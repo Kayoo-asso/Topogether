@@ -1,0 +1,278 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["referentialIntegrity"]
+}
+
+datasource db {
+  provider             = "mysql"
+  url                  = env("DATABASE_URL")
+  shadowDatabaseUrl    = env("SHADOW_DATABASE_URL")
+  referentialIntegrity = "prisma"
+}
+
+// === WIP ===
+// TODO: go over this with Flavien
+model Topo {
+  id                 Int        @id @default(autoincrement())
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
+  status             TopoStatus @default(Draft)
+  type               TopoType
+  altitude           Int?
+  approachTime       Int?
+  approachDifficulty Terrain?
+
+  remarks              String?
+  securityInstructions String?
+  danger               String?
+  forbiddenReason      String?
+
+  location           Unsupported("Point")
+  closestCity        String? // determine from location?
+  cleaningDate       DateTime?
+  // TODO: do we really need all this?
+  // If yes, bitflags?
+  hasBins            Boolean
+  hasShelter         Boolean
+  hasWaterspot       Boolean
+  hasToilets         Boolean
+  adaptedForChildren Boolean
+  hasOtherGears      Boolean
+  otherAmenities     String?
+
+  photo       Image @relation(fields: [photoId], references: [id])
+  photoId     Int
+  creator     User  @relation(name: "creator", fields: [creatorId], references: [id])
+  creatorId   Int
+  validator   User  @relation(name: "validator", fields: [validatorId], references: [id])
+  validatorId Int
+
+  sectors  Sector[]
+  parkings Parking[]
+}
+
+model Parking {
+  id          Int     @id @default(autoincrement())
+  places      Int
+  description String? @db.VarChar(2000)
+
+  location Unsupported("Point")
+
+  image   Image? @relation(fields: [imageId], references: [id])
+  imageId Int?
+  Topo    Topo?  @relation(fields: [topoId], references: [id])
+  topoId  Int?
+}
+
+model Sector {
+  id          Int     @id @default(autoincrement())
+  name        String? @db.VarChar(255)
+  description String? @db.VarChar(5000)
+
+  image   Image @relation(fields: [imageId], references: [id])
+  imageId Int
+  topo    Topo  @relation(fields: [topoId], references: [id])
+  topoId  Int
+
+  boulders Boulder[]
+}
+
+model Boulder {
+  id Int @id @default(autoincrement())
+
+  name       String?
+  isHighball Boolean
+  mustSee    Boolean
+  descent    Terrain
+  // TODO: replace with explicit lat / lng to avoid custom SQL with Prisma?
+  location   Unsupported("Point")
+
+  sector   Sector @relation(fields: [sectorId], references: [id])
+  sectorId Int
+
+  images BoulderImage[]
+  tracks Track[]
+}
+
+// === DONE ===
+
+model Track {
+  id          Int          @id @default(autoincrement())
+  name        String?      @db.VarChar(255)
+  description String?      @db.VarChar(5000)
+  height      Int?
+  orientation Orientation?
+  // TODO: add comments
+
+  grade           Grade
+  reception       Terrain
+  // Regular bitflags in JavaScript go up to 32 bits
+  techniques      Bytes   @db.Bit(32)
+  isTraverse      Boolean
+  hasSittingStart Boolean
+  hasAnchorPoint  Boolean
+  hasMantle       Boolean
+
+  creator   User    @relation(fields: [creatorId], references: [id])
+  creatorId Int
+  boulder   Boulder @relation(fields: [boulderId], references: [id])
+  boulderId Int
+
+  lines   Line[]
+  ratings TrackRating[]
+}
+
+model TrackRating {
+  id       Int     @id @default(autoincrement())
+  finished Boolean
+  rating   Rating?
+  comment  String? @db.VarChar(2000)
+
+  author   User  @relation(fields: [authorId], references: [id])
+  authorId Int
+  track    Track @relation(fields: [trackId], references: [id])
+  trackId  Int
+}
+
+model Line {
+  id             Int                          @id @default(autoincrement())
+  nbAnchors      Int                          @default(0)
+  line           Unsupported("LineString")
+  forbidden      Unsupported("MultiPolygon")?
+  startingPoints Unsupported("MultiPoint")?
+
+  track   Track        @relation(fields: [trackId], references: [id])
+  trackId Int
+  image   BoulderImage @relation(fields: [imageId], references: [id])
+  imageId Int
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  role      Role     @default(USER)
+  createdAt DateTime @default(now())
+  // TODO: the pseudo should be mandatory and unique, right?
+  pseudo    String?  @db.VarChar(255)
+  firstName String?  @db.VarChar(255)
+  lastName  String?  @db.VarChar(255)
+
+  Track          Track[]
+  TrackEval      TrackRating[]
+  createdTopos   Topo[]        @relation("creator")
+  validatedTopos Topo[]        @relation("validator")
+}
+
+// Note: do we need to add width + height here for sizing on front-end?
+// Or does Next.js + Vercel image optimization take care of that?
+model Image {
+  id      Int       @id @default(autoincrement())
+  path    String
+  type    ImageType
+  Sector  Sector[]
+  Topo    Topo[]
+  Parking Parking[]
+}
+
+model BoulderImage {
+  id   Int       @id @default(autoincrement())
+  path String
+  type ImageType
+
+  boulder   Boulder @relation(fields: [boulderId], references: [id])
+  boulderId Int
+
+  lines Line[]
+}
+
+// Is this useful?
+enum ImageType {
+  JPEG
+  PNG
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum Orientation {
+  North
+  NorthEast
+  East
+  SouthEast
+  South
+  SouthWest
+  West
+  NorthWest
+}
+
+enum Terrain {
+  Good
+  OK
+  Bad
+  Dangerous
+}
+
+enum Grade {
+  Three       @map("3")
+  ThreePlus   @map("3+")
+  Four        @map("4")
+  FourPlus    @map("4+")
+  FiveA       @map("5a")
+  FiveAPlus   @map("5a+")
+  FiveB       @map("5b")
+  FiveBPlus   @map("5b+")
+  FiveC       @map("5c")
+  FiveCPlus   @map("5c+")
+  SixA        @map("6a")
+  SixAPlus    @map("6a+")
+  SixB        @map("6b")
+  SixBPlus    @map("6b+")
+  SixC        @map("6c")
+  SixCPlus    @map("6c+")
+  SevenA      @map("7a")
+  SevenAPlus  @map("7a+")
+  SevenB      @map("7b")
+  SevenBPlus  @map("7b+")
+  SevenC      @map("7c")
+  SevenCPlus  @map("7c+")
+  EightA      @map("8a")
+  EightAPlus  @map("8a+")
+  EightB      @map("8b")
+  EightBPlus  @map("8b+")
+  EightC      @map("8c")
+  EightCPlus  @map("8c+")
+  NineA       @map("9a")
+  NineAPlus   @map("9a+")
+  NineB       @map("9b")
+  NineBPlus   @map("9b+")
+  NineC       @map("9c")
+  NineCPlus   @map("9c+")
+}
+
+enum Rating {
+  One
+  Two
+  Three
+  Four
+  Five
+}
+
+enum RockType {
+  Granite
+  // TODO
+}
+
+enum TopoStatus {
+  Draft
+  Submitted
+  Validated
+}
+
+enum TopoType {
+  Cliff
+  Boulder
+  MultiPitch
+  DeepWater
+  Artificial
+}
