@@ -1,9 +1,14 @@
+import { Button } from 'components/atoms/buttons/Button';
 import type { NextPage } from 'next'
 
 const Map: NextPage = () => {
     return (
         <div>
-            JOIE
+            <Button 
+                content="Accueil"
+                color="main"
+                href="/"
+            />
         </div>
     )
 }
