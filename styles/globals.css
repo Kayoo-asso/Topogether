@@ -2,10 +2,75 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer components {
+
+/* @layer components {
   .btn {
     @apply py-2 px-4 rounded-xl bg-kayoo ;
   }
+} */
 
 
+::-webkit-scrollbar {
+  display: none;
+  width: 0;  /* Remove scrollbar space */
+  background: transparent;  /* Optional: just make scrollbar invisible */
+}
+
+/* FONT */
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Poppins-Regular'), local('Poppins-Regular'),
+       url('/assets/fonts/Poppins/Poppins-Regular.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Poppins';
+  font-style: italic;
+  font-weight: 400;
+  src: local('Poppins-Italic'), local('Poppins-Italic'),
+       url('/assets/fonts/Poppins/Poppins-Italic.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Poppins-Medium';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Poppins-Medium'), local('Poppins-Medium'),
+       url('/assets/fonts/Poppins/Poppins-Medium.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Poppins-Medium';
+  font-style: italic;
+  font-weight: 400;
+  src: local('Poppins-MediumItalic'), local('Poppins-MediumItalic'),
+       url('/assets/fonts/Poppins/Poppins-MediumItalic.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 'bold';
+  src: local('Poppins-Bold'), local('Poppins-Bold'),
+       url('/assets/fonts/Poppins/Poppins-Bold.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Poppins';
+  font-style: italic;
+  font-weight: 'bold';
+  src: local('Poppins-BoldItalic'), local('Poppins-BoldItalic'),
+       url('/assets/fonts/Poppins/Poppins-BoldItalic.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Poppins-Semibold';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Poppins-SemiBold'), local('Poppins-SemiBold'),
+       url('/assets/fonts/Poppins/Poppins-SemiBold.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Poppins-Semibold';
+  font-style: italic;
+  font-weight: 400;
+  src: local('Poppins-SemiBoldItalic'), local('Poppins-SemiBoldItalic'),
+       url('/assets/fonts/Poppins/Poppins-SemiBoldItalic.ttf') format('truetype');
 }
