@@ -1,12 +1,13 @@
-import { Icon } from 'components/atoms/Icon';
+import { RoundButton } from 'components/atoms/buttons/RoundButton';
 import type { NextPage } from 'next'
 
 const Map: NextPage = () => {
     return (
-        <div className='bg-second'>
-            <Icon 
-                name="climbing-shoe"
-                className="stroke-main fill-white h-24 w-24"
+        <div className='bg-dark'>
+            <RoundButton 
+                iconName="filter"
+                iconClass="stroke-main fill-main"
+                onClick={() => {}}
             />
         </div>
     )
