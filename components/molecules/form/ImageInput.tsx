@@ -1,7 +1,7 @@
 import { ImageButton } from 'components'
 import React, { useRef, useState } from 'react'
 import Compressor from 'compressorjs';
-import { imageBeforeServer } from 'types';
+import { ImageBeforeServer, imageBeforeServer, imageTypes, isBetween, isImageType, numberBetween } from 'types';
 import { readFileAsync } from '../../../helpers';
 import { NumberBetween } from 'types';
 
@@ -16,25 +16,35 @@ export const ImageInput: React.FC<ImageInputProps> = props => {
     const [loading, setLoading] = useState<boolean>(false);
 
     const handleFileInput = async (file: File) => {
-        if (!file) return      
-        if (file.type !== "image/jpeg" && file.type !== "image/jpg" && file.type !== "image/png") {
+        
+        if (!isImageType(file.type)) {
             setErrorMessage("Type de fichier non reconnu. N'accepte que jpeg ou png.");
             return;
         }
-        const maxImageSize = 10000000; //10MB
-        if (file.size > maxImageSize) {
+
+        const maxImageSize = 10e6; //10MB
+        if (!isBetween(file.size, 0, maxImageSize)) {
             setErrorMessage("L'image est trop lourde. Max: 10MB.");
             return;
         }
+        
+        // Demo, to show that the type guards above work
+        const imageBeforeServer: ImageBeforeServer = {
+            name: file.name,
+            type: file.type,
+            size: file.size,
+            content: ''
+        }
+
         setLoading(true);
         new Compressor(file, {
             quality: 0.6,
             async success(res: File) { 
-                // if (res.type === "image/jpeg") {
+                // Here we already know the file has the correct type and size, but TypeScript can't verify it
                 const fileData: imageBeforeServer = {
                     name: res.name,
                     type: res.type as "image/jpeg" | "image/jpg" | 'image/png',
-                    size: res.size as NumberBetween<0, 1000,
+                    size: res.size as NumberBetween<0, 1000>,
                     content: '',
                 };
                 fileData.content = await readFileAsync(res);

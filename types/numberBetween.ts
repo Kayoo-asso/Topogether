@@ -2,7 +2,7 @@ export type NumberBetween<Min, Max> = number & {
     readonly _phantom: unique symbol
  }
  
- function isBetween<Min extends number, Max extends number>(
+ export function isBetween<Min extends number, Max extends number>(
      x: number, 
      min: Min,
      max: Max,
@@ -13,7 +13,7 @@ export type NumberBetween<Min, Max> = number & {
      return false;
  }
  
- function numberBetween<Min extends number, Max extends number>(
+ export function numberBetween<Min extends number, Max extends number>(
      x: number,
      min:Min,
      max: Max
