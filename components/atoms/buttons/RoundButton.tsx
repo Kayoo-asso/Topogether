@@ -17,7 +17,6 @@ export const RoundButton: React.FC<RoundButtonProps> = (props) => (
                         : ' bg-main'}`
                 }
     onClick={props.onClick}
-    type="button"
   >
     <Icon
       name={props.iconName}
