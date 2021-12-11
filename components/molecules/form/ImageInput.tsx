@@ -1,20 +1,26 @@
 import { ImageButton } from 'components';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Compressor from 'compressorjs';
 import {
+  ImageAfterServer,
   ImageBeforeServer, isImageType, NumberBetween,
 } from 'types';
 import { isBetween, readFileAsync } from '../../../helpers';
 
 interface ImageInputProps {
   label: string,
+  value: ImageAfterServer,
   onChange: (file: ImageBeforeServer) => void,
 }
 
 export const ImageInput: React.FC<ImageInputProps> = (props) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [errorMessage, setErrorMessage] = useState<string>('');
+
   const [loading, setLoading] = useState<boolean>(false);
+  useEffect(() => {
+    setLoading(false);
+  }, [props.value]);
 
   const handleFileInput = async (file: File) => {
     if (!isImageType(file.type)) {
@@ -65,12 +71,13 @@ export const ImageInput: React.FC<ImageInputProps> = (props) => {
       />
       <ImageButton
         text={props.label}
+        image={props.value}
         loading={loading}
         onClick={() => {
           if (!loading) fileInputRef?.current?.click();
         }}
       />
-      <div className={`ktext-error text-error w-22 h-22 ${!errorMessage ? 'hidden' : ''}`}>{errorMessage}</div>
+      <div className={`ktext-error text-error pt-1 w-22 h-22 ${!errorMessage ? 'hidden' : ''}`}>{errorMessage}</div>
     </>
   );
 };

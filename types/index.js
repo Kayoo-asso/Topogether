@@ -1,3 +1,4 @@
+export * from './TopoTypes';
 export * from './ColorTypes';
 export * from './RequireAtLeastOne';
 export * from './RequireOnlyOne';

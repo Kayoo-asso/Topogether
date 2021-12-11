@@ -7,7 +7,7 @@ interface DeleteButtonProps {
 
 export const DeleteButton: React.FC<DeleteButtonProps> = (props) => (
   <button
-    className="rounded-full p-0.5 border-dark border-2 bg-grey-medium bg-opacity-80 cursor-pointer"
+    className="shadow rounded-full p-0.5 border-dark border-2 bg-grey-medium bg-opacity-80 cursor-pointer"
     onClick={props.onClick}
   >
     <Icon
