@@ -19,7 +19,6 @@ export const Button: React.FC<ButtonProps> = (props) => (
                     }${props.fullWidth ? ' w-full ' : ''}`
                 }
     onClick={props.onClick}
-    type="button"
   >
     <Link href={props.href || ''}>
       {props.content}
