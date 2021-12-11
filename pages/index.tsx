@@ -1,16 +1,11 @@
-import { Icon, ImageButton } from '../components';
-import type { NextPage } from 'next'
+import { RoundButton } from 'components/atoms/buttons/RoundButton';
+import { Checkbox } from 'components/atoms/Checkbox';
+import type { NextPage } from 'next';
 
-const Map: NextPage = () => {
-    return (
-        <div className='bg-white w-screen h-screen'>
-            <ImageButton
-                text="+ ajouter une image"
-                // loading
-                onClick={() => {}}
-            />
-        </div>
-    )
-}
+const Map: NextPage = () => (
+  <div className="bg-dark">
+    <Checkbox />
+  </div>
+);
 
 export default Map;
