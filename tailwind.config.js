@@ -26,6 +26,7 @@ module.exports = {
         superlight: '#E8EAF0',
       },
       white: colors.white,
+      error: '#FF686B',
       diff: {
         3: '#FFD600',
         4: '#05F6A0',
@@ -39,6 +40,10 @@ module.exports = {
       current: 'currentColor',
     },
     spacing: {
+      '-4': '-1rem',
+      '-3': '-0.75rem',
+      '-2': '-0.5rem',
+      '-1': '-0.25rem',
       px: '1px',
       0: '0px',
       0.5: '0.125rem',
