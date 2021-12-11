@@ -14,7 +14,7 @@ export const ImageButton: React.FC<ImageButtonProps> = props => {
     return (
         <>           
             <div 
-                className='ktext-label text-center shadow text-main p-2 border-main border-2 w-22 h-22 flex flex-col justify-center'
+                className='ktext-label text-center shadow text-main p-2 border-main border-2 w-22 h-22 flex flex-col justify-center cursor-pointer'
                 onClick={props.onClick}
             >    
                 {props.loading && 

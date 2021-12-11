@@ -3,7 +3,7 @@ import { ReactSVG } from 'react-svg';
 
 interface IconProps {
     name: string,
-    className: string,
+    className?: string,
     center?: boolean,
     onClick?: () => void,
 }

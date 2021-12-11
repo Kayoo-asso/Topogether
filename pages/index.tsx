@@ -9,6 +9,9 @@ const Map: NextPage = () => {
                 // loading
                 onClick={() => {}}
             />
+            <Icon 
+                name='checkbox'
+            />
         </div>
     )
 }
