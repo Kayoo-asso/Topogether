@@ -7,10 +7,12 @@ module.exports = {
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
         "ecmaFeatures": {
-            "jsx": true
+            "jsx": true,
+            "tsx": true
         },
         "ecmaVersion": 13,
-        "sourceType": "module"
+        "sourceType": "module",
+        "project": ["tsconfig.json"]
     },
     // 
     // -- Plugins
@@ -21,17 +23,27 @@ module.exports = {
         "@typescript-eslint"
     ],
     "extends": [
-        "eslint:recommended",
-        "plugin:@typescript-eslint/recommended",
-        "plugin:react/recommended",
-        "plugin:react-hooks/recommended",
+        "airbnb",
+        "airbnb-typescript",
+        // "eslint:recommended",
+        // "plugin:@typescript-eslint/recommended",
+        // "plugin:react/recommended",
+        // "plugin:react-hooks/recommended",
         "next/core-web-vitals",
         "plugin:storybook/recommended"
     ],
     "rules": {
         "react-hooks/exhaustive-deps": ["warn", {
             "additionalHooks": "useAsyncEffect"
-        }]
+        }],
+        'react/jsx-filename-extension': [2, { 'extensions': ['.js', '.jsx', '.ts', '.tsx'] }],
+        "react/destructuring-assignment": 0,
+        "react/function-component-definition": 0,
+        "import/prefer-default-export": 0,
+        "react/prop-types": "off",
+        "react/require-default-props":0,
+        "react/jsx-props-no-spreading": 0,
+        "import/no-extraneous-dependencies": 0
     },
     // -- Shared settings
     "settings": {
@@ -41,5 +53,5 @@ module.exports = {
         }
     },
     // -- Ignore: Materialize and jQuery
-    "ignorePatterns": ["/src/js/materialize", "/src/js/script"]
+    "ignorePatterns": ["/src/js/materialize", "/src/js/script", "*index.js"]
 };
