@@ -1,45 +1,31 @@
 import React from 'react'
 import Link from 'next/link';
-import { baseColor } from 'components/types';
 
-type ButtonProps = {
+interface ButtonProps {
     content: string,
-    color: baseColor,
+    white?: boolean,
     fullWidth?: boolean,
-} & ({
-    href: string,
-    onClick?: null,
-} | {
-    href?: null,
-    onClick: () => void,
-})
+    href?: string,
+    onClick?: () => void,
+}
 
-export const Button: React.FC<ButtonProps> = (props: ButtonProps) => {
-    let classes: string = 'text-';
-
+export const Button: React.FC<ButtonProps> = props => {
     return (
-        <>
-            {props.href && 
-                <Link href={props.href}>
-                    <button 
-                        className={
-                            'text-white ktext-subtitle shadow bg-main hover:bg-main-light rounded-full py-3 px-8 ' 
-                            + (props.fullWidth ? 'w-full ' : '')
-                        }
-                    >
-                        {props.content}
-                    </button>
-                </Link>
-            }
-
-            {props.onClick &&
-                <button
-                    className={classes}
-                    onClick={props.onClick}
-                >
+        <>           
+            <button 
+                className={
+                    'ktext-subtitle shadow rounded-full py-3 px-8' 
+                    + (props.white ? 
+                        ' text-main bg-white border-2 border-main hover:text-main-light hover:border-main-light' : 
+                        ' text-white bg-main hover:bg-main-light')
+                    + (props.fullWidth ? ' w-full ' : '')
+                }
+                onClick={props.onClick}
+            >
+                <Link href={props.href || ''}>
                     {props.content}
-                </button>
-            }
+                </Link>
+            </button>
         </>        
     )
 }
