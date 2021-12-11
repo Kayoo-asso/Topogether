@@ -5,7 +5,8 @@ const Map: NextPage = () => {
     return (
         <div>
             <Icon 
-                name="waypoint"
+                name="position"
+                className="stroke-main h-24 w-24"
             />
         </div>
     )
