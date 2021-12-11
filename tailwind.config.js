@@ -60,6 +60,7 @@ module.exports = {
       14: '3.5rem',
       16: '4rem',
       20: '5rem',
+      22: '5.5rem',
       24: '6rem',
       28: '7rem',
       32: '8rem',
@@ -253,6 +254,7 @@ module.exports = {
       ],
     },
     fontSize: {
+      xxs: ['0.65rem', { lineHeight: '0.8rem' }],
       xs: ['0.75rem', { lineHeight: '1rem' }],
       sm: ['0.875rem', { lineHeight: '1.25rem' }],
       base: ['1rem', { lineHeight: '1.5rem' }],
@@ -261,11 +263,6 @@ module.exports = {
       '2xl': ['1.5rem', { lineHeight: '2rem' }],
       '3xl': ['1.875rem', { lineHeight: '2.25rem' }],
       '4xl': ['2.25rem', { lineHeight: '2.5rem' }],
-      '5xl': ['3rem', { lineHeight: '1' }],
-      '6xl': ['3.75rem', { lineHeight: '1' }],
-      '7xl': ['4.5rem', { lineHeight: '1' }],
-      '8xl': ['6rem', { lineHeight: '1' }],
-      '9xl': ['8rem', { lineHeight: '1' }],
     },
     fontWeight: {
       normal: '400',

@@ -9,10 +9,10 @@
   .ktext-subtitle { @apply font-sans font-bold text-base uppercase }
   .ktext-base { @apply font-sans font-normal text-base }
   .ktext-base-superbig { @apply font-sans font-semibold text-4xl }
-  .ktext-label { @apply font-sans font-medium text-sm uppercase }
+  .ktext-label { @apply font-sans font-medium text-xs uppercase }
   .ktext-label-superbig { @apply font-sans font-semibold text-3xl uppercase }
-  .ktext-error { @apply font-sans font-normal text-sm italic }
-  .ktext-subtext { @apply font-sans font-normal text-xs }
+  .ktext-error { @apply font-sans font-normal text-xs italic }
+  .ktext-subtext { @apply font-sans font-normal text-xxs }
 } 
 
 
