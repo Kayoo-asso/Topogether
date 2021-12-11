@@ -663,9 +663,7 @@ module.exports = {
       ...theme('spacing'),
       ...negative(theme('spacing')),
     }),
-    stroke: {
-      current: 'currentColor',
-    },
+    stroke: ({ theme }) => theme('colors'),
     strokeWidth: {
       0: '0',
       1: '1',

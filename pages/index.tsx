@@ -3,9 +3,10 @@ import type { NextPage } from 'next'
 
 const Map: NextPage = () => {
     return (
-        <div>
+        <div className='bg-second'>
             <Icon 
-                name="waypoint"
+                name="climbing-shoe"
+                className="stroke-main fill-white h-24 w-24"
             />
         </div>
     )

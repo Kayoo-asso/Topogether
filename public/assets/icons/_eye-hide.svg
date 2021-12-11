@@ -1,16 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="19" height="13" fill="none" viewBox="0 0 19 13">
-  <path stroke="#04D98B" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="M.745 6.82c.326-.434 3.374-4.339 8.707-4.339.544 0 5.507.087 8.707 4.339-.327.434-3.374 4.338-8.707 4.338-.544 0-5.507-.087-8.707-4.338z"/>
-  <path stroke="#04D98B" stroke-miterlimit="10" d="M9.452 8.989a2.173 2.173 0 002.177-2.17c0-1.197-.975-2.169-2.177-2.169a2.173 2.173 0 00-2.177 2.17c0 1.198.975 2.169 2.177 2.169z"/>
-  <path stroke="#04D98B" stroke-linecap="round" stroke-miterlimit="10" d="M4.054 1.397l10.883 10.846"/>
-  <mask id="a" width="13" height="13" x="2" y="1" maskUnits="userSpaceOnUse">
-    <path stroke="#fff" stroke-linecap="round" stroke-miterlimit="10" d="M3.313 2.027l10.884 10.847"/>
-  </mask>
-  <g filter="url(#filter0_b)" mask="url(#a)">
-    <path fill="#fff" fill-rule="evenodd" d="M3.87 1.995a.75.75 0 011.061-.002l8.707 8.677a.75.75 0 11-1.059 1.063L3.872 3.056a.75.75 0 01-.002-1.06z" clip-rule="evenodd"/>
-  </g>
-  <defs>
-    <filter id="filter0_b" width="18.207" height="18.177" x="-.348" y="-2.225" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse">
-      <feBlend in="SourceGraphic" in2="effect1_backgroundBlur" result="shape"/>
-    </filter>
-  </defs>
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 19 13">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="M.745 6.82c.326-.434 3.374-4.339 8.707-4.339.544 0 5.507.087 8.707 4.339-.327.434-3.374 4.338-8.707 4.338-.544 0-5.507-.087-8.707-4.338z"/>
+  <path stroke-miterlimit="10" d="M9.452 8.989a2.173 2.173 0 002.177-2.17c0-1.197-.975-2.169-2.177-2.169a2.173 2.173 0 00-2.177 2.17c0 1.198.975 2.169 2.177 2.169z"/>
+  <path stroke-linecap="round" stroke-miterlimit="10" d="M4.054 1.397l10.883 10.846"/>
 </svg>
