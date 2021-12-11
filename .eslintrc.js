@@ -44,7 +44,9 @@ module.exports = {
         "react/require-default-props":0,
         "react/jsx-props-no-spreading": 0,
         "import/no-extraneous-dependencies": 0,
-        "react/button-has-type": 0
+        "react/button-has-type": 0,
+        "no-console": 1,
+        "max-len": 0,
     },
     // -- Shared settings
     "settings": {
