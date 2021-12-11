@@ -1,16 +1,23 @@
 import { ImageButton } from 'components'
-import React from 'react'
+import React, { useRef, useState } from 'react'
 import Compressor from 'compressorjs';
+import { imageBeforeServer } from 'types';
+import { readFileAsync } from '../../../helpers';
+import { NumberBetween } from 'types';
 
 interface ImageInputProps {
     label: string,
+    onChange: (file: imageBeforeServer) => void,
 }
 
 export const ImageInput: React.FC<ImageInputProps> = props => {
+    const fileInputRef = useRef();
+    const [errorMessage, setErrorMessage] = useState<string>('');
+    const [loading, setLoading] = useState<boolean>(false);
 
-    const handleFileInput = async (file) => {
-        if (!file) return
-        if (file.type !== "image/jpeg" && file.type !== "image/png") {
+    const handleFileInput = async (file: File) => {
+        if (!file) return      
+        if (file.type !== "image/jpeg" && file.type !== "image/jpg" && file.type !== "image/png") {
             setErrorMessage("Type de fichier non reconnu. N'accepte que jpeg ou png.");
             return;
         }
@@ -19,19 +26,22 @@ export const ImageInput: React.FC<ImageInputProps> = props => {
             setErrorMessage("L'image est trop lourde. Max: 10MB.");
             return;
         }
-
         setLoading(true);
         new Compressor(file, {
             quality: 0.6,
-            async success(res) {          
-                const fileData = {};
-                fileData.name = res.name;
-                fileData.type = res.type;
-                fileData.size = res.size;
+            async success(res: File) { 
+                // if (res.type === "image/jpeg") {
+                const fileData: imageBeforeServer = {
+                    name: res.name,
+                    type: res.type as "image/jpeg" | "image/jpg" | 'image/png',
+                    size: res.size as NumberBetween<0, 1000,
+                    content: '',
+                };
                 fileData.content = await readFileAsync(res);
-                props.getFileData(fileData);
-                setErrorMessage(null);
+                props.onChange(fileData);
+                setErrorMessage('');
                 setLoading(false);
+            // }
             },
             error(err) {
                 console.log(err.message);
@@ -44,7 +54,7 @@ export const ImageInput: React.FC<ImageInputProps> = props => {
         <>
             <input 
                 type='file' 
-                className='hidden' 
+                className='hidden'
                 onChange={e => {
                     if (e?.target?.files)
                         handleFileInput(e.target.files[0]);
@@ -52,6 +62,7 @@ export const ImageInput: React.FC<ImageInputProps> = props => {
             />
             <ImageButton 
                 text={props.label}
+                loading={loading}
                 onClick={() => {
 
                 }}
