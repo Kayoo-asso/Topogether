@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
  @layer components {
   .ktext-title { @apply font-sans font-normal text-lg uppercase }
   .ktext-section-title { @apply font-sans font-semibold text-xl }
