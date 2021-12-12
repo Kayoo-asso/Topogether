@@ -21,18 +21,25 @@ interface MultipleImageInputProps {
   onChange: (file: ImageBeforeServer) => void,
 }
 
-export const MultipleImageInput: React.FC<MultipleImageInputProps> = (props) => {
+export const MultipleImageInput: React.FC<MultipleImageInputProps> = ({
+  numberOfVisibleRows = 2,
+  thumbPerRow = 3,
+  hasButton = true,
+  selectableThumb = false,
+  selectedThumbIndex = null,
+  ...props
+}: MultipleImageInputProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [errorMessage, setErrorMessage] = useState<string>('');
 
   const [page, setPage] = useState<number>(0);
-  const numberOfVisibleRows = props.numberOfVisibleRows || (props.values.length / (props.thumbPerRow || 3));
-  let numberOfVisibleThumbs = numberOfVisibleRows * (props.thumbPerRow || 3);
-  if (props.hasButton) numberOfVisibleThumbs -= 1;
+  numberOfVisibleRows = numberOfVisibleRows || (props.values.length / (thumbPerRow || 3));
+  let numberOfVisibleThumbs = numberOfVisibleRows * (thumbPerRow || 3);
+  if (hasButton) numberOfVisibleThumbs -= 1;
   const numberOfPages = Math.ceil(props.values.length / numberOfVisibleThumbs);
 
-  const displayLeftArrow = (props.numberOfVisibleRows && numberOfPages > 0 && page > 0);
-  const displayRightArrow = (props.numberOfVisibleRows && numberOfPages > 1 && page < numberOfPages - 1);
+  const displayLeftArrow = (numberOfVisibleRows && numberOfPages > 0 && page > 0);
+  const displayRightArrow = (numberOfVisibleRows && numberOfPages > 1 && page < numberOfPages - 1);
 
   const [thumbsToDisplay, setThumbsToDisplay] = useState(numberOfVisibleRows ? props.values.slice(numberOfVisibleThumbs * page, numberOfVisibleThumbs * (page + 1)) : props.values);
   useEffect(() => {
@@ -122,19 +129,19 @@ export const MultipleImageInput: React.FC<MultipleImageInputProps> = (props) => 
           key={image.id}
           image={image}
           selectable
-          selected={props.selectedThumbIndex === index}
+          selected={selectedThumbIndex === index}
           onDeleteImage={() => {
             console.log('do on delete image');
           }}
           onClick={() => {
-            if (props.selectableThumb) {
+            if (selectableThumb) {
               if (props.getSelectedThumbIndex) props.getSelectedThumbIndex(index);
             }
           }}
         />
       ))}
 
-      {props.hasButton && (
+      {hasButton && (
         <ImageButton
           text={props.label}
           loading={loading}
@@ -158,12 +165,4 @@ export const MultipleImageInput: React.FC<MultipleImageInputProps> = (props) => 
       <div className={`ktext-error text-error pt-1 w-64 h-64${!errorMessage ? 'hidden' : ''}`}>{errorMessage}</div>
     </>
   );
-};
-
-MultipleImageInput.defaultProps = {
-  numberOfVisibleRows: 2,
-  thumbPerRow: 3,
-  hasButton: true,
-  selectableThumb: false,
-  selectedThumbIndex: null,
 };

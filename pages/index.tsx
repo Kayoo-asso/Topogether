@@ -1,23 +1,19 @@
 import { Dropdown } from 'components';
+import { GradeCircle } from 'components';
 import { DrawerToolEnum } from 'enums';
 import type { NextPage } from 'next';
+import { useState } from 'react';
 
 
-const cursorColor = '6';
-const getCursorUrl = () => {  
-  let cursorUrl = '';
-  if (cursorColor === '5')
-    cursorUrl = `/assets/icons/colored/hand-full/_hand-full-5.svg`
-  else if (cursorColor === '6')
-    cursorUrl = `/assets/icons/colored/hand-full/_hand-full-6.svg`
-  return cursorUrl;
-}
-
-const Map: NextPage = () => (
-  <div 
-    className={"bg-dark h-40"}
-    style={{cursor: "url("+getCursorUrl()+"), auto"}}
-  ></div>
-);
+const Map: NextPage = () => {
+  const [test, setTest] = useState(true);
+  return (
+    <GradeCircle 
+      grade="5"
+      colored={false}
+      selected={test}
+      onClick={() => setTest(!test)}
+    />
+)};
 
 export default Map;

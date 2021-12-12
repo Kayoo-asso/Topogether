@@ -10,7 +10,11 @@ interface DraggablePolylineProps {
   onDrop?: () => void,
 }
 
-export const DraggablePolyline: React.FC<DraggablePolylineProps> = (props: DraggablePolylineProps) => {
+export const DraggablePolyline: React.FC<DraggablePolylineProps> = ({
+  className = 'stroke-main',
+  strokeWidth = 2,
+  ...props
+}: DraggablePolylineProps) => {
   const [cursorPosition, setCursorPosition] = useState({
     x: 0,
     y: 0,
@@ -49,17 +53,12 @@ export const DraggablePolyline: React.FC<DraggablePolylineProps> = (props: Dragg
 
   return (
     <polyline
-      className={`cursor-pointer ${props.className}`}
+      className={`cursor-pointer ${className}`}
       points={pointsToPolylineStr(props.points)}
-      strokeWidth={props.strokeWidth}
+      strokeWidth={strokeWidth}
       onPointerDown={handlePointerDown}
       onPointerUp={handlePointerUp}
       onPointerMove={handlePointerMove}
     />
   );
-};
-
-DraggablePolyline.defaultProps = {
-  className: 'stroke-main',
-  strokeWidth: 2,
 };

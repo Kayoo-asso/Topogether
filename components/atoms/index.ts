@@ -4,3 +4,4 @@ export * from './svg';
 export * from './Icon';
 export * from './ImageThumb';
 export * from './Checkbox';
+export * from './GradeCircle';

@@ -31,20 +31,18 @@ interface TracksImageProps {
   onImageLoad?: (e: {
     naturalWidth: number;
     naturalHeight: number;
-}) => void,
+  }) => void,
 }
 
-type TracksImageType = TracksImageProps & typeof defaultProps;
-const defaultProps = {
-  tracksClassName: 'stroke-main',
-  displayTracks: true,
-  displayPhantomTracks: true,
-  displayTracksNumber: true,
-  displayTracksDetails: true,
-  editable: false,
-}
-
-export const TracksImage: React.FC<TracksImageType> = (props: TracksImageType) => {
+export const TracksImage: React.FC<TracksImageProps> = ({
+  tracksClassName = 'stroke-main',
+  displayTracks = true,
+  displayPhantomTracks = true,
+  displayTracksNumber = true,
+  displayTracksDetails = true,
+  editable = false,
+  ...props
+}: TracksImageProps) => {
   const imgContainerRef = useRef<HTMLSpanElement>(null);
 
   const [canvasWidth, setCanvasWidth] = useState(0);
@@ -158,14 +156,14 @@ export const TracksImage: React.FC<TracksImageType> = (props: TracksImageType) =
             return (
               <React.Fragment key={line.id}>
                 <path
-                  className={`z-10 opacity-40 ${props.tracksClassName} ${props.onPolylineClick && ' cursor-pointer'}`}
+                  className={`z-10 opacity-40 ${tracksClassName} ${props.onPolylineClick && ' cursor-pointer'}`}
                   strokeWidth={lineStrokeWidth}
                   d={getPathFromPoints(getResizedPointsOfLine(line, 'LINE_POINT'), 'CURVE')}
                   onClick={() => {
                     if (props.onPolylineClick) props.onPolylineClick(line);
                   }}
                 />
-                {props.displayTracksNumber && (
+                {displayTracksNumber && (
                   <>
                     <circle
                       cx={getResizedPointsOfLine(line, 'LINE_POINT')[0]?.posX}
@@ -212,14 +210,14 @@ export const TracksImage: React.FC<TracksImageType> = (props: TracksImageType) =
             return (
               <React.Fragment key={line.id}>
                 <path
-                  className={`z-30 ${props.tracksClassName} ${props.onPolylineClick && 'cursor-pointer'}`}
+                  className={`z-30 ${tracksClassName} ${props.onPolylineClick && 'cursor-pointer'}`}
                   strokeWidth={lineStrokeWidth}
                   d={getPathFromPoints(getResizedPointsOfLine(line, 'LINE_POINT'), 'CURVE')}
                   onClick={() => {
                     if (props.onPolylineClick) props.onPolylineClick(line);
                   }}
                 />
-                {props.displayTracksNumber && (
+                {displayTracksNumber && (
                   <>
                     <circle
                       cx={getResizedPointsOfLine(line, 'LINE_POINT')[0]?.posX}
@@ -389,7 +387,7 @@ export const TracksImage: React.FC<TracksImageType> = (props: TracksImageType) =
               >
                 <SVGArea
                   key={index}
-                  editable={props.editable}
+                  editable={editable}
                   area={getResizedPointsOfArea(areaLine)}
                   ratio={ratio}
                   pointSize={pointSize}
@@ -439,7 +437,7 @@ export const TracksImage: React.FC<TracksImageType> = (props: TracksImageType) =
         height={canvasHeight}
         onMouseDown={(e) => {
           if (e.button === 0 && props.onImageClick && !e.currentTarget.classList.contains('svg-area')) { // Left-click on the canvas only
-            if (props.image && props.editable) {
+            if (props.image && editable) {
               // TO FIX ??? TODO
               // if (!e.currentTarget.classList.contains('svg-canvas')) {
               //   e.currentTarget = e.currentTarget.farthestViewportElement;
@@ -450,13 +448,13 @@ export const TracksImage: React.FC<TracksImageType> = (props: TracksImageType) =
           }
         }}
       >
-        {props.displayPhantomTracks && renderPhantomTracks()}
-        {props.displayTracks && renderTracks()}
-        {props.displayTracks && props.editable && renderTracksPoints()}
-        {props.displayTracksDetails && renderHandDeparturePoints()}
-        {props.displayTracksDetails && renderFeetDeparturePoints()}
-        {props.displayTracksDetails && renderAnchorPoints()}
-        {props.displayTracksDetails && renderForbiddenAreas()}
+        {displayPhantomTracks && renderPhantomTracks()}
+        {displayTracks && renderTracks()}
+        {displayTracks && editable && renderTracksPoints()}
+        {displayTracksDetails && renderHandDeparturePoints()}
+        {displayTracksDetails && renderFeetDeparturePoints()}
+        {displayTracksDetails && renderAnchorPoints()}
+        {displayTracksDetails && renderForbiddenAreas()}
       </svg>
 
       <span 

@@ -13,17 +13,22 @@ interface ImageThumbProps {
   onClick?: () => void,
 }
 
-export const ImageThumb: React.FC<ImageThumbProps> = (props) => (
+export const ImageThumb: React.FC<ImageThumbProps> = ({
+  selectable = false,
+  selected = false,
+  deletable = true,
+  ...props
+}: ImageThumbProps) => (
   // eslint-disable-next-line jsx-a11y/click-events-have-key-events
   <div
-    className={`${props.selected ? ' border-main' : ' border-dark'} 
-      ${props.selectable ? 'cursor-pointer' : ''} 
+    className={`${selected ? ' border-main' : ' border-dark'} 
+      ${selectable ? 'cursor-pointer' : ''} 
       group border-2 w-22 h-22 flex flex-col justify-center relative`}
     onClick={props.onClick}
     role="button"
     tabIndex={0}
   >
-    {props.deletable
+    {deletable
         && (
         <div className="absolute z-10 -top---3 -right---3 lg:hidden group-hover:block">
           <DeleteButton
@@ -41,10 +46,4 @@ export const ImageThumb: React.FC<ImageThumbProps> = (props) => (
       objectFit="contain"
     />
   </div>
-);
-
-ImageThumb.defaultProps = {
-  selectable: false,
-  selected: false,
-  deletable: true,
-};
+)
