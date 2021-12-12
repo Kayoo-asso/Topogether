@@ -4,7 +4,7 @@
     // Gives us nicer paths to modules, by referring to them
     // from the root of the project
     "baseUrl": ".",
-    "target": "es5",
+    "target": "ESNext",
     "lib": [
       "dom",
       "dom.iterable",
