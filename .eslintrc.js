@@ -48,6 +48,7 @@ module.exports = {
         "react/no-unstable-nested-components": 0,
         "no-console": 1,
         "max-len": 0,
+        "import/no-cycle": 0,
     },
     // -- Shared settings
     "settings": {

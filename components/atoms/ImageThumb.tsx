@@ -46,4 +46,4 @@ export const ImageThumb: React.FC<ImageThumbProps> = ({
       objectFit="contain"
     />
   </div>
-)
+);
