@@ -1,6 +1,6 @@
 import {
   Button,
-  Checkbox, Dropdown, GradeCircle, MobileHeader, MobileShell, SatelliteButton,
+  Checkbox, Dropdown, GradeCircle, MobileHeader,
 } from 'components';
 import type { NextPage } from 'next';
 import { useState } from 'react';
@@ -12,6 +12,7 @@ const Map: NextPage = () => {
       <MobileHeader
         title="La meilleure app du monde"
         menu={[]}
+        onBackClick={() => {}}
       />
 
       <Button

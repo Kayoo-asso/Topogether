@@ -32,7 +32,7 @@ export const MobileShell: React.FC<MobileShellProps> = ({
       <div className="shell-container w-screen min-h-full bg-dark grid grid-cols-3 items-center">
         <Link href={session ? '/user/profile' : '/user/login'} passHref>
           <div
-            className={` ${activeTab === 0 ? 'border-t-main border-t-2' : ''} cursor-pointer`}
+            className={`${activeTab === 0 ? 'border-t-main border-t-6' : ''} h-full cursor-pointer`}
             onClick={() => changeTab(0)}
             role="button"
             tabIndex={0}
@@ -47,7 +47,7 @@ export const MobileShell: React.FC<MobileShellProps> = ({
 
         <Link href={topoUrl || '/'} passHref>
           <div
-            className={`shell-item valign-wrapper ${activeTab === 1 ? 'selected' : ''}`}
+            className={`${activeTab === 1 ? 'border-t-main border-t-6' : ''} h-full  cursor-pointer`}
             onClick={() => changeTab(1)}
             role="button"
             tabIndex={0}
@@ -61,8 +61,8 @@ export const MobileShell: React.FC<MobileShellProps> = ({
         </Link>
         <Link href={session ? '/builder/dashboard' : '#'} passHref>
           <div
-            className={`shell-item valign-wrapper ${activeTab === 2 ? 'selected' : ''}`}
-            onClick={(e) => {
+            className={`${activeTab === 2 ? 'border-t-main border-t-6' : ''} h-full  cursor-pointer`}
+            onClick={() => {
               if (session) changeTab(2);
               else setDisplayModalLogin(true);
             }}
