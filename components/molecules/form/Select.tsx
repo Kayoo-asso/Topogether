@@ -26,7 +26,8 @@ export const Select: React.FC<SelectProps> = (props) => {
         label={props.label}
         id={`${props.id}-input`}
         value={props.selected?.label}
-        onFocus={() => alert('hihi')}
+        onFocus={() => setIsOpen(true)}
+        onBlur={() => setIsOpen(false)}
       />
       {isOpen && <Dropdown choices={props.choices} onSelect={props.onSelect} />}
     </div>
