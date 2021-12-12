@@ -1,8 +1,14 @@
-import { Checkbox } from 'components/atoms/Checkbox';
+import { Dropdown } from 'components';
 import type { NextPage } from 'next';
 
+const choices = [
+  {
+    value: 'dangerous', label: 'Site dangereux', checked: true,
+  },
+  { value: 'rocky', label: 'Site rocheux' },
+];
 const Map: NextPage = () => (
-  <Checkbox checked={false} onClick={() => {}} label="text" />
+  <Dropdown type="checkbox" choices={choices} />
 );
 
 export default Map;

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Icon } from './Icon';
 
 interface CheckboxProps {
-  checked: boolean,
+  checked?: boolean,
   label?: string,
   onClick: () => void
 }
@@ -24,10 +24,9 @@ export const Checkbox: React.FC<CheckboxProps> = (props) => {
         name={icon}
         onClick={handleClick}
       />
-      <span className="ktext-base dark">
+      <div className="ktext-base main">
         {props.label}
-
-      </span>
+      </div>
     </div>
   );
 };
