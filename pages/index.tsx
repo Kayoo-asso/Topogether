@@ -1,16 +1,23 @@
 import {
-  Checkbox, Dropdown, GradeCircle, SatelliteButton,
+  Button,
+  Checkbox, Dropdown, GradeCircle, MobileHeader, MobileShell, SatelliteButton,
 } from 'components';
-import { DrawerToolEnum } from 'enums';
 import type { NextPage } from 'next';
 import { useState } from 'react';
 
 const Map: NextPage = () => {
   const [test, setTest] = useState(true);
   return (
-    <SatelliteButton
-      onClick={() => {}}
-    />
+    <>
+      <MobileHeader
+        title="La meilleure app du monde"
+        menu={[]}
+      />
+
+      <Button
+        content="Click me"
+      />
+    </>
   );
 };
 
