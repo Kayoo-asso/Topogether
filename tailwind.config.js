@@ -87,6 +87,10 @@ module.exports = {
       ping: 'ping 1s cubic-bezier(0, 0, 0.2, 1) infinite',
       pulse: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
       bounce: 'bounce 1s infinite',
+      check: 'check .5s forwards',
+      fadein: 'fadein .5s forwards',
+      fadeout: 'fadeout 1s forwards',
+      uncheck: 'uncheck .5s forwards'
     },
     backdropBlur: (theme) => theme('blur'),
     backdropBrightness: (theme) => theme('brightness'),
@@ -458,6 +462,28 @@ module.exports = {
           animationTimingFunction: 'cubic-bezier(0,0,0.2,1)',
         },
       },
+      check: {
+        to: {
+          transform: 'rotate(90deg)',
+          opacity: '0%'
+        },
+      },
+      uncheck: {
+        to: {
+          transform: 'rotate(-90deg)',
+          opacity: '100%'
+        },
+      },
+      fadein: {
+        to: {
+          opacity: '100%',
+        },
+      },
+      fadeout: {
+        to: {
+          opacity: '0%',
+        },
+      }
     },
     letterSpacing: {
       tighter: '-0.05em',

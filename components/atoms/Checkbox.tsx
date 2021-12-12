@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Icon } from './Icon';
 
 interface CheckboxProps {
@@ -9,8 +9,6 @@ interface CheckboxProps {
 
 export const Checkbox: React.FC<CheckboxProps> = (props) => {
   const [isChecked, setIsChecked] = useState(props.checked);
-  const icon = isChecked ? 'checked' : 'checkbox';
-  const iconColor = isChecked ? 'stroke-main' : 'stroke-dark';
 
   const handleClick = () => {
     setIsChecked(!isChecked);
@@ -20,8 +18,13 @@ export const Checkbox: React.FC<CheckboxProps> = (props) => {
   return (
     <div className="flex items-center">
       <Icon
-        className={`h-5 w-5 mr-2 ${iconColor}`}
-        name={icon}
+        className={`absolute h-5 w-5 mr-2 stroke-main opacity-0 cursor-pointer ${isChecked ? 'animate-fadein' : 'animate-fadeout'}`}
+        name="checked"
+        onClick={handleClick}
+      />
+      <Icon
+        className={`absolute h-5 w-5 mr-2 stroke-dark cursor-pointer ${isChecked ? 'animate-check' : 'animate-uncheck'}`}
+        name="checkbox"
         onClick={handleClick}
       />
       <div className="ktext-base main">
