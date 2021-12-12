@@ -26,7 +26,3 @@ export const Select: React.FC<SelectProps> = (props) => {
     </div>
   );
 };
-
-TextInput.defaultProps = {
-  type: 'text',
-};

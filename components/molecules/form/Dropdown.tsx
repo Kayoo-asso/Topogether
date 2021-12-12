@@ -17,7 +17,9 @@ interface DropdownProps {
   type?: string;
 }
 
-export const Dropdown: React.FC<DropdownProps> = (props) => (
+export const Dropdown: React.FC<DropdownProps> = ({
+  ...props
+}: DropdownProps) => (
   <div className="shadow px-7 py-5 w-60 bg-white rounded-lg">
     {props.choices.map((choice, i) => (
       choice.isSection
@@ -45,7 +47,3 @@ export const Dropdown: React.FC<DropdownProps> = (props) => (
         )))}
   </div>
 );
-
-Dropdown.defaultProps = {
-  onSelect: () => {},
-};
