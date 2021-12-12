@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Icon } from './Icon';
 
 interface CheckboxProps {
@@ -7,8 +7,11 @@ interface CheckboxProps {
   onClick: () => void
 }
 
-export const Checkbox: React.FC<CheckboxProps> = (props) => {
-  const [isChecked, setIsChecked] = useState(props.checked);
+export const Checkbox: React.FC<CheckboxProps> = ({
+  checked = false,
+  ...props
+}: CheckboxProps) => {
+  const [isChecked, setIsChecked] = useState(checked);
 
   const handleClick = () => {
     setIsChecked(!isChecked);

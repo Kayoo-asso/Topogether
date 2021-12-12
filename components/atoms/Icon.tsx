@@ -8,20 +8,19 @@ interface IconProps {
   onClick?: () => void,
 }
 
-export const Icon: React.FC<IconProps> = (props) => (
+export const Icon: React.FC<IconProps> = ({
+  className = 'stroke-main h-8 w-8',
+  center = false,
+  ...props
+}: IconProps) => (
   <ReactSVG
     src={`/assets/icons/_${props.name}.svg`}
     wrapper="span"
-    className={props.center ? 'flex flex-col justify-center items-center' : ''}
+    className={center ? 'flex flex-col justify-center items-center' : ''}
     beforeInjection={(svg) => {
-      svg.setAttribute('class', `${props.className}`);
+      svg.setAttribute('class', `${className}`);
     }}
     loading={() => <span className="ktext-subtext">Loading...</span>}
     onClick={props.onClick}
   />
 );
-
-Icon.defaultProps = {
-  className: 'stroke-main h-8 w-8',
-  center: false,
-};

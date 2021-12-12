@@ -5,13 +5,17 @@ import { ImageAfterServer } from 'types';
 import { Icon } from 'components';
 
 interface ImageButtonProps {
-  text: string,
+  text?: string,
   image?: ImageAfterServer,
   loading?: boolean,
   onClick: () => void,
 }
 
-export const ImageButton: React.FC<ImageButtonProps> = (props) => (
+export const ImageButton: React.FC<ImageButtonProps> = ({
+  text = "+ ajouter une image",
+  loading = false,
+  ...props
+}) => (
   // eslint-disable-next-line jsx-a11y/click-events-have-key-events
   <div
     className="ktext-label relative text-center shadow text-main p-2 border-main border-2 w-22 h-22 flex flex-col justify-center cursor-pointer"
@@ -19,7 +23,7 @@ export const ImageButton: React.FC<ImageButtonProps> = (props) => (
     role="button"
     tabIndex={0}
   >
-    {props.loading
+    {loading
                     && (
                     <Icon
                       name="spinner"
@@ -27,7 +31,7 @@ export const ImageButton: React.FC<ImageButtonProps> = (props) => (
                       center
                     />
                     )}
-    {!props.loading && props.image
+    {!loading && props.image
                     && (
                     <Image
                       src={props.image.url}
@@ -36,11 +40,7 @@ export const ImageButton: React.FC<ImageButtonProps> = (props) => (
                       objectFit="contain"
                     />
                     )}
-    {!props.loading && !props.image
-                    && <span>{props.text}</span>}
+    {!loading && !props.image
+                    && <span>{text}</span>}
   </div>
 );
-
-ImageButton.defaultProps = {
-  loading: false,
-};

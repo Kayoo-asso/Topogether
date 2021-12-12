@@ -6,41 +6,35 @@ import { SVGPoint } from './SVGPoint';
 
 interface SVGAreaProps {
   area: AreaType,
-  ratio?: {
+  ratio: {
     rX: number,
     rY: number,
   },
-  editable?: boolean,
-  pointSize?: number,
+  editable: boolean,
+  pointSize: number,
   onChange?: (area: AreaType) => void,
 }
 
-type SVGAreaType = SVGAreaProps & typeof defaultProps;
-const defaultProps = {
-  ratio: { rX: 1, rY: 1 },
-  editable: false,
-  pointSize: 3,
-<<<<<<< HEAD
-}
-=======
-};
->>>>>>> 2e0752306f07c0700c35fdad80d8ccf69bb01062
-
-export const SVGArea: React.FC<SVGAreaType> = (props: SVGAreaType) => {
+export const SVGArea: React.FC<SVGAreaProps> = ({
+  ratio = { rX: 1, rY: 1 },
+  editable = false,
+  pointSize = 3,
+  ...props
+}: SVGAreaProps) => {
   const [area, setArea] = useState(props.area);
 
   const updateAreaPoint = (index: number, pos: CoordinatesType) => {
     const newArea = { ...area };
     newArea.points[index] = {
       ...newArea.points[index],
-      posX: pos.posX + props.pointSize / 2,
-      posY: pos.posY + props.pointSize / 2,
+      posX: pos.posX + pointSize / 2,
+      posY: pos.posY + pointSize / 2,
     };
     if (index === 0) {
       newArea.points[area.points.length - 1] = {
         ...newArea.points[area.points.length - 1],
-        posX: pos.posX + props.pointSize / 2,
-        posY: pos.posY + props.pointSize / 2,
+        posX: pos.posX + pointSize / 2,
+        posY: pos.posY + pointSize / 2,
       };
     }
     setArea(newArea);
@@ -63,16 +57,11 @@ export const SVGArea: React.FC<SVGAreaType> = (props: SVGAreaType) => {
 
   const renderPolyline = () => {
     if (props.area && props.area.points) {
-      const lineStrokeWidth = 2 * props.ratio.rX;
-      if (props.editable) {
+      const lineStrokeWidth = 2 * ratio.rX;
+      if (editable) {
         return (
-<<<<<<< HEAD
           <DraggablePolyline 
             className={"stroke-second fill-second/10 z-20 svg-area"}
-=======
-          <DraggablePolyline
-            className="stroke-second fill-second/10 z-20"
->>>>>>> 2e0752306f07c0700c35fdad80d8ccf69bb01062
             strokeWidth={lineStrokeWidth}
             points={area.points}
             onDrag={(diffX, diffY) => {
@@ -98,15 +87,15 @@ export const SVGArea: React.FC<SVGAreaType> = (props: SVGAreaType) => {
   const renderPoints = () => {
     if (props.area && props.area.points) {
       const SVGpoints: any[] = [];
-      if (props.editable) {
+      if (editable) {
         area.points.forEach((point, pointIndex) => {
           SVGpoints.push(
             <SVGPoint
               key={pointIndex}
-              x={point.posX - props.pointSize / 2}
-              y={point.posY - props.pointSize / 2}
-              draggable={props.editable}
-              size={props.pointSize}
+              x={point.posX - pointSize / 2}
+              y={point.posY - pointSize / 2}
+              draggable={editable}
+              size={pointSize}
               className="fill-second"
               onDrop={(pos) => {
                 if (props.onChange) props.onChange(area);

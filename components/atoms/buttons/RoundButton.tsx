@@ -8,11 +8,15 @@ interface RoundButtonProps {
   onClick: () => void,
 }
 
-export const RoundButton: React.FC<RoundButtonProps> = (props) => (
+export const RoundButton: React.FC<RoundButtonProps> = ({
+  white = true,
+  iconClass = 'stroke-main',
+  ...props
+}: RoundButtonProps) => (
   <button
     className={
                     `shadow rounded-full p-5${
-                      props.white
+                      white
                         ? ' bg-white'
                         : ' bg-main'}`
                 }
@@ -20,12 +24,7 @@ export const RoundButton: React.FC<RoundButtonProps> = (props) => (
   >
     <Icon
       name={props.iconName}
-      className={`h-6 w-6 ${props.iconClass}`}
+      className={`h-6 w-6 ${iconClass}`}
     />
   </button>
 );
-
-RoundButton.defaultProps = {
-  white: true,
-  iconClass: 'stroke-main',
-};

@@ -12,7 +12,13 @@ interface SVGPointProps {
   onDrop?: (coord: CoordinatesType) => void,
 }
 
-export const SVGPoint: React.FC<SVGPointProps> = (props: SVGPointProps) => {
+export const SVGPoint: React.FC<SVGPointProps> = ({
+  draggable = false,
+  iconName = 'line-point',
+  size = 5,
+  className = 'fill-main',
+  ...props
+}: SVGPointProps) => {
   const [position, setPosition] = useState({
     x: props.x,
     y: props.y,
@@ -32,7 +38,7 @@ export const SVGPoint: React.FC<SVGPointProps> = (props: SVGPointProps) => {
   }, [props.x, props.y]);
 
   const handlePointerDown: React.PointerEventHandler<SVGSVGElement> = (e: React.PointerEvent) => {
-    if (props.draggable) {
+    if (draggable) {
       const el = e.currentTarget;
       const bbox = e.currentTarget.getBoundingClientRect();
       const x = e.clientX - bbox.left;
@@ -49,7 +55,7 @@ export const SVGPoint: React.FC<SVGPointProps> = (props: SVGPointProps) => {
     }
   };
   const handlePointerMove: React.PointerEventHandler<SVGSVGElement> = (e: React.PointerEvent) => {
-    if (props.draggable) {
+    if (draggable) {
       const bbox = e.currentTarget.getBoundingClientRect();
       const x = e.clientX - bbox.left;
       const y = e.clientY - bbox.top;
@@ -66,7 +72,7 @@ export const SVGPoint: React.FC<SVGPointProps> = (props: SVGPointProps) => {
     }
   };
   const handlePointerUp: React.PointerEventHandler<SVGSVGElement> = (e: React.PointerEvent) => {
-    if (props.draggable) {
+    if (draggable) {
       setPosition({
         ...position,
         active: false,
@@ -79,14 +85,14 @@ export const SVGPoint: React.FC<SVGPointProps> = (props: SVGPointProps) => {
     <svg
       x={position.x}
       y={position.y}
-      className={`${props.className} ${props.draggable ? ' draggable' : ''}`}
+      className={`${className} ${draggable ? ' draggable' : ''}`}
       onPointerDown={handlePointerDown}
       onPointerUp={handlePointerUp}
       onPointerMove={handlePointerMove}
     >
       <image
-        href={`/assets/icons/_${props.iconName}.svg`}
-        width={props.size}
+        href={`/assets/icons/_${iconName}.svg`}
+        width={size}
       />
     </svg>
   );
@@ -96,11 +102,4 @@ export const SVGPoint: React.FC<SVGPointProps> = (props: SVGPointProps) => {
       {renderPoint()}
     </>
   );
-};
-
-SVGPoint.defaultProps = {
-  draggable: false,
-  iconName: 'line-point',
-  size: 5,
-  className: 'fill-main',
 };

@@ -31,7 +31,7 @@ interface TracksImageProps {
   onImageLoad?: (e: {
     naturalWidth: number;
     naturalHeight: number;
-}) => void,
+  }) => void,
 }
 
 type TracksImageType = TracksImageProps & typeof defaultProps;
