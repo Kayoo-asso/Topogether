@@ -56,6 +56,5 @@ module.exports = {
             "version": "detect"
         }
     },
-    // -- Ignore: Materialize and jQuery
-    "ignorePatterns": ["/src/js/materialize", "/src/js/script", "*index.js"]
+    "ignorePatterns": []
 };
