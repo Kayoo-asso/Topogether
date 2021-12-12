@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { AreaType, CoordinatesType } from 'types';
+import { Area, Coordinates } from 'types';
 import { DraggablePolyline } from '.';
 import { pointsToPolylineStr } from '../../../helpers';
 import { SVGPoint } from './SVGPoint';
 
 interface SVGAreaProps {
-  area: AreaType,
+  area: Area,
   ratio: {
     rX: number,
     rY: number,
   },
   editable: boolean,
   pointSize: number,
-  onChange?: (area: AreaType) => void,
+  onChange?: (area: Area) => void,
 }
 
 export const SVGArea: React.FC<SVGAreaProps> = ({
@@ -23,7 +23,7 @@ export const SVGArea: React.FC<SVGAreaProps> = ({
 }: SVGAreaProps) => {
   const [area, setArea] = useState(props.area);
 
-  const updateAreaPoint = (index: number, pos: CoordinatesType) => {
+  const updateAreaPoint = (index: number, pos: Coordinates) => {
     const newArea = { ...area };
     newArea.points[index] = {
       ...newArea.points[index],

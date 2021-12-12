@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ColorType, CoordinatesType } from 'types';
+import { Coordinates } from 'types';
 
 interface SVGPointProps {
   x: number,
@@ -8,8 +8,8 @@ interface SVGPointProps {
   iconName?: string,
   size?: number,
   className?: string,
-  onDrag?: (coord: CoordinatesType) => void,
-  onDrop?: (coord: CoordinatesType) => void,
+  onDrag?: (coord: Coordinates) => void,
+  onDrop?: (coord: Coordinates) => void,
 }
 
 export const SVGPoint: React.FC<SVGPointProps> = ({

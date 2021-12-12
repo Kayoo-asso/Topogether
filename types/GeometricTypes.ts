@@ -1,13 +1,13 @@
-export type CoordinatesType = {
+export type Coordinates = {
   posX: number,
   posY: number,
 };
 
-export type AreaType = {
-  points: CoordinatesType[],
+export type Area = {
+  points: Coordinates[],
 };
 
-export type GeoCoordinatesType = {
+export type GeoCoordinates = {
   lat: number,
   lng: number,
 };

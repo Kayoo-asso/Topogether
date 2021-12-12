@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import {
-  AreaType, CoordinatesType, ImageAfterServer, ImageDimension, LineType, TrackType,
+  Area, Coordinates, ImageAfterServer, ImageDimension, Line, Track,
 } from 'types';
 import { SVGArea } from 'components';
 import { PointEnum, AreaEnum, DrawerToolEnum } from 'enums';
@@ -14,7 +14,7 @@ import { staticUrl, topogetherUrl } from 'const/staticUrl';
 
 interface TracksImageProps {
   image: ImageAfterServer,
-  tracks: TrackType[],
+  tracks: Track[],
   tracksClassName?: string,
   displayTracks?: boolean,
   displayPhantomTracks?: boolean,
@@ -24,10 +24,10 @@ interface TracksImageProps {
   currentTrackId?: number, 
   currentTool?: DrawerToolEnum,
   boulderImageDimensions: ImageDimension,
-  onImageClick?: (pos: CoordinatesType | null) => void,
+  onImageClick?: (pos: Coordinates | null) => void,
   onPointClick?: (pointType: PointEnum, index: number) => void,
-  onPolylineClick?: (line: LineType) => void,
-  onAreaChange?: (areaType: AreaEnum, index: number, area: AreaType) => void,
+  onPolylineClick?: (line: Line) => void,
+  onAreaChange?: (areaType: AreaEnum, index: number, area: Area) => void,
   onImageLoad?: (e: {
     naturalWidth: number;
     naturalHeight: number;
@@ -84,12 +84,12 @@ export const TracksImage: React.FC<TracksImageProps> = ({
     }
   }, []);
 
-  const getResizedPointsOfLine: (line: LineType, pointType: PointEnum) => CoordinatesType[] = (line:LineType, pointType: PointEnum) => {
+  const getResizedPointsOfLine: (line: Line, pointType: PointEnum) => Coordinates[] = (line:Line, pointType: PointEnum) => {
     if (ratio) {
-      const resizedLinePoints: CoordinatesType[] = [];
-      const resizedHandDeparturePoints: CoordinatesType[] = [];
-      const resizedFeetDeparturePoints: CoordinatesType[] = [];
-      const resizedAnchorDeparturePoints: CoordinatesType[] = [];
+      const resizedLinePoints: Coordinates[] = [];
+      const resizedHandDeparturePoints: Coordinates[] = [];
+      const resizedFeetDeparturePoints: Coordinates[] = [];
+      const resizedAnchorDeparturePoints: Coordinates[] = [];
       if (pointType === 'LINE_POINT' && line.linePoints) {
         for (const linePoints of line.linePoints) {
           resizedLinePoints.push({
@@ -130,10 +130,10 @@ export const TracksImage: React.FC<TracksImageProps> = ({
     }
     return [];
   };
-  const getResizedPointsOfArea: (area: AreaType) => AreaType = (area: AreaType) => {
+  const getResizedPointsOfArea: (area: Area) => Area = (area: Area) => {
     if (area.points && ratio) {
-      const newArea: AreaType = JSON.parse(JSON.stringify(area));
-      const resizedAreaPoints: CoordinatesType[] = [];
+      const newArea: Area = JSON.parse(JSON.stringify(area));
+      const resizedAreaPoints: Coordinates[] = [];
       newArea.points.forEach((point) => {
         resizedAreaPoints.push({
           posX: ratio.rX * point.posX,
