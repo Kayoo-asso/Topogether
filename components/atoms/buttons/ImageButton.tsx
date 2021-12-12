@@ -1,12 +1,12 @@
 import React from 'react';
 import Image from 'next/image';
-import { ImageAfterServerType } from 'types';
+import { ImageAfterServer } from 'types';
 // eslint-disable-next-line import/no-cycle
 import { Icon } from 'components';
 
 interface ImageButtonProps {
   text: string,
-  image?: ImageAfterServerType,
+  image?: ImageAfterServer,
   loading?: boolean,
   onClick: () => void,
 }

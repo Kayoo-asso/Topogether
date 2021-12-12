@@ -1,18 +1,20 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Compressor from 'compressorjs';
 import {
-  ImageAfterServerType,
-  ImageBeforeServerType, isImageType, NumberBetween,
+  ImageAfterServer,
+  ImageBeforeServer, isImageType,
+  NumberBetween, isBetween, ImageType,
 } from 'types';
 // eslint-disable-next-line import/no-cycle
 import { ImageButton } from '../../atoms';
-import { isBetween, readFileAsync } from '../../../helpers';
+import { readFileAsync } from '../../../helpers';
 
 interface ImageInputProps {
   label: string,
-  value: ImageAfterServerType,
-  onChange: (file: ImageBeforeServerType) => void,
+  value: ImageAfterServer,
+  onChange: (file: ImageBeforeServer) => void,
 }
+
 
 export const ImageInput: React.FC<ImageInputProps> = (props) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -29,8 +31,7 @@ export const ImageInput: React.FC<ImageInputProps> = (props) => {
       return;
     }
 
-    const maxImageSize = 10e6; // 10MB
-    if (!isBetween(file.size, 0, maxImageSize)) {
+    if (!isBetween(file.size, 0, 10e6)) {
       setErrorMessage('Image trop lourde. Max: 10MB.');
       return;
     }
@@ -38,14 +39,15 @@ export const ImageInput: React.FC<ImageInputProps> = (props) => {
     setLoading(true);
     const compressor = new Compressor(file, {
       quality: 0.6,
+      strict: true,
       async success(res: File) {
         // Here we already know the file has the correct type and size, but TypeScript can't verify it
         const content = await readFileAsync(res);
         if (content) {
-          const fileData: ImageBeforeServerType = {
+          const fileData: ImageBeforeServer = {
             name: res.name,
-            type: res.type as 'image/jpeg' | 'image/jpg' | 'image/png',
-            size: res.size as NumberBetween<0, 1000>,
+            type: res.type as ImageType,
+            size: res.size as NumberBetween<0, 10e6>,
             content,
           };
           props.onChange(fileData);

@@ -1,5 +1,5 @@
 import { AreaType, CoordinatesType, GeoCoordinatesType } from "./GeometricTypes";
-import { ImageAfterServerType, ImageBeforeServerType, ImageDimensionType } from "./ImageTypes";
+import { ImageAfterServer, ImageBeforeServer, ImageDimension } from "./ImageTypes";
 
 export type TopoType = {
   id: number,
@@ -8,8 +8,8 @@ export type TopoType = {
   validatorId?: number,
   state: 'DRAFT' | 'TO_VALIDATE' | 'VALIDATED',
   location: GeoCoordinatesType,
-  mainImage?: ImageAfterServerType,
-  mainImageBeforeServer?: ImageBeforeServerType,
+  mainImage?: ImageAfterServer,
+  mainImageBeforeServer?: ImageBeforeServer,
   description?: string,
   rockTypeId?: number,
   altitude?: number,
@@ -43,7 +43,7 @@ export type ParkingType = {
   location: GeoCoordinatesType,
   placeNumber?: number,
   description?: string,
-  image?: ImageAfterServerType,
+  image?: ImageAfterServer,
 }
 
 export type JourneyType = {
@@ -61,7 +61,7 @@ export type WaypointType = {
   id: number,
   name: string,
   location: GeoCoordinatesType,
-  image?: ImageAfterServerType,
+  image?: ImageAfterServer,
   description?: string,
 }
 
@@ -73,7 +73,7 @@ export type BoulderType = {
   isHighBall?: boolean,
   isMustSee?: boolean,
   hasDangerousDescent?: boolean,
-  images?: ImageAfterServerType[],
+  images?: ImageAfterServer[],
   tracks?: TrackType[],
 }
 
@@ -98,7 +98,7 @@ export type TrackType = {
 export type LineType = {
   id: number,
   boulderImageId: number,
-  boulderImageDimensions: ImageDimensionType,
+  boulderImageDimensions: ImageDimension,
   linePoints?: CoordinatesType[],
   handDeparturePoints?: CoordinatesType[],
   feetDeparturePoints?: CoordinatesType[],

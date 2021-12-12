@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import {
-  AreaType, CoordinatesType, ImageAfterServerType, ImageDimensionType, LineType, TrackType,
+  AreaType, CoordinatesType, ImageAfterServer, ImageDimension, LineType, TrackType,
 } from 'types';
 import { SVGArea } from 'components';
 import { PointEnum, AreaEnum, DrawerToolEnum } from 'enums';
@@ -13,7 +13,7 @@ import {
 import { staticUrl, topogetherUrl } from 'const/staticUrl';
 
 interface TracksImageProps {
-  image: ImageAfterServerType,
+  image: ImageAfterServer,
   tracks: TrackType[],
   tracksClassName?: string,
   displayTracks?: boolean,
@@ -23,7 +23,7 @@ interface TracksImageProps {
   editable?: boolean,
   currentTrackId?: number, 
   currentTool?: DrawerToolEnum,
-  boulderImageDimensions: ImageDimensionType,
+  boulderImageDimensions: ImageDimension,
   onImageClick?: (pos: CoordinatesType | null) => void,
   onPointClick?: (pointType: PointEnum, index: number) => void,
   onPolylineClick?: (line: LineType) => void,

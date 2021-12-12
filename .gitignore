@@ -3,6 +3,7 @@
 # Custom
 .env
 .cert
+.postgresql
 
 # dependencies
 /node_modules
