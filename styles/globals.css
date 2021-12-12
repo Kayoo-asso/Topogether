@@ -53,7 +53,7 @@
 @font-face {
   font-family: 'Poppins';
   font-style: normal;
-  font-weight: 600O;
+  font-weight: 600;
   src: local('Poppins-SemiBold'), local('Poppins-SemiBold'),
        url('/assets/fonts/Poppins/Poppins-SemiBold.ttf') format('truetype');
 }

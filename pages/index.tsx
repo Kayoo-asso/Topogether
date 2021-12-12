@@ -2,13 +2,11 @@ import { Dropdown } from 'components';
 import type { NextPage } from 'next';
 
 const choices = [
-  {
-    value: 'dangerous', label: 'Site dangereux', checked: true,
-  },
-  { value: 'rocky', label: 'Site rocheux' },
+  { value: 'yzeron', label: 'Yzéron', icon: 'waypoint' },
+  { value: 'yzedine', label: 'Yzédine', icon: 'rock' },
 ];
 const Map: NextPage = () => (
-  <Dropdown type="checkbox" choices={choices} />
+  <Dropdown choices={choices} />
 );
 
 export default Map;

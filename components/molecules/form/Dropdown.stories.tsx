@@ -44,9 +44,7 @@ export const WithCheckboxes = Template.bind({});
 WithCheckboxes.args = {
   type: 'checkbox',
   choices: [
-    {
-      value: 'dangerous', label: 'Site dangereux', checked: true,
-    },
+    { value: 'dangerous', label: 'Site dangereux', checked: true },
     { value: 'rocky', label: 'Site rocheux' },
   ],
 };

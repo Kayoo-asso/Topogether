@@ -1,6 +1,6 @@
-import { Checkbox } from 'components/atoms/Checkbox';
-import { Icon } from 'components/atoms/Icon';
 import React from 'react';
+import { Icon } from '../../atoms/Icon';
+import { Checkbox } from '../../atoms/Checkbox';
 
 interface DropdownOption {
   label: string;
@@ -18,12 +18,12 @@ interface DropdownProps {
 }
 
 export const Dropdown: React.FC<DropdownProps> = (props) => (
-  <div className="shadow mt-2 py-2 w-60 bg-white rounded-lg">
-    {props.choices.map((choice) => (
+  <div className="shadow px-7 py-5 w-60 bg-white rounded-lg">
+    {props.choices.map((choice, i) => (
       choice.isSection
         ? (
           <div
-            className="px-4 py-2 text-grey-medium uppercase"
+            className={`text-grey-medium ktext-label uppercase ${i > 0 && 'mt-5'}`}
             key={choice.value}
           >
             {choice.label}
@@ -31,7 +31,7 @@ export const Dropdown: React.FC<DropdownProps> = (props) => (
         )
         : (
           <div
-            className="px-4 py-2 capitalize text-dark cursor-pointer flex flex-row"
+            className="py-2 capitalize text-dark ktext-bgase cursor-pointer flex flex-row items-center"
             key={choice.value}
             onKeyUp={choice.action}
             onClick={choice.action}
