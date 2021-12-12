@@ -16,6 +16,8 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(({ type = 
       id={props.id}
       value={props.value}
       className="peer h-10 w-full border-dark border-b-2 placeholder-transparent focus:border-main focus:outline-none"
+      onFocus={props.onFocus}
+      onBlur={props.onBlur}
     />
     <label
       htmlFor={props.id}
