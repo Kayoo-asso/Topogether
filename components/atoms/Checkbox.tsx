@@ -4,7 +4,7 @@ import { Icon } from './Icon';
 interface CheckboxProps {
   checked?: boolean,
   label?: string,
-  onClick: () => void
+  onClick: (isChecked: boolean) => void
 }
 
 export const Checkbox: React.FC<CheckboxProps> = ({
@@ -15,7 +15,7 @@ export const Checkbox: React.FC<CheckboxProps> = ({
 
   const handleClick = () => {
     setIsChecked(!isChecked);
-    props.onClick();
+    props.onClick(isChecked);
   };
 
   return (
