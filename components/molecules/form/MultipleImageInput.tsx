@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import Compressor from 'compressorjs';
 import {
   ImageAfterServer,
-  ImageBeforeServer, isImageType, NumberBetween,
+  ImageBeforeServer, ImageType, isImageType, NumberBetween,
 } from 'types';
 import { readFileAsync } from '../../../helpers';
 
@@ -47,6 +47,8 @@ export const MultipleImageInput: React.FC<MultipleImageInputProps> = (props) => 
     // }
   }, [props.values]);
 
+  // TODO: Check on the flow of data between the new files and the existing images
+  // (MultipleImageInput should only slightly differ from ImageInput)
   const handleFilesInput = async (files: FileList) => {
     if (!files || files.length < 1) return;
     setErrorMessage('');
@@ -74,8 +76,8 @@ export const MultipleImageInput: React.FC<MultipleImageInputProps> = (props) => 
           if (content) {
             const fileData: ImageBeforeServer = {
               name: res.name,
-              type: res.type as 'image/jpeg' | 'image/jpg' | 'image/png',
-              size: res.size as NumberBetween<0, 1000>,
+              type: res.type as ImageType,
+              size: res.size as NumberBetween<0, 10e6>,
               content,
             };
             newImageList.push(fileData);
