@@ -1,11 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { CoordinatesType, ImageAfterServer, LineType, TrackType } from 'types';
+import {
+  CoordinatesType, ImageAfterServer, LineType, TrackType,
+} from 'types';
+import { SVGArea } from 'components';
+import { PointEnum } from 'enums/PointEnum';
 import {
   getGradeFromDiffIds, getMousePosInside, getPathFromPoints,
 } from '../../helpers';
 import { global, images } from '../../const';
-import { SVGArea } from 'components';
-import { PointEnum } from 'enums/PointEnum';
 
 interface TracksImageProps {
   image: ImageAfterServer,
@@ -33,7 +35,7 @@ export const TracksImage: React.FC<TracksImageProps> = (props: TracksImageProps)
 
   const [canvasWidth, setCanvasWidth] = useState(0);
   const [canvasHeight, setCanvasHeight] = useState(0);
-  const [ratio, setRatio] = useState({ rX:1, rY: 1 });
+  const [ratio, setRatio] = useState({ rX: 1, rY: 1 });
   const getRatio = () => {
     if (props.boulderImageDimensions || props.tracks[0]?.lines[0]?.boulderImageDimensions) {
       const boulderImageDimensions = props.boulderImageDimensions || props.tracks[0].lines[0].boulderImageDimensions;
@@ -45,12 +47,12 @@ export const TracksImage: React.FC<TracksImageProps> = (props: TracksImageProps)
       const rY = newY / oldY;
       return { rX, rY };
     }
-    return { rX:1, rY:1 };
+    return { rX: 1, rY: 1 };
   };
 
   useEffect(() => {
     if (canvasWidth && canvasHeight) setRatio(getRatio());
-    else setRatio({ rX:1, rY:1 });
+    else setRatio({ rX: 1, rY: 1 });
   }, [canvasWidth, canvasHeight, props.tracks[0]?.lines?.length]);
   useEffect(() => {
     if (window.screen?.orientation) {
