@@ -1,4 +1,4 @@
-import React, { InputHTMLAttributes, useRef } from 'react';
+import React, { InputHTMLAttributes, forwardRef } from 'react';
 
 interface TextInputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
@@ -7,30 +7,24 @@ interface TextInputProps extends InputHTMLAttributes<HTMLInputElement> {
   type?: string;
 }
 
-export const TextInput: React.FC<TextInputProps> = (props) => {
-  const ref = useRef<HTMLInputElement>(null);
+export const TextInput: React.FC<TextInputProps> = forwardRef<HTMLInputElement, TextInputProps>(({ type = 'text', ...props }: TextInputProps, ref) => (
+  <div className="relative">
+    <input
+      ref={ref}
+      placeholder={props.label}
+      type={type}
+      id={props.id}
+      value={props.value}
+      className="peer h-10 w-full border-dark border-b-2 placeholder-transparent focus:border-main focus:outline-none"
+    />
+    <label
+      htmlFor={props.id}
+      className="absolute left-0 -top-3.5 text-grey-medium peer-focus:text-main transition-all peer-placeholder-shown:top-2 peer-focus:-top-3.5"
+    >
+      {props.label}
+    </label>
+    {props.error && <span className="ktext-error">{props.error}</span>}
+  </div>
+));
 
-  return (
-    <div className="relative">
-      <input
-        ref={ref}
-        placeholder={props.label}
-        type={props.type}
-        id={props.id}
-        value={props.value}
-        className="peer h-10 w-full border-dark border-b-2 placeholder-transparent focus:border-main focus:outline-none"
-      />
-      <label
-        htmlFor={props.id}
-        className="absolute left-0 -top-3.5 text-grey-medium peer-focus:text-main transition-all peer-placeholder-shown:top-2 peer-focus:-top-3.5"
-      >
-        {props.label}
-      </label>
-      {props.error && <span className="ktext-error text-error">{props.error}</span>}
-    </div>
-  );
-};
-
-TextInput.defaultProps = {
-  type: 'text',
-};
+TextInput.displayName = 'TextInput';

@@ -20,8 +20,8 @@ Simple.args = {
   ],
 };
 
-export const WithLabels = Template.bind({});
-WithLabels.args = {
+export const WithSections = Template.bind({});
+WithSections.args = {
   choices: [
     { value: 'action', label: 'Action', isSection: true },
     { value: 'open', label: 'Ouvrir' },
