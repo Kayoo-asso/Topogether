@@ -6,20 +6,25 @@ export const imageTypes = [
   'image/jpeg',
 ] as const;
 
-export type ImageType = typeof imageTypes[number];
+export type ImageTypeEnum = typeof imageTypes[number];
 
-export function isImageType(type: string): type is ImageType {
+export function isImageType(type: string): type is ImageTypeEnum {
   return type in imageTypes;
 }
 
-export type ImageBeforeServer = {
+export type ImageBeforeServerType = {
   name: string,
-  type: ImageType,
+  type: ImageTypeEnum,
   size: NumberBetween<0, 10000000>,
   content: string | ArrayBuffer,
 };
 
-export type ImageAfterServer = {
+export type ImageAfterServerType = {
   id: number,
   url: string,
 };
+
+export type ImageDimensionType = {
+  width: number,
+  height: number,
+}

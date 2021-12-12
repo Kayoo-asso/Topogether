@@ -1,9 +1,11 @@
-import React, { useEffect, useRef } from 'react';
-import { ImageAfterServer, TrackType } from 'types';
+import React, { useEffect, useRef, useState } from 'react';
+import { CoordinatesType, ImageAfterServer, LineType, TrackType } from 'types';
 import {
-  getGradeFromDiffIds, getMousePosInside, getPathFromPoints, useRefState,
+  getGradeFromDiffIds, getMousePosInside, getPathFromPoints,
 } from '../../helpers';
 import { global, images } from '../../const';
+import { SVGArea } from 'components';
+import { PointEnum } from 'enums/PointEnum';
 
 interface TracksImageProps {
   image: ImageAfterServer,
@@ -20,9 +22,8 @@ interface TracksImageProps {
     height: number,
   }
   onImageClick: () => void,
-  onPointClick: () => void,
+  onPointClick: (pointType: PointEnum, index: number) => void,
   onPolylineClick: () => void,
-  updateArea: () => void,
   onImageLoad: () => void,
 }
 
@@ -30,27 +31,27 @@ export const TracksImage: React.FC<TracksImageProps> = (props: TracksImageProps)
   const imgRef = useRef();
   const pointTypeClass = (props.image && props.pointType) ? props.pointType : '';
 
-  const [canvasWidth, setCanvasWidth] = useRefState(null);
-  const [canvasHeight, setCanvasHeight] = useRefState(null);
-  const [ratio, setRatio] = useRefState(null);
+  const [canvasWidth, setCanvasWidth] = useState(0);
+  const [canvasHeight, setCanvasHeight] = useState(0);
+  const [ratio, setRatio] = useState({ rX:1, rY: 1 });
   const getRatio = () => {
     if (props.boulderImageDimensions || props.tracks[0]?.lines[0]?.boulderImageDimensions) {
       const boulderImageDimensions = props.boulderImageDimensions || props.tracks[0].lines[0].boulderImageDimensions;
-      const newX = canvasWidth.current;
-      const newY = canvasHeight.current;
+      const newX = canvasWidth;
+      const newY = canvasHeight;
       const oldX = boulderImageDimensions.width;
       const oldY = boulderImageDimensions.height;
       const rX = newX / oldX;
       const rY = newY / oldY;
       return { rX, rY };
     }
-    return null;
+    return { rX:1, rY:1 };
   };
 
   useEffect(() => {
-    if (canvasWidth.current && canvasHeight.current) setRatio(getRatio());
-    else setRatio(null);
-  }, [canvasWidth.current, canvasHeight.current, props.tracks[0]?.lines?.length]);
+    if (canvasWidth && canvasHeight) setRatio(getRatio());
+    else setRatio({ rX:1, rY:1 });
+  }, [canvasWidth, canvasHeight, props.tracks[0]?.lines?.length]);
   useEffect(() => {
     if (window.screen?.orientation) {
       window.screen.orientation.onchange = (e) => {
@@ -65,8 +66,8 @@ export const TracksImage: React.FC<TracksImageProps> = (props: TracksImageProps)
     }
   }, []);
 
-  const getResizedPointsOfLine = (line, pointType) => {
-    if (ratio.current) {
+  const getResizedPointsOfLine = (line:LineType, pointType: CoordinatesType) => {
+    if (ratio) {
       const resizedLinePoints = [];
       const resizedHandDeparturePoints = [];
       const resizedFeetDeparturePoints = [];
@@ -74,8 +75,8 @@ export const TracksImage: React.FC<TracksImageProps> = (props: TracksImageProps)
       if (pointType === 'linePoints' && line.linePoints) {
         for (const linePoints of line.linePoints) {
           resizedLinePoints.push({
-            posX: ratio.current.rX * linePoints.posX,
-            posY: ratio.current.rY * linePoints.posY,
+            posX: ratio.rX * linePoints.posX,
+            posY: ratio.rY * linePoints.posY,
           });
         }
         return resizedLinePoints;
@@ -83,8 +84,8 @@ export const TracksImage: React.FC<TracksImageProps> = (props: TracksImageProps)
       if (pointType === 'handDeparturePoints' && line.handDeparturePoints) {
         for (const handDeparturePoint of line.handDeparturePoints) {
           resizedHandDeparturePoints.push({
-            posX: ratio.current.rX * handDeparturePoint.posX,
-            posY: ratio.current.rY * handDeparturePoint.posY,
+            posX: ratio.rX * handDeparturePoint.posX,
+            posY: ratio.rY * handDeparturePoint.posY,
           });
         }
         return resizedHandDeparturePoints;
@@ -92,8 +93,8 @@ export const TracksImage: React.FC<TracksImageProps> = (props: TracksImageProps)
       if (pointType === 'feetDeparturePoints' && line.feetDeparturePoints) {
         for (const feetDeparturePoint of line.feetDeparturePoints) {
           resizedFeetDeparturePoints.push({
-            posX: ratio.current.rX * feetDeparturePoint.posX,
-            posY: ratio.current.rY * feetDeparturePoint.posY,
+            posX: ratio.rX * feetDeparturePoint.posX,
+            posY: ratio.rY * feetDeparturePoint.posY,
           });
         }
         return resizedFeetDeparturePoints;
@@ -101,8 +102,8 @@ export const TracksImage: React.FC<TracksImageProps> = (props: TracksImageProps)
       if (pointType === 'anchorPoints' && line.anchorPoints) {
         for (const anchorPoints of line.anchorPoints) {
           resizedAnchorDeparturePoints.push({
-            posX: ratio.current.rX * anchorPoints.posX,
-            posY: ratio.current.rY * anchorPoints.posY,
+            posX: ratio.rX * anchorPoints.posX,
+            posY: ratio.rY * anchorPoints.posY,
           });
         }
         return resizedAnchorDeparturePoints;
@@ -110,14 +111,14 @@ export const TracksImage: React.FC<TracksImageProps> = (props: TracksImageProps)
     }
   };
   const getResizedPointsOfArea = (area) => {
-    if (area.points && ratio.current) {
+    if (area.points && ratio) {
       const newArea = JSON.parse(JSON.stringify(area));
       const resizedAreaPoints = [];
       newArea.points.forEach((point) => {
         resizedAreaPoints.push({
           id: point.id,
-          posX: ratio.current.rX * point.posX,
-          posY: ratio.current.rY * point.posY,
+          posX: ratio.rX * point.posX,
+          posY: ratio.rY * point.posY,
         });
       });
       newArea.points = resizedAreaPoints;
@@ -126,8 +127,8 @@ export const TracksImage: React.FC<TracksImageProps> = (props: TracksImageProps)
   };
 
   const renderPhantomTracks = () => {
-    if (props.tracks && ratio.current) {
-      const lineStrokeWidth = 3 * ratio.current.rX;
+    if (props.tracks && ratio) {
+      const lineStrokeWidth = 3 * ratio.rX;
       return props.tracks.map((track, index) => {
         if (props.currentTrackId && track.id !== props.currentTrackId) {
           const line = track.lines?.find((line) => line.boulderImageId === props.image?.imageId);
@@ -181,8 +182,8 @@ export const TracksImage: React.FC<TracksImageProps> = (props: TracksImageProps)
     }
   };
   const renderTracks = () => {
-    if (props.tracks && ratio.current) {
-      const lineStrokeWidth = 3 * ratio.current.rX;
+    if (props.tracks && ratio) {
+      const lineStrokeWidth = 3 * ratio.rX;
       return props.tracks.map((track, index) => {
         if (!props.currentTrackId || track.id === props.currentTrackId) {
           const line = track.lines?.find((line) => line.boulderImageId === props.image?.imageId);
@@ -236,8 +237,8 @@ export const TracksImage: React.FC<TracksImageProps> = (props: TracksImageProps)
     }
   };
   const renderTracksPoints = () => {
-    if (props.tracks && ratio.current) {
-      const pointSize = 3 * ratio.current.rX;
+    if (props.tracks && ratio) {
+      const pointSize = 3 * ratio.rX;
       return props.tracks.map((track) => {
         const line = track.lines?.find((line) => line.boulderImageId === props.image?.imageId);
         if (line?.linePoints?.length > 0 && track.id === props.currentTrackId) {
@@ -266,8 +267,8 @@ export const TracksImage: React.FC<TracksImageProps> = (props: TracksImageProps)
     }
   };
   const renderHandDeparturePoints = () => {
-    if (props.tracks && ratio.current) {
-      const iconWidth = 18 * ratio.current.rX;
+    if (props.tracks && ratio) {
+      const iconWidth = 18 * ratio.rX;
       return props.tracks.map((track) => {
         if (!props.currentTrackId || track.id === props.currentTrackId) {
           const line = track.lines?.find((line) => line.boulderImageId === props.image?.imageId);
@@ -280,7 +281,7 @@ export const TracksImage: React.FC<TracksImageProps> = (props: TracksImageProps)
                 x={point.posX}
                 y={point.posY}
                 onClick={(e) => {
-                  if (props.onPointClick) props.onPointClick('handDeparturePoints', index);
+                  if (props.onPointClick) props.onPointClick('HAND_DEPARTURE_POINT', index);
                 }}
               >
                 <image
@@ -296,8 +297,8 @@ export const TracksImage: React.FC<TracksImageProps> = (props: TracksImageProps)
     }
   };
   const renderFeetDeparturePoints = () => {
-    if (props.tracks && ratio.current) {
-      const iconWidth = 30 * ratio.current.rX;
+    if (props.tracks && ratio) {
+      const iconWidth = 30 * ratio.rX;
       return props.tracks.map((track) => {
         if (!props.currentTrackId || track.id === props.currentTrackId) {
           const line = track.lines?.find((line) => line.boulderImageId === props.image?.imageId);
@@ -310,7 +311,7 @@ export const TracksImage: React.FC<TracksImageProps> = (props: TracksImageProps)
                 x={point.posX}
                 y={point.posY}
                 onClick={(e) => {
-                  if (props.onPointClick) props.onPointClick('feetDeparturePoints', index);
+                  if (props.onPointClick) props.onPointClick('FOOT_DEPARTURE_POINT', index);
                 }}
               >
                 <image
@@ -326,8 +327,8 @@ export const TracksImage: React.FC<TracksImageProps> = (props: TracksImageProps)
     }
   };
   const renderAnchorPoints = () => {
-    if (props.tracks && ratio.current) {
-      const iconWidth = 12 * ratio.current.rX;
+    if (props.tracks && ratio) {
+      const iconWidth = 12 * ratio.rX;
       return props.tracks.map((track) => {
         if (!props.currentTrackId || track.id === props.currentTrackId) {
           const line = track.lines?.find((line) => line.boulderImageId === props.image?.imageId);
@@ -340,7 +341,7 @@ export const TracksImage: React.FC<TracksImageProps> = (props: TracksImageProps)
                 x={point.posX}
                 y={point.posY}
                 onClick={(e) => {
-                  if (props.onPointClick) props.onPointClick('anchorPoints', index);
+                  if (props.onPointClick) props.onPointClick('ANCHOR_POINT', index);
                 }}
               >
                 <image
@@ -356,8 +357,8 @@ export const TracksImage: React.FC<TracksImageProps> = (props: TracksImageProps)
     }
   };
   const renderForbiddenAreas = () => {
-    if (props.tracks && ratio.current) {
-      const pointSize = 6 * ratio.current.rX;
+    if (props.tracks && ratio) {
+      const pointSize = 6 * ratio.rX;
       return props.tracks.map((track) => {
         if (!props.currentTrackId || track.id === props.currentTrackId) {
           const line = track.lines?.find((line) => line.boulderImageId === props.image?.imageId);
@@ -367,14 +368,14 @@ export const TracksImage: React.FC<TracksImageProps> = (props: TracksImageProps)
                 key={`forbidden-area-${index}`}
                 className={`forbidden-area${props.pointType === 'eraser' ? ' hover-scale' : ''}`}
                 onClick={(e) => {
-                  if (props.onPointClick) props.onPointClick('forbiddenAreas', index);
+                  if (props.onPointClick) props.onPointClick('FORBIDDEN_AREA_POINT', index);
                 }}
               >
                 <SVGArea
-                  index
+                  key={index}
                   editable={props.editable}
                   area={getResizedPointsOfArea(areaLine)}
-                  ratio={ratio.current}
+                  ratio={ratio}
                   pointSize={pointSize}
                   onChange={(area) => {
                     props.updateArea('forbiddenAreas', index, area);
@@ -395,8 +396,8 @@ export const TracksImage: React.FC<TracksImageProps> = (props: TracksImageProps)
     <span className={`tracks-image ${props.className ? props.className : ''}`}>
       <svg
         className={`svg-canvas ${pointTypeClass} cursor-color color-${cursorColor}`}
-        width={canvasWidth.current}
-        height={canvasHeight.current}
+        width={canvasWidth}
+        height={canvasHeight}
         onMouseDown={(e) => {
           if (e.button === 0 && props.onImageClick && !e.target.classList.contains('svg-area')) { // Left-click on the canvas only
             if (props.image && props.editable) {
@@ -419,7 +420,7 @@ export const TracksImage: React.FC<TracksImageProps> = (props: TracksImageProps)
       </svg>
       <span className="image-container">
         <img
-          ref={imgRef}
+          ref={imgRef.current}
           src={props.image ? (props.image.content || global.topogetherUrl + props.image.imageUrl) : images.defaultKayoo}
           loading="lazy"
           onLoad={(e) => {
@@ -435,7 +436,6 @@ export const TracksImage: React.FC<TracksImageProps> = (props: TracksImageProps)
 };
 
 TracksImage.defaultProps = {
-  tracks: [],
   displayTracks: true,
   displayPhantomTracks: true,
   displayTracksNumber: true,

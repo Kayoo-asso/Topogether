@@ -15,7 +15,14 @@ interface SVGAreaProps {
     onChange?: (area: AreaType) => void,
 }
 
-export const SVGArea: React.FC<SVGAreaProps> = (props: SVGAreaProps) => {
+type SVGAreaType = SVGAreaProps & typeof defaultProps;
+const defaultProps = {
+    ratio: { rX: 1, rY: 1 },
+    editable: false,
+    pointSize: 3,
+  }
+
+export const SVGArea: React.FC<SVGAreaType> = (props: SVGAreaType) => {
   const [area, setArea] = useState(props.area);
 
   const updateAreaPoint = (index: number, pos: CoordinatesType) => {
@@ -56,7 +63,7 @@ export const SVGArea: React.FC<SVGAreaProps> = (props: SVGAreaProps) => {
       if (props.editable) {
         return (
           <DraggablePolyline 
-            className={"stroke-second fill-second z-20"}
+            className={"stroke-second fill-second/10 z-20"}
             strokeWidth={lineStrokeWidth}
             points={area.points}
             onDrag={(diffX, diffY) => {
@@ -115,10 +122,4 @@ export const SVGArea: React.FC<SVGAreaProps> = (props: SVGAreaProps) => {
       {renderPoints()}
     </>     
   )
-}
-
-SVGArea.defaultProps = {
-  ratio: { rX: 1, rY: 1 },
-  editable: false,
-  pointSize: 3,
 }
