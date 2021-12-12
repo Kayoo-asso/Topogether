@@ -1,51 +1,35 @@
-import React, { memo, useEffect, useRef } from 'react';
-import 'materialize-css';
-import $ from 'jquery';
-import PropTypes from 'prop-types';
+import React, { useEffect, useRef } from 'react';
 import { ImageAfterServer, TrackType } from 'types';
-import { imageType, trackType } from '../../../types';
 import {
-  getGradeFromDiffIds, getMousePosInside, getPathFromPoints, memoPropsCompare, useRefState,
+  getGradeFromDiffIds, getMousePosInside, getPathFromPoints, useRefState,
 } from '../../helpers';
 import { global, images } from '../../const';
-import SVGArea from './svg/SVGArea';
-
-TracksImage.propTypes = {
-  image: PropTypes.shape(imageType),
-  className: PropTypes.string,
-  tracks: PropTypes.arrayOf(PropTypes.shape(trackType)),
-  displayTracks: PropTypes.bool,
-  displayPhantomTracks: PropTypes.bool,
-  displayTracksNumber: PropTypes.bool,
-  displayTracksDetails: PropTypes.bool,
-  currentTrackId: PropTypes.number,
-  boulderImageDimensions: PropTypes.shape(
-    {
-      width: PropTypes.number,
-      height: PropTypes.number,
-    },
-  ),
-  editable: PropTypes.bool,
-  pointType: PropTypes.string,
-  onImageClick: PropTypes.func,
-  onPointClick: PropTypes.func,
-  updateArea: PropTypes.func,
-  onLoad: PropTypes.func,
-  onDefaultImageClick: PropTypes.func,
-  onPolylineClick: PropTypes.func,
-};
 
 interface TracksImageProps {
   image: ImageAfterServer,
   tracks: TrackType[],
+  displayTracks: boolean,
+  displayPhantomTracks: boolean,
+  displayTracksNumber: boolean,
+  displayTracksDetails: boolean,
+  currentTrackId: number,
+  editable: boolean,
+  pointType: string,
+  boulderImageDimensions: {
+    width: number,
+    height: number,
+  }
+  onImageClick: () => void,
+  onPointClick: () => void,
+  onPolylineClick: () => void,
+  updateArea: () => void,
+  onImageLoad: () => void,
 }
 
-export const TracksImage = (props) => {
-  // console.log("render TrackImage");
-  // console.log(props.tracks);
-
-  const pointTypeClass = (props.image && props.pointType) ? props.pointType : '';
+export const TracksImage: React.FC<TracksImageProps> = (props: TracksImageProps) => {
   const imgRef = useRef();
+  const pointTypeClass = (props.image && props.pointType) ? props.pointType : '';
+
   const [canvasWidth, setCanvasWidth] = useRefState(null);
   const [canvasHeight, setCanvasHeight] = useRefState(null);
   const [ratio, setRatio] = useRefState(null);

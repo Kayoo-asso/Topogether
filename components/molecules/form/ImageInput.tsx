@@ -1,10 +1,11 @@
-import { ImageButton } from 'components';
 import React, { useEffect, useRef, useState } from 'react';
 import Compressor from 'compressorjs';
 import {
   ImageAfterServer,
   ImageBeforeServer, isImageType, NumberBetween,
 } from 'types';
+// eslint-disable-next-line import/no-cycle
+import { ImageButton } from '../../atoms';
 import { isBetween, readFileAsync } from '../../../helpers';
 
 interface ImageInputProps {
