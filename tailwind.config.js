@@ -33,7 +33,7 @@ module.exports = {
         5: '#23CAFF',
         6: '#FF7B7B',
         7: '#D67DFF',
-        8: '#FFFFFF',
+        8: '#E7B274',
         9: '#000000',
       },
       transparent: 'transparent',

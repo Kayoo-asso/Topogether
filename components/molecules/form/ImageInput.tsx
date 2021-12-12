@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Compressor from 'compressorjs';
 import {
-  ImageAfterServer,
-  ImageBeforeServer, isImageType, NumberBetween,
+  ImageAfterServerType,
+  ImageBeforeServerType, isImageType, NumberBetween,
 } from 'types';
 // eslint-disable-next-line import/no-cycle
 import { ImageButton } from '../../atoms';
@@ -10,8 +10,8 @@ import { isBetween, readFileAsync } from '../../../helpers';
 
 interface ImageInputProps {
   label: string,
-  value: ImageAfterServer,
-  onChange: (file: ImageBeforeServer) => void,
+  value: ImageAfterServerType,
+  onChange: (file: ImageBeforeServerType) => void,
 }
 
 export const ImageInput: React.FC<ImageInputProps> = (props) => {
@@ -42,7 +42,7 @@ export const ImageInput: React.FC<ImageInputProps> = (props) => {
         // Here we already know the file has the correct type and size, but TypeScript can't verify it
         const content = await readFileAsync(res);
         if (content) {
-          const fileData: ImageBeforeServer = {
+          const fileData: ImageBeforeServerType = {
             name: res.name,
             type: res.type as 'image/jpeg' | 'image/jpg' | 'image/png',
             size: res.size as NumberBetween<0, 1000>,

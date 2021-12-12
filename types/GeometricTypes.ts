@@ -5,7 +5,7 @@ export type CoordinatesType = {
 
 export type AreaType = {
   points: CoordinatesType[],
-}
+};
 
 export type GeoCoordinatesType = {
   lat: number,

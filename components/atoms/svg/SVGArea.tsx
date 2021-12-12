@@ -17,10 +17,10 @@ interface SVGAreaProps {
 
 type SVGAreaType = SVGAreaProps & typeof defaultProps;
 const defaultProps = {
-    ratio: { rX: 1, rY: 1 },
-    editable: false,
-    pointSize: 3,
-  }
+  ratio: { rX: 1, rY: 1 },
+  editable: false,
+  pointSize: 3,
+}
 
 export const SVGArea: React.FC<SVGAreaType> = (props: SVGAreaType) => {
   const [area, setArea] = useState(props.area);
@@ -63,7 +63,7 @@ export const SVGArea: React.FC<SVGAreaType> = (props: SVGAreaType) => {
       if (props.editable) {
         return (
           <DraggablePolyline 
-            className={"stroke-second fill-second/10 z-20"}
+            className={"stroke-second fill-second/10 z-20 svg-area"}
             strokeWidth={lineStrokeWidth}
             points={area.points}
             onDrag={(diffX, diffY) => {

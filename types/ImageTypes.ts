@@ -27,4 +27,4 @@ export type ImageAfterServerType = {
 export type ImageDimensionType = {
   width: number,
   height: number,
-}
+};
