@@ -1,44 +1,58 @@
 import React, { useEffect, useRef, useState } from 'react';
+import Image from 'next/image';
 import {
-  CoordinatesType, ImageAfterServer, LineType, TrackType,
+  AreaType, CoordinatesType, ImageAfterServerType, ImageDimensionType, LineType, TrackType,
 } from 'types';
 import { SVGArea } from 'components';
-import { PointEnum } from 'enums/PointEnum';
+import { PointEnum, AreaEnum, DrawerToolEnum } from 'enums';
 import {
-  getGradeFromDiffIds, getMousePosInside, getPathFromPoints,
+  getLightGradeFromDiffId,
+  getMousePosInside,
+  getPathFromPoints,
 } from '../../helpers';
-import { global, images } from '../../const';
+import { staticUrl, topogetherUrl } from 'const/staticUrl';
 
 interface TracksImageProps {
-  image: ImageAfterServer,
+  image: ImageAfterServerType,
   tracks: TrackType[],
-  displayTracks: boolean,
-  displayPhantomTracks: boolean,
-  displayTracksNumber: boolean,
-  displayTracksDetails: boolean,
-  currentTrackId: number,
-  editable: boolean,
-  pointType: string,
-  boulderImageDimensions: {
-    width: number,
-    height: number,
-  }
-  onImageClick: () => void,
-  onPointClick: (pointType: PointEnum, index: number) => void,
-  onPolylineClick: () => void,
-  onImageLoad: () => void,
+  tracksClassName?: string,
+  displayTracks?: boolean,
+  displayPhantomTracks?: boolean,
+  displayTracksNumber?: boolean,
+  displayTracksDetails?: boolean,
+  editable?: boolean,
+  currentTrackId?: number, 
+  currentTool?: DrawerToolEnum,
+  boulderImageDimensions: ImageDimensionType,
+  onImageClick?: (pos: CoordinatesType | null) => void,
+  onPointClick?: (pointType: PointEnum, index: number) => void,
+  onPolylineClick?: (line: LineType) => void,
+  onAreaChange?: (areaType: AreaEnum, index: number, area: AreaType) => void,
+  onImageLoad?: (e: {
+    naturalWidth: number;
+    naturalHeight: number;
+}) => void,
 }
 
-export const TracksImage: React.FC<TracksImageProps> = (props: TracksImageProps) => {
-  const imgRef = useRef();
-  const pointTypeClass = (props.image && props.pointType) ? props.pointType : '';
+type TracksImageType = TracksImageProps & typeof defaultProps;
+const defaultProps = {
+  tracksClassName: 'stroke-main',
+  displayTracks: true,
+  displayPhantomTracks: true,
+  displayTracksNumber: true,
+  displayTracksDetails: true,
+  editable: false,
+}
+
+export const TracksImage: React.FC<TracksImageType> = (props: TracksImageType) => {
+  const imgContainerRef = useRef<HTMLSpanElement>(null);
 
   const [canvasWidth, setCanvasWidth] = useState(0);
   const [canvasHeight, setCanvasHeight] = useState(0);
   const [ratio, setRatio] = useState({ rX: 1, rY: 1 });
   const getRatio = () => {
-    if (props.boulderImageDimensions || props.tracks[0]?.lines[0]?.boulderImageDimensions) {
-      const boulderImageDimensions = props.boulderImageDimensions || props.tracks[0].lines[0].boulderImageDimensions;
+    if (props.boulderImageDimensions || (props.tracks[0]?.lines && props.tracks[0]?.lines[0]?.boulderImageDimensions)) {
+      const boulderImageDimensions = props.boulderImageDimensions || (props.tracks[0]?.lines && props.tracks[0].lines[0].boulderImageDimensions);
       const newX = canvasWidth;
       const newY = canvasHeight;
       const oldX = boulderImageDimensions.width;
@@ -57,24 +71,28 @@ export const TracksImage: React.FC<TracksImageProps> = (props: TracksImageProps)
   useEffect(() => {
     if (window.screen?.orientation) {
       window.screen.orientation.onchange = (e) => {
-        setCanvasWidth(imgRef.current.clientWidth);
-        setCanvasHeight(imgRef.current.clientHeight);
+        if (imgContainerRef.current) {
+          setCanvasWidth(imgContainerRef.current.clientWidth);
+          setCanvasHeight(imgContainerRef.current.clientHeight);
+        }
       };
     } else { // Safari (does not support screen.orientation)
       window.addEventListener('orientationchange', () => {
-        setCanvasWidth(imgRef.current.clientWidth);
-        setCanvasHeight(imgRef.current.clientHeight);
+        if (imgContainerRef.current) {
+          setCanvasWidth(imgContainerRef.current.clientWidth);
+          setCanvasHeight(imgContainerRef.current.clientHeight);
+        }
       });
     }
   }, []);
 
-  const getResizedPointsOfLine = (line:LineType, pointType: CoordinatesType) => {
+  const getResizedPointsOfLine: (line: LineType, pointType: PointEnum) => CoordinatesType[] = (line:LineType, pointType: PointEnum) => {
     if (ratio) {
-      const resizedLinePoints = [];
-      const resizedHandDeparturePoints = [];
-      const resizedFeetDeparturePoints = [];
-      const resizedAnchorDeparturePoints = [];
-      if (pointType === 'linePoints' && line.linePoints) {
+      const resizedLinePoints: CoordinatesType[] = [];
+      const resizedHandDeparturePoints: CoordinatesType[] = [];
+      const resizedFeetDeparturePoints: CoordinatesType[] = [];
+      const resizedAnchorDeparturePoints: CoordinatesType[] = [];
+      if (pointType === 'LINE_POINT' && line.linePoints) {
         for (const linePoints of line.linePoints) {
           resizedLinePoints.push({
             posX: ratio.rX * linePoints.posX,
@@ -83,7 +101,7 @@ export const TracksImage: React.FC<TracksImageProps> = (props: TracksImageProps)
         }
         return resizedLinePoints;
       }
-      if (pointType === 'handDeparturePoints' && line.handDeparturePoints) {
+      if (pointType === 'HAND_DEPARTURE_POINT' && line.handDeparturePoints) {
         for (const handDeparturePoint of line.handDeparturePoints) {
           resizedHandDeparturePoints.push({
             posX: ratio.rX * handDeparturePoint.posX,
@@ -92,7 +110,7 @@ export const TracksImage: React.FC<TracksImageProps> = (props: TracksImageProps)
         }
         return resizedHandDeparturePoints;
       }
-      if (pointType === 'feetDeparturePoints' && line.feetDeparturePoints) {
+      if (pointType === 'FOOT_DEPARTURE_POINT' && line.feetDeparturePoints) {
         for (const feetDeparturePoint of line.feetDeparturePoints) {
           resizedFeetDeparturePoints.push({
             posX: ratio.rX * feetDeparturePoint.posX,
@@ -101,7 +119,7 @@ export const TracksImage: React.FC<TracksImageProps> = (props: TracksImageProps)
         }
         return resizedFeetDeparturePoints;
       }
-      if (pointType === 'anchorPoints' && line.anchorPoints) {
+      if (pointType === 'ANCHOR_POINT' && line.anchorPoints) {
         for (const anchorPoints of line.anchorPoints) {
           resizedAnchorDeparturePoints.push({
             posX: ratio.rX * anchorPoints.posX,
@@ -110,15 +128,16 @@ export const TracksImage: React.FC<TracksImageProps> = (props: TracksImageProps)
         }
         return resizedAnchorDeparturePoints;
       }
+      return [];
     }
+    return [];
   };
-  const getResizedPointsOfArea = (area) => {
+  const getResizedPointsOfArea: (area: AreaType) => AreaType = (area: AreaType) => {
     if (area.points && ratio) {
-      const newArea = JSON.parse(JSON.stringify(area));
-      const resizedAreaPoints = [];
+      const newArea: AreaType = JSON.parse(JSON.stringify(area));
+      const resizedAreaPoints: CoordinatesType[] = [];
       newArea.points.forEach((point) => {
         resizedAreaPoints.push({
-          id: point.id,
           posX: ratio.rX * point.posX,
           posY: ratio.rY * point.posY,
         });
@@ -126,55 +145,54 @@ export const TracksImage: React.FC<TracksImageProps> = (props: TracksImageProps)
       newArea.points = resizedAreaPoints;
       return JSON.parse(JSON.stringify(newArea));
     }
+    return { points: [] };
   };
 
   const renderPhantomTracks = () => {
     if (props.tracks && ratio) {
       const lineStrokeWidth = 3 * ratio.rX;
-      return props.tracks.map((track, index) => {
+      return props.tracks.map((track) => {
         if (props.currentTrackId && track.id !== props.currentTrackId) {
-          const line = track.lines?.find((line) => line.boulderImageId === props.image?.imageId);
-          if (line?.linePoints?.length > 0) {
-            const color = track.difficultyId === null ? 'grey-medium' : `grade-${getGradeFromDiffIds([track.difficultyId])[0].substring(0, 1)}`;
+          const line = track.lines?.find((l) => l.boulderImageId === props.image?.id);
+          if (line && (line.linePoints?.length ?? 0) > 0) {
             return (
-              <React.Fragment key={index}>
+              <React.Fragment key={line.id}>
                 <path
-                  className={`line-polyline phantom ${props.onPolylineClick && 'clickable'} accent-stroke-color color-${color}`}
+                  className={`z-10 opacity-40 ${props.tracksClassName} ${props.onPolylineClick && ' cursor-pointer'}`}
                   strokeWidth={lineStrokeWidth}
-                  d={getPathFromPoints(getResizedPointsOfLine(line, 'linePoints'), 'curve')}
+                  d={getPathFromPoints(getResizedPointsOfLine(line, 'LINE_POINT'), 'CURVE')}
                   onClick={() => {
                     if (props.onPolylineClick) props.onPolylineClick(line);
                   }}
                 />
-                {props.displayTracksNumber
-                                    && (
-                                    <>
-                                      <circle
-                                        cx={getResizedPointsOfLine(line, 'linePoints')[0]?.posX}
-                                        cy={getResizedPointsOfLine(line, 'linePoints')[0]?.posY}
-                                        r={9}
-                                        className={`line-circle phantom ${props.onPolylineClick && 'clickable'} accent-fill-color color-${color}`}
-                                        onClick={() => {
-                                          if (props.onPolylineClick) props.onPolylineClick(line);
-                                        }}
-                                      />
-                                      <text
-                                        x={getResizedPointsOfLine(line, 'linePoints')[0]?.posX}
-                                        y={getResizedPointsOfLine(line, 'linePoints')[0]?.posY}
-                                        className={`line-index ${props.onPolylineClick && 'clickable'} phantom`}
-                                        textAnchor="middle"
-                                        stroke="white"
-                                        strokeWidth="1px"
-                                        fontSize="8px"
-                                        dy="3px"
-                                        onClick={() => {
-                                          if (props.onPolylineClick) props.onPolylineClick(line);
-                                        }}
-                                      >
-                                        {track.index + 1 || index + 1}
-                                      </text>
-                                    </>
-                                    )}
+                {props.displayTracksNumber && (
+                  <>
+                    <circle
+                      cx={getResizedPointsOfLine(line, 'LINE_POINT')[0]?.posX}
+                      cy={getResizedPointsOfLine(line, 'LINE_POINT')[0]?.posY}
+                      r={9}
+                      className={`z-20 opacity-40 ${props.onPolylineClick && 'cursor-pointer pointer-events-auto'}`}
+                      onClick={() => {
+                        if (props.onPolylineClick) props.onPolylineClick(line);
+                      }}
+                    />
+                    <text
+                      x={getResizedPointsOfLine(line, 'LINE_POINT')[0]?.posX}
+                      y={getResizedPointsOfLine(line, 'LINE_POINT')[0]?.posY}
+                      className={`z-20 opacity-40 ${props.onPolylineClick && 'cursor-pointer'}`}
+                      textAnchor="middle"
+                      stroke="white"
+                      strokeWidth="1px"
+                      fontSize="8px"
+                      dy="3px"
+                      onClick={() => {
+                        if (props.onPolylineClick) props.onPolylineClick(line);
+                      }}
+                    >
+                      {track.orderIndex + 1}
+                    </text>
+                  </>
+                )}
               </React.Fragment>
             );
           }
@@ -182,54 +200,53 @@ export const TracksImage: React.FC<TracksImageProps> = (props: TracksImageProps)
         return null;
       });
     }
+    return null;
   };
   const renderTracks = () => {
     if (props.tracks && ratio) {
       const lineStrokeWidth = 3 * ratio.rX;
-      return props.tracks.map((track, index) => {
+      return props.tracks.map((track) => {
         if (!props.currentTrackId || track.id === props.currentTrackId) {
-          const line = track.lines?.find((line) => line.boulderImageId === props.image?.imageId);
-          if (line?.linePoints?.length > 0) {
-            const color = track.difficultyId === null ? 'grey-medium' : `grade-${getGradeFromDiffIds([track.difficultyId])[0].substring(0, 1)}`;
+          const line = track.lines?.find((l) => l.boulderImageId === props.image?.id);
+          if (line && (line.linePoints?.length ?? 0) > 0) {
             return (
-              <React.Fragment key={index}>
+              <React.Fragment key={line.id}>
                 <path
-                  className={`line-polyline ${props.onPolylineClick && 'clickable'} accent-stroke-color color-${color}`}
+                  className={`z-30 ${props.tracksClassName} ${props.onPolylineClick && 'cursor-pointer'}`}
                   strokeWidth={lineStrokeWidth}
-                  d={getPathFromPoints(getResizedPointsOfLine(line, 'linePoints'), 'curve')}
+                  d={getPathFromPoints(getResizedPointsOfLine(line, 'LINE_POINT'), 'CURVE')}
                   onClick={() => {
                     if (props.onPolylineClick) props.onPolylineClick(line);
                   }}
                 />
-                {props.displayTracksNumber
-                                    && (
-                                    <>
-                                      <circle
-                                        cx={getResizedPointsOfLine(line, 'linePoints')[0]?.posX}
-                                        cy={getResizedPointsOfLine(line, 'linePoints')[0]?.posY}
-                                        r={9}
-                                        className={`line-circle ${props.onPolylineClick && 'clickable'} accent-fill-color color-${color}`}
-                                        onClick={() => {
-                                          if (props.onPolylineClick) props.onPolylineClick(line);
-                                        }}
-                                      />
-                                      <text
-                                        x={getResizedPointsOfLine(line, 'linePoints')[0]?.posX}
-                                        y={getResizedPointsOfLine(line, 'linePoints')[0]?.posY}
-                                        className={`line-index ${props.onPolylineClick && 'clickable'}`}
-                                        textAnchor="middle"
-                                        stroke={color === 'grade-8' ? 'black' : 'white'}
-                                        strokeWidth="1px"
-                                        fontSize="8px"
-                                        dy="3px"
-                                        onClick={() => {
-                                          if (props.onPolylineClick) props.onPolylineClick(line);
-                                        }}
-                                      >
-                                        {track.index + 1 || index + 1}
-                                      </text>
-                                    </>
-                                    )}
+                {props.displayTracksNumber && (
+                  <>
+                    <circle
+                      cx={getResizedPointsOfLine(line, 'LINE_POINT')[0]?.posX}
+                      cy={getResizedPointsOfLine(line, 'LINE_POINT')[0]?.posY}
+                      r={9}
+                      className={`z-40 ${props.onPolylineClick && 'cursor-pointer pointer-events-auto'}`}
+                      onClick={() => {
+                        if (props.onPolylineClick) props.onPolylineClick(line);
+                      }}
+                    />
+                    <text
+                      x={getResizedPointsOfLine(line, 'LINE_POINT')[0]?.posX}
+                      y={getResizedPointsOfLine(line, 'LINE_POINT')[0]?.posY}
+                      className={`z-40 ${props.onPolylineClick && 'cursor-pointer'}`}
+                      textAnchor="middle"
+                      stroke={'white'}
+                      strokeWidth="1px"
+                      fontSize="8px"
+                      dy="3px"
+                      onClick={() => {
+                        if (props.onPolylineClick) props.onPolylineClick(line);
+                      }}
+                    >
+                      {track.orderIndex + 1}
+                    </text>
+                  </>
+                )}
               </React.Fragment>
             );
           }
@@ -237,26 +254,26 @@ export const TracksImage: React.FC<TracksImageProps> = (props: TracksImageProps)
         return null;
       });
     }
+    return null;
   };
   const renderTracksPoints = () => {
     if (props.tracks && ratio) {
       const pointSize = 3 * ratio.rX;
       return props.tracks.map((track) => {
-        const line = track.lines?.find((line) => line.boulderImageId === props.image?.imageId);
-        if (line?.linePoints?.length > 0 && track.id === props.currentTrackId) {
-          const color = track.difficultyId === null ? 'grey-medium' : `grade-${getGradeFromDiffIds([track.difficultyId])[0].substring(0, 1)}`;
-          return getResizedPointsOfLine(line, 'linePoints')?.map((point, index) => (
+        const line = track.lines?.find((l) => l.boulderImageId === props.image?.id);
+        if (line && (line.linePoints?.length ?? 0) > 0 && track.id === props.currentTrackId) {
+          return getResizedPointsOfLine(line, 'LINE_POINT')?.map((point, index) => (
             <svg
               key={`linepoint-${index}`}
-              className={`line-point${props.pointType === 'eraser' ? ' hover-scale' : ''}`}
+              className={`${props.currentTool === 'ERASER' ? 'scale-125' : ''}`}
               x={point.posX - pointSize}
               y={point.posY - pointSize}
               onClick={(e) => {
-                if (props.onPointClick) props.onPointClick('linePoints', index);
+                if (props.onPointClick) props.onPointClick('LINE_POINT', index);
               }}
             >
               <circle
-                className={`line-point accent-fill-color color-${color}`}
+                className='pointer-events-auto'
                 cx={pointSize}
                 cy={pointSize}
                 r={pointSize}
@@ -273,13 +290,12 @@ export const TracksImage: React.FC<TracksImageProps> = (props: TracksImageProps)
       const iconWidth = 18 * ratio.rX;
       return props.tracks.map((track) => {
         if (!props.currentTrackId || track.id === props.currentTrackId) {
-          const line = track.lines?.find((line) => line.boulderImageId === props.image?.imageId);
-          if (line?.handDeparturePoints?.length > 0) {
-            const color = track.difficultyId === null ? 'grey-medium' : getGradeFromDiffIds([track.difficultyId])[0].substring(0, 1);
-            return getResizedPointsOfLine(line, 'handDeparturePoints')?.map((point, index) => (
+          const line = track.lines?.find((l) => l.boulderImageId === props.image?.id);
+          if (line && (line.handDeparturePoints?.length ?? 0) > 0) {
+            return getResizedPointsOfLine(line, 'HAND_DEPARTURE_POINT')?.map((point, index) => (
               <svg
                 key={`hand-${index}`}
-                className={`hand-departure-point${props.pointType === 'eraser' ? ' hover-scale' : ''}`}
+                className={`${props.currentTool === 'ERASER' ? 'scale-125' : ''}`}
                 x={point.posX}
                 y={point.posY}
                 onClick={(e) => {
@@ -287,7 +303,7 @@ export const TracksImage: React.FC<TracksImageProps> = (props: TracksImageProps)
                 }}
               >
                 <image
-                  href={`/assets/icons/colored/hand-full/_hand-full-${color}.svg`}
+                  href={`/assets/icons/colored/hand-full/_hand-full-${typeof track.difficultyId !== 'number' ? 'grey' : getLightGradeFromDiffId(track.difficultyId)}.svg`}
                   width={iconWidth}
                 />
               </svg>
@@ -303,13 +319,12 @@ export const TracksImage: React.FC<TracksImageProps> = (props: TracksImageProps)
       const iconWidth = 30 * ratio.rX;
       return props.tracks.map((track) => {
         if (!props.currentTrackId || track.id === props.currentTrackId) {
-          const line = track.lines?.find((line) => line.boulderImageId === props.image?.imageId);
-          if (line?.feetDeparturePoints?.length > 0) {
-            const color = track.difficultyId === null ? 'grey-medium' : getGradeFromDiffIds([track.difficultyId])[0].substring(0, 1);
-            return getResizedPointsOfLine(line, 'feetDeparturePoints')?.map((point, index) => (
+          const line = track.lines?.find((l) => l.boulderImageId === props.image?.id);
+          if (line && (line.feetDeparturePoints?.length ?? 0) > 0) {
+            return getResizedPointsOfLine(line, 'FOOT_DEPARTURE_POINT')?.map((point, index) => (
               <svg
                 key={index}
-                className={`foot-departure-point${props.pointType === 'eraser' ? ' hover-scale' : ''}`}
+                className={`${props.currentTool === 'ERASER' ? 'scale-125' : ''}`}
                 x={point.posX}
                 y={point.posY}
                 onClick={(e) => {
@@ -317,7 +332,7 @@ export const TracksImage: React.FC<TracksImageProps> = (props: TracksImageProps)
                 }}
               >
                 <image
-                  href={`/assets/icons/colored/climbing-shoe-full/_climbing-shoe-full-${color}.svg`}
+                  href={`/assets/icons/colored/climbing-shoe-full/_climbing-shoe-full-${typeof track.difficultyId !== 'number' ? 'grey' : getLightGradeFromDiffId(track.difficultyId)}.svg`}
                   width={iconWidth}
                 />
               </svg>
@@ -333,13 +348,12 @@ export const TracksImage: React.FC<TracksImageProps> = (props: TracksImageProps)
       const iconWidth = 12 * ratio.rX;
       return props.tracks.map((track) => {
         if (!props.currentTrackId || track.id === props.currentTrackId) {
-          const line = track.lines?.find((line) => line.boulderImageId === props.image?.imageId);
-          if (line?.anchorPoints?.length > 0) {
-            const color = track.difficultyId === null ? 'grey-medium' : getGradeFromDiffIds([track.difficultyId])[0].substring(0, 1);
-            return getResizedPointsOfLine(line, 'anchorPoints')?.map((point, index) => (
+          const line = track.lines?.find((l) => l.boulderImageId === props.image?.id);
+          if (line && (line.anchorPoints?.length ?? 0) > 0) {
+            return getResizedPointsOfLine(line, 'ANCHOR_POINT')?.map((point, index) => (
               <svg
                 key={index}
-                className={`anchor-point${props.pointType === 'eraser' ? ' hover-scale' : ''}`}
+                className={`${props.currentTool === 'ERASER' ? 'scale-125' : ''}`}
                 x={point.posX}
                 y={point.posY}
                 onClick={(e) => {
@@ -347,7 +361,7 @@ export const TracksImage: React.FC<TracksImageProps> = (props: TracksImageProps)
                 }}
               >
                 <image
-                  href={`/assets/icons/colored/quickdraw/_quickdraw-${color}.svg`}
+                  href={`/assets/icons/colored/quickdraw/_quickdraw-${typeof track.difficultyId !== 'number' ? 'grey' : getLightGradeFromDiffId(track.difficultyId)}.svg`}
                   width={iconWidth}
                 />
               </svg>
@@ -363,12 +377,12 @@ export const TracksImage: React.FC<TracksImageProps> = (props: TracksImageProps)
       const pointSize = 6 * ratio.rX;
       return props.tracks.map((track) => {
         if (!props.currentTrackId || track.id === props.currentTrackId) {
-          const line = track.lines?.find((line) => line.boulderImageId === props.image?.imageId);
-          if (line?.forbiddenAreas?.length > 0) {
+          const line = track.lines?.find((l) => l.boulderImageId === props.image?.id);
+          if (line?.forbiddenAreas && (line.forbiddenAreas.length ?? 0) > 0) {
             return line.forbiddenAreas.map((areaLine, index) => (
               <svg
                 key={`forbidden-area-${index}`}
-                className={`forbidden-area${props.pointType === 'eraser' ? ' hover-scale' : ''}`}
+                className={`${props.currentTool === 'ERASER' ? 'scale-125' : ''}`}
                 onClick={(e) => {
                   if (props.onPointClick) props.onPointClick('FORBIDDEN_AREA_POINT', index);
                 }}
@@ -380,7 +394,7 @@ export const TracksImage: React.FC<TracksImageProps> = (props: TracksImageProps)
                   ratio={ratio}
                   pointSize={pointSize}
                   onChange={(area) => {
-                    props.updateArea('forbiddenAreas', index, area);
+                    if (props.onAreaChange) props.onAreaChange('FORBIDDEN_AREA', index, area);
                   }}
                 />
               </svg>
@@ -392,23 +406,47 @@ export const TracksImage: React.FC<TracksImageProps> = (props: TracksImageProps)
     }
   };
 
-  const cursorGradeColor = getGradeFromDiffIds([props.tracks?.find((track) => track.id === props.currentTrackId)?.difficultyId])[0]?.substring(0, 1);
-  const cursorColor = cursorGradeColor ? `grade-${cursorGradeColor}` : 'grey-medium';
+  const getCursorUrl = () => {
+    let cursorColor = 'grey';
+    const currentTrack = props.tracks.find((track) => track.id === props.currentTrackId);
+    if (currentTrack?.difficultyId)
+      cursorColor = getLightGradeFromDiffId(currentTrack.difficultyId);
+    
+    let cursorUrl = '/assets/icons/colored/'
+    switch (props.currentTool) {
+      case 'LINE_DRAWER':
+        cursorUrl += `line-point/_line-point-${cursorColor}.svg`; break;
+      case 'ANCHOR_DRAWER':
+        cursorUrl += `quickdraw/_quickdraw-${cursorColor}.svg`; break;
+      case 'ERASER':
+        cursorUrl += `_eraser-main.svg`; break;
+      case 'HAND_DEPARTURE_DRAWER':
+        cursorUrl += `hand-full/_hand-full-${cursorColor}.svg`; break;
+      case 'FOOT_DEPARTURE_DRAWER':
+        cursorUrl += `climbing-shoe-full/climbing-shoe-full-${cursorColor}.svg`; break;
+      case 'FORBIDDEN_AREA_DRAWER':
+        cursorUrl += `_forbidden-area-second.svg`; break;
+    }
+    return cursorUrl;
+  }
+
   return (
-    <span className={`tracks-image ${props.className ? props.className : ''}`}>
+    <span>
       <svg
-        className={`svg-canvas ${pointTypeClass} cursor-color color-${cursorColor}`}
+        style={{ cursor: "url("+getCursorUrl()+"), auto" }}
+        className="svg-canvas"
         width={canvasWidth}
         height={canvasHeight}
         onMouseDown={(e) => {
-          if (e.button === 0 && props.onImageClick && !e.target.classList.contains('svg-area')) { // Left-click on the canvas only
+          if (e.button === 0 && props.onImageClick && !e.currentTarget.classList.contains('svg-area')) { // Left-click on the canvas only
             if (props.image && props.editable) {
-              if (!e.target.classList.contains('svg-canvas')) {
-                e.target = e.target.farthestViewportElement;
-              }
-              const { posX, posY } = getMousePosInside(e, $(e.target));
-              props.onImageClick(posX, posY);
-            } else props.onImageClick();
+              // TO FIX ??? TODO
+              // if (!e.currentTarget.classList.contains('svg-canvas')) {
+              //   e.currentTarget = e.currentTarget.farthestViewportElement;
+              // }
+              const { posX, posY } = getMousePosInside(e);
+              props.onImageClick({ posX, posY });
+            } else props.onImageClick(null);
           }
         }}
       >
@@ -420,27 +458,23 @@ export const TracksImage: React.FC<TracksImageProps> = (props: TracksImageProps)
         {props.displayTracksDetails && renderAnchorPoints()}
         {props.displayTracksDetails && renderForbiddenAreas()}
       </svg>
-      <span className="image-container">
-        <img
-          ref={imgRef.current}
-          src={props.image ? (props.image.content || global.topogetherUrl + props.image.imageUrl) : images.defaultKayoo}
-          loading="lazy"
-          onLoad={(e) => {
-            setCanvasWidth(e.target.clientWidth);
-            setCanvasHeight(e.target.clientHeight);
-            if (props.onLoad) props.onLoad(e);
-          }}
+
+      <span 
+        ref={imgContainerRef}
+        className="flex items-center"
+      >
+        <Image 
+          src={props.image ? (topogetherUrl + props.image.url) : staticUrl.defaultKayoo}
           alt="Rocher"
+          layout="fill"
+          objectFit="contain"
+          onLoadingComplete={(e) => {
+            setCanvasWidth(e.naturalWidth);
+            setCanvasHeight(e.naturalHeight);
+            if (props.onImageLoad) props.onImageLoad(e);
+          }}
         />
       </span>
     </span>
   );
-};
-
-TracksImage.defaultProps = {
-  displayTracks: true,
-  displayPhantomTracks: true,
-  displayTracksNumber: true,
-  displayTracksDetails: true,
-  editable: false,
 };

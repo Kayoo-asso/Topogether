@@ -20,7 +20,11 @@ const defaultProps = {
   ratio: { rX: 1, rY: 1 },
   editable: false,
   pointSize: 3,
+<<<<<<< HEAD
+}
+=======
 };
+>>>>>>> 2e0752306f07c0700c35fdad80d8ccf69bb01062
 
 export const SVGArea: React.FC<SVGAreaType> = (props: SVGAreaType) => {
   const [area, setArea] = useState(props.area);
@@ -62,8 +66,13 @@ export const SVGArea: React.FC<SVGAreaType> = (props: SVGAreaType) => {
       const lineStrokeWidth = 2 * props.ratio.rX;
       if (props.editable) {
         return (
+<<<<<<< HEAD
+          <DraggablePolyline 
+            className={"stroke-second fill-second/10 z-20 svg-area"}
+=======
           <DraggablePolyline
             className="stroke-second fill-second/10 z-20"
+>>>>>>> 2e0752306f07c0700c35fdad80d8ccf69bb01062
             strokeWidth={lineStrokeWidth}
             points={area.points}
             onDrag={(diffX, diffY) => {
