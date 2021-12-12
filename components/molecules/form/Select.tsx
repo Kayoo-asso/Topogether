@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Dropdown } from './Dropdown';
 import { TextInput } from './TextInput';
 
@@ -16,12 +16,18 @@ interface SelectProps {
 }
 
 export const Select: React.FC<SelectProps> = (props) => {
-  const ref = useRef<React.ForwardedRef<HTMLInputElement>>();
+  const ref = useRef<HTMLInputElement>(null);
   const [isOpen, setIsOpen] = useState(false);
 
   return (
     <div id={props.id}>
-      <TextInput ref={ref} label={props.label} id={`${props.id}-input`} value={props.selected?.label} onFocus={() => setIsOpen(!isOpen)} />
+      <TextInput
+        ref={ref}
+        label={props.label}
+        id={`${props.id}-input`}
+        value={props.selected?.label}
+        onFocus={() => alert('hihi')}
+      />
       {isOpen && <Dropdown choices={props.choices} onSelect={props.onSelect} />}
     </div>
   );

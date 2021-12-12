@@ -26,7 +26,7 @@ export const Checkbox: React.FC<CheckboxProps> = ({
         onClick={handleClick}
       />
       <Icon
-        className={`absolute h-5 w-5 mr-2 stroke-dark cursor-pointer ${isChecked ? 'animate-check' : 'animate-uncheck'}`}
+        className={`absolute m-2 h-10 w-10 mr-2 stroke-dark cursor-pointer ${isChecked ? 'animate-check' : 'animate-uncheck'}`}
         name="checkbox"
         onClick={handleClick}
       />

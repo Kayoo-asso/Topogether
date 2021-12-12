@@ -7,7 +7,7 @@ interface TextInputProps extends InputHTMLAttributes<HTMLInputElement> {
   type?: string;
 }
 
-export const TextInput: React.FC<TextInputProps> = forwardRef<HTMLInputElement, TextInputProps>(({ type = 'text', ...props }: TextInputProps, ref) => (
+export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(({ type = 'text', ...props }: TextInputProps, ref) => (
   <div className="relative">
     <input
       ref={ref}
