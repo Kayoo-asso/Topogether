@@ -3,7 +3,7 @@ import { Icon } from '../../atoms/Icon';
 import { Checkbox } from '../../atoms/Checkbox';
 
 interface DropdownOption {
-  label: string;
+  label?: string;
   value: any;
   isSection?: boolean;
   action?: () => void;
@@ -29,7 +29,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
             className={`text-grey-medium ktext-label uppercase ${i > 0 && 'mt-5'}`}
             key={choice.value}
           >
-            {choice.label}
+            {choice.label || choice.value}
           </div>
         )
         : (
@@ -49,7 +49,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
                 SVGClassName="stroke-black h-5 w-5 mr-2"
               />
               )}
-            {choice.label}
+            {choice.label || choice.value}
           </div>
         )))}
   </div>

@@ -38,8 +38,8 @@ export const WithIcons = Template.bind({});
 WithIcons.args = {
   className: 'w-60',
   choices: [
-    { value: 'yzeron', label: 'Yzéron', icon: 'waypoint' },
-    { value: 'yzedine', label: 'Yzédine', icon: 'rock' },
+    { value: 'Yzéron', icon: 'waypoint' },
+    { value: 'Yzédine', icon: 'rock' },
   ],
 };
 
