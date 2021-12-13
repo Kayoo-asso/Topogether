@@ -3,12 +3,13 @@ import React, { useState } from 'react';
 
 interface MobileHeaderProps {
   title: string,
-  menu: any,
+  menu?: any,
   onBackClick: () => void,
 }
 
 export const MobileHeader: React.FC<MobileHeaderProps> = (props: MobileHeaderProps) => {
   const [displayFullTitle, setDisplayFullTitle] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   return (
     <>
@@ -33,9 +34,18 @@ export const MobileHeader: React.FC<MobileHeaderProps> = (props: MobileHeaderPro
           {props.title}
         </div>
 
-        <div className={props.menu ? 'w-1/6' : ''}>
-          {props.menu}
-        </div>
+        {props.menu && (
+          <div className="w-1/6">
+            <Icon
+              name="menu"
+              className={`h-4 w-4 fill-white ${menuOpen ? 'rotate-90' : ''}`}
+              center
+              onClick={() => {
+                setMenuOpen(!menuOpen);
+              }}
+            />
+          </div>
+        )}
       </div>
 
       {displayFullTitle && (
