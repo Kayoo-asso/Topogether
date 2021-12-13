@@ -39,7 +39,7 @@ export const MobileShell: React.FC<MobileShellProps> = ({
           >
             <Icon
               name="user"
-              className={`h-5 w-5 ${activeTab === 0 ? 'fill-main' : 'fill-white'} `}
+              SVGClassName={`h-5 w-5 ${activeTab === 0 ? 'fill-main' : 'fill-white'} `}
               center
             />
           </div>
@@ -54,7 +54,7 @@ export const MobileShell: React.FC<MobileShellProps> = ({
           >
             <Icon
               name="waypoint"
-              className={`h-5 w-5 stroke-1 ${activeTab === 1 ? 'fill-main' : 'fill-white'} `}
+              SVGClassName={`h-5 w-5 stroke-1 ${activeTab === 1 ? 'fill-main' : 'fill-white'} `}
               center
             />
           </div>
@@ -71,7 +71,7 @@ export const MobileShell: React.FC<MobileShellProps> = ({
           >
             <Icon
               name="topo"
-              className={`h-5 w-5 stroke-1 ${activeTab === 2 ? 'stroke-main' : 'stroke-white'} `}
+              SVGClassName={`h-5 w-5 stroke-1 ${activeTab === 2 ? 'stroke-main' : 'stroke-white'} `}
               center
             />
           </div>

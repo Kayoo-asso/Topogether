@@ -6,7 +6,7 @@ import type { NextPage } from 'next';
 import { useState } from 'react';
 
 const PageMap: NextPage = () => {
-  const [test, setTest] = useState(true);
+
   return (
     <div className="flex flex-col h-full">
 

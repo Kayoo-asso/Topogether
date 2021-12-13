@@ -42,7 +42,12 @@ export const Dropdown: React.FC<DropdownProps> = ({
             tabIndex={0}
           >
             {props.type === 'checkbox' && props.onSelect && <Checkbox className="mr-2" checked={choice.checked} onClick={() => props.onSelect && props.onSelect(choice.value)} />}
-            {choice.icon && <Icon name={choice.icon} className="stroke-black h-5 w-5 mr-2" />}
+            {choice.icon && 
+              <Icon 
+                name={choice.icon} 
+                SVGClassName="stroke-black h-5 w-5 mr-2" 
+              />
+            }
             {choice.label}
           </div>
         )))}

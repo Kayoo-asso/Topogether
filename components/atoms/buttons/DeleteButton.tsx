@@ -12,7 +12,7 @@ export const DeleteButton: React.FC<DeleteButtonProps> = (props) => (
   >
     <Icon
       name="clear"
-      className="h-3 w-3 stroke-dark stroke-2"
+      SVGClassName="h-3 w-3 stroke-dark stroke-2"
     />
   </button>
 );

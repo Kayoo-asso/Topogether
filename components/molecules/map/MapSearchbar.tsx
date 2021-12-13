@@ -30,8 +30,8 @@ export const MapSearchbar: React.FC<MapSearchbarProps> = ({
     const inputRef = useRef();
 
     const [barOpen, setBarOpen] = useState(initialOpen);
-    // const [resultsOpen, setResultsOpen] = useState(false);
-    // const [value, setValue] = useState('');
+    const [resultsOpen, setResultsOpen] = useState(false);
+    const [value, setValue] = useState('');
     // const [topoApiResults, setTopoApiResults] = useState([]);
     // const [googleApiResults, setGoogleApiResults] = useState([]);
 
@@ -90,8 +90,8 @@ export const MapSearchbar: React.FC<MapSearchbarProps> = ({
             />
             
 
-            {/* {barOpen && 
-                <div className={"shadow bg-white "}>
+            {barOpen && 
+                <div className={"shadow bg-white w-4/5"}>
                     <TextInput
                         id="search-bar-input"
                         ref={inputRef.current}
@@ -110,7 +110,7 @@ export const MapSearchbar: React.FC<MapSearchbarProps> = ({
                 </div>
             }
 
-            {barOpen && resultsOpen &&
+            {/*barOpen && resultsOpen &&
                 <div className="results-container shadow">
                     <div className="results-content">
                         <div className="topo-results-container">

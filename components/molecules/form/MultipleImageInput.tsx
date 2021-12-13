@@ -116,7 +116,7 @@ export const MultipleImageInput: React.FC<MultipleImageInputProps> = ({
       {displayLeftArrow && (
         <Icon
           name="arrow-full"
-          className="stroke-main fill-main"
+          SVGClassName="stroke-main fill-main"
           onClick={() => {
             const newPage = page - 1;
             setPage(newPage);
@@ -154,7 +154,7 @@ export const MultipleImageInput: React.FC<MultipleImageInputProps> = ({
       {displayRightArrow && (
         <Icon
           name="arrow-full"
-          className="stroke-main fill-main rotate-180"
+          SVGClassName="stroke-main fill-main rotate-180"
           onClick={() => {
             const newPage = page + 1;
             setPage(newPage);

@@ -1,7 +1,7 @@
 import { Wrapper } from '@googlemaps/react-wrapper';
 import { Button, MapComponent, RoundButton, SatelliteButton } from 'components';
 import { fontainebleauLocation } from 'const/global';
-import React from 'react';
+import React, { useState } from 'react';
 import { GeoCoordinates } from 'types';
 import { MapSearchbar } from '..';
 
@@ -10,7 +10,7 @@ interface MapProps {
     zoom?: number,
     displaySearchbar?: boolean,
     displaySatelliteButton?: boolean,
-    displayUserCenterButton?: boolean,
+    displayUserMarker?: boolean,
     displayPhotoButton?: boolean,
     filters?: any,
     onSearchResultSelect?: () => void,
@@ -21,10 +21,11 @@ export const Map: React.FC<MapProps> = ({
     zoom = 8,
     displaySearchbar = true,
     displaySatelliteButton = true,
-    displayUserCenterButton = true,
+    displayUserMarker = true,
     displayPhotoButton = true,
     ...props
 }: MapProps) => {
+    const [satelliteView, setSatelliteView] = useState(false);
 
     return (
         <div className="flex-1 h-full relative">
@@ -32,13 +33,17 @@ export const Map: React.FC<MapProps> = ({
                 <div className="flex z-30">
                     <div className='w-1/2 text-left'>
                         {displaySearchbar &&
-                            <MapSearchbar />
+                            <MapSearchbar 
+                                initialOpen
+                            />
                         }
                     </div>
                     <div className='w-1/2 text-right'>
                         {displaySatelliteButton &&
                             <SatelliteButton 
-                                onClick={() => {}}
+                                onClick={(displaySatellite) => {
+                                    setSatelliteView(displaySatellite);
+                                }}
                             />
                         }
                     </div>
@@ -61,7 +66,7 @@ export const Map: React.FC<MapProps> = ({
                         }
                     </div>
                     <div className="w-1/3 text-right">
-                        {displayUserCenterButton &&
+                        {displayUserMarker &&
                             <RoundButton 
                                 iconName='center'
                                 iconClass='stroke-main fill-main'
@@ -74,10 +79,11 @@ export const Map: React.FC<MapProps> = ({
             </div>
 
             <Wrapper apiKey="AIzaSyDoHIGgvyVVi_1_6zVWD4AOQPfHWN7zSkU">
-            <MapComponent
-                center={center}
-                zoom={zoom}
-            />
+                <MapComponent
+                    center={center}
+                    zoom={zoom}
+                    mapTypeId={satelliteView ? 'satellite' : 'roadmap'}
+                />
             </Wrapper>
         </div>
     )

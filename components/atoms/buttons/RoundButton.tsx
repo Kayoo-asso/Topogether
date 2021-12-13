@@ -30,7 +30,7 @@ export const RoundButton: React.FC<RoundButtonProps> = ({
     <Icon
       name={props.iconName}
       center
-      className={`${iconSizeClass} ${iconClass}`}
+      SVGClassName={`${iconSizeClass} ${iconClass}`}
     />
   </button>
 );
