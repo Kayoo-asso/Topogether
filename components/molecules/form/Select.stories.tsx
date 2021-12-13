@@ -12,6 +12,7 @@ const Template: ComponentStory<typeof Select> = (args) => <Select {...args} />;
 
 export const Simple = Template.bind({});
 Simple.args = {
+  className: 'w-60',
   label: 'Type de roche',
   choices: [
     { value: 'andesite', label: 'Andésite' },

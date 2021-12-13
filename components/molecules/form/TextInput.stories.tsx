@@ -8,7 +8,7 @@ export default {
   component: TextInput,
 } as ComponentMeta<typeof TextInput>;
 
-const Template: ComponentStory<typeof TextInput> = (args) => <div className="m-20"><TextInput {...args} /></div>;
+const Template: ComponentStory<typeof TextInput> = (args) => <div className="m-20"><TextInput className="w-60" {...args} /></div>;
 
 export const Default = Template.bind({});
 Default.args = {

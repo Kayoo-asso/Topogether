@@ -16,6 +16,7 @@ interface SelectProps {
   choices: DropdownOption[];
   selected: any;
   onSelect: (value: any) => void;
+  className?: string;
 }
 
 export const Select: React.FC<SelectProps> = (props) => {
@@ -25,11 +26,11 @@ export const Select: React.FC<SelectProps> = (props) => {
   const [value, setValue] = useState(selectedChoice?.label);
 
   return (
-    <div 
-      id={props.id} 
-      onFocus={() => setIsOpen(true)} 
-      onBlur={() => setIsOpen(false)} 
-      className="relative w-60 cursor-pointer" // TO CHANGE w-60
+    <div
+      id={props.id}
+      onFocus={() => setIsOpen(true)}
+      onBlur={() => setIsOpen(false)}
+      className={`relative cursor-pointer ${props.className}`}
     >
       <TextInput
         ref={ref}
@@ -38,17 +39,16 @@ export const Select: React.FC<SelectProps> = (props) => {
         value={value}
         pointer
       />
-      <Icon 
+      <Icon
         name="arrow-simple"
-        wrapperClassName="absolute right-0 top-[8px]"
-        SVGClassName="-rotate-90 fill-dark w-4 h-4 left-22"
+        wrapperClassName={`absolute right-0 ${isOpen ? 'top-[14px]' : 'top-[8px]'}`}
+        SVGClassName={`${isOpen ? 'rotate-90' : '-rotate-90'} fill-dark w-4 h-4 left-22`}
         onClick={() => {
           ref.current?.focus();
         }}
       />
       {isOpen && (
       <Dropdown
-        className="w-60"
         choices={props.choices.map((choice) => ({
           ...choice,
           action: () => {
