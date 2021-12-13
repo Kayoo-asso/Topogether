@@ -1,7 +1,7 @@
 import React, {
   forwardRef, useEffect, useRef, useState,
 } from 'react';
-import { useEffectWithDeepEqual } from 'helpers/hooks/useEffectWithDeepEqual';
+import { useEffectWithDeepEqual } from 'helpers';
 import mapStyles from '../../../styles/mapStyles';
 
 type MapProps =
