@@ -33,16 +33,18 @@ export const Select: React.FC<SelectProps> = (props) => {
         value={value}
         className="py-5 w-60"
       />
-      <Icon name="arrow-simple" className="absolute -rotate-90 fill-dark w-5 h-5 top-2 left-22" />
+      <Icon name="arrow-simple" className="absolute -rotate-90 fill-dark w-5 h-5 top-2" />
       {isOpen && (
-      <Dropdown choices={props.choices.map((choice) => ({
-        ...choice,
-        action: () => {
-          setValue(choice.label);
-          setIsOpen(false);
-          props.onSelect(choice.value);
-        },
-      }))}
+      <Dropdown
+        className="w-60"
+        choices={props.choices.map((choice) => ({
+          ...choice,
+          action: () => {
+            setValue(choice.label);
+            setIsOpen(false);
+            props.onSelect(choice.value);
+          },
+        }))}
       />
       )}
     </div>

@@ -15,12 +15,13 @@ interface DropdownProps {
   choices: DropdownOption[];
   onSelect?: (value: any) => void;
   type?: string;
+  className?:string;
 }
 
 export const Dropdown: React.FC<DropdownProps> = ({
   ...props
 }: DropdownProps) => (
-  <div className="shadow px-7 py-5 w-60 bg-white rounded-b-lg">
+  <div className={`shadow px-7 py-5 bg-white rounded-b-lg ${props.className}`}>
     {props.choices.map((choice, i) => (
       choice.isSection
         ? (
