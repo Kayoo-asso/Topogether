@@ -4,7 +4,7 @@
     // Gives us nicer paths to modules, by referring to them
     // from the root of the project
     "baseUrl": ".",
-    "target": "es5",
+    "target": "ESNext",
     "lib": [
       "dom",
       "dom.iterable",
@@ -29,7 +29,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx"
-  ],
+, "components/atoms/index.js"  ],
   "exclude": [
     "node_modules"
   ]

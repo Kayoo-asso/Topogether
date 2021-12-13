@@ -14,7 +14,7 @@ export const GradeCircle: React.FC<GradeCircleProps> = ({
   selected = true,
   ...props
 }: GradeCircleProps) => {
-  const grade = typeof props.grade === 'string' ? parseInt(props.grade.split('')[0]) : props.grade;
+  const grade = typeof props.grade === 'string' ? parseInt(props.grade.split('')[0], 10) : props.grade;
   const getColorStyle = () => {
     if (colored) {
       switch (grade) {
@@ -45,6 +45,9 @@ export const GradeCircle: React.FC<GradeCircleProps> = ({
             ${props.onClick ? 'cursor-pointer' : ''} 
             `}
       onClick={props.onClick}
+      onKeyUp={props.onClick}
+      role="button"
+      tabIndex={0}
     >
       <span className={`
             ${props.onClick ? 'cursor-pointer' : 'cursor-default'} 

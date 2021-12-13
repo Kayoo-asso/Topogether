@@ -171,6 +171,8 @@ module.exports = {
       0: '0px',
       2: '2px',
       4: '4px',
+      6: '6px',
+      8: '8px',
     },
     boxShadow: {
       // sm: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
@@ -696,6 +698,7 @@ module.exports = {
       0: '0',
       1: '1',
       2: '2',
+      4: '4',
     },
     textColor: (theme) => theme('colors'),
     textOpacity: (theme) => theme('opacity'),

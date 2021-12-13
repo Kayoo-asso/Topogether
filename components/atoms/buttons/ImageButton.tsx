@@ -12,7 +12,7 @@ interface ImageButtonProps {
 }
 
 export const ImageButton: React.FC<ImageButtonProps> = ({
-  text = "+ ajouter une image",
+  text = '+ ajouter une image',
   loading = false,
   ...props
 }) => (

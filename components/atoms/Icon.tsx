@@ -16,7 +16,7 @@ export const Icon: React.FC<IconProps> = ({
   <ReactSVG
     src={`/assets/icons/_${props.name}.svg`}
     wrapper="span"
-    className={center ? 'flex flex-col justify-center items-center' : ''}
+    className={`h-full ${center ? 'flex flex-col justify-center items-center' : ''}`}
     beforeInjection={(svg) => {
       svg.setAttribute('class', `${className}`);
     }}

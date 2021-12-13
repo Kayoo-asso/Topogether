@@ -1,13 +1,13 @@
-import { AreaType, CoordinatesType, GeoCoordinatesType } from "./GeometricTypes";
+import { Area, Coordinates, GeoCoordinates } from "./GeometricTypes";
 import { ImageAfterServer, ImageBeforeServer, ImageDimension } from "./ImageTypes";
 
-export type TopoType = {
+export type Topo = {
   id: number,
   name: string,
   creatorId: number,
   validatorId?: number,
   state: 'DRAFT' | 'TO_VALIDATE' | 'VALIDATED',
-  location: GeoCoordinatesType,
+  location: GeoCoordinates,
   mainImage?: ImageAfterServer,
   mainImageBeforeServer?: ImageBeforeServer,
   description?: string,
@@ -33,51 +33,51 @@ export type TopoType = {
   closestCity?: string,
   forbiddenReason?: string,
   isForbiddenSite?: boolean,
-  parkings?: ParkingType[],
-  sectors: SectorType[],
-  journeys?: JourneyType[],
+  parkings?: Parking[],
+  sectors: Sector[],
+  journeys?: Journey[],
 }
 
-export type ParkingType = {
+export type Parking = {
   id: number,
-  location: GeoCoordinatesType,
+  location: GeoCoordinates,
   placeNumber?: number,
   description?: string,
   image?: ImageAfterServer,
 }
 
-export type JourneyType = {
+export type Journey = {
   id: number,
 }
 
-export type SectorType = {
+export type Sector = {
   id: number,
   name: string,
-  boulders: BoulderType[],
-  wayPoints?: WaypointType[],
+  boulders: Boulder[],
+  wayPoints?: Waypoint[],
 }
 
-export type WaypointType = {
+export type Waypoint = {
   id: number,
   name: string,
-  location: GeoCoordinatesType,
+  location: GeoCoordinates,
   image?: ImageAfterServer,
   description?: string,
 }
 
-export type BoulderType = {
+export type Boulder = {
   id: number,
   orderIndex: number,
   name: string,
-  location: GeoCoordinatesType,
+  location: GeoCoordinates,
   isHighBall?: boolean,
   isMustSee?: boolean,
   hasDangerousDescent?: boolean,
   images?: ImageAfterServer[],
-  tracks?: TrackType[],
+  tracks?: Track[],
 }
 
-export type TrackType = {
+export type Track = {
   id: number,
   orderIndex: number,
   creatorId: number,
@@ -91,17 +91,17 @@ export type TrackType = {
   techniqueIds?: number[],
   height?: number,
   orientationId?: number,
-  lines?: LineType[],
+  lines?: Line[],
   note?: number,
 };
 
-export type LineType = {
+export type Line = {
   id: number,
   boulderImageId: number,
   boulderImageDimensions: ImageDimension,
-  linePoints?: CoordinatesType[],
-  handDeparturePoints?: CoordinatesType[],
-  feetDeparturePoints?: CoordinatesType[],
-  anchorPoints?: CoordinatesType[],
-  forbiddenAreas?: AreaType[],
+  linePoints?: Coordinates[],
+  handDeparturePoints?: Coordinates[],
+  feetDeparturePoints?: Coordinates[],
+  anchorPoints?: Coordinates[],
+  forbiddenAreas?: Area[],
 }
