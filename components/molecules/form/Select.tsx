@@ -25,17 +25,26 @@ export const Select: React.FC<SelectProps> = (props) => {
   const [value, setValue] = useState(selectedChoice?.label);
 
   return (
-    <div id={props.id} onFocus={() => setIsOpen(true)} onBlur={() => setIsOpen(false)} className="relative w-60">
+    <div 
+      id={props.id} 
+      onFocus={() => setIsOpen(true)} 
+      onBlur={() => setIsOpen(false)} 
+      className="relative w-60 cursor-pointer" // TO CHANGE w-60
+    >
       <TextInput
         ref={ref}
         label={props.label}
         id={`${props.id}-input`}
         value={value}
+        pointer
       />
       <Icon 
-        name="arrow-simple" 
-        wrapperClassName="absolute right-0 top-[5px]"
-        SVGClassName="-rotate-90 fill-dark w-5 h-5 left-22"
+        name="arrow-simple"
+        wrapperClassName="absolute right-0 top-[8px]"
+        SVGClassName="-rotate-90 fill-dark w-4 h-4 left-22"
+        onClick={() => {
+          ref.current?.focus();
+        }}
       />
       {isOpen && (
       <Dropdown
