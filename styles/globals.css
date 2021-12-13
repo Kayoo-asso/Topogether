@@ -9,11 +9,11 @@
   .ktext-base { @apply font-sans font-normal text-base }
   .ktext-base-superbig { @apply font-sans font-semibold text-4xl }
   .ktext-label { @apply font-sans font-medium text-xs uppercase }
+  input::placeholder { @apply font-sans font-normal text-base }
   .ktext-label-superbig { @apply font-sans font-semibold text-3xl uppercase }
   .ktext-error { @apply font-sans font-normal text-xs italic }
   .ktext-subtext { @apply font-sans font-normal text-xxs }
-} 
-
+}
 
 ::-webkit-scrollbar {
   display: none;
@@ -22,18 +22,19 @@
 }
 
 
- #map a[href^="http://maps.google.com/maps"],
- #map a[href^="https://maps.google.com/maps"],
- #map a[href^="https://www.google.com/maps"] {
-    display: none !important;
-  }
+/* MAP */
+#map a[href^="http://maps.google.com/maps"],
+#map a[href^="https://maps.google.com/maps"],
+#map a[href^="https://www.google.com/maps"] {
+  display: none !important;
+}
+#map .gmnoprint a, #map .gmnoprint span, #map .gm-style-cc {
+    display:none;
+}
+#map .gmnoprint div {
+    background:none !important;
+}
 
-  #map .gmnoprint a, #map .gmnoprint span, #map .gm-style-cc {
-      display:none;
-  }
-  #map .gmnoprint div {
-      background:none !important;
-  }
 
 /* FONT */
 @font-face {

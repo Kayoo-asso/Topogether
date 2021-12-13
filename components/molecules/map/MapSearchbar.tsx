@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { RoundButton, TextInput } from 'components';
 import { googleAutocomplete, useIsMounted } from '../../../helpers';
 import { topogetherUrl } from 'const';
+import { Dropdown } from '..';
 
 interface MapSearchbarProps {
     initialOpen?: boolean,
@@ -32,8 +33,8 @@ export const MapSearchbar: React.FC<MapSearchbarProps> = ({
     const [barOpen, setBarOpen] = useState(initialOpen);
     const [resultsOpen, setResultsOpen] = useState(false);
     const [value, setValue] = useState('');
-    // const [topoApiResults, setTopoApiResults] = useState([]);
-    // const [googleApiResults, setGoogleApiResults] = useState([]);
+    const [topoApiResults, setTopoApiResults] = useState([]);
+    const [googleApiResults, setGoogleApiResults] = useState([]);
 
     // const getPredictions = async () => {
     //     if (findTopos || findBoulders) {
@@ -79,23 +80,25 @@ export const MapSearchbar: React.FC<MapSearchbarProps> = ({
 
     return (
         <>
+        <div className='relative'>
             <RoundButton 
                 iconName='search'
-                white={barOpen}
-                iconClass={barOpen ? 'stroke-main' : 'stroke-white'}
+                white={!barOpen}
+                iconClass={barOpen ? 'stroke-white' : 'stroke-main'}
                 onClick={() => {                  
                     if (props.onButtonClick) props.onButtonClick(barOpen);
                     setBarOpen(!barOpen);
                 }}
-            />
-            
+            />  
 
             {barOpen && 
-                <div className={"shadow bg-white w-4/5"}>
+                <div className={"absolute rounded-full top-0 pl-[80px] h-[60px] w-[202%] z-30 shadow bg-white"}>
                     <TextInput
-                        id="search-bar-input"
+                        id="searchbar"
                         ref={inputRef.current}
-                        placeholder={placeholder}
+                        label='Recherche...'
+                        displayLabel={false}
+                        className='w-[90%] mt-[4px]'
                         value={value}
                         onChange={e => {
                             setValue(e.target.value);
@@ -109,102 +112,106 @@ export const MapSearchbar: React.FC<MapSearchbarProps> = ({
                     />
                 </div>
             }
+        </div>
 
-            {/*barOpen && resultsOpen &&
-                <div className="results-container shadow">
-                    <div className="results-content">
-                        <div className="topo-results-container">
-                            {topoApiResults?.length > 0 && topoApiResults.map((res, index) => {
-                                return (
-                                    <Row 
-                                        key={index}
-                                        className="result-row topos-results"
-                                        onClick={() => {
-                                            setValue(res.name);
-                                            setResultsOpen(false);
-                                            props.onResultSelect(res);
-                                        }}
-                                    >
-                                        <Col s={2} className="icon-container">
-                                            <KIcon 
-                                                name={res.boulderId ? "rock" : "waypoint"}
-                                                size="12px"
-                                                fillColored={!res.boulderId}
-                                                strokeColored={!!res.boulderId}
-                                                color="black"
-                                                wrapper="span"
-                                            />
-                                        </Col>
-                                        <Col s={6} className="name-container">
-                                            {res.name}
-                                        </Col>
-                                        <Col s={4} className="info-container">
+            {barOpen && resultsOpen &&
+                <Dropdown 
 
-                                        </Col>
-                                    </Row>
-                                )
-                            })}
-                        </div>
+                />
+                // <div className="results-container shadow">
+                //     <div className="results-content">
+                //         <div className="topo-results-container">
+                //             {topoApiResults?.length > 0 && topoApiResults.map((res, index) => {
+                //                 return (
+                //                     <Row 
+                //                         key={index}
+                //                         className="result-row topos-results"
+                //                         onClick={() => {
+                //                             setValue(res.name);
+                //                             setResultsOpen(false);
+                //                             props.onResultSelect(res);
+                //                         }}
+                //                     >
+                //                         <Col s={2} className="icon-container">
+                //                             <KIcon 
+                //                                 name={res.boulderId ? "rock" : "waypoint"}
+                //                                 size="12px"
+                //                                 fillColored={!res.boulderId}
+                //                                 strokeColored={!!res.boulderId}
+                //                                 color="black"
+                //                                 wrapper="span"
+                //                             />
+                //                         </Col>
+                //                         <Col s={6} className="name-container">
+                //                             {res.name}
+                //                         </Col>
+                //                         <Col s={4} className="info-container">
+
+                //                         </Col>
+                //                     </Row>
+                //                 )
+                //             })}
+                //         </div>
                         
-                        <div className="google-results-container">
-                            {googleApiResults?.length > 0 &&
-                                <div className="title-container">Lieux</div>}
-                            {googleApiResults?.length > 0 && googleApiResults.map((res, index) => {
-                                return (
-                                    <Row 
-                                        key={index}
-                                        className="result-row google-results"
-                                        onClick={() => {
-                                            setValue(res.structured_formatting.main_text);
-                                            setResultsOpen(false);
-                                            props.onResultSelect(res);
-                                        }}
-                                    >
-                                        <Col s={2} className="icon-container">
-                                            <KIcon 
-                                                name="flag"
-                                                size="12px"
-                                                color="black"
-                                                wrapper="span"
-                                            />
-                                        </Col>
-                                        <Col s={6} className="name-container">
-                                            {res.structured_formatting.main_text}
-                                        </Col>
-                                        <Col s={4} className="info-container">
+                //         <div className="google-results-container">
+                //             {googleApiResults?.length > 0 &&
+                //                 <div className="title-container">Lieux</div>}
+                //             {googleApiResults?.length > 0 && googleApiResults.map((res, index) => {
+                //                 return (
+                //                     <Row 
+                //                         key={index}
+                //                         className="result-row google-results"
+                //                         onClick={() => {
+                //                             setValue(res.structured_formatting.main_text);
+                //                             setResultsOpen(false);
+                //                             props.onResultSelect(res);
+                //                         }}
+                //                     >
+                //                         <Col s={2} className="icon-container">
+                //                             <KIcon 
+                //                                 name="flag"
+                //                                 size="12px"
+                //                                 color="black"
+                //                                 wrapper="span"
+                //                             />
+                //                         </Col>
+                //                         <Col s={6} className="name-container">
+                //                             {res.structured_formatting.main_text}
+                //                         </Col>
+                //                         <Col s={4} className="info-container">
 
-                                        </Col>
-                                    </Row>
-                                )
-                            })}
-                        </div>
+                //                         </Col>
+                //                     </Row>
+                //                 )
+                //             })}
+                //         </div>
 
-                        {props.open && props.findTopos && (!topoApiResults || topoApiResults.length === 0) &&
-                            <>
-                                <Row className="title-container">Aucun topo</Row>
-                                <Row 
-                                    className="result-container no-result"
-                                    onClick={() => {
-                                        props.onAddTopoSelect();
-                                    }}
-                                >
-                                    <Col s={2} className="icon-container">
-                                        <KIcon 
-                                            name="waypoint-add"
-                                            size="14px"
-                                            color="main"
-                                            wrapper="span"
-                                        />
-                                    </Col>
-                                    <Col s={10} className="name-container">
-                                        Créer un topo manquant
-                                    </Col>
-                                </Row>
-                            </>
-                        }
-                    </div>
-                </div>
-            } */}
+                //         {props.open && props.findTopos && (!topoApiResults || topoApiResults.length === 0) &&
+                //             <>
+                //                 <Row className="title-container">Aucun topo</Row>
+                //                 <Row 
+                //                     className="result-container no-result"
+                //                     onClick={() => {
+                //                         props.onAddTopoSelect();
+                //                     }}
+                //                 >
+                //                     <Col s={2} className="icon-container">
+                //                         <KIcon 
+                //                             name="waypoint-add"
+                //                             size="14px"
+                //                             color="main"
+                //                             wrapper="span"
+                //                         />
+                //                     </Col>
+                //                     <Col s={10} className="name-container">
+                //                         Créer un topo manquant
+                //                     </Col>
+                //                 </Row>
+                //             </>
+                //         }
+                //     </div>
+                // </div>
+            }
         </>
     )
 }

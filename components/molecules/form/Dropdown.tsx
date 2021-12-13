@@ -1,6 +1,5 @@
 import React from 'react';
-import { Icon } from '../../atoms/Icon';
-import { Checkbox } from '../../atoms/Checkbox';
+import { Icon, Checkbox } from '../../atoms';
 
 interface DropdownOption {
   label?: string;

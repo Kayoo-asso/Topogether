@@ -19,7 +19,7 @@ export const RoundButton: React.FC<RoundButtonProps> = ({
 }: RoundButtonProps) => (
   <button
     className={
-                    `shadow relative rounded-full z-20 ${
+                    `shadow relative rounded-full z-40 ${
                       white
                         ? 'bg-white'
                         : 'bg-main'}`
