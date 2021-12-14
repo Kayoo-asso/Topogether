@@ -28,10 +28,12 @@ export const GradeScale: React.FC<GradeScaleProps> = ({
                             className='mr-1'
                             clickable={clickable}
                             onClick={() => {
-                                let newUnselectedGrades: number[] = JSON.parse(JSON.stringify(unselectedGrades));
-                                if (newUnselectedGrades?.includes(grade)) newUnselectedGrades = newUnselectedGrades.filter(g => g !== grade)
-                                else newUnselectedGrades.push(grade);
-                                setUnselectedGrades(newUnselectedGrades);
+                                if (clickable) {
+                                    let newUnselectedGrades: number[] = JSON.parse(JSON.stringify(unselectedGrades));
+                                    if (newUnselectedGrades?.includes(grade)) newUnselectedGrades = newUnselectedGrades.filter(g => g !== grade)
+                                    else newUnselectedGrades.push(grade);
+                                    setUnselectedGrades(newUnselectedGrades);
+                                }
                                 props.onCircleClick && props.onCircleClick(grade)
                             }}
                         />
