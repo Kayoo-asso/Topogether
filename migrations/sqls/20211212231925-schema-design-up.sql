@@ -1,12 +1,101 @@
-/* Replace with your SQL commands */
+-- Up migration
+CREATE TABLE images (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    path STRING NOT NULL
+);
 
-
-CREATE TYPE Role as ENUM('USER', 'ADMIN');
+CREATE TYPE Role AS ENUM('USER', 'ADMIN');
 
 CREATE TABLE users (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-    role Role
+    pseudo STRING(255) UNIQUE NOT NULL,
+    email STRING(1000) UNIQUE NOT NULL,
+    role Role DEFAULT 'USER' NOT NULL,
+    created TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+    first_name STRING(500),
+    last_name STRING(500),
+
+    image_id UUID REFERENCES images(id) ON DELETE SET NULL
 );
+
+CREATE TYPE TopoStatus AS ENUM('Draft', 'Submitted', 'Validated');
+
+CREATE TYPE TopoType AS ENUM(
+    'Boulder',
+    'Cliff',
+    'Deep water',
+    'Multi-pitch',
+    'Artificial'
+);
+
+CREATE TYPE Difficulty AS ENUM('Good', 'OK', 'Bad', 'Dangerous');
+
+-- No `modified` column
+-- Use crdb_internal.approximate_timestamp(crdb_internal_mvcc_timestamp) instead
+CREATE TABLE topos (
+    -- Mandatory
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    created TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+    modified TIMESTAMPTZ NOT NULL,
+    status TopoStatus DEFAULT('Draft') NOT NULL,
+    type TopoType NOT NULL,
+    location GEOGRAPHY(POINT) NOT NULL,
+    -- Bitflags
+    amenities VARBIT(32) DEFAULT 0::VARBIT(32) NOT NULL,
+    rock_types VARBIT(32) DEFAULT 0::VARBIT(32) NOT NULL,
+    -- Optional
+    altitude INT,
+    approach_time INT,
+    approach_difficulty Difficulty,
+    -- no limit on STRING size here, there may be a lot of information
+    remarks STRING(5000),
+    security_instructions STRING(5000),
+    danger String(5000),
+    forbidden_reason STRING(5000),
+    other_amenities STRING(5000),
+    -- Relations
+    creator_id UUID REFERENCES users(id) ON DELETE SET NULL,
+    validator_id UUID REFERENCES users(id) ON DELETE SET NULL,
+    photo_id UUID REFERENCES images(id) ON DELETE SET NULL
+);
+
+CREATE TABLE parkings (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    spots INT NOT NULL,
+    location GEOGRAPHY(POINT) NOT NULL,
+    description STRING(5000),
+
+    topo_id UUID NOT NULL REFERENCES topos(id) ON DELETE CASCADE,
+    image_id UUID REFERENCES images(id) ON DELETE SET NULL
+);
+
+CREATE TABLE sectors (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    name STRING(255),
+    description STRING(5000),
+
+    topo_id UUID NOT NULL REFERENCES topos(id) ON DELETE CASCADE,
+    image_id UUID REFERENCES images(id) ON DELETE SET NULL
+);
+
+CREATE TABLE boulders (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    location GEOGRAPHY(POINT) NOT NULL,
+    name STRING(255),
+    is_highball BOOL DEFAULT false NOT NULL,
+    must_see BOOL DEFAULT false NOT NULL,
+    descent Difficulty NOT NULL,
+
+    sector_id UUID NOT NULL REFERENCES sectors(id) ON DELETE CASCADE
+);
+
+CREATE TABLE boulder_images (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    image_id UUID NOT NULL REFERENCES images(id) ON DELETE CASCADE,
+    boulder_id UUID NOT NULL REFERENCES boulders(id) ON DELETE CASCADE
+);
+
+CREATE TYPE Orientation AS ENUM('N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW');
 
 CREATE TYPE Grade AS ENUM(
     '3',
@@ -45,40 +134,45 @@ CREATE TYPE Grade AS ENUM(
     '9c+'
 );
 
-CREATE TYPE Rating as ENUM('1', '2', '3', '4', '5');
+CREATE TABLE tracks (
+    -- Required
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    grade Grade NOT NULL,
+    reception Difficulty NOT NULL,
+    -- Optional    
+    name STRING(255),
+    description STRING(5000),
+    height INT,
+    orientation Orientation,
+    -- bitflag, max of 32 bits (due to JavaScript's limitations)
+    techniques VARBIT(32) DEFAULT 0::VARBIT(32) NOT NULL,
+    is_traverse BOOL DEFAULT false NOT NULL,
+    -- has_anchor can be derived from looking at the lines
+    has_mantle BOOL DEFAULT false NOT NULL,
 
-CREATE TYPE TopoStatus as ENUM('Draft', 'Submitted', 'Validated');
+    boulder_id UUID NOT NULL REFERENCES boulders(id) ON DELETE CASCADE,
+    creator_id UUID REFERENCES users(id) ON DELETE SET NULL
+);
 
-CREATE TYPE TopoType AS ENUM('Boulder', 'Cliff', 'Deep water', 'Multi-pitch', 'Artificial');
+CREATE TABLE lines (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    nb_anchors INT DEFAULT 0 NOT NULL,
+    line GEOMETRY(LINESTRING) NOT NULL,
+    forbidden GEOMETRY(MULTIPOLYGON),
+    starting_points GEOMETRY(MULTIPOINT),
 
-CREATE TYPE Orientation AS ENUM('N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW');
+    image_id UUID NOT NULL REFERENCES boulder_images(id) ON DELETE CASCADE,
+    track_id UUID NOT NULL REFERENCES tracks(id) ON DELETE CASCADE
+);
 
-CREATE TYPE Terrain as ENUM('Good', 'OK', 'Bad', 'Dangerous');
+CREATE TYPE Rating AS ENUM('1', '2', '3', '4', '5');
 
-
-CREATE TYPE RockType AS ENUM(
-    'Andesite',
-    'Basalt',
-    'Composite',
-    'Conglomerate',
-    'Chalk',
-    'Dolerite',
-    'Gabbro',
-    'Gneiss',
-    'Granite',
-    'Gritstone',
-    'Limestone'
-    'Migmatite',
-    'Molasse',
-    'Porphyre',
-    'Quartz',
-    'Quartzite',
-    'Rhyolite',
-    'Sandstone',
-    'Schist',
-    'Serpentine',
-    'Trachyandesite',
-    'Trachyte',
-    'Tuff',
-    'Volcanic',
+CREATE TABLE track_rating (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    finished BOOL NOT NULL,
+    rating Rating NOT NULL,
+    comment String(5000),
+    
+    track_id UUID NOT NULL REFERENCES tracks(id) ON DELETE CASCADE,
+    author_id UUID REFERENCES users(id) ON DELETE SET NULL
 );
