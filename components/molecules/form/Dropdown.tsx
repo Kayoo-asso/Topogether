@@ -20,7 +20,7 @@ interface DropdownProps {
 export const Dropdown: React.FC<DropdownProps> = ({
   ...props
 }: DropdownProps) => (
-  <div className="shadow px-7 py-5 w-60 bg-white rounded-lg">
+  <div className="shadow px-7 py-5 w-60 bg-white rounded-b-lg">
     {props.choices.map((choice, i) => (
       choice.isSection
         ? (
@@ -33,14 +33,14 @@ export const Dropdown: React.FC<DropdownProps> = ({
         )
         : (
           <div
-            className="py-2 capitalize text-dark ktext-bgase cursor-pointer flex flex-row items-center"
+            className="py-2 capitalize text-dark ktext-base cursor-pointer flex flex-row items-center"
             key={choice.value}
-            onKeyUp={choice.action}
-            onClick={choice.action}
+            onKeyDown={() => choice.action && choice.action()}
+            onMouseDown={() => choice.action && choice.action()}
             role="menuitem"
             tabIndex={0}
           >
-            {props.type === 'checkbox' && props.onSelect && <Checkbox checked={choice.checked} onClick={() => props.onSelect && props.onSelect(choice.value)} />}
+            {props.type === 'checkbox' && props.onSelect && <Checkbox className="mr-2" checked={choice.checked} onClick={() => props.onSelect && props.onSelect(choice.value)} />}
             {choice.icon && <Icon name={choice.icon} className="stroke-black h-5 w-5 mr-2" />}
             {choice.label}
           </div>

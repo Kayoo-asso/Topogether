@@ -39,13 +39,13 @@ export const GradeCircle: React.FC<GradeCircleProps> = ({
   };
 
   return (
-    // eslint-disable-next-line jsx-a11y/click-events-have-key-events
     <div
       className={`relative p-3 w-6 h-6 border-2 box-border flex items-center text-center justify-center rounded-full ktext-subtitle 
             ${getColorStyle()} 
             ${props.onClick ? 'cursor-pointer' : ''} 
             `}
       onClick={props.onClick}
+      onKeyUp={props.onClick}
       role="button"
       tabIndex={0}
     >

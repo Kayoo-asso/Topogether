@@ -15,9 +15,7 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(({ type = 
       type={type}
       id={props.id}
       value={props.value}
-      className="peer h-10 w-full border-dark border-b-2 placeholder-transparent focus:border-main focus:outline-none"
-      onFocus={props.onFocus}
-      onBlur={props.onBlur}
+      className="peer h-10 border-dark border-b-2 placeholder-transparent focus:border-main focus:outline-none"
     />
     <label
       htmlFor={props.id}
@@ -25,7 +23,7 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(({ type = 
     >
       {props.label}
     </label>
-    {props.error && <span className="ktext-error">{props.error}</span>}
+    {props.error && <div className="ktext-error text-error">{props.error}</div>}
   </div>
 ));
 

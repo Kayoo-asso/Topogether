@@ -1,25 +1,25 @@
 import {
   Button,
-  Checkbox, Dropdown, GradeCircle, MobileHeader,
+  Checkbox, Dropdown, GradeCircle, Map, MobileHeader,
 } from 'components';
 import type { NextPage } from 'next';
 import { useState } from 'react';
 
-const Map: NextPage = () => {
+const PageMap: NextPage = () => {
   const [test, setTest] = useState(true);
   return (
-    <>
+    <div className="flex flex-col h-full">
+
       <MobileHeader
         title="La meilleure app du monde"
         menu={[]}
         onBackClick={() => {}}
       />
 
-      <Button
-        content="Click me"
-      />
-    </>
+      <Map />
+
+    </div>
   );
 };
 
-export default Map;
+export default PageMap;

@@ -1,10 +1,12 @@
+/* eslint-disable jsx-a11y/control-has-associated-label */
 import React, { useState } from 'react';
 import { Icon } from './Icon';
 
 interface CheckboxProps {
   checked?: boolean,
   label?: string,
-  onClick: (isChecked: boolean) => void
+  onClick: (isChecked: boolean) => void;
+  className?: string,
 }
 
 export const Checkbox: React.FC<CheckboxProps> = ({
@@ -12,27 +14,36 @@ export const Checkbox: React.FC<CheckboxProps> = ({
   ...props
 }: CheckboxProps) => {
   const [isChecked, setIsChecked] = useState(checked);
+  const [animated, setAnimated] = useState(false);
 
   const handleClick = () => {
     setIsChecked(!isChecked);
     props.onClick(isChecked);
+    setAnimated(true);
   };
 
   return (
-    <div className="flex items-center">
+    <div className={`flex flex-row space-between ${props.className}`}>
+      <div
+        className={`absolute h-5 w-5 stroke-dark cursor-pointer rounded border-2 border-dark ${animated && (isChecked ? 'animate-check' : 'animate-uncheck')}`}
+        onClick={handleClick}
+        onKeyUp={handleClick}
+        role="checkbox"
+        id="1"
+        tabIndex={0}
+        aria-checked={isChecked}
+      />
       <Icon
-        className={`absolute h-5 w-5 mr-2 stroke-main opacity-0 cursor-pointer ${isChecked ? 'animate-fadein' : 'animate-fadeout'}`}
+        className={`h-5 w-5 stroke-main cursor-pointer ${!checked && 'opacity-0'}  ${animated && (isChecked ? 'animate-fadein' : 'animate-fadeout')}`}
         name="checked"
         onClick={handleClick}
       />
-      <Icon
-        className={`absolute h-5 w-5 mr-2 stroke-dark cursor-pointer ${isChecked ? 'animate-check' : 'animate-uncheck'}`}
-        name="checkbox"
-        onClick={handleClick}
-      />
-      <div className="ktext-base main">
+      <label
+        htmlFor="1"
+        className="ktext-base main inline-block ml-2"
+      >
         {props.label}
-      </div>
+      </label>
     </div>
   );
 };

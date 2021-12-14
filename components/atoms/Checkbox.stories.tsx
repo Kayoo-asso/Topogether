@@ -10,3 +10,8 @@ export default {
 const Template: ComponentStory<typeof Checkbox> = (args) => <Checkbox {...args} />;
 
 export const Simple = Template.bind({});
+
+export const WithLabel = Template.bind({});
+WithLabel.args = {
+  label: 'Site dangereux',
+};

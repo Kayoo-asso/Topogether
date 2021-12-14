@@ -21,6 +21,20 @@
   background: transparent;  /* Optional: just make scrollbar invisible */
 }
 
+
+ #map a[href^="http://maps.google.com/maps"],
+ #map a[href^="https://maps.google.com/maps"],
+ #map a[href^="https://www.google.com/maps"] {
+    display: none !important;
+  }
+
+  #map .gmnoprint a, #map .gmnoprint span, #map .gm-style-cc {
+      display:none;
+  }
+  #map .gmnoprint div {
+      background:none !important;
+  }
+
 /* FONT */
 @font-face {
   font-family: 'Poppins';
