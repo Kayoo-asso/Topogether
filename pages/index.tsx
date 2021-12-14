@@ -1,6 +1,6 @@
 import {
-  Button,
-  Checkbox, Dropdown, GradeCircle, Map, MobileHeader,
+  GradeScale,
+  Map, MobileHeader,
 } from 'components';
 import type { NextPage } from 'next';
 import { useState } from 'react';
@@ -16,7 +16,13 @@ const PageMap: NextPage = () => {
         onBackClick={() => {}}
       />
 
-      <Map />
+      <GradeScale
+        grades={[3,4,5,6,7]}
+        unselectedGrades={[5,6]}
+        clickable
+      />
+      
+      {/* <Map /> */}
 
     </div>
   );

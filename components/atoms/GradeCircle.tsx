@@ -6,6 +6,7 @@ interface GradeCircleProps {
   selected?: boolean,
   clickable?: boolean
   content?: number | string,
+  className?: string,
   onClick?: () => void,
 }
 
@@ -41,6 +42,7 @@ export const GradeCircle: React.FC<GradeCircleProps> = ({
   return (
     <div
       className={`relative p-3 w-6 h-6 border-2 box-border flex items-center text-center justify-center rounded-full ktext-subtitle 
+            ${props.className ? props.className : ''} 
             ${getColorStyle()} 
             ${props.onClick ? 'cursor-pointer' : ''} 
             `}
