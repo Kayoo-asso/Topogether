@@ -1,9 +1,10 @@
 import {
+  GradeHistogram,
   GradeScale,
   Map, MobileHeader,
 } from 'components';
+import { fakeTopo } from 'helpers/fakeData/fakeTopo';
 import type { NextPage } from 'next';
-import { useState } from 'react';
 
 const PageMap: NextPage = () => {
 
@@ -16,10 +17,8 @@ const PageMap: NextPage = () => {
         onBackClick={() => {}}
       />
 
-      <GradeScale
-        grades={[3,4,5,6,7]}
-        unselectedGrades={[5,6]}
-        clickable
+      <GradeHistogram 
+        topo={fakeTopo}
       />
       
       {/* <Map /> */}
