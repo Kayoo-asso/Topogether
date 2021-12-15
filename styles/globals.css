@@ -34,7 +34,9 @@
 #map .gmnoprint div {
     background:none !important;
 }
-
+#map img[src*="phantom"] {
+  opacity: 0.4;
+}
 
 /* FONT */
 @font-face {

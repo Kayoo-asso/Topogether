@@ -2,9 +2,15 @@ import { Wrapper } from '@googlemaps/react-wrapper';
 import { MapComponent, RoundButton, SatelliteButton } from 'components';
 import { fontainebleauLocation } from 'const/global';
 import React, { useState } from 'react';
-import { GeoCoordinates } from 'types';
+import { GeoCoordinates, MarkerProps } from 'types';
 import { MapSearchbarProps } from '.';
 import { MapSearchbar } from '..';
+
+type Size = {
+    width: number,
+    height: number,
+    equals: () => boolean,
+}
 
 interface MapProps {
     center?: GeoCoordinates,
@@ -15,6 +21,7 @@ interface MapProps {
     displayPhotoButton?: boolean,
     filters?: any,
     searchbarOptions?: MapSearchbarProps,
+    markers: MarkerProps[],
     onSearchResultSelect?: () => void,
 }
 
@@ -87,6 +94,7 @@ export const Map: React.FC<MapProps> = ({
                     center={center}
                     zoom={zoom}
                     mapTypeId={satelliteView ? 'satellite' : 'roadmap'}
+                    markers={props.markers}
                 />
 
             </Wrapper>

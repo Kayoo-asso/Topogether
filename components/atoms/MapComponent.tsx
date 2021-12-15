@@ -153,6 +153,7 @@ function diffMarkers(map: google.maps.Map, before: MapMarker[], after: MarkerPro
         result[afterIdx] = updateMarker(existing, incoming);
         beforeIdx++;
         afterIdx++;
+        break;
 
       // existing.id > incoming.id
       case 1:
