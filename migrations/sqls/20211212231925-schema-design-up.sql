@@ -1,7 +1,8 @@
 -- Up migration
 CREATE TABLE images (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-    path STRING NOT NULL
+    -- UNIQUE constraint also provides us with an index on the path
+    path STRING NOT NULL UNIQUE
 );
 
 CREATE TYPE Role AS ENUM('USER', 'ADMIN');
@@ -10,7 +11,7 @@ CREATE TABLE users (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     pseudo STRING(255) UNIQUE NOT NULL,
     email STRING(1000) UNIQUE NOT NULL,
-    role Role DEFAULT 'USER' NOT NULL,
+    role Role DEFAULT ' USER' NOT NULL,
     created TIMESTAMPTZ DEFAULT NOW() NOT NULL,
     first_name STRING(500),
     last_name STRING(500),
@@ -30,8 +31,7 @@ CREATE TYPE TopoType AS ENUM(
 
 CREATE TYPE Difficulty AS ENUM('Good', 'OK', 'Bad', 'Dangerous');
 
--- No `modified` column
--- Use crdb_internal.approximate_timestamp(crdb_internal_mvcc_timestamp) instead
+-- CockroachDB does not have triggers, `modified` column has to be maintained manually
 CREATE TABLE topos (
     -- Mandatory
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -47,7 +47,7 @@ CREATE TABLE topos (
     altitude INT,
     approach_time INT,
     approach_difficulty Difficulty,
-    -- no limit on STRING size here, there may be a lot of information
+    -- high limits on STRING size, there may be a lot of information
     remarks STRING(5000),
     security_instructions STRING(5000),
     danger String(5000),
@@ -61,7 +61,7 @@ CREATE TABLE topos (
 
 CREATE TABLE parkings (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-    spots INT NOT NULL,
+    spaces INT NOT NULL,
     location GEOGRAPHY(POINT) NOT NULL,
     description STRING(5000),
 
@@ -84,7 +84,7 @@ CREATE TABLE boulders (
     name STRING(255),
     is_highball BOOL DEFAULT false NOT NULL,
     must_see BOOL DEFAULT false NOT NULL,
-    descent Difficulty NOT NULL,
+    descent Difficulty,
 
     sector_id UUID NOT NULL REFERENCES sectors(id) ON DELETE CASCADE
 );

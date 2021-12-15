@@ -2,19 +2,19 @@
     "dev": {
         "driver": "cockroachdb",
         "user" : {
-            "ENV": "DB_USER"
+            "ENV": "PGUSER"
         },
         "password": {
-            "ENV": "DB_PASSWORD"
+            "ENV": "PGPASSWORD"
         },
         "host": {
-            "ENV": "DB_HOST"
+            "ENV": "PGHOST"
         },
         "port": {
-            "ENV": "DB_PORT"
+            "ENV": "PGPORT"
         },
         "database": {
-            "ENV": "DB_NAME"
+            "ENV": "PGDATABASE"
         },
         "ssl": "true",
         "multipleStatements": "true"
