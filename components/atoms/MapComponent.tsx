@@ -4,43 +4,13 @@ import React, {
 import { useEffectWithDeepEqual } from 'helpers';
 import mapStyles from 'styles/mapStyles';
 import equal from 'fast-deep-equal/es6';
+import { mapEvents, MapProps, markerEvents, MarkerProps } from 'types';
 
-type MapProps =
-  MapEventHandlers
-  & google.maps.MapOptions
-  & {
-    className?: string,
-    markers?: MarkerProps[]
-  };
 
 const containerStyles: React.CSSProperties = {
   width: '100%',
   height: '100%',
 };
-
-type MapEventHandlers = {
-  onBoundsChange?: () => void,
-  onCenterChange?: () => void,
-  onClick?: ((event: MapMouseEvent) => void) | ((event: IconMouseEvent) => void),
-  onContextMenu?: (event: MapMouseEvent) => void,
-  onDoubleClick?: (event: MapMouseEvent) => void,
-  onDrag?: () => void,
-  onDragEnd?: () => void,
-  onDragStart?: () => void,
-  onHeadingChange?: () => void,
-  onIdle?: () => void,
-  onMapTypeIdChange?: () => void,
-  onMouseMove?: (event: MapMouseEvent) => void,
-  onMouseOut?: (event: MapMouseEvent) => void,
-  onMouseOver?: (event: MapMouseEvent) => void,
-  onProjectionChange?: () => void,
-  onTilesLoad?: () => void,
-  onTiltChange?: () => void
-  onZoomChange?: () => void,
-};
-
-type MapMouseEvent = google.maps.MapMouseEvent;
-type IconMouseEvent = google.maps.IconMouseEvent;
 
 // Omitting the type tells the compiler that this component takes no props
 // Omitting React.PropsWithChildren<T> tells the compiler that this component takes no children
@@ -157,54 +127,11 @@ export const MapComponent = forwardRef<google.maps.Map, MapProps>((props, mapRef
 
 MapComponent.displayName = 'Map';
 
-// === ADDITIONAL MAP STUFF ===
-
-const mapEvents = [
-  ['bounds_changed', 'onBoundsChange'],
-  ['center_changed', 'onCenterChange'],
-  ['click', 'onClick'],
-  ['contextmenu', 'onContextMenu'],
-  ['dblclick', 'onDoubleClick'],
-  ['drag', 'onDrag'],
-  ['dragend', 'onDragEnd'],
-  ['dragstart', 'onDragStart'],
-  ['heading_changed', 'onHeadingChange'],
-  ['idle', 'onIdle'],
-  // no support for 'isfractionalzoomenabled_changed'
-  ['maptypeid_changed', 'onMapTypeIdChange'],
-  ['mousemove', 'onMouseMove'],
-  ['mouseout', 'onMouseOut'],
-  ['mouseover', 'onMouseOver'],
-  ['projection_changed', 'onProjectionChange'],
-  // no support for 'renderingtype_changed'
-  // no support for 'rightclick', as 'contextmenu' should be used instead
-  // https://developers.google.com/maps/documentation/javascript/reference/3.44/map?hl=en#Map.rightclick
-  ['tilesloaded', 'onTilesLoad'],
-  ['tilt_changed', 'onTiltChange'],
-  ['zoom_changed', 'onZoomChange'],
-] as const;
-
-type Events = typeof mapEvents;
-type EventName = Events[number][0];
-type EventHandlerName = Events[number][1];
-
-// === Compile-time check that we have the exact same handler names in the `events` array and the `MapEventHandlers` type ===
-// (this is an isomorphism proof)
-
-// These two functions are the proof
-function _handlersIsomorphismForward(handler: EventHandlerName): keyof MapEventHandlers {
-  return handler;
-}
-
-function _handlersIsomorphismBackward(handler: keyof MapEventHandlers): EventHandlerName {
-  return handler;
-}
-
 // === MARKER UPDATES ===
 
 // note: may need to copy the after array, since it comes from props
 function diffMarkers(map: google.maps.Map, before: MapMarker[], after: MarkerProps[]): MapMarker[] {
-  before.sort((a, b) => compareBigInts(a.id, b.id));
+  // before is already sorted, due to how we construct it every time
   after.sort((a, b) => compareBigInts(a.id, b.id));
   let beforeIdx = 0;
   let afterIdx = 0;
@@ -257,15 +184,17 @@ const compareBigInts = (a: bigint, b: bigint) => (a < b) ? - 1 : ((a > b) ? 1 : 
 
 function createMarker(props: MarkerProps, map: google.maps.Map): MapMarker {
   // avoid an extra call to marker.setMap by including it into the options
-  const options: google.maps.MarkerOptions = props.options;
+  const options: google.maps.MarkerOptions = props.options ?? {};
   options.map = map;
   const marker = new google.maps.Marker(options);
   const listeners = [];
-  for (const [eventName, handlerName] of markerEvents) {
-    const handler = props.handlers[handlerName];
-    if (handler) {
-      const listener = marker.addListener(eventName, handler);
-      listeners.push(listener);
+  if (props.handlers) {
+    for (const [eventName, handlerName] of markerEvents) {
+      const handler = props.handlers[handlerName];
+      if (handler) {
+        const listener = marker.addListener(eventName, handler);
+        listeners.push(listener);
+      }
     }
   }
   return {
@@ -277,7 +206,8 @@ function createMarker(props: MarkerProps, map: google.maps.Map): MapMarker {
 
 function updateMarker(before: MapMarker, after: MarkerProps): MapMarker {
   const marker = before.marker;
-  const options = after.options;
+  const options: google.maps.MarkerOptions = after.options ?? {};
+  // Q: does it matter if we don't inject the map into the `after` options
   if (!equal(before.options, options)) {
     marker.setOptions(options)
   }
@@ -295,11 +225,13 @@ function updateMarker(before: MapMarker, after: MarkerProps): MapMarker {
       listener.remove();
     }
     const listeners: google.maps.MapsEventListener[] = [];
-    for (const [eventName, handlerName] of markerEvents) {
-      const handler = after.handlers[handlerName];
-      if (handler) {
-        const listener = marker.addListener(eventName, handler);
-        listeners.push(listener);
+    if (after.handlers) {
+      for (const [eventName, handlerName] of markerEvents) {
+        const handler = after.handlers[handlerName];
+        if (handler) {
+          const listener = marker.addListener(eventName, handler);
+          listeners.push(listener);
+        }
       }
     }
     result.listeners = listeners;
@@ -315,86 +247,8 @@ function deleteMarker(marker: MapMarker) {
   marker.marker.setMap(null);
 }
 
-// === MARKER TYPES ===
-
-const markerEvents = [
-  ['animation_changed', 'onAnimationChange'],
-  ['click', 'onClick'],
-  ['clickable_changed', 'onClickableChange'],
-  ['contextmenu', 'onContextMenu'],
-  ['cursor_changed', 'onCursorChange'],
-  ['dblclick', 'onDoubleClick'],
-  ['drag', 'onDrag'],
-  ['dragend', 'onDragEnd'],
-  ['draggable_changed', 'onDraggableChange'],
-  ['dragstart', 'onDragStart'],
-  ['flat_changed', 'onFlatChange'],
-  ['icon_changed', 'onIconChange'],
-  ['mousedown', 'onMouseDown'],
-  ['mouseout', 'onMouseOut'],
-  ['mouseover', 'onMouseOver'],
-  ['mouseup', 'onMouseUp'],
-  ['position_changed', 'onPositionChange'],
-  // no support for onRightClick, since onContextMenu should be used instead
-  // https://developers.google.com/maps/documentation/javascript/reference/marker#Marker.rightclick
-  ['shape_changed', 'onShapeChange'],
-  ['title_changed', 'onTitleChange'],
-  ['visible_changed', 'onVisibleChange'],
-  ['zindex_changed', 'onZIndexChange'],
-] as const;
-
 type MapMarker = MarkerProps &
 {
   marker: google.maps.Marker,
   listeners: google.maps.MapsEventListener[],
 };
-
-// A separate MarkerEventHandlers type to make compile-time checks easier (see below)
-type MarkerEventHandlers = {
-  onAnimationChange?: () => void,
-  onClick?: (event: MapMouseEvent) => void,
-  onClickableChange?: () => void,
-  onContextMenu?: (event: MapMouseEvent) => void,
-  onCursorChange?: () => void,
-  onDoubleClick?: (event: MapMouseEvent) => void,
-  onDrag?: (event: MapMouseEvent) => void,
-  onDragEnd?: (event: MapMouseEvent) => void,
-  onDraggableChange?: () => void,
-  onDragStart?: (event: MapMouseEvent) => void,
-  onFlatChange?: () => void,
-  onIconChange?: () => void,
-  onMouseDown?: (event: MapMouseEvent) => void,
-  onMouseOut?: (event: MapMouseEvent) => void,
-  onMouseOver?: (event: MapMouseEvent) => void,
-  onMouseUp?: (event: MapMouseEvent) => void,
-  onPositionChange?: () => void,
-  // no support for onRightClick, since onContextMenu should be used instead
-  // https://developers.google.com/maps/documentation/javascript/reference/marker#Marker.rightclick
-  onShapeChange?: () => void,
-  onTitleChange?: () => void,
-  onVisibleChange?: () => void,
-  onZIndexChange?: () => void,
-};
-
-interface MarkerProps {
-  id: bigint,
-  options: Omit<google.maps.MarkerOptions, 'map'>,
-  handlers: MarkerEventHandlers
-};
-
-
-// === Compile-time check that we have the exact same handler names in the `events` array and the `MarkerEventHandlers` type ===
-// (note: this is an isomorphism proof)
-type MarkerEvents = typeof markerEvents;
-type MarkerEventName = MarkerEvents[number][0];
-type MarkerEventHandlerName = MarkerEvents[number][1];
-
-// These two functions are the proof
-function _markerHandlersIsomorphismForward(handler: MarkerEventHandlerName): keyof MarkerEventHandlers {
-  return handler;
-}
-
-function _markerHandlersIsomorphismBackward(handler: keyof MarkerEventHandlers): MarkerEventHandlerName {
-  return handler;
-}
-
