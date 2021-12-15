@@ -17,7 +17,7 @@ export const MobileHeader: React.FC<MobileHeaderProps> = (props: MobileHeaderPro
         <div className="w-1/6">
           <Icon
             name="arrow-simple"
-            className="stroke-white stroke-1 w-4 h-4"
+            SVGClassName="stroke-white stroke-1 w-4 h-4"
             center
             onClick={props.onBackClick}
           />
@@ -38,7 +38,7 @@ export const MobileHeader: React.FC<MobileHeaderProps> = (props: MobileHeaderPro
           <div className="w-1/6">
             <Icon
               name="menu"
-              className={`h-4 w-4 fill-white ${menuOpen ? 'rotate-90' : ''}`}
+              SVGClassName={`h-4 w-4 fill-white ${menuOpen ? 'rotate-90' : ''}`}
               center
               onClick={() => {
                 setMenuOpen(!menuOpen);

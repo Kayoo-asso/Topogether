@@ -27,7 +27,7 @@ export const ImageButton: React.FC<ImageButtonProps> = ({
                     && (
                     <Icon
                       name="spinner"
-                      className="stroke-main w-10 h-10 animate-spin"
+                      SVGClassName="stroke-main w-10 h-10 animate-spin"
                       center
                     />
                     )}

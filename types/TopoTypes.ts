@@ -6,7 +6,8 @@ export type Topo = {
   name: string,
   creatorId: number,
   validatorId?: number,
-  state: 'DRAFT' | 'TO_VALIDATE' | 'VALIDATED',
+  topoType: 'Boulder' | 'Cliff' | 'Deep water' | 'Multi-pitch' | 'Artificial',
+  status: 'Draft' | 'Submitted' | 'Validated',
   location: GeoCoordinates,
   mainImage?: ImageAfterServer,
   mainImageBeforeServer?: ImageBeforeServer,
@@ -53,7 +54,7 @@ export type Journey = {
 export type Sector = {
   id: number,
   name: string,
-  boulders: Boulder[],
+  boulders?: Boulder[],
   wayPoints?: Waypoint[],
 }
 
@@ -105,3 +106,5 @@ export type Line = {
   anchorPoints?: Coordinates[],
   forbiddenAreas?: Area[],
 }
+
+export type Grade = 3 | 4 | 5 | 6 | 7 | 8 | 9;

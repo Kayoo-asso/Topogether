@@ -34,7 +34,7 @@ export const Checkbox: React.FC<CheckboxProps> = ({
         aria-checked={isChecked}
       />
       <Icon
-        className={`h-5 w-5 stroke-main cursor-pointer ${!checked && 'opacity-0'}  ${animated && (isChecked ? 'animate-fadein' : 'animate-fadeout')}`}
+        SVGClassName={`h-5 w-5 stroke-main cursor-pointer ${!checked && 'opacity-0'}  ${animated && (isChecked ? 'animate-fadein' : 'animate-fadeout')}`}
         name="checked"
         onClick={handleClick}
       />

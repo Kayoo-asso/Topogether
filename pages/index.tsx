@@ -1,12 +1,13 @@
 import {
-  Button,
-  Checkbox, Dropdown, GradeCircle, Map, MobileHeader,
+  GradeHistogram,
+  GradeScale,
+  Map, MobileHeader,
 } from 'components';
+import { fakeTopo } from 'helpers/fakeData/fakeTopo';
 import type { NextPage } from 'next';
-import { useState } from 'react';
 
 const PageMap: NextPage = () => {
-  const [test, setTest] = useState(true);
+
   return (
     <div className="flex flex-col h-full">
 
@@ -16,7 +17,11 @@ const PageMap: NextPage = () => {
         onBackClick={() => {}}
       />
 
-      <Map />
+      <GradeHistogram 
+        topo={fakeTopo}
+      />
+      
+      {/* <Map /> */}
 
     </div>
   );

@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { MobileLayout } from 'components';
 
 const App = ({ Component, pageProps }: AppProps) => {
-  const [session, setSession] = useState({ name: 'Flavien' });
+  const [session, setSession] = useState({ pseudo: 'Flavien', email: 'flavien@kayoo-asso.fr', role: 'ADMIN' });
 
   return (
     <>

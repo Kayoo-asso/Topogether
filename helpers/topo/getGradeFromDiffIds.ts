@@ -3,17 +3,25 @@ import { diffIdsToGrade } from "./diffIdsToGrade";
 export const getGradeFromDiffIds = (diffIds: number[]) => {
     let diffs: string[] = []
     diffIds.forEach(id => {
-        const grade = diffIdsToGrade.find(elt => elt.id === id);
-        if (grade && grade.label)
-            diffs.push(grade.label);
+        const grade = getGradeFromDiffId(id);
+        if (grade) diffs.push(grade);
+    });
+    return diffs;
+}
+
+export const getLightGradeFromDiffIds = (diffIds: number[]) => {
+    let diffs: string[] = []
+    diffIds.forEach(id => {
+        const grade = getLightGradeFromDiffId(id);
+        if (grade) diffs.push(grade);
     });
     return diffs;
 }
 
 export const getGradeFromDiffId = (diffId: number) => {
-    return getGradeFromDiffIds([diffId])[0];
+    return diffIdsToGrade.find(elt => elt.id === diffId)?.label;
 }
 
 export const getLightGradeFromDiffId = (diffId: number) => {
-    return getGradeFromDiffIds([diffId])[0].substring(0, 1);
+    return diffIdsToGrade.find(elt => elt.id === diffId)?.label.substring(0, 1);
 }

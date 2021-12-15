@@ -3,7 +3,7 @@ import Image from 'next/image';
 
 interface SatelliteButtonProps {
   satellite?: boolean,
-  onClick: () => void,
+  onClick: (displaySatellite: boolean) => void,
 }
 
 export const SatelliteButton: React.FC<SatelliteButtonProps> = ({
@@ -15,8 +15,8 @@ export const SatelliteButton: React.FC<SatelliteButtonProps> = ({
     <button
       className="shadow relative rounded-full p-7 z-20"
       onClick={() => {
-        setDisplaySatellite(!displaySatellite);
-        props.onClick();
+        props.onClick(displaySatellite);
+        setDisplaySatellite(!displaySatellite);  
       }}
       style={{ height: '60px', width: '60px' }}
     >
