@@ -408,7 +408,7 @@ export const TracksImage: React.FC<TracksImageProps> = ({
     let cursorColor = 'grey';
     const currentTrack = props.tracks.find((track) => track.id === props.currentTrackId);
     if (currentTrack?.difficultyId)
-      cursorColor = getLightGradeFromDiffId(currentTrack.difficultyId);
+      cursorColor = getLightGradeFromDiffId(currentTrack.difficultyId) || 'grey';
     
     let cursorUrl = '/assets/icons/colored/'
     switch (props.currentTool) {

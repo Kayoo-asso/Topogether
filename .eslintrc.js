@@ -41,7 +41,7 @@ module.exports = {
         "react/function-component-definition": 0,
         "import/prefer-default-export": 0,
         "react/prop-types": "off",
-        "react/require-default-props":0,
+        "react/require-default-props": 0,
         "react/jsx-props-no-spreading": 0,
         "import/no-extraneous-dependencies": 0,
         "react/button-has-type": 0,
@@ -50,6 +50,8 @@ module.exports = {
         "max-len": 0,
         "import/no-cycle": 0,
         "jsx-a11y/click-events-have-key-events": 0,
+        "@typescript-eslint/no-use-before-define": "off",
+        "no-plus-plus": { "allowForLoopAfterthoughts": true }
     },
     // -- Shared settings
     "settings": {

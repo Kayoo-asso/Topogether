@@ -11,7 +11,7 @@ CREATE TABLE users (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     pseudo STRING(255) UNIQUE NOT NULL,
     email STRING(1000) UNIQUE NOT NULL,
-    role Role DEFAULT ' USER' NOT NULL,
+    role Role DEFAULT 'USER' NOT NULL,
     created TIMESTAMPTZ DEFAULT NOW() NOT NULL,
     first_name STRING(500),
     last_name STRING(500),
