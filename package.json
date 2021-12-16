@@ -10,9 +10,9 @@
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
     "test": "jest",
+    "test:db": "TEST_DB=true jest",
     "test:ci": "jest --ci",
-    "migrate": "db-migrate",
-    "pgtyped": "node -r dotenv/config && pgtyped"
+    "migrate": "db-migrate"
   },
   "dependencies": {
     "@googlemaps/react-wrapper": "^1.1.16",
