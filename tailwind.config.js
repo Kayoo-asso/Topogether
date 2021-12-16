@@ -465,23 +465,37 @@ module.exports = {
         },
       },
       check: {
+        from: {
+          opacity: '100%'
+        },
+
         to: {
           transform: 'rotate(90deg)',
           opacity: '0%'
         },
       },
       uncheck: {
+        from: {
+          opacity: '0%'
+        },
+
         to: {
           transform: 'rotate(-90deg)',
           opacity: '100%'
         },
       },
       fadein: {
+        from: {
+          opacity: '0%'
+        },
         to: {
           opacity: '100%',
         },
       },
       fadeout: {
+        from: {
+          opacity: '100%'
+        },
         to: {
           opacity: '0%',
         },

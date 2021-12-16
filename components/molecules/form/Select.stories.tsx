@@ -1,21 +1,20 @@
 import React from 'react';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 
-import { Select } from './Select';
+import { MultipleSelect } from './MultipleSelect';
 
 export default {
-  title: 'Select',
-  component: Select,
-} as ComponentMeta<typeof Select>;
+  title: 'MultipleSelect',
+  component: MultipleSelect,
+} as ComponentMeta<typeof MultipleSelect>;
 
-const Template: ComponentStory<typeof Select> = (args) => <Select {...args} />;
+const Template: ComponentStory<typeof MultipleSelect> = (args) => <MultipleSelect className="w-60" {...args} />;
 
 export const Simple = Template.bind({});
 Simple.args = {
-  className: 'w-60',
-  label: 'Type de roche',
-  choices: [
-    { value: 'andesite', label: 'Andésite' },
-    { value: 'basalt', label: 'Basalte' },
+  label: 'Equipement des blocs',
+  defaultChoices: [
+    { value: 'Dégaines' },
+    { value: 'Cordes' },
   ],
 };

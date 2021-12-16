@@ -6,7 +6,7 @@ import { Dropdown } from './Dropdown';
 import { TextInput } from './TextInput';
 
 interface DropdownOption {
-  label: string;
+  label?: string;
   value: any;
 }
 

@@ -1,4 +1,16 @@
+const path = require("path");
+
 module.exports = {
+  webpackFinal: async (config, { configType }) => {
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      'components': path.resolve(__dirname, "../components"),
+      'helpers': path.resolve(__dirname, "../helpers"),
+      'types': path.resolve(__dirname, "../types"),
+      'const': path.resolve(__dirname, "../const"),
+    }
+    return config;
+  },
   "stories": [
     "../components/**/**/*.stories.mdx",
     "../components/**/*.stories.mdx",
@@ -29,4 +41,3 @@ module.exports = {
   },
   "staticDirs": ['../public'],
 }
-

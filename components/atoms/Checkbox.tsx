@@ -25,9 +25,9 @@ export const Checkbox: React.FC<CheckboxProps> = ({
   return (
     <div className={`flex flex-row space-between ${props.className}`}>
       <div
-        className={`absolute h-5 w-5 stroke-dark cursor-pointer rounded border-2 border-dark ${animated && (isChecked ? 'animate-check' : 'animate-uncheck')}`}
+        className={`absolute h-5 w-5 stroke-dark cursor-pointer rounded border-2 border-dark ${checked && 'opacity-0'} ${animated && (isChecked ? 'animate-check' : 'animate-uncheck')}`}
         onClick={handleClick}
-        onKeyUp={handleClick}
+        onKeyDown={handleClick}
         role="checkbox"
         id="1"
         tabIndex={0}

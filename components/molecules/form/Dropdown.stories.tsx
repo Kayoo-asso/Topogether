@@ -1,6 +1,7 @@
 import React from 'react';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 
+import { Icon } from 'components';
 import { Dropdown } from './Dropdown';
 
 export default {
@@ -37,6 +38,7 @@ WithSections.args = {
 export const WithIcons = Template.bind({});
 WithIcons.args = {
   className: 'w-60',
+  type: 'icon',
   choices: [
     { value: 'Yzéron', icon: 'waypoint' },
     { value: 'Yzédine', icon: 'rock' },
