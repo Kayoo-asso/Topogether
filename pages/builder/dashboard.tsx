@@ -1,7 +1,9 @@
 import React from 'react';
 
-export const TODO:React.FC = (props) => {
+const TODO:React.FC = (props) => {
     return (
         <div></div>
     )
 }
+
+export default TODO; 

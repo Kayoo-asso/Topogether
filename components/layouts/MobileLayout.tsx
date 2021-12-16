@@ -11,7 +11,7 @@ export const MobileLayout: React.FC<MobileLayoutProps> = (props: MobileLayoutPro
       {props.children}
     </div>
 
-    <div id="footer" className="bg-dark z-30" style={{ height: '10vh' }}>
+    <div id="footer" className="bg-dark z-100" style={{ height: '10vh' }}>
       <MobileShell
         initialActiveTab={1}
       />

@@ -2,7 +2,7 @@ import { RequireKeys } from "./RequireKeys";
 
 export type MapProps =
   MapEventHandlers
-  & RequireKeys<google.maps.MapOptions, 'center' | 'zoom'>
+  & google.maps.MapOptions
   & {
     className?: string,
     markers?: MarkerProps[]

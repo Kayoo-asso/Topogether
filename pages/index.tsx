@@ -6,10 +6,10 @@ import {
 } from 'components';
 import { MobileSlideover } from 'components/atoms/modals/MobileSlideover';
 import { fontainebleauLocation } from 'const';
-import { Transition } from '@headlessui/react';
 import { fakeTopo } from 'helpers/fakeData/fakeTopo';
 import type { NextPage } from 'next';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
+import { markerSize } from 'helpers';
 
 const PageMap: NextPage = () => {
   const [show, isShow] = useState(false);
@@ -24,22 +24,15 @@ const PageMap: NextPage = () => {
       />
 
     <Button 
-      content="CLick me"
+      content="Click me"
       onClick={() => isShow(show => !show)}
     />
-    <Transition
-        show={show}
-        enter="transition-opacity duration-75"
-        enterFrom="opacity-0"
-        enterTo="opacity-100"
-        leave="transition-opacity duration-150"
-        leaveFrom="opacity-100"
-        leaveTo="opacity-0"
+    
+      <MobileSlideover
+        initialOpen={show}
       >
-        <MobileSlideover>
-          <div></div>
-        </MobileSlideover>
-      </Transition>
+        <div></div>
+      </MobileSlideover>
       
       {/* <Map 
         markers={[
@@ -54,10 +47,10 @@ const PageMap: NextPage = () => {
                   draggable: true,
               },
               handlers: {
-                onDragEnd: (e) => console.log(e.latLng?.lat())
+                onDragEnd: useCallback((e) => console.log(e.latLng?.lat()), [])
               },
           }
-      ]}
+        ]}
       /> */}
 
     </div>
