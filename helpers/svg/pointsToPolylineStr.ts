@@ -1,6 +1,6 @@
-import { CoordinatesType } from "types";
+import { Coordinates } from "types";
 
-export const pointsToPolylineStr = (points: CoordinatesType[]) => {
+export const pointsToPolylineStr = (points: Coordinates[]) => {
     if (points) {
         let str = '';
         points.forEach(point => {

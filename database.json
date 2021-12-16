@@ -1,6 +1,23 @@
 {
     "dev": {
-        "ENV": "DATABASE_URL"
+        "driver": "cockroachdb",
+        "user" : {
+            "ENV": "PGUSER"
+        },
+        "password": {
+            "ENV": "PGPASSWORD"
+        },
+        "host": {
+            "ENV": "PGHOST"
+        },
+        "port": {
+            "ENV": "PGPORT"
+        },
+        "database": {
+            "ENV": "PGDATABASE"
+        },
+        "ssl": "true",
+        "multipleStatements": "true"
     },
     "sql-file": true
 }

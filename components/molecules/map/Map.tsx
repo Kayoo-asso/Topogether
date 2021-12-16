@@ -2,30 +2,29 @@ import { Wrapper } from '@googlemaps/react-wrapper';
 import { MapComponent, RoundButton, SatelliteButton } from 'components';
 import { fontainebleauLocation } from 'const/global';
 import React, { useState } from 'react';
-import { GeoCoordinates } from 'types';
 import { MapSearchbarProps } from '.';
 import { MapSearchbar } from '..';
+import { MapProps as MapComponentProps } from 'types';
 
-interface MapProps {
-  center?: GeoCoordinates,
-  zoom?: number,
-  displaySearchbar?: boolean,
-  displaySatelliteButton?: boolean,
-  displayUserMarker?: boolean,
-  displayPhotoButton?: boolean,
-  filters?: any,
-  searchbarOptions?: MapSearchbarProps,
-  onSearchResultSelect?: () => void,
+
+interface MapProps extends MapComponentProps {
+    displaySearchbar?: boolean,
+    displaySatelliteButton?: boolean,
+    displayUserMarker?: boolean,
+    displayPhotoButton?: boolean,
+    filters?: any,
+    searchbarOptions?: MapSearchbarProps,
+    onSearchResultSelect?: () => void,
 }
 
-export const Map: React.FC<MapProps> = ({
-  center = fontainebleauLocation,
-  zoom = 8,
-  displaySearchbar = true,
-  displaySatelliteButton = true,
-  displayUserMarker = true,
-  displayPhotoButton = true,
-  ...props
+export const Map: React.FC<MapProps> = ({ 
+    displaySearchbar = true,
+    displaySatelliteButton = true,
+    displayUserMarker = true,
+    displayPhotoButton = true,
+    center=fontainebleauLocation,
+    zoom=8,
+    ...props
 }: MapProps) => {
   const [satelliteView, setSatelliteView] = useState(false);
 
@@ -84,11 +83,21 @@ export const Map: React.FC<MapProps> = ({
           </div>
         </div>
 
+<<<<<<< HEAD
         <MapComponent
           center={center}
           zoom={zoom}
           mapTypeId={satelliteView ? 'satellite' : 'roadmap'}
         />
+=======
+            
+                <MapComponent
+                    center={center}
+                    zoom={zoom}
+                    {...props}
+                    mapTypeId={satelliteView ? 'satellite' : 'roadmap'}
+                />
+>>>>>>> 908615d12a9f6280dd8f2b279c7018da2c1f0765
 
       </Wrapper>
     </div>
