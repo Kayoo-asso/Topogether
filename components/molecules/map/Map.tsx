@@ -8,23 +8,23 @@ import { MapProps as MapComponentProps } from 'types';
 
 
 interface MapProps extends MapComponentProps {
-    displaySearchbar?: boolean,
-    displaySatelliteButton?: boolean,
-    displayUserMarker?: boolean,
-    displayPhotoButton?: boolean,
-    filters?: any,
-    searchbarOptions?: MapSearchbarProps,
-    onSearchResultSelect?: () => void,
+  displaySearchbar?: boolean,
+  displaySatelliteButton?: boolean,
+  displayUserMarker?: boolean,
+  displayPhotoButton?: boolean,
+  filters?: any,
+  searchbarOptions?: MapSearchbarProps,
+  onSearchResultSelect?: () => void,
 }
 
-export const Map: React.FC<MapProps> = ({ 
-    displaySearchbar = true,
-    displaySatelliteButton = true,
-    displayUserMarker = true,
-    displayPhotoButton = true,
-    center=fontainebleauLocation,
-    zoom=8,
-    ...props
+export const Map: React.FC<MapProps> = ({
+  displaySearchbar = true,
+  displaySatelliteButton = true,
+  displayUserMarker = true,
+  displayPhotoButton = true,
+  center = fontainebleauLocation,
+  zoom = 8,
+  ...props
 }: MapProps) => {
   const [satelliteView, setSatelliteView] = useState(false);
 
@@ -36,21 +36,21 @@ export const Map: React.FC<MapProps> = ({
           <div className="flex">
             <div className="w-1/2 text-left">
               {displaySearchbar
-                                && (
-                                <MapSearchbar
-                                  {...props.searchbarOptions}
-                                />
-                                )}
+                && (
+                  <MapSearchbar
+                    {...props.searchbarOptions}
+                  />
+                )}
             </div>
             <div className="w-1/2 text-right">
               {displaySatelliteButton
-                                && (
-                                <SatelliteButton
-                                  onClick={(displaySatellite) => {
-                                    setSatelliteView(displaySatellite);
-                                  }}
-                                />
-                                )}
+                && (
+                  <SatelliteButton
+                    onClick={(displaySatellite) => {
+                      setSatelliteView(displaySatellite);
+                    }}
+                  />
+                )}
             </div>
           </div>
 
@@ -58,47 +58,38 @@ export const Map: React.FC<MapProps> = ({
             <div className="w-1/3 text-left" />
             <div className="w-1/3 text-center">
               {displayPhotoButton
-                                && (
-                                <RoundButton
-                                  iconName="camera"
-                                  white={false}
-                                  buttonSize={80}
-                                  iconClass="stroke-white"
-                                  iconSizeClass="h-7 w-7"
-                                  onClick={() => {}}
-                                />
-                                )}
+                && (
+                  <RoundButton
+                    iconName="camera"
+                    white={false}
+                    buttonSize={80}
+                    iconClass="stroke-white"
+                    iconSizeClass="h-7 w-7"
+                    onClick={() => { }}
+                  />
+                )}
             </div>
             <div className="w-1/3 text-right">
               {displayUserMarker
-                                && (
-                                <RoundButton
-                                  iconName="center"
-                                  iconClass="stroke-main fill-main"
-                                  iconSizeClass="h-7 w-7"
-                                  onClick={() => {}}
-                                />
-                                )}
+                && (
+                  <RoundButton
+                    iconName="center"
+                    iconClass="stroke-main fill-main"
+                    iconSizeClass="h-7 w-7"
+                    onClick={() => { }}
+                  />
+                )}
             </div>
           </div>
         </div>
 
-<<<<<<< HEAD
+
         <MapComponent
           center={center}
           zoom={zoom}
+          {...props}
           mapTypeId={satelliteView ? 'satellite' : 'roadmap'}
         />
-=======
-            
-                <MapComponent
-                    center={center}
-                    zoom={zoom}
-                    {...props}
-                    mapTypeId={satelliteView ? 'satellite' : 'roadmap'}
-                />
->>>>>>> 908615d12a9f6280dd8f2b279c7018da2c1f0765
-
       </Wrapper>
     </div>
   );
