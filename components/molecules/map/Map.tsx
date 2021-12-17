@@ -6,7 +6,6 @@ import { MapSearchbarProps } from '.';
 import { MapSearchbar } from '..';
 import { MapProps as MapComponentProps } from 'types';
 
-
 interface MapProps extends MapComponentProps {
     displaySearchbar?: boolean,
     displaySatelliteButton?: boolean,
@@ -82,23 +81,12 @@ export const Map: React.FC<MapProps> = ({
             </div>
           </div>
         </div>
-
-<<<<<<< HEAD
         <MapComponent
-          center={center}
-          zoom={zoom}
-          mapTypeId={satelliteView ? 'satellite' : 'roadmap'}
+            center={center}
+            zoom={zoom}
+            {...props}
+            mapTypeId={satelliteView ? 'satellite' : 'roadmap'}
         />
-=======
-            
-                <MapComponent
-                    center={center}
-                    zoom={zoom}
-                    {...props}
-                    mapTypeId={satelliteView ? 'satellite' : 'roadmap'}
-                />
->>>>>>> 908615d12a9f6280dd8f2b279c7018da2c1f0765
-
       </Wrapper>
     </div>
   );

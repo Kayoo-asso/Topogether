@@ -8,6 +8,7 @@ module.exports = {
       'helpers': path.resolve(__dirname, "../helpers"),
       'types': path.resolve(__dirname, "../types"),
       'const': path.resolve(__dirname, "../const"),
+      'styles': path.resolve(__dirname, "../styles"),
     }
     return config;
   },
