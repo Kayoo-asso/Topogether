@@ -9,7 +9,7 @@
   .ktext-base { @apply font-sans font-normal text-base }
   .ktext-base-big { @apply font-sans font-normal text-xl }
   .ktext-base-superbig { @apply font-sans font-semibold text-4xl }
-  .ktext-label { @apply font-sans font-medium text-xs uppercase }
+  .ktext-label { @apply font-sans font-medium text-sm uppercase }
   input::placeholder { @apply font-sans font-normal text-base }
   .ktext-label-superbig { @apply font-sans font-semibold text-3xl uppercase }
   .ktext-error { @apply font-sans font-normal text-xs italic }
@@ -25,13 +25,13 @@
   background-color: transparent;
 } 
 ::-webkit-scrollbar-thumb {
-  background-color: #343644;
-  border-radius: 20px;
+  background-color: #D5D7E2;
+  border-radius: 30px;
   border: 6px solid transparent;
   background-clip: content-box;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background-color: #D5D7E2;
+  background-color: #979797;
 }
 
 

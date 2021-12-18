@@ -13,7 +13,7 @@ export type Topo = {
   mainImage?: ImageAfterServer,
   mainImageBeforeServer?: ImageBeforeServer,
   description?: string,
-  rockTypeId?: number,
+  rockType?: string,
   altitude?: number,
   adaptedToChildren?: boolean,
   hasDanger?: boolean,
@@ -55,6 +55,7 @@ export type Journey = {
 export type Sector = {
   id: number,
   name: string,
+  description?: string,
   boulders?: Boulder[],
   wayPoints?: Waypoint[],
 }

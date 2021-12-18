@@ -1,10 +1,10 @@
-const sectors = [
+import { Sector, Topo } from "types"
+
+const sectors: Sector[] = [
     {
         "id": 2,
-        "imageId": null,
-        "imageUrl": null,
         "name": "ABO",
-        "description": null,
+        "description": undefined,
         "boulders": [
             {
                 "id": 15,
@@ -30,16 +30,10 @@ const sectors = [
                         "name": "Passage 1",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "Une petite montée facile",
-                        "receptionIds": [
-                            1
-                        ],
                         "techniqueIds": [
                             1
                         ],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 5,
@@ -85,6 +79,7 @@ const sectors = [
                         "orderIndex": 1,
                         "grade": "4+",
                         "note": 3.9,
+                        "receptionId": 1
                     },
                     {
                         "id": 12,
@@ -92,17 +87,11 @@ const sectors = [
                         "name": "Passage 2",
                         "isTraverse": false,
                         "isSittingStart": true,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "Le départ assis est sévère mais le reste de la voie est trivial",
-                        "receptionIds": [
-                            1
-                        ],
                         "techniqueIds": [
                             1
                         ],
                         "height": 2,
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 6,
@@ -135,7 +124,8 @@ const sectors = [
                             }
                         ],
                         "orderIndex": 2,
-                        "grade": "6a"
+                        "grade": "6a",
+                        "receptionId": 1
                     }
                 ]
             },
@@ -162,12 +152,8 @@ const sectors = [
                         "name": "Passage 1",
                         "isTraverse": false,
                         "isSittingStart": true,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 646,
@@ -479,12 +465,8 @@ const sectors = [
                         "name": "Passage 2",
                         "isTraverse": true,
                         "isSittingStart": true,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 647,
@@ -530,12 +512,8 @@ const sectors = [
                         "name": "Passage 3",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 648,
@@ -595,12 +573,8 @@ const sectors = [
                         "name": "Passage 1",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 656,
@@ -641,12 +615,8 @@ const sectors = [
                         "name": "Passage 2",
                         "isTraverse": false,
                         "isSittingStart": true,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 660,
@@ -706,12 +676,8 @@ const sectors = [
                         "name": "Passage 1",
                         "isTraverse": false,
                         "isSittingStart": true,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 661,
@@ -752,12 +718,8 @@ const sectors = [
                         "name": "Passage 2",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 662,
@@ -943,12 +905,8 @@ const sectors = [
                         "name": "Passage 1",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 952,
@@ -989,12 +947,8 @@ const sectors = [
                         "name": "Passage 2",
                         "isTraverse": false,
                         "isSittingStart": true,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 953,
@@ -1035,12 +989,8 @@ const sectors = [
                         "name": "Passage 3",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 954,
@@ -1076,12 +1026,8 @@ const sectors = [
                         "name": "Passage 4",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 955,
@@ -1136,12 +1082,8 @@ const sectors = [
                         "name": "Passage 1",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 663,
@@ -1182,12 +1124,8 @@ const sectors = [
                         "name": "Passage 2",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 664,
@@ -1409,12 +1347,8 @@ const sectors = [
                         "name": "Passage 1",
                         "isTraverse": true,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 964,
@@ -1455,12 +1389,8 @@ const sectors = [
                         "name": "Passage 2",
                         "isTraverse": true,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 666,
@@ -1511,12 +1441,8 @@ const sectors = [
                         "name": "Passage 3",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 671,
@@ -1552,12 +1478,8 @@ const sectors = [
                         "name": "Passage 4",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 965,
@@ -1603,12 +1525,8 @@ const sectors = [
                         "name": "Passage 5",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 665,
@@ -1668,12 +1586,8 @@ const sectors = [
                         "name": "Passage 1",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "Fissure interdite !",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 673,
@@ -1925,12 +1839,8 @@ const sectors = [
                         "name": "Passage 1",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 677,
@@ -1971,12 +1881,8 @@ const sectors = [
                         "name": "Passage 2",
                         "isTraverse": false,
                         "isSittingStart": true,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 678,
@@ -2017,8 +1923,6 @@ const sectors = [
     },
     {
         "id": 8,
-        "imageId": null,
-        "imageUrl": null,
         "name": "Historique",
         "description": "",
         "boulders": [
@@ -2045,18 +1949,12 @@ const sectors = [
                         "name": "Passage 1",
                         "isTraverse": true,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "Aucun pied mais de bonnes mains qui raviront les doigts forts et acharnés.",
-                        "receptionIds": [
-                            1
-                        ],
                         "techniqueIds": [
                             2,
                             13
                         ],
                         "height": 1.5,
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 2,
@@ -2095,7 +1993,8 @@ const sectors = [
                             }
                         ],
                         "orderIndex": 1,
-                        "grade": "5c"
+                        "grade": "5c",
+                        "receptionId": 1
                     },
                     {
                         "id": 6,
@@ -2103,17 +2002,11 @@ const sectors = [
                         "name": "Passage 2",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "Un pas de traversée, puis une montée pas facile avec une petite pince qui abime les doigts",
-                        "receptionIds": [
-                            1
-                        ],
                         "techniqueIds": [
                             6
                         ],
                         "height": 3,
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 3,
@@ -2193,7 +2086,8 @@ const sectors = [
                             }
                         ],
                         "orderIndex": 2,
-                        "grade": "6c+"
+                        "grade": "6c+",
+                        "receptionId": 1
                     },
                     {
                         "id": 7,
@@ -2201,17 +2095,11 @@ const sectors = [
                         "name": "Passage 3",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "Une belle arrête avec un talon sympa à coincer.",
-                        "receptionIds": [
-                            1
-                        ],
                         "techniqueIds": [
                             16
                         ],
                         "height": 3,
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 4,
@@ -2255,7 +2143,8 @@ const sectors = [
                             }
                         ],
                         "orderIndex": 3,
-                        "grade": "6a+"
+                        "grade": "6a+",
+                        "receptionId": 1
                     }
                 ]
             },
@@ -2282,12 +2171,8 @@ const sectors = [
                         "name": "Passage 1",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 950,
@@ -2323,12 +2208,8 @@ const sectors = [
                         "name": "Passage 2",
                         "isTraverse": true,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 951,
@@ -2393,12 +2274,8 @@ const sectors = [
                         "name": "Passage 1",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 753,
@@ -2439,12 +2316,8 @@ const sectors = [
                         "name": "Passage 2",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 754,
@@ -2485,12 +2358,8 @@ const sectors = [
                         "name": "Passage 3",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 755,
@@ -2531,12 +2400,8 @@ const sectors = [
                         "name": "Passage 4",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 759,
@@ -2600,12 +2465,8 @@ const sectors = [
                         "name": "Passage 1",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 744,
@@ -2646,12 +2507,8 @@ const sectors = [
                         "name": "Passage 2",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 745,
@@ -2702,12 +2559,8 @@ const sectors = [
                         "name": "Passage 3",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 746,
@@ -2748,12 +2601,8 @@ const sectors = [
                         "name": "Passage 4",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 747,
@@ -2808,12 +2657,8 @@ const sectors = [
                         "name": "Passage 1",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 923,
@@ -2854,12 +2699,8 @@ const sectors = [
                         "name": "Passage 2",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 924,
@@ -2900,12 +2741,8 @@ const sectors = [
                         "name": "Passage 3",
                         "isTraverse": true,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 925,
@@ -2965,12 +2802,8 @@ const sectors = [
                         "name": "Passage 1",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 926,
@@ -3006,12 +2839,8 @@ const sectors = [
                         "name": "Passage 2",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 927,
@@ -3052,12 +2881,8 @@ const sectors = [
                         "name": "Passage 3",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 928,
@@ -3117,12 +2942,8 @@ const sectors = [
                         "name": "Passage 1",
                         "isTraverse": true,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 922,
@@ -3205,12 +3026,8 @@ const sectors = [
                         "name": "Passage 1",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 725,
@@ -3246,12 +3063,8 @@ const sectors = [
                         "name": "Passage 2",
                         "isTraverse": true,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 726,
@@ -3292,12 +3105,8 @@ const sectors = [
                         "name": "Passage 3",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 729,
@@ -3357,12 +3166,8 @@ const sectors = [
                         "name": "Passage 1",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 942,
@@ -3398,12 +3203,8 @@ const sectors = [
                         "name": "Passage 2",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 943,
@@ -3439,12 +3240,8 @@ const sectors = [
                         "name": "Passage 3",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 944,
@@ -3541,12 +3338,8 @@ const sectors = [
                         "name": "Passage 4",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 945,
@@ -3582,12 +3375,8 @@ const sectors = [
                         "name": "Passage 5",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 946,
@@ -3642,12 +3431,8 @@ const sectors = [
                         "name": "Passage 2",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 930,
@@ -3683,12 +3468,8 @@ const sectors = [
                         "name": "Passage 3",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 931,
@@ -3724,12 +3505,8 @@ const sectors = [
                         "name": "Passage 3",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 937,
@@ -3916,12 +3693,8 @@ const sectors = [
                         "name": "Passage 1",
                         "isTraverse": true,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 698,
@@ -3962,12 +3735,8 @@ const sectors = [
                         "name": "Passage 2",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 699,
@@ -4022,12 +3791,8 @@ const sectors = [
                         "name": "Passage 1",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 697,
@@ -4082,12 +3847,8 @@ const sectors = [
                         "name": "Passage 1",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 693,
@@ -4483,12 +4244,8 @@ const sectors = [
                         "name": "Passage 1",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 689,
@@ -4524,12 +4281,8 @@ const sectors = [
                         "name": "Passage 2",
                         "isTraverse": false,
                         "isSittingStart": true,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 690,
@@ -4855,12 +4608,8 @@ const sectors = [
                         "name": "Passage 1",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 684,
@@ -4931,12 +4680,8 @@ const sectors = [
                         "name": "Passage 1",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 688,
@@ -4996,12 +4741,8 @@ const sectors = [
                         "name": "Passage 1",
                         "isTraverse": true,
                         "isSittingStart": true,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 679,
@@ -5047,12 +4788,8 @@ const sectors = [
                         "name": "Passage 2",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 680,
@@ -5093,12 +4830,8 @@ const sectors = [
                         "name": "Passage 3",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 681,
@@ -5158,12 +4891,8 @@ const sectors = [
                         "name": "Passage 1",
                         "isTraverse": true,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 682,
@@ -5209,12 +4938,8 @@ const sectors = [
                         "name": "Passage 2",
                         "isTraverse": true,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 683,
@@ -5400,12 +5125,8 @@ const sectors = [
                         "name": "Passage 1",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 961,
@@ -5441,12 +5162,8 @@ const sectors = [
                         "name": "Passage 2",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "Très dur..",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 962,
@@ -5482,8 +5199,6 @@ const sectors = [
     },
     {
         "id": 166,
-        "imageId": null,
-        "imageUrl": null,
         "name": "Ca coince",
         "description": "",
         "boulders": [
@@ -5510,12 +5225,8 @@ const sectors = [
                         "name": "Passage 1",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 914,
@@ -5556,12 +5267,8 @@ const sectors = [
                         "name": "Passage 2",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 915,
@@ -5602,12 +5309,8 @@ const sectors = [
                         "name": "Passage 3",
                         "isTraverse": false,
                         "isSittingStart": true,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 916,
@@ -5648,12 +5351,8 @@ const sectors = [
                         "name": "Passage 4",
                         "isTraverse": false,
                         "isSittingStart": true,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 920,
@@ -5694,12 +5393,8 @@ const sectors = [
                         "name": "Passage 5",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 921,
@@ -5759,12 +5454,8 @@ const sectors = [
                         "name": "Passage 1",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 760,
@@ -5840,12 +5531,8 @@ const sectors = [
                         "name": "Passage 1",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 761,
@@ -5900,12 +5587,8 @@ const sectors = [
                         "name": "Passage 1",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 766,
@@ -5951,12 +5634,8 @@ const sectors = [
                         "name": "Passage 2",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 772,
@@ -5992,12 +5671,8 @@ const sectors = [
                         "name": "Passage 3",
                         "isTraverse": true,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 773,
@@ -6057,12 +5732,8 @@ const sectors = [
                         "name": "Passage 1",
                         "isTraverse": true,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 776,
@@ -6103,12 +5774,8 @@ const sectors = [
                         "name": "Passage 2",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 777,
@@ -6163,12 +5830,8 @@ const sectors = [
                         "name": "Passage 1",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 778,
@@ -6209,12 +5872,8 @@ const sectors = [
                         "name": "Passage 2",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "Départ sur les inversées, gros bacs interdits pour les mains et les pieds",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 779,
@@ -6255,12 +5914,8 @@ const sectors = [
                         "name": "Passage 3",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 789,
@@ -6301,12 +5956,8 @@ const sectors = [
                         "name": "Passage 4",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 790,
@@ -6347,12 +5998,8 @@ const sectors = [
                         "name": "Passage 5",
                         "isTraverse": true,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 791,
@@ -6407,12 +6054,8 @@ const sectors = [
                         "name": "Passage 1",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [],
                         "orderIndex": 1,
                         "grade": "6b"
@@ -6423,12 +6066,8 @@ const sectors = [
                         "name": "Passage 2",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [],
                         "orderIndex": 2,
                         "grade": "6c"
@@ -6440,8 +6079,6 @@ const sectors = [
     },
     {
         "id": 167,
-        "imageId": null,
-        "imageUrl": null,
         "name": "Ancrage",
         "description": "",
         "boulders": [
@@ -6468,12 +6105,8 @@ const sectors = [
                         "name": "Passage 1",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 823,
@@ -6538,12 +6171,8 @@ const sectors = [
                         "name": "Passage 1",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 820,
@@ -6584,12 +6213,8 @@ const sectors = [
                         "name": "Passage 2",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 821,
@@ -6630,12 +6255,8 @@ const sectors = [
                         "name": "Passage 3",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 822,
@@ -6695,12 +6316,8 @@ const sectors = [
                         "name": "Passage 1",
                         "isTraverse": false,
                         "isSittingStart": true,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 819,
@@ -6922,12 +6539,8 @@ const sectors = [
                         "name": "Passage 1",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 804,
@@ -6968,12 +6581,8 @@ const sectors = [
                         "name": "Passage 2",
                         "isTraverse": true,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "Suivre la fissure",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 811,
@@ -7024,12 +6633,8 @@ const sectors = [
                         "name": "Passage 3",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 812,
@@ -7070,12 +6675,8 @@ const sectors = [
                         "name": "Passage 4",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 816,
@@ -7116,12 +6717,8 @@ const sectors = [
                         "name": "Passage 5",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 817,
@@ -7162,12 +6759,8 @@ const sectors = [
                         "name": "Passage 6",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 818,
@@ -7232,12 +6825,8 @@ const sectors = [
                         "name": "Passage 1",
                         "isTraverse": true,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 910,
@@ -7283,12 +6872,8 @@ const sectors = [
                         "name": "Passage 2",
                         "isTraverse": false,
                         "isSittingStart": true,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 911,
@@ -7329,12 +6914,8 @@ const sectors = [
                         "name": "Passage 3",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "Sans les mains",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 912,
@@ -7375,12 +6956,8 @@ const sectors = [
                         "name": "Passage 4",
                         "isTraverse": true,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 913,
@@ -7435,12 +7012,8 @@ const sectors = [
                         "name": "Passage 1",
                         "isTraverse": true,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 824,
@@ -7481,12 +7054,8 @@ const sectors = [
                         "name": "Passage 2",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 828,
@@ -7546,12 +7115,8 @@ const sectors = [
                         "name": "Passage 1",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 829,
@@ -7592,12 +7157,8 @@ const sectors = [
                         "name": "Passage 2",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 832,
@@ -7898,12 +7459,8 @@ const sectors = [
                         "name": "Passage 1",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 802,
@@ -7944,12 +7501,8 @@ const sectors = [
                         "name": "Passage 2",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 803,
@@ -8009,12 +7562,8 @@ const sectors = [
                         "name": "Passage 1",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 799,
@@ -8055,12 +7604,8 @@ const sectors = [
                         "name": "Passage 2",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 800,
@@ -8101,12 +7646,8 @@ const sectors = [
                         "name": "Passage 3",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 801,
@@ -8166,12 +7707,8 @@ const sectors = [
                         "name": "Passage 1",
                         "isTraverse": false,
                         "isSittingStart": true,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 797,
@@ -8231,12 +7768,8 @@ const sectors = [
                         "name": "Passage 1",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 798,
@@ -8278,8 +7811,6 @@ const sectors = [
     },
     {
         "id": 168,
-        "imageId": null,
-        "imageUrl": null,
         "name": "L'oeuf",
         "description": "",
         "boulders": [
@@ -8306,12 +7837,8 @@ const sectors = [
                         "name": "Passage 1",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 613,
@@ -8347,12 +7874,8 @@ const sectors = [
                         "name": "Passage 2",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 617,
@@ -8411,12 +7934,8 @@ const sectors = [
                         "name": "Passage 1",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 981,
@@ -8467,12 +7986,8 @@ const sectors = [
                         "name": "Passage 2",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 982,
@@ -8537,12 +8052,8 @@ const sectors = [
                         "name": "Passage 1",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 620,
@@ -8578,12 +8089,8 @@ const sectors = [
                         "name": "Passage 2",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 624,
@@ -8638,12 +8145,8 @@ const sectors = [
                         "name": "Passage 1",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 625,
@@ -8925,12 +8428,8 @@ const sectors = [
                         "name": "Passage 2",
                         "isTraverse": false,
                         "isSittingStart": true,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 628,
@@ -9151,12 +8650,8 @@ const sectors = [
                         "name": "Passage 1",
                         "isTraverse": false,
                         "isSittingStart": true,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 956,
@@ -9192,12 +8687,8 @@ const sectors = [
                         "name": "Passage 2",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 957,
@@ -9238,12 +8729,8 @@ const sectors = [
                         "name": "Passage 3",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 958,
@@ -9303,12 +8790,8 @@ const sectors = [
                         "name": "Passage 1",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 629,
@@ -9354,12 +8837,8 @@ const sectors = [
                         "name": "Passage 2",
                         "isTraverse": false,
                         "isSittingStart": true,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 630,
@@ -9405,12 +8884,8 @@ const sectors = [
                         "name": "Passage 3",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 631,
@@ -9470,12 +8945,8 @@ const sectors = [
                         "name": "Passage 1",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 632,
@@ -9531,12 +9002,8 @@ const sectors = [
                         "name": "Passage 2",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 637,
@@ -9582,12 +9049,8 @@ const sectors = [
                         "name": "Passage 3",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 638,
@@ -9642,12 +9105,8 @@ const sectors = [
                         "name": "Passage 1",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 639,
@@ -9712,12 +9171,8 @@ const sectors = [
                         "name": "Passage 1",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 959,
@@ -9758,12 +9213,8 @@ const sectors = [
                         "name": "Passage 2",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 960,
@@ -9805,8 +9256,6 @@ const sectors = [
     },
     {
         "id": 169,
-        "imageId": null,
-        "imageUrl": null,
         "name": "Falaise",
         "description": "",
         "boulders": [
@@ -9828,8 +9277,6 @@ const sectors = [
     },
     {
         "id": 170,
-        "imageId": null,
-        "imageUrl": null,
         "name": "Seconde chance",
         "description": "",
         "boulders": [
@@ -9856,12 +9303,8 @@ const sectors = [
                         "name": "Passage 1",
                         "isTraverse": false,
                         "isSittingStart": true,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 909,
@@ -9925,12 +9368,8 @@ const sectors = [
                         "name": "Passage 1",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 904,
@@ -9971,12 +9410,8 @@ const sectors = [
                         "name": "Passage 2",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 905,
@@ -10036,12 +9471,8 @@ const sectors = [
                         "name": "Passage 1",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 890,
@@ -10077,12 +9508,8 @@ const sectors = [
                         "name": "Passage 2",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 902,
@@ -10118,12 +9545,8 @@ const sectors = [
                         "name": "Passage 3",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 903,
@@ -10178,12 +9601,8 @@ const sectors = [
                         "name": "Passage 1",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 889,
@@ -10247,12 +9666,8 @@ const sectors = [
                         "name": "Passage 1",
                         "isTraverse": true,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 859,
@@ -10293,12 +9708,8 @@ const sectors = [
                         "name": "Passage 2",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 863,
@@ -10334,12 +9745,8 @@ const sectors = [
                         "name": "Passage 3",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 864,
@@ -10380,12 +9787,8 @@ const sectors = [
                         "name": "Passage 4",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 868,
@@ -10426,12 +9829,8 @@ const sectors = [
                         "name": "Passage 5",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 869,
@@ -10467,12 +9866,8 @@ const sectors = [
                         "name": "Passage 6",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 885,
@@ -10508,12 +9903,8 @@ const sectors = [
                         "name": "Passage 7",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 886,
@@ -10549,12 +9940,8 @@ const sectors = [
                         "name": "Passage 8",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 887,
@@ -10595,12 +9982,8 @@ const sectors = [
                         "name": "Passage 9",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 888,
@@ -10655,12 +10038,8 @@ const sectors = [
                         "name": "Passage 1",
                         "isTraverse": false,
                         "isSittingStart": true,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 851,
@@ -10701,12 +10080,8 @@ const sectors = [
                         "name": "Passage 2",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 852,
@@ -10747,12 +10122,8 @@ const sectors = [
                         "name": "Passage 3",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 853,
@@ -10793,12 +10164,8 @@ const sectors = [
                         "name": "Passage 4",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 854,
@@ -10839,12 +10206,8 @@ const sectors = [
                         "name": "Passage 5",
                         "isTraverse": true,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 858,
@@ -10909,12 +10272,8 @@ const sectors = [
                         "name": "Passage 1",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 833,
@@ -10955,12 +10314,8 @@ const sectors = [
                         "name": "Passage 2",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 837,
@@ -11001,12 +10356,8 @@ const sectors = [
                         "name": "Passage 3",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 838,
@@ -11047,12 +10398,8 @@ const sectors = [
                         "name": "Passage 4",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 839,
@@ -11093,12 +10440,8 @@ const sectors = [
                         "name": "Passage 5",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 843,
@@ -11158,12 +10501,8 @@ const sectors = [
                         "name": "Passage 1",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 849,
@@ -11204,12 +10543,8 @@ const sectors = [
                         "name": "Passage 2",
                         "isTraverse": false,
                         "isSittingStart": false,
-                        "hasAnchorPoint": false,
-                        "hasMantle": false,
                         "description": "",
-                        "receptionIds": [],
                         "techniqueIds": [],
-                        "orientationIds": [],
                         "lines": [
                             {
                                 "id": 850,
@@ -11251,19 +10586,16 @@ const sectors = [
     }
 ]
 
-export const fakeTopo = {
+export const fakeTopo: Topo = {
     altitude: 775,
     approachDescription: "Depuis le parking, prendre le sentier qui monte dans la continuité de la route. Après 12-15min de marche, vous arriverez à une esplanade d'herbe surmontant une petite falaise (où il est possible de faire de l'initiation). Un panneau indique le site d'escalade à l'entrée de l'esplanade.\nDepuis l'esplanade, prendre le sentier qui part derrière le panneau pour monter vers les premiers blocs.",
-    approachDifficultyLabel: "Moyen",
     approachTime: 15,
-    cleaningDate: null,
+    cleaningDate: undefined,
     closestCity: "Yzéron",
     creatorId: 3,
-    creatorName: "Flavien C",
     dangerDescription: "Il y a beaucoup de pentes",
     description: "Le site d’Yzéron est situé sur le massif de Py froid à environ 800m d’altitude. Il est le plus grand site de bloc de la région Lyonnaise avec une grande diversité de profil (dévers, dalle, réta...). L’esplanade sépare la plus grande partie du site en amont, et une falaise idéale pour l’initiation, située en contrebas. La forêt protège une bonne partie du site contre les aléas météorologiques ce qui, combiné à l’altitude, permet la pratique de la grimpe toute l’année.",
-    forbiddenReason: null,
-    gears: [],
+    forbiddenReason: undefined,
     hasBins: false,
     hasDanger: true,
     hasOtherGears: false,
@@ -11272,20 +10604,20 @@ export const fakeTopo = {
     hasToilets: false,
     hasWaterSpot: false,
     id: 2,
-    isAdaptedToChildren: true,
+    adaptedToChildren: true,
     isForbiddenSite: false,
     location: {lat: 45.701356, lng: 4.607264},
-    mainImageId: 4,
-    mainImageUrl: "/public/uploads/topo/main-image/dad449499de38f1bdee5872de1a354d52fff6183.jpeg",
+    mainImage: {
+        id: 4,
+        url: "/public/uploads/topo/main-image/dad449499de38f1bdee5872de1a354d52fff6183.jpeg",
+    },
     name: "Yzéron",
-    otherGears: null,
-    otherRemarks: null,
+    otherGears: undefined,
+    otherRemarks: undefined,
     parkings: [],
-    restaurants: [],
-    rockTypeLabel: "Gneiss",
+    rockType: "Gneiss",
     sectors: sectors,
-    securityInstructions: null,
-    status: "validated",
-    type: null,
-    updatedAt: "2021-11-06 20:58:31",
+    securityInstructions: undefined,
+    status: "Validated",
+    topoType: 'Boulder',
 }

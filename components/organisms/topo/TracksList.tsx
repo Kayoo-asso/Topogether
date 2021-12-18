@@ -1,15 +1,16 @@
-import { AverageNote, GradeCircle } from 'components';
 import React from 'react';
+import { AverageNote, GradeCircle } from 'components';
 import { GradeEnum, Track } from 'types';
 
 interface TracksListProps {
     tracks: Track[],
-    displayAddButton?: boolean,
+    builderAddButton?: boolean,
     onTrackClick?: (id: number) => void,
+    onBuilderAddClick?: () => void,
 }
 
 export const TracksList: React.FC<TracksListProps> = ({
-    displayAddButton= false,
+    builderAddButton = false,
     ...props
 }: TracksListProps) => {
 
@@ -37,7 +38,7 @@ export const TracksList: React.FC<TracksListProps> = ({
       };
 
     return (
-        <div className='w-full h-[100px] border-t border-grey-light'>
+        <div className='w-full border-t border-grey-light'>
             {props.tracks.map(track => (
                 <div 
                     key={track.id}
@@ -65,8 +66,11 @@ export const TracksList: React.FC<TracksListProps> = ({
                     }
                 </div>
             ))}
-            {displayAddButton &&
-                <div className='ktext-subtitle text-grey-medium px-5 py-5 cursor-pointer border-b border-grey-light'>
+            {builderAddButton &&
+                <div 
+                    className='ktext-subtitle text-grey-medium px-5 py-5 cursor-pointer border-b border-grey-light'
+                    onClick={props.onBuilderAddClick}
+                >
                     <span className='ml-2 mr-5 text-xl'>+</span> <span>Nouveau passage</span>
                 </div>
             }

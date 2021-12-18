@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { GradeCircle } from 'components';
+import { GradeEnum, gradeToLightGrade, LightGradeEnum } from 'types';
 
 interface GradeScaleProps {
-    grades: (string | number)[],
-    unselectedGrades?: (string | number)[],
+    grades: GradeEnum[] | LightGradeEnum[],
+    unselectedGrades?: GradeEnum[] | LightGradeEnum[],
+    className?: 'string',
     clickable?: boolean,
     onCircleClick?: (grade: string | number) => void,
 }
@@ -12,12 +14,12 @@ export const GradeScale: React.FC<GradeScaleProps> = ({
     clickable = false,
     ...props
 }: GradeScaleProps) => {
-    const allGrades = [3, 4, 5, 6, 7, 8, 9];
-    const grades = props.grades.map(Number);
+    const allGrades: LightGradeEnum[] = [3, 4, 5, 6, 7, 8, 9];
+    const grades = props.grades.map(grade => gradeToLightGrade(grade)).map(Number);
     const [unselectedGrades, setUnselectedGrades] = useState(props.unselectedGrades?.map(Number));
 
     return (
-        <div className="flex">
+        <div className={`flex ${props.className ? props.className : ''}`}>
             {allGrades.map((grade, index) => {
                 if (grades.includes(grade)) {
                     return (
@@ -29,7 +31,7 @@ export const GradeScale: React.FC<GradeScaleProps> = ({
                             clickable={clickable}
                             onClick={() => {
                                 if (clickable) {
-                                    let newUnselectedGrades: number[] = JSON.parse(JSON.stringify(unselectedGrades));
+                                    let newUnselectedGrades: LightGradeEnum[] = JSON.parse(JSON.stringify(unselectedGrades));
                                     if (newUnselectedGrades?.includes(grade)) newUnselectedGrades = newUnselectedGrades.filter(g => g !== grade)
                                     else newUnselectedGrades.push(grade);
                                     setUnselectedGrades(newUnselectedGrades);

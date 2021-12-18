@@ -69,7 +69,7 @@ export const MobileSlideover: React.FC<MobileSlideoverProps> = ({
             >
                 <div className='bg-grey-light rounded-full h-[6px] w-3/12 shadow mt-[8px]'></div>
             </div>
-            <div className='overflow-scroll h-full'>
+            <div className='h-full'>
                 {props.children}
             </div>
         </div>

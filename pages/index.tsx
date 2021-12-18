@@ -19,12 +19,16 @@ const PageMap: NextPage = () => {
     let newFakeTopo = fakeTopo;
     for (let i=0; i<fakeTopo.sectors.length; i++) {
       const sector = fakeTopo.sectors[i];
-      for (let j=0; j<sector.boulders.length; j++) {
-        const boulder = sector.boulders[j];
-        newFakeTopo.sectors[i].boulders[j].orderIndex = j+1;
-        for (let k=0; k < boulder.tracks.length; k++) {
-          const track = boulder.tracks[k];
-          newFakeTopo.sectors[i].boulders[j].tracks[k].orderIndex = k+1;
+      if (sector.boulders) {
+        for (let j=0; j < sector.boulders.length; j++) {
+          const boulder = sector.boulders[j];
+          // newFakeTopo.sectors[i].boulders[j].orderIndex = j+1;
+          if (boulder.tracks) {
+            for (let k=0; k < boulder.tracks.length; k++) {
+              const track = boulder.tracks[k];
+              // delete newFakeTopo.sectors[i].boulders[j].tracks[k].orientationIds;
+            }
+          }
         }
       }
     }
@@ -48,6 +52,7 @@ const PageMap: NextPage = () => {
     
       <BoulderSlideover 
         boulder={fakeTopo.sectors[0].boulders[0]}
+        topoCreatorId={3}
       />
       
       {/* <Map 
