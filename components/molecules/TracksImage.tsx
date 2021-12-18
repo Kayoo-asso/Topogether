@@ -4,9 +4,8 @@ import {
   Area, Coordinates, ImageAfterServer, ImageDimension, Line, Track,
 } from 'types';
 import { SVGArea } from 'components';
-import { PointEnum, AreaEnum, DrawerToolEnum } from 'enums';
+import { PointEnum, AreaEnum, DrawerToolEnum } from 'types';
 import {
-  getLightGradeFromDiffId,
   getMousePosInside,
   getPathFromPoints,
 } from '../../helpers';
@@ -301,7 +300,7 @@ export const TracksImage: React.FC<TracksImageProps> = ({
                 }}
               >
                 <image
-                  href={`/assets/icons/colored/hand-full/_hand-full-${typeof track.difficultyId !== 'number' ? 'grey' : getLightGradeFromDiffId(track.difficultyId)}.svg`}
+                  href={`/assets/icons/colored/hand-full/_hand-full-${track.grade ? track.grade[0] : 'grey'}.svg`}
                   width={iconWidth}
                 />
               </svg>
@@ -330,7 +329,7 @@ export const TracksImage: React.FC<TracksImageProps> = ({
                 }}
               >
                 <image
-                  href={`/assets/icons/colored/climbing-shoe-full/_climbing-shoe-full-${typeof track.difficultyId !== 'number' ? 'grey' : getLightGradeFromDiffId(track.difficultyId)}.svg`}
+                  href={`/assets/icons/colored/climbing-shoe-full/_climbing-shoe-full-${track.grade ? track.grade[0] : 'grey'}.svg`}
                   width={iconWidth}
                 />
               </svg>
@@ -359,7 +358,7 @@ export const TracksImage: React.FC<TracksImageProps> = ({
                 }}
               >
                 <image
-                  href={`/assets/icons/colored/quickdraw/_quickdraw-${typeof track.difficultyId !== 'number' ? 'grey' : getLightGradeFromDiffId(track.difficultyId)}.svg`}
+                  href={`/assets/icons/colored/quickdraw/_quickdraw-${track.grade ? track.grade[0] : 'grey'}.svg`}
                   width={iconWidth}
                 />
               </svg>
@@ -407,8 +406,8 @@ export const TracksImage: React.FC<TracksImageProps> = ({
   const getCursorUrl = () => {
     let cursorColor = 'grey';
     const currentTrack = props.tracks.find((track) => track.id === props.currentTrackId);
-    if (currentTrack?.difficultyId)
-      cursorColor = getLightGradeFromDiffId(currentTrack.difficultyId) || 'grey';
+    if (currentTrack?.grade)
+      cursorColor = currentTrack.grade[0] || 'grey';
     
     let cursorUrl = '/assets/icons/colored/'
     switch (props.currentTool) {

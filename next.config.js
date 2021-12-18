@@ -12,7 +12,7 @@ module.exports = withPWA({
     disable: process.env.NODE_ENV === 'development'
   },
   images: {
-    domains: ['image-component.nextjs.gallery'],
+    domains: ['builder.topogether.com'],
   },
   eslint: {
     // Warning: This allows production builds to successfully complete even if

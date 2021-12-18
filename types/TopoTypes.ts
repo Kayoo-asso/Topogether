@@ -1,3 +1,4 @@
+import { GradeEnum } from "./enums";
 import { Area, Coordinates, GeoCoordinates } from "./GeometricTypes";
 import { ImageAfterServer, ImageBeforeServer, ImageDimension } from "./ImageTypes";
 
@@ -86,7 +87,7 @@ export type Track = {
   isTraverse?: boolean,
   isSittingStart?: boolean,
   anchorNumber?: number,
-  difficultyId?: number,
+  grade?: GradeEnum,
   description?: string,
   receptionId?: number,
   techniqueIds?: number[],

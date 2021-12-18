@@ -1,20 +1,18 @@
-import { Topo } from "types";
-import { getLightGradeFromDiffIds } from ".";
+import { GradeEnum, Topo } from "types";
 
-export const getDifficultiesNbFromTopos = (topo: Topo) => {
-  const diffIds: number[] = [];
+export const getGradesNbFromTopos = (topo: Topo) => {
+  const grades: GradeEnum[] = [];
   for (const sector of topo.sectors) {
     if (sector.boulders) {
       for (const boulder of sector.boulders) {
         if (boulder.tracks) {
           for (const track of boulder.tracks) {
-            if (track.difficultyId) diffIds.push(track.difficultyId);
+            if (track.grade) grades.push(track.grade);
           }
         }
       }
     }
   }
-  const difficultiesList = getLightGradeFromDiffIds(diffIds);
   
   const difficultiesNb: {
     [key: string]: number, 
@@ -28,6 +26,6 @@ export const getDifficultiesNbFromTopos = (topo: Topo) => {
     '9': 0
   };
 
-  difficultiesList.forEach(difficulty => difficultiesNb[difficulty] += 1);
+  grades.forEach(grade => difficultiesNb[grade[0]] += 1);
   return difficultiesNb;
 }
