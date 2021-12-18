@@ -1,4 +1,3 @@
-import { useEffect } from '@storybook/addons';
 import React, {
   useRef, useState,
 } from 'react';

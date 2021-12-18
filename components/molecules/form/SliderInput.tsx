@@ -1,8 +1,7 @@
 import React from 'react';
-import {
-  Slider, Handles, Rail, Tracks, SliderItem,
-} from 'react-compound-slider';
+import { SliderItem } from 'react-compound-slider';
 import { Color } from '../../../types';
+import { BaseSliderInput } from './BaseSliderInput';
 
 interface HandleProps {
   color: Color,
@@ -24,23 +23,6 @@ const Handle = (props: HandleProps) => (
   </div>
 );
 
-interface TrackProps {
-  source: { percent: number },
-  target: { percent: number },
-  getTrackProps: () => void
-}
-
-const Track = ({ source, target, getTrackProps }:TrackProps) => (
-  <div
-    className="absolute h-1 z-10 mt-4 rounded-lg bg-grey-medium cursor-pointer"
-    style={{
-      left: `${source.percent}%`,
-      width: `${target.percent - source.percent}%`,
-    }}
-    {...getTrackProps()}
-  />
-);
-
 interface SliderInputProps {
   name: string,
   domain?: number[],
@@ -49,68 +31,28 @@ interface SliderInputProps {
   connectTracks?: boolean,
   onChange: (e: readonly number[]) => void,
   color: Color;
-  handleColors: { [color: string]: Color }
 }
 
-export const SliderInput = ({
+export const SliderInput: React.FC<SliderInputProps> = ({
   domain = [3, 7],
   connectTracks = true,
-  color = 'main',
+  step = 1,
   ...props
-}: SliderInputProps) => {
-  if (domain[0] === domain[1]) {
-    domain[1]++;
-  } else if (domain[0] > domain[1]) {
-    domain.reverse();
-  }
-  return (
-    <div
-      id={`slider-${props.name}`}
-      className="relative w-full ml-px h-8"
-    >
-      <Slider
-        domain={domain}
-        values={props.values}
-        step={props.step}
-        mode={1}
-        onChange={(e) => props.onChange(e)}
-      >
-        <Rail>
-          {({ getRailProps }) => (
-            <div className="absolute w-full h-1 mt-4 rounded-lg bg-grey-light cursor-pointer" {...getRailProps()} />
-          )}
-        </Rail>
-        <Handles>
-          {({ handles, getHandleProps }) => (
-            <div className="">
-              {handles.map((handle) => (
-                <Handle
-                  color={color}
-                  key={handle.id}
-                  handle={handle}
-                  getHandleProps={getHandleProps}
-                />
-              ))}
-            </div>
-          )}
-        </Handles>
-        {connectTracks && (
-        <Tracks left={false} right={false}>
-          {({ tracks, getTrackProps }) => (
-            <div className="">
-              {tracks.map(({ id, source, target }) => (
-                <Track
-                  key={id}
-                  source={source}
-                  target={target}
-                  getTrackProps={getTrackProps}
-                />
-              ))}
-            </div>
-          )}
-        </Tracks>
-        )}
-      </Slider>
-    </div>
-  );
-};
+}: SliderInputProps) => (
+  <BaseSliderInput
+    name={props.name}
+    values={props.values || domain}
+    step={step}
+    onChange={props.onChange}
+    domain={domain}
+    connectTracks={connectTracks}
+    handleCreator={(handle, getHandleProps) => (
+      <Handle
+        color="main"
+        handle={handle}
+        getHandleProps={getHandleProps}
+        key={handle.id}
+      />
+    )}
+  />
+);
