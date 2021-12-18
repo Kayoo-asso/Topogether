@@ -2,7 +2,6 @@ import React, { ReactNode } from 'react';
 import {
   Slider, Handles, Rail, Tracks, SliderItem, GetHandleProps,
 } from 'react-compound-slider';
-import { Color } from '../../../types';
 
 interface TrackProps {
   source: { percent: number },
@@ -22,8 +21,7 @@ const Track = ({ source, target, getTrackProps }:TrackProps) => (
 );
 
 interface BaseSliderInputProps {
-  name: string,
-  domain?: number[],
+  domain: number[],
   values: number[],
   step: number,
   connectTracks?: boolean,
@@ -32,21 +30,18 @@ interface BaseSliderInputProps {
 }
 
 export const BaseSliderInput: React.FC<BaseSliderInputProps> = ({
-  domain = [3, 7],
   connectTracks = true,
   step = 1,
   ...props
 }: BaseSliderInputProps) => {
-  if (domain[0] === domain[1]) {
-    domain[1]++;
+  const { domain } = props;
+  if (props.domain[0] === props.domain[1]) {
+    domain[1] += 1;
   } else if (domain[0] > domain[1]) {
     domain.reverse();
   }
   return (
-    <div
-      id={`slider-${props.name}`}
-      className="relative w-full ml-px h-8"
-    >
+    <div className="relative w-full ml-px h-8">
       <Slider
         domain={domain}
         values={props.values}

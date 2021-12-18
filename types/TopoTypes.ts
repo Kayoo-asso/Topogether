@@ -1,6 +1,6 @@
-import { GradeEnum } from "./enums";
-import { Area, Coordinates, GeoCoordinates } from "./GeometricTypes";
-import { ImageAfterServer, ImageBeforeServer, ImageDimension } from "./ImageTypes";
+import { GradeEnum } from './enums';
+import { Area, Coordinates, GeoCoordinates } from './GeometricTypes';
+import { ImageAfterServer, ImageBeforeServer, ImageDimension } from './ImageTypes';
 
 export type Topo = {
   id: number,
@@ -38,7 +38,7 @@ export type Topo = {
   parkings?: Parking[],
   sectors: Sector[],
   journeys?: Journey[],
-}
+};
 
 export type Parking = {
   id: number,
@@ -46,11 +46,11 @@ export type Parking = {
   placeNumber?: number,
   description?: string,
   image?: ImageAfterServer,
-}
+};
 
 export type Journey = {
   id: number,
-}
+};
 
 export type Sector = {
   id: number,
@@ -58,7 +58,7 @@ export type Sector = {
   description?: string,
   boulders?: Boulder[],
   wayPoints?: Waypoint[],
-}
+};
 
 export type Waypoint = {
   id: number,
@@ -66,7 +66,7 @@ export type Waypoint = {
   location: GeoCoordinates,
   image?: ImageAfterServer,
   description?: string,
-}
+};
 
 export type Boulder = {
   id: number,
@@ -78,7 +78,7 @@ export type Boulder = {
   hasDangerousDescent?: boolean,
   images?: ImageAfterServer[],
   tracks?: Track[],
-}
+};
 
 export type Track = {
   id: number,
@@ -107,6 +107,6 @@ export type Line = {
   feetDeparturePoints?: Coordinates[],
   anchorPoints?: Coordinates[],
   forbiddenAreas?: Area[],
-}
+};
 
 export type Grade = 3 | 4 | 5 | 6 | 7 | 8 | 9;
