@@ -1,15 +1,15 @@
 import React from 'react';
-import { getDifficultiesNbFromTopos } from 'helpers';
-import { Grade } from 'types';
+import { getGradesNbFromTopos } from 'helpers';
+import { Grade, Topo } from 'types';
 
 
 interface GradeHistogramProps {
-    topo: any,
+    topo: Topo,
 }
 
 export const GradeHistogram: React.FC<GradeHistogramProps> = (props: GradeHistogramProps) => {
     const gradeArray: Grade[] = [3, 4, 5, 6, 7, 8, 9];
-    const difficultiesNb = getDifficultiesNbFromTopos(props.topo);
+    const difficultiesNb = getGradesNbFromTopos(props.topo);
     const difficultyMaxNb = Object.values(difficultiesNb).reduce((maxNb, difficultyNb) => 
       maxNb < difficultyNb ? difficultyNb: maxNb
     );

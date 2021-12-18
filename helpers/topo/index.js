@@ -1,2 +1,2 @@
-export * from './getDifficultiesNbFromTopos';
+export * from './getGradesNbFromTopos';
 export * from './getGradesFromBoulder';

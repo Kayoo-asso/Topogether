@@ -14,7 +14,7 @@ export const getGradesNbFromTopos = (topo: Topo) => {
     }
   }
   
-  const difficultiesNb: {
+  const gradesNb: {
     [key: string]: number, 
   } = {
     '3': 0, 
@@ -26,6 +26,6 @@ export const getGradesNbFromTopos = (topo: Topo) => {
     '9': 0
   };
 
-  grades.forEach(grade => difficultiesNb[grade[0]] += 1);
-  return difficultiesNb;
+  grades.forEach(grade => gradesNb[grade[0]] += 1);
+  return gradesNb;
 }
