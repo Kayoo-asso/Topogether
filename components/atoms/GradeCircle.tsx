@@ -1,7 +1,8 @@
 import React from 'react';
+import { GradeEnum, LightGradeEnum } from 'types';
 
 interface GradeCircleProps {
-  grade: number | string,
+  grade: GradeEnum | LightGradeEnum,
   colored?: boolean,
   selected?: boolean,
   clickable?: boolean
@@ -15,7 +16,7 @@ export const GradeCircle: React.FC<GradeCircleProps> = ({
   selected = true,
   ...props
 }: GradeCircleProps) => {
-  const grade = typeof props.grade === 'string' ? parseInt(props.grade.split('')[0], 10) : props.grade;
+  const grade = typeof props.grade === 'string' ? parseInt(props.grade[0], 10) : props.grade;
   const getColorStyle = () => {
     if (colored) {
       switch (grade) {
@@ -55,7 +56,7 @@ export const GradeCircle: React.FC<GradeCircleProps> = ({
             ${props.onClick ? 'cursor-pointer' : 'cursor-default'} 
             `}
       >
-        {props.content || props.grade}
+        {props.content !== undefined ? props.content : grade}
       </span>
     </div>
   );
