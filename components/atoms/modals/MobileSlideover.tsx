@@ -4,6 +4,8 @@ interface MobileSlideoverProps {
     open?: boolean,
     onlyFull?: boolean,
     initialFull?: boolean,
+    onSizeChange?: (full: boolean) => void,
+    onClose?: () => void,
     children: any,
 }
 
@@ -14,9 +16,9 @@ export const MobileSlideover: React.FC<MobileSlideoverProps> = ({
     ...props
 }: MobileSlideoverProps) => {
     const fullTranslate = 20; // 100% - x of the screen
-    const littleTranslate = 80;
+    const littleTranslate = 85;
     const [full, setFull] = useState(initialFull);
-    const [translateY, setTranslateY] = useState<number>();
+    const [translateY, setTranslateY] = useState<number>(0);
     const [transition, setTransition] = useState(true);
     const [swipeUp, setSwipeUp] = useState(false);
 
@@ -40,16 +42,20 @@ export const MobileSlideover: React.FC<MobileSlideoverProps> = ({
     function handleTouchEnd() {
         setTransition(true);
         if (Math.abs(touchStart - touchEnd) > 50) {    
-            if (swipeUp) {
+            if (swipeUp) { //FULL
                 setTranslateY(fullTranslate);
                 setFull(true);
+                if (props.onSizeChange) props.onSizeChange(true);
             }
             else {    
-                if (onlyFull || translateY > littleTranslate)
-                    setTranslateY(100)
-                else { 
+                if (onlyFull || translateY > littleTranslate) { //CLOSE
+                    setTranslateY(100);
+                    if (props.onClose) props.onClose();
+                }
+                else { //LITTLE
                     setTranslateY(littleTranslate);
                     setFull(false);
+                    if (props.onSizeChange) props.onSizeChange(false);
                 }
             }
         }

@@ -3,6 +3,7 @@ import { GradeEnum, LightGradeEnum } from 'types';
 
 interface GradeCircleProps {
   grade: GradeEnum | LightGradeEnum,
+  size?: 'little' | 'normal',
   colored?: boolean,
   selected?: boolean,
   clickable?: boolean
@@ -14,6 +15,7 @@ interface GradeCircleProps {
 export const GradeCircle: React.FC<GradeCircleProps> = ({
   colored = true,
   selected = true,
+  size = 'normal',
   ...props
 }: GradeCircleProps) => {
   const grade = typeof props.grade === 'string' ? parseInt(props.grade[0], 10) : props.grade;
@@ -42,7 +44,8 @@ export const GradeCircle: React.FC<GradeCircleProps> = ({
 
   return (
     <div
-      className={`relative p-3 w-6 h-6 border-2 box-border flex items-center text-center justify-center rounded-full ktext-subtitle 
+      className={`relative box-border flex items-center text-center justify-center rounded-full 
+            ${size === 'normal' ? 'p-3 w-6 h-6 border-2' : 'p-1 w-5 h-5 border'} 
             ${props.className ? props.className : ''} 
             ${getColorStyle()} 
             ${props.onClick ? 'cursor-pointer' : ''} 
@@ -52,9 +55,7 @@ export const GradeCircle: React.FC<GradeCircleProps> = ({
       role="button"
       tabIndex={0}
     >
-      <span className={`
-            ${props.onClick ? 'cursor-pointer' : 'cursor-default'} 
-            `}
+      <span className={`ktext-subtitle ${size === 'little' ? 'text-xs' : ''} ${props.onClick ? 'cursor-pointer' : 'cursor-default'}`}
       >
         {props.content !== undefined ? props.content : grade}
       </span>
