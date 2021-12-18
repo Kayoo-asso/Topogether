@@ -18,19 +18,19 @@ export const TracksList: React.FC<TracksListProps> = ({
         if (grade) {
           switch (parseInt(grade[0])) {
             case 3:
-              return 'text-diff-3';
+              return 'text-grade-3';
             case 4:
-                return 'text-diff-4';
+                return 'text-grade-4';
             case 5:
-                return 'text-diff-5';
+                return 'text-grade-5';
             case 6:
-                return 'text-diff-6';
+                return 'text-grade-6';
             case 7:
-                return 'text-diff-7';
+                return 'text-grade-7';
             case 8:
-                return 'text-diff-8';
+                return 'text-grade-8';
             case 9:
-                return 'text-diff-9';
+                return 'text-grade-9';
             default:
               return 'bg-grey-light';
           }
