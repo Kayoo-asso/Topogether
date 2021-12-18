@@ -1,9 +1,19 @@
-import React from 'react';
+import type { NextPage } from 'next';
+import { ProfileDesktop, ProfileMobile } from 'components';
+import { isDesktop, isMobile } from 'react-device-detect';
 
-const TODO:React.FC = (props) => {
-    return (
-        <div></div>
-    )
-}
+const ProfilePage: NextPage = () => {
 
-export default TODO; 
+  return (
+    <>
+      {isMobile &&
+        <ProfileMobile />
+      }
+      {isDesktop &&
+        <ProfileDesktop />
+      }
+    </>
+  )
+};
+
+export default ProfilePage;

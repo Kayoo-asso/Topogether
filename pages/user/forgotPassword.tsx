@@ -1,9 +1,19 @@
-import React from 'react';
+import type { NextPage } from 'next';
+import { ForgotPasswordDesktop, ForgotPasswordMobile } from 'components';
+import { isDesktop, isMobile } from 'react-device-detect';
 
-const TODO:React.FC = (props) => {
-    return (
-        <div></div>
-    )
-}
+const ForgotPasswordPage: NextPage = () => {
 
-export default TODO; 
+  return (
+    <>
+      {isMobile &&
+        <ForgotPasswordMobile />
+      }
+      {isDesktop &&
+        <ForgotPasswordDesktop />
+      }
+    </>
+  )
+};
+
+export default ForgotPasswordPage;

@@ -1,9 +1,19 @@
-import React from 'react';
+import type { NextPage } from 'next';
+import { DashboardDesktop, DashboardMobile } from 'components';
+import { isDesktop, isMobile } from 'react-device-detect';
 
-const TODO:React.FC = (props) => {
-    return (
-        <div></div>
-    )
-}
+const DashboardPage: NextPage = () => {
 
-export default TODO; 
+  return (
+    <>
+      {isMobile &&
+        <DashboardMobile />
+      }
+      {isDesktop &&
+        <DashboardDesktop />
+      }
+    </>
+  )
+};
+
+export default DashboardPage;

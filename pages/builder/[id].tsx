@@ -1,9 +1,23 @@
-import React from 'react';
+import type { NextPage } from 'next';
+import { BuilderMapDesktop, BuilderMapMobile } from 'components';
+import { isDesktop, isMobile } from 'react-device-detect';
+import { useRouter } from 'next/router';
 
-const TODO:React.FC = (props) => {
+const BuilderMapPage: NextPage = () => {
+    const router = useRouter();
+    const { topoCleanId } = router.query;
+
+    if (typeof topoCleanId !== 'string') return null;
     return (
-        <div></div>
+        <>
+            {isMobile &&
+                <BuilderMapMobile />
+            }
+            {isDesktop &&
+                <BuilderMapDesktop />
+            }
+        </>
     )
-}
+};
 
-export default TODO; 
+export default BuilderMapPage;
