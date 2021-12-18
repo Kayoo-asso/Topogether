@@ -27,7 +27,7 @@ module.exports = {
       },
       white: colors.white,
       error: '#FF686B',
-      diff: {
+      grade: {
         3: '#FFD600',
         4: '#05F6A0',
         5: '#23CAFF',

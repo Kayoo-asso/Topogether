@@ -21,19 +21,19 @@ export const GradeCircle: React.FC<GradeCircleProps> = ({
     if (colored) {
       switch (grade) {
         case 3:
-          return selected ? 'bg-diff-3 border-diff-3 text-white' : 'border-diff-3 text-diff-3 ';
+          return selected ? 'bg-grade-3 border-grade-3 text-white' : 'border-grade-3 text-grade-3 ';
         case 4:
-          return selected ? 'bg-diff-4 border-diff-4 text-white' : 'border-diff-4 text-diff-4 ';
+          return selected ? 'bg-grade-4 border-grade-4 text-white' : 'border-grade-4 text-grade-4 ';
         case 5:
-          return selected ? 'bg-diff-5 border-diff-5 text-white' : 'border-diff-5 text-diff-5 ';
+          return selected ? 'bg-grade-5 border-grade-5 text-white' : 'border-grade-5 text-grade-5 ';
         case 6:
-          return selected ? 'bg-diff-6 border-diff-6 text-white' : 'border-diff-6 text-diff-6 ';
+          return selected ? 'bg-grade-6 border-grade-6 text-white' : 'border-grade-6 text-grade-6 ';
         case 7:
-          return selected ? 'bg-diff-7 border-diff-7 text-white' : 'border-diff-7 text-diff-7 ';
+          return selected ? 'bg-grade-7 border-grade-7 text-white' : 'border-grade-7 text-grade-7 ';
         case 8:
-          return selected ? 'bg-diff-8 border-diff-8 text-white' : 'border-diff-8 text-diff-8 ';
+          return selected ? 'bg-grade-8 border-grade-8 text-white' : 'border-grade-8 text-grade-8 ';
         case 9:
-          return selected ? 'bg-diff-9 border-diff-9 text-white' : 'border-diff-9 text-diff-9 ';
+          return selected ? 'bg-grade-9 border-grade-9 text-white' : 'border-grade-9 text-grade-9 ';
         default:
           return 'bg-grey-light';
       }
