@@ -45,14 +45,15 @@ const PageMap: NextPage = () => {
         onBackClick={() => {}}
       />
 
-    <Button 
+    {/* <Button 
       content="Click me"
       onClick={() => isShow(show => !show)}
-    />
+    /> */}
     
       <BoulderSlideover 
         boulder={fakeTopo.sectors[0].boulders[0]}
         topoCreatorId={3}
+        forBuilder
       />
       
       {/* <Map 
