@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { Area, Coordinates } from 'types';
+import { Polygon, Point } from 'types';
 import { DraggablePolyline } from '.';
 import { pointsToPolylineStr } from '../../../helpers';
 import { SVGPoint } from './SVGPoint';
 
 interface SVGAreaProps {
-  area: Area,
+  area: Polygon,
   ratio: {
     rX: number,
     rY: number,
   },
   editable: boolean,
   pointSize: number,
-  onChange?: (area: Area) => void,
+  onChange?: (area: Polygon) => void,
 }
 
 export const SVGArea: React.FC<SVGAreaProps> = ({
@@ -23,29 +23,29 @@ export const SVGArea: React.FC<SVGAreaProps> = ({
 }: SVGAreaProps) => {
   const [area, setArea] = useState(props.area);
 
-  const updateAreaPoint = (index: number, pos: Coordinates) => {
+  const updateAreaPoint = (index: number, pos: Point) => {
     const newArea = { ...area };
-    newArea.points[index] = {
-      ...newArea.points[index],
-      posX: pos.posX + pointSize / 2,
-      posY: pos.posY + pointSize / 2,
+    newArea.coordinates[index] = {
+      ...newArea.coordinates[index],
+      x: pos.x + pointSize / 2,
+      y: pos.y + pointSize / 2,
     };
     if (index === 0) {
-      newArea.points[area.points.length - 1] = {
-        ...newArea.points[area.points.length - 1],
-        posX: pos.posX + pointSize / 2,
-        posY: pos.posY + pointSize / 2,
+      newArea.coordinates[area.coordinates.length - 1] = {
+        ...newArea.coordinates[area.coordinates.length - 1],
+        x: pos.x + pointSize / 2,
+        y: pos.y + pointSize / 2,
       };
     }
     setArea(newArea);
   };
   const dragAllPoints = (diffX: number, diffY: number) => {
     const newArea = { ...area };
-    for (let i = 0; i < newArea.points.length; i++) {
-      newArea.points[i] = {
-        ...newArea.points[i],
-        posX: newArea.points[i].posX + diffX,
-        posY: newArea.points[i].posY + diffY,
+    for (let i = 0; i < newArea.coordinates.length; i++) {
+      newArea.coordinates[i] = {
+        ...newArea.coordinates[i],
+        x: newArea.coordinates[i].x + diffX,
+        y: newArea.coordinates[i].y + diffY,
       };
     }
     setArea(newArea);
@@ -56,14 +56,14 @@ export const SVGArea: React.FC<SVGAreaProps> = ({
   }, [props.area]);
 
   const renderPolyline = () => {
-    if (props.area && props.area.points) {
+    if (props.area && props.area.coordinates) {
       const lineStrokeWidth = 2 * ratio.rX;
       if (editable) {
         return (
           <DraggablePolyline 
             className={"stroke-second fill-second/10 z-20 svg-area"}
             strokeWidth={lineStrokeWidth}
-            points={area.points}
+            points={area.coordinates}
             onDrag={(diffX, diffY) => {
               dragAllPoints(diffX, diffY);
             }}
@@ -77,7 +77,7 @@ export const SVGArea: React.FC<SVGAreaProps> = ({
       return (
         <polyline
           className="stroke-second fill-second z-20"
-          points={pointsToPolylineStr(area.points)}
+          points={pointsToPolylineStr(area.coordinates)}
           strokeWidth={lineStrokeWidth}
         />
       );
@@ -85,15 +85,15 @@ export const SVGArea: React.FC<SVGAreaProps> = ({
     return null;
   };
   const renderPoints = () => {
-    if (props.area && props.area.points) {
+    if (props.area && props.area.coordinates) {
       const SVGpoints: any[] = [];
       if (editable) {
-        area.points.forEach((point, pointIndex) => {
+        area.coordinates.forEach((point, pointIndex) => {
           SVGpoints.push(
             <SVGPoint
               key={pointIndex}
-              x={point.posX - pointSize / 2}
-              y={point.posY - pointSize / 2}
+              x={point.x - pointSize / 2}
+              y={point.y - pointSize / 2}
               draggable={editable}
               size={pointSize}
               className="fill-second"

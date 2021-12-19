@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import {
-  Area, Coordinates, ImageAfterServer, ImageDimension, Line, Track,
+  Polygon, Point, ImageAfterServer, ImageDimension, LineString, Track,
 } from 'types';
 import { SVGArea } from 'components';
 import { PointEnum, AreaEnum, DrawerToolEnum } from 'enums';
@@ -24,10 +24,10 @@ interface TracksImageProps {
   currentTrackId?: number, 
   currentTool?: DrawerToolEnum,
   boulderImageDimensions: ImageDimension,
-  onImageClick?: (pos: Coordinates | null) => void,
+  onImageClick?: (pos: Point | null) => void,
   onPointClick?: (pointType: PointEnum, index: number) => void,
-  onPolylineClick?: (line: Line) => void,
-  onAreaChange?: (areaType: AreaEnum, index: number, area: Area) => void,
+  onPolylineClick?: (line: LineString) => void,
+  onAreaChange?: (areaType: AreaEnum, index: number, area: Polygon) => void,
   onImageLoad?: (e: {
     naturalWidth: number;
     naturalHeight: number;
@@ -84,17 +84,17 @@ export const TracksImage: React.FC<TracksImageProps> = ({
     }
   }, []);
 
-  const getResizedPointsOfLine: (line: Line, pointType: PointEnum) => Coordinates[] = (line:Line, pointType: PointEnum) => {
+  const getResizedPointsOfLine: (line: LineString, pointType: PointEnum) => Point[] = (line:LineString, pointType: PointEnum) => {
     if (ratio) {
-      const resizedLinePoints: Coordinates[] = [];
-      const resizedHandDeparturePoints: Coordinates[] = [];
-      const resizedFeetDeparturePoints: Coordinates[] = [];
-      const resizedAnchorDeparturePoints: Coordinates[] = [];
+      const resizedLinePoints: Point[] = [];
+      const resizedHandDeparturePoints: Point[] = [];
+      const resizedFeetDeparturePoints: Point[] = [];
+      const resizedAnchorDeparturePoints: Point[] = [];
       if (pointType === 'LINE_POINT' && line.linePoints) {
         for (const linePoints of line.linePoints) {
           resizedLinePoints.push({
-            posX: ratio.rX * linePoints.posX,
-            posY: ratio.rY * linePoints.posY,
+            x: ratio.rX * linePoints.x,
+            y: ratio.rY * linePoints.y,
           });
         }
         return resizedLinePoints;
@@ -102,8 +102,8 @@ export const TracksImage: React.FC<TracksImageProps> = ({
       if (pointType === 'HAND_DEPARTURE_POINT' && line.handDeparturePoints) {
         for (const handDeparturePoint of line.handDeparturePoints) {
           resizedHandDeparturePoints.push({
-            posX: ratio.rX * handDeparturePoint.posX,
-            posY: ratio.rY * handDeparturePoint.posY,
+            x: ratio.rX * handDeparturePoint.x,
+            y: ratio.rY * handDeparturePoint.y,
           });
         }
         return resizedHandDeparturePoints;
@@ -111,8 +111,8 @@ export const TracksImage: React.FC<TracksImageProps> = ({
       if (pointType === 'FOOT_DEPARTURE_POINT' && line.feetDeparturePoints) {
         for (const feetDeparturePoint of line.feetDeparturePoints) {
           resizedFeetDeparturePoints.push({
-            posX: ratio.rX * feetDeparturePoint.posX,
-            posY: ratio.rY * feetDeparturePoint.posY,
+            x: ratio.rX * feetDeparturePoint.x,
+            y: ratio.rY * feetDeparturePoint.y,
           });
         }
         return resizedFeetDeparturePoints;
@@ -120,8 +120,8 @@ export const TracksImage: React.FC<TracksImageProps> = ({
       if (pointType === 'ANCHOR_POINT' && line.anchorPoints) {
         for (const anchorPoints of line.anchorPoints) {
           resizedAnchorDeparturePoints.push({
-            posX: ratio.rX * anchorPoints.posX,
-            posY: ratio.rY * anchorPoints.posY,
+            x: ratio.rX * anchorPoints.x,
+            y: ratio.rY * anchorPoints.y,
           });
         }
         return resizedAnchorDeparturePoints;
@@ -130,20 +130,20 @@ export const TracksImage: React.FC<TracksImageProps> = ({
     }
     return [];
   };
-  const getResizedPointsOfArea: (area: Area) => Area = (area: Area) => {
-    if (area.points && ratio) {
-      const newArea: Area = JSON.parse(JSON.stringify(area));
-      const resizedAreaPoints: Coordinates[] = [];
-      newArea.points.forEach((point) => {
+  const getResizedPointsOfArea: (area: Polygon) => Polygon = (area: Polygon) => {
+    if (area.coordinates && ratio) {
+      const newArea: Polygon = JSON.parse(JSON.stringify(area));
+      const resizedAreaPoints: Point[] = [];
+      newArea.coordinates.forEach((point) => {
         resizedAreaPoints.push({
-          posX: ratio.rX * point.posX,
-          posY: ratio.rY * point.posY,
+          x: ratio.rX * point.x,
+          y: ratio.rY * point.y,
         });
       });
-      newArea.points = resizedAreaPoints;
+      newArea.coordinates = resizedAreaPoints;
       return JSON.parse(JSON.stringify(newArea));
     }
-    return { points: [] };
+    return { coordinates: [] };
   };
 
   const renderPhantomTracks = () => {
@@ -166,8 +166,8 @@ export const TracksImage: React.FC<TracksImageProps> = ({
                 {displayTracksNumber && (
                   <>
                     <circle
-                      cx={getResizedPointsOfLine(line, 'LINE_POINT')[0]?.posX}
-                      cy={getResizedPointsOfLine(line, 'LINE_POINT')[0]?.posY}
+                      cx={getResizedPointsOfLine(line, 'LINE_POINT')[0]?.x}
+                      cy={getResizedPointsOfLine(line, 'LINE_POINT')[0]?.y}
                       r={9}
                       className={`z-20 opacity-40 ${props.onPolylineClick && 'cursor-pointer pointer-events-auto'}`}
                       onClick={() => {
@@ -175,8 +175,8 @@ export const TracksImage: React.FC<TracksImageProps> = ({
                       }}
                     />
                     <text
-                      x={getResizedPointsOfLine(line, 'LINE_POINT')[0]?.posX}
-                      y={getResizedPointsOfLine(line, 'LINE_POINT')[0]?.posY}
+                      x={getResizedPointsOfLine(line, 'LINE_POINT')[0]?.x}
+                      y={getResizedPointsOfLine(line, 'LINE_POINT')[0]?.y}
                       className={`z-20 opacity-40 ${props.onPolylineClick && 'cursor-pointer'}`}
                       textAnchor="middle"
                       stroke="white"
@@ -220,8 +220,8 @@ export const TracksImage: React.FC<TracksImageProps> = ({
                 {displayTracksNumber && (
                   <>
                     <circle
-                      cx={getResizedPointsOfLine(line, 'LINE_POINT')[0]?.posX}
-                      cy={getResizedPointsOfLine(line, 'LINE_POINT')[0]?.posY}
+                      cx={getResizedPointsOfLine(line, 'LINE_POINT')[0]?.x}
+                      cy={getResizedPointsOfLine(line, 'LINE_POINT')[0]?.y}
                       r={9}
                       className={`z-40 ${props.onPolylineClick && 'cursor-pointer pointer-events-auto'}`}
                       onClick={() => {
@@ -229,8 +229,8 @@ export const TracksImage: React.FC<TracksImageProps> = ({
                       }}
                     />
                     <text
-                      x={getResizedPointsOfLine(line, 'LINE_POINT')[0]?.posX}
-                      y={getResizedPointsOfLine(line, 'LINE_POINT')[0]?.posY}
+                      x={getResizedPointsOfLine(line, 'LINE_POINT')[0]?.x}
+                      y={getResizedPointsOfLine(line, 'LINE_POINT')[0]?.y}
                       className={`z-40 ${props.onPolylineClick && 'cursor-pointer'}`}
                       textAnchor="middle"
                       stroke={'white'}
@@ -264,8 +264,8 @@ export const TracksImage: React.FC<TracksImageProps> = ({
             <svg
               key={`linepoint-${index}`}
               className={`${props.currentTool === 'ERASER' ? 'scale-125' : ''}`}
-              x={point.posX - pointSize}
-              y={point.posY - pointSize}
+              x={point.x - pointSize}
+              y={point.y - pointSize}
               onClick={(e) => {
                 if (props.onPointClick) props.onPointClick('LINE_POINT', index);
               }}
@@ -294,8 +294,8 @@ export const TracksImage: React.FC<TracksImageProps> = ({
               <svg
                 key={`hand-${index}`}
                 className={`${props.currentTool === 'ERASER' ? 'scale-125' : ''}`}
-                x={point.posX}
-                y={point.posY}
+                x={point.x}
+                y={point.y}
                 onClick={(e) => {
                   if (props.onPointClick) props.onPointClick('HAND_DEPARTURE_POINT', index);
                 }}
@@ -323,8 +323,8 @@ export const TracksImage: React.FC<TracksImageProps> = ({
               <svg
                 key={index}
                 className={`${props.currentTool === 'ERASER' ? 'scale-125' : ''}`}
-                x={point.posX}
-                y={point.posY}
+                x={point.x}
+                y={point.y}
                 onClick={(e) => {
                   if (props.onPointClick) props.onPointClick('FOOT_DEPARTURE_POINT', index);
                 }}
@@ -352,8 +352,8 @@ export const TracksImage: React.FC<TracksImageProps> = ({
               <svg
                 key={index}
                 className={`${props.currentTool === 'ERASER' ? 'scale-125' : ''}`}
-                x={point.posX}
-                y={point.posY}
+                x={point.x}
+                y={point.y}
                 onClick={(e) => {
                   if (props.onPointClick) props.onPointClick('ANCHOR_POINT', index);
                 }}
@@ -443,7 +443,7 @@ export const TracksImage: React.FC<TracksImageProps> = ({
               //   e.currentTarget = e.currentTarget.farthestViewportElement;
               // }
               const { posX, posY } = getMousePosInside(e);
-              props.onImageClick({ posX, posY });
+              props.onImageClick({ x: posX, y: posY });
             } else props.onImageClick(null);
           }
         }}

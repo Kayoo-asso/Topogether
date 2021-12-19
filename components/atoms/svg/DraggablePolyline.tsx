@@ -1,9 +1,9 @@
 import { pointsToPolylineStr } from 'helpers';
 import React, { useState } from 'react';
-import { Coordinates } from 'types';
+import { Point } from 'types';
 
 interface DraggablePolylineProps {
-  points: Coordinates[],
+  points: Point[],
   className?: string,
   strokeWidth?: number,
   onDrag?: (diffX: number, diffY: number) => void
