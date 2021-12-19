@@ -2,14 +2,14 @@ import React, { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import {
   Area, Coordinates, ImageAfterServer, ImageDimension, Line, Track,
+  PointEnum, AreaEnum, DrawerToolEnum,
 } from 'types';
 import { SVGArea } from 'components';
-import { PointEnum, AreaEnum, DrawerToolEnum } from 'types';
+import { staticUrl, topogetherUrl } from 'const/staticUrl';
 import {
   getMousePosInside,
   getPathFromPoints,
 } from '../../helpers';
-import { staticUrl, topogetherUrl } from 'const/staticUrl';
 
 interface TracksImageProps {
   image: ImageAfterServer,
@@ -20,7 +20,7 @@ interface TracksImageProps {
   displayTracksNumber?: boolean,
   displayTracksDetails?: boolean,
   editable?: boolean,
-  currentTrackId?: number, 
+  currentTrackId?: number,
   currentTool?: DrawerToolEnum,
   boulderImageDimensions: ImageDimension,
   onImageClick?: (pos: Coordinates | null) => void,
@@ -232,7 +232,7 @@ export const TracksImage: React.FC<TracksImageProps> = ({
                       y={getResizedPointsOfLine(line, 'LINE_POINT')[0]?.posY}
                       className={`z-40 ${props.onPolylineClick && 'cursor-pointer'}`}
                       textAnchor="middle"
-                      stroke={'white'}
+                      stroke="white"
                       strokeWidth="1px"
                       fontSize="8px"
                       dy="3px"
@@ -270,7 +270,7 @@ export const TracksImage: React.FC<TracksImageProps> = ({
               }}
             >
               <circle
-                className='pointer-events-auto'
+                className="pointer-events-auto"
                 cx={pointSize}
                 cy={pointSize}
                 r={pointSize}
@@ -406,31 +406,30 @@ export const TracksImage: React.FC<TracksImageProps> = ({
   const getCursorUrl = () => {
     let cursorColor = 'grey';
     const currentTrack = props.tracks.find((track) => track.id === props.currentTrackId);
-    if (currentTrack?.grade)
-      cursorColor = currentTrack.grade[0] || 'grey';
-    
-    let cursorUrl = '/assets/icons/colored/'
+    if (currentTrack?.grade) { cursorColor = currentTrack.grade[0] || 'grey'; }
+
+    let cursorUrl = '/assets/icons/colored/';
     switch (props.currentTool) {
       case 'LINE_DRAWER':
         cursorUrl += `line-point/_line-point-${cursorColor}.svg`; break;
       case 'ANCHOR_DRAWER':
         cursorUrl += `quickdraw/_quickdraw-${cursorColor}.svg`; break;
       case 'ERASER':
-        cursorUrl += `_eraser-main.svg`; break;
+        cursorUrl += '_eraser-main.svg'; break;
       case 'HAND_DEPARTURE_DRAWER':
         cursorUrl += `hand-full/_hand-full-${cursorColor}.svg`; break;
       case 'FOOT_DEPARTURE_DRAWER':
         cursorUrl += `climbing-shoe-full/climbing-shoe-full-${cursorColor}.svg`; break;
       case 'FORBIDDEN_AREA_DRAWER':
-        cursorUrl += `_forbidden-area-second.svg`; break;
+        cursorUrl += '_forbidden-area-second.svg'; break;
     }
     return cursorUrl;
-  }
+  };
 
   return (
     <span>
       <svg
-        style={{ cursor: "url("+getCursorUrl()+"), auto" }}
+        style={{ cursor: `url(${getCursorUrl()}), auto` }}
         className="svg-canvas"
         width={canvasWidth}
         height={canvasHeight}
@@ -456,11 +455,11 @@ export const TracksImage: React.FC<TracksImageProps> = ({
         {displayTracksDetails && renderForbiddenAreas()}
       </svg>
 
-      <span 
+      <span
         ref={imgContainerRef}
         className="flex items-center"
       >
-        <Image 
+        <Image
           src={props.image ? (topogetherUrl + props.image.url) : staticUrl.defaultKayoo}
           alt="Rocher"
           layout="fill"
