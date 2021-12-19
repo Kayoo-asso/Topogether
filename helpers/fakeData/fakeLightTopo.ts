@@ -1,4 +1,5 @@
-import { LightTopo } from 'types';
+import Topo from 'pages/topo/[id]';
+import { LightTopo, TopoStatus } from 'types';
 
 export const fakeLightTopo: LightTopo = {
   altitude: 775.00,
@@ -184,19 +185,18 @@ export const fakeLightTopo: LightTopo = {
   adaptedToChildren: true,
   isForbiddenSite: false,
   location: { lat: 45.701356, lng: 4.607264 },
-  mainImage: {
-    id: 4,
+  image: {
+    id: '123456-145678-1567',
     url: '/public/uploads/topo/main-image/dad449499de38f1bdee5872de1a354d52fff6183.jpeg',
   },
   name: 'Yzéron',
-  numberOfBoulder: 67,
-  numberOfTrack: 162,
+  nbBoulders: 67,
+  nbTracks: 162,
   rockTypeLabel: 'Gneiss',
-  status: 'submitted',
   type: null,
-  updatedAt: '21-11-06',
-  validatedAt: '06-11-21',
-  submittedAt: '06-11-21',
+  updatedAt: new Date(2019, 1, 1),
+  validatedAt: new Date(2019, 1, 1),
+  submittedAt: new Date(2019, 1, 1),
   numberOfSectors: 7,
   numberOfBoulders: 67,
   numberOfTracks: 162,
@@ -204,6 +204,6 @@ export const fakeLightTopo: LightTopo = {
   otherRemarks: undefined,
   rockType: 'Gneiss',
   securityInstructions: undefined,
-  status: 'Validated',
+  status: TopoStatus.Validated,
   topoType: 'Boulder',
 };
