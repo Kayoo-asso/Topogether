@@ -8,7 +8,7 @@ interface TopoCardProps {
   topo: any;
 }
 // TODO: format correct de date
-export const TopoCard: React.FC<TopoCardProps> = (props: TopoCardProps) => {
+export const TopoCardDesktop: React.FC<TopoCardProps> = (props: TopoCardProps) => {
   const getIcon = () => {
     if (props.topo.status === 'validated') {
       return <Icon center wrapperClassName="stroke-1" SVGClassName="stroke-main h-6 w-6" name="checked" />;
@@ -33,7 +33,7 @@ export const TopoCard: React.FC<TopoCardProps> = (props: TopoCardProps) => {
       <div className="flex flex-row h-12 ml-4 items-center justify-center">
         {getIcon()}
         <div className="w-full mx-3 flex flex-col items-start">
-          <span className="ktext-title text-base text-dark font-bold">Yzéron</span>
+          <span className="ktext-title text-base text-dark font-bold">{props.topo.name}</span>
           <div className="text-xxs border-t-[1px] pt-1 w-full flex flex-row justify-between">
             <span>{`${props.topo.numberOfBoulder} blocs - ${props.topo.numberOfTrack} passages`}</span>
             {props.topo.validatedAt && (
