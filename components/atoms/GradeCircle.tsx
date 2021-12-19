@@ -1,8 +1,8 @@
 import React from 'react';
-import { GradeEnum, LightGradeEnum } from 'types';
+import { Grade, LightGrade } from 'types';
 
 interface GradeCircleProps {
-  grade: GradeEnum | LightGradeEnum,
+  grade: Grade | LightGrade,
   size?: 'little' | 'normal',
   colored?: boolean,
   selected?: boolean,

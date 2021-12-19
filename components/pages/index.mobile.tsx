@@ -1,7 +1,8 @@
-import { Button, Map, MobileHeader, Modal } from 'components';
+import { Button, Map, MobileHeader, Modal, TopoModal } from 'components';
 import { GeoCamera } from 'components/molecules/GeoCamera';
 import { fontainebleauLocation } from 'const';
 import { markerSize } from 'helpers';
+import { fakeLightTopo } from 'helpers/fakeData/fakeLightTopo';
 import { fakeTopo } from 'helpers/fakeData/fakeTopo';
 import React, { useCallback, useState } from 'react';
 
@@ -35,12 +36,12 @@ export const WorldMapMobile:React.FC = (props) => {
           onBackClick={() => {}}
         />
 
-        <Modal
+        <TopoModal
           open
-          withBackground={false}
-        >
-          <div></div>
-        </Modal>
+          topo={fakeLightTopo}
+          onEnter={() => {}}
+          onClose={()=> {}}
+        />
 
         {/* <GeoCamera 
           open

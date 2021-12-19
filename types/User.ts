@@ -1,4 +1,5 @@
 import { ImageAfterServer } from "./ImageTypes";
+import { UUID } from "./UUID";
 
 export type User = {
     pseudo: string,
@@ -18,3 +19,13 @@ export type User = {
 };
 
 export type Role = 'ADMIN' | 'USER';
+
+export interface Image {
+    id: UUID,
+    url: string
+    // TODO: width and height?
+}
+
+export interface TrackRating {
+    
+}

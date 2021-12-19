@@ -1,6 +1,6 @@
 //https://francoisromain.medium.com/smooth-a-svg-path-with-cubic-bezier-curves-e37b49d46c74
 
-import { Coordinates } from "types";
+import { Point } from "types";
 
 const opposedLine = (pointA: number[], pointB: number[]) => {
     const lengthX = pointB[0] - pointA[0]
@@ -43,7 +43,7 @@ const bezierCommand = (point: number[], i: number, a: number[][]) => {
  }
 
 type PathEnum = 'LINE' | 'CURVE';
-export const getPathFromPoints = (points: Coordinates[], type: PathEnum = "LINE") => {
+export const getPathFromPoints = (points: Point[], type: PathEnum = "LINE") => {
     let command: (point: number[], i: number, a: number[][]) => string;
     if (type === "LINE") command = lineCommand;
     else if (type === "CURVE") command = bezierCommand;
@@ -51,7 +51,7 @@ export const getPathFromPoints = (points: Coordinates[], type: PathEnum = "LINE"
     if (!command) return;
 
     // build the d attributes by looping over the points
-    const formattedPoints = points.map(point => [point.posX, point.posY]);
+    const formattedPoints = points.map(point => [point.x, point.y]);
     const d = formattedPoints.reduce((acc, point, i, a) =>
         i === 0 ?
             `M ${point[0]},${point[1]}` :

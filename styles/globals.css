@@ -4,8 +4,8 @@
 
  @layer components {
   .ktext-title { @apply font-sans font-normal text-lg uppercase }
-  .ktext-section-title { @apply font-sans font-semibold text-xl }
-  .ktext-subtitle { @apply font-sans font-bold text-lg uppercase }
+  .ktext-section-title { @apply font-sans font-semibold text-2xl }
+  .ktext-subtitle { @apply font-sans font-semibold text-lg uppercase }
   .ktext-base { @apply font-sans font-normal text-base }
   .ktext-base-big { @apply font-sans font-normal text-xl }
   .ktext-base-superbig { @apply font-sans font-semibold text-4xl }
@@ -16,6 +16,16 @@
   .ktext-subtext { @apply font-sans font-normal text-xxs }
 }
 
+.hide-after-two-lines {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+.hide-after-three-lines {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
 
 ::-webkit-scrollbar {
   background: transparent;

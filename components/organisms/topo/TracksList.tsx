@@ -1,6 +1,6 @@
 import React from 'react';
 import { AverageNote, GradeCircle } from 'components';
-import { GradeEnum, Track } from 'types';
+import { Grade, Track } from 'types';
 
 interface TracksListProps {
   tracks: Track[],
@@ -13,7 +13,7 @@ export const TracksList: React.FC<TracksListProps> = ({
   builderAddButton = false,
   ...props
 }: TracksListProps) => {
-  const getGradeColor = (grade: GradeEnum | undefined) => {
+  const getGradeColor = (grade: Grade | undefined) => {
     if (grade) {
       switch (parseInt(grade[0])) {
         case 3:
