@@ -1,7 +1,8 @@
-import { ImageAfterServer, ImageBeforeServer, ImageDimension } from "./ImageTypes";
+import {
+  ImageAfterServer, ImageBeforeServer, ImageDimension, ImageAfterServer, ImageBeforeServer, ImageDimension,
+} from './ImageTypes';
 import { GradeEnum } from './enums';
 import { Area, Coordinates, GeoCoordinates } from './GeometricTypes';
-import { ImageAfterServer, ImageBeforeServer, ImageDimension } from './ImageTypes';
 
 export type Topo = {
   id: number,
@@ -11,8 +12,8 @@ export type Topo = {
   topoType: 'Boulder' | 'Cliff' | 'Deep water' | 'Multi-pitch' | 'Artificial',
   status: 'Draft' | 'Submitted' | 'Validated',
   location: GeoCoordinates,
-  mainImage?: ImageAfterServer,
-  mainImageBeforeServer?: ImageBeforeServer,
+  image?: ImageAfterServer,
+  imageBeforeServer?: ImageBeforeServer,
   description?: string,
   rockType?: string,
   altitude?: number,
@@ -46,7 +47,7 @@ export type LightTopo = Omit<Topo, 'sectors' | 'journeys'> & {
   numberOfBoulders: number,
   numberOfTracks: number,
   grades: GradeEnum[],
-}
+};
 
 export type Parking = {
   id: number,
