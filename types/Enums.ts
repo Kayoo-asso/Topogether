@@ -45,3 +45,21 @@ export const gradeToLightGrade = (grade: Grade | LightGrade) : LightGrade => {
   if (typeof grade === 'number') return grade;
   return parseInt(grade[0], 10) as LightGrade;
 };
+
+export type DrawerToolEnum = 
+'LINE_DRAWER' | 
+'HAND_DEPARTURE_DRAWER' | 
+'FOOT_DEPARTURE_DRAWER' | 
+'ANCHOR_DRAWER' | 
+'FORBIDDEN_AREA_DRAWER' |
+'ERASER';
+
+export type PointEnum = 
+'LINE_POINT' | 
+'HAND_DEPARTURE_POINT' | 
+'FOOT_DEPARTURE_POINT' | 
+'ANCHOR_POINT' | 
+'FORBIDDEN_AREA_POINT';
+
+export type AreaEnum = 
+'FORBIDDEN_AREA';
