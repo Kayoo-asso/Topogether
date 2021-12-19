@@ -31,10 +31,7 @@ export const GeoCamera: React.FC<GeoCameraProps> = ({
     
     const handleCapture = () => {
         if (canvasRef.current && videoRef.current) {
-            console.log(canvasRef);
-            console.log(videoRef);
             const context = canvasRef.current.getContext("2d");
-            
 
             const canvasCW = canvasRef.current.clientWidth;
             const canvasCH = canvasRef.current.clientHeight;
