@@ -17,13 +17,12 @@ export const Button: React.FC<ButtonProps> = ({
 }: ButtonProps) => (
   <button
     className={
-                  `ktext-subtitle shadow rounded-full py-3 px-8 ${
+                  `ktext-subtitle shadow rounded-full py-3 px-8 h-[50px] ${
                     white
                       ? 'text-main bg-white border-2 border-main hover:text-main-light hover:border-main-light'
                       : 'text-white bg-main hover:bg-main-light'
-                  }${fullWidth ? 'w-full ' : ''} ${props.className}`
+                  } ${fullWidth ? 'w-full ' : ''} ${props.className}`
               }
-    style={{ height: '50px' }}
     onClick={props.onClick}
   >
     <Link href={props.href || ''}>

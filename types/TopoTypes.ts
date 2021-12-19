@@ -40,6 +40,13 @@ export type Topo = {
   journeys?: Journey[],
 };
 
+export type LightTopo = Omit<Topo, 'sectors' | 'journeys'> & {
+  numberOfSectors: number,
+  numberOfBoulders: number,
+  numberOfTracks: number,
+  grades: GradeEnum[],
+}
+
 export type Parking = {
   id: number,
   location: GeoCoordinates,

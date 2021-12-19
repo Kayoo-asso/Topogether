@@ -17,7 +17,7 @@ export const GradeScale: React.FC<GradeScaleProps> = ({
   ...props
 }: GradeScaleProps) => {
   const allGrades: LightGradeEnum[] = [3, 4, 5, 6, 7, 8, 9];
-  const grades = props.grades.map((grade) => gradeToLightGrade(grade)).map(Number);
+  const grades = props.grades?.map((grade) => gradeToLightGrade(grade)).map(Number) || [];
   const [unselectedGrades, setUnselectedGrades] = useState(props.unselectedGrades?.map(Number) || []);
 
   return (
