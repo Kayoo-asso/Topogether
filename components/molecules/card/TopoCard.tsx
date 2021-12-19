@@ -15,11 +15,11 @@ interface TopoCardProps {
 export const TopoCard: React.FC<TopoCardProps> = (props: TopoCardProps) => {
   const getIcon = () => {
     if (props.topo.status === 'validated') {
-      return <Icon center wrapperClassName="stroke-1" SVGClassName="stroke-main h-4 w-4" name="checked" />;
+      return <Icon center wrapperClassName="stroke-1" SVGClassName="stroke-main lg:h-6 lg:w-6 h-4 w-4" name="checked" />;
     } if (props.topo.status === 'submitted') {
-      return <Icon center wrapperClassName="stroke-[1.5px]" SVGClassName="stroke-third h-4 w-4 " name="recent" />;
+      return <Icon center wrapperClassName="stroke-[1.5px]" SVGClassName="stroke-third lg:h-6 lg:w-6 h-4 w-4 " name="recent" />;
     } if (props.topo.status === 'draft') {
-      return <Icon center wrapperClassName="stroke-[1.5px]" SVGClassName="stroke-second h-4 w-4" name="edit" />;
+      return <Icon center wrapperClassName="stroke-[1.5px]" SVGClassName="stroke-second lg:h-6 lg:w-6 h-4 w-4" name="edit" />;
     }
     return null;
   };
@@ -35,9 +35,11 @@ export const TopoCard: React.FC<TopoCardProps> = (props: TopoCardProps) => {
     return null;
   };
 
+  const icon = getIcon();
+
   return (
-    <Card className="m-10 relative text-center text-grey-medium bg-white flex flex-col">
-      <div className="w-full h-20 top-0 relative">
+    <Card className="relative text-center text-grey-medium bg-white flex flex-col">
+      <div className="w-full h-20 lg:h-44 top-0 relative">
         <Image
           src={props.topo.mainImage ? topogetherUrl + props.topo.mainImage.url : '/assets/img/Kayoo_defaut_image.png'}
           className="rounded-t-lg"
@@ -47,21 +49,25 @@ export const TopoCard: React.FC<TopoCardProps> = (props: TopoCardProps) => {
           priority
         />
       </div>
-      <div className="p-2 w-full flex flex-col items-start">
-        <div
-          className="w-full pr-2 truncate ktext-title text-dark font-bold text-xs"
-        >
-          {props.topo.name}
-
+      <div className="lg:pl-2 flex flex-row lg:h-12 lg:ml-4 lg:items-center lg:justify-center">
+        <div className="hidden lg:block">
+          {icon}
         </div>
-        <span className="text-xxs border-t-[1px]">{`${props.topo.numberOfBoulder} blocs - ${props.topo.numberOfTrack} passages`}</span>
-        <div className="w-full text-xxs flex flex-row items-end justify-between">
-          {getIcon()}
-          {props.topo.validatedAt && (
-            <span className="mr-1">
-              {getAction()}
-            </span>
-          )}
+        <div className="p-2 lg:pr-6 w-full flex flex-col items-start">
+          <div className="w-full pr-2 truncate ktext-title text-dark font-bold text-xs">
+            {props.topo.name}
+          </div>
+          <div className="w-full border-t-[1px] text-xxs flex flex-row flex-wrap items-end justify-between">
+            <span className="whitespace-nowrap">{`${props.topo.numberOfBoulder} blocs - ${props.topo.numberOfTrack} passages`}</span>
+            <div className="lg:hidden">
+              {icon}
+            </div>
+            {props.topo.validatedAt && (
+              <span className="mr-1 whitespace-nowrap">
+                {getAction()}
+              </span>
+            )}
+          </div>
         </div>
       </div>
     </Card>
