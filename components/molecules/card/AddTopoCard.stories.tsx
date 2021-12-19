@@ -1,7 +1,7 @@
 import React from 'react';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 
-import { AddTopoCard } from './AddTopoCard.desktop';
+import { AddTopoCard } from './AddTopoCard';
 
 export default {
   title: 'AddTopoCard',

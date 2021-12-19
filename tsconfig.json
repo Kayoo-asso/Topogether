@@ -11,7 +11,6 @@
       "esnext"
     ],
     // Used to add types to libraries
-    "typeRoots": ["./types/typings.d.ts"],
     "allowJs": true,
     // Set this to `true`, otherwise TypeScript complains about missing type declarations
     // (coming from dependencies of our dependencies)
