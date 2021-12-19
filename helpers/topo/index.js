@@ -1,3 +1,2 @@
-export * from './getDifficultiesNbFromTopos';
-export * from './getGradeFromDiffIds';
-export * from './diffIdsToGrade';
+export * from './getGradesNbFromTopos';
+export * from './getGradesFromBoulder';

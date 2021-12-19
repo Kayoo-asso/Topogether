@@ -13,7 +13,7 @@ export const MobileHeader: React.FC<MobileHeaderProps> = (props: MobileHeaderPro
 
   return (
     <>
-      <div className="bg-dark flex items-center" style={{ height: '7vh' }}>
+      <div className="bg-dark flex items-center h-header">
         <div className="w-1/6">
           <Icon
             name="arrow-simple"

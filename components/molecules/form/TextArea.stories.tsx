@@ -15,4 +15,3 @@ Default.args = {
   label: 'Description',
   id: 'description',
 };
-

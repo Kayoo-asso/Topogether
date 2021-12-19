@@ -9,6 +9,7 @@ module.exports = {
       'types': path.resolve(__dirname, "../types"),
       'const': path.resolve(__dirname, "../const"),
       'styles': path.resolve(__dirname, "../styles"),
+      "next/image": require.resolve("./mocks/NextJSImageMock.tsx"),
     }
     return config;
   },

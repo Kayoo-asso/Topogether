@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const TODO:React.FC = (props) => {
+export const DashboardMobile:React.FC = (props) => {
     return (
         <div></div>
     )

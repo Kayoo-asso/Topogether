@@ -1,6 +1,6 @@
 import { Amenities, ClimbTechniques, RockTypes } from "./Bitflags";
-import { Difficulty, Grade, Orientation, TopoStatus, TopoType } from "./Enums";
-import { GeometryCollection, LineString, MultiPoint, MultiPolygon } from "./GeoJson";
+import { Difficulty, Grade, LightGrade, Orientation, TopoStatus, TopoType } from "./Enums";
+import { LineString, MultiPoint, MultiPolygon } from "./GeoJson";
 import { GeoCoordinates, StringBetween } from "./Utils";
 import { UUID } from "./UUID";
 import { Image, TrackRating, User } from "./User";
@@ -8,9 +8,12 @@ import { Image, TrackRating, User } from "./User";
 export interface Topo {
     id: UUID,
     name: StringBetween<1, 255>,
-    created: Date,
-    modified: Date,
-    cleaned: Date,
+    // Creation = first validation
+    validated?: Date,
+    submitted?: Date,
+    // IMPORTANT: modifying anything in a topo changes the last modified at
+    modified?: Date,
+    cleaned?: Date,
     status: TopoStatus,
     type: TopoType,
     isForbidden: boolean,
@@ -22,7 +25,7 @@ export interface Topo {
     
     creator?: User,
     validator?: User,
-    photo?: Image
+    image?: Image
     
     closestCity?: string,
     altitude?: number,
@@ -34,6 +37,20 @@ export interface Topo {
     sectors: Sector[],
     parkings: Parking[],
     access: TopoAccess[],
+}
+
+export interface LightTopo {
+    id: UUID,
+    name: StringBetween<1, 255>,
+    description?: StringBetween<1, 5000>,
+    image?: Image,
+    nbBoulders: number,
+    nbTracks: number,
+    grades: GradeHistogram,
+} 
+
+export type GradeHistogram = {
+    [K in LightGrade]: number
 }
 
 // TODO: require at least one

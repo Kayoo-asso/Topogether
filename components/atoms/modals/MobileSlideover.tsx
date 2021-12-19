@@ -1,65 +1,78 @@
 import React, { useEffect, useState } from 'react';
-import { Transition } from '@headlessui/react';
 
 interface MobileSlideoverProps {
-    initialOpen?: boolean,
-    initialFull?: boolean,
-    children: any,
+  open?: boolean,
+  onlyFull?: boolean,
+  initialFull?: boolean,
+  onSizeChange?: (full: boolean) => void,
+  onClose?: () => void,
+  children: any,
 }
 
 export const MobileSlideover: React.FC<MobileSlideoverProps> = ({
-    initialOpen = true,
-    initialFull = true,
-    ...props
+  open = false,
+  onlyFull = false,
+  initialFull = false,
+  ...props
 }: MobileSlideoverProps) => {
-    const [open, setOpen] = useState(initialOpen);
-    const [full, setFull] = useState(initialFull);
+  const fullTranslate = 20; // 100% - x of the screen
+  const littleTranslate = 85;
+  const [full, setFull] = useState(initialFull);
+  const [translateY, setTranslateY] = useState<number>(0);
+  const [transition, setTransition] = useState(true);
+  const [swipeUp, setSwipeUp] = useState(false);
 
-    useEffect(() => {
-        setOpen(initialOpen);
-    }, [initialOpen]);
+  useEffect(() => {
+    setTranslateY(open ? initialFull ? fullTranslate : littleTranslate : 100);
+  }, [open]);
 
-    const [touchStart, setTouchStart] = useState(0);
-    const [touchEnd, setTouchEnd] = useState(0);
-    const handleToucheStart = (e: React.TouchEvent<HTMLDivElement>) => {
-        setTouchStart(e.touches[0].clientY);
-    }
-    function handleTouchMove(e: React.TouchEvent<HTMLDivElement>) {
-        setTouchEnd(e.touches[0].clientY);
-    }
-    function handleTouchEnd() {
-        if (!full && touchStart - touchEnd > 50) {
-            setFull(true);
-        }
-        if (touchStart - touchEnd < -50) {
-            console.log('close');
-            setOpen(false);
-        }
-    }
+  const [touchStart, setTouchStart] = useState(0);
+  const [touchEnd, setTouchEnd] = useState(0);
+  const handleToucheStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    setTransition(false);
+    setTouchStart(e.touches[0].clientY);
+  };
+  function handleTouchMove(e: React.TouchEvent<HTMLDivElement>) {
+    setSwipeUp(touchEnd > e.touches[0].clientY);
+    setTouchEnd(e.touches[0].clientY);
+    const swipePercent = (e.touches[0].clientY / window.screen.height) * 100;
+    const adjustedNewSlideoverSize = Math.min(Math.max(swipePercent, 20), 100);
+    setTranslateY(adjustedNewSlideoverSize);
+  }
+  function handleTouchEnd() {
+    setTransition(true);
+    if (Math.abs(touchStart - touchEnd) > 50) {
+      if (swipeUp) { // FULL
+        setTranslateY(fullTranslate);
+        setFull(true);
+        if (props.onSizeChange) props.onSizeChange(true);
+      } else if (onlyFull || translateY > littleTranslate) { // CLOSE
+        setTranslateY(100);
+        if (props.onClose) props.onClose();
+      } else { // LITTLE
+        setTranslateY(littleTranslate);
+        setFull(false);
+        if (props.onSizeChange) props.onSizeChange(false);
+      }
+    } else full ? setTranslateY(fullTranslate) : setTranslateY(littleTranslate);
+  }
 
-    return (
-        <Transition
-            show={open}
-            enter="transition ease-in-out duration-300 transform"
-            enterFrom="-translate-y-500"
-            enterTo="translate-y-100"
-            leave="transition ease-in-out duration-300 transform"
-            leaveFrom="bottom-[10vh]"
-            leaveTo="bottom-[-70vh]"
-        >
-            <div className='flex flex-col absolute w-full bottom-[10vh] bg-white rounded-t-lg h-[80%] z-40 shadow'>
-                <div 
-                    className='flex w-full h-[40px] justify-center'
-                    onTouchStart={handleToucheStart}
-                    onTouchMove={handleTouchMove}
-                    onTouchEnd={handleTouchEnd}
-                >
-                    <div className='bg-grey-light rounded-full h-[6px] w-3/12 shadow mt-[8px]'></div>
-                </div>
-                <div className='p-2 overflow-scroll'>
-                    {props.children}
-                </div>
-            </div>
-        </Transition>
-    )
-}
+  return (
+    <div
+      className={`flex flex-col ${transition ? 'transition ease-in-out' : ''} absolute w-full bottom-[10vh] bg-white rounded-t-lg h-full pb-[20vh] z-40 shadow`}
+      style={{ transform: `translateY(${translateY}%)` }}
+    >
+      <div
+        className="absolute flex w-full h-[40px] justify-center z-50"
+        onTouchStart={handleToucheStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+      >
+        <div className="bg-grey-light rounded-full h-[6px] w-3/12 shadow mt-[8px]" />
+      </div>
+      <div className="h-full">
+        {props.children}
+      </div>
+    </div>
+  );
+};

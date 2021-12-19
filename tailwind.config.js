@@ -14,7 +14,7 @@ module.exports = {
     colors: {
       main: '#04D98B',
       'main-light': '#05F79E',
-      second: '#804EE0',
+      second: '#FFC72A',
       'second-light': '#9368E5',
       third: '#FF984D',
       'third-light': '#FFD700',
@@ -27,7 +27,7 @@ module.exports = {
       },
       white: colors.white,
       error: '#FF686B',
-      diff: {
+      grade: {
         3: '#FFD600',
         4: '#05F6A0',
         5: '#23CAFF',
@@ -417,6 +417,10 @@ module.exports = {
       '5/6': '83.333333%',
       full: '100%',
       screen: '100vh',
+      contentPlusShell: '93vh',
+      contentPlusHeader: '90vh',
+      header: '7vh',
+      shell: '10vh',
     }),
     inset: (theme, { negative }) => ({
       auto: 'auto',

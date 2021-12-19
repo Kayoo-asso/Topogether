@@ -1,38 +1,51 @@
-import { ImageAfterServer, ImageBeforeServer, ImageDimension } from "./ImageTypes";
+// import { ImageAfterServer, ImageBeforeServer, ImageDimension } from "./ImageTypes";
+// import { GradeEnum } from './enums';
+// import { Area, Coordinates, GeoCoordinates } from './GeometricTypes';
+// import { ImageAfterServer, ImageBeforeServer, ImageDimension } from './ImageTypes';
 
 // export type Topo = {
-//   // id: number,
-//   // name: string,
-//   // creatorId: number,
-//   // validatorId?: number,
-//   // topoType: 'Boulder' | 'Cliff' | 'Deep water' | 'Multi-pitch' | 'Artificial',
-//   // status: 'Draft' | 'Submitted' | 'Validated',
-//   // location: GeoCoordinates,
-//   // mainImage?: ImageAfterServer,
-//   // mainImageBeforeServer?: ImageBeforeServer,
-//   // description?: string,
-//   // rockTypeId?: number,
-//   // altitude?: number,
-//   // adaptedToChildren?: boolean,
-//   // hasDanger?: boolean,
-//   // dangerDescription?: string,
-//   // securityInstructions?: string,
-//   // cleaningDate?: string,
-//   // hasToilets?: boolean,
-//   // hasWaterSpot?: boolean,
-//   // hasShelter?: boolean,
-//   // hasPicnicArea?: boolean,
-//   // hasBins?: boolean,
-//   // otherRemarks?: string,
-//   // approachDescription?: string,
-//   // approachDifficultyId?: number,
-//   // approachTime?: number,
-//   // closestCity?: string,
-//   // forbiddenReason?: string,
-//   // isForbiddenSite?: boolean,
-//   // parkings?: Parking[],
-//   // sectors: Sector[],
-//   // journeys?: Journey[],
+//   id: number,
+//   name: string,
+//   creatorId: number,
+//   validatorId?: number,
+//   topoType: 'Boulder' | 'Cliff' | 'Deep water' | 'Multi-pitch' | 'Artificial',
+//   status: 'Draft' | 'Submitted' | 'Validated',
+//   location: GeoCoordinates,
+//   mainImage?: ImageAfterServer,
+//   mainImageBeforeServer?: ImageBeforeServer,
+//   description?: string,
+//   rockType?: string,
+//   altitude?: number,
+//   adaptedToChildren?: boolean,
+//   hasDanger?: boolean,
+//   dangerDescription?: string,
+//   securityInstructions?: string,
+//   gearIds?: number[],
+//   cleaningDate?: string,
+//   hasToilets?: boolean,
+//   hasWaterSpot?: boolean,
+//   hasShelter?: boolean,
+//   hasPicnicArea?: boolean,
+//   hasBins?: boolean,
+//   hasOtherGears?: boolean,
+//   otherGears?: string,
+//   otherRemarks?: string,
+//   approachDescription?: string,
+//   approachDifficultyId?: number,
+//   approachTime?: number,
+//   closestCity?: string,
+//   forbiddenReason?: string,
+//   isForbiddenSite?: boolean,
+//   parkings?: Parking[],
+//   sectors: Sector[],
+//   journeys?: Journey[],
+// };
+
+// export type LightTopo = Omit<Topo, 'sectors' | 'journeys'> & {
+//   numberOfSectors: number,
+//   numberOfBoulders: number,
+//   numberOfTracks: number,
+//   grades: GradeEnum[],
 // }
 
 // export type Parking = {
@@ -41,18 +54,19 @@ import { ImageAfterServer, ImageBeforeServer, ImageDimension } from "./ImageType
 //   placeNumber?: number,
 //   description?: string,
 //   image?: ImageAfterServer,
-// }
+// };
 
 // export type Journey = {
 //   id: number,
-// }
+// };
 
 // export type Sector = {
 //   id: number,
 //   name: string,
+//   description?: string,
 //   boulders?: Boulder[],
 //   wayPoints?: Waypoint[],
-// }
+// };
 
 // export type Waypoint = {
 //   id: number,
@@ -60,7 +74,7 @@ import { ImageAfterServer, ImageBeforeServer, ImageDimension } from "./ImageType
 //   location: GeoCoordinates,
 //   image?: ImageAfterServer,
 //   description?: string,
-// }
+// };
 
 // export type Boulder = {
 //   id: number,
@@ -72,7 +86,7 @@ import { ImageAfterServer, ImageBeforeServer, ImageDimension } from "./ImageType
 //   hasDangerousDescent?: boolean,
 //   images?: ImageAfterServer[],
 //   tracks?: Track[],
-// }
+// };
 
 // export type Track = {
 //   id: number,
@@ -82,7 +96,7 @@ import { ImageAfterServer, ImageBeforeServer, ImageDimension } from "./ImageType
 //   isTraverse?: boolean,
 //   isSittingStart?: boolean,
 //   anchorNumber?: number,
-//   difficultyId?: number,
+//   grade?: GradeEnum,
 //   description?: string,
 //   receptionId?: number,
 //   techniqueIds?: number[],
@@ -96,9 +110,11 @@ import { ImageAfterServer, ImageBeforeServer, ImageDimension } from "./ImageType
 //   id: number,
 //   boulderImageId: number,
 //   boulderImageDimensions: ImageDimension,
-//   linePoints?: Point[],
-//   handDeparturePoints?: Point[],
-//   feetDeparturePoints?: Point[],
-//   anchorPoints?: Point[],
-//   forbiddenAreas?: Polygon[],
-// }
+//   linePoints?: Coordinates[],
+//   handDeparturePoints?: Coordinates[],
+//   feetDeparturePoints?: Coordinates[],
+//   anchorPoints?: Coordinates[],
+//   forbiddenAreas?: Area[],
+// };
+
+// export type Grade = 3 | 4 | 5 | 6 | 7 | 8 | 9;
