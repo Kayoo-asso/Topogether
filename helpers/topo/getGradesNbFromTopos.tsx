@@ -1,7 +1,7 @@
-import { GradeEnum, Topo } from "types";
+import { Grade, Topo } from "types";
 
 export const getGradesNbFromTopos = (topo: Topo) => {
-  const grades: GradeEnum[] = [];
+  const grades: Grade[] = [];
   for (const sector of topo.sectors) {
     if (sector.boulders) {
       for (const boulder of sector.boulders) {

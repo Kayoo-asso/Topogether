@@ -1,10 +1,10 @@
-import { Coordinates } from "types";
+import { Point } from "types";
 
-export const pointsToPolylineStr = (points: Coordinates[]) => {
+export const pointsToPolylineStr = (points: Point[]) => {
     if (points) {
         let str = '';
         points.forEach(point => {
-            str += `${point.posX},${point.posY} `;
+            str += `${point.x},${point.y} `;
         });
         return str;
     }

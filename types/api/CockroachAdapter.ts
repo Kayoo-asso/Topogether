@@ -1,8 +1,11 @@
 import { Awaitable, Account } from "next-auth";
 import type { Adapter, AdapterSession, AdapterUser, VerificationToken } from "next-auth/adapters";
 import type { Client, Pool, PoolClient } from 'pg';
+import type { IConnectionOptions, IDatabase, IInitOptions } from 'pg-promise';
+import pgp from 'pg-promise';
+import pg from "pg-promise/typescript/pg-subset";
 
-// TODO: Do we need to catch errors from queries?
+// // TODO: Do we need to catch errors from queries?
 // class CockroachAdapter implements Adapter {
 
 //     private static defaultConfig: AdapterConfig = {
@@ -13,19 +16,22 @@ import type { Client, Pool, PoolClient } from 'pg';
 //         supportOAuth1: true,
 //         supportGitHub: true
 //     };
-//     private readonly db: Pool | PoolClient | Client;
+//     private readonly db;
 //     private readonly config: AdapterConfig;
 
-//     constructor(db: Pool | PoolClient | Client, options?: AdapterOptions) {
+//     constructor(db: Client | PoolClient, options?: AdapterOptions) {
 //         this.db = db;
 //         this.config = { ...CockroachAdapter.defaultConfig, ...options };
 //     }
 
 //     async verifyUsersSchema() {
-//         const schema = await this.db.query(
-//             "SHOW COLUMNS FROM $1",
-//             [this.config.usersTable]
-//         ); 
+//         // Prevent SQL injections just in case
+//         const result = await this.db.query(`SHOW COLUMNS FROM quote_ident(${this.config.usersTable})`);
+//         const schema = result.rows;
+//         const expected = [
+//             { name: "id", type: "UUID" },
+//             { name: " "}
+//         ]
 //     }
 
 //     createUser: (user: Omit<AdapterUser, "id">) => Awaitable<AdapterUser>;
