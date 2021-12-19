@@ -1,7 +1,9 @@
 import React from 'react';
 
-export const TODO:React.FC = (props) => {
+export const TopoMobile:React.FC = (props) => {
     return (
-        <div></div>
+        <div>
+            Topo Mobile
+        </div>
     )
 }

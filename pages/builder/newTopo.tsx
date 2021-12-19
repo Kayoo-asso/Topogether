@@ -1,9 +1,19 @@
-import React from 'react';
+import type { NextPage } from 'next';
+import { NewTopoDesktop, NewTopoMobile } from 'components';
+import { isDesktop, isMobile } from 'react-device-detect';
 
-const TODO:React.FC = (props) => {
-    return (
-        <div></div>
-    )
-}
+const NewTopoPage: NextPage = () => {
 
-export default TODO; 
+  return (
+    <>
+      {isMobile &&
+        <NewTopoMobile />
+      }
+      {isDesktop &&
+        <NewTopoDesktop />
+      }
+    </>
+  )
+};
+
+export default NewTopoPage;

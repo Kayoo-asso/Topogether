@@ -1,7 +1,7 @@
 export type Coordinates = {
   id?: number,
-  posX: number | null,
-  posY: number | null,
+  posX: number,
+  posY: number,
 };
 
 export type Area = {
