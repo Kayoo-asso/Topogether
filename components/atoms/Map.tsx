@@ -14,7 +14,7 @@ const containerStyles: React.CSSProperties = {
 
 // Omitting the type tells the compiler that this component takes no props
 // Omitting React.PropsWithChildren<T> tells the compiler that this component takes no children
-export const MapComponent = forwardRef<google.maps.Map, MapProps>((props, mapRef) => {
+export const Map = forwardRef<google.maps.Map, MapProps>((props, mapRef) => {
   const {
     onBoundsChange,
     onCenterChange,
@@ -125,7 +125,7 @@ export const MapComponent = forwardRef<google.maps.Map, MapProps>((props, mapRef
   );
 });
 
-MapComponent.displayName = 'Map';
+Map.displayName = 'Map';
 
 // === MARKER UPDATES ===
 

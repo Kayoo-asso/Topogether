@@ -1,12 +1,13 @@
+import React, { useRef, useState } from 'react';
 import { Wrapper } from '@googlemaps/react-wrapper';
-import { MapComponent, RoundButton, SatelliteButton } from 'components';
+import { Map, RoundButton, SatelliteButton } from 'components';
 import { fontainebleauLocation } from 'const/global';
-import React, { useState } from 'react';
 import { MapSearchbarProps } from '.';
 import { MapSearchbar } from '..';
-import { MapProps as MapComponentProps } from 'types';
+import { MapProps } from 'types';
 
-interface MapProps extends MapComponentProps {
+interface MapControlProps extends MapProps {
+  initialZoom?: number,
   displaySearchbar?: boolean,
   displaySatelliteButton?: boolean,
   displayUserMarker?: boolean,
@@ -16,16 +17,18 @@ interface MapProps extends MapComponentProps {
   onSearchResultSelect?: () => void,
 }
 
-export const Map: React.FC<MapProps> = ({
+export const MapControl: React.FC<MapControlProps> = ({
   displaySearchbar = true,
   displaySatelliteButton = true,
   displayUserMarker = true,
   displayPhotoButton = true,
   center = fontainebleauLocation,
-  zoom = 8,
+  initialZoom = 8,
   ...props
-}: MapProps) => {
+}: MapControlProps) => {
+  const mapRef = useRef<google.maps.Map>(null);
   const [satelliteView, setSatelliteView] = useState(false);
+  const [zoom, setZoom] = useState(initialZoom);
 
   return (
     <div className="flex-1 h-full relative">
@@ -83,11 +86,18 @@ export const Map: React.FC<MapProps> = ({
         </div>
 
 
-        <MapComponent
+        <Map
+          ref={mapRef}
           center={center}
           zoom={zoom}
           {...props}
           mapTypeId={satelliteView ? 'satellite' : 'roadmap'}
+          onZoomChange={() => {
+            if (mapRef.current) {
+              const newZoom = mapRef.current.getZoom();
+              newZoom && setZoom(newZoom);
+            }
+          }}
         />
       </Wrapper>
     </div>

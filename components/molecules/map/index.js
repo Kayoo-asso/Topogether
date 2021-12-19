@@ -1,3 +1,3 @@
-export * from './Map';
+export * from './MapControl';
 export * from './MapSearchbar';
 export * from './MapFilters';

@@ -16,7 +16,7 @@ export const MobileSlideover: React.FC<MobileSlideoverProps> = ({
   ...props
 }: MobileSlideoverProps) => {
   const fullTranslate = 20; // 100% - x of the screen
-  const littleTranslate = 85;
+  const littleTranslate = 75;
   const [full, setFull] = useState(initialFull);
   const [translateY, setTranslateY] = useState<number>(0);
   const [transition, setTransition] = useState(true);
@@ -36,7 +36,7 @@ export const MobileSlideover: React.FC<MobileSlideoverProps> = ({
     setSwipeUp(touchEnd > e.touches[0].clientY);
     setTouchEnd(e.touches[0].clientY);
     const swipePercent = (e.touches[0].clientY / window.screen.height) * 100;
-    const adjustedNewSlideoverSize = Math.min(Math.max(swipePercent, 20), 100);
+    const adjustedNewSlideoverSize = Math.min(Math.max(swipePercent, fullTranslate), 100);
     setTranslateY(adjustedNewSlideoverSize);
   }
   function handleTouchEnd() {
@@ -46,10 +46,12 @@ export const MobileSlideover: React.FC<MobileSlideoverProps> = ({
         setTranslateY(fullTranslate);
         setFull(true);
         if (props.onSizeChange) props.onSizeChange(true);
-      } else if (onlyFull || translateY > littleTranslate) { // CLOSE
+      } 
+      else if (onlyFull || translateY > littleTranslate) { // CLOSE
         setTranslateY(100);
-        if (props.onClose) props.onClose();
-      } else { // LITTLE
+        if (props.onClose) setTimeout(props.onClose, 500);
+      } 
+      else { // LITTLE
         setTranslateY(littleTranslate);
         setFull(false);
         if (props.onSizeChange) props.onSizeChange(false);
@@ -59,7 +61,7 @@ export const MobileSlideover: React.FC<MobileSlideoverProps> = ({
 
   return (
     <div
-      className={`flex flex-col ${transition ? 'transition ease-in-out' : ''} absolute w-full bottom-[10vh] bg-white rounded-t-lg h-full pb-[20vh] z-40 shadow`}
+      className={`flex flex-col ${transition ? 'transition ease-in-out' : ''} absolute w-full bg-white rounded-t-lg h-screen pb-[20vh] z-40 shadow`}
       style={{ transform: `translateY(${translateY}%)` }}
     >
       <div
