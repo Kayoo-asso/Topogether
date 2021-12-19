@@ -1,6 +1,9 @@
-import { MobileHeader } from 'components';
+import { BoulderSlideover, Button, Map, MobileHeader } from 'components';
+import { GeoCamera } from 'components/molecules/GeoCamera';
+import { fontainebleauLocation } from 'const';
+import { markerSize } from 'helpers';
 import { fakeTopo } from 'helpers/fakeData/fakeTopo';
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 
 export const WorldMapMobile:React.FC = (props) => {
     const [show, isShow] = useState(true);
@@ -27,13 +30,17 @@ export const WorldMapMobile:React.FC = (props) => {
     // test();
 
   return (    
-      <div className="flex flex-col h-full">
-
+      <>
         <MobileHeader
           title="La meilleure app du monde"
           menu={[]}
           onBackClick={() => {}}
-        />   
+        />
+
+        <GeoCamera 
+          open
+          // onCapture={(blob) => console.log(blob)}
+        />
       
         {/* <BoulderSlideover 
           boulder={fakeTopo.sectors[0].boulders[0]}
@@ -60,6 +67,6 @@ export const WorldMapMobile:React.FC = (props) => {
           ]}
         /> */}
 
-      </div>
+      </>
   )
 };

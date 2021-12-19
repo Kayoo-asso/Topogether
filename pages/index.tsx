@@ -6,11 +6,11 @@ const WorldMapPage: NextPage = () => {
     
   return (
     <>
-      {isMobile &&
-        <WorldMapMobile />
-      }
-      {isDesktop &&
-        <WorldMapDesktop />
+      <WorldMapMobile />
+      {isDesktop && false &&
+        <div>
+          <WorldMapDesktop />
+        </div>
       }
     </>
   )
