@@ -1,4 +1,6 @@
 -- Up migration
+-- TODO: remove all gen_random_uuid(), these will be created on the front-end
+
 CREATE TABLE images (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     -- UNIQUE constraint also provides us with an index on the path
@@ -35,6 +37,7 @@ CREATE TYPE Difficulty AS ENUM('Good', 'OK', 'Bad', 'Dangerous');
 CREATE TABLE topos (
     -- Mandatory
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    name STRING(500) NOT NULL,
     created TIMESTAMPTZ DEFAULT NOW() NOT NULL,
     modified TIMESTAMPTZ NOT NULL,
     status TopoStatus DEFAULT('Draft') NOT NULL,
@@ -80,6 +83,7 @@ CREATE TABLE sectors (
 
 CREATE TABLE boulders (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    order_index INT NOT NULL,
     location GEOGRAPHY(POINT) NOT NULL,
     name STRING(255),
     is_highball BOOL DEFAULT false NOT NULL,
@@ -156,6 +160,7 @@ CREATE TABLE tracks (
 
 CREATE TABLE lines (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    orderIndex INT NOT NULL,
     nb_anchors INT DEFAULT 0 NOT NULL,
     line GEOMETRY(LINESTRING) NOT NULL,
     forbidden GEOMETRY(MULTIPOLYGON),

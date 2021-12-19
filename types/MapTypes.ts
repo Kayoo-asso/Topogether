@@ -1,5 +1,3 @@
-import { RequireKeys } from "./RequireKeys";
-
 export type MapProps =
   MapEventHandlers
   & google.maps.MapOptions
