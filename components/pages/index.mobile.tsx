@@ -1,4 +1,4 @@
-import { BoulderSlideover, Button, Map, MobileHeader } from 'components';
+import { Button, Map, MobileHeader, Modal } from 'components';
 import { GeoCamera } from 'components/molecules/GeoCamera';
 import { fontainebleauLocation } from 'const';
 import { markerSize } from 'helpers';
@@ -6,8 +6,6 @@ import { fakeTopo } from 'helpers/fakeData/fakeTopo';
 import React, { useCallback, useState } from 'react';
 
 export const WorldMapMobile:React.FC = (props) => {
-    const [show, isShow] = useState(true);
-
     const test = () => {
     let newFakeTopo = fakeTopo;
     for (let i=0; i<fakeTopo.sectors.length; i++) {
@@ -37,10 +35,17 @@ export const WorldMapMobile:React.FC = (props) => {
           onBackClick={() => {}}
         />
 
-        <GeoCamera 
+        <Modal
+          open
+          withBackground={false}
+        >
+          <div></div>
+        </Modal>
+
+        {/* <GeoCamera 
           open
           // onCapture={(blob) => console.log(blob)}
-        />
+        /> */}
       
         {/* <BoulderSlideover 
           boulder={fakeTopo.sectors[0].boulders[0]}
