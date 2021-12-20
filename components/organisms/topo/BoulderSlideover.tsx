@@ -51,7 +51,7 @@ export const BoulderSlideover: React.FC<BoulderSlideoverProps> = ({
       <div className={`grid grid-cols-8 p-5 ${full ? '' : ' mt-3'}`}>
         <div className="col-span-6">
           <div className="ktext-section-title">{props.boulder.name}</div>
-            {props.boulder.isHighBall && full && <div className="ktext-base">High Ball</div>}
+            {props.boulder.isHighball && full && <div className="ktext-base">High Ball</div>}
             {props.boulder.hasDangerousDescent && full && <div className="ktext-base">Descente dangereuse !</div>}
             {!full && (
                 <div className="flex items-center mt-2">

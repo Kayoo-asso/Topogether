@@ -1,10 +1,11 @@
 import { Icon } from 'components';
+import Link from 'next/link';
 import React, { useState } from 'react';
 
 interface MobileHeaderProps {
   title: string,
   menu?: any,
-  onBackClick: () => void,
+  backLink: string,
 }
 
 export const MobileHeader: React.FC<MobileHeaderProps> = (props: MobileHeaderProps) => {
@@ -14,14 +15,16 @@ export const MobileHeader: React.FC<MobileHeaderProps> = (props: MobileHeaderPro
   return (
     <>
       <div className="bg-dark flex items-center h-header">
-        <div className="w-1/6">
-          <Icon
-            name="arrow-simple"
-            SVGClassName="stroke-white stroke-1 w-4 h-4"
-            center
-            onClick={props.onBackClick}
-          />
-        </div>
+        <Link href={props.backLink} passHref>
+          <div className="w-1/6">
+            <Icon
+              name="arrow-simple"
+              SVGClassName="stroke-white stroke-1 w-4 h-4"
+              center
+              onClick={props.onBackClick}
+            />
+          </div>
+        </Link>
 
         <div
           className="flex-1 text-white ktext-title whitespace-nowrap"

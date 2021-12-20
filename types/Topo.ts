@@ -79,7 +79,7 @@ export interface Sector {
   name: StringBetween<1, 255>,
   description?: StringBetween<1, 5000>
 
-  boulder: Boulder[],
+  boulders: Boulder[],
   waypoints: Waypoint[]
 }
 
@@ -106,7 +106,7 @@ export interface Boulder {
   name: StringBetween<1, 255>,
   isHighball: boolean,
   mustSee: boolean,
-  descent: Difficulty,
+  descent?: Difficulty,
   orderIndex: number,
 
   tracks: Track[],
@@ -120,10 +120,10 @@ export interface Track {
   name?: StringBetween<1, 255>,
   description?: StringBetween<1, 5000>,
   height?: number,
-  grade: Grade,
+  grade?: Grade,
 
   nbAnchors?: number,
-  techniques: ClimbTechniques,
+  techniques?: ClimbTechniques,
   reception?: Difficulty,
   orientation?: Orientation,
   isTraverse?: boolean,
@@ -131,7 +131,7 @@ export interface Track {
   hasMantle?: boolean,
 
   lines: Line[],
-  ratings: TrackRating,
+  ratings?: TrackRating,
   // TODO: how to avoid creating a ton of copies of User objects
   // when deserializing an API result?
   creator: User,

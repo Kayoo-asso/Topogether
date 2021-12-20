@@ -1,3 +1,5 @@
+import { UUID } from "./UUID";
+
 export type MapProps =
   MapEventHandlers
   & google.maps.MapOptions
@@ -7,7 +9,7 @@ export type MapProps =
   };
 
 export interface MarkerProps {
-  id: bigint,
+  id: UUID,
   options?: Omit<google.maps.MarkerOptions, 'map'>,
   handlers?: MarkerEventHandlers
 };
