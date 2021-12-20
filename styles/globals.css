@@ -6,7 +6,7 @@
   .ktext-title { @apply font-sans font-normal text-lg uppercase }
   .ktext-section-title { @apply font-sans font-semibold text-2xl }
   .ktext-subtitle { @apply font-sans font-semibold text-lg uppercase }
-  .ktext-base { @apply font-sans font-normal text-base }
+  .ktext-base { @apply font-sans font-normal text-lg }
   .ktext-base-big { @apply font-sans font-normal text-xl }
   .ktext-base-superbig { @apply font-sans font-semibold text-4xl }
   .ktext-label { @apply font-sans font-medium text-sm uppercase }

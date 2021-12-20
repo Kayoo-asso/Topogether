@@ -46,38 +46,35 @@ export const TracksList: React.FC<TracksListProps> = ({
             props.onTrackClick && props.onTrackClick(track.id);
           }}
         >
-          {track.grade
-                        && (
-                        <GradeCircle
-                          grade={track.grade}
-                          className=""
-                          content={track.orderIndex}
-                        />
-                        )}
+          {track.grade && (
+            <GradeCircle
+              grade={track.grade}
+              className=""
+              content={track.orderIndex}
+            />
+          )}
 
           <div className={`ktext-subtitle mr-1 text-right ${getGradeColor(track.grade)}`}>{track.grade && track.grade}</div>
           <div className="col-span-6">
-            <span className="ktext-base-big">{track.name}</span>
+            <span className="ktext-base">{track.name}</span>
           </div>
-          {track.note
-                        && (
-                        <div className="col-span-2">
-                          <AverageNote note={track.note} className="justify-end" />
-                        </div>
-                        )}
+          {track.note && (
+            <div className="col-span-2">
+              <AverageNote note={track.note} className="justify-end" />
+            </div>
+          )}
         </div>
       ))}
-      {builderAddButton
-                && (
-                <div
-                  className="ktext-subtitle text-grey-medium px-5 py-5 cursor-pointer border-b border-grey-light"
-                  onClick={props.onBuilderAddClick}
-                >
-                  <span className="ml-2 mr-5 text-xl">+</span>
-                  {' '}
-                  <span>Nouveau passage</span>
-                </div>
-                )}
+      {builderAddButton && (
+        <div
+          className="ktext-subtitle text-grey-medium px-5 py-5 cursor-pointer border-b border-grey-light"
+          onClick={props.onBuilderAddClick}
+        >
+          <span className="ml-2 mr-5 text-xl">+</span>
+          {' '}
+          <span>Nouveau passage</span>
+        </div>
+      )}
     </div>
   );
 };

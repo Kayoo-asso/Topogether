@@ -45,6 +45,11 @@ export const TopoMobile:React.FC = (props) => {
                 initialZoom={5}
                 displayPhotoButton={false}
                 markers={getMarkersFromBoulders()}
+                boundsToMarkers={true}
+                searchbarOptions={{
+                    findTopos: false,
+                    findPlaces: false,
+                }}
             />
 
             {selectedBoulder &&

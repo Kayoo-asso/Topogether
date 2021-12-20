@@ -1,10 +1,10 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Wrapper } from '@googlemaps/react-wrapper';
 import { Map, RoundButton, SatelliteButton } from 'components';
-import { fontainebleauLocation } from 'const/global';
 import { MapSearchbarProps } from '.';
 import { MapSearchbar } from '..';
-import { MapProps } from 'types';
+import { MapProps, MarkerProps } from 'types';
+import { googleGetPlace } from 'helpers';
 
 interface MapControlProps extends MapProps {
   initialZoom?: number,
@@ -12,23 +12,48 @@ interface MapControlProps extends MapProps {
   displaySatelliteButton?: boolean,
   displayUserMarker?: boolean,
   displayPhotoButton?: boolean,
+  boundsToMarkers?: boolean,
   filters?: any,
   searchbarOptions?: MapSearchbarProps,
   onSearchResultSelect?: () => void,
 }
 
 export const MapControl: React.FC<MapControlProps> = ({
+  initialZoom = 8,
   displaySearchbar = true,
   displaySatelliteButton = true,
   displayUserMarker = true,
   displayPhotoButton = true,
-  center = fontainebleauLocation,
-  initialZoom = 8,
+  boundsToMarkers = false,
   ...props
 }: MapControlProps) => {
   const mapRef = useRef<google.maps.Map>(null);
   const [satelliteView, setSatelliteView] = useState(false);
   const [zoom, setZoom] = useState(initialZoom);
+
+  const getBoundsFromSearchbar = (geometry: google.maps.places.PlaceGeometry) => {
+    if (mapRef.current) {
+        const newBounds = new google.maps.LatLngBounds();
+          if (geometry.viewport) newBounds.union(geometry.viewport);
+          else if (geometry.location) newBounds.extend(geometry.location);
+          else return;
+          mapRef.current.fitBounds(newBounds);
+    }
+  }
+  const getBoundsFromMarker = (markers: MarkerProps[]) => {
+    if (mapRef.current) {
+      console.log("bounds");
+      const newBounds = new google.maps.LatLngBounds();
+      markers.map(marker => {
+        if (marker.options?.position && newBounds) {
+          newBounds.extend(new google.maps.LatLng(
+              marker.options?.position
+          ));
+        }
+      });
+      mapRef.current.fitBounds(newBounds);
+    }
+  }
 
   return (
     <div className="flex-1 h-full relative">
@@ -40,6 +65,10 @@ export const MapControl: React.FC<MapControlProps> = ({
               {displaySearchbar
                 && (
                   <MapSearchbar
+                    onResultSelect={async (option) => {
+                      const placeDetails = await googleGetPlace(option.value) as google.maps.places.PlaceResult;
+                      if (placeDetails.geometry) getBoundsFromSearchbar(placeDetails.geometry);
+                    }}
                     {...props.searchbarOptions}
                   />
                 )}
@@ -88,9 +117,8 @@ export const MapControl: React.FC<MapControlProps> = ({
 
         <Map
           ref={mapRef}
-          center={center}
-          zoom={zoom}
-          {...props}
+          center={props.center}
+          zoom={zoom} 
           mapTypeId={satelliteView ? 'satellite' : 'roadmap'}
           onZoomChange={() => {
             if (mapRef.current) {
@@ -98,6 +126,10 @@ export const MapControl: React.FC<MapControlProps> = ({
               newZoom && setZoom(newZoom);
             }
           }}
+          onLoad={() => {
+            if (boundsToMarkers && props.markers) getBoundsFromMarker(props.markers);
+          }}
+          {...props}
         />
       </Wrapper>
     </div>

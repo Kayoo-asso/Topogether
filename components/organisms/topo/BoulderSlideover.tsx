@@ -36,9 +36,9 @@ export const BoulderSlideover: React.FC<BoulderSlideoverProps> = ({
       onClose={props.onClose}
     >
       {full && (
-        <div className="w-full relative h-[275px] bg-dark rounded-t-lg">
+        <div className="w-full relative h-[440px] bg-dark rounded-t-lg">
           <Image
-            src={props.boulder.images ? topogetherUrl + props.boulder.images[0].url : '/assets/img/Kayoo_defaut_image.png'}
+            src={props.boulder.images[0] ? topogetherUrl + props.boulder.images[0].url : '/assets/img/Kayoo_defaut_image.png'}
             className="rounded-t-lg"
             alt="Boulder"
             priority
@@ -74,7 +74,7 @@ export const BoulderSlideover: React.FC<BoulderSlideoverProps> = ({
           {!full && (
             <div className="w-full relative h-[60px]">
               <Image
-                src={props.boulder.images ? topogetherUrl + props.boulder.images[0].url : '/assets/img/Kayoo_defaut_image.png'}
+                src={props.boulder.images[0] ? topogetherUrl + props.boulder.images[0].url : '/assets/img/Kayoo_defaut_image.png'}
                 className="rounded-sm"
                 alt="Boulder"
                 priority
@@ -87,10 +87,10 @@ export const BoulderSlideover: React.FC<BoulderSlideoverProps> = ({
       </div>
 
       {!forBuilder && (
-        <div className="grid grid-cols-8 pl-5 ktext-label font-bold my-2">
+        <div className="grid grid-cols-8 px-5 ktext-label font-bold my-2">
           <span className={`col-span-2 ${displayOfficialTrack ? 'text-main' : 'text-grey-medium'}`} onClick={() => setDisplayOfficialTrack(true)}>officielles</span>
           <span className={`col-span-2 ${!displayOfficialTrack ? 'text-main' : 'text-grey-medium'}`} onClick={() => setDisplayOfficialTrack(false)}>communautés</span>
-          <span className="col-start-8">
+          <span className="col-start-8 flex justify-end">
             <Icon
               name="add"
               SVGClassName="w-5 h-5 stroke-main"
@@ -99,7 +99,7 @@ export const BoulderSlideover: React.FC<BoulderSlideoverProps> = ({
           </span>
         </div>
       )}
-      <div className="overflow-auto">
+      <div className="overflow-auto pb-[30px]">
         <TracksList
           tracks={displayOfficialTrack ? officialTracks : communityTracks}
           builderAddButton={forBuilder}

@@ -5,6 +5,7 @@ import { useEffectWithDeepEqual } from 'helpers';
 import mapStyles from 'styles/mapStyles';
 import equal from 'fast-deep-equal/es6';
 import { mapEvents, MapProps, markerEvents, MarkerProps } from 'types';
+import { fontainebleauLocation } from 'const';
 
 
 const containerStyles: React.CSSProperties = {
@@ -26,6 +27,7 @@ export const Map = forwardRef<google.maps.Map, MapProps>((props, mapRef) => {
     onDragStart,
     onHeadingChange,
     onIdle,
+    onLoad,
     onMapTypeIdChange,
     onMouseMove,
     onMouseOut,
@@ -44,6 +46,8 @@ export const Map = forwardRef<google.maps.Map, MapProps>((props, mapRef) => {
 
   options.styles = options.styles ? options.styles.concat(mapStyles) : mapStyles;
   options.disableDefaultUI = true;
+  options.center = props.center || fontainebleauLocation;
+  
 
   const elementRef = useRef<HTMLDivElement>(null);
   const [map, setMap] = useState<google.maps.Map>();
@@ -80,6 +84,7 @@ export const Map = forwardRef<google.maps.Map, MapProps>((props, mapRef) => {
   useEffectWithDeepEqual(() => {
     if (map) {
       map.setOptions(options);
+      props.onLoad && props.onLoad();
     }
   }, [map, options]);
 
@@ -114,7 +119,12 @@ export const Map = forwardRef<google.maps.Map, MapProps>((props, mapRef) => {
   
 
   return (
-    <div id="map" style={containerStyles} ref={elementRef} className={className}>
+    <div 
+      id="map" 
+      style={containerStyles} 
+      ref={elementRef} 
+      className={className}
+    >
       {/* {React.Children.map(children, (child) => {
         if (React.isValidElement(child)) {
           // pass the map as a prop to the child component

@@ -25,6 +25,7 @@ export type MapEventHandlers = {
   onDragEnd?: () => void,
   onDragStart?: () => void,
   onHeadingChange?: () => void,
+  onLoad?: () => void,
   onIdle?: () => void,
   onMapTypeIdChange?: () => void,
   onMouseMove?: (event: MapMouseEvent) => void,

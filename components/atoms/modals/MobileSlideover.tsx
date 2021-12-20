@@ -15,15 +15,15 @@ export const MobileSlideover: React.FC<MobileSlideoverProps> = ({
   initialFull = false,
   ...props
 }: MobileSlideoverProps) => {
-  const fullTranslate = 20; // 100% - x of the screen
-  const littleTranslate = 75;
+  const fullTranslate = 15; // 100% - x of the screen
+  const littleTranslate = 85;
   const [full, setFull] = useState(initialFull);
-  const [translateY, setTranslateY] = useState<number>(0);
+  const [translateY, setTranslateY] = useState<number>(100);
   const [transition, setTransition] = useState(true);
   const [swipeUp, setSwipeUp] = useState(false);
 
   useEffect(() => {
-    setTranslateY(open ? initialFull ? fullTranslate : littleTranslate : 100);
+    window.setTimeout(() => setTranslateY(open ? initialFull ? fullTranslate : littleTranslate : 100), 1);
   }, [open]);
 
   const [touchStart, setTouchStart] = useState(0);
@@ -61,7 +61,7 @@ export const MobileSlideover: React.FC<MobileSlideoverProps> = ({
 
   return (
     <div
-      className={`flex flex-col ${transition ? 'transition ease-in-out' : ''} absolute w-full bg-white rounded-t-lg h-screen pb-[20vh] z-40 shadow`}
+      className={`flex flex-col ${transition ? 'transition ease-in-out' : ''} absolute w-full bg-white rounded-t-lg h-[100%] pb-[27%] mb-[5%] z-40 shadow`}
       style={{ transform: `translateY(${translateY}%)` }}
     >
       <div
@@ -72,7 +72,7 @@ export const MobileSlideover: React.FC<MobileSlideoverProps> = ({
       >
         <div className="bg-grey-light rounded-full h-[6px] w-3/12 shadow mt-[8px]" />
       </div>
-      <div className="h-full">
+      <div className="h-full flex flex-col">
         {props.children}
       </div>
     </div>
