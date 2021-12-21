@@ -20,11 +20,6 @@ export type User = {
 
 export type Role = 'ADMIN' | 'USER';
 
-export interface Image {
-  id: UUID,
-  url: string
-  // TODO: width and height?
-}
 
 export interface TrackRating {
 

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Point } from 'types';
+import React, { useState } from 'react';
+import { Position } from 'types';
 
 interface SVGPointProps {
   x: number,
@@ -8,8 +8,8 @@ interface SVGPointProps {
   iconName?: string,
   size?: number,
   className?: string,
-  onDrag?: (coord: Point) => void,
-  onDrop?: (coord: Point) => void,
+  onDrag?: (coord: Position) => void,
+  onDrop?: (coord: Position) => void,
 }
 
 export const SVGPoint: React.FC<SVGPointProps> = ({
@@ -19,87 +19,63 @@ export const SVGPoint: React.FC<SVGPointProps> = ({
   className = 'fill-main',
   ...props
 }: SVGPointProps) => {
+  // don't put x & y here, to avoid derived state
+  // The main risk is that internal state becomes out-of-sync with parent components
+  // https://reactjs.org/blog/2018/06/07/you-probably-dont-need-derived-state.html
+  // TODO: is active necessary? Does onPointerMove fire when pointer capure is not set?
+  // TODO: verify that the offset works correctly
   const [position, setPosition] = useState({
-    x: props.x,
-    y: props.y,
     active: false,
-    offset: {
-      x: 0,
-      y: 0,
-    },
+    offsetX: 0,
+    offsetY: 0,
   });
 
-  useEffect(() => {
-    setPosition({
-      ...position,
-      x: props.x,
-      y: props.y,
-    });
-  }, [props.x, props.y]);
 
-  const handlePointerDown: React.PointerEventHandler<SVGSVGElement> = (e: React.PointerEvent) => {
+  const handlePointerDown: React.PointerEventHandler<SVGImageElement> = (e: React.PointerEvent) => {
     if (draggable) {
       const el = e.currentTarget;
-      const bbox = e.currentTarget.getBoundingClientRect();
-      const x = e.clientX - bbox.left;
-      const y = e.clientY - bbox.top;
       el.setPointerCapture(e.pointerId);
       setPosition({
         ...position,
         active: true,
-        offset: {
-          x,
-          y,
-        },
+        offsetX: e.clientX - props.x,
+        offsetY: e.clientY - props.y,
       });
     }
   };
-  const handlePointerMove: React.PointerEventHandler<SVGSVGElement> = (e: React.PointerEvent) => {
-    if (draggable) {
-      const bbox = e.currentTarget.getBoundingClientRect();
-      const x = e.clientX - bbox.left;
-      const y = e.clientY - bbox.top;
-      if (position.active) {
-        const posX = position.x - (position.offset.x - x);
-        const posY = position.y - (position.offset.y - y);
-        setPosition({
-          ...position,
-          x: posX,
-          y: posY,
-        });
-        if (props.onDrag) props.onDrag({ x: posX, y: posY });
-      }
+
+  const handlePointerMove: React.PointerEventHandler<SVGImageElement> = (e: React.PointerEvent) => {
+    if (position.active) {
+      const newX = e.clientX - position.offsetX;
+      const newY = e.clientY - position.offsetY;
+      if (props.onDrag) props.onDrag([newX, newY]);
     }
   };
-  const handlePointerUp: React.PointerEventHandler<SVGSVGElement> = (e: React.PointerEvent) => {
-    if (draggable) {
+
+  const handlePointerUp: React.PointerEventHandler<SVGImageElement> = (e: React.PointerEvent) => {
+    if (position.active) {
+      const newX = e.clientX - position.offsetX;
+      const newY = e.clientY - position.offsetY;
+      if (props.onDrag) props.onDrag([newX, newY]);
       setPosition({
-        ...position,
+        offsetX: 0,
+        offsetY: 0,
         active: false,
       });
-      if (props.onDrop) props.onDrop({ x: position.x, y: position.y });
     }
   };
 
-  const renderPoint = () => (
-    <svg
-      x={position.x}
-      y={position.y}
-      className={`${className} ${draggable ? ' draggable' : ''}`}
-      onPointerDown={handlePointerDown}
-      onPointerUp={handlePointerUp}
-      onPointerMove={handlePointerMove}
-    >
-      <image
-        href={`/assets/icons/_${iconName}.svg`}
-        width={size}
-      />
-    </svg>
-  );
 
   return (
-    <>
-      {renderPoint()}
-    </>
+      <image
+        x={props.x}
+        y={props.y}
+        className={`${className} ${draggable ? ' draggable' : ''}`}
+        href={`/assets/icons/_${iconName}.svg`}
+        width={size}
+        onPointerDown={handlePointerDown}
+        onPointerUp={handlePointerUp}
+        onPointerMove={handlePointerMove}
+      />
   );
 };

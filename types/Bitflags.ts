@@ -1,6 +1,10 @@
 // Bitflags can only have up to 32 values
 // JavaScript considers all number as 32-bit for bitwise operations
 
+// Used to define helper functions that only operate on one of the bitflags
+// Register new bitflags here
+export type Bitflag = ClimbTechniques | Amenities | RockTypes;
+
 export enum ClimbTechniques {
     None           = 0,
     Aplat          = 1 << 0,

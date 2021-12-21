@@ -29,7 +29,7 @@ export type GeoJsonType = GeoJson["type"];
  * Implementations SHOULD NOT extend positions beyond three elements because the semantics of extra elements are
  * unspecified and ambiguous.
  */
-export type Position = [number, number];
+export type Position = [x: number, y: number];
 
 export type BoundingBox = { 0: number, 1: number, 2: number, 3: number } & number[];
 
@@ -74,12 +74,14 @@ export interface MultiPoint extends GeometryBase {
     coordinates: Position[];
 }
 
+export type LineCoords = { 0: Position, 1: Position } & Position[];
+
 export interface LineString extends GeometryBase {
     type: "LineString";
     /**
      * For type "LineString", the "coordinates" member is an array of two or more positions.
      */
-    coordinates: { 0: Position, 1: Position } & Position[]
+    coordinates: LineCoords
 }
 
 export interface MultiLineString extends GeometryBase {
@@ -101,6 +103,8 @@ export interface MultiLineString extends GeometryBase {
  */
 export type LinearRing = { 0: Position, 1: Position, 2: Position, 3: Position } & Position[];
 
+export type PolygonCoords = LinearRing[]
+
 export interface Polygon extends GeometryBase {
     type: "Polygon";
     /**
@@ -110,15 +114,17 @@ export interface Polygon extends GeometryBase {
      * interior rings. The exterior ring bounds the surface, and the interior rings (if present) bound holes within
      * the surface.
      */
-    coordinates: LinearRing[];
+    coordinates: PolygonCoords;
 }
+
+export type MultiPolygonCoords = PolygonCoords[];
 
 export interface MultiPolygon extends GeometryBase {
     type: "MultiPolygon";
     /**
      * For type "MultiPolygon", the "coordinates" member is an array of Polygon coordinate arrays.
      */
-    coordinates: Polygon["coordinates"][];
+    coordinates: MultiPolygonCoords;
 }
 
 export interface GeometryCollection {

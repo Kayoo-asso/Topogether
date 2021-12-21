@@ -2,10 +2,11 @@ import { Amenities, ClimbTechniques, RockTypes } from './Bitflags';
 import {
   Difficulty, Grade, LightGrade, Orientation, TopoStatus, TopoType,
 } from './Enums';
-import { LineString, MultiPoint, MultiPolygon } from './GeoJson';
+import { LinearRing, LineCoords, Position } from './GeoJson';
 import { GeoCoordinates, StringBetween } from './Utils';
 import { UUID } from './UUID';
-import { Image, TrackRating, User } from './User';
+import { TrackRating, User } from './User';
+import { Image } from './Image';
 
 export interface Topo {
   id: UUID,
@@ -74,15 +75,6 @@ export interface TopoAccessStep {
   image?: Image,
 }
 
-export interface Sector {
-  id: UUID,
-  name: StringBetween<1, 255>,
-  description?: StringBetween<1, 5000>
-
-  boulders: Boulder[],
-  waypoints: Waypoint[]
-}
-
 export interface Parking {
   id: UUID,
   spaces: number,
@@ -90,6 +82,15 @@ export interface Parking {
   name?: StringBetween<1, 255>,
   description?: StringBetween<1, 5000>
   image?: Image
+}
+
+export interface Sector {
+  id: UUID,
+  name: StringBetween<1, 255>,
+  description?: StringBetween<1, 5000>
+
+  boulders: Boulder[],
+  waypoints: Waypoint[]
 }
 
 export interface Waypoint {
@@ -106,8 +107,8 @@ export interface Boulder {
   name: StringBetween<1, 255>,
   isHighball: boolean,
   mustSee: boolean,
-  descent?: Difficulty,
   orderIndex: number,
+  descent?: Difficulty,
 
   tracks: Track[],
   // can be cross-referenced by lines within each track
@@ -123,7 +124,7 @@ export interface Track {
   grade?: Grade,
 
   nbAnchors?: number,
-  techniques?: ClimbTechniques,
+  techniques: ClimbTechniques,
   reception?: Difficulty,
   orientation?: Orientation,
   isTraverse?: boolean,
@@ -131,7 +132,7 @@ export interface Track {
   hasMantle?: boolean,
 
   lines: Line[],
-  ratings?: TrackRating,
+  ratings: TrackRating[],
   // TODO: how to avoid creating a ton of copies of User objects
   // when deserializing an API result?
   creator: User,
@@ -139,11 +140,15 @@ export interface Track {
 
 export interface Line {
   id: UUID,
-  line: LineString,
-  forbidden: MultiPolygon,
+  points: LineCoords,
+  // a LinearRing delineates the contour of a polygon
+  forbidden: LinearRing[],
   // Starting points = max 2 for hand, max 2 for feet
-  startingPoints: MultiPoint
+  // Could not find a way to represent an array of length <= 2 in TypeScript types
+  handDepartures: Position[],
+  feetDepartures: Position[],
 
+  trackId: UUID,
   // the images are provided with the boulder
   imageId: UUID
 }

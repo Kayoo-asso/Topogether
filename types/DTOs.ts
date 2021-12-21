@@ -1,4 +1,4 @@
-import { Line, Track } from "./Topo";
+import { Boulder, Line, Parking, Track, Waypoint } from "./Topo";
 import { UUID } from "./UUID";
 
 export type DTO<T, Refs extends keyof T, Ids extends string> = Omit<T, Refs> & {
@@ -10,6 +10,18 @@ export type LineDTO = Line & {
 };
 
 export type TrackDTO = Omit<Track, 'lines' | 'creator' | 'ratings'> & {
-    sectorId: UUID,
+    boulderId: UUID,
     creatorId: UUID
+};
+
+export type BoulderDTO = Omit<Boulder, 'tracks' | 'images'> & {
+    sectorId: UUID,
+};
+
+export type WaypointDTO = Waypoint & {
+    sectorId: UUID
+};
+
+export type ParkingDTO = Parking & {
+    topoId: UUID
 };

@@ -1,12 +1,9 @@
-import { Point } from "types";
+import { Position } from "types";
 
-export const pointsToPolylineStr = (points: Point[]) => {
-    if (points) {
-        let str = '';
-        points.forEach(point => {
-            str += `${point.x},${point.y} `;
-        });
-        return str;
-    }
-    else return undefined;
+// Example format: "10,20 30,40 10,70 ..."
+// The two coordinates of a point are separated by a comma ','
+// Two points are separated by a space ' '
+export const pointsToPolylineStr = (points: Position[]): string => {
+    const pointStrings = points.map(p => p[0] + ',' + p[1]);
+    return pointStrings.join(' ');
 }

@@ -1,8 +1,8 @@
 //https://francoisromain.medium.com/smooth-a-svg-path-with-cubic-bezier-curves-e37b49d46c74
 
-import { Point } from "types";
+import { Position } from "types";
 
-const opposedLine = (pointA: number[], pointB: number[]) => {
+const opposedLine = (pointA: Position, pointB: Position) => {
     const lengthX = pointB[0] - pointA[0]
     const lengthY = pointB[1] - pointA[1]
     return {
@@ -10,7 +10,7 @@ const opposedLine = (pointA: number[], pointB: number[]) => {
       angle: Math.atan2(lengthY, lengthX)
     }
 }
-const controlPoint = (current: number[], previous: number[], next: number[], reverse?: boolean) => {
+const controlPoint = (current: Position, previous: Position, next: Position, reverse?: boolean) => {
     // When 'current' is the first or last point of the array
     // 'previous' or 'next' don't exist.
     // Replace with 'current'
@@ -31,9 +31,9 @@ const controlPoint = (current: number[], previous: number[], next: number[], rev
 }
 
 
-const lineCommand = (point: number[]) => `L ${point[0]} ${point[1]}`;
+const lineCommand = (point: Position) => `L ${point[0]} ${point[1]}`;
 
-const bezierCommand = (point: number[], i: number, a: number[][]) => {
+const bezierCommand = (point: Position, i: number, a: Position[]) => {
     // start control point
     const [cpsX, cpsY] = controlPoint(a[i - 1], a[i - 2], point)
 
@@ -43,16 +43,13 @@ const bezierCommand = (point: number[], i: number, a: number[][]) => {
  }
 
 type PathEnum = 'LINE' | 'CURVE';
-export const getPathFromPoints = (points: Point[], type: PathEnum = "LINE") => {
-    let command: (point: number[], i: number, a: number[][]) => string;
+export const getPathFromPoints = (points: Position[], type: PathEnum = "LINE") => {
+    let command: (point: Position, i: number, a: Position[]) => string;
     if (type === "LINE") command = lineCommand;
-    else if (type === "CURVE") command = bezierCommand;
-    else return;
-    if (!command) return;
+    if (type === "CURVE") command = bezierCommand;
 
     // build the d attributes by looping over the points
-    const formattedPoints = points.map(point => [point.x, point.y]);
-    const d = formattedPoints.reduce((acc, point, i, a) =>
+    const d = points.reduce((acc, point, i, a) =>
         i === 0 ?
             `M ${point[0]},${point[1]}` :
             `${acc} ${command(point, i, a)}`,

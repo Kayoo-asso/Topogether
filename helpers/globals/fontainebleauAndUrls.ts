@@ -1,3 +1,8 @@
+export const fontainebleauLocation = {
+  lat: 48.399065,
+  lng: 2.697569,
+};
+
 export const topogetherUrl = 'https://builder.topogether.com';// import.meta.env.VITE_TOPOGETHER_URL,
 export const staticUrl = {
   logo_color: `${topogetherUrl}/assets/images/logo/Logo_green_topogether.png`,

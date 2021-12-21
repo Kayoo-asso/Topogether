@@ -58,7 +58,6 @@ export type PointEnum =
 'LINE_POINT' | 
 'HAND_DEPARTURE_POINT' | 
 'FOOT_DEPARTURE_POINT' | 
-'ANCHOR_POINT' | 
 'FORBIDDEN_AREA_POINT';
 
 export type AreaEnum = 

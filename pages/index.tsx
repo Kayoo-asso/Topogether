@@ -5,10 +5,12 @@ import { fakeLightTopo } from 'helpers/fakeData/fakeLightTopo';
 import type { NextPage } from 'next';
 import React from 'react';
 import { isDesktop, isMobile } from 'react-device-detect';
+import { GeoCamera } from 'components/molecules/GeoCameraTest';
 
 const WorldMapPage: NextPage = () => (
   <>
-    <TopoCard topo={fakeLightTopo} />
+    <GeoCamera open/>
+    {/* <TopoCard topo={fakeLightTopo} /> */}
     {/* <TopoCardDesktop topo={fakeLightTopo} /> */}
   </>
 );

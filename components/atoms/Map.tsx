@@ -4,9 +4,8 @@ import React, {
 import { useEffectWithDeepEqual } from 'helpers';
 import mapStyles from 'styles/mapStyles';
 import equal from 'fast-deep-equal/es6';
-import { mapEvents, MapProps, markerEvents, MarkerProps } from 'types';
-import { fontainebleauLocation } from 'const';
-
+import { mapEvents, MapProps, markerEvents, MarkerProps, UUID } from 'types';
+import { fontainebleauLocation } from 'helpers/globals';
 
 const containerStyles: React.CSSProperties = {
   width: '100%',
@@ -142,7 +141,7 @@ Map.displayName = 'Map';
 // note: may need to copy the after array, since it comes from props
 function diffMarkers(map: google.maps.Map, before: MapMarker[], after: MarkerProps[]): MapMarker[] {
   // before is already sorted, due to how we construct it every time
-  after.sort((a, b) => compareBigInts(a.id, b.id));
+  after.sort((a, b) => compareIds(a.id, b.id));
   let beforeIdx = 0;
   let afterIdx = 0;
   let result: MapMarker[] = new Array(after.length);
@@ -151,7 +150,7 @@ function diffMarkers(map: google.maps.Map, before: MapMarker[], after: MarkerPro
     const existing = before[beforeIdx];
     const incoming = after[afterIdx];
     // Process the one with lowest ID first, or compare both if the IDs are equal
-    switch (compareBigInts(existing.id, incoming.id)) {
+    switch (compareIds(existing.id, incoming.id)) {
       // existing.id < incoming.id
       case -1:
         deleteMarker(existing);
@@ -189,9 +188,7 @@ function diffMarkers(map: google.maps.Map, before: MapMarker[], after: MarkerPro
   return result;
 }
 
-// when comparing bigints in Array.sort, we can't return `a - b` like we'd do with numbers,
-// since the result of a compare function should be a number, not a bigint.
-const compareBigInts = (a: bigint, b: bigint) => (a < b) ? - 1 : ((a > b) ? 1 : 0)
+const compareIds = (a: UUID, b: UUID) => (a < b) ? - 1 : ((a > b) ? 1 : 0)
 
 function createMarker(props: MarkerProps, map: google.maps.Map): MapMarker {
   // avoid an extra call to marker.setMap by including it into the options

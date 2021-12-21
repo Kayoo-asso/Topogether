@@ -3,6 +3,8 @@ export type GeoCoordinates = {
   lng: number,
 };
 
+export type BBox = Omit<DOMRect, 'toJSON'>;
+
 export type RequireAtLeastOne<T, Keys extends keyof T = keyof T> =
     Pick<T, Exclude<keyof T, Keys>>
     & {
@@ -70,4 +72,15 @@ export function stringBetween<Min extends number, Max extends number>(
     return s;
   }
   return null;
+}
+
+const hardcoded: StringBetween<1, 255> = "foo" as StringBetween<1, 255>;
+
+function onChange(input: string) {
+  if (isStringBetween(input, 1, 255)) {
+    // Update data
+    // example:
+    const x: StringBetween<1, 255> = input;
+  }
+  // Handle error
 }

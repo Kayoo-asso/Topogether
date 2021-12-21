@@ -1,11 +1,11 @@
 import React from 'react';
-import Image from 'next/image';
-import { ImageAfterServer } from 'types';
+import { default as NextImage } from 'next/image';
+import { Image } from 'types';
 // eslint-disable-next-line import/no-cycle
 import { DeleteButton } from 'components';
 
 interface ImageThumbProps {
-  image: ImageAfterServer,
+  image: Image,
   selectable?: boolean,
   selected?: boolean,
   deletable?: boolean,
@@ -39,7 +39,7 @@ export const ImageThumb: React.FC<ImageThumbProps> = ({
           />
         </div>
         )}
-    <Image
+    <NextImage
       src={props.image.url}
       alt="user generated image"
       layout="fill"

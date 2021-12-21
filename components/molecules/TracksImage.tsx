@@ -1,480 +1,283 @@
 import React, { useEffect, useRef, useState } from 'react';
-// import Image from 'next/image';
-// import {
-// <<<<<<< HEAD
-//   Polygon, Point, ImageAfterServer, ImageDimension, LineString, Track,
-// =======
-//   Area, Coordinates, ImageAfterServer, ImageDimension, Line, Track,
-//   PointEnum, AreaEnum, DrawerToolEnum,
-// >>>>>>> dev
-// } from 'types';
-// import { SVGArea } from 'components';
-// import { staticUrl, topogetherUrl } from 'const/staticUrl';
-// import {
-//   getMousePosInside,
-//   getPathFromPoints,
-// } from '../../helpers';
+import { default as NextImage } from 'next/image';
+import {
+  Polygon, Point, Image, LineString, Track,
+  PointEnum, AreaEnum, DrawerToolEnum, Position, LineCoords, Line, ImageDimensions, UUID, gradeToLightGrade, LinearRing,
+  LightGrade
+} from 'types';
+import { SVGArea } from 'components';
+import { staticUrl, topogetherUrl } from 'helpers/globals';
+import {
+  getMousePosInside,
+  getPathFromPoints,
+} from '../../helpers';
 
-// interface TracksImageProps {
-//   image: ImageAfterServer,
-//   tracks: Track[],
-//   tracksClassName?: string,
-//   displayTracks?: boolean,
-//   displayPhantomTracks?: boolean,
-//   displayTracksNumber?: boolean,
-//   displayTracksDetails?: boolean,
-//   editable?: boolean,
-//   currentTrackId?: number,
-//   currentTool?: DrawerToolEnum,
-//   boulderImageDimensions: ImageDimension,
-//   onImageClick?: (pos: Point | null) => void,
-//   onPointClick?: (pointType: PointEnum, index: number) => void,
-//   onPolylineClick?: (line: LineString) => void,
-//   onAreaChange?: (areaType: AreaEnum, index: number, area: Polygon) => void,
-//   onImageLoad?: (e: {
-//     naturalWidth: number;
-//     naturalHeight: number;
-//   }) => void,
-// }
+interface TracksImageProps {
+  image: Image,
+  tracks: Track[],
+  dimensions: ImageDimensions,
+  tracksClassName?: string,
+  displayTracks?: boolean,
+  displayPhantomTracks?: boolean,
+  displayTracksNumber?: boolean,
+  displayTracksDetails?: boolean,
+  editable?: boolean,
+  currentTrackId?: UUID,
+  currentTool?: DrawerToolEnum,
+  onImageClick?: (pos: Position) => void,
+  onPointClick?: (pointType: PointEnum, index: number) => void,
+  onPolylineClick?: (line: Line) => void,
+  onAreaChange?: (areaType: AreaEnum, index: number, area: LinearRing) => void,
+  onImageLoad?: (e: {
+    naturalWidth: number;
+    naturalHeight: number;
+  }) => void,
+};
 
-// export const TracksImage: React.FC<TracksImageProps> = ({
-//   tracksClassName = 'stroke-main',
-//   displayTracks = true,
-//   displayPhantomTracks = true,
-//   displayTracksNumber = true,
-//   displayTracksDetails = true,
-//   editable = false,
-//   ...props
-// }: TracksImageProps) => {
-  // const imgContainerRef = useRef<HTMLSpanElement>(null);
 
-  // const [canvasWidth, setCanvasWidth] = useState(0);
-  // const [canvasHeight, setCanvasHeight] = useState(0);
-  // const [ratio, setRatio] = useState({ rX: 1, rY: 1 });
-  // const getRatio = () => {
-  //   if (props.boulderImageDimensions || (props.tracks[0]?.lines && props.tracks[0]?.lines[0]?.boulderImageDimensions)) {
-  //     const boulderImageDimensions = props.boulderImageDimensions || (props.tracks[0]?.lines && props.tracks[0].lines[0].boulderImageDimensions);
-  //     const newX = canvasWidth;
-  //     const newY = canvasHeight;
-  //     const oldX = boulderImageDimensions.width;
-  //     const oldY = boulderImageDimensions.height;
-  //     const rX = newX / oldX;
-  //     const rY = newY / oldY;
-  //     return { rX, rY };
-  //   }
-  //   return { rX: 1, rY: 1 };
-  // };
+// NOTES:
+// - The useDimensions hook from react-cool-dimensions can be used to dynamically size this component, based on its container
+// TODOS:
+// - Verify that all the SVG elems are positioned correctly by taking into account their width / radius when setting x,y attributes
+// - Verify that clicking on the SVG canvas works properly
+// - Verify that clicking on interactive SVG elements does not propagate to canvas
+// - Verify that onPointClick / onPolyLineClick / onAreaChange work as expected
+// - Verify that the useDimensions hook works for dynamically resizing TracksImage
+// - Verify that the SVG canvas and the image overlap correctly
+export const TracksImage: React.FC<TracksImageProps> = ({
+  tracksClassName = 'stroke-main',
+  displayTracks = true,
+  displayPhantomTracks = true,
+  displayTracksNumber = true,
+  displayTracksDetails = true,
+  editable = false,
+  ...props
+}: TracksImageProps) => {
 
-  // useEffect(() => {
-  //   if (canvasWidth && canvasHeight) setRatio(getRatio());
-  //   else setRatio({ rX: 1, rY: 1 });
-  // }, [canvasWidth, canvasHeight, props.tracks[0]?.lines?.length]);
-  // useEffect(() => {
-  //   if (window.screen?.orientation) {
-  //     window.screen.orientation.onchange = (e) => {
-  //       if (imgContainerRef.current) {
-  //         setCanvasWidth(imgContainerRef.current.clientWidth);
-  //         setCanvasHeight(imgContainerRef.current.clientHeight);
-  //       }
-  //     };
-  //   } else { // Safari (does not support screen.orientation)
-  //     window.addEventListener('orientationchange', () => {
-  //       if (imgContainerRef.current) {
-  //         setCanvasWidth(imgContainerRef.current.clientWidth);
-  //         setCanvasHeight(imgContainerRef.current.clientHeight);
-  //       }
-  //     });
-  //   }
-  // }, []);
+  // We use props.dimensions often, so a shorter name is nice
+  const dimensions = props.dimensions;
+  const [naturalDims, setNaturalDims] = useState<ImageDimensions>({ width: 0, height: 0 });
+  const rx = naturalDims.width != 0
+    ? dimensions.width / naturalDims.width
+    : 1;
+  const ry = naturalDims.height != 0
+    ? dimensions.height / naturalDims.height
+    : 1;
 
-  // const getResizedPointsOfLine: (line: LineString, pointType: PointEnum) => Point[] = (line:LineString, pointType: PointEnum) => {
-  //   if (ratio) {
-  //     const resizedLinePoints: Point[] = [];
-  //     const resizedHandDeparturePoints: Point[] = [];
-  //     const resizedFeetDeparturePoints: Point[] = [];
-  //     const resizedAnchorDeparturePoints: Point[] = [];
-  //     if (pointType === 'LINE_POINT' && line.linePoints) {
-  //       for (const linePoints of line.linePoints) {
-  //         resizedLinePoints.push({
-  //           x: ratio.rX * linePoints.x,
-  //           y: ratio.rY * linePoints.y,
-  //         });
-  //       }
-  //       return resizedLinePoints;
-  //     }
-  //     if (pointType === 'HAND_DEPARTURE_POINT' && line.handDeparturePoints) {
-  //       for (const handDeparturePoint of line.handDeparturePoints) {
-  //         resizedHandDeparturePoints.push({
-  //           x: ratio.rX * handDeparturePoint.x,
-  //           y: ratio.rY * handDeparturePoint.y,
-  //         });
-  //       }
-  //       return resizedHandDeparturePoints;
-  //     }
-  //     if (pointType === 'FOOT_DEPARTURE_POINT' && line.feetDeparturePoints) {
-  //       for (const feetDeparturePoint of line.feetDeparturePoints) {
-  //         resizedFeetDeparturePoints.push({
-  //           x: ratio.rX * feetDeparturePoint.x,
-  //           y: ratio.rY * feetDeparturePoint.y,
-  //         });
-  //       }
-  //       return resizedFeetDeparturePoints;
-  //     }
-  //     if (pointType === 'ANCHOR_POINT' && line.anchorPoints) {
-  //       for (const anchorPoints of line.anchorPoints) {
-  //         resizedAnchorDeparturePoints.push({
-  //           x: ratio.rX * anchorPoints.x,
-  //           y: ratio.rY * anchorPoints.y,
-  //         });
-  //       }
-  //       return resizedAnchorDeparturePoints;
-  //     }
-  //     return [];
-  //   }
-  //   return [];
-  // };
-  // const getResizedPointsOfArea: (area: Polygon) => Polygon = (area: Polygon) => {
-  //   if (area.coordinates && ratio) {
-  //     const newArea: Polygon = JSON.parse(JSON.stringify(area));
-  //     const resizedAreaPoints: Point[] = [];
-  //     newArea.coordinates.forEach((point) => {
-  //       resizedAreaPoints.push({
-  //         x: ratio.rX * point.x,
-  //         y: ratio.rY * point.y,
-  //       });
-  //     });
-  //     newArea.coordinates = resizedAreaPoints;
-  //     return JSON.parse(JSON.stringify(newArea));
-  //   }
-  //   return { coordinates: [] };
-  // };
+  const svgElems: JSX.Element[] = [];
+  const svgScaleClass = props.currentTool === 'ERASER'
+    ? 'scale-125'
+    : '';
 
-  // const renderPhantomTracks = () => {
-  //   if (props.tracks && ratio) {
-  //     const lineStrokeWidth = 3 * ratio.rX;
-  //     return props.tracks.map((track) => {
-  //       if (props.currentTrackId && track.id !== props.currentTrackId) {
-  //         const line = track.lines?.find((l) => l.boulderImageId === props.image?.id);
-  //         if (line && (line.linePoints?.length ?? 0) > 0) {
-  //           return (
-  //             <React.Fragment key={line.id}>
-  //               <path
-  //                 className={`z-10 opacity-40 ${tracksClassName} ${props.onPolylineClick && ' cursor-pointer'}`}
-  //                 strokeWidth={lineStrokeWidth}
-  //                 d={getPathFromPoints(getResizedPointsOfLine(line, 'LINE_POINT'), 'CURVE')}
-  //                 onClick={() => {
-  //                   if (props.onPolylineClick) props.onPolylineClick(line);
-  //                 }}
-  //               />
-  //               {displayTracksNumber && (
-  //                 <>
-  //                   <circle
-  //                     cx={getResizedPointsOfLine(line, 'LINE_POINT')[0]?.x}
-  //                     cy={getResizedPointsOfLine(line, 'LINE_POINT')[0]?.y}
-  //                     r={9}
-  //                     className={`z-20 opacity-40 ${props.onPolylineClick && 'cursor-pointer pointer-events-auto'}`}
-  //                     onClick={() => {
-  //                       if (props.onPolylineClick) props.onPolylineClick(line);
-  //                     }}
-  //                   />
-  //                   <text
-  //                     x={getResizedPointsOfLine(line, 'LINE_POINT')[0]?.x}
-  //                     y={getResizedPointsOfLine(line, 'LINE_POINT')[0]?.y}
-  //                     className={`z-20 opacity-40 ${props.onPolylineClick && 'cursor-pointer'}`}
-  //                     textAnchor="middle"
-  //                     stroke="white"
-  //                     strokeWidth="1px"
-  //                     fontSize="8px"
-  //                     dy="3px"
-  //                     onClick={() => {
-  //                       if (props.onPolylineClick) props.onPolylineClick(line);
-  //                     }}
-  //                   >
-  //                     {track.orderIndex + 1}
-  //                   </text>
-  //                 </>
-  //               )}
-  //             </React.Fragment>
-  //           );
-  //         }
-  //       }
-  //       return null;
-  //     });
-  //   }
-  //   return null;
-  // };
-  // const renderTracks = () => {
-  //   if (props.tracks && ratio) {
-  //     const lineStrokeWidth = 3 * ratio.rX;
-  //     return props.tracks.map((track) => {
-  //       if (!props.currentTrackId || track.id === props.currentTrackId) {
-  //         const line = track.lines?.find((l) => l.boulderImageId === props.image?.id);
-  //         if (line && (line.linePoints?.length ?? 0) > 0) {
-  //           return (
-  //             <React.Fragment key={line.id}>
-  //               <path
-  //                 className={`z-30 ${tracksClassName} ${props.onPolylineClick && 'cursor-pointer'}`}
-  //                 strokeWidth={lineStrokeWidth}
-  //                 d={getPathFromPoints(getResizedPointsOfLine(line, 'LINE_POINT'), 'CURVE')}
-  //                 onClick={() => {
-  //                   if (props.onPolylineClick) props.onPolylineClick(line);
-  //                 }}
-  //               />
-  //               {displayTracksNumber && (
-  //                 <>
-  //                   <circle
-  //                     cx={getResizedPointsOfLine(line, 'LINE_POINT')[0]?.x}
-  //                     cy={getResizedPointsOfLine(line, 'LINE_POINT')[0]?.y}
-  //                     r={9}
-  //                     className={`z-40 ${props.onPolylineClick && 'cursor-pointer pointer-events-auto'}`}
-  //                     onClick={() => {
-  //                       if (props.onPolylineClick) props.onPolylineClick(line);
-  //                     }}
-  //                   />
-  //                   <text
-  //                     x={getResizedPointsOfLine(line, 'LINE_POINT')[0]?.x}
-  //                     y={getResizedPointsOfLine(line, 'LINE_POINT')[0]?.y}
-  //                     className={`z-40 ${props.onPolylineClick && 'cursor-pointer'}`}
-  //                     textAnchor="middle"
-  //                     stroke="white"
-  //                     strokeWidth="1px"
-  //                     fontSize="8px"
-  //                     dy="3px"
-  //                     onClick={() => {
-  //                       if (props.onPolylineClick) props.onPolylineClick(line);
-  //                     }}
-  //                   >
-  //                     {track.orderIndex + 1}
-  //                   </text>
-  //                 </>
-  //               )}
-  //             </React.Fragment>
-  //           );
-  //         }
-  //       }
-  //       return null;
-  //     });
-  //   }
-  //   return null;
-  // };
-  // const renderTracksPoints = () => {
-  //   if (props.tracks && ratio) {
-  //     const pointSize = 3 * ratio.rX;
-  //     return props.tracks.map((track) => {
-  //       const line = track.lines?.find((l) => l.boulderImageId === props.image?.id);
-  //       if (line && (line.linePoints?.length ?? 0) > 0 && track.id === props.currentTrackId) {
-  //         return getResizedPointsOfLine(line, 'LINE_POINT')?.map((point, index) => (
-  //           <svg
-  //             key={`linepoint-${index}`}
-  //             className={`${props.currentTool === 'ERASER' ? 'scale-125' : ''}`}
-  //             x={point.x - pointSize}
-  //             y={point.y - pointSize}
-  //             onClick={(e) => {
-  //               if (props.onPointClick) props.onPointClick('LINE_POINT', index);
-  //             }}
-  //           >
-  //             <circle
-  //               className="pointer-events-auto"
-  //               cx={pointSize}
-  //               cy={pointSize}
-  //               r={pointSize}
-  //             />
-  //           </svg>
-  //         ));
-  //       }
-  //       return null;
-  //     });
-  //   }
-  // };
-  // const renderHandDeparturePoints = () => {
-  //   if (props.tracks && ratio) {
-  //     const iconWidth = 18 * ratio.rX;
-  //     return props.tracks.map((track) => {
-  //       if (!props.currentTrackId || track.id === props.currentTrackId) {
-  //         const line = track.lines?.find((l) => l.boulderImageId === props.image?.id);
-  //         if (line && (line.handDeparturePoints?.length ?? 0) > 0) {
-  //           return getResizedPointsOfLine(line, 'HAND_DEPARTURE_POINT')?.map((point, index) => (
-  //             <svg
-  //               key={`hand-${index}`}
-  //               className={`${props.currentTool === 'ERASER' ? 'scale-125' : ''}`}
-  //               x={point.x}
-  //               y={point.y}
-  //               onClick={(e) => {
-  //                 if (props.onPointClick) props.onPointClick('HAND_DEPARTURE_POINT', index);
-  //               }}
-  //             >
-  //               <image
-  //                 href={`/assets/icons/colored/hand-full/_hand-full-${track.grade ? track.grade[0] : 'grey'}.svg`}
-  //                 width={iconWidth}
-  //               />
-  //             </svg>
-  //           ));
-  //         }
-  //       }
-  //       return null;
-  //     });
-  //   }
-  // };
-  // const renderFeetDeparturePoints = () => {
-  //   if (props.tracks && ratio) {
-  //     const iconWidth = 30 * ratio.rX;
-  //     return props.tracks.map((track) => {
-  //       if (!props.currentTrackId || track.id === props.currentTrackId) {
-  //         const line = track.lines?.find((l) => l.boulderImageId === props.image?.id);
-  //         if (line && (line.feetDeparturePoints?.length ?? 0) > 0) {
-  //           return getResizedPointsOfLine(line, 'FOOT_DEPARTURE_POINT')?.map((point, index) => (
-  //             <svg
-  //               key={index}
-  //               className={`${props.currentTool === 'ERASER' ? 'scale-125' : ''}`}
-  //               x={point.x}
-  //               y={point.y}
-  //               onClick={(e) => {
-  //                 if (props.onPointClick) props.onPointClick('FOOT_DEPARTURE_POINT', index);
-  //               }}
-  //             >
-  //               <image
-  //                 href={`/assets/icons/colored/climbing-shoe-full/_climbing-shoe-full-${track.grade ? track.grade[0] : 'grey'}.svg`}
-  //                 width={iconWidth}
-  //               />
-  //             </svg>
-  //           ));
-  //         }
-  //       }
-  //       return null;
-  //     });
-  //   }
-  // };
-  // const renderAnchorPoints = () => {
-  //   if (props.tracks && ratio) {
-  //     const iconWidth = 12 * ratio.rX;
-  //     return props.tracks.map((track) => {
-  //       if (!props.currentTrackId || track.id === props.currentTrackId) {
-  //         const line = track.lines?.find((l) => l.boulderImageId === props.image?.id);
-  //         if (line && (line.anchorPoints?.length ?? 0) > 0) {
-  //           return getResizedPointsOfLine(line, 'ANCHOR_POINT')?.map((point, index) => (
-  //             <svg
-  //               key={index}
-  //               className={`${props.currentTool === 'ERASER' ? 'scale-125' : ''}`}
-  //               x={point.x}
-  //               y={point.y}
-  //               onClick={(e) => {
-  //                 if (props.onPointClick) props.onPointClick('ANCHOR_POINT', index);
-  //               }}
-  //             >
-  //               <image
-  //                 href={`/assets/icons/colored/quickdraw/_quickdraw-${track.grade ? track.grade[0] : 'grey'}.svg`}
-  //                 width={iconWidth}
-  //               />
-  //             </svg>
-  //           ));
-  //         }
-  //       }
-  //       return null;
-  //     });
-  //   }
-  // };
-  // const renderForbiddenAreas = () => {
-  //   if (props.tracks && ratio) {
-  //     const pointSize = 6 * ratio.rX;
-  //     return props.tracks.map((track) => {
-  //       if (!props.currentTrackId || track.id === props.currentTrackId) {
-  //         const line = track.lines?.find((l) => l.boulderImageId === props.image?.id);
-  //         if (line?.forbiddenAreas && (line.forbiddenAreas.length ?? 0) > 0) {
-  //           return line.forbiddenAreas.map((areaLine, index) => (
-  //             <svg
-  //               key={`forbidden-area-${index}`}
-  //               className={`${props.currentTool === 'ERASER' ? 'scale-125' : ''}`}
-  //               onClick={(e) => {
-  //                 if (props.onPointClick) props.onPointClick('FORBIDDEN_AREA_POINT', index);
-  //               }}
-  //             >
-  //               <SVGArea
-  //                 key={index}
-  //                 editable={editable}
-  //                 area={getResizedPointsOfArea(areaLine)}
-  //                 ratio={ratio}
-  //                 pointSize={pointSize}
-  //                 onChange={(area) => {
-  //                   if (props.onAreaChange) props.onAreaChange('FORBIDDEN_AREA', index, area);
-  //                 }}
-  //               />
-  //             </svg>
-  //           ));
-  //         }
-  //       }
-  //       return null;
-  //     });
-  //   }
-  // };
+  const linesOnImage = sortLines(props.tracks, props.image.id);
 
-  // const getCursorUrl = () => {
-  //   let cursorColor = 'grey';
-  //   const currentTrack = props.tracks.find((track) => track.id === props.currentTrackId);
-  //   if (currentTrack?.grade) { cursorColor = currentTrack.grade[0] || 'grey'; }
+  for (let lineIdx = 0; lineIdx < linesOnImage.length; lineIdx++) {
+    const line = linesOnImage[lineIdx];
+    const isHighlighted =
+      props.currentTrackId === undefined ||
+      line.trackId === props.currentTrackId;
 
-  //   let cursorUrl = '/assets/icons/colored/';
-  //   switch (props.currentTool) {
-  //     case 'LINE_DRAWER':
-  //       cursorUrl += `line-point/_line-point-${cursorColor}.svg`; break;
-  //     case 'ANCHOR_DRAWER':
-  //       cursorUrl += `quickdraw/_quickdraw-${cursorColor}.svg`; break;
-  //     case 'ERASER':
-  //       cursorUrl += '_eraser-main.svg'; break;
-  //     case 'HAND_DEPARTURE_DRAWER':
-  //       cursorUrl += `hand-full/_hand-full-${cursorColor}.svg`; break;
-  //     case 'FOOT_DEPARTURE_DRAWER':
-  //       cursorUrl += `climbing-shoe-full/climbing-shoe-full-${cursorColor}.svg`; break;
-  //     case 'FORBIDDEN_AREA_DRAWER':
-  //       cursorUrl += '_forbidden-area-second.svg'; break;
-  //   }
-  //   return cursorUrl;
-  // };
+    if (line.points.length == 0) {
+      continue;
+    }
 
-  // return (
-  //   <span>
-  //     <svg
-  //       style={{ cursor: `url(${getCursorUrl()}), auto` }}
-  //       className="svg-canvas"
-  //       width={canvasWidth}
-  //       height={canvasHeight}
-  //       onMouseDown={(e) => {
-  //         if (e.button === 0 && props.onImageClick && !e.currentTarget.classList.contains('svg-area')) { // Left-click on the canvas only
-  //           if (props.image && editable) {
-  //             // TO FIX ??? TODO
-  //             // if (!e.currentTarget.classList.contains('svg-canvas')) {
-  //             //   e.currentTarget = e.currentTarget.farthestViewportElement;
-  //             // }
-  //             const { posX, posY } = getMousePosInside(e);
-  //             props.onImageClick({ x: posX, y: posY });
-  //           } else props.onImageClick(null);
-  //         }
-  //       }}
-  //     >
-  //       {displayPhantomTracks && renderPhantomTracks()}
-  //       {displayTracks && renderTracks()}
-  //       {displayTracks && editable && renderTracksPoints()}
-  //       {displayTracksDetails && renderHandDeparturePoints()}
-  //       {displayTracksDetails && renderFeetDeparturePoints()}
-  //       {displayTracksDetails && renderAnchorPoints()}
-  //       {displayTracksDetails && renderForbiddenAreas()}
-  //     </svg>
+    const points: Position[] = line.points.map(p => [p[0] * rx, p[1] * ry]);
+    const path = getPathFromPoints(points, 'CURVE');
+    const firstX = points[0][0] * rx;
+    const firstY = points[0][1] * ry;
+    const lineBaseCss = isHighlighted
+      ? "z-30"
+      : displayPhantomTracks ? "z-10 opacity-40" : "hidden";
+    const tracksNumberBaseCss = isHighlighted
+      ? "z-40"
+      : displayPhantomTracks ? "z-20 opacity-40" : "hidden";
 
-  //     <span
-  //       ref={imgContainerRef}
-  //       className="flex items-center"
-  //     >
-  //       <Image
-  //         src={props.image ? (topogetherUrl + props.image.url) : staticUrl.defaultKayoo}
-  //         alt="Rocher"
-  //         layout="fill"
-  //         objectFit="contain"
-  //         onLoadingComplete={(e) => {
-  //           setCanvasWidth(e.naturalWidth);
-  //           setCanvasHeight(e.naturalHeight);
-  //           if (props.onImageLoad) props.onImageLoad(e);
-  //         }}
-  //       />
-  //     </span>
-  //   </span>
-  // );
-// };
+    svgElems.push(
+      <path
+        className={`${lineBaseCss} ${tracksClassName} ${props.onPolylineClick && 'cursor-pointer'}`}
+        strokeWidth={3 * rx}
+        d={path}
+        onClick={() => props.onPolylineClick && props.onPolylineClick(line)}
+      />
+    );
+
+    const pointRadius = 3 * rx;
+    const pointCircles = points.map(x =>
+      <circle
+        className="pointer-events-auto"
+        cx={x[0] * rx}
+        cy={x[1] * ry}
+        r={pointRadius}
+      />
+    );
+
+    // TODO: optimise this
+    svgElems.push(...pointCircles);
+
+    // Number in the track ordering
+    if (displayTracksNumber) {
+      svgElems.push(
+        <circle
+          cx={firstX}
+          cy={firstY}
+          r={9}
+          className={`${tracksNumberBaseCss} ${props.onPolylineClick && 'cursor-pointer pointer-events-auto'}`}
+          onClick={() => props.onPolylineClick && props.onPolylineClick(line)}
+        />,
+        <text
+          x={firstX}
+          y={firstY}
+          className={`${tracksNumberBaseCss} ${props.onPolylineClick && 'cursor-pointer'}`}
+          textAnchor="middle"
+          stroke="white"
+          strokeWidth="1px"
+          fontSize="8px"
+          dy="3px"
+          onClick={() => props.onPolylineClick && props.onPolylineClick(line)}
+        >
+          {lineIdx}
+        </text >
+      );
+    }
+
+    // Hand and feet departures
+    // Only render hand and feet departures for the first line of a track
+    // TODO: try out SVG imports instead
+    // TODO: onClick handlers. Is passing the index really the best solution here?
+    if (line.isStart && displayTracksDetails && isHighlighted) {
+      for (const [handX, handY] of line.handDepartures) {
+        svgElems.push(
+          <image
+            className={svgScaleClass}
+            href={`assets/icons/colored/hand-full/_hand-full-${line.gradeSuffix}.svg`}
+            width={18 * rx}
+            x={handX * rx}
+            y={handY * ry}
+          />
+        );
+      }
+      for (const [footX, footY] of line.feetDepartures) {
+        svgElems.push(
+          <image
+            className={svgScaleClass}
+            href={`assets/icons/colored/climbing-shoe-full/_climbing-shoe-full-${line.gradeSuffix}.svg`}
+            width={30 * rx}
+            x={footX * rx}
+            y={footY * ry}
+          />
+        )
+      }
+    }
+
+    // Forbidden areas
+    if (displayTracksDetails && isHighlighted) {
+      for (let areaIdx = 0; areaIdx < line.forbidden.length; areaIdx++) {
+        const area = line.forbidden[areaIdx];
+        svgElems.push(
+          <SVGArea
+            className={svgScaleClass}
+            area={area}
+            editable={editable}
+            rx={rx}
+            ry={ry}
+            pointSize={6 * rx}
+            // TODO: do we need to handle clicks on area points?
+            // You can already drag to resize
+            // Maybe to remove them?
+            // need to call props.onPointClick('FORBIDDEN_AREA_POINT', areaIdx)
+            onChange={(area) => props.onAreaChange && props.onAreaChange('FORBIDDEN_AREA', areaIdx, area)}
+          />
+        )
+      }
+    }
+  }
+
+  const getCursorUrl = () => {
+    let cursorColor = 'grey';
+    const currentTrack = props.tracks.find((track) => track.id === props.currentTrackId);
+    if (currentTrack?.grade) { cursorColor = currentTrack.grade[0] || 'grey'; }
+
+    let cursorUrl = '/assets/icons/colored/';
+    switch (props.currentTool) {
+      case 'LINE_DRAWER':
+        cursorUrl += `line-point/_line-point-${cursorColor}.svg`; break;
+      case 'ANCHOR_DRAWER':
+        cursorUrl += `quickdraw/_quickdraw-${cursorColor}.svg`; break;
+      case 'ERASER':
+        cursorUrl += '_eraser-main.svg'; break;
+      case 'HAND_DEPARTURE_DRAWER':
+        cursorUrl += `hand-full/_hand-full-${cursorColor}.svg`; break;
+      case 'FOOT_DEPARTURE_DRAWER':
+        cursorUrl += `climbing-shoe-full/climbing-shoe-full-${cursorColor}.svg`; break;
+      case 'FORBIDDEN_AREA_DRAWER':
+        cursorUrl += '_forbidden-area-second.svg'; break;
+    }
+    return cursorUrl;
+  };
+
+  return (
+    <>
+      <svg
+        style={{ cursor: `url(${getCursorUrl()}), auto` }}
+        className="svg-canvas"
+        width={dimensions.width}
+        height={dimensions.height}
+        onMouseDown={(e) => {
+          if (e.button === 0 && props.onImageClick && editable) { // Left-click on the canvas only
+            const pos = getMousePosInside(e);
+            props.onImageClick(pos);
+          }
+        }}
+      >
+        {svgElems}
+      </svg>
+      <NextImage
+        className="-mt-[100%]"
+        src={props.image ? (topogetherUrl + props.image.url) : staticUrl.defaultKayoo}
+        alt="Rocher"
+        width={dimensions.width}
+        height={dimensions.height}
+        onLoadingComplete={(e) => {
+          setNaturalDims({
+            width: e.naturalWidth,
+            height: e.naturalHeight
+          });
+          if (props.onImageLoad) props.onImageLoad(e);
+        }}
+      />
+    </>
+  );
+};
+
+type LineOnImage = Line & {
+  isStart: boolean,
+  gradeSuffix: LightGrade | 'grey'
+};
+
+function sortLines(tracks: Track[], imageId: UUID): LineOnImage[] {
+  const lines: LineOnImage[] = [];
+  for (let i = 0; i < tracks.length; i++) {
+    const track = tracks[i];
+    const lineIdx = track.lines.findIndex(x => x.imageId === imageId);
+    if (lineIdx < 0) {
+      continue;
+    }
+
+    lines.push({
+      isStart: lineIdx === 0,
+      gradeSuffix: track.grade ? gradeToLightGrade(track.grade) : 'grey',
+      ...track.lines[lineIdx]
+    });
+  }
+  lines.sort(compareLineStarts);
+  return lines;
+}
+
+const compareLineStarts = (a: Line, b: Line): number => {
+  if (a.points.length === 0 || b.points.length === 0) {
+    return 0;
+  }
+  const aStartX = a.points[0][0];
+  const bStartX = b.points[0][0];
+  return aStartX - bStartX;
+}

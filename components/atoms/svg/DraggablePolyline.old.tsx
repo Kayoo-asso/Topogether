@@ -1,9 +1,9 @@
 import { pointsToPolylineStr } from 'helpers';
 import React, { useState } from 'react';
-import { Position } from 'types';
+import { Point } from 'types';
 
 interface DraggablePolylineProps {
-  points: Position[],
+  points: Point[],
   className?: string,
   strokeWidth?: number,
   onDrag?: (diffX: number, diffY: number) => void
@@ -27,9 +27,6 @@ export const DraggablePolyline: React.FC<DraggablePolylineProps> = ({
       y: e.clientY,
       active: true,
     });
-    // Avoid registering clicks on the underlying SVG 
-    // TODO: verify that this works
-    e.stopPropagation();
   };
 
   const handlePointerMove: React.PointerEventHandler<SVGPolylineElement> = (e: React.PointerEvent) => {
@@ -53,7 +50,6 @@ export const DraggablePolyline: React.FC<DraggablePolylineProps> = ({
       if (props.onDrop) props.onDrop();
     }
   };
-
 
   return (
     <polyline
