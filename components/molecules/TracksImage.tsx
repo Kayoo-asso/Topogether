@@ -118,7 +118,7 @@ export const TracksImage: React.FC<TracksImageProps> = ({
     // TODO: optimise this
     svgElems.push(...pointCircles);
 
-    // Line number in the ordering
+    // Track number in the ordering
     if (displayTracksNumber) {
       svgElems.push(
         <circle
@@ -139,7 +139,7 @@ export const TracksImage: React.FC<TracksImageProps> = ({
           dy="3px"
           onClick={() => props.onPolylineClick && props.onPolylineClick(line)}
         >
-          {lineIdx}
+          {line.trackNb}
         </text >
       );
     }
@@ -257,7 +257,8 @@ export const TracksImage: React.FC<TracksImageProps> = ({
 type LineOnImage = Line & {
   isStart: boolean,
   // TODO: remove "None"
-  gradeSuffix: LightGrade | 'grey'
+  gradeSuffix: LightGrade | 'grey',
+  trackNb: number,
 };
 
 function sortLines(tracks: Track[], imageId: UUID): LineOnImage[] {
@@ -272,6 +273,7 @@ function sortLines(tracks: Track[], imageId: UUID): LineOnImage[] {
     lines.push({
       isStart: lineIdx === 0,
       gradeSuffix: track.grade ? gradeToLightGrade(track.grade) : 'grey',
+      trackNb: track.orderIndex,
       ...track.lines[lineIdx]
     });
   }
