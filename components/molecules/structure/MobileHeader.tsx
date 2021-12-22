@@ -1,10 +1,11 @@
 import { Icon } from 'components';
 import Link from 'next/link';
 import React, { useState } from 'react';
+import { Dropdown, DropdownOption } from '..';
 
 interface MobileHeaderProps {
   title: string,
-  menu?: any,
+  menuOptions: DropdownOption[],
   backLink: string,
 }
 
@@ -21,7 +22,6 @@ export const MobileHeader: React.FC<MobileHeaderProps> = (props: MobileHeaderPro
               name="arrow-simple"
               SVGClassName="stroke-white stroke-1 w-4 h-4"
               center
-              onClick={props.onBackClick}
             />
           </div>
         </Link>
@@ -29,7 +29,7 @@ export const MobileHeader: React.FC<MobileHeaderProps> = (props: MobileHeaderPro
         <div
           className="flex-1 text-white ktext-title whitespace-nowrap"
           onClick={() => {
-            setDisplayFullTitle(true);
+            setDisplayFullTitle(!displayFullTitle);
           }}
           role="button"
           tabIndex={0}
@@ -37,7 +37,7 @@ export const MobileHeader: React.FC<MobileHeaderProps> = (props: MobileHeaderPro
           {props.title}
         </div>
 
-        {props.menu && (
+        {props.menuOptions && (
           <div className="w-1/6">
             <Icon
               name="menu"
@@ -49,6 +49,12 @@ export const MobileHeader: React.FC<MobileHeaderProps> = (props: MobileHeaderPro
             />
           </div>
         )}
+        {menuOpen &&
+          <Dropdown 
+            choices={props.menuOptions}
+            className='absolute z-50 right-[10px] top-[8%] min-w-[40%]'
+          />
+        }
       </div>
 
       {displayFullTitle && (

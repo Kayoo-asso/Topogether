@@ -1,4 +1,4 @@
-import { MapControl, MobileHeader } from 'components';
+import { Button, MapControl, MobileHeader } from 'components';
 import { markerSize } from 'helpers';
 import React, { useCallback, useState } from 'react';
 import { Boulder, GeoCoordinates, MarkerProps, Topo } from 'types';
@@ -11,8 +11,6 @@ interface BuilderMapMobileProps {
 
 export const BuilderMapMobile:React.FC<BuilderMapMobileProps> = (props: BuilderMapMobileProps) => {
     const [selectedBoulder, setSelectedBoulder] = useState<Boulder>();
-
-    console.log(props.topo.sectors[0].boulders[0]);
 
     const getMarkersFromBoulders = () => {
         const markers: MarkerProps[] = []
@@ -39,7 +37,7 @@ export const BuilderMapMobile:React.FC<BuilderMapMobileProps> = (props: BuilderM
                                         lat: e.latLng.lat(),
                                         lng: e.latLng.lng(),
                                     }
-                                    props.updateBoulder(i, j, "location", newCoords);
+                                    props.crud.boulder.update(i, j, "location", newCoords);
                                 }
                             }, [])
                         }
@@ -54,13 +52,22 @@ export const BuilderMapMobile:React.FC<BuilderMapMobileProps> = (props: BuilderM
         <>
             <MobileHeader
                 title={props.topo.name}
-                menu={[]}
                 backLink={'/builder/dashboard'}
+                menuOptions={[
+                    { value: 'Infos du spot', action: () => {}},
+                    { value: 'Marche d\'approche', action: () => {}},
+                    { value: 'Gestionnaires du spot', action: () => {}},
+                    { value: 'Valider le topo', action: () => {}},
+                    { value: 'Supprimer le topo', action: () => {}},
+                ]}
             />
 
             <MapControl 
                 initialZoom={5}
                 markers={getMarkersFromBoulders()}
+                onPhotoButtonClick={() => {
+                    // TODO
+                }}
                 boundsToMarkers={true}
                 searchbarOptions={{
                     findTopos: false,

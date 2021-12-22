@@ -16,6 +16,7 @@ interface MapControlProps extends MapProps {
   filters?: any,
   searchbarOptions?: MapSearchbarProps,
   onSearchResultSelect?: () => void,
+  onPhotoButtonClick?: () => void,
 }
 
 export const MapControl: React.FC<MapControlProps> = ({
@@ -42,7 +43,6 @@ export const MapControl: React.FC<MapControlProps> = ({
   }
   const getBoundsFromMarker = (markers: MarkerProps[]) => {
     if (mapRef.current) {
-      console.log("bounds");
       const newBounds = new google.maps.LatLngBounds();
       markers.map(marker => {
         if (marker.options?.position && newBounds) {
@@ -96,7 +96,7 @@ export const MapControl: React.FC<MapControlProps> = ({
                     buttonSize={80}
                     iconClass="stroke-white"
                     iconSizeClass="h-7 w-7"
-                    onClick={() => { }}
+                    onClick={props.onPhotoButtonClick}
                   />
                 )}
             </div>
@@ -107,7 +107,9 @@ export const MapControl: React.FC<MapControlProps> = ({
                     iconName="center"
                     iconClass="stroke-main fill-main"
                     iconSizeClass="h-7 w-7"
-                    onClick={() => { }}
+                    onClick={() => { 
+                      //TODO
+                    }}
                   />
                 )}
             </div>

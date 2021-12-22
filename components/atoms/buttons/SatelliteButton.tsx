@@ -23,6 +23,7 @@ export const SatelliteButton: React.FC<SatelliteButtonProps> = ({
       <Image
         src={displaySatellite ? '/assets/img/bg_satellite.jpg' : '/assets/img/bg_non-satellite.jpg'}
         className="rounded-full"
+        priority
         alt="Vue satellite"
         layout="fill"
         objectFit="cover"

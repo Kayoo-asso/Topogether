@@ -17,12 +17,10 @@ interface DropdownProps {
   className?:string;
 }
 
-// TODO : Ajouter la possibilité qu'un choice soit un Button (centré dans la dropdown)
-
 export const Dropdown: React.FC<DropdownProps> = React.memo(({
   ...props
 }: DropdownProps) => (
-  <div className={`shadow px-7 py-5 bg-white rounded-b-lg ${props.className}`}>
+  <div className={`shadow px-7 py-5 bg-white rounded-b ${props.className}`}>
     {props.choices.map((choice, i) => (
       choice.isSection ? (
         <div
@@ -33,7 +31,7 @@ export const Dropdown: React.FC<DropdownProps> = React.memo(({
         </div>
       ) : (
         <div
-          className="py-4 capitalize text-dark ktext-base cursor-pointer flex flex-row items-center"
+          className="py-4 text-dark ktext-base cursor-pointer flex flex-row items-center"
           key={choice.value}
           onKeyDown={() => {
             props.onSelect && props.onSelect(choice);

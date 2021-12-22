@@ -122,7 +122,7 @@ export interface Track {
   grade?: Grade,
 
   nbAnchors?: number,
-  techniques: ClimbTechniques,
+  techniques?: ClimbTechniques,
   reception?: Difficulty,
   orientation?: Orientation,
   isTraverse?: boolean,
@@ -130,7 +130,7 @@ export interface Track {
   hasMantle?: boolean,
 
   lines: Line[],
-  ratings: TrackRating[],
+  ratings?: TrackRating[],
   // TODO: how to avoid creating a ton of copies of User objects
   // when deserializing an API result?
   creatorId: UUID,
