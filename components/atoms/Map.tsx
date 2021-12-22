@@ -45,7 +45,7 @@ export const Map = forwardRef<google.maps.Map, MapProps>((props, mapRef) => {
 
   options.styles = options.styles ? options.styles.concat(mapStyles) : mapStyles;
   options.disableDefaultUI = true;
-  options.center = props.center || fontainebleauLocation;
+  options.center = props.center;
 
 
   const elementRef = useRef<HTMLDivElement>(null);
@@ -59,7 +59,6 @@ export const Map = forwardRef<google.maps.Map, MapProps>((props, mapRef) => {
     if (elementRef.current && !map) {
       const newMap = new google.maps.Map(elementRef.current, options);
       setMap(newMap);
-      props.onLoad && props.onLoad();
     }
   }, [elementRef, map]);
 
@@ -73,6 +72,7 @@ export const Map = forwardRef<google.maps.Map, MapProps>((props, mapRef) => {
       mapRef(map);
     } else {
       mapRef.current = map;
+      props.onLoad && props.onLoad();
     }
   }, [map]);
 

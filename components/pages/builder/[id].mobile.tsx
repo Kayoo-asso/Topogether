@@ -64,7 +64,7 @@ export const BuilderMapMobile:React.FC<BuilderMapMobileProps> = (props: BuilderM
             />
 
             <MapControl 
-                initialZoom={5}
+                initialZoom={13}
                 markers={getMarkersFromBoulders()}
                 onPhotoButtonClick={() => {
                     // TODO

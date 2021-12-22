@@ -26,7 +26,7 @@ export const GradeHistogram: React.FC<GradeHistogramProps> = (props: GradeHistog
   return (
     <div className="flex h-full">
 
-      {lightGrades.map((grade) => {
+      {lightGrades.slice(0,-1).map((grade) => {
         const count = histogram[grade];
         const heightPercent = count / histogram.Total * 100;
         const height = `${heightPercent}%`;

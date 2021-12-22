@@ -17,6 +17,7 @@ interface MapControlProps extends MapProps {
   searchbarOptions?: MapSearchbarProps,
   onSearchResultSelect?: () => void,
   onPhotoButtonClick?: () => void,
+  onMapZoomChange?: (zoom: number | undefined) => void,
 }
 
 export const MapControl: React.FC<MapControlProps> = ({
@@ -120,12 +121,11 @@ export const MapControl: React.FC<MapControlProps> = ({
         <Map
           ref={mapRef}
           center={props.center}
-          zoom={zoom} 
+          zoom={initialZoom} 
           mapTypeId={satelliteView ? 'satellite' : 'roadmap'}
           onZoomChange={() => {
-            if (mapRef.current) {
-              const newZoom = mapRef.current.getZoom();
-              newZoom && setZoom(newZoom);
+            if (mapRef.current && props.onMapZoomChange) {
+              props.onMapZoomChange(mapRef.current.getZoom());
             }
           }}
           onLoad={() => {
