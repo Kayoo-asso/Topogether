@@ -9,16 +9,20 @@ export function buildGradeHistogram(topo: Topo): GradeHistogram {
         7: 0,
         8: 0,
         9: 0,
-        None: 0
+        None: 0,
+        Total: 0,
     };
+
     for (const sector of topo.sectors) {
         for (const boulder of sector.boulders) {
             for (const track of boulder.tracks) {
                 if (track.grade) {
                     const lightGrade = gradeToLightGrade(track.grade);
                     histogram[lightGrade] += 1;
+                    histogram.Total += 1;
                 } else {
                     histogram.None += 1;
+                    histogram.Total += 1;
                 }
             }
         }

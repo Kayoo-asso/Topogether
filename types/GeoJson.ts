@@ -63,7 +63,6 @@ export interface Point extends GeometryBase {
      * For type "Point", the "coordinates" member is a single position.
      */
     coordinates: Position;
-    // bbox?: BoundingBox;
 }
 
 export interface MultiPoint extends GeometryBase {

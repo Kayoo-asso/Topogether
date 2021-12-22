@@ -8,6 +8,7 @@ interface HandleProps {
   getHandleProps: (id: string) => void
 }
 
+// TODO, possible solution: `props.handle.value as LightGrade`, if we are certain the domain is correct
 const Handle = (props: HandleProps) => (
   <div
     className="absolute -ml-1 mt-1.5 z-20 cursor-pointer"

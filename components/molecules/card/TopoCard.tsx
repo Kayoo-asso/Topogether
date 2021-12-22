@@ -1,7 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 import { Card } from 'components/atoms/Card';
-import { topogetherUrl } from 'const';
+import { topogetherUrl } from 'helpers/globals';
 import { Icon } from 'components';
 import equal from 'fast-deep-equal/es6';
 import { LightTopo, TopoStatus } from 'types';

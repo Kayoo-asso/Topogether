@@ -40,7 +40,8 @@ export const fakeLightTopo: LightTopo = {
     "7": 18,
     "8": 5,
     "9": 1,
-    None: 11
+    None: 11,
+    Total: 102
   },
   nbSectors: 7,
   nbBoulders: 67,

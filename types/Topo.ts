@@ -15,6 +15,8 @@ export interface Topo {
   submittedAt?: Date,
   validatedAt?: Date,
   // IMPORTANT: modifying anything in a topo changes the last modified at
+  // TODO: if someone is editing a topo offline, should we reflect that
+  // in the modifiedAt date for them?
   modifiedAt?: Date,
   cleaned?: Date,
   status: TopoStatus,
@@ -53,7 +55,7 @@ export type LightTopo = Omit<Topo, 'sectors' | 'parkings' | 'access'> & {
 export type GradeHistogram = {
   [K in LightGrade]: number
 } & {
-  None: number
+  Total: number
 };
 
 // TODO: require at least one

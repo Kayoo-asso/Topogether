@@ -1,65 +1,60 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import Compressor from 'compressorjs';
 import {
-  ImageAfterServer,
-  ImageBeforeServer, isImageType,
-  NumberBetween, isBetween, ImageType,
+  isBetween, isImageType, Image
 } from 'types';
 // eslint-disable-next-line import/no-cycle
 import { ImageButton } from '../../atoms';
-import { readFileAsync } from '../../../helpers';
 
 interface ImageInputProps {
   label: string,
-  value: ImageAfterServer,
-  onChange: (file: ImageBeforeServer) => void,
+  display?: Image,
+  multiple?: boolean,
+  onUpload: (files: File[]) => void,
 }
 
+enum FileUploadError {
+  NotImageType,
+  TooLarge
+}
 
-export const ImageInput: React.FC<ImageInputProps> = (props) => {
+export const ImageInput: React.FC<ImageInputProps> = ({
+  multiple = false,
+  ...props
+}) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [errorMessage, setErrorMessage] = useState<string>('');
-
+  const [errors, setErrors] = useState<[string, FileUploadError][]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  useEffect(() => {
-    setLoading(false);
-  }, [props.value]);
 
-  const handleFileInput = async (file: File) => {
-    if (!isImageType(file.type)) {
-      setErrorMessage('Fichier jpeg ou png uniquement');
-      return;
-    }
-
-    if (!isBetween(file.size, 0, 10e6)) {
-      setErrorMessage('Image trop lourde. Max: 10MB.');
-      return;
-    }
-
+  const handleFileInput = async (files: FileList) => {
+    const errors: [string, FileUploadError][] = [];
+    const uploaded: File[] = [];
     setLoading(true);
-    const compressor = new Compressor(file, {
-      quality: 0.6,
-      strict: true,
-      async success(res: File) {
-        // Here we already know the file has the correct type and size, but TypeScript can't verify it
-        const content = await readFileAsync(res);
-        if (content) {
-          const fileData: ImageBeforeServer = {
-            name: res.name,
-            type: res.type as ImageType,
-            size: res.size as NumberBetween<0, 10e6>,
-            content,
-          };
-          props.onChange(fileData);
-          setErrorMessage('');
-          setLoading(false);
-        }
-      },
-      error(err) {
-        console.log(err.message);
-        setLoading(false);
-      },
-    });
+
+    for (const file of files) {
+      if (!isImageType(file.type)) {
+        errors.push([file.name, FileUploadError.NotImageType]);
+      } else if (!isBetween(file.size, 0, 10e6)) {
+        errors.push([file.name, FileUploadError.TooLarge]);
+      } else {
+        new Compressor(file, {
+          quality: 0.6,
+          strict: true,
+          success(compressed: File) {
+            uploaded.push(compressed);
+          },
+          error(err) {
+            console.log(err.message);
+            // upload uncompressed version
+            uploaded.push(file);
+          }
+        })
+      }
+    }
+    
+    props.onUpload(uploaded);
+    setLoading(false);
+    setErrors(errors);
   };
 
   return (
@@ -67,20 +62,23 @@ export const ImageInput: React.FC<ImageInputProps> = (props) => {
       <input
         type="file"
         className="hidden"
+        multiple={multiple}
         ref={fileInputRef}
         onChange={(e) => {
-          if (e?.target?.files) { handleFileInput(e.target.files[0]); }
+          if (e?.target?.files) { handleFileInput(e.target.files); }
         }}
       />
       <ImageButton
         text={props.label}
-        image={props.value}
+        image={props.display}
         loading={loading}
         onClick={() => {
-          if (!loading) fileInputRef?.current?.click();
+          if (!loading) fileInputRef.current?.click();
         }}
       />
-      <div className={`ktext-error text-error pt-1 w-22 h-22 ${!errorMessage ? 'hidden' : ''}`}>{errorMessage}</div>
+      <div className={`ktext-error text-error pt-1 w-22 h-22 ${errors ? '' : 'hidden'}`}>
+        {errors}
+      </div>
     </>
   );
 };

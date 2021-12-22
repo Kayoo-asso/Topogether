@@ -124,12 +124,6 @@ export const Map = forwardRef<google.maps.Map, MapProps>((props, mapRef) => {
       ref={elementRef} 
       className={className}
     >
-      {/* {React.Children.map(children, (child) => {
-        if (React.isValidElement(child)) {
-          // pass the map as a prop to the child component
-          return React.cloneElement(child, { map });
-        }
-      })} */}
     </div>
   );
 });

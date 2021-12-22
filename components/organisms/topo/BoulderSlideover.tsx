@@ -3,15 +3,15 @@ import {
   GradeScale, Icon, LikeButton, MobileSlideover,
 } from 'components';
 import Image from 'next/image';
-import { Boulder } from 'types';
-import { topogetherUrl } from 'const';
-import { getGradesFromBoulder } from 'helpers';
+import { Boulder, Difficulty, UUID } from 'types';
+import { topogetherUrl } from 'helpers/globals';
+import { buildBoulderGradeHistogram } from 'helpers';
 import { TracksList } from '.';
 
 interface BoulderSlideoverProps {
   open?: boolean,
   boulder: Boulder,
-  topoCreatorId: number,
+  topoCreatorId: UUID,
   forBuilder?: boolean,
   onClose?: () => void,
 }
@@ -25,8 +25,11 @@ export const BoulderSlideover: React.FC<BoulderSlideoverProps> = ({
   const [boulderLiked, setBoulderLiked] = useState(false); // To change TODO
   const [displayOfficialTrack, setDisplayOfficialTrack] = useState(true);
 
-  const officialTracks = props.boulder.tracks ? props.boulder.tracks.filter((track) => track.creatorId === props.topoCreatorId) : [];
-  const communityTracks = props.boulder.tracks ? props.boulder.tracks.filter((track) => track.creatorId !== props.topoCreatorId) : [];
+  const officialTracks = props.boulder.tracks
+    ? props.boulder.tracks.filter((track) => track.creatorId === props.topoCreatorId)
+    : [];
+  const communityTracks = props.boulder.tracks
+    ? props.boulder.tracks.filter((track) => track.creatorId !== props.topoCreatorId) : [];
 
   return (
     <MobileSlideover
@@ -52,11 +55,11 @@ export const BoulderSlideover: React.FC<BoulderSlideoverProps> = ({
         <div className="col-span-6">
           <div className="ktext-section-title">{props.boulder.name}</div>
             {props.boulder.isHighball && full && <div className="ktext-base">High Ball</div>}
-            {props.boulder.hasDangerousDescent && full && <div className="ktext-base">Descente dangereuse !</div>}
+            {props.boulder.descent === Difficulty.Dangerous && full && <div className="ktext-base">Descente dangereuse !</div>}
             {!full && (
                 <div className="flex items-center mt-2">
                   <GradeScale
-                    grades={getGradesFromBoulder(props.boulder)}
+                    grades={buildBoulderGradeHistogram(props.boulder)}
                     circleSize="little"
                   />
                 </div>

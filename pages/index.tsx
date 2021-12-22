@@ -1,6 +1,5 @@
 import { WorldMapDesktop, WorldMapMobile } from 'components';
 import { TopoCard } from 'components/molecules/card/TopoCard';
-import { TopoCardDesktop } from 'components/molecules/card/TopoCard.desktop';
 import { fakeLightTopo } from 'helpers/fakeData/fakeLightTopo';
 import type { NextPage } from 'next';
 import React from 'react';
@@ -11,7 +10,6 @@ const WorldMapPage: NextPage = () => (
   <>
     <GeoCamera open/>
     {/* <TopoCard topo={fakeLightTopo} /> */}
-    {/* <TopoCardDesktop topo={fakeLightTopo} /> */}
   </>
 );
 

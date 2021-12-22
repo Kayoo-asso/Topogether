@@ -73,18 +73,20 @@ export const TracksImage: React.FC<TracksImageProps> = ({
 
   for (let lineIdx = 0; lineIdx < linesOnImage.length; lineIdx++) {
     const line = linesOnImage[lineIdx];
-    const isHighlighted =
-      props.currentTrackId === undefined ||
-      line.trackId === props.currentTrackId;
-
+    
     if (line.points.length == 0) {
       continue;
     }
+
+    const isHighlighted =
+      props.currentTrackId === undefined ||
+      line.trackId === props.currentTrackId;
 
     const points: Position[] = line.points.map(p => [p[0] * rx, p[1] * ry]);
     const path = getPathFromPoints(points, 'CURVE');
     const firstX = points[0][0] * rx;
     const firstY = points[0][1] * ry;
+
     const lineBaseCss = isHighlighted
       ? "z-30"
       : displayPhantomTracks ? "z-10 opacity-40" : "hidden";
@@ -92,6 +94,7 @@ export const TracksImage: React.FC<TracksImageProps> = ({
       ? "z-40"
       : displayPhantomTracks ? "z-20 opacity-40" : "hidden";
 
+    // Draw line
     svgElems.push(
       <path
         className={`${lineBaseCss} ${tracksClassName} ${props.onPolylineClick && 'cursor-pointer'}`}
@@ -101,6 +104,7 @@ export const TracksImage: React.FC<TracksImageProps> = ({
       />
     );
 
+    // Draw point circles
     const pointRadius = 3 * rx;
     const pointCircles = points.map(x =>
       <circle
@@ -114,7 +118,7 @@ export const TracksImage: React.FC<TracksImageProps> = ({
     // TODO: optimise this
     svgElems.push(...pointCircles);
 
-    // Number in the track ordering
+    // Line number in the ordering
     if (displayTracksNumber) {
       svgElems.push(
         <circle
@@ -231,6 +235,7 @@ export const TracksImage: React.FC<TracksImageProps> = ({
       >
         {svgElems}
       </svg>
+
       <NextImage
         className="-mt-[100%]"
         src={props.image ? (topogetherUrl + props.image.url) : staticUrl.defaultKayoo}
@@ -251,6 +256,7 @@ export const TracksImage: React.FC<TracksImageProps> = ({
 
 type LineOnImage = Line & {
   isStart: boolean,
+  // TODO: remove "None"
   gradeSuffix: LightGrade | 'grey'
 };
 
@@ -274,6 +280,7 @@ function sortLines(tracks: Track[], imageId: UUID): LineOnImage[] {
 }
 
 const compareLineStarts = (a: Line, b: Line): number => {
+  // TODO: clean up
   if (a.points.length === 0 || b.points.length === 0) {
     return 0;
   }

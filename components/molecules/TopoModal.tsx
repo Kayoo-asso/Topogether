@@ -1,6 +1,6 @@
 import { Button, DownloadButton, Icon, LikeButton, Modal, ParkingButton } from 'components';
 import { ParkingModal } from 'components/atoms/modals/ParkingModal';
-import { topogetherUrl } from 'const';
+import { topogetherUrl } from 'helpers/globals';
 import Image from 'next/image';
 import React, { useState } from 'react';
 import { LightTopo
@@ -45,7 +45,7 @@ export const TopoModal: React.FC<TopoModalProps> = ({
 
                     <div className='w-full h-[180px] relative mt-2'>
                         <Image 
-                            src={(topogetherUrl + props.topo.mainImage?.url) || '/assets/img/Kayoo_default_image.png'}
+                            src={(topogetherUrl + props.topo.image?.url) || '/assets/img/Kayoo_default_image.png'}
                             alt="image principale du topo"
                             priority
                             layout="fill"
@@ -64,14 +64,14 @@ export const TopoModal: React.FC<TopoModalProps> = ({
                                 SVGClassName='h-6 w-6 stroke-dark'
                             />
                         </div>
-                        <div className="col-span-11 ml-2">{props.topo.numberOfBoulders} blocs</div>
+                        <div className="col-span-11 ml-2">{props.topo.nbBoulders} blocs</div>
                         <div>
                             <Icon 
                                 name="many-tracks"
                                 SVGClassName='h-6 w-6 stroke-dark'
                             />
                         </div>
-                        <div className="col-span-5 ml-2">{props.topo.numberOfTracks} passages</div>
+                        <div className="col-span-5 ml-2">{props.topo.nbTracks} passages</div>
                         <div className="col-span-6 ml-2">
                             <GradeScale 
                                 grades={props.topo.grades}

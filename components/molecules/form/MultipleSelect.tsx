@@ -21,7 +21,9 @@ export const MultipleSelect: React.FC<MultipleSelectProps> = (props) => {
     [choice.value]: choice,
   }), {}));
 
-  const textValue = Object.values(choices).filter((choice) => choice.checked).map((value) => value.label || value.value).join(', ');
+  const textValue = Object.values(choices)
+    .filter((choice) => choice.checked).map((value) => value.label || value.value)
+    .join(', ');
 
   const select = (selected: DropdownOption) => setChoices({
     ...choices,
