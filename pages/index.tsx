@@ -8,7 +8,7 @@ import { GeoCamera } from 'components/molecules/GeoCameraTest';
 
 const WorldMapPage: NextPage = () => (
   <>
-    <GeoCamera open/>
+    {/* <GeoCamera open/> */}
     {/* <TopoCard topo={fakeLightTopo} /> */}
   </>
 );
