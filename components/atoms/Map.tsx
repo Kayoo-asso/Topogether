@@ -46,7 +46,7 @@ export const Map = forwardRef<google.maps.Map, MapProps>((props, mapRef) => {
   options.styles = options.styles ? options.styles.concat(mapStyles) : mapStyles;
   options.disableDefaultUI = true;
   options.center = props.center || fontainebleauLocation;
-  
+
 
   const elementRef = useRef<HTMLDivElement>(null);
   const [map, setMap] = useState<google.maps.Map>();
@@ -57,6 +57,7 @@ export const Map = forwardRef<google.maps.Map, MapProps>((props, mapRef) => {
   // Note: may merge this useEffect with the one setting options, to ensure exhaustive deps checking
   useEffect(() => {
     if (elementRef.current && !map) {
+      console.log('Creating map object');
       const newMap = new google.maps.Map(elementRef.current, options);
       setMap(newMap);
     }
@@ -82,6 +83,7 @@ export const Map = forwardRef<google.maps.Map, MapProps>((props, mapRef) => {
   // https://github.com/googlemaps/js-samples/blob/9678b79fbd30b94f64a31645f0e2ef966ac7ad26/samples/react-map/src/index.tsx#L240-L245
   useEffectWithDeepEqual(() => {
     if (map) {
+      console.log('Updating map options')
       map.setOptions(options);
       props.onLoad && props.onLoad();
     }
@@ -110,18 +112,21 @@ export const Map = forwardRef<google.maps.Map, MapProps>((props, mapRef) => {
 
 
   // Diff and display markers
-  if (map) {
-    displayedMarkers.current = diffMarkers(map, displayedMarkers.current, markers);
-  }
+  useEffect(() => {
+    if (map) {
+      const newMarkers = diffMarkers(map, displayedMarkers.current, markers);
+      displayedMarkers.current = newMarkers;
+    }
+  });
+
   // Q: do I need to unregister all markers on unmount?
   // TODO: profile to see if the markers leak memory
-  
 
   return (
-    <div 
-      id="map" 
-      style={containerStyles} 
-      ref={elementRef} 
+    <div
+      id="map"
+      style={containerStyles}
+      ref={elementRef}
       className={className}
     >
     </div>
@@ -154,6 +159,7 @@ function diffMarkers(map: google.maps.Map, before: MapMarker[], after: MarkerPro
       // existing.id == incoming.id
       case 0:
         result[afterIdx] = updateMarker(existing, incoming);
+
         beforeIdx++;
         afterIdx++;
         break;
@@ -186,6 +192,7 @@ const compareIds = (a: UUID, b: UUID) => (a < b) ? - 1 : ((a > b) ? 1 : 0)
 
 function createMarker(props: MarkerProps, map: google.maps.Map): MapMarker {
   // avoid an extra call to marker.setMap by including it into the options
+  console.log(`Creating marker ${props.id}`);
   const options: google.maps.MarkerOptions = props.options ?? {};
   options.map = map;
   const marker = new google.maps.Marker(options);
@@ -207,8 +214,11 @@ function createMarker(props: MarkerProps, map: google.maps.Map): MapMarker {
 }
 
 function updateMarker(before: MapMarker, after: MarkerProps): MapMarker {
+  console.log(`Updating marker ${before.id}, ${after.id}`);
   const marker = before.marker;
   const options: google.maps.MarkerOptions = after.options ?? {};
+  console.assert(before.id === after.id)
+
   // Q: does it matter if we don't inject the map into the `after` options
   if (!equal(before.options, options)) {
     marker.setOptions(options)
@@ -243,6 +253,7 @@ function updateMarker(before: MapMarker, after: MarkerProps): MapMarker {
 }
 
 function deleteMarker(marker: MapMarker) {
+  console.log(`Deleting marker ${marker.id}`);
   for (const listener of marker.listeners) {
     listener.remove();
   }
