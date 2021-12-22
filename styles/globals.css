@@ -1,4 +1,4 @@
-@import 'microtip';
+@import 'microtip.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

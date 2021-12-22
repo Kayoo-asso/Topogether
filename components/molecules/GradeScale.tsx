@@ -33,7 +33,7 @@ export const GradeScale: React.FC<GradeScaleProps> = ({
 
   return (
     <div className={`flex ${props.className}`}>
-      {lightGrades.map(grade =>
+      {lightGrades.slice(0,-1).map(grade =>
         <GradeCircle
           key={grade}
           grade={grade}

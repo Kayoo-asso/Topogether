@@ -1,4 +1,4 @@
-import { Button, MapControl, MobileHeader } from 'components';
+import { BoulderSlideover, Button, MapControl, MobileHeader } from 'components';
 import { markerSize } from 'helpers';
 import React, { useCallback, useState } from 'react';
 import { Boulder, GeoCoordinates, MarkerProps, Topo } from 'types';
@@ -54,6 +54,7 @@ export const BuilderMapMobile:React.FC<BuilderMapMobileProps> = (props: BuilderM
                 title={props.topo.name}
                 backLink={'/builder/dashboard'}
                 menuOptions={[
+                    //TODO : mettre les actions
                     { value: 'Infos du spot', action: () => {}},
                     { value: 'Marche d\'approche', action: () => {}},
                     { value: 'Gestionnaires du spot', action: () => {}},
@@ -74,6 +75,15 @@ export const BuilderMapMobile:React.FC<BuilderMapMobileProps> = (props: BuilderM
                     findPlaces: false,
                 }}
             />
+
+            {selectedBoulder &&
+                <BoulderSlideover 
+                    open
+                    boulder={selectedBoulder}
+                    forBuilder
+                    onClose={() => setSelectedBoulder(undefined)}
+                />
+            }
         </>
     )
 }

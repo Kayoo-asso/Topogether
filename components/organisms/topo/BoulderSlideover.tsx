@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import {
+  Dropdown,
   GradeScale, Icon, LikeButton, MobileSlideover,
 } from 'components';
 import Image from 'next/image';
@@ -11,7 +12,7 @@ import { TracksList } from '.';
 interface BoulderSlideoverProps {
   open?: boolean,
   boulder: Boulder,
-  topoCreatorId: UUID,
+  topoCreatorId?: UUID,
   forBuilder?: boolean,
   onClose?: () => void,
 }
@@ -22,8 +23,10 @@ export const BoulderSlideover: React.FC<BoulderSlideoverProps> = ({
   ...props
 }: BoulderSlideoverProps) => {
   const [full, setFull] = useState(false);
+  const [imageHeight, setImageHeight] = useState(0);
   const [boulderLiked, setBoulderLiked] = useState(false); // To change TODO
   const [displayOfficialTrack, setDisplayOfficialTrack] = useState(true);
+  const [boulderMenuOpen, setBoulderMenuOpen] = useState(false);
 
   const officialTracks = props.boulder.tracks
     ? props.boulder.tracks.filter((track) => track.creatorId === props.topoCreatorId)
@@ -39,7 +42,12 @@ export const BoulderSlideover: React.FC<BoulderSlideoverProps> = ({
       onClose={props.onClose}
     >
       {full && (
-        <div className="w-full relative h-[440px] bg-dark rounded-t-lg">
+        <div 
+          className="w-full relative bg-dark rounded-t-lg min-h-[30%] max-h-[45%]"
+          style={{
+            height: imageHeight+'px'
+          }}
+        >
           <Image
             src={props.boulder.images[0] ? topogetherUrl + props.boulder.images[0].url : '/assets/img/Kayoo_defaut_image.png'}
             className="rounded-t-lg"
@@ -47,6 +55,9 @@ export const BoulderSlideover: React.FC<BoulderSlideoverProps> = ({
             priority
             layout="fill"
             objectFit="contain"
+            onLoadingComplete={(e) => {
+              setImageHeight(e.naturalHeight);
+            }}
           />
         </div>
       )}
@@ -65,6 +76,7 @@ export const BoulderSlideover: React.FC<BoulderSlideoverProps> = ({
                 </div>
               )}
         </div>
+
         <div className="flex justify-end col-span-2">
           {!forBuilder && full && (
             <LikeButton
@@ -74,6 +86,27 @@ export const BoulderSlideover: React.FC<BoulderSlideoverProps> = ({
               }}
             />
           )}
+          {forBuilder && full && (
+            <Icon
+              name="menu"
+              SVGClassName={`h-4 w-4 fill-dark ${boulderMenuOpen ? 'rotate-90' : ''}`}
+              center
+              onClick={() => {
+                setBoulderMenuOpen(!boulderMenuOpen);
+              }}
+            />
+          )}
+          {forBuilder && full && boulderMenuOpen &&
+              <Dropdown 
+                choices={[
+                  { value: 'Infos du bloc', action: () => {} },
+                  { value: 'Masquer les voies', action: () => {} },
+                  { value: 'Supprimer le bloc', action: () => {} },
+                ]}
+                className='absolute right-[10px] mt-[35px] min-w-[40%]'
+              />
+            }
+
           {!full && (
             <div className="w-full relative h-[60px]">
               <Image
@@ -102,6 +135,7 @@ export const BoulderSlideover: React.FC<BoulderSlideoverProps> = ({
           </span>
         </div>
       )}
+
       <div className="overflow-auto pb-[30px]">
         <TracksList
           tracks={displayOfficialTrack ? officialTracks : communityTracks}
