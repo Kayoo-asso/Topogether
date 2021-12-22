@@ -2,7 +2,7 @@ import type { NextPage } from 'next';
 import { BuilderMapDesktop, BuilderMapMobile } from 'components';
 import { isDesktop, isMobile } from 'react-device-detect';
 import { useRouter } from 'next/router';
-import { useContext, useState } from 'react';
+import { useCallback, useContext, useState } from 'react';
 import { fakeTopo } from 'helpers/fakeData/fakeTopo';
 import { Boulder, GeoCoordinates, Sector, StringBetween, stringBetween, Topo, Track, User } from 'types';
 import { v4 as uuid } from 'uuid';
@@ -15,16 +15,18 @@ const BuilderMapPage: NextPage = () => {
     const { id } = router.query;
     if (typeof id !== 'string') return null;
 
+    console.log("render page");
+
     const [topo, setTopo] = useState(fakeTopo);
-    const updateTopo = <K extends keyof Topo>(key: K, value: Topo[K], save=true, now=false) => {
-        const newTopo = JSON.parse(JSON.stringify(topo.current));
+    const updateTopo = useCallback(<K extends keyof Topo>(key: K, value: Topo[K], save=true, now=false) => {
+        const newTopo = JSON.parse(JSON.stringify(topo));
         newTopo[key] = value;
         // if (save && !savingImage.current) { // If an image is in the process of being saved, prevent to save something else because it would lead to saving a second time the image
         //     if (now) submitTopo(newTopo);
         //     else timer = submitTimer(timer, submitTopo, newTopo);
         // }
         setTopo(newTopo);
-    }
+    }, []);
     const deleteTopo = () => {
         console.log("delete topo");
     }
@@ -83,8 +85,8 @@ const BuilderMapPage: NextPage = () => {
         //     boulderIndex: newSectors[sectorIndex].boulders.length-1,
         // });
     }
-    const updateBoulder = (sectorIndex: number, boulderIndex: number, key: string, value: any) => {
-        const newSectors = JSON.parse(JSON.stringify(topo.current.sectors));
+    const updateBoulder = useCallback((sectorIndex: number, boulderIndex: number, key: string, value: any) => {
+        const newSectors = JSON.parse(JSON.stringify(topo.sectors));
         newSectors[sectorIndex].boulders[boulderIndex][key] = value;
         if (key === "images") {
             updateTopo("sectors", newSectors, true, true);
@@ -92,7 +94,7 @@ const BuilderMapPage: NextPage = () => {
             // setSavingImage({ sectorIndex, boulderIndex });
         }
         else updateTopo("sectors", newSectors);
-    }
+    }, []);
     const deleteBoulder = (sectorIndex: number, boulderIndex: number, display=true) => {
         const newSectors = JSON.parse(JSON.stringify(topo.sectors));
         newSectors[sectorIndex].boulders.splice(boulderIndex, 1);
@@ -174,6 +176,7 @@ const BuilderMapPage: NextPage = () => {
         },
         boulder: {
             create: createBoulder,
+            // update: useCallback(() => updateBoulder()),
             update: updateBoulder,
             delete: deleteBoulder,
         }
@@ -184,8 +187,9 @@ const BuilderMapPage: NextPage = () => {
         <>
             {isMobile &&
                 <BuilderMapMobile 
-                    topo={topo.current}
+                    topo={topo}
                     crud={crud}
+                    updateBoulder={useCallback(updateBoulder, [])}
                 />
             }
             {isDesktop &&

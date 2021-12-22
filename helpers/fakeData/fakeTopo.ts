@@ -8696,6 +8696,454 @@ const sectors: Sector[] = [
     }
 ]
 
+const miniSectors: Sector[] = [
+    {
+        "id": 2,
+        name: "ABO" as StringBetween<1, 255>,
+        "description": undefined,
+        "boulders": [
+            {
+                "id": 15,
+                "name": "Pearl Harbor",
+                "location": {
+                    "lat": 45.70201,
+                    "lng": 4.605412
+                },
+                "isHighBall": true,
+                "hasDangerousDescent": true,
+                "isMustSee": false,
+                "orderIndex": 1,
+                "images": [
+                    {
+                        "id": 16,
+                        "url": "/public/uploads/boulder/image/5b558375709fbbacae9e5dcb746c8e10e7fa083f.jpeg"
+                    }
+                ],
+                "tracks": [
+                    {
+                        "id": 8,
+                        "creatorId": 3,
+                        "name": "Passage 1",
+                        "isTraverse": false,
+                        "isSittingStart": false,
+                        "description": "Une petite montée facile",
+                        "techniqueIds": [
+                            1
+                        ],
+                        "lines": [
+                            {
+                                "id": 5,
+                                "boulderImageId": 16,
+                                "boulderImageDimensions": {
+                                    "width": 674,
+                                    "height": 450
+                                },
+                                "linePoints": [
+                                    {
+                                        "id": 110,
+                                        "posX": 299.99,
+                                        "posY": 286.54
+                                    },
+                                    {
+                                        "id": 133,
+                                        "posX": 312.99,
+                                        "posY": 113.54
+                                    },
+                                    {
+                                        "id": 134,
+                                        "posX": 258.99,
+                                        "posY": 8.54
+                                    }
+                                ],
+                                "handDeparturePoints": [
+                                    {
+                                        "id": 135,
+                                        "posX": 251.99,
+                                        "posY": 197.54
+                                    },
+                                    {
+                                        "id": 136,
+                                        "posX": 333.99,
+                                        "posY": 176.54
+                                    }
+                                ],
+                                "feetDeparturePoints": [],
+                                "anchorPoints": [],
+                                "forbiddenAreas": []
+                            }
+                        ],
+                        "orderIndex": 1,
+                        "grade": "4+",
+                        "note": 3.9,
+                        "receptionId": 1
+                    },
+                    {
+                        "id": 12,
+                        "creatorId": 3,
+                        "name": "Passage 2",
+                        "isTraverse": false,
+                        "isSittingStart": true,
+                        "description": "Le départ assis est sévère mais le reste de la voie est trivial",
+                        "techniqueIds": [
+                            1
+                        ],
+                        "height": 2,
+                        "lines": [
+                            {
+                                "id": 6,
+                                "boulderImageId": 16,
+                                "boulderImageDimensions": {
+                                    "width": 674,
+                                    "height": 450
+                                },
+                                "linePoints": [
+                                    {
+                                        "id": 137,
+                                        "posX": 323.99,
+                                        "posY": 285.54
+                                    },
+                                    {
+                                        "id": 142,
+                                        "posX": 331.99,
+                                        "posY": 115.54
+                                    },
+                                    {
+                                        "id": 143,
+                                        "posX": 278.99,
+                                        "posY": 7.54
+                                    }
+                                ],
+                                "handDeparturePoints": [],
+                                "feetDeparturePoints": [],
+                                "anchorPoints": [],
+                                "forbiddenAreas": []
+                            }
+                        ],
+                        "orderIndex": 2,
+                        "grade": "6a",
+                        "receptionId": 1
+                    }
+                ]
+            },
+            {
+                "id": 16,
+                "name": "Gaêllys",
+                "location": {
+                    "lat": 45.702065,
+                    "lng": 4.605291
+                },
+                "isHighBall": false,
+                "isMustSee": false,
+                "orderIndex": 2,
+                "images": [
+                    {
+                        "id": 243,
+                        "url": "/public/uploads/boulder/image/42c98cfbc55c124196a59bf9003b2416e84df581.jpeg"
+                    }
+                ],
+                "tracks": [
+                    {
+                        "id": 927,
+                        "creatorId": 3,
+                        "name": "Passage 1",
+                        "isTraverse": false,
+                        "isSittingStart": true,
+                        "description": "",
+                        "techniqueIds": [],
+                        "lines": [
+                            {
+                                "id": 646,
+                                "boulderImageId": 243,
+                                "boulderImageDimensions": {
+                                    "width": 674,
+                                    "height": 450
+                                },
+                                "linePoints": [
+                                    {
+                                        "id": 7073,
+                                        "posX": 333.33,
+                                        "posY": 413.47
+                                    },
+                                    {
+                                        "id": 7076,
+                                        "posX": 298.33,
+                                        "posY": 92.47
+                                    },
+                                    {
+                                        "id": 7077,
+                                        "posX": 266.33,
+                                        "posY": 11.47
+                                    }
+                                ],
+                                "handDeparturePoints": [],
+                                "feetDeparturePoints": [],
+                                "anchorPoints": [],
+                                "forbiddenAreas": [
+                                    {
+                                        "id": 143,
+                                        "points": [
+                                            {
+                                                "id": 7078,
+                                                "posX": 213.33,
+                                                "posY": 53.47
+                                            },
+                                            {
+                                                "id": 7079,
+                                                "posX": 245.33,
+                                                "posY": 200.47
+                                            },
+                                            {
+                                                "id": 7080,
+                                                "posX": 211.33,
+                                                "posY": 405.47
+                                            },
+                                            {
+                                                "id": 7081,
+                                                "posX": 134.33,
+                                                "posY": 226.47
+                                            },
+                                            {
+                                                "id": 7082,
+                                                "posX": 213.33,
+                                                "posY": 53.47
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "id": 148,
+                                        "points": [
+                                            {
+                                                "id": 7103,
+                                                "posX": 400.33,
+                                                "posY": 108.47
+                                            },
+                                            {
+                                                "id": 7104,
+                                                "posX": 576.33,
+                                                "posY": 269.47
+                                            },
+                                            {
+                                                "id": 7105,
+                                                "posX": 502.33,
+                                                "posY": 396.47
+                                            },
+                                            {
+                                                "id": 7106,
+                                                "posX": 397.33,
+                                                "posY": 207.47
+                                            },
+                                            {
+                                                "id": 7113,
+                                                "posX": 400.33,
+                                                "posY": 108.47
+                                            }
+                                        ]
+                                    },
+                                ]
+                            }
+                        ],
+                        "orderIndex": 1,
+                        "grade": "6b"
+                    },
+                    {
+                        "id": 928,
+                        "creatorId": 3,
+                        "name": "Passage 2",
+                        "isTraverse": true,
+                        "isSittingStart": true,
+                        "description": "",
+                        "techniqueIds": [],
+                        "lines": [
+                            {
+                                "id": 647,
+                                "boulderImageId": 243,
+                                "boulderImageDimensions": {
+                                    "width": 674,
+                                    "height": 450
+                                },
+                                "linePoints": [
+                                    {
+                                        "id": 10419,
+                                        "posX": 388.72,
+                                        "posY": 400.27
+                                    },
+                                    {
+                                        "id": 10420,
+                                        "posX": 261.72,
+                                        "posY": 267.27
+                                    },
+                                    {
+                                        "id": 10421,
+                                        "posX": 244.72,
+                                        "posY": 133.27
+                                    },
+                                    {
+                                        "id": 10422,
+                                        "posX": 257.72,
+                                        "posY": 43.27
+                                    }
+                                ],
+                                "handDeparturePoints": [],
+                                "feetDeparturePoints": [],
+                                "anchorPoints": [],
+                                "forbiddenAreas": []
+                            }
+                        ],
+                        "orderIndex": 2,
+                        "grade": "5b"
+                    },
+                    {
+                        "id": 931,
+                        "creatorId": 3,
+                        "name": "Passage 3",
+                        "isTraverse": false,
+                        "isSittingStart": false,
+                        "description": "",
+                        "techniqueIds": [],
+                        "lines": [
+                            {
+                                "id": 648,
+                                "boulderImageId": 243,
+                                "boulderImageDimensions": {
+                                    "width": 674,
+                                    "height": 450
+                                },
+                                "linePoints": [
+                                    {
+                                        "id": 7137,
+                                        "posX": 407.33,
+                                        "posY": 375.5
+                                    },
+                                    {
+                                        "id": 7149,
+                                        "posX": 365.33,
+                                        "posY": 112.5
+                                    },
+                                    {
+                                        "id": 7150,
+                                        "posX": 304.33,
+                                        "posY": 38.5
+                                    }
+                                ],
+                                "handDeparturePoints": [],
+                                "feetDeparturePoints": [],
+                                "anchorPoints": [],
+                                "forbiddenAreas": []
+                            }
+                        ],
+                        "orderIndex": 3,
+                        "grade": "4+"
+                    }
+                ]
+            },
+            // {
+            //     "id": 17,
+            //     "name": "Hector Berlioz",
+            //     "location": {
+            //         "lat": 45.702301,
+            //         "lng": 4.605275
+            //     },
+            //     "isHighBall": false,
+            //     "isMustSee": false,
+            //     "orderIndex": 3,
+            //     "images": [
+            //         {
+            //             "id": 244,
+            //             "url": "/public/uploads/boulder/image/500883acb3a62f8b8c6bdb5fe7210d2bdf4b79fc.jpeg"
+            //         }
+            //     ],
+            //     "tracks": [
+            //         {
+            //             "id": 942,
+            //             "creatorId": 3,
+            //             "name": "Passage 1",
+            //             "isTraverse": false,
+            //             "isSittingStart": false,
+            //             "description": "",
+            //             "techniqueIds": [],
+            //             "lines": [
+            //                 {
+            //                     "id": 656,
+            //                     "boulderImageId": 244,
+            //                     "boulderImageDimensions": {
+            //                         "width": 300,
+            //                         "height": 450
+            //                     },
+            //                     "linePoints": [
+            //                         {
+            //                             "id": 7351,
+            //                             "posX": 50.08,
+            //                             "posY": 365.5
+            //                         },
+            //                         {
+            //                             "id": 7373,
+            //                             "posX": 26.08,
+            //                             "posY": 190.5
+            //                         },
+            //                         {
+            //                             "id": 7374,
+            //                             "posX": 115.08,
+            //                             "posY": 48.5
+            //                         }
+            //                     ],
+            //                     "handDeparturePoints": [],
+            //                     "feetDeparturePoints": [],
+            //                     "anchorPoints": [],
+            //                     "forbiddenAreas": []
+            //                 }
+            //             ],
+            //             "orderIndex": 1,
+            //             "grade": "3+"
+            //         },
+            //         {
+            //             "id": 948,
+            //             "creatorId": 3,
+            //             "name": "Passage 2",
+            //             "isTraverse": false,
+            //             "isSittingStart": true,
+            //             "description": "",
+            //             "techniqueIds": [],
+            //             "lines": [
+            //                 {
+            //                     "id": 660,
+            //                     "boulderImageId": 244,
+            //                     "boulderImageDimensions": {
+            //                         "width": 300,
+            //                         "height": 450
+            //                     },
+            //                     "linePoints": [
+            //                         {
+            //                             "id": 7375,
+            //                             "posX": 124.08,
+            //                             "posY": 327.5
+            //                         },
+            //                         {
+            //                             "id": 7376,
+            //                             "posX": 174.08,
+            //                             "posY": 176.5
+            //                         },
+            //                         {
+            //                             "id": 7377,
+            //                             "posX": 156.08,
+            //                             "posY": 38.5
+            //                         }
+            //                     ],
+            //                     "handDeparturePoints": [],
+            //                     "feetDeparturePoints": [],
+            //                     "anchorPoints": [],
+            //                     "forbiddenAreas": []
+            //                 }
+            //             ],
+            //             "orderIndex": 2,
+            //             "grade": "7a"
+            //         }
+            //     ]
+            // },
+        ],
+        "wayPoints": []
+    },
+]
+
 export const fakeTopo: Topo = {
     altitude: 775,
     approachDescription: "Depuis le parking, prendre le sentier qui monte dans la continuité de la route. Après 12-15min de marche, vous arriverez à une esplanade d'herbe surmontant une petite falaise (où il est possible de faire de l'initiation). Un panneau indique le site d'escalade à l'entrée de l'esplanade.\nDepuis l'esplanade, prendre le sentier qui part derrière le panneau pour monter vers les premiers blocs.",
@@ -8726,7 +9174,7 @@ export const fakeTopo: Topo = {
     otherRemarks: undefined,
     parkings: [],
     rockType: "Gneiss",
-    sectors: sectors,
+    sectors: miniSectors,
     securityInstructions: undefined,
     status: TopoStatus.Draft,
     topoType: 'Boulder',

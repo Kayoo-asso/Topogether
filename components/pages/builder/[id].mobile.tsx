@@ -3,6 +3,7 @@ import { markerSize } from 'helpers';
 import React, { useCallback, useState } from 'react';
 import { Boulder, GeoCoordinates, MarkerProps, Topo } from 'types';
 
+
 interface BuilderMapMobileProps {
     topo: Topo,
     crud: any,
@@ -10,6 +11,8 @@ interface BuilderMapMobileProps {
 
 export const BuilderMapMobile:React.FC<BuilderMapMobileProps> = (props: BuilderMapMobileProps) => {
     const [selectedBoulder, setSelectedBoulder] = useState<Boulder>();
+
+    console.log(props.topo.sectors[0].boulders[0]);
 
     const getMarkersFromBoulders = () => {
         const markers: MarkerProps[] = []
@@ -29,15 +32,14 @@ export const BuilderMapMobile:React.FC<BuilderMapMobileProps> = (props: BuilderM
                             draggable: true,
                         },
                         handlers: {
-                            onClick: () => setSelectedBoulder(boulder),
+                            onClick: useCallback(() => setSelectedBoulder(boulder), []),
                             onDragEnd: useCallback((e) => {
-                                console.log("foo");
                                 if (e.latLng) {
                                     const newCoords: GeoCoordinates = {
                                         lat: e.latLng.lat(),
                                         lng: e.latLng.lng(),
                                     }
-                                    props.crud.boulder.update(i, j, "location", newCoords);
+                                    props.updateBoulder(i, j, "location", newCoords);
                                 }
                             }, [])
                         }
@@ -46,7 +48,7 @@ export const BuilderMapMobile:React.FC<BuilderMapMobileProps> = (props: BuilderM
             }
         }
         return markers;
-    }
+    };
 
     return (
         <>
