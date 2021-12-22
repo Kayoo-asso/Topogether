@@ -61,6 +61,13 @@ export const Map = forwardRef<google.maps.Map, MapProps>((props, mapRef) => {
       setMap(newMap);
       props.onLoad && props.onLoad();
     }
+
+    return () => {
+      const length = displayedMarkers.current.length;
+      for (const marker of displayedMarkers.current) {
+        deleteMarker(marker);
+      }
+    }
   }, [elementRef, map]);
 
   // Pass the map upward in a ref
@@ -213,7 +220,6 @@ function createMarker(props: MarkerProps, map: google.maps.Map): MapMarker {
 function updateMarker(before: MapMarker, after: MarkerProps): MapMarker {
   const marker = before.marker;
   const options: google.maps.MarkerOptions = after.options ?? {};
-  console.assert(before.id === after.id)
 
   // Q: does it matter if we don't inject the map into the `after` options
   if (!equal(before.options, options)) {
@@ -249,7 +255,6 @@ function updateMarker(before: MapMarker, after: MarkerProps): MapMarker {
 }
 
 function deleteMarker(marker: MapMarker) {
-  console.log(`Deleting marker ${marker.id}`);
   for (const listener of marker.listeners) {
     listener.remove();
   }
