@@ -36,8 +36,7 @@ export const ImageThumb: React.FC<ImageThumbProps> = ({
       role="button"
       tabIndex={0}
     >
-      {onDelete
-        &&
+      {onDelete &&
         <div className="absolute z-10 -top---3 -right---3 lg:hidden group-hover:block">
           <DeleteButton
             onClick={() => {

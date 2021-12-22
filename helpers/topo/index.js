@@ -1,2 +1,2 @@
-export * from './getGradesNbFromTopos';
+export * from './buildGradeHistogram';
 export * from './buildBoulderGradeHistogram';

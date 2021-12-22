@@ -105,7 +105,6 @@ export const BoulderSlideover: React.FC<BoulderSlideoverProps> = ({
       <div className="overflow-auto pb-[30px]">
         <TracksList
           tracks={displayOfficialTrack ? officialTracks : communityTracks}
-          builderAddButton={forBuilder}
           onTrackClick={(id) => console.log('got to track ')} //TODO
           onBuilderAddClick={() => console.log('create track')} //TODO
         />

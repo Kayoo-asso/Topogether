@@ -115,6 +115,7 @@ export interface Boulder {
 // Order defined by the x-coordinate of the first point of the first line
 export interface Track {
   id: UUID,
+  orderIndex: number,
   name?: StringBetween<1, 255>,
   description?: StringBetween<1, 5000>,
   height?: number,

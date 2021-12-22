@@ -41,9 +41,11 @@ export type Grade = typeof grades[number];
 
 export type LightGrade = typeof lightGrades[number];
 
-export const gradeToLightGrade = (grade: Grade | LightGrade) : LightGrade => {
-  if (typeof grade === 'number') return grade;
-  return parseInt(grade[0], 10) as LightGrade;
+export const gradeToLightGrade = (grade?: Grade): LightGrade => {
+  if (grade) {
+    return Number(grade[0]) as LightGrade
+  }
+  return "None";
 };
 
 export type DrawerToolEnum = 
