@@ -69,7 +69,7 @@ export const TracksImage: React.FC<TracksImageProps> = ({
     ? 'scale-125'
     : '';
 
-  const linesOnImage = sortLines(props.tracks, props.image.id);
+  const linesOnImage = getLines(props.tracks, props.image.id);
 
   for (let lineIdx = 0; lineIdx < linesOnImage.length; lineIdx++) {
     const line = linesOnImage[lineIdx];
@@ -261,7 +261,7 @@ type LineOnImage = Line & {
   trackNb: number,
 };
 
-function sortLines(tracks: Track[], imageId: UUID): LineOnImage[] {
+function getLines(tracks: Track[], imageId: UUID): LineOnImage[] {
   const lines: LineOnImage[] = [];
   for (let i = 0; i < tracks.length; i++) {
     const track = tracks[i];
@@ -277,16 +277,5 @@ function sortLines(tracks: Track[], imageId: UUID): LineOnImage[] {
       ...track.lines[lineIdx]
     });
   }
-  lines.sort(compareLineStarts);
   return lines;
-}
-
-const compareLineStarts = (a: Line, b: Line): number => {
-  // TODO: clean up
-  if (a.points.length === 0 || b.points.length === 0) {
-    return 0;
-  }
-  const aStartX = a.points[0][0];
-  const bStartX = b.points[0][0];
-  return aStartX - bStartX;
 }
