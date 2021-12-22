@@ -57,9 +57,9 @@ export const Map = forwardRef<google.maps.Map, MapProps>((props, mapRef) => {
   // Note: may merge this useEffect with the one setting options, to ensure exhaustive deps checking
   useEffect(() => {
     if (elementRef.current && !map) {
-      console.log('Creating map object');
       const newMap = new google.maps.Map(elementRef.current, options);
       setMap(newMap);
+      props.onLoad && props.onLoad();
     }
   }, [elementRef, map]);
 
@@ -83,9 +83,7 @@ export const Map = forwardRef<google.maps.Map, MapProps>((props, mapRef) => {
   // https://github.com/googlemaps/js-samples/blob/9678b79fbd30b94f64a31645f0e2ef966ac7ad26/samples/react-map/src/index.tsx#L240-L245
   useEffectWithDeepEqual(() => {
     if (map) {
-      console.log('Updating map options')
       map.setOptions(options);
-      props.onLoad && props.onLoad();
     }
   }, [map, options]);
 
@@ -192,7 +190,6 @@ const compareIds = (a: UUID, b: UUID) => (a < b) ? - 1 : ((a > b) ? 1 : 0)
 
 function createMarker(props: MarkerProps, map: google.maps.Map): MapMarker {
   // avoid an extra call to marker.setMap by including it into the options
-  console.log(`Creating marker ${props.id}`);
   const options: google.maps.MarkerOptions = props.options ?? {};
   options.map = map;
   const marker = new google.maps.Marker(options);
@@ -214,7 +211,6 @@ function createMarker(props: MarkerProps, map: google.maps.Map): MapMarker {
 }
 
 function updateMarker(before: MapMarker, after: MarkerProps): MapMarker {
-  console.log(`Updating marker ${before.id}, ${after.id}`);
   const marker = before.marker;
   const options: google.maps.MarkerOptions = after.options ?? {};
   console.assert(before.id === after.id)
