@@ -1,20 +1,21 @@
-import { Sector, Topo, TopoStatus } from "types";
+import { Sector, StringBetween, Topo, TopoStatus } from "types";
+import { v4 as uuid } from "uuid";
 
 const sectors: Sector[] = [
     {
-        "id": 2,
-        "name": "ABO",
-        "description": undefined,
-        "boulders": [
+        id: uuid(),
+        name: "ABO" as StringBetween<1, 255>,
+        description: undefined,
+        boulders: [
             {
-                "id": 15,
-                "name": "Pearl Harbor",
-                "location": {
-                    "lat": 45.70201,
-                    "lng": 4.605412
+                id: uuid(),
+                name: "Pearl Harbor" as StringBetween<1, 255>,
+                location: {
+                    lat: 45.70201,
+                    lng: 4.605412
                 },
-                "isHighBall": true,
-                "hasDangerousDescent": true,
+                isHighBall: true,
+                hasDangerousDescent: true,
                 "isMustSee": false,
                 "orderIndex": 1,
                 "images": [
@@ -8715,7 +8716,7 @@ export const fakeTopo: Topo = {
     id: 20,
     adaptedToChildren: true,
     isForbiddenSite: false,
-    location: {lat: 45.701356, lng: 4.607264},
+    location: { lat: 45.701356, lng: 4.607264 },
     mainImage: {
         id: 4,
         url: "/public/uploads/topo/main-image/dad449499de38f1bdee5872de1a354d52fff6183.jpeg",

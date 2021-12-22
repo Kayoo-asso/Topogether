@@ -5,15 +5,15 @@ import {
 import { LinearRing, LineCoords, Position } from './GeoJson';
 import { GeoCoordinates, StringBetween } from './Utils';
 import { UUID } from './UUID';
-import { TrackRating, User } from './User';
+import { TrackRating } from './User';
 import { Image } from './Image';
 
 export interface Topo {
   id: UUID,
   name: StringBetween<1, 255>,
   // Creation = first validation
-  validatedAt?: Date,
   submittedAt?: Date,
+  validatedAt?: Date,
   // IMPORTANT: modifying anything in a topo changes the last modified at
   modifiedAt?: Date,
   cleaned?: Date,
@@ -26,11 +26,11 @@ export interface Topo {
   amenities: Amenities,
   otherAmenities?: StringBetween<1, 5000>
 
-  creator?: User,
-  validator?: User,
+  creatorId?: UUID,
+  validatorId?: UUID,
   image?: Image
 
-  closestCity?: string,
+  closestCity?: StringBetween<1, 255>,
   altitude?: number,
   description?: StringBetween<1, 5000>,
   faunaProtection?: StringBetween<1, 5000>,
@@ -42,23 +42,18 @@ export interface Topo {
   access: TopoAccess[],
 }
 
-export interface LightTopo {
-  id: UUID,
-  name: StringBetween<1, 255>,
-  description?: StringBetween<1, 5000>,
-  image?: Image,
-  nbBoulders: number,
+export type LightTopo = Omit<Topo, 'sectors' | 'parkings' | 'access'> & {
+  nbSectors: number,
   nbTracks: number,
+  nbBoulders: number,
   grades: GradeHistogram,
-  status: TopoStatus,
-  validatedAt?: Date,
-  submittedAt?: Date,
-  // IMPORTANT: modifying anything in a topo changes the last modified at
-  modifiedAt?: Date,
+  // TODO: do we include access information here? Like access difficulty & time
 }
 
 export type GradeHistogram = {
   [K in LightGrade]: number
+} & {
+  None: number
 };
 
 // TODO: require at least one
@@ -135,7 +130,7 @@ export interface Track {
   ratings: TrackRating[],
   // TODO: how to avoid creating a ton of copies of User objects
   // when deserializing an API result?
-  creator: User,
+  creatorId: UUID,
 }
 
 export interface Line {

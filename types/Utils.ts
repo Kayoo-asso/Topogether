@@ -5,6 +5,9 @@ export type GeoCoordinates = {
 
 export type BBox = Omit<DOMRect, 'toJSON'>;
 
+export type Description = StringBetween<1, 5000>;
+export type Name = StringBetween<1, 255>;
+
 export type RequireAtLeastOne<T, Keys extends keyof T = keyof T> =
     Pick<T, Exclude<keyof T, Keys>>
     & {
