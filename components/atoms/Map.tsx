@@ -4,8 +4,8 @@ import React, {
 import { useEffectWithDeepEqual } from 'helpers';
 import mapStyles from 'styles/mapStyles';
 import equal from 'fast-deep-equal/es6';
-import { mapEvents, MapProps, markerEvents, MarkerProps } from 'types';
-
+import { mapEvents, MapProps, markerEvents, MarkerProps, UUID } from 'types';
+import { fontainebleauLocation } from 'helpers/globals';
 
 const containerStyles: React.CSSProperties = {
   width: '100%',
@@ -26,6 +26,7 @@ export const Map = forwardRef<google.maps.Map, MapProps>((props, mapRef) => {
     onDragStart,
     onHeadingChange,
     onIdle,
+    onLoad,
     onMapTypeIdChange,
     onMouseMove,
     onMouseOut,
@@ -37,40 +38,44 @@ export const Map = forwardRef<google.maps.Map, MapProps>((props, mapRef) => {
     className,
     // don't forget the default value
     markers = [],
-    // TODO: how to check that we only kept the necessary properties for MapOptions?
-    // i.e., that we did not forget to deconstruct any property outside of MapOptions
     ...options
   } = props;
 
   options.styles = options.styles ? options.styles.concat(mapStyles) : mapStyles;
   options.disableDefaultUI = true;
+  options.center = props.center;
+
 
   const elementRef = useRef<HTMLDivElement>(null);
   const [map, setMap] = useState<google.maps.Map>();
   const displayedMarkers = useRef<MapMarker[]>([]);
   const listeners = useRef<google.maps.MapsEventListener[]>([]);
 
-  // Create the map
+  // Create the map and pass it upward in a ref
   // Note: may merge this useEffect with the one setting options, to ensure exhaustive deps checking
   useEffect(() => {
     if (elementRef.current && !map) {
       const newMap = new google.maps.Map(elementRef.current, options);
+      
+      if (typeof mapRef === "function") {
+        mapRef(newMap);
+      } else if(mapRef) {
+        mapRef.current = newMap;
+      }
+
       setMap(newMap);
+      
+      if (onLoad) {
+        onLoad(newMap); 
+      }
+    }
+
+    return () => {
+      for (const marker of displayedMarkers.current) {
+        deleteMarker(marker);
+      }
     }
   }, [elementRef, map]);
-
-  // Pass the map upward in a ref
-  useEffect(() => {
-    if (!map || !mapRef) {
-      return;
-    }
-
-    if (typeof mapRef === 'function') {
-      mapRef(map);
-    } else {
-      mapRef.current = map;
-    }
-  }, [map]);
 
   // Note: positions defined by latitude and longitude can be equal, even for different numeric values
   // (since latitudes are clamped between -90 and 90 and longitudes wrap around at 180)
@@ -106,21 +111,20 @@ export const Map = forwardRef<google.maps.Map, MapProps>((props, mapRef) => {
 
 
   // Diff and display markers
-  if (map) {
-    displayedMarkers.current = diffMarkers(map, displayedMarkers.current, markers);
-  }
-  // Q: do I need to unregister all markers on unmount?
-  // TODO: profile to see if the markers leak memory
-  
+  useEffect(() => {
+    if (map) {
+      const newMarkers = diffMarkers(map, displayedMarkers.current, markers);
+      displayedMarkers.current = newMarkers;
+    }
+  });
 
   return (
-    <div id="map" style={containerStyles} ref={elementRef} className={className}>
-      {/* {React.Children.map(children, (child) => {
-        if (React.isValidElement(child)) {
-          // pass the map as a prop to the child component
-          return React.cloneElement(child, { map });
-        }
-      })} */}
+    <div
+      id="map"
+      style={containerStyles}
+      ref={elementRef}
+      className={className}
+    >
     </div>
   );
 });
@@ -132,7 +136,7 @@ Map.displayName = 'Map';
 // note: may need to copy the after array, since it comes from props
 function diffMarkers(map: google.maps.Map, before: MapMarker[], after: MarkerProps[]): MapMarker[] {
   // before is already sorted, due to how we construct it every time
-  after.sort((a, b) => compareBigInts(a.id, b.id));
+  after.sort((a, b) => compareIds(a.id, b.id));
   let beforeIdx = 0;
   let afterIdx = 0;
   let result: MapMarker[] = new Array(after.length);
@@ -141,7 +145,7 @@ function diffMarkers(map: google.maps.Map, before: MapMarker[], after: MarkerPro
     const existing = before[beforeIdx];
     const incoming = after[afterIdx];
     // Process the one with lowest ID first, or compare both if the IDs are equal
-    switch (compareBigInts(existing.id, incoming.id)) {
+    switch (compareIds(existing.id, incoming.id)) {
       // existing.id < incoming.id
       case -1:
         deleteMarker(existing);
@@ -151,6 +155,7 @@ function diffMarkers(map: google.maps.Map, before: MapMarker[], after: MarkerPro
       // existing.id == incoming.id
       case 0:
         result[afterIdx] = updateMarker(existing, incoming);
+
         beforeIdx++;
         afterIdx++;
         break;
@@ -179,9 +184,7 @@ function diffMarkers(map: google.maps.Map, before: MapMarker[], after: MarkerPro
   return result;
 }
 
-// when comparing bigints in Array.sort, we can't return `a - b` like we'd do with numbers,
-// since the result of a compare function should be a number, not a bigint.
-const compareBigInts = (a: bigint, b: bigint) => (a < b) ? - 1 : ((a > b) ? 1 : 0)
+const compareIds = (a: UUID, b: UUID) => (a < b) ? - 1 : ((a > b) ? 1 : 0)
 
 function createMarker(props: MarkerProps, map: google.maps.Map): MapMarker {
   // avoid an extra call to marker.setMap by including it into the options
@@ -208,6 +211,7 @@ function createMarker(props: MarkerProps, map: google.maps.Map): MapMarker {
 function updateMarker(before: MapMarker, after: MarkerProps): MapMarker {
   const marker = before.marker;
   const options: google.maps.MarkerOptions = after.options ?? {};
+
   // Q: does it matter if we don't inject the map into the `after` options
   if (!equal(before.options, options)) {
     marker.setOptions(options)

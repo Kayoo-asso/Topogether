@@ -9,15 +9,14 @@ export const googleGetPlace = async (placeId: string) =>
       return reject("Need valid window object")
     }
 
+    const placeDetailsRequest: google.maps.places.PlaceDetailsRequest = {
+      placeId: placeId,
+      fields: ['geometry'],
+    }
+
     try {
       const elt = document.createElement("div");
-      new window.google.maps.places.PlacesService(elt).getDetails(
-        {
-            placeId: placeId,
-            fields: ['geometry'],
-        },
-        resolve
-      )
+      new google.maps.places.PlacesService(elt).getDetails(placeDetailsRequest, resolve);
       elt.remove();
     } catch (e) {
       reject(e)

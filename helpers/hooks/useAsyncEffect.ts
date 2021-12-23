@@ -15,7 +15,7 @@ export interface LivenessRef {
  */
 
 export function useAsyncEffect(
-    effect: (isAlive: LivenessRef) => React.EffectCallback,
+    effect: (isAlive: LivenessRef) => void | React.EffectCallback,
     deps: React.DependencyList
 ) {
     useEffect(() => {

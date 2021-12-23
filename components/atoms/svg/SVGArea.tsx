@@ -1,117 +1,97 @@
 import React, { useEffect, useState } from 'react';
-import { Polygon, Point } from 'types';
+import { Polygon, Point, LinearRing, Position } from 'types';
 import { DraggablePolyline } from '.';
 import { pointsToPolylineStr } from '../../../helpers';
 import { SVGPoint } from './SVGPoint';
 
 interface SVGAreaProps {
-  area: Polygon,
-  ratio: {
-    rX: number,
-    rY: number,
-  },
+  // a LinearRing delineates the contour of a Polygon
+  area: LinearRing,
+  rx: number,
+  ry: number,
   editable: boolean,
   pointSize: number,
-  onChange?: (area: Polygon) => void,
+  className?: string,
+  onChange?: (area: LinearRing) => void,
 }
 
 export const SVGArea: React.FC<SVGAreaProps> = ({
-  ratio = { rX: 1, rY: 1 },
+  rx = 1,
+  ry = 1,
   editable = false,
   pointSize = 3,
+  className = '',
   ...props
 }: SVGAreaProps) => {
-  const [area, setArea] = useState(props.area);
 
-  const updateAreaPoint = (index: number, pos: Point) => {
-    const newArea = { ...area };
-    newArea.coordinates[index] = {
-      ...newArea.coordinates[index],
-      x: pos.x + pointSize / 2,
-      y: pos.y + pointSize / 2,
-    };
-    if (index === 0) {
-      newArea.coordinates[area.coordinates.length - 1] = {
-        ...newArea.coordinates[area.coordinates.length - 1],
-        x: pos.x + pointSize / 2,
-        y: pos.y + pointSize / 2,
-      };
+  const updateAreaPoint = (index: number, newPos: Position) => {
+    if (props.onChange) {
+      const newArea = [...props.area];
+      newArea[index] = newPos;
+      if (index === 0) {
+        newArea[newArea.length - 1] = newPos;
+      }
+      // TypeScript cannot recognize that the length did not change
+      // and we still have at least 4 elements
+      props.onChange(newArea as LinearRing);
     }
-    setArea(newArea);
   };
+
   const dragAllPoints = (diffX: number, diffY: number) => {
-    const newArea = { ...area };
-    for (let i = 0; i < newArea.coordinates.length; i++) {
-      newArea.coordinates[i] = {
-        ...newArea.coordinates[i],
-        x: newArea.coordinates[i].x + diffX,
-        y: newArea.coordinates[i].y + diffY,
-      };
+    if (props.onChange) {
+      const newArea = props.area.map(p => [p[0] + diffX, p[1] + diffY]);
+      // TypeScript cannot recognize that the length did not change
+      // and we still have at least 4 elements
+      props.onChange(newArea as LinearRing);
     }
-    setArea(newArea);
   };
-
-  useEffect(() => {
-    setArea(props.area);
-  }, [props.area]);
 
   const renderPolyline = () => {
-    if (props.area && props.area.coordinates) {
-      const lineStrokeWidth = 2 * ratio.rX;
-      if (editable) {
-        return (
-          <DraggablePolyline 
-            className={"stroke-second fill-second/10 z-20 svg-area"}
-            strokeWidth={lineStrokeWidth}
-            points={area.coordinates}
-            onDrag={(diffX, diffY) => {
-              dragAllPoints(diffX, diffY);
-            }}
-            onDrop={() => {
-              if (props.onChange) props.onChange(area);
-            }}
-          />
-        );
-      }
-
+    const lineStrokeWidth = 2 * rx;
+    if (editable) {
       return (
-        <polyline
-          className="stroke-second fill-second z-20"
-          points={pointsToPolylineStr(area.coordinates)}
+        <DraggablePolyline
+          className={`stroke-second fill-second/10 z-20 ${className}`}
           strokeWidth={lineStrokeWidth}
+          points={props.area}
+          onDrag={(diffX, diffY) => {
+            dragAllPoints(diffX, diffY);
+          }}
+          onDrop={() => props.onChange && props.onChange(props.area)}
         />
       );
     }
-    return null;
+
+    return (
+      <polyline
+        className={`stroke-second fill-second z-20 ${className}`}
+        points={pointsToPolylineStr(props.area)}
+        strokeWidth={lineStrokeWidth}
+      />
+    );
   };
+
   const renderPoints = () => {
-    if (props.area && props.area.coordinates) {
-      const SVGpoints: any[] = [];
-      if (editable) {
-        area.coordinates.forEach((point, pointIndex) => {
-          SVGpoints.push(
-            <SVGPoint
-              key={pointIndex}
-              x={point.x - pointSize / 2}
-              y={point.y - pointSize / 2}
-              draggable={editable}
-              size={pointSize}
-              className="fill-second"
-              onDrop={(pos) => {
-                if (props.onChange) props.onChange(area);
-              }}
-              onDrag={(pos) => {
-                updateAreaPoint(pointIndex, pos);
-              }}
-            />,
-          );
-        });
-        SVGpoints.pop(); // Del the last point that is the same than the first and allow only to close the polyline
-      }
-      return (SVGpoints);
-    }
-    return null;
-  };
+    const points = props.area.map((point, pointIndex) =>
+      <SVGPoint
+        key={pointIndex}
+        x={point[0] - pointSize / 2}
+        y={point[1] - pointSize / 2}
+        draggable={editable}
+        size={pointSize}
+        className="fill-second"
+        // The area should already be updated by onDrag
+        // onDrop={(pos) => {
+        //   if (props.onChange) props.onChange(area);
+        // }}
+        onDrag={(pos) => {
+          updateAreaPoint(pointIndex, pos);
+        }}
+      />,
+    );
+    points.pop(); // Del the last point that is the same than the first and allow only to close the polyline
+    return points;
+  }
 
   return (
     <>

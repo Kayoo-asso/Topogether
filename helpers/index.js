@@ -7,3 +7,4 @@ export * from './map';
 export * from './readFileAsync';
 export * from './distanceBetween';
 export * from './markerSize';
+export * from './bitflagHelpers';

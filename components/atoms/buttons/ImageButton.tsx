@@ -1,12 +1,12 @@
 import React from 'react';
-import Image from 'next/image';
-import { ImageAfterServer } from 'types';
+import { default as NextImage } from 'next/image';
+import { Image } from 'types';
 // eslint-disable-next-line import/no-cycle
 import { Icon } from 'components';
 
 interface ImageButtonProps {
   text?: string,
-  image?: ImageAfterServer,
+  image?: Image,
   loading?: boolean,
   onClick: () => void,
 }
@@ -24,23 +24,23 @@ export const ImageButton: React.FC<ImageButtonProps> = ({
     tabIndex={0}
   >
     {loading
-                    && (
-                    <Icon
-                      name="spinner"
-                      SVGClassName="stroke-main w-10 h-10 animate-spin"
-                      center
-                    />
-                    )}
+      && (
+        <Icon
+          name="spinner"
+          SVGClassName="stroke-main w-10 h-10 animate-spin"
+          center
+        />
+      )}
     {!loading && props.image
-                    && (
-                    <Image
-                      src={props.image.url}
-                      alt="user generated image"
-                      layout="fill"
-                      objectFit="contain"
-                    />
-                    )}
+      && (
+        <NextImage
+          src={props.image.url}
+          alt="user generated image"
+          layout="fill"
+          objectFit="contain"
+        />
+      )}
     {!loading && !props.image
-                    && <span>{text}</span>}
+      && <span>{text}</span>}
   </div>
 );

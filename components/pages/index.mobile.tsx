@@ -30,11 +30,6 @@ export const WorldMapMobile:React.FC = (props) => {
 
   return (    
       <>
-        <MobileHeader
-          title="La meilleure app du monde"
-          menu={[]}
-          onBackClick={() => {}}
-        />
 
         <TopoModal
           open

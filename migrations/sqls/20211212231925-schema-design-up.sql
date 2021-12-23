@@ -93,6 +93,7 @@ CREATE TABLE boulders (
     sector_id UUID NOT NULL REFERENCES sectors(id) ON DELETE CASCADE
 );
 
+-- TODO: add orderIndex
 CREATE TABLE boulder_images (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     image_id UUID NOT NULL REFERENCES images(id) ON DELETE CASCADE,

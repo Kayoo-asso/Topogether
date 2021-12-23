@@ -6,8 +6,8 @@ import { isDesktop, isMobile } from 'react-device-detect';
 const Topo: NextPage = () => {
   const router = useRouter();
   const { id } = router.query;
-
   if (typeof id !== 'string') return null;
+  
   return (
     <>
       {isMobile &&

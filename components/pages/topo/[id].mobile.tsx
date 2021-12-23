@@ -1,10 +1,14 @@
 import { BoulderSlideover, MapControl, MobileHeader } from 'components';
 import { markerSize } from 'helpers';
 import { fakeTopo } from 'helpers/fakeData/fakeTopo';
+import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 import { Boulder, MarkerProps } from 'types';
 
-export const TopoMobile:React.FC = (props) => {
+export const TopoMobile:React.FC = () => {
+    const router = useRouter();
+    const { id } = router.query;
+
     const [topo, setTopo] = useState(fakeTopo);
     const [selectedBoulder, setSelectedBoulder] = useState<Boulder>();
     const [selectedTrack, setSelectedTrack] = useState<number>();
@@ -38,13 +42,18 @@ export const TopoMobile:React.FC = (props) => {
             <MobileHeader
                 title={topo.name}
                 menu={[]}
-                onBackClick={() => {}}
+                backLink={'/'}
             />
 
             <MapControl 
                 initialZoom={5}
                 displayPhotoButton={false}
                 markers={getMarkersFromBoulders()}
+                boundsToMarkers={true}
+                searchbarOptions={{
+                    findTopos: false,
+                    findPlaces: false,
+                }}
             />
 
             {selectedBoulder &&

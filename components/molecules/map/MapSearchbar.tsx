@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { RoundButton, TextInput } from 'components';
 import { googleAutocomplete, useIsMounted } from '../../../helpers';
-import { topogetherUrl } from 'const';
 import { Dropdown, DropdownOption } from '..';
 
 export interface MapSearchbarProps {
@@ -158,7 +157,6 @@ export const MapSearchbar: React.FC<MapSearchbarProps> = ({
                         setResultsOpen(false);
                         setValue(option.label || option.value);
                         props.onResultSelect && props.onResultSelect(option);
-                        console.log(option.value);
                     }}
                 />
 

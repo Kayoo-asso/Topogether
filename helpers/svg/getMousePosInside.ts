@@ -1,6 +1,8 @@
-export const getMousePosInside = (e: React.MouseEvent) => {
+import { Position } from "types";
+
+export const getMousePosInside = (e: React.MouseEvent): Position => {
     const rect = e.currentTarget.getBoundingClientRect();
-    const posX = e.clientX - rect.left;
-    const posY = e.clientY - rect.top;
-    return { posX, posY };
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    return [x, y];
 }

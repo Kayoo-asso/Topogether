@@ -7,7 +7,7 @@ interface RoundButtonProps {
   buttonSize?: number,
   iconClass?: string,
   iconSizeClass?: string,
-  onClick: () => void,
+  onClick?: () => void,
 }
 
 export const RoundButton: React.FC<RoundButtonProps> = ({
