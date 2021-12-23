@@ -15,7 +15,7 @@ const bgStyles = {
   8: 'bg-grade-8',
   9: 'bg-grade-9',
   None: 'bg-grey-light',
-}
+};
 
 export const GradeHistogram: React.FC<GradeHistogramProps> = (props: GradeHistogramProps) => {
   const histogram = buildGradeHistogram(props.topo);
@@ -26,7 +26,7 @@ export const GradeHistogram: React.FC<GradeHistogramProps> = (props: GradeHistog
   return (
     <div className="flex h-full">
 
-      {lightGrades.slice(0,-1).map((grade) => {
+      {lightGrades.slice(0, -1).map((grade) => {
         const count = histogram[grade];
         const heightPercent = count / histogram.Total * 100;
         const height = `${heightPercent}%`;
@@ -38,7 +38,8 @@ export const GradeHistogram: React.FC<GradeHistogramProps> = (props: GradeHistog
             </div>
             <div
               style={{ height }}
-              className={`ktext-subtitle w-6 flex flex-col justify-end items-center rounded-full text-white ${bgStyles[grade]}`}>
+              className={`ktext-subtitle w-6 flex flex-col justify-end items-center rounded-full text-white ${bgStyles[grade]}`}
+            >
               <div>{grade}</div>
             </div>
           </div>

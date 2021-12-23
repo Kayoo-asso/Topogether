@@ -59,7 +59,9 @@ export const MobileShell: React.FC<MobileShellProps> = ({
             />
           </div>
         </Link>
-        <Link href={session ? '/builder/dashboard' : '#'} passHref>
+        {/* <Link href={session ? '/builder/dashboard' : '#'} passHref> */}
+
+        <Link href="/builder/dashboard" passHref>
           <div
             className={`${activeTab === 2 ? 'border-t-main border-t-6' : ''} h-full  cursor-pointer`}
             onClick={() => {

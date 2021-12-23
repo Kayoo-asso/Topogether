@@ -12,11 +12,10 @@ interface TopoCardProps {
 }
 
 const topoIcons = {
-  [TopoStatus.Validated]: <Icon center wrapperClassName="stroke1" SVGClassName="stroke-main lg:h-6 lg:w-6 h-4 w-4" name="checked"/>,
-  [TopoStatus.Submitted]: <Icon center wrapperClassName="stroke-[1.5px]" SVGClassName="stroke-third lg:h-6 lg:w-6 h-4 w-4 " name="recent"/>,
-  [TopoStatus.Draft]: <Icon center wrapperClassName="stroke-[1.5px]" SVGClassName="stroke-second lg:h-6 lg:w-6 h-4 w-4" name="edit" />,
-}
-
+  [TopoStatus.Validated]: <Icon center wrapperClassName="stroke1" SVGClassName="stroke-main lg:h-6 lg:w-6 h-4 w-4" name="checked" />,
+  [TopoStatus.Submitted]: <Icon center wrapperClassName="stroke-[1.5px]" SVGClassName="stroke-third lg:h-6 lg:w-6 h-4 w-4 " name="recent" />,
+  [TopoStatus.Draft]: <Icon center wrapperClassName="stroke-[1.5px]" SVGClassName="stroke-second-light lg:h-6 lg:w-6 h-4 w-4" name="edit" />,
+};
 
 export const TopoCard: React.FC<TopoCardProps> = React.memo((props: TopoCardProps) => {
   const getAction = () => {
@@ -31,7 +30,6 @@ export const TopoCard: React.FC<TopoCardProps> = React.memo((props: TopoCardProp
   };
 
   const icon = topoIcons[props.topo.status];
-
 
   return (
     <Card className="relative text-center text-grey-medium bg-white flex flex-col">
