@@ -3,8 +3,9 @@ import type { AppProps } from 'next/app';
 import Head from 'next/head';
 import { UserContext } from 'helpers';
 import { useState } from 'react';
-import { MobileLayout } from 'components';
+import { LayoutMobile, LayoutDesktop } from 'components';
 import { User, UUID } from 'types';
+import { isDesktop, isMobile } from 'react-device-detect';
 
 const App = ({ Component, pageProps }: AppProps) => {
   const [session, setSession] = useState<User>(
@@ -29,12 +30,19 @@ const App = ({ Component, pageProps }: AppProps) => {
         <title>Topogether</title>
         <link rel="manifest" href="/manifest.json" />
       </Head>
-
-      <MobileLayout>
+      
         <UserContext.Provider value={{ session, setSession }}>
-          <Component {...pageProps} />
+          {isMobile &&
+            <LayoutMobile>
+              <Component {...pageProps} />
+            </LayoutMobile>
+          }
+          {isDesktop &&
+            <LayoutDesktop>
+              <Component {...pageProps} />
+            </LayoutDesktop>
+          }
         </UserContext.Provider>
-      </MobileLayout>
     </>
   );
 };

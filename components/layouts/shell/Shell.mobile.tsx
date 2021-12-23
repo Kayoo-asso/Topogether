@@ -5,14 +5,14 @@ import { useRouter } from 'next/router';
 import { Icon } from 'components';
 import { UserContext } from 'helpers';
 
-interface MobileShellProps {
+interface ShellMobileProps {
   initialActiveTab: 0 | 1 | 2,
 }
 
-export const MobileShell: React.FC<MobileShellProps> = ({
+export const ShellMobile: React.FC<ShellMobileProps> = ({
   initialActiveTab = 1,
   ...props
-}: MobileShellProps) => {
+}: ShellMobileProps) => {
   const { session } = useContext(UserContext);
   const router = useRouter();
 

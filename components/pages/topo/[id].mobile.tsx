@@ -1,21 +1,21 @@
-import { BoulderSlideover, MapControl, MobileHeader } from 'components';
+import { BoulderSlideover, MapControl, HeaderMobile } from 'components';
 import { markerSize } from 'helpers';
 import { fakeTopo } from 'helpers/fakeData/fakeTopo';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
-import { Boulder, MarkerProps } from 'types';
+import { Boulder, MarkerProps, Topo } from 'types';
 
-export const TopoMobile:React.FC = () => {
-    const router = useRouter();
-    const { id } = router.query;
+interface TopoMobileProps {
+    topo: Topo,
+}
 
-    const [topo, setTopo] = useState(fakeTopo);
+export const TopoMobile:React.FC<TopoMobileProps> = (props: TopoMobileProps) => {
     const [selectedBoulder, setSelectedBoulder] = useState<Boulder>();
     const [selectedTrack, setSelectedTrack] = useState<number>();
 
     const getMarkersFromBoulders = () => {
         const markers: MarkerProps[] = []
-        for (const sector of fakeTopo.sectors) {
+        for (const sector of props.topo.sectors) {
             if (sector.boulders) {
                 for (const boulder of sector.boulders) {
                     markers.push({
@@ -39,9 +39,9 @@ export const TopoMobile:React.FC = () => {
 
     return (
         <>
-            <MobileHeader
-                title={topo.name}
-                menu={[]}
+            <HeaderMobile
+                title={props.topo.name}
+                menuOptions={[]}
                 backLink={'/'}
             />
 
@@ -58,7 +58,7 @@ export const TopoMobile:React.FC = () => {
 
             {selectedBoulder &&
                 <BoulderSlideover 
-                    topoCreatorId={topo.creatorId}
+                    topoCreatorId={props.topo.creatorId}
                     boulder={selectedBoulder}
                     onClose={() => setSelectedBoulder(undefined)}
                 />

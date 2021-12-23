@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Image from 'next/image';
+import { default as NextImage } from 'next/image';
 
 interface SatelliteButtonProps {
   satellite?: boolean,
@@ -20,7 +20,7 @@ export const SatelliteButton: React.FC<SatelliteButtonProps> = ({
       }}
       style={{ height: '60px', width: '60px' }}
     >
-      <Image
+      <NextImage
         src={displaySatellite ? '/assets/img/bg_satellite.jpg' : '/assets/img/bg_non-satellite.jpg'}
         className="rounded-full"
         priority

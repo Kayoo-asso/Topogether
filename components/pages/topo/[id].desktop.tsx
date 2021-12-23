@@ -1,9 +1,14 @@
 import React from 'react';
+import { Topo } from 'types';
 
-export const TopoDesktop:React.FC = (props) => {
+interface TopoDesktopProps {
+    topo: Topo,
+}
+
+export const TopoDesktop:React.FC<TopoDesktopProps> = (props: TopoDesktopProps) => {
     return (
-        <div>
-            Topo Desktop
-        </div>
+        <>
+            
+        </>
     )
 }

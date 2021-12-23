@@ -1,15 +1,14 @@
-import { Icon } from 'components';
+import { Dropdown, DropdownOption, Icon } from 'components';
 import Link from 'next/link';
 import React, { useState } from 'react';
-import { Dropdown, DropdownOption } from '..';
 
-interface MobileHeaderProps {
+interface HeaderMobileProps {
   title: string,
   menuOptions: DropdownOption[],
   backLink: string,
 }
 
-export const MobileHeader: React.FC<MobileHeaderProps> = (props: MobileHeaderProps) => {
+export const HeaderMobile: React.FC<HeaderMobileProps> = (props: HeaderMobileProps) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [displayTitleTooltip, setDisplayTitleTooltip] = useState(false);
 
@@ -31,7 +30,6 @@ export const MobileHeader: React.FC<MobileHeaderProps> = (props: MobileHeaderPro
           aria-label={displayTitleTooltip ? props.title : undefined}
           data-microtip-position="bottom" 
           role="tooltip"
-          tabIndex={0}
           onClick={() => setDisplayTitleTooltip(!displayTitleTooltip)}
         >
           {props.title}

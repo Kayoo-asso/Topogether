@@ -31,7 +31,7 @@ const BuilderMapPage: NextPage = () => {
     }
 
     // CRUD
-    const createSector = (display = true) => {
+    const createSector = useCallback((display = true) => {
         const newSector: Sector = {
             id: uuid(),
             name: stringBetween("Secteur "+(topo.sectors.length+1), 1, 255) as StringBetween<1, 255>,
@@ -44,13 +44,13 @@ const BuilderMapPage: NextPage = () => {
         ];
         updateTopo("sectors", newSectors, true, true);
         // if (display) setCurrentItem({ type: "sector", sectorIndex: newSectors.length-1 });
-    }
-    const updateSector = <K extends keyof Sector>(index: number, key: K, value: Sector[K], save=true, now=false) => {
+    }, [topo])
+    const updateSector = useCallback(<K extends keyof Sector>(index: number, key: K, value: Sector[K], save=true, now=false) => {
         const newSectors = JSON.parse(JSON.stringify(topo.sectors));
         newSectors[index][key] = value;
         updateTopo("sectors", newSectors, save, now);
-    }
-    const deleteSector = (index: number, display=true) => {
+    }, [topo])
+    const deleteSector = useCallback((index: number, display=true) => {
         const newSectors = JSON.parse(JSON.stringify(topo.sectors));
         newSectors.splice(index, 1);
         updateTopo("sectors", newSectors);
@@ -61,9 +61,9 @@ const BuilderMapPage: NextPage = () => {
         //         sectorIndex: index-1,
         //     });
         // }
-    }
+    }, [topo])
 
-    const createBoulder = (sectorIndex: number, location: GeoCoordinates, display=true) => {
+    const createBoulder = useCallback((sectorIndex: number, location: GeoCoordinates, display=true) => {
         const boulderNumberInTopo = topo.sectors.map(sector => sector.boulders).flat().length + 1;
         const newBoulder: Boulder = {
             id: uuid(),
@@ -83,8 +83,8 @@ const BuilderMapPage: NextPage = () => {
         //     sectorIndex: sectorIndex,
         //     boulderIndex: newSectors[sectorIndex].boulders.length-1,
         // });
-    }
-    const updateBoulder = <K extends keyof Boulder>(sectorIndex: number, boulderIndex: number, key: K, value: Boulder[K]) => {
+    }, [topo])
+    const updateBoulder = useCallback(<K extends keyof Boulder>(sectorIndex: number, boulderIndex: number, key: K, value: Boulder[K]) => {
         const newSectors = JSON.parse(JSON.stringify(topo.sectors));
         newSectors[sectorIndex].boulders[boulderIndex][key] = value;
         if (key === "images") {
@@ -93,8 +93,8 @@ const BuilderMapPage: NextPage = () => {
             // setSavingImage({ sectorIndex, boulderIndex });
         }
         else updateTopo("sectors", newSectors);
-    }
-    const deleteBoulder = (sectorIndex: number, boulderIndex: number, display=true) => {
+    }, [topo])
+    const deleteBoulder = useCallback((sectorIndex: number, boulderIndex: number, display=true) => {
         const newSectors = JSON.parse(JSON.stringify(topo.sectors));
         newSectors[sectorIndex].boulders.splice(boulderIndex, 1);
         updateTopo("sectors", newSectors, true, true);
@@ -114,10 +114,10 @@ const BuilderMapPage: NextPage = () => {
         //         boulderIndex: boulderIndex-1,
         //     });
         // }
-    }
+    }, [topo])
 
 
-    const createTrack = (sectorIndex: number, boulderIndex: number, display=true) => {
+    const createTrack = useCallback((sectorIndex: number, boulderIndex: number, display=true) => {
         const trackNumberInBoulder = topo.sectors[sectorIndex].boulders[boulderIndex].tracks.length+1;
         const newTrack: Track = {
             id: uuid(),
@@ -138,13 +138,13 @@ const BuilderMapPage: NextPage = () => {
         //     boulderIndex,
         //     trackIndex: newSectors[sectorIndex].boulders[boulderIndex].tracks.length-1,
         // });
-    }
-    const updateTrack = <K extends keyof Track>(sectorIndex: number, boulderIndex: number, trackIndex: number, key: K, value: Track[K]) => {
+    }, [topo])
+    const updateTrack = useCallback(<K extends keyof Track>(sectorIndex: number, boulderIndex: number, trackIndex: number, key: K, value: Track[K]) => {
         const newSectors = JSON.parse(JSON.stringify(topo.sectors));
         newSectors[sectorIndex].boulders[boulderIndex].tracks[trackIndex][key] = value;
         updateTopo("sectors", newSectors);
-    }
-    const deleteTrack = (sectorIndex: number, boulderIndex: number, trackIndex: number, display=true) => {
+    }, [topo])
+    const deleteTrack = useCallback((sectorIndex: number, boulderIndex: number, trackIndex: number, display=true) => {
         const newSectors = JSON.parse(JSON.stringify(topo.sectors));
         newSectors[sectorIndex].boulders[boulderIndex].tracks.splice(trackIndex,1);
         updateTopo("sectors", newSectors, true, true);
@@ -167,7 +167,7 @@ const BuilderMapPage: NextPage = () => {
         //         trackIndex: trackIndex-1,
         //     });
         // }
-    }
+    }, [topo])
 
     const crud = {
         topo: {
@@ -201,7 +201,7 @@ const BuilderMapPage: NextPage = () => {
             }
             {isDesktop &&
                 <BuilderMapDesktop 
-                    // topo={topo}
+                    topo={topo}
                 />
             }
         </>
