@@ -3,7 +3,7 @@ import {
 } from 'components';
 import { ParkingModal } from 'components/atoms/modals/ParkingModal';
 import { topogetherUrl } from 'helpers/globals';
-import {default as NextImage } from 'next/image';
+import Image from 'next/image';
 import React, { useState } from 'react';
 import { LightTopo } from 'types';
 import { GradeScale } from '.';
@@ -45,7 +45,7 @@ export const TopoModal: React.FC<TopoModalProps> = ({
           </div>
 
           <div className="w-full h-[180px] relative mt-2">
-            <NextImage
+            <Image
               src={(topogetherUrl + props.topo.image?.url) || '/assets/img/Kayoo_default_image.png'}
               alt="image principale du topo"
               priority
