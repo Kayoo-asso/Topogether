@@ -21,14 +21,14 @@ export const DashboardMobile:React.FC<DashboardMobileProps> = (props: DashboardM
         <div className="ktext-section-title text-center">Vos topos</div>
         <Button content="Créer un topo" onClick={newTopo} />
       </div>
-      <Select
+      {/* <Select
         id=""
         label=""
         choices={[{ label: 'Les plus récents', value: 'mostRecent' }]}
         selected="mostRecent"
         onSelect={sortTopos}
         className="w-44 m-3"
-      />
+      /> */}
       <div className="text-second-light ktext-section-title">Brouillons</div>
       <div className="flex flex-row">
         {draftTopos.map((topo) => (
