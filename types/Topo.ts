@@ -45,6 +45,7 @@ export interface Topo {
 }
 
 export type LightTopo = Omit<Topo, 'sectors' | 'parkings' | 'access'> & {
+  firstParkingLocation: GeoCoordinates,
   nbSectors: number,
   nbTracks: number,
   nbBoulders: number,

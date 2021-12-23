@@ -202,6 +202,7 @@ const BuilderMapPage: NextPage = () => {
             {isDesktop &&
                 <BuilderMapDesktop 
                     topo={topo}
+                    crud={crud}
                 />
             }
         </>

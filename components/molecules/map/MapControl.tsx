@@ -15,6 +15,7 @@ interface MapControlProps extends MapProps {
   boundsToMarkers?: boolean,
   filters?: any,
   searchbarOptions?: MapSearchbarProps,
+  className?: string,
   onSearchResultSelect?: () => void,
   onPhotoButtonClick?: () => void,
   onMapZoomChange?: (zoom: number | undefined) => void,
@@ -60,7 +61,9 @@ export const MapControl: React.FC<MapControlProps> = ({
     <div className="flex-1 h-full relative">
       <Wrapper apiKey="AIzaSyDoHIGgvyVVi_1_6zVWD4AOQPfHWN7zSkU" libraries={['places']}>
 
-        <div className="absolute h-full w-full p-3 grid grid-rows-2">
+        <div 
+          className="absolute h-full w-full p-3 grid grid-rows-2"
+        >
           <div className="flex">
             <div className="w-1/2 text-left">
               {displaySearchbar
@@ -123,6 +126,7 @@ export const MapControl: React.FC<MapControlProps> = ({
           center={props.center}
           zoom={initialZoom} 
           mapTypeId={satelliteView ? 'satellite' : 'roadmap'}
+          className={props.className}
           onZoomChange={() => {
             if (mapRef.current && props.onMapZoomChange) {
               props.onMapZoomChange(mapRef.current.getZoom());

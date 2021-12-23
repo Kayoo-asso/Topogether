@@ -1,4 +1,4 @@
-import { ImageAfterServer } from './ImageTypes';
+import { Image } from 'types';
 import { StringBetween } from './Utils';
 import { UUID } from './UUID';
 
@@ -7,7 +7,7 @@ export type User = {
   pseudo: string,
   email: string,
   role: string,
-  profilePicture?: ImageAfterServer,
+  profilePicture?: Image,
   firstName?: string,
   lastName?: string,
   phone?: string,

@@ -48,6 +48,11 @@ export const gradeToLightGrade = (grade?: Grade): LightGrade => {
   return "None";
 };
 
+export type MapToolEnum = 
+'ROCK' |
+'PARKING' |
+'WAYPOINT';
+
 export type DrawerToolEnum = 
 'LINE_DRAWER' | 
 'HAND_DEPARTURE_DRAWER' | 

@@ -3,6 +3,7 @@ import {
 } from 'components';
 import { ParkingModal } from 'components/atoms/modals/ParkingModal';
 import { topogetherUrl } from 'helpers/globals';
+import launchNavigation from 'helpers/map/launchNavigation';
 import Image from 'next/image';
 import React, { useState } from 'react';
 import { LightTopo } from 'types';
@@ -106,7 +107,8 @@ export const TopoModal: React.FC<TopoModalProps> = ({
 
       <ParkingModal
         open={modalParkingOpen}
-        onGoogleClick={() => console.log('ok')}
+        onGoogleClick={() => launchNavigation(props.topo.firstParkingLocation, 'google')}
+        onAppleClick={() => launchNavigation(props.topo.firstParkingLocation, 'apple')}
         onClose={() => setModalParkingOpen(false)}
       />
     </>

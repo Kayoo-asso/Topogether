@@ -205,8 +205,6 @@ export const TracksImage: React.FC<TracksImageProps> = ({
     switch (props.currentTool) {
       case 'LINE_DRAWER':
         cursorUrl += `line-point/_line-point-${cursorColor}.svg`; break;
-      case 'ANCHOR_DRAWER':
-        cursorUrl += `quickdraw/_quickdraw-${cursorColor}.svg`; break;
       case 'ERASER':
         cursorUrl += '_eraser-main.svg'; break;
       case 'HAND_DEPARTURE_DRAWER':

@@ -8,3 +8,4 @@ export * from './Checkbox';
 export * from './GradeCircle';
 export * from './Map';
 export * from './AverageNote';
+export * from './ProfilePicture';

@@ -13,12 +13,11 @@ export const SatelliteButton: React.FC<SatelliteButtonProps> = ({
   const [displaySatellite, setDisplaySatellite] = useState(satellite);
   return (
     <button
-      className="shadow relative rounded-full p-7 z-20"
+      className="shadow relative rounded-full p-7 z-20 h-[60px] w-[60px]"
       onClick={() => {
         props.onClick(displaySatellite);
         setDisplaySatellite(!displaySatellite);  
       }}
-      style={{ height: '60px', width: '60px' }}
     >
       <NextImage
         src={displaySatellite ? '/assets/img/bg_satellite.jpg' : '/assets/img/bg_non-satellite.jpg'}

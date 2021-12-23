@@ -59,7 +59,6 @@ export const ShellMobile: React.FC<ShellMobileProps> = ({
             />
           </div>
         </Link>
-        {/* <Link href={session ? '/builder/dashboard' : '#'} passHref> */}
 
         <Link href="/builder/dashboard" passHref>
           <div

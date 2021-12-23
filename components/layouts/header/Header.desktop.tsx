@@ -2,6 +2,7 @@ import { Dropdown, DropdownOption, Icon } from 'components';
 import { default as NextImage } from 'next/image';
 import Link from 'next/link';
 import React, { useState } from 'react';
+import { MapToolEnum } from 'types';
 
 interface HeaderDesktopProps {
   backLink: string,
@@ -11,6 +12,7 @@ interface HeaderDesktopProps {
   onRockClick?: () => void,
   onParkingClick?: () => void,
   onWaypointClick?: () => void,
+  currentTool?: MapToolEnum,
   displayLogin?: boolean,
 }
 
@@ -66,17 +68,17 @@ export const HeaderDesktop: React.FC<HeaderDesktopProps> = ({
           <div className='flex flex-row gap-8 mr-[40%]'>
             <Icon 
               name='rock'
-              SVGClassName='stroke-white h-7 w-7'
+              SVGClassName={`h-7 w-7 ${props.currentTool === 'ROCK' ? 'stroke-main' : 'stroke-white'}`}
               onClick={props.onRockClick}
             />
             <Icon 
               name='parking'
-              SVGClassName='fill-white h-6 w-6'
+              SVGClassName={`h-6 w-6 ${props.currentTool === 'PARKING' ? 'fill-second' : 'fill-white'}`}
               onClick={props.onParkingClick}
             />
             <Icon 
-              name='help'
-              SVGClassName='fill-white h-6 w-6'
+              name='help-round'
+              SVGClassName={`h-6 w-6 ${props.currentTool === 'WAYPOINT' ? 'fill-third stroke-third' : 'fill-white stroke-white'}`}
               onClick={props.onWaypointClick}
             />
           </div>
