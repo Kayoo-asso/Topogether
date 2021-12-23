@@ -38,8 +38,6 @@ export const Map = forwardRef<google.maps.Map, MapProps>((props, mapRef) => {
     className,
     // don't forget the default value
     markers = [],
-    // TODO: how to check that we only kept the necessary properties for MapOptions?
-    // i.e., that we did not forget to deconstruct any property outside of MapOptions
     ...options
   } = props;
 
@@ -53,35 +51,31 @@ export const Map = forwardRef<google.maps.Map, MapProps>((props, mapRef) => {
   const displayedMarkers = useRef<MapMarker[]>([]);
   const listeners = useRef<google.maps.MapsEventListener[]>([]);
 
-  // Create the map
+  // Create the map and pass it upward in a ref
   // Note: may merge this useEffect with the one setting options, to ensure exhaustive deps checking
   useEffect(() => {
     if (elementRef.current && !map) {
       const newMap = new google.maps.Map(elementRef.current, options);
+      
+      if (typeof mapRef === "function") {
+        mapRef(newMap);
+      } else if(mapRef) {
+        mapRef.current = newMap;
+      }
+
       setMap(newMap);
+      
+      if (onLoad) {
+        onLoad(newMap); 
+      }
     }
 
     return () => {
-      const length = displayedMarkers.current.length;
       for (const marker of displayedMarkers.current) {
         deleteMarker(marker);
       }
     }
   }, [elementRef, map]);
-
-  // Pass the map upward in a ref
-  useEffect(() => {
-    if (!map || !mapRef) {
-      return;
-    }
-
-    if (typeof mapRef === 'function') {
-      mapRef(map);
-    } else {
-      mapRef.current = map;
-      props.onLoad && props.onLoad();
-    }
-  }, [map]);
 
   // Note: positions defined by latitude and longitude can be equal, even for different numeric values
   // (since latitudes are clamped between -90 and 90 and longitudes wrap around at 180)
@@ -123,9 +117,6 @@ export const Map = forwardRef<google.maps.Map, MapProps>((props, mapRef) => {
       displayedMarkers.current = newMarkers;
     }
   });
-
-  // Q: do I need to unregister all markers on unmount?
-  // TODO: profile to see if the markers leak memory
 
   return (
     <div
