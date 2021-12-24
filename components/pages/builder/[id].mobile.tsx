@@ -1,5 +1,5 @@
 import {
-  BoulderSlideover, Button, MapControl, MobileHeader,
+  BoulderSlideoverMobile, Button, HeaderMobile, MapControl,
 } from 'components';
 import { markerSize } from 'helpers';
 import React, { useCallback, useState } from 'react';
@@ -53,7 +53,7 @@ export const BuilderMapMobile:React.FC<BuilderMapMobileProps> = (props: BuilderM
 
   return (
     <>
-      <MobileHeader
+      <HeaderMobile
         title={props.topo.name}
         backLink="/builder/dashboard"
         menuOptions={[
@@ -81,7 +81,7 @@ export const BuilderMapMobile:React.FC<BuilderMapMobileProps> = (props: BuilderM
 
       {selectedBoulder
                 && (
-                <BoulderSlideover
+                <BoulderSlideoverMobile
                   open
                   boulder={selectedBoulder}
                   forBuilder

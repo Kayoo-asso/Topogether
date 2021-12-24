@@ -1,4 +1,4 @@
-import { BoulderSlideover, MapControl, HeaderMobile } from 'components';
+import { BoulderSlideoverMobile, MapControl, HeaderMobile } from 'components';
 import { markerSize } from 'helpers';
 import React, { useState } from 'react';
 import { Boulder, MarkerProps, Topo } from 'types';
@@ -7,7 +7,7 @@ interface TopoMobileProps {
     topo: Topo,
 }
 
-export const TopoMobile:React.FC<TopoMobileProps> = (props: TopoMobileProps) => {
+export const TopoMobile: React.FC<TopoMobileProps> = (props: TopoMobileProps) => {
     const [selectedBoulder, setSelectedBoulder] = useState<Boulder>();
     const [selectedTrack, setSelectedTrack] = useState<number>();
 
@@ -55,7 +55,7 @@ export const TopoMobile:React.FC<TopoMobileProps> = (props: TopoMobileProps) => 
             />
 
             {selectedBoulder &&
-                <BoulderSlideover 
+                <BoulderSlideoverMobile 
                     topoCreatorId={props.topo.creatorId}
                     boulder={selectedBoulder}
                     onClose={() => setSelectedBoulder(undefined)}

@@ -8,7 +8,7 @@ interface ParkingModalProps {
     onClose?: () => void,
 }
 
-export const ParkingModal:React.FC<ParkingModalProps> = ({
+export const ParkingModal: React.FC<ParkingModalProps> = ({
     open = true,
     ...props
 }: ParkingModalProps) => {

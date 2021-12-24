@@ -4,13 +4,14 @@ import { useRouter } from 'next/router';
 import { isDesktop, isMobile } from 'react-device-detect';
 import { useState } from 'react';
 import { Topo } from 'types';
+import { fakeTopo } from 'helpers/fakeData/fakeTopo';
 
 const Topo: NextPage = () => {
   const router = useRouter();
   const { id } = router.query;
-  if (typeof id !== 'string') return null;
+  // if (typeof id !== 'string') return null;
 
-  const [topo, setTopo] = useState<Topo>();
+  const [topo, setTopo] = useState<Topo>(fakeTopo);
   
   return (
     <>

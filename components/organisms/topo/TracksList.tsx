@@ -1,11 +1,11 @@
 import React from 'react';
 import { AverageNote, GradeCircle } from 'components';
-import { Grade, gradeToLightGrade, Track, UUID } from 'types';
+import { Grade, gradeToLightGrade, Track } from 'types';
 import { averageTrackNote } from 'helpers/topo/averageTrackRating';
 
 interface TracksListProps {
   tracks: Track[],
-  onTrackClick?: (id: UUID) => void,
+  onTrackClick?: (track: Track) => void,
   onBuilderAddClick?: () => void,
 }
 
@@ -24,29 +24,32 @@ export const TracksList: React.FC<TracksListProps> = (props: TracksListProps) =>
 
   return (
     <div className="w-full border-t border-grey-light">
+
       {props.tracks.map((track) => {
         const grade = gradeToLightGrade(track.grade);
         return (
           <div
             key={track.id}
-            className="px-5 py-5 grid grid-cols-10 items-center border-b border-grey-light"
+            className="px-5 py-5 grid grid-cols-10 items-center border-b border-grey-light cursor-pointer hover:bg-grey-superlight"
             onClick={() => {
-              props.onTrackClick && props.onTrackClick(track.id);
+              props.onTrackClick && props.onTrackClick(track);
             }}
           >
             <GradeCircle
               grade={grade}
-              className=""
+              className="cursor-pointer"
               content={track.orderIndex.toString()}
             />
 
-            <div className={`ktext-subtitle mr-1 text-right ${gradeColors[grade]}`}>
-              {track.grade || "Pas de cotation"}
-            </div>
-            <div className="col-span-6">
+            {track.grade && 
+              <div className={`ktext-subtitle ml-3 text-right ${gradeColors[grade]}`}>
+                {track.grade}
+              </div>
+            }
+            <div className="col-span-5 ml-3">
               <span className="ktext-base">{track.name}</span>
             </div>
-            {track.ratings.length > 1 && (
+            {track.ratings && track.ratings.length > 1 && (
               <div className="col-span-2">
                 <AverageNote note={averageTrackNote(track.ratings)} className="justify-end" />
               </div>
@@ -54,6 +57,7 @@ export const TracksList: React.FC<TracksListProps> = (props: TracksListProps) =>
           </div>
         );
       })}
+
       {props.onBuilderAddClick && (
         <div
           className="ktext-subtitle text-grey-medium px-5 py-5 cursor-pointer border-b border-grey-light"

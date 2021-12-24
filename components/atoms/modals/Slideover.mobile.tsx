@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-interface MobileSlideoverProps {
+interface SlideoverMobileProps {
   open?: boolean,
   onlyFull?: boolean,
   initialFull?: boolean,
@@ -9,12 +9,12 @@ interface MobileSlideoverProps {
   children: any,
 }
 
-export const MobileSlideover: React.FC<MobileSlideoverProps> = ({
+export const SlideoverMobile: React.FC<SlideoverMobileProps> = ({
   open = false,
   onlyFull = false,
   initialFull = false,
   ...props
-}: MobileSlideoverProps) => {
+}: SlideoverMobileProps) => {
   const fullTranslate = 15; // 100% - x of the screen
   const littleTranslate = 85;
   const [full, setFull] = useState(initialFull);

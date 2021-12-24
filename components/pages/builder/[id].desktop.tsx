@@ -1,6 +1,6 @@
-import React, { useCallback, useState } from 'react';
-import { HeaderDesktop, LeftbarDesktop, MapControl } from 'components';
-import { Boulder, GeoCoordinates, MapToolEnum, MarkerProps, Topo } from 'types';
+import React, { useCallback, useEffect, useState } from 'react';
+import { BoulderSlideagainstDesktop, HeaderDesktop, LeftbarDesktop, MapControl, SlideagainstRightDesktop, SlideoverLeftDesktop } from 'components';
+import { Boulder, Track, GeoCoordinates, MapToolEnum, MarkerProps, Topo } from 'types';
 import { markerSize } from 'helpers';
 
 interface BuilderMapDesktopProps {
@@ -11,6 +11,32 @@ interface BuilderMapDesktopProps {
 export const BuilderMapDesktop:React.FC<BuilderMapDesktopProps> = (props: BuilderMapDesktopProps) => {
     const [currentTool, setCurrentTool] = useState<MapToolEnum>();
     const [selectedBoulder, setSelectedBoulder] = useState<Boulder>();
+    const [selectedTrack, setSelectedTrack] = useState<Track>();
+
+    const [displayInfoForm, setDisplayInfoForm] = useState<boolean>(false);
+    const [displayApproachForm, setDisplayApproachForm] = useState<boolean>(false);
+    const [displayManagementForm, setDisplayManagementForm] = useState<boolean>(false);
+    useEffect(() => {
+      if (displayInfoForm)
+        setTimeout(() => {
+          setDisplayApproachForm(false);
+          setDisplayManagementForm(false)
+        }, 150)
+    }, [displayInfoForm]);
+    useEffect(() => {
+      if (displayApproachForm)
+        setTimeout(() => {
+          setDisplayInfoForm(false);
+          setDisplayManagementForm(false)
+        }, 150)
+    }, [displayApproachForm]);
+    useEffect(() => {
+      if (displayManagementForm)
+        setTimeout(() => {
+          setDisplayInfoForm(false);
+          setDisplayApproachForm(false)
+        }, 150)
+    }, [displayManagementForm]);
 
     const getMarkersFromBoulders = () => {
         const markers: MarkerProps[] = [];
@@ -46,7 +72,16 @@ export const BuilderMapDesktop:React.FC<BuilderMapDesktopProps> = (props: Builde
           }
         }
         return markers;
-      };
+    };
+
+    const [displayValidateModal, setDisplayValidateModal] = useState(false);
+    const validateTopo = () => {
+      {/* TODO */}
+    }
+    const [displayDeleteModal, setDisplayDeleteModal] = useState(false);
+    const deleteTopo = () => {
+      {/* TODO */}
+    }
 
     return (
         <>
@@ -54,11 +89,11 @@ export const BuilderMapDesktop:React.FC<BuilderMapDesktopProps> = (props: Builde
                 backLink='/builder/dashboard'
                 title={props.topo.name}
                 menuOptions={[
-                    { value: 'Infos du topo', action: () => {} },
-                    { value: 'Marche d\'approche', action: () => {} },
-                    { value: 'Gestionnaires du site', action: () => {} },
-                    { value: 'Valider le topo', action: () => {} },
-                    { value: 'Supprimer le topo', action: () => {} }
+                    { value: 'Infos du topo', action: () => setDisplayInfoForm(true)},
+                    { value: 'Marche d\'approche', action: () => setDisplayApproachForm(true)},
+                    { value: 'Gestionnaires du site', action: () => setDisplayManagementForm(true)},
+                    { value: 'Valider le topo', action: () => setDisplayValidateModal(true)},
+                    { value: 'Supprimer le topo', action: () => setDisplayDeleteModal(true)}
                 ]}
                 displayDrawer
                 currentTool={currentTool}
@@ -67,10 +102,32 @@ export const BuilderMapDesktop:React.FC<BuilderMapDesktopProps> = (props: Builde
                 onWaypointClick={() => setCurrentTool('WAYPOINT')}
             />
 
-            <div className='flex flex-row h-full'>
+            <div className='flex flex-row h-full overflow-hidden'>
                 <LeftbarDesktop 
                     currentMenuItem='BUILDER'
                 />
+
+                {displayInfoForm &&
+                  <SlideoverLeftDesktop 
+                    open={displayInfoForm}
+                    onClose={() => { setDisplayInfoForm(false) }}
+                    title='Infos du spot'
+                  /> // TODO : formulaire
+                }
+                {displayApproachForm &&
+                  <SlideoverLeftDesktop 
+                    open={displayApproachForm}
+                    onClose={() => { setDisplayApproachForm(false) }}
+                    title="Marche d'approche"
+                  /> // TODO : formulaire
+                }
+                {displayManagementForm &&
+                  <SlideoverLeftDesktop 
+                    open={displayManagementForm}
+                    onClose={() => { setDisplayManagementForm(false) }}
+                    title='Gestionnaires du spot'
+                  /> // TODO : formulaire
+                }
 
                 <MapControl 
                     initialZoom={13}
@@ -88,6 +145,26 @@ export const BuilderMapDesktop:React.FC<BuilderMapDesktopProps> = (props: Builde
                         findPlaces: false,
                     }}
                 />
+
+                {/* TO MODIFY TO PUT FORMS */}
+                {selectedTrack &&
+                  <SlideagainstRightDesktop 
+                    open={!!selectedTrack}
+                    onClose={() => setSelectedTrack(undefined)}
+                  />
+                }
+                {selectedBoulder &&
+                  <BoulderSlideagainstDesktop
+                    boulder={selectedBoulder} 
+                    open={!!selectedBoulder}
+                    onSelectTrack={(track) => setSelectedTrack(track)}
+                    onClose={() => {
+                      setSelectedTrack(undefined);
+                      setSelectedBoulder(undefined)
+                    }}
+                  />
+                }
+                
             </div>
         </>
     )

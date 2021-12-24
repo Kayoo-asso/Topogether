@@ -1,6 +1,5 @@
-import { Button, Map, MobileHeader, Modal, TopoModal } from 'components';
+import { Button, Map, Modal, TopoModal } from 'components';
 import { GeoCamera } from 'components/molecules/GeoCamera';
-import { fontainebleauLocation } from 'const';
 import { markerSize } from 'helpers';
 import { fakeLightTopo } from 'helpers/fakeData/fakeLightTopo';
 import { fakeTopo } from 'helpers/fakeData/fakeTopo';
@@ -43,7 +42,7 @@ export const WorldMapMobile:React.FC = (props) => {
           // onCapture={(blob) => console.log(blob)}
         /> */}
       
-        {/* <BoulderSlideover 
+        {/* <BoulderSlideoverMobile 
           boulder={fakeTopo.sectors[0].boulders[0]}
           topoCreatorId={3}
           forBuilder

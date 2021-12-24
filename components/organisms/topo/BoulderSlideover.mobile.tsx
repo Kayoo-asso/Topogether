@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
   Dropdown,
-  GradeScale, Icon, LikeButton, MobileSlideover,
+  GradeScale, Icon, LikeButton, SlideoverMobile,
 } from 'components';
 import Image from 'next/image';
 import { Boulder, Difficulty, UUID } from 'types';
@@ -9,7 +9,7 @@ import { topogetherUrl } from 'helpers/globals';
 import { buildBoulderGradeHistogram } from 'helpers';
 import { TracksList } from '.';
 
-interface BoulderSlideoverProps {
+interface BoulderSlideoverMobileProps {
   open?: boolean,
   boulder: Boulder,
   topoCreatorId?: UUID,
@@ -17,11 +17,11 @@ interface BoulderSlideoverProps {
   onClose?: () => void,
 }
 
-export const BoulderSlideover: React.FC<BoulderSlideoverProps> = ({
+export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = ({
   open = false,
   forBuilder = false,
   ...props
-}: BoulderSlideoverProps) => {
+}: BoulderSlideoverMobileProps) => {
   const [full, setFull] = useState(false);
   const [imageHeight, setImageHeight] = useState(0);
   const [boulderLiked, setBoulderLiked] = useState(false); // To change TODO
@@ -35,7 +35,7 @@ export const BoulderSlideover: React.FC<BoulderSlideoverProps> = ({
     ? props.boulder.tracks.filter((track) => track.creatorId !== props.topoCreatorId) : [];
 
   return (
-    <MobileSlideover
+    <SlideoverMobile
       open
       initialFull={false}
       onSizeChange={(f) => setFull(f)}
@@ -143,6 +143,6 @@ export const BoulderSlideover: React.FC<BoulderSlideoverProps> = ({
           onBuilderAddClick={() => console.log('create track')} //TODO
         />
       </div>
-    </MobileSlideover>
+    </SlideoverMobile>
   );
 };

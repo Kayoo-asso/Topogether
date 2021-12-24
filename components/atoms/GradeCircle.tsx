@@ -50,7 +50,7 @@ export const GradeCircle: React.FC<GradeCircleProps> = ({
     : 'p-1 w-5 h-5 border';
   
   const content = props.content
-    || props.grade === "None" ? "Sans cotation" : props.grade;
+    || (props.grade === "None" ? "n/a" : props.grade);
 
   return (
     <div
@@ -67,7 +67,7 @@ export const GradeCircle: React.FC<GradeCircleProps> = ({
     >
       <span className={`ktext-subtitle
         ${size === 'little' ? 'text-xs' : ''}
-        ${props.onClick ? 'cursor-pointer' : 'cursor-default'}
+        ${props.onClick ? 'cursor-pointer' : ''}
         `}
       >
         {content}

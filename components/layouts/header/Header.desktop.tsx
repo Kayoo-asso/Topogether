@@ -41,9 +41,8 @@ export const HeaderDesktop: React.FC<HeaderDesktopProps> = ({
 
         <div className="flex-1 flex flex-row items-center text-white ktext-title whitespace-nowrap">
           <span
-            aria-label={props.title}
-            data-microtip-position="bottom" 
-            role="tooltip"
+            className='cursor-pointer'
+            onClick={() => setMenuOpen(!menuOpen)}
           >
             {props.title}
           </span>
@@ -58,7 +57,8 @@ export const HeaderDesktop: React.FC<HeaderDesktopProps> = ({
           {props.menuOptions && menuOpen &&
             <Dropdown 
               choices={props.menuOptions}
-              className='absolute z-50 top-[7%]'
+              onSelect={() => setMenuOpen(false)}
+              className='absolute z-500 top-[7%]'
             />
           }
         </div>
