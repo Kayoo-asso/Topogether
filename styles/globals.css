@@ -5,8 +5,8 @@
 
  @layer components {
   .ktext-title { @apply font-sans font-medium text-xl uppercase }
-  .ktext-section-title { @apply font-sans font-semibold text-2xl }
-  .ktext-subtitle { @apply font-sans font-semibold text-base uppercase }
+  .ktext-section-title { @apply font-sans font-semibold text-xl }
+  .ktext-subtitle { @apply font-sans font-bold text-subtitle uppercase }
   .ktext-base { @apply font-sans font-normal text-lg }
   .ktext-base-big { @apply font-sans font-normal text-xl }
   .ktext-base-superbig { @apply font-sans font-semibold text-4xl }
