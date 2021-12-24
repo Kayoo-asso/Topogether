@@ -1,7 +1,5 @@
 import { BoulderSlideover, MapControl, HeaderMobile } from 'components';
 import { markerSize } from 'helpers';
-import { fakeTopo } from 'helpers/fakeData/fakeTopo';
-import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 import { Boulder, MarkerProps, Topo } from 'types';
 

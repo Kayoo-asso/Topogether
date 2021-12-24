@@ -1,7 +1,14 @@
 import React from 'react';
+import { User } from 'types';
 
-export const ProfileMobile:React.FC = (props) => {
+interface ProfileMobileProps {
+    user: User,
+}
+
+export const ProfileMobile: React.FC<ProfileMobileProps> = (props: ProfileMobileProps) => {
     return (
-        <div></div>
+        <div className='h-full w-full flex flex-col'>
+            {/* CONTENT GOES HERE */}
+        </div>
     )
 }

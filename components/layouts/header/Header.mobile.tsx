@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 
 interface HeaderMobileProps {
   title: string,
-  menuOptions: DropdownOption[],
+  menuOptions?: DropdownOption[],
   backLink: string,
 }
 
@@ -47,7 +47,7 @@ export const HeaderMobile: React.FC<HeaderMobileProps> = (props: HeaderMobilePro
             />
           </div>
         )}
-        {menuOpen &&
+        {menuOpen && props.menuOptions &&
           <Dropdown 
             choices={props.menuOptions}
             className='absolute z-50 right-[10px] top-[8%] min-w-[40%]'

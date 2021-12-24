@@ -1,16 +1,25 @@
 import type { NextPage } from 'next';
-import { TopoDesktop, TopoMobile } from 'components';
+import { AdminDesktop, AdminMobile } from 'components';
 import { isDesktop, isMobile } from 'react-device-detect';
+import { useState } from 'react';
+import { LightTopo } from 'types';
 
 const AdminPage: NextPage = () => {
+  const [lightTopos, setLightTopos] = useState<LightTopo[]>();
+
+  {/* TODO: GET LIGHT TOPOS */}
 
   return (
     <>
       {isMobile &&
-        <TopoMobile />
+        <AdminMobile
+          lightTopos={lightTopos}
+        />
       }
       {isDesktop &&
-        <TopoDesktop />
+        <AdminDesktop
+          lightTopos={lightTopos}
+        />
       }
     </>
   )

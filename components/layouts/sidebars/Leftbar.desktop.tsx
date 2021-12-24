@@ -4,13 +4,14 @@ import Link from 'next/link';
 import { UserContext } from 'helpers';
 
 interface LeftbarDesktopProps {
-    currentMenuItem?: string,
+    currentMenuItem?: 'BUILDER' | 'MAP' | 'USER' | 'ADMIN',
 }
 
 export const LeftbarDesktop: React.FC<LeftbarDesktopProps> = ({
-    currentMenuItem = 'map'
+    currentMenuItem = 'MAP'
 }: LeftbarDesktopProps) => {
     const { session } = useContext(UserContext);
+    
     if (!session) return null;
     return (
         <div className='bg-white border-r border-grey-medium w-[300px] h-full flex flex-col px-8 py-10'>
@@ -31,27 +32,27 @@ export const LeftbarDesktop: React.FC<LeftbarDesktopProps> = ({
                     <div className='cursor-pointer flex flex-row'>
                         <Icon 
                             name='topo'
-                            SVGClassName={`h-6 w-6 mr-4 ${currentMenuItem === 'builder' ? 'stroke-main' : 'stroke-dark'}`}
+                            SVGClassName={`h-6 w-6 mr-4 ${currentMenuItem === 'BUILDER' ? 'stroke-main' : 'stroke-dark'}`}
                         />
-                        <span className={`ktext-title ${currentMenuItem === 'builder' ? 'text-main' : 'text-dark'}`}>Mes topos</span>
+                        <span className={`ktext-title ${currentMenuItem === 'BUILDER' ? 'text-main' : 'text-dark'}`}>Mes topos</span>
                     </div>
                 </Link>
                 <Link href='/' passHref>
                     <div className='cursor-pointer flex flex-row'>
                         <Icon 
                             name='waypoint'
-                            SVGClassName={`h-6 w-6 mr-4 ${currentMenuItem === 'map' ? 'fill-main' : 'fill-dark'}`}
+                            SVGClassName={`h-6 w-6 mr-4 ${currentMenuItem === 'MAP' ? 'fill-main' : 'fill-dark'}`}
                         />
-                        <span className={`ktext-title ${currentMenuItem === 'map' ? 'text-main' : 'text-dark'}`}>Carte</span>
+                        <span className={`ktext-title ${currentMenuItem === 'MAP' ? 'text-main' : 'text-dark'}`}>Carte</span>
                     </div>
                 </Link>
                 <Link href='/user/profile' passHref>
                     <div className='cursor-pointer flex flex-row'>
                         <Icon 
                             name='user'
-                            SVGClassName={`h-6 w-6 mr-4 ${currentMenuItem === 'user' ? 'fill-main' : 'fill-dark'}`}
+                            SVGClassName={`h-6 w-6 mr-4 ${currentMenuItem === 'USER' ? 'fill-main' : 'fill-dark'}`}
                         />
-                        <span className={`ktext-title ${currentMenuItem === 'user' ? 'text-main' : 'text-dark'}`}>Profile</span>
+                        <span className={`ktext-title ${currentMenuItem === 'USER' ? 'text-main' : 'text-dark'}`}>Profile</span>
                     </div>
                 </Link>
                 {session?.role === 'ADMIN' &&
@@ -59,9 +60,9 @@ export const LeftbarDesktop: React.FC<LeftbarDesktopProps> = ({
                         <div className='cursor-pointer flex flex-row'>
                             <Icon 
                                 name='key'
-                                SVGClassName={`h-6 w-6 mr-4 ${currentMenuItem === 'admin' ? 'stroke-main' : 'stroke-dark'}`}
+                                SVGClassName={`h-6 w-6 mr-4 ${currentMenuItem === 'ADMIN' ? 'stroke-main' : 'stroke-dark'}`}
                             />
-                            <span className={`ktext-title ${currentMenuItem === 'admin' ? 'text-main' : 'text-dark'}`}>Admin</span>
+                            <span className={`ktext-title ${currentMenuItem === 'ADMIN' ? 'text-main' : 'text-dark'}`}>Admin</span>
                         </div>
                     </Link>
                 }

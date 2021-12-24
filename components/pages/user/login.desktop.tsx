@@ -1,7 +1,20 @@
+import { HeaderDesktop } from 'components';
 import React from 'react';
 
-export const LoginDesktop:React.FC = (props) => {
+export const LoginDesktop:React.FC = () => {
     return (
-        <div></div>
+        <>
+            <HeaderDesktop
+                backLink="#"
+                title="Topogether"
+                displayLogin
+            />
+
+            <div className="flex flex-row h-full">
+
+                {/* CONTENT GOES HERE */}
+
+            </div>
+        </>
     )
 }

@@ -15,10 +15,10 @@ export const DashboardDesktop:React.FC<DashboardDesktopProps> = (props: Dashboar
 
     <div className="flex flex-row h-full">
       <LeftbarDesktop
-        currentMenuItem="builder"
+        currentMenuItem="BUILDER"
       />
 
-      {/* CODE GOES HERE */}
+      {/* CONTENT GOES HERE */}
 
     </div>
   </>

@@ -1,7 +1,27 @@
+import { HeaderDesktop, LeftbarDesktop } from 'components';
 import React from 'react';
+import { User } from 'types';
 
-export const ProfileDesktop:React.FC = (props) => {
+interface ProfileDesktopProps {
+    user: User,
+}
+
+export const ProfileDesktop: React.FC<ProfileDesktopProps> = (props: ProfileDesktopProps) => {
     return (
-        <div></div>
+        <>
+            <HeaderDesktop
+                backLink="/"
+                title="Mon profile"
+            />
+
+            <div className="flex flex-row h-full">
+            <LeftbarDesktop
+                currentMenuItem="USER"
+            />
+
+            {/* CONTENT GOES HERE */}
+
+            </div>
+        </>
     )
 }

@@ -69,7 +69,7 @@ export const BuilderMapDesktop:React.FC<BuilderMapDesktopProps> = (props: Builde
 
             <div className='flex flex-row h-full'>
                 <LeftbarDesktop 
-                    currentMenuItem='builder'
+                    currentMenuItem='BUILDER'
                 />
 
                 <MapControl 
