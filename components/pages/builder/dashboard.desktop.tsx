@@ -1,7 +1,27 @@
+import { HeaderDesktop, LeftbarDesktop } from 'components';
 import React from 'react';
+import { LightTopo } from 'types';
 
-export const DashboardDesktop:React.FC = (props) => {
+interface DashboardDesktopProps {
+    topos: LightTopo[],
+}
+
+export const DashboardDesktop:React.FC<DashboardDesktopProps> = (props: DashboardDesktopProps) => {
     return (
-        <div></div>
+        <>
+            <HeaderDesktop
+                backLink='#'
+                title='Mes topos'
+            />
+
+            <div className='flex flex-row h-full'>
+                <LeftbarDesktop 
+                    currentMenuItem='builder'
+                />
+
+                {/* CODE GOES HERE */}
+
+            </div>
+        </>
     )
 }

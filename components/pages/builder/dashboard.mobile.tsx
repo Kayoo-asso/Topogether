@@ -29,6 +29,7 @@ export const DashboardMobile:React.FC<DashboardMobileProps> = (props: DashboardM
         onSelect={sortTopos}
         className="w-44 m-3"
       /> */}
+      
       <div className="text-second-light ktext-section-title">Brouillons</div>
       <div className="flex flex-row">
         {draftTopos.map((topo) => (
@@ -36,6 +37,7 @@ export const DashboardMobile:React.FC<DashboardMobileProps> = (props: DashboardM
         ))}
         <AddTopoCard />
       </div>
+
       <div className="text-third-light ktext-section-title">En attente de validation</div>
       {submittedTopos?.length === 0 && <NoTopoCard topoStatus={TopoStatus.Submitted} />}
       <div className="flex flex-row">
@@ -43,6 +45,7 @@ export const DashboardMobile:React.FC<DashboardMobileProps> = (props: DashboardM
           <TopoCard key={topo.id} topo={topo} />
         ))}
       </div>
+
       <div className="text-main-light ktext-section-title">Validés</div>
       {validatedTopos?.length === 0 && <NoTopoCard topoStatus={TopoStatus.Validated} />}
       <div className="flex flex-row">
