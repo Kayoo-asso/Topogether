@@ -1,7 +1,11 @@
 import { HeaderDesktop } from 'components';
 import React from 'react';
 
-export const NewTopoDesktop:React.FC = () => {
+interface NewTopoDesktopProps {
+    createTopo: () => void,
+}
+
+export const NewTopoDesktop: React.FC<NewTopoDesktopProps> = (props: NewTopoDesktopProps) => {
     return (
         <>
             <HeaderDesktop

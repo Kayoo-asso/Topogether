@@ -30,6 +30,8 @@ const BuilderMapPage: NextPage = () => {
         console.log("delete topo");
     }
 
+    {/* TODO: GET TOPO */}
+
     // CRUD
     const createSector = useCallback((display = true) => {
         const newSector: Sector = {

@@ -1,6 +1,10 @@
 import React from 'react';
 
-export const NewTopoMobile:React.FC = (props) => {
+interface NewTopoMobileProps {
+    createTopo: () => void,
+}
+
+export const NewTopoMobile: React.FC<NewTopoMobileProps> = (props: NewTopoMobileProps) => {
     return (
         <div className='h-full w-full flex flex-col bg-main'>
             {/* CONTENT GOES HERE */}

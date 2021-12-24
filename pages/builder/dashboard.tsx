@@ -2,10 +2,11 @@ import type { NextPage } from 'next';
 import { DashboardDesktop, DashboardMobile } from 'components';
 import { isDesktop, isMobile } from 'react-device-detect';
 import { fakeLightTopo } from 'helpers/fakeData/fakeLightTopo';
-import { TopoStatus } from 'types';
+import { LightTopo, TopoStatus } from 'types';
+import { useState } from 'react';
 
 const DashboardPage: NextPage = () => {
-  const topos = [
+  const [lightTopos, setLightTopos] = useState<LightTopo[]>([
     fakeLightTopo,
     {
       ...fakeLightTopo,
@@ -31,13 +32,22 @@ const DashboardPage: NextPage = () => {
       id: '4',
 
     },
-  ];
+  ]);
+
+  {/* TODO: get Light Topos */}
+
   return (
     <>
-      {isMobile
-        && <DashboardMobile topos={topos} />}
-      {isDesktop
-        && <DashboardDesktop topos={topos} />}
+      {isMobile && 
+        <DashboardMobile 
+          lightTopos={lightTopos} 
+        />
+      }
+      {isDesktop && 
+        <DashboardDesktop 
+          lightTopos={lightTopos} 
+        />
+      }
     </>
   );
 };

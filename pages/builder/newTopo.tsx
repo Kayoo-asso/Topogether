@@ -4,13 +4,20 @@ import { isDesktop, isMobile } from 'react-device-detect';
 
 const NewTopoPage: NextPage = () => {
 
+  {/* TODO: add Create Topo */}
+  const createTopo = () => {};
+
   return (
     <>
       {isMobile &&
-        <NewTopoMobile />
+        <NewTopoMobile 
+          createTopo={createTopo}
+        />
       }
       {isDesktop &&
-        <NewTopoDesktop />
+        <NewTopoDesktop 
+          createTopo={createTopo}
+        />
       }
     </>
   )

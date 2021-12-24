@@ -3,7 +3,7 @@ import React from 'react';
 import { LightTopo } from 'types';
 
 interface DashboardDesktopProps {
-  topos: LightTopo[],
+  lightTopos: LightTopo[],
 }
 
 export const DashboardDesktop:React.FC<DashboardDesktopProps> = (props: DashboardDesktopProps) => (
