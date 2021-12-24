@@ -33,7 +33,7 @@ export const TopoCard: React.FC<TopoCardProps> = React.memo((props: TopoCardProp
 
   return (
     <Card className="relative text-center text-grey-medium bg-white flex flex-col">
-      <div className="w-full h-20 lg:h-44 top-0 relative">
+      <div className="w-full h-[70px] lg:h-44 top-0 relative">
         <Image
           src={props.topo.image ? topogetherUrl + props.topo.image.url : '/assets/img/Kayoo_defaut_image.png'}
           className="rounded-t-lg"
@@ -48,10 +48,10 @@ export const TopoCard: React.FC<TopoCardProps> = React.memo((props: TopoCardProp
           {icon}
         </div>
         <div className="p-2 lg:pr-6 w-full flex flex-col items-start">
-          <div className="w-full pr-2 truncate ktext-title text-dark font-bold text-xs">
+          <div className="w-full pr-2 truncate ktext-title text-left text-dark font-bold text-xs">
             {props.topo.name}
           </div>
-          <div className="w-full border-t-[1px] text-xxs flex flex-row flex-wrap items-end justify-between">
+          <div className="w-full border-t-[1px] text-xxs flex flex-row flex-wrap items-end justify-between py-1">
             <span className="whitespace-nowrap">{`${props.topo.nbBoulders} blocs - ${props.topo.nbTracks} passages`}</span>
             <div className="lg:hidden">
               {icon}

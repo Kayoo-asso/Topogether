@@ -11,6 +11,7 @@ const DashboardPage: NextPage = () => {
       ...fakeLightTopo,
       status: TopoStatus.Submitted,
       id: '1',
+      name: 'Les roches qui dansent très souvent',
     },
     {
       ...fakeLightTopo,
@@ -36,7 +37,7 @@ const DashboardPage: NextPage = () => {
       {isMobile
         && <DashboardMobile topos={topos} />}
       {isDesktop
-        && <DashboardDesktop />}
+        && <DashboardDesktop topos={topos} />}
     </>
   );
 };
