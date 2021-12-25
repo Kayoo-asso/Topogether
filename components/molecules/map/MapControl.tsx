@@ -5,6 +5,7 @@ import { MapSearchbarProps } from '.';
 import { MapSearchbar } from '..';
 import { MapProps, MarkerProps } from 'types';
 import { googleGetPlace } from 'helpers';
+import { isDesktop, isMobile } from 'react-device-detect';
 
 interface MapControlProps extends MapProps {
   initialZoom?: number,
@@ -32,7 +33,6 @@ export const MapControl: React.FC<MapControlProps> = ({
 }: MapControlProps) => {
   const mapRef = useRef<google.maps.Map>(null);
   const [satelliteView, setSatelliteView] = useState(false);
-  const [zoom, setZoom] = useState(initialZoom);
 
   const getBoundsFromSearchbar = (geometry: google.maps.places.PlaceGeometry) => {
     if (mapRef.current) {
@@ -58,7 +58,7 @@ export const MapControl: React.FC<MapControlProps> = ({
   }
 
   return (
-    <div className="flex-1 h-full relative">
+    <div className={"relative " + (isMobile ? 'h-content' : 'flex-1')}>
       <Wrapper apiKey="AIzaSyDoHIGgvyVVi_1_6zVWD4AOQPfHWN7zSkU" libraries={['places']}>
 
         <div 

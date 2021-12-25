@@ -1,10 +1,10 @@
-import {
-  BoulderSlideoverMobile, Button, HeaderMobile, MapControl,
-} from 'components';
-import { markerSize } from 'helpers';
 import React, { useCallback, useState } from 'react';
 import {
-  Boulder, GeoCoordinates, MarkerProps, Topo,
+  BoulderSlideoverMobile, Drawer, HeaderMobile, MapControl,
+} from 'components';
+import { markerSize } from 'helpers';
+import {
+  Boulder, GeoCoordinates, MarkerProps, Topo, Track,
 } from 'types';
 
 interface BuilderMapMobileProps {
@@ -14,6 +14,8 @@ interface BuilderMapMobileProps {
 
 export const BuilderMapMobile:React.FC<BuilderMapMobileProps> = (props: BuilderMapMobileProps) => {
   const [selectedBoulder, setSelectedBoulder] = useState<Boulder>();
+  const [selectedTrack, setSelectedTrack] = useState<Track>();
+  const [drawerOpen, setDrawerOpen] = useState(true);
 
   const getMarkersFromBoulders = () => {
     const markers: MarkerProps[] = [];
@@ -33,8 +35,8 @@ export const BuilderMapMobile:React.FC<BuilderMapMobileProps> = (props: BuilderM
               draggable: true,
             },
             handlers: {
-              onClick: useCallback(() => setSelectedBoulder(boulder), []),
-              onDragEnd: useCallback((e) => {
+              onClick: () => setSelectedBoulder(boulder),
+              onDragEnd: (e) => {
                 if (e.latLng) {
                   const newCoords: GeoCoordinates = {
                     lat: e.latLng.lat(),
@@ -42,7 +44,7 @@ export const BuilderMapMobile:React.FC<BuilderMapMobileProps> = (props: BuilderM
                   };
                   props.crud.boulder.update(i, j, 'location', newCoords);
                 }
-              }, []),
+              },
             },
           });
         }
@@ -66,28 +68,36 @@ export const BuilderMapMobile:React.FC<BuilderMapMobileProps> = (props: BuilderM
         ]}
       />
 
-      <MapControl
-        initialZoom={13}
-        markers={getMarkersFromBoulders()}
-        onPhotoButtonClick={() => {
-          // TODO
-        }}
-        boundsToMarkers
-        searchbarOptions={{
-          findTopos: false,
-          findPlaces: false,
-        }}
-      />
+      <div className='h-full relative'>
+        <MapControl
+          initialZoom={13}
+          markers={getMarkersFromBoulders()}
+          onPhotoButtonClick={() => {
+            // TODO
+          }}
+          boundsToMarkers
+          searchbarOptions={{
+            findTopos: false,
+            findPlaces: false,
+          }}
+        />
 
-      {selectedBoulder
-                && (
-                <BoulderSlideoverMobile
-                  open
-                  boulder={selectedBoulder}
-                  forBuilder
-                  onClose={() => setSelectedBoulder(undefined)}
-                />
-                )}
+        {drawerOpen &&
+          <Drawer 
+            image={props.topo.sectors[0].boulders[0].images[0]}
+            track={props.topo.sectors[0].boulders[0].tracks[0]}
+          />
+        }
+      </div>
+
+      {selectedBoulder && (
+        <BoulderSlideoverMobile
+          open
+          boulder={selectedBoulder}
+          forBuilder
+          onClose={() => setSelectedBoulder(undefined)}
+        />
+      )}
     </>
   );
 };
