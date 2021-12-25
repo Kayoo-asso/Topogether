@@ -16,27 +16,28 @@ export const BuilderMapDesktop:React.FC<BuilderMapDesktopProps> = (props: Builde
     const [displayInfoForm, setDisplayInfoForm] = useState<boolean>(false);
     const [displayApproachForm, setDisplayApproachForm] = useState<boolean>(false);
     const [displayManagementForm, setDisplayManagementForm] = useState<boolean>(false);
+    const [currentDisplay, setCurrentDisplay] = useState<'INFO' | 'APPROACH' | 'MANAGEMENT'>();
     useEffect(() => {
-      if (displayInfoForm)
+      if (currentDisplay === 'INFO') {
+        setDisplayInfoForm(true);
         setTimeout(() => {
           setDisplayApproachForm(false);
-          setDisplayManagementForm(false)
+          setDisplayManagementForm(false);
         }, 150)
-    }, [displayInfoForm]);
-    useEffect(() => {
-      if (displayApproachForm)
+      } else if (currentDisplay === 'APPROACH') {
+        setDisplayApproachForm(true);
         setTimeout(() => {
           setDisplayInfoForm(false);
           setDisplayManagementForm(false)
         }, 150)
-    }, [displayApproachForm]);
-    useEffect(() => {
-      if (displayManagementForm)
+      } else if (currentDisplay === 'MANAGEMENT') {
+        setDisplayManagementForm(true);
         setTimeout(() => {
           setDisplayInfoForm(false);
           setDisplayApproachForm(false)
         }, 150)
-    }, [displayManagementForm]);
+      }
+    }, [currentDisplay]);
 
     const getMarkersFromBoulders = () => {
         const markers: MarkerProps[] = [];
@@ -89,9 +90,9 @@ export const BuilderMapDesktop:React.FC<BuilderMapDesktopProps> = (props: Builde
                 backLink='/builder/dashboard'
                 title={props.topo.name}
                 menuOptions={[
-                    { value: 'Infos du topo', action: () => setDisplayInfoForm(true)},
-                    { value: 'Marche d\'approche', action: () => setDisplayApproachForm(true)},
-                    { value: 'Gestionnaires du site', action: () => setDisplayManagementForm(true)},
+                    { value: 'Infos du topo', action: () => setCurrentDisplay('INFO')},
+                    { value: 'Marche d\'approche', action: () => setCurrentDisplay('APPROACH')},
+                    { value: 'Gestionnaires du site', action: () => setCurrentDisplay('MANAGEMENT')},
                     { value: 'Valider le topo', action: () => setDisplayValidateModal(true)},
                     { value: 'Supprimer le topo', action: () => setDisplayDeleteModal(true)}
                 ]}
@@ -111,6 +112,7 @@ export const BuilderMapDesktop:React.FC<BuilderMapDesktopProps> = (props: Builde
                   <SlideoverLeftDesktop 
                     open={displayInfoForm}
                     onClose={() => { setDisplayInfoForm(false) }}
+                    className={currentDisplay === 'INFO' ? 'z-100' : ''}
                     title='Infos du spot'
                   /> // TODO : formulaire
                 }
@@ -118,6 +120,7 @@ export const BuilderMapDesktop:React.FC<BuilderMapDesktopProps> = (props: Builde
                   <SlideoverLeftDesktop 
                     open={displayApproachForm}
                     onClose={() => { setDisplayApproachForm(false) }}
+                    className={currentDisplay === 'APPROACH' ? 'z-100' : ''}
                     title="Marche d'approche"
                   /> // TODO : formulaire
                 }
@@ -125,6 +128,7 @@ export const BuilderMapDesktop:React.FC<BuilderMapDesktopProps> = (props: Builde
                   <SlideoverLeftDesktop 
                     open={displayManagementForm}
                     onClose={() => { setDisplayManagementForm(false) }}
+                    className={currentDisplay === 'MANAGEMENT' ? 'z-100' : ''}
                     title='Gestionnaires du spot'
                   /> // TODO : formulaire
                 }
