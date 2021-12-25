@@ -60,13 +60,35 @@ export const TracksImage: React.FC<TracksImageProps> = ({
       observe(); // To re-start observing the current target element
     },
   });
-  const [imageDims, setImageDims] = useState<ImageDimensions>({ width: 0, height: 0 });
+
+  let imgWidth, imgHeight;
+  // Only one of those will be set
+  let divWidth = undefined;
+  let divHeight = undefined;
+
+  const imgRatio = props.image.width / props.image.height;
+
+  // Original: width > height
+  // We fit width and set the height accordingly
+  if (imgRatio > 1) {
+    imgWidth = containerWidth;
+    imgHeight = containerWidth * 1 / imgRatio;
+    divHeight = imgHeight;
+  }
+  // Original: height > width
+  // We fight height and set the width accordingly
+  else {
+    imgWidth = containerHeight * imgRatio;
+    imgHeight = containerHeight;
+    divWidth = imgWidth;
+  }
+
   const rx = props.image.width != 0
-      ? imageDims.width / props.image.width
-      : 1;
-      const ry = props.image.height != 0
-        ? imageDims.height / props.image.height
-        : 1;
+    ? imgWidth / props.image.width
+    : 1;
+  const ry = props.image.height != 0
+    ? imgHeight / props.image.height
+    : 1;
 
   const svgElems: JSX.Element[] = [];
   const svgScaleClass = props.currentTool === 'ERASER'
@@ -77,7 +99,7 @@ export const TracksImage: React.FC<TracksImageProps> = ({
 
   for (let lineIdx = 0; lineIdx < linesOnImage.length; lineIdx++) {
     const line = linesOnImage[lineIdx];
-    
+
     if (line.points.length == 0) {
       continue;
     }
@@ -221,28 +243,8 @@ export const TracksImage: React.FC<TracksImageProps> = ({
     return cursorUrl;
   };
 
-  const [divHeight, setDivHeight] = useState<number>();
-  const [divWidth, setDivWidth] = useState<number>();
-  useEffect(() => {
-      const imgRatio = props.image.width / props.image.height
-      if (imgRatio > 1) {
-        setImageDims({
-          width: containerWidth,
-          height: containerWidth * (1/imgRatio)
-        })
-        setDivHeight(containerWidth * (1/imgRatio))
-      }
-      else {
-        setImageDims({
-          width: containerHeight * imgRatio,
-          height: containerHeight
-        })
-        setDivWidth(containerHeight * imgRatio)
-      }
-  }, [containerWidth, containerHeight]);
-
   return (
-    <div 
+    <div
       ref={observe}
       className={'relative max-h-content ' + containerClassName}
       style={{
@@ -253,8 +255,8 @@ export const TracksImage: React.FC<TracksImageProps> = ({
       <svg
         style={{ cursor: `url(${getCursorUrl()}), auto` }}
         className="svg-canvas absolute"
-        width={imageDims.width}
-        height={imageDims.height}
+        width={imgWidth}
+        height={imgHeight}
         onMouseDown={(e) => {
           if (e.button === 0 && props.onImageClick && editable) { // Left-click on the canvas only
             const pos = getMousePosInside(e);
@@ -266,13 +268,13 @@ export const TracksImage: React.FC<TracksImageProps> = ({
       </svg>
 
       <NextImage
-        className={""+ (props.imageClassName ? props.imageClassName : '')}
+        className={"" + (props.imageClassName ? props.imageClassName : '')}
         src={props.image ? (topogetherUrl + props.image.url) : staticUrl.defaultKayoo}
         alt="Rocher"
-        width={imageDims.width}
-        height={imageDims.height}
+        width={imgWidth}
+        height={imgHeight}
       />
-      </div>
+    </div>
   );
 };
 

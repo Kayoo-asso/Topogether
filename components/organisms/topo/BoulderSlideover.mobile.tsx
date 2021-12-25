@@ -45,10 +45,10 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = ({
       onClose={props.onClose}
     >
       {full && (
-        <div className="w-full bg-dark rounded-t-lg flex items-center justify-center">
+        <div className="w-full bg-dark rounded-t-lg flex items-center justify-center overflow-hidden">
             <TracksImage 
               image={props.boulder.images[0]}
-              imageClassName={'rounded-t-lg'}
+              imageClassName={''}
               containerClassName='w-full'
               tracks={props.boulder.tracks}
             />  
