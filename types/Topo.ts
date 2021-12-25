@@ -6,7 +6,7 @@ import { LinearRing, LineCoords, Position } from './GeoJson';
 import { GeoCoordinates, StringBetween } from './Utils';
 import { UUID } from './UUID';
 import { TrackRating } from './User';
-import { Image } from './Image';
+import { Image, ImageDimensions } from './Image';
 
 export interface Topo {
   id: UUID,

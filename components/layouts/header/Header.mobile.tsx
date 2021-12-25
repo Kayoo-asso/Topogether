@@ -15,15 +15,17 @@ export const HeaderMobile: React.FC<HeaderMobileProps> = (props: HeaderMobilePro
   return (
     <>
       <div className="bg-dark flex items-center h-header">
+          
         <Link href={props.backLink} passHref>
-          <div className="w-1/6">
+          <div className="w-1/6 h-full">
             <Icon
               name="arrow-simple"
               SVGClassName="stroke-white stroke-1 w-4 h-4"
               center
             />
-          </div>
-        </Link>
+            </div>
+          </Link>
+          
 
         <div
           className="flex-1 text-white ktext-title whitespace-nowrap"
@@ -50,7 +52,7 @@ export const HeaderMobile: React.FC<HeaderMobileProps> = (props: HeaderMobilePro
         {menuOpen && props.menuOptions &&
           <Dropdown 
             choices={props.menuOptions}
-            className='absolute z-50 right-[10px] top-[8%] min-w-[40%]'
+            className='absolute z-50 right-[10px] top-[7%] min-w-[40%]'
           />
         }
       </div>

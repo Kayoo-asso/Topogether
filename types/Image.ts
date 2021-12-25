@@ -3,7 +3,8 @@ import { UUID } from "./UUID";
 export interface Image {
   id: UUID,
   url: string
-  // TODO: width and height?
+  width: number,
+  height: number,
 }
 
 export const imageTypes = ["image/jpg", "image/jpeg", "image/png"] as const;

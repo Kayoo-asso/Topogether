@@ -66,7 +66,7 @@ export const TopoDesktop: React.FC<TopoDesktopProps> = (props: TopoDesktopProps)
     return (
         <>
             <HeaderDesktop
-                backLink="#"
+                backLink="/"
                 title={props.topo.name}
                 menuOptions={[
                     { value: 'Infos du topo', action: () => setDisplayInfo(true)},

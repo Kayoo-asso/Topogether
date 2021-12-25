@@ -8716,7 +8716,9 @@ const miniSectors: Sector[] = [
                 "images": [
                     {
                         "id": 16,
-                        "url": "/public/uploads/boulder/image/5b558375709fbbacae9e5dcb746c8e10e7fa083f.jpeg"
+                        "url": "/public/uploads/boulder/image/5b558375709fbbacae9e5dcb746c8e10e7fa083f.jpeg",
+                        "width": 4592,
+                        "height": 3064
                     }
                 ],
                 "tracks": [
@@ -8734,7 +8736,7 @@ const miniSectors: Sector[] = [
                             {
                                 "id": 5,
                                 "boulderImageId": 16,
-                                "boulderImageDimensions": {
+                                "initialImageDimensions": {
                                     "width": 674,
                                     "height": 450
                                 },
@@ -8792,7 +8794,7 @@ const miniSectors: Sector[] = [
                             {
                                 "id": 6,
                                 "boulderImageId": 16,
-                                "boulderImageDimensions": {
+                                "initialImageDimensions": {
                                     "width": 674,
                                     "height": 450
                                 },
@@ -8854,7 +8856,7 @@ const miniSectors: Sector[] = [
                             {
                                 "id": 646,
                                 "boulderImageId": 243,
-                                "boulderImageDimensions": {
+                                "initialImageDimensions": {
                                     "width": 674,
                                     "height": 450
                                 },
@@ -8957,7 +8959,7 @@ const miniSectors: Sector[] = [
                             {
                                 "id": 647,
                                 "boulderImageId": 243,
-                                "boulderImageDimensions": {
+                                "initialImageDimensions": {
                                     "width": 674,
                                     "height": 450
                                 },
@@ -9004,7 +9006,7 @@ const miniSectors: Sector[] = [
                             {
                                 "id": 648,
                                 "boulderImageId": 243,
-                                "boulderImageDimensions": {
+                                "initialImageDimensions": {
                                     "width": 674,
                                     "height": 450
                                 },

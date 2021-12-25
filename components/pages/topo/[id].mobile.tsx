@@ -11,6 +11,10 @@ export const TopoMobile: React.FC<TopoMobileProps> = (props: TopoMobileProps) =>
     const [selectedBoulder, setSelectedBoulder] = useState<Boulder>();
     const [selectedTrack, setSelectedTrack] = useState<number>();
 
+    const [displayInfo, setDisplayInfo] = useState<boolean>(false);
+    const [displayApproach, setDisplayApproach] = useState<boolean>(false);
+    const [displayManagement, setDisplayManagement] = useState<boolean>(false);
+
     const getMarkersFromBoulders = () => {
         const markers: MarkerProps[] = []
         for (const sector of props.topo.sectors) {
@@ -39,8 +43,12 @@ export const TopoMobile: React.FC<TopoMobileProps> = (props: TopoMobileProps) =>
         <>
             <HeaderMobile
                 title={props.topo.name}
-                menuOptions={[]}
-                backLink={'/'}
+                backLink='/'
+                menuOptions={[
+                    { value: 'Infos du topo', action: () => setDisplayInfo(true)},
+                    { value: 'Marche d\'approche', action: () => setDisplayApproach(true)},
+                    { value: 'Gestionnaires du site', action: () => setDisplayManagement(true)},
+                ]}
             />
 
             <MapControl 

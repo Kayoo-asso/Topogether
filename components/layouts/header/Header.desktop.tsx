@@ -17,7 +17,7 @@ interface HeaderDesktopProps {
 }
 
 export const HeaderDesktop: React.FC<HeaderDesktopProps> = ({
-  displayDrawer = true,
+  displayDrawer = false,
   displayLogin = false,
   ...props
 }: HeaderDesktopProps) => {
@@ -27,17 +27,19 @@ export const HeaderDesktop: React.FC<HeaderDesktopProps> = ({
   return (
     <>
       <div className="bg-dark flex items-center h-header">
-        <Link href={props.backLink} passHref>
-          <div className="w-1/12 relative h-[70%]">
-            <NextImage 
-              src='/assets/img/Logo_white_topogether.png'
-              priority
-              alt="Logo Topogether"
-              layout="fill"
-              objectFit="contain"
-            />
-          </div>
-        </Link>
+
+      <Link href={props.backLink} passHref>   
+        <div className="w-1/12 relative h-[70%] cursor-pointer">
+          <NextImage 
+            src='/assets/img/Logo_white_topogether.png'
+            priority
+            alt="Logo Topogether"
+            layout="fill"
+            objectFit="contain"
+          /> 
+        </div>
+      </Link>
+        
 
         <div className="flex-1 flex flex-row items-center text-white ktext-title whitespace-nowrap">
           <span
