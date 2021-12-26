@@ -1,5 +1,6 @@
 import { Icon } from 'components';
 import React, { useEffect, useRef, useState } from 'react';
+import { isMobile } from 'react-device-detect';
 import { Grade, grades } from 'types';
 
 interface GradeselectorDrawerProps {
@@ -52,12 +53,12 @@ export const Gradeselector: React.FC<GradeselectorDrawerProps> = (props: Gradese
 
         {open &&
             <div 
-                className='absolute flex right-[17%] bottom-0 h-[520px] pt-8 flex-col gap-5 items-start bg-dark rounded-t-full mt-8 mb-[7vh] overflow-y-scroll overflow-x-hidden hide-scrollbar'
+                className={'absolute flex bottom-0 h-[520px] pt-8 flex-col gap-5 items-start bg-dark rounded-t-full mt-8 mb-[7vh] overflow-y-scroll overflow-x-hidden hide-scrollbar' + (isMobile ? ' right-[17%]' : ' right-[6%]')}
             >
                 {[...grades].reverse().map(grade => (
                     <span
                         key={grade}
-                        className='flex flex-row items-center text-white ktext-base px-3'
+                        className='flex flex-row items-center text-white ktext-base px-3 cursor-pointer'
                         onClick={() => {
                             props.onSelectGrade(grade);
                             setOpen(false);

@@ -96,7 +96,8 @@ export const BuilderMapDesktop:React.FC<BuilderMapDesktopProps> = (props: Builde
                     { value: 'Valider le topo', action: () => setDisplayValidateModal(true)},
                     { value: 'Supprimer le topo', action: () => setDisplayDeleteModal(true)}
                 ]}
-                displayDrawer
+                displayMapTools
+                MapToolsActivated={!selectedTrack}
                 currentTool={currentTool}
                 onRockClick={() => setCurrentTool('ROCK')}
                 onParkingClick={() => setCurrentTool('PARKING')}

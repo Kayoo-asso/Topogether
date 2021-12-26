@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { DrawerToolEnum, Image, Track } from 'types';
-import { isDesktop, isMobile } from 'react-device-detect';
-import { Toolbar } from 'components';
+import { isMobile } from 'react-device-detect';
+import { Toolbar, TracksImage } from 'components';
 
 
 interface DrawerProps {
     image: Image,
     track: Track,
+    otherTracks: Track[],
 }
 
 export const Drawer: React.FC<DrawerProps> = (props: DrawerProps) => {
@@ -16,7 +17,14 @@ export const Drawer: React.FC<DrawerProps> = (props: DrawerProps) => {
     return (
         <div className={'absolute top-0 bg-black bg-opacity-90 h-full flex flex-col z-500 ' + (isMobile ? 'w-full' : 'w-[calc(100%-600px)]')}>
 
-            <div className='flex-1'></div>
+            <div className='flex-1 flex items-center relative'>
+                {/* TODO: CHANGE SIZING */}
+               <TracksImage 
+                    image={props.image}
+                    tracks={[props.track]}
+                    containerClassName='w-full'
+               /> 
+            </div>
 
             <Toolbar
                 selectedTool={selectedTool}
