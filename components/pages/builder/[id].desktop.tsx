@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { BoulderSlideagainstDesktop, HeaderDesktop, LeftbarDesktop, MapControl, SlideagainstRightDesktop, SlideoverLeftDesktop } from 'components';
+import { BoulderSlideagainstDesktop, Drawer, HeaderDesktop, LeftbarDesktop, MapControl, SlideagainstRightDesktop, SlideoverLeftDesktop } from 'components';
 import { Boulder, Track, GeoCoordinates, MapToolEnum, MarkerProps, Topo } from 'types';
 import { markerSize } from 'helpers';
 
@@ -10,8 +10,8 @@ interface BuilderMapDesktopProps {
 
 export const BuilderMapDesktop:React.FC<BuilderMapDesktopProps> = (props: BuilderMapDesktopProps) => {
     const [currentTool, setCurrentTool] = useState<MapToolEnum>();
-    const [selectedBoulder, setSelectedBoulder] = useState<Boulder>();
-    const [selectedTrack, setSelectedTrack] = useState<Track>();
+    const [selectedBoulder, setSelectedBoulder] = useState<Boulder | undefined>(props.topo.sectors[0].boulders[0]);
+    const [selectedTrack, setSelectedTrack] = useState<Track | undefined>(props.topo.sectors[0].boulders[0].tracks[0]);
 
     const [displayInfoForm, setDisplayInfoForm] = useState<boolean>(false);
     const [displayApproachForm, setDisplayApproachForm] = useState<boolean>(false);
@@ -103,7 +103,7 @@ export const BuilderMapDesktop:React.FC<BuilderMapDesktopProps> = (props: Builde
                 onWaypointClick={() => setCurrentTool('WAYPOINT')}
             />
 
-            <div className='flex flex-row h-full overflow-hidden'>
+            <div className='flex flex-row h-full overflow-hidden relative'>
                 <LeftbarDesktop 
                     currentMenuItem='BUILDER'
                 />
@@ -149,6 +149,13 @@ export const BuilderMapDesktop:React.FC<BuilderMapDesktopProps> = (props: Builde
                         findPlaces: false,
                     }}
                 />
+
+                {selectedTrack &&
+                  <Drawer 
+                    image={selectedBoulder!.images[0]}
+                    track={selectedTrack}
+                  />
+                }
 
                 {/* TO MODIFY TO PUT FORMS */}
                 {selectedTrack &&

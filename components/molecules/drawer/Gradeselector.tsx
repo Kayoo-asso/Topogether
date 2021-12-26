@@ -40,7 +40,7 @@ export const Gradeselector: React.FC<GradeselectorDrawerProps> = (props: Gradese
     return (
        <>
         <span
-            className={'flex flex-row items-center ' + (props.grade ? 'ktext-base text-white' : 'ktext-title text-grey-medium')}
+            className={'flex flex-row cursor-pointer items-center ' + (props.grade ? 'ktext-base text-white' : 'ktext-title text-grey-medium')}
             onClick={() => setOpen(!open)}
         >
             <Icon 
