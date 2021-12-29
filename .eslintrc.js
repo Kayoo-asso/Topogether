@@ -52,7 +52,8 @@ module.exports = {
         "jsx-a11y/click-events-have-key-events": 0,
         "@typescript-eslint/no-use-before-define": "off",
         "no-plusplus":  [2, { allowForLoopAfterthoughts: true }],
-        "@typescript-eslint/indent": 0
+        "@typescript-eslint/indent": 0,
+        "no-bitwise": 0
     },
     // -- Shared settings
     "settings": {
