@@ -1,8 +1,8 @@
+import React, { useState } from 'react';
 import type { NextPage } from 'next';
 import { TopoDesktop, TopoMobile } from 'components';
 import { useRouter } from 'next/router';
 import { isDesktop, isMobile } from 'react-device-detect';
-import { useState } from 'react';
 import { Topo } from 'types';
 import { fakeTopo } from 'helpers/fakeData/fakeTopo';
 
@@ -12,21 +12,23 @@ const Topo: NextPage = () => {
   // if (typeof id !== 'string') return null;
 
   const [topo, setTopo] = useState<Topo>(fakeTopo);
-  
+
   return (
     <>
-      {isMobile && topo &&
+      {isMobile && topo
+        && (
         <TopoMobile
           topo={topo}
         />
-      }
-      {isDesktop && topo &&
+        )}
+      {isDesktop && topo
+        && (
         <TopoDesktop
           topo={topo}
         />
-      }
+        )}
     </>
-  )
+  );
 };
 
 export default Topo;

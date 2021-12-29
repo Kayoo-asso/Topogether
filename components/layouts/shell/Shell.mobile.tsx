@@ -60,7 +60,7 @@ export const ShellMobile: React.FC<ShellMobileProps> = ({
           </div>
         </Link>
 
-        <Link href="/builder/dashboard" passHref>
+        <Link href={session ? '/builder/dashboard' : '/user/login'} passHref>
           <div
             className={`${activeTab === 2 ? 'border-t-main border-t-6' : ''} h-full  cursor-pointer`}
             onClick={() => {

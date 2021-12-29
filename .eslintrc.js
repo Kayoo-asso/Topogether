@@ -51,7 +51,8 @@ module.exports = {
         "import/no-cycle": 0,
         "jsx-a11y/click-events-have-key-events": 0,
         "@typescript-eslint/no-use-before-define": "off",
-        "no-plusplus":  [2, { allowForLoopAfterthoughts: true }]
+        "no-plusplus":  [2, { allowForLoopAfterthoughts: true }],
+        "@typescript-eslint/indent": 0
     },
     // -- Shared settings
     "settings": {

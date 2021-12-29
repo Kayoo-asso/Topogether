@@ -1,5 +1,5 @@
+import React, { ReactElement } from 'react';
 import { ShellMobile } from 'components';
-import { ReactElement } from 'react';
 
 interface LayoutMobileProps {
   children: ReactElement,

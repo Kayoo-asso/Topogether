@@ -1,6 +1,5 @@
-import { Button } from 'components';
-import { TopoCardList } from 'components/molecules/card/TopoCardList';
 import React, { useCallback } from 'react';
+import { Button, TopoCardList } from 'components';
 import { LightTopo, TopoStatus } from 'types';
 
 // TODO: add a select to sort topos by date or alphabetic order
@@ -17,7 +16,7 @@ export const DashboardMobile:React.FC<DashboardMobileProps> = (props: DashboardM
 
   return (
     <div className="py-6 px-5 bg-white w-full h-full flex flex-col ">
-      
+
       <div className="flex flex-row justify-between items-center">
         <div className="ktext-section-title text-center">Vos topos</div>
         <Button content="Créer un topo" onClick={newTopo} />

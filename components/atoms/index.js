@@ -9,3 +9,4 @@ export * from './GradeCircle';
 export * from './Map';
 export * from './AverageNote';
 export * from './ProfilePicture';
+export * from './Card';

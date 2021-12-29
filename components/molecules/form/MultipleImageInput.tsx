@@ -1,5 +1,5 @@
-import { Icon, ImageThumb } from 'components';
 import React, { useState } from 'react';
+import { Icon, ImageThumb } from 'components';
 import {
   Image, UUID,
 } from 'types';
@@ -34,7 +34,7 @@ export const MultipleImageInput: React.FC<MultipleImageInputProps> = ({
   const nbPages = Math.ceil(props.display.length / nbVisible);
 
   if (page >= nbPages) {
-    setPage(nbPages - 1)
+    setPage(nbPages - 1);
   }
 
   const displayLeftArrow = page > 0;
@@ -42,7 +42,7 @@ export const MultipleImageInput: React.FC<MultipleImageInputProps> = ({
 
   // index of first image to display
   const sliceStart = nbVisible * page;
-  // index of last image to display + 1 
+  // index of last image to display + 1
   const sliceEnd = sliceStart + nbVisible - 1;
   const toDisplay = props.display.slice(sliceStart, sliceEnd);
 
@@ -52,11 +52,11 @@ export const MultipleImageInput: React.FC<MultipleImageInputProps> = ({
         <Icon
           name="arrow-full"
           SVGClassName="stroke-main fill-main"
-          onClick={() => setPage(p => p - 1)}
+          onClick={() => setPage((p) => p - 1)}
         />
       )}
 
-      {toDisplay.map(image => (
+      {toDisplay.map((image) => (
         <ImageThumb
           key={image.id}
           image={image}
@@ -69,7 +69,7 @@ export const MultipleImageInput: React.FC<MultipleImageInputProps> = ({
       {allowUpload && (
         <ImageInput
           label={props.label}
-          multiple={true}
+          multiple
           onUpload={props.onUpload}
         />
       )}
@@ -78,7 +78,7 @@ export const MultipleImageInput: React.FC<MultipleImageInputProps> = ({
         <Icon
           name="arrow-full"
           SVGClassName="stroke-main fill-main rotate-180"
-          onClick={() => setPage(p => p + 1)}
+          onClick={() => setPage((p) => p + 1)}
         />
       )}
     </>
