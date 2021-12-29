@@ -1,22 +1,24 @@
 import React, { useEffect, useRef, useState } from 'react';
 import NextImage from 'next/image';
 import {
-  Polygon, Point, Image, LineString, Track,
-  PointEnum, AreaEnum, DrawerToolEnum, Position, LineCoords, Line, ImageDimensions, UUID, gradeToLightGrade, LinearRing,
+  Image as ImageType, Track,
+  PointEnum, AreaEnum, DrawerToolEnum, Position, Line, ImageDimensions, UUID, gradeToLightGrade, LinearRing,
   LightGrade,
 } from 'types';
 import { SVGArea } from 'components';
 import { staticUrl, topogetherUrl } from 'helpers/globals';
+import useDimensions from 'react-cool-dimensions';
 import {
   getMousePosInside,
   getPathFromPoints,
 } from '../../helpers';
 
 interface TracksImageProps {
-  image: Image,
+  image: ImageType,
   tracks: Track[],
-  dimensions: ImageDimensions,
+  imageClassName?: string,
   tracksClassName?: string,
+  containerClassName?: string,
   displayTracks?: boolean,
   displayPhantomTracks?: boolean,
   displayTracksNumber?: boolean,
@@ -28,10 +30,7 @@ interface TracksImageProps {
   onPointClick?: (pointType: PointEnum, index: number) => void,
   onPolylineClick?: (line: Line) => void,
   onAreaChange?: (areaType: AreaEnum, index: number, area: LinearRing) => void,
-  onImageLoad?: (e: {
-    naturalWidth: number;
-    naturalHeight: number;
-  }) => void,
+  onImageLoad?: (dims: ImageDimensions) => void,
 }
 
 // NOTES:
@@ -50,16 +49,49 @@ export const TracksImage: React.FC<TracksImageProps> = ({
   displayTracksNumber = true,
   displayTracksDetails = true,
   editable = false,
+  containerClassName = 'w-[300px] h-[300px]',
   ...props
 }: TracksImageProps) => {
-  // We use props.dimensions often, so a shorter name is nice
-  const { dimensions } = props;
-  const [naturalDims, setNaturalDims] = useState<ImageDimensions>({ width: 0, height: 0 });
-  const rx = naturalDims.width != 0
-    ? dimensions.width / naturalDims.width
+  const {
+ observe, unobserve, width: containerWidth, height: containerHeight, entry,
+} = useDimensions({
+    onResize: ({
+ observe, unobserve, width, height, entry,
+}) => {
+      // Triggered whenever the size of the target is changed...
+      unobserve(); // To stop observing the current target element
+      observe(); // To re-start observing the current target element
+    },
+  });
+
+  let imgWidth; let
+imgHeight;
+  // Only one of those will be set
+  let divWidth;
+  let divHeight;
+
+  const imgRatio = props.image.width / props.image.height;
+
+  // Original: width > height
+  // We fit width and set the height accordingly
+  if (imgRatio > 1) {
+    imgWidth = containerWidth;
+    imgHeight = containerWidth * 1 / imgRatio;
+    divHeight = imgHeight;
+  }
+  // Original: height > width
+  // We fight height and set the width accordingly
+  else {
+    imgWidth = containerHeight * imgRatio;
+    imgHeight = containerHeight;
+    divWidth = imgWidth;
+  }
+
+  const rx = props.image.width != 0
+    ? imgWidth / props.image.width
     : 1;
-  const ry = naturalDims.height != 0
-    ? dimensions.height / naturalDims.height
+  const ry = props.image.height != 0
+    ? imgHeight / props.image.height
     : 1;
 
   const svgElems: JSX.Element[] = [];
@@ -215,12 +247,19 @@ export const TracksImage: React.FC<TracksImageProps> = ({
   };
 
   return (
-    <>
+    <div
+      ref={observe}
+      className={`relative max-h-content ${containerClassName}`}
+      style={{
+        maxHeight: divHeight,
+        maxWidth: divWidth,
+      }}
+    >
       <svg
         style={{ cursor: `url(${getCursorUrl()}), auto` }}
-        className="svg-canvas"
-        width={dimensions.width}
-        height={dimensions.height}
+        className="svg-canvas absolute"
+        width={imgWidth}
+        height={imgHeight}
         onMouseDown={(e) => {
           if (e.button === 0 && props.onImageClick && editable) { // Left-click on the canvas only
             const pos = getMousePosInside(e);
@@ -232,20 +271,13 @@ export const TracksImage: React.FC<TracksImageProps> = ({
       </svg>
 
       <NextImage
-        className="-mt-[100%]"
+        className={`${props.imageClassName ? props.imageClassName : ''}`}
         src={props.image ? (topogetherUrl + props.image.url) : staticUrl.defaultKayoo}
         alt="Rocher"
-        width={dimensions.width}
-        height={dimensions.height}
-        onLoadingComplete={(e) => {
-          setNaturalDims({
-            width: e.naturalWidth,
-            height: e.naturalHeight,
-          });
-          if (props.onImageLoad) props.onImageLoad(e);
-        }}
+        width={imgWidth}
+        height={imgHeight}
       />
-    </>
+    </div>
   );
 };
 

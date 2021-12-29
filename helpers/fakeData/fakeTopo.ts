@@ -8716,7 +8716,9 @@ const miniSectors: Sector[] = [
                 "images": [
                     {
                         "id": 16,
-                        "url": "/public/uploads/boulder/image/5b558375709fbbacae9e5dcb746c8e10e7fa083f.jpeg"
+                        "url": "/public/uploads/boulder/image/5b558375709fbbacae9e5dcb746c8e10e7fa083f.jpeg",
+                        "width": 4592,
+                        "height": 3064
                     }
                 ],
                 "tracks": [
@@ -8734,7 +8736,7 @@ const miniSectors: Sector[] = [
                             {
                                 "id": 5,
                                 "boulderImageId": 16,
-                                "boulderImageDimensions": {
+                                "initialImageDimensions": {
                                     "width": 674,
                                     "height": 450
                                 },
@@ -8792,7 +8794,7 @@ const miniSectors: Sector[] = [
                             {
                                 "id": 6,
                                 "boulderImageId": 16,
-                                "boulderImageDimensions": {
+                                "initialImageDimensions": {
                                     "width": 674,
                                     "height": 450
                                 },
@@ -8838,7 +8840,9 @@ const miniSectors: Sector[] = [
                 "images": [
                     {
                         "id": 243,
-                        "url": "/public/uploads/boulder/image/42c98cfbc55c124196a59bf9003b2416e84df581.jpeg"
+                        "url": "/public/uploads/boulder/image/42c98cfbc55c124196a59bf9003b2416e84df581.jpeg",
+                        "width": 2000,
+                        "height": 1334
                     }
                 ],
                 "tracks": [
@@ -8854,7 +8858,7 @@ const miniSectors: Sector[] = [
                             {
                                 "id": 646,
                                 "boulderImageId": 243,
-                                "boulderImageDimensions": {
+                                "initialImageDimensions": {
                                     "width": 674,
                                     "height": 450
                                 },
@@ -8957,7 +8961,7 @@ const miniSectors: Sector[] = [
                             {
                                 "id": 647,
                                 "boulderImageId": 243,
-                                "boulderImageDimensions": {
+                                "initialImageDimensions": {
                                     "width": 674,
                                     "height": 450
                                 },
@@ -9004,7 +9008,7 @@ const miniSectors: Sector[] = [
                             {
                                 "id": 648,
                                 "boulderImageId": 243,
-                                "boulderImageDimensions": {
+                                "initialImageDimensions": {
                                     "width": 674,
                                     "height": 450
                                 },
@@ -9036,109 +9040,111 @@ const miniSectors: Sector[] = [
                     }
                 ]
             },
-            // {
-            //     "id": 17,
-            //     "name": "Hector Berlioz",
-            //     "location": {
-            //         "lat": 45.702301,
-            //         "lng": 4.605275
-            //     },
-            //     "isHighBall": false,
-            //     "isMustSee": false,
-            //     "orderIndex": 3,
-            //     "images": [
-            //         {
-            //             "id": 244,
-            //             "url": "/public/uploads/boulder/image/500883acb3a62f8b8c6bdb5fe7210d2bdf4b79fc.jpeg"
-            //         }
-            //     ],
-            //     "tracks": [
-            //         {
-            //             "id": 942,
-            //             "creatorId": 3,
-            //             "name": "Passage 1",
-            //             "isTraverse": false,
-            //             "isSittingStart": false,
-            //             "description": "",
-            //             "techniqueIds": [],
-            //             "lines": [
-            //                 {
-            //                     "id": 656,
-            //                     "boulderImageId": 244,
-            //                     "boulderImageDimensions": {
-            //                         "width": 300,
-            //                         "height": 450
-            //                     },
-            //                     "linePoints": [
-            //                         {
-            //                             "id": 7351,
-            //                             "posX": 50.08,
-            //                             "posY": 365.5
-            //                         },
-            //                         {
-            //                             "id": 7373,
-            //                             "posX": 26.08,
-            //                             "posY": 190.5
-            //                         },
-            //                         {
-            //                             "id": 7374,
-            //                             "posX": 115.08,
-            //                             "posY": 48.5
-            //                         }
-            //                     ],
-            //                     "handDeparturePoints": [],
-            //                     "feetDeparturePoints": [],
-            //                     "anchorPoints": [],
-            //                     "forbiddenAreas": []
-            //                 }
-            //             ],
-            //             "orderIndex": 1,
-            //             "grade": "3+"
-            //         },
-            //         {
-            //             "id": 948,
-            //             "creatorId": 3,
-            //             "name": "Passage 2",
-            //             "isTraverse": false,
-            //             "isSittingStart": true,
-            //             "description": "",
-            //             "techniqueIds": [],
-            //             "lines": [
-            //                 {
-            //                     "id": 660,
-            //                     "boulderImageId": 244,
-            //                     "boulderImageDimensions": {
-            //                         "width": 300,
-            //                         "height": 450
-            //                     },
-            //                     "linePoints": [
-            //                         {
-            //                             "id": 7375,
-            //                             "posX": 124.08,
-            //                             "posY": 327.5
-            //                         },
-            //                         {
-            //                             "id": 7376,
-            //                             "posX": 174.08,
-            //                             "posY": 176.5
-            //                         },
-            //                         {
-            //                             "id": 7377,
-            //                             "posX": 156.08,
-            //                             "posY": 38.5
-            //                         }
-            //                     ],
-            //                     "handDeparturePoints": [],
-            //                     "feetDeparturePoints": [],
-            //                     "anchorPoints": [],
-            //                     "forbiddenAreas": []
-            //                 }
-            //             ],
-            //             "orderIndex": 2,
-            //             "grade": "7a"
-            //         }
-            //     ]
-            // },
+            {
+                "id": 17,
+                "name": "Hector Berlioz",
+                "location": {
+                    "lat": 45.702301,
+                    "lng": 4.605275
+                },
+                "isHighBall": false,
+                "isMustSee": false,
+                "orderIndex": 3,
+                "images": [
+                    {
+                        "id": 244,
+                        "url": "/public/uploads/boulder/image/500883acb3a62f8b8c6bdb5fe7210d2bdf4b79fc.jpeg",
+                        "width": 1334,
+                        "height": 2000
+                    }
+                ],
+                "tracks": [
+                    {
+                        "id": 942,
+                        "creatorId": 3,
+                        "name": "Passage 1",
+                        "isTraverse": false,
+                        "isSittingStart": false,
+                        "description": "",
+                        "techniqueIds": [],
+                        "lines": [
+                            {
+                                "id": 656,
+                                "boulderImageId": 244,
+                                "boulderImageDimensions": {
+                                    "width": 300,
+                                    "height": 450
+                                },
+                                "linePoints": [
+                                    {
+                                        "id": 7351,
+                                        "posX": 50.08,
+                                        "posY": 365.5
+                                    },
+                                    {
+                                        "id": 7373,
+                                        "posX": 26.08,
+                                        "posY": 190.5
+                                    },
+                                    {
+                                        "id": 7374,
+                                        "posX": 115.08,
+                                        "posY": 48.5
+                                    }
+                                ],
+                                "handDeparturePoints": [],
+                                "feetDeparturePoints": [],
+                                "anchorPoints": [],
+                                "forbiddenAreas": []
+                            }
+                        ],
+                        "orderIndex": 1,
+                        "grade": "3+"
+                    },
+                    {
+                        "id": 948,
+                        "creatorId": 3,
+                        "name": "Passage 2",
+                        "isTraverse": false,
+                        "isSittingStart": true,
+                        "description": "",
+                        "techniqueIds": [],
+                        "lines": [
+                            {
+                                "id": 660,
+                                "boulderImageId": 244,
+                                "boulderImageDimensions": {
+                                    "width": 300,
+                                    "height": 450
+                                },
+                                "linePoints": [
+                                    {
+                                        "id": 7375,
+                                        "posX": 124.08,
+                                        "posY": 327.5
+                                    },
+                                    {
+                                        "id": 7376,
+                                        "posX": 174.08,
+                                        "posY": 176.5
+                                    },
+                                    {
+                                        "id": 7377,
+                                        "posX": 156.08,
+                                        "posY": 38.5
+                                    }
+                                ],
+                                "handDeparturePoints": [],
+                                "feetDeparturePoints": [],
+                                "anchorPoints": [],
+                                "forbiddenAreas": []
+                            }
+                        ],
+                        "orderIndex": 2,
+                        "grade": "7a"
+                    }
+                ]
+            },
         ],
         "wayPoints": []
     },

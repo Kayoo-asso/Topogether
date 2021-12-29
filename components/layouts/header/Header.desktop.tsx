@@ -8,7 +8,8 @@ interface HeaderDesktopProps {
   backLink: string,
   title: string,
   menuOptions?: DropdownOption[],
-  displayDrawer?: boolean,
+  displayMapTools?: boolean,
+  MapToolsActivated?: boolean,
   onRockClick?: () => void,
   onParkingClick?: () => void,
   onWaypointClick?: () => void,
@@ -17,7 +18,7 @@ interface HeaderDesktopProps {
 }
 
 export const HeaderDesktop: React.FC<HeaderDesktopProps> = ({
-  displayDrawer = true,
+  displayMapTools = false,
   displayLogin = false,
   ...props
 }: HeaderDesktopProps) => {
@@ -26,8 +27,9 @@ export const HeaderDesktop: React.FC<HeaderDesktopProps> = ({
 
   return (
     <div className="bg-dark flex items-center h-header">
+
       <Link href={props.backLink} passHref>
-        <div className="w-1/12 relative h-[70%]">
+        <div className="w-1/12 relative h-[70%] cursor-pointer">
           <NextImage
             src="/assets/img/Logo_white_topogether.png"
             priority
@@ -64,26 +66,25 @@ export const HeaderDesktop: React.FC<HeaderDesktopProps> = ({
             )}
       </div>
 
-      {displayDrawer
-          && (
-          <div className="flex flex-row gap-8 mr-[40%]">
-            <Icon
-              name="rock"
-              SVGClassName={`h-7 w-7 ${props.currentTool === 'ROCK' ? 'stroke-main' : 'stroke-white'}`}
-              onClick={props.onRockClick}
-            />
-            <Icon
-              name="parking"
-              SVGClassName={`h-6 w-6 ${props.currentTool === 'PARKING' ? 'fill-second' : 'fill-white'}`}
-              onClick={props.onParkingClick}
-            />
-            <Icon
-              name="help-round"
-              SVGClassName={`h-6 w-6 ${props.currentTool === 'WAYPOINT' ? 'fill-third stroke-third' : 'fill-white stroke-white'}`}
-              onClick={props.onWaypointClick}
-            />
-          </div>
-          )}
+      {displayMapTools && (
+        <div className="flex flex-row gap-8 mr-[40%]">
+          <Icon
+            name="rock"
+            SVGClassName={`h-7 w-7 ${!props.MapToolsActivated ? 'stroke-grey-medium' : props.currentTool === 'ROCK' ? 'stroke-main' : 'stroke-white'}`}
+            onClick={props.MapToolsActivated ? props.onRockClick : undefined}
+          />
+          <Icon
+            name="parking"
+            SVGClassName={`h-6 w-6 ${!props.MapToolsActivated ? 'fill-grey-medium' : props.currentTool === 'PARKING' ? 'fill-second' : 'fill-white'}`}
+            onClick={props.MapToolsActivated ? props.onParkingClick : undefined}
+          />
+          <Icon
+            name="help-round"
+            SVGClassName={`h-6 w-6 ${!props.MapToolsActivated ? 'fill-grey-medium stroke-grey-medium' : props.currentTool === 'WAYPOINT' ? 'fill-third stroke-third' : 'fill-white stroke-white'}`}
+            onClick={props.MapToolsActivated ? props.onWaypointClick : undefined}
+          />
+        </div>
+      )}
 
       {displayLogin
           && (

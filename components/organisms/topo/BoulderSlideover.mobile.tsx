@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import {
   Dropdown,
-  GradeScale, Icon, LikeButton, SlideoverMobile,
+  GradeScale, Icon, LikeButton, SlideoverMobile, TracksImage,
 } from 'components';
-import Image from 'next/image';
-import { Boulder, Difficulty, UUID } from 'types';
+import { Boulder, Difficulty, ImageDimensions, UUID } from 'types';
 import { topogetherUrl } from 'helpers/globals';
 import { buildBoulderGradeHistogram } from 'helpers';
 import { TracksList } from '.';
+import { default as NextImage } from 'next/image';
+// import reactImageSize from 'react-image-size';
 
 interface BoulderSlideoverMobileProps {
   open?: boolean,
@@ -18,12 +19,12 @@ interface BoulderSlideoverMobileProps {
 }
 
 export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = ({
-  open = false,
+  open = true,
   forBuilder = false,
   ...props
 }: BoulderSlideoverMobileProps) => {
   const [full, setFull] = useState(false);
-  const [imageHeight, setImageHeight] = useState(0);
+  const [imageDimensions, setImageDimensions] = useState<ImageDimensions>({width: 300, height: 300});
   const [boulderLiked, setBoulderLiked] = useState(false); // To change TODO
   const [displayOfficialTrack, setDisplayOfficialTrack] = useState(true);
   const [boulderMenuOpen, setBoulderMenuOpen] = useState(false);
@@ -34,6 +35,8 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = ({
   const communityTracks = props.boulder.tracks
     ? props.boulder.tracks.filter((track) => track.creatorId !== props.topoCreatorId) : [];
 
+
+  
   return (
     <SlideoverMobile
       open
@@ -42,26 +45,15 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = ({
       onClose={props.onClose}
     >
       {full && (
-        <div 
-          className="w-full relative bg-dark rounded-t-lg min-h-[30%] max-h-[45%]"
-          style={{
-            height: imageHeight+'px'
-          }}
-        >
-          <Image
-            src={props.boulder.images[0] ? topogetherUrl + props.boulder.images[0].url : '/assets/img/Kayoo_defaut_image.png'}
-            className="rounded-t-lg"
-            alt="Boulder"
-            priority
-            layout="fill"
-            objectFit="contain"
-            onLoadingComplete={(e) => {
-              setImageHeight(e.naturalHeight);
-            }}
-          />
+        <div className="w-full bg-dark rounded-t-lg flex items-center justify-center overflow-hidden">
+            <TracksImage 
+              image={props.boulder.images[0]}
+              containerClassName='w-full'
+              tracks={props.boulder.tracks}
+            />  
         </div>
       )}
-
+      
       <div className={`grid grid-cols-8 p-5 ${full ? '' : ' mt-3'}`}>
         <div className="col-span-6">
           <div className="ktext-section-title">{props.boulder.name}</div>
@@ -109,7 +101,7 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = ({
 
           {!full && (
             <div className="w-full relative h-[60px]">
-              <Image
+              <NextImage
                 src={props.boulder.images[0] ? topogetherUrl + props.boulder.images[0].url : '/assets/img/Kayoo_defaut_image.png'}
                 className="rounded-sm"
                 alt="Boulder"
