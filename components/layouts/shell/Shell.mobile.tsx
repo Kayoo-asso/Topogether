@@ -1,23 +1,24 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import React, { useContext, useState } from 'react';
+import React, { useContext, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { Icon } from 'components';
 import { UserContext } from 'helpers';
 
-interface ShellMobileProps {
-  initialActiveTab: 0 | 1 | 2,
-}
-
-export const ShellMobile: React.FC<ShellMobileProps> = ({
-  initialActiveTab = 1,
-  ...props
-}: ShellMobileProps) => {
-  const { session } = useContext(UserContext);
+export const ShellMobile: React.FC = () => {
   const router = useRouter();
-
+  const { session } = useContext(UserContext);
+  const initialActiveTab = useMemo(() => {
+    if (router.pathname.includes('user')) {
+      return 0;
+    }
+    if (router.pathname.includes('builder')) {
+      return 2;
+    }
+    return 1;
+  }, [router.pathname]);
   const [displayModalLogin, setDisplayModalLogin] = useState(false);
-  const [activeTab, setActiveTab] = useState(initialActiveTab);
+  const [activeTab, setActiveTab] = useState<0 | 1 | 2>(initialActiveTab);
   const [topoUrl, setTopoUrl] = useState<string>('');
 
   const changeTab = (id: 0 | 1 | 2) => {
