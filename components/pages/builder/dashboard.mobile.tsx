@@ -29,19 +29,20 @@ export const DashboardMobile:React.FC<DashboardMobileProps> = (props: DashboardM
         onSelect={sortTopos}
         className="w-44 m-3"
       /> */}
+      <div className="overflow-y-scroll hide-scrollbar w-screen">
+        <TopoCardList topos={draftLightTopos} status={TopoStatus.Draft}>
+          <div className="text-second-light ktext-section-title">Brouillons</div>
+        </TopoCardList>
 
-      <TopoCardList topos={draftLightTopos} status={TopoStatus.Draft}>
-        <div className="text-second-light ktext-section-title">Brouillons</div>
-      </TopoCardList>
+        <TopoCardList topos={submittedLightTopos} status={TopoStatus.Submitted}>
+          <div className="text-third-light ktext-section-title">En attente de validation</div>
+        </TopoCardList>
 
-      <TopoCardList topos={submittedLightTopos} status={TopoStatus.Submitted}>
-        <div className="text-third-light ktext-section-title">En attente de validation</div>
-      </TopoCardList>
+        <TopoCardList topos={validatedLightTopos} status={TopoStatus.Validated}>
+          <div className="text-main ktext-section-title">Validés</div>
+        </TopoCardList>
 
-      <TopoCardList topos={validatedLightTopos} status={TopoStatus.Validated}>
-        <div className="text-main ktext-section-title">Validés</div>
-      </TopoCardList>
-
+      </div>
     </div>
   );
 };
