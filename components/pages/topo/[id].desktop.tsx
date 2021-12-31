@@ -14,27 +14,28 @@ export const TopoDesktop: React.FC<TopoDesktopProps> = (props: TopoDesktopProps)
     const [displayInfo, setDisplayInfo] = useState<boolean>(false);
     const [displayApproach, setDisplayApproach] = useState<boolean>(false);
     const [displayManagement, setDisplayManagement] = useState<boolean>(false);
+    const [currentDisplay, setCurrentDisplay] = useState<'INFO' | 'APPROACH' | 'MANAGEMENT'>();
     useEffect(() => {
-      if (displayInfo)
+      if (currentDisplay === 'INFO') {
+        setDisplayInfo(true);
         setTimeout(() => {
           setDisplayApproach(false);
-          setDisplayManagement(false)
+          setDisplayManagement(false);
         }, 150)
-    }, [displayInfo]);
-    useEffect(() => {
-      if (displayApproach)
+      } else if (currentDisplay === 'APPROACH') {
+        setDisplayApproach(true);
         setTimeout(() => {
           setDisplayInfo(false);
           setDisplayManagement(false)
         }, 150)
-    }, [displayApproach]);
-    useEffect(() => {
-      if (displayManagement)
+      } else if (currentDisplay === 'MANAGEMENT') {
+        setDisplayManagement(true);
         setTimeout(() => {
           setDisplayInfo(false);
           setDisplayApproach(false)
         }, 150)
-    }, [displayManagement]);
+      }
+    }, [currentDisplay]);
 
     const getMarkersFromBoulders = () => {
         const markers: MarkerProps[] = [];
@@ -69,9 +70,9 @@ export const TopoDesktop: React.FC<TopoDesktopProps> = (props: TopoDesktopProps)
                 backLink="/"
                 title={props.topo.name}
                 menuOptions={[
-                    { value: 'Infos du topo', action: () => setDisplayInfo(true)},
-                    { value: 'Marche d\'approche', action: () => setDisplayApproach(true)},
-                    { value: 'Gestionnaires du site', action: () => setDisplayManagement(true)},
+                    { value: 'Infos du topo', action: () => setCurrentDisplay('INFO')},
+                    { value: 'Marche d\'approche', action: () => setCurrentDisplay('APPROACH')},
+                    { value: 'Gestionnaires du site', action: () => setCurrentDisplay('MANAGEMENT')},
                 ]}
             />
 
@@ -84,6 +85,7 @@ export const TopoDesktop: React.FC<TopoDesktopProps> = (props: TopoDesktopProps)
                   <SlideoverLeftDesktop 
                     open={displayInfo}
                     onClose={() => { setDisplayInfo(false) }}
+                    className={currentDisplay === 'INFO' ? 'z-100' : ''}
                     title='Infos du spot'
                   /> // TODO : Infos
                 }
@@ -91,6 +93,7 @@ export const TopoDesktop: React.FC<TopoDesktopProps> = (props: TopoDesktopProps)
                   <SlideoverLeftDesktop 
                     open={displayApproach}
                     onClose={() => { setDisplayApproach(false) }}
+                    className={currentDisplay === 'APPROACH' ? 'z-100' : ''}
                     title="Marche d'approche"
                   /> // TODO : Marche d'approche
                 }
@@ -98,6 +101,7 @@ export const TopoDesktop: React.FC<TopoDesktopProps> = (props: TopoDesktopProps)
                   <SlideoverLeftDesktop 
                     open={displayManagement}
                     onClose={() => { setDisplayManagement(false) }}
+                    className={currentDisplay === 'MANAGEMENT' ? 'z-100' : ''}
                     title='Gestionnaires du spot'
                   /> // TODO : Gestionnaires du spot
                 }

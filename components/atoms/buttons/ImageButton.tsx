@@ -1,5 +1,5 @@
 import React from 'react';
-import { default as NextImage } from 'next/image';
+import NextImage from 'next/image';
 import { Image } from 'types';
 // eslint-disable-next-line import/no-cycle
 import { Icon } from 'components';

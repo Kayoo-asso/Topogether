@@ -1,5 +1,5 @@
-import { GradeCircle } from 'components';
 import React from 'react';
+import { GradeCircle } from 'components';
 import { SliderItem } from 'react-compound-slider';
 import { BaseSliderInput } from './BaseSliderInput';
 

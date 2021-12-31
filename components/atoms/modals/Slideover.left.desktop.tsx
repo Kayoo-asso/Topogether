@@ -4,6 +4,7 @@ interface SlideoverLeftDesktopProps {
     open?: boolean,
     onClose: () => void,
     title?: string,
+    className?: string,
     children?: Node[],
 }
 
@@ -20,7 +21,7 @@ export const SlideoverLeftDesktop: React.FC<SlideoverLeftDesktopProps> = ({
 
     return (
         <div 
-            className={`bg-white absolute transition ease-in-out left-[300px] z-50 w-[600px] border-r border-grey-medium h-contentPlusShell flex flex-col px-8 py-5`}
+            className={`bg-white absolute transition ease-in-out left-[300px] z-50 w-[600px] border-r border-grey-medium h-contentPlusShell flex flex-col px-8 py-5 ${props.className ? props.className : ''}`}
             style={{ 
                 transform: `translateX(-${translateX}%)`
             }}

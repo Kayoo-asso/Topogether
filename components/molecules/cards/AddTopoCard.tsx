@@ -1,6 +1,5 @@
-import { Icon } from 'components';
-import { Card } from 'components/atoms/Card';
 import React from 'react';
+import { Icon, Card } from 'components';
 
 // corriger l'icone
 export const AddTopoCard: React.FC = () => (

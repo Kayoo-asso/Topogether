@@ -1,8 +1,8 @@
+import React, { useState, useMemo } from 'react';
 import 'styles/globals.css';
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
 import { UserContext } from 'helpers';
-import { useState } from 'react';
 import { LayoutMobile, LayoutDesktop } from 'components';
 import { User, UUID } from 'types';
 import { isDesktop, isMobile } from 'react-device-detect';
@@ -11,10 +11,13 @@ const App = ({ Component, pageProps }: AppProps) => {
   const [session, setSession] = useState<User>(
     {
       id: '34ff6fb9-8912-4086-818c-19afbe0576c4' as UUID,
-      pseudo: 'Flavien', 
-      email: 'flavien@kayoo-asso.fr', 
-      role: 'ADMIN' }
-    );
+      pseudo: 'Flavien',
+      email: 'flavien@kayoo-asso.fr',
+      role: 'ADMIN',
+    },
+  );
+
+  const sessionContextDefaultValues = useMemo(() => ({ session, setSession }), [session]);
 
   return (
     <>
@@ -30,19 +33,21 @@ const App = ({ Component, pageProps }: AppProps) => {
         <title>Topogether</title>
         <link rel="manifest" href="/manifest.json" />
       </Head>
-      
-        <UserContext.Provider value={{ session, setSession }}>
-          {isMobile &&
+
+      <UserContext.Provider value={sessionContextDefaultValues}>
+        {isMobile
+            && (
             <LayoutMobile>
               <Component {...pageProps} />
             </LayoutMobile>
-          }
-          {isDesktop &&
+            )}
+        {isDesktop
+            && (
             <LayoutDesktop>
               <Component {...pageProps} />
             </LayoutDesktop>
-          }
-        </UserContext.Provider>
+            )}
+      </UserContext.Provider>
     </>
   );
 };

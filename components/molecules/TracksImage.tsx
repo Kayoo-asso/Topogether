@@ -1,17 +1,17 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { default as NextImage } from 'next/image';
+import NextImage from 'next/image';
 import {
   Image as ImageType, Track,
   PointEnum, AreaEnum, DrawerToolEnum, Position, Line, ImageDimensions, UUID, gradeToLightGrade, LinearRing,
-  LightGrade
+  LightGrade,
 } from 'types';
 import { SVGArea } from 'components';
 import { staticUrl, topogetherUrl } from 'helpers/globals';
+import useDimensions from 'react-cool-dimensions';
 import {
   getMousePosInside,
   getPathFromPoints,
 } from '../../helpers';
-import useDimensions from "react-cool-dimensions";
 
 interface TracksImageProps {
   image: ImageType,
@@ -31,8 +31,7 @@ interface TracksImageProps {
   onPolylineClick?: (line: Line) => void,
   onAreaChange?: (areaType: AreaEnum, index: number, area: LinearRing) => void,
   onImageLoad?: (dims: ImageDimensions) => void,
-};
-
+}
 
 // NOTES:
 // - The useDimensions hook from react-cool-dimensions can be used to dynamically size this component, based on its container
@@ -53,18 +52,23 @@ export const TracksImage: React.FC<TracksImageProps> = ({
   containerClassName = 'w-[300px] h-[300px]',
   ...props
 }: TracksImageProps) => {
-  const { observe, unobserve, width: containerWidth, height: containerHeight, entry } = useDimensions({
-    onResize: ({ observe, unobserve, width, height, entry }) => {
+  const {
+ observe, unobserve, width: containerWidth, height: containerHeight, entry,
+} = useDimensions({
+    onResize: ({
+ observe, unobserve, width, height, entry,
+}) => {
       // Triggered whenever the size of the target is changed...
       unobserve(); // To stop observing the current target element
       observe(); // To re-start observing the current target element
     },
   });
 
-  let imgWidth, imgHeight;
+  let imgWidth; let
+imgHeight;
   // Only one of those will be set
-  let divWidth = undefined;
-  let divHeight = undefined;
+  let divWidth;
+  let divHeight;
 
   const imgRatio = props.image.width / props.image.height;
 
@@ -104,21 +108,20 @@ export const TracksImage: React.FC<TracksImageProps> = ({
       continue;
     }
 
-    const isHighlighted =
-      props.currentTrackId === undefined ||
-      line.trackId === props.currentTrackId;
+    const isHighlighted = props.currentTrackId === undefined
+      || line.trackId === props.currentTrackId;
 
-    const points: Position[] = line.points.map(p => [p[0] * rx, p[1] * ry]);
+    const points: Position[] = line.points.map((p) => [p[0] * rx, p[1] * ry]);
     const path = getPathFromPoints(points, 'CURVE');
     const firstX = points[0][0] * rx;
     const firstY = points[0][1] * ry;
 
     const lineBaseCss = isHighlighted
-      ? "z-30"
-      : displayPhantomTracks ? "z-10 opacity-40" : "hidden";
+      ? 'z-30'
+      : displayPhantomTracks ? 'z-10 opacity-40' : 'hidden';
     const tracksNumberBaseCss = isHighlighted
-      ? "z-40"
-      : displayPhantomTracks ? "z-20 opacity-40" : "hidden";
+      ? 'z-40'
+      : displayPhantomTracks ? 'z-20 opacity-40' : 'hidden';
 
     // Draw line
     svgElems.push(
@@ -127,19 +130,19 @@ export const TracksImage: React.FC<TracksImageProps> = ({
         strokeWidth={3 * rx}
         d={path}
         onClick={() => props.onPolylineClick && props.onPolylineClick(line)}
-      />
+      />,
     );
 
     // Draw point circles
     const pointRadius = 3 * rx;
-    const pointCircles = points.map(x =>
+    const pointCircles = points.map((x) => (
       <circle
         className="pointer-events-auto"
         cx={x[0] * rx}
         cy={x[1] * ry}
         r={pointRadius}
       />
-    );
+    ));
 
     // TODO: optimise this
     svgElems.push(...pointCircles);
@@ -166,7 +169,7 @@ export const TracksImage: React.FC<TracksImageProps> = ({
           onClick={() => props.onPolylineClick && props.onPolylineClick(line)}
         >
           {line.trackNb}
-        </text >
+        </text>,
       );
     }
 
@@ -183,7 +186,7 @@ export const TracksImage: React.FC<TracksImageProps> = ({
             width={18 * rx}
             x={handX * rx}
             y={handY * ry}
-          />
+          />,
         );
       }
       for (const [footX, footY] of line.feetDepartures) {
@@ -194,8 +197,8 @@ export const TracksImage: React.FC<TracksImageProps> = ({
             width={30 * rx}
             x={footX * rx}
             y={footY * ry}
-          />
-        )
+          />,
+        );
       }
     }
 
@@ -216,8 +219,8 @@ export const TracksImage: React.FC<TracksImageProps> = ({
             // Maybe to remove them?
             // need to call props.onPointClick('FORBIDDEN_AREA_POINT', areaIdx)
             onChange={(area) => props.onAreaChange && props.onAreaChange('FORBIDDEN_AREA', areaIdx, area)}
-          />
-        )
+          />,
+        );
       }
     }
   }
@@ -246,10 +249,10 @@ export const TracksImage: React.FC<TracksImageProps> = ({
   return (
     <div
       ref={observe}
-      className={'relative max-h-content ' + containerClassName}
+      className={`relative max-h-content ${containerClassName}`}
       style={{
         maxHeight: divHeight,
-        maxWidth: divWidth
+        maxWidth: divWidth,
       }}
     >
       <svg
@@ -268,7 +271,7 @@ export const TracksImage: React.FC<TracksImageProps> = ({
       </svg>
 
       <NextImage
-        className={"" + (props.imageClassName ? props.imageClassName : '')}
+        className={`${props.imageClassName ? props.imageClassName : ''}`}
         src={props.image ? (topogetherUrl + props.image.url) : staticUrl.defaultKayoo}
         alt="Rocher"
         width={imgWidth}
@@ -289,7 +292,7 @@ function getLines(tracks: Track[], imageId: UUID): LineOnImage[] {
   const lines: LineOnImage[] = [];
   for (let i = 0; i < tracks.length; i++) {
     const track = tracks[i];
-    const lineIdx = track.lines.findIndex(x => x.imageId === imageId);
+    const lineIdx = track.lines.findIndex((x) => x.imageId === imageId);
     if (lineIdx < 0) {
       continue;
     }
@@ -298,7 +301,7 @@ function getLines(tracks: Track[], imageId: UUID): LineOnImage[] {
       isStart: lineIdx === 0,
       gradeSuffix: track.grade ? gradeToLightGrade(track.grade) : 'grey',
       trackNb: track.orderIndex,
-      ...track.lines[lineIdx]
+      ...track.lines[lineIdx],
     });
   }
   return lines;

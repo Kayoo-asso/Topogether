@@ -22,32 +22,34 @@ const DashboardPage: NextPage = () => {
     },
     {
       ...fakeLightTopo,
-      status: TopoStatus.Submitted,
+      status: TopoStatus.Validated,
       id: '3',
 
     },
     {
       ...fakeLightTopo,
-      status: TopoStatus.Submitted,
+      status: TopoStatus.Draft,
       id: '4',
 
     },
   ]);
 
-  {/* TODO: get Light Topos */}
+  { /* TODO: get Light Topos */ }
 
   return (
     <>
-      {isMobile && 
-        <DashboardMobile 
-          lightTopos={lightTopos} 
+      {isMobile
+        && (
+        <DashboardMobile
+          lightTopos={lightTopos}
         />
-      }
-      {isDesktop && 
-        <DashboardDesktop 
-          lightTopos={lightTopos} 
+        )}
+      {isDesktop
+        && (
+        <DashboardDesktop
+          lightTopos={lightTopos}
         />
-      }
+        )}
     </>
   );
 };

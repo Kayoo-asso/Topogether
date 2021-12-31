@@ -1,14 +1,15 @@
-import { Dropdown, DropdownOption, Icon } from 'components';
-import { default as NextImage } from 'next/image';
-import Link from 'next/link';
 import React, { useState } from 'react';
+import NextImage from 'next/image';
+import { Dropdown, DropdownOption, Icon } from 'components';
+import Link from 'next/link';
 import { MapToolEnum } from 'types';
 
 interface HeaderDesktopProps {
   backLink: string,
   title: string,
   menuOptions?: DropdownOption[],
-  displayDrawer?: boolean,
+  displayMapTools?: boolean,
+  MapToolsActivated?: boolean,
   onRockClick?: () => void,
   onParkingClick?: () => void,
   onWaypointClick?: () => void,
@@ -17,7 +18,7 @@ interface HeaderDesktopProps {
 }
 
 export const HeaderDesktop: React.FC<HeaderDesktopProps> = ({
-  displayDrawer = false,
+  displayMapTools = false,
   displayLogin = false,
   ...props
 }: HeaderDesktopProps) => {
@@ -25,76 +26,75 @@ export const HeaderDesktop: React.FC<HeaderDesktopProps> = ({
   const [displayTitleTooltip, setDisplayTitleTooltip] = useState(false);
 
   return (
-    <>
-      <div className="bg-dark flex items-center h-header">
+    <div className="bg-dark flex items-center h-header">
 
-      <Link href={props.backLink} passHref>   
+      <Link href={props.backLink} passHref>
         <div className="w-1/12 relative h-[70%] cursor-pointer">
-          <NextImage 
-            src='/assets/img/Logo_white_topogether.png'
+          <NextImage
+            src="/assets/img/Logo_white_topogether.png"
             priority
             alt="Logo Topogether"
             layout="fill"
             objectFit="contain"
-          /> 
+          />
         </div>
       </Link>
-        
 
-        <div className="flex-1 flex flex-row items-center text-white ktext-title whitespace-nowrap">
-          <span
-            className='cursor-pointer'
-            onClick={() => setMenuOpen(!menuOpen)}
-          >
-            {props.title}
-          </span>
-          {props.menuOptions && 
-            <Icon 
-              name='arrow-full'
+      <div className="flex-1 flex flex-row items-center text-white ktext-title whitespace-nowrap">
+        <span
+          className="cursor-pointer"
+          onClick={() => setMenuOpen(!menuOpen)}
+        >
+          {props.title}
+        </span>
+        {props.menuOptions
+            && (
+            <Icon
+              name="arrow-full"
               center
-              SVGClassName='fill-white w-4 h-4 rotate-90 ml-[20px]'
+              SVGClassName="fill-white w-4 h-4 rotate-90 ml-[20px]"
               onClick={() => setMenuOpen(!menuOpen)}
             />
-          }
-          {props.menuOptions && menuOpen &&
-            <Dropdown 
+            )}
+        {props.menuOptions && menuOpen
+            && (
+            <Dropdown
               choices={props.menuOptions}
               onSelect={() => setMenuOpen(false)}
-              className='absolute z-500 top-[7%]'
+              className="absolute z-500 top-[7%]"
             />
-          }
+            )}
+      </div>
+
+      {displayMapTools && (
+        <div className="flex flex-row gap-8 mr-[40%]">
+          <Icon
+            name="rock"
+            SVGClassName={`h-7 w-7 ${!props.MapToolsActivated ? 'stroke-grey-medium' : props.currentTool === 'ROCK' ? 'stroke-main' : 'stroke-white'}`}
+            onClick={props.MapToolsActivated ? props.onRockClick : undefined}
+          />
+          <Icon
+            name="parking"
+            SVGClassName={`h-6 w-6 ${!props.MapToolsActivated ? 'fill-grey-medium' : props.currentTool === 'PARKING' ? 'fill-second' : 'fill-white'}`}
+            onClick={props.MapToolsActivated ? props.onParkingClick : undefined}
+          />
+          <Icon
+            name="help-round"
+            SVGClassName={`h-6 w-6 ${!props.MapToolsActivated ? 'fill-grey-medium stroke-grey-medium' : props.currentTool === 'WAYPOINT' ? 'fill-third stroke-third' : 'fill-white stroke-white'}`}
+            onClick={props.MapToolsActivated ? props.onWaypointClick : undefined}
+          />
         </div>
-        
+      )}
 
-        {displayDrawer &&
-          <div className='flex flex-row gap-8 mr-[40%]'>
-            <Icon 
-              name='rock'
-              SVGClassName={`h-7 w-7 ${props.currentTool === 'ROCK' ? 'stroke-main' : 'stroke-white'}`}
-              onClick={props.onRockClick}
-            />
-            <Icon 
-              name='parking'
-              SVGClassName={`h-6 w-6 ${props.currentTool === 'PARKING' ? 'fill-second' : 'fill-white'}`}
-              onClick={props.onParkingClick}
-            />
-            <Icon 
-              name='help-round'
-              SVGClassName={`h-6 w-6 ${props.currentTool === 'WAYPOINT' ? 'fill-third stroke-third' : 'fill-white stroke-white'}`}
-              onClick={props.onWaypointClick}
-            />
-          </div>
-        }
-
-        {displayLogin &&
-          <Link href='/user/login' passHref>
-            <div className='ktext-base text-white cursor-pointer mr-[3%]'>
+      {displayLogin
+          && (
+          <Link href="/user/login" passHref>
+            <div className="ktext-base text-white cursor-pointer mr-[3%]">
               Se connecter
             </div>
           </Link>
-        }
+          )}
 
-      </div>
-    </>
+    </div>
   );
 };

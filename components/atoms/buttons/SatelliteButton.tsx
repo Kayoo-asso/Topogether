@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { default as NextImage } from 'next/image';
+import NextImage from 'next/image';
 
 interface SatelliteButtonProps {
   satellite?: boolean,
@@ -16,7 +16,7 @@ export const SatelliteButton: React.FC<SatelliteButtonProps> = ({
       className="shadow relative rounded-full p-7 z-20 h-[60px] w-[60px]"
       onClick={() => {
         props.onClick(displaySatellite);
-        setDisplaySatellite(!displaySatellite);  
+        setDisplaySatellite(!displaySatellite);
       }}
     >
       <NextImage

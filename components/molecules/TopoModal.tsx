@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import {
   Button, DownloadButton, Icon, LikeButton, Modal, ParkingButton,
 } from 'components';
@@ -5,7 +6,6 @@ import { ParkingModal } from 'components/atoms/modals/ParkingModal';
 import { topogetherUrl } from 'helpers/globals';
 import launchNavigation from 'helpers/map/launchNavigation';
 import Image from 'next/image';
-import React, { useState } from 'react';
 import { LightTopo } from 'types';
 import { GradeScale } from '.';
 

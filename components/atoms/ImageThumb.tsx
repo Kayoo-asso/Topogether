@@ -1,5 +1,5 @@
 import React from 'react';
-import { default as NextImage } from 'next/image';
+import NextImage from 'next/image';
 import { Image, UUID } from 'types';
 // eslint-disable-next-line import/no-cycle
 import { DeleteButton } from 'components';
@@ -36,7 +36,8 @@ export const ImageThumb: React.FC<ImageThumbProps> = ({
       role="button"
       tabIndex={0}
     >
-      {onDelete &&
+      {onDelete
+        && (
         <div className="absolute z-10 -top---3 -right---3 lg:hidden group-hover:block">
           <DeleteButton
             onClick={() => {
@@ -45,7 +46,7 @@ export const ImageThumb: React.FC<ImageThumbProps> = ({
             }}
           />
         </div>
-      }
+)}
       <NextImage
         src={props.image.url}
         alt="user generated image"
@@ -54,5 +55,4 @@ export const ImageThumb: React.FC<ImageThumbProps> = ({
       />
     </div>
   );
-}
-
+};
