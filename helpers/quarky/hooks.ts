@@ -44,7 +44,7 @@ export function useQuark<T>(quark: Quark<T>): [T, Dispatch<SetStateAction<T>>] {
     else useSubscription([quark]);
 
     const current = read(quark);
-    // always return the same setter (less performant than useCallback, but plays nicely with useQuarkArray)
+    // always return the same setter (likely less performant than useCallback, but plays nicely with useQuarkArray)
     const setter = getSetter(quark);
     return [current, setter];
 }

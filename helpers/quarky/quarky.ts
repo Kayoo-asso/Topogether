@@ -29,7 +29,6 @@ interface DerivationInternal<T> {
     // > 0 means it's waiting for more confirmations
     dirtyCount: number,
     shouldRecompute: boolean, // TODO: replace by the sign bit of dirtyCount
-    status: DerivationStatus, // TODO: remove, we can check if a node is on the stack by setting dirtyCount to a special value and restoring it
     dependencies: DataNode[],
     dependencySlots: number[],
     observers: Computation[],
@@ -39,13 +38,6 @@ interface DerivationInternal<T> {
 
 const maxSigned31BitInt = 1073741823;
 const ON_STACK = maxSigned31BitInt;
-
-enum DerivationStatus {
-    Clean,
-    Dirty,
-    OnStack,
-    Detached
-}
 
 const enum NodeType {
     Quark,
@@ -138,14 +130,15 @@ export function read<T>(node: Quark<T> | Derivation<T>): T {
     const d = node as DerivationInternal<T>;
     if (node.type === NodeType.Derivation && (node as DerivationInternal<T>).observers.length === 0) {
         // necessary to detect cycles among potentially deactivated nodes
-        if (d.status === DerivationStatus.OnStack) {
+        if (d.dirtyCount === ON_STACK) {
             // clean up the scope to recover the state
             CurrentScope = CurrentScope!.parent;
             throwError("Quarky detected a cycle!", d.name);
         }
-        d.status = DerivationStatus.OnStack;
+        const saveDirtyCount = d.dirtyCount;
+        d.dirtyCount = ON_STACK;
         updateDerivation(d);
-        d.status = DerivationStatus.Clean;
+        d.dirtyCount = saveDirtyCount;
     }
     return (node as DataNode).value;
 }
@@ -208,7 +201,6 @@ export function derive<T>(computation: () => T, options?: QuarkOptions<T>): Deri
         value: undefined!,
         equal: options?.equal ?? defaultEqual,
         computation,
-        status: DerivationStatus.Detached,
         dirtyCount: 0,
         shouldRecompute: false,
         observers: [],
@@ -454,16 +446,15 @@ function attemptCleanup(node: DataNode) {
         return;
     }
     detachDependencies(node, 0);
-    node.dependencies = [];
+    // node.dependencies = [];
     node.dependencySlots = [];
-    node.status = DerivationStatus.Detached;
 }
 
 function cleanupEffect__internal(effect: EffectInternal, deleting: boolean) {
     let unchanged: number;
     if (deleting) {
         unchanged = 0;
-        effect.constantDependencies = -1;
+        effect.constantDependencies = DELETED_EFFECT;
     } else {
         unchanged = effect.constantDependencies;
     }
@@ -501,19 +492,19 @@ function detachDependencies(node: Computation, start: number) {
 
 // depth-first search, to detect cycles
 function flagDirty(node: Computation) {
+    if (node.dirtyCount === ON_STACK) {
+        throwError("Quarky detected a cycle!", node.name);
+    }
     node.dirtyCount += 1;
     // console.log(`Flagging ${node.name} as dirty. dirtyCount = ${node.dirtyCount}`);
     // only propagate the dirty flag if it's the first time this derivation has been dirtied
     if (node.type === NodeType.Derivation && node.dirtyCount === 1) {
-        if (node.status === DerivationStatus.OnStack) {
-            throwError("Quarky detected a cycle!", node.name);
-        }
-        node.status = DerivationStatus.OnStack;
+        node.dirtyCount = ON_STACK;
         for (let i = 0; i < node.observers.length; i++) {
             const o = node.observers[i];
             flagDirty(o);
         }
-        node.status = DerivationStatus.Dirty;
+        node.dirtyCount = 1;
     }
 }
 
@@ -533,7 +524,6 @@ function signalReady(node: Computation, shouldRecompute: boolean) {
             }
             return;
         }
-        node.status = DerivationStatus.Clean;
         // TODO: batch derivation updates as well?
         const valueChanged = node.shouldRecompute && updateDerivation(node);
         node.shouldRecompute = false;

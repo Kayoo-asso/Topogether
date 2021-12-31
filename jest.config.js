@@ -6,11 +6,16 @@ const createJestConfig = nextJest({
   dir: './',
 })
 
+const testPathIgnorePatterns = process.env.TEST_DB
+  ? ["/node_modules/"]
+  : ["/node_modules/", "test/db"];
+
 // Add any custom config to be passed to Jest
 const customJestConfig = {
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   // adding '.' to moduleDirectories makes for nice import paths
   moduleDirectories: ['node_modules', '.'],
+  testPathIgnorePatterns
 }
 
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async
