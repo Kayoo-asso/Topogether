@@ -3,13 +3,16 @@ import {
   Difficulty, Grade, LightGrade, Orientation, TopoStatus, TopoType,
 } from './Enums';
 import { LinearRing, LineCoords, Position } from './GeoJson';
-import { GeoCoordinates, StringBetween } from './Utils';
+import { GeoCoordinates, RequireAtLeastOne, StringBetween } from './Utils';
 import { UUID } from './UUID';
-import { TrackRating } from './User';
+import { TrackRating, User } from './User';
 import { Image, ImageDimensions } from './Image';
+import { Quarkify } from 'helpers/quarky';
+
+export type Entities = Sector | Boulder | Track | Line | Parking | TopoAccess | Image | User | Waypoint | TrackRating;
 
 export interface Topo {
-  id: UUID,
+  readonly id: UUID,
   name: StringBetween<1, 255>,
   // Creation = first validation
   submittedAt?: Date,
@@ -30,7 +33,7 @@ export interface Topo {
 
   creatorId?: UUID,
   validatorId?: UUID,
-  image?: Image
+  imageId?: UUID,
 
   closestCity?: StringBetween<1, 255>,
   altitude?: number,
@@ -59,14 +62,14 @@ export type GradeHistogram = {
   Total: number
 };
 
-// TODO: require at least one
-export interface TopoAccess {
-  id: UUID,
-  duration?: number,
-  difficulty?: Difficulty,
+// TODO: is the RequireAtLeastOne correct?
+export type TopoAccess = RequireAtLeastOne<{
+  readonly id: UUID,
   danger?: StringBetween<1, 5000>,
-  steps: TopoAccessStep[],
-}
+  difficulty?: Difficulty,
+  duration?: number,
+  steps?: TopoAccessStep[],
+}, 'danger' | 'difficulty' | 'duration' | 'steps' >
 
 export interface TopoAccessStep {
   description: StringBetween<1, 5000>
@@ -74,7 +77,7 @@ export interface TopoAccessStep {
 }
 
 export interface Parking {
-  id: UUID,
+  readonly id: UUID,
   spaces: number,
   location: GeoCoordinates,
   name?: StringBetween<1, 255>,
@@ -83,7 +86,7 @@ export interface Parking {
 }
 
 export interface Sector {
-  id: UUID,
+  readonly id: UUID,
   name: StringBetween<1, 255>,
   description?: StringBetween<1, 5000>
 
@@ -92,7 +95,7 @@ export interface Sector {
 }
 
 export interface Waypoint {
-  id: UUID,
+  readonly id: UUID,
   name: StringBetween<1, 255>,
   location: GeoCoordinates,
   image?: Image,
@@ -100,22 +103,22 @@ export interface Waypoint {
 }
 
 export interface Boulder {
-  id: UUID,
+  readonly id: UUID,
   location: GeoCoordinates,
   name: StringBetween<1, 255>,
-  isHighball: boolean,
-  mustSee: boolean,
   orderIndex: number,
+  isHighball?: boolean,
+  mustSee?: boolean,
   descent?: Difficulty,
 
   tracks: Track[],
   // can be cross-referenced by lines within each track
-  images: Image[]
+  imageIds: UUID[]
 }
 
 // Order defined by the x-coordinate of the first point of the first line
 export interface Track {
-  id: UUID,
+  readonly id: UUID,
   orderIndex: number,
   name?: StringBetween<1, 255>,
   description?: StringBetween<1, 5000>,
@@ -131,23 +134,20 @@ export interface Track {
   hasMantle?: boolean,
 
   lines: Line[],
-  ratings?: TrackRating[],
-  // TODO: how to avoid creating a ton of copies of User objects
-  // when deserializing an API result?
+  ratings: TrackRating[],
   creatorId: UUID,
 }
 
 export interface Line {
-  id: UUID,
+  readonly id: UUID,
   points: LineCoords,
   // a LinearRing delineates the contour of a polygon
-  forbidden: LinearRing[],
+  forbidden?: LinearRing[] | null,
   // Starting points = max 2 for hand, max 2 for feet
   // Could not find a way to represent an array of length <= 2 in TypeScript types
-  handDepartures: Position[],
-  feetDepartures: Position[],
+  handDepartures?: Position[] | null,
+  feetDepartures?: Position[] | null,
 
-  trackId: UUID,
   // the images are provided with the boulder
   imageId: UUID
 }

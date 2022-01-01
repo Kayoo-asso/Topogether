@@ -1,6 +1,7 @@
-import { quark, quarks } from 'helpers';
-import { Boulder, Grade, Line, Name, Image, Track, Description, Difficulty, ClimbTechniques, Sector, Topo, Amenities, TopoStatus, TopoType, RockTypes, TopoAccess, UUID } from 'types';
+import { Quarkify } from 'helpers/quarky';
+import { Boulder, Line, Name, Image, Track, Description, Difficulty, ClimbTechniques, Sector, Topo, Amenities, TopoStatus, TopoType, RockTypes, TopoAccess, Entities } from 'types';
 import { v4 as uuid } from 'uuid';
+import { quarkifyTopo } from './quarkifyTopo';
 
 export const images: Image[] = [
     // Topo image
@@ -62,7 +63,8 @@ export const tracks: Track[] = [
         techniques: ClimbTechniques.Adherence,
         description: "Une petite montée facile" as Description,
 
-        lineIds: [lines[0].id],
+        lines: [lines[0]],
+        ratings: [],
         creatorId: topoCreatorId,
     },
     // Track 1, boulder 0
@@ -78,7 +80,8 @@ export const tracks: Track[] = [
         techniques: ClimbTechniques.Adherence | ClimbTechniques.Pince,
         isSittingStart: true,
 
-        lineIds: [lines[1].id],
+        lines: [lines[1]],
+        ratings: [],
         creatorId: topoCreatorId,
     },
 ]
@@ -95,7 +98,7 @@ export const boulders: Boulder[] = [
         descent: Difficulty.Dangerous,
         orderIndex: 0,
         imageIds: [images[1].id],
-        trackIds: [tracks[0].id, tracks[1].id]
+        tracks
     }
 ]
 
@@ -103,8 +106,8 @@ export const sectors: Sector[] = [
     {
         id: uuid(),
         name: "ABO" as Name,
-        boulderIds: [boulders[0].id],
-        waypointIds: [],
+        boulders,
+        waypoints: []
     }
 ]
 
@@ -141,36 +144,9 @@ export const topo: Topo = {
     creatorId: topoCreatorId,
     validatorId: validatorId,
 
-    sectorIds: [sectors[0].id],
-    parkingIds: [],
-    accessIds: [access.id],
+    sectors: sectors,
+    parkings: [],
+    access: [access],
 }
 
-export function loadFakeTopoV2(): UUID {
-    quarks.topo.set(topo.id, quark(topo));
-    quarks.access.set(access.id, quark(access));
-
-    for (const sector of sectors) {
-        quarks.sectors.set(sector.id, quark(sector));
-    }
-
-    for (const boulder of boulders) {
-        quarks.boulders.set(boulder.id, quark(boulder));
-    }
-
-    for (const track of tracks) {
-        quarks.tracks.set(track.id, quark(track));
-    }
-
-    for (const line of lines) {
-        quarks.lines.set(line.id, quark(line));
-    }
-
-    for (const image of images) {
-        quarks.images.set(image.id, quark(image));
-    }
-
-    return topo.id;
-
-    // TODO: create proper users and load them into quarks
-}
+export const data: Quarkify<Topo, Entities> = quarkifyTopo(topo);

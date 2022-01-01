@@ -1,4 +1,5 @@
 import React, {
+  createContext,
   forwardRef, useEffect, useRef, useState,
 } from 'react';
 import { useEffectWithDeepEqual } from 'helpers';
@@ -12,9 +13,11 @@ const containerStyles: React.CSSProperties = {
   height: '100%',
 };
 
+export const MapContext = createContext<google.maps.Map>(null!);
+
 // Omitting the type tells the compiler that this component takes no props
 // Omitting React.PropsWithChildren<T> tells the compiler that this component takes no children
-export const Map = forwardRef<google.maps.Map, MapProps>((props, mapRef) => {
+export const Map = forwardRef<google.maps.Map, React.PropsWithChildren<MapProps>>((props, mapRef) => {
   const {
     onBoundsChange,
     onCenterChange,
@@ -38,6 +41,7 @@ export const Map = forwardRef<google.maps.Map, MapProps>((props, mapRef) => {
     className,
     // don't forget the default value
     markers = [],
+    children,
     ...options
   } = props;
 
@@ -56,17 +60,17 @@ export const Map = forwardRef<google.maps.Map, MapProps>((props, mapRef) => {
   useEffect(() => {
     if (elementRef.current && !map) {
       const newMap = new google.maps.Map(elementRef.current, options);
-      
+
       if (typeof mapRef === "function") {
         mapRef(newMap);
-      } else if(mapRef) {
+      } else if (mapRef) {
         mapRef.current = newMap;
       }
 
       setMap(newMap);
-      
+
       if (onLoad) {
-        onLoad(newMap); 
+        onLoad(newMap);
       }
     }
 
@@ -125,6 +129,11 @@ export const Map = forwardRef<google.maps.Map, MapProps>((props, mapRef) => {
       ref={elementRef}
       className={className}
     >
+      {map &&
+        <MapContext.Provider value={map}>
+          {children}
+        </MapContext.Provider>
+      }
     </div>
   );
 });

@@ -1,12 +1,12 @@
-import { markerSize, useBoulder, useQuark } from "helpers";
-import { quarks } from "helpers";
+import { markerSize } from "helpers";
+import { Quarkify, useQuark } from "helpers/quarky";
 import { useContext, useEffect, useRef, useState } from "react";
-import { GeoCoordinates, MapMouseEvent, UUID } from "types";
+import { Boulder, Entities, GeoCoordinates, MapMouseEvent, UUID } from "types";
 import { MapContext } from ".";
 
 interface BoulderMarkerProps {
-    boulderId: UUID,
-    onClick?: (id: UUID) => void,
+    boulder: Quarkify<Boulder, Entities>,
+    onClick?: (boulder: Quarkify<Boulder, Entities>) => void,
 }
 
 const icon: google.maps.Icon = {
@@ -14,11 +14,8 @@ const icon: google.maps.Icon = {
     scaledSize: markerSize(30)
 };
 
-const BoulderMarker: React.FC<BoulderMarkerProps> = ({
-    boulderId,
-    onClick
-}) => {
-    const [boulder, setBoulder] = useBoulder(boulderId);
+const BoulderMarker: React.FC<BoulderMarkerProps> = (props) => {
+    const [boulder, setBoulder] = useQuark(props.boulder);
     const [marker, setMarker] = useState<google.maps.Marker>();
     const map = useContext(MapContext);
     const listeners = useRef<google.maps.MapsEventListener[]>([]);
@@ -49,8 +46,9 @@ const BoulderMarker: React.FC<BoulderMarkerProps> = ({
     }, [marker, boulder.location])
 
     useEffect(() => {
-        if (marker && onClick) {
-            const onClickListener = marker.addListener('click', onClick);
+        if (marker) {
+            // TODO: cleanup using the types from MarkerEventHandlers
+            const onClickListener = marker.addListener('click', (e: MapMouseEvent) => props.onClick && props.onClick(props.boulder));
             const onDragEndListener = marker.addListener('dragend', (e: MapMouseEvent) => {
                 if (e.latLng) {
                     const newLoc: GeoCoordinates = {
@@ -73,7 +71,7 @@ const BoulderMarker: React.FC<BoulderMarkerProps> = ({
             }
             listeners.current = [];
         }
-    }, [marker, onClick])
+    }, [marker, props.onClick])
 
 
     return null;

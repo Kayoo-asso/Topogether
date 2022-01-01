@@ -79,10 +79,22 @@ type DataNode = QuarkInternal<any> | DerivationInternal<any>;
 type Computation = DerivationInternal<any> | EffectInternal;
 
 // === EXPORTED TYPES ===
-export interface Quark<T> { readonly type: NodeType.Quark };
-export interface Derivation<T> { readonly type: NodeType.Derivation };
+export interface Quark<T> { readonly type: NodeType.Quark, readonly value: T };
+export interface Derivation<T> { readonly type: NodeType.Derivation, readonly value: T };
 export interface Effect { readonly type: NodeType.Effect };
+
 export type DataQuark<T> = Quark<T> | Derivation<T>;
+export type QuarkArray<T> = Quark<Quark<T>[]>;
+
+// TypeScript dark arts
+export type Quarkify<T, Entities> = Quark<{
+    [K in keyof T]:
+    T[K] extends Entities[]
+    ? Quark<Quarkify<T[K][number], Entities>[]>
+    : T[K] extends Entities
+    ? Quark<Quarkify<T[K], Entities>>
+    : T[K]
+}>;
 
 export type StateUpdate<T> = T | ((prev: T) => T);
 export type CleanupHelper = (cleanup: () => void) => void;
@@ -97,6 +109,13 @@ export interface QuarkArrayOptions<T> {
     names?: string[],
     arrayName?: string,
 }
+
+export interface QuarkifiedArrayOptions<T, U> {
+    quarkifier?: (item: T, index: number) => Quark<U>,
+    arrayName?: string,
+}
+
+export type Quarkifier<T, U> = (item: T) => Quark<U>;
 
 export interface EffectOptions {
     watch?: DataQuark<any>[], 
@@ -118,29 +137,20 @@ let IsBatching = false;
 let ScheduledEffects: EffectInternal[] = [];
 
 // === EXTERNAL API ===
-// There is some additional work to convert between exported opaque types and internal types
+// Due to the phantom marker on external types
 
 export function read<T>(node: Quark<T> | Derivation<T>): T {
-    if (CurrentScope) {
-        CurrentScope.accessed.push(node as DataNode);
-    }
-    // Check for updates - allows for lazy derivations & ensures glitch-free values even w/ concurrency (I think)
-    // TODO: check again when we have lazy derivations / concurrency
-    // Right now, it assumes the derivation can't be dirty, so it only checks if it is detached
-    const d = node as DerivationInternal<T>;
-    if (node.type === NodeType.Derivation && (node as DerivationInternal<T>).observers.length === 0) {
-        // necessary to detect cycles among potentially deactivated nodes
-        if (d.dirtyCount === ON_STACK) {
-            // clean up the scope to recover the state
-            CurrentScope = CurrentScope!.parent;
-            throwError("Quarky detected a cycle!", d.name);
-        }
-        const saveDirtyCount = d.dirtyCount;
-        d.dirtyCount = ON_STACK;
-        updateDerivation(d);
-        d.dirtyCount = saveDirtyCount;
-    }
-    return (node as DataNode).value;
+    return read__internal(
+        node as QuarkInternal<T> | DerivationInternal<T>,
+        true // register
+    );
+}
+
+export function peek<T>(node: Quark<T> | Derivation<T>): T {
+    return read__internal(
+        node as QuarkInternal<T> | DerivationInternal<T>,
+        false // don't register
+    );
 }
 
 export function write<T>(node: Quark<T>, update: StateUpdate<T>) {
@@ -148,9 +158,6 @@ export function write<T>(node: Quark<T>, update: StateUpdate<T>) {
         console.error("Quarky detected an attempt to set a value in a derivation! This is not allowed and will be ignored");
         return;
     }
-    const q = node as QuarkInternal<T>;
-    // console.log(`Writing to ${q.name}`)
-    // console.log("Observers: ", q.observers);
     // Slightly more work for the non-batching case, but this helps centralize the logic
     PendingQuarks.push(node as QuarkInternal<T>);
     PendingUpdates.push(update);
@@ -182,13 +189,25 @@ const quarkArrayEqual = <T>(a: Quark<T>[], b: Quark<T>[]): boolean => {
     return true;
 }
 
-export function quarkArray<T>(array: T[], options?: QuarkArrayOptions<T>): Quark<Quark<T>[]> {
-    const quarks: Quark<T>[] = new Array(array.length);
+// Overloads
+export function quarkArray<T, U>(array: T[], options: QuarkifiedArrayOptions<T, U>): Quark<Quark<U>[]>;
+export function quarkArray<T>(array: T[], options?: QuarkArrayOptions<T>): Quark<Quark<T>[]>
+
+export function quarkArray<T, U>(array: T[], options?: QuarkArrayOptions<T> | QuarkifiedArrayOptions<T, U>): Quark<Quark<T | U>[]> {
+    const quarks: Quark<T | U>[] = new Array(array.length);
+    const quarkifiedOptions = options as QuarkifiedArrayOptions<T, U>;
+    const quarkArrayOptions = options as QuarkArrayOptions<T>;
+    
+    const quarkifier = quarkifiedOptions?.quarkifier
+        ? quarkifiedOptions.quarkifier
+        : (item: T, i: number) =>
+            quark(item, {
+                equal: quarkArrayOptions?.equal,
+                name: quarkArrayOptions?.names ? quarkArrayOptions.names[i] : undefined
+            });
+
     for (let i = 0; i < array.length; i++) {
-        quarks[i] = quark(array[i], {
-            equal: options?.equal,
-            name: options?.names ? options.names[i] : undefined
-        });
+        quarks[i] = quarkifier(array[i], i);
     }
     return quark(quarks, { equal: quarkArrayEqual, name: options?.arrayName });
 }
@@ -271,6 +290,29 @@ export function cleanupEffect(effect: Effect) {
 }
 
 // === CORE ===
+
+function read__internal<T>(node: QuarkInternal<T> | DerivationInternal<T>, registerRead: boolean = true): T {
+    if (registerRead && CurrentScope) {
+        CurrentScope.accessed.push(node);
+    }
+    // Check for updates - allows for lazy derivations & ensures glitch-free values even w/ concurrency (I think)
+    // TODO: check again when we have lazy derivations / concurrency
+    // Right now, it assumes the derivation can't be dirty, so it only checks if it is detached
+    if (node.type === NodeType.Derivation && node.observers.length === 0) {
+        // necessary to detect cycles among potentially deactivated nodes
+        if (node.dirtyCount === ON_STACK) {
+            // clean up the scope to recover the state
+            CurrentScope = CurrentScope!.parent;
+            throwError("Quarky detected a cycle!", node.name);
+        }
+        const saveDirtyCount = node.dirtyCount;
+        node.dirtyCount = ON_STACK;
+        updateDerivation(node);
+        node.dirtyCount = saveDirtyCount;
+    }
+    return node.value;
+}
+
 
 function processUpdates() {
     const skip = new Array(PendingQuarks.length);

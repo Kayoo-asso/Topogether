@@ -35,23 +35,20 @@ test("Updating quark propagates to derivations", () => {
 });
 
 test("Updating quark to equal value does not trigger propagation", () => {
-    const init = { value: 1 };
-    const a = quark(init, { name: "quark" });
-    let counter = {
-        value: 0,
-    }
+    const a = quark(1, { name: "quark" });
+    let counter = { current: 0 };
     // Don't do this at home, side effects don't belong in derivations
     const b = derive(() => {
-        counter.value += 1;
-        return { value: read(a).value + 1 }
+        counter.current += 1;
+        return read(a) + 1;
     }, { name: "derivation" });
     // necessary to attach the derivation
     effect(() => { }, { watch: [b], name: "effect" });
-    expect(counter.value).toBe(1);
-    write(a, init);
-    expect(counter.value).toBe(1);
-    write(a, { value: 1 });
-    expect(counter.value).toBe(2);
+    expect(counter.current).toBe(1);
+    write(a, 2);
+    expect(counter.current).toBe(1);
+    write(a, 1);
+    expect(counter.current).toBe(2);
 });
 
 test("Updating derivation to equal value stops propagation", () => {
@@ -244,7 +241,7 @@ test("Cycles are detected (reading)", () => {
 });
 
 test("Custom equality function stops propagation (quark)", () => {
-    // settings this quark to "false" does not propagate
+    // settings this quark to `false` does not propagate, because q.equal will return `true`
     const q = quark(true, { equal: (_, b) => !b });
     const counter = { current: 0 };
     effect(() => counter.current++, { watch: [q] });
@@ -254,9 +251,8 @@ test("Custom equality function stops propagation (quark)", () => {
 });
 
 test("Custom equality function stops propagation (derivation)", () => {
-    // settings this quark to "false" does not propagate
+    // settings this quark to `false` does not propagate, because d.equal will return `true`
     const q = quark(true);
-    // if this derivation is updated to "false", it stops the propagation
     const d = derive(() => read(q), { equal: (_, b) => !b });
     const counter = { current: 0 };
     effect(() => counter.current++, { watch: [d] });
@@ -293,8 +289,7 @@ test("Transactions suspend propagation", () => {
     expect(counter.current).toBe(2);
 });
 
-
-test("Transactions suspend created effects", () => {
+test("Transactions suspend effect creation", () => {
     const counter = { current: 0 }
     const q = quark(1, { name: "Q" });
     const d = derive(() => read(q) + 1, { name: "D" });
@@ -452,3 +447,9 @@ test("Children effects scheduled before their parent should be cleaned up noneth
     // only the new child-effect runs, not the old one
     expect(counter.current).toBe(2);
 });
+
+test.todo("Peeking");
+
+test.todo("Child effect dependencies are not registered in their parent or children");
+
+test.todo("Persisetng effects");
