@@ -1,11 +1,12 @@
 import React from 'react';
 import { AverageNote, GradeCircle } from 'components';
-import { Grade, gradeToLightGrade, Track } from 'types';
+import { gradeToLightGrade, Track, UUID } from 'types';
 import { averageTrackNote } from 'helpers/topo/averageTrackRating';
+import { fakeTopo } from 'helpers/fakeData/fakeTopo';
 
 interface TracksListProps {
-  tracks: Track[],
-  onTrackClick?: (track: Track) => void,
+  trackIds: UUID[],
+  onTrackClick?: (trackId: UUID) => void,
   onBuilderAddClick?: () => void,
 }
 
@@ -22,17 +23,20 @@ const gradeColors = {
 
 export const TracksList: React.FC<TracksListProps> = (props: TracksListProps) => {
 
+  // TODO Quarky
+  const tracks = fakeTopo.sectors[0].boulders[0].tracks;
+
   return (
     <div className="w-full border-t border-grey-light">
 
-      {props.tracks.map((track) => {
+      {tracks.map((track) => {
         const grade = gradeToLightGrade(track.grade);
         return (
           <div
             key={track.id}
             className="px-5 py-5 grid grid-cols-10 items-center border-b border-grey-light cursor-pointer hover:bg-grey-superlight"
             onClick={() => {
-              props.onTrackClick && props.onTrackClick(track);
+              props.onTrackClick && props.onTrackClick(track.id);
             }}
           >
             <GradeCircle

@@ -127,13 +127,13 @@ export const MapSearchbar: React.FC<MapSearchbarProps> = ({
             />  
 
             {barOpen && 
-                <div className={"absolute rounded-full top-0 pl-[80px] h-[60px] w-[202%] z-30 shadow bg-white"}>
+                <div className={"absolute rounded-full top-0 pl-[80px] h-[60px] w-[201%] z-30 shadow bg-white"}>
                     <TextInput
                         id="searchbar"
                         ref={inputRef}
                         label='Recherche...'
                         displayLabel={false}
-                        className='w-[90%] mt-[4px]'
+                        className='w-[95%] mt-[4px]'
                         value={value}
                         onChange={e => {
                             setValue(e.target.value);
