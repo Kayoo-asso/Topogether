@@ -27,10 +27,8 @@ export const DashboardDesktop:React.FC<DashboardDesktopProps> = (props: Dashboar
           currentMenuItem="BUILDER"
         />
 
-        <div className="py-6 px-5 bg-white w-full h-full flex flex-col ">
-
-          <div className="flex flex-row justify-between items-center">
-            <div className="ktext-section-title text-center">Vos topos</div>
+        <div className="py-6 px-8 bg-white w-full h-full flex flex-col overflow-y-scroll">
+          <div className="flex flex-row-reverse justify-between items-center">
             <Button content="Créer un topo" onClick={newTopo} />
           </div>
 

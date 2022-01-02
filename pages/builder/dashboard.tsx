@@ -1,9 +1,9 @@
 import type { NextPage } from 'next';
 import { DashboardDesktop, DashboardMobile } from 'components';
-import { isDesktop, isMobile } from 'react-device-detect';
 import { fakeLightTopo } from 'helpers/fakeData/fakeLightTopo';
 import { LightTopo, TopoStatus } from 'types';
 import { useState } from 'react';
+import Device from 'components/layouts/device';
 
 const DashboardPage: NextPage = () => {
   const [lightTopos, setLightTopos] = useState<LightTopo[]>([
@@ -18,18 +18,48 @@ const DashboardPage: NextPage = () => {
       ...fakeLightTopo,
       status: TopoStatus.Submitted,
       id: '2',
+      name: 'Les roches qui dansent très souvent',
+    },
+    {
+      ...fakeLightTopo,
+      status: TopoStatus.Submitted,
+      id: '3',
+      name: 'Les roches qui dansent très souvent',
+    },
+    {
+      ...fakeLightTopo,
+      status: TopoStatus.Submitted,
+      id: '4',
+      name: 'Les roches qui dansent très souvent',
+    },
+    {
+      ...fakeLightTopo,
+      status: TopoStatus.Submitted,
+      id: '5',
+      name: 'Les roches qui dansent très souvent',
+    },
+    {
+      ...fakeLightTopo,
+      status: TopoStatus.Submitted,
+      id: '6',
+      name: 'Les roches qui dansent très souvent',
+    },
+    {
+      ...fakeLightTopo,
+      status: TopoStatus.Submitted,
+      id: '7',
 
     },
     {
       ...fakeLightTopo,
       status: TopoStatus.Validated,
-      id: '3',
+      id: '8',
 
     },
     {
       ...fakeLightTopo,
       status: TopoStatus.Draft,
-      id: '4',
+      id: '9',
 
     },
   ]);
@@ -37,21 +67,23 @@ const DashboardPage: NextPage = () => {
   { /* TODO: get Light Topos */ }
 
   return (
-    <>
-      {isMobile
-        && (
-        <DashboardMobile
-          lightTopos={lightTopos}
-        />
-        )}
-      {isDesktop
-        && (
-        <DashboardDesktop
-          lightTopos={lightTopos}
-        />
-        )}
-    </>
-  );
+    <Device>
+      {({ isMobile }: { isMobile: boolean }) => {
+        if (isMobile) {
+          return (
+            <DashboardMobile
+              lightTopos={lightTopos}
+            />
+);
+        }
+        return (
+          <DashboardDesktop
+            lightTopos={lightTopos}
+          />
+);
+      }}
+    </Device>
+);
 };
 
 export default DashboardPage;
