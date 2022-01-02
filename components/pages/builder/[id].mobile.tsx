@@ -4,16 +4,16 @@ import {
 } from 'components';
 import {
   Boulder, Entities, isStringBetween, Topo, Track } from 'types';
-import { Quarkify, useQuark, useQuarkValue, useCreateQuark, read, derive } from 'helpers/quarky';
+import { Quarkify, useQuark, useQuarkValue, useCreateQuark, read, derive, Quark } from 'helpers/quarky';
 
 interface BuilderMapMobileProps {
   topo: Quarkify<Topo, Entities>,
 }
 
 export const BuilderMapMobile:React.FC<BuilderMapMobileProps> = (props: BuilderMapMobileProps) => {
-  const selectedBoulder = useCreateQuark<Boulder | undefined>(undefined);
+  const selectedBoulder = useCreateQuark<Quark<Boulder>>();
   const selectedBoulderVal = useQuarkValue(selectedBoulder);
-  const selectedTrack = useCreateQuark<Track | undefined>(undefined);
+  const selectedTrack = useCreateQuark<Quark<Track>>();
   const selectedTrackVal = useQuarkValue(selectedTrack);
  
   const drawerOpen = useCreateQuark(false);
@@ -116,7 +116,7 @@ export const BuilderMapMobile:React.FC<BuilderMapMobileProps> = (props: BuilderM
         <BoulderSlideoverMobile
           open
           // boulderId={selectedBoulderId}
-          boulder={selectedBoulder}
+          boulder={selectedBoulderVal}
           track={selectedTrack}
           topoCreatorId={read(props.topo).creatorId}
           forBuilder

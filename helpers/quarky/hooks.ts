@@ -84,5 +84,13 @@ function useSubscription(quarks: DataQuark<any>[]) {
     }, quarks);
 }
 
-export const useCreateQuark = <T>(value: T, deps?: React.DependencyList): Quark<T> =>
-    useMemo(() => quark(value), deps ?? []);
+export function useCreateQuark<T>(deps?: React.DependencyList): Quark<T | undefined>;
+export function useCreateQuark<T>(value: T, deps?: React.DependencyList): Quark<T>;
+export function useCreateQuark<T>(valueOrDeps: T | React.DependencyList | undefined, deps?: React.DependencyList): Quark<T> | Quark<T | undefined> {
+    valueOrDeps = valueOrDeps ?? [];
+    if (Array.isArray(valueOrDeps)) {
+        return useMemo(() => quark<T | undefined>(undefined), valueOrDeps)
+    }
+    deps = deps ?? [];
+    return useMemo(() => quark<T>(valueOrDeps as T), deps);
+}
