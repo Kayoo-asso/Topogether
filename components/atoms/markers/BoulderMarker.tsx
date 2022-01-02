@@ -1,8 +1,8 @@
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { markerSize } from "helpers";
 import { Quarkify, useQuark } from "helpers/quarky";
-import { useContext, useEffect, useRef, useState } from "react";
 import { Boulder, Entities, GeoCoordinates, MapMouseEvent, UUID } from "types";
-import { MapContext } from ".";
+import { MapContext } from "..";
 
 interface BoulderMarkerProps {
     boulder: Quarkify<Boulder, Entities>,
@@ -14,7 +14,7 @@ const icon: google.maps.Icon = {
     scaledSize: markerSize(30)
 };
 
-const BoulderMarker: React.FC<BoulderMarkerProps> = (props) => {
+export const BoulderMarker: React.FC<BoulderMarkerProps> = (props) => {
     const [boulder, setBoulder] = useQuark(props.boulder);
     const [marker, setMarker] = useState<google.maps.Marker>();
     const map = useContext(MapContext);
@@ -76,5 +76,3 @@ const BoulderMarker: React.FC<BoulderMarkerProps> = (props) => {
 
     return null;
 }
-
-export default BoulderMarker;

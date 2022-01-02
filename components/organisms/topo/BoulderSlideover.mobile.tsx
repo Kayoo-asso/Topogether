@@ -2,18 +2,17 @@ import React, { useState } from 'react';
 import {
   GradeScale, Icon, LikeButton, RoundButton, SlideoverMobile, TracksImage,
 } from 'components';
-import { Boulder, Difficulty, gradeToLightGrade, UUID } from 'types';
+import { Boulder, Difficulty, Entities, gradeToLightGrade, Track, UUID } from 'types';
 import { topogetherUrl } from 'helpers/globals';
 import { buildBoulderGradeHistogram } from 'helpers';
 import { TracksList } from '.';
 import { default as NextImage } from 'next/image';
-import { fakeTopo } from 'helpers/fakeData/fakeTopo';
-import { Quark } from 'helpers/quarky';
+import { quark, Quark, quarkArray, Quarkify, read, useQuark } from 'helpers/quarky';
 
 interface BoulderSlideoverMobileProps {
   open?: boolean,
-  boulderId: UUID,
-  selectedTrack?: Quark<UUID | undefined>,
+  boulder: Quark<Boulder | undefined>
+  track: Quark<Track | undefined>,
   topoCreatorId?: UUID,
   forBuilder?: boolean,
   onPhotoButtonClick: () => void,
@@ -43,15 +42,21 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = ({
   const [officialTrackTab, setOfficialTrackTab] = useState(true); // TOPO
   const [trackTab, setTrackTab] = useState(true); // BUILDER
 
-  // TODO quarky
-  const boulder = fakeTopo.sectors[0].boulders[0];
-  const track = fakeTopo.sectors[0].boulders[0].tracks[0];
+  const [boulder, setBoulder] = useQuark(props.boulder);
+  if (!boulder) return null;
+  const [track, setTrack] = useQuark(props.track);
 
-  const officialTrackIds = boulder.tracks
-    ? boulder.tracks.filter((track) => track.creatorId === props.topoCreatorId).map((track) => track.id)
+  const quarkifyTrack = (track: Track): Quarkify<Track, Entities> => quark({
+    ...track,
+    lines: quarkArray(track.lines),
+    ratings: quarkArray(track.ratings)
+  });
+
+  const officialTracks = boulder.tracks
+    ? quarkArray(boulder.tracks.filter((track) => track.creatorId === props.topoCreatorId), { quarkifier: quarkifyTrack })
     : [];
-  const communityTrackIds = boulder.tracks
-    ? boulder.tracks.filter((track) => track.creatorId !== props.topoCreatorId).map((track) => track.id)
+  const communityTracks = boulder.tracks
+    ? quarkArray(boulder.tracks.filter((track) => track.creatorId !== props.topoCreatorId), { quarkifier: quarkifyTrack })
     : [];
   
   return (
@@ -59,7 +64,10 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = ({
       open
       initialFull={false}
       onSizeChange={(f) => setFull(f)}
-      onClose={props.onClose}
+      onClose={() => {
+        setBoulder(undefined);
+        setTrack(undefined);
+      }}
     >
       {/* BOULDER IMAGE */}
       {full && (
@@ -76,7 +84,7 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = ({
 
       
       {/* BOULDER INFOS */}
-      {!props.trackId && (
+      {!read(props.track) && (
         <div className={`grid grid-cols-8 p-5 items-center ${full ? '' : ' mt-3'}`}>
           <div className="col-span-6">
             <div className="ktext-section-title">{boulder.name}</div>
@@ -127,7 +135,7 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = ({
 
 
       {/* TRACK INFOS */}
-      {props.trackId && (
+      {read(props.track) && (
         <div className={`grid grid-cols-8 p-5 items-center ${full ? '' : ' mt-3'}`}>
             <div className='col-span-1 pr-3'>
               {track.grade && 
@@ -171,7 +179,7 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = ({
 
       
       {/* TRACK DETAILS */}
-      {props.trackId && forBuilder && full && (
+      {read(props.track) && forBuilder && full && (
         <>
           <div className='grid grid-cols-9 p-5 items-center'>
             <div className='col-span-full mb-6'>
@@ -198,7 +206,7 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = ({
 
       
       {/* TABS */}
-      {!props.trackId && (
+      {!read(props.track) && (
         <div className="grid grid-cols-8 px-5 ktext-label font-bold my-2">
           {!forBuilder && (
             <>
@@ -225,10 +233,10 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = ({
 
 
       {/* TRACKSLIST */}
-      {(!forBuilder || trackTab) && !props.trackId && full && (
+      {(!forBuilder || trackTab) && !read(props.track) && full && (
         <div className="overflow-auto pb-[30px]">
           <TracksList
-            trackIds={officialTrackTab ? officialTrackIds : communityTrackIds}
+            tracks={officialTrackTab ? officialTracks : communityTracks}
             onTrackClick={props.onSelectTrack} //TODO
             onBuilderAddClick={() => console.log('create track')} //TODO
           />
@@ -237,7 +245,7 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = ({
 
 
       {/* BOULDER FORM */}
-      {forBuilder && !trackTab && !props.trackId && full && (
+      {forBuilder && !trackTab && !read(props.track) && full && (
         <div className='border-t border-grey-light'>
           {/* TODO */}
         </div>
@@ -245,7 +253,7 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = ({
 
 
       {/* TRACK FORM */}
-      {forBuilder && props.trackId && full && (
+      {forBuilder && read(props.track) && full && (
         <div></div>
       )}
 

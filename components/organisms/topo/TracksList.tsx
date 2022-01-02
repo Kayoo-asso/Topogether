@@ -1,13 +1,10 @@
 import React from 'react';
 import { AverageNote, GradeCircle } from 'components';
 import { Entities, gradeToLightGrade, Track, UUID } from 'types';
-import { averageTrackNote } from 'helpers/topo/averageTrackRating';
-import { fakeTopo } from 'helpers/fakeData/fakeTopo';
 import { Quark, Quarkify, useQuarkArray } from 'helpers/quarky';
 
 interface TracksListProps {
   tracks: Quark<Array<Quarkify<Track, Entities>>>,
-  trackIds: UUID[],
   onTrackClick?: (trackId: UUID) => void,
   onBuilderAddClick?: () => void,
 }
@@ -25,8 +22,6 @@ const gradeColors = {
 
 export const TracksList: React.FC<TracksListProps> = (props: TracksListProps) => {
   const tracks = useQuarkArray(props.tracks);
-  // TODO Quarky
-  // const tracks = fakeTopo.sectors[0].boulders[0].tracks;
 
   return (
     <div className="w-full border-t border-grey-light">

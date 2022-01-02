@@ -112,7 +112,7 @@ export interface Boulder {
 
   tracks: Track[],
   // can be cross-referenced by lines within each track
-  imageIds: UUID[]
+  images: Image[]
 }
 
 // Order defined by the x-coordinate of the first point of the first line

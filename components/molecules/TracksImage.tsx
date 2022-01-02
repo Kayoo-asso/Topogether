@@ -64,8 +64,8 @@ export const TracksImage: React.FC<TracksImageProps> = ({
     },
   });
 
-  let imgWidth; let
-imgHeight;
+  let imgWidth; 
+  let imgHeight;
   // Only one of those will be set
   let divWidth;
   let divHeight;
