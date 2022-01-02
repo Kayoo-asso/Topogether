@@ -3,7 +3,7 @@ import 'styles/globals.css';
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
 import { UserContext } from 'helpers';
-import { LayoutMobile, LayoutDesktop } from 'components';
+import { LayoutMobile, LayoutDesktop, Device } from 'components';
 import { User, UUID } from 'types';
 import { isDesktop, isMobile } from 'react-device-detect';
 
@@ -35,18 +35,23 @@ const App = ({ Component, pageProps }: AppProps) => {
       </Head>
 
       <UserContext.Provider value={sessionContextDefaultValues}>
-        {isMobile
-            && (
-            <LayoutMobile>
-              <Component {...pageProps} />
-            </LayoutMobile>
-            )}
-        {isDesktop
-            && (
+        <Device>
+          {({ isMobile }: { isMobile: boolean }) => {
+            if (isMobile) {
+              return (
+                <LayoutMobile>
+                  <Component {...pageProps} />
+                </LayoutMobile>
+);
+          }
+
+          return (
             <LayoutDesktop>
               <Component {...pageProps} />
             </LayoutDesktop>
-            )}
+);
+          }}
+        </Device>
       </UserContext.Provider>
     </>
   );

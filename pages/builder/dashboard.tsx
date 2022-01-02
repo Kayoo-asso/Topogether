@@ -1,9 +1,8 @@
 import type { NextPage } from 'next';
-import { DashboardDesktop, DashboardMobile } from 'components';
+import { Device, DashboardDesktop, DashboardMobile } from 'components';
 import { fakeLightTopo } from 'helpers/fakeData/fakeLightTopo';
 import { LightTopo, TopoStatus } from 'types';
 import { useState } from 'react';
-import Device from 'components/layouts/device';
 
 const DashboardPage: NextPage = () => {
   const [lightTopos, setLightTopos] = useState<LightTopo[]>([

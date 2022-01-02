@@ -5,5 +5,5 @@ interface DeviceProps {
   children: (props: typeof rdd) => ReactNode
 }
 export default function Device(props: DeviceProps) {
-  return <div className="absolute h-full overflow-y-hidden">{props.children(rdd)}</div>;
+  return <div className="absolute h-full w-full overflow-x-hidden overflow-y-hidden">{props.children(rdd)}</div>;
 }

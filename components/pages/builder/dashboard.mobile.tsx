@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
 import { Button, TopoCardList } from 'components';
 import { LightTopo, TopoStatus } from 'types';
+import Link from 'next/link';
 
 // TODO: add a select to sort topos by date or alphabetic order
 interface DashboardMobileProps {
@@ -8,7 +9,6 @@ interface DashboardMobileProps {
 }
 
 export const DashboardMobile:React.FC<DashboardMobileProps> = (props: DashboardMobileProps) => {
-  const newTopo = useCallback(() => console.log('Link to newTopo page'), []);
   // const sortTopos = useCallback(() => console.log('sortTopos'), []);
   const draftLightTopos = props.lightTopos.filter((topo) => topo.status === TopoStatus.Draft);
   const submittedLightTopos = props.lightTopos.filter((topo) => topo.status === TopoStatus.Submitted);
@@ -19,7 +19,7 @@ export const DashboardMobile:React.FC<DashboardMobileProps> = (props: DashboardM
 
       <div className="flex flex-row justify-between items-center">
         <div className="ktext-section-title text-center">Vos topos</div>
-        <Button content="Créer un topo" onClick={newTopo} />
+        <Button content="Créer un topo" href="newTopo" />
       </div>
       {/* <Select
         id=""
