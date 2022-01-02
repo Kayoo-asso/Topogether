@@ -8,7 +8,7 @@ import { buildBoulderGradeHistogram } from 'helpers';
 import { TracksList } from '.';
 import { default as NextImage } from 'next/image';
 import { derive, quark, Quark, quarkArray, Quarkify, read, useCreateDerivation, useInlineDerivation, useQuark, useQuarkArray, useQuarkValue } from 'helpers/quarky';
-import { topo, topoCreatorId, tracks } from 'helpers/fakeData/fakeTopoV2';
+import { topoCreatorId } from 'helpers/fakeData/fakeTopoV2';
 
 interface BoulderSlideoverMobileProps {
   open?: boolean,
@@ -44,8 +44,7 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = ({
   const [trackTab, setTrackTab] = useState(true); // BUILDER
 
   const [boulder, setBoulder] = useQuark(props.boulder);
-  if (!boulder) return null;
-  const [selectedTrack, setSelectedTrack] = useQuark(props.selectedTrack!);
+  const [selectedTrack, setSelectedTrack] = useQuark(props.selectedTrack);
   
   // TODO: rewrite
   const displayedTracks = useInlineDerivation(() => {
@@ -83,7 +82,7 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = ({
 
 
       {/* BOULDER INFOS */}
-      {!read(props.track) && (
+      {!selectedTrack && (
         <div className={`grid grid-cols-8 p-5 items-center ${full ? '' : ' mt-3'}`}>
           <div className="col-span-6">
             <div className="ktext-section-title">{boulder.name}</div>
@@ -119,7 +118,7 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = ({
             {!full && (
               <div className="w-full relative h-[60px]">
                 <NextImage
-                  src={boulder.images[0] ? topogetherUrl + boulder.images[0].url : '/assets/img/Kayoo_defaut_image.png'}
+                  src={boulder.images[0] ? topogetherUrl + read(boulder.images[0]).url : '/assets/img/Kayoo_defaut_image.png'}
                   className="rounded-sm"
                   alt="Boulder"
                   priority
@@ -134,18 +133,18 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = ({
 
 
       {/* TRACK INFOS */}
-      {read(props.track) && (
+      {selectedTrack && (
         <div className={`grid grid-cols-8 p-5 items-center ${full ? '' : ' mt-3'}`}>
           <div className='col-span-1 pr-3'>
-            {track.grade &&
-              <div className={`ktext-subtitle float-right ${gradeColors[gradeToLightGrade(track.grade)]}`}>
-                {track.grade}
+            {selectedTrack.grade &&
+              <div className={`ktext-subtitle float-right ${gradeColors[gradeToLightGrade(selectedTrack.grade)]}`}>
+                {selectedTrack.grade}
               </div>
             }
           </div>
 
           <div className='col-span-6'>
-            <div className="ktext-section-title">{track.name}</div>
+            <div className="ktext-section-title">{selectedTrack.name}</div>
           </div>
 
           <div className='col-span-1'>
@@ -164,8 +163,8 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = ({
           </div>
 
           <div className={'col-start-2 col-span-4' + (forBuilder ? ' -mt-[16px]' : '')}>
-            {track.isTraverse && full && <div className="ktext-base-little">Traversée</div>}
-            {track.isSittingStart && full && <div className="ktext-base-little">Départ assis</div>}
+            {selectedTrack.isTraverse && full && <div className="ktext-base-little">Traversée</div>}
+            {selectedTrack.isSittingStart && full && <div className="ktext-base-little">Départ assis</div>}
           </div>
 
           {!forBuilder &&
@@ -178,11 +177,11 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = ({
 
 
       {/* TRACK DETAILS */}
-      {read(props.track) && forBuilder && full && (
+      {selectedTrack && forBuilder && full && (
         <>
           <div className='grid grid-cols-9 p-5 items-center'>
             <div className='col-span-full mb-6'>
-              {track.description}
+              {selectedTrack.description}
             </div>
 
             <div className='col-span-3'>
@@ -205,7 +204,7 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = ({
 
 
       {/* TABS */}
-      {!read(props.track) && (
+      {!selectedTrack && (
         <div className="grid grid-cols-8 px-5 ktext-label font-bold my-2">
           {!forBuilder && (
             <>
@@ -232,7 +231,7 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = ({
 
 
       {/* TRACKSLIST */}
-      {(!forBuilder || trackTab) && !read(props.track) && full && (
+      {(!forBuilder || trackTab) && !selectedTrack && full && (
         <div className="overflow-auto pb-[30px]">
           <TracksList
             tracks={displayedTracks}
@@ -244,7 +243,7 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = ({
 
 
       {/* BOULDER FORM */}
-      {forBuilder && !trackTab && !read(props.track) && full && (
+      {forBuilder && !trackTab && !selectedTrack && full && (
         <div className='border-t border-grey-light'>
           {/* TODO */}
         </div>
@@ -252,7 +251,7 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = ({
 
 
       {/* TRACK FORM */}
-      {forBuilder && read(props.track) && full && (
+      {forBuilder && selectedTrack && full && (
         <div></div>
       )}
 
