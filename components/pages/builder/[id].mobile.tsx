@@ -3,19 +3,20 @@ import {
   BoulderSlideoverMobile, Drawer, HeaderMobile, MapControl, BoulderMarker,
 } from 'components';
 import {
-  Boulder, Entities, isStringBetween, Topo, Track } from 'types';
-import { Quarkify, useQuark, useQuarkValue, useCreateQuark, read, derive, Quark } from 'helpers/quarky';
+  Boulder, BoulderQuark, Entities, isStringBetween, Topo, Track, TrackQuark
+} from 'types';
+import { Quarkify, useQuark, useQuarkValue, useCreateQuark, read, derive, Quark, useInlineDerivation } from 'helpers/quarky';
 
 interface BuilderMapMobileProps {
   topo: Quarkify<Topo, Entities>,
 }
 
-export const BuilderMapMobile:React.FC<BuilderMapMobileProps> = (props: BuilderMapMobileProps) => {
-  const selectedBoulder = useCreateQuark<Quark<Boulder>>();
+export const BuilderMapMobile: React.FC<BuilderMapMobileProps> = (props: BuilderMapMobileProps) => {
+  const selectedBoulder = useCreateQuark<BoulderQuark>();
   const selectedBoulderVal = useQuarkValue(selectedBoulder);
-  const selectedTrack = useCreateQuark<Quark<Track>>();
+  const selectedTrack = useCreateQuark<TrackQuark>();
   const selectedTrackVal = useQuarkValue(selectedTrack);
- 
+
   const drawerOpen = useCreateQuark(false);
   const geoCameraOpen = useCreateQuark(false);
 
@@ -28,6 +29,12 @@ export const BuilderMapMobile:React.FC<BuilderMapMobileProps> = (props: BuilderM
       name: newTopoName
     });
   }
+
+  const boulders = useInlineDerivation(() =>
+    topo.sectors
+      .map(read)
+      .flatMap(x => x.boulders)
+  );
 
   // const getMarkersFromBoulders = () => {
   //   const markers: MarkerProps[] = [];
@@ -72,18 +79,18 @@ export const BuilderMapMobile:React.FC<BuilderMapMobileProps> = (props: BuilderM
         backLink="/builder/dashboard"
         menuOptions={[
           // TODO : mettre les actions
-          { value: 'Infos du spot', action: () => {} },
-          { value: 'Marche d\'approche', action: () => {} },
-          { value: 'Gestionnaires du spot', action: () => {} },
-          { value: 'Valider le topo', action: () => {} },
-          { value: 'Supprimer le topo', action: () => {} },
+          { value: 'Infos du spot', action: () => { } },
+          { value: 'Marche d\'approche', action: () => { } },
+          { value: 'Gestionnaires du spot', action: () => { } },
+          { value: 'Valider le topo', action: () => { } },
+          { value: 'Supprimer le topo', action: () => { } },
         ]}
       />
 
       <div className='h-full relative'>
         <MapControl
           initialZoom={13}
-          markers={getMarkersFromBoulders()}
+          // markers={getMarkersFromBoulders()}
           onPhotoButtonClick={() => setGeoCameraOpen(true)}
           boundsToMarkers
           searchbarOptions={{
@@ -91,15 +98,15 @@ export const BuilderMapMobile:React.FC<BuilderMapMobileProps> = (props: BuilderM
             findPlaces: false,
           }}
         >
-          {read(topo.sectors).map(s => read(s).boulders).map(boulder => 
-            <BoulderMarker 
-              boulder={read(boulder)}
+          {boulders.map(boulder =>
+            <BoulderMarker
+              boulder={boulder}
             />
           )}
         </MapControl>
 
         {drawerOpen && selectedTrackVal &&
-          <Drawer 
+          <Drawer
             image={props.topo.sectors[0].boulders[0].images[0]}
             trackId={selectedTrack}
             onValidate={() => setDrawerOpen(false)}
@@ -123,10 +130,10 @@ export const BuilderMapMobile:React.FC<BuilderMapMobileProps> = (props: BuilderM
           onPhotoButtonClick={() => setGeoCameraOpen(true)}
           // onSelectTrack={(trackId) => setSelectedTrackId(trackId)}
           onDrawButtonClick={() => setDrawerOpen(true)}
-          // onClose={() => {
-          //   setSelectedTrackId(undefined);
-          //   setSelectedBoulderId(undefined)
-          // }}
+        // onClose={() => {
+        //   setSelectedTrackId(undefined);
+        //   setSelectedBoulderId(undefined)
+        // }}
         />
       )}
     </>

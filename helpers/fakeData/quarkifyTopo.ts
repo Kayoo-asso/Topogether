@@ -4,26 +4,27 @@ import { Boulder, Grade, Line, Name, Image, Track, Description, Difficulty, Clim
 
 export const quarkifyTopo = (topo: Topo): Quarkify<Topo, Entities> => quark({
     ...topo,
-    sectors: quarkArray(topo.sectors, { quarkifier: quarkifySector }),
-    parkings: quarkArray(topo.parkings),
-    access: quarkArray(topo.access)
+    sectors: topo.sectors.map(quarkifySector),
+    parkings: topo.parkings.map(x => quark(x)),
+    access: topo.access.map(x => quark(x))
 });
 
 const quarkifySector = (sector: Sector): Quarkify<Sector, Entities> => quark({
     ...sector,
-    boulders: quarkArray(sector.boulders, { quarkifier: quarkifyBoulder }),
-    waypoints: quarkArray(sector.waypoints)
+    boulders: sector.boulders.map(quarkifyBoulder),
+    waypoints: sector.waypoints.map(x => quark(x))
 });
 
 const quarkifyBoulder = (boulder: Boulder): Quarkify<Boulder, Entities> => quark({
     ...boulder,
-    tracks: quarkArray(boulder.tracks, { quarkifier: quarkifyTrack }),
+    tracks: boulder.tracks.map(quarkifyTrack),
+    images: boulder.images.map(x => quark(x))
 });
 
 const quarkifyTrack = (track: Track): Quarkify<Track, Entities> => quark({
     ...track,
-    lines: quarkArray(track.lines),
-    ratings: quarkArray(track.ratings)
+    lines: track.lines.map(x => quark(x)),
+    ratings: track.ratings.map(r => quark(r))
 });
 
 

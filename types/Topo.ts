@@ -7,8 +7,15 @@ import { GeoCoordinates, RequireAtLeastOne, StringBetween } from './Utils';
 import { UUID } from './UUID';
 import { TrackRating, User } from './User';
 import { Image, ImageDimensions } from './Image';
+import { Quarkify } from 'helpers/quarky';
 
 export type Entities = Sector | Boulder | Track | Line | Parking | TopoAccess | Image | User | Waypoint | TrackRating;
+export type TopoQuark = Quarkify<Topo, Entities>;
+export type SectorQuark = Quarkify<Sector, Entities>;
+export type BoulderQuark = Quarkify<Boulder, Entities>;
+export type TrackQuark = Quarkify<Track, Entities>;
+export type LineQuark = Quarkify<Line, Entities>;
+export type ImageQuark = Quarkify<Image, Entities>;
 
 export interface Topo {
   readonly id: UUID,

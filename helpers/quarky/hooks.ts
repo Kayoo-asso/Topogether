@@ -1,5 +1,5 @@
 import React, { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useRef, useState, useReducer, ReactElement } from "react";
-import { cleanupEffect, CleanupHelper, DataQuark, Derivation, derive, effect, quark, Quark, read, StateUpdate, write } from "./quarky";
+import { cleanupEffect, CleanupHelper, DataQuark, Derivation, derive, effect, quark, Quark, QuarkOptions, read, StateUpdate, write } from "./quarky";
 
 let subsBatch: DataQuark<any>[] | null = null;
 
@@ -60,17 +60,15 @@ export function useQuarkSetter<T>(quark: Quark<T>): Dispatch<SetStateAction<T>> 
     }
 }
 
-export function useQuarkArray<T>(quarkArray: Quark<Quark<T>[]>): [T, Dispatch<SetStateAction<T>>][] {
-    const quarks = read(quarkArray);
-
-    const output: [T, Dispatch<SetStateAction<T>>][] = new Array(quarks.length);
+export function useQuarkArray<T>(quarks: Quark<T>[]): T[] {
+    const output: T[] = new Array(quarks.length);
     for (let i = 0; i < quarks.length; i++) {
         const q = quarks[i];
-        output[i] = [read(q), useQuarkSetter(q)];
+        output[i] = read(q);
     }
 
-    if (subsBatch) subsBatch.push(quarkArray, ...quarks);
-    else useSubscription([quarkArray, ...quarks]);
+    if (subsBatch) subsBatch.push(...quarks);
+    else useSubscription([...quarks]);
 
     return output;
 }
@@ -93,4 +91,12 @@ export function useCreateQuark<T>(valueOrDeps: T | React.DependencyList | undefi
     }
     deps = deps ?? [];
     return useMemo(() => quark<T>(valueOrDeps as T), deps);
+}
+
+export function useCreateDerivation<T>(computation: () => T, deps?: React.DependencyList, options?: QuarkOptions<T>): Derivation<T> {
+    return useMemo(() => derive(computation, options), deps ?? []);
+}
+
+export function useInlineDerivation<T>(computation: () => T, deps?: React.DependencyList, options?: QuarkOptions<T>): T {
+    return useQuarkValue(useCreateDerivation(computation, deps, options));
 }

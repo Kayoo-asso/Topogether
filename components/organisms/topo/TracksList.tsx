@@ -1,10 +1,10 @@
 import React from 'react';
 import { AverageNote, GradeCircle } from 'components';
-import { Entities, gradeToLightGrade, Track, UUID } from 'types';
+import { Entities, gradeToLightGrade, Track, TrackQuark, UUID } from 'types';
 import { Quark, Quarkify, useQuarkArray } from 'helpers/quarky';
 
 interface TracksListProps {
-  tracks: Quark<Array<Quarkify<Track, Entities>>>,
+  tracks: TrackQuark[],
   onTrackClick?: (trackId: UUID) => void,
   onBuilderAddClick?: () => void,
 }
@@ -26,7 +26,7 @@ export const TracksList: React.FC<TracksListProps> = (props: TracksListProps) =>
   return (
     <div className="w-full border-t border-grey-light">
 
-      {tracks.map(([track, ]) => {
+      {tracks.map(track => {
         const grade = gradeToLightGrade(track.grade);
         return (
           <div

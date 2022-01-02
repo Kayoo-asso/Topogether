@@ -1,11 +1,11 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { markerSize } from "helpers";
 import { Quarkify, useQuark } from "helpers/quarky";
-import { Boulder, Entities, GeoCoordinates, MapMouseEvent, UUID } from "types";
+import { Boulder, BoulderQuark, Entities, GeoCoordinates, MapMouseEvent, UUID } from "types";
 import { MapContext } from "..";
 
 interface BoulderMarkerProps {
-    boulder: Quarkify<Boulder, Entities>,
+    boulder: BoulderQuark,
     onClick?: (boulder: Quarkify<Boulder, Entities>) => void,
 }
 

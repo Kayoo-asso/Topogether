@@ -99,7 +99,7 @@ export type QuarkArray<T> = Quark<Quark<T>[]>;
 export type Quarkify<T, Entities> = Quark<{
     [K in keyof T]:
     T[K] extends Entities[]
-    ? Quark<Quarkify<T[K][number], Entities>[]>
+    ? Quarkify<T[K][number], Entities>[]
     : T[K] extends Entities
     ? Quarkify<T[K], Entities>
     : T[K]
