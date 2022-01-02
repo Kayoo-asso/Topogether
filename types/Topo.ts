@@ -7,7 +7,6 @@ import { GeoCoordinates, RequireAtLeastOne, StringBetween } from './Utils';
 import { UUID } from './UUID';
 import { TrackRating, User } from './User';
 import { Image, ImageDimensions } from './Image';
-import { Quarkify } from 'helpers/quarky';
 
 export type Entities = Sector | Boulder | Track | Line | Parking | TopoAccess | Image | User | Waypoint | TrackRating;
 
@@ -42,7 +41,7 @@ export interface Topo {
   ethics?: StringBetween<1, 5000>,
   danger?: StringBetween<1, 5000>
 
-  sectors: Sector[],
+  sectors: Sector[], // -> Quark<Array<Quark<Sector>>>
   parkings: Parking[],
   access: TopoAccess[],
 }

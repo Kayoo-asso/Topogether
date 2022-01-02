@@ -8,11 +8,12 @@ import { buildBoulderGradeHistogram } from 'helpers';
 import { TracksList } from '.';
 import { default as NextImage } from 'next/image';
 import { fakeTopo } from 'helpers/fakeData/fakeTopo';
+import { Quark } from 'helpers/quarky';
 
 interface BoulderSlideoverMobileProps {
   open?: boolean,
   boulderId: UUID,
-  trackId?: UUID,
+  selectedTrack?: Quark<UUID | undefined>,
   topoCreatorId?: UUID,
   forBuilder?: boolean,
   onPhotoButtonClick: () => void,

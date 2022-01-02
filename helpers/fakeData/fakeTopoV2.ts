@@ -149,4 +149,4 @@ export const topo: Topo = {
     access: [access],
 }
 
-export const data: Quarkify<Topo, Entities> = quarkifyTopo(topo);
+export const quarkTopo: Quarkify<Topo, Entities> = quarkifyTopo(topo);

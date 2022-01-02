@@ -1,4 +1,4 @@
-import { cleanupEffect, DataQuark, derive, effect, quark, read, transaction, write } from "helpers/quarky"
+import { cleanupEffect, DataQuark, derive, effect, peek, quark, read, transaction, write } from "helpers/quarky"
 import { getConsoleErrorSpy } from "test/utils";
 
 test("Creating and reading quark", () => {
@@ -45,9 +45,9 @@ test("Updating quark to equal value does not trigger propagation", () => {
     // necessary to attach the derivation
     effect(() => { }, { watch: [b], name: "effect" });
     expect(counter.current).toBe(1);
-    write(a, 2);
-    expect(counter.current).toBe(1);
     write(a, 1);
+    expect(counter.current).toBe(1);
+    write(a, 2);
     expect(counter.current).toBe(2);
 });
 
@@ -448,8 +448,47 @@ test("Children effects scheduled before their parent should be cleaned up noneth
     expect(counter.current).toBe(2);
 });
 
-test.todo("Peeking");
+test("Peeking does not add dependencies to derivations", () => {
+    const q1 = quark(1);
+    const q2 = quark(1);
+    const counter = { current: 0 };
+    const d = derive(() => { counter.current++; read(q1) + peek(q2) });
+    // activate derivation
+    effect(() => read(d));
+    counter.current = 0;
+    write(q1, 2);
+    expect(counter.current).toBe(1);
+    write(q2, 2);
+    expect(counter.current).toBe(1);
+});
 
-test.todo("Child effect dependencies are not registered in their parent or children");
+test("Peeking does not add dependencies to effects", () => {
+    const q1 = quark(1);
+    const q2 = quark(1);
+    const counter = { current: 0 };
+    effect(() => { counter.current++; read(q1) + peek(q2) });
+    // activate derivation
+    counter.current = 0;
+    write(q1, 2);
+    expect(counter.current).toBe(1);
+    write(q2, 2);
+    expect(counter.current).toBe(1);
+});
 
-test.todo("Persisetng effects");
+test("Child effect dependencies are not registered in their parent or children", () => {
+    const q1 = quark(1);
+    const q2 = quark(1);
+    const counter = { current: 0 };
+    effect(() => {
+        counter.current++;
+        read(q1);
+        effect(() => {
+            counter.current++;
+            read(q2);
+        })
+    });
+});
+
+test.todo("Persisting effects");
+
+test.todo("Nested transactions")

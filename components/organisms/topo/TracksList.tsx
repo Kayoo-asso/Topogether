@@ -1,10 +1,12 @@
 import React from 'react';
 import { AverageNote, GradeCircle } from 'components';
-import { gradeToLightGrade, Track, UUID } from 'types';
+import { Entities, gradeToLightGrade, Track, UUID } from 'types';
 import { averageTrackNote } from 'helpers/topo/averageTrackRating';
 import { fakeTopo } from 'helpers/fakeData/fakeTopo';
+import { Quark, Quarkify, useQuarkArray } from 'helpers/quarky';
 
 interface TracksListProps {
+  tracks: Quark<Array<Quarkify<Track, Entities>>>,
   trackIds: UUID[],
   onTrackClick?: (trackId: UUID) => void,
   onBuilderAddClick?: () => void,
@@ -22,14 +24,14 @@ const gradeColors = {
 }
 
 export const TracksList: React.FC<TracksListProps> = (props: TracksListProps) => {
-
+  const tracks = useQuarkArray(props.tracks);
   // TODO Quarky
-  const tracks = fakeTopo.sectors[0].boulders[0].tracks;
+  // const tracks = fakeTopo.sectors[0].boulders[0].tracks;
 
   return (
     <div className="w-full border-t border-grey-light">
 
-      {tracks.map((track) => {
+      {tracks.map(([track, ]) => {
         const grade = gradeToLightGrade(track.grade);
         return (
           <div
@@ -53,11 +55,7 @@ export const TracksList: React.FC<TracksListProps> = (props: TracksListProps) =>
             <div className="col-span-5 ml-3">
               <span className="ktext-base">{track.name}</span>
             </div>
-            {track.ratings && track.ratings.length > 1 && (
-              <div className="col-span-2">
-                <AverageNote note={averageTrackNote(track.ratings)} className="justify-end" />
-              </div>
-            )}
+            <AverageNote ratings={track.ratings} className="justify-end" wrapperClassName="col-span-2"  />
           </div>
         );
       })}
