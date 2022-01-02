@@ -9,12 +9,11 @@ import { TracksList } from '.';
 import { default as NextImage } from 'next/image';
 import { derive, quark, Quark, quarkArray, Quarkify, read, useCreateDerivation, useInlineDerivation, useQuark, useQuarkArray, useQuarkValue } from 'helpers/quarky';
 import { topo, topoCreatorId, tracks } from 'helpers/fakeData/fakeTopoV2';
-import { off } from 'process';
 
 interface BoulderSlideoverMobileProps {
   open?: boolean,
   boulder: BoulderQuark,
-  track?: TrackQuark,
+  selectedTrack?: TrackQuark,
   topoCreatorId?: UUID,
   forBuilder?: boolean,
   onPhotoButtonClick: () => void,
@@ -46,22 +45,17 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = ({
 
   const [boulder, setBoulder] = useQuark(props.boulder);
   if (!boulder) return null;
-  const [track, setTrack] = useQuark(props.track);
+  const [selectedTrack, setSelectedTrack] = useQuark(props.selectedTrack!);
   
-  // const tracks = useQuarkArray(boulder.tracks);
-  // const displayedTracks = tracks.filter(
-  //   track => (track.creatorId === topoCreatorId) === officialTrackTab
-  // );
-
   // TODO: rewrite
   const displayedTracks = useInlineDerivation(() => {
-    const selected: TrackQuark[] = []
+    const displayed: TrackQuark[] = []
     for (const trackQuark of boulder.tracks) {
       if ((read(trackQuark).creatorId === topoCreatorId) === officialTrackTab) {
-        selected.push(trackQuark)
+        displayed.push(trackQuark)
       }
     }
-    return selected;
+    return displayed;
   }, [topoCreatorId, boulder.tracks, officialTrackTab]);
 
   return (
@@ -71,14 +65,14 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = ({
       onSizeChange={(f) => setFull(f)}
       onClose={() => {
         setBoulder(undefined);
-        setTrack(undefined);
+        setSelectedTrack(undefined);
       }}
     >
       {/* BOULDER IMAGE */}
       {full && (
         <div className="w-full bg-dark rounded-t-lg flex items-center justify-center overflow-hidden">
           <TracksImage
-            image={boulder.images[0]}
+            image={read(boulder.images[0])}
             containerClassName='w-full'
             tracks={boulder.tracks}
             currentTrackId={props.trackId}

@@ -1,76 +1,31 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   BoulderSlideoverMobile, Drawer, HeaderMobile, MapControl, BoulderMarker,
 } from 'components';
 import {
-  Boulder, BoulderQuark, Entities, isStringBetween, Topo, Track, TrackQuark
+  BoulderQuark, Entities, Topo, TrackQuark
 } from 'types';
-import { Quarkify, useQuark, useQuarkValue, useCreateQuark, read, derive, Quark, useInlineDerivation } from 'helpers/quarky';
+import { Quarkify, useQuark, useQuarkValue, useCreateQuark, read, useInlineDerivation } from 'helpers/quarky';
 
 interface BuilderMapMobileProps {
   topo: Quarkify<Topo, Entities>,
 }
 
 export const BuilderMapMobile: React.FC<BuilderMapMobileProps> = (props: BuilderMapMobileProps) => {
-  const selectedBoulder = useCreateQuark<BoulderQuark>();
-  const selectedBoulderVal = useQuarkValue(selectedBoulder);
-  const selectedTrack = useCreateQuark<TrackQuark>();
-  const selectedTrackVal = useQuarkValue(selectedTrack);
+  const selectedBoulderQ = useCreateQuark<BoulderQuark>();
+  const selectedBoulderVal = useQuarkValue(selectedBoulderQ);
+  const selectedTrackQ = useCreateQuark<TrackQuark>();
+  const selectedTrackVal = useQuarkValue(selectedTrackQ);
 
-  const drawerOpen = useCreateQuark(false);
-  const geoCameraOpen = useCreateQuark(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [geoCameraOpen, setGeoCameraOpen] = useState(false);
 
-  const [topo, setTopo] = useQuark(props.topo);
-
-  function onInput(newTopoName: string) {
-    if (!isStringBetween(newTopoName, 1, 255)) throw new Error();
-    setTopo({
-      ...topo,
-      name: newTopoName
-    });
-  }
-
-  const boulders = useInlineDerivation(() =>
+  const topo = useQuarkValue(props.topo);
+  const boulderQuarks = useInlineDerivation(() =>
     topo.sectors
       .map(read)
       .flatMap(x => x.boulders)
   );
-
-  // const getMarkersFromBoulders = () => {
-  //   const markers: MarkerProps[] = [];
-  //   for (let i = 0; i < props.topo.sectors.length; i++) {
-  //     if (props.topo.sectors[i].boulders) {
-  //       const sector = props.topo.sectors[i];
-  //       for (let j = 0; j < sector.boulders.length; j++) {
-  //         const boulder = sector.boulders[j];
-  //         markers.push({
-  //           id: boulder.id,
-  //           options: {
-  //             icon: {
-  //               url: '/assets/icons/colored/_rock.svg',
-  //               scaledSize: markerSize(30),
-  //             },
-  //             position: boulder.location,
-  //             draggable: true,
-  //           },
-  //           handlers: {
-  //             onClick: () => setSelectedBoulderId(boulder.id),
-  //             onDragEnd: (e) => {
-  //               if (e.latLng) {
-  //                 const newCoords: GeoCoordinates = {
-  //                   lat: e.latLng.lat(),
-  //                   lng: e.latLng.lng(),
-  //                 };
-  //                 props.crud.boulder.update(i, j, 'location', newCoords);
-  //               }
-  //             },
-  //           },
-  //         });
-  //       }
-  //     }
-  //   }
-  //   return markers;
-  // };
 
   return (
     <>
@@ -90,7 +45,6 @@ export const BuilderMapMobile: React.FC<BuilderMapMobileProps> = (props: Builder
       <div className='h-full relative'>
         <MapControl
           initialZoom={13}
-          // markers={getMarkersFromBoulders()}
           onPhotoButtonClick={() => setGeoCameraOpen(true)}
           boundsToMarkers
           searchbarOptions={{
@@ -98,17 +52,17 @@ export const BuilderMapMobile: React.FC<BuilderMapMobileProps> = (props: Builder
             findPlaces: false,
           }}
         >
-          {boulders.map(boulder =>
+          {boulderQuarks.map(boulder =>
             <BoulderMarker
               boulder={boulder}
             />
           )}
         </MapControl>
 
-        {drawerOpen && selectedTrackVal &&
+        {drawerOpen && selectedTrackVal && selectedBoulderVal &&
           <Drawer
-            image={props.topo.sectors[0].boulders[0].images[0]}
-            trackId={selectedTrack}
+            image={read(read(selectedBoulderVal).images[0])}
+            track={selectedTrackQ}
             onValidate={() => setDrawerOpen(false)}
           />
         }
@@ -122,18 +76,12 @@ export const BuilderMapMobile: React.FC<BuilderMapMobileProps> = (props: Builder
       {selectedBoulderVal && (
         <BoulderSlideoverMobile
           open
-          // boulderId={selectedBoulderId}
           boulder={selectedBoulderVal}
-          track={selectedTrack}
+          selectedTrack={selectedTrackVal}
           topoCreatorId={read(props.topo).creatorId}
           forBuilder
           onPhotoButtonClick={() => setGeoCameraOpen(true)}
-          // onSelectTrack={(trackId) => setSelectedTrackId(trackId)}
           onDrawButtonClick={() => setDrawerOpen(true)}
-        // onClose={() => {
-        //   setSelectedTrackId(undefined);
-        //   setSelectedBoulderId(undefined)
-        // }}
         />
       )}
     </>

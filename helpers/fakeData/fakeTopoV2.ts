@@ -97,7 +97,7 @@ export const boulders: Boulder[] = [
         isHighball: true,
         descent: Difficulty.Dangerous,
         orderIndex: 0,
-        imageIds: [images[1].id],
+        images: [images[1]],
         tracks
     }
 ]

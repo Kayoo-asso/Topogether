@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { DrawerToolEnum, Image, Track, UUID } from 'types';
+import { DrawerToolEnum, Image, TrackQuark } from 'types';
 import { isMobile } from 'react-device-detect';
 import { Toolbar, TracksImage } from 'components';
 import { fakeTopo } from 'helpers/fakeData/fakeTopo';
@@ -7,8 +7,8 @@ import { fakeTopo } from 'helpers/fakeData/fakeTopo';
 
 interface DrawerProps {
     image: Image,
-    trackId: UUID,
-    otherTracks: Track[],
+    track: TrackQuark,
+    otherTracks: TrackQuark[],
     onClear: () => void,
     onRewind: () => void,
     onValidate: () => void,
