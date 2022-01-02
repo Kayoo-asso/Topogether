@@ -23,7 +23,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
 }: ToolbarProps) => {
     
     return (
-        <div className='bg-dark w-full h-[7vh] flex flex-row items-center justify-center'>
+        <div className='bg-dark w-full h-[7vh] flex flex-row items-center justify-center z-40'>
 
             <span className={'flex flex-row items-center justify-around ' + (isMobile ? 'w-2/5' : 'w-3/12')}>
                 <Icon 

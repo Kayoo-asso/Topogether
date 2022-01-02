@@ -4,7 +4,7 @@ import {
 } from 'components';
 import { markerSize } from 'helpers';
 import {
-  Boulder, GeoCoordinates, MarkerProps, Topo, Track,
+  Boulder, GeoCoordinates, MarkerProps, Topo, Track, UUID,
 } from 'types';
 
 interface BuilderMapMobileProps {
@@ -13,9 +13,10 @@ interface BuilderMapMobileProps {
 }
 
 export const BuilderMapMobile:React.FC<BuilderMapMobileProps> = (props: BuilderMapMobileProps) => {
-  const [selectedBoulder, setSelectedBoulder] = useState<Boulder>();
-  const [selectedTrack, setSelectedTrack] = useState<Track>();
-  const [drawerOpen, setDrawerOpen] = useState(true);
+  const [selectedBoulderId, setSelectedBoulderId] = useState<UUID>();
+  const [selectedTrackId, setSelectedTrackId] = useState<UUID>();
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [geoCameraOpen, setGeoCameraOpen] = useState(false);
 
   const getMarkersFromBoulders = () => {
     const markers: MarkerProps[] = [];
@@ -35,7 +36,7 @@ export const BuilderMapMobile:React.FC<BuilderMapMobileProps> = (props: BuilderM
               draggable: true,
             },
             handlers: {
-              onClick: () => setSelectedBoulder(boulder),
+              onClick: () => setSelectedBoulderId(boulder.id),
               onDragEnd: (e) => {
                 if (e.latLng) {
                   const newCoords: GeoCoordinates = {
@@ -72,9 +73,7 @@ export const BuilderMapMobile:React.FC<BuilderMapMobileProps> = (props: BuilderM
         <MapControl
           initialZoom={13}
           markers={getMarkersFromBoulders()}
-          onPhotoButtonClick={() => {
-            // TODO
-          }}
+          onPhotoButtonClick={() => setGeoCameraOpen(true)}
           boundsToMarkers
           searchbarOptions={{
             findTopos: false,
@@ -82,20 +81,34 @@ export const BuilderMapMobile:React.FC<BuilderMapMobileProps> = (props: BuilderM
           }}
         />
 
-        {drawerOpen &&
+        {drawerOpen && selectedTrackId &&
           <Drawer 
             image={props.topo.sectors[0].boulders[0].images[0]}
-            track={props.topo.sectors[0].boulders[0].tracks[0]}
+            trackId={selectedTrackId}
+            onValidate={() => setDrawerOpen(false)}
           />
+        }
+
+        {/* TODO */}
+        {geoCameraOpen &&
+          <></>
         }
       </div>
 
-      {selectedBoulder && (
+      {selectedBoulderId && (
         <BoulderSlideoverMobile
           open
-          boulder={selectedBoulder}
+          boulderId={selectedBoulderId}
+          trackId={selectedTrackId}
+          topoCreatorId={props.topo.creatorId}
           forBuilder
-          onClose={() => setSelectedBoulder(undefined)}
+          onPhotoButtonClick={() => setGeoCameraOpen(true)}
+          onSelectTrack={(trackId) => setSelectedTrackId(trackId)}
+          onDrawButtonClick={() => setDrawerOpen(true)}
+          onClose={() => {
+            setSelectedTrackId(undefined);
+            setSelectedBoulderId(undefined)
+          }}
         />
       )}
     </>

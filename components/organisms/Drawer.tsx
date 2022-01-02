@@ -1,18 +1,25 @@
 import React, { useState } from 'react';
-import { DrawerToolEnum, Image, Track } from 'types';
+import { DrawerToolEnum, Image, Track, UUID } from 'types';
 import { isMobile } from 'react-device-detect';
 import { Toolbar, TracksImage } from 'components';
+import { fakeTopo } from 'helpers/fakeData/fakeTopo';
 
 
 interface DrawerProps {
     image: Image,
-    track: Track,
+    trackId: UUID,
     otherTracks: Track[],
+    onClear: () => void,
+    onRewind: () => void,
+    onValidate: () => void,
 }
 
 export const Drawer: React.FC<DrawerProps> = (props: DrawerProps) => {
     const [selectedTool, setSelectedTool] = useState<DrawerToolEnum>('LINE_DRAWER');
     const [displayOtherTracks, setDisplayOtherTracks] = useState(false);
+
+    // TODO quarky
+    const track = fakeTopo.sectors[0].boulders[0].tracks[0];
 
     return (
         <div className={'absolute top-0 bg-black bg-opacity-90 h-full flex flex-col z-500 ' + (isMobile ? 'w-full' : 'w-[calc(100%-600px)]')}>
@@ -21,7 +28,7 @@ export const Drawer: React.FC<DrawerProps> = (props: DrawerProps) => {
                 {/* TODO: CHANGE SIZING */}
                <TracksImage 
                     image={props.image}
-                    tracks={[props.track]}
+                    tracks={[track]}
                     containerClassName='w-full'
                /> 
             </div>
@@ -29,13 +36,13 @@ export const Drawer: React.FC<DrawerProps> = (props: DrawerProps) => {
             <Toolbar
                 selectedTool={selectedTool}
                 displayOtherTracks={displayOtherTracks}
-                grade={props.track.grade}
+                grade={track.grade}
                 onToolSelect={(tool) => setSelectedTool(tool)}
                 onGradeSelect={(grade) => console.log(grade)}
                 onClear={() => {}}
                 onRewind={() => {}}
                 onOtherTracks={() => setDisplayOtherTracks(!displayOtherTracks)}
-                onValidate={() => {}}
+                onValidate={props.onValidate}
             />
 
         </div>

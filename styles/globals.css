@@ -9,13 +9,14 @@
   .ktext-section-title { @apply font-sans font-semibold text-xl }
   .ktext-subtitle { @apply font-sans font-bold text-sm uppercase }
   .ktext-base { @apply font-sans font-normal text-lg }
+  .ktext-base-little { @apply font-sans font-normal text-sm }
   .ktext-base-big { @apply font-sans font-normal text-xl }
   .ktext-base-superbig { @apply font-sans font-semibold text-4xl }
   .ktext-label { @apply font-sans font-medium text-sm uppercase }
   input::placeholder { @apply font-sans font-normal text-base }
   .ktext-label-superbig { @apply font-sans font-semibold text-3xl uppercase }
   .ktext-error { @apply font-sans font-normal text-xs italic }
-  .ktext-subtext { @apply font-sans font-normal text-xxs }
+  .ktext-subtext { @apply font-sans font-normal text-xs }
 }
 
 .hide-after-two-lines {

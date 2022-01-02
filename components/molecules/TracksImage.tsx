@@ -47,7 +47,7 @@ export const TracksImage: React.FC<TracksImageProps> = ({
   displayTracks = true,
   displayPhantomTracks = true,
   displayTracksNumber = true,
-  displayTracksDetails = true,
+  displayTracksDetails = false,
   editable = false,
   containerClassName = 'w-[300px] h-[300px]',
   ...props
