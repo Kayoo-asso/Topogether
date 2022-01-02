@@ -570,6 +570,7 @@ module.exports = {
       0: '0px',
       full: '100%',
       screen: '100vh',
+      max: 'max-content',
     },
     minWidth: {
       0: '0px',
