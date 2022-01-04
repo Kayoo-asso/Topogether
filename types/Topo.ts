@@ -6,18 +6,30 @@ import { LinearRing, LineCoords, Position } from './GeoJson';
 import { GeoCoordinates, RequireAtLeastOne, StringBetween } from './Utils';
 import { UUID } from './UUID';
 import { TrackRating, User } from './User';
-import { Image, ImageDimensions } from './Image';
-import { Quarkify } from 'helpers/quarky';
+import { Image } from './Image';
+import { Quark, QuarkArray, Quarkify } from 'helpers/quarky';
 
-export type Entities = Sector | Boulder | Track | Line | Parking | TopoAccess | Image | User | Waypoint | TrackRating;
-export type TopoQuark = Quarkify<Topo, Entities>;
-export type SectorQuark = Quarkify<Sector, Entities>;
-export type BoulderQuark = Quarkify<Boulder, Entities>;
-export type TrackQuark = Quarkify<Track, Entities>;
-export type LineQuark = Quarkify<Line, Entities>;
-export type ImageQuark = Quarkify<Image, Entities>;
+export type Topo = Omit<TopoData, 'sectors' | 'parkings' | 'access'> & {
+  sectors: QuarkArray<Sector>,
+  parkings: QuarkArray<Parking>,
+  access: QuarkArray<TopoAccess>
+}
 
-export interface Topo {
+export type Sector = Omit<SectorData, 'boulders' | 'waypoints'> & {
+  boulders: QuarkArray<Boulder>,
+  waypoints: QuarkArray<Waypoint>,
+}
+
+export type Boulder = Omit<BoulderData, 'tracks'> & {
+  tracks: QuarkArray<Track>,
+}
+
+export type Track = Omit<TrackData, 'ratings' | 'lines'> & {
+  ratings: QuarkArray<TrackRating>,
+  lines: QuarkArray<Line>
+}
+
+export interface TopoData {
   readonly id: UUID,
   name: StringBetween<1, 255>,
   // Creation = first validation
@@ -48,12 +60,12 @@ export interface Topo {
   ethics?: StringBetween<1, 5000>,
   danger?: StringBetween<1, 5000>
 
-  sectors: Sector[], // -> Quark<Array<Quark<Sector>>>
+  sectors: SectorData[], // -> Quark<Array<Quark<Sector>>>
   parkings: Parking[],
   access: TopoAccess[],
 }
 
-export type LightTopo = Omit<Topo, 'sectors' | 'parkings' | 'access'> & {
+export type LightTopo = Omit<TopoData, 'sectors' | 'parkings' | 'access'> & {
   firstParkingLocation: GeoCoordinates,
   nbSectors: number,
   nbTracks: number,
@@ -91,12 +103,12 @@ export interface Parking {
   image?: Image
 }
 
-export interface Sector {
+export interface SectorData {
   readonly id: UUID,
   name: StringBetween<1, 255>,
   description?: StringBetween<1, 5000>
 
-  boulders: Boulder[],
+  boulders: BoulderData[],
   waypoints: Waypoint[]
 }
 
@@ -108,7 +120,7 @@ export interface Waypoint {
   description?: StringBetween<1, 5000>,
 }
 
-export interface Boulder {
+export interface BoulderData {
   readonly id: UUID,
   location: GeoCoordinates,
   name: StringBetween<1, 255>,
@@ -117,13 +129,13 @@ export interface Boulder {
   mustSee?: boolean,
   descent?: Difficulty,
 
-  tracks: Track[],
+  tracks: TrackData[],
   // can be cross-referenced by lines within each track
   images: Image[]
 }
 
 // Order defined by the x-coordinate of the first point of the first line
-export interface Track {
+export interface TrackData {
   readonly id: UUID,
   orderIndex: number,
   name?: StringBetween<1, 255>,
@@ -148,11 +160,11 @@ export interface Line {
   readonly id: UUID,
   points: LineCoords,
   // a LinearRing delineates the contour of a polygon
-  forbidden?: LinearRing[] | null,
+  forbidden: LinearRing[] | null,
   // Starting points = max 2 for hand, max 2 for feet
   // Could not find a way to represent an array of length <= 2 in TypeScript types
-  handDepartures?: Position[] | null,
-  feetDepartures?: Position[] | null,
+  handDepartures: Position[] | null,
+  feetDepartures: Position[] | null,
 
   // the images are provided with the boulder
   imageId: UUID

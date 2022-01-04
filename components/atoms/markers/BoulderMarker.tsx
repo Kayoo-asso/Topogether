@@ -1,12 +1,12 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { markerSize } from "helpers";
-import { Quarkify, useQuark } from "helpers/quarky";
-import { Boulder, BoulderQuark, Entities, GeoCoordinates, MapMouseEvent, UUID } from "types";
+import { Quark, Quarkify, useQuark } from "helpers/quarky";
+import { Boulder, BoulderData, GeoCoordinates, MapMouseEvent, UUID } from "types";
 import { MapContext } from "..";
 
 interface BoulderMarkerProps {
-    boulder: BoulderQuark,
-    onClick?: (boulder: Quarkify<Boulder, Entities>) => void,
+    boulder: Quark<Boulder>,
+    onClick?: (boulder: Quark<Boulder>) => void,
 }
 
 const icon: google.maps.Icon = {

@@ -1,10 +1,10 @@
 import { UUID } from "./UUID";
 
 export interface Image {
-  id: UUID,
-  url: string
-  width: number,
-  height: number,
+  readonly id: UUID,
+  readonly url: string
+  readonly width: number,
+  readonly height: number,
 }
 
 export const imageTypes = ["image/jpg", "image/jpeg", "image/png"] as const;
@@ -19,7 +19,7 @@ export function isImageType(type: string): type is ImageType {
   return false;
 }
 
-export interface ImageDimensions {
-  width: number,
-  height: number
-}
+// export interface ImageDimensions {
+//   width: number,
+//   height: number
+// }

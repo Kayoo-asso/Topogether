@@ -9,7 +9,7 @@ interface GradeCircleProps {
   selected?: boolean,
   content?: string,
   className?: string,
-  onClick?: () => void,
+  onClick?: (grade: LightGrade) => void,
 }
 
 const notSelectedColorStyles = {
@@ -60,8 +60,8 @@ export const GradeCircle: React.FC<GradeCircleProps> = ({
         ${props.className} 
         ${props.onClick ? 'cursor-pointer' : ''} 
         `}
-      onClick={props.onClick}
-      onKeyUp={props.onClick}
+      onClick={() => props.onClick && props.onClick(props.grade) }
+      onKeyUp={() => props.onClick && props.onClick(props.grade) }
       role="button"
       tabIndex={0}
     >

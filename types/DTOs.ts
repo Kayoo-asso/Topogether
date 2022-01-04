@@ -1,15 +1,15 @@
-import { Boulder, Line, Parking, Sector, Topo, Track, Waypoint } from "./Topo";
+import { BoulderData, Line, Parking, SectorData, TopoData, TrackData, Waypoint } from "./Topo";
 import { UUID } from "./UUID";
 
 export type DTO<T, Refs extends keyof T, Ids extends string> = Omit<T, Refs> & {
     [K in Ids]: UUID
 };
 
-export type TopoDTO = Omit<Topo, 'sectors' | 'parkings' | 'access' | 'image'> & {
+export type TopoDTO = Omit<TopoData, 'sectors' | 'parkings' | 'access' | 'image'> & {
     imageId?: UUID
 };
 
-export type SectorDTO = Omit<Sector, 'boulders' | 'waypoints'> & {
+export type SectorDTO = Omit<SectorData, 'boulders' | 'waypoints'> & {
     boulderIds: UUID[],
     waypointIds: UUID[]
 }
@@ -18,12 +18,12 @@ export type LineDTO = Line & {
     trackId: UUID
 };
 
-export type TrackDTO = Omit<Track, 'lines' | 'creator' | 'ratings'> & {
+export type TrackDTO = Omit<TrackData, 'lines' | 'creator' | 'ratings'> & {
     boulderId: UUID,
     creatorId: UUID
 };
 
-export type BoulderDTO = Omit<Boulder, 'tracks' | 'images'> & {
+export type BoulderDTO = Omit<BoulderData, 'tracks' | 'images'> & {
     sectorId: UUID,
 };
 

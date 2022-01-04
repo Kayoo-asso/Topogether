@@ -1,20 +1,19 @@
-import { QuarkArray, useQuarkArray } from 'helpers/quarky';
+import { Quark, QuarkIter, useQuark } from 'helpers/quarky';
 import React from 'react';
-import { Track, TrackRating } from 'types';
+import { TrackData, TrackRating } from 'types';
 import { Icon } from '.';
 
 interface AverageNoteProps {
-  ratings: QuarkArray<TrackRating>,
-  // note: number,
+  ratings: QuarkIter<Quark<TrackRating>>,
   className?: string,
   wrapperClassName?: string
 }
 
 export const AverageNote: React.FC<AverageNoteProps> = (props: AverageNoteProps) => {
-  const ratings = useQuarkArray(props.ratings);
+  const ratings = useQuark(props.ratings.unwrap());
 
   let total = 0;
-  for (const [rating,] of ratings) {
+  for (const rating of ratings) {
     total += rating.rating;
   }
   const avgNote = total / ratings.length;

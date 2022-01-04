@@ -3,7 +3,7 @@ import type { NextPage } from 'next';
 import { TopoDesktop, TopoMobile } from 'components';
 import { useRouter } from 'next/router';
 import { isDesktop, isMobile } from 'react-device-detect';
-import { Topo } from 'types';
+import { TopoData } from 'types';
 import { fakeTopo } from 'helpers/fakeData/fakeTopo';
 
 const Topo: NextPage = () => {
@@ -11,7 +11,7 @@ const Topo: NextPage = () => {
   const { id } = router.query;
   // if (typeof id !== 'string') return null;
 
-  const [topo, setTopo] = useState<Topo>(fakeTopo);
+  const [topo, setTopo] = useState<TopoData>(fakeTopo);
 
   return (
     <>
@@ -31,4 +31,4 @@ const Topo: NextPage = () => {
   );
 };
 
-export default Topo;
+export default TopoData;

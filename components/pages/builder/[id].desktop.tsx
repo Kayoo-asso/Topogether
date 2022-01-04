@@ -1,17 +1,17 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { BoulderSlideagainstDesktop, Drawer, HeaderDesktop, LeftbarDesktop, MapControl, SlideagainstRightDesktop, SlideoverLeftDesktop } from 'components';
-import { Boulder, Track, GeoCoordinates, MapToolEnum, MarkerProps, Topo } from 'types';
+import { BoulderData, TrackData, GeoCoordinates, MapToolEnum, MarkerProps, TopoData } from 'types';
 import { markerSize } from 'helpers';
 
 interface BuilderMapDesktopProps {
-    topo: Topo,
+    topo: TopoData,
     crud: any,
 }
 
 export const BuilderMapDesktop:React.FC<BuilderMapDesktopProps> = (props: BuilderMapDesktopProps) => {
     const [currentTool, setCurrentTool] = useState<MapToolEnum>();
-    const [selectedBoulder, setSelectedBoulder] = useState<Boulder | undefined>(props.topo.sectors[0].boulders[0]);
-    const [selectedTrack, setSelectedTrack] = useState<Track | undefined>(props.topo.sectors[0].boulders[0].tracks[0]);
+    const [selectedBoulder, setSelectedBoulder] = useState<BoulderData | undefined>(props.topo.sectors[0].boulders[0]);
+    const [selectedTrack, setSelectedTrack] = useState<TrackData | undefined>(props.topo.sectors[0].boulders[0].tracks[0]);
 
     const [displayInfoForm, setDisplayInfoForm] = useState<boolean>(false);
     const [displayApproachForm, setDisplayApproachForm] = useState<boolean>(false);

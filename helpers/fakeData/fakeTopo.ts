@@ -1,7 +1,7 @@
-import { Sector, StringBetween, Topo, TopoStatus } from "types";
+import { SectorData, StringBetween, TopoData, TopoStatus } from "types";
 import { v4 as uuid } from "uuid";
 
-const sectors: Sector[] = [
+const sectors: SectorData[] = [
     {
         id: uuid(),
         name: "ABO" as StringBetween<1, 255>,
@@ -8696,7 +8696,7 @@ const sectors: Sector[] = [
     }
 ]
 
-const miniSectors: Sector[] = [
+const miniSectors: SectorData[] = [
     {
         "id": 2,
         name: "ABO" as StringBetween<1, 255>,
@@ -9150,7 +9150,7 @@ const miniSectors: Sector[] = [
     },
 ]
 
-export const fakeTopo: Topo = {
+export const fakeTopo: TopoData = {
     altitude: 775,
     approachDescription: "Depuis le parking, prendre le sentier qui monte dans la continuité de la route. Après 12-15min de marche, vous arriverez à une esplanade d'herbe surmontant une petite falaise (où il est possible de faire de l'initiation). Un panneau indique le site d'escalade à l'entrée de l'esplanade.\nDepuis l'esplanade, prendre le sentier qui part derrière le panneau pour monter vers les premiers blocs.",
     approachTime: 15,

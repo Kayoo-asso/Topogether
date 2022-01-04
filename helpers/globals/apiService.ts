@@ -1,5 +1,5 @@
 import { Quarkify, read } from "helpers/quarky";
-import { Boulder, Entities, Image, Line, Sector, Topo, TopoDTO, Track, User } from "types";
+import { BoulderData, Entities, Image, Line, SectorData, TopoData, TopoDTO, TrackData, User } from "types";
 
 export interface IApiService {
     uploadImage(file: File): Image;
@@ -22,18 +22,18 @@ class ApiService implements IApiService {
         throw new Error("Method not implemented.");
     }
 
-    onTopoUpdate(topoQuark: Quarkify<Topo, Entities>) {
+    onTopoUpdate(topoQuark: Quarkify<TopoData, Entities>) {
     }
     
-    onSectorUpdate(sector: Quarkify<Sector, Entities>) {
+    onSectorUpdate(sector: Quarkify<SectorData, Entities>) {
 
     }
 
-    onBoulderUpdate(boulder: Quarkify<Boulder, Entities>) {
+    onBoulderUpdate(boulder: Quarkify<BoulderData, Entities>) {
 
     }
 
-    onTrackUpdate(track: Quarkify<Track, Entities>) {
+    onTrackUpdate(track: Quarkify<TrackData, Entities>) {
 
     }
 

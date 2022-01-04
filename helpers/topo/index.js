@@ -1,2 +1,2 @@
-export * from './buildGradeHistogram';
-export * from './buildBoulderGradeHistogram';
+export { buildGradeHistogram } from './buildGradeHistogram';
+export { buildBoulderGradeHistogram } from './buildBoulderGradeHistogram';

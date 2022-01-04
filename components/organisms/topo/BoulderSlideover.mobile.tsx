@@ -2,18 +2,18 @@ import React, { useState } from 'react';
 import {
   GradeScale, Icon, LikeButton, RoundButton, SlideoverMobile, TracksImage,
 } from 'components';
-import { Boulder, BoulderQuark, Difficulty, Entities, gradeToLightGrade, Track, TrackQuark, UUID } from 'types';
+import { Boulder, BoulderData, BoulderQuark, Difficulty, Entities, gradeToLightGrade, Track, TrackData, TrackQuark, UUID } from 'types';
 import { topogetherUrl } from 'helpers/globals';
 import { buildBoulderGradeHistogram } from 'helpers';
 import { TracksList } from '.';
 import { default as NextImage } from 'next/image';
-import { derive, quark, Quark, quarkArray, Quarkify, read, useCreateDerivation, useInlineDerivation, useQuark, useQuarkArray, useQuarkValue } from 'helpers/quarky';
-import { topoCreatorId } from 'helpers/fakeData/fakeTopoV2';
+import { derive, quark, Quark, QuarkIterator, quarkArray, Quarkify, read, useCreateDerivation, useInlineDerivation, useQuark, useQuarks, useQuarkValue } from 'helpers/quarky';
+import { topo, topoCreatorId, tracks } from 'helpers/fakeData/fakeTopoV2';
 
 interface BoulderSlideoverMobileProps {
   open?: boolean,
-  boulder: BoulderQuark,
-  selectedTrack?: TrackQuark,
+  boulder: Quark<Boulder>,
+  selectedTrack: Quark<Track | undefined>,
   topoCreatorId?: UUID,
   forBuilder?: boolean,
   onPhotoButtonClick: () => void,
@@ -44,19 +44,14 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = ({
   const [trackTab, setTrackTab] = useState(true); // BUILDER
 
   const [boulder, setBoulder] = useQuark(props.boulder);
+  if (!boulder) return null;
   const [selectedTrack, setSelectedTrack] = useQuark(props.selectedTrack);
-  
-  // TODO: rewrite
-  const displayedTracks = useInlineDerivation(() => {
-    const displayed: TrackQuark[] = []
-    for (const trackQuark of boulder.tracks) {
-      if ((read(trackQuark).creatorId === topoCreatorId) === officialTrackTab) {
-        displayed.push(trackQuark)
-      }
-    }
-    return displayed;
-  }, [topoCreatorId, boulder.tracks, officialTrackTab]);
 
+
+  const displayedTracks = boulder.tracks
+    .unwrap()
+    .filter(track => ((track.creatorId) === topoCreatorId) === officialTrackTab);
+  
   return (
     <SlideoverMobile
       open
@@ -71,7 +66,7 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = ({
       {full && (
         <div className="w-full bg-dark rounded-t-lg flex items-center justify-center overflow-hidden">
           <TracksImage
-            image={read(boulder.images[0])}
+            image={boulder.images[0]}
             containerClassName='w-full'
             tracks={boulder.tracks}
             currentTrackId={props.trackId}
@@ -91,7 +86,7 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = ({
             {!full && (
               <div className="flex items-center mt-2">
                 <GradeScale
-                  grades={buildBoulderGradeHistogram(boulder)}
+                  histogram={buildBoulderGradeHistogram(boulder)}
                   circleSize="little"
                 />
               </div>
@@ -118,7 +113,7 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = ({
             {!full && (
               <div className="w-full relative h-[60px]">
                 <NextImage
-                  src={boulder.images[0] ? topogetherUrl + read(boulder.images[0]).url : '/assets/img/Kayoo_defaut_image.png'}
+                  src={boulder.images[0] ? topogetherUrl + boulder.images[0].url : '/assets/img/Kayoo_defaut_image.png'}
                   className="rounded-sm"
                   alt="Boulder"
                   priority
@@ -133,18 +128,18 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = ({
 
 
       {/* TRACK INFOS */}
-      {selectedTrack && (
+      {read(props.track) && (
         <div className={`grid grid-cols-8 p-5 items-center ${full ? '' : ' mt-3'}`}>
           <div className='col-span-1 pr-3'>
-            {selectedTrack.grade &&
-              <div className={`ktext-subtitle float-right ${gradeColors[gradeToLightGrade(selectedTrack.grade)]}`}>
-                {selectedTrack.grade}
+            {track.grade &&
+              <div className={`ktext-subtitle float-right ${gradeColors[gradeToLightGrade(track.grade)]}`}>
+                {track.grade}
               </div>
             }
           </div>
 
           <div className='col-span-6'>
-            <div className="ktext-section-title">{selectedTrack.name}</div>
+            <div className="ktext-section-title">{track.name}</div>
           </div>
 
           <div className='col-span-1'>
@@ -163,8 +158,8 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = ({
           </div>
 
           <div className={'col-start-2 col-span-4' + (forBuilder ? ' -mt-[16px]' : '')}>
-            {selectedTrack.isTraverse && full && <div className="ktext-base-little">Traversée</div>}
-            {selectedTrack.isSittingStart && full && <div className="ktext-base-little">Départ assis</div>}
+            {track.isTraverse && full && <div className="ktext-base-little">Traversée</div>}
+            {track.isSittingStart && full && <div className="ktext-base-little">Départ assis</div>}
           </div>
 
           {!forBuilder &&
@@ -177,11 +172,11 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = ({
 
 
       {/* TRACK DETAILS */}
-      {selectedTrack && forBuilder && full && (
+      {read(props.track) && forBuilder && full && (
         <>
           <div className='grid grid-cols-9 p-5 items-center'>
             <div className='col-span-full mb-6'>
-              {selectedTrack.description}
+              {track.description}
             </div>
 
             <div className='col-span-3'>
@@ -204,7 +199,7 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = ({
 
 
       {/* TABS */}
-      {!selectedTrack && (
+      {!read(props.track) && (
         <div className="grid grid-cols-8 px-5 ktext-label font-bold my-2">
           {!forBuilder && (
             <>

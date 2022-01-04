@@ -1,32 +1,41 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   BoulderSlideoverMobile, Drawer, HeaderMobile, MapControl, BoulderMarker,
 } from 'components';
 import {
-  BoulderQuark, Entities, Topo, TrackQuark
+  Boulder,
+  SectorData, Topo, TopoData, Track
 } from 'types';
-import { Quarkify, useQuark, useQuarkValue, useCreateQuark, read, useInlineDerivation } from 'helpers/quarky';
+import { Quarkify, useQuark, useNewQuark, read, Quark, startQuarkyBatch, useQuarkyBatch, reactKey } from 'helpers/quarky';
 
 interface BuilderMapMobileProps {
-  topo: Quarkify<Topo, Entities>,
+  topo: Quark<Topo>,
 }
 
 export const BuilderMapMobile: React.FC<BuilderMapMobileProps> = (props: BuilderMapMobileProps) => {
-  const selectedBoulderQ = useCreateQuark<BoulderQuark>();
-  const selectedBoulderVal = useQuarkValue(selectedBoulderQ);
-  const selectedTrackQ = useCreateQuark<TrackQuark>();
-  const selectedTrackVal = useQuarkValue(selectedTrackQ);
-
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [geoCameraOpen, setGeoCameraOpen] = useState(false);
 
-  const topo = useQuarkValue(props.topo);
-  const boulderQuarks = useInlineDerivation(() =>
-    topo.sectors
-      .map(read)
-      .flatMap(x => x.boulders)
-  );
+  startQuarkyBatch();
 
+  const selectedBoulderQ = useNewQuark<Quark<Boulder>>();
+  // NOTE: testing out how we could select a boulder by a clicking on a map marker
+  // We pass setSelectedBoulder directly to BoulderMarker
+  // This is good, since the setter is always the same function, thus
+  const [selectedBoulderVal, setSelectedBoulder] = useQuark(selectedBoulderQ);
+  const selectedTrackQ = useNewQuark<Quark<Track>>();
+  const [selectedTrackVal,] = useQuark(selectedTrackQ);
+
+  const [topo,] = useQuark(props.topo);
+  const boulderIter = useMemo(() => topo.sectors
+    .unwrap() // read the quark for each sector
+    .map(x => x.boulders)
+    .flatten()
+  , [topo.sectors]);
+  const boulders = useQuark(boulderIter);
+
+  useQuarkyBatch();
+  
   return (
     <>
       <HeaderMobile
@@ -52,16 +61,18 @@ export const BuilderMapMobile: React.FC<BuilderMapMobileProps> = (props: Builder
             findPlaces: false,
           }}
         >
-          {boulderQuarks.map(boulder =>
+          {boulders.map(b =>
             <BoulderMarker
-              boulder={boulder}
+              key={reactKey(b)}
+              boulder={b}
+              onClick={setSelectedBoulder}
             />
           )}
         </MapControl>
 
         {drawerOpen && selectedTrackVal && selectedBoulderVal &&
           <Drawer
-            image={read(read(selectedBoulderVal).images[0])}
+            image={selectedBoulderVal.images[0]}
             track={selectedTrackQ}
             onValidate={() => setDrawerOpen(false)}
           />

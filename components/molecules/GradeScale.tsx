@@ -1,6 +1,7 @@
 import React from 'react';
 import { GradeCircle } from 'components';
 import { GradeHistogram, LightGrade, lightGrades } from 'types';
+import { Derivation, useQuark } from 'helpers/quarky';
 
 type GradeHistogramSelection = {
   [K in LightGrade]: boolean
@@ -18,7 +19,7 @@ const defaultHistogramSelection: GradeHistogramSelection = {
 }
 
 interface GradeScaleProps {
-  grades: GradeHistogram,
+  histogram: Derivation<GradeHistogram>,
   selection?: GradeHistogramSelection,
   circleSize?: 'little' | 'normal',
   className?: string,
@@ -30,6 +31,8 @@ export const GradeScale: React.FC<GradeScaleProps> = ({
   circleSize = 'normal',
   ...props
 }: GradeScaleProps) => {
+  // TODO: use the histogram
+  const histogram = useQuark(props.histogram);
 
   return (
     <div className={`flex ${props.className}`}>
@@ -40,7 +43,7 @@ export const GradeScale: React.FC<GradeScaleProps> = ({
           size={circleSize}
           selected={selection[grade]}
           className="mr-1"
-          onClick={() => props.onCircleClick && props.onCircleClick(grade)}
+          onClick={props.onCircleClick}
         />
       )}
       

@@ -14,20 +14,20 @@ const BuilderMapPage: NextPage = () => {
   const { id } = router.query;
   if (typeof id !== 'string') return null;
 
-  const topoQuark = quarkTopo;
+  const topo = quarkTopo;
 
   return (
     <>
       {isMobile
                 && (
                 <BuilderMapMobile
-                  topo={topoQuark}
+                  topo={topo}
                 />
                 )}
       {isDesktop
                 && (
                 <BuilderMapDesktop
-                  topo={topoQuark}
+                  topo={topo}
                 />
                 )}
     </>

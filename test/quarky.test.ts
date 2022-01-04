@@ -492,3 +492,5 @@ test("Child effect dependencies are not registered in their parent or children",
 test.todo("Persisting effects");
 
 test.todo("Nested transactions")
+
+test.todo("Zipping and concatenating iterators calls the init function of both arguments");

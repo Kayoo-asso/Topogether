@@ -84,7 +84,7 @@ export const TopoModal: React.FC<TopoModalProps> = ({
             </div>
             <div className="col-span-6 ml-2">
               <GradeScale
-                grades={props.topo.grades}
+                histogram={props.topo.grades}
                 circleSize="little"
               />
             </div>

@@ -1,5 +1,5 @@
-import { Quarkify } from 'helpers/quarky';
-import { Boulder, Line, Name, Image, Track, Description, Difficulty, ClimbTechniques, Sector, Topo, Amenities, TopoStatus, TopoType, RockTypes, TopoAccess, Entities } from 'types';
+import { Quark, Quarkify } from 'helpers/quarky';
+import { BoulderData, Line, Name, Image, TrackData, Description, Difficulty, ClimbTechniques, SectorData, TopoData, Amenities, TopoStatus, TopoType, RockTypes, TopoAccess, Topo } from 'types';
 import { v4 as uuid } from 'uuid';
 import { quarkifyTopo } from './quarkifyTopo';
 
@@ -52,7 +52,7 @@ export const lines: Line[] = [
     }
 ]
 
-export const tracks: Track[] = [
+export const tracks: TrackData[] = [
     // Track 0, boulder 0
     {
         id: uuid(),
@@ -86,7 +86,7 @@ export const tracks: Track[] = [
     },
 ]
 
-export const boulders: Boulder[] = [
+export const boulders: BoulderData[] = [
     {
         id: uuid(),
         name: "PearlHarbor" as Name,
@@ -102,7 +102,7 @@ export const boulders: Boulder[] = [
     }
 ]
 
-export const sectors: Sector[] = [
+export const sectors: SectorData[] = [
     {
         id: uuid(),
         name: "ABO" as Name,
@@ -122,7 +122,7 @@ export const access: TopoAccess = {
     ]
 }
 
-export const topo: Topo = {
+export const topo: TopoData = {
     id: uuid(),
     name: "Yzéron" as Name,
     description: "Le site d'Yzéron est situé sur le massif de Py froid à environ 800m d'altitude. Il est le plus grand site de bloc de la région Lyonnaise avec une grande diversité de profil (dévers, dalle, réta...). L'esplanade sépare la plus grande partie du site en amont, et une falaise idéale pour l'initiation, située en contrebas. La forêt protège une bonne partie du site contre les aléas météorologiques ce qui, combiné à l'altitude, permet la pratique de la grimpe toute l'année." as Description,
@@ -149,4 +149,4 @@ export const topo: Topo = {
     access: [access],
 }
 
-export const quarkTopo: Quarkify<Topo, Entities> = quarkifyTopo(topo);
+export const quarkTopo: Quark<Topo> = quarkifyTopo(topo);

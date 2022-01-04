@@ -1,12 +1,13 @@
 import { Icon, SlideagainstRightDesktop } from 'components';
+import { Quark, useQuark } from 'helpers/quarky';
 import React from 'react';
-import { Boulder, Track } from 'types';
+import { Boulder, BoulderData, Track, TrackData } from 'types';
 import { TracksList } from '.';
 
 interface BoulderSlideagainstDesktopProps {
-    boulder: Boulder,
+    boulder: Quark<Boulder>,
     open?: boolean,
-    onSelectTrack?: (track: Track) => void,
+    onSelectTrack?: (track: Quark<Track>) => void,
     onClose: () => void,
 }
 
@@ -14,6 +15,7 @@ export const BoulderSlideagainstDesktop: React.FC<BoulderSlideagainstDesktopProp
     open = true,
     ...props
 }: BoulderSlideagainstDesktopProps) => {
+    const [boulder,] = useQuark(props.boulder);
     return (
         <SlideagainstRightDesktop 
             open={open}
@@ -25,17 +27,17 @@ export const BoulderSlideagainstDesktop: React.FC<BoulderSlideagainstDesktopProp
                         <Icon 
                             name='rock'
                         />
-                        <span className='ktext-big-title ml-3'>{props.boulder.name}</span>
+                        <span className='ktext-big-title ml-3'>{boulder.name}</span>
                     </div>
-                    <div className='ktext-label text-grey-medium'>{props.boulder.location.lat + ',' + props.boulder.location.lng}</div>
-                    {props.boulder.isHighball && <div className='ktext-label text-grey-medium'>High Ball</div>}
-                    {props.boulder.mustSee && <div className='ktext-label text-grey-medium mb-15'>Incontournable !</div>}
+                    <div className='ktext-label text-grey-medium'>{boulder.location.lat + ',' + boulder.location.lng}</div>
+                    {boulder.isHighball && <div className='ktext-label text-grey-medium'>High Ball</div>}
+                    {boulder.mustSee && <div className='ktext-label text-grey-medium mb-15'>Incontournable !</div>}
 
                     <div>{/* TODO Boulder Preview*/}</div>
                 </div>
 
                 <TracksList 
-                    tracks={props.boulder.tracks}
+                    tracks={boulder.tracks}
                     onTrackClick={props.onSelectTrack}
                 />
             </>

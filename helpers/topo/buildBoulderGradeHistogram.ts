@@ -1,7 +1,19 @@
-import { Boulder, GradeHistogram, gradeToLightGrade } from 'types';
+import { Derivation } from 'helpers/quarky';
+import { Boulder, BoulderData, Grade, GradeHistogram, gradeToLightGrade, Track } from 'types';
 
-export const buildBoulderGradeHistogram = (boulder: Boulder): GradeHistogram => {
-  const histogram: GradeHistogram = {
+export const buildBoulderGradeHistogram = (boulder: Boulder): Derivation<GradeHistogram> => {
+  return boulder.tracks
+    .unwrap()
+    .reduce(addTrackToHistogram, defaultGradeHistogram());
+};
+
+export const addTrackToHistogram = (histogram: GradeHistogram, track: Track) => {
+  histogram[gradeToLightGrade(track.grade)] += 1;
+  histogram.Total += 1;
+  return histogram;
+}
+
+export const defaultGradeHistogram  = (): GradeHistogram => ({
     3: 0,
     4: 0,
     5: 0,
@@ -11,16 +23,16 @@ export const buildBoulderGradeHistogram = (boulder: Boulder): GradeHistogram => 
     9: 0,
     None: 0,
     Total: 0,
-  };
-  for (const track of boulder.tracks) {
-    if (track.grade) {
-      const lightGrade = gradeToLightGrade(track.grade);
-      histogram[lightGrade] += 1;
-      histogram.Total += 1;
-    } else {
-      histogram.None += 1;
-      histogram.Total += 1;
-    }
-  }
-  return histogram;
-};
+})
+
+  // for (const track of boulder.tracks) {
+  //   if (track.grade) {
+  //     const lightGrade = gradeToLightGrade(track.grade);
+  //     histogram[lightGrade] += 1;
+  //     histogram.Total += 1;
+  //   } else {
+  //     histogram.None += 1;
+  //     histogram.Total += 1;
+  //   }
+  // }
+  // return histogram;

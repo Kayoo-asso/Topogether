@@ -1,11 +1,11 @@
 import React from 'react';
 import { AverageNote, GradeCircle } from 'components';
-import { Entities, gradeToLightGrade, Track, TrackQuark, UUID } from 'types';
-import { Quark, Quarkify, useQuarkArray } from 'helpers/quarky';
+import { gradeToLightGrade, Track, TrackData, UUID } from 'types';
+import { Quark, QuarkIter, Quarkify, useQuark } from 'helpers/quarky';
 
 interface TracksListProps {
-  tracks: TrackQuark[],
-  onTrackClick?: (trackId: UUID) => void,
+  tracks: QuarkIter<Quark<Track>>,
+  onTrackClick?: (track: Quark<Track>) => void,
   onBuilderAddClick?: () => void,
 }
 
@@ -20,20 +20,22 @@ const gradeColors = {
   None: 'border-grey-light bg-grey-light text-white',
 }
 
+// TODO: separate into a TracksListItem component?
 export const TracksList: React.FC<TracksListProps> = (props: TracksListProps) => {
-  const tracks = useQuarkArray(props.tracks);
+  const tracks = useQuark(props.tracks.unwrap());
 
   return (
     <div className="w-full border-t border-grey-light">
 
       {tracks.map(track => {
+
         const grade = gradeToLightGrade(track.grade);
         return (
           <div
             key={track.id}
             className="px-5 py-5 grid grid-cols-10 items-center border-b border-grey-light cursor-pointer hover:bg-grey-superlight"
             onClick={() => {
-              props.onTrackClick && props.onTrackClick(track.id);
+              props.onTrackClick && props.onTrackClick(track);
             }}
           >
             <GradeCircle

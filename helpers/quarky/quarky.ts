@@ -45,7 +45,7 @@ interface DerivationInternal<T> {
 // max signed 31-bit integer (optimized to SMI by JS engines)
 const ONSTACK = 1073741823;
 
-const enum NodeType {
+export const enum NodeType {
     Quark,
     Derivation,
     Effect
@@ -81,7 +81,7 @@ interface Scope {
     accessed: DataNode[],
     effects: EffectInternal[] | null,
     cleanups: (() => void)[] | null,
-    parent: Scope | null,
+    parent: Scope | undefined,
 }
 
 type DataNode = QuarkInternal<any> | DerivationInternal<any>;
@@ -93,17 +93,6 @@ export interface Derivation<T> { readonly type: NodeType.Derivation, readonly va
 export interface Effect { readonly type: NodeType.Effect };
 
 export type DataQuark<T> = Quark<T> | Derivation<T>;
-export type QuarkArray<T> = Quark<Quark<T>[]>;
-
-// TypeScript dark arts
-export type Quarkify<T, Entities> = Quark<{
-    [K in keyof T]:
-    T[K] extends Entities[]
-    ? Quarkify<T[K][number], Entities>[]
-    : T[K] extends Entities
-    ? Quarkify<T[K], Entities>
-    : T[K]
-}>;
 
 export type StateUpdate<T> = T | ((prev: T) => T);
 export type CleanupHelper = (cleanup: () => void) => void;
@@ -137,7 +126,7 @@ export interface EffectOptions {
 }
 
 // === GLOBAL CONTEXT ===
-let CurrentScope: Scope | null = null;
+let CurrentScope: Scope | undefined = undefined;
 
 let PendingQuarks: QuarkInternal<any>[] = [];
 let PendingUpdates: StateUpdate<any>[] = [];
@@ -189,38 +178,8 @@ export function quark<T>(value: T, options?: QuarkOptions<T>): Quark<T> {
     return q;
 }
 
-const quarkArrayEqual = <T>(a: Quark<T>[], b: Quark<T>[]): boolean => {
-    if (a.length !== b.length) return false;
-    for (let i = 0; i < a.length; i++) {
-        // quarks are referentially stable
-        if (a[i] !== b[i]) return false;
-    }
-    return true;
-}
-
-// Overloads
-export function quarkArray<T, U>(array: T[], options: QuarkifiedArrayOptions<T, U>): Quark<Quark<U>[]>;
-export function quarkArray<T>(array: T[], options?: QuarkArrayOptions<T>): Quark<Quark<T>[]>
-
-export function quarkArray<T, U>(array: T[], options?: QuarkArrayOptions<T> | QuarkifiedArrayOptions<T, U>): Quark<Quark<T | U>[]> {
-    const quarks: Quark<T | U>[] = new Array(array.length);
-    const quarkifiedOptions = options as QuarkifiedArrayOptions<T, U>;
-    const quarkArrayOptions = options as QuarkArrayOptions<T>;
-    
-    const quarkifier = quarkifiedOptions?.quarkifier
-        ? quarkifiedOptions.quarkifier
-        : (item: T, i: number) =>
-            quark(item, {
-                equal: quarkArrayOptions?.equal,
-                name: quarkArrayOptions?.names ? quarkArrayOptions.names[i] : undefined
-            });
-
-    for (let i = 0; i < array.length; i++) {
-        quarks[i] = quarkifier(array[i], i);
-    }
-    return quark(quarks, { equal: quarkArrayEqual, name: options?.arrayName });
-}
-
+// TODO: allow derivations that receive the previous value as argument,
+// but require an initial value to be provided in the options
 export function derive<T>(computation: () => T, options?: QuarkOptions<T>): Derivation<T> {
     // the value will be computed with updateDerivation
     const d: DerivationInternal<T> =  {
@@ -242,9 +201,7 @@ export function derive<T>(computation: () => T, options?: QuarkOptions<T>): Deri
 
 export function effect(computation: (onCleanup: CleanupHelper) => void, options?: EffectOptions): Effect {
     if (CurrentScope && !CurrentScope.effects) {
-        // clean up the scope before throwing
-        CurrentScope = CurrentScope.parent;
-        throw new Error("Quarky detected an attempt to create an effect within a derivation! This is not allowed: derivation should be pure functions.");
+        handleError("Quarky detected an attempt to create an effect within a derivation! This is not allowed: derivation should be pure functions.");
     }
     const effect: EffectInternal = {
         type: NodeType.Effect,
@@ -309,12 +266,13 @@ function read__internal<T>(node: QuarkInternal<T> | DerivationInternal<T>, regis
     // TODO: should we activate the derivation here by updating + refreshing dependencies, if a scope exists?
     // (if the read is tracking)
     // Two cases for a scope : within a derivation or within an effect, both of which create an observer
+    // TODO: should we add back a status tag on the derivation for fast checking?
+    // -> probably faster than going to node.o.length
     if (node.type === NodeType.Derivation && node.o.length === 0) {
         // necessary to detect cycles among potentially deactivated nodes
         if (node.dc === ONSTACK) {
             // clean up the scope to recover the state
-            CurrentScope = CurrentScope!.parent;
-            throwError("Quarky detected a cycle!", node.name);
+            handleError("Quarky detected a cycle!", node.name);
         }
         const saveDirtyCount = node.dc;
         node.dc = ONSTACK;
@@ -543,7 +501,7 @@ function detachDependencies(node: Computation, start: number) {
 // depth-first search, to detect cycles
 function flagDirty(node: Computation) {
     if (node.dc === ONSTACK) {
-        throwError("Quarky detected a cycle!", node.name);
+        handleError("Quarky detected a cycle!", node.name);
     }
     node.dc += 1;
     // console.log(`Flagging ${node.name} as dirty. dirtyCount = ${node.dirtyCount}`);
@@ -562,7 +520,7 @@ function signalReady(node: Computation, shouldRecompute: boolean) {
     // As far as I understand it, if a cycle is created during an update, this case can be triggered (see tests)
     // It may be possible this error is hit without cycles as well
     if (node.dc <= 0) {
-        throwError("Something went wrong during Quarky's update propagation. This is likely due to a cycle.", node.name)
+        handleError("Something went wrong during Quarky's update propagation. This is likely due to a cycle.", node.name)
     }
     node.u ||= shouldRecompute;
     // console.log(`Signaling ready to ${node.name}. dirtyCount (before decrement): ${node.dirtyCount}`);
@@ -624,7 +582,12 @@ function onCleanup(cleanup: () => void) {
     }
 }
 
-function throwError(errorMsg: string, name?: string) {
+function handleError(errorMsg: string, name?: string) {
+    // Clean up the scope before throwing
+    // TODO: This probably fails if an error happens in a nested effect / derivation
+    // However, effects or derivations may also catch errors
+    // Is there a way to handle this, without adding try / catch everywhere?
+    CurrentScope = CurrentScope?.parent;
     let msg = errorMsg;
     if (name) msg += ` The problem was hit at quark \"${name}\".`;
     throw new Error(msg);

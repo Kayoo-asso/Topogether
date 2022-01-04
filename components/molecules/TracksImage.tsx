@@ -1,9 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import NextImage from 'next/image';
 import {
-  Image as ImageType, Track,
-  PointEnum, AreaEnum, DrawerToolEnum, Position, Line, ImageDimensions, UUID, gradeToLightGrade, LinearRing,
+  Image as ImageType, TrackData,
+  PointEnum, AreaEnum, DrawerToolEnum, Position, Line, UUID, gradeToLightGrade, LinearRing,
   LightGrade,
+  Track,
 } from 'types';
 import { SVGArea } from 'components';
 import { staticUrl, topogetherUrl } from 'helpers/globals';
@@ -12,10 +13,11 @@ import {
   getMousePosInside,
   getPathFromPoints,
 } from '../../helpers';
+import { Quark, QuarkArray, QuarkIter, useQuark, read } from 'helpers/quarky';
 
 interface TracksImageProps {
   image: ImageType,
-  tracks: Track[],
+  tracks: QuarkIter<Quark<Track>>,
   imageClassName?: string,
   tracksClassName?: string,
   containerClassName?: string,
@@ -30,7 +32,7 @@ interface TracksImageProps {
   onPointClick?: (pointType: PointEnum, index: number) => void,
   onPolylineClick?: (line: Line) => void,
   onAreaChange?: (areaType: AreaEnum, index: number, area: LinearRing) => void,
-  onImageLoad?: (dims: ImageDimensions) => void,
+  onImageLoad?: (width: number, height: number) => void,
 }
 
 // NOTES:
@@ -52,19 +54,39 @@ export const TracksImage: React.FC<TracksImageProps> = ({
   containerClassName = 'w-[300px] h-[300px]',
   ...props
 }: TracksImageProps) => {
-  const {
- observe, unobserve, width: containerWidth, height: containerHeight, entry,
-} = useDimensions({
-    onResize: ({
- observe, unobserve, width, height, entry,
-}) => {
+
+  const linesIter = useMemo(() => props.tracks
+    .unwrap()
+    .map((t, i) => ({
+      line: read(t.lines
+        .unwrap()
+        .find(l => l.imageId === props.image.id)
+      ),
+      orderIndex: t.orderIndex,
+      gradeColor: t.grade ? gradeToLightGrade(t.grade) : "grey",
+      isStart: i === 0,
+      lineTrackId: t.id,
+    })), [props.tracks, props.image.id]);
+
+  const lines = useQuark(linesIter);
+
+  const currentTrack = useQuark(
+    useMemo(() => props.tracks
+      .unwrap()
+      .find(t => t.id === props.currentTrackId)
+      , [props.tracks, props.currentTrackId])
+  );
+
+
+  const { observe, unobserve, width: containerWidth, height: containerHeight, entry } = useDimensions({
+    onResize: ({ observe, unobserve, width, height, entry }) => {
       // Triggered whenever the size of the target is changed...
       unobserve(); // To stop observing the current target element
       observe(); // To re-start observing the current target element
     },
   });
 
-  let imgWidth; 
+  let imgWidth;
   let imgHeight;
   // Only one of those will be set
   let divWidth;
@@ -99,17 +121,18 @@ export const TracksImage: React.FC<TracksImageProps> = ({
     ? 'scale-125'
     : '';
 
-  const linesOnImage = getLines(props.tracks, props.image.id);
+  // const linesOnImage = getLines(tracks, props.image.id);
 
-  for (let lineIdx = 0; lineIdx < linesOnImage.length; lineIdx++) {
-    const line = linesOnImage[lineIdx];
+  for (let lineIdx = 0; lineIdx < lines.length; lineIdx++) {
+    const { line, orderIndex, isStart, gradeColor, lineTrackId } = lines[lineIdx];
+    if (!line) continue;
 
     if (line.points.length == 0) {
       continue;
     }
 
     const isHighlighted = props.currentTrackId === undefined
-      || line.trackId === props.currentTrackId;
+      || lineTrackId === props.currentTrackId;
 
     const points: Position[] = line.points.map((p) => [p[0] * rx, p[1] * ry]);
     const path = getPathFromPoints(points, 'CURVE');
@@ -168,7 +191,7 @@ export const TracksImage: React.FC<TracksImageProps> = ({
           dy="3px"
           onClick={() => props.onPolylineClick && props.onPolylineClick(line)}
         >
-          {line.trackNb}
+          {orderIndex}
         </text>,
       );
     }
@@ -177,33 +200,37 @@ export const TracksImage: React.FC<TracksImageProps> = ({
     // Only render hand and feet departures for the first line of a track
     // TODO: try out SVG imports instead
     // TODO: onClick handlers. Is passing the index really the best solution here?
-    if (line.isStart && displayTracksDetails && isHighlighted) {
-      for (const [handX, handY] of line.handDepartures) {
-        svgElems.push(
-          <image
-            className={svgScaleClass}
-            href={`assets/icons/colored/hand-full/_hand-full-${line.gradeSuffix}.svg`}
-            width={18 * rx}
-            x={handX * rx}
-            y={handY * ry}
-          />,
-        );
+    if (isStart && displayTracksDetails && isHighlighted) {
+      if (line.handDepartures) {
+        for (const [handX, handY] of line.handDepartures) {
+          svgElems.push(
+            <image
+              className={svgScaleClass}
+              href={`assets/icons/colored/hand-full/_hand-full-${gradeColor}.svg`}
+              width={18 * rx}
+              x={handX * rx}
+              y={handY * ry}
+            />,
+          );
+        }
       }
-      for (const [footX, footY] of line.feetDepartures) {
-        svgElems.push(
-          <image
-            className={svgScaleClass}
-            href={`assets/icons/colored/climbing-shoe-full/_climbing-shoe-full-${line.gradeSuffix}.svg`}
-            width={30 * rx}
-            x={footX * rx}
-            y={footY * ry}
-          />,
-        );
+      if (line.feetDepartures) {
+        for (const [footX, footY] of line.feetDepartures) {
+          svgElems.push(
+            <image
+              className={svgScaleClass}
+              href={`assets/icons/colored/climbing-shoe-full/_climbing-shoe-full-${gradeColor}.svg`}
+              width={30 * rx}
+              x={footX * rx}
+              y={footY * ry}
+            />,
+          );
+        }
       }
     }
 
     // Forbidden areas
-    if (displayTracksDetails && isHighlighted) {
+    if (displayTracksDetails && isHighlighted && line.forbidden) {
       for (let areaIdx = 0; areaIdx < line.forbidden.length; areaIdx++) {
         const area = line.forbidden[areaIdx];
         svgElems.push(
@@ -227,7 +254,6 @@ export const TracksImage: React.FC<TracksImageProps> = ({
 
   const getCursorUrl = () => {
     let cursorColor = 'grey';
-    const currentTrack = props.tracks.find((track) => track.id === props.currentTrackId);
     if (currentTrack?.grade) { cursorColor = currentTrack.grade[0] || 'grey'; }
 
     let cursorUrl = '/assets/icons/colored/';
@@ -281,14 +307,16 @@ export const TracksImage: React.FC<TracksImageProps> = ({
   );
 };
 
-type LineOnImage = Line & {
+type LineOnImage = Line & TrackInfo;
+
+type TrackInfo = {
   isStart: boolean,
   // TODO: remove "None"
   gradeSuffix: LightGrade | 'grey',
-  trackNb: number,
+  orderIndex: number,
 };
 
-function getLines(tracks: Track[], imageId: UUID): LineOnImage[] {
+function getLines(tracks: TrackData[], imageId: UUID): LineOnImage[] {
   const lines: LineOnImage[] = [];
   for (let i = 0; i < tracks.length; i++) {
     const track = tracks[i];
@@ -300,7 +328,7 @@ function getLines(tracks: Track[], imageId: UUID): LineOnImage[] {
     lines.push({
       isStart: lineIdx === 0,
       gradeSuffix: track.grade ? gradeToLightGrade(track.grade) : 'grey',
-      trackNb: track.orderIndex,
+      orderIndex: track.orderIndex,
       ...track.lines[lineIdx],
     });
   }

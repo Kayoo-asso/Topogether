@@ -1,15 +1,15 @@
 import { BoulderSlideagainstDesktop, HeaderDesktop, LeftbarDesktop, MapControl, SlideagainstRightDesktop, SlideoverLeftDesktop } from 'components';
 import { markerSize } from 'helpers';
 import React, { useCallback, useEffect, useState } from 'react';
-import { Boulder, MarkerProps, Topo, Track } from 'types';
+import { BoulderData, MarkerProps, TopoData, TrackData } from 'types';
 
 interface TopoDesktopProps {
-    topo: Topo,
+    topo: TopoData,
 }
 
 export const TopoDesktop: React.FC<TopoDesktopProps> = (props: TopoDesktopProps) => {
-    const [selectedBoulder, setSelectedBoulder] = useState<Boulder>();
-    const [selectedTrack, setSelectedTrack] = useState<Track>();
+    const [selectedBoulder, setSelectedBoulder] = useState<BoulderData>();
+    const [selectedTrack, setSelectedTrack] = useState<TrackData>();
 
     const [displayInfo, setDisplayInfo] = useState<boolean>(false);
     const [displayApproach, setDisplayApproach] = useState<boolean>(false);

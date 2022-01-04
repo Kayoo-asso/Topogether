@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Topo } from 'types';
+import { TopoData } from 'types';
 
 interface EditTopoDetailsProps {
-  topo: Topo
+  topo: TopoData
 }
 
 export const EditTopoDetails: React.FC<EditTopoDetailsProps> = (props: EditTopoDetailsProps) => (
