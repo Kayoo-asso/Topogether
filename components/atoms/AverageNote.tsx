@@ -1,10 +1,10 @@
-import { Quark, QuarkIter, useQuark } from 'helpers/quarky';
+import { WritableQuark, QuarkIter, useQuark } from 'helpers/quarky';
 import React from 'react';
 import { TrackData, TrackRating } from 'types';
 import { Icon } from '.';
 
 interface AverageNoteProps {
-  ratings: QuarkIter<Quark<TrackRating>>,
+  ratings: QuarkIter<WritableQuark<TrackRating>>,
   className?: string,
   wrapperClassName?: string
 }

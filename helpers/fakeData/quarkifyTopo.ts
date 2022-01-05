@@ -1,25 +1,25 @@
-import { CleanupHelper, effect, Effect, Quark, quark, quarkArray, Quarkify, read, write } from 'helpers/quarky';
+import { CleanupHelper, effect, Effect, WritableQuark, quark, quarkArray, Quarkify, read, write } from 'helpers/quarky';
 import { BoulderData, Grade, Line, Name, Image, TrackData, Description, Difficulty, ClimbTechniques, SectorData, TopoData, Amenities, TopoStatus, TopoType, RockTypes, TopoAccess, UUID, Track, Boulder, Sector, Topo } from 'types';
 
-export const quarkifyTopo = (topo: TopoData): Quark<Topo> => quark({
+export const quarkifyTopo = (topo: TopoData): WritableQuark<Topo> => quark({
     ...topo,
     sectors: quarkArray(topo.sectors, quarkifySector),
     parkings: quarkArray(topo.parkings),
     access: quarkArray(topo.access)
 });
 
-const quarkifySector = (sector: SectorData): Quark<Sector> => quark({
+const quarkifySector = (sector: SectorData): WritableQuark<Sector> => quark({
     ...sector,
     boulders: quarkArray(sector.boulders, quarkifyBoulder),
     waypoints: quarkArray(sector.waypoints)
 });
 
-const quarkifyBoulder = (boulder: BoulderData): Quark<Boulder> => quark({
+const quarkifyBoulder = (boulder: BoulderData): WritableQuark<Boulder> => quark({
     ...boulder,
     tracks: quarkArray(boulder.tracks, quarkifyTrack)
 });
 
-const quarkifyTrack = (track: TrackData): Quark<Track> => quark({
+const quarkifyTrack = (track: TrackData): WritableQuark<Track> => quark({
     ...track,
     lines: quarkArray(track.lines),
     ratings: quarkArray(track.ratings)

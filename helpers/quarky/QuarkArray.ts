@@ -1,91 +1,95 @@
-import { QuarkIter } from "./QuarkIterator";
-import { DataQuark, Derivation, quark, Quark, read, write } from "./quarky";
+import { QuarkIter } from "./QuarkIter";
+import { quark, WritableQuark } from "./quarky";
 
-const alwaysFalse = () => false;
 
-export class QuarkArray<T> extends QuarkIter<Quark<T>> {
-    private quarks: Quark<Array<Quark<T>>>;
-
-    constructor(quarks: Quark<T>[]) {
-        // returning always false allows us to mutate the array in-place 
-        // and return the same reference
-        const q = quark(quarks, { equal: alwaysFalse });
-        const iter = new QuarkArrayIterator(q);
-        super(iter, iter.init);
-        this.quarks = q;
-    }
-
-    push(item: Quark<T> | Quark<T>[]) {
-        if (!Array.isArray(item)) {
-            item = [item];
-        }
-        write(this.quarks, arr => {
-            arr.push(...(item as Quark<T>[]));
-            return arr;
-        })
-    }
-
-    // Maybe not return the quark? Avoids leaking information
-    pop(): Quark<T> | undefined {
-        let item: Quark<T> | undefined;
-        write(this.quarks, arr => {
-            item = arr.pop()
-            return arr;
-        });
-        return item;
-    }
-
-    splice(start: number, deleteCount?: number): void
-    splice(start: number, deleteCount: number, ...items: Quark<T>[]): void
-    splice(start: number, deleteCount?: number, ...items: Quark<T>[]): void {
-        write(this.quarks, arr => {
-            deleteCount
-                ? arr.splice(start, deleteCount, ...items)
-                : arr.splice(start, deleteCount);
-            return arr;
-        })
-    }
-
-    shift(): Quark<T> | undefined {
-        let item: Quark<T> | undefined;
-        write(this.quarks, arr => {
-            item = arr.shift()
-            return arr;
-        });
-        return item;
-    }
-
-    reverse() {
-        write(this.quarks, arr => {
-            arr.reverse();
-            return arr;
-        });
-    }
-
+export interface QuarkArray<T> extends Iterable<T> {
+    length: number,
+    at(i: number): T,
+    set(i: number, value: T): void,
+    quarks(): QuarkArrayRaw<T>,
+    lazy(): QuarkIter<T>,
 }
 
-class QuarkArrayIterator<T> implements Iterator<Quark<T>> {
-    private source: Quark<Array<Quark<T>>>;
-    private buffer: Array<Quark<T>>;
+export class QuarkArrayImpl<T> implements QuarkArray<T> {
+    #source: WritableQuark<Array<WritableQuark<T>>>;
+
+    // TODO: auto-setup callbacks (so it works even on push etc)
+    constructor(items: T[]) {
+        const itemsWrapped = items.map(x => quark(x));
+        this.#source = quark(itemsWrapped);
+    }
+
+    get length(): number {
+        return this.#source().length;
+    }
+
+    // removing undefined from the return type, since it's annoying
+    at(i: number): T {
+        return this.#source().at(i)!();
+    }
+
+    set(i: number, value: T) {
+        this.#source()[i].set(value);
+    }
+
+    push(value: T) {
+        this.#source.set([...this.#source(), quark(value)]);
+    }
+
+    [Symbol.iterator]() {
+        const iter = new QuarkArrayIterator(this.#source);
+        iter.init();
+        return iter;
+    }
+
+    quarks(): QuarkArrayRaw<T> {
+        return new QuarkArrayRawImpl(this.#source());
+    }
+
+    lazy(): QuarkIter<T> {
+        const iter = new QuarkArrayIterator(this.#source);
+        return new QuarkIter(iter, iter.init);
+    }
+}
+
+class QuarkArrayRawImpl<T> implements QuarkArrayRaw<T> {
+    constructor(private quarks: WritableQuark<T>[]) {}
+
+    lazy(): QuarkIter<WritableQuark<T>> {
+        return new QuarkIter(this.quarks[Symbol.iterator](), () => { });
+    }
+
+    [Symbol.iterator](): Iterator<WritableQuark<T>> {
+        return this.quarks[Symbol.iterator]();
+    }
+}
+
+
+interface QuarkArrayRaw<T> extends Iterable<WritableQuark<T>> {
+    lazy(): QuarkIter<WritableQuark<T>>
+}
+
+// TODO: reset() method?
+class QuarkArrayIterator<T> implements Iterator<T> {
+    private source: WritableQuark<Array<WritableQuark<T>>>;
+    private buffer: Array<WritableQuark<T>>;
     private pos: number = 0;
 
-    constructor(source: Quark<Array<Quark<T>>>) {
+    constructor(source: WritableQuark<Array<WritableQuark<T>>>) {
         this.source = source;
         this.buffer = [];
     }
 
-    // call this method before performing actual computation, to register the dependency
     init() {
-        this.buffer = read(this.source);
+        this.pos = 0;
+        this.buffer = this.source();
     }
-
-    next(): IteratorResult<Quark<T>> {
+    
+    next(): IteratorResult<T> {
         if (this.pos < this.buffer.length) {
-            return { done: false, value: this.buffer[this.pos++] };
+            return { done: false, value: this.buffer[this.pos++]() };
         } else {
             return { done: true, value: undefined };
         }
     }
 }
-
-// TODO: Generic iterator + wrapper for any iterable?

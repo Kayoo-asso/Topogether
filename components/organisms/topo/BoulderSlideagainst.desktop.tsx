@@ -1,5 +1,5 @@
 import { Icon, SlideagainstRightDesktop } from 'components';
-import { Quark, useQuark } from 'helpers/quarky';
+import { Quark } from 'helpers/quarky';
 import React from 'react';
 import { Boulder, BoulderData, Track, TrackData } from 'types';
 import { TracksList } from '.';
@@ -15,7 +15,7 @@ export const BoulderSlideagainstDesktop: React.FC<BoulderSlideagainstDesktopProp
     open = true,
     ...props
 }: BoulderSlideagainstDesktopProps) => {
-    const [boulder,] = useQuark(props.boulder);
+    const boulder = props.boulder();
     return (
         <SlideagainstRightDesktop 
             open={open}

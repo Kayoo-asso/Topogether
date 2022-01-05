@@ -1,4 +1,4 @@
-import { Quark, Quarkify } from 'helpers/quarky';
+import { WritableQuark, Quarkify } from 'helpers/quarky';
 import { BoulderData, Line, Name, Image, TrackData, Description, Difficulty, ClimbTechniques, SectorData, TopoData, Amenities, TopoStatus, TopoType, RockTypes, TopoAccess, Topo } from 'types';
 import { v4 as uuid } from 'uuid';
 import { quarkifyTopo } from './quarkifyTopo';
@@ -149,4 +149,4 @@ export const topo: TopoData = {
     access: [access],
 }
 
-export const quarkTopo: Quark<Topo> = quarkifyTopo(topo);
+export const quarkTopo: WritableQuark<Topo> = quarkifyTopo(topo);

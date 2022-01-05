@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react';
 import { lightGrades, Topo, TopoData } from 'types';
 import { buildGradeHistogram } from 'helpers/topo/buildGradeHistogram';
-import { useQuark } from 'helpers/quarky';
 
 interface GradeHistogramProps {
   topo: Topo,
@@ -19,8 +18,9 @@ const bgStyles = {
 };
 
 export const GradeHistogram: React.FC<GradeHistogramProps> = (props: GradeHistogramProps) => {
-  const histogramQ = useMemo(() => buildGradeHistogram(props.topo), [props.topo]);
-  const histogram = useQuark(histogramQ);
+  const histogram = useMemo(() =>
+    buildGradeHistogram(props.topo),
+  [props.topo])();
 
   // TODO: I removed the special case for grade categories whose count == 0,
   // since it did not show the category properly.

@@ -1,5 +1,5 @@
-import { Derivation, read } from "helpers/quarky";
-import { GradeHistogram, gradeToLightGrade, Topo, TopoData } from "types";
+import { WritableQuark, QuarkArray } from "helpers/quarky";
+import { Boulder, GradeHistogram, gradeToLightGrade, Topo, TopoData, Track } from "types";
 import { addTrackToHistogram, defaultGradeHistogram } from "./buildBoulderGradeHistogram";
 
 // The dependencies we'd want if we were doing this by hand:
@@ -9,16 +9,32 @@ import { addTrackToHistogram, defaultGradeHistogram } from "./buildBoulderGradeH
 // - each track quark
 // Technically, we need to subscribe to each sector / boulder quark as well, in case someone replaces the QuarkArray within them?
 // So we could replace the reads with a peek here
-export function buildGradeHistogram(topo: Topo): Derivation<GradeHistogram> {
+
+export function buildGradeHistogram(topo: Topo): WritableQuark<GradeHistogram> {
     return topo.sectors
-        // .unwrap()
-        .map(x => read(x).boulders)
+        .lazy()
+        .map(x => x.boulders)
         .flatten()
-        // .unwrap()
-        .map(x => read(x).tracks)
+        .map(x => x.tracks)
         .flatten()
-        .unwrap()
         .reduce(addTrackToHistogram, defaultGradeHistogram());
+}
+
+export function firstBoulder(topo: Topo): Boulder {
+    return topo.sectors.at(0).boulders.at(0);
+}
+
+
+export function consume(topo: Topo) {
+    for (const sector of topo.sectors) {
+        for (const boulder of sector.boulders) {
+            for (const track of boulder.tracks) {
+                for (const line of track.lines) {
+                    
+                }
+            }
+        }
+    } 
 }
 
     // for (const sector of topo.sectors) {

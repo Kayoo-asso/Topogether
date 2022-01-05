@@ -1,11 +1,11 @@
 import React from 'react';
 import { AverageNote, GradeCircle } from 'components';
 import { gradeToLightGrade, Track, TrackData, UUID } from 'types';
-import { Quark, QuarkIter, Quarkify, useQuark } from 'helpers/quarky';
+import { WritableQuark, QuarkIter, Quarkify } from 'helpers/quarky';
 
 interface TracksListProps {
-  tracks: QuarkIter<Quark<Track>>,
-  onTrackClick?: (track: Quark<Track>) => void,
+  tracks: Iterable<Track>,
+  onTrackClick?: (track: WritableQuark<Track>) => void,
   onBuilderAddClick?: () => void,
 }
 

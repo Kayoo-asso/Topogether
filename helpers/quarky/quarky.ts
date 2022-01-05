@@ -11,7 +11,7 @@
 // Optimisation note: never change the shape of the Node object after creation
 // See: https://richardartoul.github.io/jekyll/update/2015/04/26/hidden-classes.html
 
-interface QuarkInternal<T> {
+interface QuarkNode<T> {
     readonly type: NodeType.Quark,
     value: T,
     equal: (a: T, b: T) => boolean,
@@ -21,7 +21,7 @@ interface QuarkInternal<T> {
     name?: string,
 }
 
-interface DerivationInternal<T> {
+interface DerivationNode<T> {
     readonly type: NodeType.Derivation,
     value: T,
     equal: (a: T, b: T) => boolean,
@@ -58,7 +58,7 @@ export const enum NodeType {
 // Effects have to be cleaned up manually, if not created under another effect.
 // TODO: test what happens when creating an effect with a dependency that is both explicit + in the computation
 
-interface EffectInternal {
+interface EffectNode {
     readonly type: NodeType.Effect,
     readonly fn: (onCleanup: CleanupHelper) => void,
     // dirty count
@@ -70,7 +70,7 @@ interface EffectInternal {
     // constant dependencies
     // - 1 means the effect has been deleted
     cdeps: number,
-    children: EffectInternal[] | null,
+    children: EffectNode[] | null,
     clean: (() => void)[] | null,
     name?: string
 }
@@ -79,20 +79,29 @@ const DELETED_EFFECT = -1;
 
 interface Scope {
     accessed: DataNode[],
-    effects: EffectInternal[] | null,
+    // null here means effects are not allowed
+    effects: EffectNode[] | null,
     cleanups: (() => void)[] | null,
     parent: Scope | undefined,
 }
 
-type DataNode = QuarkInternal<any> | DerivationInternal<any>;
-type Computation = DerivationInternal<any> | EffectInternal;
+type DataNode = QuarkNode<any> | DerivationNode<any>;
+type Computation = DerivationNode<any> | EffectNode;
 
 // === EXPORTED TYPES ===
-export interface Quark<T> { readonly type: NodeType.Quark, readonly value: T };
-export interface Derivation<T> { readonly type: NodeType.Derivation, readonly value: T };
-export interface Effect { readonly type: NodeType.Effect };
 
-export type DataQuark<T> = Quark<T> | Derivation<T>;
+
+export interface Quark<T> {
+    (): T,
+};
+
+export interface WritableQuark<T> extends Quark<T> {
+    set(value: StateUpdate<T>): void,
+};
+
+export interface Effect {
+    dispose(): void,
+};
 
 export type StateUpdate<T> = T | ((prev: T) => T);
 export type CleanupHelper = (cleanup: () => void) => void;
@@ -102,21 +111,9 @@ export interface QuarkOptions<T> {
     name?: string,
 }
 
-export interface QuarkArrayOptions<T> {
-    equal?: ((a: T, b: T) => boolean),
-    names?: string[],
-    arrayName?: string,
-}
-
-export interface QuarkifiedArrayOptions<T, U> {
-    quarkifier?: (item: T, index: number) => Quark<U>,
-    arrayName?: string,
-}
-
-export type Quarkifier<T, U> = (item: T) => Quark<U>;
-
 export interface EffectOptions {
-    watch?: DataQuark<any>[], 
+    // TODO: fix, once I find out how I want to handle the explicit context use in the React integration
+    watch?: DataNode[], 
     // Lazy means the effect will not run and register dependencies upon creation.
     // It will only get triggered by explicit "watch" dependencies.
     // Setting `lazy: true` without providing `watch` dependencies means the effect will never run.
@@ -128,36 +125,62 @@ export interface EffectOptions {
 // === GLOBAL CONTEXT ===
 let CurrentScope: Scope | undefined = undefined;
 
-let PendingQuarks: QuarkInternal<any>[] = [];
+let PendingQuarks: QuarkNode<any>[] = [];
 let PendingUpdates: StateUpdate<any>[] = [];
 let IsBatching = false;
 
-let ScheduledEffects: EffectInternal[] = [];
+let ScheduledEffects: EffectNode[] = [];
 
 // === EXTERNAL API ===
 // Due to the phantom marker on external types
 
-export function read<T>(node: Quark<T> | Derivation<T>): T {
-    return read__internal(
-        node as QuarkInternal<T> | DerivationInternal<T>,
-        true // register
-    );
+// export function read<T>(node: Quark<T> | Derivation<T>): T {
+//     return read__internal(
+//         node as QuarkNode<T> | DerivationNode<T>,
+//         true // register
+//     );
+// }
+
+// export function peek<T>(node: Quark<T> | Derivation<T>): T {
+//     return read__internal(
+//         node as QuarkNode<T> | DerivationNode<T>,
+//         false // don't register
+//     );
+// }
+
+export function trackContext<T>(work: () => T): [T, Scope] {
+    CurrentScope = {
+        accessed: [],
+        effects: [],
+        cleanups: null,
+        parent: CurrentScope
+    };
+    const result = work();
+    const scope = CurrentScope;
+    CurrentScope = scope.parent;
+    return [result, scope];
 }
 
-export function peek<T>(node: Quark<T> | Derivation<T>): T {
-    return read__internal(
-        node as QuarkInternal<T> | DerivationInternal<T>,
-        false // don't register
-    );
+export function untrack<T>(work: () => T): T {
+    const saved = CurrentScope;
+    CurrentScope = undefined;
+    const result = work();
+    CurrentScope = saved;
+    return result;
 }
 
-export function write<T>(node: Quark<T>, update: StateUpdate<T>) {
+export function setQuark<T>(quark: WritableQuark<T>, update: StateUpdate<T>) {
+    quark.set(update);
+}
+
+function writeNode<T>(node: QuarkNode<T>, update: StateUpdate<T>) {
+    // TODO: check this again once we have a trackContext function
     if (CurrentScope && ! CurrentScope.effects) {
         console.error("Quarky detected an attempt to set a value in a derivation! This is not allowed and will be ignored");
         return;
     }
     // Slightly more work for the non-batching case, but this helps centralize the logic
-    PendingQuarks.push(node as QuarkInternal<T>);
+    PendingQuarks.push(node);
     PendingUpdates.push(update);
     if (!IsBatching) {
         processUpdates();
@@ -166,8 +189,8 @@ export function write<T>(node: Quark<T>, update: StateUpdate<T>) {
 
 const defaultEqual = <T>(a: T, b: T) => a === b;
 
-export function quark<T>(value: T, options?: QuarkOptions<T>): Quark<T> {
-    const q: QuarkInternal<T> = {
+export function quark<T>(value: T, options?: QuarkOptions<T>): WritableQuark<T> {
+    const q: QuarkNode<T> = {
         type: NodeType.Quark,
         value,
         equal: options?.equal ?? defaultEqual,
@@ -175,14 +198,17 @@ export function quark<T>(value: T, options?: QuarkOptions<T>): Quark<T> {
         os: [],
         name: options?.name
     };
-    return q;
+    // TODO: would .bind() be noticeably faster?
+    const read = () => readNode(q);
+    read.set = (value: T) => writeNode(q, value);
+    return read;
 }
 
 // TODO: allow derivations that receive the previous value as argument,
 // but require an initial value to be provided in the options
-export function derive<T>(computation: () => T, options?: QuarkOptions<T>): Derivation<T> {
+export function derive<T>(computation: () => T, options?: QuarkOptions<T>): Quark<T> {
     // the value will be computed with updateDerivation
-    const d: DerivationInternal<T> =  {
+    const d: DerivationNode<T> =  {
         type: NodeType.Derivation,
         value: undefined!,
         equal: options?.equal ?? defaultEqual,
@@ -196,14 +222,15 @@ export function derive<T>(computation: () => T, options?: QuarkOptions<T>): Deri
         name: options?.name,
     };
     updateDerivation(d);
-    return d;
+    // TODO: would .bind() be noticeably faster?
+    return () => readNode(d);
 }
 
 export function effect(computation: (onCleanup: CleanupHelper) => void, options?: EffectOptions): Effect {
     if (CurrentScope && !CurrentScope.effects) {
         handleError("Quarky detected an attempt to create an effect within a derivation! This is not allowed: derivation should be pure functions.");
     }
-    const effect: EffectInternal = {
+    const effect: EffectNode = {
         type: NodeType.Effect,
         fn: computation,
         d: [],
@@ -219,7 +246,7 @@ export function effect(computation: (onCleanup: CleanupHelper) => void, options?
         const deps = options.watch;
         const slots = new Array(deps.length);
         for (let i = 0; i < deps.length; i++) {
-            slots[i] = hookObserver(effect, deps[i] as DataNode, i);
+            slots[i] = hookObserver(effect, deps[i], i);
         }
         effect.d = deps as DataNode[];
         effect.ds = slots;
@@ -238,11 +265,14 @@ export function effect(computation: (onCleanup: CleanupHelper) => void, options?
             runEffect(effect);
         }
     }
-    return effect;
+    return {
+        dispose: () => cleanupEffect(effect, true)
+    };
 }
 
 // Q: should transactions suspend derivation creations? (derivations are pure from Quarky's point of view)
 // Q: should transactions suspend effect cleanups?
+// Q: should transactions have their own scope?
 export function transaction(work: () => void) {
     IsBatching = true;
     work();
@@ -250,16 +280,18 @@ export function transaction(work: () => void) {
     processUpdates();
 }
 
-export function cleanupEffect(effect: Effect) {
-    cleanupEffect__internal(effect as EffectInternal, true);
-}
+// export function cleanupEffect(effect: Effect) {
+//     cleanupEffect__internal(effect as EffectNode, true);
+// }
 
 // === CORE ===
 
-function read__internal<T>(node: QuarkInternal<T> | DerivationInternal<T>, registerRead: boolean = true): T {
-    if (registerRead && CurrentScope) {
+
+function readNode<T>(node: QuarkNode<T> | DerivationNode<T>): T {
+    if (CurrentScope) {
         CurrentScope.accessed.push(node);
     }
+    console.log("Reading node " + node.name + ". Scope is: ", CurrentScope);
     // Check for updates - allows for lazy derivations & ensures glitch-free values even w/ concurrency (I think)
     // TODO: check again when we have lazy derivations / concurrency
     // Right now, it assumes the derivation can't be dirty, so it only checks if it is detached
@@ -323,7 +355,7 @@ function processUpdates() {
         for (let i = 0; i < ScheduledEffects.length; i++) {
             const e = ScheduledEffects[i];
             if (e.cdeps === DELETED_EFFECT) continue;
-            cleanupEffect__internal(ScheduledEffects[i], false);
+            cleanupEffect(ScheduledEffects[i], false);
         }
         for (let i = 0; i < ScheduledEffects.length; i++) {
             const e = ScheduledEffects[i];
@@ -338,7 +370,7 @@ function processUpdates() {
 }
 
 // returns `true` if the value changed
-function updateDerivation(node: DerivationInternal<any>): boolean {
+function updateDerivation(node: DerivationNode<any>): boolean {
     // console.log(`Updating derivation ${node.name}`);
     const scope = {
         accessed: [],
@@ -365,7 +397,7 @@ function updateDerivation(node: DerivationInternal<any>): boolean {
     return !node.equal(prev, next);
 }
 
-function refreshDependencies(node: DerivationInternal<any>, accessed: DataNode[]) {
+function refreshDependencies(node: DerivationNode<any> | EffectNode, accessed: DataNode[]) {
     // We go over both arrays at once, since it's likely most dependencies will be the same
     const current = node.d;
     const currentSlots = node.ds;
@@ -424,7 +456,7 @@ function hookObserver(observer: Computation, dependency: DataNode, slot: number)
     return usedSlot;
 }
 
-function activate(node: DerivationInternal<any>) {
+function activate(node: DerivationNode<any>) {
     // TODO: remove once proper testing is done
     if (node.o.length !== 1) throw new Error("Should not be calling activate on a derivation that had observers");
     if (node.ds.length !== 0) throw new Error("Deactivated derivation should not be registered and have slots");
@@ -458,7 +490,7 @@ function attemptCleanup(node: DataNode) {
     node.ds = [];
 }
 
-function cleanupEffect__internal(effect: EffectInternal, deleting: boolean) {
+function cleanupEffect(effect: EffectNode, deleting: boolean) {
     let unchanged: number;
     if (deleting) {
         unchanged = 0;
@@ -468,22 +500,25 @@ function cleanupEffect__internal(effect: EffectInternal, deleting: boolean) {
     }
     const toRemove = effect.d.length - unchanged;
     if (deleting) {
+        detachDependencies(effect, unchanged);
         // console.log(`Deleting effect ${effect.name}. Children: `, effect.children);
     } else {
         // console.log(`Cleaning up effect ${effect.name}. Children: `, effect.children);
     }
-    detachDependencies(effect, unchanged);
     effect.d.splice(unchanged, toRemove);
     effect.ds.splice(unchanged, toRemove);
     if (effect.children) {
         for (let i = 0; i < effect.children.length; i++) {
-            cleanupEffect__internal(effect.children[i], true);
+            cleanupEffect(effect.children[i], true);
         }
     }
     if (effect.clean) {
         for (let i = 0; i < effect.clean.length; i++) {
             effect.clean[i]();
         }
+        // when processing updates, we may clean an effect first, then delete it because its parent reruns
+        // this avoids running the cleanups twice
+        effect.clean = null;
     }
 }
 
@@ -542,7 +577,7 @@ function signalReady(node: Computation, shouldRecompute: boolean) {
     }
 }
 
-function runEffect(effect: EffectInternal) {
+function runEffect(effect: EffectNode) {
     // console.log("Running effect " + effect.name);
 
     const scope: Scope = {
@@ -563,13 +598,14 @@ function runEffect(effect: EffectInternal) {
         : null;
 
     const accessed = scope.accessed;
-    const deps = effect.d;
-    const slots = effect.ds;
-    // TODO: compare perf vs directly splicing the dependency array
-    for (let i = 0; i < accessed.length; i++) {
-        slots.push(hookObserver(effect, accessed[i], i));
-        deps.push(accessed[i]);
-    }
+    refreshDependencies(effect, accessed);
+    // const deps = effect.d;
+    // const slots = effect.ds;
+    // // TODO: compare perf vs directly splicing the dependency array
+    // for (let i = 0; i < accessed.length; i++) {
+    //     slots.push(hookObserver(effect, accessed[i], i));
+    //     deps.push(accessed[i]);
+    // }
 }
 
 // should not be exposed outside effect functions
