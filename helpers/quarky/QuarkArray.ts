@@ -10,17 +10,22 @@ import { quark, WritableQuark } from "./quarky";
 //     lazy(): QuarkIter<T>,
 // }
 
+const alwaysFalse = () => false;
+
 export interface QuarkArrayRaw<T> extends Iterable<WritableQuark<T>> {
     lazy(): QuarkIter<WritableQuark<T>>
 }
 
+// NOTE: the return values of all the array methods become invalid if done within a batch (since modifications apply later)
+// Should we not return anything instead? Or wrap them in a Ref object, to ensure the values can be used at the end of the batch
 export class QuarkArray<T> implements QuarkArray<T> {
     #source: WritableQuark<Array<WritableQuark<T>>>;
 
     // TODO: auto-setup callbacks (so it works even on push etc)
     constructor(items: T[]) {
         const itemsWrapped = items.map(x => quark(x));
-        this.#source = quark(itemsWrapped);
+        // the alwaysFalse allows us to modify the array in place and return the same reference to update the quark
+        this.#source = quark(itemsWrapped, { equal: alwaysFalse });
     }
 
     get length(): number {
@@ -36,8 +41,39 @@ export class QuarkArray<T> implements QuarkArray<T> {
         this.#source()[i].set(value);
     }
 
-    push(value: T) {
-        this.#source.set([...this.#source(), quark(value)]);
+    #apply<U>(operation: (buffer: WritableQuark<T>[]) => U): U {
+        let output: U;
+        this.#source.set(x => {
+            output = operation(x);
+            return x;
+        });
+        return output!;
+    }
+
+    // TODO: hook up predefined effects
+    push(value: T): number {
+        return this.#apply(x => x.push(quark(value)));
+    }
+
+    pop(): WritableQuark<T> | undefined {
+        return this.#apply(x => x.pop());
+    }
+
+    shift(): WritableQuark<T> | undefined {
+        return this.#apply(x => x.shift());
+    }
+
+    unshift(...items: T[]): number {
+        return this.#apply(x => x.unshift(...items.map(x => quark(x))));
+    }
+
+    splice(start: number, deleteCount?: number, ...items: T[]): WritableQuark<T>[] {
+        return this.#apply(x =>
+            deleteCount
+                ? x.splice(start, deleteCount as number, ...items.map(x => quark(x)))
+                // does not work if a 2nd argument is provided, even if it's undefined
+                : x.splice(start)
+        );
     }
 
     toArray(): T[] {
