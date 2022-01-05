@@ -18,18 +18,16 @@ const BuilderMapPage: NextPage = () => {
 
   return (
     <>
-      {isMobile
-                && (
-                <BuilderMapMobile
-                  topo={topo}
-                />
-                )}
-      {isDesktop
-                && (
-                <BuilderMapDesktop
-                  topo={topo}
-                />
-                )}
+      {isMobile && (
+        <BuilderMapMobile
+          topo={topo}
+        />
+      )}
+      {isDesktop && (
+        <BuilderMapDesktop
+          topo={topo}
+        />
+      )}
     </>
   );
 };

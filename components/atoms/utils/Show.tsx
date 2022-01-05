@@ -19,7 +19,7 @@ const ShowNested = (props: React.PropsWithChildren<EvaluatedProps>) =>
 
 const NestedMemo = React.memo(ShowNested, (a, b) => a.when !== b.when);
 
-function Show<T>(props: React.PropsWithChildren<ShowProps<T>>) {
+function ShowComponent<T>(props: React.PropsWithChildren<ShowProps<T>>) {
     let when: boolean | T | null | undefined;
     let content: JSX.Element | null;
     if (typeof props.children === "function") {
@@ -36,4 +36,4 @@ function Show<T>(props: React.PropsWithChildren<ShowProps<T>>) {
     );
 }
 
-export default watchDependencies(Show, { memo: false });
+export const Show = watchDependencies(ShowComponent, { memo: false });

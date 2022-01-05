@@ -1,4 +1,4 @@
-import { WritableQuark, Quarkify } from 'helpers/quarky';
+import { WritableQuark } from 'helpers/quarky';
 import { BoulderData, Line, Name, Image, TrackData, Description, Difficulty, ClimbTechniques, SectorData, TopoData, Amenities, TopoStatus, TopoType, RockTypes, TopoAccess, Topo } from 'types';
 import { v4 as uuid } from 'uuid';
 import { quarkifyTopo } from './quarkifyTopo';
@@ -23,9 +23,9 @@ export const images: Image[] = [
 ]
 
 // TODO: create proper users and load them into quarks
-export const topoCreatorId = uuid();
-export const contributorId = uuid();
-export const validatorId = uuid();
+const topoCreatorId = uuid();
+const contributorId = uuid();
+const validatorId = uuid();
 
 export const lines: Line[] = [
     // Line 0, track 0
@@ -39,6 +39,9 @@ export const lines: Line[] = [
             [1717, 1349],
             [2269, 1200]
         ],
+        forbidden: null,
+        handDepartures: null,
+        feetDepartures: null,
     },
     // Line 1, track 1
     {
@@ -48,7 +51,10 @@ export const lines: Line[] = [
             [2207, 1942],
             [2262, 787],
             [1901, 51]
-        ]
+        ],
+        forbidden: null,
+        handDepartures: null,
+        feetDepartures: null,
     }
 ]
 

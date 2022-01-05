@@ -1,14 +1,9 @@
 import React, { useMemo, useState } from 'react';
 import {
-  BoulderSlideoverMobile, Drawer, HeaderMobile, MapControl, BoulderMarker,
+  BoulderSlideoverMobile, Drawer, HeaderMobile, MapControl, BoulderMarker, For, Show
 } from 'components';
-import {
-  Boulder,
-  SectorData, Topo, TopoData, Track
-} from 'types';
-import { Quarkify, useCreateQuark, WritableQuark, reactKey } from 'helpers/quarky';
-import For from 'components/atoms/utils/For';
-import Show from 'components/atoms/utils/Show';
+import { Boulder, Topo, Track } from 'types';
+import { useCreateQuark, WritableQuark, reactKey } from 'helpers/quarky';
 
 interface BuilderMapMobileProps {
   topo: WritableQuark<Topo>,
@@ -17,12 +12,14 @@ interface BuilderMapMobileProps {
 export const BuilderMapMobile: React.FC<BuilderMapMobileProps> = (props: BuilderMapMobileProps) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [geoCameraOpen, setGeoCameraOpen] = useState(false);
+  const [selectedTrack, setSelectedTrack] = useState<WritableQuark<Track>>();
+  const [selectedBoulder, setSelectedBoulder] = useState<WritableQuark<Boulder>>();
 
   // NOTE: testing out how we could select a boulder by a clicking on a map marker
   // We pass selectedBoulder.Set directly to BoulderMarker
   // This is good, since the setter is always the same function
-  const selectedBoulder = useCreateQuark<WritableQuark<Boulder>>();
-  const selectedTrack = useCreateQuark<WritableQuark<Track>>();
+  // const selectedBoulder = useCreateQuark<WritableQuark<Boulder>>();
+  // const selectedTrack = useCreateQuark<WritableQuark<Track>>();
 
   const topo = props.topo();
   const boulders = useMemo(() => topo.sectors
@@ -31,7 +28,6 @@ export const BuilderMapMobile: React.FC<BuilderMapMobileProps> = (props: Builder
     .flatten()
   , [topo.sectors]);
 
-  
   return (
     <>
       <HeaderMobile
@@ -57,44 +53,25 @@ export const BuilderMapMobile: React.FC<BuilderMapMobileProps> = (props: Builder
             findPlaces: false,
           }}
         >
-
           <For each={boulders.toArray}>
             {(boulder) => 
               <BoulderMarker
                 key={reactKey(boulder)}
                 boulder={boulder}
-                onClick={selectedBoulder.set}
+                onClick={setSelectedBoulder}
               />
             }
           </For>
-
-          {/* {boulders.map(b =>
-            <BoulderMarker
-              key={reactKey(b)}
-              boulder={b}
-              onClick={setSelectedBoulder}
-            />
-          )} */}
         </MapControl>
 
-        <Show
-          when={() => drawerOpen && selectedTrack() && selectedBoulder()}
-          fallback={<div>Loading drawer...</div>}
-        >
+        <Show when={() => drawerOpen && selectedTrack && selectedBoulder}>
           <Drawer
-            image={() => selectedBoulder()!().images[0]}
-            track={selectedTrack()!}
+            image={selectedBoulder!().images[0]}
+            tracks={selectedBoulder!().tracks.quarks()}
+            displayedTrackId={selectedTrack!().id}
             onValidate={() => setDrawerOpen(false)}
           />
         </Show>
-        
-        {drawerOpen && selectedTrack() && selectedBoulder() &&
-          <Drawer
-            image={() => selectedBoulder()!().images[0]}
-            track={selectedTrack()!}
-            onValidate={() => setDrawerOpen(false)}
-          />
-        }
 
         {/* TODO */}
         {geoCameraOpen &&
@@ -102,17 +79,22 @@ export const BuilderMapMobile: React.FC<BuilderMapMobileProps> = (props: Builder
         }
       </div>
 
-      {selectedBoulderVal && (
+      <Show when={() => selectedBoulder}>
         <BoulderSlideoverMobile
           open
-          boulder={selectedBoulderVal}
-          selectedTrack={selectedTrackVal}
-          topoCreatorId={read(props.topo).creatorId}
+          boulder={selectedBoulder!}
+          selectedTrack={selectedTrack}
+          topoCreatorId={topo.creatorId}
           forBuilder
           onPhotoButtonClick={() => setGeoCameraOpen(true)}
           onDrawButtonClick={() => setDrawerOpen(true)}
+          onSelectTrack={setSelectedTrack}
+          onClose={() => {
+            setSelectedBoulder(undefined);
+            setSelectedTrack(undefined);
+          }}
         />
-      )}
+      </Show>
     </>
   );
 };

@@ -5,7 +5,6 @@ export type MapProps =
   & google.maps.MapOptions
   & {
     className?: string,
-    markers?: MarkerProps[]
   };
 
 export interface MarkerProps {

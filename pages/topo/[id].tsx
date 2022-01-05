@@ -15,14 +15,12 @@ const Topo: NextPage = () => {
 
   return (
     <>
-      {isMobile && topo
-        && (
+      {isMobile && topo && (
         <TopoMobile
           topo={topo}
         />
         )}
-      {isDesktop && topo
-        && (
+      {isDesktop && topo && (
         <TopoDesktop
           topo={topo}
         />

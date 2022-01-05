@@ -1,24 +1,25 @@
-import { WritableQuark, QuarkIter, useQuark } from 'helpers/quarky';
 import React from 'react';
-import { TrackData, TrackRating } from 'types';
+import { TrackRating } from 'types';
 import { Icon } from '.';
 
 interface AverageNoteProps {
-  ratings: QuarkIter<WritableQuark<TrackRating>>,
+  ratings: Iterable<TrackRating>,
   className?: string,
   wrapperClassName?: string
 }
 
 export const AverageNote: React.FC<AverageNoteProps> = (props: AverageNoteProps) => {
-  const ratings = useQuark(props.ratings.unwrap());
+  const ratings = props.ratings;
 
   let total = 0;
+  let length = 0;
   for (const rating of ratings) {
     total += rating.rating;
+    length += 1;
   }
-  const avgNote = total / ratings.length;
+  const avgNote = total / length;
 
-  if (ratings.length >= 1) {
+  if (length >= 1) {
     return (
       <div className={props.wrapperClassName ? props.wrapperClassName : ''}>
         <div className={`flex flex-row items-end ${props.className ? props.className : ''}`}>

@@ -51,7 +51,7 @@ export interface TopoData {
 
   creatorId?: UUID,
   validatorId?: UUID,
-  imageId?: UUID,
+  image?: Image,
 
   closestCity?: StringBetween<1, 255>,
   altitude?: number,

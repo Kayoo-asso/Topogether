@@ -7,7 +7,7 @@ export interface ForProps<T> {
 }
 
 // TODO: test to see if users can put keys directly on the result of their function
-function For<T>(props: ForProps<T>) {
+function ForComponent<T>(props: ForProps<T>) {
     const list = props.each();
     if (list.length === 0 && props.fallback) return props.fallback;
     return (<>
@@ -15,6 +15,6 @@ function For<T>(props: ForProps<T>) {
     </>)
 }
 
-export default function<T>(props: ForProps<T>) {
-    return watchDependencies(For)(props as any);
+export function For<T>(props: ForProps<T>) {
+    return watchDependencies(ForComponent)(props as any);
 };

@@ -13,11 +13,11 @@ import {
   getMousePosInside,
   getPathFromPoints,
 } from '../../helpers';
-import { QuarkIter, Quark } from 'helpers/quarky';
+import { QuarkIter, Quark, WritableQuark } from 'helpers/quarky';
 
 interface TracksImageProps {
   image: ImageType,
-  tracks: Iterable<Track>,
+  tracks: QuarkIter<WritableQuark<Track>>,
   imageClassName?: string,
   tracksClassName?: string,
   containerClassName?: string,
@@ -57,25 +57,22 @@ export const TracksImage: React.FC<TracksImageProps> = ({
 
   const linesIter = useMemo(() => props.tracks
     .unwrap()
+    .toArray()
     .map((t, i) => ({
-      line: read(t.lines
-        .unwrap()
-        .find(l => l.imageId === props.image.id)
-      ),
+      line: t.lines
+        .toArray()
+        .find(l => l.imageId === props.image.id),
       orderIndex: t.orderIndex,
       gradeColor: t.grade ? gradeToLightGrade(t.grade) : "grey",
       isStart: i === 0,
       lineTrackId: t.id,
     })), [props.tracks, props.image.id]);
 
-  const lines = useQuark(linesIter);
-
-  const currentTrack = useQuark(
-    useMemo(() => props.tracks
-      .unwrap()
-      .find(t => t.id === props.currentTrackId)
-      , [props.tracks, props.currentTrackId])
-  );
+  const currentTrack = useMemo(() => props.tracks
+    .unwrap()
+    .toArray()
+    .find(t => t.id === props.currentTrackId)
+  , [props.tracks, props.currentTrackId]);
 
 
   const { observe, unobserve, width: containerWidth, height: containerHeight, entry } = useDimensions({

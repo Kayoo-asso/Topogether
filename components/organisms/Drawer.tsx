@@ -1,17 +1,14 @@
 import React, { useState } from 'react';
-import { Boulder, DrawerToolEnum, Image, Track } from 'types';
+import { DrawerToolEnum, Image, Track, UUID } from 'types';
 import { isMobile } from 'react-device-detect';
 import { Toolbar, TracksImage } from 'components';
-import { fakeTopo } from 'helpers/fakeData/fakeTopo';
-import { QuarkIter, Quark } from 'helpers/quarky';
+import { WritableQuark, QuarkIter } from 'helpers/quarky';
 
 
 interface DrawerProps {
-    image: () => Image,
-    track: Quark<Track>,
-    // otherTracks: Iterable<Track>,
-    onClear: () => void,
-    onRewind: () => void,
+    image: Image,
+    tracks: QuarkIter<WritableQuark<Track>>,
+    displayedTrackId: UUID,
     onValidate: () => void,
 }
 
@@ -19,8 +16,9 @@ export const Drawer: React.FC<DrawerProps> = (props: DrawerProps) => {
     const [selectedTool, setSelectedTool] = useState<DrawerToolEnum>('LINE_DRAWER');
     const [displayOtherTracks, setDisplayOtherTracks] = useState(false);
 
-    const track = props.track();
-    const image = props.image();
+    const track = props.tracks
+        .unwrap()
+        .find(x => x.id === props.displayedTrackId)();
 
     return (
         <div className={'absolute top-0 bg-black bg-opacity-90 h-full flex flex-col z-500 ' + (isMobile ? 'w-full' : 'w-[calc(100%-600px)]')}>
@@ -28,8 +26,9 @@ export const Drawer: React.FC<DrawerProps> = (props: DrawerProps) => {
             <div className='flex-1 flex items-center relative'>
                 {/* TODO: CHANGE SIZING */}
                <TracksImage 
-                    image={image}
-                    tracks={[track]}
+                    image={props.image}
+                    tracks={props.tracks}
+                    currentTrackId={props.displayedTrackId}
                     containerClassName='w-full'
                /> 
             </div>
@@ -37,7 +36,7 @@ export const Drawer: React.FC<DrawerProps> = (props: DrawerProps) => {
             <Toolbar
                 selectedTool={selectedTool}
                 displayOtherTracks={displayOtherTracks}
-                grade={track.grade}
+                grade={track!.grade}
                 onToolSelect={(tool) => setSelectedTool(tool)}
                 onGradeSelect={(grade) => console.log(grade)}
                 onClear={() => {}}

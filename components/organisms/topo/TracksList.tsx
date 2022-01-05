@@ -1,10 +1,10 @@
 import React from 'react';
 import { AverageNote, GradeCircle } from 'components';
-import { gradeToLightGrade, Track, TrackData, UUID } from 'types';
-import { WritableQuark, QuarkIter, Quarkify } from 'helpers/quarky';
+import { gradeToLightGrade, Track } from 'types';
+import { WritableQuark, watchDependencies } from 'helpers/quarky';
 
 interface TracksListProps {
-  tracks: Iterable<Track>,
+  tracks: Iterable<WritableQuark<Track>>,
   onTrackClick?: (track: WritableQuark<Track>) => void,
   onBuilderAddClick?: () => void,
 }
@@ -21,21 +21,21 @@ const gradeColors = {
 }
 
 // TODO: separate into a TracksListItem component?
-export const TracksList: React.FC<TracksListProps> = (props: TracksListProps) => {
-  const tracks = useQuark(props.tracks.unwrap());
-
+export const TracksList: React.FC<TracksListProps> = watchDependencies((props: TracksListProps) => {
+  const tracks = Array.from(props.tracks);
+  
   return (
     <div className="w-full border-t border-grey-light">
 
-      {tracks.map(track => {
-
+      {tracks.map(trackQuark => {
+        const track = trackQuark();
         const grade = gradeToLightGrade(track.grade);
         return (
           <div
             key={track.id}
             className="px-5 py-5 grid grid-cols-10 items-center border-b border-grey-light cursor-pointer hover:bg-grey-superlight"
             onClick={() => {
-              props.onTrackClick && props.onTrackClick(track);
+              props.onTrackClick && props.onTrackClick(trackQuark);
             }}
           >
             <GradeCircle
@@ -69,4 +69,4 @@ export const TracksList: React.FC<TracksListProps> = (props: TracksListProps) =>
       )}
     </div>
   );
-};
+});

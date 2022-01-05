@@ -1,5 +1,5 @@
 import { isIterable, ConcatIterator, FilterIterator, Flattened, FlattenIterator, MapIterator, ZipIterator} from "./iterators";
-import { derive, Quark } from "./quarky";
+import { derive, Quark, WritableQuark } from "./quarky";
 
 
 const emptyInit = () => { };
@@ -42,6 +42,10 @@ export class QuarkIter<T> implements Iterable<T> {
             new MapIterator(this.iterator, fn),
             this.init,
         );
+    }
+
+    unwrap<U>(this: QuarkIter<Quark<U>>): QuarkIter<U> {
+        return this.map(x => x());
     }
 
     flatten(): QuarkIter<Flattened<T>> {

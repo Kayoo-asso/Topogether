@@ -86,8 +86,9 @@ export class QuarkArray<T> implements QuarkArray<T> {
         return iter;
     }
 
-    quarks(): QuarkArrayRaw<T> {
-        return new QuarkArrayRawImpl(this.#source());
+    quarks(): QuarkIter<WritableQuark<T>> {
+        const iter = new QuarkArrayIteratorRaw(this.#source);
+        return new QuarkIter(iter, iter.init);
     }
 
     lazy(): QuarkIter<T> {
@@ -96,15 +97,27 @@ export class QuarkArray<T> implements QuarkArray<T> {
     }
 }
 
-class QuarkArrayRawImpl<T> implements QuarkArrayRaw<T> {
-    constructor(private quarks: WritableQuark<T>[]) {}
+class QuarkArrayIteratorRaw<T> implements Iterator<WritableQuark<T>> {
+    private source: WritableQuark<Array<WritableQuark<T>>>;
+    private buffer: Array<WritableQuark<T>>;
+    private pos: number = 0;
 
-    lazy(): QuarkIter<WritableQuark<T>> {
-        return new QuarkIter(this.quarks[Symbol.iterator](), () => { });
+    constructor(source: WritableQuark<Array<WritableQuark<T>>>) {
+        this.source = source;
+        this.buffer = [];
     }
 
-    [Symbol.iterator](): Iterator<WritableQuark<T>> {
-        return this.quarks[Symbol.iterator]();
+    init() {
+        this.pos = 0;
+        this.buffer = this.source();
+    }
+    
+    next(): IteratorResult<WritableQuark<T>> {
+        if (this.pos < this.buffer.length) {
+            return { done: false, value: this.buffer[this.pos++] };
+        } else {
+            return { done: true, value: undefined };
+        }
     }
 }
 

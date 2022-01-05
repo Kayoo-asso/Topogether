@@ -1,4 +1,4 @@
-import { WritableQuark, QuarkArray } from "helpers/quarky";
+import { Quark, QuarkArray } from "helpers/quarky";
 import { Boulder, GradeHistogram, gradeToLightGrade, Topo, TopoData, Track } from "types";
 import { addTrackToHistogram, defaultGradeHistogram } from "./buildBoulderGradeHistogram";
 
@@ -10,7 +10,7 @@ import { addTrackToHistogram, defaultGradeHistogram } from "./buildBoulderGradeH
 // Technically, we need to subscribe to each sector / boulder quark as well, in case someone replaces the QuarkArray within them?
 // So we could replace the reads with a peek here
 
-export function buildGradeHistogram(topo: Topo): WritableQuark<GradeHistogram> {
+export function buildGradeHistogram(topo: Topo): Quark<GradeHistogram> {
     return topo.sectors
         .lazy()
         .map(x => x.boulders)
@@ -18,23 +18,6 @@ export function buildGradeHistogram(topo: Topo): WritableQuark<GradeHistogram> {
         .map(x => x.tracks)
         .flatten()
         .reduce(addTrackToHistogram, defaultGradeHistogram());
-}
-
-export function firstBoulder(topo: Topo): Boulder {
-    return topo.sectors.at(0).boulders.at(0);
-}
-
-
-export function consume(topo: Topo) {
-    for (const sector of topo.sectors) {
-        for (const boulder of sector.boulders) {
-            for (const track of boulder.tracks) {
-                for (const line of track.lines) {
-                    
-                }
-            }
-        }
-    } 
 }
 
     // for (const sector of topo.sectors) {

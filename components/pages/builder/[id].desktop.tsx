@@ -1,17 +1,18 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { BoulderSlideagainstDesktop, Drawer, HeaderDesktop, LeftbarDesktop, MapControl, SlideagainstRightDesktop, SlideoverLeftDesktop } from 'components';
-import { BoulderData, TrackData, GeoCoordinates, MapToolEnum, MarkerProps, TopoData } from 'types';
-import { markerSize } from 'helpers';
+import React, { useEffect, useMemo, useState } from 'react';
+import { BoulderMarker, BoulderSlideagainstDesktop, Drawer, For, HeaderDesktop, LeftbarDesktop, MapControl, Show, SlideagainstRightDesktop, SlideoverLeftDesktop } from 'components';
+import { MapToolEnum, Topo, Track, Boulder } from 'types';
+import { Quark, reactKey, WritableQuark } from 'helpers/quarky';
 
 interface BuilderMapDesktopProps {
-    topo: TopoData,
-    crud: any,
+    topo: Quark<Topo>,
 }
 
 export const BuilderMapDesktop:React.FC<BuilderMapDesktopProps> = (props: BuilderMapDesktopProps) => {
+  const [drawerOpen, setDrawerOpen] = useState<boolean>();
+
     const [currentTool, setCurrentTool] = useState<MapToolEnum>();
-    const [selectedBoulder, setSelectedBoulder] = useState<BoulderData | undefined>(props.topo.sectors[0].boulders[0]);
-    const [selectedTrack, setSelectedTrack] = useState<TrackData | undefined>(props.topo.sectors[0].boulders[0].tracks[0]);
+    const [selectedBoulder, setSelectedBoulder] = useState<WritableQuark<Boulder>>();
+    const [selectedTrack, setSelectedTrack] = useState<WritableQuark<Track>>();
 
     const [displayInfoForm, setDisplayInfoForm] = useState<boolean>(false);
     const [displayApproachForm, setDisplayApproachForm] = useState<boolean>(false);
@@ -39,42 +40,6 @@ export const BuilderMapDesktop:React.FC<BuilderMapDesktopProps> = (props: Builde
       }
     }, [currentDisplay]);
 
-    const getMarkersFromBoulders = () => {
-        const markers: MarkerProps[] = [];
-        for (let i = 0; i < props.topo.sectors.length; i++) {
-          if (props.topo.sectors[i].boulders) {
-            const sector = props.topo.sectors[i];
-            for (let j = 0; j < sector.boulders.length; j++) {
-              const boulder = sector.boulders[j];
-              markers.push({
-                id: boulder.id,
-                options: {
-                  icon: {
-                    url: '/assets/icons/colored/_rock.svg',
-                    scaledSize: markerSize(30),
-                  },
-                  position: boulder.location,
-                  draggable: true,
-                },
-                handlers: {
-                  onClick: useCallback(() => setSelectedBoulder(boulder), []),
-                  onDragEnd: useCallback((e) => {
-                    if (e.latLng) {
-                      const newCoords: GeoCoordinates = {
-                        lat: e.latLng.lat(),
-                        lng: e.latLng.lng(),
-                      };
-                      props.crud.boulder.update(i, j, 'location', newCoords);
-                    }
-                  }, []),
-                },
-              });
-            }
-          }
-        }
-        return markers;
-    };
-
     const [displayValidateModal, setDisplayValidateModal] = useState(false);
     const validateTopo = () => {
       {/* TODO */}
@@ -83,6 +48,13 @@ export const BuilderMapDesktop:React.FC<BuilderMapDesktopProps> = (props: Builde
     const deleteTopo = () => {
       {/* TODO */}
     }
+
+    const topo = props.topo();
+    const boulders = useMemo(() => topo.sectors
+        .lazy()
+        .map(x => x.boulders.quarks())
+        .flatten()
+        , [topo.sectors]);
 
     return (
         <>
@@ -136,7 +108,6 @@ export const BuilderMapDesktop:React.FC<BuilderMapDesktopProps> = (props: Builde
 
                 <MapControl 
                     initialZoom={13}
-                    markers={getMarkersFromBoulders()}
                     boundsToMarkers
                     displayPhotoButton={false}
                     className={
@@ -149,14 +120,26 @@ export const BuilderMapDesktop:React.FC<BuilderMapDesktopProps> = (props: Builde
                         findTopos: false,
                         findPlaces: false,
                     }}
-                />
+                >
+                  <For each={boulders.toArray}>
+                    {(boulder) =>
+                        <BoulderMarker
+                            key={reactKey(boulder)}
+                            boulder={boulder}
+                            onClick={setSelectedBoulder}
+                        />
+                    }
+                  </For>
+                </MapControl>
 
-                {selectedTrack &&
+                <Show when={() => drawerOpen && selectedTrack && selectedBoulder}>
                   <Drawer 
-                    image={selectedBoulder!.images[0]}
-                    track={selectedTrack}
+                    image={selectedBoulder!().images[0]}
+                    tracks={selectedBoulder!().tracks.quarks()}
+                    displayedTrackId={selectedTrack!().id}
+                    onValidate={() => setDrawerOpen(false)}
                   />
-                }
+                </Show>
 
                 {/* TO MODIFY TO PUT FORMS */}
                 {selectedTrack &&

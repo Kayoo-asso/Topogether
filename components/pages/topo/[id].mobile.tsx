@@ -1,43 +1,27 @@
-import { BoulderSlideoverMobile, MapControl, HeaderMobile } from 'components';
+import { BoulderSlideoverMobile, MapControl, HeaderMobile, For, BoulderMarker } from 'components';
 import { markerSize } from 'helpers';
-import React, { useState } from 'react';
-import { BoulderData, MarkerProps, TopoData } from 'types';
+import React, { useMemo, useState } from 'react';
+import { Boulder, MarkerProps, Topo, Track } from 'types';
+import { Quark, reactKey, WritableQuark } from 'helpers/quarky';
 
 interface TopoMobileProps {
-    topo: TopoData,
+    topo: Quark<Topo>,
 }
 
 export const TopoMobile: React.FC<TopoMobileProps> = (props: TopoMobileProps) => {
-    const [selectedBoulder, setSelectedBoulder] = useState<BoulderData>();
-    const [selectedTrack, setSelectedTrack] = useState<number>();
+    const [selectedBoulder, setSelectedBoulder] = useState<WritableQuark<Boulder>>();
+    const [selectedTrack, setSelectedTrack] = useState<WritableQuark<Track>>();
 
     const [displayInfo, setDisplayInfo] = useState<boolean>(false);
     const [displayApproach, setDisplayApproach] = useState<boolean>(false);
     const [displayManagement, setDisplayManagement] = useState<boolean>(false);
 
-    const getMarkersFromBoulders = () => {
-        const markers: MarkerProps[] = []
-        for (const sector of props.topo.sectors) {
-            if (sector.boulders) {
-                for (const boulder of sector.boulders) {
-                    markers.push({
-                        id: boulder.id,
-                        options: {
-                            icon: {
-                                url: '/assets/icons/colored/_rock.svg',
-                                scaledSize: markerSize(30)
-                            },
-                            position: boulder.location,
-                        },
-                        handlers: {
-                            onClick: () => setSelectedBoulder(boulder),
-                        }
-                    })
-                }
-            }
-        }
-        return markers;
-    }
+    const topo = props.topo();
+    const boulders = useMemo(() => topo.sectors
+        .lazy()
+        .map(x => x.boulders.quarks())
+        .flatten()
+        , [topo.sectors]);
 
     return (
         <>
@@ -45,27 +29,38 @@ export const TopoMobile: React.FC<TopoMobileProps> = (props: TopoMobileProps) =>
                 title={props.topo.name}
                 backLink='/'
                 menuOptions={[
-                    { value: 'Infos du topo', action: () => setDisplayInfo(true)},
-                    { value: 'Marche d\'approche', action: () => setDisplayApproach(true)},
-                    { value: 'Gestionnaires du site', action: () => setDisplayManagement(true)},
+                    { value: 'Infos du topo', action: () => setDisplayInfo(true) },
+                    { value: 'Marche d\'approche', action: () => setDisplayApproach(true) },
+                    { value: 'Gestionnaires du site', action: () => setDisplayManagement(true) },
                 ]}
             />
 
-            <MapControl 
+            <MapControl
                 initialZoom={5}
                 displayPhotoButton={false}
-                markers={getMarkersFromBoulders()}
                 boundsToMarkers={true}
                 searchbarOptions={{
                     findTopos: false,
                     findPlaces: false,
                 }}
-            />
+            >
+                <For each={boulders.toArray}>
+                    {(boulder) =>
+                        <BoulderMarker
+                            key={reactKey(boulder)}
+                            boulder={boulder}
+                            onClick={setSelectedBoulder}
+                        />
+                    }
+                </For>
+            </MapControl>
 
             {selectedBoulder &&
-                <BoulderSlideoverMobile 
-                    topoCreatorId={props.topo.creatorId}
+                <BoulderSlideoverMobile
+                    topoCreatorId={props.topo().creatorId}
                     boulder={selectedBoulder}
+                    selectedTrack={selectedTrack}
+                    onSelectTrack={setSelectedTrack}
                     onClose={() => setSelectedBoulder(undefined)}
                 />
             }
