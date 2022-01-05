@@ -7,7 +7,7 @@ import { GeoCoordinates, RequireAtLeastOne, StringBetween } from './Utils';
 import { UUID } from './UUID';
 import { TrackRating, User } from './User';
 import { Image } from './Image';
-import { WritableQuark, QuarkArray, Quarkify } from 'helpers/quarky';
+import { WritableQuark, QuarkArray } from 'helpers/quarky';
 
 export type Topo = Omit<TopoData, 'sectors' | 'parkings' | 'access'> & {
   sectors: QuarkArray<Sector>,

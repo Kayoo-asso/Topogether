@@ -2,15 +2,19 @@ import { QuarkIter } from "./QuarkIter";
 import { quark, WritableQuark } from "./quarky";
 
 
-export interface QuarkArray<T> extends Iterable<T> {
-    length: number,
-    at(i: number): T,
-    set(i: number, value: T): void,
-    quarks(): QuarkArrayRaw<T>,
-    lazy(): QuarkIter<T>,
+// export interface QuarkArray<T> extends Iterable<T> {
+//     length: number,
+//     at(i: number): T,
+//     set(i: number, value: T): void,
+//     quarks(): QuarkArrayRaw<T>,
+//     lazy(): QuarkIter<T>,
+// }
+
+export interface QuarkArrayRaw<T> extends Iterable<WritableQuark<T>> {
+    lazy(): QuarkIter<WritableQuark<T>>
 }
 
-export class QuarkArrayImpl<T> implements QuarkArray<T> {
+export class QuarkArray<T> implements QuarkArray<T> {
     #source: WritableQuark<Array<WritableQuark<T>>>;
 
     // TODO: auto-setup callbacks (so it works even on push etc)
@@ -34,6 +38,10 @@ export class QuarkArrayImpl<T> implements QuarkArray<T> {
 
     push(value: T) {
         this.#source.set([...this.#source(), quark(value)]);
+    }
+
+    toArray(): T[] {
+        return Array.from(this);
     }
 
     [Symbol.iterator]() {
@@ -65,9 +73,6 @@ class QuarkArrayRawImpl<T> implements QuarkArrayRaw<T> {
 }
 
 
-interface QuarkArrayRaw<T> extends Iterable<WritableQuark<T>> {
-    lazy(): QuarkIter<WritableQuark<T>>
-}
 
 // TODO: reset() method?
 class QuarkArrayIterator<T> implements Iterator<T> {

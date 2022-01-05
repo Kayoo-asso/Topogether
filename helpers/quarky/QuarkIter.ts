@@ -58,7 +58,8 @@ export class QuarkIter<T> implements Iterable<T> {
         )
     }
 
-    toArray(): T[] {
+    // Does not make a copy by default, so the return array is readonly
+    toArray(): readonly T[] {
         if (!this.result) {
             this.result = derive(() => {
                 this.init();
