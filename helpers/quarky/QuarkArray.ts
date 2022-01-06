@@ -1,5 +1,5 @@
 import { QuarkIter } from "./QuarkIter";
-import { quark, WritableQuark } from "./quarky";
+import { quark, Quark } from "./quarky";
 
 
 // export interface QuarkArray<T> extends Iterable<T> {
@@ -12,14 +12,14 @@ import { quark, WritableQuark } from "./quarky";
 
 const alwaysFalse = () => false;
 
-export interface QuarkArrayRaw<T> extends Iterable<WritableQuark<T>> {
-    lazy(): QuarkIter<WritableQuark<T>>
+export interface QuarkArrayRaw<T> extends Iterable<Quark<T>> {
+    lazy(): QuarkIter<Quark<T>>
 }
 
 // NOTE: the return values of all the array methods become invalid if done within a batch (since modifications apply later)
 // Should we not return anything instead? Or wrap them in a Ref object, to ensure the values can be used at the end of the batch
 export class QuarkArray<T> implements QuarkArray<T> {
-    #source: WritableQuark<Array<WritableQuark<T>>>;
+    #source: Quark<Array<Quark<T>>>;
 
     // TODO: auto-setup callbacks (so it works even on push etc)
     constructor(items: T[]) {
@@ -41,7 +41,7 @@ export class QuarkArray<T> implements QuarkArray<T> {
         this.#source()[i].set(value);
     }
 
-    #apply<U>(operation: (buffer: WritableQuark<T>[]) => U): U {
+    #apply<U>(operation: (buffer: Quark<T>[]) => U): U {
         let output: U;
         this.#source.set(x => {
             output = operation(x);
@@ -55,11 +55,11 @@ export class QuarkArray<T> implements QuarkArray<T> {
         return this.#apply(x => x.push(quark(value)));
     }
 
-    pop(): WritableQuark<T> | undefined {
+    pop(): Quark<T> | undefined {
         return this.#apply(x => x.pop());
     }
 
-    shift(): WritableQuark<T> | undefined {
+    shift(): Quark<T> | undefined {
         return this.#apply(x => x.shift());
     }
 
@@ -67,7 +67,7 @@ export class QuarkArray<T> implements QuarkArray<T> {
         return this.#apply(x => x.unshift(...items.map(x => quark(x))));
     }
 
-    splice(start: number, deleteCount?: number, ...items: T[]): WritableQuark<T>[] {
+    splice(start: number, deleteCount?: number, ...items: T[]): Quark<T>[] {
         return this.#apply(x =>
             deleteCount
                 ? x.splice(start, deleteCount as number, ...items.map(x => quark(x)))
@@ -86,7 +86,7 @@ export class QuarkArray<T> implements QuarkArray<T> {
         return iter;
     }
 
-    quarks(): QuarkIter<WritableQuark<T>> {
+    quarks(): QuarkIter<Quark<T>> {
         const iter = new QuarkArrayIteratorRaw(this.#source);
         return new QuarkIter(iter, iter.init);
     }
@@ -97,12 +97,12 @@ export class QuarkArray<T> implements QuarkArray<T> {
     }
 }
 
-class QuarkArrayIteratorRaw<T> implements Iterator<WritableQuark<T>> {
-    private source: WritableQuark<Array<WritableQuark<T>>>;
-    private buffer: Array<WritableQuark<T>>;
+class QuarkArrayIteratorRaw<T> implements Iterator<Quark<T>> {
+    private source: Quark<Array<Quark<T>>>;
+    private buffer: Array<Quark<T>>;
     private pos: number = 0;
 
-    constructor(source: WritableQuark<Array<WritableQuark<T>>>) {
+    constructor(source: Quark<Array<Quark<T>>>) {
         this.source = source;
         this.buffer = [];
     }
@@ -112,7 +112,7 @@ class QuarkArrayIteratorRaw<T> implements Iterator<WritableQuark<T>> {
         this.buffer = this.source();
     }
     
-    next(): IteratorResult<WritableQuark<T>> {
+    next(): IteratorResult<Quark<T>> {
         if (this.pos < this.buffer.length) {
             return { done: false, value: this.buffer[this.pos++] };
         } else {
@@ -125,11 +125,11 @@ class QuarkArrayIteratorRaw<T> implements Iterator<WritableQuark<T>> {
 
 // TODO: reset() method?
 class QuarkArrayIterator<T> implements Iterator<T> {
-    private source: WritableQuark<Array<WritableQuark<T>>>;
-    private buffer: Array<WritableQuark<T>>;
+    private source: Quark<Array<Quark<T>>>;
+    private buffer: Array<Quark<T>>;
     private pos: number = 0;
 
-    constructor(source: WritableQuark<Array<WritableQuark<T>>>) {
+    constructor(source: Quark<Array<Quark<T>>>) {
         this.source = source;
         this.buffer = [];
     }

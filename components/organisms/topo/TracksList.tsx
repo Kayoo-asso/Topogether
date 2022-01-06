@@ -1,11 +1,11 @@
 import React from 'react';
 import { AverageNote, GradeCircle } from 'components';
 import { gradeToLightGrade, Track } from 'types';
-import { WritableQuark, watchDependencies } from 'helpers/quarky';
+import { Quark, watchDependencies } from 'helpers/quarky';
 
 interface TracksListProps {
-  tracks: Iterable<WritableQuark<Track>>,
-  onTrackClick?: (track: WritableQuark<Track>) => void,
+  tracks: Iterable<Quark<Track>>,
+  onTrackClick?: (track: Quark<Track>) => void,
   onBuilderAddClick?: () => void,
 }
 

@@ -1,5 +1,5 @@
 import { isIterable, ConcatIterator, FilterIterator, Flattened, FlattenIterator, MapIterator, ZipIterator} from "./iterators";
-import { derive, Quark, WritableQuark } from "./quarky";
+import { derive, Signal, Quark } from "./quarky";
 
 
 const emptyInit = () => { };
@@ -9,7 +9,7 @@ const emptyInit = () => { };
 export class QuarkIter<T> implements Iterable<T> {
     private readonly iterator: Iterator<T>;
     private readonly init: () => void;
-    private result: Quark<T[]> | null;
+    private result: Signal<T[]> | null;
 
     constructor(source: Iterator<T> | Iterable<T>, init?: () => void) {
         this.iterator = isIterable(source)
@@ -44,7 +44,7 @@ export class QuarkIter<T> implements Iterable<T> {
         );
     }
 
-    unwrap<U>(this: QuarkIter<Quark<U>>): QuarkIter<U> {
+    unwrap<U>(this: QuarkIter<Signal<U>>): QuarkIter<U> {
         return this.map(x => x());
     }
 
@@ -77,7 +77,7 @@ export class QuarkIter<T> implements Iterable<T> {
         return this.result();
     }
 
-    find(predicate: (item: T) => boolean): Quark<T | undefined> {
+    find(predicate: (item: T) => boolean): Signal<T | undefined> {
         return derive(() => {
             this.init();
             let result: IteratorResult<T>;
@@ -93,7 +93,7 @@ export class QuarkIter<T> implements Iterable<T> {
         });
     }
 
-    reduce<A>(fn: (acc: A, item: T) => A, initial: A): Quark<A> {
+    reduce<A>(fn: (acc: A, item: T) => A, initial: A): Signal<A> {
         return derive(() => {
             this.init();
             let result: IteratorResult<T>;

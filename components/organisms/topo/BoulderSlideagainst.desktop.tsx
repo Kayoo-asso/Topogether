@@ -1,13 +1,13 @@
 import { Icon, SlideagainstRightDesktop } from 'components';
-import { Quark } from 'helpers/quarky';
+import { Signal } from 'helpers/quarky';
 import React from 'react';
 import { Boulder, BoulderData, Track, TrackData } from 'types';
 import { TracksList } from '.';
 
 interface BoulderSlideagainstDesktopProps {
-    boulder: Quark<Boulder>,
+    boulder: Signal<Boulder>,
     open?: boolean,
-    onSelectTrack?: (track: Quark<Track>) => void,
+    onSelectTrack?: (track: Signal<Track>) => void,
     onClose: () => void,
 }
 

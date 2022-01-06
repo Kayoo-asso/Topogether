@@ -1,7 +1,7 @@
 import React from 'react';
 import { GradeCircle } from 'components';
 import { GradeHistogram, LightGrade, lightGrades } from 'types';
-import { Quark } from 'helpers/quarky';
+import { Signal } from 'helpers/quarky';
 
 type GradeHistogramSelection = {
   [K in LightGrade]: boolean
@@ -19,7 +19,7 @@ const defaultHistogramSelection: GradeHistogramSelection = {
 }
 
 interface GradeScaleProps {
-  histogram: Quark<GradeHistogram>,
+  histogram: Signal<GradeHistogram>,
   selection?: GradeHistogramSelection,
   circleSize?: 'little' | 'normal',
   className?: string,

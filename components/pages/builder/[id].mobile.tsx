@@ -3,17 +3,20 @@ import {
   BoulderSlideoverMobile, Drawer, HeaderMobile, MapControl, BoulderMarker, For, Show
 } from 'components';
 import { Boulder, Topo, Track } from 'types';
-import { useCreateQuark, WritableQuark, reactKey } from 'helpers/quarky';
+import { Quark, reactKey, useSelectQuark } from 'helpers/quarky';
 
 interface BuilderMapMobileProps {
-  topo: WritableQuark<Topo>,
+  topo: Quark<Topo>,
 }
 
 export const BuilderMapMobile: React.FC<BuilderMapMobileProps> = (props: BuilderMapMobileProps) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [geoCameraOpen, setGeoCameraOpen] = useState(false);
-  const [selectedTrack, setSelectedTrack] = useState<WritableQuark<Track>>();
-  const [selectedBoulder, setSelectedBoulder] = useState<WritableQuark<Boulder>>();
+
+  // const [selectedTrack, setSelectedTrack] = useState<WritableQuark<Track>>();
+  // const [selectedBoulder, setSelectedBoulder] = useState<WritableQuark<Boulder>>();
+  const selectedTrack = useSelectQuark<Track>();
+  const selectedBoulder = useSelectQuark<Boulder>();
 
   // NOTE: testing out how we could select a boulder by a clicking on a map marker
   // We pass selectedBoulder.Set directly to BoulderMarker
@@ -26,7 +29,7 @@ export const BuilderMapMobile: React.FC<BuilderMapMobileProps> = (props: Builder
     .lazy()
     .map(x => x.boulders.quarks())
     .flatten()
-  , [topo.sectors]);
+    , [topo.sectors]);
 
   return (
     <>
@@ -54,23 +57,25 @@ export const BuilderMapMobile: React.FC<BuilderMapMobileProps> = (props: Builder
           }}
         >
           <For each={boulders.toArray}>
-            {(boulder) => 
+            {(boulder) =>
               <BoulderMarker
                 key={reactKey(boulder)}
                 boulder={boulder}
-                onClick={setSelectedBoulder}
+                onClick={selectedBoulder.select}
               />
             }
           </For>
         </MapControl>
 
-        <Show when={() => drawerOpen && selectedTrack && selectedBoulder}>
-          <Drawer
-            image={selectedBoulder!().images[0]}
-            tracks={selectedBoulder!().tracks.quarks()}
-            displayedTrackId={selectedTrack!().id}
-            onValidate={() => setDrawerOpen(false)}
-          />
+        <Show when={() => [drawerOpen, selectedBoulder(), selectedTrack()] as const}>
+          {([, boulder, track]) =>
+            <Drawer
+              image={boulder.images[0]}
+              tracks={boulder.tracks.quarks()}
+              displayedTrackId={track.id}
+              onValidate={() => setDrawerOpen(false)}
+            />
+          }
         </Show>
 
         {/* TODO */}
@@ -79,21 +84,24 @@ export const BuilderMapMobile: React.FC<BuilderMapMobileProps> = (props: Builder
         }
       </div>
 
-      <Show when={() => selectedBoulder}>
-        <BoulderSlideoverMobile
-          open
-          boulder={selectedBoulder!}
-          selectedTrack={selectedTrack}
-          topoCreatorId={topo.creatorId}
-          forBuilder
-          onPhotoButtonClick={() => setGeoCameraOpen(true)}
-          onDrawButtonClick={() => setDrawerOpen(true)}
-          onSelectTrack={setSelectedTrack}
-          onClose={() => {
-            setSelectedBoulder(undefined);
-            setSelectedTrack(undefined);
-          }}
-        />
+      <Show when={() => selectedBoulder.quark()}>
+        {boulder =>
+          <BoulderSlideoverMobile
+            open
+            boulder={boulder}
+            selectedTrack={selectedTrack}
+            topoCreatorId={topo.creatorId}
+            forBuilder
+            onPhotoButtonClick={() => setGeoCameraOpen(true)}
+            onDrawButtonClick={() => setDrawerOpen(true)}
+            // onSelectTrack={setSelectedTrack}
+            // onClose={() => {
+            //   setSelectedBoulder(undefined);
+            //   setSelectedTrack(undefined);
+            // }}
+          />
+        
+        }
       </Show>
     </>
   );

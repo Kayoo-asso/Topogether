@@ -13,11 +13,11 @@ import {
   getMousePosInside,
   getPathFromPoints,
 } from '../../helpers';
-import { QuarkIter, Quark, WritableQuark } from 'helpers/quarky';
+import { QuarkIter, Signal, Quark } from 'helpers/quarky';
 
 interface TracksImageProps {
   image: ImageType,
-  tracks: QuarkIter<WritableQuark<Track>>,
+  tracks: QuarkIter<Quark<Track>>,
   imageClassName?: string,
   tracksClassName?: string,
   containerClassName?: string,

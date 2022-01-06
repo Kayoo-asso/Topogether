@@ -7,18 +7,18 @@ import { topogetherUrl } from 'helpers/globals';
 import { buildBoulderGradeHistogram } from 'helpers';
 import { TracksList } from '.';
 import { default as NextImage } from 'next/image';
-import { WritableQuark, watchDependencies } from 'helpers/quarky';
+import { Quark, watchDependencies, SelectSignal, SelectSignalNullable } from 'helpers/quarky';
 
 interface BoulderSlideoverMobileProps {
   open?: boolean,
-  boulder: WritableQuark<Boulder>,
-  selectedTrack: WritableQuark<Track> | undefined,
+  boulder: Quark<Boulder>,
+  selectedTrack: SelectSignalNullable<Track>,
   topoCreatorId?: UUID,
   forBuilder?: boolean,
   onPhotoButtonClick?: () => void,
-  onSelectTrack: (selected: WritableQuark<Track>) => void,
+  // onSelectTrack: (selected: WritableQuark<Track>) => void,
   onDrawButtonClick?: () => void,
-  onClose: () => void,
+  // onClose: () => void,
 }
 
 const gradeColors = {
@@ -43,13 +43,13 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = wat
   const [trackTab, setTrackTab] = useState(true); // BUILDER
 
   const boulder = props.boulder();
-  const selectedTrack = props.selectedTrack ? props.selectedTrack() : undefined;
+  // const selectedTrack = props.selectedTrack();
 
   const displayedTracks = useMemo(() => boulder.tracks
     .quarks()
-    .filter(track => ((track().creatorId) === props.topoCreatorId) === officialTrackTab), 
-  [boulder.tracks, props.topoCreatorId, officialTrackTab]);
-  
+    .filter(track => ((track().creatorId) === props.topoCreatorId) === officialTrackTab),
+    [boulder.tracks, props.topoCreatorId, officialTrackTab]);
+
   return (
     <SlideoverMobile
       open
@@ -122,72 +122,76 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = wat
 
 
       {/* TRACK INFOS */}
-      {/* TODO: Put this into a Show once we have a proper pattern */}
-      {selectedTrack && (
-        <div className={`grid grid-cols-8 p-5 items-center ${full ? '' : ' mt-3'}`}>
-          <div className='col-span-1 pr-3'>
-            {selectedTrack.grade &&
-              <div className={`ktext-subtitle float-right ${gradeColors[gradeToLightGrade(selectedTrack.grade)]}`}>
-                {selectedTrack.grade}
+      {/* TODO: abstract this into its own component? */}
+      <Show when={props.selectedTrack}>
+        {track =>
+          <div className={`grid grid-cols-8 p-5 items-center ${full ? '' : ' mt-3'}`}>
+            <div className='col-span-1 pr-3'>
+              {track.grade &&
+                <div className={`ktext-subtitle float-right ${gradeColors[gradeToLightGrade(track.grade)]}`}>
+                  {track.grade}
+                </div>
+              }
+            </div>
+
+            <div className='col-span-6'>
+              <div className="ktext-section-title">{track.name}</div>
+            </div>
+
+            <div className='col-span-1'>
+              {forBuilder && (
+                <RoundButton
+                  iconName='draw'
+                  buttonSize={45}
+                  onClick={props.onDrawButtonClick}
+                />
+              )}
+              {!forBuilder && (
+                <Icon
+                  name='flag'
+                />
+              )}
+            </div>
+
+            <div className={'col-start-2 col-span-4' + (forBuilder ? ' -mt-[16px]' : '')}>
+              {track.isTraverse && full && <div className="ktext-base-little">Traversée</div>}
+              {track.isSittingStart && full && <div className="ktext-base-little">Départ assis</div>}
+            </div>
+
+            {!forBuilder &&
+              <div className='col-span-3 flex content-end'>
+                Etoiles
+                {/* TODO */}
               </div>
             }
           </div>
-
-          <div className='col-span-6'>
-            <div className="ktext-section-title">{selectedTrack.name}</div>
-          </div>
-
-          <div className='col-span-1'>
-            {forBuilder && (
-              <RoundButton
-                iconName='draw'
-                buttonSize={45}
-                onClick={props.onDrawButtonClick}
-              />
-            )}
-            {!forBuilder && (
-              <Icon
-                name='flag'
-              />
-            )}
-          </div>
-
-          <div className={'col-start-2 col-span-4' + (forBuilder ? ' -mt-[16px]' : '')}>
-            {selectedTrack.isTraverse && full && <div className="ktext-base-little">Traversée</div>}
-            {selectedTrack.isSittingStart && full && <div className="ktext-base-little">Départ assis</div>}
-          </div>
-
-          {!forBuilder &&
-            <div className='col-span-3 flex content-end'>
-              Etoiles
-              {/* TODO */}
-            </div>
-          }
-        </div>
-      )}
+        }
+      </Show>
 
 
       {/* TRACK DETAILS */}
-      <Show when={() => selectedTrack && forBuilder && full}>
-        <div className='grid grid-cols-9 p-5 items-center'>
-          <div className='col-span-full mb-6'>
-            {selectedTrack!.description}
+      <Show when={() => [forBuilder, full, props.selectedTrack()] as const}>
+        {([, , track]) =>
+          <div className='grid grid-cols-9 p-5 items-center'>
+
+            <div className='col-span-full mb-6'>
+              {track.description}
+            </div>
+
+            <div className='col-span-3'>
+              <div className='ktext-subtitle'>Techniques</div>
+
+            </div>
+
+            <div className='col-span-3'>
+              <div className='ktext-subtitle'>Réception</div>
+            </div>
+
+            <div className='col-span-3'>
+              <div className='ktext-subtitle'>Orientation</div>
+            </div>
           </div>
-
-          <div className='col-span-3'>
-            <div className='ktext-subtitle'>Techniques</div>
-
-          </div>
-
-          <div className='col-span-3'>
-            <div className='ktext-subtitle'>Réception</div>
-
-          </div>
-
-          <div className='col-span-3'>
-            <div className='ktext-subtitle'>Orientation</div>
-          </div>
-        </div>
+        }
       </Show>
 
       {/* TODO : show once good pattern */}
@@ -223,7 +227,7 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = wat
         <div className="overflow-auto pb-[30px]">
           <TracksList
             tracks={displayedTracks}
-            onTrackClick={props.onSelectTrack} //TODO
+            onTrackClick={props.selectedTrack.select} //TODO
             onBuilderAddClick={() => console.log('create track')} //TODO
           />
         </div>

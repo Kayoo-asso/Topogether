@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import { DrawerToolEnum, Image, Track, UUID } from 'types';
 import { isMobile } from 'react-device-detect';
 import { Toolbar, TracksImage } from 'components';
-import { WritableQuark, QuarkIter } from 'helpers/quarky';
+import { Quark, QuarkIter } from 'helpers/quarky';
 
 
 interface DrawerProps {
     image: Image,
-    tracks: QuarkIter<WritableQuark<Track>>,
+    tracks: QuarkIter<Quark<Track>>,
     displayedTrackId: UUID,
     onValidate: () => void,
 }

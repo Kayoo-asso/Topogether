@@ -1,39 +1,64 @@
 import { watchDependencies } from "helpers/quarky";
 import React from "react";
 
+type NonNullableValues<T> = T extends Array<unknown> | ReadonlyArray<unknown>
+    ? NonNullObject<T>
+    : NonNullable<T>;
+
+type NonNullObject<T> = {
+    [K in keyof T]: NonNullable<T[K]>
+}
+
 // Assumption: the children and fallback are always the same
 // Using two components here allows us to only rerender when the actual truthiness of the value changed
 export interface ShowProps<T> {
-    when: () => T | null | undefined,
+    when: () => T,
     fallback?: JSX.Element,
-    children: JSX.Element | ((item: T) => JSX.Element),
+    children: JSX.Element | ((item: NonNullableValues<T>) => JSX.Element),
 }
 
 interface EvaluatedProps {
-    when: any,
+    when: boolean,
     fallback?: JSX.Element,
 }
 
-const ShowNested = (props: React.PropsWithChildren<EvaluatedProps>) =>
-    <>{props.when ? props.children : (props.fallback ?? null) }</>
+const Nested = (props: React.PropsWithChildren<EvaluatedProps>) =>
+    <>
+        {props.when
+            ? props.children
+            : (props.fallback ?? null)
+        }
+    </>
 
-const NestedMemo = React.memo(ShowNested, (a, b) => a.when !== b.when);
+const NestedMemo = React.memo(Nested, (a, b) => a.when !== b.when);
 
-function ShowComponent<T>(props: React.PropsWithChildren<ShowProps<T>>) {
-    let when: boolean | T | null | undefined;
-    let content: JSX.Element | null;
-    if (typeof props.children === "function") {
-        when = props.when();
-        content = when ? props.children(when) : null;
+function Component({ when, fallback, children}: ShowPropsInternal) {
+    let result = when();
+    let showContent = true;
+    if (Array.isArray(result)) {
+        for (let i = 0; i < result.length; i++) {
+            showContent &&= !!result[i];
+        }
     } else {
-        when = !!props.when();
-        content = props.children as JSX.Element;
+        showContent = !!result;
     }
+    const content: JSX.Element | null = typeof children === "function"
+        ? (showContent ? children(result as any) : null)
+        : children;
     return (
-        <NestedMemo when={!!props.when()} fallback={props.fallback}>
+        <NestedMemo when={showContent} fallback={fallback}>
             {content}
         </NestedMemo>
     );
 }
 
-export const Show = watchDependencies(ShowComponent, { memo: false });
+export function Show<T>(props: ShowProps<T>): JSX.Element | null {
+    return watchDependencies<ShowProps<T>>(Component, { memo: false })(props as ShowPropsInternal);
+}
+
+// Remember to handle both the array and non-array case
+export type ShowPropsInternal = {
+    when: () => any,
+    fallback?: JSX.Element,
+    children: JSX.Element | ((item: any) => JSX.Element),
+}

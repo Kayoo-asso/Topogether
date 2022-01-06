@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { trackContext } from ".";
-import { WritableQuark, derive, effect, quark, QuarkOptions, untrack, Quark } from "./quarky";
+import { selectQuark, SelectQuark, selectSignal, SelectSignal, SelectSignalNullable, trackContext } from ".";
+import { Quark, derive, effect, quark, QuarkOptions, untrack, Signal, SelectQuarkNullable } from "./quarky";
 
 
 // TODO: implement options
@@ -8,8 +8,13 @@ export interface WatchDependenciesOptions {
     memo?: boolean
 }
 
-export function watchDependencies<P>(component: React.FC<P>, options?: WatchDependenciesOptions): React.FC<P> {
-    return (props, context) => {
+const defaultOptions: WatchDependenciesOptions = {
+    memo: true
+}
+
+// I think the type is correct? React.memo is a mess in TypeScript
+export function watchDependencies<T>(component: React.FunctionComponent<T>, options?: WatchDependenciesOptions) {
+    const wrapped = (props: T, context?: any) => {
         const [result, scope] = trackContext(() => component(props, context));
         const [, forceRender] = useState([]);
         // reruns every time
@@ -22,6 +27,15 @@ export function watchDependencies<P>(component: React.FC<P>, options?: WatchDepe
         });
         return result;
     }
+    const actualOpt = {
+        ...defaultOptions,
+        options
+    };
+    
+    return actualOpt.memo
+        ? React.memo(wrapped)
+        : wrapped;
+
 }
 
 // export function useQuark<T>(quark: Quark<T>): [T, Dispatch<SetStateAction<T>>];
@@ -87,19 +101,14 @@ export function watchDependencies<P>(component: React.FC<P>, options?: WatchDepe
 //     }, quarks);
 // }
 
-export function useCreateQuark<T>(): WritableQuark<T | undefined>;
-export function useCreateQuark<T>(value: undefined, options?: QuarkOptions<T>): WritableQuark<T | undefined>;
-export function useCreateQuark<T>(value: T, options?: QuarkOptions<T>): WritableQuark<T>;
-export function useCreateQuark<T>(computation: () => T, deps?: React.DependencyList, options?: QuarkOptions<T>): Quark<T>
+export function useCreateQuark<T>(value: T, options?: QuarkOptions<T>): Quark<T>;
+export function useCreateQuark<T>(computation: () => T, deps?: React.DependencyList, options?: QuarkOptions<T>): Signal<T>
 
 export function useCreateQuark<T>(
-    arg1?: T | (() => T) | QuarkOptions<T>,
+    arg1: T | (() => T),
     arg2?: QuarkOptions<T> | React.DependencyList,
     options?: QuarkOptions<T>
-): WritableQuark<T> | WritableQuark<T | undefined> | Quark<T> {
-    if (!arg1) {
-        return useMemo(() => quark<T | undefined>(undefined, arg2 as QuarkOptions<T | undefined> | undefined), []);
-    }
+): Signal<T> | Quark<T> | SelectQuark<T> | SelectSignal<T> {
     // don't default to an empty dependency list here, it's better to rerun the computation and ensure a correct result
     if (typeof arg1 === "function") {
         return useMemo(() => derive(arg1 as () => T, options), arg2 as React.DependencyList);
@@ -107,13 +116,25 @@ export function useCreateQuark<T>(
     return useMemo(() => quark(arg1 as T, arg2 as QuarkOptions<T> | undefined), [])
 }
 
-const quarkKeys: WeakMap<Quark<any>, number> = new WeakMap();
+export function useSelectSignal<T>(): SelectSignalNullable<T>;
+export function useSelectSignal<T>(initial: Signal<T>): SelectSignal<T>;
+export function useSelectSignal<T>(initial?: Signal<T>): SelectSignal<T> | SelectSignalNullable<T> {
+    return useMemo(() => selectSignal<T>(initial as any), []);
+}
+
+export function useSelectQuark<T>(): SelectQuarkNullable<T>;
+export function useSelectQuark<T>(initial: Quark<T>): SelectQuark<T>;
+export function useSelectQuark<T>(initial?: Quark<T>): SelectQuark<T> | SelectQuarkNullable<T> {
+    return useMemo(() => selectQuark<T>(initial as any), []);
+}
+
+const quarkKeys: WeakMap<Signal<any>, number> = new WeakMap();
 let keyCount = 0;
 
-export function reactKey<T>(quark: Quark<T>): string | number;
-export function reactKey<T, K extends keyof T>(quark: Quark<T>, keyProperty: K): string | number;
+export function reactKey<T>(quark: Signal<T>): string | number;
+export function reactKey<T, K extends keyof T>(quark: Signal<T>, keyProperty: K): string | number;
 
-export function reactKey<T>(quark: Quark<T>, keyProperty?: string): string | number {
+export function reactKey<T>(quark: Signal<T>, keyProperty?: string): string | number {
     keyProperty = keyProperty ?? "id";
     const obj = untrack(() => quark()) as any;
     const keyType = typeof obj[keyProperty];

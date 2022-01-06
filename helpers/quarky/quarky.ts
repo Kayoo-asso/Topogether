@@ -1,3 +1,70 @@
+// === EXTERNAL API ===
+
+// The interface common to Quarks and Signals
+// This is simply a function that returns the current value of the signal
+// A computed signal (= derived from other signals) without any active observers
+// is removed from the auto-update system. Its value will only be updated upon the next read.
+// An active observer can be an effect, or another active signal.
+export interface Signal<T> {
+    (): T,
+};
+
+// Quarks contain the data of the application
+export interface Quark<T> extends Signal<T> {
+    set(value: StateUpdate<T>): void,
+};
+
+// SelectQuarks are useful when picking a quark to use somewhere else
+// They are a handy wrapper around a Quark<Quark<T> | undefined>
+export interface SelectQuark<T> {
+    (): T,
+    quark(): Quark<T>,
+    select(value: Quark<T>): void,
+}
+export interface SelectQuarkNullable<T> {
+    (): T | undefined,
+    quark(): Quark<T> | undefined,
+    select(value: Quark<T> | undefined): void,
+}
+
+// SelectSignals are the readonly version of SelectQuarks
+export interface SelectSignal<T> {
+    (): T,
+    quark(): Signal<T>,
+    select(value: Signal<T>): void,
+}
+
+export interface SelectSignalNullable<T> {
+    (): T | undefined,
+    quark(): Signal<T> | undefined,
+    select(value: Signal<T> | undefined): void,
+}
+
+// Effects keep signals activated and are rerun whenever one of their dependencies changes
+export interface Effect {
+    dispose(): void,
+};
+
+export type StateUpdate<T> = T | ((prev: T) => T);
+export type CleanupHelper = (cleanup: () => void) => void;
+
+export interface QuarkOptions<T> {
+    equal?: ((a: T, b: T) => boolean),
+    name?: string,
+}
+
+export interface EffectOptions {
+    // TODO: fix, once I find out how I want to handle the explicit context use in the React integration
+    watch?: DataNode[], 
+    // Lazy means the effect will not run and register dependencies upon creation.
+    // It will only get triggered by explicit "watch" dependencies.
+    // Setting `lazy: true` without providing `watch` dependencies means the effect will never run.
+    // (TODO: make it impossible in the type)
+    // This is especially useful for subscribing components or synchronization with external storage.
+    lazy?: boolean,
+    name?: string
+}
+
 // === TYPES ===
 
 // import ReactDOM from "react-dom";
@@ -88,40 +155,6 @@ interface Scope {
 type DataNode = QuarkNode<any> | DerivationNode<any>;
 type Computation = DerivationNode<any> | EffectNode;
 
-// === EXPORTED TYPES ===
-
-
-export interface Quark<T> {
-    (): T,
-};
-
-export interface WritableQuark<T> extends Quark<T> {
-    set(value: StateUpdate<T>): void,
-};
-
-export interface Effect {
-    dispose(): void,
-};
-
-export type StateUpdate<T> = T | ((prev: T) => T);
-export type CleanupHelper = (cleanup: () => void) => void;
-
-export interface QuarkOptions<T> {
-    equal?: ((a: T, b: T) => boolean),
-    name?: string,
-}
-
-export interface EffectOptions {
-    // TODO: fix, once I find out how I want to handle the explicit context use in the React integration
-    watch?: DataNode[], 
-    // Lazy means the effect will not run and register dependencies upon creation.
-    // It will only get triggered by explicit "watch" dependencies.
-    // Setting `lazy: true` without providing `watch` dependencies means the effect will never run.
-    // This is especially useful for subscribing components or synchronization with external storage.
-    lazy?: boolean,
-    name?: string
-}
-
 // === GLOBAL CONTEXT ===
 let CurrentScope: Scope | undefined = undefined;
 
@@ -169,7 +202,7 @@ export function untrack<T>(work: () => T): T {
     return result;
 }
 
-export function setQuark<T>(quark: WritableQuark<T>, update: StateUpdate<T>) {
+export function setQuark<T>(quark: Quark<T>, update: StateUpdate<T>) {
     quark.set(update);
 }
 
@@ -189,7 +222,7 @@ function writeNode<T>(node: QuarkNode<T>, update: StateUpdate<T>) {
 
 const defaultEqual = <T>(a: T, b: T) => a === b;
 
-export function quark<T>(value: T, options?: QuarkOptions<T>): WritableQuark<T> {
+export function quark<T>(value: T, options?: QuarkOptions<T>): Quark<T> {
     const q: QuarkNode<T> = {
         type: NodeType.Quark,
         value,
@@ -204,9 +237,31 @@ export function quark<T>(value: T, options?: QuarkOptions<T>): WritableQuark<T> 
     return read;
 }
 
+export function selectSignal<T>(): SelectSignalNullable<T>;
+export function selectSignal<T>(initial: Signal<T>): SelectSignal<T>;
+export function selectSignal<T>(initial?: Signal<T>): SelectSignal<T> | SelectSignalNullable<T> {
+    const inner = quark<Signal<T> | undefined>(initial);
+    const outer = () => {
+        const selected = inner();
+        return selected ? selected() : undefined;
+    }
+    outer.quark = inner;
+    // necessary, otherwise the quark will think the inner signal is a state update and
+    // will execute it, instead of storing it as-is.
+    outer.select = (selected: Signal<T> | undefined) => inner.set(() => selected);
+    return outer as any;
+}
+
+export function selectQuark<T>(): SelectQuarkNullable<T>;
+export function selectQuark<T>(initial: Quark<T>): SelectQuark<T>;
+export function selectQuark<T>(initial?: Quark<T>): SelectQuark<T> | SelectQuarkNullable<T> {
+    // TypeScript just struggles here
+    return selectSignal(initial as any) as SelectQuark<T> | SelectQuarkNullable<T>;
+}
+
 // TODO: allow derivations that receive the previous value as argument,
 // but require an initial value to be provided in the options
-export function derive<T>(computation: () => T, options?: QuarkOptions<T>): Quark<T> {
+export function derive<T>(computation: () => T, options?: QuarkOptions<T>): Signal<T> {
     // the value will be computed with updateDerivation
     const d: DerivationNode<T> =  {
         type: NodeType.Derivation,
@@ -291,7 +346,7 @@ function readNode<T>(node: QuarkNode<T> | DerivationNode<T>): T {
     if (CurrentScope) {
         CurrentScope.accessed.push(node);
     }
-    console.log("Reading node " + node.name + ". Scope is: ", CurrentScope);
+    // console.log("Reading node " + node.name + ". Scope is: ", CurrentScope);
     // Check for updates - allows for lazy derivations & ensures glitch-free values even w/ concurrency (I think)
     // TODO: check again when we have lazy derivations / concurrency
     // Right now, it assumes the derivation can't be dirty, so it only checks if it is detached

@@ -2,15 +2,15 @@ import { BoulderSlideoverMobile, MapControl, HeaderMobile, For, BoulderMarker } 
 import { markerSize } from 'helpers';
 import React, { useMemo, useState } from 'react';
 import { Boulder, MarkerProps, Topo, Track } from 'types';
-import { Quark, reactKey, WritableQuark } from 'helpers/quarky';
+import { Signal, reactKey, Quark } from 'helpers/quarky';
 
 interface TopoMobileProps {
-    topo: Quark<Topo>,
+    topo: Signal<Topo>,
 }
 
 export const TopoMobile: React.FC<TopoMobileProps> = (props: TopoMobileProps) => {
-    const [selectedBoulder, setSelectedBoulder] = useState<WritableQuark<Boulder>>();
-    const [selectedTrack, setSelectedTrack] = useState<WritableQuark<Track>>();
+    const [selectedBoulder, setSelectedBoulder] = useState<Quark<Boulder>>();
+    const [selectedTrack, setSelectedTrack] = useState<Quark<Track>>();
 
     const [displayInfo, setDisplayInfo] = useState<boolean>(false);
     const [displayApproach, setDisplayApproach] = useState<boolean>(false);

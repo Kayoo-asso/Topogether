@@ -1,18 +1,18 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { BoulderMarker, BoulderSlideagainstDesktop, Drawer, For, HeaderDesktop, LeftbarDesktop, MapControl, Show, SlideagainstRightDesktop, SlideoverLeftDesktop } from 'components';
 import { MapToolEnum, Topo, Track, Boulder } from 'types';
-import { Quark, reactKey, WritableQuark } from 'helpers/quarky';
+import { Signal, reactKey, Quark } from 'helpers/quarky';
 
 interface BuilderMapDesktopProps {
-    topo: Quark<Topo>,
+    topo: Signal<Topo>,
 }
 
 export const BuilderMapDesktop:React.FC<BuilderMapDesktopProps> = (props: BuilderMapDesktopProps) => {
   const [drawerOpen, setDrawerOpen] = useState<boolean>();
 
     const [currentTool, setCurrentTool] = useState<MapToolEnum>();
-    const [selectedBoulder, setSelectedBoulder] = useState<WritableQuark<Boulder>>();
-    const [selectedTrack, setSelectedTrack] = useState<WritableQuark<Track>>();
+    const [selectedBoulder, setSelectedBoulder] = useState<Quark<Boulder>>();
+    const [selectedTrack, setSelectedTrack] = useState<Quark<Track>>();
 
     const [displayInfoForm, setDisplayInfoForm] = useState<boolean>(false);
     const [displayApproachForm, setDisplayApproachForm] = useState<boolean>(false);

@@ -1,4 +1,4 @@
-import { WritableQuark, derive, effect, quark, trackContext, transaction, untrack } from "helpers/quarky"
+import { Quark, derive, effect, quark, trackContext, transaction, untrack, Signal, selectSignal, selectQuark } from "helpers/quarky"
 import { getConsoleErrorSpy } from "test/utils";
 
 test("Creating and reading quark", () => {
@@ -234,7 +234,7 @@ test("Writing to quark within a derivation prints error and is ignored", () => {
 
 test("Cycles are detected (reading)", () => {
     const q = quark(1, { name: "q" });
-    const wrapper: { quark: WritableQuark<number> } = { quark: q };
+    const wrapper: { quark: Signal<number> } = { quark: q };
     const d = derive(() => q() + wrapper.quark() + 1, { name: "d" });
     wrapper.quark = d;
     // Here d is detached, so reading it will trigger an update, which will read d, etc...
@@ -503,7 +503,7 @@ test.todo("Nested transactions")
 
 test.todo("Zipping and concatenating iterators calls the init function of both arguments");
 
-test.only("trackContext should catch top-level dependencies", () => {
+test.skip("trackContext should catch top-level dependencies", () => {
     const quarks = [quark(0), quark(1), quark(2), quark(3, { name: "Q3"})]
     const [, scope] = trackContext(() => {
         // tracked
@@ -528,3 +528,80 @@ test.only("trackContext should catch top-level dependencies", () => {
 });
 
 test.todo("trackContext should catch top-level effects");
+
+
+test("Empty SelectSignalNullable", () => {
+    const s = selectSignal<string>();
+    expect(s()).toBe(undefined);
+    expect(s.quark()).toBe(undefined);
+});
+
+test("Setting and unsetting SelectSignalNullable", () => {
+    const s = selectSignal<string>();
+    const value = quark("foo");
+
+    s.select(value);
+    expect(s()).toBe("foo");
+    expect(s.quark()).toBe(value);
+    
+    s.select(undefined);
+    expect(s()).toBe(undefined);
+    expect(s.quark()).toBe(undefined);
+});
+
+test("Setting and unsetting SelectSignal", () => {
+    const v1 = quark("foo");
+    const v2 = quark("bar");
+
+    const s = selectSignal(v1);
+    expect(s()).toBe("foo");
+    expect(s.quark()).toBe(v1);
+
+    s.select(v2);
+    expect(s()).toBe("bar");
+    expect(s.quark()).toBe(v2);
+});
+
+test("Empty SelectQuarkNullable", () => {
+    const s = selectQuark<string>();
+    expect(s()).toBe(undefined);
+    expect(s.quark()).toBe(undefined);
+});
+
+test("Setting and unsetting SelectQuarkNullable", () => {
+    const s = selectQuark<string>();
+    const value = quark("foo");
+
+    s.select(value);
+    expect(s()).toBe("foo");
+    expect(s.quark()).toBe(value);
+
+    value.set("bar");
+    expect(s()).toBe("bar");
+    
+    s.select(undefined);
+    expect(s()).toBe(undefined);
+    expect(s.quark()).toBe(undefined);
+});
+
+
+test("Setting and unsetting SelectSignal", () => {
+    const v1 = quark("foo");
+    const v2 = quark("bar");
+
+    const s = selectSignal(v1);
+    expect(s()).toBe("foo");
+    expect(s.quark()).toBe(v1);
+
+    v1.set("foo2");
+    expect(s()).toBe("foo2");
+
+    s.select(v2);
+    expect(s()).toBe("bar");
+    expect(s.quark()).toBe(v2);
+
+    v1.set("foo3");
+    expect(s()).toBe("bar");
+    v2.set("foo4");
+    expect(s()).toBe("foo4");
+});
