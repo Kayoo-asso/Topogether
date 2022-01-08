@@ -7,12 +7,12 @@ import { topogetherUrl } from 'helpers/globals';
 import { buildBoulderGradeHistogram } from 'helpers';
 import { TracksList } from '.';
 import { default as NextImage } from 'next/image';
-import { Quark, watchDependencies, SelectSignal, SelectSignalNullable } from 'helpers/quarky';
+import { Quark, watchDependencies, SelectSignal, SelectQuarkNullable } from 'helpers/quarky';
 
 interface BoulderSlideoverMobileProps {
   open?: boolean,
   boulder: Quark<Boulder>,
-  selectedTrack: SelectSignalNullable<Track>,
+  selectedTrack: SelectQuarkNullable<Track>,
   topoCreatorId?: UUID,
   forBuilder?: boolean,
   onPhotoButtonClick?: () => void,
@@ -43,7 +43,7 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = wat
   const [trackTab, setTrackTab] = useState(true); // BUILDER
 
   const boulder = props.boulder();
-  // const selectedTrack = props.selectedTrack();
+  const selectedTrack = props.selectedTrack();
 
   const displayedTracks = useMemo(() => boulder.tracks
     .quarks()
@@ -71,7 +71,7 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = wat
 
 
       {/* BOULDER INFOS */}
-      {!selectedTrack && (
+      {<Show when={() => !props.selectedTrack}>
         <div className={`grid grid-cols-8 p-5 items-center ${full ? '' : ' mt-3'}`}>
           <div className="col-span-6">
             <div className="ktext-section-title">{boulder.name}</div>
@@ -118,7 +118,7 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = wat
             )}
           </div>
         </div>
-      )}
+        </Show>}
 
 
       {/* TRACK INFOS */}

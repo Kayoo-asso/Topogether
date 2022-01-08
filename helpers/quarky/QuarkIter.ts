@@ -1,7 +1,6 @@
 import { isIterable, ConcatIterator, FilterIterator, Flattened, FlattenIterator, MapIterator, ZipIterator} from "./iterators";
 import { derive, Signal, Quark } from "./quarky";
 
-
 const emptyInit = () => { };
 
 // should initially be created from a Quark<Array<Quark<T>>>

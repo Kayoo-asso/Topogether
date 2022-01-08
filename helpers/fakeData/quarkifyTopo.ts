@@ -1,28 +1,28 @@
-import { CleanupHelper, effect, Effect, Quark, quark, quarkArray, Quarkify, read, write } from 'helpers/quarky';
+import { CleanupHelper, effect, Effect, Quark, quark, QuarkArray } from 'helpers/quarky';
 import { BoulderData, Grade, Line, Name, Image, TrackData, Description, Difficulty, ClimbTechniques, SectorData, TopoData, Amenities, TopoStatus, TopoType, RockTypes, TopoAccess, UUID, Track, Boulder, Sector, Topo } from 'types';
 
 export const quarkifyTopo = (topo: TopoData): Quark<Topo> => quark({
     ...topo,
-    sectors: quarkArray(topo.sectors, quarkifySector),
-    parkings: quarkArray(topo.parkings),
-    access: quarkArray(topo.access)
+    sectors: new QuarkArray(topo.sectors.map(quarkifySector)),
+    parkings: new QuarkArray(topo.parkings),
+    access: new QuarkArray(topo.access)
 });
 
-const quarkifySector = (sector: SectorData): Quark<Sector> => quark({
+const quarkifySector = (sector: SectorData): Sector => ({
     ...sector,
-    boulders: quarkArray(sector.boulders, quarkifyBoulder),
-    waypoints: quarkArray(sector.waypoints)
+    boulders: new QuarkArray(sector.boulders.map(quarkifyBoulder)),
+    waypoints: new QuarkArray(sector.waypoints)
 });
 
-const quarkifyBoulder = (boulder: BoulderData): Quark<Boulder> => quark({
+const quarkifyBoulder = (boulder: BoulderData): Boulder => ({
     ...boulder,
-    tracks: quarkArray(boulder.tracks, quarkifyTrack)
+    tracks: new QuarkArray(boulder.tracks.map(quarkifyTrack))
 });
 
-const quarkifyTrack = (track: TrackData): Quark<Track> => quark({
+const quarkifyTrack = (track: TrackData): Track => ({
     ...track,
-    lines: quarkArray(track.lines),
-    ratings: quarkArray(track.ratings)
+    lines: new QuarkArray(track.lines),
+    ratings: new QuarkArray(track.ratings)
 });
 
 

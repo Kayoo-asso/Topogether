@@ -21,6 +21,7 @@ export interface SelectQuark<T> {
     quark(): Quark<T>,
     select(value: Quark<T>): void,
 }
+
 export interface SelectQuarkNullable<T> {
     (): T | undefined,
     quark(): Quark<T> | undefined,

@@ -53,7 +53,9 @@ function Component({ when, fallback, children}: ShowPropsInternal) {
 }
 
 export function Show<T>(props: ShowProps<T>): JSX.Element | null {
-    return watchDependencies<ShowProps<T>>(Component, { memo: false })(props as ShowPropsInternal);
+    const result = watchDependencies<ShowProps<T>>(Component, { memo: false })(props as ShowPropsInternal);
+    console.log("watchDependencies result: ", result);
+    return result;
 }
 
 // Remember to handle both the array and non-array case
