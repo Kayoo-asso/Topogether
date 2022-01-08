@@ -36,24 +36,23 @@ export const HeaderMobile: React.FC<HeaderMobileProps> = (props: HeaderMobilePro
       </div>
 
       {props.menuOptions && (
-      <div className="w-1/6">
-        <Icon
-          name="menu"
-          SVGClassName={`h-4 w-4 fill-white ${menuOpen ? 'rotate-90' : ''}`}
-          center
-          onClick={() => {
-                setMenuOpen(!menuOpen);
-              }}
-        />
-      </div>
-        )}
+        <div className="w-1/6">
+          <Icon
+            name="menu"
+            SVGClassName={`h-4 w-4 fill-white ${menuOpen ? 'rotate-90' : ''}`}
+            center
+            onClick={() => setMenuOpen(!menuOpen)}
+          />
+        </div>
+      )}
       {menuOpen && props.menuOptions
           && (
           <Dropdown
             choices={props.menuOptions}
-            className="absolute z-50 right-[10px] top-[7%] min-w-[40%]"
+            className="absolute z-100 right-[10px] top-[7%] min-w-[40%]"
+            onSelect={() => setMenuOpen(false)}
           />
-    )}
+      )}
     </div>
   );
 };

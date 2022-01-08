@@ -7,7 +7,7 @@ import { topogetherUrl } from 'helpers/globals';
 import launchNavigation from 'helpers/map/launchNavigation';
 import Image from 'next/image';
 import { LightTopo } from 'types';
-import { GradeScale } from '.';
+import { GradeScale } from '../molecules';
 
 interface TopoModalProps {
   open: boolean,

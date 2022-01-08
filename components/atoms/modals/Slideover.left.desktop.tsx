@@ -5,14 +5,13 @@ interface SlideoverLeftDesktopProps {
     onClose: () => void,
     title?: string,
     className?: string,
-    children?: Node[],
+    children?: React.ReactNode,
 }
 
 export const SlideoverLeftDesktop: React.FC<SlideoverLeftDesktopProps> = ({
     open = false,
     ...props
 }: SlideoverLeftDesktopProps) => {
-    const size = 600;
     const [translateX, setTranslateX] = useState<number>(100);
 
     useEffect(() => {

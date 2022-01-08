@@ -15,8 +15,8 @@ export const SlideoverMobile: React.FC<SlideoverMobileProps> = ({
   initialFull = false,
   ...props
 }: SlideoverMobileProps) => {
-  const fullTranslate = 10; // 100% - x of the screen
-  const littleTranslate = 75;
+  const fullTranslate = 5; // 100% - x of the screen
+  const littleTranslate = 85;
   const [full, setFull] = useState(initialFull);
   const [translateY, setTranslateY] = useState<number>(100);
   const [transition, setTransition] = useState(true);
@@ -61,7 +61,7 @@ export const SlideoverMobile: React.FC<SlideoverMobileProps> = ({
 
   return (
     <div
-      className={`flex flex-col ${transition ? 'transition ease-in-out' : ''} absolute w-full bg-white rounded-t-lg h-[100%] pb-[27%] mb-[5%] z-40 shadow`}
+      className={`flex flex-col ${transition ? 'transition ease-in-out' : ''} absolute w-full bg-white rounded-t-lg h-[100%] pb-[27%] mb-[5%] z-50 shadow`}
       style={{ transform: `translateY(${translateY}%)` }}
     >
       <div

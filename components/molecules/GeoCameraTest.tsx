@@ -14,7 +14,7 @@ const CAPTURE_OPTIONS = {
 };  
 
 export const GeoCamera: React.FC<GeoCameraProps> = ({
-    open = false,
+    open = true,
     ...props
 }: GeoCameraProps) => {
     const [coords, setCoords] = useState({

@@ -30,8 +30,6 @@ const Nested = (props: React.PropsWithChildren<EvaluatedProps>) =>
         }
     </>
 
-const NestedMemo = React.memo(Nested, (a, b) => a.when !== b.when);
-
 function Component({ when, fallback, children}: ShowPropsInternal) {
     let result = when();
     let showContent = true;
@@ -46,9 +44,9 @@ function Component({ when, fallback, children}: ShowPropsInternal) {
         ? (showContent ? children(result as any) : null)
         : children;
     return (
-        <NestedMemo when={showContent} fallback={fallback}>
+        <Nested when={showContent} fallback={fallback}>
             {content}
-        </NestedMemo>
+        </Nested>
     );
 }
 

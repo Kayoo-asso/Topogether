@@ -5,6 +5,7 @@
 // A computed signal (= derived from other signals) without any active observers
 // is removed from the auto-update system. Its value will only be updated upon the next read.
 // An active observer can be an effect, or another active signal.
+
 export interface Signal<T> {
     (): T,
 };
@@ -54,16 +55,21 @@ export interface QuarkOptions<T> {
     name?: string,
 }
 
-export interface EffectOptions {
-    // TODO: fix, once I find out how I want to handle the explicit context use in the React integration
-    watch?: DataNode[], 
-    // Lazy means the effect will not run and register dependencies upon creation.
-    // It will only get triggered by explicit "watch" dependencies.
-    // Setting `lazy: true` without providing `watch` dependencies means the effect will never run.
-    // (TODO: make it impossible in the type)
-    // This is especially useful for subscribing components or synchronization with external storage.
-    lazy?: boolean,
-    name?: string
+export type EffectOptions = ImmediateEffectOptions | LazyEffectOptions;
+
+export interface ImmediateEffectOptions {
+    lazy: false,
+    watch?: DataNode[],
+    persistent?: boolean,
+    name?: string | undefined,
+}
+
+export interface LazyEffectOptions {
+    lazy: true,
+    // if no "watch" dependencies are passed, the effect will never execute
+    watch: DataNode[],
+    persistent?: boolean,
+    name?: string | undefined,
 }
 
 // === TYPES ===
@@ -300,7 +306,7 @@ export function effect(computation: (onCleanup: CleanupHelper) => void, options?
         clean: null,
         name: options?.name,
     }
-    if (options?.watch) {
+    if (options?.watch?.length) {
         const deps = options.watch;
         const slots = new Array(deps.length);
         for (let i = 0; i < deps.length; i++) {
@@ -311,7 +317,7 @@ export function effect(computation: (onCleanup: CleanupHelper) => void, options?
         effect.cdeps = deps.length;
     }
 
-    if (CurrentScope) {
+    if (CurrentScope && !options?.persistent) {
         // console.log(`Pushing effect \"${effect.name}\" onto the scope`);
         CurrentScope.effects!.push(effect);
     }

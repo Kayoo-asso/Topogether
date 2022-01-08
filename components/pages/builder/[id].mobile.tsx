@@ -27,11 +27,12 @@ export const BuilderMapMobile: React.FC<BuilderMapMobileProps> = (props: Builder
   // const selectedTrack = useCreateQuark<WritableQuark<Track>>();
 
   const topo = props.topo();
+
   const boulders = useMemo(() => topo.sectors
     .lazy()
     .map(x => x.boulders.quarks())
     .flatten()
-    , [topo.sectors]);
+  , [topo.sectors]);
 
   return (
     <>
@@ -87,7 +88,7 @@ export const BuilderMapMobile: React.FC<BuilderMapMobileProps> = (props: Builder
         }
       </div>
 
-      <Show when={selectedBoulder}>
+      <Show when={selectedBoulder.quark}>
         {boulder =>
           <BoulderSlideoverMobile
             open
@@ -103,7 +104,6 @@ export const BuilderMapMobile: React.FC<BuilderMapMobileProps> = (props: Builder
             //   selectedTrack.select(undefined);
             // }}
           />
-        
         }
       </Show>
     </>

@@ -1,12 +1,13 @@
 import React from 'react';
 import { Icon, SlideagainstRightDesktop, TracksList } from 'components';
-import { Signal } from 'helpers/quarky';
-import { Boulder, Track } from 'types';
+import { Quark } from 'helpers/quarky';
+import { Boulder, Track, UUID } from 'types';
 
 interface BoulderSlideagainstDesktopProps {
-    boulder: Signal<Boulder>,
+    boulder: Quark<Boulder>,
     open?: boolean,
-    onSelectTrack?: (track: Signal<Track>) => void,
+    topoCreatorId?: UUID,
+    onSelectTrack?: (track: Quark<Track>) => void,
     onClose: () => void,
 }
 
@@ -15,6 +16,7 @@ export const BoulderSlideagainstDesktop: React.FC<BoulderSlideagainstDesktopProp
     ...props
 }: BoulderSlideagainstDesktopProps) => {
     const boulder = props.boulder();
+
     return (
         <SlideagainstRightDesktop 
             open={open}
@@ -36,7 +38,7 @@ export const BoulderSlideagainstDesktop: React.FC<BoulderSlideagainstDesktopProp
                 </div>
 
                 <TracksList 
-                    tracks={boulder.tracks}
+                    tracks={boulder.tracks.quarks()}
                     onTrackClick={props.onSelectTrack}
                 />
             </>

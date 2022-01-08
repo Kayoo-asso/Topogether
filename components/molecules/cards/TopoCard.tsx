@@ -1,7 +1,7 @@
 import React from 'react';
 import NextImage from 'next/image';
 import { Card, Icon } from 'components';
-import { topogetherUrl, formatDate } from 'helpers';
+import { topogetherUrl, formatDate, staticUrl } from 'helpers';
 import equal from 'fast-deep-equal/es6';
 import { LightTopo, TopoStatus } from 'types';
 
@@ -35,7 +35,7 @@ export const TopoCard: React.FC<TopoCardProps> = React.memo((props: TopoCardProp
     <Card className="relative text-center text-grey-medium bg-white flex flex-col">
       <div className="w-full h-[70px] lg:h-44 top-0 relative">
         <NextImage
-          src={props.topo.image ? topogetherUrl + props.topo.image.url : '/assets/img/Kayoo_defaut_image.png'}
+          src={props.topo.image ? props.topo.image.url : staticUrl.defaultKayoo}
           className="rounded-t-lg"
           alt="topo-image"
           layout="fill"

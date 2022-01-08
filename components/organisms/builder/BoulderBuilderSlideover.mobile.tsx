@@ -1,24 +1,21 @@
 import React, { useMemo, useState } from 'react';
 import {
-  GradeScale, Icon, LikeButton, RoundButton, SlideoverMobile, TracksImage, Show,
+  GradeScale, RoundButton, SlideoverMobile, TracksImage, Show, TracksList
 } from 'components';
-import { Boulder, Difficulty, gradeToLightGrade, Track, UUID } from 'types';
+import { Boulder, Difficulty, gradeToLightGrade, Track } from 'types';
 import { topogetherUrl } from 'helpers/globals';
 import { buildBoulderGradeHistogram } from 'helpers';
-import { TracksList } from '../topo';
 import { default as NextImage } from 'next/image';
 import { Quark, watchDependencies, SelectQuarkNullable } from 'helpers/quarky';
 
-interface BoulderSlideoverMobileProps {
-  open?: boolean,
+interface BoulderBuilderSlideoverMobileProps {
   boulder: Quark<Boulder>,
+  open?: boolean,
   selectedTrack: SelectQuarkNullable<Track>,
-  topoCreatorId?: UUID,
-  forBuilder?: boolean,
   onPhotoButtonClick?: () => void,
-  // onSelectTrack: (selected: WritableQuark<Track>) => void,
+  onSelectTrack: (selected: Quark<Track>) => void,
   onDrawButtonClick?: () => void,
-  // onClose: () => void,
+  onClose: () => void,
 }
 
 const gradeColors = {
@@ -32,23 +29,17 @@ const gradeColors = {
   None: 'border-grey-light bg-grey-light text-white',
 }
 
-export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = watchDependencies(({
+export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobileProps> = watchDependencies(({
   open = true,
-  forBuilder = false,
   ...props
-}: BoulderSlideoverMobileProps) => {
+}: BoulderBuilderSlideoverMobileProps) => {
   const [full, setFull] = useState(false);
-  const [boulderLiked, setBoulderLiked] = useState(false); // To change TODO
-  const [officialTrackTab, setOfficialTrackTab] = useState(true); // TOPO
   const [trackTab, setTrackTab] = useState(true); // BUILDER
 
   const boulder = props.boulder();
   const selectedTrack = props.selectedTrack();
 
-  const displayedTracks = useMemo(() => boulder.tracks
-    .quarks()
-    .filter(track => ((track().creatorId) === props.topoCreatorId) === officialTrackTab),
-    [boulder.tracks, props.topoCreatorId, officialTrackTab]);
+  const displayedTracks = useMemo(() => boulder.tracks.quarks(), [boulder.tracks]);
 
   return (
     <SlideoverMobile
@@ -62,7 +53,7 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = wat
           <TracksImage
             image={boulder.images[0]}
             containerClassName='w-full'
-            tracks={boulder.tracks.quarks()}
+            tracks={boulder.tracks}
             currentTrackId={selectedTrack?.id}
             displayTracksDetails={!!selectedTrack?.id}
           />
@@ -88,15 +79,7 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = wat
           </div>
 
           <div className="flex justify-end col-span-2">
-            {!forBuilder && full && (
-              <LikeButton
-                liked={boulderLiked}
-                onClick={() => {
-                  setBoulderLiked(!boulderLiked);
-                }}
-              />
-            )}
-            {forBuilder && full && (
+            {full && (
               <RoundButton
                 iconName="camera"
                 buttonSize={45}
@@ -139,91 +122,34 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = wat
             </div>
 
             <div className='col-span-1'>
-              {forBuilder && (
                 <RoundButton
                   iconName='draw'
                   buttonSize={45}
                   onClick={props.onDrawButtonClick}
                 />
-              )}
-              {!forBuilder && (
-                <Icon
-                  name='flag'
-                />
-              )}
             </div>
 
-            <div className={'col-start-2 col-span-4' + (forBuilder ? ' -mt-[16px]' : '')}>
+            <div className='col-start-2 col-span-4 -mt-[16px]'>
               {track.isTraverse && full && <div className="ktext-base-little">Traversée</div>}
               {track.isSittingStart && full && <div className="ktext-base-little">Départ assis</div>}
             </div>
-
-            {!forBuilder &&
-              <div className='col-span-3 flex content-end'>
-                Etoiles
-                {/* TODO */}
-              </div>
-            }
           </div>
         }
       </Show>
 
-
-      {/* TRACK DETAILS */}
-      <Show when={() => [forBuilder, full, props.selectedTrack()] as const}>
-        {([, , track]) =>
-          <div className='grid grid-cols-9 p-5 items-center'>
-
-            <div className='col-span-full mb-6'>
-              {track.description}
-            </div>
-
-            <div className='col-span-3'>
-              <div className='ktext-subtitle'>Techniques</div>
-
-            </div>
-
-            <div className='col-span-3'>
-              <div className='ktext-subtitle'>Réception</div>
-            </div>
-
-            <div className='col-span-3'>
-              <div className='ktext-subtitle'>Orientation</div>
-            </div>
-          </div>
-        }
-      </Show>
 
       {/* TODO : show once good pattern */}
       {/* TABS */}
       {selectedTrack && (
         <div className="grid grid-cols-8 px-5 ktext-label font-bold my-2">
-          {!forBuilder && (
-            <>
-              <span className={`col-span-2 ${officialTrackTab ? 'text-main' : 'text-grey-medium'}`} onClick={() => setOfficialTrackTab(true)}>officielles</span>
-              <span className={`col-span-2 ${!officialTrackTab ? 'text-main' : 'text-grey-medium'}`} onClick={() => setOfficialTrackTab(false)}>communautés</span>
-              <span className="col-start-8 flex justify-end">
-                <Icon
-                  name="add"
-                  SVGClassName="w-5 h-5 stroke-main"
-                  onClick={() => console.log('create community track')} //TODO
-                />
-              </span>
-            </>
-          )}
-
-          {forBuilder && (
-            <>
               <span className={`col-span-2 ${trackTab ? 'text-main' : 'text-grey-medium'}`} onClick={() => setTrackTab(true)}>Voies</span>
               <span className={`col-span-6 ${!trackTab ? 'text-main' : 'text-grey-medium'}`} onClick={() => setTrackTab(false)}>Infos du bloc</span>
-            </>
-          )}
         </div>
       )}
 
 
       {/* TRACKSLIST */}
-      {(!forBuilder || trackTab) && !selectedTrack && full && (
+      {trackTab && !selectedTrack && full && (
         <div className="overflow-auto pb-[30px]">
           <TracksList
             tracks={displayedTracks}
@@ -235,16 +161,20 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = wat
 
 
       {/* BOULDER FORM */}
-      {forBuilder && !trackTab && !selectedTrack && full && (
+      {!trackTab && !selectedTrack && full && (
         <div className='border-t border-grey-light'>
           {/* TODO */}
+          BOULDER FORM
         </div>
       )}
 
 
       {/* TRACK FORM */}
-      {forBuilder && selectedTrack && full && (
-        <div></div>
+      {selectedTrack && full && (
+        <div className='border-t border-grey-light'>
+            {/* TODO */}
+            TRACK FORM
+        </div>
       )}
 
     </SlideoverMobile>

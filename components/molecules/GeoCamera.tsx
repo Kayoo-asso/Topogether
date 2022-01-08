@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { distanceLatLng, LivenessRef, useAsyncEffect, useUserMedia } from 'helpers';
+import { distanceLatLng, useAsyncEffect, useUserMedia } from 'helpers';
 import { Icon } from 'components';
 
 interface GeoCameraProps {
@@ -14,7 +14,7 @@ const CAPTURE_OPTIONS = {
 };  
 
 export const GeoCamera: React.FC<GeoCameraProps> = ({
-    open = false,
+    open = true,
     ...props
 }: GeoCameraProps) => {
     const [coords, setCoords] = useState({
@@ -71,8 +71,6 @@ export const GeoCamera: React.FC<GeoCameraProps> = ({
             const videoH = videoRef.current.videoHeight;
             const videoCW = videoRef.current.clientWidth;
             const videoCH = videoRef.current.clientHeight;
-
-            console.log(canvasCW, canvasCH, videoW, videoH, videoCW, videoCH);
 
             const ratioW = videoW/videoCW;
             const ratioH = videoH/videoCH;

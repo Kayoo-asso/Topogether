@@ -1,23 +1,22 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React from 'react';
 import NextImage from 'next/image';
 import {
-  Image as ImageType, TrackData,
+  Image, 
   PointEnum, AreaEnum, DrawerToolEnum, Position, Line, UUID, gradeToLightGrade, LinearRing,
-  LightGrade,
-  Track,
+  LightGrade, 
+  Track
 } from 'types';
 import { SVGArea } from 'components';
-import { staticUrl, topogetherUrl } from 'helpers/globals';
+import { staticUrl } from 'helpers/globals';
 import useDimensions from 'react-cool-dimensions';
 import {
   getMousePosInside,
   getPathFromPoints,
 } from '../../helpers';
-import { QuarkIter, Signal, Quark } from 'helpers/quarky';
 
 interface TracksImageProps {
-  image: ImageType,
-  tracks: QuarkIter<Quark<Track>>,
+  image: Image,
+  tracks: Iterable<Track>,
   imageClassName?: string,
   tracksClassName?: string,
   containerClassName?: string,
@@ -54,26 +53,6 @@ export const TracksImage: React.FC<TracksImageProps> = ({
   containerClassName = 'w-[300px] h-[300px]',
   ...props
 }: TracksImageProps) => {
-
-  const linesIter = useMemo(() => props.tracks
-    .unwrap()
-    .toArray()
-    .map((t, i) => ({
-      line: t.lines
-        .toArray()
-        .find(l => l.imageId === props.image.id),
-      orderIndex: t.orderIndex,
-      gradeColor: t.grade ? gradeToLightGrade(t.grade) : "grey",
-      isStart: i === 0,
-      lineTrackId: t.id,
-    })), [props.tracks, props.image.id]);
-
-  const currentTrack = useMemo(() => props.tracks
-    .unwrap()
-    .toArray()
-    .find(t => t.id === props.currentTrackId)
-  , [props.tracks, props.currentTrackId]);
-
 
   const { observe, unobserve, width: containerWidth, height: containerHeight, entry } = useDimensions({
     onResize: ({ observe, unobserve, width, height, entry }) => {
@@ -118,134 +97,144 @@ export const TracksImage: React.FC<TracksImageProps> = ({
     ? 'scale-125'
     : '';
 
-  // const linesOnImage = getLines(tracks, props.image.id);
+  // const [lines, currentTrack] = getLines(props.tracks, props.image.id, props.currentTrackId);
+  let currentTrack: Track | undefined = undefined;
 
-  for (let lineIdx = 0; lineIdx < lines.length; lineIdx++) {
-    const { line, orderIndex, isStart, gradeColor, lineTrackId } = lines[lineIdx];
-    if (!line) continue;
-
-    if (line.points.length == 0) {
-      continue;
+  for (const track of props.tracks) {
+    if (track.id === props.currentTrackId) {
+      currentTrack = track;
     }
 
-    const isHighlighted = props.currentTrackId === undefined
-      || lineTrackId === props.currentTrackId;
+    const gradeColorSuffix = gradeColor(track);
 
-    const points: Position[] = line.points.map((p) => [p[0] * rx, p[1] * ry]);
-    const path = getPathFromPoints(points, 'CURVE');
-    const firstX = points[0][0] * rx;
-    const firstY = points[0][1] * ry;
+    let isFirstLine = true; // don't forget to set to false at the end of the loop!
+    for (const line of track.lines) {
 
-    const lineBaseCss = isHighlighted
-      ? 'z-30'
-      : displayPhantomTracks ? 'z-10 opacity-40' : 'hidden';
-    const tracksNumberBaseCss = isHighlighted
-      ? 'z-40'
-      : displayPhantomTracks ? 'z-20 opacity-40' : 'hidden';
+      if (line.imageId !== props.image.id) {
+        continue;
+      }
 
-    // Draw line
-    svgElems.push(
-      <path
-        className={`${lineBaseCss} ${tracksClassName} ${props.onPolylineClick && 'cursor-pointer'}`}
-        strokeWidth={3 * rx}
-        d={path}
-        onClick={() => props.onPolylineClick && props.onPolylineClick(line)}
-      />,
-    );
+      const isHighlighted = props.currentTrackId === undefined
+        || track.id === props.currentTrackId;
 
-    // Draw point circles
-    const pointRadius = 3 * rx;
-    const pointCircles = points.map((x) => (
-      <circle
-        className="pointer-events-auto"
-        cx={x[0] * rx}
-        cy={x[1] * ry}
-        r={pointRadius}
-      />
-    ));
+      const points: Position[] = line.points.map((p) => [p[0] * rx, p[1] * ry]);
+      const path = getPathFromPoints(points, 'CURVE');
+      const firstX = points[0][0] * rx;
+      const firstY = points[0][1] * ry;
 
-    // TODO: optimise this
-    svgElems.push(...pointCircles);
+      const lineBaseCss = isHighlighted
+        ? 'z-30'
+        : displayPhantomTracks ? 'z-10 opacity-40' : 'hidden';
+      const tracksNumberBaseCss = isHighlighted
+        ? 'z-40'
+        : displayPhantomTracks ? 'z-20 opacity-40' : 'hidden';
 
-    // Track number in the ordering
-    if (displayTracksNumber) {
+      // Draw line
       svgElems.push(
-        <circle
-          cx={firstX}
-          cy={firstY}
-          r={9}
-          className={`${tracksNumberBaseCss} ${props.onPolylineClick && 'cursor-pointer pointer-events-auto'}`}
+        <path
+          className={`${lineBaseCss} ${tracksClassName} ${props.onPolylineClick && 'cursor-pointer'}`}
+          strokeWidth={3 * rx}
+          d={path}
           onClick={() => props.onPolylineClick && props.onPolylineClick(line)}
         />,
-        <text
-          x={firstX}
-          y={firstY}
-          className={`${tracksNumberBaseCss} ${props.onPolylineClick && 'cursor-pointer'}`}
-          textAnchor="middle"
-          stroke="white"
-          strokeWidth="1px"
-          fontSize="8px"
-          dy="3px"
-          onClick={() => props.onPolylineClick && props.onPolylineClick(line)}
-        >
-          {orderIndex}
-        </text>,
       );
-    }
 
-    // Hand and feet departures
-    // Only render hand and feet departures for the first line of a track
-    // TODO: try out SVG imports instead
-    // TODO: onClick handlers. Is passing the index really the best solution here?
-    if (isStart && displayTracksDetails && isHighlighted) {
-      if (line.handDepartures) {
-        for (const [handX, handY] of line.handDepartures) {
-          svgElems.push(
-            <image
-              className={svgScaleClass}
-              href={`assets/icons/colored/hand-full/_hand-full-${gradeColor}.svg`}
-              width={18 * rx}
-              x={handX * rx}
-              y={handY * ry}
-            />,
-          );
-        }
-      }
-      if (line.feetDepartures) {
-        for (const [footX, footY] of line.feetDepartures) {
-          svgElems.push(
-            <image
-              className={svgScaleClass}
-              href={`assets/icons/colored/climbing-shoe-full/_climbing-shoe-full-${gradeColor}.svg`}
-              width={30 * rx}
-              x={footX * rx}
-              y={footY * ry}
-            />,
-          );
-        }
-      }
-    }
+      // Draw point circles
+      const pointRadius = 3 * rx;
+      const pointCircles = points.map((x) => (
+        <circle
+          className="pointer-events-auto"
+          cx={x[0] * rx}
+          cy={x[1] * ry}
+          r={pointRadius}
+        />
+      ));
 
-    // Forbidden areas
-    if (displayTracksDetails && isHighlighted && line.forbidden) {
-      for (let areaIdx = 0; areaIdx < line.forbidden.length; areaIdx++) {
-        const area = line.forbidden[areaIdx];
+      // TODO: optimise this
+      svgElems.push(...pointCircles);
+
+      // Track number in the ordering
+      if (displayTracksNumber) {
         svgElems.push(
-          <SVGArea
-            className={svgScaleClass}
-            area={area}
-            editable={editable}
-            rx={rx}
-            ry={ry}
-            pointSize={6 * rx}
-            // TODO: do we need to handle clicks on area points?
-            // You can already drag to resize
-            // Maybe to remove them?
-            // need to call props.onPointClick('FORBIDDEN_AREA_POINT', areaIdx)
-            onChange={(area) => props.onAreaChange && props.onAreaChange('FORBIDDEN_AREA', areaIdx, area)}
+          <circle
+            cx={firstX}
+            cy={firstY}
+            r={9}
+            className={`${tracksNumberBaseCss} ${props.onPolylineClick && 'cursor-pointer pointer-events-auto'}`}
+            onClick={() => props.onPolylineClick && props.onPolylineClick(line)}
           />,
+          <text
+            x={firstX}
+            y={firstY}
+            className={`${tracksNumberBaseCss} ${props.onPolylineClick && 'cursor-pointer'}`}
+            textAnchor="middle"
+            stroke="white"
+            strokeWidth="1px"
+            fontSize="8px"
+            dy="3px"
+            onClick={() => props.onPolylineClick && props.onPolylineClick(line)}
+          >
+            {track.orderIndex}
+          </text>,
         );
       }
+
+      // Hand and feet departures
+      // Only render hand and feet departures for the first line of a track
+      // TODO: try out SVG imports instead
+      // TODO: onClick handlers. Is passing the index really the best solution here?
+      if (isFirstLine && displayTracksDetails && isHighlighted) {
+        if (line.handDepartures) {
+          for (const [handX, handY] of line.handDepartures) {
+            svgElems.push(
+              <image
+                className={svgScaleClass}
+                href={`assets/icons/colored/hand-full/_hand-full-${gradeColorSuffix}.svg`}
+                width={18 * rx}
+                x={handX * rx}
+                y={handY * ry}
+              />,
+            );
+          }
+        }
+        if (line.feetDepartures) {
+          for (const [footX, footY] of line.feetDepartures) {
+            svgElems.push(
+              <image
+                className={svgScaleClass}
+                href={`assets/icons/colored/climbing-shoe-full/_climbing-shoe-full-${gradeColorSuffix}.svg`}
+                width={30 * rx}
+                x={footX * rx}
+                y={footY * ry}
+              />,
+            );
+          }
+        }
+      }
+
+      // Forbidden areas
+      if (displayTracksDetails && isHighlighted && line.forbidden) {
+        for (let areaIdx = 0; areaIdx < line.forbidden.length; areaIdx++) {
+          const area = line.forbidden[areaIdx];
+          svgElems.push(
+            <SVGArea
+              className={svgScaleClass}
+              area={area}
+              editable={editable}
+              rx={rx}
+              ry={ry}
+              pointSize={6 * rx}
+              // TODO: do we need to handle clicks on area points?
+              // You can already drag to resize
+              // Maybe to remove them?
+              // need to call props.onPointClick('FORBIDDEN_AREA_POINT', areaIdx)
+              onChange={(area) => props.onAreaChange && props.onAreaChange('FORBIDDEN_AREA', areaIdx, area)}
+            />,
+          );
+        }
+      }
+
+      isFirstLine = false;
     }
   }
 
@@ -295,7 +284,7 @@ export const TracksImage: React.FC<TracksImageProps> = ({
 
       <NextImage
         className={`${props.imageClassName ? props.imageClassName : ''}`}
-        src={props.image ? (topogetherUrl + props.image.url) : staticUrl.defaultKayoo}
+        src={props.image ? props.image.url : staticUrl.defaultKayoo}
         alt="Rocher"
         width={imgWidth}
         height={imgHeight}
@@ -307,27 +296,39 @@ export const TracksImage: React.FC<TracksImageProps> = ({
 type LineOnImage = Line & TrackInfo;
 
 type TrackInfo = {
+  trackId: UUID,
   isStart: boolean,
   // TODO: remove "None"
-  gradeSuffix: LightGrade | 'grey',
+  gradeColor: LightGrade | 'grey',
   orderIndex: number,
 };
 
-function getLines(tracks: TrackData[], imageId: UUID): LineOnImage[] {
+function getLines(tracks: Iterable<Track>, imageId: UUID, currentTrackId?: UUID): [LineOnImage[], Track | undefined] {
   const lines: LineOnImage[] = [];
-  for (let i = 0; i < tracks.length; i++) {
-    const track = tracks[i];
-    const lineIdx = track.lines.findIndex((x) => x.imageId === imageId);
-    if (lineIdx < 0) {
-      continue;
+  let currentTrack: Track | undefined = undefined;
+
+  for (const track of tracks) {
+    if (track.id === currentTrackId)
+      currentTrack = track;
+
+    let i = 0;
+    for (const line of track.lines) {
+      if (line.imageId !== imageId) continue;
+
+      lines.push({
+        trackId: track.id,
+        isStart: i === 0,
+        gradeColor: track.grade ? gradeToLightGrade(track.grade) : 'grey',
+        orderIndex: track.orderIndex,
+        ...line,
+      });
+      i += 1;
     }
 
-    lines.push({
-      isStart: lineIdx === 0,
-      gradeSuffix: track.grade ? gradeToLightGrade(track.grade) : 'grey',
-      orderIndex: track.orderIndex,
-      ...track.lines[lineIdx],
-    });
   }
-  return lines;
+  return [lines, currentTrack];
+}
+
+function gradeColor(track: Track) {
+  return track.grade ? gradeToLightGrade(track.grade) : 'grey';
 }

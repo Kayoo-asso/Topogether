@@ -1,11 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Wrapper } from '@googlemaps/react-wrapper';
 import { Map, RoundButton, SatelliteButton } from 'components';
 import { MapSearchbarProps } from '.';
 import { MapSearchbar } from '..';
 import { MapProps, MarkerProps } from 'types';
 import { googleGetPlace } from 'helpers';
-import { isDesktop, isMobile } from 'react-device-detect';
 
 interface MapControlProps extends MapProps {
   initialZoom?: number,
@@ -59,7 +58,7 @@ export const MapControl: React.FC<MapControlProps> = ({
   }
 
   return (
-    <div className={"relative " + (isMobile ? 'h-content' : 'flex-1')}>
+    <div className="relative w-full h-content md:h-full md:flex-1">
       <Wrapper apiKey="AIzaSyDoHIGgvyVVi_1_6zVWD4AOQPfHWN7zSkU" libraries={['places']}>
 
         <div 

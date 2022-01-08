@@ -10,8 +10,8 @@ import { quark, Quark, untrack } from "./quarky";
 //     lazy(): QuarkIter<T>,
 // }
 
-const alwaysFalse = () => false;
 
+const alwaysFalse = () => false;
 
 // NOTE: the return values of all the array methods become invalid if done within a batch (since modifications apply later)
 // Should we not return anything instead? Or wrap them in a Ref object, to ensure the values can be used at the end of the batch
@@ -23,7 +23,7 @@ export class QuarkArray<T> implements QuarkArray<T> {
         const itemsWrapped = items.map(x => quark(x));
         // the alwaysFalse allows us to modify the array in place and return the same reference to update the quark
         this.#source = quark(itemsWrapped, { equal: alwaysFalse });
-    }
+     }
 
     get length(): number {
         return this.#source().length;
@@ -36,6 +36,20 @@ export class QuarkArray<T> implements QuarkArray<T> {
 
     set(i: number, value: T) {
         this.#source()[i].set(value);
+    }
+
+    find(filter: (item: T) => boolean): T | undefined {
+        const q = this.findQuark(filter);
+        return q ? q() : undefined;
+    }
+
+    findQuark(filter: (item: T) => boolean): Quark<T> | undefined {
+        const source = this.#source();
+        for (let i = 0; i < source.length; i++) {
+            const q = source[i];
+            if (filter(q()))
+                return q;
+        }
     }
 
     #apply<U>(operation: (buffer: Quark<T>[]) => U): U {

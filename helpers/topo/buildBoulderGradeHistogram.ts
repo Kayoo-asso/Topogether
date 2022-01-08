@@ -1,9 +1,8 @@
-import { Quark } from 'helpers/quarky';
-import { Boulder, BoulderData, Grade, GradeHistogram, gradeToLightGrade, Track } from 'types';
+import { Signal } from 'helpers/quarky';
+import { Boulder, GradeHistogram, gradeToLightGrade, Track } from 'types';
 
-export const buildBoulderGradeHistogram = (boulder: Boulder): Quark<GradeHistogram> => {
-  return boulder.tracks
-    .unwrap()
+export const buildBoulderGradeHistogram = (boulder: Boulder): Signal<GradeHistogram> => {
+  return boulder.tracks.lazy()
     .reduce(addTrackToHistogram, defaultGradeHistogram());
 };
 

@@ -15,7 +15,7 @@ const App = ({ Component, pageProps }: AppProps) => {
     onResize: ({ observe, unobserve, width, height, entry }) => {
       if (width > 768)
         setDevice('DESKTOP');
-      else if (width > 600)
+      else if (width > 640)
         setDevice('TABLET');
       else setDevice('MOBILE');
     },
