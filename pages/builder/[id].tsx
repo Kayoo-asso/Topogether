@@ -8,7 +8,7 @@ import {
 import { useRouter } from 'next/router';
 import { quarkTopo } from 'helpers/fakeData/fakeTopoV2';
 import { DeviceContext, UserContext } from 'helpers';
-import { Boulder, Track } from 'types';
+import { Boulder, MapToolEnum, Track } from 'types';
 import { reactKey, useSelectQuark, watchDependencies } from 'helpers/quarky';
 
 const BuilderMapPage: NextPage = () => {
@@ -23,6 +23,7 @@ const BuilderMapPage: NextPage = () => {
       .flatten()
       , [topo().sectors]);
 
+  const [currentTool, setCurrentTool] = useState<MapToolEnum>();
   const selectedTrack = useSelectQuark<Track>();
   const selectedBoulder = useSelectQuark<Boulder>();
 
@@ -71,6 +72,12 @@ const BuilderMapPage: NextPage = () => {
           { value: 'Valider le topo', action: () => setDisplayModalValidate(!displayModalValidate)},
           { value: 'Supprimer le topo', action: () => setDisplayModalDelete(!displayModalDelete)},
         ]}
+        displayMapTools
+        MapToolsActivated={!selectedTrack}
+        currentTool={currentTool}
+        onRockClick={() => setCurrentTool('ROCK')}
+        onParkingClick={() => setCurrentTool('PARKING')}
+        onWaypointClick={() => setCurrentTool('WAYPOINT')}
       />
 
       <div className="h-full relative flex flex-row md:overflow-hidden">

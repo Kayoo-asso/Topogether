@@ -58,7 +58,7 @@ export const MapControl: React.FC<MapControlProps> = ({
   }
 
   return (
-    <div className="relative w-full h-content md:h-full md:flex-1">
+    <div className="relative w-full h-full md:flex-1">
       <Wrapper apiKey="AIzaSyDoHIGgvyVVi_1_6zVWD4AOQPfHWN7zSkU" libraries={['places']}>
 
         <div 

@@ -7,17 +7,25 @@ interface TextInputProps extends InputHTMLAttributes<HTMLInputElement> {
   error?: string;
   type?: string;
   pointer?: boolean;
-  className?: string;
+  big?: boolean,
+  white?: boolean,
+  wrapperClassName?: string;
+  inputClassName?: string,
+  labelClassName?: string,
 }
 
 export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(({
   type = 'text',
   displayLabel = true,
-  className = '',
+  big = false,
+  white = false,
+  wrapperClassName = '',
+  inputClassName = '',
+  labelClassName = '',
   pointer = false,
   ...props
 }: TextInputProps, ref) => (
-  <div className={`relative ${className}`}>
+  <div className={`relative ${wrapperClassName}`}>
     <input
       {...props}
       ref={ref}
@@ -25,13 +33,23 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(({
       type={type}
       id={props.id}
       value={props.value}
-      className={`peer h-10 border-dark ktext-base border-b-2 ${displayLabel ? 'placeholder-transparent' : ''} focus:border-main focus:outline-none w-full ${pointer ? ' cursor-pointer' : ''}`}
+      className={`peer h-10 ktext-base focus:outline-none w-full
+        ${big ? 'border-b-3' : 'border-b-2'} 
+        ${white ? 'border-white bg-white bg-opacity-0 text-white' : 'border-dark focus:border-main text-dark'}   
+        ${displayLabel ? 'placeholder-transparent' : ''} 
+        ${pointer ? ' cursor-pointer' : ''} 
+        ${inputClassName}`
+      }
     />
     {displayLabel
       && (
       <label
         htmlFor={props.id}
-        className={`absolute left-0 -top-3.5 ktext-label text-grey-medium peer-focus:text-main transition-all peer-placeholder-shown:top-2 peer-focus:-top-3.5 ${pointer ? ' cursor-pointer' : ''}`}
+        className={`absolute left-0 ktext-label transition-all peer-placeholder-shown:top-2
+        ${big ? '-top-6 text-xl peer-focus:-top-6' : '-top-3.5 peer-focus:-top-3.5'} 
+        ${white ? 'text-white peer-focus:text-white' : 'text-grey-medium peer-focus:text-main'}
+        ${pointer ? ' cursor-pointer' : ''} 
+        ${labelClassName}`}
       >
         {props.label}
       </label>

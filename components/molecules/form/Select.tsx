@@ -14,49 +14,67 @@ interface SelectProps {
   id: string;
   label: string;
   choices: DropdownOption[];
-  selected: any;
+  big?: boolean,
+  white?: boolean,
+  value?: string;
   onSelect: (value: any) => void;
-  className?: string;
+  wrapperClassname?: string;
 }
 
-export const Select: React.FC<SelectProps> = (props) => {
+export const Select: React.FC<SelectProps> = ({
+  big = false,
+  white = false,
+  ...props
+}: SelectProps) => {
   const ref = useRef<HTMLInputElement>(null);
   const [isOpen, setIsOpen] = useState(false);
-  const selectedChoice = props.choices.find((choice) => choice.value === props.selected);
-  const [value, setValue] = useState(selectedChoice?.label);
+  console.log(props.value);
 
   return (
     <div
       id={props.id}
       onFocus={() => setIsOpen(true)}
       onBlur={() => setIsOpen(false)}
-      className={`relative cursor-pointer ${props.className}`}
+      className={`relative cursor-pointer ${props.wrapperClassname}`}
     >
       <TextInput
         ref={ref}
         label={props.label}
         id={`${props.id}-input`}
-        value={value}
+        big={big}
+        white={white}
+        value={props.value || ''}
+        readOnly
         pointer
       />
       <Icon
         name="arrow-simple"
         wrapperClassName={`absolute right-0 ${isOpen ? 'top-[14px]' : 'top-[8px]'}`}
-        SVGClassName={`${isOpen ? 'rotate-90' : '-rotate-90'} fill-dark w-4 h-4 left-22`}
+        SVGClassName={`${isOpen ? 'rotate-90' : '-rotate-90'} ${white ? 'fill-white' : 'fill-dark'} w-4 h-4 left-22`}
         onClick={() => {
           ref.current?.focus();
         }}
       />
       {isOpen && (
       <Dropdown
-        choices={props.choices.map((choice) => ({
-          ...choice,
-          action: () => {
-            setValue(choice.label);
-            setIsOpen(false);
-            props.onSelect(choice.value);
-          },
-        }))}
+        className='absolute w-full'
+        choices={[{
+            value: props.label,
+            isSection: true,
+            action: () => {
+              setIsOpen(false);
+              props.onSelect(undefined);
+            }
+          }]
+          .concat(props.choices.map((choice) => ({
+            ...choice,
+            isSection: false,
+            action: () => {
+              setIsOpen(false);
+              props.onSelect(choice.value);
+            }
+          })))
+        }
       />
       )}
     </div>

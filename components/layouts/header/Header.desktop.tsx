@@ -26,7 +26,7 @@ export const HeaderDesktop: React.FC<HeaderDesktopProps> = ({
   const [displayTitleTooltip, setDisplayTitleTooltip] = useState(false);
 
   return (
-    <div className="bg-dark flex items-center h-header">
+    <div className="bg-dark items-center h-header hidden md:flex">
 
       <Link href={props.backLink} passHref>
         <div className="w-1/12 relative h-[70%] cursor-pointer">

@@ -23,8 +23,13 @@ export const Button: React.FC<ButtonProps> = ({
     } ${fullWidth ? 'w-full ' : ''} ${props.className}`}
     onClick={props.onClick}
   >
-    <Link href={props.href || ''}>
-      {props.content}
-    </Link>
+    {props.href &&
+      <Link href={props.href}>
+        {props.content}
+      </Link>
+    }
+    {!props.href &&
+      props.content
+    }
   </button>
 );
