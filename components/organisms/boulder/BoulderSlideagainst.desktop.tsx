@@ -1,8 +1,7 @@
-import { Icon, SlideagainstRightDesktop } from 'components';
-import { Signal } from 'helpers/quarky';
 import React from 'react';
-import { Boulder, BoulderData, Track, TrackData } from 'types';
-import { TracksList } from '.';
+import { Icon, SlideagainstRightDesktop, TracksList } from 'components';
+import { Signal } from 'helpers/quarky';
+import { Boulder, Track } from 'types';
 
 interface BoulderSlideagainstDesktopProps {
     boulder: Signal<Boulder>,

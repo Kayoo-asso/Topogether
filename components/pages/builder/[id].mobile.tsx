@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import {
-  BoulderSlideoverMobile, Drawer, HeaderMobile, MapControl, BoulderMarker, For, Show
+  BoulderSlideoverMobile, Drawer, HeaderMobile, MapControl, BoulderMarker, For, Show, Map
 } from 'components';
 import { Boulder, Topo, Track } from 'types';
 import { Quark, reactKey, useSelectQuark } from 'helpers/quarky';
@@ -17,6 +17,8 @@ export const BuilderMapMobile: React.FC<BuilderMapMobileProps> = (props: Builder
   // const [selectedBoulder, setSelectedBoulder] = useState<WritableQuark<Boulder>>();
   const selectedTrack = useSelectQuark<Track>();
   const selectedBoulder = useSelectQuark<Boulder>();
+
+  const [selectedTrack2, setSelectedTrack2] = useState<Quark<Track>>();
 
   // NOTE: testing out how we could select a boulder by a clicking on a map marker
   // We pass selectedBoulder.Set directly to BoulderMarker
@@ -50,6 +52,7 @@ export const BuilderMapMobile: React.FC<BuilderMapMobileProps> = (props: Builder
         <MapControl
           initialZoom={13}
           onPhotoButtonClick={() => setGeoCameraOpen(true)}
+          center={boulders.toArray()[0]().location}
           boundsToMarkers
           searchbarOptions={{
             findTopos: false,
@@ -84,7 +87,7 @@ export const BuilderMapMobile: React.FC<BuilderMapMobileProps> = (props: Builder
         }
       </div>
 
-      <Show when={() => selectedBoulder.quark()}>
+      <Show when={selectedBoulder}>
         {boulder =>
           <BoulderSlideoverMobile
             open
@@ -96,8 +99,8 @@ export const BuilderMapMobile: React.FC<BuilderMapMobileProps> = (props: Builder
             onDrawButtonClick={() => setDrawerOpen(true)}
             // onSelectTrack={setSelectedTrack}
             // onClose={() => {
-            //   setSelectedBoulder(undefined);
-            //   setSelectedTrack(undefined);
+            //   selectedBoulder.select(undefined);
+            //   selectedTrack.select(undefined);
             // }}
           />
         

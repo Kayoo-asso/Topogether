@@ -6,7 +6,6 @@ import { useEffectWithDeepEqual } from 'helpers';
 import mapStyles from 'styles/mapStyles';
 import equal from 'fast-deep-equal/es6';
 import { mapEvents, MapProps, markerEvents, MarkerProps, UUID } from 'types';
-import { fontainebleauLocation } from 'helpers/globals';
 
 const containerStyles: React.CSSProperties = {
   width: '100%',
@@ -39,8 +38,6 @@ export const Map = forwardRef<google.maps.Map, React.PropsWithChildren<MapProps>
     onTiltChange,
     onZoomChange,
     className,
-    // don't forget the default value
-    markers = [],
     children,
     ...options
   } = props;
@@ -115,12 +112,12 @@ export const Map = forwardRef<google.maps.Map, React.PropsWithChildren<MapProps>
 
 
   // Diff and display markers
-  useEffect(() => {
-    if (map) {
-      const newMarkers = diffMarkers(map, displayedMarkers.current, markers);
-      displayedMarkers.current = newMarkers;
-    }
-  });
+  // useEffect(() => {
+  //   if (map) {
+  //     const newMarkers = diffMarkers(map, displayedMarkers.current, markers);
+  //     displayedMarkers.current = newMarkers;
+  //   }
+  // });
 
   return (
     <div

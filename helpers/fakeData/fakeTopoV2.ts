@@ -146,7 +146,7 @@ export const topo: TopoData = {
 
     danger: "Il y a beaucoup de pentes" as Description,
 
-    imageId: images[0].id,
+    image: images[0],
     creatorId: topoCreatorId,
     validatorId: validatorId,
 

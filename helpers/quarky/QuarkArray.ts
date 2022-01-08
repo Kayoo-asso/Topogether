@@ -1,5 +1,5 @@
 import { QuarkIter } from "./QuarkIter";
-import { quark, Quark } from "./quarky";
+import { quark, Quark, untrack } from "./quarky";
 
 
 // export interface QuarkArray<T> extends Iterable<T> {
@@ -12,9 +12,6 @@ import { quark, Quark } from "./quarky";
 
 const alwaysFalse = () => false;
 
-export interface QuarkArrayRaw<T> extends Iterable<Quark<T>> {
-    lazy(): QuarkIter<Quark<T>>
-}
 
 // NOTE: the return values of all the array methods become invalid if done within a batch (since modifications apply later)
 // Should we not return anything instead? Or wrap them in a Ref object, to ensure the values can be used at the end of the batch
@@ -95,6 +92,10 @@ export class QuarkArray<T> implements QuarkArray<T> {
         const iter = new QuarkArrayIterator(this.#source);
         return new QuarkIter(iter, () => iter.init());
     }
+}
+
+export interface QuarkArrayRaw<T> extends Iterable<Quark<T>> {
+    lazy(): QuarkIter<Quark<T>>
 }
 
 class QuarkArrayIteratorRaw<T> implements Iterator<Quark<T>> {

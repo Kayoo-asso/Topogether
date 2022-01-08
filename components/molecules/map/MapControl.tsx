@@ -17,6 +17,7 @@ interface MapControlProps extends MapProps {
   filters?: any,
   searchbarOptions?: MapSearchbarProps,
   className?: string,
+  children?: any,
   onSearchResultSelect?: () => void,
   onPhotoButtonClick?: () => void,
   onMapZoomChange?: (zoom: number | undefined) => void,
@@ -132,9 +133,9 @@ export const MapControl: React.FC<MapControlProps> = ({
               props.onMapZoomChange(mapRef.current.getZoom());
             }
           }}
-          onLoad={() => {
-            if (boundsToMarkers && props.markers) getBoundsFromMarker(props.markers);
-          }}
+          // onLoad={() => {
+          //   if (boundsToMarkers && props.children) getBoundsFromMarker(props.children);
+          // }}
           {...props}
         />
       </Wrapper>

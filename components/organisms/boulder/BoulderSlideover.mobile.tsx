@@ -5,9 +5,9 @@ import {
 import { Boulder, Difficulty, gradeToLightGrade, Track, UUID } from 'types';
 import { topogetherUrl } from 'helpers/globals';
 import { buildBoulderGradeHistogram } from 'helpers';
-import { TracksList } from '.';
+import { TracksList } from '../topo';
 import { default as NextImage } from 'next/image';
-import { Quark, watchDependencies, SelectSignal, SelectQuarkNullable } from 'helpers/quarky';
+import { Quark, watchDependencies, SelectQuarkNullable } from 'helpers/quarky';
 
 interface BoulderSlideoverMobileProps {
   open?: boolean,

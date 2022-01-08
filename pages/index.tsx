@@ -1,9 +1,14 @@
+import React, { useContext } from 'react';
 import { WorldMapDesktop } from 'components';
+import { DeviceContext } from 'helpers';
 import type { NextPage } from 'next';
-import React from 'react';
 
-const WorldMapPage: NextPage = () => (
-  <WorldMapDesktop />
-);
+const WorldMapPage: NextPage = () => {
+  const device = useContext(DeviceContext);
+
+  return (
+    <WorldMapDesktop />
+  )
+};
 
 export default WorldMapPage;
