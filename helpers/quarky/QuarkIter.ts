@@ -64,14 +64,14 @@ export class QuarkIter<T> implements Iterable<T> {
     // Does not make a copy by default, so the return array is readonly
     toArray(): readonly T[] {
         if (!this.result) {
-            this.result = derive(() => {
+            this.result = derive((() => {
                 this.init();
                 // do not use the QuarkIter itself, since its iterable property
                 // depends on the derivation we're creating!
                 return Array.from({
                     [Symbol.iterator]: () => this.iterator
                 });
-            });
+            }).bind(this));
         }
         return this.result();
     }

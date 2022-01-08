@@ -56,7 +56,7 @@ export const BuilderMapMobile: React.FC<BuilderMapMobileProps> = (props: Builder
             findPlaces: false,
           }}
         >
-          <For each={boulders.toArray}>
+          <For each={() => boulders.toArray()}>
             {(boulder) =>
               <BoulderMarker
                 key={reactKey(boulder)}

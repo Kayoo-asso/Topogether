@@ -33,7 +33,7 @@
     "**/*.ts",
     "**/*.tsx",
     "components/atoms/index.js", "helpers/hooks/index.js"
-  ],
+, "helpers/quarky/quarky.ts", "helpers/quarky/QuarkIter.ts.old"  ],
   "exclude": [
     "node_modules"
   ]

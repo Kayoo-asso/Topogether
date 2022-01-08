@@ -16,5 +16,5 @@ function ForComponent<T>(props: ForProps<T>) {
 }
 
 export function For<T>(props: ForProps<T>) {
-    return watchDependencies(ForComponent)(props as any);
+    return watchDependencies(ForComponent, { memo: false })(props as any);
 };

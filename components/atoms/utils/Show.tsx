@@ -53,9 +53,9 @@ function Component({ when, fallback, children}: ShowPropsInternal) {
 }
 
 export function Show<T>(props: ShowProps<T>): JSX.Element | null {
-    const result = watchDependencies<ShowProps<T>>(Component, { memo: false })(props as ShowPropsInternal);
-    console.log("watchDependencies result: ", result);
-    return result;
+    // the result of watchDependencies is invokable iff the option `memo` is set to false
+    // (the result of React.memo is not invokable)
+    return watchDependencies<ShowProps<T>>(Component, { memo: false })(props as ShowPropsInternal);
 }
 
 // Remember to handle both the array and non-array case

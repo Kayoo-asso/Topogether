@@ -12,7 +12,12 @@ const defaultOptions: WatchDependenciesOptions = {
     memo: true
 }
 
-// I think the type is correct? React.memo is a mess in TypeScript
+// TODO: The first call to watchDependencies in a component tree creates a root
+// Each root batches all Quarky operations underneath it
+// The first root schedules execution of all batches in a useEffect
+
+// the result of watchDependencies is invokable iff the option `memo` is set to false
+// (the result of React.memo is not invokable)
 export function watchDependencies<T>(component: React.FunctionComponent<T>, options?: WatchDependenciesOptions) {
     const wrapped = (props: T, context?: any) => {
         const [result, scope] = trackContext(() => component(props, context));
@@ -21,7 +26,7 @@ export function watchDependencies<T>(component: React.FunctionComponent<T>, opti
         useEffect(() => {
             const e = effect(() => {
                 forceRender([]);
-            }, { watch: scope.accessed });
+            }, { watch: scope.accessed, lazy: true });
 
             return e.dispose;
         });
@@ -29,7 +34,7 @@ export function watchDependencies<T>(component: React.FunctionComponent<T>, opti
     }
     const actualOpt = {
         ...defaultOptions,
-        options
+        ...options
     };
     
     return actualOpt.memo

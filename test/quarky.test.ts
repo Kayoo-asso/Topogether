@@ -1,4 +1,4 @@
-import { Quark, derive, effect, quark, trackContext, transaction, untrack, Signal, selectSignal, selectQuark } from "helpers/quarky"
+import { Quark, derive, effect, quark, trackContext, batch, untrack, Signal, selectSignal, selectQuark } from "helpers/quarky"
 import { getConsoleErrorSpy } from "test/utils";
 
 test("Creating and reading quark", () => {
@@ -262,10 +262,10 @@ test("Custom equality function stops propagation (derivation)", () => {
     expect(counter.current).toBe(1);
 });
 
-test("Transactions suspend quark writes", () => {
+test("Batches suspend quark writes", () => {
     const q1 = quark(1);
     const q2 = quark(2);
-    transaction(() => {
+    batch(() => {
         q1.set(2);
         q2.set(3);
         expect(q1()).toBe(1);
@@ -275,12 +275,12 @@ test("Transactions suspend quark writes", () => {
     expect(q2()).toBe(3);
 })
 
-test("Transactions suspend propagation", () => {
+test("Batches suspend propagation", () => {
     const counter = { current: 0 }
     const q = quark(1, { name: "Q" });
     const d = derive(() => q() + 1, { name: "D" });
     effect(() => { d(); counter.current++ }, { name: "E" });
-    transaction(() => {
+    batch(() => {
         q.set(2);
         q.set(3);
         expect(counter.current).toBe(1);
@@ -294,7 +294,7 @@ test("Transactions suspend effect creation", () => {
     const counter = { current: 0 }
     const q = quark(1, { name: "Q" });
     const d = derive(() => q() + 1, { name: "D" });
-    transaction(() => {
+    batch(() => {
         effect(() => { d(); counter.current++; }, { name: "E" });
         expect(counter.current).toBe(0);
     });
@@ -346,7 +346,7 @@ test("Scheduled cleanups run before each effect invokation", () => {
             q();
             if (nesting > 1) getEffectWithCleanup(nesting - 1);
             onCleanup(() => counter.current++);
-        }, { name: `clean-effect-${nesting}`});
+        }, { name: `clean-effect-${nesting}` });
     getEffectWithCleanup(3);
     expect(counter.current).toBe(0);
     q.set(2);
@@ -429,7 +429,7 @@ test("Each node is updated only once per batch (= updates are run in topological
     // activate the chain
     effect(() => d());
     counter.current = 0;
-    transaction(() => {
+    batch(() => {
         q.set(2);
         q.set(3);
     })
@@ -448,7 +448,7 @@ test("Children effects scheduled before their parent should be cleaned up noneth
         }, { name: "child-effect" })
     }, { name: "parent-effect" });
     expect(counter.current).toBe(1);
-    transaction(() => {
+    batch(() => {
         q2.set(10);
         q1.set(10);
     });
@@ -499,12 +499,18 @@ test("Child effect dependencies are not registered in their parent or children",
 
 test.todo("Persisting effects");
 
-test.todo("Nested transactions")
+test.todo("Nested batch");
+
+test.todo("Cleaning up effect within batch");
 
 test.todo("Zipping and concatenating iterators calls the init function of both arguments");
 
-test.skip("trackContext should catch top-level dependencies", () => {
-    const quarks = [quark(0), quark(1), quark(2), quark(3, { name: "Q3"})]
+test("trackContext should catch top-level dependencies", () => {
+    const quarks = [
+        quark(0, { name: "Q0" }),
+        quark(1, { name: "Q1" }),
+        quark(2, { name: "Q2" }),
+        quark(3, { name: "Q3" })]
     const [, scope] = trackContext(() => {
         // tracked
         quarks[0]();
@@ -516,15 +522,17 @@ test.skip("trackContext should catch top-level dependencies", () => {
     });
     console.log("Received scope: ", scope);
     const counter = { current: 0 };
-    effect(() => { console.log("Running effect"); counter.current++ }, { watch: scope.accessed });
-    quarks[0].set(-1);
+    effect(() => counter.current++, { watch: scope.accessed, name: "E"});
     expect(counter.current).toBe(1);
+    console.log("Setting Q0")
+    quarks[0].set(-1);
+    expect(counter.current).toBe(2);
     quarks[1].set(-1);
     quarks[2].set(-1);
-    expect(counter.current).toBe(1);
+    expect(counter.current).toBe(2);
     console.log("Setting quark3");
     quarks[3].set(-1);
-    expect(counter.current).toBe(2);
+    expect(counter.current).toBe(3);
 });
 
 test.todo("trackContext should catch top-level effects");
@@ -543,7 +551,7 @@ test("Setting and unsetting SelectSignalNullable", () => {
     s.select(value);
     expect(s()).toBe("foo");
     expect(s.quark()).toBe(value);
-    
+
     s.select(undefined);
     expect(s()).toBe(undefined);
     expect(s.quark()).toBe(undefined);
@@ -578,7 +586,7 @@ test("Setting and unsetting SelectQuarkNullable", () => {
 
     value.set("bar");
     expect(s()).toBe("bar");
-    
+
     s.select(undefined);
     expect(s()).toBe(undefined);
     expect(s.quark()).toBe(undefined);

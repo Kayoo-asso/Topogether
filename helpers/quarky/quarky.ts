@@ -15,7 +15,7 @@ export interface Quark<T> extends Signal<T> {
 };
 
 // SelectQuarks are useful when picking a quark to use somewhere else
-// They are a handy wrapper around a Quark<Quark<T> | undefined>
+// They are a handy wrapper around a Quark<Quark<T>> or Quark<Quark<T> | undefined>
 export interface SelectQuark<T> {
     (): T,
     quark(): Quark<T>,
@@ -76,7 +76,7 @@ export interface EffectOptions {
 // TODO: optimise the reactivation process, so that the context tracks whether it is detached or not
 // and the activation happens on read
 
-// Optimisation note: never change the shape of the Node object after creation
+// Optimisation note: never change the shape of objects after creation
 // See: https://richardartoul.github.io/jekyll/update/2015/04/26/hidden-classes.html
 
 interface QuarkNode<T> {
@@ -84,8 +84,8 @@ interface QuarkNode<T> {
     value: T,
     equal: (a: T, b: T) => boolean,
     // Observers and observer slots
-    o: Computation[],
-    os: number[],
+    obs: Computation[],
+    oSlots: number[],
     name?: string,
 }
 
@@ -98,15 +98,15 @@ interface DerivationNode<T> {
     // > 0 means it's waiting for more confirmations
     // < 0 means a cycle was created
     // dirty count
-    dc: number,
+    dirty: number,
     // update flag
-    u: boolean, // TODO: replace by the sign bit of dirtyCount
+    update: boolean, // TODO: replace by the sign bit of dirtyCount
     // Dependencies & dependency slots
-    d: DataNode[],
-    ds: number[],
+    deps: DataNode[],
+    depSlots: number[],
     // Observers and observer slots
-    o: Computation[],
-    os: number[],
+    obs: Computation[],
+    oSlots: number[],
     name?: string
 }
 
@@ -130,11 +130,11 @@ interface EffectNode {
     readonly type: NodeType.Effect,
     readonly fn: (onCleanup: CleanupHelper) => void,
     // dirty count
-    dc: number,
+    dirty: number,
     // update flag
-    u: boolean, // TODO: remove by using the sign bit of dirtyCount instead
-    d: DataNode[],
-    ds: number[],
+    update: boolean, // TODO: remove by using the sign bit of dirtyCount instead
+    deps: DataNode[],
+    depSlots: number[],
     // constant dependencies
     // - 1 means the effect has been deleted
     cdeps: number,
@@ -161,7 +161,8 @@ let CurrentScope: Scope | undefined = undefined;
 
 let PendingQuarks: QuarkNode<any>[] = [];
 let PendingUpdates: StateUpdate<any>[] = [];
-let IsBatching = false;
+// let IsBatching = false;
+let BatchIndices: number[] = [];
 
 let ScheduledEffects: EffectNode[] = [];
 
@@ -213,10 +214,11 @@ function writeNode<T>(node: QuarkNode<T>, update: StateUpdate<T>) {
         console.error("Quarky detected an attempt to set a value in a derivation! This is not allowed and will be ignored");
         return;
     }
+
     // Slightly more work for the non-batching case, but this helps centralize the logic
     PendingQuarks.push(node);
     PendingUpdates.push(update);
-    if (!IsBatching) {
+    if (BatchIndices.length === 0) {
         processUpdates();
     }
 }
@@ -228,8 +230,8 @@ export function quark<T>(value: T, options?: QuarkOptions<T>): Quark<T> {
         type: NodeType.Quark,
         value,
         equal: options?.equal ?? defaultEqual,
-        o: [],
-        os: [],
+        obs: [],
+        oSlots: [],
         name: options?.name
     };
     // TODO: would .bind() be noticeably faster?
@@ -269,12 +271,12 @@ export function derive<T>(computation: () => T, options?: QuarkOptions<T>): Sign
         value: undefined!,
         equal: options?.equal ?? defaultEqual,
         fn: computation,
-        dc: 0,
-        u: false,
-        o: [],
-        os: [],
-        d: [],
-        ds: [],
+        dirty: 0,
+        update: false,
+        obs: [],
+        oSlots: [],
+        deps: [],
+        depSlots: [],
         name: options?.name,
     };
     updateDerivation(d);
@@ -289,11 +291,11 @@ export function effect(computation: (onCleanup: CleanupHelper) => void, options?
     const effect: EffectNode = {
         type: NodeType.Effect,
         fn: computation,
-        d: [],
-        ds: [],
+        deps: [],
+        depSlots: [],
         cdeps: 0,
-        dc: 0,
-        u: false,
+        dirty: 0,
+        update: false,
         children: null,
         clean: null,
         name: options?.name,
@@ -304,8 +306,8 @@ export function effect(computation: (onCleanup: CleanupHelper) => void, options?
         for (let i = 0; i < deps.length; i++) {
             slots[i] = hookObserver(effect, deps[i], i);
         }
-        effect.d = deps as DataNode[];
-        effect.ds = slots;
+        effect.deps = deps as DataNode[];
+        effect.depSlots = slots;
         effect.cdeps = deps.length;
     }
 
@@ -315,7 +317,7 @@ export function effect(computation: (onCleanup: CleanupHelper) => void, options?
     }
 
     if (!options?.lazy) {
-        if (IsBatching) {
+        if (BatchIndices.length > 0) {
             ScheduledEffects.push(effect);
         } else {
             runEffect(effect);
@@ -329,10 +331,10 @@ export function effect(computation: (onCleanup: CleanupHelper) => void, options?
 // Q: should transactions suspend derivation creations? (derivations are pure from Quarky's point of view)
 // Q: should transactions suspend effect cleanups?
 // Q: should transactions have their own scope?
-export function transaction(work: () => void) {
-    IsBatching = true;
+export function batch(work: () => void) {
+    BatchIndices.push(PendingQuarks.length);
     work();
-    IsBatching = false;
+    BatchIndices.pop();
     processUpdates();
 }
 
@@ -356,16 +358,16 @@ function readNode<T>(node: QuarkNode<T> | DerivationNode<T>): T {
     // Two cases for a scope : within a derivation or within an effect, both of which create an observer
     // TODO: should we add back a status tag on the derivation for fast checking?
     // -> probably faster than going to node.o.length
-    if (node.type === NodeType.Derivation && node.o.length === 0) {
+    if (node.type === NodeType.Derivation && node.obs.length === 0) {
         // necessary to detect cycles among potentially deactivated nodes
-        if (node.dc === ONSTACK) {
+        if (node.dirty === ONSTACK) {
             // clean up the scope to recover the state
             handleError("Quarky detected a cycle!", node.name);
         }
-        const saveDirtyCount = node.dc;
-        node.dc = ONSTACK;
+        const saveDirtyCount = node.dirty;
+        node.dirty = ONSTACK;
         updateDerivation(node);
-        node.dc = saveDirtyCount;
+        node.dirty = saveDirtyCount;
     }
     return node.value;
 }
@@ -376,6 +378,7 @@ function processUpdates() {
     for (let i = 0; i < PendingQuarks.length; i++) {
         const q = PendingQuarks[i];
         const u = PendingUpdates[i];
+        console.log(`Setting quark \"${q.name}\" to ${u}.\nObservers: ${q.obs}`);
         let newValue;
         if (typeof u === "function") {
             newValue = u(q.value);
@@ -384,13 +387,14 @@ function processUpdates() {
         }
 
         if (q.equal(q.value, newValue)) {
+            console.log("Skipping update to quark " + q.name);
             skip[i] = true;
             continue;
         }
 
         q.value = newValue;
-        for (let j = 0; j < q.o.length; j++) {
-            const o = q.o[j];
+        for (let j = 0; j < q.obs.length; j++) {
+            const o = q.obs[j];
             flagDirty(o);
         }
     }
@@ -399,8 +403,8 @@ function processUpdates() {
         if (skip[i]) continue;
 
         const q = PendingQuarks[i];
-        for (let j = 0; j < q.o.length; j++) {
-            const o = q.o[j];
+        for (let j = 0; j < q.obs.length; j++) {
+            const o = q.obs[j];
             signalReady(o, true);
         }
     }
@@ -440,31 +444,35 @@ function updateDerivation(node: DerivationNode<any>): boolean {
     CurrentScope = scope.parent;
 
     // TODO: make it conditional, to avoid attaching detached nodes upon read
-    if (node.o.length > 0) {
+    if (node.obs.length > 0) {
         refreshDependencies(node, scope.accessed);
     } else {
         // TODO: remove once out of testing mode
-        if (node.ds.length > 0) throw new Error("A derivation with no observers should not be using any dependency slots");
-        node.d = scope.accessed;
+        if (node.depSlots.length > 0) throw new Error("A derivation with no observers should not be using any dependency slots");
+        node.deps = scope.accessed;
     }
     const prev = node.value;
     node.value = next;
-    node.dc = 0;
+    node.dirty = 0;
     return !node.equal(prev, next);
 }
 
 function refreshDependencies(node: DerivationNode<any> | EffectNode, accessed: DataNode[]) {
     // We go over both arrays at once, since it's likely most dependencies will be the same
-    const current = node.d;
-    const currentSlots = node.ds;
+    const current = node.deps;
+    const currentSlots = node.depSlots;
     // copy to local for fast access
     const currentLength = current.length;
     const accessedLength = accessed.length;
 
-    const length = Math.min(currentLength, accessedLength);
+    const commonLength = Math.min(currentLength, accessedLength);
     const slots = new Array(accessedLength);
 
-    for (let i = 0; i < length; i++) {
+    // By defining i outside the loop, we can keep track of its final value
+    // This allows us to handle the case where `start` may be > to `length`,
+    // by skipping the next 2 loops
+    let i = 0;
+    for (; i < commonLength; i++) {
         const before = current[i];
         const after = accessed[i];
         // fast path
@@ -478,10 +486,10 @@ function refreshDependencies(node: DerivationNode<any> | EffectNode, accessed: D
         slots[i] = hookObserver(node, after, i);
     }
     // at most one loop runs
-    for (let i = length; i < currentLength; i++) {
+    for (; i < currentLength; i++) {
         unhookObserver(node, current[i], currentSlots[i]);
     }
-    for (let i = length; i < accessedLength; i++) {
+    for (; i < accessedLength; i++) {
         slots[i] = hookObserver(node, accessed[i], i);
     }
 
@@ -494,17 +502,17 @@ function refreshDependencies(node: DerivationNode<any> | EffectNode, accessed: D
         attemptCleanup(current[i]);
     }
 
-    node.d = accessed;
-    node.ds = slots;
+    node.deps = accessed;
+    node.depSlots = slots;
 }
 
 // returns the slot that was used
 function hookObserver(observer: Computation, dependency: DataNode, slot: number): number {
     // console.log(`Hooking observer \"${observer.name}\" to \"${dependency.name}\"`);
     // Dependencies should have been activated through the read call beforehand
-    const usedSlot = dependency.o.length;
-    dependency.o.push(observer);
-    dependency.os.push(slot);
+    const usedSlot = dependency.obs.length;
+    dependency.obs.push(observer);
+    dependency.oSlots.push(slot);
     // check used slot first to avoid memory jump in case it's >0
     if (usedSlot === 0 && dependency.type === NodeType.Derivation) {
         activate(dependency);
@@ -514,36 +522,36 @@ function hookObserver(observer: Computation, dependency: DataNode, slot: number)
 
 function activate(node: DerivationNode<any>) {
     // TODO: remove once proper testing is done
-    if (node.o.length !== 1) throw new Error("Should not be calling activate on a derivation that had observers");
-    if (node.ds.length !== 0) throw new Error("Deactivated derivation should not be registered and have slots");
-    const slots = new Array(node.d.length);
+    if (node.obs.length !== 1) throw new Error("Should not be calling activate on a derivation that had observers");
+    if (node.depSlots.length !== 0) throw new Error("Deactivated derivation should not be registered and have slots");
+    const slots = new Array(node.deps.length);
     for (let i = 0; i < slots.length; i++) {
-        slots[i] = hookObserver(node, node.d[i], i);
+        slots[i] = hookObserver(node, node.deps[i], i);
     }
-    node.ds = slots;
+    node.depSlots = slots;
 }
 
 // TODO: measure perf & memory vs using sets
 // Not sure this is actually faster, due to a lot of jumps in memory
 function unhookObserver(observer: Computation, dependency: DataNode, slot: number) {
     // console.log(`Unhooking observer \"${observer.name}\" from \"${dependency.name}\"`)
-    const lastObserver = dependency.o.pop()!;
-    const lastObserverSlot = dependency.os.pop()!;
+    const lastObserver = dependency.obs.pop()!;
+    const lastObserverSlot = dependency.oSlots.pop()!;
     if (lastObserver !== observer) {
-        dependency.o[slot] = lastObserver;
-        dependency.os[slot] = lastObserverSlot;
-        lastObserver.ds[lastObserverSlot] = slot;
+        dependency.obs[slot] = lastObserver;
+        dependency.oSlots[slot] = lastObserverSlot;
+        lastObserver.depSlots[lastObserverSlot] = slot;
     }
     // cleanup should be done separately
 }
 
 function attemptCleanup(node: DataNode) {
-    if (node.type === NodeType.Quark || node.o.length > 0) {
+    if (node.type === NodeType.Quark || node.obs.length > 0) {
         return;
     }
     detachDependencies(node, 0);
     // node.dependencies = [];
-    node.ds = [];
+    node.depSlots = [];
 }
 
 function cleanupEffect(effect: EffectNode, deleting: boolean) {
@@ -554,15 +562,15 @@ function cleanupEffect(effect: EffectNode, deleting: boolean) {
     } else {
         unchanged = effect.cdeps;
     }
-    const toRemove = effect.d.length - unchanged;
+    const toRemove = effect.deps.length - unchanged;
     if (deleting) {
         detachDependencies(effect, unchanged);
         // console.log(`Deleting effect ${effect.name}. Children: `, effect.children);
     } else {
         // console.log(`Cleaning up effect ${effect.name}. Children: `, effect.children);
     }
-    effect.d.splice(unchanged, toRemove);
-    effect.ds.splice(unchanged, toRemove);
+    effect.deps.splice(unchanged, toRemove);
+    effect.depSlots.splice(unchanged, toRemove);
     if (effect.children) {
         for (let i = 0; i < effect.children.length; i++) {
             cleanupEffect(effect.children[i], true);
@@ -579,8 +587,8 @@ function cleanupEffect(effect: EffectNode, deleting: boolean) {
 }
 
 function detachDependencies(node: Computation, start: number) {
-    const dependencies = node.d;
-    const dependencySlots = node.ds;
+    const dependencies = node.deps;
+    const dependencySlots = node.depSlots;
     for (let i = start; i < dependencies.length; i++) {
         const dep = dependencies[i];
         unhookObserver(node, dep, dependencySlots[i]);
@@ -591,53 +599,52 @@ function detachDependencies(node: Computation, start: number) {
 
 // depth-first search, to detect cycles
 function flagDirty(node: Computation) {
-    if (node.dc === ONSTACK) {
+    if (node.dirty === ONSTACK) {
         handleError("Quarky detected a cycle!", node.name);
     }
-    node.dc += 1;
-    // console.log(`Flagging ${node.name} as dirty. dirtyCount = ${node.dirtyCount}`);
+    node.dirty += 1;
+    // console.log(`Flagging ${node.name} as dirty. dirtyCount = ${node.dirty}`);
     // only propagate the dirty flag if it's the first time this derivation has been dirtied
-    if (node.type === NodeType.Derivation && node.dc === 1) {
-        node.dc = ONSTACK;
-        for (let i = 0; i < node.o.length; i++) {
-            const o = node.o[i];
+    if (node.type === NodeType.Derivation && node.dirty === 1) {
+        node.dirty = ONSTACK;
+        for (let i = 0; i < node.obs.length; i++) {
+            const o = node.obs[i];
             flagDirty(o);
         }
-        node.dc = 1;
+        node.dirty = 1;
     }
 }
 
 function signalReady(node: Computation, shouldRecompute: boolean) {
     // As far as I understand it, if a cycle is created during an update, this case can be triggered (see tests)
     // It may be possible this error is hit without cycles as well
-    if (node.dc <= 0) {
+    if (node.dirty <= 0) {
         handleError("Something went wrong during Quarky's update propagation. This is likely due to a cycle.", node.name)
     }
-    node.u ||= shouldRecompute;
+    node.update ||= shouldRecompute;
     // console.log(`Signaling ready to ${node.name}. dirtyCount (before decrement): ${node.dirtyCount}`);
-    if (--node.dc === 0) {
+    if (--node.dirty === 0) {
         if (node.type === NodeType.Effect) {
-            if (node.u) {
+            if (node.update) {
                 ScheduledEffects.push(node);
-                node.u = false;
+                node.update = false;
             }
             return;
         }
         // TODO: batch derivation updates as well?
-        const valueChanged = node.u && updateDerivation(node);
-        node.u = false;
-        for (let i = 0; i < node.o.length; i++) {
-            const o = node.o[i];
+        const valueChanged = node.update && updateDerivation(node);
+        node.update = false;
+        for (let i = 0; i < node.obs.length; i++) {
+            const o = node.obs[i];
             signalReady(o, valueChanged);
         }
     }
 }
 
 function runEffect(effect: EffectNode) {
-    // console.log("Running effect " + effect.name);
-
+    // console.log(`Running effect with dependencies: ${effect.deps.map(x => x.name)}\n. Nb of constant dependencies: ${effect.cdeps}`);
     const scope: Scope = {
-        accessed: [],
+        accessed: effect.deps.slice(0, effect.cdeps),
         effects: [],
         cleanups: [],
         parent: CurrentScope
@@ -654,6 +661,8 @@ function runEffect(effect: EffectNode) {
         : null;
 
     const accessed = scope.accessed;
+    // TODO: more optimal way to update dependencies, while taking into account constant dependencies?
+    // Ideally, only one allocation for the slots
     refreshDependencies(effect, accessed);
     // const deps = effect.d;
     // const slots = effect.ds;

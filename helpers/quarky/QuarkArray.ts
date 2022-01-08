@@ -88,12 +88,12 @@ export class QuarkArray<T> implements QuarkArray<T> {
 
     quarks(): QuarkIter<Quark<T>> {
         const iter = new QuarkArrayIteratorRaw(this.#source);
-        return new QuarkIter(iter, iter.init);
+        return new QuarkIter(iter, () => iter.init());
     }
 
     lazy(): QuarkIter<T> {
         const iter = new QuarkArrayIterator(this.#source);
-        return new QuarkIter(iter, iter.init);
+        return new QuarkIter(iter, () => iter.init());
     }
 }
 
