@@ -12,6 +12,7 @@ const NewTopoPage: NextPage = () => {
   const [topoPosition, setTopoPosition] = useState<GeoCoordinates>(fontainebleauLocation);
 
   const [nameError, setNameError] = useState<string>();
+  const [typeError, setTypeError] = useState<string>();
   const [latitudeError, setLatitudeError] = useState<string>();
   const [longitudeError, setLongitudeError] = useState<string>();
 
@@ -43,7 +44,10 @@ const NewTopoPage: NextPage = () => {
                       wrapperClassName='w-full mb-10'
                       error={nameError}
                       value={topoName}
-                      onChange={(e) => setTopoName(e.target.value)}
+                      onChange={(e) => {
+                        setNameError(undefined);
+                        setTopoName(e.target.value);
+                      }}
                   />
                   <div className='flex flex-row items-center w-full justify-between md:justify-end'>
                       <Link href='/builder/dashboard'>
@@ -53,8 +57,9 @@ const NewTopoPage: NextPage = () => {
                           content='Suivant'
                           white
                           onClick={() => {
-                              // TODO check name validity
-                              setStep(1);
+                            //TODO : check if the name already exists
+                              if (!topoName) setNameError("Merci d'indiquer un nom valide");
+                              else setStep(1);
                           }}
                       />
                   </div>
@@ -71,7 +76,11 @@ const NewTopoPage: NextPage = () => {
                         white
                         wrapperClassname='w-full mb-10'
                         value={topoType}
-                        onSelect={(val) => { setTopoType(val)}}
+                        error={typeError}
+                        onSelect={(val) => {
+                          setTypeError(undefined);
+                          setTopoType(val)
+                        }}
                     />
                     <div className='flex flex-row items-center w-full justify-between md:justify-end'>
                         <div 
@@ -83,7 +92,10 @@ const NewTopoPage: NextPage = () => {
                       <Button 
                           content='Suivant'
                           white
-                          onClick={() => setStep(2)}
+                          onClick={() => {
+                            if (!topoType) setTypeError("Merci d'indiquer un type de spot");
+                            else setStep(2)
+                          }}
                       />
                   </div>
                 </div>
@@ -112,6 +124,7 @@ const NewTopoPage: NextPage = () => {
                           wrapperClassName='w-full mb-10'
                           value={topoPosition?.lat || ''}
                           onChange={(e) => {
+                              setLatitudeError(undefined);
                               setTopoPosition({
                                   ...topoPosition,
                                   lat: parseFloat(e.target.value)
@@ -127,6 +140,7 @@ const NewTopoPage: NextPage = () => {
                           wrapperClassName='w-full mb-10'
                           value={topoPosition?.lng || ''}
                           onChange={(e) => {
+                              setLongitudeError(undefined);
                               setTopoPosition({
                                   ...topoPosition,
                                   lng: parseFloat(e.target.value)
@@ -145,8 +159,9 @@ const NewTopoPage: NextPage = () => {
                           content='Créer'
                           white
                           onClick={() => {
-                              // TODO check position validity
-                              createTopo();
+                              if (isNaN(topoPosition.lat)) setLatitudeError("Latitude invalide");
+                              if (isNaN(topoPosition.lng)) setLongitudeError("Longitude invalide");
+                              if (!isNaN(topoPosition.lat) && !isNaN(topoPosition.lng)) createTopo();
                           }}
                       />
                     </div>

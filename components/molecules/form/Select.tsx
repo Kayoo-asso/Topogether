@@ -17,6 +17,7 @@ interface SelectProps {
   big?: boolean,
   white?: boolean,
   value?: string;
+  error?: string,
   onSelect: (value: any) => void;
   wrapperClassname?: string;
 }
@@ -44,6 +45,7 @@ export const Select: React.FC<SelectProps> = ({
         big={big}
         white={white}
         value={props.value || ''}
+        error={props.error}
         readOnly
         pointer
       />

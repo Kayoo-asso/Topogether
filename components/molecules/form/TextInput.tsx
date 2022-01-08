@@ -54,7 +54,7 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(({
         {props.label}
       </label>
       )}
-    {props.error && <div className="ktext-error text-error">{props.error}</div>}
+    {props.error && <div className="ktext-error text-error mt-1">{props.error}</div>}
   </div>
 ));
 
