@@ -25,7 +25,7 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(({
   pointer = false,
   ...props
 }: TextInputProps, ref) => (
-  <div className={`relative ${wrapperClassName}`}>
+  <div className={`relative w-full ${wrapperClassName}`}>
     <input
       {...props}
       ref={ref}

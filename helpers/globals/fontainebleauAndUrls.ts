@@ -5,9 +5,9 @@ export const fontainebleauLocation = {
 
 export const topogetherUrl = 'https://builder.topogether.com';// import.meta.env.VITE_TOPOGETHER_URL,
 export const staticUrl = {
-  logo_color: `/assets/img/logo/Logo_green_topogether.png`,
-  logo_black: `/assets/images/logo/Logo_black_topogether.png`,
-  logo_white: `/assets/images/logo/Logo_white_topogether.png`,
+  logo_color: `/assets/img/Logo_green_topogether.png`,
+  logo_black: `/assets/images/Logo_black_topogether.png`,
+  logo_white: `/assets/images/Logo_white_topogether.png`,
   illuLogin: `${topogetherUrl}/assets/images/illustrations/login_background topogether climbing boulder.png`,
   illu404: `${topogetherUrl}/assets/images/illustrations/Error 404 Topogether climbing escalade Fontainebleau topo.png`,
   defaultProfilePicture: `/assets/img/Default_profile_picture.png`,

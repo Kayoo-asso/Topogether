@@ -86,14 +86,13 @@ export const HeaderDesktop: React.FC<HeaderDesktopProps> = ({
         </div>
       )}
 
-      {displayLogin
-          && (
-          <Link href="/user/login" passHref>
-            <div className="ktext-base text-white cursor-pointer mr-[3%]">
-              Se connecter
-            </div>
-          </Link>
-          )}
+      {displayLogin && (
+        <Link href="/user/login" passHref>
+          <div className="ktext-base text-white cursor-pointer mr-[3%]">
+            Se connecter
+          </div>
+        </Link>
+      )}
 
     </div>
   );
