@@ -13,7 +13,7 @@ const LoginPage: NextPage = () => {
       />
 
       <div className="w-full h-full flex flex-col items-center justify-center bg-white md:bg-[url('/assets/img/login_background.png')] md:bg-cover">
-        <div className="p-10 w-full md:w-[500px] md:h-[400px] md:shadow md:rounded-lg">
+        <div className="p-10 w-full bg-white md:w-[500px] md:shadow md:rounded-lg">
 
          <LoginForm /> 
 
