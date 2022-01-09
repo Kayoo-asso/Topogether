@@ -18,16 +18,16 @@ const gradeColors = {
   8: 'text-grade-8',
   9: 'text-grade-9',
   None: 'border-grey-light bg-grey-light text-white',
-}
+};
 
 // TODO: separate into a TracksListItem component?
 export const TracksList: React.FC<TracksListProps> = watchDependencies((props: TracksListProps) => {
   const tracks = Array.from(props.tracks);
-  
+
   return (
     <div className="w-full border-t border-grey-light">
 
-      {tracks.map(trackQuark => {
+      {tracks.map((trackQuark) => {
         const track = trackQuark();
         const grade = gradeToLightGrade(track.grade);
         return (
@@ -44,15 +44,16 @@ export const TracksList: React.FC<TracksListProps> = watchDependencies((props: T
               content={track.orderIndex.toString()}
             />
 
-            {track.grade && 
+            {track.grade
+              && (
               <div className={`ktext-subtitle ml-3 text-right ${gradeColors[grade]}`}>
                 {track.grade}
               </div>
-            }
+)}
             <div className="col-span-5 ml-3">
               <span className="ktext-base">{track.name}</span>
             </div>
-            <AverageNote ratings={track.ratings} className="justify-end" wrapperClassName="col-span-2"  />
+            <AverageNote ratings={track.ratings} className="justify-end" wrapperClassName="col-span-2" />
           </div>
         );
       })}

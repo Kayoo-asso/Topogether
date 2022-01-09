@@ -3,7 +3,6 @@ import { LightTopo, TopoStatus } from 'types';
 import { NoTopoCard } from './NoTopoCard';
 import { TopoCard } from './TopoCard';
 import { AddTopoCard } from './AddTopoCard';
-// import { horizontalScroll } from 'helpers';
 
 // TODO: add a select to sort topos by date or alphabetic order
 interface TopoCardListProps {
@@ -16,9 +15,9 @@ export const TopoCardList:React.FC<TopoCardListProps> = (props: TopoCardListProp
     {props.children}
     <div
       id={`topo-card-list-${props.status}`}
-      className="-mx-2 overflow-x-scroll hide-scrollbar"
+      className="-mx-1 overflow-x-scroll hide-scrollbar lg:overflow-x-hidden"
     >
-      <div className="min-w-max flex flex-row">
+      <div className="min-w-max lg:min-w-full flex flex-row lg:flex-wrap">
         {props.topos.length === 0 && (props.status === TopoStatus.Submitted
       || props.status === TopoStatus.Validated)
        && <NoTopoCard topoStatus={props.status} />}

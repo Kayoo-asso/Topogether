@@ -5,19 +5,17 @@ import Head from 'next/head';
 import { UserContext, DeviceContext, Device } from 'helpers';
 import { ShellMobile } from 'components';
 import { User, UUID } from 'types';
-import useDimensions from "react-cool-dimensions";
-
-
+import useDimensions from 'react-cool-dimensions';
 
 const App = ({ Component, pageProps }: AppProps) => {
-  const [device, setDevice] = useState<Device>('MOBILE')
-  const { observe, unobserve, width, height, entry } = useDimensions({
-    onResize: ({ observe, unobserve, width, height, entry }) => {
-      if (width > 768)
-        setDevice('DESKTOP');
-      else if (width > 640)
-        setDevice('TABLET');
-      else setDevice('MOBILE');
+  const [device, setDevice] = useState<Device>('MOBILE');
+  const {
+ observe, unobserve, width, height, entry,
+} = useDimensions({
+    onResize: ({
+ observe, unobserve, width, height, entry,
+}) => {
+      if (width > 768) { setDevice('DESKTOP'); } else if (width > 640) { setDevice('TABLET'); } else setDevice('MOBILE');
     },
   });
 
@@ -49,7 +47,7 @@ const App = ({ Component, pageProps }: AppProps) => {
 
       <UserContext.Provider value={sessionContextDefaultValues}>
         <DeviceContext.Provider value={device}>
-          <div ref={observe} className='w-screen h-screen flex items-end flex-col'>
+          <div ref={observe} className="w-screen h-screen flex items-end flex-col">
             <div id="content" className="flex-1 w-screen absolute bg-grey-light flex flex-col h-contentPlusHeader md:h-screen">
               <Component {...pageProps} />
             </div>
@@ -57,8 +55,8 @@ const App = ({ Component, pageProps }: AppProps) => {
             <div id="footer" className="bg-dark z-100 absolute bottom-0 h-shell md:hidden">
               <ShellMobile />
             </div>
-          </div> 
-        </DeviceContext.Provider> 
+          </div>
+        </DeviceContext.Provider>
       </UserContext.Provider>
     </>
   );

@@ -46,12 +46,10 @@ export const SlideoverMobile: React.FC<SlideoverMobileProps> = ({
         setTranslateY(fullTranslate);
         setFull(true);
         if (props.onSizeChange) props.onSizeChange(true);
-      } 
-      else if (onlyFull || translateY > littleTranslate) { // CLOSE
+      } else if (onlyFull || translateY > littleTranslate) { // CLOSE
         setTranslateY(100);
         if (props.onClose) setTimeout(props.onClose, 500);
-      } 
-      else { // LITTLE
+      } else { // LITTLE
         setTranslateY(littleTranslate);
         setFull(false);
         if (props.onSizeChange) props.onSizeChange(false);
