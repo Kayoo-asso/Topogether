@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { Button, Icon, ProfilePicture } from 'components';
 import Link from 'next/link';
-import { UserContext } from 'helpers';
+import { staticUrl, UserContext } from 'helpers';
 
 interface LeftbarDesktopProps {
     currentMenuItem?: 'BUILDER' | 'MAP' | 'USER' | 'ADMIN',
@@ -14,11 +14,11 @@ export const LeftbarDesktop: React.FC<LeftbarDesktopProps> = ({
     
     if (!session) return null;
     return (
-        <div className='bg-white border-r border-grey-medium w-[300px] h-full flex flex-col px-8 py-10 z-100'>
+        <div className='bg-white border-r border-grey-medium w-[300px] h-full hidden md:flex flex-col px-8 py-10 z-100'>
             <div className="grid grid-cols-3 items-center pb-[50%]">
                 <div>
                    <ProfilePicture 
-                        src={session.profilePicture?.url || '/assets/img/Default_profile_picture.png'}
+                        src={session.profilePicture?.url || staticUrl.defaultProfilePicture}
                    /> 
                 </div>
                 <div className=''>

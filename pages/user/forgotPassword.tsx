@@ -24,12 +24,12 @@ const ForgotPasswordPage: NextPage = () => {
   return (
     <>
     <Header
-        backLink="/user/login"
+        backLink="/"
         title="Mot de passe oublié"
         displayLogin
     />
 
-      <div className="w-full h-full flex flex-col items-center justify-center bg-white md:bg-[url('/assets/img/login_background.png')] md:bg-cover">
+      <div className="w-full h-full flex flex-col items-center justify-center bg-white bg-bottom md:bg-[url('/assets/img/login_background.png')] md:bg-cover">
         <div className="p-10 w-full bg-white mb-10 md:w-[500px] md:shadow md:rounded-lg">
 
           <div className='flex flex-col gap-8 items-center w-full'>

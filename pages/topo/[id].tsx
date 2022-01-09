@@ -99,7 +99,7 @@ const Topo: NextPage = () => {
 
 
         <MapControl
-          initialZoom={5}
+          initialZoom={16}
           center={boulders.toArray()[0]().location}
           displayPhotoButton={false}
           boundsToMarkers
@@ -113,7 +113,10 @@ const Topo: NextPage = () => {
                   <BoulderMarker
                     key={reactKey(boulder)}
                     boulder={boulder}
-                    onClick={selectedBoulder.select}
+                    onClick={(boulder) => {
+                      if (selectedBoulder()) selectedBoulder.select(undefined);
+                      else selectedBoulder.select(boulder);
+                    }}
                   />
               }
           </For>
@@ -142,7 +145,7 @@ const Topo: NextPage = () => {
                   onSelectTrack={(track) => selectedTrack.select(track)}
                   onClose={() => {
                     selectedTrack.select(undefined);
-                    selectedBoulder.select(undefined)
+                    selectedBoulder.select(undefined);
                   }}
                 />
               )

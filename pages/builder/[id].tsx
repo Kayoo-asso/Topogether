@@ -4,7 +4,7 @@ import {
   BoulderBuilderSlideoverMobile, BoulderSlideagainstDesktop, TrackSlideagainstDesktop,
   MapControl, BoulderMarker, 
   For, Show, 
-  Header, LeftbarDesktop, InfoFormSlideover, ApproachFormSlideover, ManagementFormSlideover, TrackFormSlideagainstDesktop, ModalValidateTopo, ModalDeleteTopo, GeoCamera, Drawer } from 'components';
+  Header, LeftbarDesktop, InfoFormSlideover, ApproachFormSlideover, ManagementFormSlideover, TrackFormSlideagainstDesktop, ModalValidateTopo, ModalDeleteTopo, GeoCamera, Drawer, LeftbarBuilderDesktop } from 'components';
 import { useRouter } from 'next/router';
 import { quarkTopo } from 'helpers/fakeData/fakeTopoV2';
 import { DeviceContext, UserContext } from 'helpers';
@@ -81,11 +81,9 @@ const BuilderMapPage: NextPage = () => {
       />
 
       <div className="h-full relative flex flex-row md:overflow-hidden">
-        {device !== 'MOBILE' &&
-          <LeftbarDesktop
-              currentMenuItem="BUILDER"
-          />
-        }
+        <LeftbarBuilderDesktop 
+          onValidate={() => setDisplayModalValidate(true)}
+        />
 
         <Show when={() => displayInfo}>
           <InfoFormSlideover 
