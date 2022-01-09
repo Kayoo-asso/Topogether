@@ -16,7 +16,7 @@ module.exports = {
       'main-light': '#05F79E',
       second: '#804EE0',
       'second-light': '#9368E5',
-      third: '#FF984D',
+      third: '#FFC72A',
       'third-light': '#FFD700',
       black: colors.black,
       dark: '#343644',

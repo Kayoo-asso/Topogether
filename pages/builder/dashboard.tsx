@@ -84,12 +84,12 @@ const DashboardPage: NextPage = () => {
           currentMenuItem="BUILDER"
         />
 
-        <div className="py-3 md:py-6 pl-4 md:pl-8 bg-white overflow-y-scroll h-content overflow-x-hidden">
+        <div className="py-3 md:py-6 pl-4 md:pl-8 bg-white overflow-y-auto h-content md:h-contentPlusShell overflow-x-hidden">
           <div className="flex flex-row-reverse justify-between items-center">
             <Link href="/builder/new" passHref>
               <Button content="Créer un topo" />
             </Link>
-            <div className="md:hidden ktext-section-title text-center">Vos topos</div>
+            <div className="md:hidden ktext-section-title text-center">Mes topos</div>
           </div>
 
           <TopoCardList topos={draftLightTopos} status={TopoStatus.Draft}>

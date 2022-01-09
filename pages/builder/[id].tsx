@@ -82,6 +82,7 @@ const BuilderMapPage: NextPage = () => {
 
       <div className="h-full relative flex flex-row md:overflow-hidden">
         <LeftbarBuilderDesktop 
+          sectors={topo().sectors.quarks()}
           onValidate={() => setDisplayModalValidate(true)}
         />
 
