@@ -1,5 +1,3 @@
-export * from './forgotPassword.desktop';
-export * from './forgotPassword.mobile';
 export * from './login.desktop';
 export * from './login.mobile';
 export * from './profile.desktop';

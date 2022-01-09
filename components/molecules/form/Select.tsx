@@ -29,7 +29,6 @@ export const Select: React.FC<SelectProps> = ({
 }: SelectProps) => {
   const ref = useRef<HTMLInputElement>(null);
   const [isOpen, setIsOpen] = useState(false);
-  console.log(props.value);
 
   return (
     <div

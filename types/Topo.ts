@@ -11,8 +11,8 @@ import { Image } from './Image';
 
 export type Topo = Omit<TopoData, 'sectors' | 'parkings' | 'access'> & {
   sectors: QuarkArray<Sector>,
-  parkings: QuarkArray<Parking>,
-  access: QuarkArray<TopoAccess>
+  parkings?: QuarkArray<Parking>,
+  access?: QuarkArray<TopoAccess>
 };
 
 export type Sector = Omit<SectorData, 'boulders' | 'waypoints'> & {
@@ -41,15 +41,15 @@ export interface TopoData {
   modifiedAt?: Date,
   cleaned?: Date,
   status: TopoStatus,
-  type: TopoType,
+  type: TopoType | undefined,
   isForbidden: boolean,
 
   location: GeoCoordinates,
-  rockTypes: RockTypes,
-  amenities: Amenities,
+  rockTypes?: RockTypes,
+  amenities?: Amenities,
   otherAmenities?: StringBetween<1, 5000>
 
-  creatorId?: UUID,
+  creatorId: UUID,
   validatorId?: UUID,
   image?: Image,
 
@@ -66,11 +66,11 @@ export interface TopoData {
 }
 
 export type LightTopo = Omit<TopoData, 'sectors' | 'parkings' | 'access'> & {
-  firstParkingLocation: GeoCoordinates,
-  nbSectors: number,
-  nbTracks: number,
-  nbBoulders: number,
-  grades: GradeHistogram,
+  firstParkingLocation?: GeoCoordinates,
+  nbSectors?: number,
+  nbTracks?: number,
+  nbBoulders?: number,
+  grades?: GradeHistogram,
   // TODO: do we include access information here? Like access difficulty & time
 };
 

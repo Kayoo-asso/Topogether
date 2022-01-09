@@ -1,17 +1,30 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import type { NextPage } from 'next';
-import { GeoCoordinates } from 'types';
-import { fontainebleauLocation } from 'helpers';
+import { Sector, StringBetween, Topo } from 'types';
+import { fontainebleauLocation, UserContext } from 'helpers';
 import {
- Button, HeaderDesktop, MapControl, Select, TextInput,
+ Button, HeaderDesktop, MapControl, Select, TextInput, TopoMarker,
 } from 'components';
 import Link from 'next/link';
+import { v4 } from 'uuid';
+import { quark, QuarkArray } from 'helpers/quarky';
 
 const NewPage: NextPage = () => {
+  const { session } = useContext(UserContext);
   const [step, setStep] = useState(0);
-  const [topoName, setTopoName] = useState<string>();
-  const [topoType, setTopoType] = useState<string>();
-  const [topoPosition, setTopoPosition] = useState<GeoCoordinates>(fontainebleauLocation);
+
+  const [topo, setTopo] = useState<Topo>({
+    id: v4(),
+    creatorId: session!.id,
+    name: '' as StringBetween<1, 255>,
+    status: 0,
+    type: undefined,
+    isForbidden: false,
+    location: fontainebleauLocation,
+    sectors: new QuarkArray<Sector>([]),
+    // parkings: [],
+    // access: [],
+  })
 
   const [nameError, setNameError] = useState<string>();
   const [typeError, setTypeError] = useState<string>();
@@ -23,8 +36,42 @@ const NewPage: NextPage = () => {
     if (nameInputRef.current) nameInputRef.current.focus();
   }, [nameInputRef]);
 
+  const mapTypeIdToLabel = (typeId: number | undefined) => {
+    switch (typeId) {
+      case undefined: return undefined;
+      case 0: return 'Blocs';
+      case 1: return 'Falaise';
+      case 2: return 'Deepwater';
+      case 3: return 'Grandes voies';
+      case 4: return 'Artificiel';
+      default: return undefined;
+    }
+  }
+
+  const goStep1 = () => {
+    // TODO : check if the name already exists
+    if (!topo.name) setNameError("Merci d'indiquer un nom valide");
+    else setStep(1);
+  }
+  const goStep2 = () => {
+    if (topo.type && isNaN(topo.type)) setTypeError("Merci d'indiquer un type de spot");
+    else setStep(2);
+  }
   { /* TODO: add Create Topo */ }
-  const createTopo = () => {};
+  const createTopo = () => {
+    console.log(topo);
+  };
+
+  useEffect(() => {
+    document.addEventListener("keyup", (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        if (step === 0) goStep1();
+        else if (step === 1) goStep2();
+        else createTopo(); 
+      }
+    });
+  });
 
   return (
     <>
@@ -45,10 +92,13 @@ const NewPage: NextPage = () => {
                     white
                     wrapperClassName='w-full mb-10'
                     error={nameError}
-                    value={topoName}
+                    value={topo.name}
                     onChange={(e) => {
                       setNameError(undefined);
-                      setTopoName(e.target.value);
+                      setTopo({
+                        ...topo,
+                        name: e.target.value as StringBetween<1, 255>
+                      });
                     }}
                 />
                 <div className="flex flex-row items-center w-full justify-between md:justify-end">
@@ -58,11 +108,7 @@ const NewPage: NextPage = () => {
                   <Button
                     content="Suivant"
                     white
-                    onClick={() => {
-                          // TODO : check if the name already exists
-                            if (!topoName) setNameError("Merci d'indiquer un nom valide");
-                            else setStep(1);
-                        }}
+                    onClick={goStep1}
                   />
                 </div>
               </div>
@@ -73,15 +119,24 @@ const NewPage: NextPage = () => {
                 <Select
                   id="topo-type"
                   label="Type de spot"
-                  choices={[{ value: 'Bloc' }, { value: 'Deepwater' }]}
+                  choices={[
+                    { value: 0, label: 'Bloc' }, 
+                    { value: 1, label: 'Falaise' },
+                    { value: 2, label: 'Deepwater' },
+                    { value: 3, label: 'Grande voie' },
+                    { value: 4, label: 'Artificiel' },
+                  ]}
                   big
                   white
                   wrapperClassname="w-full mb-10"
-                  value={topoType}
+                  value={mapTypeIdToLabel(topo.type)}
                   error={typeError}
-                  onSelect={(val) => {
+                  onSelect={(val: number | undefined) => {
                         setTypeError(undefined);
-                        setTopoType(val);
+                        setTopo({
+                          ...topo,
+                          type: val
+                        });
                       }}
                 />
                 <div className="flex flex-row items-center w-full justify-between md:justify-end">
@@ -94,10 +149,7 @@ const NewPage: NextPage = () => {
                   <Button
                     content="Suivant"
                     white
-                    onClick={() => {
-                          if (!topoType) setTypeError("Merci d'indiquer un type de spot");
-                          else setStep(2);
-                        }}
+                    onClick={goStep2}
                   />
                 </div>
               </div>
@@ -111,7 +163,11 @@ const NewPage: NextPage = () => {
                     displayUserMarker={false}
                     zoom={10}
                     center={fontainebleauLocation}
-                  />
+                  >
+                    {/* <TopoMarker 
+                      topo={quark(topo)}
+                    /> */}
+                  </MapControl>
                 </div>
 
                 <div className="px-[10%] w-full">
@@ -123,13 +179,16 @@ const NewPage: NextPage = () => {
                       big
                       white
                       wrapperClassName="w-full mb-10"
-                      value={topoPosition?.lat || ''}
+                      value={topo.location?.lat || ''}
                       onChange={(e) => {
                             setLatitudeError(undefined);
-                            setTopoPosition({
-                                ...topoPosition,
-                                lat: parseFloat(e.target.value),
-                            });
+                            setTopo({
+                              ...topo,
+                              location: {
+                                lng: topo.location.lng,
+                                lat: parseFloat(e.target.value)
+                              }
+                            })
                         }}
                     />
                     <TextInput
@@ -139,13 +198,16 @@ const NewPage: NextPage = () => {
                       big
                       white
                       wrapperClassName="w-full mb-10"
-                      value={topoPosition?.lng || ''}
+                      value={topo.location?.lng || ''}
                       onChange={(e) => {
                             setLongitudeError(undefined);
-                            setTopoPosition({
-                                ...topoPosition,
+                            setTopo({
+                              ...topo,
+                              location: {
                                 lng: parseFloat(e.target.value),
-                            });
+                                lat: topo.location.lat
+                              }
+                            })
                         }}
                     />
                   </div>
@@ -160,9 +222,9 @@ const NewPage: NextPage = () => {
                       content="Créer"
                       white
                       onClick={() => {
-                            if (isNaN(topoPosition.lat)) setLatitudeError('Latitude invalide');
-                            if (isNaN(topoPosition.lng)) setLongitudeError('Longitude invalide');
-                            if (!isNaN(topoPosition.lat) && !isNaN(topoPosition.lng)) createTopo();
+                            if (isNaN(topo.location.lat)) setLatitudeError('Latitude invalide');
+                            if (isNaN(topo.location.lng)) setLongitudeError('Longitude invalide');
+                            if (!isNaN(topo.location.lat) && !isNaN(topo.location.lng)) createTopo();
                         }}
                     />
                   </div>
