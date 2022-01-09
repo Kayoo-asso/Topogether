@@ -14,7 +14,7 @@ export const LeftbarDesktop: React.FC<LeftbarDesktopProps> = ({
 
     if (!session) return null;
     return (
-      <div className="bg-white border-r border-grey-medium w-[300px] h-full hidden md:flex flex-col px-8 py-10 z-100">
+      <div className="bg-white border-r border-grey-medium min-w-[300px] w-[300px] h-contentPlusShell hidden md:flex flex-col px-8 py-10 z-100">
         <div className="grid grid-cols-3 items-center pb-[50%]">
           <div>
             <ProfilePicture

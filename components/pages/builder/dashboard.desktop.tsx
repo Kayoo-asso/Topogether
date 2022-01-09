@@ -30,7 +30,7 @@ export const DashboardDesktop:React.FC<DashboardDesktopProps> = (props: Dashboar
         <div className="py-6 px-8 bg-white lg:overflow-y-scroll h-screen">
           <div className="w-full flex flex-col min-h-max">
             <div className="flex flex-row-reverse justify-between items-center">
-              <Link href="newTopo" passHref>
+              <Link href="builder/new" passHref>
                 <Button content="Créer un topo" />
               </Link>
             </div>

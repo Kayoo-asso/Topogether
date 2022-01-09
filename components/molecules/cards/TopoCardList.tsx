@@ -15,9 +15,9 @@ export const TopoCardList:React.FC<TopoCardListProps> = (props: TopoCardListProp
     {props.children}
     <div
       id={`topo-card-list-${props.status}`}
-      className="-mx-1 overflow-x-scroll hide-scrollbar lg:overflow-x-hidden"
+      className="-mx-1 overflow-x-scroll hide-scrollbar md:overflow-x-hidden"
     >
-      <div className="min-w-max lg:min-w-full flex flex-row lg:flex-wrap">
+      <div className="min-w-max md:min-w-full flex flex-row md:flex-wrap">
         {props.topos.length === 0 && (props.status === TopoStatus.Submitted
       || props.status === TopoStatus.Validated)
        && <NoTopoCard topoStatus={props.status} />}

@@ -1,3 +1,4 @@
+import { Quark, QuarkArray } from 'helpers/quarky';
 import { Amenities, ClimbTechniques, RockTypes } from './Bitflags';
 import {
   Difficulty, Grade, LightGrade, Orientation, TopoStatus, TopoType,
@@ -7,27 +8,26 @@ import { GeoCoordinates, RequireAtLeastOne, StringBetween } from './Utils';
 import { UUID } from './UUID';
 import { TrackRating, User } from './User';
 import { Image } from './Image';
-import { Quark, QuarkArray } from 'helpers/quarky';
 
 export type Topo = Omit<TopoData, 'sectors' | 'parkings' | 'access'> & {
   sectors: QuarkArray<Sector>,
   parkings: QuarkArray<Parking>,
   access: QuarkArray<TopoAccess>
-}
+};
 
 export type Sector = Omit<SectorData, 'boulders' | 'waypoints'> & {
   boulders: QuarkArray<Boulder>,
   waypoints: QuarkArray<Waypoint>,
-}
+};
 
 export type Boulder = Omit<BoulderData, 'tracks'> & {
   tracks: QuarkArray<Track>,
-}
+};
 
 export type Track = Omit<TrackData, 'ratings' | 'lines'> & {
   ratings: QuarkArray<TrackRating>,
   lines: QuarkArray<Line>
-}
+};
 
 export interface TopoData {
   readonly id: UUID,
@@ -72,7 +72,7 @@ export type LightTopo = Omit<TopoData, 'sectors' | 'parkings' | 'access'> & {
   nbBoulders: number,
   grades: GradeHistogram,
   // TODO: do we include access information here? Like access difficulty & time
-}
+};
 
 export type GradeHistogram = {
   [K in LightGrade]: number
@@ -87,7 +87,7 @@ export type TopoAccess = RequireAtLeastOne<{
   difficulty?: Difficulty,
   duration?: number,
   steps?: TopoAccessStep[],
-}, 'danger' | 'difficulty' | 'duration' | 'steps' >
+}, 'danger' | 'difficulty' | 'duration' | 'steps' >;
 
 export interface TopoAccessStep {
   description: StringBetween<1, 5000>

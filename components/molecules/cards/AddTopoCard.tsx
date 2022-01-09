@@ -5,7 +5,7 @@ import Link from 'next/link';
 // corriger l'icone
 export const AddTopoCard: React.FC = () => (
   <Card className="items-center lg:p-10 text-center text-grey-medium bg-grey-superlight">
-    <Link href="newTopo" passHref>
+    <Link href="/builder/new" passHref>
       <div className="w-full flex flex-col items-center">
         <Icon
           wrapperClassName="rounded-full border-t-transparent"

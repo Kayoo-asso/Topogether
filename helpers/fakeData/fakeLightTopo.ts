@@ -24,7 +24,9 @@ export const fakeLightTopo: LightTopo = {
   validatorId: uuid(),
   image: {
     id: uuid(),
-    url: '/public/uploads/topo/main-image/dad449499de38f1bdee5872de1a354d52fff6183.jpeg',
+    url: 'https://builder.topogether.com/public/uploads/topo/main-image/dad449499de38f1bdee5872de1a354d52fff6183.jpeg',
+    width: 4592,
+    height: 3064,
   },
 
   closestCity: 'Yzéron' as Name,

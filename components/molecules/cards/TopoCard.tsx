@@ -1,7 +1,7 @@
 import React from 'react';
 import NextImage from 'next/image';
 import { Card, Icon } from 'components';
-import { topogetherUrl, formatDate, staticUrl } from 'helpers';
+import { formatDate, staticUrl } from 'helpers';
 import equal from 'fast-deep-equal/es6';
 import { LightTopo, TopoStatus } from 'types';
 
@@ -11,12 +11,12 @@ interface TopoCardProps {
 
 const getTopoIcons = (status: TopoStatus) => {
   if (status === TopoStatus.Validated) {
-    return <Icon center wrapperClassName="stroke1" SVGClassName="stroke-main lg:h-6 lg:w-6 h-4 w-4" name="checked" />;
+    return <Icon center wrapperClassName="stroke1" SVGClassName="stroke-main md:h-6 md:w-6 h-4 w-4" name="checked" />;
   }
   if (status === TopoStatus.Submitted) {
-    return <Icon center wrapperClassName="stroke-[1.5px]" SVGClassName="stroke-third lg:h-6 lg:w-6 h-4 w-4 " name="recent" />;
+    return <Icon center wrapperClassName="stroke-[1.5px]" SVGClassName="stroke-third md:h-6 md:w-6 h-4 w-4 " name="recent" />;
   }
-  return <Icon center wrapperClassName="stroke-[1.5px]" SVGClassName="stroke-second-light lg:h-6 lg:w-6 h-4 w-4" name="edit" />;
+  return <Icon center wrapperClassName="stroke-[1.5px]" SVGClassName="stroke-second-light md:h-6 md:w-6 h-4 w-4" name="edit" />;
 };
 
 export const TopoCard: React.FC<TopoCardProps> = React.memo((props: TopoCardProps) => {
@@ -33,7 +33,7 @@ export const TopoCard: React.FC<TopoCardProps> = React.memo((props: TopoCardProp
 
   return (
     <Card className="relative text-center text-grey-medium bg-white flex flex-col">
-      <div className="w-full h-[70px] lg:h-44 top-0 relative">
+      <div className="w-full h-[70px] md:h-44 top-0 relative">
         <NextImage
           src={props.topo.image ? props.topo.image.url : staticUrl.defaultKayoo}
           className="rounded-t-lg"
@@ -43,17 +43,17 @@ export const TopoCard: React.FC<TopoCardProps> = React.memo((props: TopoCardProp
           priority
         />
       </div>
-      <div className="lg:pl-2 flex flex-row lg:h-12 lg:ml-4 lg:items-center lg:justify-center">
-        <div className="hidden lg:block">
+      <div className="md:pl-2 flex flex-row md:h-12 md:ml-4 md:items-center md:justify-center">
+        <div className="hidden md:block">
           {getTopoIcons(props.topo.status)}
         </div>
-        <div className="p-2 lg:pr-6 w-full flex flex-col items-start">
+        <div className="p-2 md:pr-6 w-full flex flex-col items-start">
           <div className="w-full pr-2 truncate ktext-title text-left text-dark font-bold text-xs">
             {props.topo.name}
           </div>
           <div className="w-full border-t-[1px] text-xxs flex flex-row flex-wrap items-end justify-between py-1">
             <span className="whitespace-nowrap">{`${props.topo.nbBoulders} blocs - ${props.topo.nbTracks} passages`}</span>
-            <div className="lg:hidden">
+            <div className="md:hidden">
               {getTopoIcons(props.topo.status)}
             </div>
             <span className="mr-1 whitespace-nowrap">
