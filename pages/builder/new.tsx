@@ -7,13 +7,13 @@ import {
 } from 'components';
 import Link from 'next/link';
 import { v4 } from 'uuid';
-import { quark, QuarkArray } from 'helpers/quarky';
+import { quark, QuarkArray, useCreateQuark } from 'helpers/quarky';
 
 const NewPage: NextPage = () => {
   const { session } = useContext(UserContext);
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState(2);
 
-  const [topo, setTopo] = useState<Topo>({
+  const topoData = {
     id: v4(),
     creatorId: session!.id,
     name: '' as StringBetween<1, 255>,
@@ -24,7 +24,14 @@ const NewPage: NextPage = () => {
     sectors: new QuarkArray<Sector>([]),
     // parkings: [],
     // access: [],
-  })
+  };
+
+  const topoQuark = useCreateQuark<Topo>(topoData);
+  const topo = topoQuark();
+
+  useEffect(() => {
+    console.log(topoQuark());
+  }, [topoQuark()])
 
   const [nameError, setNameError] = useState<string>();
   const [typeError, setTypeError] = useState<string>();
@@ -95,7 +102,7 @@ const NewPage: NextPage = () => {
                     value={topo.name}
                     onChange={(e) => {
                       setNameError(undefined);
-                      setTopo({
+                      topoQuark.set({
                         ...topo,
                         name: e.target.value as StringBetween<1, 255>
                       });
@@ -133,7 +140,7 @@ const NewPage: NextPage = () => {
                   error={typeError}
                   onSelect={(val: number | undefined) => {
                         setTypeError(undefined);
-                        setTopo({
+                        topoQuark.set({
                           ...topo,
                           type: val
                         });
@@ -163,11 +170,11 @@ const NewPage: NextPage = () => {
                     displayUserMarker={false}
                     zoom={10}
                     center={fontainebleauLocation}
-                  />
-                    {/* <TopoMarker 
-                      topo={quark(topo)}
+                  >
+                    <TopoMarker 
+                      topo={topoQuark}
                     />
-                  </MapControl> */}
+                  </MapControl>
                 </div>
 
                 <div className="px-[10%] w-full">
@@ -182,7 +189,7 @@ const NewPage: NextPage = () => {
                       value={topo.location?.lat || ''}
                       onChange={(e) => {
                             setLatitudeError(undefined);
-                            setTopo({
+                            topoQuark.set({
                               ...topo,
                               location: {
                                 lng: topo.location.lng,
@@ -201,7 +208,7 @@ const NewPage: NextPage = () => {
                       value={topo.location?.lng || ''}
                       onChange={(e) => {
                             setLongitudeError(undefined);
-                            setTopo({
+                            topoQuark.set({
                               ...topo,
                               location: {
                                 lng: parseFloat(e.target.value),
