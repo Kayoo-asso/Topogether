@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Button, Icon } from 'components';
 import { UserContext } from 'helpers';
-import { Quark, SelectQuarkNullable } from 'helpers/quarky';
+import { Quark, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
 import { Boulder, Grade, Sector, UUID } from 'types';
 
 interface LeftbarBuilderDesktopProps {
@@ -11,7 +11,7 @@ interface LeftbarBuilderDesktopProps {
     onValidate: () => void,
 }
 
-export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = (props: LeftbarBuilderDesktopProps) => {
+export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = watchDependencies((props: LeftbarBuilderDesktopProps) => {
     const { session } = useContext(UserContext);
     const sectors = Array.from(props.sectors);
     const selectedBoulder = props.selectedBoulder();
@@ -53,7 +53,7 @@ export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = (prop
                             <div className="ktext-label text-grey-medium">Secteur {index + 1}</div>
                             <div className="ktext-section-title text-main cursor-pointer mb-2 flex flex-row justify-between">
                                 {sector.name}
-                                <Icon 
+                                <Icon
                                     name='arrow-simple'
                                     SVGClassName={'w-3 h-3 stroke-main stroke-2 ' + (displayedSectors.includes(sector.id) ? 'rotate-90' : '-rotate-90')}
                                     onClick={() => {
@@ -77,10 +77,10 @@ export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = (prop
                                                     <div
                                                         onClick={() => props.onBoulderSelect(boulderQuark)}
                                                     >
-                                                        <span className={'mr-2' + (selectedBoulder?.id === boulder.id ? ' font-semibold' : '')}>{boulder.orderIndex+1}.</span>
+                                                        <span className={'mr-2' + (selectedBoulder?.id === boulder.id ? ' font-semibold' : '')}>{boulder.orderIndex + 1}.</span>
                                                         <span className={'ktext-base' + (selectedBoulder?.id === boulder.id ? ' font-semibold' : '')}>{boulder.name}</span>
                                                     </div>
-                                                    <Icon 
+                                                    <Icon
                                                         name='arrow-simple'
                                                         SVGClassName={'w-3 h-3 stroke-dark ' + (displayedBoulders.includes(boulder.id) ? 'rotate-90' : '-rotate-90')}
                                                         onClick={() => {
@@ -117,10 +117,10 @@ export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = (prop
                 })}
             </div>
 
-            <Button 
+            <Button
                 content='Valider le topo'
                 onClick={props.onValidate}
             />
         </div>
     )
-}
+});

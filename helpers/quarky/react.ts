@@ -1,7 +1,9 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { selectQuark, SelectQuark, selectSignal, SelectSignal, SelectSignalNullable, trackContext } from ".";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import ReactDOM from "react-dom";
+import { selectQuark, SelectQuark, selectSignal, SelectSignal, SelectSignalNullable, setBatchUpdates, trackContext } from ".";
 import { Quark, derive, effect, quark, QuarkOptions, untrack, Signal, SelectQuarkNullable } from "./quarky";
 
+setBatchUpdates(ReactDOM.unstable_batchedUpdates);
 
 // TODO: implement options
 export interface WatchDependenciesOptions {
@@ -20,7 +22,9 @@ const defaultOptions: WatchDependenciesOptions = {
 // (the result of React.memo is not invokable)
 export function watchDependencies<T>(component: React.FunctionComponent<T>, options?: WatchDependenciesOptions) {
     const wrapped = (props: T, context?: any) => {
+        // console.log("Watching " + componentName);
         const [result, scope] = trackContext(() => component(props, context));
+        // console.log("Unwatching " + componentName);
         const [, forceRender] = useState([]);
         // reruns every time
         useEffect(() => {
@@ -28,7 +32,9 @@ export function watchDependencies<T>(component: React.FunctionComponent<T>, opti
                 forceRender([]);
             }, { watch: scope.accessed, lazy: true });
 
-            return e.dispose;
+            return () => {
+                e.dispose();
+            };
         });
         return result;
     }
@@ -40,71 +46,7 @@ export function watchDependencies<T>(component: React.FunctionComponent<T>, opti
     return actualOpt.memo
         ? React.memo(wrapped)
         : wrapped;
-
 }
-
-// export function useQuark<T>(quark: Quark<T>): [T, Dispatch<SetStateAction<T>>];
-// export function useQuark<T>(quark: Derivation<T>): T;
-// export function useQuark<T>(quark: QuarkIter<T>): T[];
-
-// export function useQuark<T>(quark: DataQuark<T> | QuarkIter<T>): [T, Dispatch<SetStateAction<T>>] | T | T[] {
-//     let sub: DataQuark<T | T[]>;
-//     let result: [T, Dispatch<SetStateAction<T>>] | T | T[] ;
-//     if (quark instanceof QuarkIter) {
-//         sub = quark.use();
-//         result = read(sub);
-//     } else if (quark.type === NodeType.Quark) {
-//         sub = quark;
-//         // use getQuarkSetter instead of useCallback since we're in a conditional
-//         // and, theoretically, the input could change
-//         result = [read(quark), getQuarkSetter(quark)];
-//     } else {
-//         sub = quark
-//         result = read(quark);
-//     }
-//     if (subsBatch) subsBatch.push(sub);
-//     else useSubscription([sub]);
-//     return result;
-// }
-
-// // export function useQuarkSimple<T>(quark: Quark<T>): [T, Dispatch<SetStateAction<T>>] {
-// //     const current = useQuarkValue(quark);
-// //     // always return the same setter (likely less performant than useCallback, but plays nicely with useQuarkArray)
-// //     const setter = useQuarkSetter(quark);
-// //     return [current, setter];
-// // }
-
-// // export function useQuarkValue<T>(quark: DataQuark<T>): T {
-// //     // This conditional is fine: the same branch will be taken in every component execution,
-// //     // and the sequence of React hooks will remain stable
-// //     if (subsBatch) subsBatch.push(quark);
-// //     else useSubscription([quark]);
-
-// //     return read(quark);
-// // }
-
-// // use a WeakMap to not keep quarks alive (also more performant)
-// const quarkSetters: WeakMap<Quark<any>, Dispatch<SetStateAction<any>>> = new WeakMap();
-
-// export function getQuarkSetter<T>(quark: Quark<T>): Dispatch<SetStateAction<T>> {
-//     const existing = quarkSetters.get(quark);
-//     if (existing) {
-//         return existing;
-//     } else {
-//         const setter = (t: SetStateAction<T>) => write(quark, t);
-//         quarkSetters.set(quark, setter);
-//         return setter;
-//     }
-// }
-
-// function useSubscription(quarks: DataQuark<any>[]) {
-//     const [, setState] = useState([]);
-//     useEffect(() => {
-//         const forceRender = () => setState([]);
-//         const sub = effect(forceRender, { lazy: true, watch: quarks });
-//         return () => cleanupEffect(sub);
-//     }, quarks);
-// }
 
 export function useCreateQuark<T>(value: T, options?: QuarkOptions<T>): Quark<T>;
 export function useCreateQuark<T>(computation: () => T, deps?: React.DependencyList, options?: QuarkOptions<T>): Signal<T>

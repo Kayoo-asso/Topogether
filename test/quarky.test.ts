@@ -1,4 +1,4 @@
-import { Quark, derive, effect, quark, trackContext, batch, untrack, Signal, selectSignal, selectQuark } from "helpers/quarky"
+import { Quark, derive, effect, quark, trackContext, batch, untrack, Signal, selectSignal, selectQuark, QuarkDebug, EffectDebug } from "helpers/quarky"
 import { getConsoleErrorSpy } from "test/utils";
 
 test("Creating and reading quark", () => {
@@ -74,7 +74,7 @@ test("Lazy effects don't run immediately", () => {
     const counter = {
         effect: 0,
     }
-    effect(() => counter.effect += 1, { lazy: true });
+    effect(() => counter.effect += 1, { lazy: true, watch: [] });
     expect(counter.effect).toBe(0);
 });
 
@@ -183,16 +183,17 @@ test("Derivations used by activated derivations are activated", () => {
 
 test("Cleaning up effect can deactivate derivation", () => {
     const counter = { current: 0 };
-    const q = quark(1);
+    const q = quark(1, { name: "Q" });
     const d = derive(() => {
         counter.current++;
         return q() + 1
-    });
-    const e = effect(() => d());
-    expect(counter.current).toBe(2);
+    }, { name: "D" });
+    const e = effect(() => d(), { name: "E" });
+    counter.current = 0;
+    expect(counter.current).toBe(0);
     e.dispose();
     q.set(2);
-    expect(counter.current).toBe(2);
+    expect(counter.current).toBe(0);
 });
 
 test("Creating effect within a derivation throws", () => {
@@ -290,13 +291,13 @@ test("Batches suspend propagation", () => {
     expect(counter.current).toBe(2);
 });
 
-test("Transactions suspend effect creation", () => {
+test("Batches do not suspend effect creation", () => {
     const counter = { current: 0 }
     const q = quark(1, { name: "Q" });
     const d = derive(() => q() + 1, { name: "D" });
     batch(() => {
         effect(() => { d(); counter.current++; }, { name: "E" });
-        expect(counter.current).toBe(0);
+        expect(counter.current).toBe(1);
     });
     expect(counter.current).toBe(1);
 });
@@ -613,3 +614,24 @@ test("Setting and unsetting SelectSignal", () => {
     v2.set("foo4");
     expect(s()).toBe("foo4");
 });
+
+test("Lazy effects only register once and are cleaned up correctly", () => {
+    const Q = quark(1) as QuarkDebug<number>;
+    const node = Q.node;
+    const E = effect(() => { }, { watch: [node] }) as EffectDebug;
+    expect(node.obs).toEqual([E.node]);
+    expect(node.oSlots).toEqual([0]);
+    // trigger the effect, since there have been many problems about lazy effects double registering their dependencies upon first run
+    Q.set(2);
+    E.dispose();
+    expect(node.obs).toEqual([]);
+    expect(node.oSlots).toEqual([]);
+});
+
+test.todo("Activating a derivation from a new effect does not (re)run the effect");
+
+test.todo("Activating / deactivating a derivation multiple times in a batch only recomputes its value once");
+
+test.todo("Effects setting quarks");
+
+test.todo("Effects creating effects");

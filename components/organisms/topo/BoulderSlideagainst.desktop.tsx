@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Flash, Icon, SlideagainstRightDesktop, TracksList } from 'components';
-import { Quark } from 'helpers/quarky';
+import { Quark, watchDependencies } from 'helpers/quarky';
 import { Boulder, Track, UUID } from 'types';
 
 interface BoulderSlideagainstDesktopProps {
@@ -11,7 +11,7 @@ interface BoulderSlideagainstDesktopProps {
     onClose: () => void,
 }
 
-export const BoulderSlideagainstDesktop: React.FC<BoulderSlideagainstDesktopProps> = ({
+export const BoulderSlideagainstDesktop: React.FC<BoulderSlideagainstDesktopProps> = watchDependencies(({
     open = true,
     ...props
 }: BoulderSlideagainstDesktopProps) => {
@@ -66,4 +66,4 @@ export const BoulderSlideagainstDesktop: React.FC<BoulderSlideagainstDesktopProp
             </Flash>
         </>
     )
-}
+});
