@@ -1,10 +1,10 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import type { NextPage } from 'next';
 import { 
-  BoulderBuilderSlideoverMobile, BoulderSlideagainstDesktop, TrackSlideagainstDesktop,
+  BoulderBuilderSlideoverMobile, BoulderSlideagainstDesktop,
   MapControl, BoulderMarker, 
   For, Show, 
-  Header, LeftbarDesktop, InfoFormSlideover, ApproachFormSlideover, ManagementFormSlideover, TrackFormSlideagainstDesktop, ModalValidateTopo, ModalDeleteTopo, GeoCamera, Drawer, LeftbarBuilderDesktop } from 'components';
+  Header, InfoFormSlideover, ApproachFormSlideover, ManagementFormSlideover, TrackFormSlideagainstDesktop, ModalValidateTopo, ModalDeleteTopo, GeoCamera, Drawer, LeftbarBuilderDesktop } from 'components';
 import { useRouter } from 'next/router';
 import { quarkTopo } from 'helpers/fakeData/fakeTopoV2';
 import { DeviceContext, UserContext } from 'helpers';
@@ -83,6 +83,7 @@ const BuilderMapPage: NextPage = () => {
       <div className="h-full relative flex flex-row md:overflow-hidden">
         <LeftbarBuilderDesktop 
           sectors={topo().sectors.quarks()}
+          selectedBoulder={selectedBoulder}
           onValidate={() => setDisplayModalValidate(true)}
         />
 
@@ -113,7 +114,7 @@ const BuilderMapPage: NextPage = () => {
 
 
         <MapControl
-          initialZoom={5}
+          initialZoom={15}
           center={boulders.toArray()[0]().location}
           boundsToMarkers
           searchbarOptions={{

@@ -1,65 +1,123 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { Button, Icon } from 'components';
 import { UserContext } from 'helpers';
-import { Quark, QuarkIter } from 'helpers/quarky';
-import { Sector } from 'types';
+import { Quark, SelectQuarkNullable } from 'helpers/quarky';
+import { Boulder, Grade, Sector, UUID } from 'types';
 
 interface LeftbarBuilderDesktopProps {
-    onValidate: () => void,
     sectors: Iterable<Quark<Sector>>,
+    selectedBoulder: SelectQuarkNullable<Boulder>,
+    onValidate: () => void,
 }
 
 export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = (props: LeftbarBuilderDesktopProps) => {
     const { session } = useContext(UserContext);
-
     const sectors = Array.from(props.sectors);
+
+    const [displayedSectors, setDisplayedSectors] = useState<Array<UUID>>(sectors.map(sector => sector().id));
+    const [displayedBoulders, setDisplayedBoulders] = useState<Array<UUID>>([]);
+
+    const getGradeColorClass = (grade: Grade) => {
+        const lightGrade = parseInt(grade[0]);
+        switch (lightGrade) {
+            case 3:
+                return 'text-grade-3';
+            case 4:
+                return 'text-grade-4';
+            case 5:
+                return 'text-grade-5';
+            case 6:
+                return 'text-grade-6';
+            case 7:
+                return 'text-grade-7';
+            case 8:
+                return 'text-grade-8';
+            case 9:
+                return 'text-grade-9';
+        }
+    }
     
     if (!session) return null;
     return (
-        <div className='bg-white border-r border-grey-medium w-[300px] h-full hidden md:flex flex-col px-8 py-10 z-100'>
+        <div className='bg-white border-r border-grey-medium min-w-[280px] w-[280px] h-full hidden md:flex flex-col px-6 py-10 z-100'>
             
-            {sectors.map((sectorQuark, index) => {
-                const sector = sectorQuark();
-                const boulders = sector.boulders.quarks();
-                return (
-                    <div className='flex flex-col'>
-                        <div className="ktext-label text-grey-medium">Secteur {index}</div>
-                        <div className="ktext-section-title text-main">{sector.name}</div>
-
-                        <div className='flex flex-col pl-3'>
-                            {boulders.map((boulderQuark) => {
-                                const boulder = boulderQuark();
-                                const tracks = boulder.tracks.quarks();
-                                return (
-                                    <>
-                                        <div className='flex flex-row cursor-pointer text-dark'>
-                                            <div className='basis-1/8'>{boulder.orderIndex}</div>
-                                            <div className='basis-6/8'>{boulder.name}</div>
-                                            <div className='basis-1/8'>
-                                                <Icon 
-                                                    name='arrow-simple'
-                                                />
-                                            </div>
-                                        </div>
-
-                                        <div className='flex flex-col pl-3'>
-                                            {tracks.map((trackQuark) => {
-                                                const track = trackQuark();
-                                                return (
-                                                    <div className='flex flex-row cursor-pointer'>
-                                                        <div className='basis-1/4'>{track.grade}</div>
-                                                        <div className='basis-3/4'>{track.name}</div>
+            <div className='h-[90%] scroll-y-auto pb-6'>
+                {sectors.map((sectorQuark, index) => {
+                    const sector = sectorQuark();
+                    const bouldersIter = sector.boulders.quarks();
+                    const boulderQuarks = Array.from(bouldersIter);
+                    return (
+                        <div key={sector.id} className='flex flex-col'>
+                            <div className="ktext-label text-grey-medium">Secteur {index + 1}</div>
+                            <div className="ktext-section-title text-main cursor-pointer mb-2 flex flex-row justify-between">
+                                {sector.name}
+                                <Icon 
+                                    name='arrow-simple'
+                                    SVGClassName={'w-3 h-3 stroke-main stroke-2 ' + (displayedSectors.includes(sector.id) ? 'rotate-90' : '-rotate-90')}
+                                    onClick={() => {
+                                        const newDS = [...displayedSectors];
+                                        if (newDS.includes(sector.id)) newDS.splice(newDS.indexOf(sector.id), 1)
+                                        else newDS.push(sector.id);
+                                        setDisplayedSectors(newDS);
+                                    }}
+                                />
+                            </div>
+                            
+                            {displayedSectors.includes(sector.id) &&
+                                <div className='flex flex-col gap-1 ml-3'>
+                                    {boulderQuarks.map((boulderQuark) => {
+                                        const boulder = boulderQuark();
+                                        const TracksIter = boulder.tracks.quarks();
+                                        const TrackQuarks = Array.from(TracksIter);
+                                        return (
+                                            <React.Fragment key={boulder.id}>
+                                                <div className='flex flex-row cursor-pointer text-dark items-center justify-between'>
+                                                    <div
+                                                        onClick={() => {
+                                                            if (props.selectedBoulder()?.id === boulderQuark().id)
+                                                                props.selectedBoulder.select(undefined);
+                                                            else props.selectedBoulder.select(boulderQuark)
+                                                        }}
+                                                    >
+                                                        <span className='mr-2'>{boulder.orderIndex+1}.</span>
+                                                        <span className='ktext-base'>{boulder.name}</span>
                                                     </div>
-                                                )
-                                            })}
-                                        </div>
-                                    </>
-                                )
-                            })}
+                                                    <Icon 
+                                                        name='arrow-simple'
+                                                        SVGClassName={'w-3 h-3 stroke-dark ' + (displayedBoulders.includes(boulder.id) ? 'rotate-90' : '-rotate-90')}
+                                                        onClick={() => {
+                                                            const newDB = [...displayedBoulders];
+                                                            if (newDB.includes(boulder.id)) newDB.splice(newDB.indexOf(boulder.id), 1)
+                                                            else newDB.push(boulder.id);
+                                                            setDisplayedBoulders(newDB);
+                                                        }}
+                                                    />
+                                                </div>
+                                                
+                                                {displayedBoulders.includes(boulder.id) &&
+                                                    <div className='flex flex-col ml-4 mb-4'>
+                                                        {TrackQuarks.map((trackQuark) => {
+                                                            const track = trackQuark();
+                                                            return (
+                                                                <div key={track.id} className='flex flex-row cursor-pointer items-baseline'>
+                                                                    {track.grade &&
+                                                                        <div className={'mr-2 ktext-subtitle ' + getGradeColorClass(track.grade)}>{track.grade}</div>
+                                                                    }
+                                                                    <div className='text-grey-medium'>{track.name}</div>
+                                                                </div>
+                                                            )
+                                                        })}
+                                                    </div>
+                                                }
+                                            </React.Fragment>
+                                        )
+                                    })}
+                                </div>
+                            }
                         </div>
-                    </div>
-                )
-            })}
+                    )
+                })}
+            </div>
 
             <Button 
                 content='Valider le topo'
