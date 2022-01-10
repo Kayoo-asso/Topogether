@@ -3,7 +3,7 @@ import { v4 as uuid } from 'uuid';
 import type { NextPage } from 'next';
 import Link from 'next/link';
 import {
-  Button, Header, LeftbarDesktop, TopoCardList,
+  Button, HeaderDesktop, LeftbarDesktop, TopoCardList,
 } from 'components';
 import { LightTopo, TopoStatus } from 'types';
 import { fakeLightTopo } from 'helpers/fakeData/fakeLightTopo';
@@ -74,7 +74,7 @@ const DashboardPage: NextPage = () => {
 
   return (
     <>
-      <Header
+      <HeaderDesktop
         backLink="#"
         title="Mes topos"
       />
@@ -84,24 +84,23 @@ const DashboardPage: NextPage = () => {
           currentMenuItem="BUILDER"
         />
 
-        <div className="py-3 md:py-6 pl-4 md:pl-8 bg-white overflow-y-auto h-content md:h-contentPlusShell overflow-x-hidden">
-          <div className="flex flex-row-reverse justify-between items-center">
+        <div className="bg-white overflow-y-auto h-contentPlusHeader md:h-contentPlusShell overflow-x-hidden">
+          <div className="px-4 md:px-8 py-6 flex flex-row-reverse justify-between items-center">
             <Link href="/builder/new" passHref>
               <Button content="Créer un topo" />
             </Link>
             <div className="md:hidden ktext-section-title text-center">Mes topos</div>
           </div>
-
           <TopoCardList topos={draftLightTopos} status={TopoStatus.Draft}>
-            <div className="text-second-light ktext-section-title">Brouillons</div>
+            <div className="text-second-light ktext-section-title px-4 md:px-8">Brouillons</div>
           </TopoCardList>
 
           <TopoCardList topos={submittedLightTopos} status={TopoStatus.Submitted}>
-            <div className="text-third-light ktext-section-title">En attente de validation</div>
+            <div className="text-third-light ktext-section-title px-4 md:px-8">En attente de validation</div>
           </TopoCardList>
 
           <TopoCardList topos={validatedLightTopos} status={TopoStatus.Validated}>
-            <div className="text-main ktext-section-title">Validés</div>
+            <div className="text-main ktext-section-title px-4 md:px-8">Validés</div>
           </TopoCardList>
         </div>
       </div>

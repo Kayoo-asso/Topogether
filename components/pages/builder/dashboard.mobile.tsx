@@ -19,7 +19,7 @@ export const DashboardMobile:React.FC<DashboardMobileProps> = (props: DashboardM
 
       <div className="flex flex-row justify-between items-center">
         <div className="ktext-section-title text-center">Vos topos</div>
-        <Button content="Créer un topo" href="builder/new" />
+        <Button content="Créer un topo" href="newTopo" />
       </div>
       {/* <Select
         id=""
