@@ -1,4 +1,4 @@
-import { Quark, derive, effect, quark, trackContext, batch, untrack, Signal, selectSignal, selectQuark, QuarkDebug, EffectDebug } from "helpers/quarky"
+import { Quark, derive, effect, quark, trackContext, batch, untrack, Signal, selectSignal, selectQuark, QuarkDebug, EffectDebug } from "helpers/quarky/quarky"
 import { getConsoleErrorSpy } from "test/utils";
 
 test("Creating and reading quark", () => {
@@ -521,17 +521,14 @@ test("trackContext should catch top-level dependencies", () => {
         // tracked
         quarks[3]();
     });
-    console.log("Received scope: ", scope);
     const counter = { current: 0 };
     effect(() => counter.current++, { watch: scope.accessed, name: "E"});
     expect(counter.current).toBe(1);
-    console.log("Setting Q0")
     quarks[0].set(-1);
     expect(counter.current).toBe(2);
     quarks[1].set(-1);
     quarks[2].set(-1);
     expect(counter.current).toBe(2);
-    console.log("Setting quark3");
     quarks[3].set(-1);
     expect(counter.current).toBe(3);
 });
@@ -628,6 +625,38 @@ test("Lazy effects only register once and are cleaned up correctly", () => {
     expect(node.oSlots).toEqual([]);
 });
 
+test("Effect observing a quark 2+ times only runs once on update", () => {
+    const Q = quark(1) as QuarkDebug<number>;
+    const node = Q.node;
+    const counter = { current: 0 };
+    const E = effect(() => {
+        Q(); Q();
+        counter.current += 1
+    }) as EffectDebug;
+    
+    expect(node.obs).toEqual([E.node, E.node]);
+    counter.current = 0;
+    Q.set(2);
+    expect(counter.current).toEqual(1);
+});
+
+test("Effect observing multiple modified quarks only runs once on update", () => {
+    const Q1 = quark(1);
+    const Q2 = quark(1);
+    const D = derive(() => Q2() + 1);
+    const counter = { current: 0 };
+    const E = effect(() => {
+        D(); Q1();
+        counter.current += 1;
+    });
+    counter.current = 0;
+    batch(() => {
+        Q1.set(2);
+        Q2.set(2);
+    });
+    expect(counter.current).toBe(1);
+});
+
 test.todo("Activating a derivation from a new effect does not (re)run the effect");
 
 test.todo("Activating / deactivating a derivation multiple times in a batch only recomputes its value once");
@@ -635,3 +664,5 @@ test.todo("Activating / deactivating a derivation multiple times in a batch only
 test.todo("Effects setting quarks");
 
 test.todo("Effects creating effects");
+
+test.todo("Effects are batched");

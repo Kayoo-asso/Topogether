@@ -421,7 +421,7 @@ function processUpdates() {
             for (let i = 0; i < quarks.length; i++) {
                 const q = quarks[i];
                 const u = updates[i];
-                console.log(`Setting quark \"${q.name}\" to ${u}.\nObservers: ${q.obs}`);
+                // console.log(`Setting quark \"${q.name}\" to ${u}.\nObservers: ${q.obs}`);
                 let newValue;
                 if (typeof u === "function") {
                     newValue = u(q.value);
@@ -667,7 +667,7 @@ function runEffect(effect: EffectNode) {
         parent: CurrentScope
     };
     CurrentScope = scope;
-    effect.fn(onCleanup);
+    batch(() => effect.fn(onCleanup));
     CurrentScope = scope.parent;
 
     effect.cleanup = scope.cleanups!.length !== 0
