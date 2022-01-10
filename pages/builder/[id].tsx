@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import type { NextPage } from 'next';
 import { 
   BoulderBuilderSlideoverMobile, BoulderSlideagainstDesktop,
@@ -9,7 +9,7 @@ import { useRouter } from 'next/router';
 import { quarkTopo } from 'helpers/fakeData/fakeTopoV2';
 import { DeviceContext, UserContext } from 'helpers';
 import { Boulder, MapToolEnum, Track } from 'types';
-import { reactKey, useSelectQuark, watchDependencies } from 'helpers/quarky';
+import { Quark, reactKey, useSelectQuark, watchDependencies } from 'helpers/quarky';
 
 const BuilderMapPage: NextPage = () => {
   const { session } = useContext(UserContext);
@@ -59,6 +59,12 @@ const BuilderMapPage: NextPage = () => {
   const [displayModalValidate, setDisplayModalValidate] = useState(false);
   const [displayModalDelete, setDisplayModalDelete] = useState(false);
 
+  const toggleBoulderSelect = useCallback((boulderQuark: Quark<Boulder>) => {
+    if (selectedBoulder()?.id === boulderQuark().id)
+        selectedBoulder.select(undefined);
+    else selectedBoulder.select(boulderQuark)
+  }, [selectedBoulder]);
+
   if (!session || typeof id !== 'string' || !topo) return null;
   return (
     <>
@@ -84,6 +90,7 @@ const BuilderMapPage: NextPage = () => {
         <LeftbarBuilderDesktop 
           sectors={topo().sectors.quarks()}
           selectedBoulder={selectedBoulder}
+          onBoulderSelect={toggleBoulderSelect}
           onValidate={() => setDisplayModalValidate(true)}
         />
 
@@ -124,11 +131,11 @@ const BuilderMapPage: NextPage = () => {
           onPhotoButtonClick={() => setDisplayGeoCamera(true)}
         >
           <For each={() => boulders.toArray()}>
-              {(boulder) =>
+              {(boulderQuark) =>
                   <BoulderMarker
-                    key={reactKey(boulder)}
-                    boulder={boulder}
-                    onClick={selectedBoulder.select}
+                    key={reactKey(boulderQuark)}
+                    boulder={boulderQuark}
+                    onClick={toggleBoulderSelect}
                   />
               }
           </For>

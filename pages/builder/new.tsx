@@ -163,11 +163,11 @@ const NewPage: NextPage = () => {
                     displayUserMarker={false}
                     zoom={10}
                     center={fontainebleauLocation}
-                  >
+                  />
                     {/* <TopoMarker 
                       topo={quark(topo)}
-                    /> */}
-                  </MapControl>
+                    />
+                  </MapControl> */}
                 </div>
 
                 <div className="px-[10%] w-full">

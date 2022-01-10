@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Button, Icon } from 'components';
 import { UserContext } from 'helpers';
 import { Quark, SelectQuarkNullable } from 'helpers/quarky';
@@ -7,12 +7,14 @@ import { Boulder, Grade, Sector, UUID } from 'types';
 interface LeftbarBuilderDesktopProps {
     sectors: Iterable<Quark<Sector>>,
     selectedBoulder: SelectQuarkNullable<Boulder>,
+    onBoulderSelect: (boulderQuark: Quark<Boulder>) => void,
     onValidate: () => void,
 }
 
 export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = (props: LeftbarBuilderDesktopProps) => {
     const { session } = useContext(UserContext);
     const sectors = Array.from(props.sectors);
+    const selectedBoulder = props.selectedBoulder();
 
     const [displayedSectors, setDisplayedSectors] = useState<Array<UUID>>(sectors.map(sector => sector().id));
     const [displayedBoulders, setDisplayedBoulders] = useState<Array<UUID>>([]);
@@ -36,7 +38,7 @@ export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = (prop
                 return 'text-grade-9';
         }
     }
-    
+
     if (!session) return null;
     return (
         <div className='bg-white border-r border-grey-medium min-w-[280px] w-[280px] h-full hidden md:flex flex-col px-6 py-10 z-100'>
@@ -73,14 +75,10 @@ export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = (prop
                                             <React.Fragment key={boulder.id}>
                                                 <div className='flex flex-row cursor-pointer text-dark items-center justify-between'>
                                                     <div
-                                                        onClick={() => {
-                                                            if (props.selectedBoulder()?.id === boulderQuark().id)
-                                                                props.selectedBoulder.select(undefined);
-                                                            else props.selectedBoulder.select(boulderQuark)
-                                                        }}
+                                                        onClick={() => props.onBoulderSelect(boulderQuark)}
                                                     >
-                                                        <span className='mr-2'>{boulder.orderIndex+1}.</span>
-                                                        <span className='ktext-base'>{boulder.name}</span>
+                                                        <span className={'mr-2' + (selectedBoulder?.id === boulder.id ? ' font-semibold' : '')}>{boulder.orderIndex+1}.</span>
+                                                        <span className={'ktext-base' + (selectedBoulder?.id === boulder.id ? ' font-semibold' : '')}>{boulder.name}</span>
                                                     </div>
                                                     <Icon 
                                                         name='arrow-simple'
