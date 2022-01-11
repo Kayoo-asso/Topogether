@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import type { NextPage } from 'next';
-import { Sector, StringBetween, Topo } from 'types';
+import { Sector, StringBetween, Topo, TopoType } from 'types';
 import { fontainebleauLocation, UserContext } from 'helpers';
 import {
  Button, HeaderDesktop, MapControl, Select, TextInput, TopoMarker,
@@ -127,18 +127,18 @@ const NewPage: NextPage = () => {
                   id="topo-type"
                   label="Type de spot"
                   choices={[
-                    { value: 0, label: 'Bloc' }, 
-                    { value: 1, label: 'Falaise' },
-                    { value: 2, label: 'Deepwater' },
-                    { value: 3, label: 'Grande voie' },
-                    { value: 4, label: 'Artificiel' },
+                    { value: TopoType.Boulder, label: 'Bloc' }, 
+                    { value: TopoType.Cliff, label: 'Falaise' },
+                    { value: TopoType.DeepWater, label: 'Deepwater' },
+                    { value: TopoType.Multipitch, label: 'Grande voie' },
+                    { value: TopoType.Artificial, label: 'Artificiel' },
                   ]}
                   big
                   white
                   wrapperClassname="w-full mb-10"
                   value={mapTypeIdToLabel(topo.type)}
                   error={typeError}
-                  onSelect={(val: number | undefined) => {
+                  onSelect={(val: TopoType | undefined) => {
                         setTypeError(undefined);
                         topoQuark.set({
                           ...topo,

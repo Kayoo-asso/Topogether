@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import type { NextPage } from 'next';
 import { 
   ApproachSlideover, InfoSlideover, ManagementSlideover,
@@ -10,12 +10,13 @@ import { useRouter } from 'next/router';
 import { quarkTopo } from 'helpers/fakeData/fakeTopoV2';
 import { DeviceContext } from 'helpers';
 import { Boulder, Track } from 'types';
-import { reactKey, useSelectQuark, watchDependencies } from 'helpers/quarky';
+import { Quark, reactKey, useSelectQuark, watchDependencies } from 'helpers/quarky';
 
 const Topo: NextPage = () => {
   const router = useRouter();
   const { id } = router.query;
   const device = useContext(DeviceContext);
+
   const topo = quarkTopo;
   const boulders = useMemo(() => topo().sectors
       .lazy()
@@ -25,6 +26,12 @@ const Topo: NextPage = () => {
 
   const selectedTrack = useSelectQuark<Track>();
   const selectedBoulder = useSelectQuark<Boulder>();
+
+  const toggleBoulderSelect = useCallback((boulderQuark: Quark<Boulder>) => {
+    if (selectedBoulder()?.id === boulderQuark().id)
+        selectedBoulder.select(undefined);
+    else selectedBoulder.select(boulderQuark)
+  }, [selectedBoulder]);
 
   const [displayInfo, setDisplayInfo] = useState<boolean>(false);
   const [displayApproach, setDisplayApproach] = useState<boolean>(false);
@@ -66,36 +73,34 @@ const Topo: NextPage = () => {
       />
 
       <div className="h-full relative flex flex-row md:overflow-hidden">
-        {device !== 'MOBILE' &&
-          <LeftbarDesktop
-              currentMenuItem="MAP"
-          />
-        }
+        <LeftbarDesktop
+            currentMenuItem="MAP"
+        />
 
-        {displayInfo &&
+        <Show when={() => displayInfo}>
           <InfoSlideover 
             topo={topo}
             open={displayInfo}
             onClose={() => { setDisplayInfo(false) }}
             className={currentDisplay === 'INFO' ? 'z-100' : ''}
           />
-        }
-        {displayApproach &&
+        </Show>
+        <Show when={() => displayApproach}>
           <ApproachSlideover
             topo={topo}
             open={displayApproach}
             onClose={() => { setDisplayApproach(false) }}
             className={currentDisplay === 'APPROACH' ? 'z-100' : ''}
           />
-        }
-        {displayManagement &&
+        </Show>
+        <Show when={() => displayManagement}>
           <ManagementSlideover
             topo={topo}
             open={displayManagement}
             onClose={() => { setDisplayManagement(false) }}
             className={currentDisplay === 'MANAGEMENT' ? 'z-100' : ''}
           />
-        }
+        </Show>
 
 
         <MapControl
@@ -113,10 +118,7 @@ const Topo: NextPage = () => {
                   <BoulderMarker
                     key={reactKey(boulder)}
                     boulder={boulder}
-                    onClick={(boulder) => {
-                      if (selectedBoulder()) selectedBoulder.select(undefined);
-                      else selectedBoulder.select(boulder);
-                    }}
+                    onClick={toggleBoulderSelect}
                   />
               }
           </For>
