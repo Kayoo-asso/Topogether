@@ -1,5 +1,4 @@
 import { watchDependencies } from "helpers/quarky";
-import React from "react";
 
 type NonNullableValues<T> = T extends Array<unknown> | ReadonlyArray<unknown>
     ? NonNullObject<T>
@@ -17,19 +16,6 @@ export interface ShowProps<T> {
     children: JSX.Element | ((item: NonNullableValues<T>) => JSX.Element),
 }
 
-interface EvaluatedProps {
-    when: boolean,
-    fallback?: JSX.Element,
-}
-
-const Nested = (props: React.PropsWithChildren<EvaluatedProps>) =>
-    <>
-        {props.when
-            ? props.children
-            : (props.fallback ?? null)
-        }
-    </>
-
 function Component({ when, fallback, children}: ShowPropsInternal) {
     let result = when();
     let showContent = true;
@@ -40,14 +26,13 @@ function Component({ when, fallback, children}: ShowPropsInternal) {
     } else {
         showContent = !!result;
     }
-    const content: JSX.Element | null = typeof children === "function"
-        ? (showContent ? children(result as any) : null)
-        : children;
-    return (
-        <Nested when={showContent} fallback={fallback}>
-            {content}
-        </Nested>
-    );
+    if (!showContent) {
+        return fallback ?? null;
+    }
+    if (typeof children === "function") {
+        return children(result);
+    }
+    return children;
 }
 
 export function Show<T>(props: ShowProps<T>): JSX.Element | null {
