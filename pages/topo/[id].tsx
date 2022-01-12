@@ -47,7 +47,7 @@ const Topo: NextPage = () => {
   const [displayInfo, setDisplayInfo] = useState<boolean>(false);
   const [displayApproach, setDisplayApproach] = useState<boolean>(false);
   const [displayManagement, setDisplayManagement] = useState<boolean>(false);
-  const [currentDisplay, setCurrentDisplay] = useState<'INFO' | 'APPROACH' | 'MANAGEMENT'>();
+  const [currentDisplay, setCurrentDisplay] = useState<'INFO' | 'APPROACH' | 'MANAGEMENT' | undefined>();
   useEffect(() => {
     if (currentDisplay === 'INFO') {
       setDisplayInfo(true);
@@ -59,14 +59,19 @@ const Topo: NextPage = () => {
       setDisplayApproach(true);
       setTimeout(() => {
         setDisplayInfo(false);
-        setDisplayManagement(false)
+        setDisplayManagement(false);
       }, 150)
     } else if (currentDisplay === 'MANAGEMENT') {
       setDisplayManagement(true);
       setTimeout(() => {
         setDisplayInfo(false);
-        setDisplayApproach(false)
+        setDisplayApproach(false);
       }, 150)
+    }
+    else {
+      setDisplayInfo(false);
+      setDisplayApproach(false);
+      setDisplayManagement(false);
     }
   }, [currentDisplay]);
 
@@ -92,24 +97,24 @@ const Topo: NextPage = () => {
           <InfoSlideover 
             topo={topo}
             open={displayInfo}
-            onClose={() => { setDisplayInfo(false) }}
-            className={currentDisplay === 'INFO' ? 'z-100' : ''}
+            onClose={() => setCurrentDisplay(undefined)}
+            className={currentDisplay === 'INFO' ? 'z-100' : 'z-50'}
           />
         </Show>
         <Show when={() => displayApproach}>
           <ApproachSlideover
             topo={topo}
             open={displayApproach}
-            onClose={() => { setDisplayApproach(false) }}
-            className={currentDisplay === 'APPROACH' ? 'z-100' : ''}
+            onClose={() => setCurrentDisplay(undefined)}
+            className={currentDisplay === 'APPROACH' ? 'z-100' : 'z-50'}
           />
         </Show>
         <Show when={() => displayManagement}>
           <ManagementSlideover
             topo={topo}
             open={displayManagement}
-            onClose={() => { setDisplayManagement(false) }}
-            className={currentDisplay === 'MANAGEMENT' ? 'z-100' : ''}
+            onClose={() => setCurrentDisplay(undefined)}
+            className={currentDisplay === 'MANAGEMENT' ? 'z-100' : 'z-50'}
           />
         </Show>
 

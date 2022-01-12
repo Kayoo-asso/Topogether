@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 interface SlideoverLeftDesktopProps {
     open?: boolean,
-    onClose: () => void,
+    onClose?: () => void,
     title?: string,
     className?: string,
     children?: React.ReactNode,
@@ -20,7 +20,7 @@ export const SlideoverLeftDesktop: React.FC<SlideoverLeftDesktopProps> = ({
 
     return (
         <div 
-            className={`bg-white absolute transition ease-in-out left-[300px] z-50 w-[600px] border-r border-grey-medium h-contentPlusShell flex flex-col px-8 py-5 ${props.className ? props.className : ''}`}
+            className={`bg-white absolute transition ease-in-out left-[280px] w-[600px] border-r border-grey-medium h-contentPlusShell flex flex-col px-8 py-5 ${props.className ? props.className : ''}`}
             style={{ 
                 transform: `translateX(-${translateX}%)`
             }}
@@ -31,7 +31,7 @@ export const SlideoverLeftDesktop: React.FC<SlideoverLeftDesktopProps> = ({
                     className='cursor-pointer text-main ktext-base'
                     onClick={() => {
                         setTranslateX(100)
-                        window.setTimeout(() => props.onClose(), 150);  
+                        window.setTimeout(() => props.onClose && props.onClose(), 150);  
                         
                     }}
                 >Terminé</span>

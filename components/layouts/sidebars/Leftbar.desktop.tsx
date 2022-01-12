@@ -14,7 +14,7 @@ export const LeftbarDesktop: React.FC<LeftbarDesktopProps> = ({
 
     if (!session) return null;
     return (
-      <div className="hidden md:flex flex-col bg-white border-r border-grey-medium min-w-[280px] w-[280px] h-full px-8 py-10 z-100">
+      <div className="hidden md:flex flex-col bg-white border-r border-grey-medium min-w-[280px] w-[280px] h-full px-8 py-10 z-200">
         <Link href='/user/profile' passHref>
           <div className="grid grid-cols-3 items-center pb-[50%] cursor-pointer">
             <div>

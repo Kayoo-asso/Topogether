@@ -41,7 +41,7 @@ export const SlideoverMobile: React.FC<SlideoverMobileProps> = ({
   }
   function handleTouchEnd() {
     setTransition(true);
-    if (Math.abs(touchStart - touchEnd) > 50) {
+    if (touchEnd && Math.abs(touchStart - touchEnd) > 50) {
       if (swipeUp) { // FULL
         setTranslateY(fullTranslate);
         setFull(true);
@@ -59,7 +59,7 @@ export const SlideoverMobile: React.FC<SlideoverMobileProps> = ({
 
   return (
     <div
-      className={`flex flex-col ${transition ? 'transition ease-in-out' : ''} absolute w-full bg-white rounded-t-lg h-[100%] pb-[27%] mb-[5%] z-50 shadow`}
+      className={`flex flex-col ${transition ? 'transition ease-in-out' : ''} absolute w-full bg-white rounded-t-lg h-[100%] pb-[10%] mb-[5%] z-50 shadow`}
       style={{ transform: `translateY(${translateY}%)` }}
     >
       <div

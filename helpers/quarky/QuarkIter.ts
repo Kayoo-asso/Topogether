@@ -92,11 +92,11 @@ export class QuarkIter<T> implements Iterable<T> {
         });
     }
 
-    reduce<A>(fn: (acc: A, item: T) => A, initial: A): Signal<A> {
+    reduce<A>(fn: (acc: A, item: T) => A, initial: () => A): Signal<A> {
         return derive(() => {
             this.init();
             let result: IteratorResult<T>;
-            let acc = initial;
+            let acc = initial();
             while (true) {
                 result = this.iterator.next();
                 if (result.done) return acc;

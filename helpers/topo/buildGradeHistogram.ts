@@ -17,7 +17,7 @@ export function buildGradeHistogram(topo: Topo): Signal<GradeHistogram> {
         .flatten()
         .map(x => x.tracks)
         .flatten()
-        .reduce(addTrackToHistogram, defaultGradeHistogram());
+        .reduce(addTrackToHistogram, defaultGradeHistogram);
 }
 
     // for (const sector of topo.sectors) {

@@ -1,16 +1,20 @@
 import React from 'react';
+import { Signal } from 'helpers/quarky';
+import { LightTopo, Topo } from 'types';
 import { Icon } from '../Icon';
 
 interface DownloadButtonProps {
     downloaded?: boolean,
     className?: string,
-    onClick: () => void,
+    topo: Signal<Topo> | Signal<LightTopo>
+    onClick?: () => void,
 }
 
 export const DownloadButton: React.FC<DownloadButtonProps> = ({
     downloaded = false,
     ...props
 }: DownloadButtonProps) => {
+    
     return (
         <Icon
           name='download'

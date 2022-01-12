@@ -3,7 +3,7 @@ import { Boulder, GradeHistogram, gradeToLightGrade, Track } from 'types';
 
 export const buildBoulderGradeHistogram = (boulder: Boulder): Signal<GradeHistogram> => {
   return boulder.tracks.lazy()
-    .reduce(addTrackToHistogram, defaultGradeHistogram());
+    .reduce(addTrackToHistogram, defaultGradeHistogram);
 };
 
 export const addTrackToHistogram = (histogram: GradeHistogram, track: Track) => {

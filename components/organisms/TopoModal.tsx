@@ -7,10 +7,11 @@ import launchNavigation from 'helpers/map/launchNavigation';
 import Image from 'next/image';
 import { LightTopo } from 'types';
 import { GradeScale } from '../molecules';
+import { Signal } from 'helpers/quarky';
 
 interface TopoModalProps {
   open: boolean,
-  topo: LightTopo,
+  topo: Signal<LightTopo>,
   onEnter: () => void,
   onClose: () => void,
 }
@@ -20,6 +21,7 @@ export const TopoModal: React.FC<TopoModalProps> = ({
   ...props
 }: TopoModalProps) => {
   const [modalParkingOpen, setModalParkingOpen] = useState(true);
+  const topo = props.topo();
 
   return (
     <>
@@ -28,14 +30,12 @@ export const TopoModal: React.FC<TopoModalProps> = ({
         withBackground={false}
         onClose={props.onClose}
       >
-        <div className="flex flex-row px-6 pt-4">
+        <div className="flex flex-row gap-5 px-6 pt-4">
           <LikeButton
-            className="mr-4 w-1/12"
-            onClick={() => {}}
+            item={props.topo}
           />
           <DownloadButton
-            className="w-1/12"
-            onClick={() => {}}
+            topo={props.topo}
           />
         </div>
 
@@ -46,7 +46,7 @@ export const TopoModal: React.FC<TopoModalProps> = ({
 
           <div className="w-full h-[180px] relative mt-2">
             <Image
-              src={(topogetherUrl + props.topo.image?.url) || '/assets/img/Kayoo_default_image.png'}
+              src={(topogetherUrl + topo.image?.url) || '/assets/img/Kayoo_default_image.png'}
               alt="image principale du topo"
               priority
               layout="fill"
@@ -55,7 +55,7 @@ export const TopoModal: React.FC<TopoModalProps> = ({
           </div>
 
           <div className="ktext-base mt-4 px-4 hide-after-two-lines overflow-hidden">
-            {props.topo.description}
+            {topo.description}
           </div>
 
           <div className="grid grid-cols-12 gap-4 mt-4 px-4">
@@ -66,7 +66,7 @@ export const TopoModal: React.FC<TopoModalProps> = ({
               />
             </div>
             <div className="col-span-11 ml-2">
-              {props.topo.nbBoulders}
+              {topo.nbBoulders}
               {' '}
               blocs
             </div>
@@ -77,13 +77,13 @@ export const TopoModal: React.FC<TopoModalProps> = ({
               />
             </div>
             <div className="col-span-5 ml-2">
-              {props.topo.nbTracks}
+              {topo.nbTracks}
               {' '}
               passages
             </div>
             <div className="col-span-6 ml-2">
               <GradeScale
-                histogram={() => props.topo.grades}
+                histogram={() => topo.grades}
                 circleSize="little"
               />
             </div>
@@ -106,8 +106,8 @@ export const TopoModal: React.FC<TopoModalProps> = ({
 
       <ParkingModal
         open={modalParkingOpen}
-        onGoogleClick={() => launchNavigation(props.topo.firstParkingLocation, 'google')}
-        onAppleClick={() => launchNavigation(props.topo.firstParkingLocation, 'apple')}
+        onGoogleClick={() => launchNavigation(topo.firstParkingLocation, 'google')}
+        onAppleClick={() => launchNavigation(topo.firstParkingLocation, 'apple')}
         onClose={() => setModalParkingOpen(false)}
       />
     </>

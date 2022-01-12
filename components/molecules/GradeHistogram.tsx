@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { lightGrades, Topo, TopoData } from 'types';
+import { lightGrades, Topo } from 'types';
 import { buildGradeHistogram } from 'helpers/topo/buildGradeHistogram';
 
 interface GradeHistogramProps {
@@ -18,9 +18,14 @@ const bgStyles = {
 };
 
 export const GradeHistogram: React.FC<GradeHistogramProps> = (props: GradeHistogramProps) => {
-  const histogram = useMemo(() =>
+  const histogramSignal = useMemo(() =>
     buildGradeHistogram(props.topo),
-  [props.topo])();
+  [props.topo]);
+  const histogram = histogramSignal();
+
+  const { Total, None, ...grades } = histogram
+  const maxNbOfTracks = Math.max(...Object.values(grades));
+  const ratio = histogram.Total / maxNbOfTracks;
 
   // TODO: I removed the special case for grade categories whose count == 0,
   // since it did not show the category properly.
@@ -30,7 +35,7 @@ export const GradeHistogram: React.FC<GradeHistogramProps> = (props: GradeHistog
 
       {lightGrades.slice(0, -1).map((grade) => {
         const count = histogram[grade];
-        const heightPercent = count / histogram.Total * 100;
+        const heightPercent = (count / histogram.Total * 100) * ratio;
         const height = `${heightPercent}%`;
 
         return (
@@ -39,7 +44,7 @@ export const GradeHistogram: React.FC<GradeHistogramProps> = (props: GradeHistog
               {count}
             </div>
             <div
-              style={{ height }}
+              style={{ height, minHeight: '24px' }}
               className={`ktext-subtitle w-6 flex flex-col justify-end items-center rounded-full text-white ${bgStyles[grade]}`}
             >
               <div>{grade}</div>

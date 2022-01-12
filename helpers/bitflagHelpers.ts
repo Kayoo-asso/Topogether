@@ -1,6 +1,7 @@
 import { Bitflag, ClimbTechniques, RockTypes } from "types";
 
-export const hasFlag = <T extends Bitflag>(value: T, flag: T): boolean => (value & flag) === flag;
+export const hasFlag = <T extends Bitflag>(value: T | undefined, flag: T): boolean =>
+    value !== undefined && ((value & flag) === flag);
 
 export function listFlags<T extends Bitflag>(value: T, names: [T, string][]): string[] {
     const flagList = [];

@@ -157,8 +157,8 @@ export const topo: TopoData = {
     closestCity: "Yzéron" as Name,
     location: { lat: 45.701356, lng: 4.607264 },
 
-    isForbidden: false,
-    amenities: Amenities.AdaptedToChildren,
+    isForbidden: true,
+    amenities: Amenities.AdaptedToChildren | Amenities.Waterspot | Amenities.PicnicArea,
     // the real topo doesn't have composite rock, but this allows us to test the bitflag
     rockTypes: RockTypes.Gneiss | RockTypes.Composite,
 
@@ -166,6 +166,7 @@ export const topo: TopoData = {
 
     image: images[0],
     creatorId: topoCreatorId,
+    creatorPseudo: 'Flavien' as Name,
     validatorId: validatorId,
 
     sectors: sectors,

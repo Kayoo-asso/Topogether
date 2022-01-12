@@ -1,16 +1,20 @@
+import { Signal } from 'helpers/quarky';
 import React from 'react';
+import { Boulder, LightTopo, Topo } from 'types';
 import { Icon } from '../Icon';
 
 interface LikeButtonProps {
   liked?: boolean,
   className?: string,
-  onClick: () => void,
+  item: Signal<Boulder> | Signal<Topo> | Signal<LightTopo>,
+  onClick?: () => void,
 }
 
 export const LikeButton: React.FC<LikeButtonProps> = ({
   liked = false,
   ...props
 }: LikeButtonProps) => {
+
     return (
         <Icon
           name='heart'

@@ -50,6 +50,7 @@ export interface TopoData {
   otherAmenities?: StringBetween<1, 5000>
 
   creatorId: UUID,
+  creatorPseudo: StringBetween<1, 255>,
   validatorId?: UUID,
   image?: Image,
 
