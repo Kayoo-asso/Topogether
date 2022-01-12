@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import ReactDOM from "react-dom";
-import { selectQuark, SelectQuark, selectSignal, SelectSignal, SelectSignalNullable, setBatchUpdates, trackContext } from ".";
+import { observerEffect, selectQuark, SelectQuark, selectSignal, SelectSignal, SelectSignalNullable, setBatchUpdates } from ".";
 import { Quark, derive, effect, quark, QuarkOptions, untrack, Signal, SelectQuarkNullable } from "./quarky";
 
 setBatchUpdates(ReactDOM.unstable_batchedUpdates);
@@ -20,24 +20,18 @@ const defaultOptions: WatchDependenciesOptions = {
 
 // the result of watchDependencies is invokable iff the option `memo` is set to false
 // (the result of React.memo is not invokable)
+const toggle = (x: boolean) => !x;
 export function watchDependencies<T>(component: React.FunctionComponent<T>, options?: WatchDependenciesOptions) {
     const wrapped = (props: T, context?: any) => {
-        // console.log("Watching " + componentName);
-        const [result, scope] = trackContext(() => component(props, context));
-        // console.log("Unwatching " + componentName);
-        const [, forceRender] = useState([]);
-        // reruns every time
-        useEffect(() => {
-            const e = effect(() => {
-                forceRender([]);
-            }, { watch: scope.accessed, lazy: true });
-
-            return () => {
-                e.dispose();
-            };
-        });
-        return result;
+        const [, forceRender] = useState(false);
+        const eff = useMemo(() =>
+            observerEffect(() => forceRender(toggle))
+        , []);
+        const jsx = eff.watch(() => component(props, context));
+        useEffect(() => eff.dispose, []);
+        return jsx;
     }
+    wrapped.displayName = component.displayName;
     const actualOpt = {
         ...defaultOptions,
         ...options
@@ -48,8 +42,9 @@ export function watchDependencies<T>(component: React.FunctionComponent<T>, opti
         : wrapped;
 }
 
-export function useCreateQuark<T>(value: T, options?: QuarkOptions<T>): Quark<T>;
+// order matters here, otherwise useCreateQuark will infer a result type of Quark<() => ...> when attempting to create derivations
 export function useCreateQuark<T>(computation: () => T, deps?: React.DependencyList, options?: QuarkOptions<T>): Signal<T>
+export function useCreateQuark<T>(value: T, options?: QuarkOptions<T>): Quark<T>;
 
 export function useCreateQuark<T>(
     arg1: T | (() => T),

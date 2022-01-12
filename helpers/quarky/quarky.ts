@@ -47,6 +47,10 @@ export interface Effect {
     dispose(): void,
 };
 
+export interface ObserverEffect extends Effect {
+    watch<T>(computation: () => T): T
+}
+
 export type StateUpdate<T> = T | ((prev: T) => T);
 export type CleanupHelper = (cleanup: () => void) => void;
 
@@ -177,8 +181,8 @@ export interface EffectDebug extends Effect {
     node: EffectNode
 }
 
-// TODO: make it framework agnostic, by allowing external integrations to set this function
 let BatchUpdates = (work: () => void) => work();
+// allows Quarky's core to be framework-agnostic
 export function setBatchUpdates(fn: (work: () => void) => void) {
     BatchUpdates = fn;
 }
@@ -197,18 +201,6 @@ const ScheduledEffects: EffectNode[] = [];
 let DeactivationCandidates: DerivationNode<any>[] = []
 
 // === EXTERNAL API ===
-
-export function trackContext<T>(work: () => T): [T, Scope] {
-    CurrentScope = {
-        accessed: [],
-        cleanups: [],
-        parent: CurrentScope
-    };
-    const result = work();
-    const scope = CurrentScope;
-    CurrentScope = scope.parent;
-    return [result, scope];
-}
 
 export function untrack<T>(work: () => T): T {
     const saved = CurrentScope;
@@ -342,6 +334,38 @@ export function effect(computation: (onCleanup: CleanupHelper) => void, options?
     }
 
     return result;
+}
+
+// TODO: effect options
+export function observerEffect(effect: (onCleanup: CleanupHelper) => void): ObserverEffect {
+    const node: EffectNode = {
+        type: NodeType.Effect,
+        fn: effect,
+        deps: [],
+        depSlots: [],
+        cdeps: 0,
+        dirty: 0,
+        update: false,
+        cleanup: null,
+    }
+    const watch = <T>(computation: () => T): T => {
+        const scope: Scope = {
+            accessed: [],
+            cleanups: [],
+            parent: CurrentScope,
+        };
+        CurrentScope = scope;
+        const result = computation();
+        CurrentScope = scope.parent;
+        node.cdeps = scope.accessed.length;
+        refreshDependencies(node, scope.accessed);
+        return result;
+    }
+    const dispose = () => cleanupEffect(node, true);
+    return {
+        watch,
+        dispose
+    };
 }
 
 // Q: should transactions suspend derivation creations? (derivations are pure from Quarky's point of view)
