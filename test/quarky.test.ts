@@ -1,4 +1,4 @@
-import { Quark, derive, effect, quark, trackContext, batch, untrack, Signal, selectSignal, selectQuark, QuarkDebug, EffectDebug } from "helpers/quarky/quarky"
+import { Quark, derive, effect, quark, batch, untrack, Signal, selectSignal, selectQuark, QuarkDebug, EffectDebug } from "helpers/quarky/quarky"
 import { getConsoleErrorSpy } from "test/utils";
 
 test("Creating and reading quark", () => {
@@ -74,7 +74,7 @@ test("Lazy effects don't run immediately", () => {
     const counter = {
         effect: 0,
     }
-    effect(() => counter.effect += 1, { lazy: true, watch: [] });
+    effect([], () => counter.effect += 1, { lazy: true });
     expect(counter.effect).toBe(0);
 });
 
@@ -506,32 +506,32 @@ test.todo("Cleaning up effect within batch");
 
 test.todo("Zipping and concatenating iterators calls the init function of both arguments");
 
-test("trackContext should catch top-level dependencies", () => {
-    const quarks = [
-        quark(0, { name: "Q0" }),
-        quark(1, { name: "Q1" }),
-        quark(2, { name: "Q2" }),
-        quark(3, { name: "Q3" })]
-    const [, scope] = trackContext(() => {
-        // tracked
-        quarks[0]();
-        // not tracked
-        derive(() => quarks[1]() + 1);
-        effect(() => quarks[2]());
-        // tracked
-        quarks[3]();
-    });
-    const counter = { current: 0 };
-    effect(() => counter.current++, { watch: scope.accessed, name: "E"});
-    expect(counter.current).toBe(1);
-    quarks[0].set(-1);
-    expect(counter.current).toBe(2);
-    quarks[1].set(-1);
-    quarks[2].set(-1);
-    expect(counter.current).toBe(2);
-    quarks[3].set(-1);
-    expect(counter.current).toBe(3);
-});
+// test("trackContext should catch top-level dependencies", () => {
+//     const quarks = [
+//         quark(0, { name: "Q0" }),
+//         quark(1, { name: "Q1" }),
+//         quark(2, { name: "Q2" }),
+//         quark(3, { name: "Q3" })]
+//     const [, scope] = trackContext(() => {
+//         // tracked
+//         quarks[0]();
+//         // not tracked
+//         derive(() => quarks[1]() + 1);
+//         effect(() => quarks[2]());
+//         // tracked
+//         quarks[3]();
+//     });
+//     const counter = { current: 0 };
+//     effect(() => counter.current++, { watch: scope.accessed, name: "E"});
+//     expect(counter.current).toBe(1);
+//     quarks[0].set(-1);
+//     expect(counter.current).toBe(2);
+//     quarks[1].set(-1);
+//     quarks[2].set(-1);
+//     expect(counter.current).toBe(2);
+//     quarks[3].set(-1);
+//     expect(counter.current).toBe(3);
+// });
 
 test.todo("trackContext should catch top-level effects");
 
@@ -615,7 +615,7 @@ test("Setting and unsetting SelectSignal", () => {
 test("Lazy effects only register once and are cleaned up correctly", () => {
     const Q = quark(1) as QuarkDebug<number>;
     const node = Q.node;
-    const E = effect(() => { }, { watch: [node] }) as EffectDebug;
+    const E = effect([Q], () => { }) as EffectDebug;
     expect(node.obs).toEqual([E.node]);
     expect(node.oSlots).toEqual([0]);
     // trigger the effect, since there have been many problems about lazy effects double registering their dependencies upon first run
@@ -666,3 +666,7 @@ test.todo("Effects setting quarks");
 test.todo("Effects creating effects");
 
 test.todo("Effects are batched");
+
+test.todo("ObserverEffect");
+
+test.todo("More on explicit effects?");
