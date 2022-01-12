@@ -1,22 +1,13 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useState, useMemo, useEffect} from "react";
 import ReactDOM from "react-dom";
 import { observerEffect, selectQuark, SelectQuark, selectSignal, SelectSignal, SelectSignalNullable, setBatchUpdates } from ".";
-import { Quark, derive, effect, quark, QuarkOptions, untrack, Signal, SelectQuarkNullable } from "./quarky";
+import { Quark, derive, quark, QuarkOptions, untrack, Signal, SelectQuarkNullable } from "./quarky";
 
 setBatchUpdates(ReactDOM.unstable_batchedUpdates);
 
-// TODO: implement options
 export interface WatchDependenciesOptions {
     memo?: boolean
 }
-
-const defaultOptions: WatchDependenciesOptions = {
-    memo: true
-}
-
-// TODO: The first call to watchDependencies in a component tree creates a root
-// Each root batches all Quarky operations underneath it
-// The first root schedules execution of all batches in a useEffect
 
 // the result of watchDependencies is invokable iff the option `memo` is set to false
 // (the result of React.memo is not invokable)
@@ -32,30 +23,21 @@ export function watchDependencies<T>(component: React.FunctionComponent<T>, opti
         return jsx;
     }
     wrapped.displayName = component.displayName;
-    const actualOpt = {
-        ...defaultOptions,
-        ...options
-    };
     
-    return actualOpt.memo
+    return !options || options.memo
         ? React.memo(wrapped)
         : wrapped;
 }
 
-// order matters here, otherwise useCreateQuark will infer a result type of Quark<() => ...> when attempting to create derivations
-export function useCreateQuark<T>(computation: () => T, deps?: React.DependencyList, options?: QuarkOptions<T>): Signal<T>
-export function useCreateQuark<T>(value: T, options?: QuarkOptions<T>): Quark<T>;
 
-export function useCreateQuark<T>(
-    arg1: T | (() => T),
-    arg2?: QuarkOptions<T> | React.DependencyList,
-    options?: QuarkOptions<T>
-): Signal<T> | Quark<T> | SelectQuark<T> | SelectSignal<T> {
-    // don't default to an empty dependency list here, it's better to rerun the computation and ensure a correct result
-    if (typeof arg1 === "function") {
-        return useMemo(() => derive(arg1 as () => T, options), arg2 as React.DependencyList);
-    }
-    return useMemo(() => quark(arg1 as T, arg2 as QuarkOptions<T> | undefined), [])
+// useCreateQuark and useCreateDerivation have to be 2 separate hooks,
+// to allow the creation of quarks that store functions
+export function useCreateQuark<T>(value: T, options?: QuarkOptions<T>): Quark<T> {
+    return useMemo(() => quark(value, options), [])
+}
+
+export function useCreateDerivation<T>(computation: () => T, deps?: React.DependencyList, options?: QuarkOptions<T>): Signal<T> {
+    return useMemo(() => derive(computation, options), deps);
 }
 
 export function useSelectSignal<T>(): SelectSignalNullable<T>;
