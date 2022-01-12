@@ -1,4 +1,6 @@
-import { Quark, derive, effect, quark, batch, untrack, Signal, selectSignal, selectQuark, QuarkDebug, EffectDebug } from "helpers/quarky/quarky"
+import exp from "constants";
+import { Quark, derive, effect, quark, batch, untrack, Signal, selectSignal, selectQuark, QuarkDebug, EffectDebug, Effect } from "helpers/quarky/quarky"
+import { lazy } from "react";
 import { getConsoleErrorSpy } from "test/utils";
 
 test("Creating and reading quark", () => {
@@ -15,14 +17,6 @@ test("Creating and reading derivations", () => {
     // should be updated upon read, even without observers
     expect(_84()).toBe(84);
     expect(_21()).toBe(21);
-});
-
-test("Non-activated derivations run once upon creation", () => {
-    const counter = {
-        current: 0
-    }
-    const d = derive(() => counter.current++);
-    expect(counter.current).toBe(1);
 });
 
 test("Updating quark propagates to derivations", () => {
@@ -78,23 +72,24 @@ test("Lazy effects don't run immediately", () => {
     expect(counter.effect).toBe(0);
 });
 
-// test("Lazy effects register dependencies after first run", () => {
-//     const counter = { current: 0 };
-//     const q1 = quark(1);
-//     const q2 = quark(2);
-//     effect(() => {
-//         q2();
-//         counter.current++;
-//     }, { watch: [q1], lazy: true });
-//     expect(counter.current).toBe(0);
-//     // q2 has not been registered as dependency yet, it has no effect
-//     write(q2, q => q + 1);
-//     expect(counter.current).toBe(0);
-//     write(q1, q => q + 1);
-//     expect(counter.current).toBe(1);
-//     write(q2, q => q + 1);
-//     expect(counter.current).toBe(2);
-// })
+test("Lazy effects register dependencies after first run", () => {
+    const counter = { current: 0 };
+    const q1 = quark(1);
+    const q2 = quark(2);
+    effect([q1], () => {
+        q2();
+        counter.current++;
+    }, { lazy: true });
+    expect(counter.current).toBe(0);
+    // q2 has not been registered as dependency yet, it has no effect
+
+    q2.set(q => q + 1);
+    expect(counter.current).toBe(0);
+    q1.set(q => q + 1);
+    expect(counter.current).toBe(1);
+    q2.set(q => q + 1);
+    expect(counter.current).toBe(2);
+})
 
 test("Updating quark triggers effects", () => {
     const counter = { a: 0, b: 0, c: 0 };
@@ -129,12 +124,12 @@ test("Derivations start deactivated", () => {
         counter.current++;
         return q() + 1;
     });
-    expect(counter.current).toBe(1);
+    expect(counter.current).toBe(0);
     q.set(23);
-    expect(counter.current).toBe(1);
+    expect(counter.current).toBe(0);
 });
 
-test("Reading deactivated derivation updates it", () => {
+test("Reading inactive derivation updates it", () => {
     const q = quark(2);
     const counter = {
         current: 0
@@ -143,8 +138,8 @@ test("Reading deactivated derivation updates it", () => {
         counter.current++;
         return q() + 1;
     });
-    expect(counter.current).toBe(1);
-    q.set(23);
+    expect(counter.current).toBe(0);
+    d();
     expect(counter.current).toBe(1);
     d();
     expect(counter.current).toBe(2);
@@ -161,10 +156,9 @@ test("Deactivated derivation B using deactivated derivation A does not activate 
         counter.b++;
         return a() + 1
     }, { name: "b" });
-    // A executes twice: once upon creation, once upon B's creation
-    expect(counter).toStrictEqual({ a: 2, b: 1 });
+    expect(counter).toStrictEqual({ a: 0, b: 0 });
     q.set(10);
-    expect(counter).toStrictEqual({ a: 2, b: 1 });
+    expect(counter).toStrictEqual({ a: 0, b: 0 });
 });
 
 test("Derivations used by activated derivations are activated", () => {
@@ -198,10 +192,11 @@ test("Cleaning up effect can deactivate derivation", () => {
 
 test("Creating effect within a derivation throws", () => {
     const counter = { current: 0 };
-    expect(() => derive(() => {
+    const d = derive(() => {
         effect(() => counter.current++);
         return 2;
-    })).toThrowError();
+    })
+    expect(d).toThrowError();
 });
 
 test("Writing to quark within a derivation prints error and is ignored", () => {
@@ -216,22 +211,21 @@ test("Writing to quark within a derivation prints error and is ignored", () => {
     expect(q()).toBe(1);
     // test the spy at the end, since toHaveBeenCalledTimes seems to count all calls within the test,
     // not just calls before the line at which the method is called
-    // ex: if we put this test before the line with `d()`, it will still have been called twice
-    expect(spy).toHaveBeenCalledTimes(2);
+    expect(spy).toHaveBeenCalledTimes(1);
 });
 
-
 // TODO: redo this one once lazy effects are back, it hits a dirtyCount < 0 only using a lazy effect
-// test("Cycles are detected (propagation)", () => {
-//     const q = quark(1, { name: "q" });
-//     const wrapper: { quark: DataQuark<number> } = { quark: q };
-//     const d = derive(() => q() + wrapper.quark() + 1, { name: "d" });
-//     wrapper.quark = d;
-//     // necessary to activate the derivation
-//     effect(() => {}, { watch: [d], name: "e" });
-//     // TODO: check that the error messages are good
-//     expect(() => q.set(2)).toThrowError();
-// });
+test("Cycles are detected (propagation)", () => {
+    const q = quark(1, { name: "q" });
+    const wrapper: { quark: Signal<number> } = { quark: q };
+    const d = derive(() => q() + wrapper.quark() + 1, { name: "d" });
+    // necessary to activate the derivation
+    effect([d], () => { }, { lazy: true, name: "e" });
+    // create the cycle after the effect has read `d` and registered as an observer
+    wrapper.quark = d;
+    // TODO: check that the error messages are good
+    expect(() => q.set(2)).toThrowError();
+});
 
 test("Cycles are detected (reading)", () => {
     const q = quark(1, { name: "q" });
@@ -498,43 +492,116 @@ test("Child effect dependencies are not registered in their parent or children",
     });
 });
 
-test.todo("Persisting effects");
+test("Persisting effects", () => {
+    const triggerWrapper = quark(false);
+    const inc = quark(false);
+    let persistentEffect: Effect | undefined = undefined;
+    let counter = 0;
+    const wrapperEffect = effect([triggerWrapper], () => {
+        if (persistentEffect === undefined) {
+            persistentEffect = effect([inc], () => {
+                counter += 1;
+            }, { lazy: true, persistent: true })
+        }
+    });
+    // persistentEffect should survive a rerun or a cleanup of wrapperEffect
+    expect(counter).toBe(0);
+    inc.set(x => !x);
+    expect(counter).toBe(1);
+    triggerWrapper.set(x => !x);
+    expect(counter).toBe(1);
+    inc.set(x => !x);
+    expect(counter).toBe(2);
+    wrapperEffect.dispose();
+    inc.set(x => !x);
+    expect(counter).toBe(3);
+});
 
-test.todo("Nested batch");
+test("Nested batch resolves before outer batch", () => {
+    const q = quark(1);
+    batch(() => {
+        q.set(q() + 1);
+        batch(() => {
+            q.set(c => c + 1);
+            q.set(c => c + 1);
+            expect(q()).toBe(1);
+        });
+        expect(q()).toBe(3);
+        q.set(q() + 1);
+    });
+    expect(q()).toBe(4);
+});
 
-test.todo("Cleaning up effect within batch");
+test("Effects are created normally within a batch", () => {
+    const q = quark(1);
+    let effectRuns = 0;
+    batch(() => {
+        q.set(2);
+        effect([q], () => effectRuns += 1);
+    });
+    // once upon creation, once after setting the quark
+    expect(effectRuns).toBe(2);
+});
+
+test("Derivations are created normally within a batch", () => {
+    const q = quark(1);
+    let effectRuns = 0;
+    batch(() => {
+        q.set(2);
+        const d = derive(() => 2 * q());
+        effect([d], () => effectRuns += 1);
+    });
+    // once upon creation, once after setting the quark
+    expect(effectRuns).toBe(2);
+});
+
+test("Effect cleanups happen immediately within a batch", () => {
+    let effectRuns = 0;
+    const q = quark(1);
+    const e = effect([q], () => effectRuns += 1);
+    expect(effectRuns).toBe(1);
+    batch(() => {
+        q.set(2);
+        e.dispose();
+    });
+    expect(effectRuns).toBe(1);
+});
+
+// This exact scenario was encountered when React component subscriptions
+// disposed and recreated the effect upon each rerender. The subscription effect
+// would dispose itself, causing bugs all over the place.
+test("Lazy effect that ends up cleaning itself during execution runs cleanups and does not stay alive", () => {
+    const effectRef: { current: Effect } = { current: undefined! };
+    const trigger = quark(false) as QuarkDebug<boolean>;
+    let counter = 0;
+    let cleanupRuns = 0;
+    const e = effect(
+        [trigger],
+        (_, onCleanup) => {
+            effectRef.current.dispose();
+            // this dependency should not be added after disposal & current execution
+            trigger();
+            counter += 1;
+            onCleanup(() => cleanupRuns += 1);
+        },
+        { lazy: true }
+    ) as EffectDebug;
+    effectRef.current = e
+
+    trigger.set(x => !x);
+    expect(counter).toBe(1);
+    expect(cleanupRuns).toBe(1);
+    expect(trigger.node.obs.length).toBe(0);
+    expect(trigger.node.oSlots.length).toBe(0);
+    expect(e.node.deps.length).toBe(0);
+    expect(e.node.depSlots.length).toBe(0);
+    expect(e.node.cdeps).toBe(-1); // means deleted
+
+    trigger.set(x => !x);
+    expect(counter).toBe(1);
+});
 
 test.todo("Zipping and concatenating iterators calls the init function of both arguments");
-
-// test("trackContext should catch top-level dependencies", () => {
-//     const quarks = [
-//         quark(0, { name: "Q0" }),
-//         quark(1, { name: "Q1" }),
-//         quark(2, { name: "Q2" }),
-//         quark(3, { name: "Q3" })]
-//     const [, scope] = trackContext(() => {
-//         // tracked
-//         quarks[0]();
-//         // not tracked
-//         derive(() => quarks[1]() + 1);
-//         effect(() => quarks[2]());
-//         // tracked
-//         quarks[3]();
-//     });
-//     const counter = { current: 0 };
-//     effect(() => counter.current++, { watch: scope.accessed, name: "E"});
-//     expect(counter.current).toBe(1);
-//     quarks[0].set(-1);
-//     expect(counter.current).toBe(2);
-//     quarks[1].set(-1);
-//     quarks[2].set(-1);
-//     expect(counter.current).toBe(2);
-//     quarks[3].set(-1);
-//     expect(counter.current).toBe(3);
-// });
-
-test.todo("trackContext should catch top-level effects");
-
 
 test("Empty SelectSignalNullable", () => {
     const s = selectSignal<string>();
@@ -633,7 +700,7 @@ test("Effect observing a quark 2+ times only runs once on update", () => {
         Q(); Q();
         counter.current += 1
     }) as EffectDebug;
-    
+
     expect(node.obs).toEqual([E.node, E.node]);
     counter.current = 0;
     Q.set(2);
@@ -661,12 +728,42 @@ test.todo("Activating a derivation from a new effect does not (re)run the effect
 
 test.todo("Activating / deactivating a derivation multiple times in a batch only recomputes its value once");
 
-test.todo("Effects setting quarks");
-
-test.todo("Effects creating effects");
-
-test.todo("Effects are batched");
+test("Effects are batched", () => {
+    const trigger = quark(false);
+    const q1 = quark(0);
+    const q2 = quark(0);
+    let counter = 0;
+    effect([q1, q2], () => counter += 1, { lazy: true });
+    effect([trigger], () => {
+        q1.set(x => x + 1);
+        q2.set(x => x + 1);
+        q2.set(x => x + 1);
+    }, { lazy: true });
+    trigger.set(x => !x);
+    expect(q1()).toBe(1);
+    expect(q2()).toBe(2);
+    expect(counter).toBe(1);
+})
 
 test.todo("ObserverEffect");
 
-test.todo("More on explicit effects?");
+test.todo("Explicit effects receive the current value of their dependencies");
+
+test.todo("Runaway update cycles are detected");
+
+test("Storing functions in quarks", () => {
+    const inc = (x: number) => x + 1;
+    const q = quark(inc);
+    expect(q()).toBe(inc);
+    // passing in a wrapped value
+    const double = (x: number) => inc(inc(x));
+    q.set(() => double);
+    expect(q()).toBe(double);
+    // passing in an update function
+    let quadruple: (x: number) => number;
+    q.set((prev: (x: number) => number) => {
+        quadruple = (x) => prev(prev(x));
+        return quadruple
+    });
+    expect(q()).toBe(quadruple!);
+});
