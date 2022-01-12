@@ -17,7 +17,6 @@ export const Flash: React.FC<FlashProps> = (props: FlashProps) => {
                 setDisplay(true);
             }, 10);
             closeTimeout = setTimeout(() => {
-                console.log('close');
                 setDisplay(false);
             }, 2000);
         }
@@ -34,7 +33,7 @@ export const Flash: React.FC<FlashProps> = (props: FlashProps) => {
 
     return (
         <div 
-            className={'bg-white transition-[bottom] ease-in-out ' + (display ? 'bottom-[8%]' : '-bottom-[10%]') + ' rounded-lg shadow px-6 py-4 z-500 absolute left-[50%] translate-x-[-50%] cursor-pointer'}
+            className={'bg-white transition-[bottom] ease-in-out w-[90%] md:w-auto text-center ' + (display ? 'bottom-[8%]' : '-bottom-[10%]') + ' rounded-lg shadow px-6 py-4 z-1000 absolute left-[50%] translate-x-[-50%] cursor-pointer'}
             onClick={() => setDisplay(false)}
         >
             {props.children}

@@ -14,7 +14,7 @@ const icon: google.maps.Icon = {
     scaledSize: markerSize(30)
 };
 
-export const BoulderMarker: React.FC<BoulderMarkerProps> = watchDependencies((props) => {
+export const BoulderMarker: React.FC<BoulderMarkerProps> = watchDependencies((props: BoulderMarkerProps) => {
     const boulder = props.boulder();
     const [marker, setMarker] = useState<google.maps.Marker>();
     const map = useContext(MapContext);

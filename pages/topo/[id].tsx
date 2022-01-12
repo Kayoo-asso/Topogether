@@ -5,12 +5,12 @@ import {
   BoulderSlideagainstDesktop,  BoulderSlideoverMobile, TrackSlideagainstDesktop,
   For, Show,
   Header, LeftbarDesktop, 
-  MapControl, BoulderMarker } from 'components';
+  MapControl, BoulderMarker, ParkingSlide, ParkingMarker } from 'components';
 import { useRouter } from 'next/router';
 import { quarkTopo } from 'helpers/fakeData/fakeTopoV2';
 import { DeviceContext } from 'helpers';
-import { Boulder, Track } from 'types';
-import { Quark, reactKey, useSelectQuark, watchDependencies } from 'helpers/quarky';
+import { Boulder, Parking, Track } from 'types';
+import { Quark, QuarkIter, reactKey, useSelectQuark, watchDependencies } from 'helpers/quarky';
 
 const Topo: NextPage = () => {
   const router = useRouter();
@@ -20,18 +20,29 @@ const Topo: NextPage = () => {
   const topo = quarkTopo;
   const boulders = useMemo(() => topo().sectors
       .lazy()
-      .map(x => x.boulders.quarks())
+      .map(s => s.boulders.quarks())
       .flatten()
       , [topo().sectors]);
+  const parkings = useMemo(() => topo().parkings?.quarks(), [topo().parkings]) || new QuarkIter<Quark<Parking>>([]);
 
   const selectedTrack = useSelectQuark<Track>();
   const selectedBoulder = useSelectQuark<Boulder>();
+  const selectedParking = useSelectQuark<Parking>();
 
   const toggleBoulderSelect = useCallback((boulderQuark: Quark<Boulder>) => {
+    selectedTrack.select(undefined);
+    selectedParking.select(undefined);
     if (selectedBoulder()?.id === boulderQuark().id)
         selectedBoulder.select(undefined);
     else selectedBoulder.select(boulderQuark)
   }, [selectedBoulder]);
+  const toggleParkingSelect = useCallback((parkingQuark: Quark<Parking>) => {
+    selectedBoulder.select(undefined);
+    selectedTrack.select(undefined);
+    if (selectedParking()?.id === parkingQuark().id)
+      selectedParking.select(undefined);
+    else selectedParking.select(parkingQuark)
+  }, [selectedParking]);
 
   const [displayInfo, setDisplayInfo] = useState<boolean>(false);
   const [displayApproach, setDisplayApproach] = useState<boolean>(false);
@@ -122,6 +133,15 @@ const Topo: NextPage = () => {
                   />
               }
           </For>
+          <For each={() => parkings.toArray()}>
+              {(parking) => 
+                <ParkingMarker 
+                  key={reactKey(parking)}
+                  parking={parking}
+                  onClick={toggleParkingSelect}
+                />
+              }
+          </For>
         </MapControl>
         
 
@@ -163,6 +183,20 @@ const Topo: NextPage = () => {
                 }}
               />
             )
+          }}
+        </Show>
+
+        <Show when={selectedParking.quark}>
+          {(parking) => {
+              return (
+                <ParkingSlide 
+                  open
+                  parking={parking}
+                  onClose={() => {
+                    selectedParking.select(undefined);
+                  }}
+                />
+              )
           }}
         </Show>
 

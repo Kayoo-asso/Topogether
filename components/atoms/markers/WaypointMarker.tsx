@@ -1,12 +1,12 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { markerSize } from "helpers";
-import { Quark } from "helpers/quarky";
-import { GeoCoordinates, MapMouseEvent, Topo } from "types";
+import { Quark, watchDependencies } from "helpers/quarky";
+import { GeoCoordinates, MapMouseEvent, Waypoint } from "types";
 import { MapContext } from "..";
 
-interface TopoMarkerProps {
-    topo: Quark<Topo>,
-    onClick?: (topo: Quark<Topo>) => void,
+interface WaypointMarkerProps {
+    waypoint: Quark<Waypoint>,
+    onClick?: (waypoint: Quark<Waypoint>) => void,
 }
 
 const icon: google.maps.Icon = {
@@ -14,8 +14,8 @@ const icon: google.maps.Icon = {
     scaledSize: markerSize(30)
 };
 
-export const TopoMarker: React.FC<TopoMarkerProps> = (props: TopoMarkerProps) => {
-    const topo = props.topo();
+export const WaypointMarker: React.FC<WaypointMarkerProps> = watchDependencies((props: WaypointMarkerProps) => {
+    const waypoint = props.waypoint();
     const [marker, setMarker] = useState<google.maps.Marker>();
     const map = useContext(MapContext);
     const listeners = useRef<google.maps.MapsEventListener[]>([]);
@@ -40,23 +40,23 @@ export const TopoMarker: React.FC<TopoMarkerProps> = (props: TopoMarkerProps) =>
                 map,
                 icon,
                 draggable: true,
-                position: topo.location,
+                position: waypoint.location,
             })
         }
-    }, [marker, topo.location])
+    }, [marker, waypoint.location])
 
     useEffect(() => {
         if (marker) {
             // TODO: cleanup using the types from MarkerEventHandlers
-            const onClickListener = marker.addListener('click', (e: MapMouseEvent) => props.onClick && props.onClick(props.topo));
+            const onClickListener = marker.addListener('click', (e: MapMouseEvent) => props.onClick && props.onClick(props.waypoint));
             const onDragEndListener = marker.addListener('dragend', (e: MapMouseEvent) => {
                 if (e.latLng) {
                     const newLoc: GeoCoordinates = {
                         lat: e.latLng.lat(),
                         lng: e.latLng.lng()
                     };
-                    props.topo.set({
-                        ...topo,
+                    props.waypoint.set({
+                        ...waypoint,
                         location: newLoc
                     });
                 }
@@ -75,4 +75,4 @@ export const TopoMarker: React.FC<TopoMarkerProps> = (props: TopoMarkerProps) =>
 
 
     return null;
-}
+});

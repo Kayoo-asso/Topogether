@@ -1,6 +1,6 @@
 import { Quark } from 'helpers/quarky';
-import { BoulderData, Line, Name, Image, TrackData, Description, Difficulty, ClimbTechniques, SectorData, TopoData, Amenities, TopoStatus, TopoType, RockTypes, TopoAccess, Topo } from 'types';
-import { v4 as uuid } from 'uuid';
+import { BoulderData, Line, Name, Image, TrackData, Description, Difficulty, ClimbTechniques, SectorData, TopoData, Amenities, TopoStatus, TopoType, RockTypes, TopoAccess, Topo, Parking, StringBetween } from 'types';
+import { v4 as uuid, v4 } from 'uuid';
 import { quarkifyTopo } from './quarkifyTopo';
 
 export const images: Image[] = [
@@ -19,6 +19,13 @@ export const images: Image[] = [
         height: 3064,
         // boulderImageDimensions = 674x450 in the original fakeTopo
         // multiply every line coordinate by 4592 / 674 to scale the data
+    },
+    // Parking 0 image
+    {
+        id: uuid(),
+        url: 'https://builder.topogether.com/public/uploads/parking/image/f1e65106ded2f0aafa14f1e6208a13178aae28b5.png',
+        width: 1082,
+        height: 476,
     }
 ]
 
@@ -128,6 +135,17 @@ export const access: TopoAccess = {
     ]
 }
 
+export const parkings: Parking[] = [
+    {
+        id: v4(),
+        spaces: 80,
+        location: { lat: 45.701321, lng: 4.607274 },
+        name: 'Parking 1' as StringBetween<1, 255>,
+        description: 'Le parking de Rocher Canon est facile d’accès depuis la N12. Attention toutefois, beaucoup de GPS indique un itinéraire qui passe à travers la forêt et qui est en fait fermé. Il faut bien arriver par la N12. ' as StringBetween<1, 5000>,
+        image: images[2]
+    }
+]
+
 export const topo: TopoData = {
     id: uuid(),
     name: "Yzéron" as Name,
@@ -151,7 +169,7 @@ export const topo: TopoData = {
     validatorId: validatorId,
 
     sectors: sectors,
-    parkings: [],
+    parkings: parkings,
     access: [access],
 }
 

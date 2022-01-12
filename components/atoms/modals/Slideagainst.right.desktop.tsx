@@ -2,7 +2,7 @@ import React, { ReactNode, useEffect, useState } from 'react';
 
 interface SlideagainstRightDesktopProps {
     open?: boolean,
-    onClose: () => void,
+    onClose?: () => void,
     children?: ReactNode,
 }
 
@@ -30,13 +30,13 @@ export const SlideagainstRightDesktop: React.FC<SlideagainstRightDesktopProps> =
                     className='cursor-pointer text-main ktext-base'
                     onClick={() => {
                         setMarginRight(size)
-                        window.setTimeout(() => props.onClose(), 150);  
+                        window.setTimeout(() => props.onClose && props.onClose(), 150);  
                         
                     }}
                 >Terminé</span>
             </div>
 
-            <div className='flex-1'>
+            <div className='flex-1 relative'>
                 {props.children}
             </div>
         </div>
