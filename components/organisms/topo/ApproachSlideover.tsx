@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { SlideoverLeftDesktop, SlideoverMobile } from 'components';
 import { Signal } from 'helpers/quarky';
-import { Topo } from 'types';
+import { Difficulty, Topo, TopoAccess } from 'types';
 import { DeviceContext } from 'helpers';
 import { default as NextImage } from 'next/image';
 
@@ -20,9 +20,25 @@ export const ApproachSlideover: React.FC<ApproachSlideoverProps> = ({
     const topo = props.topo();
     const access = topo.access ? topo.access.toArray()[0] : undefined;
 
+    const getDifficultyName = (acces: TopoAccess) => {
+        switch (acces?.difficulty) {
+            case Difficulty.Bad: return 'Difficile';
+            case Difficulty.Dangerous: return 'Dangereuse';
+            case Difficulty.Good: return 'Facile';
+            case Difficulty.OK: return 'Moyen';
+            default: 'N/A';
+        }
+    }
+
     const approachContent = () => {
         if (!access) return (
-            <div>Aucune marche d'approche référencée</div>
+            <div className='flex flex-col h-full pt-5 md:pt-0'>
+                <div className='flex flex-col px-6 md:px-0 pt-5 md:pt-0'>
+                    <div className='ktext-big-title text-center w-full mt-4 mb-6 md:mb-3'>
+                        Aucune marche d'approche référencée
+                    </div>
+                </div>
+            </div>
         )
         else return (
         <div className='flex flex-col h-full pt-5 md:pt-0'>
@@ -30,7 +46,7 @@ export const ApproachSlideover: React.FC<ApproachSlideoverProps> = ({
                 <div className='ktext-big-title text-center w-full mt-4 mb-6 md:mb-3'>Marche d'approche</div>
 
                 <div className='flex flex-row justify-between md:flex-col'>
-                    {access.difficulty && <div><span className='font-semibold'>Difficulté : </span>{access.difficulty}</div>}
+                    {access.difficulty && <div><span className='font-semibold'>Difficulté : </span>{getDifficultyName(access)}</div>}
                     {access.duration && <div><span className='font-semibold'>Durée : </span>{access.duration}min</div>}
                 </div>
             </div>
