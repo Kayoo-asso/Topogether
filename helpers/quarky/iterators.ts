@@ -92,9 +92,9 @@ export class ZipIterator<T> implements Iterator<[T, T]> {
     }
 }
 
-export function isIterator(x: unknown): x is Iterable<unknown> {
-    return typeof x === "object" && x !== null && typeof (x as any).next === "function";
-}
+// export function isIterator(x: unknown): x is Iterable<unknown> {
+//     return typeof x === "object" && x !== null && typeof (x as any).next === "function";
+// }
 
 export function isIterable(candidate: any): candidate is Iterable<any> {
     return typeof candidate === 'object' && candidate !== null && typeof candidate[Symbol.iterator] === 'function'

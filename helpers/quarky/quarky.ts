@@ -51,7 +51,8 @@ export interface ObserverEffect extends Effect {
     watch<T>(computation: () => T): T
 }
 
-export type StateUpdate<T> = T | ((prev: T) => T);
+type WrapFunctions<T> = T extends Function ? () => T : T;
+export type StateUpdate<T> = WrapFunctions<T> | ((prev: T) => T);
 export type CleanupHelper = (cleanup: () => void) => void;
 
 export interface QuarkOptions<T> {
@@ -221,7 +222,7 @@ export function quark<T>(value: T, options?: QuarkOptions<T>): Quark<T> {
     };
     // TODO: would .bind() be noticeably faster?
     const read = () => readNode(q);
-    read.set = (value: T) => writeNode(q, value);
+    read.set = (value: StateUpdate<T>) => writeNode(q, value);
     if (DEBUG) {
         (read as QuarkDebug<T>).node = q;
     }
@@ -268,7 +269,7 @@ export function derive<T>(computation: () => T, options?: QuarkOptions<T>): Sign
         depSlots: [],
         name: options?.name,
     };
-    updateDerivation(d);
+    // updateDerivation(d);
     // TODO: would .bind() be noticeably faster?
     const s = () => readNode(d);
     if (DEBUG) {
@@ -303,10 +304,11 @@ const buildEffect = (fn: (onCleanup: CleanupHelper) => void, name?: string): Eff
 function registerEffect(dispose: () => void, persistent: boolean | undefined) {
     if (ScopeStack.length > 0) {
         const scope = ScopeStack[ScopeStack.length - 1];
-        if (scope.cleanups && !persistent) {
-            scope.cleanups.push(dispose);
-        } else {
+        if (!scope.cleanups) {
             handleError("Quarky detected an attempt to create an effect within a derivation! This is not allowed: derivation should be pure functions.");
+        }
+        if (!persistent) {
+            scope.cleanups!.push(dispose);
         }
     }
 }
@@ -317,6 +319,7 @@ function simpleEffect(fn: (onCleanup: CleanupHelper) => void, options?: EffectOp
         dispose: () => cleanupEffect(e, true)
     }
     registerEffect(result.dispose, options?.persistent);
+
     runEffect(e);
     if (DEBUG) {
         (result as EffectDebug).node = e;
@@ -394,7 +397,6 @@ export function batch(work: () => void) {
     RunningBatch = true;
     BatchIndices.push(PendingQuarks.length);
     work();
-    BatchIndices.pop();
     processUpdates();
 }
 
@@ -629,6 +631,8 @@ function cleanupEffect(effect: EffectNode, deleting: boolean) {
     if (deleting) {
         detachDependencies(effect);
         effect.cdeps = DELETED_EFFECT;
+        effect.deps = [];
+        effect.depSlots = [];
     }
     if (effect.cleanup) {
         for (let i = 0; i < effect.cleanup.length; i++) {
@@ -712,9 +716,13 @@ function runEffect(effect: EffectNode) {
         ? scope.cleanups
         : null;
 
-    // TODO: more optimal way to update dependencies, while taking into account constant dependencies?
-    // Ideally, only one allocation for the slots
-    refreshDependencies(effect, scope.accessed);
+    // in case the effect deleted itself during execution
+    if (effect.cdeps === DELETED_EFFECT) {
+        // run cleanups
+        cleanupEffect(effect, true); 
+    } else {
+        refreshDependencies(effect, scope.accessed);
+    }
 }
 
 // should not be exposed outside effect functions
