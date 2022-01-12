@@ -28,6 +28,8 @@ export const ManagementSlideover: React.FC<ManagementSlideoverProps> = ({
                 <SlideoverMobile
                     open
                     initialFull={true}
+                    onlyFull
+                    onClose={props.onClose}
                 >
                     {managementContent()}
                 </SlideoverMobile>

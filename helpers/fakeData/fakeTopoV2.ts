@@ -120,7 +120,16 @@ export const sectors: SectorData[] = [
         id: uuid(),
         name: "ABO" as Name,
         boulders,
-        waypoints: []
+        waypoints: [
+            {
+                id: uuid(),
+                name: 'Pont de pierre' as Name,
+                location: {
+                    lat: 45.70256,
+                    lng: 4.605462,
+                },
+            }
+        ]
     }
 ]
 
@@ -131,6 +140,11 @@ export const access: TopoAccess = {
     steps: [
         {
             description: "Depuis le parking, prendre le sentier qui monte dans la continuité de la route. Après 12-15min de marche, vous arriverez à une esplanade d'herbe surmontant une petite falaise (où il est possible de faire de l'initiation). Un panneau indique le site d'escalade à l'entrée de l'esplanade.\nDepuis l'esplanade, prendre le sentier qui part derrière le panneau pour monter vers les premiers blocs." as Description,
+            image: images[0]
+        },
+        {
+            description: "Et ceci est une autre étape incroyable pour s'approcher du spot." as Description,
+            image: images[0]
         }
     ]
 }
@@ -157,7 +171,7 @@ export const topo: TopoData = {
     closestCity: "Yzéron" as Name,
     location: { lat: 45.701356, lng: 4.607264 },
 
-    isForbidden: true,
+    isForbidden: false,
     amenities: Amenities.AdaptedToChildren | Amenities.Waterspot | Amenities.PicnicArea,
     // the real topo doesn't have composite rock, but this allows us to test the bitflag
     rockTypes: RockTypes.Gneiss | RockTypes.Composite,

@@ -10,7 +10,7 @@ interface WaypointMarkerProps {
 }
 
 const icon: google.maps.Icon = {
-    url: '/assets/icons/colored/_waypoint.svg',
+    url: '/assets/icons/colored/_help-round.svg',
     scaledSize: markerSize(30)
 };
 

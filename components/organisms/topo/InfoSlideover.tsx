@@ -53,7 +53,6 @@ export const InfoSlideover: React.FC<InfoSlideoverProps> = ({
             </div>
 
             <div className='flex flex-col items-center md:items-start px-6 md:px-0 pt-5 md:pt-0'>
-
                 <div className='ktext-label text-center md:hidden'>
                     Topo créé par <span className="text-main cursor-pointer">{topo.creatorPseudo}</span>
                 </div>
@@ -119,7 +118,7 @@ export const InfoSlideover: React.FC<InfoSlideoverProps> = ({
                 </div>
 
                 <div>
-                    {topo.description}
+                    {topo.description} {topo.description}
                 </div>
                 
                 <div className='flex flex-col gap-1'>

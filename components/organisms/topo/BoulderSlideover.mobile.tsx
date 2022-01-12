@@ -35,7 +35,6 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = wat
   ...props
 }: BoulderSlideoverMobileProps) => {
   const [full, setFull] = useState(false);
-  const [boulderLiked, setBoulderLiked] = useState(false); // To change TODO
   const [officialTrackTab, setOfficialTrackTab] = useState(true);
 
   const boulder = props.boulder();
@@ -87,10 +86,7 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = wat
           <div className="flex justify-end col-span-2">
             {full && (
               <LikeButton
-                liked={boulderLiked}
-                onClick={() => {
-                  setBoulderLiked(!boulderLiked);
-                }}
+                item={props.boulder}
               />
             )}
 
