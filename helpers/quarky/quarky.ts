@@ -123,8 +123,10 @@ interface DerivationNode<T> {
     name?: string
 }
 
-// max signed 31-bit integer (optimized to SMI by JS engines)
-const ONSTACK = 1073741823;
+// two lowest signed 31-bit integer
+// optimized to SMI (small integer) by JS engines
+const ONSTACK = -1073741824; // (-2 ^ 30)
+const INACTIVE = ONSTACK + 1;
 
 export const enum NodeType {
     Quark,
@@ -296,7 +298,7 @@ export function derive<T>(computation: () => T, options?: QuarkOptions<T>): Sign
         value: undefined!,
         equal: options?.equal ?? defaultEqual,
         fn: computation,
-        dirty: 0,
+        dirty: INACTIVE,
         update: false,
         obs: [],
         oSlots: [],
@@ -450,12 +452,15 @@ function readNode<T>(node: QuarkNode<T> | DerivationNode<T>): T {
     // Two cases for a scope : within a derivation or within an effect, both of which create an observer
     // TODO: should we add back a status tag on the derivation for fast checking?
     // -> probably faster than going to node.o.length
-    if (node.type === NodeType.Derivation && node.obs.length === 0) {
+
+    // node.dirty < 0 means either INACTIVE or ONSTACK
+    if (node.type === NodeType.Derivation && node.dirty < 0) {
         // necessary to detect cycles among potentially deactivated nodes
         if (node.dirty === ONSTACK) {
             // clean up the scope to recover the state
             handleError("Quarky detected a cycle!", node.name);
         }
+        if (node.dirty !== INACTIVE) throw new Error("Should only reach this point for inactive derivations");
         const saveDirtyCount = node.dirty;
         node.dirty = ONSTACK;
         updateDerivation(node);
@@ -485,7 +490,6 @@ function processUpdates() {
     RunningBatch = true;
     const start = BatchIndices.pop() ?? 0;
     let iterations = 0;
-    // console.log("=== PROCESSING UPDATES ===");
 
     // The BatchUpdates function is
     BatchUpdates(() => {
@@ -544,13 +548,14 @@ function processUpdates() {
     for (let i = 0; i < DeactivationCandidates.length; i++) {
         const d = DeactivationCandidates[i];
         if (d.obs.length > 0) continue;
-        // console.log("Deactivating ", d);
         detachDependencies(d);
+        d.dirty = INACTIVE;
         d.depSlots = [];
     }
     DeactivationCandidates = [];
 
-    RunningBatch = false;
+    // only stop (RunningBatch = false) if there is no more work (BatchIndices.length === 0)
+    RunningBatch = BatchIndices.length !== 0;
 }
 
 // returns `true` if the value changed
@@ -633,6 +638,7 @@ function hookObserver(observer: Computation, dependency: DataNode, slot: number)
 }
 
 function activate(node: DerivationNode<any>) {
+    // console.log("Activating dependency");
     // TODO: remove once proper testing is done
     if (node.obs.length !== 1) throw new Error("Should not be calling activate on a derivation that had observers");
     // this means the node was not yet deactivated
@@ -642,6 +648,8 @@ function activate(node: DerivationNode<any>) {
         slots[i] = hookObserver(node, node.deps[i], i);
     }
     node.depSlots = slots;
+    // remove INACTIVE flag
+    node.dirty = 0;
 }
 
 // TODO: measure perf & memory vs using sets
