@@ -1,5 +1,5 @@
 import { isIterable, ConcatIterator, FilterIterator, Flattened, FlattenIterator, MapIterator, ZipIterator} from "./iterators";
-import { derive, Signal, Quark } from "./quarky";
+import { derive, Signal } from "./quarky";
 
 const emptyInit = () => { };
 
@@ -71,6 +71,7 @@ export class QuarkIter<T> implements Iterable<T> {
                 return Array.from({
                     [Symbol.iterator]: () => this.iterator
                 });
+            // TODO: do we need the .bind(this)?
             }).bind(this));
         }
         return this.result();

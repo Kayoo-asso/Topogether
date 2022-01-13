@@ -1,5 +1,8 @@
 // === EXTERNAL API ===
 
+import { quarkTopo } from "helpers/fakeData/fakeTopoV2";
+import { Topo } from "types";
+
 // The interface common to Quarks and Signals
 // This is simply a function that returns the current value of the signal
 // A computed signal (= derived from other signals) without any active observers
@@ -227,6 +230,38 @@ export function quark<T>(value: T, options?: QuarkOptions<T>): Quark<T> {
         (read as QuarkDebug<T>).node = q;
     }
     return read;
+}
+
+export type FocusQuarkOptions<U> =
+    { strictUpdates?: false } |
+    {
+        strictUpdates?: true,
+        equal?: ((a: U, b: U) => boolean),
+        name?: string,
+    }
+
+export function focusQuark<T, U>(
+    quark: Quark<T>,
+    focus: (value: T) => U,
+    write: (value: T, modif: U) => T,
+    options?: FocusQuarkOptions<U>
+): Quark<U> {
+    let q = (() => focus(quark())) as Quark<U>;
+    if (options?.strictUpdates) {
+        q = derive(q, { equal: options.equal, name: options.name }) as Quark<U>
+    }
+    // use this form of Quark.set to recover the previous value without reading the quark
+    q.set = (u: StateUpdate<U>) => {
+        quark.set((current: T) => {
+            // TypeScript massaging: if u is a function, we execute it
+            let newValue: U = u as U;
+            if (typeof u === "function") {
+                newValue = (u as (prev: U) => U)(focus(current))
+            }
+            return write(current, newValue);
+        })
+    }
+    return q;
 }
 
 export function selectSignal<T>(): SelectSignalNullable<T>;
