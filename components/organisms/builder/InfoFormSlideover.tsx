@@ -28,6 +28,7 @@ export const InfoFormSlideover: React.FC<InfoFormSlideoverProps> = ({
                 <SlideoverMobile
                     open
                     initialFull={true}
+                    onlyFull
                 >
                     {infosForm()}
                 </SlideoverMobile>

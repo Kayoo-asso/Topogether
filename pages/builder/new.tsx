@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import type { NextPage } from 'next';
-import { Sector, StringBetween, Topo, TopoType } from 'types';
+import { Name, Sector, StringBetween, Topo, TopoType } from 'types';
 import { fontainebleauLocation, UserContext } from 'helpers';
 import {
  Button, HeaderDesktop, MapControl, Select, TextInput, TopoMarker,
@@ -16,6 +16,7 @@ const NewPage: NextPage = () => {
   const topoData = {
     id: v4(),
     creatorId: session!.id,
+    creatorPseudo: 'Flavien' as Name,
     name: '' as StringBetween<1, 255>,
     status: 0,
     type: undefined,
@@ -173,6 +174,7 @@ const NewPage: NextPage = () => {
                   >
                     <TopoMarker 
                       topo={topoQuark}
+                      draggable
                     />
                   </MapControl>
                 </div>

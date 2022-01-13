@@ -1,78 +1,43 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
-import { markerSize } from "helpers";
+import React, { useCallback } from "react";
+import { markerSize, useMarker } from "helpers";
 import { Quark, watchDependencies } from "helpers/quarky";
-import { GeoCoordinates, MapMouseEvent, Parking } from "types";
-import { MapContext } from "..";
+import { Parking, MarkerEventHandlers } from "types";
 
 interface ParkingMarkerProps {
     parking: Quark<Parking>,
+    draggable?: boolean,
     onClick?: (parking: Quark<Parking>) => void,
 }
 
 const icon: google.maps.Icon = {
-    url: '/assets/icons/colored/_parking.svg',
+    url: '/assets/icons/colored/_rock.svg',
     scaledSize: markerSize(30)
 };
 
-export const ParkingMarker: React.FC<ParkingMarkerProps> = watchDependencies((props: ParkingMarkerProps) => {
+export const ParkingMarker: React.FC<ParkingMarkerProps> = watchDependencies(({
+    draggable = false,
+    ...props
+}: ParkingMarkerProps) => {
     const parking = props.parking();
-    const [marker, setMarker] = useState<google.maps.Marker>();
-    const map = useContext(MapContext);
-    const listeners = useRef<google.maps.MapsEventListener[]>([]);
 
-    useEffect(() => {
-        if (!marker) {
-            const m = new google.maps.Marker({
-                map
-            });
-            setMarker(m);
-        }
-        return () => {
-            if (marker) {
-                marker.setMap(null);
+    const options: google.maps.MarkerOptions = {
+        icon,
+        draggable,
+        position: parking.location
+    };
+
+    const handlers: MarkerEventHandlers = {
+        onClick: useCallback(() => props.onClick && props.onClick(props.parking), [props.parking, props.onClick]),
+        onDragEnd: useCallback((e: google.maps.MapMouseEvent) => {
+            if (e.latLng) {
+                props.parking.set({
+                    ...parking,
+                    location: { lat: e.latLng.lat(), lng: e.latLng.lng() }
+                })
             }
-        }
-    }, [map]);
-
-    useEffect(() => {
-        if (marker) {
-            marker.setOptions({
-                map,
-                icon,
-                draggable: true,
-                position: parking.location,
-            })
-        }
-    }, [marker, parking.location])
-
-    useEffect(() => {
-        if (marker) {
-            // TODO: cleanup using the types from MarkerEventHandlers
-            const onClickListener = marker.addListener('click', (e: MapMouseEvent) => props.onClick && props.onClick(props.parking));
-            const onDragEndListener = marker.addListener('dragend', (e: MapMouseEvent) => {
-                if (e.latLng) {
-                    const newLoc: GeoCoordinates = {
-                        lat: e.latLng.lat(),
-                        lng: e.latLng.lng()
-                    };
-                    props.parking.set({
-                        ...parking,
-                        location: newLoc
-                    });
-                }
-            });
-
-            listeners.current = [onClickListener, onDragEndListener];
-        }
-
-        return () => {
-            for (const listener of listeners.current) {
-                listener.remove();
-            }
-            listeners.current = [];
-        }
-    }, [marker, props.onClick])
-
+        }, [props.parking])
+    }
+    useMarker(options, handlers);
 
     return null;
 });

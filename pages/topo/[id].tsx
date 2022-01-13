@@ -186,7 +186,6 @@ const Topo: NextPage = () => {
                 <WaypointMarker 
                   key={reactKey(waypoint)}
                   waypoint={waypoint}
-                  draggable={false}
                   onClick={toggleWaypointSelect}
                 />
               }

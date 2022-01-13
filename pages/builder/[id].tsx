@@ -4,28 +4,37 @@ import {
   BoulderBuilderSlideoverMobile, BoulderSlideagainstDesktop,
   MapControl, BoulderMarker, 
   For, Show, 
-  Header, InfoFormSlideover, ApproachFormSlideover, ManagementFormSlideover, TrackFormSlideagainstDesktop, ModalValidateTopo, ModalDeleteTopo, GeoCamera, Drawer, LeftbarBuilderDesktop } from 'components';
+  Header, InfoFormSlideover, ApproachFormSlideover, ManagementFormSlideover, TrackFormSlideagainstDesktop, ModalValidateTopo, ModalDeleteTopo, GeoCamera, Drawer, LeftbarBuilderDesktop, WaypointMarker, ParkingMarker } from 'components';
 import { useRouter } from 'next/router';
 import { quarkTopo } from 'helpers/fakeData/fakeTopoV2';
 import { DeviceContext, UserContext } from 'helpers';
-import { Boulder, MapToolEnum, Track } from 'types';
-import { Quark, reactKey, useSelectQuark, watchDependencies } from 'helpers/quarky';
+import { Boulder, MapToolEnum, Parking, Track, Waypoint } from 'types';
+import { Quark, QuarkIter, reactKey, useSelectQuark, watchDependencies } from 'helpers/quarky';
 
 const BuilderMapPage: NextPage = () => {
   const { session } = useContext(UserContext);
   const router = useRouter();
   const { id } = router.query;
   const device = useContext(DeviceContext);
+
   const topo = quarkTopo;
   const boulders = useMemo(() => topo().sectors
       .lazy()
       .map(x => x.boulders.quarks())
       .flatten()
       , [topo().sectors]);
+  const parkings = useMemo(() => topo().parkings?.quarks(), [topo().parkings]) || new QuarkIter<Quark<Parking>>([]);
+  const waypoints = useMemo(() => topo().sectors
+      .lazy()
+      .map(s => s.waypoints.quarks())
+      .flatten()
+      , [topo().sectors]) || new QuarkIter<Quark<Waypoint>>([]);
 
   const [currentTool, setCurrentTool] = useState<MapToolEnum>();
   const selectedTrack = useSelectQuark<Track>();
   const selectedBoulder = useSelectQuark<Boulder>();
+  const selectedParking = useSelectQuark<Parking>();
+  const selectedWaypoint = useSelectQuark<Waypoint>();
 
   const [displayGeoCamera, setDisplayGeoCamera] = useState(false);
   const [displayDrawer, setDisplayDrawer] = useState(false);
@@ -60,10 +69,29 @@ const BuilderMapPage: NextPage = () => {
   const [displayModalDelete, setDisplayModalDelete] = useState(false);
 
   const toggleBoulderSelect = useCallback((boulderQuark: Quark<Boulder>) => {
+    selectedTrack.select(undefined);
+    selectedParking.select(undefined);
+    selectedWaypoint.select(undefined);
     if (selectedBoulder()?.id === boulderQuark().id)
         selectedBoulder.select(undefined);
     else selectedBoulder.select(boulderQuark)
   }, [selectedBoulder]);
+  const toggleParkingSelect = useCallback((parkingQuark: Quark<Parking>) => {
+    selectedBoulder.select(undefined);
+    selectedTrack.select(undefined);
+    selectedWaypoint.select(undefined);
+    if (selectedParking()?.id === parkingQuark().id)
+      selectedParking.select(undefined);
+    else selectedParking.select(parkingQuark)
+  }, [selectedParking]);
+  const toggleWaypointSelect = useCallback((waypointQuark: Quark<Waypoint>) => {
+    selectedBoulder.select(undefined);
+    selectedTrack.select(undefined);
+    selectedParking.select(undefined);
+    if (selectedWaypoint()?.id === waypointQuark().id)
+      selectedWaypoint.select(undefined);
+    else selectedWaypoint.select(waypointQuark)
+  }, [selectedWaypoint]);
 
   if (!session || typeof id !== 'string' || !topo) return null;
   return (
@@ -130,13 +158,34 @@ const BuilderMapPage: NextPage = () => {
           }}
           onPhotoButtonClick={() => setDisplayGeoCamera(true)}
         >
+          <For each={() => waypoints.toArray()}>
+              {(waypoint) => 
+                <WaypointMarker 
+                  key={reactKey(waypoint)}
+                  waypoint={waypoint}
+                  draggable
+                  onClick={toggleWaypointSelect}
+                />
+              }
+          </For>
           <For each={() => boulders.toArray()}>
               {(boulderQuark) =>
                   <BoulderMarker
                     key={reactKey(boulderQuark)}
                     boulder={boulderQuark}
+                    draggable
                     onClick={toggleBoulderSelect}
                   />
+              }
+          </For>
+          <For each={() => parkings.toArray()}>
+              {(parking) => 
+                <ParkingMarker 
+                  key={reactKey(parking)}
+                  parking={parking}
+                  draggable
+                  onClick={toggleParkingSelect}
+                />
               }
           </For>
         </MapControl>

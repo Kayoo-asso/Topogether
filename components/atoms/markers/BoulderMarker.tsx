@@ -5,6 +5,7 @@ import { Boulder, MarkerEventHandlers } from "types";
 
 interface BoulderMarkerProps {
     boulder: Quark<Boulder>,
+    draggable?: boolean,
     onClick?: (boulder: Quark<Boulder>) => void,
 }
 
@@ -13,12 +14,15 @@ const icon: google.maps.Icon = {
     scaledSize: markerSize(30)
 };
 
-export const BoulderMarker: React.FC<BoulderMarkerProps> = watchDependencies((props: BoulderMarkerProps) => {
+export const BoulderMarker: React.FC<BoulderMarkerProps> = watchDependencies(({
+    draggable = false,
+    ...props
+}: BoulderMarkerProps) => {
     const boulder = props.boulder();
 
     const options: google.maps.MarkerOptions = {
         icon,
-        draggable: true,
+        draggable,
         position: boulder.location
     };
 
