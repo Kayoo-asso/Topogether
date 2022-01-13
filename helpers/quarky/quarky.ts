@@ -113,7 +113,7 @@ interface DerivationNode<T> {
     // dirty count
     dirty: number,
     // update flag
-    update: boolean, // TODO: replace by the sign bit of dirtyCount
+    update: boolean, // can't replace with the sign bit of dirty, since dirty may go <0 during propagation if there's a cycle
     // Dependencies & dependency slots
     deps: DataNode[],
     depSlots: number[],

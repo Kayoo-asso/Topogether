@@ -38,7 +38,7 @@ export type MapEventHandlers = {
   onZoomChange?: () => void,
 };
 
-type MarkerEventHandlers = {
+export type MarkerEventHandlers = {
   onAnimationChange?: () => void,
   onClick?: (event: MapMouseEvent) => void,
   onClickableChange?: () => void,
@@ -103,9 +103,9 @@ function _handlersIsomorphismForward(handler: EventHandlerName): keyof MapEventH
   return handler;
 }
 
-function _handlersIsomorphismBackward(handler: keyof MapEventHandlers): EventHandlerName {
-  return handler;
-}
+// function _handlersIsomorphismBackward(handler: keyof MapEventHandlers): EventHandlerName {
+//   return handler;
+// }
 
 // === Marker events ==
 export const markerEvents = [

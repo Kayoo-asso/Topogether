@@ -1,8 +1,7 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
-import { markerSize } from "helpers";
+import React, { useCallback } from "react";
+import { markerSize, useMarker } from "helpers";
 import { Quark, watchDependencies } from "helpers/quarky";
-import { Boulder, GeoCoordinates, MapMouseEvent } from "types";
-import { MapContext } from "..";
+import { Boulder, MarkerEventHandlers } from "types";
 
 interface BoulderMarkerProps {
     boulder: Quark<Boulder>,
@@ -16,63 +15,25 @@ const icon: google.maps.Icon = {
 
 export const BoulderMarker: React.FC<BoulderMarkerProps> = watchDependencies((props: BoulderMarkerProps) => {
     const boulder = props.boulder();
-    const [marker, setMarker] = useState<google.maps.Marker>();
-    const map = useContext(MapContext);
-    const listeners = useRef<google.maps.MapsEventListener[]>([]);
 
-    useEffect(() => {
-        if (!marker) {
-            const m = new google.maps.Marker({
-                map
-            });
-            setMarker(m);
-        }
-        return () => {
-            if (marker) {
-                marker.setMap(null);
+    const options: google.maps.MarkerOptions = {
+        icon,
+        draggable: true,
+        position: boulder.location
+    };
+
+    const handlers: MarkerEventHandlers = {
+        onClick: useCallback(() => props.onClick && props.onClick(props.boulder), [props.boulder, props.onClick]),
+        onDragEnd: useCallback((e: google.maps.MapMouseEvent) => {
+            if (e.latLng) {
+                props.boulder.set({
+                    ...boulder,
+                    location: { lat: e.latLng.lat(), lng: e.latLng.lng() }
+                })
             }
-        }
-    }, [map]);
-
-    useEffect(() => {
-        if (marker) {
-            marker.setOptions({
-                map,
-                icon,
-                draggable: true,
-                position: boulder.location,
-            })
-        }
-    }, [marker, boulder.location])
-
-    useEffect(() => {
-        if (marker) {
-            // TODO: cleanup using the types from MarkerEventHandlers
-            const onClickListener = marker.addListener('click', (e: MapMouseEvent) => props.onClick && props.onClick(props.boulder));
-            const onDragEndListener = marker.addListener('dragend', (e: MapMouseEvent) => {
-                if (e.latLng) {
-                    const newLoc: GeoCoordinates = {
-                        lat: e.latLng.lat(),
-                        lng: e.latLng.lng()
-                    };
-                    props.boulder.set({
-                        ...boulder,
-                        location: newLoc
-                    });
-                }
-            });
-
-            listeners.current = [onClickListener, onDragEndListener];
-        }
-
-        return () => {
-            for (const listener of listeners.current) {
-                listener.remove();
-            }
-            listeners.current = [];
-        }
-    }, [marker, props.onClick])
-
+        }, [props.boulder])
+    }
+    useMarker(options, handlers);
 
     return null;
 });
