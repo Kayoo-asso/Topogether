@@ -532,6 +532,28 @@ test("Nested batch resolves before outer batch", () => {
     expect(q()).toBe(4);
 });
 
+test("Nested batch does not steal outer batch's work", () => {
+    const q1 = quark(1);
+    const q2 = quark(1);
+    const q3 = quark(1);
+    batch(() => {
+        // disalign the number of pending quark updates and batch indices
+        q1.set(2);
+        q1.set(3);
+        q1.set(4);
+        batch(() => {
+            q2.set(2);
+        });
+        q3.set(2);
+        expect(q1()).toBe(1);
+        expect(q2()).toBe(2);
+        expect(q3()).toBe(1);
+    });
+    expect(q1()).toBe(4);
+    expect(q2()).toBe(2);
+    expect(q3()).toBe(2);
+});
+
 test("Effects are created normally within a batch", () => {
     const q = quark(1);
     let effectRuns = 0;
@@ -724,9 +746,50 @@ test("Effect observing multiple modified quarks only runs once on update", () =>
     expect(counter.current).toBe(1);
 });
 
-test.todo("Activating a derivation from a new effect does not (re)run the effect");
+test("Activating a derivation from a new effect runs the derivation and effect once", () => {
+    let derivationRuns = 0;
+    let effectRuns = 0;
+    const q = quark(0);
+    const d = derive(() => {
+        derivationRuns += 1;
+        return q()
+    });
+    effect([d], () => effectRuns += 1);
+    expect(derivationRuns).toBe(1);
+    expect(effectRuns).toBe(1);
+});
 
-test.todo("Activating / deactivating a derivation multiple times in a batch only recomputes its value once");
+test("Reading a derivation after activation does not rerun it", () => {
+    let derivationRuns = 0;
+    const q = quark(0);
+    const d = derive(() => {
+        derivationRuns += 1;
+        return q()
+    });
+    effect([d], () => { });
+    expect(derivationRuns).toBe(1);
+    d();
+    expect(derivationRuns).toBe(1);
+})
+
+test("Activating / deactivating a derivation multiple times in a batch only recomputes its value once", () => {
+    let derivationRuns = 0;
+    const q = quark(1);
+    const d = derive(() => {
+        derivationRuns += 1;
+        return q()
+    });
+    batch(() => {
+        let e = effect([d], () => { });
+        expect(derivationRuns).toBe(1);
+        e.dispose();
+        e = effect([d], () => { });
+        expect(derivationRuns).toBe(1);
+        e.dispose();
+        e = effect([d], () => { });
+        expect(derivationRuns).toBe(1);
+    });
+});
 
 test("Effects are batched", () => {
     const trigger = quark(false);
@@ -736,6 +799,7 @@ test("Effects are batched", () => {
     effect([q1, q2], () => counter += 1, { lazy: true });
     effect([trigger], () => {
         q1.set(x => x + 1);
+        batch(() => { });
         q2.set(x => x + 1);
         q2.set(x => x + 1);
     }, { lazy: true });
