@@ -21,7 +21,7 @@ export const Dropdown: React.FC<DropdownProps> = React.memo(({
   className = '',
   ...props
 }: DropdownProps) => (
-  <div className={`shadow px-7 py-5 bg-white rounded-b ${className}`}>
+  <div className={`shadow absolute z-100 w-full px-7 py-5 bg-white rounded-b ${className}`}>
     {props.choices.map((choice, i) => (
       choice.isSection ? (
         <div
@@ -55,14 +55,13 @@ export const Dropdown: React.FC<DropdownProps> = React.memo(({
           role="menuitem"
           tabIndex={0}
         >
-          {props.type === 'checkbox' && props.onSelect
-              && (
-              <Checkbox
-                className="mr-2"
-                checked={choice.checked}
-                onClick={() => { props.onSelect && props.onSelect(choice); }}
-              />
-              )}
+          {props.type === 'checkbox' && props.onSelect && (
+            <Checkbox
+              className="mr-2"
+              checked={choice.checked}
+              onClick={() => { props.onSelect && props.onSelect(choice); }}
+            />
+          )}
           {choice.icon && (
           <Icon
             name={choice.icon}

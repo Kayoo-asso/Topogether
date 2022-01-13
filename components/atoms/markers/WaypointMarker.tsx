@@ -6,6 +6,7 @@ import { MapContext } from "..";
 
 interface WaypointMarkerProps {
     waypoint: Quark<Waypoint>,
+    draggable?: boolean,
     onClick?: (waypoint: Quark<Waypoint>) => void,
 }
 
@@ -14,7 +15,11 @@ const icon: google.maps.Icon = {
     scaledSize: markerSize(30)
 };
 
-export const WaypointMarker: React.FC<WaypointMarkerProps> = watchDependencies((props: WaypointMarkerProps) => {
+export const WaypointMarker: React.FC<WaypointMarkerProps> = watchDependencies((
+    {
+        draggable = true,
+        ...props
+    }: WaypointMarkerProps) => {
     const waypoint = props.waypoint();
     const [marker, setMarker] = useState<google.maps.Marker>();
     const map = useContext(MapContext);
@@ -39,7 +44,7 @@ export const WaypointMarker: React.FC<WaypointMarkerProps> = watchDependencies((
             marker.setOptions({
                 map,
                 icon,
-                draggable: true,
+                draggable: draggable,
                 position: waypoint.location,
             })
         }

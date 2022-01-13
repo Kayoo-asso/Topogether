@@ -2,7 +2,7 @@ import React, { useRef, useState } from 'react';
 import { Wrapper } from '@googlemaps/react-wrapper';
 import { Map, RoundButton, SatelliteButton } from 'components';
 import { MapSearchbarProps } from '.';
-import { MapSearchbar } from '..';
+import { FilterOptions, Filters, MapSearchbar } from '..';
 import { MapProps, MarkerProps } from 'types';
 import { googleGetPlace } from 'helpers';
 
@@ -13,7 +13,7 @@ interface MapControlProps extends MapProps {
   displayUserMarker?: boolean,
   displayPhotoButton?: boolean,
   boundsToMarkers?: boolean,
-  filters?: any,
+  filters?: FilterOptions[],
   searchbarOptions?: MapSearchbarProps,
   className?: string,
   children?: any,
@@ -66,8 +66,7 @@ export const MapControl: React.FC<MapControlProps> = ({
         >
           <div className="flex">
             <div className="w-1/2 text-left">
-              {displaySearchbar
-                && (
+              {displaySearchbar && (
                   <MapSearchbar
                     onResultSelect={async (option) => {
                       const placeDetails = await googleGetPlace(option.value) as google.maps.places.PlaceResult;
@@ -75,25 +74,33 @@ export const MapControl: React.FC<MapControlProps> = ({
                     }}
                     {...props.searchbarOptions}
                   />
-                )}
+              )}
+              {props.filters &&
+                <div className='mt-5'>
+                  <Filters 
+                    filters={props.filters}
+                    onChange={(filters) => {
+                      // console.log(filters);
+                    }}
+                  />
+                </div>
+              }
             </div>
             <div className="w-1/2 text-right">
-              {displaySatelliteButton
-                && (
+              {displaySatelliteButton && (
                   <SatelliteButton
                     onClick={(displaySatellite) => {
                       setSatelliteView(displaySatellite);
                     }}
                   />
-                )}
+              )}
             </div>
           </div>
 
           <div className="flex items-end">
             <div className="w-1/3 text-left" />
             <div className="w-1/3 text-center">
-              {displayPhotoButton
-                && (
+              {displayPhotoButton && (
                   <RoundButton
                     iconName="camera"
                     white={false}
@@ -102,20 +109,19 @@ export const MapControl: React.FC<MapControlProps> = ({
                     iconSizeClass="h-7 w-7"
                     onClick={props.onPhotoButtonClick}
                   />
-                )}
+              )}
             </div>
             <div className="w-1/3 text-right">
-              {displayUserMarker
-                && (
-                  <RoundButton
-                    iconName="center"
-                    iconClass="stroke-main fill-main"
-                    iconSizeClass="h-7 w-7"
-                    onClick={() => { 
-                      //TODO
-                    }}
-                  />
-                )}
+              {displayUserMarker && (
+                <RoundButton
+                  iconName="center"
+                  iconClass="stroke-main fill-main"
+                  iconSizeClass="h-7 w-7"
+                  onClick={() => { 
+                    //TODO
+                  }}
+                />
+              )}
             </div>
           </div>
         </div>
@@ -132,6 +138,7 @@ export const MapControl: React.FC<MapControlProps> = ({
               props.onMapZoomChange(mapRef.current.getZoom());
             }
           }}
+          // TODO
           // onLoad={() => {
           //   if (boundsToMarkers && props.children) getBoundsFromMarker(props.children);
           // }}

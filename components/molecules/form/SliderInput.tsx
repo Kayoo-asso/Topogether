@@ -24,23 +24,20 @@ const Handle = (props: HandleProps) => (
 );
 
 interface SliderInputProps {
-  name: string,
   domain: number[],
   values: number[],
-  step: number,
+  step?: number,
   connectTracks?: boolean,
   onChange: (e: readonly number[]) => void,
-  color: Color;
 }
 
 export const SliderInput: React.FC<SliderInputProps> = ({
   connectTracks = true,
-  step = 1,
   ...props
 }: SliderInputProps) => (
   <BaseSliderInput
     values={props.values || props.domain}
-    step={step}
+    step={props.step}
     onChange={props.onChange}
     domain={props.domain}
     connectTracks={connectTracks}

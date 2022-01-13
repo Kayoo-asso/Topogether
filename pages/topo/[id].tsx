@@ -11,6 +11,7 @@ import { quarkTopo } from 'helpers/fakeData/fakeTopoV2';
 import { DeviceContext } from 'helpers';
 import { Boulder, Parking, Track, Waypoint } from 'types';
 import { Quark, QuarkIter, reactKey, useSelectQuark, watchDependencies } from 'helpers/quarky';
+import { v4 } from 'uuid';
 
 const Topo: NextPage = () => {
   const router = useRouter();
@@ -140,6 +141,41 @@ const Topo: NextPage = () => {
           center={boulders.toArray()[0]().location}
           displayPhotoButton={false}
           boundsToMarkers
+          filters={[
+            {
+              type: 'multipleselect',
+              id: v4(),
+              label: 'Type de spot',
+              value: [],
+              choices: [
+                {
+                  value: 'Bloc',
+                }, 
+                {
+                  value: 'Deepwater',
+                },
+              ]
+            },
+            {
+              type: 'slider',
+              id: v4(),
+              label: 'Nombre de blocs',
+              domain: [0, 100],
+              value: [0, 100]
+            },
+            {
+              type: 'gradeslider',
+              id: v4(),
+              label: 'Difficultés',
+              value: [3, 9],
+            },
+            {
+              type: 'checkbox',
+              id: v4(),
+              label: 'Adapté aux enfants',
+              value: false,
+            }
+          ]}
           searchbarOptions={{
               findTopos: false,
               findPlaces: false,
@@ -150,6 +186,7 @@ const Topo: NextPage = () => {
                 <WaypointMarker 
                   key={reactKey(waypoint)}
                   waypoint={waypoint}
+                  draggable={false}
                   onClick={toggleWaypointSelect}
                 />
               }

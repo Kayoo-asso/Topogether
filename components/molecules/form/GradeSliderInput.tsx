@@ -2,13 +2,13 @@ import React from 'react';
 import { GradeCircle } from 'components';
 import { SliderItem } from 'react-compound-slider';
 import { BaseSliderInput } from './BaseSliderInput';
+import { LightGrade } from 'types';
 
 interface HandleProps {
   handle: SliderItem,
   getHandleProps: (id: string) => void
 }
 
-// TODO, possible solution: `props.handle.value as LightGrade`, if we are certain the domain is correct
 const Handle = (props: HandleProps) => (
   <div
     className="absolute -ml-1 mt-1.5 z-20 cursor-pointer"
@@ -17,7 +17,7 @@ const Handle = (props: HandleProps) => (
     }}
     {...props.getHandleProps(props.handle.id)}
   >
-    <GradeCircle size="little" grade={props.handle.value} />
+    <GradeCircle size="normal" grade={props.handle.value as LightGrade} />
   </div>
 );
 
@@ -25,9 +25,7 @@ interface GradeSliderInputProps {
   onChange: (e: readonly number[]) => void,
 }
 
-export const GradeSliderInput: React.FC<GradeSliderInputProps> = ({
-  ...props
-}: GradeSliderInputProps) => (
+export const GradeSliderInput: React.FC<GradeSliderInputProps> = (props: GradeSliderInputProps) => (
   <BaseSliderInput
     values={[3, 9]}
     domain={[3, 9]}

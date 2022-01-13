@@ -5,8 +5,8 @@ import { Icon } from './Icon';
 interface CheckboxProps {
   checked?: boolean,
   label?: string,
-  onClick: (isChecked: boolean) => void;
   className?: string,
+  onClick: (isChecked: boolean) => void;
 }
 
 export const Checkbox: React.FC<CheckboxProps> = ({

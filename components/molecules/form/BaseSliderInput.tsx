@@ -23,7 +23,7 @@ const Track = ({ source, target, getTrackProps }:TrackProps) => (
 interface BaseSliderInputProps {
   domain: number[],
   values: number[],
-  step: number,
+  step?: number,
   connectTracks?: boolean,
   onChange: (e: readonly number[]) => void,
   handleCreator: (handle: SliderItem, getHandlerProps: GetHandleProps) => ReactNode,
@@ -41,7 +41,7 @@ export const BaseSliderInput: React.FC<BaseSliderInputProps> = ({
     domain.reverse();
   }
   return (
-    <div className="relative w-full ml-px h-8">
+    <div className="relative w-[calc(100%-20px)] ml-px h-8">
       <Slider
         domain={domain}
         values={props.values}

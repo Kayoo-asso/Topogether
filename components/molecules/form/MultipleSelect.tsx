@@ -36,8 +36,6 @@ export const MultipleSelect: React.FC<MultipleSelectProps> = (props) => {
   return (
     <div
       id={props.id}
-      onFocus={() => setIsOpen(true)}
-      onBlur={() => setIsOpen(false)}
       className={`relative cursor-pointer ${props.className}`}
     >
       <TextInput
@@ -47,21 +45,24 @@ export const MultipleSelect: React.FC<MultipleSelectProps> = (props) => {
         value={textValue}
         pointer
         readOnly
+        onClick={() => setIsOpen(!isOpen)}
       />
       <Icon
         name="arrow-simple"
         wrapperClassName={`absolute right-0 ${isOpen ? 'top-[14px]' : 'top-[8px]'}`}
         SVGClassName={`${isOpen ? 'rotate-90' : '-rotate-90'} fill-dark w-4 h-4 left-22`}
         onClick={() => {
-          ref.current?.focus();
+          setIsOpen(!isOpen);
+          if (!isOpen) ref.current?.focus();
         }}
       />
+
       {isOpen && (
-      <Dropdown
-        type="checkbox"
-        onSelect={(selected) => { select(selected); props.onSelect(selected); }}
-        choices={Object.values(choices)}
-      />
+        <Dropdown
+          type="checkbox"
+          onSelect={(selected) => { select(selected); props.onSelect(selected); }}
+          choices={Object.values(choices)}
+        />
       )}
     </div>
   );

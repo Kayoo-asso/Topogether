@@ -5,7 +5,7 @@ import { LightGrade } from 'types';
 // to having an onClick handler or not
 interface GradeCircleProps {
   grade: LightGrade,
-  size?: 'little' | 'normal',
+  size?: 'little' | 'normal' | 'big',
   selected?: boolean,
   content?: string,
   className?: string,
@@ -45,30 +45,26 @@ export const GradeCircle: React.FC<GradeCircleProps> = ({
     ? selectedColorStyles[props.grade]
     : notSelectedColorStyles[props.grade];
 
-  const sizeStyles = size === 'normal'
+  const sizeStyles = size === 'big'
     ? 'p-3 w-6 h-6 border-2'
-    : 'p-1 w-5 h-5 border';
+    : size === 'little' 
+    ?'p-1 w-5 h-5 border'
+    : 'p-2 w-6 h-6 border';
   
   const content = props.content
     || (props.grade === "None" ? "n/a" : props.grade);
 
   return (
     <div
-      className={`relative box-border flex items-center text-center justify-center rounded-full 
-        ${colorStyles} 
-        ${sizeStyles} 
-        ${props.className} 
-        ${props.onClick ? 'cursor-pointer' : ''} 
-        `}
+      className={`relative box-border flex items-center text-center justify-center rounded-full \
+        ${colorStyles} ${sizeStyles} ${props.className ?? props.className}${props.onClick ? ' cursor-pointer' : ''}`}
       onClick={() => props.onClick && props.onClick(props.grade) }
       onKeyUp={() => props.onClick && props.onClick(props.grade) }
       role="button"
       tabIndex={0}
     >
-      <span className={`ktext-subtitle
-        ${size === 'little' ? 'text-xs' : ''}
-        ${props.onClick ? 'cursor-pointer' : ''}
-        `}
+      <span 
+        className={`ktext-subtitle${size === 'little' ? ' text-xs' : ''}${props.onClick ? ' cursor-pointer' : ''}`}
       >
         {content}
       </span>
