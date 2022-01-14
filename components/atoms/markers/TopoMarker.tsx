@@ -1,24 +1,32 @@
 import React, { useCallback } from "react";
 import { markerSize, useMarker } from "helpers";
 import { Quark, watchDependencies } from "helpers/quarky";
-import { Topo, MarkerEventHandlers } from "types";
+import { Topo, MarkerEventHandlers, TopoType } from "types";
 
 interface TopoMarkerProps {
     topo: Quark<Topo>,
     draggable?: boolean,
+    type?: TopoType,
     onClick?: (topo: Quark<Topo>) => void,
 }
 
-const icon: google.maps.Icon = {
-    url: '/assets/icons/colored/_rock.svg',
-    scaledSize: markerSize(30)
-};
-
 export const TopoMarker: React.FC<TopoMarkerProps> = watchDependencies(({
     draggable = false,
+    type = TopoType.Boulder,
     ...props
 }: TopoMarkerProps) => {
     const topo = props.topo();
+    
+    const color = type === TopoType.Boulder ?
+    'main' : TopoType.Cliff ?
+    'third' : TopoType.DeepWater ?
+    'grade-5' : TopoType.Multipitch ?
+    'third-highlight' : TopoType.Artificial ?
+    'dark' : 'grey-light';
+    const icon: google.maps.Icon = {
+        url: '/assets/icons/colored/waypoint/_'+color+'.svg',
+        scaledSize: markerSize(30)
+    };
 
     const options: google.maps.MarkerOptions = {
         icon,

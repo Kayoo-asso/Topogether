@@ -10,7 +10,7 @@ interface ParkingMarkerProps {
 }
 
 const icon: google.maps.Icon = {
-    url: '/assets/icons/colored/_rock.svg',
+    url: '/assets/icons/colored/_parking.svg',
     scaledSize: markerSize(30)
 };
 
