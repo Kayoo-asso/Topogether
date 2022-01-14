@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import { Checkbox, Icon, RoundButton } from 'components';
-import { UUID } from 'types';
+import { Amenities, Grade, LightGrade, LightTopo, Topo, TopoType, UUID } from 'types';
 import { DropdownOption, GradeSliderInput, MultipleSelect, Select, SliderInput } from '.';
+import { hasFlag } from 'helpers';
 
 
 type BaseFilterOptions = {
     id: UUID,
     label: string,
 }
+
 export type FilterOptions = BaseFilterOptions & (
     { type: 'checkbox', value: boolean } |
     { type: 'slider', domain: number[], value: number[] } |
@@ -15,24 +17,68 @@ export type FilterOptions = BaseFilterOptions & (
     { type: 'select' | 'multipleselect', choices: DropdownOption[], value: DropdownOption[] }
 )
 
+export interface TopoFilterOptions {
+    types: TopoType[] | null,
+    minBoulders: number,
+    maxBoulders: number,
+    minGrade: Exclude<LightGrade, 'None'>,
+    maxGrade: Exclude<LightGrade, 'None'>,
+    adaptedToChildren: boolean,
+}
+
+const defaultOptions: TopoFilterOptions = {
+
+}
+
+function produceTopoFilter(options: TopoFilterOptions): (topo: LightTopo) => boolean {
+    return (topo: LightTopo) => {
+        let result = options.types.includes(topo.type) &&
+            topo.nbBoulders >= options.minBoulders &&
+            topo.nbBoulders <= options.maxBoulders;
+        
+        let foundBouldersAtGrade = false;
+        for (let grade = options.minGrade; grade <= options.maxGrade; grade++) {
+            if (topo.grades[grade] > 0) {
+                foundBouldersAtGrade = true;
+                break;
+            }
+        }
+        result &&= foundBouldersAtGrade;
+        
+        result &&= hasFlag(topo.amenities, Amenities.AdaptedToChildren);
+        return result;
+    }
+}
+
 interface FiltersProps {
     initialOpen?: boolean,
-    filters: FilterOptions[],
-    onChange: (filters: FilterOptions[]) => void,
+    // filters: FilterOptions[],
+    onChange: (filter: (topo: LightTopo) => boolean) => void,
 }
 
 export const Filters: React.FC<FiltersProps> = ({
     initialOpen = false,
     ...props
 }: FiltersProps) => {
-    const [open, setOpen] = useState(initialOpen)
+    const [open, setOpen] = useState(initialOpen);
+    const [options, setOptions] = useState<TopoFilterOptions>(defaultOptions);
     
     const updateFilters = (id: UUID, value: any) => {
         const newFilters: FilterOptions[] = JSON.parse(JSON.stringify(props.filters));
         const filterIndex = newFilters.findIndex(filter => filter.id === id);
         newFilters[filterIndex]["value"] = value;
         props.onChange(newFilters);
+    
     }
+
+
+    const updateTopoFilters = (newOptions: TopoFilterOptions) => {
+        const filterFn = produceTopoFilter(newOptions);
+        props.onChange(filterFn);
+        setOptions(newOptions);
+    }
+
+
 
     const renderFilters = () => (
         props.filters.map(filter => (

@@ -41,7 +41,7 @@ export interface TopoData {
   modifiedAt?: Date,
   cleaned?: Date,
   status: TopoStatus,
-  type: TopoType | undefined,
+  type: TopoType,
   isForbidden: boolean,
 
   location: GeoCoordinates,

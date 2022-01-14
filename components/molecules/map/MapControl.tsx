@@ -2,8 +2,8 @@ import React, { useRef, useState } from 'react';
 import { Wrapper } from '@googlemaps/react-wrapper';
 import { Map, RoundButton, SatelliteButton } from 'components';
 import { MapSearchbarProps } from '.';
-import { FilterOptions, Filters, MapSearchbar } from '..';
-import { MapProps, MarkerProps } from 'types';
+import { FilterOptions, Filters, MapSearchbar, TopoFilterOptions } from '..';
+import { LightTopo, MapProps, MarkerProps } from 'types';
 import { googleGetPlace } from 'helpers';
 
 interface MapControlProps extends MapProps {
@@ -33,6 +33,7 @@ export const MapControl: React.FC<MapControlProps> = ({
 }: MapControlProps) => {
   const mapRef = useRef<google.maps.Map>(null);
   const [satelliteView, setSatelliteView] = useState(false);
+  const [topoFilter, setTopoFilter] = useState<(topo: LightTopo) => boolean>();
 
   const getBoundsFromSearchbar = (geometry: google.maps.places.PlaceGeometry) => {
     if (mapRef.current) {
@@ -79,9 +80,7 @@ export const MapControl: React.FC<MapControlProps> = ({
                 <div className='mt-5'>
                   <Filters 
                     filters={props.filters}
-                    onChange={(filters) => {
-                      // console.log(filters);
-                    }}
+                    onChange={setTopoFilter}
                   />
                 </div>
               }

@@ -11,6 +11,7 @@ import { DeviceContext, UserContext } from 'helpers';
 import { Boulder, MapToolEnum, Parking, Track, Waypoint } from 'types';
 import { Quark, QuarkIter, reactKey, useSelectQuark, watchDependencies } from 'helpers/quarky';
 
+
 const BuilderMapPage: NextPage = () => {
   const { session } = useContext(UserContext);
   const router = useRouter();
