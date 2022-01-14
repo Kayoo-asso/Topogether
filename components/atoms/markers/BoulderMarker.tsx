@@ -11,8 +11,8 @@ interface BoulderMarkerProps {
 
 const icon: google.maps.Icon = {
     url: '/assets/icons/colored/_rock.svg',
-    scaledSize: markerSize(30)
-};
+    scaledSize: markerSize(30),
+}
 
 export const BoulderMarker: React.FC<BoulderMarkerProps> = watchDependencies(({
     draggable = false,

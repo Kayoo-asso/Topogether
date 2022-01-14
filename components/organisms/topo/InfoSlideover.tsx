@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react';
 import { DownloadButton, Flash, GradeHistogram, Icon, LikeButton, SlideoverLeftDesktop, SlideoverMobile } from 'components';
 import { Signal } from 'helpers/quarky';
 import { Amenities, Topo, TopoType } from 'types';
-import { DeviceContext, hasFlag, listRockTypes } from 'helpers';
+import { DeviceContext, hasFlag, listRockTypes, TopoTypeToColor } from 'helpers';
 
 interface InfoSlideoverProps {
     topo: Signal<Topo>,
@@ -26,17 +26,6 @@ export const InfoSlideover: React.FC<InfoSlideoverProps> = ({
         nbOfBoulders += sector.boulders.length
         for (const boulder of sector.boulders) {
             nbOfTracks += boulder.tracks.length
-        }
-    }
-
-    const getWaypointColorClassName = () => {
-        switch (topo.type) {
-            case TopoType.Boulder: return 'fill-main';
-            case TopoType.Cliff: return 'fill-second';
-            case TopoType.DeepWater: return 'fill-grade-5';
-            case TopoType.Multipitch: return 'fill-third';
-            case TopoType.Artificial: return 'fill-dark';
-            default: return 'fill-grey-medium';
         }
     }
 
@@ -65,7 +54,7 @@ export const InfoSlideover: React.FC<InfoSlideoverProps> = ({
                     <div className='hidden md:inline mr-2'>
                         <Icon 
                             name='waypoint'
-                            SVGClassName={'w-6 h-6 ' + getWaypointColorClassName()}
+                            SVGClassName={'w-6 h-6 ' + TopoTypeToColor(topo.type)}
                         />
                     </div>
                     {topo.name}
