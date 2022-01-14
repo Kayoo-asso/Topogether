@@ -4,42 +4,42 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { MarkerEventHandlers, markerEvents } from "types";
 
 export function useMarker(options: google.maps.MarkerOptions, handlers: MarkerEventHandlers) {
-    const [marker, setMarker] = useState<google.maps.Marker>();
+    // const [marker, setMarker] = useState<google.maps.Marker>();
+    const marker = useRef<google.maps.Marker>();
     const map = useContext(MapContext);
     const listeners = useRef<google.maps.MapsEventListener[]>([]);
 
     useEffect(() => {
-        if (!marker) {
-            const m = new google.maps.Marker({
+        if (!marker.current) {
+            marker.current = new google.maps.Marker({
                 ...options,
                 map
             });
-            setMarker(m);
         }
         return () => {
-            if (marker) {
-                marker.setMap(null);
+            if (marker.current) {
+                marker.current.setMap(null);
             }
         }
     // do not include marker as a dependency here
     }, [map]);
 
     useEffectWithDeepEqual(() => {
-        if (marker) {
-            marker.setOptions({
+        if (marker.current) {
+            marker.current.setOptions({
                 ...options,
                 map,
             })
         }
-    }, [marker, options])
+    }, [marker.current, options])
 
     useEffect(() => {
-        if (marker) {
+        if (marker.current) {
             const l = [];
             for (const [eventName, handlerName] of markerEvents) {
                 const handler = handlers[handlerName];
                 if (handler) {
-                    const listener = marker.addListener(eventName, handler);
+                    const listener = marker.current.addListener(eventName, handler);
                     l.push(listener) 
                 }
             }
@@ -51,5 +51,5 @@ export function useMarker(options: google.maps.MarkerOptions, handlers: MarkerEv
             }
             listeners.current = [];
         }
-    }, [marker, handlers.onAnimationChange, handlers.onClick, handlers.onClickableChange, handlers.onContextMenu, handlers.onCursorChange, handlers.onDoubleClick, handlers.onDrag, handlers.onDragEnd, handlers.onDraggableChange, handlers.onDragStart, handlers.onFlatChange, handlers.onIconChange, handlers.onMouseDown, handlers.onMouseOut, handlers.onMouseOver, handlers.onMouseUp, handlers.onPositionChange, handlers.onShapeChange, handlers.onTitleChange, handlers.onVisibleChange, handlers.onZIndexChange])
+    }, [marker.current, handlers.onAnimationChange, handlers.onClick, handlers.onClickableChange, handlers.onContextMenu, handlers.onCursorChange, handlers.onDoubleClick, handlers.onDrag, handlers.onDragEnd, handlers.onDraggableChange, handlers.onDragStart, handlers.onFlatChange, handlers.onIconChange, handlers.onMouseDown, handlers.onMouseOut, handlers.onMouseOver, handlers.onMouseUp, handlers.onPositionChange, handlers.onShapeChange, handlers.onTitleChange, handlers.onVisibleChange, handlers.onZIndexChange])
 }

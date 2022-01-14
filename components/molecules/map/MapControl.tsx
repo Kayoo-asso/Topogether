@@ -1,10 +1,11 @@
 import React, { useRef, useState } from 'react';
 import { Wrapper } from '@googlemaps/react-wrapper';
-import { Map, RoundButton, SatelliteButton } from 'components';
-import { MapSearchbarProps } from '.';
-import { FilterOptions, Filters, MapSearchbar, TopoFilterOptions } from '..';
-import { LightTopo, MapProps, MarkerProps } from 'types';
-import { googleGetPlace } from 'helpers';
+import { BoulderMarker, For, Map, ParkingMarker, RoundButton, SatelliteButton, Show, TopoMarker, WaypointMarker } from 'components';
+import { BoulderFilterOptions, BoulderFilters, MapSearchbarProps, TopoFilterOptions, TopoFilters } from '.';
+import { MapSearchbar } from '..';
+import { Amenities, Boulder, gradeToLightGrade, LightGrade, LightTopo, MapProps, MarkerProps, Parking, Waypoint } from 'types';
+import { googleGetPlace, hasFlag } from 'helpers';
+import { Quark, QuarkIter, reactKey } from 'helpers/quarky';
 
 interface MapControlProps extends MapProps {
   initialZoom?: number,
@@ -13,10 +14,19 @@ interface MapControlProps extends MapProps {
   displayUserMarker?: boolean,
   displayPhotoButton?: boolean,
   boundsToMarkers?: boolean,
-  filters?: FilterOptions[],
   searchbarOptions?: MapSearchbarProps,
   className?: string,
-  children?: any,
+  waypoints?: QuarkIter<Quark<Waypoint>>,
+  onWaypointClick?: (waypoint: Quark<Waypoint>) => void,
+  boulders?: QuarkIter<Quark<Boulder>>,
+  onBoulderClick?: (boulder: Quark<Boulder>) => void,
+  displayBoulderFilter?: boolean,
+  parkings?: QuarkIter<Quark<Parking>>,
+  onParkingClick?: (parking: Quark<Parking>) => void,
+  topos?: QuarkIter<Quark<LightTopo>>,
+  onTopoClick?: (topo: Quark<LightTopo>) => void,
+  displayTopoFilter?: boolean,
+  draggableMarkers?: boolean,
   onSearchResultSelect?: () => void,
   onPhotoButtonClick?: () => void,
   onMapZoomChange?: (zoom: number | undefined) => void,
@@ -29,11 +39,63 @@ export const MapControl: React.FC<MapControlProps> = ({
   displayUserMarker = true,
   displayPhotoButton = true,
   boundsToMarkers = false,
+  displayTopoFilter = false,
+  displayBoulderFilter = false,
+  draggableMarkers = false,
   ...props
 }: MapControlProps) => {
   const mapRef = useRef<google.maps.Map>(null);
   const [satelliteView, setSatelliteView] = useState(false);
-  const [topoFilter, setTopoFilter] = useState<(topo: LightTopo) => boolean>();
+  const [topoFilterOptions, setTopoFilterOptions] = useState<TopoFilterOptions>({
+    types: null,
+    nbOfBoulders: 200,
+    boulderRange: [0, 200],
+    gradeRange: [3, 9],
+    adaptedToChildren: false,
+  });
+  const [boulderFilterOptions, setBoulderFilterOptions] = useState<BoulderFilterOptions>({
+    techniques: null,
+    nbOfTracks: 10,
+    tracksRange: [0, 10],
+    gradeRange: [3, 9],
+    mustSee: false
+  });
+
+  const boulderFilter = (boulder: Boulder) => {
+      const boulderTechniques = boulder.tracks.toArray().map(track => track.techniques);
+      let result = (boulderFilterOptions.techniques === null || boulderFilterOptions.techniques.some(tech => boulderTechniques.includes(tech))) &&
+          boulder.tracks.length >= boulderFilterOptions.tracksRange[0] &&
+          boulder.tracks.length <= boulderFilterOptions.tracksRange[1];
+
+      const boulderGrades: LightGrade[] = boulder.tracks.toArray().map(track => gradeToLightGrade(track.grade));
+      let foundBouldersAtGrade = false;
+      for (let grade = boulderFilterOptions.gradeRange[0]; grade <= boulderFilterOptions.gradeRange[1]; grade++) {
+          if (boulderGrades.includes(grade)) {
+              foundBouldersAtGrade = true;
+              break;
+          }
+      }
+      result &&= foundBouldersAtGrade;
+      result &&= (boulderFilterOptions.mustSee ? boulder.mustSee : true);
+      return result;
+  }
+  const topoFilter = (topo: LightTopo) => {
+        let result = (topoFilterOptions.types === null || topoFilterOptions.types.includes(topo.type)) &&
+            topo.nbBoulders >= topoFilterOptions.boulderRange[0] &&
+            topo.nbBoulders <= topoFilterOptions.boulderRange[1];
+        
+        let foundBouldersAtGrade = false;
+        for (let grade = topoFilterOptions.gradeRange[0]; grade <= topoFilterOptions.gradeRange[1]; grade++) {
+            if (topo.grades[grade] > 0) {
+                foundBouldersAtGrade = true;
+                break;
+            }
+        }
+        result &&= foundBouldersAtGrade;
+        
+        result &&= hasFlag(topo.amenities, Amenities.AdaptedToChildren);
+        return result;
+  }
 
   const getBoundsFromSearchbar = (geometry: google.maps.places.PlaceGeometry) => {
     if (mapRef.current) {
@@ -76,11 +138,19 @@ export const MapControl: React.FC<MapControlProps> = ({
                     {...props.searchbarOptions}
                   />
               )}
-              {props.filters &&
+              {displayTopoFilter &&
                 <div className='mt-5'>
-                  <Filters 
-                    filters={props.filters}
-                    onChange={setTopoFilter}
+                  <TopoFilters 
+                    options={topoFilterOptions}
+                    onChange={setTopoFilterOptions}
+                  />
+                </div>
+              }
+              {displayBoulderFilter &&
+                <div className='mt-5'>
+                  <BoulderFilters 
+                    options={boulderFilterOptions}
+                    onChange={setBoulderFilterOptions}
                   />
                 </div>
               }
@@ -142,7 +212,57 @@ export const MapControl: React.FC<MapControlProps> = ({
           //   if (boundsToMarkers && props.children) getBoundsFromMarker(props.children);
           // }}
           {...props}
-        />
+        >
+          <Show when={() => props.waypoints}>
+            <For each={() => props.waypoints!.toArray()}>
+                {(waypoint) => 
+                  <WaypointMarker 
+                    key={reactKey(waypoint)}
+                    draggable={draggableMarkers}
+                    waypoint={waypoint}
+                    onClick={props.onWaypointClick}
+                  />
+                }
+            </For>
+          </Show>
+          <Show when={() => props.boulders}>
+            <For each={() => props.boulders!.filter(b => boulderFilter(b())).toArray()}>
+                {(boulder) => 
+                      <BoulderMarker
+                        key={reactKey(boulder)}
+                        draggable={draggableMarkers}
+                        boulder={boulder}
+                        onClick={props.onBoulderClick}
+                      />
+                    
+                }
+            </For>
+          </Show>
+          <Show when={() => props.parkings}>
+            <For each={() => props.parkings!.toArray()}>
+                {(parking) => 
+                  <ParkingMarker 
+                    key={reactKey(parking)}
+                    draggable={draggableMarkers}
+                    parking={parking}
+                    onClick={props.onParkingClick}
+                  />
+                }
+            </For>
+          </Show>
+          <Show when={() => props.topos}>
+            <For each={() => props.topos!.filter(t => topoFilter(t())).toArray()}>
+                {(topo) => 
+                  <TopoMarker 
+                    key={reactKey(topo)}
+                    draggable={draggableMarkers}
+                    topo={topo}
+                    onClick={props.onTopoClick}
+                  />
+                }
+            </For>
+          </Show>
+        </Map>
       </Wrapper>
     </div>
   );

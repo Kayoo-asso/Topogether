@@ -1,13 +1,13 @@
 import React, { useCallback } from "react";
 import { markerSize, TopoTypeToColor, useMarker } from "helpers";
 import { Quark, watchDependencies } from "helpers/quarky";
-import { Topo, MarkerEventHandlers, TopoType } from "types";
+import { Topo, MarkerEventHandlers, TopoType, LightTopo } from "types";
 
 interface TopoMarkerProps {
-    topo: Quark<Topo>,
+    topo: Quark<LightTopo>,
     draggable?: boolean,
     type?: TopoType,
-    onClick?: (topo: Quark<Topo>) => void,
+    onClick?: (topo: Quark<LightTopo>) => void,
 }
 
 export const TopoMarker: React.FC<TopoMarkerProps> = watchDependencies(({

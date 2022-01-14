@@ -22,7 +22,7 @@ const Handle = (props: HandleProps) => (
 );
 
 interface GradeSliderInputProps {
-  onChange: (e: readonly number[]) => void,
+  onChange: (range: [Exclude<LightGrade, 'None'>, Exclude<LightGrade, 'None'>]) => void,
 }
 
 export const GradeSliderInput: React.FC<GradeSliderInputProps> = (props: GradeSliderInputProps) => (
@@ -30,7 +30,9 @@ export const GradeSliderInput: React.FC<GradeSliderInputProps> = (props: GradeSl
     values={[3, 9]}
     domain={[3, 9]}
     step={1}
-    onChange={props.onChange}
+    onChange={(range) => {
+      props.onChange([range[0] as Exclude<LightGrade, 'None'>, range[1] as Exclude<LightGrade, 'None'>]);
+    }}
     handleCreator={(handle, getHandleProps) => (
       <Handle
         handle={handle}

@@ -126,8 +126,8 @@ export interface BoulderData {
   location: GeoCoordinates,
   name: StringBetween<1, 255>,
   orderIndex: number,
-  isHighball?: boolean,
-  mustSee?: boolean,
+  isHighball: boolean,
+  mustSee: boolean,
   descent?: Difficulty,
 
   tracks: TrackData[],

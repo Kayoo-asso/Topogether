@@ -9,16 +9,16 @@ interface WaypointMarkerProps {
     onClick?: (waypoint: Quark<Waypoint>) => void,
 }
 
-const icon: google.maps.Icon = {
-    url: '/assets/icons/colored/_help-round.svg',
-    scaledSize: markerSize(30)
-};
-
 export const WaypointMarker: React.FC<WaypointMarkerProps> = watchDependencies(({
     draggable = false,
     ...props
 }: WaypointMarkerProps) => {
     const waypoint = props.waypoint();
+
+    const icon: google.maps.Icon = {
+        url: '/assets/icons/colored/_help-round.svg',
+        scaledSize: markerSize(30)
+    };
 
     const options: google.maps.MarkerOptions = {
         icon,

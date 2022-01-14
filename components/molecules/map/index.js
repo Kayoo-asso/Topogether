@@ -1,3 +1,4 @@
 export * from './MapControl';
 export * from './MapSearchbar';
-export * from './MapFilters';
+export * from './TopoFilters';
+export * from './BoulderFilters';

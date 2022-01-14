@@ -18,7 +18,7 @@ export const Checkbox: React.FC<CheckboxProps> = ({
 
   const handleClick = () => {
     setIsChecked(!isChecked);
-    props.onClick(isChecked);
+    props.onClick(!isChecked);
     setAnimated(true);
   };
 

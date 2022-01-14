@@ -21,11 +21,11 @@ const Track = ({ source, target, getTrackProps }:TrackProps) => (
 );
 
 interface BaseSliderInputProps {
-  domain: number[],
-  values: number[],
+  domain: [number, number],
+  values: [number, number],
   step?: number,
   connectTracks?: boolean,
-  onChange: (e: readonly number[]) => void,
+  onChange: (range: [number, number]) => void,
   handleCreator: (handle: SliderItem, getHandlerProps: GetHandleProps) => ReactNode,
 }
 
@@ -47,7 +47,10 @@ export const BaseSliderInput: React.FC<BaseSliderInputProps> = ({
         values={props.values}
         step={step}
         mode={1}
-        onChange={(e) => props.onChange(e)}
+        onChange={(e) => {
+          const val: [number, number] = [e[0], e[1]];
+          props.onChange(val);
+        }}
       >
         <Rail>
           {({ getRailProps }) => (

@@ -5,12 +5,12 @@ import {
   BoulderSlideagainstDesktop,  BoulderSlideoverMobile, TrackSlideagainstDesktop,
   For, Show,
   Header, LeftbarDesktop, 
-  MapControl, BoulderMarker, ParkingSlide, ParkingMarker, WaypointMarker } from 'components';
+  MapControl, ParkingSlide } from 'components';
 import { useRouter } from 'next/router';
 import { quarkTopo } from 'helpers/fakeData/fakeTopoV2';
 import { DeviceContext } from 'helpers';
 import { Boulder, Parking, Track, Waypoint } from 'types';
-import { Quark, QuarkIter, reactKey, useSelectQuark, watchDependencies } from 'helpers/quarky';
+import { Quark, QuarkIter, useSelectQuark, watchDependencies } from 'helpers/quarky';
 import { v4 } from 'uuid';
 
 const Topo: NextPage = () => {
@@ -141,74 +141,18 @@ const Topo: NextPage = () => {
           center={boulders.toArray()[0]().location}
           displayPhotoButton={false}
           boundsToMarkers
-          filters={[
-            {
-              type: 'multipleselect',
-              id: v4(),
-              label: 'Type de spot',
-              value: [],
-              choices: [
-                {
-                  value: 'Bloc',
-                }, 
-                {
-                  value: 'Deepwater',
-                },
-              ]
-            },
-            {
-              type: 'slider',
-              id: v4(),
-              label: 'Nombre de blocs',
-              domain: [0, 100],
-              value: [0, 100]
-            },
-            {
-              type: 'gradeslider',
-              id: v4(),
-              label: 'Difficultés',
-              value: [3, 9],
-            },
-            {
-              type: 'checkbox',
-              id: v4(),
-              label: 'Adapté aux enfants',
-              value: false,
-            }
-          ]}
           searchbarOptions={{
               findTopos: false,
               findPlaces: false,
           }}
-        >
-          <For each={() => waypoints.toArray()}>
-              {(waypoint) => 
-                <WaypointMarker 
-                  key={reactKey(waypoint)}
-                  waypoint={waypoint}
-                  onClick={toggleWaypointSelect}
-                />
-              }
-          </For>
-          <For each={() => boulders.toArray()}>
-              {(boulder) =>
-                  <BoulderMarker
-                    key={reactKey(boulder)}
-                    boulder={boulder}
-                    onClick={toggleBoulderSelect}
-                  />
-              }
-          </For>
-          <For each={() => parkings.toArray()}>
-              {(parking) => 
-                <ParkingMarker 
-                  key={reactKey(parking)}
-                  parking={parking}
-                  onClick={toggleParkingSelect}
-                />
-              }
-          </For>
-        </MapControl>
+          waypoints={waypoints}
+          onWaypointClick={toggleWaypointSelect}
+          boulders={boulders}
+          displayBoulderFilter
+          onBoulderClick={toggleBoulderSelect}
+          parkings={parkings}
+          onParkingClick={toggleParkingSelect}
+        />
         
 
         <Show when={() => [device !== 'MOBILE', selectedTrack.quark()] as const}>

@@ -9,16 +9,16 @@ interface BoulderMarkerProps {
     onClick?: (boulder: Quark<Boulder>) => void,
 }
 
-const icon: google.maps.Icon = {
-    url: '/assets/icons/colored/_rock.svg',
-    scaledSize: markerSize(30),
-}
-
 export const BoulderMarker: React.FC<BoulderMarkerProps> = watchDependencies(({
     draggable = false,
     ...props
 }: BoulderMarkerProps) => {
     const boulder = props.boulder();
+
+    const icon: google.maps.Icon = {
+        url: '/assets/icons/colored/_rock.svg',
+        scaledSize: markerSize(30),
+    }
 
     const options: google.maps.MarkerOptions = {
         icon,

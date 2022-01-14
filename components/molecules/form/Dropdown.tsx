@@ -21,7 +21,7 @@ export const Dropdown: React.FC<DropdownProps> = React.memo(({
   className = '',
   ...props
 }: DropdownProps) => (
-  <div className={`shadow absolute z-100 w-full px-7 py-5 bg-white rounded-b ${className}`}>
+  <div className={`shadow absolute z-100 w-auto px-7 py-5 bg-white rounded-b ${className}`}>
     {props.choices.map((choice, i) => (
       choice.isSection ? (
         <div
