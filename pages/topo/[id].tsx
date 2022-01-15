@@ -12,6 +12,7 @@ import { DeviceContext } from 'helpers';
 import { Boulder, Parking, Track, Waypoint } from 'types';
 import { Quark, QuarkIter, useSelectQuark, watchDependencies } from 'helpers/quarky';
 import { v4 } from 'uuid';
+import { quarkLightTopo } from 'helpers/fakeData/fakeLightTopoV2';
 
 const Topo: NextPage = () => {
   const router = useRouter();
@@ -19,6 +20,7 @@ const Topo: NextPage = () => {
   const device = useContext(DeviceContext);
 
   const topo = quarkTopo;
+  const lightTopo = quarkLightTopo;
   const boulders = useMemo(() => topo().sectors
       .lazy()
       .map(s => s.boulders.quarks())
@@ -152,6 +154,7 @@ const Topo: NextPage = () => {
           onBoulderClick={toggleBoulderSelect}
           parkings={parkings}
           onParkingClick={toggleParkingSelect}
+          topos={new QuarkIter([lightTopo])}
         />
         
 

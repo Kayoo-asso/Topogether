@@ -1,8 +1,5 @@
 // === EXTERNAL API ===
 
-import { quarkTopo } from "helpers/fakeData/fakeTopoV2";
-import { Topo } from "types";
-
 // The interface common to Quarks and Signals
 // This is simply a function that returns the current value of the signal
 // A computed signal (= derived from other signals) without any active observers
@@ -54,8 +51,8 @@ export interface ObserverEffect extends Effect {
     watch<T>(computation: () => T): T
 }
 
-type WrapFunctions<T> = T extends Function ? () => T : T;
-export type StateUpdate<T> = WrapFunctions<T> | ((prev: T) => T);
+export type ValueOrWrappedFunction<T> = T extends Function ? () => T : T;
+export type StateUpdate<T> = ValueOrWrappedFunction<T> | ((prev: T) => T);
 export type CleanupHelper = (cleanup: () => void) => void;
 
 export interface QuarkOptions<T> {
@@ -430,11 +427,12 @@ export function observerEffect(computation: (onCleanup: CleanupHelper) => void):
 }
 
 // Q: should batches have their own scope?
-export function batch(work: () => void) {
+export function batch<T>(work: () => T): T {
     RunningBatch = true;
     BatchIndices.push(PendingQuarks.length);
-    work();
+    const output = work();
     processUpdates();
+    return output;
 }
 
 // === CORE ===

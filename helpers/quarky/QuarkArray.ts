@@ -1,21 +1,13 @@
+import { batch } from ".";
+import { Flattened, ResettableIterator } from "./iterators";
 import { QuarkIter } from "./QuarkIter";
-import { quark, Quark, untrack } from "./quarky";
-
-
-// export interface QuarkArray<T> extends Iterable<T> {
-//     length: number,
-//     at(i: number): T,
-//     set(i: number, value: T): void,
-//     quarks(): QuarkArrayRaw<T>,
-//     lazy(): QuarkIter<T>,
-// }
-
+import { quark, Quark, Signal, untrack, ValueOrWrappedFunction } from "./quarky";
 
 const alwaysFalse = () => false;
 
 // NOTE: the return values of all the array methods become invalid if done within a batch (since modifications apply later)
 // Should we not return anything instead? Or wrap them in a Ref object, to ensure the values can be used at the end of the batch
-export class QuarkArray<T> implements QuarkArray<T> {
+export class QuarkArray<T> {
     #source: Quark<Array<Quark<T>>>;
 
     // TODO: auto-setup callbacks (so it works even on push etc)
@@ -34,9 +26,41 @@ export class QuarkArray<T> implements QuarkArray<T> {
         return this.#source().at(i)!();
     }
 
-    set(i: number, value: T) {
+    set(i: number, value: ValueOrWrappedFunction<T>) {
         this.#source()[i].set(value);
     }
+    
+    // === Iterator functionality ===
+
+    concat(other: QuarkIter<T>): QuarkIter<T> {
+        return this.lazy().concat(other);
+    }
+
+    filter(predicate: (item: T) => boolean): QuarkIter<T>;
+    filter<U extends T>(predicate: (item: T) => item is U): QuarkIter<U>;
+    filter<U extends T>(
+        predicate: ((item: T) => boolean) | ((item: T) => item is U)
+    ): QuarkIter<T> | QuarkIter<U> {
+        return this.lazy().filter(predicate);
+    }
+
+    flatten(): QuarkIter<Flattened<T>> {
+        return this.lazy().flatten();
+    }
+
+    zip(other: QuarkIter<T>): QuarkIter<[T, T]> {
+        return this.lazy().zip(other);
+    }
+    
+    map<U>(fn: (item: T) => U): QuarkIter<U> {
+        return this.lazy().map(fn);
+    }
+
+    unwrap<U>(this: QuarkArray<Signal<U>>): QuarkIter<U> {
+        return this.map(x => x());
+    }
+
+    // === Array methods === 
 
     find(filter: (item: T) => boolean): T | undefined {
         const q = this.findQuark(filter);
@@ -53,12 +77,15 @@ export class QuarkArray<T> implements QuarkArray<T> {
     }
 
     #apply<U>(operation: (buffer: Quark<T>[]) => U): U {
-        let output: U;
-        this.#source.set(x => {
-            output = operation(x);
-            return x;
+        // batching ensures the returned value is not undefined
+        return batch(() => {
+            let output: U;
+            this.#source.set(x => {
+                output = operation(x);
+                return x;
+            });
+            return output!;
         });
-        return output!;
     }
 
     // TODO: hook up predefined effects
@@ -93,18 +120,18 @@ export class QuarkArray<T> implements QuarkArray<T> {
 
     [Symbol.iterator]() {
         const iter = new QuarkArrayIterator(this.#source);
-        iter.init();
+        iter.reset();
         return iter;
     }
 
     quarks(): QuarkIter<Quark<T>> {
         const iter = new QuarkArrayIteratorRaw(this.#source);
-        return new QuarkIter(iter, () => iter.init());
+        return new QuarkIter(iter);
     }
 
     lazy(): QuarkIter<T> {
         const iter = new QuarkArrayIterator(this.#source);
-        return new QuarkIter(iter, () => iter.init());
+        return new QuarkIter(iter);
     }
 }
 
@@ -112,7 +139,7 @@ export interface QuarkArrayRaw<T> extends Iterable<Quark<T>> {
     lazy(): QuarkIter<Quark<T>>
 }
 
-class QuarkArrayIteratorRaw<T> implements Iterator<Quark<T>> {
+class QuarkArrayIteratorRaw<T> implements ResettableIterator<Quark<T>> {
     private source: Quark<Array<Quark<T>>>;
     private buffer: Array<Quark<T>>;
     private pos: number = 0;
@@ -122,7 +149,7 @@ class QuarkArrayIteratorRaw<T> implements Iterator<Quark<T>> {
         this.buffer = [];
     }
 
-    init() {
+    reset() {
         this.pos = 0;
         this.buffer = this.source();
     }
@@ -139,7 +166,7 @@ class QuarkArrayIteratorRaw<T> implements Iterator<Quark<T>> {
 
 
 // TODO: reset() method?
-class QuarkArrayIterator<T> implements Iterator<T> {
+class QuarkArrayIterator<T> implements ResettableIterator<T> {
     private source: Quark<Array<Quark<T>>>;
     private buffer: Array<Quark<T>>;
     private pos: number = 0;
@@ -149,7 +176,7 @@ class QuarkArrayIterator<T> implements Iterator<T> {
         this.buffer = [];
     }
 
-    init() {
+    reset() {
         this.pos = 0;
         this.buffer = this.source();
     }
