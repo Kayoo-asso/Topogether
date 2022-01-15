@@ -44,19 +44,23 @@ export const MapControl: React.FC<MapControlProps> = ({
   draggableMarkers = false,
   ...props
 }: MapControlProps) => {
+  console.log(props.topos!.toArray());
+  console.log(props.topos!.toArray());
   const mapRef = useRef<google.maps.Map>(null);
   const [satelliteView, setSatelliteView] = useState(false);
+  const maxBoulders = props.topos ? Math.max(...props.topos.map(t => t().nbBoulders).toArray()) : 0;
   const [topoFilterOptions, setTopoFilterOptions] = useState<TopoFilterOptions>({
     types: null,
-    nbOfBoulders: 200,
-    boulderRange: [0, 200],
+    nbOfBoulders: maxBoulders,
+    boulderRange: [0, maxBoulders],
     gradeRange: [3, 9],
     adaptedToChildren: false,
   });
+  const maxTracks = props.boulders ? Math.max(...props.boulders.map(b => b().tracks.length).toArray()) : 0;
   const [boulderFilterOptions, setBoulderFilterOptions] = useState<BoulderFilterOptions>({
     techniques: null,
-    nbOfTracks: 10,
-    tracksRange: [0, 10],
+    nbOfTracks: maxTracks,
+    tracksRange: [0, maxTracks],
     gradeRange: [3, 9],
     mustSee: false
   });
@@ -80,21 +84,22 @@ export const MapControl: React.FC<MapControlProps> = ({
       return result;
   }
   const topoFilter = (topo: LightTopo) => {
-        let result = (topoFilterOptions.types === null || topoFilterOptions.types.includes(topo.type)) &&
-            topo.nbBoulders >= topoFilterOptions.boulderRange[0] &&
-            topo.nbBoulders <= topoFilterOptions.boulderRange[1];
-        
-        let foundBouldersAtGrade = false;
-        for (let grade = topoFilterOptions.gradeRange[0]; grade <= topoFilterOptions.gradeRange[1]; grade++) {
-            if (topo.grades[grade] > 0) {
-                foundBouldersAtGrade = true;
-                break;
-            }
+    console.log('filter');
+    let result = (topoFilterOptions.types === null || topoFilterOptions.types.includes(topo.type)) &&
+        topo.nbBoulders >= topoFilterOptions.boulderRange[0] &&
+        topo.nbBoulders <= topoFilterOptions.boulderRange[1];
+    
+    let foundBouldersAtGrade = false;
+    for (let grade = topoFilterOptions.gradeRange[0]; grade <= topoFilterOptions.gradeRange[1]; grade++) {
+        if (topo.grades[grade] > 0) {
+            foundBouldersAtGrade = true;
+            break;
         }
-        result &&= foundBouldersAtGrade;
-        
-        result &&= hasFlag(topo.amenities, Amenities.AdaptedToChildren);
-        return result;
+    }
+    result &&= foundBouldersAtGrade;
+    console.log(result);
+    result &&= hasFlag(topo.amenities, Amenities.AdaptedToChildren);
+    return result;
   }
 
   const getBoundsFromSearchbar = (geometry: google.maps.places.PlaceGeometry) => {
@@ -227,15 +232,14 @@ export const MapControl: React.FC<MapControlProps> = ({
           </Show>
           <Show when={() => props.boulders}>
             <For each={() => props.boulders!.filter(b => boulderFilter(b())).toArray()}>
-                {(boulder) => 
-                      <BoulderMarker
-                        key={reactKey(boulder)}
-                        draggable={draggableMarkers}
-                        boulder={boulder}
-                        onClick={props.onBoulderClick}
-                      />
-                    
-                }
+              {(boulder) => 
+                <BoulderMarker
+                  key={reactKey(boulder)}
+                  draggable={draggableMarkers}
+                  boulder={boulder}
+                  onClick={props.onBoulderClick}
+                />   
+              }
             </For>
           </Show>
           <Show when={() => props.parkings}>
@@ -252,14 +256,15 @@ export const MapControl: React.FC<MapControlProps> = ({
           </Show>
           <Show when={() => props.topos}>
             <For each={() => props.topos!.filter(t => topoFilter(t())).toArray()}>
-                {(topo) => 
-                  <TopoMarker 
+                {(topo) => {
+                  console.log(topo());
+                  return <TopoMarker 
                     key={reactKey(topo)}
                     draggable={draggableMarkers}
                     topo={topo}
                     onClick={props.onTopoClick}
                   />
-                }
+                }}
             </For>
           </Show>
         </Map>

@@ -2,17 +2,16 @@ import React, { useState } from 'react';
 import {
   Button, DownloadButton, Icon, LikeButton, Modal, ParkingButton, ParkingModal
 } from 'components';
-import { topogetherUrl } from 'helpers/globals';
 import launchNavigation from 'helpers/map/launchNavigation';
 import Image from 'next/image';
 import { LightTopo } from 'types';
 import { GradeScale } from '../molecules';
 import { Signal } from 'helpers/quarky';
+import { staticUrl } from 'helpers';
 
 interface TopoModalProps {
   open: boolean,
   topo: Signal<LightTopo>,
-  onEnter: () => void,
   onClose: () => void,
 }
 
@@ -46,7 +45,7 @@ export const TopoModal: React.FC<TopoModalProps> = ({
 
           <div className="w-full h-[180px] relative mt-2">
             <Image
-              src={(topogetherUrl + topo.image?.url) || '/assets/img/Kayoo_default_image.png'}
+              src={topo.image?.url || staticUrl.defaultKayoo}
               alt="image principale du topo"
               priority
               layout="fill"
@@ -93,7 +92,7 @@ export const TopoModal: React.FC<TopoModalProps> = ({
             <Button
               content="Entrer"
               fullWidth
-              onClick={props.onEnter}
+              href={'/topo/'+topo.id}
             />
           </div>
           <div className="pb-4">

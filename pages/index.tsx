@@ -1,15 +1,15 @@
 import React, { useCallback, useContext } from 'react';
 import { DeviceContext, fontainebleauLocation } from 'helpers';
 import type { NextPage } from 'next';
-import { HeaderDesktop, LeftbarDesktop, MapControl } from 'components';
+import { HeaderDesktop, LeftbarDesktop, MapControl, Show, TopoModal } from 'components';
 import { LightTopo } from 'types';
-import { quarkTopo } from 'helpers/fakeData/fakeTopoV2';
 import { Quark, QuarkIter, useSelectQuark } from 'helpers/quarky';
+import { quarkLightTopo } from 'helpers/fakeData/fakeLightTopoV2';
 
 const WorldMapPage: NextPage = () => {
   const device = useContext(DeviceContext);
 
-  const topos: QuarkIter<Quark<LightTopo>> = new QuarkIter(quarkTopo);
+  const topos: QuarkIter<Quark<LightTopo>> = new QuarkIter([quarkLightTopo]);
 
   const selectedTopo = useSelectQuark<LightTopo>();
   const toggleTopoSelect = useCallback((topoQuark: Quark<LightTopo>) => {
@@ -31,20 +31,26 @@ const WorldMapPage: NextPage = () => {
         />
 
         <MapControl
-          initialZoom={8}
+          initialZoom={5}
           center={fontainebleauLocation}
           displayPhotoButton={false}
-          boundsToMarkers
-          searchbarOptions={{
-              findTopos: false,
-              findPlaces: false,
-          }}
+          boundsToMarkers={true}
           topos={topos}
           displayTopoFilter
           onTopoClick={toggleTopoSelect}
         />
 
       </div>
+      
+      <Show when={selectedTopo.quark}>
+          {(topo) => (
+            <TopoModal 
+              open
+              topo={topo}
+              onClose={() => selectedTopo.select(undefined)}
+            />
+      )}
+      </Show>
     </>
   )
 };

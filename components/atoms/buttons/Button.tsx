@@ -24,7 +24,7 @@ export const Button: React.FC<ButtonProps> = ({
     onClick={props.onClick}
   >
     {props.href &&
-      <Link href={props.href}>
+      <Link href={props.href} passHref>
         {props.content}
       </Link>
     }
