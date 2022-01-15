@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { DownloadButton, Flash, GradeHistogram, Icon, LikeButton, SlideoverLeftDesktop, SlideoverMobile } from 'components';
 import { Signal } from 'helpers/quarky';
-import { Amenities, Topo, TopoType } from 'types';
+import { Amenities, Topo } from 'types';
 import { DeviceContext, hasFlag, listRockTypes, TopoTypeToColor } from 'helpers';
 
 interface InfoSlideoverProps {

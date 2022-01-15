@@ -1,5 +1,5 @@
-import { Signal, QuarkArray } from "helpers/quarky";
-import { Boulder, GradeHistogram, gradeToLightGrade, Topo, TopoData, Track } from "types";
+import { Signal } from "helpers/quarky";
+import { GradeHistogram, Topo } from "types";
 import { addTrackToHistogram, defaultGradeHistogram } from "./buildBoulderGradeHistogram";
 
 // The dependencies we'd want if we were doing this by hand:

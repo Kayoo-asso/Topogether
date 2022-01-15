@@ -78,7 +78,7 @@ export const TopoFilters: React.FC<TopoFiltersProps> = ({
                 />
             }
             {open &&
-                <div className='bg-white z-40 relative shadow rounded-lg flex flex-col max-w-[60%] min-w-[250px]'>
+                <div className='bg-white z-40 relative shadow rounded-lg flex flex-col max-w-[60%] md:max-w-[40%] min-w-[250px]'>
                     <div 
                         className='flex flex-row items-center shadow bg-main rounded-lg p-3 pt-4 pl-5 cursor-pointer max-w-[150px]' 
                         onClick={() => setOpen(false)}

@@ -1,9 +1,10 @@
 import React, { useMemo } from 'react';
-import { lightGrades, Topo } from 'types';
+import { lightGrades, LightTopo, Topo } from 'types';
 import { buildGradeHistogram } from 'helpers/topo/buildGradeHistogram';
 
 interface GradeHistogramProps {
-  topo: Topo,
+  topo: Topo | LightTopo,
+  size?: 'little' | 'normal' | 'big',
 }
 
 const bgStyles = {
@@ -17,11 +18,18 @@ const bgStyles = {
   None: 'bg-grey-light',
 };
 
-export const GradeHistogram: React.FC<GradeHistogramProps> = (props: GradeHistogramProps) => {
-  const histogramSignal = useMemo(() =>
-    buildGradeHistogram(props.topo),
-  [props.topo]);
-  const histogram = histogramSignal();
+const typeguard = (topo: LightTopo | Topo): topo is LightTopo => { return true };
+
+export const GradeHistogram: React.FC<GradeHistogramProps> = ({
+  size = 'normal',
+  ...props
+}: GradeHistogramProps) => {
+  // const histogramSignal = useMemo(() =>
+  //   buildGradeHistogram(props.topo as Topo),
+  // [props.topo]);
+  const histogram = typeguard(props.topo) ? 
+                      props.topo.grades :
+                      buildGradeHistogram(props.topo)();
 
   const { Total, None, ...grades } = histogram
   const maxNbOfTracks = Math.max(...Object.values(grades));
@@ -39,13 +47,13 @@ export const GradeHistogram: React.FC<GradeHistogramProps> = (props: GradeHistog
         const height = `${heightPercent}%`;
 
         return (
-          <div className="flex flex-col justify-end h-full mr-1" key={grade}>
-            <div className="ktext-base text-center">
+          <div className={`flex flex-col justify-end h-full mr-1`} key={grade}>
+            <div className={`text-center ${(size === 'normal') ? 'ktext-base' : 'ktext-base-little'}`}>
               {count}
             </div>
             <div
-              style={{ height, minHeight: '24px' }}
-              className={`ktext-subtitle w-6 flex flex-col justify-end items-center rounded-full text-white ${bgStyles[grade]}`}
+              style={{ height, minHeight: '22px' }}
+              className={`ktext-subtitle ${(size === 'normal') ? 'w-6' : 'w-[22px]'} flex flex-col justify-end items-center rounded-full text-white ${bgStyles[grade]}`}
             >
               <div>{grade}</div>
             </div>

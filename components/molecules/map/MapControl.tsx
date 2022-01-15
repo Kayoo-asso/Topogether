@@ -44,8 +44,6 @@ export const MapControl: React.FC<MapControlProps> = ({
   draggableMarkers = false,
   ...props
 }: MapControlProps) => {
-  console.log(props.topos!.toArray());
-  console.log(props.topos!.toArray());
   const mapRef = useRef<google.maps.Map>(null);
   const [satelliteView, setSatelliteView] = useState(false);
   const maxBoulders = props.topos ? Math.max(...props.topos.map(t => t().nbBoulders).toArray()) : 0;
@@ -84,7 +82,6 @@ export const MapControl: React.FC<MapControlProps> = ({
       return result;
   }
   const topoFilter = (topo: LightTopo) => {
-    console.log('filter');
     let result = (topoFilterOptions.types === null || topoFilterOptions.types.includes(topo.type)) &&
         topo.nbBoulders >= topoFilterOptions.boulderRange[0] &&
         topo.nbBoulders <= topoFilterOptions.boulderRange[1];
@@ -97,7 +94,6 @@ export const MapControl: React.FC<MapControlProps> = ({
         }
     }
     result &&= foundBouldersAtGrade;
-    console.log(result);
     result &&= hasFlag(topo.amenities, Amenities.AdaptedToChildren);
     return result;
   }
@@ -256,15 +252,14 @@ export const MapControl: React.FC<MapControlProps> = ({
           </Show>
           <Show when={() => props.topos}>
             <For each={() => props.topos!.filter(t => topoFilter(t())).toArray()}>
-                {(topo) => {
-                  console.log(topo());
-                  return <TopoMarker 
+                {(topo) =>
+                  <TopoMarker 
                     key={reactKey(topo)}
                     draggable={draggableMarkers}
                     topo={topo}
                     onClick={props.onTopoClick}
                   />
-                }}
+                }
             </For>
           </Show>
         </Map>

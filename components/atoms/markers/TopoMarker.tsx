@@ -16,8 +16,6 @@ export const TopoMarker: React.FC<TopoMarkerProps> = watchDependencies(({
     ...props
 }: TopoMarkerProps) => {
     const topo = props.topo();
-    console.log('render topo marker');
-    console.log('/assets/icons/colored/waypoint/_'+TopoTypeToColor(type)+'.svg');
     
     const icon: google.maps.Icon = {
         url: '/assets/icons/colored/waypoint/_'+TopoTypeToColor(type)+'.svg',

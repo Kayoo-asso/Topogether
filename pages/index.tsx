@@ -1,7 +1,7 @@
 import React, { useCallback, useContext } from 'react';
 import { DeviceContext, fontainebleauLocation } from 'helpers';
 import type { NextPage } from 'next';
-import { HeaderDesktop, LeftbarDesktop, MapControl, Show, TopoModal } from 'components';
+import { HeaderDesktop, LeftbarDesktop, MapControl, Show, TopoPreview } from 'components';
 import { LightTopo } from 'types';
 import { Quark, QuarkIter, useSelectQuark } from 'helpers/quarky';
 import { quarkLightTopo } from 'helpers/fakeData/fakeLightTopoV2';
@@ -25,7 +25,7 @@ const WorldMapPage: NextPage = () => {
         title="Carte des topos"
       />
 
-      <div className="flex flex-row h-full">
+      <div className="flex flex-row relative h-full">
         <LeftbarDesktop
           currentMenuItem="MAP"
         />
@@ -39,18 +39,16 @@ const WorldMapPage: NextPage = () => {
           displayTopoFilter
           onTopoClick={toggleTopoSelect}
         />
-
-      </div>
       
-      <Show when={selectedTopo.quark}>
-          {(topo) => (
-            <TopoModal 
-              open
-              topo={topo}
-              onClose={() => selectedTopo.select(undefined)}
-            />
-      )}
-      </Show>
+        <Show when={selectedTopo.quark}>
+            {(topo) => (
+              <TopoPreview 
+                topo={topo}
+                onClose={() => selectedTopo.select(undefined)}
+              />
+            )}
+        </Show>
+      </div>
     </>
   )
 };
