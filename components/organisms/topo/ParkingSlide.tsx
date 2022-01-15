@@ -4,7 +4,6 @@ import { Quark, watchDependencies } from 'helpers/quarky';
 import { Parking } from 'types';
 import { DeviceContext, staticUrl } from 'helpers';
 import { default as NextImage } from 'next/image';
-import launchNavigation from 'helpers/map/launchNavigation';
 
 interface ParkingSlideProps {
     open: boolean,
@@ -61,7 +60,7 @@ export const ParkingSlide: React.FC<ParkingSlideProps> = watchDependencies(({
                     <div className='mt-2'>{parking.description}</div>
                 </div>
             </div>
-            <div className='absolute text-center px-6 bottom-[9%] md:bottom-[9%] w-full'>
+            <div className='absolute text-center px-6 bottom-[9%] md:bottom-2 w-full'>
                 <ParkingButton 
                     onClick={() => setModalParkingOpen(true)}
                 />
@@ -97,12 +96,12 @@ export const ParkingSlide: React.FC<ParkingSlideProps> = watchDependencies(({
                 {flashMessage}
             </Flash>
 
-            <ParkingModal
-                open={modalParkingOpen}
-                onGoogleClick={() => launchNavigation(parking.location, 'google')}
-                onAppleClick={() => launchNavigation(parking.location, 'apple')}
-                onClose={() => setModalParkingOpen(false)}
-            />
+            {modalParkingOpen &&
+                <ParkingModal
+                    parkingLocation={parking.location}
+                    onClose={() => setModalParkingOpen(false)}
+                />
+            }
         </>
     )
 });
