@@ -41,7 +41,7 @@ export const TracksList: React.FC<TracksListProps> = watchDependencies((props: T
             <GradeCircle
               grade={grade}
               className="cursor-pointer"
-              content={track.orderIndex.toString()}
+              content={(track.orderIndex + 1).toString()}
             />
 
             {track.grade
@@ -53,6 +53,7 @@ export const TracksList: React.FC<TracksListProps> = watchDependencies((props: T
             <div className="col-span-5 ml-3">
               <span className="ktext-base">{track.name}</span>
             </div>
+
             <AverageNote ratings={track.ratings} className="justify-end" wrapperClassName="col-span-2" />
           </div>
         );

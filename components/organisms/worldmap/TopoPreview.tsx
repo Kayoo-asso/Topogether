@@ -5,7 +5,7 @@ import {
 import { default as NextImage } from 'next/image';
 import { LightTopo } from 'types';
 import { Signal } from 'helpers/quarky';
-import { DeviceContext, staticUrl } from 'helpers';
+import { DeviceContext, staticUrl, TopoTypeToColor } from 'helpers';
 
 interface TopoPreviewProps {
   topo: Signal<LightTopo>,
@@ -34,7 +34,7 @@ export const TopoPreview: React.FC<TopoPreviewProps> = (props: TopoPreviewProps)
                 <div className="px-4 ktext-section-title justify-center md:justify-start flex flex-row items-center">
                     <Icon 
                         name='waypoint'
-                        SVGClassName={'h-6 w-6 fill-main'} //TODO : change color depending on topo type
+                        SVGClassName={'h-6 w-6 ' + TopoTypeToColor(topo.type)} //TODO : change color depending on topo type
                     />
                     <div className='ml-2'>{topo.name}</div>
                 </div>

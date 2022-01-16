@@ -12,13 +12,13 @@ interface ImageButtonProps {
 }
 
 export const ImageButton: React.FC<ImageButtonProps> = ({
-  text = '+ ajouter une image',
+  text = '+ Ajouter une image',
   loading = false,
   ...props
 }) => (
   // eslint-disable-next-line jsx-a11y/click-events-have-key-events
   <div
-    className="ktext-label relative text-center shadow text-main p-2 border-main border-2 w-22 h-22 flex flex-col justify-center cursor-pointer"
+    className="ktext-subtext relative text-center shadow text-main p-2 border-main border-2 w-22 h-22 flex flex-col justify-center cursor-pointer"
     onClick={props.onClick}
     role="button"
     tabIndex={0}
@@ -41,6 +41,6 @@ export const ImageButton: React.FC<ImageButtonProps> = ({
         />
       )}
     {!loading && !props.image
-      && <span>{text}</span>}
+      && <span className=''>{text}</span>}
   </div>
 );

@@ -8,8 +8,8 @@ import { ImageInput } from '.';
 // TODO : GESTION DES TRACKSIMAGE
 
 interface MultipleImageInputProps {
-  label: string,
-  display: Image[],
+  images: Image[],
+  label?: string,
   rows?: number,
   cols?: number,
   allowUpload?: boolean,
@@ -31,7 +31,7 @@ export const MultipleImageInput: React.FC<MultipleImageInputProps> = ({
   if (allowUpload) {
     nbVisible -= 1;
   }
-  const nbPages = Math.ceil(props.display.length / nbVisible);
+  const nbPages = Math.ceil(props.images.length / nbVisible);
 
   if (page >= nbPages) {
     setPage(nbPages - 1);
@@ -44,10 +44,10 @@ export const MultipleImageInput: React.FC<MultipleImageInputProps> = ({
   const sliceStart = nbVisible * page;
   // index of last image to display + 1
   const sliceEnd = sliceStart + nbVisible - 1;
-  const toDisplay = props.display.slice(sliceStart, sliceEnd);
+  const toDisplay = props.images.slice(sliceStart, sliceEnd);
 
   return (
-    <>
+    <div className='flex flex-row gap-2'>
       {displayLeftArrow && (
         <Icon
           name="arrow-full"
@@ -81,6 +81,6 @@ export const MultipleImageInput: React.FC<MultipleImageInputProps> = ({
           onClick={() => setPage((p) => p + 1)}
         />
       )}
-    </>
+    </div>
   );
 };

@@ -154,7 +154,6 @@ const Topo: NextPage = () => {
           onBoulderClick={toggleBoulderSelect}
           parkings={parkings}
           onParkingClick={toggleParkingSelect}
-          topos={new QuarkIter([lightTopo])}
         />
         
 
@@ -187,9 +186,12 @@ const Topo: NextPage = () => {
             }
             else return (
               <BoulderSlideagainstDesktop
-                open
-                boulder={boulder} 
-                onSelectTrack={(track) => selectedTrack.select(track)}
+                boulder={boulder}
+                selectedTrack={selectedTrack}
+                topoCreatorId={topo().creatorId}
+                onSelectTrack={(track) => {
+                  // console.log(track())
+                  selectedTrack.select(track)}}
                 onClose={() => {
                   selectedTrack.select(undefined);
                   selectedBoulder.select(undefined);

@@ -40,12 +40,11 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = wat
   const boulder = props.boulder();
   const selectedTrack = props.selectedTrack();
 
-  const displayedTracks = useMemo(
-() => boulder.tracks
+  const displayedTracks = useMemo(() => boulder.tracks
     .quarks()
     .filter((track) => ((track().creatorId) === props.topoCreatorId) === officialTrackTab),
     [boulder.tracks, props.topoCreatorId, officialTrackTab],
-);
+  );
 
   return (
     <SlideoverMobile

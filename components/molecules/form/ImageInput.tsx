@@ -7,7 +7,7 @@ import {
 import { ImageButton } from '../../atoms';
 
 interface ImageInputProps {
-  label: string,
+  label?: string,
   display?: Image,
   multiple?: boolean,
   onUpload: (files: File[]) => void,

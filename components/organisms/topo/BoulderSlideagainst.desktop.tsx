@@ -1,31 +1,35 @@
-import React, { useState } from 'react';
-import { Flash, Icon, SlideagainstRightDesktop, TracksList } from 'components';
-import { Quark, watchDependencies } from 'helpers/quarky';
+import React, { useMemo, useState } from 'react';
+import { BoulderPreviewDesktop, Flash, Icon, SlideagainstRightDesktop, TracksList } from 'components';
+import { Quark, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
 import { Boulder, Track, UUID } from 'types';
 
 interface BoulderSlideagainstDesktopProps {
     boulder: Quark<Boulder>,
-    open?: boolean,
+    selectedTrack: SelectQuarkNullable<Track>,
     topoCreatorId?: UUID,
     onSelectTrack?: (track: Quark<Track>) => void,
     onClose: () => void,
 }
 
-export const BoulderSlideagainstDesktop: React.FC<BoulderSlideagainstDesktopProps> = watchDependencies(({
-    open = true,
-    ...props
-}: BoulderSlideagainstDesktopProps) => {
+export const BoulderSlideagainstDesktop: React.FC<BoulderSlideagainstDesktopProps> = watchDependencies((props: BoulderSlideagainstDesktopProps) => {
     const [flashMessage, setFlashMessage] = useState<string>();
+    const [officialTrackTab, setOfficialTrackTab] = useState(true);
     const boulder = props.boulder();
+
+    const displayedTracks = useMemo(() => boulder.tracks
+        .quarks()
+        .filter((track) => ((track().creatorId) === props.topoCreatorId) === officialTrackTab),
+        [boulder.tracks, props.topoCreatorId, officialTrackTab],
+    );
 
     return (
         <>
             <SlideagainstRightDesktop 
-                open={open}
+                open
                 onClose={props.onClose}
             >
                 <>
-                    <div className='px-8 mb-10'>
+                    <div className='px-5 mb-10'>
                         <div className='flex flex-row items-end mb-2'>
                             <Icon 
                                 name='rock'
@@ -47,12 +51,23 @@ export const BoulderSlideagainstDesktop: React.FC<BoulderSlideagainstDesktopProp
                         </div>
                         {boulder.isHighball && <div className='ktext-label text-grey-medium'>High Ball</div>}
                         {boulder.mustSee && <div className='ktext-label text-grey-medium mb-15'>Incontournable !</div>}
-
-                        <div>{/* TODO Boulder Preview*/}</div>
+                        
+                        <div className='mt-3'>
+                            <BoulderPreviewDesktop
+                                boulder={props.boulder}
+                                selectedTrack={props.selectedTrack}
+                                onSelectTrack={props.onSelectTrack}
+                            />
+                        </div>
                     </div>
+                    
 
+                    <div className="flex flex-row px-5 ktext-label font-bold my-2 justify-between">
+                        <span className={`cursor-pointer ${officialTrackTab ? 'text-main' : 'text-grey-medium'}`} onClick={() => setOfficialTrackTab(true)}>officielles</span>
+                        <span className={`cursor-pointer ${!officialTrackTab ? 'text-main' : 'text-grey-medium'}`} onClick={() => setOfficialTrackTab(false)}>communautés</span>
+                    </div>
                     <TracksList 
-                        tracks={boulder.tracks.quarks()}
+                        tracks={displayedTracks}
                         onTrackClick={props.onSelectTrack}
                     />
                 </>
