@@ -306,10 +306,10 @@ export const TracksImage: React.FC<TracksImageProps> = ({
   return (
     <div
       ref={observe}
-      className={`relative max-h-content ${containerClassName}`}
+      className={`relative max-h-content w-full ${containerClassName}`}
       style={{
-        maxHeight: divHeight,
-        maxWidth: divWidth,
+        height: divHeight,
+        width: divWidth,
       }}
     >
       <svg

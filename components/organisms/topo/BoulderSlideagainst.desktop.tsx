@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { BoulderPreviewDesktop, Flash, Icon, SlideagainstRightDesktop, TracksList } from 'components';
+import { BoulderPreviewDesktop, Flash, Icon, LikeButton, SlideagainstRightDesktop, TracksList } from 'components';
 import { Quark, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
 import { Boulder, Track, UUID } from 'types';
 
@@ -26,6 +26,8 @@ export const BoulderSlideagainstDesktop: React.FC<BoulderSlideagainstDesktopProp
         <>
             <SlideagainstRightDesktop 
                 open
+                displayLikeButton
+                item={props.boulder}
                 onClose={props.onClose}
             >
                 <>
@@ -59,17 +61,19 @@ export const BoulderSlideagainstDesktop: React.FC<BoulderSlideagainstDesktopProp
                                 onSelectTrack={props.onSelectTrack}
                             />
                         </div>
-                    </div>
-                    
+                    </div>             
 
                     <div className="flex flex-row px-5 ktext-label font-bold my-2 justify-between">
                         <span className={`cursor-pointer ${officialTrackTab ? 'text-main' : 'text-grey-medium'}`} onClick={() => setOfficialTrackTab(true)}>officielles</span>
                         <span className={`cursor-pointer ${!officialTrackTab ? 'text-main' : 'text-grey-medium'}`} onClick={() => setOfficialTrackTab(false)}>communautés</span>
                     </div>
-                    <TracksList 
-                        tracks={displayedTracks}
-                        onTrackClick={props.onSelectTrack}
-                    />
+
+                    <div className='overflow-auto'>
+                        <TracksList 
+                            tracks={displayedTracks}
+                            onTrackClick={props.onSelectTrack}
+                        />
+                    </div>
                 </>
             </SlideagainstRightDesktop>
 

@@ -20,6 +20,12 @@ export const images: Image[] = [
         // boulderImageDimensions = 674x450 in the original fakeTopo
         // multiply every line coordinate by 4592 / 674 to scale the data
     },
+    {
+        id: uuid(),
+        url: "https://builder.topogether.com/public/uploads/boulder/image/a486a4432feafc909d335e8f18ee5448212af176.jpeg",
+        width: 1334,
+        height: 2000,
+    },
     // Parking 0 image
     {
         id: uuid(),
@@ -120,7 +126,7 @@ export const boulders: BoulderData[] = [
         mustSee: false,
         descent: Difficulty.Dangerous,
         orderIndex: 0,
-        images: [images[1]],
+        images: [images[0], images[1], images[2]],
         tracks
     }
 ]

@@ -18,17 +18,20 @@ export const BoulderPreviewDesktop: React.FC<BoulderPreviewDesktopProps> = ({
     const [selectedImageId, setSelectedImageId] = useState<UUID>(boulder.images[0].id);
 
     return (
-        <div className='flex flex-col w-full'>
-            <TracksImage 
-                image={boulder.images.find(i => i.id === selectedImageId) || boulder.images[0]}
-                tracks={boulder.tracks}
-                selectedTrack={props.selectedTrack}
-                onPolylineClick={(line) => {
-                    // console.log(line);
-                    const track = boulder.tracks.findQuark(t => t.lines.toArray().some(l => l.id === line.id));
-                    props.onSelectTrack && props.onSelectTrack(track!)
-                }}
-            />
+        <div className='flex flex-col w-full items-center'>
+            <div className='bg-dark w-full flex flex-col items-center'>
+                <TracksImage 
+                    image={boulder.images.find(i => i.id === selectedImageId) || boulder.images[0]}
+                    tracks={boulder.tracks}
+                    selectedTrack={props.selectedTrack}
+                    containerClassName='max-h-[200px]'
+                    onPolylineClick={(line) => {
+                        // console.log(line);
+                        const track = boulder.tracks.findQuark(t => t.lines.toArray().some(l => l.id === line.id));
+                        props.onSelectTrack && props.onSelectTrack(track!)
+                    }}
+                />
+            </div>
             
             <div className='flex flex-row w-full mt-3'>
                 <MultipleImageInput 

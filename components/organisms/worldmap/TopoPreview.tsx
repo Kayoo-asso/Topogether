@@ -21,7 +21,7 @@ export const TopoPreview: React.FC<TopoPreviewProps> = (props: TopoPreviewProps)
 
     const topoPreviewContent = () => (
         <>
-            <div className="flex flex-row gap-5 px-6 pt-4 md:-mt-[50px] md:max-w-[50%]">
+            <div className="flex flex-row gap-5 px-6 pt-4 md:hidden">
                 <LikeButton
                     item={props.topo}
                 />
@@ -129,7 +129,10 @@ export const TopoPreview: React.FC<TopoPreviewProps> = (props: TopoPreviewProps)
         }
         {device !== 'MOBILE' &&
             <SlideagainstRightDesktop 
-                open={true}
+                open
+                displayLikeButton
+                displayDlButton
+                item={props.topo}
                 onClose={props.onClose}
             >
                 {topoPreviewContent()}

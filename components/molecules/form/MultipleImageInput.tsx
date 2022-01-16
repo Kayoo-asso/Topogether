@@ -42,12 +42,12 @@ export const MultipleImageInput: React.FC<MultipleImageInputProps> = ({
 
   // index of first image to display
   const sliceStart = nbVisible * page;
-  // index of last image to display + 1
-  const sliceEnd = sliceStart + nbVisible - 1;
+  // index of last image to display
+  const sliceEnd = sliceStart + nbVisible;
   const toDisplay = props.images.slice(sliceStart, sliceEnd);
 
   return (
-    <div className='flex flex-row gap-2'>
+    <div className='flex flex-row gap-1.5 w-full'>
       {displayLeftArrow && (
         <Icon
           name="arrow-full"
