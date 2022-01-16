@@ -12,6 +12,7 @@ import useDimensions from 'react-cool-dimensions';
 import {
   getMousePosInside,
   getPathFromPoints,
+  ratioPoint,
 } from '../../helpers';
 import { QuarkArray, SelectQuarkNullable } from 'helpers/quarky';
 
@@ -158,7 +159,7 @@ export const TracksImage: React.FC<TracksImageProps> = ({
         || props.selectedTrack() === undefined
         || track.id === props.selectedTrack()!.id;
 
-      const points: Position[] = line.points.map((p) => [p[0] * rx, p[1] * ry]);
+      const points: Position[] = line.points.map((p) => ratioPoint(p, rx));
       const path = getPathFromPoints(points, 'CURVE');
       const firstX = points[0][0];
       const firstY = points[0][1];
@@ -176,24 +177,26 @@ export const TracksImage: React.FC<TracksImageProps> = ({
           key={'path'+line.id}
           className={`fill-[none] ${getStrokeColorClass(track)} stroke-2 ${lineBaseCss}${props.onPolylineClick ? ' cursor-pointer' : ''}`}
           d={path}
-          onClick={() => props.onPolylineClick && props.onPolylineClick(line)}
+          onClick={() => {
+            props.onPolylineClick && props.onPolylineClick(line)}}
         />,
       );
 
       // Draw point circles
-      const pointRadius = 3 * rx;
-      const pointCircles = points.map((x, index) => (
-        <circle
-          key={index+line.id+x[0]+','+x[1]}
-          className="pointer-events-auto"
-          cx={x[0] * rx}
-          cy={x[1] * ry}
-          r={pointRadius}
-        />
-      ));
-
-      // TODO: optimise this
-      svgElems.push(...pointCircles);
+      if (editable) {
+        const pointRadius = 3;
+        const pointCircles = points.map((x, index) => (
+          <circle
+            key={index+line.id+x[0]+','+x[1]}
+            className={"pointer-events-auto " + getFillColorClass(track)}
+            cx={x[0]}
+            cy={x[1]}
+            r={pointRadius}
+          />
+        ));
+        // TODO: optimise this
+        svgElems.push(...pointCircles);
+      }
 
       // Track number in the ordering
       if (displayTracksNumber) {
@@ -233,8 +236,7 @@ export const TracksImage: React.FC<TracksImageProps> = ({
             svgElems.push(
               <image
                 className={svgScaleClass}
-                href={`assets/icons/colored/hand-full/_hand-full-${getColorNumber(track)}.svg`}
-                width={18}
+                href={`/assets/icons/colored/hand-full/_hand-full-${getColorNumber(track)}.svg`}
                 x={handX * rx}
                 y={handY * ry}
               />,
@@ -246,8 +248,7 @@ export const TracksImage: React.FC<TracksImageProps> = ({
             svgElems.push(
               <image
                 className={svgScaleClass}
-                href={`assets/icons/colored/climbing-shoe-full/_climbing-shoe-full-${getColorNumber(track)}.svg`}
-                width={30}
+                href={`/assets/icons/colored/climbing-shoe-full/_climbing-shoe-full-${getColorNumber(track)}.svg`}
                 x={footX * rx}
                 y={footY * ry}
               />,
@@ -258,8 +259,8 @@ export const TracksImage: React.FC<TracksImageProps> = ({
 
       // Forbidden areas
       if (displayTracksDetails && isHighlighted && line.forbidden) {
-        for (let areaIdx = 0; areaIdx < line.forbidden.length; areaIdx++) {
-          const area = line.forbidden[areaIdx];
+        for (let i = 0; i < line.forbidden.length; i++) {
+          const area = line.forbidden[i];
           svgElems.push(
             <SVGArea
               className={svgScaleClass}
@@ -272,7 +273,7 @@ export const TracksImage: React.FC<TracksImageProps> = ({
               // You can already drag to resize
               // Maybe to remove them?
               // need to call props.onPointClick('FORBIDDEN_AREA_POINT', areaIdx)
-              onChange={(area) => props.onAreaChange && props.onAreaChange('FORBIDDEN_AREA', areaIdx, area)}
+              onChange={(area) => props.onAreaChange && props.onAreaChange('FORBIDDEN_AREA', i, area)}
             />,
           );
         }

@@ -5,7 +5,7 @@ interface SVGPointProps {
   x: number,
   y: number,
   draggable?: boolean,
-  iconName?: string,
+  iconHref?: string,
   size?: number,
   className?: string,
   onDrag?: (coord: Position) => void,
@@ -14,7 +14,7 @@ interface SVGPointProps {
 
 export const SVGPoint: React.FC<SVGPointProps> = ({
   draggable = false,
-  iconName = 'line-point',
+  iconHref = '/assets/icons/colored/line-point/_line-point-grey.svg',
   size = 5,
   className = 'fill-main',
   ...props
@@ -71,7 +71,7 @@ export const SVGPoint: React.FC<SVGPointProps> = ({
         x={props.x}
         y={props.y}
         className={`${className} ${draggable ? ' draggable' : ''}`}
-        href={`/assets/icons/_${iconName}.svg`}
+        href={iconHref}
         width={size}
         onPointerDown={handlePointerDown}
         onPointerUp={handlePointerUp}

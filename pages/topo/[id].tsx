@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import type { NextPage } from 'next';
 import { 
   ApproachSlideover, InfoSlideover, ManagementSlideover,
@@ -11,8 +11,6 @@ import { quarkTopo } from 'helpers/fakeData/fakeTopoV2';
 import { DeviceContext } from 'helpers';
 import { Boulder, Parking, Track, Waypoint } from 'types';
 import { Quark, QuarkIter, useQuarkyCallback, useSelectQuark, watchDependencies } from 'helpers/quarky';
-import { v4 } from 'uuid';
-import { quarkLightTopo } from 'helpers/fakeData/fakeLightTopoV2';
 
 const Topo: NextPage = () => {
   const router = useRouter();
@@ -20,7 +18,6 @@ const Topo: NextPage = () => {
   const device = useContext(DeviceContext);
 
   const topo = quarkTopo;
-  const lightTopo = quarkLightTopo;
   const boulders = useMemo(() => topo().sectors
       .lazy()
       .map(s => s.boulders.quarks())

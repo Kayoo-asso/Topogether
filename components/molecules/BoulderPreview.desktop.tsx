@@ -24,7 +24,7 @@ export const BoulderPreviewDesktop: React.FC<BoulderPreviewDesktopProps> = ({
                 tracks={boulder.tracks}
                 selectedTrack={props.selectedTrack}
                 onPolylineClick={(line) => {
-                    console.log(line);
+                    // console.log(line);
                     const track = boulder.tracks.findQuark(t => t.lines.toArray().some(l => l.id === line.id));
                     props.onSelectTrack && props.onSelectTrack(track!)
                 }}

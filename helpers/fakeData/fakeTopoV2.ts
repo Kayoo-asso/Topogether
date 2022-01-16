@@ -47,7 +47,9 @@ export const lines: Line[] = [
             [2269, 1200]
         ],
         forbidden: null,
-        handDepartures: null,
+        handDepartures: [
+            [1050, 620],
+        ],
         feetDepartures: null,
     },
     // Line 1, track 1
@@ -59,9 +61,16 @@ export const lines: Line[] = [
             [2262, 787],
             [1901, 51]
         ],
-        forbidden: null,
+        forbidden: [{
+            0: [1200, 50],
+            1: [1650, 50],
+            2: [1650, 400],
+            3: [1200, 400],
+        }],
         handDepartures: null,
-        feetDepartures: null,
+        feetDepartures: [
+            [600, 250],
+        ],
     }
 ]
 
