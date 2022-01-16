@@ -10,7 +10,7 @@ import { useRouter } from 'next/router';
 import { quarkTopo } from 'helpers/fakeData/fakeTopoV2';
 import { DeviceContext } from 'helpers';
 import { Boulder, Parking, Track, Waypoint } from 'types';
-import { Quark, QuarkIter, useSelectQuark, watchDependencies } from 'helpers/quarky';
+import { Quark, QuarkIter, useQuarkyCallback, useSelectQuark, watchDependencies } from 'helpers/quarky';
 import { v4 } from 'uuid';
 import { quarkLightTopo } from 'helpers/fakeData/fakeLightTopoV2';
 
@@ -38,7 +38,7 @@ const Topo: NextPage = () => {
   const selectedParking = useSelectQuark<Parking>();
   const selectedWaypoint = useSelectQuark<Waypoint>();
 
-  const toggleBoulderSelect = useCallback((boulderQuark: Quark<Boulder>) => {
+  const toggleBoulderSelect = useQuarkyCallback((boulderQuark: Quark<Boulder>) => {
     selectedTrack.select(undefined);
     selectedParking.select(undefined);
     selectedWaypoint.select(undefined);
@@ -46,7 +46,7 @@ const Topo: NextPage = () => {
         selectedBoulder.select(undefined);
     else selectedBoulder.select(boulderQuark)
   }, [selectedBoulder]);
-  const toggleParkingSelect = useCallback((parkingQuark: Quark<Parking>) => {
+  const toggleParkingSelect = useQuarkyCallback((parkingQuark: Quark<Parking>) => {
     selectedBoulder.select(undefined);
     selectedTrack.select(undefined);
     selectedWaypoint.select(undefined);
@@ -54,7 +54,7 @@ const Topo: NextPage = () => {
       selectedParking.select(undefined);
     else selectedParking.select(parkingQuark)
   }, [selectedParking]);
-  const toggleWaypointSelect = useCallback((waypointQuark: Quark<Waypoint>) => {
+  const toggleWaypointSelect = useQuarkyCallback((waypointQuark: Quark<Waypoint>) => {
     selectedBoulder.select(undefined);
     selectedTrack.select(undefined);
     selectedParking.select(undefined);

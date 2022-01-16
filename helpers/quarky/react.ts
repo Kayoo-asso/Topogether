@@ -1,6 +1,6 @@
-import React, { useState, useMemo, useEffect} from "react";
+import React, { useState, useMemo, useEffect, useCallback} from "react";
 import ReactDOM from "react-dom";
-import { observerEffect, selectQuark, SelectQuark, selectSignal, SelectSignal, SelectSignalNullable, setBatchUpdates } from ".";
+import { batch, observerEffect, selectQuark, SelectQuark, selectSignal, SelectSignal, SelectSignalNullable, setBatchUpdates } from ".";
 import { Quark, derive, quark, QuarkOptions, untrack, Signal, SelectQuarkNullable } from "./quarky";
 
 setBatchUpdates(ReactDOM.unstable_batchedUpdates);
@@ -50,6 +50,12 @@ export function useSelectQuark<T>(): SelectQuarkNullable<T>;
 export function useSelectQuark<T>(initial: Quark<T>): SelectQuark<T>;
 export function useSelectQuark<T>(initial?: Quark<T>): SelectQuark<T> | SelectQuarkNullable<T> {
     return useMemo(() => selectQuark<T>(initial as any), []);
+}
+
+export function useQuarkyCallback<T>(callback: (input: T) => void, deps: React.DependencyList): (input: T) => void {
+    return useCallback((input: T) => {
+        batch(() => callback(input))
+    }, deps);
 }
 
 const quarkKeys: WeakMap<Signal<any>, number> = new WeakMap();

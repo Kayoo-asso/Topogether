@@ -524,16 +524,14 @@ function processUpdates() {
                 const q = quarks[i];
                 const u = updates[i];
                 let prevValue = q.value;
-                // style update the value inside the quark, in case it's different but a custom equality function is there to stop propagation
+                // still update the value inside the quark, in case it's different but a custom equality function is there to stop propagation
                 if (typeof u === "function") {
                     q.value = u(q.value);
                 } else {
                     q.value = u;
                 }
 
-                if (q.equal(prevValue, q.value)) {
-                    continue;
-                }
+                if (q.equal(prevValue, q.value)) continue;
 
                 q.lastEpoch = Epoch;
 
@@ -559,7 +557,7 @@ function processUpdates() {
                 const e = effects[i];
                 if (e.cdeps === EFFECT_DELETED) continue;
                 // e does not use its passive dependencies
-                if (updateChildren(e, e.cdeps)) {
+                if (updateChildren(e)) {
                     runEffect(e);
                 }
             }
@@ -612,12 +610,12 @@ function updateDerivation(node: DerivationNode<any>): boolean {
 function propagateDown(node: DerivationNode<any>): boolean {
     // only update the derivation if one of the children has changed 
     // and only send a signal upward if the value changed with the update
-    return updateChildren(node, 0) && updateDerivation(node);
+    return updateChildren(node) && updateDerivation(node);
 }
 
-function updateChildren(node: Computation, start: number): boolean {
+function updateChildren(node: Computation): boolean {
     let somethingChanged = false;
-    for (let i = start; i < node.deps.length; i++) {
+    for (let i = 0; i < node.deps.length; i++) {
         const d = node.deps[i];
         if (d.type === NodeType.Derivation && d.dirty) {
             somethingChanged ||= propagateDown(d);
