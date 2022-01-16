@@ -1,6 +1,4 @@
-import exp from "constants";
 import { Quark, derive, effect, quark, batch, untrack, Signal, selectSignal, selectQuark, QuarkDebug, EffectDebug, Effect } from "helpers/quarky/quarky"
-import { lazy } from "react";
 import { getConsoleErrorSpy } from "test/utils";
 
 test("Creating and reading quark", () => {
@@ -129,7 +127,7 @@ test("Derivations start deactivated", () => {
     expect(counter.current).toBe(0);
 });
 
-test("Reading inactive derivation updates it", () => {
+test("Reading inactive derivation does not update if nothing changed", () => {
     const q = quark(2);
     const counter = {
         current: 0
@@ -141,6 +139,25 @@ test("Reading inactive derivation updates it", () => {
     expect(counter.current).toBe(0);
     d();
     expect(counter.current).toBe(1);
+    d();
+    expect(counter.current).toBe(1);
+});
+
+
+test("Reading inactive derivation does not update if something changed (even unrelated)", () => {
+    const q = quark(2);
+    const unrelated = quark(0);
+    const counter = {
+        current: 0
+    }
+    const d = derive(() => {
+        counter.current++;
+        return q() + 1;
+    });
+    expect(counter.current).toBe(0);
+    d();
+    expect(counter.current).toBe(1);
+    unrelated.set(1);
     d();
     expect(counter.current).toBe(2);
 });
@@ -223,7 +240,9 @@ test("Cycles are detected (propagation)", () => {
     effect([d], () => { }, { lazy: true, name: "e" });
     // create the cycle after the effect has read `d` and registered as an observer
     wrapper.quark = d;
-    // TODO: check that the error messages are good
+    // first, d needs to refresh its dependencies
+    // then, the cycle will be detected upon next run
+    q.set(3);
     expect(() => q.set(2)).toThrowError();
 });
 
