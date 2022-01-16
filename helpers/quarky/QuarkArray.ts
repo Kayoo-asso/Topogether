@@ -26,6 +26,10 @@ export class QuarkArray<T> {
         return this.#source().at(i)!();
     }
 
+    quarkAt(i: number): Quark<T> {
+        return this.#source().at(i)!;
+    }
+
     set(i: number, value: ValueOrWrappedFunction<T>) {
         this.#source()[i].set(value);
     }
