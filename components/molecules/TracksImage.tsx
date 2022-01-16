@@ -285,7 +285,6 @@ export const TracksImage: React.FC<TracksImageProps> = ({
   }
 
   const getCursorUrl = () => {
-    console.log(props.currentTool);
     let cursorColor = 'grey';
     if (currentTrack?.grade) { cursorColor = currentTrack.grade[0] || 'grey'; }
 

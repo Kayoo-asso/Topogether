@@ -91,6 +91,10 @@ export const tracks: TrackData[] = [
         techniques: ClimbTechniques.Adherence,
         description: "Une petite montée facile" as Description,
 
+        isTraverse: false,
+        isSittingStart: true,
+        mustSee: true,
+
         lines: [lines[0]],
         ratings: [],
         creatorId: topoCreatorId,
@@ -106,7 +110,10 @@ export const tracks: TrackData[] = [
         reception: Difficulty.OK,
         // -> Bitflag example
         techniques: ClimbTechniques.Adherence | ClimbTechniques.Pince,
-        isSittingStart: true,
+        
+        isTraverse: true,
+        isSittingStart: false,
+        mustSee: false,
 
         lines: [lines[1]],
         ratings: [],

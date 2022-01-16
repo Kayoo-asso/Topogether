@@ -148,8 +148,9 @@ export interface TrackData {
   techniques?: ClimbTechniques,
   reception?: Difficulty,
   orientation?: Orientation,
-  isTraverse?: boolean,
-  isSittingStart?: boolean,
+  isTraverse: boolean,
+  isSittingStart: boolean,
+  mustSee: boolean
   hasMantle?: boolean,
 
   lines: Line[],

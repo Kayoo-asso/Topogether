@@ -11,7 +11,7 @@ export interface DropdownOption {
 }
 
 interface DropdownProps {
-  choices: DropdownOption[];
+  options: DropdownOption[];
   onSelect?: (option: DropdownOption) => void;
   type?: string;
   className?:string;
@@ -21,36 +21,36 @@ export const Dropdown: React.FC<DropdownProps> = React.memo(({
   className = '',
   ...props
 }: DropdownProps) => (
-  <div className={`shadow absolute z-100 w-auto px-7 py-5 bg-white rounded-b ${className}`}>
-    {props.choices.map((choice, i) => (
-      choice.isSection ? (
+  <div className={`shadow absolute z-100 w-full px-7 py-5 bg-white rounded-b ${className}`}>
+    {props.options.map((opt, i) => (
+      opt.isSection ? (
         <div
           className={`text-grey-medium ktext-label uppercase ${i > 0 && 'mt-5'}`}
-          key={choice.value}
+          key={opt.value}
           onKeyDown={() => {
-            props.onSelect && props.onSelect(choice);
-            choice.action && choice.action();
+            props.onSelect && props.onSelect(opt);
+            opt.action && opt.action();
           }}
           onMouseDown={() => {
-            props.onSelect && props.onSelect(choice);
-            choice.action && choice.action();
+            props.onSelect && props.onSelect(opt);
+            opt.action && opt.action();
           }}
           role="menuitem"
           tabIndex={0}
         >
-          {choice.label || choice.value}
+          {opt.label || opt.value}
         </div>
       ) : (
         <div
           className="py-4 text-dark ktext-base cursor-pointer flex flex-row items-center"
-          key={choice.value}
+          key={opt.value}
           onKeyDown={() => {
-            props.onSelect && props.onSelect(choice);
-            choice.action && choice.action();
+            props.onSelect && props.onSelect(opt);
+            opt.action && opt.action();
           }}
           onMouseDown={() => {
-            props.onSelect && props.onSelect(choice);
-            choice.action && choice.action();
+            props.onSelect && props.onSelect(opt);
+            opt.action && opt.action();
           }}
           role="menuitem"
           tabIndex={0}
@@ -58,18 +58,18 @@ export const Dropdown: React.FC<DropdownProps> = React.memo(({
           {props.type === 'checkbox' && props.onSelect && (
             <Checkbox
               className="mr-2"
-              checked={choice.checked}
-              onClick={() => { props.onSelect && props.onSelect(choice); }}
+              checked={opt.checked}
+              onClick={() => { props.onSelect && props.onSelect(opt); }}
             />
           )}
-          {choice.icon && (
+          {opt.icon && (
           <Icon
-            name={choice.icon}
+            name={opt.icon}
             SVGClassName="stroke-black h-5 w-5 mr-5"
           />
           )}
 
-          {choice.label || choice.value}
+          {opt.label || opt.value}
 
         </div>
       )))}
