@@ -51,20 +51,25 @@ export const MultipleImageInput: React.FC<MultipleImageInputProps> = ({
       {displayLeftArrow && (
         <Icon
           name="arrow-full"
-          SVGClassName="stroke-main fill-main"
+          center
+          SVGClassName="w-3 h-3 stroke-main fill-main rotate-180"
           onClick={() => setPage((p) => p - 1)}
         />
       )}
 
-      {toDisplay.map((image) => (
-        <ImageThumb
-          key={image.id}
-          image={image}
-          selected={image.id === props.selected}
-          onClick={props.onImageClick}
-          onDelete={props.onImageDelete}
-        />
-      ))}
+      {[ ...Array(cols).keys()].map((i, index) => {
+        if (toDisplay[index])
+          return (
+            <ImageThumb
+              key={toDisplay[index].id}
+              image={toDisplay[index]}
+              selected={toDisplay[index].id === props.selected}
+              onClick={props.onImageClick}
+              onDelete={props.onImageDelete}
+            />
+          )
+        else return <div className='w-full'></div>
+      })}
 
       {allowUpload && (
         <ImageInput
@@ -77,7 +82,8 @@ export const MultipleImageInput: React.FC<MultipleImageInputProps> = ({
       {displayRightArrow && (
         <Icon
           name="arrow-full"
-          SVGClassName="stroke-main fill-main rotate-180"
+          center
+          SVGClassName="w-3 h-3 stroke-main fill-main"
           onClick={() => setPage((p) => p + 1)}
         />
       )}

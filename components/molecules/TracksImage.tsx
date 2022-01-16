@@ -178,6 +178,7 @@ export const TracksImage: React.FC<TracksImageProps> = ({
           className={`fill-[none] ${getStrokeColorClass(track)} stroke-2 ${lineBaseCss}${props.onPolylineClick ? ' cursor-pointer' : ''}`}
           d={path}
           onClick={() => {
+            // TODO bug with line (always the same one)
             props.onPolylineClick && props.onPolylineClick(line)}}
         />,
       );
@@ -314,7 +315,7 @@ export const TracksImage: React.FC<TracksImageProps> = ({
     >
       <svg
         style={{ cursor: `url(${getCursorUrl()}), auto` }}
-        className="svg-canvas absolute z-100"
+        className="svg-canvas absolute z-50"
         width={imgWidth}
         height={imgHeight}
         onMouseDown={(e) => {

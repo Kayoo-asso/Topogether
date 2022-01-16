@@ -40,6 +40,8 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = wat
   const boulder = props.boulder();
   const selectedTrack = props.selectedTrack();
 
+  const [imageToDisplayIndex, setImageToDisplayIndex] = useState(0);
+
   const displayedTracks = useMemo(() => boulder.tracks
     .quarks()
     .filter((track) => ((track().creatorId) === props.topoCreatorId) === officialTrackTab),
@@ -55,13 +57,33 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = wat
       {/* BOULDER IMAGE */}
       {full && (
         <div className="w-full bg-dark rounded-t-lg flex items-center justify-center overflow-hidden">
+          {imageToDisplayIndex > 0 &&
+            <div className='absolute left-2 z-200'>
+              <Icon 
+                name='arrow-full'
+                SVGClassName='w-5 h-5 fill-main rotate-180'
+                onClick={() => setImageToDisplayIndex(idx => idx-1)}
+              />
+            </div>
+          }
+
           <TracksImage
-            image={boulder.images[0]}
-            containerClassName="w-full"
+            image={boulder.images[imageToDisplayIndex]}
+            containerClassName="max-h-[300px]"
             tracks={boulder.tracks}
-            currentTrackId={selectedTrack?.id}
+            selectedTrack={props.selectedTrack}
             displayTracksDetails={!!selectedTrack?.id}
           />
+
+          {imageToDisplayIndex < boulder.images.length-1 &&
+            <div className='absolute right-2 z-200'>
+              <Icon 
+                name='arrow-full'
+                SVGClassName='w-5 h-5 fill-main'
+                onClick={() => setImageToDisplayIndex(idx => idx+1)}
+              />
+            </div>
+          }
         </div>
       )}
 

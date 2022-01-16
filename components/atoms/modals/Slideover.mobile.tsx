@@ -63,7 +63,7 @@ export const SlideoverMobile: React.FC<SlideoverMobileProps> = ({
       style={{ transform: `translateY(${translateY}%)` }}
     >
       <div
-        className="absolute flex w-full h-[40px] justify-center z-50"
+        className="absolute flex w-full h-[40px] justify-center z-100"
         onTouchStart={handleToucheStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
