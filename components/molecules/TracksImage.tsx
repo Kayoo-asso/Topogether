@@ -166,10 +166,10 @@ export const TracksImage: React.FC<TracksImageProps> = ({
 
       const lineBaseCss = isHighlighted
         ? 'z-30'
-        : displayPhantomTracks ? 'z-10 opacity-40' : 'hidden';
+        : displayPhantomTracks ? 'z-10 opacity-60' : 'hidden';
       const tracksNumberBaseCss = isHighlighted
         ? 'z-40'
-        : displayPhantomTracks ? 'z-20 opacity-40' : 'hidden';
+        : displayPhantomTracks ? 'z-20 opacity-60' : 'hidden';
 
       // Draw line
       svgElems.push(
@@ -285,6 +285,7 @@ export const TracksImage: React.FC<TracksImageProps> = ({
   }
 
   const getCursorUrl = () => {
+    console.log(props.currentTool);
     let cursorColor = 'grey';
     if (currentTrack?.grade) { cursorColor = currentTrack.grade[0] || 'grey'; }
 
@@ -297,7 +298,7 @@ export const TracksImage: React.FC<TracksImageProps> = ({
       case 'HAND_DEPARTURE_DRAWER':
         cursorUrl += `hand-full/_hand-full-${cursorColor}.svg`; break;
       case 'FOOT_DEPARTURE_DRAWER':
-        cursorUrl += `climbing-shoe-full/climbing-shoe-full-${cursorColor}.svg`; break;
+        cursorUrl += `climbing-shoe-full/_climbing-shoe-full-${cursorColor}.svg`; break;
       case 'FORBIDDEN_AREA_DRAWER':
         cursorUrl += '_forbidden-area-second.svg'; break;
     }

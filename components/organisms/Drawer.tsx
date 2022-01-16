@@ -1,25 +1,20 @@
 import React, { useState } from 'react';
 import {
- DrawerToolEnum, Image, Track, UUID,
+ DrawerToolEnum, Image, Track,
 } from 'types';
-import { isMobile } from 'react-device-detect';
 import { Toolbar, TracksImage } from 'components';
-import { Quark, QuarkIter } from 'helpers/quarky';
-import { fakeTopo } from 'helpers/fakeData/fakeTopo';
+import { QuarkArray, SelectQuarkNullable } from 'helpers/quarky';
 
 interface DrawerProps {
     image: Image,
-    tracks: QuarkIter<Track>,
-    displayedTrackId: UUID,
+    tracks: QuarkArray<Track>,
+    selectedTrack: SelectQuarkNullable<Track>,
     onValidate: () => void,
 }
 
 export const Drawer: React.FC<DrawerProps> = (props: DrawerProps) => {
     const [selectedTool, setSelectedTool] = useState<DrawerToolEnum>('LINE_DRAWER');
     const [displayOtherTracks, setDisplayOtherTracks] = useState(false);
-
-    const track = props.tracks
-        .find((x) => x.id === props.displayedTrackId)();
 
     return (
       <div className="absolute top-0 bg-black bg-opacity-90 h-full flex flex-col z-500 w-full md:w-[calc(100%-600px)]">
@@ -28,18 +23,26 @@ export const Drawer: React.FC<DrawerProps> = (props: DrawerProps) => {
           {/* TODO: CHANGE SIZING */}
           <TracksImage
             image={props.image}
-            tracks={props.tracks}
-            currentTrackId={props.displayedTrackId}
-            containerClassName="w-full"
+            tracks={displayOtherTracks ? props.tracks : new QuarkArray([props.selectedTrack()!])}
+            selectedTrack={props.selectedTrack}
+            currentTool={selectedTool}
+            onPolylineClick={displayOtherTracks ? (line) => {
+              console.log(line);
+            } : undefined}
           />
         </div>
 
         <Toolbar
           selectedTool={selectedTool}
           displayOtherTracks={displayOtherTracks}
-          grade={track!.grade}
+          grade={props.selectedTrack()!.grade}
           onToolSelect={(tool) => setSelectedTool(tool)}
-          onGradeSelect={(grade) => console.log(grade)}
+          onGradeSelect={(grade) => {
+            props.selectedTrack.quark()?.set({
+              ...props.selectedTrack()!,
+              grade: grade,
+            })
+          }}
           onClear={() => {}}
           onRewind={() => {}}
           onOtherTracks={() => setDisplayOtherTracks(!displayOtherTracks)}

@@ -50,7 +50,7 @@ export const TracksList: React.FC<TracksListProps> = watchDependencies((props: T
                 {track.grade}
               </div>
 )}
-            <div className="col-span-5 ml-3">
+            <div className="col-span-5 ml-5">
               <span className="ktext-base">{track.name}</span>
             </div>
 

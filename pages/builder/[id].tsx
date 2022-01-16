@@ -216,12 +216,12 @@ const BuilderMapPage: NextPage = () => {
           />
         </Show>
 
-        <Show when={() => [displayDrawer, selectedBoulder(), selectedTrack()] as const}>
-          {([, selectedBoulder, selectedTrack]) => (
+        <Show when={() => [(device !== 'MOBILE' || displayDrawer), selectedBoulder(), selectedTrack()] as const}>
+          {([, sBoulder, sTrack]) => (
             <Drawer  
-              image={selectedBoulder.images.find(img => img.id === selectedTrack.lines.lazy().toArray()[0].imageId)!}
-              tracks={selectedBoulder.tracks.lazy()}
-              displayedTrackId={selectedTrack.id}
+              image={sBoulder.images.find(img => img.id === sTrack.lines.lazy().toArray()[0].imageId)!}
+              tracks={sBoulder.tracks}
+              selectedTrack={selectedTrack}
               onValidate={() => setDisplayDrawer(false)}
             />
           )}
