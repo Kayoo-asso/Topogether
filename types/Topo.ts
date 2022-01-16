@@ -128,7 +128,7 @@ export interface BoulderData {
   orderIndex: number,
   isHighball: boolean,
   mustSee: boolean,
-  descent?: Difficulty,
+  dangerousDescent: boolean,
 
   tracks: TrackData[],
   // can be cross-referenced by lines within each track

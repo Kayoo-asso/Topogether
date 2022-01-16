@@ -33,7 +33,7 @@ export const TracksList: React.FC<TracksListProps> = watchDependencies((props: T
         return (
           <div
             key={track.id}
-            className="px-5 py-5 grid grid-cols-10 items-center border-b border-grey-light cursor-pointer hover:bg-grey-superlight"
+            className="px-5 py-5 md:py-3 grid grid-cols-10 items-center border-b border-grey-light cursor-pointer hover:bg-grey-superlight"
             onClick={() => {
               props.onTrackClick && props.onTrackClick(trackQuark);
             }}
@@ -61,7 +61,7 @@ export const TracksList: React.FC<TracksListProps> = watchDependencies((props: T
 
       {props.onBuilderAddClick && (
         <div
-          className="ktext-subtitle text-grey-medium px-5 py-5 cursor-pointer border-b border-grey-light"
+          className="ktext-subtitle text-grey-medium px-5 py-5 md:py-3 cursor-pointer border-b border-grey-light hover:bg-grey-superlight"
           onClick={props.onBuilderAddClick}
         >
           <span className="ml-2 mr-5 text-xl">+</span>

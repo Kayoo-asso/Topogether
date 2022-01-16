@@ -4,7 +4,7 @@ import {
   BoulderBuilderSlideoverMobile, BoulderSlideagainstDesktop,
   MapControl, BoulderMarker, 
   For, Show, 
-  Header, InfoFormSlideover, ApproachFormSlideover, ManagementFormSlideover, TrackFormSlideagainstDesktop, ModalValidateTopo, ModalDeleteTopo, GeoCamera, Drawer, LeftbarBuilderDesktop, WaypointMarker, ParkingMarker } from 'components';
+  Header, InfoFormSlideover, ApproachFormSlideover, ManagementFormSlideover, TrackFormSlideagainstDesktop, ModalValidateTopo, ModalDeleteTopo, GeoCamera, Drawer, LeftbarBuilderDesktop, WaypointMarker, ParkingMarker, BoulderBuilderSlideagainstDesktop } from 'components';
 import { useRouter } from 'next/router';
 import { quarkTopo } from 'helpers/fakeData/fakeTopoV2';
 import { DeviceContext, UserContext } from 'helpers';
@@ -150,47 +150,23 @@ const BuilderMapPage: NextPage = () => {
 
 
         <MapControl
-          initialZoom={15}
+          initialZoom={16}
           center={boulders.toArray()[0]().location}
           boundsToMarkers
           searchbarOptions={{
               findTopos: false,
               findPlaces: false,
           }}
+          waypoints={waypoints}
+          onWaypointClick={toggleWaypointSelect}
+          boulders={boulders}
+          displayBoulderFilter
+          onBoulderClick={toggleBoulderSelect}
+          parkings={parkings}
+          onParkingClick={toggleParkingSelect}
           onPhotoButtonClick={() => setDisplayGeoCamera(true)}
-        >
-          <For each={() => waypoints.toArray()}>
-              {(waypoint) => 
-                <WaypointMarker 
-                  key={reactKey(waypoint)}
-                  waypoint={waypoint}
-                  draggable
-                  onClick={toggleWaypointSelect}
-                />
-              }
-          </For>
-          <For each={() => boulders.toArray()}>
-              {(boulderQuark) =>
-                  <BoulderMarker
-                    key={reactKey(boulderQuark)}
-                    boulder={boulderQuark}
-                    draggable
-                    onClick={toggleBoulderSelect}
-                  />
-              }
-          </For>
-          <For each={() => parkings.toArray()}>
-              {(parking) => 
-                <ParkingMarker 
-                  key={reactKey(parking)}
-                  parking={parking}
-                  draggable
-                  onClick={toggleParkingSelect}
-                />
-              }
-          </For>
-        </MapControl>
-        
+        />
+
 
         <Show when={() => [device !== 'MOBILE', selectedTrack.quark()] as const}>
           {([, track]) => 
@@ -220,9 +196,11 @@ const BuilderMapPage: NextPage = () => {
               )
             }
             else return (
-              <BoulderSlideagainstDesktop
+              <BoulderBuilderSlideagainstDesktop
                 boulder={boulder} 
+                topoCreatorId={topo().creatorId}
                 onSelectTrack={(track) => selectedTrack.select(track)}
+                selectedTrack={selectedTrack}
                 onClose={() => {
                   selectedTrack.select(undefined);
                   selectedBoulder.select(undefined);
@@ -234,8 +212,10 @@ const BuilderMapPage: NextPage = () => {
 
         <Show when={() => displayGeoCamera}>
           <GeoCamera
+            onClose={() => setDisplayGeoCamera(false)}
           />
         </Show>
+
         <Show when={() => [displayDrawer, selectedBoulder(), selectedTrack()] as const}>
           {([, selectedBoulder, selectedTrack]) => (
             <Drawer  

@@ -124,7 +124,7 @@ export const boulders: BoulderData[] = [
         },
         isHighball: true,
         mustSee: false,
-        descent: Difficulty.Dangerous,
+        dangerousDescent: false,
         orderIndex: 0,
         images: [images[0], images[1], images[2], images[3]],
         tracks

@@ -95,49 +95,50 @@ export const GeoCamera: React.FC<GeoCameraProps> = ({
 
     if (!open) return null;
     return (
-            <div className='w-full h-contentPlusShell relative overflow-hidden z-500'>
-                <video 
-                    ref={videoRef} 
-                    onCanPlay={handleCanPlay} 
-                    autoPlay 
-                    playsInline 
-                    muted
-                    className='h-full max-w-none absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]'
-                />
-                <canvas
-                    ref={canvasRef}
-                    className='w-full h-full absolute top-0 left-0'
-                    height={canvasRef.current?.clientHeight}
-                    width={canvasRef.current?.clientWidth}
-                />
+        <div className='w-full h-contentPlusShell absolute overflow-hidden z-500'>
+            <video 
+                ref={videoRef} 
+                onCanPlay={handleCanPlay} 
+                autoPlay 
+                playsInline 
+                muted
+                className='h-full max-w-none absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]'
+            />
+            <canvas
+                ref={canvasRef}
+                className='w-full h-full absolute top-0 left-0'
+                height={canvasRef.current?.clientHeight}
+                width={canvasRef.current?.clientWidth}
+            />
 
-                <div 
-                    className='absolute shadow bg-white rounded-full h-[60px] w-[60px] bottom-[10vh] left-[50%] translate-x-[-50%] z-40'
-                    onClick={handleCapture}
-                ></div>
-                {!isCalibrating &&
-                    <div className='text-white ktext-label absolute bottom-[2vh] left-[50%] translate-x-[-50%] z-40'>{coords.lat + ', ' + coords.lng}</div>
-                }
-                {isCalibrating &&
-                    <div className='h-full w-full absolute flex flex-col justify-center items-center z-50 text-white ktext-base bg-black bg-opacity-90'>
-                        <div className='mb-10 text-center'>
-                            Calibrage de la caméra <br />
-                            Merci de patienter...
-                        </div>
-
-                        <span>{coords.lat + ', ' + coords.lng}</span>
+            <div 
+                className='absolute shadow bg-white rounded-full h-[60px] w-[60px] bottom-[20vh] left-[50%] translate-x-[-50%] z-40'
+                onClick={handleCapture}
+            ></div>
+            {!isCalibrating &&
+                <div className='text-white ktext-label absolute bottom-[12vh] left-[50%] translate-x-[-50%] z-40'>{coords.lat + ', ' + coords.lng}</div>
+            }
+            {isCalibrating &&
+                <div className='h-full w-full absolute flex flex-col justify-center items-center z-50 text-white ktext-base bg-black bg-opacity-90'>
+                    <div className='mb-10 text-center'>
+                        Calibrage de la caméra <br />
+                        Merci de patienter...
                     </div>
-                }
 
-                <div 
-                    className='absolute z-100 top-4 right-4'
-                    onClick={props.onClose}
-                >
-                    <Icon 
-                        name='clear'
-                        SVGClassName='stroke-white h-8 w-8'
-                    />
+                    <span>{coords.lat + ', ' + coords.lng}</span>
                 </div>
+            }
+
+            <div 
+                className='absolute z-100 top-4 right-4'
+                onClick={props.onClose}
+            >
+                <Icon 
+                    name='clear'
+                    SVGClassName='stroke-white h-8 w-8'
+                    onClick={props.onClose}
+                />
             </div>
+        </div>
     )
 }

@@ -41,19 +41,19 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(({
         ${inputClassName}`
       }
     />
-    {displayLabel
-      && (
+
+    {displayLabel && (
       <label
         htmlFor={props.id}
-        className={`absolute left-0 ktext-label transition-all peer-placeholder-shown:top-2
-        ${big ? '-top-6 text-xl peer-focus:-top-6' : '-top-3.5 peer-focus:-top-3.5'} 
-        ${white ? 'text-white peer-focus:text-white' : 'text-grey-medium peer-focus:text-main'}
-        ${pointer ? ' cursor-pointer' : ''} 
-        ${labelClassName}`}
+        className={`absolute left-0 ktext-label transition-all peer-placeholder-shown:top-2 \
+        ${big ? '-top-6 text-xl peer-focus:-top-6' : '-top-3.5 peer-focus:-top-3.5'} \
+        ${white ? 'text-white peer-focus:text-white' : 'text-grey-medium peer-focus:text-main'} \
+        ${pointer ? ' cursor-pointer' : ''} ${labelClassName}`}
       >
         {props.label}
       </label>
-      )}
+    )}
+
     {props.error && <div className="ktext-error text-error mt-1">{props.error}</div>}
   </div>
 ));

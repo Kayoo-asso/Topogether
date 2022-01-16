@@ -54,7 +54,7 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
             image={boulder.images[0]}
             containerClassName='w-full'
             tracks={boulder.tracks}
-            currentTrackId={selectedTrack?.id}
+            selectedTrack={props.selectedTrack}
             displayTracksDetails={!!selectedTrack?.id}
           />
         </div>
