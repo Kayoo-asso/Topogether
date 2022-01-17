@@ -159,7 +159,7 @@ export const TracksImage: React.FC<TracksImageProps> = ({
         || props.selectedTrack() === undefined
         || track.id === props.selectedTrack()!.id;
 
-      const points: Position[] = line.points.map((p) => ratioPoint(p, rx));
+      const points: Position[] = line.points?.map((p) => ratioPoint(p, rx)) || [];
       const path = getPathFromPoints(points, 'CURVE');
       const firstX = points[0][0];
       const firstY = points[0][1];
@@ -269,7 +269,7 @@ export const TracksImage: React.FC<TracksImageProps> = ({
               editable={editable}
               rx={rx}
               ry={ry}
-              pointSize={6}
+              pointSize={7}
               // TODO: do we need to handle clicks on area points?
               // You can already drag to resize
               // Maybe to remove them?
@@ -319,9 +319,10 @@ export const TracksImage: React.FC<TracksImageProps> = ({
         width={imgWidth}
         height={imgHeight}
         onMouseDown={(e) => {
-          if (e.button === 0 && props.onImageClick && editable) { // Left-click on the canvas only
+          if (e.button === 0 && props.onImageClick && editable && e.target.nodeName === 'svg') { // Left-click on the canvas only
             const pos = getMousePosInside(e);
-            props.onImageClick(pos);
+            const rPos = [pos[0]/rx, pos[1]/rx] as Position;
+            props.onImageClick(rPos);
           }
         }}
       >

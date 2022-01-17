@@ -70,7 +70,7 @@ export const SVGPoint: React.FC<SVGPointProps> = ({
       <image
         x={props.x}
         y={props.y}
-        className={`${className} ${draggable ? ' draggable' : ''}`}
+        className={`${className} ${draggable ? 'cursor-pointer' : ''}`}
         href={iconHref}
         width={size}
         onPointerDown={handlePointerDown}

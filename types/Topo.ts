@@ -160,7 +160,7 @@ export interface TrackData {
 
 export interface Line {
   readonly id: UUID,
-  points: LineCoords,
+  points: Position[] | null,
   // a LinearRing delineates the contour of a polygon
   forbidden: LinearRing[] | null,
   // Starting points = max 2 for hand, max 2 for feet
