@@ -15,6 +15,8 @@ function ForComponent<T>(props: ForProps<T>) {
     </>)
 }
 
+ForComponent.displayName = "For";
+
 export function For<T>(props: ForProps<T>) {
     return watchDependencies<ForProps<T>>(ForComponent, { memo: false })(props);
 };

@@ -128,6 +128,7 @@ export interface BoulderData {
   orderIndex: number,
   isHighball: boolean,
   mustSee: boolean,
+  descent: Difficulty,
   dangerousDescent: boolean,
 
   tracks: TrackData[],
@@ -160,13 +161,13 @@ export interface TrackData {
 
 export interface Line {
   readonly id: UUID,
-  points: Position[] | null,
+  points: Position[],
   // a LinearRing delineates the contour of a polygon
-  forbidden: LinearRing[] | null,
+  forbidden?: LinearRing[],
   // Starting points = max 2 for hand, max 2 for feet
   // Could not find a way to represent an array of length <= 2 in TypeScript types
-  handDepartures: Position[] | null,
-  feetDepartures: Position[] | null,
+  handDepartures?: Position[],
+  feetDepartures?: Position[],
 
   // the images are provided with the boulder
   imageId: UUID

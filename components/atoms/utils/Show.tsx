@@ -35,6 +35,8 @@ function Component({ when, fallback, children}: ShowPropsInternal) {
     return children;
 }
 
+Component.displayName = "Show";
+
 export function Show<T>(props: ShowProps<T>): JSX.Element | null {
     // the result of watchDependencies is invokable iff the option `memo` is set to false
     // (the result of React.memo is not invokable)

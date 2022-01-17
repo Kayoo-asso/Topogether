@@ -27,6 +27,7 @@ export class QuarkArray<T> {
     }
 
     quarkAt(i: number): Quark<T> {
+        console.log("Within quarkAt, this.source = ", this.#source());
         return this.#source().at(i)!;
     }
 
@@ -166,8 +167,6 @@ class QuarkArrayIteratorRaw<T> implements ResettableIterator<Quark<T>> {
         }
     }
 }
-
-
 
 // TODO: reset() method?
 class QuarkArrayIterator<T> implements ResettableIterator<T> {

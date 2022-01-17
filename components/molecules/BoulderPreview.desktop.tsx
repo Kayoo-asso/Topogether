@@ -7,7 +7,6 @@ interface BoulderPreviewDesktopProps {
     boulder: Quark<Boulder>,
     selectedTrack: SelectQuarkNullable<Track>,
     displayAddButton?: boolean,
-    onSelectTrack?: (track: Quark<Track>) => void,
 }
 
 export const BoulderPreviewDesktop: React.FC<BoulderPreviewDesktopProps> = ({
@@ -25,11 +24,6 @@ export const BoulderPreviewDesktop: React.FC<BoulderPreviewDesktopProps> = ({
                     tracks={boulder.tracks}
                     selectedTrack={props.selectedTrack}
                     containerClassName='max-h-[200px]'
-                    onPolylineClick={(line) => {
-                        // console.log(line);
-                        const track = boulder.tracks.findQuark(t => t.lines.toArray().some(l => l.id === line.id));
-                        props.onSelectTrack && props.onSelectTrack(track!)
-                    }}
                 />
             </div>
             

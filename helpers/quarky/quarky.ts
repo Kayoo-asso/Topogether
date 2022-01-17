@@ -288,7 +288,7 @@ export function selectSignal<T>(initial?: Signal<T>): SelectSignal<T> | SelectSi
     outer.quark = inner;
     // necessary, otherwise the quark will think the inner signal is a state update and
     // will execute it, instead of storing it as-is.
-    outer.select = (selected: Signal<T> | undefined) => inner.set(() => selected);
+    outer.select = (selected: Signal<T> | undefined) => inner.set(() => selected)
     return outer as any;
 }
 
@@ -383,7 +383,7 @@ function simpleEffect(fn: (onCleanup: CleanupHelper) => void, options?: EffectOp
 function explicitEffect(signals: any[], computation: (deps: any[], onCleanup: CleanupHelper) => void, options?: ExplicitEffectOptions): Effect {
     const fn = () => {
         const input = new Array(signals.length);
-        for (var i = 0; i < input.length; i++) {
+        for (let i = 0; i < input.length; i++) {
             input[i] = signals[i]();
         }
         computation(signals, onCleanup);
@@ -397,7 +397,7 @@ function explicitEffect(signals: any[], computation: (deps: any[], onCleanup: Cl
         const scope: Scope = { accessed: [], cleanups: null };
         ScopeStack.push(scope);
         // we can do this in one pass, since each call to signals[i]() pushes one node on scope.accessed
-        for (var i = 0; i < signals.length; i++) {
+        for (let i = 0; i < signals.length; i++) {
             signals[i]();
             slots[i] = hookObserver(e, scope.accessed[i], i);
         }

@@ -44,14 +44,13 @@ const NewPage: NextPage = () => {
     if (nameInputRef.current) nameInputRef.current.focus();
   }, [nameInputRef]);
 
-  const mapTypeIdToLabel = (typeId: number | undefined) => {
+  const mapTypeIdToLabel = (typeId: TopoType | undefined) => {
     switch (typeId) {
-      case undefined: return undefined;
-      case 0: return 'Blocs';
-      case 1: return 'Falaise';
-      case 2: return 'Deepwater';
-      case 3: return 'Grandes voies';
-      case 4: return 'Artificiel';
+      case TopoType.Boulder: return 'Blocs';
+      case TopoType.Cliff: return 'Falaise';
+      case TopoType.DeepWater: return 'Deepwater';
+      case TopoType.Multipitch: return 'Grandes voies';
+      case TopoType.Artificial: return 'Artificiel';
       default: return undefined;
     }
   }

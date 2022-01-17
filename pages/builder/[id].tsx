@@ -199,7 +199,6 @@ const BuilderMapPage: NextPage = () => {
               <BoulderBuilderSlideagainstDesktop
                 boulder={boulder} 
                 topoCreatorId={topo().creatorId}
-                onSelectTrack={(track) => selectedTrack.select(track)}
                 selectedTrack={selectedTrack}
                 onClose={() => {
                   selectedTrack.select(undefined);

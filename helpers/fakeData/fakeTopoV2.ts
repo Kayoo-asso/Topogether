@@ -52,11 +52,9 @@ export const lines: Line[] = [
             [1717, 1349],
             [2269, 1200]
         ],
-        forbidden: null,
         handDepartures: [
             [1050, 620],
         ],
-        feetDepartures: null,
     },
     // Line 1, track 1
     {
@@ -73,7 +71,6 @@ export const lines: Line[] = [
             2: [1650, 400],
             3: [1200, 400],
         }],
-        handDepartures: null,
         feetDepartures: [
             [600, 250],
         ],
@@ -131,6 +128,7 @@ export const boulders: BoulderData[] = [
         },
         isHighball: true,
         mustSee: false,
+        descent: Difficulty.Dangerous,
         dangerousDescent: false,
         orderIndex: 0,
         images: [images[0], images[1], images[2], images[3]],

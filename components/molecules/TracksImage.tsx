@@ -1,9 +1,9 @@
 import React from 'react';
 import NextImage from 'next/image';
 import {
-  Image, 
+  Image,
   PointEnum, AreaEnum, DrawerToolEnum, Position, Line, UUID, gradeToLightGrade, LinearRing,
-  LightGrade, 
+  LightGrade,
   Track
 } from 'types';
 import { SVGArea } from 'components';
@@ -14,7 +14,7 @@ import {
   getPathFromPoints,
   ratioPoint,
 } from '../../helpers';
-import { QuarkArray, SelectQuarkNullable } from 'helpers/quarky';
+import { Quark, QuarkArray, SelectQuarkNullable } from 'helpers/quarky';
 
 interface TracksImageProps {
   image: Image,
@@ -30,7 +30,7 @@ interface TracksImageProps {
   currentTool?: DrawerToolEnum,
   onImageClick?: (pos: Position) => void,
   onPointClick?: (pointType: PointEnum, index: number) => void,
-  onPolylineClick?: (line: Line) => void,
+  // onPolylineClick?: (line: Line) => void,
   onAreaChange?: (areaType: AreaEnum, index: number, area: LinearRing) => void,
   onImageLoad?: (width: number, height: number) => void,
 }
@@ -44,19 +44,19 @@ const getFillColorClass = (track: Track) => {
     const lightGrade = gradeToLightGrade(track.grade);
     switch (lightGrade) {
       case 3:
-          return 'fill-grade-3';
+        return 'fill-grade-3';
       case 4:
-          return 'fill-grade-4';
+        return 'fill-grade-4';
       case 5:
-          return 'fill-grade-5';
+        return 'fill-grade-5';
       case 6:
-          return 'fill-grade-6';
+        return 'fill-grade-6';
       case 7:
-          return 'fill-grade-7';
+        return 'fill-grade-7';
       case 8:
-          return 'fill-grade-8';
+        return 'fill-grade-8';
       case 9:
-          return 'fill-grade-9';
+        return 'fill-grade-9';
     }
   }
 }
@@ -66,19 +66,19 @@ const getStrokeColorClass = (track: Track) => {
     const lightGrade = gradeToLightGrade(track.grade);
     switch (lightGrade) {
       case 3:
-          return 'stroke-grade-3';
+        return 'stroke-grade-3';
       case 4:
-          return 'stroke-grade-4';
+        return 'stroke-grade-4';
       case 5:
-          return 'stroke-grade-5';
+        return 'stroke-grade-5';
       case 6:
-          return 'stroke-grade-6';
+        return 'stroke-grade-6';
       case 7:
-          return 'stroke-grade-7';
+        return 'stroke-grade-7';
       case 8:
-          return 'stroke-grade-8';
+        return 'stroke-grade-8';
       case 9:
-          return 'stroke-grade-9';
+        return 'stroke-grade-9';
     }
   }
 }
@@ -140,26 +140,46 @@ export const TracksImage: React.FC<TracksImageProps> = ({
     ? imgHeight / props.image.height
     : 1;
 
-  const svgElems: JSX.Element[] = [];
+  const renderAccumulator: RenderAccumulator[] = [];
   const svgScaleClass = props.currentTool === 'ERASER'
     ? 'scale-125'
     : '';
 
   let currentTrack: Track | undefined = undefined;
-  for (const track of props.tracks) {
-    if (props.selectedTrack && props.selectedTrack() && track.id === props.selectedTrack()!.id) currentTrack = track;
+
+  for (const trackQuark of props.tracks.quarks()) {
+
+    const track = trackQuark();
+    if (props.selectedTrack() && track.id === props.selectedTrack()!.id) {
+      currentTrack = track;
+    }
     let isFirstLine = true; // don't forget to set to false at the end of the loop!
+
+
 
     for (const line of track.lines) {
       if (line.imageId !== props.image.id) {
         continue;
       }
+      // NE MARCHE PAS
+      const onLineClick__BROKEN = () => props.selectedTrack.select(trackQuark);
 
-      const isHighlighted = !props.selectedTrack
-        || props.selectedTrack() === undefined
-        || track.id === props.selectedTrack()!.id;
+      // OK
+      // TODO: investigate why a regular inline callback doesn't work (can't reproduce with a simple case)
+      // TODO: customise logic
+      const onLineClick = getOnLineClick(props.selectedTrack, trackQuark);
 
-      const points: Position[] = line.points?.map((p) => ratioPoint(p, rx)) || [];
+      const nodes: JSX.Element[] = [];
+      renderAccumulator.push({
+        id: line.id,
+        nodes,
+      });
+
+      const isHighlighted =
+        props.selectedTrack() === undefined ||
+        track.id === props.selectedTrack()!.id;
+
+      const points: Position[] = line.points.map(([x, y]) => [x * rx, y * ry]);
       const path = getPathFromPoints(points, 'CURVE');
       const firstX = points[0][0];
       const firstY = points[0][1];
@@ -172,14 +192,11 @@ export const TracksImage: React.FC<TracksImageProps> = ({
         : displayPhantomTracks ? 'z-20 opacity-60' : 'hidden';
 
       // Draw line
-      svgElems.push(
+      nodes.push(
         <path
-          key={'path'+line.id}
-          className={`fill-[none] ${getStrokeColorClass(track)} stroke-2 ${lineBaseCss}${props.onPolylineClick ? ' cursor-pointer' : ''}`}
+          className={`fill-[none] ${getStrokeColorClass(track)} stroke-2 ${lineBaseCss}${onLineClick ? ' cursor-pointer' : ''}`}
           d={path}
-          onClick={() => {
-            // TODO bug with line (always the same one)
-            props.onPolylineClick && props.onPolylineClick(line)}}
+          onClick={onLineClick}
         />,
       );
 
@@ -188,7 +205,6 @@ export const TracksImage: React.FC<TracksImageProps> = ({
         const pointRadius = 3;
         const pointCircles = points.map((x, index) => (
           <circle
-            key={index+line.id+x[0]+','+x[1]}
             className={"pointer-events-auto " + getFillColorClass(track)}
             cx={x[0]}
             cy={x[1]}
@@ -196,31 +212,29 @@ export const TracksImage: React.FC<TracksImageProps> = ({
           />
         ));
         // TODO: optimise this
-        svgElems.push(...pointCircles);
+        nodes.push(...pointCircles);
       }
 
       // Track number in the ordering
       if (displayTracksNumber) {
-        svgElems.push(
+        nodes.push(
           <circle
-            key={'circle'+line.id}
             cx={firstX}
             cy={firstY}
             r={9}
-            className={`${getFillColorClass(track)} ${tracksNumberBaseCss}${props.onPolylineClick ? ' cursor-pointer pointer-events-auto' : ''}`}
-            onClick={() => props.onPolylineClick && props.onPolylineClick(line)}
+            className={`${getFillColorClass(track)} ${tracksNumberBaseCss}${onLineClick ? ' cursor-pointer pointer-events-auto' : ''}`}
+            onClick={onLineClick}
           />,
           <text
-            key={'text'+line.id}
             x={firstX}
             y={firstY}
-            className={`${tracksNumberBaseCss}${props.onPolylineClick ? ' cursor-pointer' : ''}`}
+            className={`${tracksNumberBaseCss}${onLineClick ? ' cursor-pointer' : ''}`}
             textAnchor="middle"
             stroke="white"
             strokeWidth="1px"
             fontSize="8px"
             dy="3px"
-            onClick={() => props.onPolylineClick && props.onPolylineClick(line)}
+            onClick={onLineClick}
           >
             {track.orderIndex + 1}
           </text>,
@@ -234,7 +248,7 @@ export const TracksImage: React.FC<TracksImageProps> = ({
       if (isFirstLine && displayTracksDetails && isHighlighted) {
         if (line.handDepartures) {
           for (const [handX, handY] of line.handDepartures) {
-            svgElems.push(
+            nodes.push(
               <image
                 className={svgScaleClass}
                 href={`/assets/icons/colored/hand-full/_hand-full-${getColorNumber(track)}.svg`}
@@ -246,7 +260,7 @@ export const TracksImage: React.FC<TracksImageProps> = ({
         }
         if (line.feetDepartures) {
           for (const [footX, footY] of line.feetDepartures) {
-            svgElems.push(
+            nodes.push(
               <image
                 className={svgScaleClass}
                 href={`/assets/icons/colored/climbing-shoe-full/_climbing-shoe-full-${getColorNumber(track)}.svg`}
@@ -262,7 +276,7 @@ export const TracksImage: React.FC<TracksImageProps> = ({
       if (displayTracksDetails && isHighlighted && line.forbidden) {
         for (let i = 0; i < line.forbidden.length; i++) {
           const area = line.forbidden[i];
-          svgElems.push(
+          nodes.push(
             <SVGArea
               className={svgScaleClass}
               area={area}
@@ -321,12 +335,16 @@ export const TracksImage: React.FC<TracksImageProps> = ({
         onMouseDown={(e) => {
           if (e.button === 0 && props.onImageClick && editable && e.target.nodeName === 'svg') { // Left-click on the canvas only
             const pos = getMousePosInside(e);
-            const rPos = [pos[0]/rx, pos[1]/rx] as Position;
+            const rPos = [pos[0] / rx, pos[1] / rx] as Position;
             props.onImageClick(rPos);
           }
         }}
       >
-        {svgElems}
+        {renderAccumulator.map(x =>
+          <React.Fragment key={x.id}>
+            {x.nodes}
+          </React.Fragment>
+        )}
       </svg>
 
       <NextImage
@@ -340,6 +358,12 @@ export const TracksImage: React.FC<TracksImageProps> = ({
   );
 };
 
+TracksImage.displayName = "TracksImage";
+
+function getOnLineClick(selectedTrack: SelectQuarkNullable<Track>, trackQuark: Quark<Track>) {
+  return () => selectedTrack.select(trackQuark);
+}
+
 type LineOnImage = Line & TrackInfo;
 
 type TrackInfo = {
@@ -350,28 +374,7 @@ type TrackInfo = {
   orderIndex: number,
 };
 
-function getLines(tracks: Iterable<Track>, imageId: UUID, currentTrackId?: UUID): [LineOnImage[], Track | undefined] {
-  const lines: LineOnImage[] = [];
-  let currentTrack: Track | undefined = undefined;
-
-  for (const track of tracks) {
-    if (track.id === currentTrackId)
-      currentTrack = track;
-
-    let i = 0;
-    for (const line of track.lines) {
-      if (line.imageId !== imageId) continue;
-
-      lines.push({
-        trackId: track.id,
-        isStart: i === 0,
-        gradeColor: track.grade ? gradeToLightGrade(track.grade) : 'grey',
-        orderIndex: track.orderIndex,
-        ...line,
-      });
-      i += 1;
-    }
-
-  }
-  return [lines, currentTrack];
+interface RenderAccumulator {
+  id: UUID,
+  nodes: JSX.Element[],
 }

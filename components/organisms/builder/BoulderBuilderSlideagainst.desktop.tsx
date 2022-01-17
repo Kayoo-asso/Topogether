@@ -7,7 +7,6 @@ interface BoulderBuilderSlideagainstDesktopProps {
     boulder: Quark<Boulder>,
     selectedTrack: SelectQuarkNullable<Track>,
     topoCreatorId?: UUID,
-    onSelectTrack?: (track: Quark<Track>) => void,
     onClose: () => void,
 }
 
@@ -94,7 +93,6 @@ export const BoulderBuilderSlideagainstDesktop: React.FC<BoulderBuilderSlideagai
                         <BoulderPreviewDesktop
                             boulder={props.boulder}
                             selectedTrack={props.selectedTrack}
-                            onSelectTrack={props.onSelectTrack}
                         />
                     </div>
                 </div>             
@@ -102,7 +100,7 @@ export const BoulderBuilderSlideagainstDesktop: React.FC<BoulderBuilderSlideagai
                 <div className='overflow-auto'>
                     <TracksList 
                         tracks={boulder.tracks.quarks()}
-                        onTrackClick={props.onSelectTrack}
+                        onTrackClick={props.selectedTrack.select}
                         onBuilderAddClick={() => console.log('create track')} //TODO
                     />
                 </div>

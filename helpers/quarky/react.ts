@@ -22,7 +22,7 @@ export function watchDependencies<T>(component: React.FunctionComponent<T>, opti
         useEffect(() => eff.dispose, []);
         return jsx;
     }
-    wrapped.displayName = component.displayName;
+    wrapped.displayName = component.displayName || component.name || 'WrappedComponent';
     
     return !options || options.memo
         ? React.memo(wrapped)

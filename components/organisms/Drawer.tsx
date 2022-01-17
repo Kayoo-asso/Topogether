@@ -13,45 +13,47 @@ interface DrawerProps {
 }
 
 export const Drawer: React.FC<DrawerProps> = watchDependencies((props: DrawerProps) => {
+  console.log("Rendering Drawer");
     const [selectedTool, setSelectedTool] = useState<DrawerToolEnum>('LINE_DRAWER');
     const [displayOtherTracks, setDisplayOtherTracks] = useState(false);
 
     const selectedTrack = props.selectedTrack()!;
 
     const addPointToLine = (pos: Position) => {
-      const newLine = selectedTrack.lines.quarkAt(0);
+      const newLineQuark = selectedTrack.lines.quarkAt(0);
+      const newLine = newLineQuark();
       switch (selectedTool) {
         case 'LINE_DRAWER':
-          const newPoints = newLine().points || [];
+          const newPoints = newLine.points || [];
           newPoints.push(pos);
-          newLine.set({
-            ...newLine(),
+          newLineQuark.set({
+            ...newLine,
             points: newPoints
           });
           break;
         case 'HAND_DEPARTURE_DRAWER':
-          const newHandPoints = newLine().handDepartures || [];
+          const newHandPoints = newLine.handDepartures || [];
           if (newHandPoints.length < 2) newHandPoints.push(pos);
           else { newHandPoints.splice(0,1); newHandPoints.push(pos); }
-          newLine.set({
-            ...newLine(),
+          newLineQuark.set({
+            ...newLine,
             handDepartures: newHandPoints
           });
           break;
           case 'FOOT_DEPARTURE_DRAWER':
-            const newFootPoints = newLine().feetDepartures || [];
+            const newFootPoints = newLine.feetDepartures || [];
             if (newFootPoints.length < 2) newFootPoints.push(pos);
             else { newFootPoints.splice(0,1); newFootPoints.push(pos); }
-            newLine.set({
-              ...newLine(),
+            newLineQuark.set({
+              ...newLine,
               feetDepartures: newFootPoints
             });
             break;
           case 'FORBIDDEN_AREA_DRAWER':
-            const newForbiddenPoints = newLine().forbidden || [];
+            const newForbiddenPoints = newLine.forbidden || [];
             newForbiddenPoints.push(constructArea(pos));
-            newLine.set({
-              ...newLine(),
+            newLineQuark.set({
+              ...newLine,
               forbidden: newForbiddenPoints
             });
             break;
@@ -91,9 +93,6 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies((props: DrawerPro
             currentTool={selectedTool}
             editable
             displayTracksDetails
-            onPolylineClick={displayOtherTracks ? (line) => {
-              console.log(line);
-            } : undefined}
             onImageClick={(pos) => addPointToLine(pos)}
             onPointClick={(pointType, index) => {
               if (selectedTool === 'ERASER') deletePointToLine(pointType, index);
@@ -124,3 +123,5 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies((props: DrawerPro
       </div>
     );
 });
+
+Drawer.displayName = "Drawer";

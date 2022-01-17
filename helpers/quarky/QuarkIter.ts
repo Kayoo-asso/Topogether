@@ -1,8 +1,6 @@
 import { isIterable, ConcatIterator, FilterIterator, Flattened, FlattenIterator, MapIterator, ZipIterator, ResettableIterator, ResettableIteratorWrapper} from "./iterators";
 import { derive, Signal } from "./quarky";
 
-const emptyInit = () => { };
-
 // should initially be created from a Quark<Array<Quark<T>>>
 // init should be the init function of QuarkArrayIterator
 export class QuarkIter<T> implements Iterable<T> {
