@@ -101,7 +101,6 @@ export const TracksImage: React.FC<TracksImageProps> = ({
   containerClassName = '',
   ...props
 }: TracksImageProps) => {
-
   const { observe, unobserve, width: containerWidth, height: containerHeight, entry } = useDimensions({
     onResize: ({ observe, unobserve, width, height, entry }) => {
       // Triggered whenever the size of the target is changed...

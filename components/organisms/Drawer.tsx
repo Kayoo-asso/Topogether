@@ -13,7 +13,6 @@ interface DrawerProps {
 }
 
 export const Drawer: React.FC<DrawerProps> = watchDependencies((props: DrawerProps) => {
-  console.log("Rendering Drawer");
     const [selectedTool, setSelectedTool] = useState<DrawerToolEnum>('LINE_DRAWER');
     const [displayOtherTracks, setDisplayOtherTracks] = useState(false);
 
@@ -66,9 +65,12 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies((props: DrawerPro
         pointType === 'FOOT_DEPARTURE_POINT' ? 'feetDepartures' :
         'forbidden'
       const newLine = selectedTrack.lines.quarkAt(0);
-      const newProps = {...newLine()};
-      newProps[key]?.slice(index, 1);
-      newLine.set(newProps);
+      const line = newLine();
+      const points = line[key]!;
+      newLine.set({
+        ...line,
+        [key]: [...points.slice(0, index), ...points.slice(index+1)]
+      });
     }
 
     const constructArea = (pos: Position): LinearRing => {

@@ -64,7 +64,7 @@ export class QuarkIter<T> implements Iterable<T> {
     }
 
     find(predicate: (item: T) => boolean): Signal<T | undefined> {
-        return derive(() => {
+        return () => {
             this.iterator.reset();
             let result: IteratorResult<T>;
             while (true) {
@@ -76,11 +76,11 @@ export class QuarkIter<T> implements Iterable<T> {
                     return result.value;
                 }
             }
-        });
+        };
     }
 
     reduce<A>(fn: (acc: A, item: T) => A, initial: () => A): Signal<A> {
-        return derive(() => {
+        return () => {
             this.iterator.reset();
             let result: IteratorResult<T>;
             let acc = initial();
@@ -89,7 +89,7 @@ export class QuarkIter<T> implements Iterable<T> {
                 if (result.done) return acc;
                 acc = fn(acc, result.value);
             };
-        });
+        };
     }
 
     // Avoid exhausting the inner iterator

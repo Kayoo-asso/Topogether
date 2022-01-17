@@ -23,12 +23,15 @@ export class QuarkArray<T> {
 
     // removing undefined from the return type, since it's annoying
     at(i: number): T {
-        return this.#source().at(i)!();
+        const arr = this.#source();
+        if (i < 0) i += arr.length;
+        return arr[i]();
     }
 
     quarkAt(i: number): Quark<T> {
-        console.log("Within quarkAt, this.source = ", this.#source());
-        return this.#source().at(i)!;
+        const arr = this.#source();
+        if (i < 0) i += arr.length;
+        return arr[i];
     }
 
     set(i: number, value: ValueOrWrappedFunction<T>) {
