@@ -12,7 +12,6 @@ import useDimensions from 'react-cool-dimensions';
 import {
   getMousePosInside,
   getPathFromPoints,
-  ratioPoint,
 } from '../../helpers';
 import { Quark, QuarkArray, SelectQuarkNullable } from 'helpers/quarky';
 
@@ -146,27 +145,25 @@ export const TracksImage: React.FC<TracksImageProps> = ({
 
   let currentTrack: Track | undefined = undefined;
 
-  for (const trackQuark of props.tracks.quarks()) {
-
-    const track = trackQuark();
+  for (const quarkTrack of props.tracks.quarks()) {
+    const track = quarkTrack();
     if (props.selectedTrack() && track.id === props.selectedTrack()!.id) {
       currentTrack = track;
     }
     let isFirstLine = true; // don't forget to set to false at the end of the loop!
 
-
-
-    for (const line of track.lines) {
+    for (const quarkLine of track.lines.quarks()) {
+      const line = quarkLine();
       if (line.imageId !== props.image.id) {
         continue;
       }
       // NE MARCHE PAS
-      const onLineClick__BROKEN = () => props.selectedTrack.select(trackQuark);
+      const onLineClick__BROKEN = () => props.selectedTrack.select(quarkTrack);
 
       // OK
       // TODO: investigate why a regular inline callback doesn't work (can't reproduce with a simple case)
       // TODO: customise logic
-      const onLineClick = getOnLineClick(props.selectedTrack, trackQuark);
+      const onLineClick = getOnLineClick(props.selectedTrack, quarkTrack);
 
       const nodes: JSX.Element[] = [];
       renderAccumulator.push({
@@ -193,7 +190,7 @@ export const TracksImage: React.FC<TracksImageProps> = ({
       // Draw line
       nodes.push(
         <path
-          className={`fill-[none] ${getStrokeColorClass(track)} stroke-2 ${lineBaseCss}${onLineClick ? ' cursor-pointer' : ''}`}
+          className={`cursor-pointer fill-[none] ${getStrokeColorClass(track)} stroke-2 ${lineBaseCss}`}
           d={path}
           onClick={onLineClick}
         />,
@@ -221,13 +218,13 @@ export const TracksImage: React.FC<TracksImageProps> = ({
             cx={firstX}
             cy={firstY}
             r={9}
-            className={`${getFillColorClass(track)} ${tracksNumberBaseCss}${onLineClick ? ' cursor-pointer pointer-events-auto' : ''}`}
+            className={`cursor-pointer pointer-events-auto ${getFillColorClass(track)} ${tracksNumberBaseCss}`}
             onClick={onLineClick}
           />,
           <text
             x={firstX}
             y={firstY}
-            className={`${tracksNumberBaseCss}${onLineClick ? ' cursor-pointer' : ''}`}
+            className={`cursor-pointer ${tracksNumberBaseCss}`}
             textAnchor="middle"
             stroke="white"
             strokeWidth="1px"
@@ -283,11 +280,16 @@ export const TracksImage: React.FC<TracksImageProps> = ({
               rx={rx}
               ry={ry}
               pointSize={7}
-              // TODO: do we need to handle clicks on area points?
-              // You can already drag to resize
-              // Maybe to remove them?
-              // need to call props.onPointClick('FORBIDDEN_AREA_POINT', areaIdx)
-              onChange={(area) => props.onAreaChange && props.onAreaChange('FORBIDDEN_AREA', i, area)}
+              onChange={(area) => {
+                if (editable) {
+                  const newForbiddens = [...line.forbidden!]
+                  newForbiddens[i] = area;
+                  quarkLine?.set({
+                    ...line,
+                    forbidden: newForbiddens,
+                  })
+                }
+              }}
             />,
           );
         }
@@ -362,8 +364,6 @@ TracksImage.displayName = "TracksImage";
 function getOnLineClick(selectedTrack: SelectQuarkNullable<Track>, trackQuark: Quark<Track>) {
   return () => selectedTrack.select(trackQuark);
 }
-
-type LineOnImage = Line & TrackInfo;
 
 type TrackInfo = {
   trackId: UUID,

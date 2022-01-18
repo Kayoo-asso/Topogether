@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Polygon, Point, LinearRing, Position } from 'types';
+import React from 'react';
+import { LinearRing, Position } from 'types';
 import { DraggablePolyline } from '.';
 import { pointsToPolylineStr, ratioPoint } from '../../../helpers';
 import { SVGPoint } from './SVGPoint';
@@ -23,7 +23,6 @@ export const SVGArea: React.FC<SVGAreaProps> = ({
   className = '',
   ...props
 }: SVGAreaProps) => {
-
   const initialPoints = Object.values(props.area)
   const points = initialPoints.map(p => ratioPoint(p, rx)) as Position[];
   points.push(ratioPoint(initialPoints[0], rx));
@@ -31,7 +30,7 @@ export const SVGArea: React.FC<SVGAreaProps> = ({
   const updateAreaPoint = (index: 0 | 1 | 2 | 3, newPos: Position) => {
     if (props.onChange) {
       const newArea = {...props.area};
-      newArea[index] = ratioPoint(newPos, rx);
+      newArea[index] = [newPos[0]/rx, newPos[1]/ry];
       props.onChange(newArea);
     }
   };
@@ -39,10 +38,10 @@ export const SVGArea: React.FC<SVGAreaProps> = ({
   const dragAllPoints = (diffX: number, diffY: number) => {
     if (props.onChange) {
       const newArea: LinearRing = {
-        0: [props.area[0][0] + diffX, props.area[0][1] + diffY],
-        1: [props.area[1][0] + diffX, props.area[1][1] + diffY],
-        2: [props.area[2][0] + diffX, props.area[2][1] + diffY],
-        3: [props.area[3][0] + diffX, props.area[3][1] + diffY],
+        0: [props.area[0][0] + diffX/rx, props.area[0][1] + diffY/rx],
+        1: [props.area[1][0] + diffX/rx, props.area[1][1] + diffY/rx],
+        2: [props.area[2][0] + diffX/rx, props.area[2][1] + diffY/rx],
+        3: [props.area[3][0] + diffX/rx, props.area[3][1] + diffY/rx],
       };
       props.onChange(newArea);
     }
@@ -84,7 +83,8 @@ export const SVGArea: React.FC<SVGAreaProps> = ({
           size={pointSize}
           className="fill-second"
           onDrag={(pos) => {
-            updateAreaPoint(index as 0|1|2|3, pos);
+            const idx = (index < 4) ? index : 0;
+            updateAreaPoint(idx as 0|1|2|3, pos);
           }}
         />
       ))

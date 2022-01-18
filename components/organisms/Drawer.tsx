@@ -19,43 +19,45 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies((props: DrawerPro
     const selectedTrack = props.selectedTrack()!;
 
     const addPointToLine = (pos: Position) => {
-      const newLineQuark = selectedTrack.lines.quarkAt(0);
-      const newLine = newLineQuark();
-      switch (selectedTool) {
-        case 'LINE_DRAWER':
-          const newPoints = newLine.points || [];
-          newPoints.push(pos);
-          newLineQuark.set({
-            ...newLine,
-            points: newPoints
-          });
-          break;
-        case 'HAND_DEPARTURE_DRAWER':
-          const newHandPoints = newLine.handDepartures || [];
-          if (newHandPoints.length < 2) newHandPoints.push(pos);
-          else { newHandPoints.splice(0,1); newHandPoints.push(pos); }
-          newLineQuark.set({
-            ...newLine,
-            handDepartures: newHandPoints
-          });
-          break;
-          case 'FOOT_DEPARTURE_DRAWER':
-            const newFootPoints = newLine.feetDepartures || [];
-            if (newFootPoints.length < 2) newFootPoints.push(pos);
-            else { newFootPoints.splice(0,1); newFootPoints.push(pos); }
+      const newLineQuark = selectedTrack.lines.findQuark(l => l.imageId === props.image.id)
+      if (newLineQuark) {
+        const newLine = newLineQuark();
+        switch (selectedTool) {
+          case 'LINE_DRAWER':
+            const newPoints = newLine.points || [];
+            newPoints.push(pos);
             newLineQuark.set({
               ...newLine,
-              feetDepartures: newFootPoints
+              points: newPoints
             });
             break;
-          case 'FORBIDDEN_AREA_DRAWER':
-            const newForbiddenPoints = newLine.forbidden || [];
-            newForbiddenPoints.push(constructArea(pos));
+          case 'HAND_DEPARTURE_DRAWER':
+            const newHandPoints = newLine.handDepartures || [];
+            if (newHandPoints.length < 2) newHandPoints.push(pos);
+            else { newHandPoints.splice(0,1); newHandPoints.push(pos); }
             newLineQuark.set({
               ...newLine,
-              forbidden: newForbiddenPoints
+              handDepartures: newHandPoints
             });
             break;
+            case 'FOOT_DEPARTURE_DRAWER':
+              const newFootPoints = newLine.feetDepartures || [];
+              if (newFootPoints.length < 2) newFootPoints.push(pos);
+              else { newFootPoints.splice(0,1); newFootPoints.push(pos); }
+              newLineQuark.set({
+                ...newLine,
+                feetDepartures: newFootPoints
+              });
+              break;
+            case 'FORBIDDEN_AREA_DRAWER':
+              const newForbiddenPoints = newLine.forbidden || [];
+              newForbiddenPoints.push(constructArea(pos));
+              newLineQuark.set({
+                ...newLine,
+                forbidden: newForbiddenPoints
+              });
+              break;
+        }
       }
     }
 
