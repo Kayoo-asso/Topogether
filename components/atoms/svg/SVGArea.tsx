@@ -19,7 +19,7 @@ export const SVGArea: React.FC<SVGAreaProps> = ({
   rx = 1,
   ry = 1,
   editable = false,
-  pointSize = 3,
+  pointSize = 5,
   className = '',
   ...props
 }: SVGAreaProps) => {

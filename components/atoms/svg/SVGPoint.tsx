@@ -15,7 +15,6 @@ interface SVGPointProps {
 export const SVGPoint: React.FC<SVGPointProps> = ({
   draggable = false,
   iconHref = '/assets/icons/colored/line-point/_line-point-grey.svg',
-  size = 5,
   className = 'fill-main',
   ...props
 }: SVGPointProps) => {
@@ -23,13 +22,11 @@ export const SVGPoint: React.FC<SVGPointProps> = ({
   // The main risk is that internal state becomes out-of-sync with parent components
   // https://reactjs.org/blog/2018/06/07/you-probably-dont-need-derived-state.html
   // TODO: is active necessary? Does onPointerMove fire when pointer capure is not set?
-  // TODO: verify that the offset works correctly
   const [position, setPosition] = useState({
     active: false,
     offsetX: 0,
     offsetY: 0,
   });
-
 
   const handlePointerDown: React.PointerEventHandler<SVGImageElement> = (e: React.PointerEvent) => {
     if (draggable) {
@@ -43,7 +40,6 @@ export const SVGPoint: React.FC<SVGPointProps> = ({
       });
     }
   };
-
   const handlePointerMove: React.PointerEventHandler<SVGImageElement> = (e: React.PointerEvent) => {
     if (position.active) {
       const newX = e.clientX - position.offsetX;
@@ -51,7 +47,6 @@ export const SVGPoint: React.FC<SVGPointProps> = ({
       if (props.onDrag) props.onDrag([newX, newY]);
     }
   };
-
   const handlePointerUp: React.PointerEventHandler<SVGImageElement> = (e: React.PointerEvent) => {
     if (position.active) {
       const newX = e.clientX - position.offsetX;
@@ -72,7 +67,7 @@ export const SVGPoint: React.FC<SVGPointProps> = ({
         y={props.y}
         className={`${className} ${draggable ? 'cursor-pointer' : ''}`}
         href={iconHref}
-        width={size}
+        width={props.size || undefined}
         onPointerDown={handlePointerDown}
         onPointerUp={handlePointerUp}
         onPointerMove={handlePointerMove}
