@@ -65,12 +65,12 @@ export const lines: Line[] = [
             [2262, 787],
             [1901, 51]
         ],
-        forbidden: [{
-            0: [1200, 50],
-            1: [1650, 50],
-            2: [1650, 400],
-            3: [1200, 400],
-        }],
+        forbidden: [
+            [[1200, 50],
+            [1650, 50],
+            [1650, 400],
+            [1200, 400]],
+        ],
         feetDepartures: [
             [600, 250],
         ],
@@ -107,7 +107,7 @@ export const tracks: TrackData[] = [
         reception: Difficulty.OK,
         // -> Bitflag example
         techniques: ClimbTechniques.Adherence | ClimbTechniques.Pince,
-        
+
         isTraverse: true,
         isSittingStart: false,
         mustSee: false,

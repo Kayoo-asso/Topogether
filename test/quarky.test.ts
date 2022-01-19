@@ -1,4 +1,5 @@
 import { Quark, derive, effect, quark, batch, untrack, Signal, selectSignal, selectQuark, QuarkDebug, EffectDebug, Effect } from "helpers/quarky/quarky"
+import { wrap } from "module";
 import { getConsoleErrorSpy } from "test/utils";
 
 test("Creating and reading quark", () => {
@@ -849,4 +850,24 @@ test("Storing functions in quarks", () => {
         return quadruple
     });
     expect(q()).toBe(quadruple!);
+});
+
+
+// Check that cleanups do not run multiple times, that all of the
+test("Effect disposing itself during cleanup runs all cleanups exactly once", () => {
+    let firstCleanupCount = 0;
+    let secondCleanupCount = 0;
+    // use a ref to allow a direct self-reference within the effect
+    let ref: { e: Effect } = { e: undefined! };
+    ref.e = effect((onCleanup) => {
+        // do it before recursing due to deletion
+        onCleanup(() => ++firstCleanupCount);
+        // avoid infinite recursion in case of a failing test
+        onCleanup(() => ref.e.dispose());
+        // this one should run too
+        onCleanup(() => ++secondCleanupCount);
+    });
+    ref.e.dispose();
+    expect(firstCleanupCount).toBe(1);
+    expect(secondCleanupCount).toBe(1);
 });
