@@ -696,7 +696,6 @@ test("Setting and unsetting SelectQuarkNullable", () => {
     expect(s.quark()).toBe(undefined);
 });
 
-
 test("Setting and unsetting SelectSignal", () => {
     const v1 = quark("foo");
     const v2 = quark("bar");
@@ -717,6 +716,31 @@ test("Setting and unsetting SelectSignal", () => {
     v2.set("foo4");
     expect(s()).toBe("foo4");
 });
+
+test("SelectQuark notifies observers", () => {
+    const s = selectQuark<string>();
+    const value = quark("foo");
+    let valueObserverRuns = 0;
+    let quarkObserverRuns = 0;
+    effect([s], () => valueObserverRuns += 1, { lazy: true });
+    effect([s.quark], () => quarkObserverRuns += 1, { lazy: true });
+
+    s.select(value);
+    expect(valueObserverRuns).toBe(1);
+    expect(quarkObserverRuns).toBe(1);
+
+    value.set("bar");
+    expect(s()).toBe("bar");
+    expect(valueObserverRuns).toBe(2);
+    expect(quarkObserverRuns).toBe(1);
+
+    s.select(undefined);
+    expect(s()).toBe(undefined);
+    expect(s.quark()).toBe(undefined);
+    expect(valueObserverRuns).toBe(3);
+    expect(quarkObserverRuns).toBe(2);
+});
+
 
 test("Lazy effects only register once and are cleaned up correctly", () => {
     const Q = quark(1) as QuarkDebug<number>;

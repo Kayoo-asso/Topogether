@@ -11,7 +11,7 @@ import useDimensions from 'react-cool-dimensions';
 import {
   getMousePosInside,
 } from '../../helpers';
-import { Quark, QuarkArray, SelectQuarkNullable } from 'helpers/quarky';
+import { Quark, QuarkArray, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
 
 interface TracksImageProps {
   image: Image,
@@ -38,7 +38,7 @@ const getColorNumber = (track: Track) => {
 // - The useDimensions hook from react-cool-dimensions can be used to dynamically size this component, based on its container
 // TODOS:
 // - Verify that the useDimensions hook works for dynamically resizing TracksImage
-export const TracksImage: React.FC<TracksImageProps> = ({
+export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
   displayTracks = true,
   displayPhantomTracks = true,
   displayTracksNumber = true,
@@ -265,7 +265,7 @@ export const TracksImage: React.FC<TracksImageProps> = ({
       />
     </div>
   );
-};
+});
 
 TracksImage.displayName = "TracksImage";
 

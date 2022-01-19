@@ -23,7 +23,6 @@ const gradeColors = {
 // TODO: separate into a TracksListItem component?
 export const TracksList: React.FC<TracksListProps> = watchDependencies((props: TracksListProps) => {
   const tracks = Array.from(props.tracks);
-  console.log(tracks);
 
   return (
     <div className="w-full border-t border-grey-light">
