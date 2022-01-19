@@ -45,6 +45,10 @@ const BuilderMapPage: NextPage = () => {
   const [displayManagement, setDisplayManagement] = useState<boolean>(false);
   const [currentDisplay, setCurrentDisplay] = useState<'INFO' | 'APPROACH' | 'MANAGEMENT'>();
   useEffect(() => {
+    selectedTrack.select(undefined);
+    selectedBoulder.select(undefined);
+    selectedParking.select(undefined);
+    selectedWaypoint.select(undefined);
     if (currentDisplay === 'INFO') {
       setDisplayInfo(true);
       setTimeout(() => {
@@ -64,6 +68,11 @@ const BuilderMapPage: NextPage = () => {
         setDisplayApproach(false)
       }, 150)
     }
+    else {
+      setDisplayInfo(false);
+      setDisplayApproach(false);
+      setDisplayManagement(false);
+    }
   }, [currentDisplay]);
 
   const [displayModalValidate, setDisplayModalValidate] = useState(false);
@@ -77,6 +86,17 @@ const BuilderMapPage: NextPage = () => {
         selectedBoulder.select(undefined);
     else selectedBoulder.select(boulderQuark)
   }, [selectedBoulder]);
+  const toggleTrackSelect = useCallback((trackQuark: Quark<Track>, boulderQuark: Quark<Boulder>) => {
+    selectedBoulder.select(undefined);
+    selectedParking.select(undefined);
+    selectedWaypoint.select(undefined);
+    if (selectedTrack()?.id === trackQuark().id)
+      selectedTrack.select(undefined);
+    else {
+      selectedBoulder.select(boulderQuark);
+      selectedTrack.select(trackQuark); 
+    }
+  }, [selectedTrack]);
   const toggleParkingSelect = useCallback((parkingQuark: Quark<Parking>) => {
     selectedBoulder.select(undefined);
     selectedTrack.select(undefined);
@@ -120,6 +140,7 @@ const BuilderMapPage: NextPage = () => {
           sectors={topo().sectors.quarks()}
           selectedBoulder={selectedBoulder}
           onBoulderSelect={toggleBoulderSelect}
+          onTrackSelect={toggleTrackSelect}
           onValidate={() => setDisplayModalValidate(true)}
         />
 
@@ -127,7 +148,7 @@ const BuilderMapPage: NextPage = () => {
           <InfoFormSlideover 
             topo={topo}
             open={displayInfo}
-            onClose={() => { setDisplayInfo(false) }}
+            onClose={() => setCurrentDisplay(undefined)}
             className={currentDisplay === 'INFO' ? 'z-100' : ''}
           />
         </Show>
@@ -135,7 +156,7 @@ const BuilderMapPage: NextPage = () => {
           <ApproachFormSlideover
             topo={topo}
             open={displayApproach}
-            onClose={() => { setDisplayApproach(false) }}
+            onClose={() => setCurrentDisplay(undefined)}
             className={currentDisplay === 'APPROACH' ? 'z-100' : ''}
           />
         </Show>
@@ -143,7 +164,7 @@ const BuilderMapPage: NextPage = () => {
           <ManagementFormSlideover
             topo={topo}
             open={displayManagement}
-            onClose={() => { setDisplayManagement(false) }}
+            onClose={() => setCurrentDisplay(undefined)}
             className={currentDisplay === 'MANAGEMENT' ? 'z-100' : ''}
           />
         </Show>
@@ -179,7 +200,6 @@ const BuilderMapPage: NextPage = () => {
               }}
             />
           }
-
         </Show>
 
         <Show when={() => selectedBoulder.quark()}>

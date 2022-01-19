@@ -25,7 +25,7 @@ export const SVGLine: React.FC<SVGLineProps> = watchDependencies(({
     displayTrackOrderIndex = true,
     ...props
 }: SVGLineProps) => {
-    console.log("Rendering SVGLine");
+    if (!editable) console.log("Rendering SVGLine");
     const line = props.line();
     const points: Position[] = line.points.map(([x, y]) => [x * props.r, y * props.r]);
     const path = getPathFromPoints(points, 'CURVE');

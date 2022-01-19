@@ -14,14 +14,16 @@ interface DropdownProps {
   options: DropdownOption[];
   onSelect?: (option: DropdownOption) => void;
   type?: string;
+  fullSize?: boolean,
   className?:string;
 }
 
 export const Dropdown: React.FC<DropdownProps> = React.memo(({
   className = '',
+  fullSize = false,
   ...props
 }: DropdownProps) => (
-  <div className={`shadow absolute z-100 w-full px-7 py-5 bg-white rounded-b ${className}`}>
+  <div className={`shadow absolute z-100 ${fullSize ? 'w-full' : 'w-auto'} px-7 py-5 bg-white rounded-b ${className}`}>
     {props.options.map((opt, i) => (
       opt.isSection ? (
         <div

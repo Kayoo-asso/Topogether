@@ -2,12 +2,13 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Button, Icon } from 'components';
 import { UserContext } from 'helpers';
 import { Quark, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
-import { Boulder, Grade, Sector, UUID } from 'types';
+import { Boulder, Grade, Sector, Track, UUID } from 'types';
 
 interface LeftbarBuilderDesktopProps {
     sectors: Iterable<Quark<Sector>>,
     selectedBoulder: SelectQuarkNullable<Boulder>,
     onBoulderSelect: (boulderQuark: Quark<Boulder>) => void,
+    onTrackSelect: (trackQuark: Quark<Track>, boulderQuark: Quark<Boulder>) => void,
     onValidate: () => void,
 }
 
@@ -41,7 +42,7 @@ export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = watch
 
     if (!session) return null;
     return (
-        <div className='bg-white border-r border-grey-medium min-w-[280px] w-[280px] h-full hidden md:flex flex-col px-6 py-10 z-100'>
+        <div className='bg-white border-r border-grey-medium min-w-[280px] w-[280px] h-full hidden md:flex flex-col px-6 py-10 z-500'>
             
             <div className='h-[90%] scroll-y-auto pb-6'>
                 {sectors.map((sectorQuark, index) => {
@@ -97,7 +98,11 @@ export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = watch
                                                         {TrackQuarks.map((trackQuark) => {
                                                             const track = trackQuark();
                                                             return (
-                                                                <div key={track.id} className='flex flex-row cursor-pointer items-baseline'>
+                                                                <div 
+                                                                    key={track.id} 
+                                                                    className='flex flex-row cursor-pointer items-baseline'
+                                                                    onClick={() => props.onTrackSelect(trackQuark, boulderQuark)}
+                                                                >
                                                                     {track.grade &&
                                                                         <div className={'mr-2 ktext-subtitle ' + getGradeColorClass(track.grade)}>{track.grade}</div>
                                                                     }

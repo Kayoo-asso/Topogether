@@ -47,88 +47,92 @@ export const SVGTrack: React.FC<SVGTrackProps> = watchDependencies(({
     
         // Hand and feet departures
         if (displayTrackDetails && highlighted) {
-        if (line.handDepartures) {
-            for (let i = 0; i < line.handDepartures.length; i++) {
-            const [handX, handY] = line.handDepartures[i];
-            nodes.push(
-                <SVGPoint 
-                iconHref={`/assets/icons/colored/hand-full/_hand-full-${colorNumber}.svg`}
-                x={handX * props.r}
-                y={handY * props.r}
-                draggable={editable}
-                eraser={props.currentTool === 'ERASER'}
-                onDrag={(pos) => {
-                    if (editable) {
-                    const newHands = [...line.handDepartures!]
-                    newHands[i] = [pos[0]/props.r, pos[1]/props.r];
-                    quarkLine?.set({
-                        ...line,
-                        handDepartures: newHands,
-                    })
-                    }
-                }}
-                onClick={() => props.onPointClick && props.onPointClick('HAND_DEPARTURE_POINT', i)}
-                />
-            );
+            if (line.handDepartures) {
+                for (let i = 0; i < line.handDepartures.length; i++) {
+                const [handX, handY] = line.handDepartures[i];
+                nodes.push(
+                    <SVGPoint 
+                        key={'hand'+i}
+                        iconHref={`/assets/icons/colored/hand-full/_hand-full-${colorNumber}.svg`}
+                        x={handX * props.r}
+                        y={handY * props.r}
+                        draggable={editable}
+                        eraser={props.currentTool === 'ERASER'}
+                        onDrag={(pos) => {
+                            if (editable) {
+                            const newHands = [...line.handDepartures!]
+                            newHands[i] = [pos[0]/props.r, pos[1]/props.r];
+                            quarkLine?.set({
+                                ...line,
+                                handDepartures: newHands,
+                            })
+                            }
+                        }}
+                        onClick={() => props.onPointClick && props.onPointClick('HAND_DEPARTURE_POINT', i)}
+                    />
+                );
+                }
             }
-        }
-        if (line.feetDepartures) {
-            for (let i = 0; i < line.feetDepartures.length; i++) {
-            const [footX, footY] = line.feetDepartures[i];
-            nodes.push(
-                <SVGPoint 
-                iconHref={`/assets/icons/colored/climbing-shoe-full/_climbing-shoe-full-${colorNumber}.svg`}
-                x={footX * props.r}
-                y={footY * props.r}
-                draggable={editable}
-                eraser={props.currentTool === 'ERASER'}
-                onDrag={(pos) => {
-                    if (editable) {
-                    const newFeet = [...line.feetDepartures!]
-                    newFeet[i] = [pos[0]/props.r, pos[1]/props.r];
-                    quarkLine?.set({
-                        ...line,
-                        feetDepartures: newFeet,
-                    })
-                    }
-                }}
-                onClick={() => props.onPointClick && props.onPointClick('FOOT_DEPARTURE_POINT', i)}
-                />
-            );
+            if (line.feetDepartures) {
+                for (let i = 0; i < line.feetDepartures.length; i++) {
+                const [footX, footY] = line.feetDepartures[i];
+                nodes.push(
+                    <SVGPoint 
+                        key={'foot'+i}
+                        iconHref={`/assets/icons/colored/climbing-shoe-full/_climbing-shoe-full-${colorNumber}.svg`}
+                        x={footX * props.r}
+                        y={footY * props.r}
+                        draggable={editable}
+                        eraser={props.currentTool === 'ERASER'}
+                        onDrag={(pos) => {
+                            if (editable) {
+                            const newFeet = [...line.feetDepartures!]
+                            newFeet[i] = [pos[0]/props.r, pos[1]/props.r];
+                            quarkLine?.set({
+                                ...line,
+                                feetDepartures: newFeet,
+                            })
+                            }
+                        }}
+                        onClick={() => props.onPointClick && props.onPointClick('FOOT_DEPARTURE_POINT', i)}
+                    />
+                );
+                }
             }
-        }
         }
 
         // Forbidden areas
         if (displayTrackDetails && highlighted && line.forbidden) {
-        for (let i = 0; i < line.forbidden.length; i++) {
-            const area = line.forbidden[i];
-            nodes.push(
-            <SVGArea
-                area={area}
-                editable={editable}
-                eraser={props.currentTool === 'ERASER'}
-                rx={props.r}
-                ry={props.r}
-                pointSize={8}
-                onChange={(area) => {
-                if (editable) {
-                    const newForbiddens = [...line.forbidden!]
-                    newForbiddens[i] = area;
-                    quarkLine?.set({
-                    ...line,
-                    forbidden: newForbiddens,
-                    })
-                }
-                }}
-                onClick={() => props.onPointClick && props.onPointClick('FORBIDDEN_AREA_POINT', i)}
-            />,
-            );
-        }
+            for (let i = 0; i < line.forbidden.length; i++) {
+                const area = line.forbidden[i];
+                nodes.push(
+                    <SVGArea
+                        key={'area'+i}
+                        area={area}
+                        editable={editable}
+                        eraser={props.currentTool === 'ERASER'}
+                        rx={props.r}
+                        ry={props.r}
+                        pointSize={8}
+                        onChange={(area) => {
+                        if (editable) {
+                            const newForbiddens = [...line.forbidden!]
+                            newForbiddens[i] = area;
+                            quarkLine?.set({
+                            ...line,
+                            forbidden: newForbiddens,
+                            })
+                        }
+                        }}
+                        onClick={() => props.onPointClick && props.onPointClick('FORBIDDEN_AREA_POINT', i)}
+                    />,
+                );
+            }
         }
 
         return nodes;
     }
+    constructNodes(track.lines.quarkAt(0));
 
     return (
         <>

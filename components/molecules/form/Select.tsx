@@ -58,8 +58,8 @@ export const Select: React.FC<SelectProps> = ({
       />
       {isOpen && (
       <Dropdown
-        className='absolute w-full'
-        choices={[{
+        fullSize
+        options={[{
             value: props.label,
             isSection: true,
             action: () => {

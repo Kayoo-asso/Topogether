@@ -7,6 +7,7 @@ interface SlideagainstRightDesktopProps {
     open?: boolean,
     displayLikeButton?: boolean,
     displayDlButton?: boolean,
+    className?: string,
     item?: Signal<Boulder> | Signal<Topo> | Signal<LightTopo>,
     onClose?: () => void,
     children?: ReactNode,
@@ -22,12 +23,12 @@ export const SlideagainstRightDesktop: React.FC<SlideagainstRightDesktopProps> =
     const [marginRight, setMarginRight] = useState<number>(size);
 
     useEffect(() => {
-        window.setTimeout(() => setMarginRight(open ? 0 : size), 1);        
+        window.setTimeout(() => setMarginRight(open ? 0 : size), 1);    
       }, [open]);
 
     return (
         <div 
-            className={`bg-white w-[300px] border-l border-grey-medium h-full flex flex-col py-5`}
+            className={`bg-white w-[300px] border-l border-grey-medium h-full flex flex-col py-5 ${props.className ? props.className : ''}`}
             style={{ 
                 marginRight: `-${marginRight}px`,
                 transition: 'margin-right 0.15s ease-in-out'

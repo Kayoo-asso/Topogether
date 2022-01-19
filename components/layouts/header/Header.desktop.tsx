@@ -47,23 +47,21 @@ export const HeaderDesktop: React.FC<HeaderDesktopProps> = ({
         >
           {props.title}
         </span>
-        {props.menuOptions
-            && (
+        {props.menuOptions && (
             <Icon
               name="arrow-full"
               center
               SVGClassName="fill-white w-4 h-4 rotate-90 ml-[20px]"
               onClick={() => setMenuOpen(!menuOpen)}
             />
-            )}
-        {props.menuOptions && menuOpen
-            && (
+        )}
+        {props.menuOptions && menuOpen && (
             <Dropdown
-              choices={props.menuOptions}
+              options={props.menuOptions}
               onSelect={() => setMenuOpen(false)}
-              className="absolute z-500 top-[7%]"
+              className="z-1000 top-[7%]"
             />
-            )}
+        )}
       </div>
 
       {displayMapTools && (

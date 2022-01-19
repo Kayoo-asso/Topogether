@@ -18,6 +18,7 @@ export const BoulderBuilderSlideagainstDesktop: React.FC<BoulderBuilderSlideagai
     return (
         <SlideagainstRightDesktop 
             open
+            className='z-50'
             onClose={props.onClose}
         >
             <>

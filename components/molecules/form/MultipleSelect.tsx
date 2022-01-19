@@ -47,6 +47,7 @@ export const MultipleSelect: React.FC<MultipleSelectProps> = (props) => {
       {isOpen && (
         <Dropdown
           type="checkbox"
+          fullSize
           onSelect={(option) => {
             const newValue = [...props.value];
             if (props.value.includes(option)) newValue.slice(props.value.indexOf(option), 1);
