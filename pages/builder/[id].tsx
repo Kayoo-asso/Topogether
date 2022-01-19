@@ -8,7 +8,7 @@ import { useRouter } from 'next/router';
 import { quarkTopo } from 'helpers/fakeData/fakeTopoV2';
 import { DeviceContext, UserContext } from 'helpers';
 import { Boulder, Image, MapToolEnum, Parking, Track, Waypoint } from 'types';
-import { Quark, QuarkIter, reactKey, useSelectQuark, watchDependencies } from 'helpers/quarky';
+import { Quark, QuarkIter, useSelectQuark, watchDependencies } from 'helpers/quarky';
 
 
 const BuilderMapPage: NextPage = () => {
@@ -173,6 +173,10 @@ const BuilderMapPage: NextPage = () => {
             <TrackFormSlideagainstDesktop
               track={track}
               onClose={() => selectedTrack.select(undefined)}
+              onDeleteTrack={(quarkTrack) => {
+                selectedBoulder()!.tracks.removeQuark(quarkTrack)
+                selectedTrack.select(undefined);
+              }}
             />
           }
 

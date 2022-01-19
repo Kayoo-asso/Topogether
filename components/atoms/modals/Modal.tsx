@@ -14,7 +14,7 @@ export const Modal: React.FC<ModalProps> = ({
 
     return (
         <div 
-            className={'h-screen w-full z-500 absolute' + (withBackground ? ' bg-black bg-opacity-80' : '')}
+            className={'h-screen w-full z-1000 absolute' + (withBackground ? ' bg-black bg-opacity-80' : '')}
             onClick={props.onClose}
         >
             <div 
