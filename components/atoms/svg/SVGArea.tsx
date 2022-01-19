@@ -9,16 +9,19 @@ interface SVGAreaProps {
   area: LinearRing,
   rx: number,
   ry: number,
-  editable: boolean,
+  editable?: boolean,
+  eraser?: boolean,
   pointSize: number,
   className?: string,
   onChange?: (area: LinearRing) => void,
+  onClick?: () => void,
 }
 
 export const SVGArea: React.FC<SVGAreaProps> = ({
   rx = 1,
   ry = 1,
   editable = false,
+  eraser = false,
   pointSize = 5,
   className = '',
   ...props
@@ -52,13 +55,14 @@ export const SVGArea: React.FC<SVGAreaProps> = ({
     if (editable) {
       return (
         <DraggablePolyline
-          className={`stroke-second fill-second/10 z-20 ${className}`}
+          className={`stroke-second fill-second/10 z-20 ${eraser ? 'hover:fill-second/50' : ''} ${className}`}
           strokeWidth={lineStrokeWidth}
           points={points}
+          pointer={!eraser}
           onDrag={(diffX, diffY) => {
             dragAllPoints(diffX, diffY);
           }}
-          onDrop={() => props.onChange && props.onChange(props.area)}
+          onClick={props.onClick}
         />
       );
     }

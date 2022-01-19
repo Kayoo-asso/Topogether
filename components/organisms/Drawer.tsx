@@ -15,6 +15,7 @@ interface DrawerProps {
 export const Drawer: React.FC<DrawerProps> = watchDependencies((props: DrawerProps) => {
     const [selectedTool, setSelectedTool] = useState<DrawerToolEnum>('LINE_DRAWER');
     const [displayOtherTracks, setDisplayOtherTracks] = useState(false);
+    const [displayClearModal, setDisplayClearModal] = useState(false);
 
     const selectedTrack = props.selectedTrack()!;
 
@@ -86,45 +87,48 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies((props: DrawerPro
     }
 
     return (
-      <div className="absolute top-0 bg-black bg-opacity-90 h-full flex flex-col z-500 w-full md:w-[calc(100%-600px)]">
+      <>
+        <div className="absolute top-0 bg-black bg-opacity-90 h-full flex flex-col z-500 w-full md:w-[calc(100%-600px)]">
 
-        <div className="flex-1 flex items-center relative">
-          {/* TODO: CHANGE SIZING */}
-          <TracksImage
-            image={props.image}
-            tracks={displayOtherTracks ? props.tracks : new QuarkArray([selectedTrack])}
-            selectedTrack={props.selectedTrack}
-            currentTool={selectedTool}
-            editable
-            displayTracksDetails
-            onImageClick={(pos) => addPointToLine(pos)}
-            onPointClick={(pointType, index) => {
-              if (selectedTool === 'ERASER') deletePointToLine(pointType, index);
-            }}
-            onAreaChange={(areaType, index, area) => {
+          <div className="flex-1 flex items-center relative">
+            {/* TODO: CHANGE SIZING */}
+            <TracksImage
+              image={props.image}
+              tracks={displayOtherTracks ? props.tracks : new QuarkArray([selectedTrack])}
+              selectedTrack={props.selectedTrack}
+              currentTool={selectedTool}
+              editable
+              displayTracksDetails
+              onImageClick={(pos) => addPointToLine(pos)}
+              onPointClick={(pointType, index) => {
+                if (selectedTool === 'ERASER') deletePointToLine(pointType, index);
+              }}
+            />
+          </div>
 
+          <Toolbar
+            selectedTool={selectedTool}
+            displayOtherTracks={displayOtherTracks}
+            grade={selectedTrack.grade}
+            onToolSelect={(tool) => setSelectedTool(tool)}
+            onGradeSelect={(grade) => {
+              props.selectedTrack.quark()?.set({
+                ...selectedTrack,
+                grade: grade,
+              })
             }}
+            onClear={() => {}}
+            onRewind={() => {}}
+            onOtherTracks={() => setDisplayOtherTracks(!displayOtherTracks)}
+            onValidate={props.onValidate}
           />
+
         </div>
 
-        <Toolbar
-          selectedTool={selectedTool}
-          displayOtherTracks={displayOtherTracks}
-          grade={selectedTrack.grade}
-          onToolSelect={(tool) => setSelectedTool(tool)}
-          onGradeSelect={(grade) => {
-            props.selectedTrack.quark()?.set({
-              ...selectedTrack,
-              grade: grade,
-            })
-          }}
-          onClear={() => {}}
-          onRewind={() => {}}
-          onOtherTracks={() => setDisplayOtherTracks(!displayOtherTracks)}
-          onValidate={props.onValidate}
-        />
-
-      </div>
+        {displayClearModal &&
+          <></>
+        }
+      </>
     );
 });
 

@@ -2,8 +2,7 @@ import React from 'react';
 import NextImage from 'next/image';
 import {
   Image,
-  PointEnum, AreaEnum, DrawerToolEnum, Position, UUID, gradeToLightGrade, LinearRing,
-  LightGrade,
+  PointEnum, DrawerToolEnum, Position, UUID, gradeToLightGrade,
   Track
 } from 'types';
 import { SVGArea, SVGLine, SVGPoint } from 'components';
@@ -11,7 +10,6 @@ import { staticUrl } from 'helpers/globals';
 import useDimensions from 'react-cool-dimensions';
 import {
   getMousePosInside,
-  getPathFromPoints,
 } from '../../helpers';
 import { Quark, QuarkArray, SelectQuarkNullable } from 'helpers/quarky';
 
@@ -29,7 +27,6 @@ interface TracksImageProps {
   currentTool?: DrawerToolEnum,
   onImageClick?: (pos: Position) => void,
   onPointClick?: (pointType: PointEnum, index: number) => void,
-  onAreaChange?: (areaType: AreaEnum, index: number, area: LinearRing) => void,
   onImageLoad?: (width: number, height: number) => void,
 }
 
@@ -113,11 +110,13 @@ export const TracksImage: React.FC<TracksImageProps> = ({
             line={quarkLine}
             r={rx}
             editable={editable && isHighlighted}
+            eraser={props.currentTool === 'ERASER'}
             grade={track.grade}
             pointSize={8}
             phantom={!isHighlighted}
             trackOrderIndex={track.orderIndex}
             onClick={onLineClick}
+            onPointClick={(index) => props.onPointClick && props.onPointClick('LINE_POINT', index)}
           />
         )
 
@@ -132,6 +131,7 @@ export const TracksImage: React.FC<TracksImageProps> = ({
                   x={handX * rx}
                   y={handY * ry}
                   draggable={editable}
+                  eraser={props.currentTool === 'ERASER'}
                   onDrag={(pos) => {
                     if (editable) {
                       const newHands = [...line.handDepartures!]
@@ -142,6 +142,7 @@ export const TracksImage: React.FC<TracksImageProps> = ({
                       })
                     }
                   }}
+                  onClick={() => props.onPointClick && props.onPointClick('HAND_DEPARTURE_POINT', i)}
                 />
               );
             }
@@ -155,6 +156,7 @@ export const TracksImage: React.FC<TracksImageProps> = ({
                   x={footX * rx}
                   y={footY * ry}
                   draggable={editable}
+                  eraser={props.currentTool === 'ERASER'}
                   onDrag={(pos) => {
                     if (editable) {
                       const newFeet = [...line.feetDepartures!]
@@ -165,6 +167,7 @@ export const TracksImage: React.FC<TracksImageProps> = ({
                       })
                     }
                   }}
+                  onClick={() => props.onPointClick && props.onPointClick('FOOT_DEPARTURE_POINT', i)}
                 />
               );
             }
@@ -179,6 +182,7 @@ export const TracksImage: React.FC<TracksImageProps> = ({
               <SVGArea
                 area={area}
                 editable={editable}
+                eraser={props.currentTool === 'ERASER'}
                 rx={rx}
                 ry={ry}
                 pointSize={8}
@@ -192,6 +196,7 @@ export const TracksImage: React.FC<TracksImageProps> = ({
                     })
                   }
                 }}
+                onClick={() => props.onPointClick && props.onPointClick('FORBIDDEN_AREA_POINT', i)}
               />,
             );
           }
@@ -232,7 +237,7 @@ export const TracksImage: React.FC<TracksImageProps> = ({
       }}
     >
       <svg
-        style={{ cursor: `url(${getCursorUrl()}), auto` }}
+        style={{ cursor: `url(${getCursorUrl()}) ${props.currentTool === 'ERASER' ? '3 7': ''}, auto` }}
         className="svg-canvas absolute z-50"
         width={imgWidth}
         height={imgHeight}
@@ -267,14 +272,6 @@ TracksImage.displayName = "TracksImage";
 function getOnLineClick(selectedTrack: SelectQuarkNullable<Track>, trackQuark: Quark<Track>) {
   return () => selectedTrack.select(trackQuark);
 }
-
-type TrackInfo = {
-  trackId: UUID,
-  isStart: boolean,
-  // TODO: remove "None"
-  gradeColor: LightGrade | 'grey',
-  orderIndex: number,
-};
 
 interface RenderAccumulator {
   id: UUID,

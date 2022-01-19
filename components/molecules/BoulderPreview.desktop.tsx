@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Quark, SelectQuarkNullable } from 'helpers/quarky';
+import { Quark, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
 import { Boulder, Track, UUID } from 'types';
 import { MultipleImageInput, TracksImage } from '.';
 
@@ -9,12 +9,13 @@ interface BoulderPreviewDesktopProps {
     displayAddButton?: boolean,
 }
 
-export const BoulderPreviewDesktop: React.FC<BoulderPreviewDesktopProps> = ({
+export const BoulderPreviewDesktop: React.FC<BoulderPreviewDesktopProps> = watchDependencies(({
     displayAddButton = false,
     ...props
 }: BoulderPreviewDesktopProps) => {
     const boulder = props.boulder();
     const [selectedImageId, setSelectedImageId] = useState<UUID>(boulder.images[0].id);
+    console.log(props.selectedTrack());
 
     return (
         <div className='flex flex-col w-full items-center'>
@@ -41,4 +42,4 @@ export const BoulderPreviewDesktop: React.FC<BoulderPreviewDesktopProps> = ({
             </div>
         </div>
     )
-}
+});

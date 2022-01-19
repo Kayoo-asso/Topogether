@@ -6,13 +6,15 @@ interface DraggablePolylineProps {
   points: Position[],
   className?: string,
   strokeWidth?: number,
+  pointer?: boolean,
   onDrag?: (diffX: number, diffY: number) => void
-  onDrop?: () => void,
+  onClick?: () => void,
 }
 
 export const DraggablePolyline: React.FC<DraggablePolylineProps> = ({
   className = 'stroke-main',
   strokeWidth = 2,
+  pointer = true,
   ...props
 }: DraggablePolylineProps) => {
   const [cursorPosition, setCursorPosition] = useState({
@@ -50,19 +52,19 @@ export const DraggablePolyline: React.FC<DraggablePolylineProps> = ({
         ...cursorPosition,
         active: false,
       });
-      if (props.onDrop) props.onDrop();
     }
   };
 
 
   return (
     <polyline
-      className={`cursor-pointer ${className}`}
+      className={`${pointer ? 'cursor-pointer ' : ''}${className}`}
       points={pointsToPolylineStr(props.points)}
       strokeWidth={strokeWidth}
       onPointerDown={handlePointerDown}
       onPointerUp={handlePointerUp}
       onPointerMove={handlePointerMove}
+      onClick={props.onClick}
     />
   );
 };

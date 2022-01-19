@@ -5,15 +5,17 @@ interface SVGPointProps {
   x: number,
   y: number,
   draggable?: boolean,
+  eraser?: boolean,
   iconHref?: string,
   size?: number,
   className?: string,
   onDrag?: (coord: Position) => void,
-  onDrop?: (coord: Position) => void,
+  onClick?: (e: React.MouseEvent<SVGImageElement, MouseEvent>) => void,
 }
 
 export const SVGPoint: React.FC<SVGPointProps> = ({
   draggable = false,
+  eraser = false,
   iconHref = '/assets/icons/colored/line-point/_line-point-grey.svg',
   className = 'fill-main',
   ...props
@@ -65,12 +67,16 @@ export const SVGPoint: React.FC<SVGPointProps> = ({
       <image
         x={props.x}
         y={props.y}
-        className={`${className} ${draggable ? 'cursor-pointer' : ''}`}
+        className={`${className} ${(draggable && !eraser) ? 'cursor-pointer' : ''}${eraser ? ' hover:scale-150 origin-center' : ''}`}
+        style={{
+          transformBox: 'fill-box'
+        }}
         href={iconHref}
         width={props.size || undefined}
         onPointerDown={handlePointerDown}
         onPointerUp={handlePointerUp}
         onPointerMove={handlePointerMove}
+        onClick={props.onClick}
       />
   );
 };

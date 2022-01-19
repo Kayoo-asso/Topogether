@@ -9,15 +9,18 @@ interface SVGLineProps {
     r: number,
     grade: Grade | undefined,
     editable?: boolean,
+    eraser?: boolean,
     displayTrackOrderIndex?: boolean,
     trackOrderIndex: number,
     pointSize?: number,
     phantom?: boolean,
     onClick?: () => void,
+    onPointClick?: (index: number) => void,
 }
 
 export const SVGLine: React.FC<SVGLineProps> = watchDependencies(({
     editable = false,
+    eraser = false,
     phantom = false,
     displayTrackOrderIndex = true,
     ...props
@@ -136,6 +139,7 @@ export const SVGLine: React.FC<SVGLineProps> = watchDependencies(({
                         y={p[1] - pointSize/2}
                         size={pointSize}
                         draggable={editable}
+                        eraser={eraser}
                         onDrag={(pos) => {
                             if (editable) {
                               const newPoints = [...line.points]
@@ -145,6 +149,10 @@ export const SVGLine: React.FC<SVGLineProps> = watchDependencies(({
                                   points: newPoints,
                               })
                             }
+                        }}
+                        onClick={(e) => {
+                          if (eraser) e.stopPropagation();
+                          props.onPointClick && props.onPointClick(index); 
                         }}
                     />
                 ))};
@@ -157,7 +165,7 @@ export const SVGLine: React.FC<SVGLineProps> = watchDependencies(({
                     cx={firstX}
                     cy={firstY}
                     r={9}
-                    className={`${getFillColorClass()} ${phantom ? 'z-20 opacity-50' : 'z-40'} cursor-pointer`}
+                    className={`${getFillColorClass()} ${phantom ? 'z-20 opacity-50' : 'z-40'}${!eraser || phantom ? ' cursor-pointer' : ''}`}
                     onClick={props.onClick}
                     onPointerDown={handlePointerDown}
                     onPointerUp={handlePointerUp}
@@ -166,7 +174,7 @@ export const SVGLine: React.FC<SVGLineProps> = watchDependencies(({
                 <text
                     x={firstX}
                     y={firstY}
-                    className={`${phantom ? 'z-20 opacity-50' : 'z-40'} cursor-pointer`}
+                    className={`${phantom ? 'z-20 opacity-50' : 'z-40'}${!eraser || phantom ? ' cursor-pointer' : ''}`}
                     textAnchor="middle"
                     stroke="white"
                     strokeWidth="1px"
