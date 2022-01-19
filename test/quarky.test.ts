@@ -1,5 +1,4 @@
-import { Quark, derive, effect, quark, batch, untrack, Signal, selectSignal, selectQuark, QuarkDebug, EffectDebug, Effect } from "helpers/quarky/quarky"
-import { wrap } from "module";
+import { Quark, derive, effect, quark, batch, untrack, Signal, selectSignal, selectQuark, QuarkDebug, EffectDebug, Effect } from "helpers/quarky/"
 import { getConsoleErrorSpy } from "test/utils";
 
 test("Creating and reading quark", () => {
@@ -633,11 +632,9 @@ test("Lazy effect that ends up cleaning itself during execution runs cleanups an
     trigger.set(x => !x);
     expect(counter).toBe(1);
     expect(cleanupRuns).toBe(1);
-    expect(trigger.node.obs.length).toBe(0);
-    expect(trigger.node.oSlots.length).toBe(0);
-    expect(e.node.deps.length).toBe(0);
-    expect(e.node.depSlots.length).toBe(0);
-    expect(e.node.cdeps).toBe(-1); // means deleted
+    expect(trigger.node.obs.size).toBe(0);
+    expect(e.node.deps.size).toBe(0);
+    expect(e.node.deleted);
 
     trigger.set(x => !x);
     expect(counter).toBe(1);
@@ -725,13 +722,11 @@ test("Lazy effects only register once and are cleaned up correctly", () => {
     const Q = quark(1) as QuarkDebug<number>;
     const node = Q.node;
     const E = effect([Q], () => { }) as EffectDebug;
-    expect(node.obs).toEqual([E.node]);
-    expect(node.oSlots).toEqual([0]);
+    expect(node.obs).toEqual(new Set([E.node]));
     // trigger the effect, since there have been many problems about lazy effects double registering their dependencies upon first run
     Q.set(2);
     E.dispose();
-    expect(node.obs).toEqual([]);
-    expect(node.oSlots).toEqual([]);
+    expect(node.obs).toEqual(new Set());
 });
 
 test("Effect observing a quark 2+ times only runs once on update", () => {
@@ -743,7 +738,7 @@ test("Effect observing a quark 2+ times only runs once on update", () => {
         counter.current += 1
     }) as EffectDebug;
 
-    expect(node.obs).toEqual([E.node, E.node]);
+    expect(node.obs).toEqual(new Set([E.node]));
     counter.current = 0;
     Q.set(2);
     expect(counter.current).toEqual(1);

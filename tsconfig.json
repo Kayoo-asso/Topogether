@@ -32,8 +32,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    "components/atoms/index.js", "helpers/hooks/index.js"
-, "helpers/quarky/quarky.ts", "helpers/quarky/QuarkIter.ts.old"  ],
+    "components/atoms/index.js", "helpers/hooks/index.js"],
   "exclude": [
     "node_modules"
   ]
