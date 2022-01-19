@@ -71,7 +71,7 @@ export const TrackFormSlideagainstDesktop: React.FC<TrackFormSlideagainstDesktop
                                 value: 'Dulfer'
                             }
                         ]}
-                        value={[]}
+                        values={[]}
                         onChange={(opts) => console.log(opts)}
                     />
 
@@ -87,7 +87,7 @@ export const TrackFormSlideagainstDesktop: React.FC<TrackFormSlideagainstDesktop
                                 value: 'Mauvaise'
                             }
                         ]}
-                        value={[]}
+                        values={[]}
                         onChange={(opts) => console.log(opts)}
                     />
 
