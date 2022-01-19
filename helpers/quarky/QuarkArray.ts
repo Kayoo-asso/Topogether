@@ -122,6 +122,42 @@ export class QuarkArray<T> {
         );
     }
 
+    remove(item: T) {
+        untrack(() => {
+            this.#source.set(arr => {
+                for (let i = 0; i < arr.length; i++) {
+                    const x = arr[i]();
+                    if (x === item) {
+                        arr.splice(i, 1);
+                        break;
+                    }
+                }
+                return arr;
+            }) 
+        });
+    }
+
+    removeQuark(quark: Quark<T>) {
+       untrack(() => {
+            this.#source.set(arr => {
+                for (let i = 0; i < arr.length; i++) {
+                    if (quark === arr[i]) {
+                        arr.splice(i, 1);
+                        break;
+                    }
+                }
+                return arr;
+            }) 
+        });
+
+    }
+
+    removeAll(selection: (item: T) => boolean) {
+        untrack(() => {
+            this.#source.set(arr => arr.filter(x => !selection(x())))
+        });
+    }
+
     toArray(): T[] {
         return Array.from(this);
     }
