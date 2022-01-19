@@ -1,5 +1,5 @@
-import React from 'react';
-import { Checkbox, MultipleSelect, SlideagainstRightDesktop, TextArea, TextInput } from 'components';
+import React, { useState } from 'react';
+import { Button, Checkbox, ModalDelete, MultipleSelect, SlideagainstRightDesktop, TextArea, TextInput } from 'components';
 import { Quark, watchDependencies } from 'helpers/quarky';
 import { Description, Name, Track } from 'types';
 
@@ -10,6 +10,7 @@ interface TrackFormSlideagainstDesktopProps {
 
 export const TrackFormSlideagainstDesktop: React.FC<TrackFormSlideagainstDesktopProps> = watchDependencies((props: TrackFormSlideagainstDesktopProps) => {
     const track = props.track();
+    const [displayDeleteModal, setDisplayDeleteModal] = useState(false);
 
     return (
         <SlideagainstRightDesktop 
@@ -113,7 +114,24 @@ export const TrackFormSlideagainstDesktop: React.FC<TrackFormSlideagainstDesktop
 
                     </div>
 
+                    <div className='absolute w-full bottom-5 left-0 px-5'>
+                        <Button 
+                            content='Supprimer'
+                            onClick={() => setDisplayDeleteModal(true)}
+                            fullWidth
+                        />
+                    </div>
+
                 </div>
+
+                {displayDeleteModal &&
+                    <ModalDelete
+                        onClose={() => setDisplayDeleteModal(false)}
+                        onDelete={() => {}} //TODO
+                    >
+                        Etes-vous sûr de vouloir supprimer la voie ?
+                    </ModalDelete>
+                }
             </>
         </SlideagainstRightDesktop>
     )

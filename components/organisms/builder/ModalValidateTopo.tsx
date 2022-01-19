@@ -18,7 +18,7 @@ export const ModalValidateTopo: React.FC<ModalValidateTopoProps> = (props: Modal
       }
 
     return (
-        <Modal open onClose={props.onClose} >
+        <Modal onClose={props.onClose} >
             <div className='p-6 pt-10'>
                 <div className='w-full h-[100px] relative mb-5'>
                     <NextImage 

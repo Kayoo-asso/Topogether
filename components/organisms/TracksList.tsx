@@ -23,6 +23,7 @@ const gradeColors = {
 // TODO: separate into a TracksListItem component?
 export const TracksList: React.FC<TracksListProps> = watchDependencies((props: TracksListProps) => {
   const tracks = Array.from(props.tracks);
+  console.log(tracks);
 
   return (
     <div className="w-full border-t border-grey-light">
@@ -44,12 +45,11 @@ export const TracksList: React.FC<TracksListProps> = watchDependencies((props: T
               content={(track.orderIndex + 1).toString()}
             />
 
-            {track.grade
-              && (
+            {track.grade && (
               <div className={`ktext-subtitle ml-3 text-right ${gradeColors[grade]}`}>
                 {track.grade}
               </div>
-)}
+            )}
             <div className="col-span-5 ml-5">
               <span className="ktext-base">{track.name}</span>
             </div>

@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
+import React, { Dispatch, SetStateAction, useState } from 'react';
 import { Quark, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
-import { Boulder, Track, UUID } from 'types';
+import { Boulder, Image, Track, UUID } from 'types';
 import { MultipleImageInput, TracksImage } from '.';
 
 interface BoulderPreviewDesktopProps {
     boulder: Quark<Boulder>,
     selectedTrack: SelectQuarkNullable<Track>,
+    currentImage: Image | undefined,
+    setCurrentImage: Dispatch<SetStateAction<Image | undefined>>,
     displayAddButton?: boolean,
 }
 
@@ -14,14 +16,13 @@ export const BoulderPreviewDesktop: React.FC<BoulderPreviewDesktopProps> = watch
     ...props
 }: BoulderPreviewDesktopProps) => {
     const boulder = props.boulder();
-    const [selectedImageId, setSelectedImageId] = useState<UUID>(boulder.images[0].id);
-    console.log(props.selectedTrack());
+    const selectedTrack = props.selectedTrack();
 
     return (
         <div className='flex flex-col w-full items-center'>
             <div className='bg-dark w-full flex flex-col items-center'>
                 <TracksImage 
-                    image={boulder.images.find(i => i.id === selectedImageId) || boulder.images[0]}
+                    image={props.currentImage || boulder.images[0]}
                     tracks={boulder.tracks}
                     selectedTrack={props.selectedTrack}
                     containerClassName='max-h-[200px]'
@@ -31,9 +32,9 @@ export const BoulderPreviewDesktop: React.FC<BoulderPreviewDesktopProps> = watch
             <div className='flex flex-row w-full mt-3'>
                 <MultipleImageInput 
                     images={boulder.images}
-                    selected={selectedImageId}
+                    selected={props.currentImage?.id}
                     rows={1}
-                    onImageClick={setSelectedImageId}
+                    onImageClick={(id) => props.setCurrentImage(boulder.images.find(img => img.id === id))}
                     allowUpload={displayAddButton}
                     onUpload={(files) => {
                         // TODO

@@ -1,14 +1,13 @@
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import type { NextPage } from 'next';
 import { 
-  BoulderBuilderSlideoverMobile, BoulderSlideagainstDesktop,
-  MapControl, BoulderMarker, 
-  For, Show, 
-  Header, InfoFormSlideover, ApproachFormSlideover, ManagementFormSlideover, TrackFormSlideagainstDesktop, ModalValidateTopo, ModalDeleteTopo, GeoCamera, Drawer, LeftbarBuilderDesktop, WaypointMarker, ParkingMarker, BoulderBuilderSlideagainstDesktop } from 'components';
+  BoulderBuilderSlideoverMobile,
+  MapControl, Show, 
+  Header, InfoFormSlideover, ApproachFormSlideover, ManagementFormSlideover, TrackFormSlideagainstDesktop, ModalValidateTopo, ModalDeleteTopo, GeoCamera, Drawer, LeftbarBuilderDesktop, BoulderBuilderSlideagainstDesktop } from 'components';
 import { useRouter } from 'next/router';
 import { quarkTopo } from 'helpers/fakeData/fakeTopoV2';
 import { DeviceContext, UserContext } from 'helpers';
-import { Boulder, MapToolEnum, Parking, Track, Waypoint } from 'types';
+import { Boulder, Image, MapToolEnum, Parking, Track, Waypoint } from 'types';
 import { Quark, QuarkIter, reactKey, useSelectQuark, watchDependencies } from 'helpers/quarky';
 
 
@@ -32,6 +31,7 @@ const BuilderMapPage: NextPage = () => {
       , [topo().sectors]) || new QuarkIter<Quark<Waypoint>>([]);
 
   const [currentTool, setCurrentTool] = useState<MapToolEnum>();
+  const [currentImage, setCurrentImage] = useState<Image>();
   const selectedTrack = useSelectQuark<Track>();
   const selectedBoulder = useSelectQuark<Boulder>();
   const selectedParking = useSelectQuark<Parking>();
@@ -200,6 +200,8 @@ const BuilderMapPage: NextPage = () => {
                 boulder={boulder} 
                 topoCreatorId={topo().creatorId}
                 selectedTrack={selectedTrack}
+                setCurrentImage={setCurrentImage}
+                currentImage={currentImage}
                 onClose={() => {
                   selectedTrack.select(undefined);
                   selectedBoulder.select(undefined);
@@ -218,7 +220,7 @@ const BuilderMapPage: NextPage = () => {
         <Show when={() => [(device !== 'MOBILE' || displayDrawer), selectedBoulder(), selectedTrack()] as const}>
           {([, sBoulder, sTrack]) => (
             <Drawer  
-              image={sBoulder.images.find(img => img.id === sTrack.lines.lazy().toArray()[0].imageId)!}
+              image={sBoulder.images.find(img => img.id === sTrack.lines.lazy().toArray()[0]?.imageId) || currentImage!}
               tracks={sBoulder.tracks}
               selectedTrack={selectedTrack}
               onValidate={() => setDisplayDrawer(false)}

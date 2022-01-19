@@ -6,3 +6,4 @@ export * from './Modal';
 export * from './Flash';
 
 export * from './ParkingModal';
+export * from './ModalDelete';

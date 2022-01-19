@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
  DrawerToolEnum, Image, LinearRing, PointEnum, Position, Track,
 } from 'types';
-import { Toolbar, TracksImage } from 'components';
-import { QuarkArray, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
+import { ModalDelete, Toolbar, TracksImage } from 'components';
+import { QuarkArray, SelectQuarkNullable, useCreateQuark, watchDependencies } from 'helpers/quarky';
+import { v4 } from 'uuid';
 
 interface DrawerProps {
     image: Image,
@@ -20,45 +21,52 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies((props: DrawerPro
     const selectedTrack = props.selectedTrack()!;
 
     const addPointToLine = (pos: Position) => {
-      const newLineQuark = selectedTrack.lines.findQuark(l => l.imageId === props.image.id)
-      if (newLineQuark) {
-        const newLine = newLineQuark();
-        switch (selectedTool) {
-          case 'LINE_DRAWER':
-            const newPoints = newLine.points || [];
-            newPoints.push(pos);
+      let newLineQuark = selectedTrack.lines.findQuark(l => l.imageId === props.image.id);
+      if (!newLineQuark) {
+        selectedTrack.lines.push({
+          id: v4(),
+          imageId: props.image.id,
+          points: [],
+        });
+        newLineQuark = selectedTrack.lines.findQuark(l => l.imageId === props.image.id)!;
+      }
+
+      const newLine = newLineQuark();
+      switch (selectedTool) {
+        case 'LINE_DRAWER':
+          const newPoints = newLine.points || [];
+          newPoints.push(pos);
+          newLineQuark.set({
+            ...newLine,
+            points: newPoints
+          });
+          break;
+        case 'HAND_DEPARTURE_DRAWER':
+          const newHandPoints = newLine.handDepartures || [];
+          if (newHandPoints.length < 2) newHandPoints.push(pos);
+          else { newHandPoints.splice(0,1); newHandPoints.push(pos); }
+          newLineQuark.set({
+            ...newLine,
+            handDepartures: newHandPoints
+          });
+          break;
+          case 'FOOT_DEPARTURE_DRAWER':
+            const newFootPoints = newLine.feetDepartures || [];
+            if (newFootPoints.length < 2) newFootPoints.push(pos);
+            else { newFootPoints.splice(0,1); newFootPoints.push(pos); }
             newLineQuark.set({
               ...newLine,
-              points: newPoints
+              feetDepartures: newFootPoints
             });
             break;
-          case 'HAND_DEPARTURE_DRAWER':
-            const newHandPoints = newLine.handDepartures || [];
-            if (newHandPoints.length < 2) newHandPoints.push(pos);
-            else { newHandPoints.splice(0,1); newHandPoints.push(pos); }
+          case 'FORBIDDEN_AREA_DRAWER':
+            const newForbiddenPoints = newLine.forbidden || [];
+            newForbiddenPoints.push(constructArea(pos));
             newLineQuark.set({
               ...newLine,
-              handDepartures: newHandPoints
+              forbidden: newForbiddenPoints
             });
             break;
-            case 'FOOT_DEPARTURE_DRAWER':
-              const newFootPoints = newLine.feetDepartures || [];
-              if (newFootPoints.length < 2) newFootPoints.push(pos);
-              else { newFootPoints.splice(0,1); newFootPoints.push(pos); }
-              newLineQuark.set({
-                ...newLine,
-                feetDepartures: newFootPoints
-              });
-              break;
-            case 'FORBIDDEN_AREA_DRAWER':
-              const newForbiddenPoints = newLine.forbidden || [];
-              newForbiddenPoints.push(constructArea(pos));
-              newLineQuark.set({
-                ...newLine,
-                forbidden: newForbiddenPoints
-              });
-              break;
-        }
       }
     }
 
@@ -66,14 +74,22 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies((props: DrawerPro
       const key = pointType === 'LINE_POINT' ? 'points' :
         pointType === 'HAND_DEPARTURE_POINT' ? 'handDepartures' :
         pointType === 'FOOT_DEPARTURE_POINT' ? 'feetDepartures' :
-        'forbidden'
+        'forbidden';
       const newLine = selectedTrack.lines.quarkAt(0);
       const line = newLine();
       const points = line[key]!;
       newLine.set({
         ...line,
-        [key]: [...points.slice(0, index), ...points.slice(index+1)]
+        [key]: index === -1 ? [...points.slice(0, -1)] : [...points.slice(0, index), ...points.slice(index+1)]
       });
+    }
+    const rewind = () => {
+      const pointType: PointEnum | undefined = selectedTool === 'LINE_DRAWER' ? 'LINE_POINT' :
+        selectedTool === 'FOOT_DEPARTURE_DRAWER' ? 'FOOT_DEPARTURE_POINT' :
+        selectedTool === 'HAND_DEPARTURE_DRAWER' ? 'HAND_DEPARTURE_POINT' :
+        selectedTool === 'FORBIDDEN_AREA_DRAWER' ? 'FORBIDDEN_AREA_POINT' :
+        undefined;
+      if (pointType) deletePointToLine(pointType, -1)
     }
 
     const constructArea = (pos: Position): LinearRing => {
@@ -85,6 +101,12 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies((props: DrawerPro
         3: [pos[0]+size, pos[1]-size],
       }
     }
+
+    useEffect(() => {
+      document.addEventListener('keydown', function(event) {
+        if (event.ctrlKey && event.key === 'z') rewind();
+      });
+    }, []);
 
     return (
       <>
@@ -117,8 +139,8 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies((props: DrawerPro
                 grade: grade,
               })
             }}
-            onClear={() => {}}
-            onRewind={() => {}}
+            onClear={() => setDisplayClearModal(true)}
+            onRewind={rewind}
             onOtherTracks={() => setDisplayOtherTracks(!displayOtherTracks)}
             onValidate={props.onValidate}
           />
@@ -126,7 +148,30 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies((props: DrawerPro
         </div>
 
         {displayClearModal &&
-          <></>
+          <ModalDelete
+            onClose={() => setDisplayClearModal(false)}
+            onDelete={() => {
+              setDisplayClearModal(false);
+                  // const newLine = selectedTrack.lines.quarkAt(0);
+                  // const line = newLine();
+                  // newLine.set({
+                  //   ...line,
+                  //   points: [],
+                  //   feetDepartures: undefined,
+                  //   handDepartures: undefined,
+                  //   forbidden: undefined,
+                  // })
+                  const newLines = selectedTrack.lines;
+                  newLines.shift();
+                  console.log(newLines);
+                  props.selectedTrack.quark()!.set({
+                    ...selectedTrack,
+                    lines: newLines
+                  });
+            }}
+          >
+            Vous êtes sur le point de supprimer l'ensemble du tracé. Voulez-vous continuer ?
+          </ModalDelete>
         }
       </>
     );
