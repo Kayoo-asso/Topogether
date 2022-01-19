@@ -7,13 +7,14 @@ import { topogetherUrl } from 'helpers/globals';
 import { buildBoulderGradeHistogram } from 'helpers';
 import { default as NextImage } from 'next/image';
 import { Quark, watchDependencies, SelectQuarkNullable } from 'helpers/quarky';
+import { TracksListBuilder } from '.';
 
 interface BoulderBuilderSlideoverMobileProps {
   boulder: Quark<Boulder>,
   selectedTrack: SelectQuarkNullable<Track>,
   onPhotoButtonClick?: () => void,
   onSelectTrack: (selected: Quark<Track>) => void,
-  onDrawButtonClick?: () => void,
+  onDrawButtonClick: () => void,
   onClose: () => void,
 }
 
@@ -58,7 +59,6 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
           }
           <TracksImage
             image={boulder.images.find(img => img.id === selectedTrack?.lines.at(0).imageId) || boulder.images[imageIndex]}
-            containerClassName='w-full'
             tracks={boulder.tracks}
             selectedTrack={props.selectedTrack}
             displayPhantomTracks={false}
@@ -78,118 +78,72 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
 
 
       {/* BOULDER INFOS */}
-      {<Show when={() => !selectedTrack}>
-        <div className={`grid grid-cols-8 p-5 items-center ${full ? '' : ' mt-3'}`}>
-          <div className="col-span-6">
-            <div className="ktext-section-title">{boulder.name}</div>
-            {boulder.isHighball && full && <div className="ktext-base-little">High Ball</div>}
-            {boulder.descent === Difficulty.Dangerous && full && <div className="ktext-base-little">Descente dangereuse !</div>}
-            {!full && (
-              <div className="flex items-center mt-2">
-                <GradeScale
-                  histogram={buildBoulderGradeHistogram(boulder)}
-                  circleSize="little"
-                />
-              </div>
-            )}
-          </div>
-
-          <div className="flex justify-end col-span-2">
-            {full && (
-              <RoundButton
-                iconName="camera"
-                buttonSize={45}
-                onClick={props.onPhotoButtonClick}
+      <div className={`grid grid-cols-8 p-5 items-center ${full ? '' : ' mt-3'}`}>
+        <div className="col-span-6">
+          <div className="ktext-section-title">{boulder.name}</div>
+          {boulder.isHighball && full && <div className="ktext-base-little">High Ball</div>}
+          {boulder.descent === Difficulty.Dangerous && full && <div className="ktext-base-little">Descente dangereuse !</div>}
+          {!full && (
+            <div className="flex items-center mt-2">
+              <GradeScale
+                histogram={buildBoulderGradeHistogram(boulder)}
+                circleSize="little"
               />
-            )}
-
-            {!full && (
-              <div className="w-full relative h-[60px]">
-                <NextImage
-                  src={boulder.images[0] ? boulder.images[0].url : '/assets/img/Kayoo_defaut_image.png'}
-                  className="rounded-sm"
-                  alt="Boulder"
-                  priority
-                  layout="fill"
-                  objectFit="contain"
-                />
-              </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
-        </Show>}
 
+        <div className="flex justify-end col-span-2">
+          {full && (
+            <RoundButton
+              iconName="camera"
+              buttonSize={45}
+              onClick={props.onPhotoButtonClick}
+            />
+          )}
 
-      {/* TRACK INFOS */}
-      {/* TODO: abstract this into its own component? */}
-      <Show when={() => selectedTrack}>
-        {track =>
-          <div className={`grid grid-cols-8 p-5 items-center ${full ? '' : ' mt-3'}`}>
-            <div className='col-span-1 pr-3'>
-              {track.grade &&
-                <div className={`ktext-subtitle float-right ${gradeColors[gradeToLightGrade(track.grade)]}`}>
-                  {track.grade}
-                </div>
-              }
+          {!full && (
+            <div className="w-full relative h-[60px]">
+              <NextImage
+                src={boulder.images[0] ? boulder.images[0].url : '/assets/img/Kayoo_defaut_image.png'}
+                className="rounded-sm"
+                alt="Boulder"
+                priority
+                layout="fill"
+                objectFit="contain"
+              />
             </div>
-
-            <div className='col-span-6'>
-              <div className="ktext-section-title">{track.name}</div>
-            </div>
-
-            <div className='col-span-1'>
-                <RoundButton
-                  iconName='draw'
-                  buttonSize={45}
-                  onClick={props.onDrawButtonClick}
-                />
-            </div>
-
-            <div className='col-start-2 col-span-4 -mt-[16px]'>
-              {track.isTraverse && full && <div className="ktext-base-little">Traversée</div>}
-              {track.isSittingStart && full && <div className="ktext-base-little">Départ assis</div>}
-            </div>
-          </div>
-        }
-      </Show>
+          )}
+        </div>
+      </div>
 
 
       {/* TODO : show once good pattern */}
       {/* TABS */}
-      <Show when={() => !selectedTrack}>
-        <div className="grid grid-cols-8 px-5 ktext-label font-bold my-2">
-              <span className={`col-span-2 ${trackTab ? 'text-main' : 'text-grey-medium'}`} onClick={() => setTrackTab(true)}>Voies</span>
-              <span className={`col-span-6 ${!trackTab ? 'text-main' : 'text-grey-medium'}`} onClick={() => setTrackTab(false)}>Infos du bloc</span>
-        </div>
-      </Show>
+      <div className="flex flex-row px-5 ktext-label font-bold my-2">
+          <span className={`w-1/4 ${trackTab ? 'text-main' : 'text-grey-medium'}`} onClick={() => setTrackTab(true)}>Voies</span>
+          <span className={`w-3/4 ${!trackTab ? 'text-main' : 'text-grey-medium'}`} onClick={() => setTrackTab(false)}>Infos du bloc</span>
+      </div>
 
 
       {/* TRACKSLIST */}
-      {trackTab && !selectedTrack && full && (
+      {trackTab && full && (
         <div className="overflow-auto pb-[30px]">
-          <TracksList
+          <TracksListBuilder
             tracks={displayedTracks}
-            onTrackClick={props.selectedTrack.select} //TODO
-            onBuilderAddClick={() => console.log('create track')} //TODO
+            onTrackClick={props.selectedTrack.select}
+            onAddTrack={() => console.log('create track')} //TODO
+            onDrawButtonClick={props.onDrawButtonClick}
           />
         </div>
       )}
 
 
       {/* BOULDER FORM */}
-      {!trackTab && !selectedTrack && full && (
+      {!trackTab && full && (
         <div className='border-t border-grey-light'>
           {/* TODO */}
           BOULDER FORM
-        </div>
-      )}
-
-
-      {/* TRACK FORM */}
-      {selectedTrack && full && (
-        <div className='border-t border-grey-light'>
-            {/* TODO */}
-            TRACK FORM
         </div>
       )}
 

@@ -75,129 +75,6 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
     ? imgWidth / props.image.width
     : 1;
 
-  // for (const quarkTrack of props.tracks.quarks()) {
-  //   const track = quarkTrack();
-  //   const isHighlighted =
-  //       props.selectedTrack() === undefined ||
-  //       track.id === props.selectedTrack()!.id;
-
-  //   if (isHighlighted || displayPhantomTracks) {
-  //     for (const quarkLine of track.lines.quarks()) {
-  //       const line = quarkLine();
-  //       if (line.imageId !== props.image.id) {
-  //         continue;
-  //       }
-  //       // TODO: investigate why a regular inline callback doesn't work (can't reproduce with a simple case)
-  //       // TODO: customise logic
-  //       const onLineClick = getOnLineClick(props.selectedTrack, quarkTrack);
-
-  //       const nodes: JSX.Element[] = [];
-  //       renderAccumulator.push({
-  //         id: track.id,
-  //         nodes,
-  //       });
-
-  //       // Line
-  //       nodes.push(
-  //         <SVGLine
-  //           line={quarkLine}
-  //           r={rx}
-  //           editable={editable && isHighlighted}
-  //           eraser={props.currentTool === 'ERASER'}
-  //           grade={track.grade}
-  //           pointSize={8}
-  //           phantom={!isHighlighted}
-  //           trackOrderIndex={track.orderIndex}
-  //           onClick={onLineClick}
-  //           onPointClick={(index) => props.onPointClick && props.onPointClick('LINE_POINT', index)}
-  //         />
-  //       )
-
-  //       // Hand and feet departures
-  //       if (displayTracksDetails && isHighlighted) {
-  //         if (line.handDepartures) {
-  //           for (let i = 0; i < line.handDepartures.length; i++) {
-  //             const [handX, handY] = line.handDepartures[i];
-  //             nodes.push(
-  //               <SVGPoint 
-  //                 iconHref={`/assets/icons/colored/hand-full/_hand-full-${getColorNumber(track)}.svg`}
-  //                 x={handX * rx}
-  //                 y={handY * ry}
-  //                 draggable={editable}
-  //                 eraser={props.currentTool === 'ERASER'}
-  //                 onDrag={(pos) => {
-  //                   if (editable) {
-  //                     const newHands = [...line.handDepartures!]
-  //                     newHands[i] = [pos[0]/rx, pos[1]/rx];
-  //                     quarkLine?.set({
-  //                       ...line,
-  //                       handDepartures: newHands,
-  //                     })
-  //                   }
-  //                 }}
-  //                 onClick={() => props.onPointClick && props.onPointClick('HAND_DEPARTURE_POINT', i)}
-  //               />
-  //             );
-  //           }
-  //         }
-  //         if (line.feetDepartures) {
-  //           for (let i = 0; i < line.feetDepartures.length; i++) {
-  //             const [footX, footY] = line.feetDepartures[i];
-  //             nodes.push(
-  //               <SVGPoint 
-  //                 iconHref={`/assets/icons/colored/climbing-shoe-full/_climbing-shoe-full-${getColorNumber(track)}.svg`}
-  //                 x={footX * rx}
-  //                 y={footY * ry}
-  //                 draggable={editable}
-  //                 eraser={props.currentTool === 'ERASER'}
-  //                 onDrag={(pos) => {
-  //                   if (editable) {
-  //                     const newFeet = [...line.feetDepartures!]
-  //                     newFeet[i] = [pos[0]/rx, pos[1]/rx];
-  //                     quarkLine?.set({
-  //                       ...line,
-  //                       feetDepartures: newFeet,
-  //                     })
-  //                   }
-  //                 }}
-  //                 onClick={() => props.onPointClick && props.onPointClick('FOOT_DEPARTURE_POINT', i)}
-  //               />
-  //             );
-  //           }
-  //         }
-  //       }
-
-  //       // Forbidden areas
-  //       if (displayTracksDetails && isHighlighted && line.forbidden) {
-  //         for (let i = 0; i < line.forbidden.length; i++) {
-  //           const area = line.forbidden[i];
-  //           nodes.push(
-  //             <SVGArea
-  //               area={area}
-  //               editable={editable}
-  //               eraser={props.currentTool === 'ERASER'}
-  //               rx={rx}
-  //               ry={ry}
-  //               pointSize={8}
-  //               onChange={(area) => {
-  //                 if (editable) {
-  //                   const newForbiddens = [...line.forbidden!]
-  //                   newForbiddens[i] = area;
-  //                   quarkLine?.set({
-  //                     ...line,
-  //                     forbidden: newForbiddens,
-  //                   })
-  //                 }
-  //               }}
-  //               onClick={() => props.onPointClick && props.onPointClick('FORBIDDEN_AREA_POINT', i)}
-  //             />,
-  //           );
-  //         }
-  //       }
-  //     }
-  //   }
-  // }
-
   const getCursorUrl = () => {
     let cursorColor = 'grey';
     if (props.selectedTrack()?.grade) cursorColor = props.selectedTrack()!.grade![0];
@@ -221,9 +98,10 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
   return (
     <div
       ref={observe}
-      className={`relative max-h-content w-full ${containerClassName}`}
+      className={`relative w-full ${containerClassName}`}
       style={{
         height: divHeight,
+        minHeight: divHeight,
         width: divWidth,
       }}
     >
