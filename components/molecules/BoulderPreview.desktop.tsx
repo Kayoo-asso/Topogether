@@ -16,7 +16,6 @@ export const BoulderPreviewDesktop: React.FC<BoulderPreviewDesktopProps> = watch
     ...props
 }: BoulderPreviewDesktopProps) => {
     const boulder = props.boulder();
-    const selectedTrack = props.selectedTrack();
 
     return (
         <div className='flex flex-col w-full items-center'>

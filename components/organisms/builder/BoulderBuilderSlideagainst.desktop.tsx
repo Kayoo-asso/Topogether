@@ -14,7 +14,6 @@ interface BoulderBuilderSlideagainstDesktopProps {
 
 export const BoulderBuilderSlideagainstDesktop: React.FC<BoulderBuilderSlideagainstDesktopProps> = watchDependencies((props: BoulderBuilderSlideagainstDesktopProps) => {
     const boulder = props.boulder();
-    const selectedTrack = props.selectedTrack();
 
     return (
         <SlideagainstRightDesktop 
