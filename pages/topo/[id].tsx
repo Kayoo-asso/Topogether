@@ -104,7 +104,7 @@ const Topo: NextPage = () => {
         ]}
       />
 
-      <div className="h-full relative flex flex-row md:overflow-hidden">
+      <div className="h-content md:h-full relative flex flex-row md:overflow-hidden">
         <LeftbarDesktop
             currentMenuItem="MAP"
         />

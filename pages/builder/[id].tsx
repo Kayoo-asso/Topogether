@@ -135,7 +135,7 @@ const BuilderMapPage: NextPage = () => {
         onWaypointClick={() => setCurrentTool('WAYPOINT')}
       />
 
-      <div className="h-full relative flex flex-row md:overflow-hidden">
+      <div className="h-content md:h-full relative flex flex-row md:overflow-hidden">
         <LeftbarBuilderDesktop 
           sectors={topo().sectors.quarks()}
           selectedBoulder={selectedBoulder}
@@ -235,7 +235,22 @@ const BuilderMapPage: NextPage = () => {
           }}
         </Show>
 
-        <Show when={() => displayGeoCamera}>
+        <Show when={() => displayModalValidate}>
+          <ModalValidateTopo 
+            topo={topo}
+            onClose={() => setDisplayModalValidate(false)}
+          />
+        </Show>
+        <Show when={() => displayModalDelete}>
+          <ModalDeleteTopo 
+            topo={topo}
+            onClose={() => setDisplayModalDelete(false)}
+          />
+        </Show>
+
+      </div> 
+
+      <Show when={() => displayGeoCamera}>
           <GeoCamera
             onClose={() => setDisplayGeoCamera(false)}
           />
@@ -251,21 +266,6 @@ const BuilderMapPage: NextPage = () => {
             />
           )}
         </Show>
-
-        <Show when={() => displayModalValidate}>
-          <ModalValidateTopo 
-            topo={topo}
-            onClose={() => setDisplayModalValidate(false)}
-          />
-        </Show>
-        <Show when={() => displayModalDelete}>
-          <ModalDeleteTopo 
-            topo={topo}
-            onClose={() => setDisplayModalDelete(false)}
-          />
-        </Show>
-
-      </div> 
       
     </>
   );

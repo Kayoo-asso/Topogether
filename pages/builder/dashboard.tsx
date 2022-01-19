@@ -79,7 +79,7 @@ const DashboardPage: NextPage = () => {
         title="Mes topos"
       />
 
-      <div className="flex flex-row h-full">
+      <div className="flex flex-row h-content md:h-full">
         <LeftbarDesktop
           currentMenuItem="BUILDER"
         />

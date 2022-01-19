@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 import { Checkbox, Icon, RoundButton } from 'components';
 import { Boulder, ClimbTechniques, gradeToLightGrade, LightGrade } from 'types';
-import { GradeSliderInput, MultipleSelect, SliderInput } from '..';
+import { DropdownOption, GradeSliderInput, MultipleSelect, SliderInput } from '..';
 
 
 export interface BoulderFilterOptions {
     techniques: ClimbTechniques[] | null,
-    nbOfTracks: number,
     tracksRange: [number, number],
     gradeRange: [Exclude<LightGrade, 'None'>, Exclude<LightGrade, 'None'>],
     mustSee: boolean,
@@ -15,6 +14,7 @@ export interface BoulderFilterOptions {
 interface BoulderFiltersProps {
     initialOpen?: boolean,
     options: BoulderFilterOptions,
+    values: BoulderFilterOptions,
     onChange: (options: BoulderFilterOptions) => void,
 }
 
@@ -35,21 +35,22 @@ export const BoulderFilters: React.FC<BoulderFiltersProps> = ({
             <MultipleSelect 
                 id='boulder-techniques'
                 label='Techniques'
-                defaultChoices={[
+                options={[
                     {
                         value: 'Bloc',
                     }, 
                     {
                         value: 'Deepwater',
                     },
-                    ]}
-                onSelect={option => updateBoulderFilters('techniques', option.value)}
+                ]}
+                values={[{ value: props.values.techniques }] as DropdownOption[]}
+                onChange={option => updateBoulderFilters('techniques', option.map(opt => opt.value))}
             />
             <div>
                 <div className='ktext-label text-grey-medium'>Nombre de voies</div>
                 <SliderInput 
-                    domain={[0, props.options.nbOfTracks]}
-                    values={props.options.tracksRange}
+                    domain={props.options.tracksRange}
+                    values={props.values.tracksRange}
                     onChange={value => updateBoulderFilters('tracksRange', value)}
                 />
             </div>
@@ -61,7 +62,7 @@ export const BoulderFilters: React.FC<BoulderFiltersProps> = ({
             </div>
             <Checkbox
                 label='Incontournable'
-                checked={props.options.mustSee}
+                checked={props.values.mustSee}
                 onClick={isChecked => updateBoulderFilters('mustSee', isChecked)}
             />
         </React.Fragment>

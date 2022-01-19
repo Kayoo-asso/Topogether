@@ -9,7 +9,7 @@ interface MultipleSelectProps {
   id: string;
   label?: string;
   options: DropdownOption[];
-  value: DropdownOption[],
+  values: DropdownOption[],
   onChange: (value: DropdownOption[]) => void;
   className?: string;
 }
@@ -18,7 +18,7 @@ export const MultipleSelect: React.FC<MultipleSelectProps> = (props) => {
   const ref = useRef<HTMLInputElement>(null);
   const [isOpen, setIsOpen] = useState(false);
 
-  const textValue = props.value.map((value) => value.label || value.value).join(', ');
+  const textValue = props.values.map((value) => value.label || value.value).join(', ');
 
   return (
     <div
@@ -49,8 +49,8 @@ export const MultipleSelect: React.FC<MultipleSelectProps> = (props) => {
           type="checkbox"
           fullSize
           onSelect={(option) => {
-            const newValue = [...props.value];
-            if (props.value.includes(option)) newValue.slice(props.value.indexOf(option), 1);
+            const newValue = [...props.values];
+            if (props.values.includes(option)) newValue.slice(props.values.indexOf(option), 1);
             else newValue.push(option);
             props.onChange(newValue); 
           }}

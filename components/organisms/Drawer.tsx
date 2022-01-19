@@ -110,7 +110,7 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies((props: DrawerPro
 
     return (
       <>
-        <div className="absolute top-0 bg-black bg-opacity-90 h-full flex flex-col z-500 w-full md:w-[calc(100%-600px)]">
+        <div className="absolute top-0 bg-black bg-opacity-90 h-full flex flex-col z-1000 w-full md:w-[calc(100%-600px)]">
 
           <div className="flex-1 flex items-center relative">
             {/* TODO: CHANGE SIZING */}
@@ -152,22 +152,12 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies((props: DrawerPro
             onClose={() => setDisplayClearModal(false)}
             onDelete={() => {
               setDisplayClearModal(false);
-                  // const newLine = selectedTrack.lines.quarkAt(0);
-                  // const line = newLine();
-                  // newLine.set({
-                  //   ...line,
-                  //   points: [],
-                  //   feetDepartures: undefined,
-                  //   handDepartures: undefined,
-                  //   forbidden: undefined,
-                  // })
-                  const newLines = selectedTrack.lines;
-                  newLines.shift();
-                  console.log(newLines);
-                  props.selectedTrack.quark()!.set({
-                    ...selectedTrack,
-                    lines: newLines
-                  });
+              const newLines = selectedTrack.lines;
+              newLines.shift();
+              props.selectedTrack.quark()!.set({
+                ...selectedTrack,
+                lines: newLines
+              });
             }}
           >
             Vous êtes sur le point de supprimer l'ensemble du tracé. Voulez-vous continuer ?

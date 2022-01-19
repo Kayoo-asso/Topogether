@@ -25,7 +25,7 @@ const WorldMapPage: NextPage = () => {
         title="Carte des topos"
       />
 
-      <div className="flex flex-row relative h-full">
+      <div className="flex flex-row relative h-contentPlusHeader md:h-full">
         <LeftbarDesktop
           currentMenuItem="MAP"
         />

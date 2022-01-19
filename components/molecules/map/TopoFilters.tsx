@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 import { Checkbox, Icon, RoundButton } from 'components';
 import { LightGrade, TopoType } from 'types';
-import { GradeSliderInput, MultipleSelect, SliderInput } from '..';
+import { DropdownOption, GradeSliderInput, MultipleSelect, SliderInput } from '..';
 
 
 export interface TopoFilterOptions {
     types: TopoType[] | null,
-    nbOfBoulders: number,
     boulderRange: [number, number],
     gradeRange: [Exclude<LightGrade, 'None'>, Exclude<LightGrade, 'None'>],
     adaptedToChildren: boolean,
@@ -15,6 +14,7 @@ export interface TopoFilterOptions {
 interface TopoFiltersProps {
     initialOpen?: boolean,
     options: TopoFilterOptions,
+    values: TopoFilterOptions,
     onChange: (options: TopoFilterOptions) => void,
 }
 
@@ -35,21 +35,22 @@ export const TopoFilters: React.FC<TopoFiltersProps> = ({
             <MultipleSelect 
                 id='topo-types'
                 label='Types de spot'
-                defaultChoices={[
+                options={[
                     {
                         value: 'Bloc',
                     }, 
                     {
                         value: 'Deepwater',
                     },
-                    ]}
-                onSelect={option => updateTopoFilters('types', option.value)}
+                ]}
+                values={[{ value: props.values.types }] as DropdownOption[]}
+                onChange={option => updateTopoFilters('types', option.map(opt => opt.value))}
             />
             <div>
                 <div className='ktext-label text-grey-medium'>Nombre de blocs</div>
                 <SliderInput 
-                    domain={[0, props.options.nbOfBoulders]}
-                    values={props.options.boulderRange}
+                    domain={props.options.boulderRange}
+                    values={props.values.boulderRange}
                     onChange={value => updateTopoFilters('boulderRange', value)}
                 />
             </div>
@@ -61,7 +62,7 @@ export const TopoFilters: React.FC<TopoFiltersProps> = ({
             </div>
             <Checkbox
                 label='Adapté aux enfants'
-                checked={props.options.adaptedToChildren}
+                checked={props.values.adaptedToChildren}
                 onClick={isChecked => updateTopoFilters('adaptedToChildren', isChecked)}
             />
         </React.Fragment>

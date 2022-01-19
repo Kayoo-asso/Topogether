@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { markerSize, TopoTypeToColor, useMarker } from "helpers";
 import { Quark, watchDependencies } from "helpers/quarky";
-import { MarkerEventHandlers, TopoType, LightTopo } from "types";
+import { MarkerEventHandlers, TopoType, LightTopo, Topo } from "types";
 
 interface TopoMarkerProps {
     topo: Quark<LightTopo>,

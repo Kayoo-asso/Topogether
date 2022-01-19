@@ -41,7 +41,7 @@ export interface TopoData {
   modifiedAt?: Date,
   cleaned?: Date,
   status: TopoStatus,
-  type: TopoType,
+  type?: TopoType,
   isForbidden: boolean,
 
   location: GeoCoordinates,
@@ -67,11 +67,11 @@ export interface TopoData {
 }
 
 export type LightTopo = Omit<TopoData, 'sectors' | 'parkings' | 'access'> & {
-  firstParkingLocation: GeoCoordinates,
+  firstParkingLocation?: GeoCoordinates,
   nbSectors: number,
   nbTracks: number,
   nbBoulders: number,
-  grades: GradeHistogram,
+  grades?: GradeHistogram,
   // TODO: do we include access information here? Like access difficulty & time
 };
 

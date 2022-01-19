@@ -95,7 +95,7 @@ export const GeoCamera: React.FC<GeoCameraProps> = ({
 
     if (!open) return null;
     return (
-        <div className='w-full h-contentPlusShell absolute overflow-hidden z-500'>
+        <div className='w-full h-full absolute overflow-hidden z-1000'>
             <video 
                 ref={videoRef} 
                 onCanPlay={handleCanPlay} 

@@ -1,17 +1,17 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import type { NextPage } from 'next';
-import { Name, Sector, StringBetween, Topo, TopoType } from 'types';
+import { LightTopo, Name, Sector, StringBetween, Topo, TopoType } from 'types';
 import { fontainebleauLocation, UserContext } from 'helpers';
 import {
  Button, HeaderDesktop, MapControl, Select, TextInput, TopoMarker,
 } from 'components';
 import Link from 'next/link';
 import { v4 } from 'uuid';
-import { quark, QuarkArray, useCreateQuark } from 'helpers/quarky';
+import { QuarkArray, QuarkIter, useCreateQuark, watchDependencies } from 'helpers/quarky';
 
 const NewPage: NextPage = () => {
   const { session } = useContext(UserContext);
-  const [step, setStep] = useState(2);
+  const [step, setStep] = useState(0);
 
   const topoData = {
     id: v4(),
@@ -22,17 +22,13 @@ const NewPage: NextPage = () => {
     type: undefined,
     isForbidden: false,
     location: fontainebleauLocation,
-    sectors: new QuarkArray<Sector>([]),
-    // parkings: [],
-    // access: [],
+    nbSectors: 0,
+    nbBoulders: 0,
+    nbTracks: 0,
   };
 
-  const topoQuark = useCreateQuark<Topo>(topoData);
+  const topoQuark = useCreateQuark<LightTopo>(topoData);
   const topo = topoQuark();
-
-  useEffect(() => {
-    console.log(topoQuark());
-  }, [topoQuark()])
 
   const [nameError, setNameError] = useState<string>();
   const [typeError, setTypeError] = useState<string>();
@@ -87,7 +83,7 @@ const NewPage: NextPage = () => {
         title="Nouveau topo"
       />
 
-      <div className='h-full w-full flex flex-row items-center bg-main'>
+      <div className='h-contentPlusHeader md:h-full w-full flex flex-row items-center bg-main'>
           <div className='flex flex-col items-center justify-center w-full'>
             {step === 0 &&
               <div className='px-[10%] w-full'>
@@ -127,7 +123,7 @@ const NewPage: NextPage = () => {
                   id="topo-type"
                   label="Type de spot"
                   choices={[
-                    { value: TopoType.Boulder, label: 'Bloc' }, 
+                    { value: TopoType.Boulder, label: 'Blocs' }, 
                     { value: TopoType.Cliff, label: 'Falaise' },
                     { value: TopoType.DeepWater, label: 'Deepwater' },
                     { value: TopoType.Multipitch, label: 'Grande voie' },
@@ -170,12 +166,9 @@ const NewPage: NextPage = () => {
                     displayUserMarker={false}
                     zoom={10}
                     center={fontainebleauLocation}
-                  >
-                    <TopoMarker 
-                      topo={topoQuark}
-                      draggable
-                    />
-                  </MapControl>
+                    topos={new QuarkIter([topoQuark])}
+                    draggableMarkers
+                  />
                 </div>
 
                 <div className="px-[10%] w-full">
@@ -245,4 +238,4 @@ const NewPage: NextPage = () => {
   );
 };
 
-export default NewPage;
+export default watchDependencies(NewPage);

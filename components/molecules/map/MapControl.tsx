@@ -47,21 +47,21 @@ export const MapControl: React.FC<MapControlProps> = ({
   const mapRef = useRef<google.maps.Map>(null);
   const [satelliteView, setSatelliteView] = useState(false);
   const maxBoulders = props.topos ? Math.max(...props.topos.map(t => t().nbBoulders).toArray()) : 0;
-  const [topoFilterOptions, setTopoFilterOptions] = useState<TopoFilterOptions>({
+  const defaultTopoFilterOptions: TopoFilterOptions = {
     types: null,
-    nbOfBoulders: maxBoulders,
     boulderRange: [0, maxBoulders],
     gradeRange: [3, 9],
     adaptedToChildren: false,
-  });
+  };
+  const [topoFilterOptions, setTopoFilterOptions] = useState<TopoFilterOptions>(defaultTopoFilterOptions);
   const maxTracks = props.boulders ? Math.max(...props.boulders.map(b => b().tracks.length).toArray()) : 0;
-  const [boulderFilterOptions, setBoulderFilterOptions] = useState<BoulderFilterOptions>({
+  const defaultBoulderFilterOptions: BoulderFilterOptions = {
     techniques: null,
-    nbOfTracks: maxTracks,
     tracksRange: [0, maxTracks],
     gradeRange: [3, 9],
     mustSee: false
-  });
+  }
+  const [boulderFilterOptions, setBoulderFilterOptions] = useState<BoulderFilterOptions>(defaultBoulderFilterOptions);
 
   const boulderFilter = (boulder: Boulder) => {
       const boulderTechniques = boulder.tracks.toArray().map(track => track.techniques);
@@ -82,19 +82,19 @@ export const MapControl: React.FC<MapControlProps> = ({
       return result;
   }
   const topoFilter = (topo: LightTopo) => {
-    let result = (topoFilterOptions.types === null || topoFilterOptions.types.includes(topo.type)) &&
+    let result = (topoFilterOptions.types === null || topoFilterOptions.types.includes(topo.type!)) &&
         topo.nbBoulders >= topoFilterOptions.boulderRange[0] &&
         topo.nbBoulders <= topoFilterOptions.boulderRange[1];
     
     let foundBouldersAtGrade = false;
     for (let grade = topoFilterOptions.gradeRange[0]; grade <= topoFilterOptions.gradeRange[1]; grade++) {
-        if (topo.grades[grade] > 0) {
+        if (!topo.grades || topo.grades[grade] > 0) {
             foundBouldersAtGrade = true;
             break;
         }
     }
     result &&= foundBouldersAtGrade;
-    result &&= hasFlag(topo.amenities, Amenities.AdaptedToChildren);
+    result &&= topoFilterOptions.adaptedToChildren ? hasFlag(topo.amenities, Amenities.AdaptedToChildren) : true;
     return result;
   }
 
@@ -142,7 +142,8 @@ export const MapControl: React.FC<MapControlProps> = ({
               {displayTopoFilter &&
                 <div className='mt-5'>
                   <TopoFilters 
-                    options={topoFilterOptions}
+                    options={defaultTopoFilterOptions}
+                    values={topoFilterOptions}
                     onChange={setTopoFilterOptions}
                   />
                 </div>
@@ -150,7 +151,8 @@ export const MapControl: React.FC<MapControlProps> = ({
               {displayBoulderFilter &&
                 <div className='mt-5'>
                   <BoulderFilters 
-                    options={boulderFilterOptions}
+                    options={defaultBoulderFilterOptions}
+                    values={boulderFilterOptions}
                     onChange={setBoulderFilterOptions}
                   />
                 </div>
