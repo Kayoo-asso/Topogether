@@ -144,7 +144,7 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = wat
         <div className="overflow-auto pb-[30px]">
           <TracksList
             tracks={displayedTracks}
-            onTrackClick={props.selectedTrack.select}
+            selectedTrack={props.selectedTrack}
           />
         </div>
       </Show>

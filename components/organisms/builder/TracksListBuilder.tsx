@@ -1,14 +1,14 @@
 import React from 'react';
-import { GradeCircle, Icon } from 'components';
-import { gradeToLightGrade, Track } from 'types';
+import { Checkbox, GradeCircle, Icon, MultipleSelect, TextArea, TextInput } from 'components';
+import { Description, gradeToLightGrade, Name, Track } from 'types';
 import { Quark, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
+import { TrackForm } from '../form/TrackForm';
 
 interface TracksListBuilderProps {
   tracks: Iterable<Quark<Track>>,
   selectedTrack: SelectQuarkNullable<Track>,
-  onTrackClick: (track: Quark<Track>) => void,
   onAddTrack: () => void,
-  onDrawButtonClick: () => void,
+  onDrawButtonClick?: () => void,
 }
 
 const gradeColors = {
@@ -25,7 +25,7 @@ const gradeColors = {
 // TODO: separate into a TracksListItem component?
 export const TracksListBuilder: React.FC<TracksListBuilderProps> = watchDependencies((props: TracksListBuilderProps) => {
   const tracks = Array.from(props.tracks);
-  const selectedTrack = props.selectedTrack ? props.selectedTrack() : undefined;
+  const selectedTrack = props.selectedTrack();
 
   return (
     <div className="w-full border-t border-grey-light">
@@ -37,7 +37,10 @@ export const TracksListBuilder: React.FC<TracksListBuilderProps> = watchDependen
           <div
             key={track.id}
             className="px-5 py-5 md:py-3 flex flex-col border-b border-grey-light cursor-pointer md:hover:bg-grey-superlight"
-            onClick={() => props.selectedTrack.select(trackQuark)}
+            onClick={() => {
+              if (props.selectedTrack()?.id === track.id) props.selectedTrack.select(undefined)
+              else props.selectedTrack.select(trackQuark)
+            }}
           >
             <div className='flex flex-row w-full items-center'>
               <GradeCircle
@@ -56,35 +59,20 @@ export const TracksListBuilder: React.FC<TracksListBuilderProps> = watchDependen
                 {track.isTraverse && <div className='ktext-subtext'>Traversée</div>}
                 {track.isSittingStart && <div className='ktext-subtext'>Départ assis</div>}
               </div>
-
-              <Icon 
-                name='draw'
-                SVGClassName='w-6 h-6 stroke-main'
-                onClick={props.onDrawButtonClick}
-              />
+              
+              {props.onDrawButtonClick &&
+                <Icon 
+                  name='draw'
+                  SVGClassName='w-6 h-6 stroke-main'
+                  onClick={props.onDrawButtonClick}
+                />
+              }
             </div>
             {selectedTrack?.id === track.id &&
-              <>
-                <div className='mt-4'>
-                  {track.description}
-                </div>
-                <div className='flex flex-row gap-2 justify-between mt-4'>
-                  <div className="flex flex-col w-1/3">
-                    <div className="ktext-subtitle">Techniques</div>
-                    {/* TODO */}
-                  </div>
-
-                  <div className="flex flex-col w-1/3">
-                    <div className="ktext-subtitle">Réception</div>
-                    {/* TODO */}
-                  </div>
-
-                  <div className="flex flex-col w-1/3">
-                    <div className="ktext-subtitle">Orientation</div>
-                    {/* TODO */}
-                  </div>
-                </div>
-              </>
+              <TrackForm 
+                track={trackQuark}
+                className='mt-8'
+              />
             }
           </div>  
         );

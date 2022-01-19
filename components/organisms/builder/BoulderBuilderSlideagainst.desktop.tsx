@@ -2,6 +2,7 @@ import React, { Dispatch, SetStateAction } from 'react';
 import { BoulderPreviewDesktop, Checkbox, SlideagainstRightDesktop, TextInput, TracksList } from 'components';
 import { Quark, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
 import { Boulder, Image, Name, Track, UUID } from 'types';
+import { TracksListBuilder } from '.';
 
 interface BoulderBuilderSlideagainstDesktopProps {
     boulder: Quark<Boulder>,
@@ -103,10 +104,10 @@ export const BoulderBuilderSlideagainstDesktop: React.FC<BoulderBuilderSlideagai
                 </div>             
 
                 <div className='overflow-auto'>
-                    <TracksList 
+                    <TracksListBuilder 
                         tracks={boulder.tracks.quarks()}
-                        onTrackClick={props.selectedTrack.select}
-                        onBuilderAddClick={() => console.log('create track')} //TODO
+                        selectedTrack={props.selectedTrack}
+                        onAddTrack={() => console.log('create track')} //TODO
                     />
                 </div>
             </>

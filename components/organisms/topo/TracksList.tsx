@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { AverageNote, GradeCircle } from 'components';
 import { gradeToLightGrade, Track } from 'types';
-import { Quark, watchDependencies } from 'helpers/quarky';
+import { Quark, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
 
 interface TracksListProps {
   tracks: Iterable<Quark<Track>>,
-  onTrackClick?: (track: Quark<Track>) => void,
+  selectedTrack: SelectQuarkNullable<Track>,
 }
 
 const gradeColors = {
@@ -22,7 +22,6 @@ const gradeColors = {
 // TODO: separate into a TracksListItem component?
 export const TracksList: React.FC<TracksListProps> = watchDependencies((props: TracksListProps) => {
   const tracks = Array.from(props.tracks);
-  const [selectedTrack, setSelectedTrack] = useState<Track>()
 
   return (
     <div className="w-full border-t border-grey-light">
@@ -35,9 +34,8 @@ export const TracksList: React.FC<TracksListProps> = watchDependencies((props: T
             key={track.id}
             className="px-5 py-5 md:py-3 flex flex-col border-b border-grey-light cursor-pointer md:hover:bg-grey-superlight"
             onClick={() => {
-              if (selectedTrack?.id === track.id) setSelectedTrack(undefined);
-              else setSelectedTrack(track);
-              props.onTrackClick && props.onTrackClick(trackQuark);
+              if (props.selectedTrack()?.id === track.id) props.selectedTrack.select(undefined);
+              else props.selectedTrack.select(trackQuark);
             }}
           >
             <div className='flex flex-row w-full items-center'>
@@ -64,7 +62,7 @@ export const TracksList: React.FC<TracksListProps> = watchDependencies((props: T
                 wrapperClassName="col-span-2" 
               />
             </div>
-            {selectedTrack?.id === track.id &&
+            {props.selectedTrack()?.id === track.id &&
               <>
                 <div className='mt-4'>
                   {track.description}

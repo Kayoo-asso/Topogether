@@ -58,7 +58,6 @@ export const BoulderSlideagainstDesktop: React.FC<BoulderSlideagainstDesktopProp
                             <BoulderPreviewDesktop
                                 boulder={props.boulder}
                                 selectedTrack={props.selectedTrack}
-                                onSelectTrack={props.onSelectTrack}
                             />
                         </div>
                     </div>             
@@ -71,7 +70,7 @@ export const BoulderSlideagainstDesktop: React.FC<BoulderSlideagainstDesktopProp
                     <div className='overflow-auto'>
                         <TracksList 
                             tracks={displayedTracks}
-                            onTrackClick={props.onSelectTrack}
+                            selectedTrack={props.selectedTrack}
                         />
                     </div>
                 </>

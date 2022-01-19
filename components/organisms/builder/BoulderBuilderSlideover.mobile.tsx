@@ -1,9 +1,8 @@
 import React, { useMemo, useState } from 'react';
 import {
-  GradeScale, RoundButton, SlideoverMobile, TracksImage, Show, TracksList, Icon
+  GradeScale, RoundButton, SlideoverMobile, TracksImage, Icon
 } from 'components';
-import { Boulder, Difficulty, gradeToLightGrade, Track } from 'types';
-import { topogetherUrl } from 'helpers/globals';
+import { Boulder, Difficulty, Track } from 'types';
 import { buildBoulderGradeHistogram } from 'helpers';
 import { default as NextImage } from 'next/image';
 import { Quark, watchDependencies, SelectQuarkNullable } from 'helpers/quarky';
@@ -131,7 +130,7 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
         <div className="overflow-auto pb-[30px]">
           <TracksListBuilder
             tracks={displayedTracks}
-            onTrackClick={props.selectedTrack.select}
+            selectedTrack={props.selectedTrack}
             onAddTrack={() => console.log('create track')} //TODO
             onDrawButtonClick={props.onDrawButtonClick}
           />
