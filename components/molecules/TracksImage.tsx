@@ -1,17 +1,13 @@
 import React from 'react';
 import NextImage from 'next/image';
 import {
-  Image,
-  PointEnum, DrawerToolEnum, Position, UUID, gradeToLightGrade,
-  Track
+  Image, PointEnum, DrawerToolEnum, Position, Track
 } from 'types';
-import { SVGArea, SVGLine, SVGPoint, SVGTrack } from 'components';
+import { SVGTrack } from 'components';
 import { staticUrl } from 'helpers/globals';
 import useDimensions from 'react-cool-dimensions';
-import {
-  getMousePosInside,
-} from '../../helpers';
-import { Quark, QuarkArray, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
+import { getMousePosInside } from '../../helpers';
+import { QuarkArray, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
 
 interface TracksImageProps {
   image: Image,
@@ -19,6 +15,7 @@ interface TracksImageProps {
   selectedTrack: SelectQuarkNullable<Track>,
   imageClassName?: string,
   containerClassName?: string,
+  canvasClassName?: string,
   displayTracks?: boolean,
   displayPhantomTracks?: boolean,
   displayTracksDetails?: boolean,
@@ -28,10 +25,6 @@ interface TracksImageProps {
   onPointClick?: (pointType: PointEnum, index: number) => void,
   onImageLoad?: (width: number, height: number) => void,
 }
-
-// const getColorNumber = (track: Track) => {
-//   return track.grade ? gradeToLightGrade(track.grade) : 'grey';
-// }
 
 // NOTES:
 // - The useDimensions hook from react-cool-dimensions can be used to dynamically size this component, based on its container
@@ -52,7 +45,6 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
       observe(); // To re-start observing the current target element
     },
   });
-  // const renderAccumulator: RenderAccumulator[] = [];
 
   let imgWidth;
   let imgHeight;
@@ -107,7 +99,7 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
     >
       <svg
         style={{ cursor: `url(${getCursorUrl()}) ${props.currentTool === 'ERASER' ? '3 7': ''}, auto` }}
-        className="svg-canvas absolute z-50"
+        className={"svg-canvas absolute z-50 " + (props.canvasClassName ? props.canvasClassName : '')}
         width={imgWidth}
         height={imgHeight}
         onMouseDown={(e) => {
@@ -151,9 +143,3 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
 });
 
 TracksImage.displayName = "TracksImage";
-
-
-// interface RenderAccumulator {
-//   id: UUID,
-//   nodes: JSX.Element[],
-// }

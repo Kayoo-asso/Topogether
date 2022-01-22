@@ -28,7 +28,7 @@ export const SlideagainstRightDesktop: React.FC<SlideagainstRightDesktopProps> =
 
     return (
         <div 
-            className={`bg-white w-[300px] border-l border-grey-medium h-full flex flex-col py-5 ${props.className ? props.className : ''}`}
+            className={`bg-white w-[300px] border-l border-grey-medium h-full flex flex-col py-5 z-40 ${props.className ? props.className : ''}`}
             style={{ 
                 marginRight: `-${marginRight}px`,
                 transition: 'margin-right 0.15s ease-in-out'

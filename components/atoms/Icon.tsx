@@ -22,6 +22,11 @@ export const Icon: React.FC<IconProps> = ({
       svg.setAttribute('class', `${SVGClassName}`);
     }}
     loading={() => <span className="ktext-subtext">Loading...</span>}
-    onClick={props.onClick}
+    onClick={(e) => {
+      if (props.onClick) {
+        e.stopPropagation();
+        props.onClick();
+      }
+    }}
   />
 );

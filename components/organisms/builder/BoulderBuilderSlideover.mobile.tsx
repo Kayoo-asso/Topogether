@@ -7,25 +7,15 @@ import { buildBoulderGradeHistogram } from 'helpers';
 import { default as NextImage } from 'next/image';
 import { Quark, watchDependencies, SelectQuarkNullable } from 'helpers/quarky';
 import { TracksListBuilder } from '.';
+import { BoulderForm } from '..';
+import { v4 } from 'uuid';
 
 interface BoulderBuilderSlideoverMobileProps {
   boulder: Quark<Boulder>,
   selectedTrack: SelectQuarkNullable<Track>,
   onPhotoButtonClick?: () => void,
-  onSelectTrack: (selected: Quark<Track>) => void,
   onDrawButtonClick: () => void,
   onClose: () => void,
-}
-
-const gradeColors = {
-  3: 'text-grade-3',
-  4: 'text-grade-4',
-  5: 'text-grade-5',
-  6: 'text-grade-6',
-  7: 'text-grade-7',
-  8: 'text-grade-8',
-  9: 'text-grade-9',
-  None: 'border-grey-light bg-grey-light text-white',
 }
 
 export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobileProps> = watchDependencies((props: BoulderBuilderSlideoverMobileProps) => {
@@ -36,17 +26,16 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
   const boulder = props.boulder();
   const selectedTrack = props.selectedTrack();
 
-  const displayedTracks = useMemo(() => boulder.tracks.quarks(), [boulder.tracks]);
-
   return (
     <SlideoverMobile
       open
       initialFull={false}
       onSizeChange={(f) => setFull(f)}
+      onClose={props.onClose}
     >
       {/* BOULDER IMAGE */}
       {full && (
-        <div className="w-full bg-dark rounded-t-lg flex items-center justify-center overflow-hidden">
+        <div className="w-full bg-dark rounded-t-lg flex items-center justify-center">
           {imageIndex > 0 && !selectedTrack &&
             <Icon 
               name="arrow-full"
@@ -62,6 +51,8 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
             selectedTrack={props.selectedTrack}
             displayPhantomTracks={false}
             displayTracksDetails={!!selectedTrack?.id}
+            imageClassName='rounded-t-lg'
+            canvasClassName='rounded-t-lg'
           />
           {imageIndex < boulder.images.length - 1 && !selectedTrack &&
             <Icon 
@@ -129,9 +120,8 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
       {trackTab && full && (
         <div className="overflow-auto pb-[30px]">
           <TracksListBuilder
-            tracks={displayedTracks}
+            boulder={props.boulder}
             selectedTrack={props.selectedTrack}
-            onAddTrack={() => console.log('create track')} //TODO
             onDrawButtonClick={props.onDrawButtonClick}
           />
         </div>
@@ -140,9 +130,10 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
 
       {/* BOULDER FORM */}
       {!trackTab && full && (
-        <div className='border-t border-grey-light'>
-          {/* TODO */}
-          BOULDER FORM
+        <div className='border-t border-grey-light px-6 py-10 overflow-auto'>
+          <BoulderForm 
+            boulder={props.boulder} 
+          />
         </div>
       )}
 

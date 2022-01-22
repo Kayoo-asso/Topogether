@@ -1,13 +1,14 @@
-import React from 'react';
-import { Checkbox, GradeCircle, Icon, MultipleSelect, TextArea, TextInput } from 'components';
-import { Description, gradeToLightGrade, Name, Track } from 'types';
-import { Quark, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
+import React, { useContext } from 'react';
+import { GradeCircle, Icon} from 'components';
+import { Boulder, gradeToLightGrade, Line, Name, Track, TrackRating } from 'types';
+import { Quark, QuarkArray, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
 import { TrackForm } from '../form/TrackForm';
+import { v4 } from 'uuid';
+import { DeviceContext, UserContext } from 'helpers';
 
 interface TracksListBuilderProps {
-  tracks: Iterable<Quark<Track>>,
+  boulder: Quark<Boulder>,
   selectedTrack: SelectQuarkNullable<Track>,
-  onAddTrack: () => void,
   onDrawButtonClick?: () => void,
 }
 
@@ -24,8 +25,27 @@ const gradeColors = {
 
 // TODO: separate into a TracksListItem component?
 export const TracksListBuilder: React.FC<TracksListBuilderProps> = watchDependencies((props: TracksListBuilderProps) => {
-  const tracks = Array.from(props.tracks);
+  const { session } = useContext(UserContext);
+  const device = useContext(DeviceContext);
+
+  const boulder = props.boulder();
+  const tracks = boulder.tracks.quarks();
   const selectedTrack = props.selectedTrack();
+
+  const createTrack = () => {
+    const newTrack: Track = {
+      id: v4(),
+      creatorId: session!.id,
+      orderIndex: boulder.tracks.length,
+      name: 'Voie ' + (boulder.tracks.length+1) as Name,
+      mustSee: false,
+      isTraverse: false,
+      isSittingStart: false,
+      lines: new QuarkArray<Line>([]),
+      ratings: new QuarkArray<TrackRating>([])
+    }
+    boulder.tracks.push(newTrack);
+  }
 
   return (
     <div className="w-full border-t border-grey-light">
@@ -64,14 +84,18 @@ export const TracksListBuilder: React.FC<TracksListBuilderProps> = watchDependen
                 <Icon 
                   name='draw'
                   SVGClassName='w-6 h-6 stroke-main'
-                  onClick={props.onDrawButtonClick}
+                  onClick={() => {
+                    props.selectedTrack.select(trackQuark);
+                    props.onDrawButtonClick!();
+                  }}
                 />
               }
             </div>
-            {selectedTrack?.id === track.id &&
+            {selectedTrack?.id === track.id && device === 'MOBILE' &&
               <TrackForm 
                 track={trackQuark}
                 className='mt-8'
+                onDeleteTrack={() => console.log('TODO')}
               />
             }
           </div>  
@@ -80,7 +104,7 @@ export const TracksListBuilder: React.FC<TracksListBuilderProps> = watchDependen
 
       <div
         className="ktext-subtitle text-grey-medium px-5 py-5 md:py-3 cursor-pointer border-b border-grey-light hover:bg-grey-superlight"
-        onClick={props.onAddTrack}
+        onClick={createTrack}
       >
         <span className="ml-2 mr-5 text-xl">+</span>
         {' '}

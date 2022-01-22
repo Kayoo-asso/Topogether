@@ -161,9 +161,7 @@ export const MapControl: React.FC<MapControlProps> = ({
             <div className="w-1/2 text-right">
               {displaySatelliteButton && (
                   <SatelliteButton
-                    onClick={(displaySatellite) => {
-                      setSatelliteView(displaySatellite);
-                    }}
+                    onClick={(displaySatellite) => setSatelliteView(displaySatellite)}
                   />
               )}
             </div>
@@ -201,10 +199,9 @@ export const MapControl: React.FC<MapControlProps> = ({
 
         <Map
           ref={mapRef}
-          center={props.center}
           zoom={initialZoom} 
           mapTypeId={satelliteView ? 'satellite' : 'roadmap'}
-          className={props.className}
+          className={props.className ? props.className : ''}
           onZoomChange={() => {
             if (mapRef.current && props.onMapZoomChange) {
               props.onMapZoomChange(mapRef.current.getZoom());
