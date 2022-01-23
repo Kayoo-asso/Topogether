@@ -1,19 +1,19 @@
-// === EXTERNAL API ===
-
-// The interface common to Quarks and Signals
-// This is simply a function that returns the current value of the signal
-// A computed signal (= derived from other signals) without any active observers
-// is removed from the auto-update system. Its value will only be updated upon the next read.
-// An active observer can be an effect, or another active signal.
-
 export interface Signal<T> {
     (): T,
-};
+}
 
-// Quarks contain the data of the application
 export interface Quark<T> extends Signal<T> {
+    (): T,
     set(value: StateUpdate<T>): void,
-};
+}
+
+export interface Effect {
+    dispose(): void,
+}
+
+export interface ObserverEffect extends Effect {
+    watch<T>(computation: () => T): T
+}
 
 // SelectQuarks are useful when picking a quark to use somewhere else
 // They are a handy wrapper around a Quark<Quark<T>> or Quark<Quark<T> | undefined>
@@ -42,15 +42,6 @@ export interface SelectSignalNullable<T> {
     select(value: Signal<T> | undefined): void,
 }
 
-// Effects keep signals activated and are rerun whenever one of their dependencies changes
-export interface Effect {
-    dispose(): void,
-};
-
-export interface ObserverEffect extends Effect {
-    watch<T>(computation: () => T): T
-}
-
 export type ValueOrWrappedFunction<T> = T extends Function ? () => T : T;
 export type StateUpdate<T> = ValueOrWrappedFunction<T> | ((prev: T) => T);
 export type CleanupHelper = (cleanup: (deleted: boolean) => void) => void;
@@ -76,173 +67,240 @@ export type EvaluatedDeps<T extends (Array<Signal<any>> | ReadonlyArray<Signal<a
     [K in keyof T]: SignalValue<T[K]>;
 }
 
-// === TYPES ===
 
-// TODO: see if we can make all internal functions monomorphic, i.e. not use union types
-// -> this should allow JS engine to optimise much more
-
-// Optimisations:
-// 1. Never change the shape of objects after creation
-//    See: https://richardartoul.github.io/jekyll/update/2015/04/26/hidden-classes.html
-// 2. All functions take exact types. Write functions as if you were writing C code with structs.
-
-interface QuarkNode<T> {
-    readonly type: NodeType.Quark,
-    value: T,
-    equal: (a: T, b: T) => boolean,
-    lastEpoch: number,
-    // Observers and observer slots
-    obs: Set<Computation>,
-    name: string | undefined,
+interface Node {
+    value: any
+    fn: Function | null,
+    equal: ((a: any, b: any) => boolean) | ((deleted: boolean) => void) | null,
+    status: NodeStatus,
+    lastChange: number,
+    lastVerified: number,
+    // active: boolean,
+    // readonly effect: boolean,
+    // cleanups: ((deleted: boolean) => void)[] | null,
+    deps: Dependency[] | null,
+    obs: Observer[] | null,
+    readonly name: string | undefined,
 }
 
-interface DerivationNode<T> {
-    readonly type: NodeType.Derivation,
+type Dependency = Leaf<any> | Derived<any>;
+type Observer = Derived<any> | Root;
+
+// Use a single enum, to easily distinguish between derivations and effects
+// when propagating
+const enum NodeStatus {
+    // 
+    Clean = 0,
+    Effect = 1,
+    // scheduled derivation or effect
+    Dirty = 2,
+    Inactive = 4,
+    OnStack = 8,
+    Tracking = 16,
+}
+
+interface Leaf<T> extends Node {
     value: T,
-    equal: (a: T, b: T) => boolean,
+    readonly equal: (a: T, b: T) => boolean,
+    readonly fn: null,
+    readonly status: NodeStatus.Clean,
+    readonly deps: null,
+    readonly obs: Observer[],
+}
+
+interface Derived<T> extends Node {
+    value: T,
+    readonly equal: (a: T, b: T) => boolean,
     readonly fn: () => T,
-    lastEpoch: number,
-    onStack: boolean,
-    dirty: boolean,
-    active: boolean,
-    // Dependencies & dependency slots
-    deps: Set<DataNode>,
-    // Observers and observer slots
-    obs: Set<Computation>,
-    name: string | undefined
+    deps: Dependency[],
+    readonly obs: Observer[],
 }
 
-const enum NodeType {
-    Quark,
-    Derivation,
-    Effect
+interface Root extends Node {
+    value: undefined,
+    readonly fn: () => void,
+    equal: ((deleted: boolean) => void) | null, // cleanup hooks, aggregated into a single function
+    deps: Dependency[],
+    readonly obs: null,
 }
-
-// Creating an effect within a derivation WILL throw.
-// Derivations are meant to be pure functions.
-// This is also necessary due to how memory management works: derivations are automatically deactivated and garbage collected,
-// and effects created under a derivation would have to be deactivated at the same time.
-// Effects have to be cleaned up manually, if not created under another effect.
-// TODO: test what happens when creating an effect with a dependency that is both explicit + in the computation
-
-interface EffectNode {
-    readonly type: NodeType.Effect,
-    readonly fn: (onCleanup: CleanupHelper) => void,
-    scheduled: boolean,
-    deleted: boolean,
-    track: boolean,
-    deps: Set<DataNode>,
-    // constant dependencies (current use: observer effects. intended use: any effect that has dependencies that are not read)
-    // - 1 means the effect has been deleted
-    // cdeps: number,
-    cleanup: ((deleted: boolean) => void)[] | null,
-    name: string | undefined
-}
-
-const EFFECT_DELETED = -1;
 
 interface Scope {
-    accessed: Set<DataNode>,
-    // null here means effects are not allowed
-    cleanups: ((deleted: boolean) => void)[] | null,
+    accessed: Dependency[],
+    effectHooks: ((deleted: boolean) => void)[] | null,
+    parent: Scope | null;
 }
 
-type DataNode = QuarkNode<any> | DerivationNode<any>;
-type Computation = DerivationNode<any> | EffectNode;
 
-// === GLOBAL CONTEXT ===
-
-// TODO: verify that the associated code is stripped out in production build
-const DEBUG = process.env.NODE_ENV === "development" || process.env.NODE_ENV === "test";
-
-export interface QuarkDebug<T> extends Quark<T> {
-    node: QuarkNode<T>
-}
-
-export interface SignalDebug<T> extends Signal<T> {
-    node: DerivationNode<T>
-}
-
-export interface EffectDebug extends Effect {
-    node: EffectNode
-}
-
-let BatchUpdates = (work: () => void) => work();
-// allows Quarky's core to be framework-agnostic
-export function setBatchUpdates(fn: (work: () => void) => void) {
-    BatchUpdates = fn;
-}
+// === IMPLEMENTATION ===
 
 let Epoch = 0;
-const ScopeStack: Scope[] = [];
+// Using a linked list instead of an array for faster checks during reads
+// todo: benchmark?
+let Scope: Scope | null = null;
 
-const BatchIndices: number[] = [];
-let RunningBatch = false;
+let Scheduled = false;
 
-const PendingQuarks: QuarkNode<any>[] = [];
+const PendingLeaves: Leaf<any>[] = [];
 const PendingUpdates: StateUpdate<any>[] = [];
 
-const ScheduledEffects: EffectNode[] = [];
-let DeactivationCandidates: DerivationNode<any>[] = []
+let ScheduledCleanups: Root[] = [];
+let ScheduledEffects: Root[] = [];
+let DeactivationCandidates: Derived<any>[] = [];
 
-// === EXTERNAL API ===
+let ExternalBatcher = (work: () => void) => work();
 
-export function untrack<T>(work: () => T): T {
-    ScopeStack.push({ accessed: new Set(), cleanups: [] });
-    const result = work();
-    ScopeStack.pop();
-    return result;
+export function setBatchingBehavior(batcher: (work: () => void) => void) {
+    ExternalBatcher = batcher;
 }
 
 const defaultEqual = <T>(a: T, b: T) => a === b;
 
-export function quark<T>(value: T, options?: QuarkOptions<T>): Quark<T> {
-    const q: QuarkNode<T> = {
-        type: NodeType.Quark,
-        value,
+export function quark<T>(initial: T, options?: QuarkOptions<T>): Quark<T> {
+    // initialize in the order given in the Node interface, to ensure consistency with others
+    const q: Leaf<T> = {
+        value: initial,
+        fn: null,
         equal: options?.equal ?? defaultEqual,
-        lastEpoch: Epoch,
-        obs: new Set(),
+        status: NodeStatus.Clean,
+        lastChange: -1,
+        lastVerified: Epoch,
+        deps: null,
+        obs: [],
         name: options?.name
     };
-    const read = () => readQuark(q);
-    read.set = (value: StateUpdate<T>) => writeNode(q, value);
-    if (DEBUG) {
-        (read as QuarkDebug<T>).node = q;
+    const read = () => readLeaf(q);
+    read.set = (value: StateUpdate<T>) => {
+        writeLeaf(q, value);
+        scheduleUpdates();
     }
+    // TODO: debug info
     return read;
 }
 
-export type FocusQuarkOptions<U> =
-    { strictUpdates?: false } |
-    {
-        strictUpdates?: true,
-        equal?: ((a: U, b: U) => boolean),
-        name?: string,
-    }
+export function derive<T>(fn: () => T, options?: QuarkOptions<T>): Signal<T> {
+    const d: Derived<T> = {
+        // will be computed upon first read
+        value: undefined!,
+        fn,
+        equal: options?.equal ?? defaultEqual,
+        status: NodeStatus.Inactive | NodeStatus.Tracking,
+        lastChange: -1,
+        lastVerified: -1,
+        deps: [],
+        obs: [],
+        name: options?.name
+    };
+    const computed = () => readNode(d);
+    // TODO: debug info
+    return computed;
+}
 
-export function focusQuark<T, U>(
-    quark: Quark<T>,
-    focus: (value: T) => U,
-    write: (value: T, modif: U) => T,
-    options?: FocusQuarkOptions<U>
-): Quark<U> {
-    let q = (() => focus(quark())) as Quark<U>;
-    if (options?.strictUpdates) {
-        q = derive(q, { equal: options.equal, name: options.name }) as Quark<U>
+export function effect<T extends Signal<any>[] | readonly Signal<any>[]>(deps: T, computation: (deps: EvaluatedDeps<T>, onCleanup: CleanupHelper) => void, options?: ExplicitEffectOptions): Effect;
+export function effect(computation: () => void, options?: EffectOptions): Effect;
+export function effect(arg1: any, arg2?: any, arg3?: any): Effect {
+    if (typeof arg1 === "function") {
+        return simpleEffect(arg1, arg2);
+    } else {
+        return explicitEffect(arg1, arg2, arg3);
     }
-    // use this form of Quark.set to recover the previous value without reading the quark
-    q.set = (u: StateUpdate<U>) => {
-        quark.set((current: T) => {
-            // TypeScript massaging: if u is a function, we execute it
-            let newValue: U = u as U;
-            if (typeof u === "function") {
-                newValue = (u as (prev: U) => U)(focus(current))
-            }
-            return write(current, newValue);
-        });
+}
+
+function buildEffect(fn: () => void, status: NodeStatus, name?: string): Root {
+    return {
+        value: undefined,
+        fn,
+        equal: null,
+        status,
+        lastChange: -1,
+        lastVerified: -1,
+        deps: [],
+        obs: null,
+        name
+    };
+}
+
+function registerEffect(dispose: () => void, persistent: boolean | undefined) {
+    if (Scope && !persistent) {
+        if (!Scope.effectHooks) {
+            Scope.effectHooks = [dispose];
+        } else {
+            Scope.effectHooks.push(dispose);
+        }
     }
-    return q;
+}
+
+function simpleEffect(fn: () => void, options?: EffectOptions): Effect {
+    const e = buildEffect(fn, NodeStatus.Effect | NodeStatus.Tracking, options?.name);
+    const dispose = () => {
+        cleanupEffect(e, true);
+        scheduleUpdates();
+    };
+    registerEffect(dispose, options?.persistent);
+    runComputation(e);
+    // TODO: debug info
+    return {
+        dispose
+    };
+}
+
+function explicitEffect(signals: any[], computation: (deps: any[]) => void, options?: ExplicitEffectOptions): Effect {
+    const fn = () => {
+        const input = new Array(signals.length);
+        for (let i = 0; i < signals.length; ++i) {
+            input[i] = signals[i]();
+        }
+        computation(signals);
+    }
+    const e = buildEffect(fn, NodeStatus.Effect | NodeStatus.Tracking, options?.name);
+    const dispose = () => {
+        cleanupEffect(e, true);
+        scheduleUpdates();
+    };
+    // do it before hooking this effect to signals, in case of an error
+    registerEffect(dispose, options?.persistent);
+    if (options?.lazy) {
+        const s: Scope = {
+            accessed: e.deps,
+            effectHooks: [],
+            parent: Scope,
+        };
+        Scope = s;
+        for (let i = 0; i < signals.length; ++i) {
+            signals[i]();
+        }
+        for (let i = 0; i < e.deps.length; ++i) {
+            hook(e, e.deps[i]);
+        }
+        Scope = s.parent;
+    } else {
+        runComputation(e);
+    }
+    return {
+        dispose
+    };
+}
+
+export function observerEffect(computation: () => void): ObserverEffect {
+    const node = buildEffect(computation, NodeStatus.Effect);
+    return {
+        watch<T>(computation: () => T): T {
+            const scope: Scope = {
+                accessed: [],
+                effectHooks: null,
+                parent: Scope
+            };
+            Scope = scope;
+            const result = computation();
+            Scope = scope.parent;
+            diffDeps(node, node.deps, scope.accessed);
+            node.deps = scope.accessed;
+            return result;
+        },
+        dispose: () => {
+            cleanupEffect(node, true);
+            scheduleUpdates();
+        }
+    }
 }
 
 export function selectSignal<T>(): SelectSignalNullable<T>;
@@ -267,440 +325,340 @@ export function selectQuark<T>(initial?: Quark<T>): SelectQuark<T> | SelectQuark
     return selectSignal(initial as any) as SelectQuark<T> | SelectQuarkNullable<T>;
 }
 
-export function derive<T>(computation: () => T, options?: QuarkOptions<T>): Signal<T> {
-    const d: DerivationNode<T> = {
-        type: NodeType.Derivation,
-        value: undefined!,
-        equal: options?.equal ?? defaultEqual,
-        fn: computation,
-        lastEpoch: -1,
-        active: false,
-        dirty: false,
-        onStack: false,
-        obs: new Set(),
-        //   oSlots: [],
-        deps: new Set(),
-        //   depSlots: [],
-        name: options?.name,
-    };
-    const s = () => readDerivation(d);
-    if (DEBUG) {
-        (s as SignalDebug<T>).node = d;
-    }
-    return s;
-}
-
-export function effect<T extends Signal<any>[] | readonly Signal<any>[]>(deps: T, computation: (deps: EvaluatedDeps<T>, onCleanup: CleanupHelper) => void, options?: ExplicitEffectOptions): Effect;
-export function effect(computation: (onCleanup: CleanupHelper) => void, options?: EffectOptions): Effect;
-export function effect(arg1: any, arg2?: any, arg3?: any): Effect {
-    if (typeof arg1 === "function") {
-        return simpleEffect(arg1, arg2);
-    } else {
-        return explicitEffect(arg1, arg2, arg3);
-    }
-}
-
-// 2 helpers to reduce code duplication between simpleEffect & explicitEffect
-const buildEffect = (fn: (onCleanup: CleanupHelper) => void, name?: string): EffectNode => ({
-    type: NodeType.Effect,
-    fn,
-    deps: new Set(),
-    //   depSlots: [],
-    // cdeps: 0,
-    scheduled: false,
-    deleted: false,
-    track: true,
-    cleanup: null,
-    name
-});
-
-function registerEffect(dispose: () => void, persistent: boolean | undefined) {
-    if (ScopeStack.length > 0) {
-        const scope = ScopeStack[ScopeStack.length - 1];
-        if (!scope.cleanups) {
-            handleError("Quarky detected an attempt to create an effect within a derivation! This is not allowed: derivation should be pure functions.");
-        }
-        if (!persistent) {
-            scope.cleanups!.push(dispose);
-        }
-    }
-}
-
-function simpleEffect(fn: (onCleanup: CleanupHelper) => void, options?: EffectOptions): Effect {
-    const e = buildEffect(fn, options?.name);
-    const result = {
-        dispose: () => cleanupEffect(e, true)
-    }
-    registerEffect(result.dispose, options?.persistent);
-
-    runEffect(e);
-    if (DEBUG) {
-        (result as EffectDebug).node = e;
-    }
-    return result;
-}
-
-function explicitEffect(signals: any[], computation: (deps: any[], onCleanup: CleanupHelper) => void, options?: ExplicitEffectOptions): Effect {
-    const fn = () => {
-        const input = new Array(signals.length);
-        for (let i = 0; i < input.length; i++) {
-            input[i] = signals[i]();
-        }
-        computation(signals, onCleanup);
-    }
-    const e = buildEffect(fn, options?.name);
-    const result = {
-        dispose: () => cleanupEffect(e, true)
-    }
-    if (options?.lazy) {
-        const scope: Scope = { accessed: new Set(), cleanups: null };
-        ScopeStack.push(scope);
-        // we can do this in one pass, since each call to signals[i]() pushes one node on scope.accessed
-        for (let i = 0; i < signals.length; i++) {
-            signals[i]();
-        }
-        ScopeStack.pop();
-        for (const d of scope.accessed) {
-            hookObserver(e, d);
-        }
-        e.deps = scope.accessed;
-    } else {
-        runEffect(e);
-    }
-    registerEffect(result.dispose, options?.persistent);
-    if (DEBUG) {
-        (result as EffectDebug).node = e;
-    }
-    return result;
-}
-
-// TODO: effect options
-export function observerEffect(computation: (onCleanup: CleanupHelper) => void): ObserverEffect {
-    // throw new Error("TODO");
-    const node: EffectNode = {
-        type: NodeType.Effect,
-        fn: computation,
-        deps: new Set(),
-        // cdeps: 0,
-        scheduled: false,
-        deleted: false,
-        track: false,
-        cleanup: null,
-        name: undefined
-    }
-    // TODO: what do we do about nested effects created within that computation?
-    // I don't think they should be cleaned up whenever the effect runs, that would be counterintuitive within React components
-    return {
-        watch<T>(computation: () => T): T {
-            const scope: Scope = {
-                accessed: new Set(),
-                cleanups: []
-            };
-            ScopeStack.push(scope);
-            const result = computation();
-            ScopeStack.pop();
-            refreshDependencies(node, scope.accessed);
-            return result;
-        },
-        dispose: () => cleanupEffect(node, true)
-    };
-}
-
-// Q: should batches have their own scope?
 export function batch<T>(work: () => T): T {
-    RunningBatch = true;
-    BatchIndices.push(PendingQuarks.length);
-    const output = work();
-    processUpdates();
-    return output;
+    const start = PendingLeaves.length;
+    const prev = Scheduled;
+    Scheduled = true;
+    const result = work();
+    processUpdates(start);
+    if (!prev) processDeactivations();
+    Scheduled = prev;
+    return result;
+}
+
+export function untrack<T>(work: () => T): T {
+    const saved = Scope;
+    Scope = null;
+    const result = work();
+    Scope = saved;
+    return result;
 }
 
 // === CORE ===
-
-function readQuark<T>(node: QuarkNode<T>): T {
-    if (ScopeStack.length > 0) {
-        ScopeStack[ScopeStack.length - 1].accessed.add(node);
+function readLeaf<T>(node: Leaf<T>): T {
+    if (Scope) {
+        Scope.accessed.push(node);
     }
     return node.value;
 }
 
-function readDerivation<T>(node: DerivationNode<T>): T {
-    if (ScopeStack.length > 0) {
-        ScopeStack[ScopeStack.length - 1].accessed.add(node);
+// TODO: is there a way to do less checks & centralise the cycle checking logic?
+function readNode<T>(node: Derived<T>): T {
+    if (Scope) {
+        Scope.accessed.push(node);
     }
-    if (node.onStack) {
-        // clean up the scope to recover the state
-        handleError("Quarky detected a cycle!", node.name);
+    if (node.status !== NodeStatus.Clean && node.lastVerified < Epoch) {
+        if (node.status & NodeStatus.OnStack) {
+            handleError("Quarky detected a cycle!");
+        }
+        // TODO: remove once out of debug mode
+        node.status |= NodeStatus.OnStack;
+        runComputation(node);
+        // we know the flag is set here
+        node.status ^= NodeStatus.OnStack;
+        // this is done in refreshDerived
+        // node.lastVerified = Epoch;
     }
-    if (!node.active && node.lastEpoch < Epoch) {
-        node.onStack = true;
-        updateDerivation(node);
-        node.onStack = false;
-    }
-    return node.value
+    return node.value;
 }
 
-function writeNode<T>(node: QuarkNode<T>, update: StateUpdate<T>) {
-    if (ScopeStack.length > 0 && !ScopeStack[ScopeStack.length - 1].cleanups) {
-        console.error("Quarky detected an attempt to set a value in a derivation! This is not allowed and will be ignored");
+// todo: microtask?
+function scheduleUpdates() {
+    if (!Scheduled) {
+        Scheduled = true;
+        processUpdates(0);
+        processDeactivations();
+        Scheduled = false;
+    }
+}
+
+function processUpdates(start: number) {
+    ExternalBatcher(() => {
+        // This avoids incrementing the epoch counter if nothing happens
+        // (ex: we're only processing deactivations after disposing an effect)
+        if (PendingLeaves.length === start && ScheduledEffects.length === 0) return;
+        // Increment at the beginning, in case some reads have happened between the end of last epoch and this one
+        Epoch += 1;
+        do {
+            const leaves = PendingLeaves.splice(start);
+            const updates = PendingUpdates.splice(start);
+
+            for (let i = 0; i < leaves.length; ++i) {
+                const node = leaves[i];
+                const u = updates[i];
+                const prevValue = node.value;
+
+                node.value = typeof u === "function"
+                    ? u(node.value)
+                    : u;
+
+                if (node.equal(prevValue, node.value)) continue;
+
+                node.lastChange = Epoch;
+
+                for (let j = node.obs.length - 1; j >= 0; --j) {
+                    flagDirty(node.obs[j]);
+                }
+            }
+
+            let cleanups = ScheduledCleanups;
+            let effects = ScheduledEffects;
+            ScheduledCleanups = [];
+            ScheduledEffects = []
+
+            for (let i = cleanups.length - 1; i >= 0; --i) {
+                cleanupEffect(cleanups[i], false);
+            }
+            // TODO: what happens if an effect runs and should reschedule an effect
+            // that is already scheduled for later? The rescheduling should happen 
+            // when updating quarks in the next update cycle anyways
+            for (let i = effects.length - 1; i >= 0; --i) {
+                const e = effects[i];
+                // NodeStatus.Clean means deleted for effects
+                if (e.status === NodeStatus.Clean) continue;
+                checkComputation(e);
+            }
+        } while (PendingLeaves.length > start || ScheduledEffects.length > 0)
+        // Epoch += 1;
+    });
+}
+
+function processDeactivations() {
+    // allows processing deactivation chains efficiently
+    let d = DeactivationCandidates.pop();
+    while (d !== undefined) {
+        if (d.obs.length === 0) {
+            // console.log(`Deactivating ${d.name}. Epoch ${Epoch}, lastChange: ${d.lastChange}, lastVerified: ${d.lastVerified}`);
+            for (let i = d.obs.length - 1; i >= 0; --i) {
+                unhook(d, d.deps[i]);
+            }
+            d.status |= NodeStatus.Inactive;
+        }
+        d = DeactivationCandidates.pop();
+    }
+}
+
+// TODO: is there a way to centralize the cycle checking logic somewhere?
+function flagDirty(node: Observer) {
+    if (!(node.status & NodeStatus.Dirty)) {
+        // console.log(`Flagging ${node.name} as dirty`)
+        node.status |= NodeStatus.Dirty;
+
+        if (node.status & NodeStatus.Effect) {
+            ScheduledEffects.push(node as Root);
+            if (node.equal) ScheduledCleanups.push(node as Root);
+        }
+        else {
+            for (let i = node.obs!.length - 1; i >= 0; --i) {
+                flagDirty(node.obs![i]);
+            }
+        }
+    }
+}
+
+function checkComputation(node: Observer): boolean {
+    // console.log("Actualising " + node.name + " with deps " + node.deps.map(x => x.name));
+    let somethingChanged = false;
+    for (let i = node.deps.length - 1; i >= 0; --i) {
+        const d = node.deps[i];
+        if (d.lastChange === Epoch ||
+            // leaves never have any bit set on their status flag
+            ((d.status & NodeStatus.Dirty) && checkComputation(d as Observer))) {
+            somethingChanged = true;
+            break;
+        }
+    }
+    if (!(node.status & NodeStatus.Dirty)) throw new Error("Should not be checking clean computations");
+    // can use a XOR instead of & ~NodeStatus.Dirty, since we know the dirty flag is not set
+    node.status ^= NodeStatus.Dirty;
+    return somethingChanged && runComputation(node);
+}
+
+function writeLeaf<T>(node: Leaf<T>, update: StateUpdate<T>) {
+    PendingLeaves.push(node);
+    PendingUpdates.push(update);
+}
+
+function activate(node: Derived<any>) {
+    // TODO: is this true?
+    if (node.lastVerified < Epoch) {
+        throw new Error("Activation should always come after a read");
+    }
+    // console.log("Activating " + node.name);
+    node.status &= ~NodeStatus.Inactive;
+    for (let i = node.deps.length - 1; i >= 0; --i) {
+        hook(node, node.deps[i]);
+    }
+}
+
+function runComputation(node: Observer): boolean {
+    // console.log("Running computation " + node.name);
+    const scope: Scope = {
+        accessed: [],
+        effectHooks: null,
+        parent: Scope
+    }
+    const isDerivation = !(node.status & NodeStatus.Effect);
+    Scope = scope;
+    const prev = node.value;
+    node.value = node.fn();
+    Scope = scope.parent;
+
+    let somethingChanged: boolean;
+    if (isDerivation) {
+        if (scope.effectHooks) {
+            console.error("Quarky detected the creation of an effect within a derivation. This is likely a memory leak!");
+        }
+        somethingChanged = !(node as Derived<any>).equal(prev, node.value);
+        node.lastVerified = Epoch;
+        if (somethingChanged) node.lastChange = Epoch;
+    } else {
+        (node as Root).equal = scope.effectHooks
+            ? hooksRunner(scope.effectHooks)
+            : null;
+        // the effect deleted itself
+        if (node.status & NodeStatus.Inactive) {
+            cleanupEffect(node as Root, true);
+            // TODO: clean up this control flow
+            // this prevents updating the deps of the effect below
+            return true;
+        }
+        somethingChanged = true;
+    }
+
+    // do this after checking for deleted effects and
+    // unhoking them from their dependencies
+    if (node.status & NodeStatus.Tracking) {
+        if (!(node.status & NodeStatus.Inactive)) {
+            diffDeps(node, node.deps, scope.accessed);
+        } 
+        node.deps = scope.accessed
+    }
+
+    return somethingChanged;
+}
+
+
+// Have to fallback upon slow diff on first difference,
+// since the same node may appear multiple times in before or after
+function diffDeps(node: Observer, before: Dependency[], after: Dependency[]) {
+    if (depsAreEqual(before, after)) return;
+
+    // easy case for initialisation
+    if (before.length === 0) {
+        for (let i = 0; i < after.length; ++i) {
+            hook(node, after[i]);
+        }
         return;
     }
 
-    // Slightly more work for the non-batching case, but this helps centralize the logic
-    PendingQuarks.push(node);
-    PendingUpdates.push(update);
-    if (!RunningBatch) {
-        processUpdates();
-    }
-}
+    // console.log("Diffing deps for " + node.name);
 
-const MAX_ITERS = 500;
-
-// The nice part about Quarky's update model is that effects provide a natural endpoint
-// That means we can update everything
-function processUpdates() {
-    RunningBatch = true;
-    const start = BatchIndices.pop() ?? 0;
-    let iterations = 0;
-
-    // The BatchUpdates function is
-    BatchUpdates(() => {
-        while (PendingQuarks.length > start || ScheduledEffects.length > 0) {
-            if (iterations > MAX_ITERS) {
-                handleError(`Runaway update cycle detected! (>${MAX_ITERS} iterations)`);
-            }
-            iterations += 1;
-            const quarks = PendingQuarks.splice(start);
-            const updates = PendingUpdates.splice(start);
-            for (let i = 0; i < quarks.length; i++) {
-                const q = quarks[i];
-                const u = updates[i];
-                let prevValue = q.value;
-                // still update the value inside the quark, in case it's different but a custom equality function is there to stop propagation
-                if (typeof u === "function") {
-                    q.value = u(q.value);
-                } else {
-                    q.value = u;
-                }
-
-                if (q.equal(prevValue, q.value)) continue;
-
-                q.lastEpoch = Epoch;
-
-                for (const o of q.obs) {
-                    if (o.type === NodeType.Effect) scheduleEffect(o);
-                    else flagDirty(o);
-                }
-            }
-
-            // Run all cleanups first, since effects that were scheduled to run may be cleaned up
-            // by effects that were scheduled later
-            const effects = ScheduledEffects.splice(0);
-            for (let i = 0; i < effects.length; i++) {
-                // cleaning up a deleted effect should not be a problem
-                const e = effects[i];
-                cleanupEffect(e, false);
-                // allows rescheduling during execution phase
-                e.scheduled = false;
-            }
-            // 
-            for (let i = 0; i < effects.length; i++) {
-                const e = effects[i];
-                if (e.deleted) continue;
-                // e does not use its passive dependencies
-                if (updateChildren(e.deps)) {
-                    runEffect(e);
-                }
-            }
-            Epoch += 1;
-        }
-    });
-
-    for (let i = 0; i < DeactivationCandidates.length; i++) {
-        const d = DeactivationCandidates[i];
-        if (d.obs.size > 0) continue;
-        detachDependencies(d);
-        d.active = false;
-    }
-    DeactivationCandidates = [];
-
-    // only stop (RunningBatch = false) if there is no more work (BatchIndices.length === 0)
-    RunningBatch = BatchIndices.length !== 0;
-}
-
-// returns `true` if the value changed
-function updateDerivation(node: DerivationNode<any>): boolean {
-    // console.log(`Updating derivation ${node.name}. Active: ${node.active}`);
-    ScopeStack.push({
-        accessed: new Set(),
-        // effects are not allowed within a derivation
-        cleanups: null
-    });
-    const prev = node.value;
-    node.value = node.fn();
-    const scope = ScopeStack.pop()!;
-
-    if (node.active) {
-        refreshDependencies(node, scope.accessed);
-        const somethingChanged = !node.equal(prev, node.value);
-        if (somethingChanged) node.lastEpoch = Epoch;
-        return somethingChanged;
-    } else {
-        node.deps = scope.accessed;
-        // this allows us to skip updates for reads to this inactive derivation in the same epoch
-        // this approach only has an impact on update propagation if a deactivated node is activated again and keeps the same value
-        // TODO: should we separate lastRead and lastUpdate?
-        node.lastEpoch = Epoch;
-        return true;
-    }
-}
-
-function propagateDown(node: DerivationNode<any>): boolean {
-    // only update the derivation if one of the children has changed 
-    // and only send a signal upward if the value changed with the update
-    return updateChildren(node.deps) && updateDerivation(node);
-}
-
-function updateChildren(deps: Set<DataNode>): boolean {
-    let somethingChanged = false;
-    for(const d of deps) {
-        if (d.type === NodeType.Derivation && d.dirty) {
-            somethingChanged ||= propagateDown(d);
-            d.dirty = false;
-        } else if (d.lastEpoch === Epoch) {
-            somethingChanged = true;
+    // slow diff
+    const toRemove = new Set(before);
+    const toAdd = new Set(after);
+    for (const x of toRemove) {
+        if (!toAdd.delete(x)) {
+            unhook(node, x);
         }
     }
-    return somethingChanged;
+    for (const x of toAdd) {
+        hook(node, x);
+    }
 }
-function refreshDependencies(node: Computation, accessed: Set<DataNode>) {
-    const current = node.deps;
-     for (const d of accessed) {
-        if (!current.delete(d)) {
-            hookObserver(node, d);
+
+function depsAreEqual(before: Dependency[], after: Dependency[]) {
+    if (before.length !== after.length) return false;
+    for (let i = before.length - 1; i >= 0; --i) {
+        if (before[i] !== after[i]) return false;
+    }
+    return true;
+}
+
+function hook(node: Observer, dep: Dependency) {
+    if (dep.obs.indexOf(node) !== -1) return;
+
+    // console.log(`Hooking ${node.name} to ${dep.name}`)
+    // only alter the observers array of the dependency
+    // we directly replace the dependencies of the observer with a new array
+    dep.obs.push(node);
+    if (dep.status & NodeStatus.Inactive) {
+        activate(dep as Derived<any>);
+    }
+}
+
+function unhook(node: Observer, dep: Dependency) {
+    const lastObserver = dep.obs.pop()!;
+    // console.log(`Unhooking ${node.name} from ${dep.name}`);
+    if (dep.deps && dep.obs.length === 0) {
+        DeactivationCandidates.push(dep);
+    }
+    if (lastObserver !== node) {
+        for (let i = dep.obs.length - 1; i >= 0; --i) {
+            if (dep.obs[i] === node) {
+                dep.obs[i] = lastObserver;
+                break;
+            }
         }
     }
-    for (const d of current) {
-        unhookObserver(node, d);
-    }
-    node.deps = accessed;
 }
 
-
-// returns the slot that was used
-function hookObserver(observer: Computation, dependency: DataNode) {
-    dependency.obs.add(observer);
-    if (dependency.type === NodeType.Derivation && dependency.obs.size === 1) {
-        activate(dependency);
+function hooksRunner(hooks: ((deleted: boolean) => void)[]): (deleted: boolean) => void {
+    return (deleted: boolean) => {
+        // run them in order here
+        for (let i = 0; i < hooks.length; ++i) {
+            hooks[i](deleted);
+        }
     }
 }
 
-function activate(node: DerivationNode<any>) {
-    if (node.active) return;
-    // console.log("Activating dependency");
-    for (const dep of node.deps) {
-        hookObserver(node, dep);
-    }
-    node.active = true;
-}
-
-// TODO: measure perf & memory vs using sets
-// Not sure this is actually faster, due to a lot of jumps in memory
-function unhookObserver(observer: Computation, dependency: DataNode) {
-    dependency.obs.delete(observer);
-    if (dependency.type === NodeType.Derivation && dependency.obs.size === 0) {
-        DeactivationCandidates.push(dependency);
-    }
-}
-
-
-function cleanupEffect(effect: EffectNode, deleted: boolean) {
+function cleanupEffect(node: Root, deleted: boolean) {
     if (deleted) {
-        detachDependencies(effect);
-        effect.deleted = true;
-        effect.deps.clear();
-    }
-    if (effect.cleanup) {
-        // copy cleanups and set them to null right away, in case one of the cleanups leads to another cleanup of this same effect
-        const cleanups = effect.cleanup;
-        // when processing updates, we may clean an effect first, then delete it because its parent reruns
-        // this avoids running the cleanups twice
-        effect.cleanup = null;
-        for (let i = 0; i < cleanups.length; i++) {
-            cleanups[i](deleted);
+        // set inactive flag, remove tracking flag
+        node.status = node.status | NodeStatus.Inactive & ~NodeStatus.Tracking;
+        for (var i = node.deps.length; i-- > 0;) {
+            unhook(node, node.deps[i]);
         }
+        node.deps = [];
     }
-    if (!RunningBatch && DeactivationCandidates.length > 0) {
-        // in case of deactivations
-        processUpdates();
-    }
-}
-
-function detachDependencies(node: Computation) {
-    for (const d of node.deps) {
-        unhookObserver(node, d);
-    }
-    // clearing the dependency set should be done elsewhere (the set is actually kept for inactive derivations)
-    node.deps.clear();
-}
-
-// depth-first search, to detect cycles
-function flagDirty(node: DerivationNode<any>) {
-    if (node.onStack) handleError("Quarky detected a cycle!", node.name);
-    if (!node.dirty) {
-        node.onStack = true;
-        for (const o of node.obs) {
-            if (o.type === NodeType.Effect) scheduleEffect(o);
-            else flagDirty(o);
-        }
-        node.onStack = false;
-        node.dirty = true;
+    if (node.equal) {
+        // set cleanups to null before running, in case the cleanups themselves rerun or delete the effect
+        // this avoids running the same cleanup twice
+        const toRun = node.equal;
+        node.equal = null;
+        toRun(deleted);
     }
 }
 
-const scheduleEffect = (node: EffectNode) => {
-    if (!node.scheduled) {
-        node.scheduled = true;
-        ScheduledEffects.push(node);
+export function onCleanup(hook: (deleted: boolean) => void): void {
+    if (!Scope) {
+        console.error("Quarky detected a use of onCleanup outside of any context");
+        return;
+    }
+    if (!Scope.effectHooks) {
+        Scope.effectHooks = [hook];
+    } else {
+        Scope.effectHooks.push(hook);
     }
 }
 
-function runEffect(effect: EffectNode) {
-    // console.log(`Running effect with dependencies: ${effect.deps.map(x => x.name)}\n. Nb of constant dependencies: ${effect.cdeps}`);
-    // if (effect.cdeps === EFFECT_DELETED) return;
-
-    ScopeStack.push({
-        // todo: handle cdeps
-        accessed: new Set(),
-        cleanups: [],
-    })
-    // effect.fn(onCleanup);
-    batch(() => effect.fn(onCleanup));
-    const scope = ScopeStack.pop()!;
-
-    effect.cleanup = scope.cleanups!.length !== 0
-        ? scope.cleanups
-        : null;
-
-    // in case the effect deleted itself during execution
-    if (effect.deleted) {
-        // run any cleanups that may have been registered after deletion
-        cleanupEffect(effect, true);
-    } else if(effect.track) {
-        refreshDependencies(effect, scope.accessed);
-    }
-}
-
-// should not be exposed outside effect functions
-function onCleanup(cleanup: (deleted: boolean) => void) {
-    const scope = ScopeStack[ScopeStack.length - 1];
-    scope.cleanups!.push(cleanup);
-}
-
-function handleError(errorMsg: string, name?: string) {
-    // not the best way, but I don't know how to recover the scope otherwise
-    ScopeStack.pop();
-    let msg = errorMsg;
-    if (name) msg += ` The problem was hit at quark "${name}".`;
-    throw new Error(msg);
+function handleError(message: string): never {
+    // clean up the context
+    Scope = null;
+    PendingLeaves.splice(0);
+    PendingUpdates.splice(0);
+    ScheduledEffects = [];
+    ScheduledCleanups = [];
+    Scheduled = false;
+    throw new Error(message);
 }

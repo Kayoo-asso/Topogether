@@ -1,9 +1,9 @@
 import React, { useState, useMemo, useEffect, useCallback} from "react";
 import ReactDOM from "react-dom";
-import { batch, observerEffect, selectQuark, SelectQuark, selectSignal, SelectSignal, SelectSignalNullable, setBatchUpdates } from ".";
+import { batch, observerEffect, selectQuark, SelectQuark, selectSignal, SelectSignal, SelectSignalNullable, setBatchingBehavior } from ".";
 import { Quark, derive, quark, QuarkOptions, untrack, Signal, SelectQuarkNullable } from "./quarky";
 
-setBatchUpdates(ReactDOM.unstable_batchedUpdates);
+setBatchingBehavior(ReactDOM.unstable_batchedUpdates);
 
 export interface WatchDependenciesOptions {
     memo?: boolean
