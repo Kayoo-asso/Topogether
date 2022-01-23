@@ -4,6 +4,7 @@ import { Icon } from '..';
 interface ModalProps {
     withBackground?: boolean,
     children?: ReactNode,
+    className?: string,
     onClose: () => void,
 }
 
@@ -14,7 +15,7 @@ export const Modal: React.FC<ModalProps> = ({
 
     return (
         <div 
-            className={'h-screen w-full z-1000 absolute' + (withBackground ? ' bg-black bg-opacity-80' : '')}
+            className={'h-screen w-full top-0 left-0 z-1000 absolute' + (withBackground ? ' bg-black bg-opacity-80 ' : '') + (props.className ? props.className : '')}
             onClick={props.onClose}
         >
             <div 

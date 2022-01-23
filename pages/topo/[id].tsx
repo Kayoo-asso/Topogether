@@ -186,9 +186,7 @@ const Topo: NextPage = () => {
                 boulder={boulder}
                 selectedTrack={selectedTrack}
                 topoCreatorId={topo().creatorId}
-                onSelectTrack={(track) => {
-                  // console.log(track())
-                  selectedTrack.select(track)}}
+                onSelectTrack={(track) => selectedTrack.select(track)}
                 onClose={() => {
                   selectedTrack.select(undefined);
                   selectedBoulder.select(undefined);

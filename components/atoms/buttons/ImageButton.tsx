@@ -18,7 +18,7 @@ export const ImageButton: React.FC<ImageButtonProps> = ({
 }) => (
   // eslint-disable-next-line jsx-a11y/click-events-have-key-events
   <div
-    className="ktext-subtext relative text-center shadow text-main p-2 border-main border-2 w-22 h-22 flex flex-col justify-center cursor-pointer"
+    className="ktext-subtext relative text-center shadow text-main p-2 border-main border-2 w-22 h-22 min-w-[5.5rem] min-h-[5.5rem] flex flex-col justify-center cursor-pointer"
     onClick={props.onClick}
     role="button"
     tabIndex={0}

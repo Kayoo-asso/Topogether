@@ -1,11 +1,12 @@
 import { CleanupHelper, effect, Effect, Quark, quark, QuarkArray } from 'helpers/quarky';
 import { BoulderData, Grade, Line, Name, Image, TrackData, Description, Difficulty, ClimbTechniques, SectorData, TopoData, Amenities, TopoStatus, TopoType, RockTypes, TopoAccess, UUID, Track, Boulder, Sector, Topo } from 'types';
 
-export const quarkifyTopo = (topo: TopoData): Quark<Topo> => quark({
+export const quarkifyTopo = (topo: TopoData): Quark<Topo> => quark<Topo>({
     ...topo,
     sectors: new QuarkArray(topo.sectors.map(quarkifySector)),
     parkings: new QuarkArray(topo.parkings),
-    access: new QuarkArray(topo.access)
+    accesses: new QuarkArray(topo.accesses),
+    managers: new QuarkArray(topo.managers),
 });
 
 const quarkifySector = (sector: SectorData): Sector => ({

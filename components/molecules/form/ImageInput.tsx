@@ -8,9 +8,9 @@ import { ImageButton } from '../../atoms';
 
 interface ImageInputProps {
   label?: string,
-  display?: Image,
   multiple?: boolean,
-  onUpload: (files: File[]) => void,
+  value?: Image,
+  onChange: (files: File[]) => void,
 }
 
 enum FileUploadError {
@@ -52,7 +52,7 @@ export const ImageInput: React.FC<ImageInputProps> = ({
       }
     }
     
-    props.onUpload(uploaded);
+    props.onChange(uploaded);
     setLoading(false);
     setErrors(errors);
   };
@@ -70,13 +70,13 @@ export const ImageInput: React.FC<ImageInputProps> = ({
       />
       <ImageButton
         text={props.label}
-        image={props.display}
+        image={props.value}
         loading={loading}
         onClick={() => {
           if (!loading) fileInputRef.current?.click();
         }}
       />
-      <div className={`ktext-error text-error pt-1 w-22 h-22 ${errors ? '' : 'hidden'}`}>
+      <div className={`ktext-error text-error pt-1 w-22 h-22 ${errors.length > 0 ? '' : 'hidden'}`}>
         {errors}
       </div>
     </>

@@ -13,13 +13,13 @@ interface DropdownOption {
 interface SelectProps {
   id: string;
   label: string;
-  choices: DropdownOption[];
+  wrapperClassname?: string;
+  options: DropdownOption[];
   big?: boolean,
   white?: boolean,
   value?: string;
   error?: string,
   onSelect: (value: any) => void;
-  wrapperClassname?: string;
 }
 
 export const Select: React.FC<SelectProps> = ({
@@ -67,12 +67,12 @@ export const Select: React.FC<SelectProps> = ({
               props.onSelect(undefined);
             }
           }]
-          .concat(props.choices.map((choice) => ({
-            ...choice,
+          .concat(props.options.map((opt) => ({
+            ...opt,
             isSection: false,
             action: () => {
               setIsOpen(false);
-              props.onSelect(choice.value);
+              props.onSelect(opt.value);
             }
           })))
         }

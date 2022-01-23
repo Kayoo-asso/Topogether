@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { Button, Checkbox, ModalDelete, MultipleSelect, TextArea, TextInput } from 'components';
-import { Quark, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
-import { Boulder, Description, Name, Track } from 'types';
+import React from 'react';
+import { Button, Checkbox, MultipleSelect, TextArea, TextInput } from 'components';
+import { Quark, watchDependencies } from 'helpers/quarky';
+import { Description, Name, Track } from 'types';
 
 interface TrackFormProps {
     track: Quark<Track>,
@@ -10,13 +10,12 @@ interface TrackFormProps {
 }
 
 export const TrackForm: React.FC<TrackFormProps> = watchDependencies((props: TrackFormProps) => {
-    const [displayDeleteModal, setDisplayDeleteModal] = useState(false);
     const track = props.track();
 
     return (
         <>
         <div 
-            className={'flex flex-col gap-6 ' + (props.className ? props.className : '')}
+            className={'flex flex-col gap-6 h-full ' + (props.className ? props.className : '')}
             onClick={(e) => e.stopPropagation()}
         >
             <TextInput 
@@ -110,23 +109,16 @@ export const TrackForm: React.FC<TrackFormProps> = watchDependencies((props: Tra
                 })}
             />
 
-            <div className='md:absolute w-full md:bottom-5 md:left-0 md:px-5'>
+            <div className='w-full flex grow items-end'>
                 <Button 
                     content='Supprimer'
-                    onClick={() => setDisplayDeleteModal(true)}
+                    onClick={props.onDeleteTrack}
                     fullWidth
                 />
             </div>
         </div>
 
-        {displayDeleteModal &&
-            <ModalDelete
-                onClose={() => setDisplayDeleteModal(false)}
-                onDelete={() => props.onDeleteTrack()}
-            >
-                Etes-vous sûr de vouloir supprimer la voie ?
-            </ModalDelete>
-        }
+        
     </>
     )
 });

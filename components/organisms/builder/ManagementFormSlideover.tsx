@@ -1,11 +1,12 @@
 import React, { useContext } from 'react';
 import { SlideoverLeftDesktop, SlideoverMobile } from 'components';
-import { Quark } from 'helpers/quarky';
-import { Topo } from 'types';
+import { QuarkArray } from 'helpers/quarky';
+import { Manager } from 'types';
 import { DeviceContext } from 'helpers';
+import { ManagementForm } from '..';
 
 interface ManagementFormSlideoverProps {
-    topo: Quark<Topo>,
+    managers: QuarkArray<Manager>,
     open?: boolean,
     className?: string,
     onClose: () => void,
@@ -16,20 +17,21 @@ export const ManagementFormSlideover: React.FC<ManagementFormSlideoverProps> = (
     ...props
 }: ManagementFormSlideoverProps) => {
     const device = useContext(DeviceContext);
-    const topo = props.topo();
-
-    const managementForm = () => (
-       <div>TOPO MANAGEMENT FORM</div> 
-    )
 
     return (
         <>
             {device === 'MOBILE' &&
                 <SlideoverMobile
                     open
+                    onlyFull
                     initialFull={true}
                 >
-                    {managementForm()}
+                    <div className='px-6 py-10 h-full'>
+                        <div className='ktext-title mb-6'>Gestionnaire du spot</div>
+                        <ManagementForm 
+                            manager={props.managers.quarkAt(0)}
+                        />
+                    </div>
                 </SlideoverMobile>
             }
             {device !== 'MOBILE' && 
@@ -39,7 +41,10 @@ export const ManagementFormSlideover: React.FC<ManagementFormSlideoverProps> = (
                     onClose={props.onClose}
                     className={props.className}
                 >
-                    {managementForm()}
+                    <ManagementForm 
+                        manager={props.managers.quarkAt(0)}
+                        className='mt-6'
+                    />
                 </SlideoverLeftDesktop>
             }
         </> 

@@ -19,7 +19,7 @@ export type IconMouseEvent = google.maps.IconMouseEvent;
 export type MapEventHandlers = {
   onBoundsChange?: () => void,
   onCenterChange?: () => void,
-  onClick?: ((event: MapMouseEvent) => void) | ((event: IconMouseEvent) => void),
+  onClick?: (event: MapMouseEvent | IconMouseEvent) => void,
   onContextMenu?: (event: MapMouseEvent) => void,
   onDoubleClick?: (event: MapMouseEvent) => void,
   onDrag?: () => void,

@@ -1,7 +1,7 @@
-import React, { useContext } from 'react';
-import { GradeCircle, Icon} from 'components';
+import React, { useContext, useState } from 'react';
+import { GradeCircle, Icon, ModalDelete} from 'components';
 import { Boulder, gradeToLightGrade, Line, Name, Track, TrackRating } from 'types';
-import { Quark, QuarkArray, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
+import { Quark, QuarkArray, SelectQuarkNullable, useSelectQuark, watchDependencies } from 'helpers/quarky';
 import { TrackForm } from '../form/TrackForm';
 import { v4 } from 'uuid';
 import { DeviceContext, UserContext } from 'helpers';
@@ -25,6 +25,7 @@ const gradeColors = {
 
 // TODO: separate into a TracksListItem component?
 export const TracksListBuilder: React.FC<TracksListBuilderProps> = watchDependencies((props: TracksListBuilderProps) => {
+  const trackToDelete = useSelectQuark<Track>();;
   const { session } = useContext(UserContext);
   const device = useContext(DeviceContext);
 
@@ -48,69 +49,81 @@ export const TracksListBuilder: React.FC<TracksListBuilderProps> = watchDependen
   }
 
   return (
-    <div className="w-full border-t border-grey-light">
+    <>
+      <div className="w-full border-t border-grey-light">
 
-      {tracks.map((trackQuark) => {
-        const track = trackQuark();
-        const grade = gradeToLightGrade(track.grade);
-        return (
-          <div
-            key={track.id}
-            className="px-5 py-5 md:py-3 flex flex-col border-b border-grey-light cursor-pointer md:hover:bg-grey-superlight"
-            onClick={() => {
-              if (props.selectedTrack()?.id === track.id) props.selectedTrack.select(undefined)
-              else props.selectedTrack.select(trackQuark)
-            }}
-          >
-            <div className='flex flex-row w-full items-center'>
-              <GradeCircle
-                grade={grade}
-                className="cursor-pointer"
-                content={(track.orderIndex + 1).toString()}
-              />
+        {tracks.map((trackQuark) => {
+          const track = trackQuark();
+          const grade = gradeToLightGrade(track.grade);
+          return (
+            <div
+              key={track.id}
+              className="px-5 py-5 md:py-3 flex flex-col border-b border-grey-light cursor-pointer md:hover:bg-grey-superlight"
+              onClick={() => {
+                if (props.selectedTrack()?.id === track.id) props.selectedTrack.select(undefined)
+                else props.selectedTrack.select(trackQuark);
+              }}
+            >
+              <div className='flex flex-row w-full items-center'>
+                <GradeCircle
+                  grade={grade}
+                  className="cursor-pointer"
+                  content={(track.orderIndex + 1).toString()}
+                />
 
-              {track.grade && (
-                <div className={`ktext-subtitle ml-3 text-right ${gradeColors[grade]}`}>
-                  {track.grade}
+                {track.grade && (
+                  <div className={`ktext-subtitle ml-3 text-right ${gradeColors[grade]}`}>
+                    {track.grade}
+                  </div>
+                )}
+                <div className="ml-4 w-3/4 flex flex-col">
+                  <span className="ktext-base">{track.name}</span>
+                  {track.isTraverse && <div className='ktext-subtext'>Traversée</div>}
+                  {track.isSittingStart && <div className='ktext-subtext'>Départ assis</div>}
                 </div>
-              )}
-              <div className="ml-4 w-3/4 flex flex-col">
-                <span className="ktext-base">{track.name}</span>
-                {track.isTraverse && <div className='ktext-subtext'>Traversée</div>}
-                {track.isSittingStart && <div className='ktext-subtext'>Départ assis</div>}
+                
+                {props.onDrawButtonClick &&
+                  <Icon 
+                    name='draw'
+                    SVGClassName='w-6 h-6 stroke-main'
+                    onClick={() => {
+                      props.selectedTrack.select(trackQuark);
+                      props.onDrawButtonClick!();
+                    }}
+                  />
+                }
               </div>
-              
-              {props.onDrawButtonClick &&
-                <Icon 
-                  name='draw'
-                  SVGClassName='w-6 h-6 stroke-main'
-                  onClick={() => {
-                    props.selectedTrack.select(trackQuark);
-                    props.onDrawButtonClick!();
-                  }}
+              {selectedTrack?.id === track.id && device === 'MOBILE' &&
+                <TrackForm 
+                  track={trackQuark}
+                  className='mt-8'
+                  onDeleteTrack={() => trackToDelete.select(trackQuark)}
                 />
               }
-            </div>
-            {selectedTrack?.id === track.id && device === 'MOBILE' &&
-              <TrackForm 
-                track={trackQuark}
-                className='mt-8'
-                onDeleteTrack={() => console.log('TODO')}
-              />
-            }
-          </div>  
-        );
-      })}
+            </div>  
+          );
+        })}
 
-      <div
-        className="ktext-subtitle text-grey-medium px-5 py-5 md:py-3 cursor-pointer border-b border-grey-light hover:bg-grey-superlight"
-        onClick={createTrack}
-      >
-        <span className="ml-2 mr-5 text-xl">+</span>
-        {' '}
-        <span>Nouveau passage</span>
+        <div
+          className="ktext-subtitle text-grey-medium px-5 py-5 md:py-3 cursor-pointer border-b border-grey-light hover:bg-grey-superlight"
+          onClick={createTrack}
+        >
+          <span className="ml-2 mr-5 text-xl">+</span>
+          {' '}
+          <span>Nouveau passage</span>
+        </div>
+
       </div>
 
-    </div>
+      {trackToDelete() &&
+        <ModalDelete
+            className='-top-[15vh]'
+            onClose={() => trackToDelete.select(undefined)}
+            onDelete={() => boulder.tracks.removeQuark(trackToDelete.quark()!)}
+        >
+            Etes-vous sûr de vouloir supprimer la voie ?
+        </ModalDelete>
+      }
+    </>
   );
 });

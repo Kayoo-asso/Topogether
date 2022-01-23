@@ -5,6 +5,7 @@ import NextImage from 'next/image';
 
 interface ModalDeleteProps {
     children: React.ReactNode,
+    className?: string,
     onClose: () => void,
     onDelete: () => void,
 }
@@ -12,7 +13,10 @@ interface ModalDeleteProps {
 export const ModalDelete: React.FC<ModalDeleteProps> = (props: ModalDeleteProps) => {
 
     return (
-        <Modal onClose={props.onClose}>
+        <Modal 
+            className={props.className}
+            onClose={props.onClose}
+        >
             <div className='p-6 pt-10'>
                 <div className='w-full h-[100px] relative mb-5'>
                     <NextImage 

@@ -9,10 +9,11 @@ import { UUID } from './UUID';
 import { TrackRating, User } from './User';
 import { Image } from './Image';
 
-export type Topo = Omit<TopoData, 'sectors' | 'parkings' | 'access'> & {
+export type Topo = Omit<TopoData, 'sectors' | 'parkings' | 'accesses' | 'managers'> & {
   sectors: QuarkArray<Sector>,
-  parkings?: QuarkArray<Parking>,
-  access?: QuarkArray<TopoAccess>
+  parkings: QuarkArray<Parking>,
+  accesses: QuarkArray<TopoAccess>,
+  managers: QuarkArray<Manager>,
 };
 
 export type Sector = Omit<SectorData, 'boulders' | 'waypoints'> & {
@@ -63,7 +64,8 @@ export interface TopoData {
 
   sectors: SectorData[], // -> Quark<Array<Quark<Sector>>>
   parkings: Parking[],
-  access: TopoAccess[],
+  accesses: TopoAccess[],
+  managers: Manager[],
 }
 
 export type LightTopo = Omit<TopoData, 'sectors' | 'parkings' | 'access'> & {
@@ -102,6 +104,19 @@ export interface Parking {
   name?: StringBetween<1, 255>,
   description?: StringBetween<1, 5000>
   image?: Image
+}
+
+export interface Manager {
+  readonly id: UUID,
+  name: StringBetween<1, 255>, 
+  description?: StringBetween<1, 5000>
+  image?: Image
+  adress?: StringBetween<1, 255>
+  zip?: number,
+  city?: StringBetween<1, 255>,
+  contactName: StringBetween<1, 255>,
+  contactPhone?: StringBetween<1, 255>,
+  contactMail?: StringBetween<1, 255>,
 }
 
 export interface SectorData {

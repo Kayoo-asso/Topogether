@@ -48,7 +48,7 @@ export const HeaderMobile: React.FC<HeaderMobileProps> = (props: HeaderMobilePro
       {menuOpen && props.menuOptions
           && (
           <Dropdown
-            choices={props.menuOptions}
+            options={props.menuOptions}
             className="absolute z-100 right-[10px] top-[7%] min-w-[40%]"
             onSelect={() => setMenuOpen(false)}
           />

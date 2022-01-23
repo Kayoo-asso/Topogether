@@ -46,7 +46,7 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
             />
           }
           <TracksImage
-            image={boulder.images.find(img => img.id === selectedTrack?.lines.at(0).imageId) || boulder.images[imageIndex]}
+            image={boulder.images.find(img => img.id === selectedTrack?.lines?.at(0)?.imageId) || boulder.images[imageIndex]}
             tracks={boulder.tracks}
             selectedTrack={props.selectedTrack}
             displayPhantomTracks={false}
@@ -72,7 +72,7 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
         <div className="col-span-6">
           <div className="ktext-section-title">{boulder.name}</div>
           {boulder.isHighball && full && <div className="ktext-base-little">High Ball</div>}
-          {boulder.descent === Difficulty.Dangerous && full && <div className="ktext-base-little">Descente dangereuse !</div>}
+          {boulder.dangerousDescent && full && <div className="ktext-base-little">Descente dangereuse !</div>}
           {!full && (
             <div className="flex items-center mt-2">
               <GradeScale

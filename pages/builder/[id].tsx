@@ -3,7 +3,7 @@ import type { NextPage } from 'next';
 import { 
   BoulderBuilderSlideoverMobile,
   MapControl, Show, 
-  Header, InfoFormSlideover, ApproachFormSlideover, ManagementFormSlideover, TrackFormSlideagainstDesktop, ModalValidateTopo, ModalDeleteTopo, GeoCamera, Drawer, LeftbarBuilderDesktop, BoulderBuilderSlideagainstDesktop } from 'components';
+  Header, InfoFormSlideover, ManagementFormSlideover, TrackFormSlideagainstDesktop, ModalValidateTopo, ModalDeleteTopo, GeoCamera, Drawer, LeftbarBuilderDesktop, BoulderBuilderSlideagainstDesktop, ParkingBuilderSlide, AccessFormSlideover } from 'components';
 import { useRouter } from 'next/router';
 import { quarkTopo } from 'helpers/fakeData/fakeTopoV2';
 import { DeviceContext, UserContext } from 'helpers';
@@ -128,11 +128,11 @@ const BuilderMapPage: NextPage = () => {
       isHighball: false,
       mustSee: false,
       dangerousDescent: false,
-      tracks: new QuarkArray<Track>([]),
+      tracks: new QuarkArray(),
       images: []
     }
     topo.sectors.at(0).boulders.push(newBoulder);
-  }, []);
+  }, [topo]);
   const createParking = useCallback((location: GeoCoordinates) => {
     const newParking: Parking = {
       id: v4(),
@@ -140,24 +140,16 @@ const BuilderMapPage: NextPage = () => {
       name: 'parking ' + (topo.parkings ? topo.parkings.length + 1 : '1') as Name,
       location: location,
     }
-    if (topo.parkings) topo.parkings.push(newParking);
-    else quarkTopo.set({
-      ...topo,
-      parkings: new QuarkArray([newParking])
-    })
-  }, []);
+    topo.parkings.push(newParking);
+  }, [topo]);
   const createWaypoint = useCallback((location: GeoCoordinates) => {
     const newWaypoint: Waypoint = {
       id: v4(),
       name: "point d'intérêt " + (topo.sectors.at(0).waypoints ? topo.sectors.at(0).waypoints.length + 1 : '1') as Name,
       location: location,
     }
-    if (topo.sectors.at(0).waypoints) topo.sectors.at(0).waypoints.push(newWaypoint);
-    else topo.sectors.quarkAt(0).set({
-      ...topo.sectors.at(0),
-      waypoints: new QuarkArray([newWaypoint])
-    })
-  }, []);
+    topo.sectors.at(0).waypoints.push(newWaypoint);
+  }, [topo]);
 
   if (!session || typeof id !== 'string' || !topo) return null;
   return (
@@ -168,7 +160,7 @@ const BuilderMapPage: NextPage = () => {
         menuOptions={[
           { value: 'Infos du topo', action: () => setCurrentDisplay('INFO')},
           { value: 'Marche d\'approche', action: () => setCurrentDisplay('APPROACH')},
-          { value: 'Gestionnaires du site', action: () => setCurrentDisplay('MANAGEMENT')},
+          { value: 'Gestionnaires du spot', action: () => setCurrentDisplay('MANAGEMENT')},
           { value: 'Valider le topo', action: () => setDisplayModalValidate(!displayModalValidate)},
           { value: 'Supprimer le topo', action: () => setDisplayModalDelete(!displayModalDelete)},
         ]}
@@ -198,8 +190,8 @@ const BuilderMapPage: NextPage = () => {
           />
         </Show>
         <Show when={() => displayApproach}>
-          <ApproachFormSlideover
-            topo={quarkTopo}
+          <AccessFormSlideover
+            accesses={topo.accesses}
             open={displayApproach}
             onClose={() => setCurrentDisplay(undefined)}
             className={currentDisplay === 'APPROACH' ? 'z-100' : ''}
@@ -207,7 +199,7 @@ const BuilderMapPage: NextPage = () => {
         </Show>
         <Show when={() => displayManagement}>
           <ManagementFormSlideover
-            topo={quarkTopo}
+            managers={topo.managers}
             open={displayManagement}
             onClose={() => setCurrentDisplay(undefined)}
             className={currentDisplay === 'MANAGEMENT' ? 'z-100' : ''}
@@ -237,19 +229,20 @@ const BuilderMapPage: NextPage = () => {
           onParkingClick={toggleParkingSelect}
           onPhotoButtonClick={() => setDisplayGeoCamera(true)}
           onClick={(e) => {
-            switch (currentTool) {
-              case 'ROCK':
-                console.log('create rock at: ' + e.latLng.lat() + ',' + e.latLng.lng());
-                createBoulder({ lat: e.latLng.lat(), lng: e.latLng.lng() })
-                break;
-              case 'PARKING':
-                createParking({ lat: e.latLng.lat(), lng: e.latLng.lng() })
-                break;
-              case 'WAYPOINT':
-                createWaypoint({ lat: e.latLng.lat(), lng: e.latLng.lng() })
-                break;
-              default: break;
-            }
+            if (e.latLng)
+              switch (currentTool) {
+                case 'ROCK':
+                  console.log('create rock at: ' + e.latLng.lat() + ',' + e.latLng.lng());
+                  createBoulder({ lat: e.latLng.lat(), lng: e.latLng.lng() })
+                  break;
+                case 'PARKING':
+                  createParking({ lat: e.latLng.lat(), lng: e.latLng.lng() })
+                  break;
+                case 'WAYPOINT':
+                  createWaypoint({ lat: e.latLng.lat(), lng: e.latLng.lng() })
+                  break;
+                default: break;
+              }
           }}
         />
 
@@ -296,6 +289,21 @@ const BuilderMapPage: NextPage = () => {
                 }}
               />
             )
+          }}
+        </Show>
+        <Show when={selectedParking.quark}>
+          {(parking) => {
+              return (
+                <ParkingBuilderSlide 
+                  open
+                  parking={parking}
+                  onDeleteParking={() => {
+                    topo.parkings.removeQuark(parking);
+                    selectedParking.select(undefined);
+                  }}
+                  onClose={() => selectedParking.select(undefined)}
+                />
+              )
           }}
         </Show>
 

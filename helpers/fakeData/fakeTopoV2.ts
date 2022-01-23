@@ -1,5 +1,5 @@
 import { Quark } from 'helpers/quarky';
-import { BoulderData, Line, Name, Image, TrackData, Description, Difficulty, ClimbTechniques, SectorData, TopoData, Amenities, TopoStatus, TopoType, RockTypes, TopoAccess, Topo, Parking, StringBetween } from 'types';
+import { BoulderData, Line, Name, Image, TrackData, Description, Difficulty, ClimbTechniques, SectorData, TopoData, Amenities, TopoStatus, TopoType, RockTypes, TopoAccess, Topo, Parking, StringBetween, Manager } from 'types';
 import { v4 as uuid, v4 } from 'uuid';
 import { quarkifyTopo } from './quarkifyTopo';
 
@@ -128,7 +128,6 @@ export const boulders: BoulderData[] = [
         },
         isHighball: true,
         mustSee: false,
-        descent: Difficulty.Dangerous,
         dangerousDescent: false,
         orderIndex: 0,
         images: [images[0], images[1], images[2], images[3]],
@@ -154,21 +153,23 @@ export const sectors: SectorData[] = [
     }
 ]
 
-export const access: TopoAccess = {
-    id: uuid(),
-    duration: 15,
-    difficulty: Difficulty.OK,
-    steps: [
-        {
-            description: "Depuis le parking, prendre le sentier qui monte dans la continuité de la route. Après 12-15min de marche, vous arriverez à une esplanade d'herbe surmontant une petite falaise (où il est possible de faire de l'initiation). Un panneau indique le site d'escalade à l'entrée de l'esplanade.\nDepuis l'esplanade, prendre le sentier qui part derrière le panneau pour monter vers les premiers blocs." as Description,
-            image: images[0]
-        },
-        {
-            description: "Et ceci est une autre étape incroyable pour s'approcher du spot." as Description,
-            image: images[0]
-        }
-    ]
-}
+export const access: TopoAccess[] = [
+    {
+        id: uuid(),
+        duration: 15,
+        difficulty: Difficulty.OK,
+        steps: [
+            {
+                description: "Depuis le parking, prendre le sentier qui monte dans la continuité de la route. Après 12-15min de marche, vous arriverez à une esplanade d'herbe surmontant une petite falaise (où il est possible de faire de l'initiation). Un panneau indique le site d'escalade à l'entrée de l'esplanade.\nDepuis l'esplanade, prendre le sentier qui part derrière le panneau pour monter vers les premiers blocs." as Description,
+                image: images[0]
+            },
+            {
+                description: "Et ceci est une autre étape incroyable pour s'approcher du spot." as Description,
+                image: images[0]
+            }
+        ]
+    }
+]
 
 export const parkings: Parking[] = [
     {
@@ -178,6 +179,20 @@ export const parkings: Parking[] = [
         name: 'Parking 1' as StringBetween<1, 255>,
         description: 'Le parking de Rocher Canon est facile d’accès depuis la N12. Attention toutefois, beaucoup de GPS indique un itinéraire qui passe à travers la forêt et qui est en fait fermé. Il faut bien arriver par la N12. ' as StringBetween<1, 5000>,
         image: images[2]
+    }
+]
+
+export const managers: Manager[] = [
+    {
+        id: v4(),
+        name: 'La dégaine' as Name,
+        image: images[3],
+        contactName: 'Jérôme Foobar' as Name,
+        contactPhone: '06 69 43 44 92' as Name,
+        contactMail: 'ladegaine@ladegaine.com' as Name,
+        adress: 'Maison des Arts, Chemin de la Ferrière' as Name,
+        zip: 69260,
+        city: 'Charbonnières-les-Bains' as Name,
     }
 ]
 
@@ -206,7 +221,8 @@ export const topo: TopoData = {
 
     sectors: sectors,
     parkings: parkings,
-    access: [access],
+    accesses: access,
+    managers: managers,
 }
 
 export const quarkTopo: Quark<Topo> = quarkifyTopo(topo);
