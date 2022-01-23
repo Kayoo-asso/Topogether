@@ -25,7 +25,8 @@ export class QuarkArray<T> {
     at(i: number): T {
         const arr = this.#source();
         if (i < 0) i += arr.length;
-        return arr[i]();
+        const val: Quark<T> | undefined = arr[i];
+        return val ? val() : undefined!;
     }
 
     quarkAt(i: number): Quark<T> {
