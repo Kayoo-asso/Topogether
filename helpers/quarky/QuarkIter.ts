@@ -1,15 +1,15 @@
-import { isIterable, ConcatIterator, FilterIterator, Flattened, FlattenIterator, MapIterator, ZipIterator, ResettableIterator, ResettableIteratorWrapper} from "./iterators";
+import { isIterable, ConcatIterator, FilterIterator, Flattened, FlattenIterator, MapIterator, ZipIterator, CloneResetIterator, CloneResetIterableIterator} from "./iterators";
 import { derive, Signal } from "./quarky";
 
 // should initially be created from a Quark<Array<Quark<T>>>
 // init should be the init function of QuarkArrayIterator
 export class QuarkIter<T> implements Iterable<T> {
-    private readonly iterator: ResettableIterator<T>;
+    private readonly iterator: CloneResetIterator<T>;
     private result: Signal<T[]> | null;
 
-    constructor(source: ResettableIterator<T> | Iterable<T>) {
+    constructor(source: CloneResetIterator<T> | Iterable<T>) {
         this.iterator = isIterable(source)
-            ? new ResettableIteratorWrapper(source)
+            ? new CloneResetIterableIterator(source)
             : source;
         this.result = null;
     }
@@ -94,7 +94,8 @@ export class QuarkIter<T> implements Iterable<T> {
 
     // Avoid exhausting the inner iterator
     [Symbol.iterator](): Iterator<T> {
-        this.iterator.reset();
-        return this.iterator;
+        const iter = this.iterator.clone();
+        iter.reset();
+        return iter;
     }
 }

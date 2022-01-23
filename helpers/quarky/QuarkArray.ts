@@ -1,5 +1,5 @@
 import { batch } from ".";
-import { Flattened, ResettableIterator } from "./iterators";
+import { Flattened, CloneResetIterator } from "./iterators";
 import { QuarkIter } from "./QuarkIter";
 import { quark, Quark, Signal, untrack, ValueOrWrappedFunction } from "./quarky";
 
@@ -11,8 +11,8 @@ export class QuarkArray<T> {
     #source: Quark<Array<Quark<T>>>;
 
     // TODO: auto-setup callbacks (so it works even on push etc)
-    constructor(items: T[]) {
-        const itemsWrapped = items.map(x => quark(x));
+    constructor(items?: T[]) {
+        const itemsWrapped = items?.map(x => quark(x)) ?? [];
         // the alwaysFalse allows us to modify the array in place and return the same reference to update the quark
         this.#source = quark(itemsWrapped, { equal: alwaysFalse });
      }
@@ -180,7 +180,7 @@ export interface QuarkArrayRaw<T> extends Iterable<Quark<T>> {
     lazy(): QuarkIter<Quark<T>>
 }
 
-class QuarkArrayIteratorRaw<T> implements ResettableIterator<Quark<T>> {
+class QuarkArrayIteratorRaw<T> implements CloneResetIterator<Quark<T>> {
     private source: Quark<Array<Quark<T>>>;
     private buffer: Array<Quark<T>>;
     private pos: number = 0;
@@ -195,6 +195,10 @@ class QuarkArrayIteratorRaw<T> implements ResettableIterator<Quark<T>> {
         this.buffer = this.source();
     }
     
+    clone() {
+        return new QuarkArrayIteratorRaw(this.source);
+    }
+    
     next(): IteratorResult<Quark<T>> {
         if (this.pos < this.buffer.length) {
             return { done: false, value: this.buffer[this.pos++] };
@@ -205,7 +209,7 @@ class QuarkArrayIteratorRaw<T> implements ResettableIterator<Quark<T>> {
 }
 
 // TODO: reset() method?
-class QuarkArrayIterator<T> implements ResettableIterator<T> {
+class QuarkArrayIterator<T> implements CloneResetIterator<T> {
     private source: Quark<Array<Quark<T>>>;
     private buffer: Array<Quark<T>>;
     private pos: number = 0;
@@ -218,6 +222,10 @@ class QuarkArrayIterator<T> implements ResettableIterator<T> {
     reset() {
         this.pos = 0;
         this.buffer = this.source();
+    }
+
+    clone() {
+        return new QuarkArrayIterator(this.source);
     }
     
     next(): IteratorResult<T> {

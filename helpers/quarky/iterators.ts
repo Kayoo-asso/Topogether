@@ -1,8 +1,9 @@
-export interface ResettableIterator<T> extends Iterator<T> {
+export interface CloneResetIterator<T> extends Iterator<T> {
+    clone(): CloneResetIterator<T>,
     reset(): void,
 }
 
-export class ResettableIteratorWrapper<T> implements ResettableIterator<T> {
+export class CloneResetIterableIterator<T> implements CloneResetIterator<T> {
     private source: Iterable<T>
     private iterator: Iterator<T>
 
@@ -15,14 +16,18 @@ export class ResettableIteratorWrapper<T> implements ResettableIterator<T> {
         this.iterator = this.source[Symbol.iterator]();
     }
 
+    clone() {
+        return new CloneResetIterableIterator(this.source);
+    }
+
     next(): IteratorResult<T> {
         return this.iterator.next();
     }
 }
 
-export class FilterIterator<T, U extends T = T> implements ResettableIterator<T> {
+export class FilterIterator<T, U extends T = T> implements CloneResetIterator<T> {
     constructor(
-        private source: ResettableIterator<T>,
+        private source: CloneResetIterator<T>,
         private predicate: ((item: T) => item is U) | ((item: T) => boolean)
     ) { }
 
@@ -37,13 +42,17 @@ export class FilterIterator<T, U extends T = T> implements ResettableIterator<T>
     reset() {
         this.source.reset();
     }
+
+    clone() {
+        return new FilterIterator(this.source, this.predicate);
+    }
 }
 
-export class MapIterator<T, U> implements ResettableIterator<U> {
+export class MapIterator<T, U> implements CloneResetIterator<U> {
     private count: number = 0;
 
     constructor(
-        private source: ResettableIterator<T>,
+        private source: CloneResetIterator<T>,
         private fn: (item: T, index: number) => U,
     ) { }
 
@@ -58,6 +67,10 @@ export class MapIterator<T, U> implements ResettableIterator<U> {
     reset() {
         this.source.reset();
     }
+
+    clone() {
+        return new MapIterator(this.source, this.fn);
+    }
 }
 
 export type Flattened<T> =
@@ -65,10 +78,10 @@ export type Flattened<T> =
     ? U
     : T;
 
-export class FlattenIterator<T> implements ResettableIterator<Flattened<T>> {
-    private inner?: Iterator<any>
+export class FlattenIterator<T> implements CloneResetIterator<Flattened<T>> {
+    private inner: Iterator<any> | undefined = undefined;
     constructor(
-        private outer: ResettableIterator<T>,
+        private outer: CloneResetIterator<T>,
     ) { }
 
     next(): IteratorResult<Flattened<T>> {
@@ -96,12 +109,16 @@ export class FlattenIterator<T> implements ResettableIterator<Flattened<T>> {
         this.outer.reset();
         this.inner = undefined;
     }
+
+    clone() {
+        return new FlattenIterator(this.outer);
+    }
 }
 
-export class ConcatIterator<T> implements ResettableIterator<T> {
+export class ConcatIterator<T> implements CloneResetIterator<T> {
     constructor(
-        private first: ResettableIterator<T>,
-        private second: ResettableIterator<T>,
+        private first: CloneResetIterator<T>,
+        private second: CloneResetIterator<T>,
     ) { }
 
     next(): IteratorResult<T> {
@@ -114,12 +131,16 @@ export class ConcatIterator<T> implements ResettableIterator<T> {
         this.first.reset();
         this.second.reset();
     }
+
+    clone() {
+        return new ConcatIterator(this.first, this.second);
+    }
 }
 
-export class ZipIterator<T> implements ResettableIterator<[T, T]> {
+export class ZipIterator<T> implements CloneResetIterator<[T, T]> {
     constructor(
-        private first: ResettableIterator<T>,
-        private second: ResettableIterator<T>,
+        private first: CloneResetIterator<T>,
+        private second: CloneResetIterator<T>,
     ) { }
 
     next(): IteratorResult<[T, T]> {
@@ -134,6 +155,10 @@ export class ZipIterator<T> implements ResettableIterator<[T, T]> {
     reset() {
         this.first.reset();
         this.second.reset();
+    }
+
+    clone() {
+        return new ZipIterator(this.first, this.second);
     }
 }
 
