@@ -3,6 +3,7 @@ import { SlideoverLeftDesktop, SlideoverMobile } from 'components';
 import { Quark } from 'helpers/quarky';
 import { Topo } from 'types';
 import { DeviceContext } from 'helpers';
+import { InfoForm } from '..';
 
 interface InfoFormSlideoverProps {
     topo: Quark<Topo>,
@@ -16,11 +17,6 @@ export const InfoFormSlideover: React.FC<InfoFormSlideoverProps> = ({
     ...props
 }: InfoFormSlideoverProps) => {
     const device = useContext(DeviceContext);
-    const topo = props.topo();
-
-    const infosForm = () => (
-       <div>TOPO INFOS FORM</div> 
-    )
 
     return (
         <>
@@ -31,7 +27,12 @@ export const InfoFormSlideover: React.FC<InfoFormSlideoverProps> = ({
                     onlyFull
                     onClose={props.onClose}
                 >
-                    {infosForm()}
+                    <div className='px-6 py-10 h-full'>
+                        <div className='ktext-title mb-6'>Infos du spot</div>
+                        <InfoForm 
+                            topo={props.topo}
+                        />
+                    </div>
                 </SlideoverMobile>
             }
             {device !== 'MOBILE' && 
@@ -41,7 +42,10 @@ export const InfoFormSlideover: React.FC<InfoFormSlideoverProps> = ({
                     open={open}
                     onClose={props.onClose}
                 >
-                    {infosForm()}
+                    <InfoForm 
+                        topo={props.topo}
+                        className='mt-6'
+                    />
                 </SlideoverLeftDesktop>
             }
         </> 

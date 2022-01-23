@@ -48,6 +48,7 @@ export interface TopoData {
   location: GeoCoordinates,
   rockTypes?: RockTypes,
   amenities?: Amenities,
+  hasOtherAmenities?: boolean,
   otherAmenities?: StringBetween<1, 5000>
 
   creatorId: UUID,
