@@ -13,7 +13,7 @@ export const AccessForm: React.FC<AccessFormProps> = watchDependencies((props: A
 
     return (
         <div 
-            className={'flex flex-col gap-6 h-full ' + (props.className ? props.className : '')}
+            className={'flex flex-col gap-6 h-full pb-[25px] md:pb-[60px] ' + (props.className ? props.className : '')}
             onClick={(e) => e.stopPropagation()}
         >
             <div className='flex flex-row gap-6 items-end'>
@@ -42,35 +42,51 @@ export const AccessForm: React.FC<AccessFormProps> = watchDependencies((props: A
                 />
             </div>
             
-            <div className='ktext-subtitle'>Etapes</div>
-            {access.steps?.map((step, index) => {
-                const newSteps = access.steps!; 
-                return (
-                    <div className='flex flex-col'>
-                        <ImageInput 
-                            value={step.image}
-                            onChange={(files) => {
-                                newSteps[index].image = files[0];
-                                props.access.set({
-                                    ...access,
-                                    steps: newSteps,
-                                })
-                            }}
-                        />
-                        <TextArea 
-                            id={'step'+index+'-description'}
-                            label='Description'
-                            onChange={(e) => {
-                                newSteps[index].description = e.target.value as Description;
-                                props.access.set({
-                                    ...access,
-                                    steps: newSteps,
-                                })
-                            }}
-                        />
-                    </div>
-                )
-            })}
+            <div className='ktext-subtitle mt-3'>Etapes</div>
+            <div className='overflow-auto flex flex-col gap-6'>
+                {/* TODO : scroll to the new step when it is created */}
+                {access.steps?.map((step, index) => {
+                    const newSteps = access.steps!; 
+                    return (
+                        <div className='flex flex-col gap-2' key={index}>
+                            <div className='flex flex-row gap-6 items-end'>
+                                <ImageInput 
+                                    value={step.image}
+                                    onChange={(files) => {
+                                        newSteps[index].image = files[0];
+                                        props.access.set({
+                                            ...access,
+                                            steps: newSteps,
+                                        })
+                                    }}
+                                />
+                                <TextArea 
+                                    id={'step'+index+'-description'}
+                                    label='Description'
+                                    value={step.description}
+                                    onChange={(e) => {
+                                        newSteps[index].description = e.target.value as Description;
+                                        props.access.set({
+                                            ...access,
+                                            steps: newSteps,
+                                        })
+                                    }}
+                                />
+                            </div>
+                            <div 
+                                className='ktext-base-little text-main cursor-pointer'
+                                onClick={() => {
+                                    newSteps.splice(index, 1);
+                                    props.access.set({
+                                        ...access,
+                                        steps: newSteps,
+                                    })
+                                }}
+                            >Supprimer</div>
+                        </div>
+                    )
+                })}
+            </div>
 
             <Button 
                 content='Ajouter une étape'
@@ -79,7 +95,11 @@ export const AccessForm: React.FC<AccessFormProps> = watchDependencies((props: A
                     newSteps.push({
                         description: '' as Description
                     })
-                }}
+                    props.access.set({
+                        ...access,
+                        steps: newSteps
+                    })
+                }} 
             />
 
         </div>

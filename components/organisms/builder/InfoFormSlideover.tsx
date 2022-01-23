@@ -27,8 +27,9 @@ export const InfoFormSlideover: React.FC<InfoFormSlideoverProps> = ({
             {device === 'MOBILE' &&
                 <SlideoverMobile
                     open
-                    initialFull={true}
+                    initialFull
                     onlyFull
+                    onClose={props.onClose}
                 >
                     {infosForm()}
                 </SlideoverMobile>
@@ -36,9 +37,9 @@ export const InfoFormSlideover: React.FC<InfoFormSlideoverProps> = ({
             {device !== 'MOBILE' && 
                 <SlideoverLeftDesktop 
                     title="Infos du spot"  
+                    className={props.className}
                     open={open}
                     onClose={props.onClose}
-                    className={props.className}
                 >
                     {infosForm()}
                 </SlideoverLeftDesktop>

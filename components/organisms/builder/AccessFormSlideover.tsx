@@ -17,7 +17,6 @@ export const AccessFormSlideover: React.FC<AccessFormSlideoverProps> = ({
     ...props
 }: AccessFormSlideoverProps) => {
     const device = useContext(DeviceContext);
-    console.log(props.accesses)
 
     return (
         <>
@@ -26,9 +25,10 @@ export const AccessFormSlideover: React.FC<AccessFormSlideoverProps> = ({
                     open
                     onlyFull
                     initialFull={true}
+                    onClose={props.onClose}
                 >
                     <div className='px-6 py-10 h-full'>
-                        <div className='ktext-title mb-6'>Gestionnaire du spot</div>
+                        <div className='ktext-title mb-6'>Marche d'approche</div>
                         <AccessForm 
                             access={props.accesses.quarkAt(0)}
                         />
@@ -39,8 +39,8 @@ export const AccessFormSlideover: React.FC<AccessFormSlideoverProps> = ({
                 <SlideoverLeftDesktop 
                     title="Marche d'approche"  
                     open={open}
-                    onClose={props.onClose}
                     className={props.className}
+                    onClose={props.onClose}
                 >
                     <AccessForm 
                         access={props.accesses?.quarkAt(0)}

@@ -24,7 +24,8 @@ export const ManagementFormSlideover: React.FC<ManagementFormSlideoverProps> = (
                 <SlideoverMobile
                     open
                     onlyFull
-                    initialFull={true}
+                    initialFull
+                    onClose={props.onClose}
                 >
                     <div className='px-6 py-10 h-full'>
                         <div className='ktext-title mb-6'>Gestionnaire du spot</div>
@@ -36,10 +37,10 @@ export const ManagementFormSlideover: React.FC<ManagementFormSlideoverProps> = (
             }
             {device !== 'MOBILE' && 
                 <SlideoverLeftDesktop 
-                    title="Gestionnaires du spot"  
+                    title="Gestionnaires du spot" 
+                    className={props.className} 
                     open={open}
                     onClose={props.onClose}
-                    className={props.className}
                 >
                     <ManagementForm 
                         manager={props.managers.quarkAt(0)}
