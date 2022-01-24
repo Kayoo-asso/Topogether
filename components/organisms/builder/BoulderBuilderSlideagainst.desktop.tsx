@@ -14,7 +14,6 @@ interface BoulderBuilderSlideagainstDesktopProps {
 }
 
 export const BoulderBuilderSlideagainstDesktop: React.FC<BoulderBuilderSlideagainstDesktopProps> = watchDependencies((props: BoulderBuilderSlideagainstDesktopProps) => {
-
     return (
         <SlideagainstRightDesktop 
             open
@@ -48,3 +47,5 @@ export const BoulderBuilderSlideagainstDesktop: React.FC<BoulderBuilderSlideagai
         </SlideagainstRightDesktop>
     )
 });
+
+BoulderBuilderSlideagainstDesktop.displayName = "BoulderBuilderSlideagainstDesktop";

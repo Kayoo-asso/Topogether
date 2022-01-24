@@ -1,20 +1,40 @@
 import { batch } from ".";
-import { Flattened, CloneResetIterator } from "./iterators";
+import { Flattened, CloneInitIterator } from "./iterators";
 import { QuarkIter } from "./QuarkIter";
 import { quark, Quark, Signal, untrack, ValueOrWrappedFunction } from "./quarky";
 
 const alwaysFalse = () => false;
 
+export interface QuarkArrayCallbacks<T> {
+    onAdd?: (item: T) => void,
+    onChange?: (value: T) => void,
+    onDelete?: (item: T) => void
+}
+
 // NOTE: the return values of all the array methods become invalid if done within a batch (since modifications apply later)
 // Should we not return anything instead? Or wrap them in a Ref object, to ensure the values can be used at the end of the batch
 export class QuarkArray<T> {
     #source: Quark<Array<Quark<T>>>;
+    #onAdd?: (item: T) => void;
+    #onChange?: (value: T) => void;
+    #onDelete?: (item: T) => void;
 
     // TODO: auto-setup callbacks (so it works even on push etc)
-    constructor(items?: T[]) {
-        const itemsWrapped = items?.map(x => quark(x)) ?? [];
+    constructor(
+        items?: T[],
+        callbacks?: QuarkArrayCallbacks<T>,
+    ) {
+        items = items ?? [];
+        const quarks: Array<Quark<T>> = new Array(items.length);
+        for (let i = 0; i < items.length; ++i) {
+            const q = quark(items[i], { sub: callbacks?.onChange });
+            quarks[i] = q;
+        }
         // the alwaysFalse allows us to modify the array in place and return the same reference to update the quark
-        this.#source = quark(itemsWrapped, { equal: alwaysFalse });
+        this.#source = quark(quarks, { equal: alwaysFalse });
+        this.#onAdd = callbacks?.onAdd;
+        this.#onChange = callbacks?.onChange;
+        this.#onDelete = callbacks?.onDelete;
      }
 
     get length(): number {
@@ -99,19 +119,30 @@ export class QuarkArray<T> {
 
     // TODO: hook up predefined effects
     push(value: T): number {
-        return this.#apply(x => x.push(quark(value)));
+        if(this.#onAdd) this.#onAdd(value);
+        const q = quark(value, { sub: this.#onChange });
+        return this.#apply(x => x.push(q));
     }
 
     pop(): Quark<T> | undefined {
-        return this.#apply(x => x.pop());
+        const val = this.#apply(x => x.pop());
+        if (this.#onDelete && val) untrack(() => this.#onDelete!(val()));
+        return val;
     }
 
     shift(): Quark<T> | undefined {
-        return this.#apply(x => x.shift());
+        const quark = this.#apply(x => x.shift());
+        if (quark && this.#onDelete) untrack(() => this.#onDelete!(quark()));
+        return quark;
     }
 
     unshift(...items: T[]): number {
-        return this.#apply(x => x.unshift(...items.map(x => quark(x))));
+        const quarks = new Array(items.length);
+        for (let i = 0; i < items.length; ++i) {
+            if (this.#onAdd) this.#onAdd(items[i]);
+            quarks[i] = quark(items[i], { sub: this.#onChange });
+        }
+        return this.#apply(x => x.unshift(...quarks));
     }
 
     splice(start: number, deleteCount?: number, ...items: T[]): Quark<T>[] {
@@ -125,34 +156,47 @@ export class QuarkArray<T> {
 
     remove(item: T) {
         untrack(() => {
-            this.#source.set(arr => {
-                for (let i = 0; i < arr.length; i++) {
-                    const x = arr[i]();
-                    if (x === item) {
-                        arr.splice(i, 1);
-                        break;
-                    }
+            const arr = this.#source();
+            for (let i = 0; i < arr.length; i++) {
+                const x = arr[i]();
+                if (x === item) {
+                    arr.splice(i, 1);
+                    if(this.#onDelete) this.#onDelete(x);
+                    break;
                 }
-                return arr;
-            }) 
+            }
+            this.#source.set(arr); 
         });
     }
 
     removeQuark(quark: Quark<T>) {
-        this.#source.set(arr => {
+        untrack(() => {
+            const arr = this.#source().slice(0);
             for (let i = 0; i < arr.length; i++) {
                 if (quark === arr[i]) {
                     arr.splice(i, 1);
+                    if (this.#onDelete) this.#onDelete(quark());
                     break;
                 }
             }
-            return arr;
+            this.#source.set(arr);
         });
     }
 
     removeAll(selection: (item: T) => boolean) {
         untrack(() => {
-            this.#source.set(arr => arr.filter(x => !selection(x())))
+            const current = this.#source();
+            const after = [];
+            for (let i = 0; i < current.length; ++i) {
+                const quark = current[i];
+                const val = quark();
+                if (!selection(val)) {
+                    after.push(quark);
+                } else if(this.#onDelete) {
+                    this.#onDelete(val);
+                }
+            }
+            this.#source.set(after)
         });
     }
 
@@ -162,7 +206,7 @@ export class QuarkArray<T> {
 
     [Symbol.iterator]() {
         const iter = new QuarkArrayIterator(this.#source);
-        iter.reset();
+        iter.init();
         return iter;
     }
 
@@ -181,7 +225,7 @@ export interface QuarkArrayRaw<T> extends Iterable<Quark<T>> {
     lazy(): QuarkIter<Quark<T>>
 }
 
-class QuarkArrayIteratorRaw<T> implements CloneResetIterator<Quark<T>> {
+export class QuarkArrayIteratorRaw<T> implements CloneInitIterator<Quark<T>> {
     private source: Quark<Array<Quark<T>>>;
     private buffer: Array<Quark<T>>;
     private pos: number = 0;
@@ -191,7 +235,7 @@ class QuarkArrayIteratorRaw<T> implements CloneResetIterator<Quark<T>> {
         this.buffer = [];
     }
 
-    reset() {
+    init() {
         this.pos = 0;
         this.buffer = this.source();
     }
@@ -207,10 +251,13 @@ class QuarkArrayIteratorRaw<T> implements CloneResetIterator<Quark<T>> {
             return { done: true, value: undefined };
         }
     }
+
+    toArray(): Quark<T>[] {
+        return this.source();
+    }
 }
 
-// TODO: reset() method?
-class QuarkArrayIterator<T> implements CloneResetIterator<T> {
+class QuarkArrayIterator<T> implements CloneInitIterator<T> {
     private source: Quark<Array<Quark<T>>>;
     private buffer: Array<Quark<T>>;
     private pos: number = 0;
@@ -220,7 +267,7 @@ class QuarkArrayIterator<T> implements CloneResetIterator<T> {
         this.buffer = [];
     }
 
-    reset() {
+    init() {
         this.pos = 0;
         this.buffer = this.source();
     }

@@ -85,3 +85,5 @@ export const BoulderForm: React.FC<BoulderFormProps> = watchDependencies((props:
         </div>
     )
 })
+
+BoulderForm.displayName = "BoulderForm";

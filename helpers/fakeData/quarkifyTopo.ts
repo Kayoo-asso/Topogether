@@ -11,13 +11,19 @@ export const quarkifyTopo = (topo: TopoData): Quark<Topo> => quark<Topo>({
 
 const quarkifySector = (sector: SectorData): Sector => ({
     ...sector,
-    boulders: new QuarkArray(sector.boulders.map(quarkifyBoulder)),
+    boulders: new QuarkArray(sector.boulders.map(quarkifyBoulder), {
+        onChange: (boulder) => console.log("Boulder changed!", boulder)
+    }),
     waypoints: new QuarkArray(sector.waypoints)
 });
 
 const quarkifyBoulder = (boulder: BoulderData): Boulder => ({
     ...boulder,
-    tracks: new QuarkArray(boulder.tracks.map(quarkifyTrack))
+    tracks: new QuarkArray(boulder.tracks.map(quarkifyTrack), {
+        onAdd: (track) => console.log("Created track!", track),
+        onChange: (track) => console.log("Modified track!", track),
+        onDelete: (track) => console.log("Deleted track!", track),
+    })
 });
 
 const quarkifyTrack = (track: TrackData): Track => ({

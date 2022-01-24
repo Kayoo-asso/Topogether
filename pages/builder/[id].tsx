@@ -158,11 +158,11 @@ const BuilderMapPage: NextPage = () => {
         title={topo.name}
         backLink='/'
         menuOptions={[
-          { value: 'Infos du topo', action: () => setCurrentDisplay('INFO')},
-          { value: 'Marche d\'approche', action: () => setCurrentDisplay('APPROACH')},
-          { value: 'Gestionnaires du spot', action: () => setCurrentDisplay('MANAGEMENT')},
-          { value: 'Valider le topo', action: () => setDisplayModalValidate(!displayModalValidate)},
-          { value: 'Supprimer le topo', action: () => setDisplayModalDelete(!displayModalDelete)},
+          { type: 'option', label: 'Infos du topo', onClick: () => setCurrentDisplay('INFO')},
+          { type: 'option', label: 'Marche d\'approche', onClick: () => setCurrentDisplay('APPROACH')},
+          { type: 'option', label: 'Gestionnaires du spot', onClick: () => setCurrentDisplay('MANAGEMENT')},
+          { type: 'option', label: 'Valider le topo', onClick: () => setDisplayModalValidate(!displayModalValidate)},
+          { type: 'option', label: 'Supprimer le topo', onClick: () => setDisplayModalDelete(!displayModalDelete)},
         ]}
         displayMapTools
         MapToolsActivated={!selectedTrack()}

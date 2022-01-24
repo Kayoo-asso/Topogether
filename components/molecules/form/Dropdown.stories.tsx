@@ -2,14 +2,14 @@ import React from 'react';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 
 import { Icon } from 'components';
-import { Dropdown } from './Dropdown';
+import { DropdownComponent } from './Dropdown';
 
 export default {
   title: 'Dropdown',
-  component: Dropdown,
-} as ComponentMeta<typeof Dropdown>;
+  component: DropdownComponent,
+} as ComponentMeta<typeof DropdownComponent>;
 
-const Template: ComponentStory<typeof Dropdown> = (args) => <Dropdown {...args} />;
+const Template: ComponentStory<typeof DropdownComponent> = (args) => <DropdownComponent {...args} />;
 
 export const Simple = Template.bind({});
 Simple.args = {

@@ -48,6 +48,7 @@ export type CleanupHelper = (cleanup: (deleted: boolean) => void) => void;
 
 export interface QuarkOptions<T> {
     equal?: ((a: T, b: T) => boolean),
+    sub?: (value: T) => void,
     name?: string,
 }
 
@@ -70,7 +71,7 @@ export type EvaluatedDeps<T extends (Array<Signal<any>> | ReadonlyArray<Signal<a
 
 interface Node {
     value: any
-    fn: Function | null,
+    fn: Function | undefined,
     equal: ((a: any, b: any) => boolean) | ((deleted: boolean) => void) | null,
     status: NodeStatus,
     lastChange: number,
@@ -101,8 +102,8 @@ const enum NodeStatus {
 
 interface Leaf<T> extends Node {
     value: T,
+    readonly fn: ((value: T) => void) | undefined,
     readonly equal: (a: T, b: T) => boolean,
-    readonly fn: null,
     readonly status: NodeStatus.Clean,
     readonly deps: null,
     readonly obs: Observer[],
@@ -142,6 +143,7 @@ let Scheduled = false;
 
 const PendingLeaves: Leaf<any>[] = [];
 const PendingUpdates: StateUpdate<any>[] = [];
+const PendingSubs: Leaf<any>[] = [];
 
 let ScheduledCleanups: Root[] = [];
 let ScheduledEffects: Root[] = [];
@@ -159,7 +161,7 @@ export function quark<T>(initial: T, options?: QuarkOptions<T>): Quark<T> {
     // initialize in the order given in the Node interface, to ensure consistency with others
     const q: Leaf<T> = {
         value: initial,
-        fn: null,
+        fn: options?.sub,
         equal: options?.equal ?? defaultEqual,
         status: NodeStatus.Clean,
         lastChange: -1,
@@ -299,8 +301,24 @@ export function observerEffect(computation: () => void): ObserverEffect {
         dispose: () => {
             cleanupEffect(node, true);
             scheduleUpdates();
-        }
-    }
+        },
+        node
+    } as ObserverEffect;
+}
+
+export function useComponentWatch<T>(observer: ObserverEffect, component: React.FunctionComponent<T>, props: T) {
+    const scope: Scope = {
+        accessed: [],
+        effectHooks: null,
+        parent: Scope
+    };
+    Scope = scope;
+    const result = component(props);
+    Scope = scope.parent;
+    const effect = (observer as any).node as Root;
+    diffDeps(effect, effect.deps, scope.accessed);
+    effect.deps = scope.accessed;
+    return result;
 }
 
 export function selectSignal<T>(): SelectSignalNullable<T>;
@@ -405,6 +423,9 @@ function processUpdates(start: number) {
                 if (node.equal(prevValue, node.value)) continue;
 
                 node.lastChange = Epoch;
+                if (node.fn) {
+                    PendingSubs.push(node);
+                }
 
                 for (let j = node.obs.length - 1; j >= 0; --j) {
                     flagDirty(node.obs[j]);
@@ -422,7 +443,8 @@ function processUpdates(start: number) {
             // TODO: what happens if an effect runs and should reschedule an effect
             // that is already scheduled for later? The rescheduling should happen 
             // when updating quarks in the next update cycle anyways
-            for (let i = effects.length - 1; i >= 0; --i) {
+            // for (let i = effects.length - 1; i >= 0; --i) {
+            for (let i = 0; i < effects.length; ++i) {
                 const e = effects[i];
                 // NodeStatus.Clean means deleted for effects
                 if (e.status === NodeStatus.Clean) continue;
@@ -430,6 +452,14 @@ function processUpdates(start: number) {
             }
         } while (PendingLeaves.length > start || ScheduledEffects.length > 0)
         // Epoch += 1;
+
+        if (start === 0) {
+            const subs = new Set(PendingSubs);
+            PendingSubs.length = 0;
+            for (const node of subs) {
+                node.fn!(node.value);
+            }
+        }
     });
 }
 
@@ -553,14 +583,6 @@ function runComputation(node: Observer): boolean {
 // since the same node may appear multiple times in before or after
 function diffDeps(node: Observer, before: Dependency[], after: Dependency[]) {
     if (depsAreEqual(before, after)) return;
-
-    // easy case for initialisation
-    if (before.length === 0) {
-        for (let i = 0; i < after.length; ++i) {
-            hook(node, after[i]);
-        }
-        return;
-    }
 
     // console.log("Diffing deps for " + node.name);
 

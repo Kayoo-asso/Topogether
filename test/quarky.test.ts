@@ -888,3 +888,23 @@ test("Effect disposing itself during cleanup runs all cleanups exactly once", ()
     expect(firstCleanupCount).toBe(1);
     expect(secondCleanupCount).toBe(1);
 });
+
+test("Quark subs trigger on change", () => {
+    let subRuns = 0;
+    const q = quark(1, { sub: () => subRuns += 1 }); 
+    expect(subRuns).toBe(0);
+    q.set(2);
+    expect(subRuns).toBe(1);
+});
+
+test("Quark subs receive the new value", () => {
+
+});
+
+test("Quark subs do not trigger for equal values", () => {
+    let subRuns = 0;
+    const q = quark(1, { sub: () => subRuns += 1 }); 
+    expect(subRuns).toBe(0);
+    q.set(1);
+    expect(subRuns).toBe(0);
+});

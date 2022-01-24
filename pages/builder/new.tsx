@@ -122,7 +122,7 @@ const NewPage: NextPage = () => {
                 <Select
                   id="topo-type"
                   label="Type de spot"
-                  choices={[
+                  options={[
                     { value: TopoType.Boulder, label: 'Blocs' }, 
                     { value: TopoType.Cliff, label: 'Falaise' },
                     { value: TopoType.DeepWater, label: 'Deepwater' },
@@ -134,7 +134,7 @@ const NewPage: NextPage = () => {
                   wrapperClassname="w-full mb-10"
                   value={mapTypeIdToLabel(topo.type)}
                   error={typeError}
-                  onSelect={(val: TopoType | undefined) => {
+                  onChange={(val: TopoType | undefined) => {
                         setTypeError(undefined);
                         topoQuark.set({
                           ...topo,

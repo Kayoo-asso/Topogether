@@ -3,10 +3,51 @@ export type GeoCoordinates = {
   lng: number,
 };
 
-export type BBox = Omit<DOMRect, 'toJSON'>;
-
-export type Description = StringBetween<1, 5000>;
 export type Name = StringBetween<1, 255>;
+export type Description = StringBetween<1, 5000>;
+
+export type NumberBetween<Min, Max> = number & {
+  readonly _phantom: unique symbol
+};
+
+export type StringBetween<Min extends number, Max extends number> = string & {
+  readonly _phantom: unique symbol
+};
+
+export type Email = string & {
+  readonly _isEmail: unique symbol
+};
+
+export type UUID = string & {
+  readonly _isUUID: unique symbol
+};
+
+export function isBetween<Min extends number, Max extends number>(
+  x: number,
+  min: Min,
+  max: Max,
+): x is NumberBetween<Min, Max> {
+  if (min <= x && x < max) {
+    return true;
+  }
+  return false;
+}
+
+export function isStringBetween<Min extends number, Max extends number>(
+  s: string,
+  min: Min,
+  max: Max
+): s is StringBetween<Min, Max> {
+  return min <= s.length && s.length < max;
+}
+
+// taken from zod
+// https://github.com/colinhacks/zod/blob/master/src/types.ts#L424
+const emailRegex = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+
+export function isEmail(s: string): s is Email {
+  return emailRegex.test(s);
+}
 
 export type RequireAtLeastOne<T, Keys extends keyof T = keyof T> =
     Pick<T, Exclude<keyof T, Keys>>
@@ -27,63 +68,3 @@ export type RequireOnlyOne<T, Keys extends keyof T = keyof T> =
     Required<Pick<T, K>>
     & Partial<Record<Exclude<Keys, K>, undefined>>
   }[Keys];
-
-export type NumberBetween<Min, Max> = number & {
-  readonly _phantom: unique symbol
-};
-
-export function isBetween<Min extends number, Max extends number>(
-  x: number,
-  min: Min,
-  max: Max,
-): x is NumberBetween<Min, Max> {
-  if (min <= x && x < max) {
-    return true;
-  }
-  return false;
-}
-
-export function numberBetween<Min extends number, Max extends number>(
-  x: number,
-  min: Min,
-  max: Max,
-): NumberBetween<Min, Max> | null {
-  if (isBetween(x, min, max)) {
-    return x;
-  }
-  return null;
-}
-
-export type StringBetween<Min extends number, Max extends number> = string & {
-  readonly _phantom: unique symbol
-};
-
-export function isStringBetween<Min extends number, Max extends number>(
-  s: string,
-  min: Min,
-  max: Max
-): s is StringBetween<Min, Max> {
-  return min <= s.length && s.length < max;
-}
-
-export function stringBetween<Min extends number, Max extends number>(
-  s: string,
-  min: Min,
-  max: Max
-): StringBetween<Min, Max> | null {
-  if (isStringBetween(s, min, max)) {
-    return s;
-  }
-  return null;
-}
-
-const hardcoded: StringBetween<1, 255> = "foo" as StringBetween<1, 255>;
-
-function onChange(input: string) {
-  if (isStringBetween(input, 1, 255)) {
-    // Update data
-    // example:
-    const x: StringBetween<1, 255> = input;
-  }
-  // Handle error
-}

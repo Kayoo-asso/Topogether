@@ -1,33 +1,16 @@
-import { JSONSchemaType } from "ajv";
-import { StringBetween } from "types/Utils";
-import { UUID } from "types/UUID";
+import { Describe, pattern, refine, size, string } from "superstruct";
+import { UUID, isStringBetween, Description, Email, isEmail } from "types";
+import { Name, StringBetween } from "types/Utils";
 
-export const UUIDSchema: JSONSchemaType<UUID> = {
-    type: "string",
-    format: "uuid"
-};
+// taken from zod
+// https://github.com/colinhacks/zod/blob/master/src/types.ts#L419
+const uuidRegex = /^([a-f0-9]{8}-[a-f0-9]{4}-[1-5][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}|00000000-0000-0000-0000-000000000000)$/i;
 
-function required<T>(schema: T): T & { nullable: false } {
-    return {
-        nullable: false,
-        ...schema
-    }
-}
-
-export const NameSchema: JSONSchemaType<StringBetween<1, 255>> = {
-    type: "string",
-    minLength: 1,
-    maxLength: 255,
-    nullable: true,
-};
-
-export const RequiredNameSchema = required(NameSchema);
-
-export const DescriptionSchema: JSONSchemaType<StringBetween<1, 5000>> = {
-    type: "string",
-    minLength: 1,
-    maxLength: 255,
-    nullable: true
-};
-
-export const RequiredDescriptionSchema = required(DescriptionSchema);
+export const UUIDSchema: Describe<UUID> = pattern(string(), uuidRegex) as any;
+export const NameSchema: Describe<Name> = size(string(), 1, 255) as any;
+export const DescriptionSchema: Describe<Description> = size(string(), 1, 5000) as any;
+export const EmailSchema: Describe<Email> = refine(
+    string(),
+    "Valid email",
+    isEmail
+) as any;

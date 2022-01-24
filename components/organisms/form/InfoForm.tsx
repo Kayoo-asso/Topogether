@@ -55,7 +55,7 @@ export const InfoForm: React.FC<InfoFormProps> = watchDependencies((props: InfoF
                     { value: 'Gneiss' },
                 ]}
                 value={topo.rockTypes}
-                onSelect={(value) => props.topo.set({
+                onChange={(value) => props.topo.set({
                     ...topo,
                     rockTypes: value,
                 })}

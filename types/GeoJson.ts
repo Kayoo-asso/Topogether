@@ -100,7 +100,7 @@ export interface MultiLineString extends GeometryBase {
  *  - A linear ring MUST follow the right-hand rule with respect to the area it bounds, i.e., exterior rings are
  *  counterclockwise, and holes are clockwise.
  */
-export type LinearRing = { 0: Position, 1: Position, 2: Position, 3: Position };
+export type LinearRing = { 0: Position, 1: Position, 2: Position, 3: Position } & Position[];
 
 export type PolygonCoords = LinearRing[]
 
