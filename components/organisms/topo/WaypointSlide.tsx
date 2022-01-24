@@ -1,70 +1,64 @@
 import React, { useContext, useState } from 'react';
 import { Flash, Icon, ParkingButton, ParkingModal, SlideagainstRightDesktop, SlideoverMobile } from 'components';
 import { Quark, watchDependencies } from 'helpers/quarky';
-import { Parking } from 'types';
+import { Waypoint } from 'types';
 import { DeviceContext, staticUrl } from 'helpers';
 import { default as NextImage } from 'next/image';
 
-interface ParkingSlideProps {
+interface WaypointSlideProps {
     open: boolean,
-    parking: Quark<Parking>,
+    waypoint: Quark<Waypoint>,
     onClose?: () => void,
 }
 
-export const ParkingSlide: React.FC<ParkingSlideProps> = watchDependencies(({
+export const WaypointSlide: React.FC<WaypointSlideProps> = watchDependencies(({
     open = true,
     ...props
-  }: ParkingSlideProps) => {
+  }: WaypointSlideProps) => {
     const device = useContext(DeviceContext);
 
     const [flashMessage, setFlashMessage] = useState<string>();
-    const [modalParkingOpen, setModalParkingOpen] = useState(false);
-    const parking = props.parking();
+    const waypoint = props.waypoint();
 
-    const parkingContent = () => (
+    const waypointContent = () => (
         <>
             <div className='flex flex-col h-[90%] md:h-[85%] pt-10 md:pt-0 gap-6'>
                 <div className='flex flex-col items-center md:items-start px-6'>
                     <div className='ktext-big-title flex flex-row gap-3 items-center'>
                         <Icon 
-                            name='parking'
-                            SVGClassName='h-6 w-6 fill-second'
+                            name='help-round'
+                            SVGClassName='h-6 w-6 stroke-third fill-third'
                             center
                         />
-                        {parking.name}
+                        {waypoint.name}
                     </div>
                     <div 
                         className='ktext-label text-grey-medium cursor-pointer'
                         onClick={() => {
-                            const data = [new ClipboardItem({ "text/plain": new Blob([parking.location.lat+','+parking.location.lng], { type: "text/plain" }) })];
+                            const data = [new ClipboardItem({ "text/plain": new Blob([waypoint.location.lat+','+waypoint.location.lng], { type: "text/plain" }) })];
                             navigator.clipboard.write(data).then(function() {
                                 setFlashMessage("Coordonnées copiées dans le presse papier.");
                             }, function() {
                                 setFlashMessage("Impossible de copier les coordonées.");
                             });
                         }}
-                    >{parseFloat(parking.location.lat.toFixed(12)) + ',' + parseFloat(parking.location.lng.toFixed(12))}</div>
+                    >{parseFloat(waypoint.location.lat.toFixed(12)) + ',' + parseFloat(waypoint.location.lng.toFixed(12))}</div>
                 </div>
 
                 <div className='w-full relative max-h-[200px] h-[60%] md:h-[25%]'>
                     <NextImage 
-                        src={parking.image ? parking.image.url : staticUrl.defaultKayoo}
+                        src={waypoint.image ? waypoint.image.url : staticUrl.defaultKayoo}
                         alt="Parking"
                         priority
                         layout="fill"
                         objectFit="contain"
                     />
                 </div>
-                
-                <div className='px-6 overflow-auto'>
-                    <div><span className='font-semibold'>Nombre de places : </span>{parking.spaces}</div>
-                    <div className='mt-2 ktext-base-little'>{parking.description}</div>
+
+                <div className='px-6 ktext-base-little'>
+                    {waypoint.description}
                 </div>
-            </div>
-            <div className='absolute text-center px-6 bottom-[9%] md:bottom-2 w-full'>
-                <ParkingButton 
-                    onClick={() => setModalParkingOpen(true)}
-                />
+                
             </div>
         </>
     );
@@ -78,7 +72,7 @@ export const ParkingSlide: React.FC<ParkingSlideProps> = watchDependencies(({
                     onlyFull
                     onClose={props.onClose}
                 >
-                    {parkingContent()}
+                    {waypointContent()}
                 </SlideoverMobile>
             }
             {device !== 'MOBILE' && 
@@ -86,23 +80,16 @@ export const ParkingSlide: React.FC<ParkingSlideProps> = watchDependencies(({
                     open
                     onClose={props.onClose}
                 >
-                    {parkingContent()}
+                    {waypointContent()}
                 </SlideagainstRightDesktop>
             }
 
             <Flash 
                 open={!!flashMessage}
                 onClose={() => setFlashMessage(undefined)}
-            >
+                >
                 {flashMessage}
             </Flash>
-
-            {modalParkingOpen &&
-                <ParkingModal
-                    parkingLocation={parking.location}
-                    onClose={() => setModalParkingOpen(false)}
-                />
-            }
         </>
     )
 });

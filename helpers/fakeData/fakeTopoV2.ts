@@ -148,6 +148,7 @@ export const sectors: SectorData[] = [
                     lat: 45.70256,
                     lng: 4.605462,
                 },
+                description: "C'est un joli petit pont tout mignon qui permet de traverser une rivière ... DE SANNNNNG GNIAHAHAHAHA !!!" as Description,
             }
         ]
     }

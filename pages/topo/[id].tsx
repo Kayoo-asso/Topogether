@@ -5,7 +5,7 @@ import {
   BoulderSlideagainstDesktop,  BoulderSlideoverMobile, TrackSlideagainstDesktop,
   For, Show,
   Header, LeftbarDesktop, 
-  MapControl, ParkingSlide } from 'components';
+  MapControl, ParkingSlide, WaypointSlide } from 'components';
 import { useRouter } from 'next/router';
 import { quarkTopo } from 'helpers/fakeData/fakeTopoV2';
 import { DeviceContext } from 'helpers';
@@ -202,9 +202,18 @@ const Topo: NextPage = () => {
                 <ParkingSlide 
                   open
                   parking={parking}
-                  onClose={() => {
-                    selectedParking.select(undefined);
-                  }}
+                  onClose={() => selectedParking.select(undefined)}
+                />
+              )
+          }}
+        </Show>
+        <Show when={selectedWaypoint.quark}>
+          {(waypoint) => {
+              return (
+                <WaypointSlide 
+                  open
+                  waypoint={waypoint}
+                  onClose={() => selectedWaypoint.select(undefined)}
                 />
               )
           }}
