@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 import NextImage from 'next/image';
 import { Card, Icon } from 'components';
 import { formatDate, staticUrl } from 'helpers';
@@ -32,37 +33,41 @@ export const TopoCard: React.FC<TopoCardProps> = React.memo((props: TopoCardProp
   };
 
   return (
-    <Card className="relative text-center text-grey-medium bg-white flex flex-col">
-      <div className="w-full h-[70px] md:h-44 top-0 relative">
-        <NextImage
-          src={props.topo.image ? props.topo.image.url : staticUrl.defaultKayoo}
-          className="rounded-t-lg"
-          alt="topo-image"
-          layout="fill"
-          objectFit="cover"
-          priority
-        />
-      </div>
-      <div className="md:pl-2 flex flex-row md:h-12 md:ml-4 md:items-center md:justify-center">
-        <div className="hidden md:block">
-          {getTopoIcons(props.topo.status)}
-        </div>
-        <div className="p-2 md:pr-6 w-full flex flex-col items-start">
-          <div className="w-full pr-2 truncate ktext-title text-left text-dark font-bold text-xs">
-            {props.topo.name}
+    <Link href={`/topo/${props.topo.id}`} passHref>
+      <div>
+        <Card className="relative text-center text-grey-medium bg-white flex flex-col cursor-pointer">
+          <div className="w-full h-[70px] md:h-44 top-0 relative">
+            <NextImage
+              src={props.topo.image ? props.topo.image.url : staticUrl.defaultKayoo}
+              className="rounded-t-lg"
+              alt="topo-image"
+              layout="fill"
+              objectFit="cover"
+              priority
+            />
           </div>
-          <div className="w-full border-t-[1px] text-xxs flex flex-row flex-wrap items-end justify-between py-1">
-            <span className="whitespace-nowrap">{`${props.topo.nbBoulders} blocs - ${props.topo.nbTracks} passages`}</span>
-            <div className="md:hidden">
+          <div className="md:pl-2 flex flex-row md:h-12 md:ml-4 md:items-center md:justify-center">
+            <div className="hidden md:block">
               {getTopoIcons(props.topo.status)}
             </div>
-            <span className="mr-1 whitespace-nowrap">
-              {getAction()}
-            </span>
+            <div className="p-2 md:pr-6 w-full flex flex-col items-start">
+              <div className="w-full pr-2 truncate ktext-title text-left text-dark font-bold text-xs">
+                {props.topo.name}
+              </div>
+              <div className="w-full border-t-[1px] text-xxs flex flex-row flex-wrap items-end justify-between py-1">
+                <span className="whitespace-nowrap">{`${props.topo.nbBoulders} blocs - ${props.topo.nbTracks} passages`}</span>
+                <div className="md:hidden">
+                  {getTopoIcons(props.topo.status)}
+                </div>
+                <span className="mr-1 whitespace-nowrap">
+                  {getAction()}
+                </span>
+              </div>
+            </div>
           </div>
-        </div>
+        </Card>
       </div>
-    </Card>
+    </Link>
   );
 }, equal);
 

@@ -109,7 +109,7 @@ export interface Parking {
 
 export interface Manager {
   readonly id: UUID,
-  name: StringBetween<1, 255>, 
+  name: StringBetween<1, 255>,
   description?: StringBetween<1, 5000>
   image?: Image
   adress?: StringBetween<1, 255>
