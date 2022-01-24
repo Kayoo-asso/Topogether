@@ -127,7 +127,7 @@ const Topo: NextPage = () => {
         </Show>
         <Show when={() => displayManagement}>
           <ManagementSlideover
-            topo={topo}
+            managers={topo().managers}
             open={displayManagement}
             onClose={() => setCurrentDisplay(undefined)}
             className={currentDisplay === 'MANAGEMENT' ? 'z-100' : 'z-50'}

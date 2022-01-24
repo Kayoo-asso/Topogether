@@ -51,12 +51,12 @@ export const ApproachSlideover: React.FC<ApproachSlideoverProps> = ({
         else return (
             <div className='flex flex-col h-full pt-5 md:pt-0'>
                 <div className='flex flex-col px-6 md:px-0 pt-5 md:pt-0'>
-                    <div className='ktext-big-title text-center w-full mt-4 mb-6 md:mb-3'>{"Marche"+(props.accesses.length > 1 ? "s" : "")+" d'approche"}</div>
+                    <div className='ktext-big-title text-center w-full mt-4 mb-6 md:hidden'>{"Marche"+(props.accesses.length > 1 ? "s" : "")+" d'approche"}</div>
 
                     {props.accesses.length > 1 &&
                         <Tabs 
                             tabs={getTabOptions()}
-                            className='pt-4 pb-6'
+                            className='pt-2 md:pt-8 pb-6'
                         />
                     }
                     <div className='flex flex-row justify-between md:flex-col'>
@@ -104,6 +104,7 @@ export const ApproachSlideover: React.FC<ApproachSlideoverProps> = ({
             }
             {device !== 'MOBILE' && 
                 <SlideoverLeftDesktop 
+                    title={"Marche"+(props.accesses.length > 1 ? "s" : "")+" d'approche"}
                     open={open}
                     onClose={props.onClose}
                     className={props.className}
