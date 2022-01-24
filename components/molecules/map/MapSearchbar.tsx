@@ -133,7 +133,7 @@ export const MapSearchbar: React.FC<MapSearchbarProps> = ({
                         ref={inputRef}
                         label='Recherche...'
                         displayLabel={false}
-                        className='w-[95%] mt-[4px]'
+                        wrapperClassName='w-[95%] mt-[4px]'
                         value={value}
                         onChange={e => {
                             setValue(e.target.value);
@@ -151,7 +151,7 @@ export const MapSearchbar: React.FC<MapSearchbarProps> = ({
 
             {barOpen && resultsOpen &&
                 <Dropdown 
-                    choices={constructChoices()}
+                    options={constructChoices()}
                     className="w-[200%] mt-[-30px] pt-[50px] z-20 relative"
                     onSelect={(option) => {
                         setResultsOpen(false);

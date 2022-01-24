@@ -69,12 +69,12 @@ export interface TopoData {
   managers: Manager[],
 }
 
-export type LightTopo = Omit<TopoData, 'sectors' | 'parkings' | 'access'> & {
+export type LightTopo = Omit<TopoData, 'sectors' | 'parkings' | 'accesses' | 'managers'> & {
   firstParkingLocation?: GeoCoordinates,
   nbSectors: number,
   nbTracks: number,
   nbBoulders: number,
-  grades?: GradeHistogram,
+  grades: GradeHistogram,
   // TODO: do we include access information here? Like access difficulty & time
 };
 

@@ -119,7 +119,7 @@ const Topo: NextPage = () => {
         </Show>
         <Show when={() => displayApproach}>
           <ApproachSlideover
-            topo={topo}
+            accesses={topo().accesses}
             open={displayApproach}
             onClose={() => setCurrentDisplay(undefined)}
             className={currentDisplay === 'APPROACH' ? 'z-100' : 'z-50'}
@@ -206,7 +206,7 @@ const Topo: NextPage = () => {
                 />
               )
           }}
-        </Show>
+        </Show> 
         <Show when={selectedWaypoint.quark}>
           {(waypoint) => {
               return (

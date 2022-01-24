@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { lightGrades, LightTopo, Topo } from 'types';
 import { buildGradeHistogram } from 'helpers/topo/buildGradeHistogram';
 
@@ -18,20 +18,18 @@ const bgStyles = {
   None: 'bg-grey-light',
 };
 
-const typeguard = (topo: LightTopo | Topo): topo is LightTopo => { return true };
+const isLight = (topo: LightTopo | Topo): topo is LightTopo => (topo as LightTopo).grades !== undefined;
 
 export const GradeHistogram: React.FC<GradeHistogramProps> = ({
   size = 'normal',
   ...props
 }: GradeHistogramProps) => {
-  // const histogramSignal = useMemo(() =>
-  //   buildGradeHistogram(props.topo as Topo),
-  // [props.topo]);
-  const histogram = typeguard(props.topo) ? 
+
+  const histogram = isLight(props.topo) ? 
                       props.topo.grades :
                       buildGradeHistogram(props.topo)();
 
-  const { Total, None, ...grades } = histogram
+  const { Total, None, ...grades } = histogram;
   const maxNbOfTracks = Math.max(...Object.values(grades));
   const ratio = histogram.Total / maxNbOfTracks;
 

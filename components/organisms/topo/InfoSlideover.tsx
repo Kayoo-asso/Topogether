@@ -55,6 +55,7 @@ export const InfoSlideover: React.FC<InfoSlideoverProps> = ({
                         <Icon 
                             name='waypoint'
                             SVGClassName={'w-6 h-6 ' + TopoTypeToColor(topo.type)}
+                            center
                         />
                     </div>
                     {topo.name}
@@ -106,7 +107,7 @@ export const InfoSlideover: React.FC<InfoSlideoverProps> = ({
                     </div>
                 </div>
 
-                <div>
+                <div className='ktext-base-little'>
                     {topo.description} {topo.description}
                 </div>
                 

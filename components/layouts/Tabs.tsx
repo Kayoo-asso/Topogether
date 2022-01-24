@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { Icon } from 'components';
 import { BaseColor } from 'types';
 
-type TabOption = {
-    iconName: string,
+export type TabOption = {
+    label?: string,
+    iconName?: string,
     iconFill?: boolean,
     iconStroke?: boolean,
     color: BaseColor,
@@ -12,6 +13,7 @@ type TabOption = {
 
 interface TabsProps {
     tabs: TabOption[],
+    className?: string,
 }
 
 export const Tabs: React.FC<TabsProps> = (props: TabsProps) => {
@@ -40,6 +42,25 @@ export const Tabs: React.FC<TabsProps> = (props: TabsProps) => {
         }
         return classes;
     }
+    const getLabelClassName = (tab: TabOption, selected: boolean) => {
+        let classes = '';
+        if (!selected) {
+            classes += 'text-grey-light ';
+            return classes;
+        }
+        switch (tab.color) {
+            case 'main':
+                classes += 'text-main ';
+                break;
+            case 'second':
+                classes += 'text-second ';
+                break;
+            case 'third':
+                classes += 'text-third ';
+                break;
+        }
+        return classes;
+    }
     const getBorderClassName = (tab: TabOption, selected: boolean) => {
         if (!selected) return ' border-grey-light'
         switch (tab.color) {
@@ -50,7 +71,7 @@ export const Tabs: React.FC<TabsProps> = (props: TabsProps) => {
     }
 
     return (
-        <div className='flex flex-row w-full justify-around'>
+        <div className={'flex flex-row w-full justify-around ' + (props.className ? props.className : '')}>
             
             {props.tabs.map((tab, index) => {
                 const selected = selectedTab === index;
@@ -63,10 +84,15 @@ export const Tabs: React.FC<TabsProps> = (props: TabsProps) => {
                             tab.action();
                         }}
                     >
-                        <Icon 
-                            name={tab.iconName}
-                            SVGClassName={'h-8 w-8 ' + getIconClassName(tab, selected)}
-                        />
+                        {tab.iconName &&
+                            <Icon 
+                                name={tab.iconName}
+                                SVGClassName={'h-8 w-8 ' + getIconClassName(tab, selected)}
+                            />
+                        }
+                        {tab.label &&
+                            <div className={'ktext-label ' + getLabelClassName(tab, selected)}>{tab.label}</div>
+                        }
                     </div>
                 )
             })}
