@@ -1,21 +1,21 @@
 import React, { useContext, useState } from 'react';
 import { ModalDelete, SlideagainstRightDesktop, SlideoverMobile } from 'components';
 import { Quark, watchDependencies } from 'helpers/quarky';
-import { Parking } from 'types';
+import { Waypoint } from 'types';
 import { DeviceContext } from 'helpers';
-import { ParkingForm } from '..';
+import { WaypointForm } from '..';
 
-interface ParkingBuilderSlideProps {
+interface WaypointBuilderSlideProps {
     open: boolean,
-    parking: Quark<Parking>,
-    onDeleteParking: () => void,
+    waypoint: Quark<Waypoint>,
+    onDeleteWaypoint: () => void,
     onClose?: () => void,
 }
 
-export const ParkingBuilderSlide: React.FC<ParkingBuilderSlideProps> = watchDependencies(({
+export const WaypointBuilderSlide: React.FC<WaypointBuilderSlideProps> = watchDependencies(({
     open = true,
     ...props
-  }: ParkingBuilderSlideProps) => {
+  }: WaypointBuilderSlideProps) => {
     const [displayDeleteModal, setDisplayDeleteModal] = useState(false);
     const device = useContext(DeviceContext);
 
@@ -29,9 +29,9 @@ export const ParkingBuilderSlide: React.FC<ParkingBuilderSlideProps> = watchDepe
                     onClose={props.onClose}
                 >
                     <div className='px-6 py-14 h-full'>
-                        <ParkingForm 
-                            parking={props.parking}
-                            onDeleteParking={() => setDisplayDeleteModal(true)}
+                        <WaypointForm 
+                            waypoint={props.waypoint}
+                            onDeleteWaypoint={() => setDisplayDeleteModal(true)}
                         />
                     </div>
                 </SlideoverMobile>
@@ -42,9 +42,9 @@ export const ParkingBuilderSlide: React.FC<ParkingBuilderSlideProps> = watchDepe
                     onClose={props.onClose}
                 >
                     <div className='px-5 py-3 h-full'>
-                        <ParkingForm 
-                            parking={props.parking}
-                            onDeleteParking={() => setDisplayDeleteModal(true)}
+                        <WaypointForm 
+                            waypoint={props.waypoint}
+                            onDeleteWaypoint={() => setDisplayDeleteModal(true)}
                         />
                     </div>
                 </SlideagainstRightDesktop>
@@ -53,9 +53,9 @@ export const ParkingBuilderSlide: React.FC<ParkingBuilderSlideProps> = watchDepe
             {displayDeleteModal &&
                 <ModalDelete
                     onClose={() => setDisplayDeleteModal(false)}
-                    onDelete={() => props.onDeleteParking()}
+                    onDelete={() => props.onDeleteWaypoint()}
                 >
-                    Etes-vous sûr de vouloir supprimer le parking ?
+                    Etes-vous sûr de vouloir supprimer le point de repère ?
                 </ModalDelete>
             }
         </>

@@ -12,3 +12,4 @@ export * from './ModalDeleteTopo';
 export * from './TracksListBuilder';
 
 export * from './ParkingBuilderSlide';
+export * from './WaypointBuilderSlide';

@@ -11,7 +11,6 @@ interface InfoFormProps {
 
 export const InfoForm: React.FC<InfoFormProps> = watchDependencies((props: InfoFormProps) => {
     const topo = props.topo();
-    console.log(topo.hasOtherAmenities);
 
     return (
         <div 

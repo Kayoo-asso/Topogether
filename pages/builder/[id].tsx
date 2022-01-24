@@ -3,7 +3,7 @@ import type { NextPage } from 'next';
 import { 
   BoulderBuilderSlideoverMobile,
   MapControl, Show, 
-  Header, InfoFormSlideover, ManagementFormSlideover, TrackFormSlideagainstDesktop, ModalValidateTopo, ModalDeleteTopo, GeoCamera, Drawer, LeftbarBuilderDesktop, BoulderBuilderSlideagainstDesktop, ParkingBuilderSlide, AccessFormSlideover } from 'components';
+  Header, InfoFormSlideover, ManagementFormSlideover, TrackFormSlideagainstDesktop, ModalValidateTopo, ModalDeleteTopo, GeoCamera, Drawer, LeftbarBuilderDesktop, BoulderBuilderSlideagainstDesktop, ParkingBuilderSlide, AccessFormSlideover, WaypointBuilderSlide } from 'components';
 import { useRouter } from 'next/router';
 import { quarkTopo } from 'helpers/fakeData/fakeTopoV2';
 import { DeviceContext, UserContext } from 'helpers';
@@ -145,7 +145,7 @@ const BuilderMapPage: NextPage = () => {
   const createWaypoint = useCallback((location: GeoCoordinates) => {
     const newWaypoint: Waypoint = {
       id: v4(),
-      name: "point d'intérêt " + (topo.sectors.at(0).waypoints ? topo.sectors.at(0).waypoints.length + 1 : '1') as Name,
+      name: "point de repère " + (topo.sectors.at(0).waypoints ? topo.sectors.at(0).waypoints.length + 1 : '1') as Name,
       location: location,
     }
     topo.sectors.at(0).waypoints.push(newWaypoint);
@@ -302,6 +302,21 @@ const BuilderMapPage: NextPage = () => {
                     selectedParking.select(undefined);
                   }}
                   onClose={() => selectedParking.select(undefined)}
+                />
+              )
+          }}
+        </Show>
+        <Show when={selectedWaypoint.quark}>
+          {(waypoint) => {
+              return (
+                <WaypointBuilderSlide 
+                  open
+                  waypoint={waypoint}
+                  onDeleteWaypoint={() => {
+                    topo.sectors.at(0).waypoints.removeQuark(waypoint);
+                    selectedWaypoint.select(undefined);
+                  }}
+                  onClose={() => selectedWaypoint.select(undefined)}
                 />
               )
           }}

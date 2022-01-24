@@ -1,16 +1,16 @@
 import React from 'react';
 import { Button, ImageInput, TextArea, TextInput } from 'components';
 import { Quark, watchDependencies } from 'helpers/quarky';
-import { Description, Name, Parking } from 'types';
+import { Description, Name, Waypoint } from 'types';
 
-interface ParkingFormProps {
-    parking: Quark<Parking>,
+interface WaypointFormProps {
+    waypoint: Quark<Waypoint>,
     className?: string,
-    onDeleteParking: () => void,
+    onDeleteWaypoint: () => void,
 }
 
-export const ParkingForm: React.FC<ParkingFormProps> = watchDependencies((props: ParkingFormProps) => {
-    const parking = props.parking();
+export const WaypointForm: React.FC<WaypointFormProps> = watchDependencies((props: WaypointFormProps) => {
+    const waypoint = props.waypoint();
 
     return (
         <div 
@@ -19,22 +19,22 @@ export const ParkingForm: React.FC<ParkingFormProps> = watchDependencies((props:
         >
             <div className='flex flex-row gap-6 items-end'>
                 <ImageInput 
-                    value={parking.image}
+                    value={waypoint.image}
                     onChange={(files) => {
-                        props.parking.set({
-                            ...parking,
+                        props.waypoint.set({
+                            ...waypoint,
                             image: files[0],
                         })
                     }}
                 />
                 <div className='flex flex-col gap-2 justify-between h-full'>
-                    <div className='ktext-subtitle'>Parking</div>
+                    <div className='ktext-subtitle'>Point de repère</div>
                     <TextInput 
-                        id='parking-name'
+                        id='waypoint-name'
                         label='Nom'
-                        value={parking.name}
-                        onChange={(e) => props.parking.set({
-                            ...parking,
+                        value={waypoint.name}
+                        onChange={(e) => props.waypoint.set({
+                            ...waypoint,
                             name: e.target.value as Name
                         })}
                     />
@@ -43,51 +43,39 @@ export const ParkingForm: React.FC<ParkingFormProps> = watchDependencies((props:
 
             <div className='flex flex-row gap-3'>
                 <TextInput 
-                    id='parking-latitude'
+                    id='waypoint-latitude'
                     label='Latitude'
                     type='number'
-                    value={parking.location.lat}
-                    onChange={(e) => props.parking.set({
-                        ...parking,
+                    value={waypoint.location.lat}
+                    onChange={(e) => props.waypoint.set({
+                        ...waypoint,
                         location: {
                             lat: parseFloat(e.target.value),
-                            lng: parking.location.lng
+                            lng: waypoint.location.lng
                         }
                     })}
                 />
                 <TextInput 
-                    id='parking-longitude'
+                    id='waypoint-longitude'
                     label='Longitude'
                     type='number'
-                    value={parking.location.lng}
-                    onChange={(e) => props.parking.set({
-                        ...parking,
+                    value={waypoint.location.lng}
+                    onChange={(e) => props.waypoint.set({
+                        ...waypoint,
                         location: {
-                            lat: parking.location.lat,
+                            lat: waypoint.location.lat,
                             lng: parseFloat(e.target.value)
                         }
                     })}
                 />
             </div>
             
-
-            <TextInput 
-                id='parking-spaces'
-                label='Nombre de places'
-                type='number'
-                value={parking.spaces}
-                onChange={(e) => props.parking.set({
-                    ...parking,
-                    spaces: parseInt(e.target.value)
-                })}
-            />
-            
             <TextArea 
-                id='parking-description'
+                id='waypoint-description'
                 label='Description'
-                value={parking.description}
-                onChange={(e) => props.parking.set({
-                    ...parking,
+                value={waypoint.description}
+                onChange={(e) => props.waypoint.set({
+                    ...waypoint,
                     description: e.target.value as Description
                 })}
             />
@@ -95,7 +83,7 @@ export const ParkingForm: React.FC<ParkingFormProps> = watchDependencies((props:
             <div className='w-full flex grow items-end'>
                 <Button
                     content='Supprimer'
-                    onClick={() => props.onDeleteParking()}
+                    onClick={() => props.onDeleteWaypoint()}
                     fullWidth
                 />
             </div>
