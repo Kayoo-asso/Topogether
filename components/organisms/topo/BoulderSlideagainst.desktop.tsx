@@ -16,11 +16,11 @@ export const BoulderSlideagainstDesktop: React.FC<BoulderSlideagainstDesktopProp
     const [officialTrackTab, setOfficialTrackTab] = useState(true);
     const boulder = props.boulder();
 
-    const displayedTracks = useMemo(() => boulder.tracks
+    const displayedTracks = boulder.tracks
         .quarks()
-        .filter((track) => ((track().creatorId) === props.topoCreatorId) === officialTrackTab),
-        [boulder.tracks, props.topoCreatorId, officialTrackTab],
-    );
+        .filter((track) => ((track().creatorId) === props.topoCreatorId) === officialTrackTab);
+    //     [boulder.tracks, props.topoCreatorId, officialTrackTab],
+    // );
 
     return (
         <>

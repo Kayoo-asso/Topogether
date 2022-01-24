@@ -43,3 +43,5 @@ export const BoulderPreviewDesktop: React.FC<BoulderPreviewDesktopProps> = watch
         </div>
     )
 });
+
+BoulderPreviewDesktop.displayName = "BoulderPreviewDesktop";

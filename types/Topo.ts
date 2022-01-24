@@ -1,13 +1,12 @@
-import { Quark, QuarkArray } from 'helpers/quarky';
-import { Amenities, ClimbTechniques, RockTypes } from './Bitflags';
-import {
+import type { Quark, QuarkArray } from 'helpers/quarky';
+import type { Amenities, ClimbTechniques, RockTypes } from './Bitflags';
+import type {
   Difficulty, Grade, LightGrade, Orientation, TopoStatus, TopoType,
 } from './Enums';
-import { LinearRing, LineCoords, Position } from './GeoJson';
-import { GeoCoordinates, RequireAtLeastOne, StringBetween } from './Utils';
-import { UUID } from './UUID';
-import { TrackRating, User } from './User';
-import { Image } from './Image';
+import type { LinearRing, LineCoords, Position } from './GeoJson';
+import type { UUID, GeoCoordinates, RequireAtLeastOne, StringBetween } from './Utils';
+import type { TrackRating, User } from './User';
+import type { Image } from './Image';
 
 export type Topo = Omit<TopoData, 'sectors' | 'parkings' | 'accesses' | 'managers'> & {
   sectors: QuarkArray<Sector>,

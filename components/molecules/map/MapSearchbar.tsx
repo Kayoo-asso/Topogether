@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { RoundButton, TextInput } from 'components';
+import { RoundButton, TextInput, Dropdown, DropdownOption } from 'components';
 import { googleAutocomplete, useIsMounted } from '../../../helpers';
-import { Dropdown, DropdownOption } from '..';
 
 export interface MapSearchbarProps {
     initialOpen?: boolean,

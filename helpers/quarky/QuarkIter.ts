@@ -1,13 +1,14 @@
-import { isIterable, ConcatIterator, FilterIterator, Flattened, FlattenIterator, MapIterator, ZipIterator, CloneResetIterator, CloneResetIterableIterator} from "./iterators";
+import { QuarkArrayIteratorRaw } from ".";
+import { isIterable, ConcatIterator, FilterIterator, Flattened, FlattenIterator, MapIterator, ZipIterator, CloneInitIterator, CloneResetIterableIterator} from "./iterators";
 import { derive, Signal } from "./quarky";
 
 // should initially be created from a Quark<Array<Quark<T>>>
 // init should be the init function of QuarkArrayIterator
 export class QuarkIter<T> implements Iterable<T> {
-    private readonly iterator: CloneResetIterator<T>;
+    private readonly iterator: CloneInitIterator<T>;
     private result: Signal<T[]> | null;
 
-    constructor(source: CloneResetIterator<T> | Iterable<T>) {
+    constructor(source: CloneInitIterator<T> | Iterable<T>) {
         this.iterator = isIterable(source)
             ? new CloneResetIterableIterator(source)
             : source;
@@ -65,27 +66,27 @@ export class QuarkIter<T> implements Iterable<T> {
 
     find(predicate: (item: T) => boolean): Signal<T | undefined> {
         return () => {
-            this.iterator.reset();
+            const iter = this.iterator.clone();
+            iter.init();
             let result: IteratorResult<T>;
-            while (true) {
-                result = this.iterator.next();
-                if (result.done) {
-                    return undefined;
-                }
+            do {
+                result = iter.next();
                 if (predicate(result.value)) {
                     return result.value;
                 }
-            }
+            } while (!result.done)
+            return undefined;
         };
     }
 
     reduce<A>(fn: (acc: A, item: T) => A, initial: () => A): Signal<A> {
         return () => {
-            this.iterator.reset();
+            const iter = this.iterator.clone();
+            iter.init();
             let result: IteratorResult<T>;
             let acc = initial();
             while (true) {
-                result = this.iterator.next();
+                result = iter.next();
                 if (result.done) return acc;
                 acc = fn(acc, result.value);
             };
@@ -95,7 +96,7 @@ export class QuarkIter<T> implements Iterable<T> {
     // Avoid exhausting the inner iterator
     [Symbol.iterator](): Iterator<T> {
         const iter = this.iterator.clone();
-        iter.reset();
+        iter.init();
         return iter;
     }
 }

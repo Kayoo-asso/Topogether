@@ -22,6 +22,7 @@ export const SlideagainstRightDesktop: React.FC<SlideagainstRightDesktopProps> =
     const size = 300;
     const [marginRight, setMarginRight] = useState<number>(size);
 
+    // TODO: this sometimes causes React warnings, because it can call setMarginRight after the component was unmounted
     useEffect(() => {
         window.setTimeout(() => setMarginRight(open ? 0 : size), 1);    
       }, [open]);
