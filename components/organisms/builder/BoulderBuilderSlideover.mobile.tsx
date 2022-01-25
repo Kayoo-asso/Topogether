@@ -20,11 +20,15 @@ interface BoulderBuilderSlideoverMobileProps {
 
 export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobileProps> = watchDependencies((props: BoulderBuilderSlideoverMobileProps) => {
   const [full, setFull] = useState(false);
-  const [imageIndex, setImageIndex] = useState(0);
-  const [trackTab, setTrackTab] = useState(true); // BUILDER
+  const [trackTab, setTrackTab] = useState(true);
 
   const boulder = props.boulder();
   const selectedTrack = props.selectedTrack();
+
+  const [imageToDisplayIndex, setImageToDisplayIndex] = useState(0);
+  const imageToDisplay = boulder.images.find(img => img.id === selectedTrack?.lines?.at(0)?.imageId) || boulder.images[imageToDisplayIndex];
+
+  const [displayPhantomTracks, setDisplayPhantomTracks] = useState(false);
 
   return (
     <SlideoverMobile
@@ -36,31 +40,30 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
       {/* BOULDER IMAGE */}
       {full && (
         <div className="w-full bg-dark rounded-t-lg flex items-center justify-center">
-          {imageIndex > 0 && !selectedTrack &&
+          {imageToDisplayIndex > 0 && !selectedTrack &&
             <Icon 
               name="arrow-full"
               center
               SVGClassName="w-3 h-3 stroke-main fill-main rotate-180"
               wrapperClassName='absolute left-4 z-100'
-              onClick={() => setImageIndex((idx) => idx - 1)}
+              onClick={() => setImageToDisplayIndex((idx) => idx - 1)}
             />
           }
           <TracksImage
-            image={boulder.images.find(img => img.id === selectedTrack?.lines?.at(0)?.imageId) || boulder.images[imageIndex]}
+            image={imageToDisplay}
             tracks={boulder.tracks}
             selectedTrack={props.selectedTrack}
-            displayPhantomTracks={false}
+            displayPhantomTracks={displayPhantomTracks}
             displayTracksDetails={!!selectedTrack?.id}
-            imageClassName='rounded-t-lg'
-            canvasClassName='rounded-t-lg'
+            containerClassName={'max-h-[300px]' + (imageToDisplay.width/imageToDisplay.height > 1 ? ' overflow-hidden rounded-t-lg' : '')}
           />
-          {imageIndex < boulder.images.length - 1 && !selectedTrack &&
+          {imageToDisplayIndex < boulder.images.length - 1 && !selectedTrack &&
             <Icon 
               name="arrow-full"
               center
               SVGClassName="w-3 h-3 stroke-main fill-main"
               wrapperClassName='absolute right-4 z-100'
-              onClick={() => setImageIndex((idx) => idx + 1)}
+              onClick={() => setImageToDisplayIndex((idx) => idx + 1)}
             />
           }
         </div>
@@ -83,7 +86,14 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
           )}
         </div>
 
-        <div className="flex justify-end col-span-2">
+        <div className="flex flex-row items-center gap-6 justify-end col-span-2">
+          {selectedTrack &&
+            <Icon 
+              name='many-tracks'
+              SVGClassName={'w-6 h-6 ' + (displayPhantomTracks ? 'stroke-main' : 'stroke-grey-medium')}
+              onClick={() => setDisplayPhantomTracks(!displayPhantomTracks)}
+            />
+          }
           {full && (
             <RoundButton
               iconName="camera"

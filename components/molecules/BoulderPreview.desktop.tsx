@@ -6,9 +6,9 @@ import { MultipleImageInput, TracksImage } from '.';
 interface BoulderPreviewDesktopProps {
     boulder: Quark<Boulder>,
     selectedTrack: SelectQuarkNullable<Track>,
-    currentImage: Image | undefined,
-    setCurrentImage: Dispatch<SetStateAction<Image | undefined>>,
     displayAddButton?: boolean,
+    currentImage: Image | undefined,
+    setCurrentImage: Dispatch<SetStateAction<Image | undefined>>, 
 }
 
 export const BoulderPreviewDesktop: React.FC<BoulderPreviewDesktopProps> = watchDependencies(({

@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { AverageNote, GradeCircle } from 'components';
 import { gradeToLightGrade, Track } from 'types';
 import { Quark, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
+import { DeviceContext } from 'helpers';
 
 interface TracksListProps {
   tracks: Iterable<Quark<Track>>,
   selectedTrack: SelectQuarkNullable<Track>,
+  onTrackClick: (trackQuark: Quark<Track>) => void,
 }
 
 const gradeColors = {
@@ -20,10 +22,11 @@ const gradeColors = {
 };
 
 export const TracksList: React.FC<TracksListProps> = watchDependencies((props: TracksListProps) => {
+  const device = useContext(DeviceContext);
   const tracks = Array.from(props.tracks);
 
   return (
-    <div className="w-full border-t border-grey-light">
+    <div className="w-full border-t h-full border-grey-light">
 
       {tracks.map((trackQuark) => {
         const track = trackQuark();
@@ -32,10 +35,7 @@ export const TracksList: React.FC<TracksListProps> = watchDependencies((props: T
           <div
             key={track.id}
             className="px-5 py-5 md:py-3 flex flex-col border-b border-grey-light cursor-pointer md:hover:bg-grey-superlight"
-            onClick={() => {
-              if (props.selectedTrack()?.id === track.id) props.selectedTrack.select(undefined);
-              else props.selectedTrack.select(trackQuark);
-            }}
+            onClick={() => props.onTrackClick(trackQuark)}
           >
             <div className='flex flex-row w-full items-center'>
               <GradeCircle
@@ -61,7 +61,7 @@ export const TracksList: React.FC<TracksListProps> = watchDependencies((props: T
                 wrapperClassName="col-span-2" 
               />
             </div>
-            {props.selectedTrack()?.id === track.id &&
+            {props.selectedTrack()?.id === track.id && device === 'MOBILE' &&
               <>
                 <div className='mt-4'>
                   {track.description}
@@ -87,6 +87,8 @@ export const TracksList: React.FC<TracksListProps> = watchDependencies((props: T
           </div>  
         );
       })}
+
+
     </div>
   );
 });

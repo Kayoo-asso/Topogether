@@ -9,7 +9,7 @@ import {
 import { useRouter } from 'next/router';
 import { quarkTopo } from 'helpers/fakeData/fakeTopoV2';
 import { DeviceContext } from 'helpers';
-import { Boulder, Parking, Track, Waypoint } from 'types';
+import { Boulder, Image, Parking, Track, Waypoint } from 'types';
 import { Quark, QuarkIter, useQuarkyCallback, useSelectQuark, watchDependencies } from 'helpers/quarky';
 
 const Topo: NextPage = () => {
@@ -30,6 +30,7 @@ const Topo: NextPage = () => {
       .flatten()
       , [topo().sectors]) || new QuarkIter<Quark<Waypoint>>([]);
 
+  const [currentImage, setCurrentImage] = useState<Image>();
   const selectedTrack = useSelectQuark<Track>();
   const selectedBoulder = useSelectQuark<Boulder>();
   const selectedParking = useSelectQuark<Parking>();
@@ -41,7 +42,10 @@ const Topo: NextPage = () => {
     selectedWaypoint.select(undefined);
     if (selectedBoulder()?.id === boulderQuark().id)
         selectedBoulder.select(undefined);
-    else selectedBoulder.select(boulderQuark)
+    else {
+      selectedBoulder.select(boulderQuark);
+      setCurrentImage(boulderQuark().images[0]);
+    }
   }, [selectedBoulder]);
   const toggleParkingSelect = useQuarkyCallback((parkingQuark: Quark<Parking>) => {
     selectedBoulder.select(undefined);
@@ -173,7 +177,11 @@ const Topo: NextPage = () => {
                   boulder={boulder}
                   selectedTrack={selectedTrack}
                   topoCreatorId={topo().creatorId}
-                  onSelectTrack={(track) => selectedTrack.select(track)}
+                  onSelectTrack={(track) => {
+                    console.log(boulder().images.find(img => img.id === track().lines.at(0).id))
+                    setCurrentImage(boulder().images.find(img => img.id === track().lines.at(0).id));
+                    selectedTrack.select(track);
+                  }}
                   onClose={() => {
                     selectedTrack.select(undefined);
                     selectedBoulder.select(undefined);
@@ -186,7 +194,8 @@ const Topo: NextPage = () => {
                 boulder={boulder}
                 selectedTrack={selectedTrack}
                 topoCreatorId={topo().creatorId}
-                onSelectTrack={(track) => selectedTrack.select(track)}
+                setCurrentImage={setCurrentImage}
+                currentImage={currentImage}
                 onClose={() => {
                   selectedTrack.select(undefined);
                   selectedBoulder.select(undefined);
