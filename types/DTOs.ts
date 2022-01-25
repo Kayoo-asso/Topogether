@@ -1,54 +1,47 @@
-import { Boulder, BoulderData, Line, Parking, SectorData, TopoData, Track, TrackData, Waypoint } from "./Topo";
+import { Boulder, BoulderData, Line, Manager, Parking, SectorData, TopoData, Track, TrackData, Waypoint } from "./Topo";
+import { TrackRating, User } from "./User";
 import { UUID } from "./Utils";
-
-export type DTO<T, Refs extends keyof T, Ids extends string> = Omit<T, Refs> & {
-    [K in Ids]: UUID
-};
 
 export type TopoDTO = Omit<TopoData, 'sectors' | 'parkings' | 'access' | 'image'> & {
     imageId?: UUID
 };
 
-// === Sector ===
-
 export type SectorDTO = Omit<SectorData, 'boulders' | 'waypoints'> & {
     boulderIds: UUID[],
     waypointIds: UUID[]
-}
+};
 
-// === Boulder ===
-export type BoulderCreate = Omit<Boulder, 'tracks' | 'images'> & {
+export type BoulderDTO = Omit<Boulder, 'tracks' | 'images'> & {
     sectorId: UUID
 };
 
-export type BoulderUpdate = Omit<BoulderCreate, 'sectorId'>;
-
-
-// === Track === 
-
-export type TrackCreate = Omit<Track, 'lines' | 'ratings'> & {
+export type TrackDTO = Omit<Track, 'lines' | 'ratings'> & {
     boulderId: UUID
 };
 
-export type TrackUpdate = Omit<TrackCreate, 'sectorId'>;
-
-// === Line ===
-
-export type LineCreate = Line & {
+export type LineDTO = Line & {
     trackId: UUID
 };
 
-export type LineUpdate = Omit<LineCreate, 'trackId'>
+export type TrackRatingDTO = TrackRating & {
+    trackId: UUID
+};
 
+export type ParkingDTO = Omit<Parking, 'image'> & {
+    topoId: UUID,
+    imageId?: UUID,
+}
 
-export type BoulderDTO = Omit<BoulderData, 'tracks' | 'images'> & {
+export type WaypointDTO = Omit<Waypoint, 'image'> & {
     sectorId: UUID,
-};
+    imageId?: UUID,
+}
 
-export type WaypointDTO = Waypoint & {
-    sectorId: UUID
-};
+export type UserDTO = Omit<User, 'image'> & {
+    imageId?: UUID
+}
 
-export type ParkingDTO = Parking & {
-    topoId: UUID
-};
+export type ManagerDTO = Omit<Manager, 'image'> & {
+    topoId: UUID,
+    imageId?: UUID
+}

@@ -19,7 +19,7 @@ export const LeftbarDesktop: React.FC<LeftbarDesktopProps> = ({
           <div className="grid grid-cols-3 items-center pb-[50%] cursor-pointer">
             <div>
               <ProfilePicture
-                src={session.profilePicture?.url || staticUrl.defaultProfilePicture}
+                src={session.image?.url || staticUrl.defaultProfilePicture}
               />
             </div>
             <div>

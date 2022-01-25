@@ -21,7 +21,6 @@ const gradeColors = {
 
 export const TracksList: React.FC<TracksListProps> = watchDependencies((props: TracksListProps) => {
   const tracks = Array.from(props.tracks);
-  console.log("rendered TrackList");
 
   return (
     <div className="w-full border-t border-grey-light">
