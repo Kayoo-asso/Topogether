@@ -1,3 +1,6 @@
+import { Image } from "types";
+import { v4 } from "uuid";
+
 export const fontainebleauLocation = {
   lat: 48.399065,
   lng: 2.697569,
@@ -14,3 +17,10 @@ export const staticUrl = {
   defaultKayoo: `/assets/img/Kayoo_defaut_image.png`,
   deleteWarning: `/assets/img/Warning delete topogether boulder escalade topo.png`,
 };
+
+export const defaultImage: Image = {
+  id: v4(),
+  url: staticUrl.defaultKayoo,
+  width: 501,
+  height: 501
+}

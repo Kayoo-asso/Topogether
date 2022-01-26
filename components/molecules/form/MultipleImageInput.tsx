@@ -16,7 +16,7 @@ interface MultipleImageInputProps {
   selected?: UUID,
   onImageClick?: (id: UUID) => void,
   onImageDelete?: (id: UUID) => void,
-  onUpload: (files: File[]) => void,
+  onChange: (files: File[]) => void,
 }
 
 export const MultipleImageInput: React.FC<MultipleImageInputProps> = ({
@@ -75,7 +75,7 @@ export const MultipleImageInput: React.FC<MultipleImageInputProps> = ({
         <ImageInput
           label={props.label}
           multiple
-          onUpload={props.onUpload}
+          onChange={props.onChange}
         />
       )}
 

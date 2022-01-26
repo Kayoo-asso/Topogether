@@ -5,12 +5,12 @@ import {
   BoulderSlideagainstDesktop,  BoulderSlideoverMobile, TrackSlideagainstDesktop,
   For, Show,
   Header, LeftbarDesktop, 
-  MapControl, ParkingSlide, WaypointSlide } from 'components';
+  MapControl, ParkingSlide, WaypointSlide, TracksImage } from 'components';
 import { useRouter } from 'next/router';
 import { quarkTopo } from 'helpers/fakeData/fakeTopoV2';
-import { DeviceContext } from 'helpers';
+import { defaultImage, DeviceContext } from 'helpers';
 import { Boulder, Image, Parking, Track, Waypoint } from 'types';
-import { Quark, QuarkIter, useQuarkyCallback, useSelectQuark, watchDependencies } from 'helpers/quarky';
+import { Quark, QuarkArray, QuarkIter, useQuarkyCallback, useSelectQuark, watchDependencies } from 'helpers/quarky';
 
 const Topo: NextPage = () => {
   const router = useRouter();
@@ -22,15 +22,15 @@ const Topo: NextPage = () => {
       .lazy()
       .map(s => s.boulders.quarks())
       .flatten()
-      , [topo().sectors]);
+  , [topo().sectors]);
   const parkings = useMemo(() => topo().parkings?.quarks(), [topo().parkings]) || new QuarkIter<Quark<Parking>>([]);
   const waypoints = useMemo(() => topo().sectors
       .lazy()
       .map(s => s.waypoints.quarks())
       .flatten()
-      , [topo().sectors]) || new QuarkIter<Quark<Waypoint>>([]);
+  , [topo().sectors]) || new QuarkIter<Quark<Waypoint>>([]);
 
-  const [currentImage, setCurrentImage] = useState<Image>();
+  const [currentImage, setCurrentImage] = useState<Image>(defaultImage);
   const selectedTrack = useSelectQuark<Track>();
   const selectedBoulder = useSelectQuark<Boulder>();
   const selectedParking = useSelectQuark<Parking>();
@@ -43,8 +43,8 @@ const Topo: NextPage = () => {
     if (selectedBoulder()?.id === boulderQuark().id)
         selectedBoulder.select(undefined);
     else {
-      selectedBoulder.select(boulderQuark);
       setCurrentImage(boulderQuark().images[0]);
+      selectedBoulder.select(boulderQuark);
     }
   }, [selectedBoulder]);
   const toggleParkingSelect = useQuarkyCallback((parkingQuark: Quark<Parking>) => {
@@ -160,10 +160,23 @@ const Topo: NextPage = () => {
 
         <Show when={() => [device !== 'MOBILE', selectedTrack.quark()] as const}>
           {([, track]) => 
-            <TrackSlideagainstDesktop 
-              track={track}
-              onClose={() => selectedTrack.select(undefined)}
-            />
+            <>
+              <TrackSlideagainstDesktop 
+                track={track}
+                onClose={() => selectedTrack.select(undefined)}
+              />
+              <div className="absolute top-0 bg-black bg-opacity-90 h-full flex flex-col z-1000 w-full md:w-[calc(100%-600px)]">
+                <div className="flex-1 flex items-center relative">
+                  {/* TODO: CHANGE SIZING */}
+                  <TracksImage
+                    image={currentImage}
+                    tracks={new QuarkArray([track()])}
+                    selectedTrack={selectedTrack}
+                    displayTracksDetails
+                  />
+                </div>
+              </div>
+            </>
           }
 
         </Show>
@@ -177,11 +190,8 @@ const Topo: NextPage = () => {
                   boulder={boulder}
                   selectedTrack={selectedTrack}
                   topoCreatorId={topo().creatorId}
-                  onSelectTrack={(track) => {
-                    console.log(boulder().images.find(img => img.id === track().lines.at(0).id))
-                    setCurrentImage(boulder().images.find(img => img.id === track().lines.at(0).id));
-                    selectedTrack.select(track);
-                  }}
+                  currentImage={currentImage}
+                  setCurrentImage={setCurrentImage}
                   onClose={() => {
                     selectedTrack.select(undefined);
                     selectedBoulder.select(undefined);
@@ -194,8 +204,8 @@ const Topo: NextPage = () => {
                 boulder={boulder}
                 selectedTrack={selectedTrack}
                 topoCreatorId={topo().creatorId}
+                currentImage={currentImage || defaultImage}
                 setCurrentImage={setCurrentImage}
-                currentImage={currentImage}
                 onClose={() => {
                   selectedTrack.select(undefined);
                   selectedBoulder.select(undefined);

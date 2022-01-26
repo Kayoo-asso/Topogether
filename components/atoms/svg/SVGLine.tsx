@@ -121,11 +121,10 @@ export const SVGLine: React.FC<SVGLineProps> = watchDependencies(({
     }
   }
 
-
   return (
     <>
         <path
-            className={`fill-[none] stroke-2 ${getStrokeColorClass()} ${phantom ? 'z-10 opacity-50' : 'z-30'} cursor-pointer`}
+            className={`fill-[none] stroke-2 ${getStrokeColorClass()} ${phantom ? 'z-10 opacity-50' : 'z-30'}${props.onClick ? ' cursor-pointer' : ''}`}
             d={path}
             onClick={props.onClick}
         />
@@ -166,7 +165,7 @@ export const SVGLine: React.FC<SVGLineProps> = watchDependencies(({
                     cx={firstX}
                     cy={firstY}
                     r={9}
-                    className={`${getFillColorClass()} ${phantom ? 'z-20 opacity-50' : 'z-40'}${!eraser || phantom ? ' cursor-pointer' : ''}`}
+                    className={`${getFillColorClass()} ${phantom ? 'z-20 opacity-50' : 'z-40'}${(!eraser && props.onClick) || phantom ? ' cursor-pointer' : ''}`}
                     onClick={props.onClick}
                     onPointerDown={handlePointerDown}
                     onPointerUp={handlePointerUp}
@@ -175,7 +174,7 @@ export const SVGLine: React.FC<SVGLineProps> = watchDependencies(({
                 <text
                     x={firstX}
                     y={firstY}
-                    className={`${phantom ? 'z-20 opacity-50' : 'z-40'}${!eraser || phantom ? ' cursor-pointer' : ''}`}
+                    className={`${phantom ? 'z-20 opacity-50' : 'z-40'}${(!eraser && props.onClick) || phantom ? ' cursor-pointer' : ' cursor-default'}`}
                     textAnchor="middle"
                     stroke="white"
                     strokeWidth="1px"

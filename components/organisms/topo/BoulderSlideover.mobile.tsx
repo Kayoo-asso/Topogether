@@ -1,9 +1,9 @@
-import React, { useMemo, useState } from 'react';
+import React, { Dispatch, SetStateAction, useMemo, useState } from 'react';
 import {
   GradeScale, Icon, LikeButton, SlideoverMobile, TracksImage, Show,
 } from 'components';
 import {
- Boulder, Track, UUID,
+ Boulder, Image, Track, UUID,
 } from 'types';
 import { buildBoulderGradeHistogram, staticUrl } from 'helpers';
 import { default as NextImage } from 'next/image';
@@ -15,7 +15,8 @@ interface BoulderSlideoverMobileProps {
   open?: boolean,
   selectedTrack: SelectQuarkNullable<Track>,
   topoCreatorId?: UUID,
-  onSelectTrack: (selected: Quark<Track>) => void,
+  currentImage: Image,
+  setCurrentImage: Dispatch<SetStateAction<Image>>,
   onClose: () => void,
 }
 
@@ -30,8 +31,6 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = wat
   const selectedTrack = props.selectedTrack();
   
   const [imageToDisplayIndex, setImageToDisplayIndex] = useState(0);
-  // console.log(imageToDisplayIndex);
-  const imageToDisplay = boulder.images.find(img => img.id === selectedTrack?.lines?.at(0).imageId) || boulder.images[imageToDisplayIndex];
 
   const [displayPhantomTracks, setDisplayPhantomTracks] = useState(false);
   const displayedTracks = useMemo(() => boulder.tracks
@@ -50,32 +49,38 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = wat
       {full && (
         <div className="w-full bg-dark rounded-t-lg flex items-center justify-center">
           {imageToDisplayIndex > 0 &&
-            <div className='absolute left-2 z-200'>
-              <Icon 
-                name='arrow-full'
-                SVGClassName='w-5 h-5 fill-main rotate-180'
-                onClick={() => setImageToDisplayIndex(idx => idx-1)}
-              />
-            </div>
+            <Icon 
+              name="arrow-full"
+              center
+              SVGClassName="w-3 h-3 stroke-main fill-main rotate-180"
+              wrapperClassName='absolute left-4 z-100'
+              onClick={() => {
+                props.setCurrentImage(boulder.images[imageToDisplayIndex - 1]);
+                setImageToDisplayIndex(idx => idx - 1)
+              }}
+            />
           }
 
           <TracksImage
-            image={imageToDisplay}
+            image={props.currentImage}
             tracks={boulder.tracks}
             selectedTrack={props.selectedTrack}
             displayPhantomTracks={displayPhantomTracks}
             displayTracksDetails={!!selectedTrack?.id}
-            containerClassName={'max-h-[300px]' + (imageToDisplay.width/imageToDisplay.height > 1 ? ' overflow-hidden rounded-t-lg' : '')}
+            containerClassName={'max-h-[300px]' + (props.currentImage.width/props.currentImage.height > 1 ? ' overflow-hidden rounded-t-lg' : '')}
           />
 
           {imageToDisplayIndex < boulder.images.length-1 &&
-            <div className='absolute right-2 z-200'>
-              <Icon 
-                name='arrow-full'
-                SVGClassName='w-5 h-5 fill-main'
-                onClick={() => setImageToDisplayIndex(idx => idx+1)}
-              />
-            </div>
+            <Icon 
+              name="arrow-full"
+              center
+              SVGClassName="w-3 h-3 stroke-main fill-main"
+              wrapperClassName='absolute right-4 z-100'
+              onClick={() => {
+                props.setCurrentImage(boulder.images[imageToDisplayIndex + 1]);
+                setImageToDisplayIndex(idx => idx + 1)
+              }}
+            />
           }
         </div>
       )}
@@ -146,10 +151,15 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = wat
             tracks={displayedTracks}
             selectedTrack={props.selectedTrack}
             onTrackClick={(trackQuark) => {
-              const newImageIndex = boulder.images.findIndex(img => img.id === trackQuark().lines?.at(0).imageId);
-              if (newImageIndex > -1) setImageToDisplayIndex(newImageIndex);
               if (props.selectedTrack()?.id === trackQuark().id) props.selectedTrack.select(undefined);
-              else props.selectedTrack.select(trackQuark);
+              else {
+                const newImageIndex = boulder.images.findIndex(img => img.id === trackQuark().lines?.at(0).imageId);
+                if (newImageIndex > -1) {
+                  props.setCurrentImage(boulder.images[newImageIndex]);
+                  setImageToDisplayIndex(newImageIndex);
+                }
+                props.selectedTrack.select(trackQuark);
+              }
             }}
           />
         </div>
