@@ -2,8 +2,15 @@ import { batch, registerPostUpdateHook } from ".";
 import { getBroadcaster } from "./BroadcastChannel";
 import { quark, Quark, isSSR } from "./quarky";
 
-export interface SyncQuark<T> extends Quark<T> {
+export interface SyncQuark<T, Message = T> extends Quark<T> {
     readonly id: string,
+    readonly export?: (value: T) => Message,
+    readonly import?: (message: Message, current: T) => T,
+}
+
+export interface SyncQuarkOptions<T, Message = T> {
+    export: (value: T) => Message,
+    import: (message: Message, current: T) => T,
 }
 
 interface QuarkyMessage {
@@ -42,7 +49,11 @@ Broadcaster.onmessage = (message) => {
             // TODO: wrap functions?
             const q = syncedQuarks.get(key);
             if (q) {
-                q.set(value);
+                if (q.import) {
+                    q.set((x: any) => q.import!(value, x));
+                } else {
+                    q.set(value);
+                }
             }
         }
     });
@@ -50,23 +61,29 @@ Broadcaster.onmessage = (message) => {
 
 const syncedQuarks: Map<string, SyncQuark<any>> = new Map();
 
-export function syncQuark<T>(id: string, initial: T): SyncQuark<T> {
+export function syncQuark<T, Message = T>(id: string, initial: T, options?: SyncQuarkOptions<T, Message>): SyncQuark<T> {
     if (isSSR) {
         const q = quark(initial) as any;
         q.id = id;
         return q;
     }
 
-    let q = syncedQuarks.get(id);
+    let q = syncedQuarks.get(id) as any;
     if (q) {
         q.set(initial);
     } else {
-        const onChange = (value: T) => Changes.push([id, value]);
+        const onChange = options
+            ? (value: T) => Changes.push([id, options.export(value)])
+            : (value: T) => Changes.push([id, value]);
         // TypeScript struggles with adding a new property onto an existing interface
-        q = quark(initial, { onChange }) as SyncQuark<T>;
-        (q as any).id = id;
+        q = quark(initial, { onChange }) as any;
+        q.id = id;
+        q.import = options?.import;
+        q.export = options?.export;
+
         syncedQuarks.set(id, q);
-        Changes.push([id, initial]);
+        onChange(initial);
+
         if (!Scheduled) {
             Scheduled = true;
             queueMicrotask(flushChanges);
