@@ -21,6 +21,7 @@ export type User = {
 export type Role = 'ADMIN' | 'USER';
 
 export interface TrackRating {
+  id: UUID,
   authorId: UUID,
   finished: boolean,
   rating: Rating,

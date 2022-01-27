@@ -625,7 +625,7 @@ test("Lazy effect that ends up cleaning itself during execution runs cleanups an
             // this dependency should not be added after disposal & current execution
             trigger();
             counter += 1;
-            onCleanup(() => cleanupRuns += 1 );
+            onCleanup(() => cleanupRuns += 1);
         },
         { lazy: true }
     );
@@ -791,7 +791,7 @@ test("Activating / deactivating a derivation multiple times in a batch only reco
     const d = derive(() => {
         derivationRuns += 1;
         return q()
-    }, { name: "derivation"});
+    }, { name: "derivation" });
     batch(() => {
         let e = effect([d], () => { });
         expect(derivationRuns).toBe(1);
@@ -811,7 +811,7 @@ test("Deactivated derivation does not recompute unless a change happens", () => 
     const d = derive(() => {
         derivationRuns += 1;
         return q()
-    }, { name: "derivation"});
+    }, { name: "derivation" });
     const e = effect([d], () => { });
     expect(derivationRuns).toBe(1);
     e.dispose();
@@ -891,7 +891,7 @@ test("Effect disposing itself during cleanup runs all cleanups exactly once", ()
 
 test("Quark subs trigger on change", () => {
     let subRuns = 0;
-    const q = quark(1, { sub: () => subRuns += 1 }); 
+    const q = quark(1, { onChange: () => subRuns += 1 });
     expect(subRuns).toBe(0);
     q.set(2);
     expect(subRuns).toBe(1);
@@ -903,8 +903,33 @@ test("Quark subs receive the new value", () => {
 
 test("Quark subs do not trigger for equal values", () => {
     let subRuns = 0;
-    const q = quark(1, { sub: () => subRuns += 1 }); 
+    const q = quark(1, { onChange: () => subRuns += 1 });
     expect(subRuns).toBe(0);
     q.set(1);
     expect(subRuns).toBe(0);
+});
+
+// Test taken from Adapton
+// https://docs.rs/adapton/0.3.31/adapton/#switching
+// Gist: https://gist.github.com/khooyp/98abc0e64dc296deaa48
+// The goal is for the test to never perform a division by zero
+test("Quarky behaves like a demand-driven computation graph", () => {
+    // necessary to check when the division actually runs, since divisions by zero don't throw errors in JS
+    let divRuns = 0;
+    const num = quark(4);
+    const den = quark(0);
+    const div = derive(() => { divRuns += 1; return num() / den(); });
+    const safeDiv = derive(() => den() === 0 ? undefined : div());
+    effect(safeDiv);
+
+    expect(divRuns).toBe(0);
+    expect(safeDiv()).toBe(undefined);
+
+    den.set(2);
+    expect(safeDiv()).toBe(2);
+    expect(divRuns).toBe(1);
+
+    den.set(0);
+    expect(safeDiv()).toBe(undefined);
+    expect(divRuns).toBe(1);
 });

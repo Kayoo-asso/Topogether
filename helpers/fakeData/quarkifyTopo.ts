@@ -1,4 +1,5 @@
 import { CleanupHelper, effect, Effect, Quark, quark, QuarkArray } from 'helpers/quarky';
+import { syncQuark } from 'helpers/quarky/quarky-sync';
 import { BoulderData, Grade, Line, Name, Image, TrackData, Description, Difficulty, ClimbTechniques, SectorData, TopoData, Amenities, TopoStatus, TopoType, RockTypes, TopoAccess, UUID, Track, Boulder, Sector, Topo } from 'types';
 
 export const quarkifyTopo = (topo: TopoData): Quark<Topo> => quark<Topo>({
@@ -11,24 +12,20 @@ export const quarkifyTopo = (topo: TopoData): Quark<Topo> => quark<Topo>({
 
 const quarkifySector = (sector: SectorData): Sector => ({
     ...sector,
-    boulders: new QuarkArray(sector.boulders.map(quarkifyBoulder), {
-        onChange: (boulder) => console.log("Boulder changed!", boulder)
-    }),
+    boulders: new QuarkArray(sector.boulders.map(quarkifyBoulder)),
     waypoints: new QuarkArray(sector.waypoints)
 });
 
 const quarkifyBoulder = (boulder: BoulderData): Boulder => ({
     ...boulder,
-    tracks: new QuarkArray(boulder.tracks.map(quarkifyTrack), {
-        onAdd: (track) => console.log("Created track!", track),
-        onChange: (track) => console.log("Modified track!", track),
-        onDelete: (track) => console.log("Deleted track!", track),
-    })
+    tracks: new QuarkArray(boulder.tracks.map(quarkifyTrack))
 });
 
 const quarkifyTrack = (track: TrackData): Track => ({
     ...track,
-    lines: new QuarkArray(track.lines),
+    lines: new QuarkArray(track.lines, {
+        onAdd: (line) => syncQuark(line.id, line)
+    }),
     ratings: new QuarkArray(track.ratings)
 });
 

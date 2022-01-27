@@ -48,7 +48,12 @@ export type CleanupHelper = (cleanup: (deleted: boolean) => void) => void;
 
 export interface QuarkOptions<T> {
     equal?: ((a: T, b: T) => boolean),
-    sub?: (value: T) => void,
+    onChange?: (value: T) => void,
+    name?: string,
+}
+
+export interface DerivationOptions<T> {
+    equal?: ((a: T, b: T) => boolean),
     name?: string,
 }
 
@@ -76,9 +81,6 @@ interface Node {
     status: NodeStatus,
     lastChange: number,
     lastVerified: number,
-    // active: boolean,
-    // readonly effect: boolean,
-    // cleanups: ((deleted: boolean) => void)[] | null,
     deps: Dependency[] | null,
     obs: Observer[] | null,
     readonly name: string | undefined,
@@ -134,6 +136,8 @@ interface Scope {
 
 // === IMPLEMENTATION ===
 
+export const isSSR = typeof window === "undefined";
+
 let Epoch = 0;
 // Using a linked list instead of an array for faster checks during reads
 // todo: benchmark?
@@ -149,6 +153,8 @@ let ScheduledCleanups: Root[] = [];
 let ScheduledEffects: Root[] = [];
 let DeactivationCandidates: Derived<any>[] = [];
 
+const PostUpdateHooks: (() => void)[] = [];
+
 let ExternalBatcher = (work: () => void) => work();
 
 export function setBatchingBehavior(batcher: (work: () => void) => void) {
@@ -161,7 +167,7 @@ export function quark<T>(initial: T, options?: QuarkOptions<T>): Quark<T> {
     // initialize in the order given in the Node interface, to ensure consistency with others
     const q: Leaf<T> = {
         value: initial,
-        fn: options?.sub,
+        fn: options?.onChange,
         equal: options?.equal ?? defaultEqual,
         status: NodeStatus.Clean,
         lastChange: -1,
@@ -179,7 +185,7 @@ export function quark<T>(initial: T, options?: QuarkOptions<T>): Quark<T> {
     return read;
 }
 
-export function derive<T>(fn: () => T, options?: QuarkOptions<T>): Signal<T> {
+export function derive<T>(fn: () => T, options?: DerivationOptions<T>): Signal<T> {
     const d: Derived<T> = {
         // will be computed upon first read
         value: undefined!,
@@ -306,21 +312,6 @@ export function observerEffect(computation: () => void): ObserverEffect {
     } as ObserverEffect;
 }
 
-export function useComponentWatch<T>(observer: ObserverEffect, component: React.FunctionComponent<T>, props: T) {
-    const scope: Scope = {
-        accessed: [],
-        effectHooks: null,
-        parent: Scope
-    };
-    Scope = scope;
-    const result = component(props);
-    Scope = scope.parent;
-    const effect = (observer as any).node as Root;
-    diffDeps(effect, effect.deps, scope.accessed);
-    effect.deps = scope.accessed;
-    return result;
-}
-
 export function selectSignal<T>(): SelectSignalNullable<T>;
 export function selectSignal<T>(initial: Signal<T>): SelectSignal<T>;
 export function selectSignal<T>(initial?: Signal<T>): SelectSignal<T> | SelectSignalNullable<T> {
@@ -360,6 +351,17 @@ export function untrack<T>(work: () => T): T {
     const result = work();
     Scope = saved;
     return result;
+}
+
+export function registerPostUpdateHook(hook: () => void) {
+    PostUpdateHooks.push(hook);
+}
+
+export function unregisterPostUpdateHook(hook: () => void) {
+    const idx = PostUpdateHooks.findIndex(hook);
+    if (idx !== -1) {
+        PostUpdateHooks.splice(idx)
+    }
 }
 
 // === CORE ===
@@ -423,9 +425,7 @@ function processUpdates(start: number) {
                 if (node.equal(prevValue, node.value)) continue;
 
                 node.lastChange = Epoch;
-                if (node.fn) {
-                    PendingSubs.push(node);
-                }
+                if (node.fn) PendingSubs.push(node);
 
                 for (let j = node.obs.length - 1; j >= 0; --j) {
                     flagDirty(node.obs[j]);
@@ -443,8 +443,7 @@ function processUpdates(start: number) {
             // TODO: what happens if an effect runs and should reschedule an effect
             // that is already scheduled for later? The rescheduling should happen 
             // when updating quarks in the next update cycle anyways
-            // for (let i = effects.length - 1; i >= 0; --i) {
-            for (let i = 0; i < effects.length; ++i) {
+            for (let i = effects.length - 1; i >= 0; --i) {
                 const e = effects[i];
                 // NodeStatus.Clean means deleted for effects
                 if (e.status === NodeStatus.Clean) continue;
@@ -458,6 +457,9 @@ function processUpdates(start: number) {
             PendingSubs.length = 0;
             for (const node of subs) {
                 node.fn!(node.value);
+            }
+            for (let i = 0; i < PostUpdateHooks.length; ++i) {
+                PostUpdateHooks[i]();
             }
         }
     });
@@ -499,17 +501,20 @@ function flagDirty(node: Observer) {
 function checkComputation(node: Observer): boolean {
     // console.log("Actualising " + node.name + " with deps " + node.deps.map(x => x.name));
     let somethingChanged = false;
-    for (let i = node.deps.length - 1; i >= 0; --i) {
+    let i = 0;
+    // check deps in order, so that if a condition changed, we don't visit the dependencies of the old branch
+    // this gives Quarky the semantics of an on-demand computation graph
+    // see Adapton: https://docs.rs/adapton/0.3.31/adapton/#switching
+    while (!somethingChanged && i < node.deps.length) {
         const d = node.deps[i];
-        if (d.lastChange === Epoch ||
-            // leaves never have any bit set on their status flag
-            ((d.status & NodeStatus.Dirty) && checkComputation(d as Observer))) {
-            somethingChanged = true;
-            break;
-        }
+        somethingChanged =
+            d.lastChange === Epoch ||
+            // type conversion because a bitwise AND returns a number and not a boolean
+            ((d.status & NodeStatus.Dirty) as unknown as boolean && checkComputation(d as Observer));
+        i += 1;
     }
-    if (!(node.status & NodeStatus.Dirty)) throw new Error("Should not be checking clean computations");
-    // can use a XOR instead of & ~NodeStatus.Dirty, since we know the dirty flag is not set
+    // if (!(node.status & NodeStatus.Dirty)) throw new Error("Should not be checking clean computations");
+    // we can use a XOR instead of & ~NodeStatus.Dirty, since we know the dirty flag is set
     node.status ^= NodeStatus.Dirty;
     return somethingChanged && runComputation(node);
 }
@@ -532,7 +537,6 @@ function activate(node: Derived<any>) {
 }
 
 function runComputation(node: Observer): boolean {
-    // console.log("Running computation " + node.name);
     const scope: Scope = {
         accessed: [],
         effectHooks: null,
@@ -608,7 +612,8 @@ function depsAreEqual(before: Dependency[], after: Dependency[]) {
 }
 
 function hook(node: Observer, dep: Dependency) {
-    if (dep.obs.indexOf(node) !== -1) return;
+    // check is not needed, due to how diffing is performed
+    // if (dep.obs.indexOf(node) !== -1) return;
 
     // console.log(`Hooking ${node.name} to ${dep.name}`)
     // only alter the observers array of the dependency

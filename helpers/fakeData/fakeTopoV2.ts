@@ -1,19 +1,21 @@
 import { Quark } from 'helpers/quarky';
-import { BoulderData, Line, Name, Image, TrackData, Description, Difficulty, ClimbTechniques, SectorData, TopoData, Amenities, TopoStatus, TopoType, RockTypes, TopoAccess, Topo, Parking, StringBetween, Manager } from 'types';
-import { v4 as uuid, v4 } from 'uuid';
+import { BoulderData, Line, Name, Image, TrackData, Description, Difficulty, ClimbTechniques, SectorData, TopoData, Amenities, TopoStatus, TopoType, RockTypes, TopoAccess, Topo, Parking, StringBetween, Manager, UUID } from 'types';
+import { v4 as uuid } from 'uuid';
 import { quarkifyTopo } from './quarkifyTopo';
+
+// Note: using hardcoded strings instead of UUIDs everywhere to make cross-tab sync work with the fake data
 
 export const images: Image[] = [
     // Topo image
     {
-        id: uuid(),
+        id: "image-1" as UUID,
         url: "https://builder.topogether.com/public/uploads/topo/main-image/dad449499de38f1bdee5872de1a354d52fff6183.jpeg",
         width: 4592,
         height: 3064,
     },
     // Boulder 0 image
     {
-        id: uuid(),
+        id: "image-2" as UUID,
         url: "https://builder.topogether.com/public/uploads/boulder/image/5b558375709fbbacae9e5dcb746c8e10e7fa083f.jpeg",
         width: 4592,
         height: 3064,
@@ -21,14 +23,14 @@ export const images: Image[] = [
         // multiply every line coordinate by 4592 / 674 to scale the data
     },
     {
-        id: uuid(),
+        id: "image-3" as UUID,
         url: "https://builder.topogether.com/public/uploads/boulder/image/a486a4432feafc909d335e8f18ee5448212af176.jpeg",
         width: 1334,
         height: 2000,
     },
     // Parking 0 image
     {
-        id: uuid(),
+        id: "image-4" as UUID,
         url: 'https://builder.topogether.com/public/uploads/parking/image/f1e65106ded2f0aafa14f1e6208a13178aae28b5.png',
         width: 1082,
         height: 476,
@@ -36,14 +38,14 @@ export const images: Image[] = [
 ]
 
 // TODO: create proper users and load them into quarks
-const topoCreatorId = uuid();
-const contributorId = uuid();
-const validatorId = uuid();
+const topoCreatorId = "topo-creator" as UUID;
+const contributorId = "contributor" as UUID;
+const validatorId = "validator" as UUID;
 
 export const lines: Line[] = [
     // Line 0, track 0
     {
-        id: uuid(),
+        id: "line-1" as UUID,
         imageId: images[1].id,
         points: [
             [2044, 1948],
@@ -58,7 +60,7 @@ export const lines: Line[] = [
     },
     // Line 1, track 1
     {
-        id: uuid(),
+        id: "line-2" as UUID,
         imageId: images[1].id,
         points: [
             [2207, 1942],
@@ -80,7 +82,7 @@ export const lines: Line[] = [
 export const tracks: TrackData[] = [
     // Track 0, boulder 0
     {
-        id: uuid(),
+        id: "track-1" as UUID,
         orderIndex: 0,
         name: "Passage 1" as Name,
         grade: "4+",
@@ -98,7 +100,7 @@ export const tracks: TrackData[] = [
     },
     // Track 1, boulder 0
     {
-        id: uuid(),
+        id: "track-2" as UUID,
         orderIndex: 1,
         name: "Passage 2" as Name,
         description: "Le départ assis est sévère mais le reste de la voie est trivial" as Description,
@@ -120,7 +122,7 @@ export const tracks: TrackData[] = [
 
 export const boulders: BoulderData[] = [
     {
-        id: uuid(),
+        id: "boulder-1" as UUID,
         name: "PearlHarbor" as Name,
         location: {
             lat: 45.70201,
@@ -137,7 +139,7 @@ export const boulders: BoulderData[] = [
 
 export const sectors: SectorData[] = [
     {
-        id: uuid(),
+        id: "sector-1" as UUID,
         name: "ABO" as Name,
         boulders,
         waypoints: [
@@ -156,7 +158,7 @@ export const sectors: SectorData[] = [
 
 export const access: TopoAccess[] = [
     {
-        id: uuid(),
+        id: "access-1" as UUID,
         duration: 15,
         difficulty: Difficulty.OK,
         steps: [
@@ -171,7 +173,7 @@ export const access: TopoAccess[] = [
         ]
     },
     {
-        id: uuid(),
+        id: "access-2" as UUID,
         duration: 25,
         difficulty: Difficulty.OK,
         steps: [
@@ -189,7 +191,7 @@ export const access: TopoAccess[] = [
 
 export const parkings: Parking[] = [
     {
-        id: v4(),
+        id: "parking-1" as UUID,
         spaces: 80,
         location: { lat: 45.701321, lng: 4.607274 },
         name: 'Parking 1' as StringBetween<1, 255>,
@@ -200,7 +202,7 @@ export const parkings: Parking[] = [
 
 export const managers: Manager[] = [
     {
-        id: v4(),
+        id: "manager-1" as UUID,
         name: 'La dégaine' as Name,
         image: images[3],
         contactName: 'Jérôme Foobar' as Name,
@@ -213,7 +215,7 @@ export const managers: Manager[] = [
 ]
 
 export const topo: TopoData = {
-    id: uuid(),
+    id: "topo-1" as UUID,
     name: "Yzéron" as Name,
     description: "Le site d'Yzéron est situé sur le massif de Py froid à environ 800m d'altitude. Il est le plus grand site de bloc de la région Lyonnaise avec une grande diversité de profil (dévers, dalle, réta...). L'esplanade sépare la plus grande partie du site en amont, et une falaise idéale pour l'initiation, située en contrebas. La forêt protège une bonne partie du site contre les aléas météorologiques ce qui, combiné à l'altitude, permet la pratique de la grimpe toute l'année." as Description,
     status: TopoStatus.Draft,
