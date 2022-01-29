@@ -104,7 +104,7 @@ const AdminPage: NextPage = () => {
             },
             ]}
           />
-          <TopoCardList topos={toposToDisplay} status={selectedStatus} />
+          <TopoCardList topos={toposToDisplay} status={selectedStatus} isAdmin />
         </div>
       </div>
     </>

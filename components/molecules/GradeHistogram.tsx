@@ -24,10 +24,9 @@ export const GradeHistogram: React.FC<GradeHistogramProps> = ({
   size = 'normal',
   ...props
 }: GradeHistogramProps) => {
-
-  const histogram = isLight(props.topo) ? 
-                      props.topo.grades :
-                      buildGradeHistogram(props.topo)();
+  const histogram = isLight(props.topo)
+                      ? props.topo.grades
+                      : buildGradeHistogram(props.topo)();
 
   const { Total, None, ...grades } = histogram;
   const maxNbOfTracks = Math.max(...Object.values(grades));
@@ -45,7 +44,7 @@ export const GradeHistogram: React.FC<GradeHistogramProps> = ({
         const height = `${heightPercent}%`;
 
         return (
-          <div className={`flex flex-col justify-end h-full mr-1`} key={grade}>
+          <div className="flex flex-col justify-end h-full mr-1" key={grade}>
             <div className={`text-center ${(size === 'normal') ? 'ktext-base' : 'ktext-base-little'}`}>
               {count}
             </div>

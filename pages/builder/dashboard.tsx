@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { v4 as uuid } from 'uuid';
 import type { NextPage } from 'next';
 import {
+  AddTopoCard,
   Button, HeaderDesktop, LeftbarDesktop, TopoCardList,
 } from 'components';
 import { LightTopo, TopoStatus } from 'types';
@@ -88,17 +89,44 @@ const DashboardPage: NextPage = () => {
             <Button content="Créer un topo" href="/builder/new" />
             <div className="md:hidden ktext-section-title text-center">Mes topos</div>
           </div>
-          <TopoCardList topos={draftLightTopos} status={TopoStatus.Draft}>
-            <div className="text-second-light ktext-section-title px-4 md:px-8">Brouillons</div>
-          </TopoCardList>
+          <TopoCardList
+            topos={draftLightTopos}
+            status={TopoStatus.Draft}
+            title={(
+              <div
+                className="text-second-light ktext-section-title px-4 md:px-8"
+              >
+                Brouillons
+              </div>
+            )}
+            lastCard={
+              <AddTopoCard />
+          }
+          />
 
-          <TopoCardList topos={submittedLightTopos} status={TopoStatus.Submitted}>
-            <div className="text-third-light ktext-section-title px-4 md:px-8">En attente de validation</div>
-          </TopoCardList>
+          <TopoCardList
+            topos={submittedLightTopos}
+            status={TopoStatus.Submitted}
+            title={(
+              <div
+                className="text-third-light ktext-section-title px-4 md:px-8"
+              >
+                En attente de validation
+              </div>
+            )}
+          />
 
-          <TopoCardList topos={validatedLightTopos} status={TopoStatus.Validated}>
-            <div className="text-main ktext-section-title px-4 md:px-8">Validés</div>
-          </TopoCardList>
+          <TopoCardList
+            topos={validatedLightTopos}
+            status={TopoStatus.Validated}
+            title={(
+              <div
+                className="text-main ktext-section-title px-4 md:px-8"
+              >
+                Validés
+              </div>
+            )}
+          />
         </div>
       </div>
     </>

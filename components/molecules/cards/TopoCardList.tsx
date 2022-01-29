@@ -2,17 +2,18 @@ import React, { ReactNode } from 'react';
 import { LightTopo, TopoStatus } from 'types';
 import { NoTopoCard } from './NoTopoCard';
 import { TopoCard } from './TopoCard';
-import { AddTopoCard } from './AddTopoCard';
 
 // TODO: add a select to sort topos by date or alphabetic order
 interface TopoCardListProps {
   topos: LightTopo[];
   status: TopoStatus;
-  children?: ReactNode;
+  title?: ReactNode;
+  lastCard?: ReactNode;
+  isAdmin?: boolean;
 }
 export const TopoCardList:React.FC<TopoCardListProps> = (props: TopoCardListProps) => (
   <div className="pt-4">
-    {props.children}
+    {props.title}
     <div
       id={`topo-card-list-${props.status}`}
       className="overflow-x-scroll hide-scrollbar md:overflow-x-hidden"
@@ -23,9 +24,9 @@ export const TopoCardList:React.FC<TopoCardListProps> = (props: TopoCardListProp
       || props.status === TopoStatus.Validated)
        && <NoTopoCard topoStatus={props.status} />}
         {props.topos.map((topo) => (
-          <TopoCard key={topo.id} topo={topo} />
+          <TopoCard key={topo.id} topo={topo} isAdmin={props.isAdmin} />
         ))}
-        {props.status === TopoStatus.Draft && <AddTopoCard />}
+        {props.lastCard}
       </div>
     </div>
   </div>

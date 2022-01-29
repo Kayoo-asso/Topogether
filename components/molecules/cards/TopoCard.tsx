@@ -7,9 +7,13 @@ import equal from 'fast-deep-equal/es6';
 import { LightTopo, TopoStatus } from 'types';
 import { useRouter } from 'next/router';
 import { useContextMenu } from 'helpers/hooks/useContextMenu';
+import { topo } from 'helpers/fakeData/fakeTopoV2';
+import { UserActionDropdown } from './UserActionDropdown';
+import { AdminActionDropdown } from './AdminActionDropdown';
 
 interface TopoCardProps {
   topo: LightTopo;
+  isAdmin?: boolean;
 }
 
 const getTopoIcons = (status: TopoStatus) => {
@@ -86,21 +90,12 @@ export const TopoCard: React.FC<TopoCardProps> = React.memo((props: TopoCardProp
           </Card>
         </div>
       </Link>
-      {dropdownDisplayed && (
-        <Dropdown
-          className={`left-[${dropdownPosition?.x}-px] top-[${dropdownPosition?.y}-px]`}
-          options={[
-            { value: 'Ouvrir', action: () => openTopo() },
-            { value: 'Télécharger', action: () => alert('télécharger') },
-            { value: 'Envoyer en validation', action: () => alert('envoyer en validation') },
-            { value: 'Supprimer', action: () => alert('supprimer') },
-          ]}
-          style={{
-            left: `${dropdownPosition?.x}px`,
-            top: `${dropdownPosition?.y}px`,
-          }}
-        />
-)}
+      {dropdownDisplayed && !props.isAdmin && (
+      <UserActionDropdown dropdownPosition={dropdownPosition} topoId={props.topo.id} />
+      )}
+      {dropdownDisplayed && props.isAdmin && (
+      <AdminActionDropdown topoId={props.topo.id} status={props.topo.status} dropdownPosition={dropdownPosition} />
+      )}
     </>
   );
 }, equal);
