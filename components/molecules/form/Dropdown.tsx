@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { CSSProperties } from 'react';
 import { Icon, Checkbox } from '../../atoms';
 
 export interface DropdownOption {
@@ -16,6 +16,7 @@ interface DropdownProps {
   type?: string;
   fullSize?: boolean,
   className?:string;
+  style?: CSSProperties | undefined;
 }
 
 export const Dropdown: React.FC<DropdownProps> = React.memo(({
@@ -23,7 +24,10 @@ export const Dropdown: React.FC<DropdownProps> = React.memo(({
   fullSize = false,
   ...props
 }: DropdownProps) => (
-  <div className={`shadow absolute z-100 ${fullSize ? 'w-full' : 'w-auto'} px-7 py-5 bg-white rounded-b ${className}`}>
+  <div
+    className={`shadow absolute z-100 ${fullSize ? 'w-full' : 'w-auto'} px-7 py-5 bg-white rounded-b ${className}`}
+    style={props.style}
+  >
     {props.options.map((opt, i) => (
       opt.isSection ? (
         <div
