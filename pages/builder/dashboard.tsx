@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { v4 as uuid } from 'uuid';
 import type { NextPage } from 'next';
-import Link from 'next/link';
 import {
   Button, HeaderDesktop, LeftbarDesktop, TopoCardList,
 } from 'components';

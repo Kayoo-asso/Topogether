@@ -8,7 +8,7 @@ import { AddTopoCard } from './AddTopoCard';
 interface TopoCardListProps {
   topos: LightTopo[];
   status: TopoStatus;
-  children: ReactNode;
+  children?: ReactNode;
 }
 export const TopoCardList:React.FC<TopoCardListProps> = (props: TopoCardListProps) => (
   <div className="pt-4">
