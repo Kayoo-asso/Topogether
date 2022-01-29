@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 import { GradeCircle, Icon, ModalDelete} from 'components';
 import { Boulder, gradeToLightGrade, Line, Name, Track, TrackRating } from 'types';
 import { Quark, QuarkArray, SelectQuarkNullable, useSelectQuark, watchDependencies } from 'helpers/quarky';
@@ -9,6 +9,7 @@ import { DeviceContext, UserContext } from 'helpers';
 interface TracksListBuilderProps {
   boulder: Quark<Boulder>,
   selectedTrack: SelectQuarkNullable<Track>,
+  onTrackClick: (trackQuark: Quark<Track>) => void,
   onDrawButtonClick?: () => void,
 }
 
@@ -59,10 +60,7 @@ export const TracksListBuilder: React.FC<TracksListBuilderProps> = watchDependen
             <div
               key={track.id}
               className="px-5 py-5 md:py-3 flex flex-col border-b border-grey-light cursor-pointer md:hover:bg-grey-superlight"
-              onClick={() => {
-                if (props.selectedTrack()?.id === track.id) props.selectedTrack.select(undefined)
-                else props.selectedTrack.select(trackQuark);
-              }}
+              onClick={() => props.onTrackClick(trackQuark)}
             >
               <div className='flex flex-row w-full items-center'>
                 <GradeCircle
@@ -86,10 +84,7 @@ export const TracksListBuilder: React.FC<TracksListBuilderProps> = watchDependen
                   <Icon 
                     name='draw'
                     SVGClassName='w-6 h-6 stroke-main'
-                    onClick={() => {
-                      props.selectedTrack.select(trackQuark);
-                      props.onDrawButtonClick!();
-                    }}
+                    onClick={props.onDrawButtonClick}
                   />
                 }
               </div>

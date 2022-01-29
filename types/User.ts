@@ -1,30 +1,29 @@
 import { Image, Rating } from 'types';
-import { StringBetween } from './Utils';
-import { UUID } from './UUID';
+import { Description, Email, Name, StringBetween, UUID } from './Utils';
 
 export type User = {
   id: UUID,
-  pseudo: string,
-  email: string,
-  role: string,
-  profilePicture?: Image,
-  firstName?: string,
-  lastName?: string,
-  phone?: string,
-  birthDate?: string,
-  gender?: string,
-  citizenship?: string,
-  city?: string,
+  pseudo: Name,
+  email: Email,
+  role: Role,
+  image?: Image,
+  firstName?: Name,
+  lastName?: Name,
+  birthDate?: Date,
+  citizenship?: Name,
+  city?: Name,
   isAcceptingNewsInfos?: boolean,
-  password?: string,
-  update?: () => void,
+  // phone?: string,
+  // gender?: string,
+  // password?: string,
 };
 
 export type Role = 'ADMIN' | 'USER';
 
 export interface TrackRating {
+  id: UUID,
   authorId: UUID,
   finished: boolean,
   rating: Rating,
-  comment?: StringBetween<1, 5000>,
+  comment?: Description,
 }

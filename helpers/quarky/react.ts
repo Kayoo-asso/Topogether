@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect, useCallback, useRef } from "react";
 import ReactDOM from "react-dom";
-import { batch, ObserverEffect, observerEffect, selectQuark, SelectQuark, selectSignal, SelectSignal, SelectSignalNullable, setBatchingBehavior, useComponentWatch } from ".";
+import { batch, ObserverEffect, observerEffect, selectQuark, SelectQuark, selectSignal, SelectSignal, SelectSignalNullable, setBatchingBehavior } from ".";
 import { Quark, derive, quark, QuarkOptions, untrack, Signal, SelectQuarkNullable } from "./quarky";
 
 setBatchingBehavior(ReactDOM.unstable_batchedUpdates);

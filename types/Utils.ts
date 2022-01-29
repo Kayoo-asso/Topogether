@@ -3,7 +3,7 @@ export type GeoCoordinates = {
   lng: number,
 };
 
-export type Name = StringBetween<1, 255>;
+export type Name = StringBetween<1, 512>;
 export type Description = StringBetween<1, 5000>;
 
 export type NumberBetween<Min, Max> = number & {

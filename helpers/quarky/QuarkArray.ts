@@ -5,35 +5,34 @@ import { quark, Quark, Signal, untrack, ValueOrWrappedFunction } from "./quarky"
 
 const alwaysFalse = () => false;
 
-export interface QuarkArrayCallbacks<T> {
-    onAdd?: (item: T) => void,
-    onChange?: (value: T) => void,
-    onDelete?: (item: T) => void
+export interface QuarkArrayCallbacks<T, Q extends Quark<T> = Quark<T>> {
+    onAdd?: (item: T) => Q,
+    onDelete?: (item: Q) => void,
 }
 
 // NOTE: the return values of all the array methods become invalid if done within a batch (since modifications apply later)
 // Should we not return anything instead? Or wrap them in a Ref object, to ensure the values can be used at the end of the batch
+// TODO: ensure onAdd and onDelete are called properly for every array method
 export class QuarkArray<T> {
     #source: Quark<Array<Quark<T>>>;
-    #onAdd?: (item: T) => void;
-    #onChange?: (value: T) => void;
-    #onDelete?: (item: T) => void;
+    #onAdd: (item: T) => Quark<T>;
+    #onDelete?: (item: Quark<T>) => void;
 
     // TODO: auto-setup callbacks (so it works even on push etc)
     constructor(
         items?: T[],
-        callbacks?: QuarkArrayCallbacks<T>,
+        callbacks?: QuarkArrayCallbacks<T, any>,
     ) {
         items = items ?? [];
         const quarks: Array<Quark<T>> = new Array(items.length);
+        const quarkifier = callbacks?.onAdd ?? quark;
         for (let i = 0; i < items.length; ++i) {
-            const q = quark(items[i], { sub: callbacks?.onChange });
+            const q = quarkifier(items[i]);
             quarks[i] = q;
         }
         // the alwaysFalse allows us to modify the array in place and return the same reference to update the quark
         this.#source = quark(quarks, { equal: alwaysFalse });
-        this.#onAdd = callbacks?.onAdd;
-        this.#onChange = callbacks?.onChange;
+        this.#onAdd = quarkifier;
         this.#onDelete = callbacks?.onDelete;
      }
 
@@ -119,28 +118,26 @@ export class QuarkArray<T> {
 
     // TODO: hook up predefined effects
     push(value: T): number {
-        if(this.#onAdd) this.#onAdd(value);
-        const q = quark(value, { sub: this.#onChange });
+        const q = this.#onAdd(value);
         return this.#apply(x => x.push(q));
     }
 
     pop(): Quark<T> | undefined {
         const val = this.#apply(x => x.pop());
-        if (this.#onDelete && val) untrack(() => this.#onDelete!(val()));
+        if (this.#onDelete && val) untrack(() => this.#onDelete!(val));
         return val;
     }
 
     shift(): Quark<T> | undefined {
         const quark = this.#apply(x => x.shift());
-        if (quark && this.#onDelete) untrack(() => this.#onDelete!(quark()));
+        if (quark && this.#onDelete) untrack(() => this.#onDelete!(quark));
         return quark;
     }
 
     unshift(...items: T[]): number {
         const quarks = new Array(items.length);
         for (let i = 0; i < items.length; ++i) {
-            if (this.#onAdd) this.#onAdd(items[i]);
-            quarks[i] = quark(items[i], { sub: this.#onChange });
+            quarks[i] = this.#onAdd(items[i]);
         }
         return this.#apply(x => x.unshift(...quarks));
     }
@@ -158,10 +155,10 @@ export class QuarkArray<T> {
         untrack(() => {
             const arr = this.#source();
             for (let i = 0; i < arr.length; i++) {
-                const x = arr[i]();
-                if (x === item) {
+                const q = arr[i];
+                if (q() === item) {
                     arr.splice(i, 1);
-                    if(this.#onDelete) this.#onDelete(x);
+                    if(this.#onDelete) this.#onDelete(q);
                     break;
                 }
             }
@@ -175,7 +172,7 @@ export class QuarkArray<T> {
             for (let i = 0; i < arr.length; i++) {
                 if (quark === arr[i]) {
                     arr.splice(i, 1);
-                    if (this.#onDelete) this.#onDelete(quark());
+                    if (this.#onDelete) this.#onDelete(quark);
                     break;
                 }
             }
@@ -189,11 +186,10 @@ export class QuarkArray<T> {
             const after = [];
             for (let i = 0; i < current.length; ++i) {
                 const quark = current[i];
-                const val = quark();
-                if (!selection(val)) {
+                if (!selection(quark())) {
                     after.push(quark);
                 } else if(this.#onDelete) {
-                    this.#onDelete(val);
+                    this.#onDelete(quark);
                 }
             }
             this.#source.set(after)

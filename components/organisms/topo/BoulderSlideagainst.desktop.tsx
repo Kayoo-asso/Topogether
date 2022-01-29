@@ -1,13 +1,14 @@
-import React, { useMemo, useState } from 'react';
-import { BoulderPreviewDesktop, Flash, Icon, LikeButton, SlideagainstRightDesktop, TracksList } from 'components';
+import React, { Dispatch, SetStateAction, useState } from 'react';
+import { BoulderPreviewDesktop, Flash, Icon, SlideagainstRightDesktop, TracksList } from 'components';
 import { Quark, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
-import { Boulder, Track, UUID } from 'types';
+import { Boulder, Image, Track, UUID } from 'types';
 
 interface BoulderSlideagainstDesktopProps {
     boulder: Quark<Boulder>,
     selectedTrack: SelectQuarkNullable<Track>,
     topoCreatorId?: UUID,
-    onSelectTrack?: (track: Quark<Track>) => void,
+    currentImage: Image,
+    setCurrentImage: Dispatch<SetStateAction<Image>>,
     onClose: () => void,
 }
 
@@ -19,8 +20,6 @@ export const BoulderSlideagainstDesktop: React.FC<BoulderSlideagainstDesktopProp
     const displayedTracks = boulder.tracks
         .quarks()
         .filter((track) => ((track().creatorId) === props.topoCreatorId) === officialTrackTab);
-    //     [boulder.tracks, props.topoCreatorId, officialTrackTab],
-    // );
 
     return (
         <>
@@ -58,6 +57,8 @@ export const BoulderSlideagainstDesktop: React.FC<BoulderSlideagainstDesktopProp
                             <BoulderPreviewDesktop
                                 boulder={props.boulder}
                                 selectedTrack={props.selectedTrack}
+                                currentImage={props.currentImage}
+                                setCurrentImage={props.setCurrentImage}
                             />
                         </div>
                     </div>             
@@ -71,6 +72,14 @@ export const BoulderSlideagainstDesktop: React.FC<BoulderSlideagainstDesktopProp
                         <TracksList 
                             tracks={displayedTracks}
                             selectedTrack={props.selectedTrack}
+                            onTrackClick={(trackQuark) => {
+                                if (props.selectedTrack()?.id === trackQuark().id) props.selectedTrack.select(undefined);
+                                else {
+                                    const newImage = boulder.images.find(img => img.id === trackQuark().lines.at(0).imageId);
+                                    if (newImage) props.setCurrentImage(newImage);
+                                    props.selectedTrack.select(trackQuark);
+                                }
+                            }}
                         />
                     </div>
                 </>

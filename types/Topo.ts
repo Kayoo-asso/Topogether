@@ -4,7 +4,7 @@ import type {
   Difficulty, Grade, LightGrade, Orientation, TopoStatus, TopoType,
 } from './Enums';
 import type { LinearRing, LineCoords, Position } from './GeoJson';
-import type { UUID, GeoCoordinates, RequireAtLeastOne, StringBetween } from './Utils';
+import type { UUID, GeoCoordinates, RequireAtLeastOne, StringBetween, Name, Description } from './Utils';
 import type { TrackRating, User } from './User';
 import type { Image } from './Image';
 
@@ -31,7 +31,7 @@ export type Track = Omit<TrackData, 'ratings' | 'lines'> & {
 
 export interface TopoData {
   readonly id: UUID,
-  name: StringBetween<1, 255>,
+  name: Name,
   // Creation = first validation
   submittedAt?: Date,
   validatedAt?: Date,
@@ -48,19 +48,19 @@ export interface TopoData {
   rockTypes?: RockTypes,
   amenities?: Amenities,
   hasOtherAmenities?: boolean,
-  otherAmenities?: StringBetween<1, 5000>
+  otherAmenities?: Description
 
   creatorId: UUID,
-  creatorPseudo: StringBetween<1, 255>,
+  creatorPseudo: Name,
   validatorId?: UUID,
   image?: Image,
 
-  closestCity?: StringBetween<1, 255>,
+  closestCity?: Name,
   altitude?: number,
-  description?: StringBetween<1, 5000>,
-  faunaProtection?: StringBetween<1, 5000>,
-  ethics?: StringBetween<1, 5000>,
-  danger?: StringBetween<1, 5000>
+  description?: Description,
+  faunaProtection?: Description,
+  ethics?: Description,
+  danger?: Description
 
   sectors: SectorData[], // -> Quark<Array<Quark<Sector>>>
   parkings: Parking[],
@@ -86,14 +86,14 @@ export type GradeHistogram = {
 // TODO: is the RequireAtLeastOne correct?
 export type TopoAccess = RequireAtLeastOne<{
   readonly id: UUID,
-  danger?: StringBetween<1, 5000>,
+  danger?: Description,
   difficulty?: Difficulty,
   duration?: number,
   steps?: TopoAccessStep[],
 }, 'danger' | 'difficulty' | 'duration' | 'steps' >;
 
 export interface TopoAccessStep {
-  description: StringBetween<1, 5000>
+  description: Description
   image?: Image,
 }
 
@@ -101,28 +101,28 @@ export interface Parking {
   readonly id: UUID,
   spaces: number,
   location: GeoCoordinates,
-  name?: StringBetween<1, 255>,
-  description?: StringBetween<1, 5000>
+  name?: Name,
+  description?: Description
   image?: Image
 }
 
 export interface Manager {
   readonly id: UUID,
-  name: StringBetween<1, 255>,
-  description?: StringBetween<1, 5000>
+  name: Name,
+  description?: Description
   image?: Image
-  adress?: StringBetween<1, 255>
+  adress?: Name
   zip?: number,
-  city?: StringBetween<1, 255>,
-  contactName: StringBetween<1, 255>,
-  contactPhone?: StringBetween<1, 255>,
-  contactMail?: StringBetween<1, 255>,
+  city?: Name,
+  contactName: Name,
+  contactPhone?: Name,
+  contactMail?: Name,
 }
 
 export interface SectorData {
   readonly id: UUID,
-  name: StringBetween<1, 255>,
-  description?: StringBetween<1, 5000>
+  name: Name,
+  description?: Description
 
   boulders: BoulderData[],
   waypoints: Waypoint[]
@@ -130,16 +130,16 @@ export interface SectorData {
 
 export interface Waypoint {
   readonly id: UUID,
-  name: StringBetween<1, 255>,
+  name: Name,
   location: GeoCoordinates,
   image?: Image,
-  description?: StringBetween<1, 5000>,
+  description?: Description,
 }
 
 export interface BoulderData {
   readonly id: UUID,
   location: GeoCoordinates,
-  name: StringBetween<1, 255>,
+  name: Name,
   orderIndex: number,
   isHighball: boolean,
   mustSee: boolean,
@@ -154,8 +154,8 @@ export interface BoulderData {
 export interface TrackData {
   readonly id: UUID,
   orderIndex: number,
-  name?: StringBetween<1, 255>,
-  description?: StringBetween<1, 5000>,
+  name?: Name,
+  description?: Description,
   height?: number,
   grade?: Grade,
 

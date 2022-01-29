@@ -8,6 +8,7 @@ import { staticUrl } from 'helpers/globals';
 import useDimensions from 'react-cool-dimensions';
 import { getMousePosInside } from '../../helpers';
 import { QuarkArray, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
+import { tracks } from 'helpers/fakeData/fakeTopoV2';
 
 interface TracksImageProps {
   image: Image,
@@ -124,7 +125,7 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
                 editable={editable}
                 highlighted={highlighted}
                 displayTrackDetails={displayTracksDetails}
-                onLineClick={() => props.selectedTrack.select(trackQuark)}
+                onLineClick={props.tracks.length > 1 ? () => props.selectedTrack.select(trackQuark) : undefined}
                 onPointClick={props.onPointClick}
               />
             )

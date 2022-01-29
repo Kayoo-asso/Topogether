@@ -1,4 +1,4 @@
-import { UUID } from "./UUID";
+import { UUID } from "types";
 
 export interface Image {
   readonly id: UUID,

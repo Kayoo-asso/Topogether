@@ -1,9 +1,9 @@
-import React, { useMemo, useState } from 'react';
+import React, { Dispatch, SetStateAction, useMemo, useState } from 'react';
 import {
   GradeScale, Icon, LikeButton, SlideoverMobile, TracksImage, Show,
 } from 'components';
 import {
- Boulder, Difficulty, gradeToLightGrade, Track, UUID,
+ Boulder, Image, Track, UUID,
 } from 'types';
 import { buildBoulderGradeHistogram, staticUrl } from 'helpers';
 import { default as NextImage } from 'next/image';
@@ -15,20 +15,10 @@ interface BoulderSlideoverMobileProps {
   open?: boolean,
   selectedTrack: SelectQuarkNullable<Track>,
   topoCreatorId?: UUID,
-  onSelectTrack: (selected: Quark<Track>) => void,
+  currentImage: Image,
+  setCurrentImage: Dispatch<SetStateAction<Image>>,
   onClose: () => void,
 }
-
-const gradeColors = {
-  3: 'text-grade-3',
-  4: 'text-grade-4',
-  5: 'text-grade-5',
-  6: 'text-grade-6',
-  7: 'text-grade-7',
-  8: 'text-grade-8',
-  9: 'text-grade-9',
-  None: 'border-grey-light bg-grey-light text-white',
-};
 
 export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = watchDependencies(({
   open = true,
@@ -39,9 +29,10 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = wat
 
   const boulder = props.boulder();
   const selectedTrack = props.selectedTrack();
-
+  
   const [imageToDisplayIndex, setImageToDisplayIndex] = useState(0);
 
+  const [displayPhantomTracks, setDisplayPhantomTracks] = useState(false);
   const displayedTracks = useMemo(() => boulder.tracks
     .quarks()
     .filter((track) => ((track().creatorId) === props.topoCreatorId) === officialTrackTab),
@@ -56,33 +47,40 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = wat
     >
       {/* BOULDER IMAGE */}
       {full && (
-        <div className="w-full bg-dark rounded-t-lg flex items-center justify-center overflow-hidden">
+        <div className="w-full bg-dark rounded-t-lg flex items-center justify-center">
           {imageToDisplayIndex > 0 &&
-            <div className='absolute left-2 z-200'>
-              <Icon 
-                name='arrow-full'
-                SVGClassName='w-5 h-5 fill-main rotate-180'
-                onClick={() => setImageToDisplayIndex(idx => idx-1)}
-              />
-            </div>
+            <Icon 
+              name="arrow-full"
+              center
+              SVGClassName="w-3 h-3 stroke-main fill-main rotate-180"
+              wrapperClassName='absolute left-4 z-100'
+              onClick={() => {
+                props.setCurrentImage(boulder.images[imageToDisplayIndex - 1]);
+                setImageToDisplayIndex(idx => idx - 1)
+              }}
+            />
           }
 
           <TracksImage
-            image={boulder.images[imageToDisplayIndex]}
-            containerClassName="max-h-[300px]"
+            image={props.currentImage}
             tracks={boulder.tracks}
             selectedTrack={props.selectedTrack}
+            displayPhantomTracks={displayPhantomTracks}
             displayTracksDetails={!!selectedTrack?.id}
+            containerClassName={'max-h-[300px]' + (props.currentImage.width/props.currentImage.height > 1 ? ' overflow-hidden rounded-t-lg' : '')}
           />
 
           {imageToDisplayIndex < boulder.images.length-1 &&
-            <div className='absolute right-2 z-200'>
-              <Icon 
-                name='arrow-full'
-                SVGClassName='w-5 h-5 fill-main'
-                onClick={() => setImageToDisplayIndex(idx => idx+1)}
-              />
-            </div>
+            <Icon 
+              name="arrow-full"
+              center
+              SVGClassName="w-3 h-3 stroke-main fill-main"
+              wrapperClassName='absolute right-4 z-100'
+              onClick={() => {
+                props.setCurrentImage(boulder.images[imageToDisplayIndex + 1]);
+                setImageToDisplayIndex(idx => idx + 1)
+              }}
+            />
           }
         </div>
       )}
@@ -92,7 +90,7 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = wat
           <div className="col-span-6">
             <div className="ktext-section-title">{boulder.name}</div>
             {boulder.isHighball && full && <div className="ktext-base-little">High Ball</div>}
-            {boulder.descent === Difficulty.Dangerous && full && <div className="ktext-base-little">Descente dangereuse !</div>}
+            {boulder.dangerousDescent && full && <div className="ktext-base-little">Descente dangereuse !</div>}
             {!full && (
               <div className="flex items-center mt-2">
                 <GradeScale
@@ -103,7 +101,14 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = wat
             )}
           </div>
 
-          <div className="flex justify-end col-span-2">
+          <div className="flex flex-row gap-5 justify-end col-span-2">
+            {selectedTrack &&
+              <Icon 
+                name='many-tracks'
+                SVGClassName={'w-6 h-6 ' + (displayPhantomTracks ? 'stroke-main' : 'stroke-grey-medium')}
+                onClick={() => setDisplayPhantomTracks(!displayPhantomTracks)}
+              />
+            }
             {full && (
               <LikeButton
                 item={props.boulder}
@@ -127,10 +132,10 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = wat
 
       {/* TODO : show once good pattern */}
       {/* TABS */}
-      <div className="grid grid-cols-8 px-5 ktext-label font-bold my-2">
-        <span className={`col-span-2 ${officialTrackTab ? 'text-main' : 'text-grey-medium'}`} onClick={() => setOfficialTrackTab(true)}>officielles</span>
-        <span className={`col-span-2 ${!officialTrackTab ? 'text-main' : 'text-grey-medium'}`} onClick={() => setOfficialTrackTab(false)}>communautés</span>
-        <span className="col-start-8 flex justify-end">
+      <div className="flex flex-row gap-8 w-full px-5 ktext-label font-bold my-2">
+        <span className={`${officialTrackTab ? 'text-main' : 'text-grey-medium'}`} onClick={() => setOfficialTrackTab(true)}>officielles</span>
+        <span className={`${!officialTrackTab ? 'text-main' : 'text-grey-medium'}`} onClick={() => setOfficialTrackTab(false)}>communautés</span>
+        <span className="flex w-full justify-end">
           <Icon
             name="add"
             SVGClassName="w-5 h-5 stroke-main"
@@ -145,6 +150,17 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = wat
           <TracksList
             tracks={displayedTracks}
             selectedTrack={props.selectedTrack}
+            onTrackClick={(trackQuark) => {
+              if (props.selectedTrack()?.id === trackQuark().id) props.selectedTrack.select(undefined);
+              else {
+                const newImageIndex = boulder.images.findIndex(img => img.id === trackQuark().lines?.at(0).imageId);
+                if (newImageIndex > -1) {
+                  props.setCurrentImage(boulder.images[newImageIndex]);
+                  setImageToDisplayIndex(newImageIndex);
+                }
+                props.selectedTrack.select(trackQuark);
+              }
+            }}
           />
         </div>
       </Show>
