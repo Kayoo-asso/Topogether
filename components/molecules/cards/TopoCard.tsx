@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import NextImage from 'next/image';
-import { Card, Icon } from 'components';
+import { Card, Icon, Dropdown } from 'components';
 import { formatDate, staticUrl } from 'helpers';
 import equal from 'fast-deep-equal/es6';
 import { LightTopo, TopoStatus } from 'types';
 import { useRouter } from 'next/router';
-import { Dropdown } from '..';
+import { useContextMenu } from 'helpers/hooks/useContextMenu';
 
 interface TopoCardProps {
   topo: LightTopo;
@@ -41,6 +41,8 @@ export const TopoCard: React.FC<TopoCardProps> = React.memo((props: TopoCardProp
   const openTopo = () => {
     router.push(`/topo/${props.topo.id}`);
   };
+
+  useContextMenu(setDropdownDisplayed);
 
   return (
     <>

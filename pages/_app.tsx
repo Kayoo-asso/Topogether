@@ -44,20 +44,21 @@ const App = ({ Component, pageProps }: AppProps) => {
         <title>Topogether</title>
         <link rel="manifest" href="/manifest.json" />
       </Head>
+      <body onContextMenu={(e) => e.preventDefault()}>
+        <UserContext.Provider value={sessionContextDefaultValues}>
+          <DeviceContext.Provider value={device}>
+            <div ref={observe} className="w-screen h-screen flex items-end flex-col">
+              <div id="content" className="flex-1 w-screen absolute bg-grey-light flex flex-col h-full md:h-screen overflow-hidden">
+                <Component {...pageProps} />
+              </div>
 
-      <UserContext.Provider value={sessionContextDefaultValues}>
-        <DeviceContext.Provider value={device}>
-          <div ref={observe} className="w-screen h-screen flex items-end flex-col">
-            <div id="content" className="flex-1 w-screen absolute bg-grey-light flex flex-col h-full md:h-screen overflow-hidden">
-              <Component {...pageProps} />
+              <div id="footer" className="bg-dark z-500 absolute bottom-0 h-shell md:hidden">
+                <ShellMobile />
+              </div>
             </div>
-
-            <div id="footer" className="bg-dark z-500 absolute bottom-0 h-shell md:hidden">
-              <ShellMobile />
-            </div>
-          </div>
-        </DeviceContext.Provider>
-      </UserContext.Provider>
+          </DeviceContext.Provider>
+        </UserContext.Provider>
+      </body>
     </>
   );
 };

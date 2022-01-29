@@ -1,7 +1,9 @@
 import React, { useCallback, useContext } from 'react';
 import { DeviceContext, fontainebleauLocation } from 'helpers';
 import type { NextPage } from 'next';
-import { HeaderDesktop, LeftbarDesktop, MapControl, Show, TopoPreview } from 'components';
+import {
+ HeaderDesktop, LeftbarDesktop, MapControl, Show, TopoPreview,
+} from 'components';
 import { LightTopo } from 'types';
 import { Quark, QuarkIter, useSelectQuark } from 'helpers/quarky';
 import { quarkLightTopo } from 'helpers/fakeData/fakeLightTopoV2';
@@ -13,9 +15,9 @@ const WorldMapPage: NextPage = () => {
 
   const selectedTopo = useSelectQuark<LightTopo>();
   const toggleTopoSelect = useCallback((topoQuark: Quark<LightTopo>) => {
-    if (selectedTopo()?.id === topoQuark().id)
+    if (selectedTopo()?.id === topoQuark().id) {
       selectedTopo.select(undefined);
-    else selectedTopo.select(topoQuark)
+    } else selectedTopo.select(topoQuark);
   }, [selectedTopo]);
 
   return (
@@ -34,23 +36,23 @@ const WorldMapPage: NextPage = () => {
           initialZoom={5}
           center={fontainebleauLocation}
           displayPhotoButton={false}
-          boundsToMarkers={true}
+          boundsToMarkers
           topos={topos}
           displayTopoFilter
           onTopoClick={toggleTopoSelect}
         />
-      
+
         <Show when={selectedTopo.quark}>
-            {(topo) => (
-              <TopoPreview 
-                topo={topo}
-                onClose={() => selectedTopo.select(undefined)}
-              />
+          {(topo) => (
+            <TopoPreview
+              topo={topo}
+              onClose={() => selectedTopo.select(undefined)}
+            />
             )}
         </Show>
       </div>
     </>
-  )
+  );
 };
 
 export default WorldMapPage;

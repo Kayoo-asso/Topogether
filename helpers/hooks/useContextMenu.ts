@@ -1,4 +1,6 @@
-import React, { EffectCallback, useEffect, useRef, useState } from "react";
+import React, {
+ EffectCallback, useEffect, useRef, useState,
+} from 'react';
 
 let someoneExists = false;
 
@@ -16,22 +18,20 @@ export function useFirstEffect(effect: EffectCallback) {
             return () => {
                 if (cleanup) cleanup();
                 someoneExists = false;
-            }
+            };
         }, []);
     }
 }
-
-
 export function useContextMenu(setOpen: (open: boolean) => void) {
-    useFirstEffect(() => {
-        const onMouseDown = (e: MouseEvent) => { setOpen(false) };
-        const onContextMenu = (e: MouseEvent) => { setOpen(false) };
-        document.addEventListener("mousedown", onMouseDown, { capture: true })
-        document.addEventListener("contextmenu", onContextMenu, { capture: true });
+    useEffect(() => {
+        const onMouseDown = (e: MouseEvent) => { setOpen(false); };
+        const onContextMenu = (e: MouseEvent) => { setOpen(false); };
+        document.addEventListener('mousedown', onMouseDown, { capture: true });
+        document.addEventListener('contextmenu', onContextMenu, { capture: true });
 
         return () => {
-            document.removeEventListener("mousedown", onMouseDown);
-            document.removeEventListener("contextmenu", onContextMenu);
-        }
+            document.removeEventListener('mousedown', onMouseDown);
+            document.removeEventListener('contextmenu', onContextMenu);
+        };
     });
 }
