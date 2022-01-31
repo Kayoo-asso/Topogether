@@ -64,11 +64,12 @@ export const MapControl: React.FC<MapControlProps> = ({
   const [boulderFilterOptions, setBoulderFilterOptions] = useState<BoulderFilterOptions>(defaultBoulderFilterOptions);
 
   const boulderFilter = (boulder: Boulder) => {
-      const boulderTechniques = boulder.tracks.toArray().map(track => track.techniques);
-      let result = (boulderFilterOptions.techniques === null || boulderFilterOptions.techniques.some(tech => boulderTechniques.includes(tech))) &&
-          boulder.tracks.length >= boulderFilterOptions.tracksRange[0] &&
-          boulder.tracks.length <= boulderFilterOptions.tracksRange[1];
+    const boulderTechniques = boulder.tracks.toArray().map(track => track.techniques);
+    let result = (boulderFilterOptions.techniques === null || boulderFilterOptions.techniques.some(tech => boulderTechniques.includes(tech))) &&
+        boulder.tracks.length >= boulderFilterOptions.tracksRange[0] &&
+        boulder.tracks.length <= boulderFilterOptions.tracksRange[1];
 
+    if (boulderFilterOptions.gradeRange[0] !== 3 || boulderFilterOptions.gradeRange[1] !== 9) {
       const boulderGrades: LightGrade[] = boulder.tracks.toArray().map(track => gradeToLightGrade(track.grade));
       let foundBouldersAtGrade = false;
       for (let grade = boulderFilterOptions.gradeRange[0]; grade <= boulderFilterOptions.gradeRange[1]; grade++) {
@@ -78,8 +79,9 @@ export const MapControl: React.FC<MapControlProps> = ({
           }
       }
       result &&= foundBouldersAtGrade;
-      result &&= (boulderFilterOptions.mustSee ? boulder.mustSee : true);
-      return result;
+    }
+    result &&= (boulderFilterOptions.mustSee ? boulder.mustSee : true);
+    return result;
   }
   const topoFilter = (topo: LightTopo) => {
     let result = (topoFilterOptions.types === null || topoFilterOptions.types.includes(topo.type!)) &&
@@ -227,8 +229,7 @@ export const MapControl: React.FC<MapControlProps> = ({
           </Show>
           <Show when={() => props.boulders}>
             <For each={() => props.boulders!.filter(b => boulderFilter(b())).toArray()}>
-              {(boulder) => 
-                <BoulderMarker
+              {(boulder) => <BoulderMarker
                   key={reactKey(boulder)}
                   draggable={draggableMarkers}
                   boulder={boulder}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import NextImage from 'next/image';
 import {
   Image, PointEnum, DrawerToolEnum, Position, Track
@@ -8,7 +8,6 @@ import { staticUrl } from 'helpers/globals';
 import useDimensions from 'react-cool-dimensions';
 import { getMousePosInside } from '../../helpers';
 import { QuarkArray, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
-import { tracks } from 'helpers/fakeData/fakeTopoV2';
 
 interface TracksImageProps {
   image: Image,
@@ -39,34 +38,40 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
   containerClassName = '',
   ...props
 }: TracksImageProps) => {
-  const { observe, unobserve, width: containerWidth, height: containerHeight, entry } = useDimensions({
-    onResize: ({ observe, unobserve, width, height, entry }) => {
+  const { observe, width: containerWidth, height: containerHeight } = useDimensions({
+    onResize: ({ observe, unobserve }) => {
       // Triggered whenever the size of the target is changed...
       unobserve(); // To stop observing the current target element
       observe(); // To re-start observing the current target element
     },
   });
 
+  
   let imgWidth;
   let imgHeight;
   // Only one of those will be set
   let divWidth;
   let divHeight;
-  const imgRatio = props.image.width / props.image.height;
-  if (imgRatio > 1) {
-    imgWidth = containerWidth;
-    imgHeight = containerWidth / imgRatio;
-    divHeight = imgHeight;
-  }
-  else {
-    imgWidth = containerHeight * imgRatio;
-    imgHeight = containerHeight;
-    divWidth = imgWidth;
-  }
 
-  const rx = props.image.width != 0
+  let rx: number;
+
+    const imgRatio = props.image.width / props.image.height;
+    if (imgRatio > 1) {
+      imgWidth = containerWidth;
+      imgHeight = containerWidth / imgRatio;
+      divHeight = imgHeight;
+    }
+    else {
+      imgWidth = containerHeight * imgRatio;
+      imgHeight = containerHeight;
+      divWidth = imgWidth;
+    }
+    rx = props.image.width != 0
     ? imgWidth / props.image.width
     : 1;
+
+    console.log(containerWidth);
+  
 
   const getCursorUrl = () => {
     let cursorColor = 'grey';

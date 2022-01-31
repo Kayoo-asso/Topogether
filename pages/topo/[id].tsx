@@ -3,7 +3,7 @@ import type { NextPage } from 'next';
 import { 
   ApproachSlideover, InfoSlideover, ManagementSlideover,
   BoulderSlideagainstDesktop,  BoulderSlideoverMobile, TrackSlideagainstDesktop,
-  For, Show,
+  Show,
   Header, LeftbarDesktop, 
   MapControl, ParkingSlide, WaypointSlide, TracksImage } from 'components';
 import { useRouter } from 'next/router';
@@ -69,6 +69,10 @@ const Topo: NextPage = () => {
   const [displayManagement, setDisplayManagement] = useState<boolean>(false);
   const [currentDisplay, setCurrentDisplay] = useState<'INFO' | 'APPROACH' | 'MANAGEMENT' | undefined>();
   useEffect(() => {
+    selectedBoulder.select(undefined);
+    selectedTrack.select(undefined);
+    selectedParking.select(undefined);
+    selectedWaypoint.select(undefined);
     if (currentDisplay === 'INFO') {
       setDisplayInfo(true);
       setTimeout(() => {

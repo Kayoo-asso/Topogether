@@ -112,7 +112,7 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies((props: DrawerPro
     <>
       <div className="absolute top-0 bg-black bg-opacity-90 h-full flex flex-col z-1000 w-full md:w-[calc(100%-600px)]">
 
-        <div className="flex-1 flex items-center relative">
+        <div className="flex-1 flex items-center relative justify-center">
           {/* TODO: CHANGE SIZING */}
           <TracksImage
             image={props.image}
@@ -121,6 +121,7 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies((props: DrawerPro
             currentTool={selectedTool}
             editable
             displayTracksDetails
+            containerClassName='max-h-[93vh]'
             onImageClick={(pos) => addPointToLine(pos)}
             onPointClick={(pointType, index) => {
               if (selectedTool === 'ERASER') deletePointToLine(pointType, index);

@@ -3,10 +3,10 @@ import type { NextPage } from 'next';
 import { 
   BoulderBuilderSlideoverMobile,
   MapControl, Show, 
-  Header, InfoFormSlideover, ManagementFormSlideover, TrackFormSlideagainstDesktop, ModalValidateTopo, ModalDeleteTopo, GeoCamera, Drawer, LeftbarBuilderDesktop, BoulderBuilderSlideagainstDesktop, ParkingBuilderSlide, AccessFormSlideover, WaypointBuilderSlide } from 'components';
+  Header, InfoFormSlideover, ManagementFormSlideover, TrackFormSlideagainstDesktop, ModalValidateTopo, ModalDeleteTopo, GeoCamera, Drawer, LeftbarBuilderDesktop, BoulderBuilderSlideagainstDesktop, ParkingBuilderSlide, AccessFormSlideover, WaypointBuilderSlide, createTrack } from 'components';
 import { useRouter } from 'next/router';
 import { quarkTopo } from 'helpers/fakeData/fakeTopoV2';
-import { defaultImage, DeviceContext, UserContext } from 'helpers';
+import { blobToImage, defaultImage, DeviceContext, UserContext } from 'helpers';
 import { Boulder, GeoCoordinates, Image, MapToolEnum, Name, Parking, Track, Waypoint } from 'types';
 import { Quark, QuarkArray, QuarkIter, useSelectQuark, watchDependencies } from 'helpers/quarky';
 import { v4 } from 'uuid';
@@ -118,7 +118,7 @@ const BuilderMapPage: NextPage = () => {
     else selectedWaypoint.select(waypointQuark)
   }, [selectedWaypoint]);
 
-  const createBoulder = useCallback((location: GeoCoordinates) => {
+  const createBoulder = useCallback((location: GeoCoordinates, image?: Image, selectBoulder = false) => {
     const orderIndex = topo.sectors.at(0).boulders.length + 1
     const newBoulder: Boulder = {
       id: v4(),
@@ -129,11 +129,17 @@ const BuilderMapPage: NextPage = () => {
       mustSee: false,
       dangerousDescent: false,
       tracks: new QuarkArray(),
-      images: []
+      images: image ? [image] : []
     }
     topo.sectors.at(0).boulders.push(newBoulder);
+    const newBoulderQuark = topo.sectors.at(0).boulders.quarkAt(-1);
+    if (selectBoulder) {
+      selectedBoulder.select(newBoulderQuark);
+      if (image) setCurrentImage(newBoulder.images[0]);
+    }
+    return newBoulderQuark;
   }, [topo]);
-  const createParking = useCallback((location: GeoCoordinates) => {
+  const createParking = useCallback((location: GeoCoordinates, selectParking = false) => {
     const newParking: Parking = {
       id: v4(),
       spaces: 0,
@@ -141,14 +147,20 @@ const BuilderMapPage: NextPage = () => {
       location: location,
     }
     topo.parkings.push(newParking);
+    const newParkingQuark = topo.parkings.quarkAt(-1);
+    if (selectParking) selectedParking.select(newParkingQuark);
+    return newParkingQuark;
   }, [topo]);
-  const createWaypoint = useCallback((location: GeoCoordinates) => {
+  const createWaypoint = useCallback((location: GeoCoordinates, selectWaypoint = false) => {
     const newWaypoint: Waypoint = {
       id: v4(),
       name: "point de repère " + (topo.sectors.at(0).waypoints ? topo.sectors.at(0).waypoints.length + 1 : '1') as Name,
       location: location,
     }
     topo.sectors.at(0).waypoints.push(newWaypoint);
+    const newWaypointQuark = topo.sectors.at(0).waypoints.quarkAt(-1);
+    if (selectWaypoint) selectedWaypoint.select(newWaypointQuark);
+    return newWaypointQuark;
   }, [topo]);
 
   if (!session || typeof id !== 'string' || !topo) return null;
@@ -340,6 +352,27 @@ const BuilderMapPage: NextPage = () => {
 
       <Show when={() => displayGeoCamera}>
           <GeoCamera
+            onCapture={async (blob, coordinates) => {
+              if (blob) {
+                const img = await blobToImage(blob);
+                setCurrentImage(img);
+                if (selectedBoulder()) {
+                  const newImages = selectedBoulder()!.images;
+                  newImages.push(img);
+                  selectedBoulder.quark()!.set({
+                    ...selectedBoulder()!,
+                    images: newImages
+                  });
+                  selectedTrack.select(createTrack(selectedBoulder()!, session.id));
+                }
+                else {
+                  const newBoulderQuark = createBoulder(coordinates, img);
+                  selectedTrack.select(createTrack(newBoulderQuark(), session.id));
+                  selectedBoulder.select(newBoulderQuark);
+                }
+                setDisplayDrawer(true);
+              }
+            }}
             onClose={() => setDisplayGeoCamera(false)}
           />
         </Show>

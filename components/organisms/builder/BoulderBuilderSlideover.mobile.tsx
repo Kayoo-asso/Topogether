@@ -20,11 +20,11 @@ interface BoulderBuilderSlideoverMobileProps {
 }
 
 export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobileProps> = watchDependencies((props: BoulderBuilderSlideoverMobileProps) => {
-  const [full, setFull] = useState(false);
-  const [trackTab, setTrackTab] = useState(true);
-
   const boulder = props.boulder();
   const selectedTrack = props.selectedTrack();
+
+  const [full, setFull] = useState(!!selectedTrack);
+  const [trackTab, setTrackTab] = useState(true);
 
   const [imageToDisplayIndex, setImageToDisplayIndex] = useState(0);
 
@@ -33,7 +33,7 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
   return (
     <SlideoverMobile
       open
-      initialFull={false}
+      initialFull={full}
       onSizeChange={(f) => setFull(f)}
       onClose={props.onClose}
     >
@@ -93,7 +93,7 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
         </div>
 
         <div className="flex flex-row items-center gap-6 justify-end col-span-2">
-          {selectedTrack &&
+          {selectedTrack && boulder.tracks.filter(track => track.lines.toArray().some(line => line.imageId === props.currentImage.id)).toArray().length > 1 &&
             <Icon 
               name='many-tracks'
               SVGClassName={'w-6 h-6 ' + (displayPhantomTracks ? 'stroke-main' : 'stroke-grey-medium')}
@@ -140,7 +140,7 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
             selectedTrack={props.selectedTrack}
             onDrawButtonClick={props.onDrawButtonClick}
             onTrackClick={(trackQuark) => {
-              const newImageIndex = boulder.images.findIndex(img => img.id === trackQuark().lines?.at(0).imageId);
+              const newImageIndex = boulder.images.findIndex(img => img.id === trackQuark().lines?.at(0)?.imageId);
               if (props.selectedTrack()?.id === trackQuark().id) props.selectedTrack.select(undefined);
               else {
                 if (newImageIndex > -1) {

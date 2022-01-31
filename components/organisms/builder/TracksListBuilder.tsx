@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { GradeCircle, Icon, ModalDelete} from 'components';
-import { Boulder, gradeToLightGrade, Line, Name, Track, TrackRating } from 'types';
+import { Boulder, gradeToLightGrade, Line, Name, Track, TrackRating, UUID } from 'types';
 import { Quark, QuarkArray, SelectQuarkNullable, useSelectQuark, watchDependencies } from 'helpers/quarky';
 import { TrackForm } from '../form/TrackForm';
 import { v4 } from 'uuid';
@@ -24,7 +24,23 @@ const gradeColors = {
   None: 'border-grey-light bg-grey-light text-white',
 };
 
-// TODO: separate into a TracksListItem component?
+export const createTrack = (boulder: Boulder, creatorId: UUID, selectTrack = false) => {
+  const newTrack: Track = {
+    id: v4(),
+    creatorId: creatorId,
+    orderIndex: boulder.tracks.length,
+    name: 'Voie ' + (boulder.tracks.length+1) as Name,
+    mustSee: false,
+    isTraverse: false,
+    isSittingStart: false,
+    lines: new QuarkArray<Line>([]),
+    ratings: new QuarkArray<TrackRating>([])
+  }
+  boulder.tracks.push(newTrack);
+  const newTrackQuark = boulder.tracks.quarkAt(-1);
+  return newTrackQuark;
+}
+
 export const TracksListBuilder: React.FC<TracksListBuilderProps> = watchDependencies((props: TracksListBuilderProps) => {
   const trackToDelete = useSelectQuark<Track>();;
   const { session } = useContext(UserContext);
@@ -33,21 +49,6 @@ export const TracksListBuilder: React.FC<TracksListBuilderProps> = watchDependen
   const boulder = props.boulder();
   const tracks = boulder.tracks.quarks();
   const selectedTrack = props.selectedTrack();
-
-  const createTrack = () => {
-    const newTrack: Track = {
-      id: v4(),
-      creatorId: session!.id,
-      orderIndex: boulder.tracks.length,
-      name: 'Voie ' + (boulder.tracks.length+1) as Name,
-      mustSee: false,
-      isTraverse: false,
-      isSittingStart: false,
-      lines: new QuarkArray<Line>([]),
-      ratings: new QuarkArray<TrackRating>([])
-    }
-    boulder.tracks.push(newTrack);
-  }
 
   return (
     <>
@@ -101,7 +102,7 @@ export const TracksListBuilder: React.FC<TracksListBuilderProps> = watchDependen
 
         <div
           className="ktext-subtitle text-grey-medium px-5 py-5 md:py-3 cursor-pointer border-b border-grey-light hover:bg-grey-superlight"
-          onClick={createTrack}
+          onClick={() => createTrack(boulder, session!.id,)}
         >
           <span className="ml-2 mr-5 text-xl">+</span>
           {' '}

@@ -14,10 +14,10 @@ export const ParkingModal: React.FC<ParkingModalProps> = (props: ParkingModalPro
     return (
         <>
             <div 
-                className='h-full w-full bg-black bg-opacity-80 fixed z-500'
+                className='h-full w-full bg-black bg-opacity-80 fixed z-1000'
                 onClick={props.onClose}
             >
-                <div className='w-11/12 shadow absolute left-[50%] translate-x-[-50%] bottom-[20px] md:bottom-[70px]'>
+                <div className='w-11/12 shadow absolute left-[50%] translate-x-[-50%] bottom-[80px]'>
                     <div className='ktext-base rounded bg-white text-main text-center cursor-pointer'>
                         <div 
                             className='py-5 border-b border-grey-light' 

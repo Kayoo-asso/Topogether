@@ -1,11 +1,12 @@
 import React, { useRef, useState } from 'react';
 import { distanceLatLng, useAsyncEffect, useUserMedia } from 'helpers';
 import { Icon } from 'components';
+import { GeoCoordinates } from 'types';
 
 interface GeoCameraProps {
     open?: boolean,
-    onCapture?: (blob: Blob | null) => void,
-    onClose?: () => void,
+    onCapture?: (blob: Blob | null, coordinates: GeoCoordinates) => void,
+    onClose: () => void,
 }
 
 const CAPTURE_OPTIONS = {
@@ -22,6 +23,7 @@ export const GeoCamera: React.FC<GeoCameraProps> = ({
         lng: 0,
     });
     const [isCalibrating, setIsCalibrating] = useState(true);
+    const [displayToolbar, setDisplayToolbar] = useState(false);
 
     useAsyncEffect((isAlive) => {
         const options = {
@@ -32,7 +34,6 @@ export const GeoCamera: React.FC<GeoCameraProps> = ({
         const onPosChange = (pos: GeolocationPosition) => {
             if (isAlive.current) {
                 const dist = distanceLatLng(coords.lat, coords.lng, pos.coords.latitude, pos.coords.longitude)
-                console.log(dist);
                 if (dist < 5 || true) {
                     setIsCalibrating(false);
                     navigator.geolocation.clearWatch(watcher);
@@ -65,33 +66,51 @@ export const GeoCamera: React.FC<GeoCameraProps> = ({
         if (canvasRef.current && videoRef.current) {
             const context = canvasRef.current.getContext("2d");
 
-            const canvasCW = canvasRef.current.clientWidth;
-            const canvasCH = canvasRef.current.clientHeight;
-            const videoW = videoRef.current.videoWidth;
-            const videoH = videoRef.current.videoHeight;
-            const videoCW = videoRef.current.clientWidth;
-            const videoCH = videoRef.current.clientHeight;
+            if (context) {
+                const canvasCW = canvasRef.current.clientWidth;
+                const canvasCH = canvasRef.current.clientHeight;
+                const videoW = videoRef.current.videoWidth;
+                const videoH = videoRef.current.videoHeight;
+                const videoCW = videoRef.current.clientWidth;
+                const videoCH = videoRef.current.clientHeight;
 
-            const ratioW = videoW/videoCW;
-            const ratioH = videoH/videoCH;
-            const offsetW = Math.max(Math.round((videoW - canvasCW*ratioW)/2), 0);
-            const offsetH = Math.max(Math.round((videoH - canvasCH*ratioH)/2), 0);
-           
-            context?.drawImage(videoRef.current, 
-                offsetW, 
-                offsetH, 
-                canvasCW*ratioW, //La largeur de la partie de l'image source à dessiner dans le contexte
-                canvasCH*ratioH, //La hauteur de la partie de l'image source à dessiner dans le contexte
-                0, 
-                0,
-                canvasCW, // La largeur de l'image dessinée dans le contexte de la balise canvas
-                canvasCH // La hauteur de l'image dessinée dans le contexte de la balise canvas
-            ); 
-            canvasRef.current.toBlob(blob => {
-                props.onCapture && props.onCapture(blob)
-            }, "image/jpeg", 1);
+                const ratioW = videoW/videoCW;
+                const ratioH = videoH/videoCH;
+                const offsetW = Math.max(Math.round((videoW - canvasCW*ratioW)/2), 0);
+                const offsetH = Math.max(Math.round((videoH - canvasCH*ratioH)/2), 0);
+                
+                try {
+                    context.drawImage(videoRef.current, 
+                        offsetW, 
+                        offsetH, 
+                        canvasCW*ratioW, //La largeur de la partie de l'image source à dessiner dans le contexte
+                        canvasCH*ratioH, //La hauteur de la partie de l'image source à dessiner dans le contexte
+                        0, 
+                        0,
+                        canvasCW, // La largeur de l'image dessinée dans le contexte de la balise canvas
+                        canvasCH // La hauteur de l'image dessinée dans le contexte de la balise canvas
+                    );
+                    setDisplayToolbar(true);
+                } catch (err) {
+                    console.log(err);
+                }
+            }
         }
     }
+    const removeCapture = () => {
+        if (canvasRef.current && videoRef.current) {
+            const context = canvasRef.current.getContext("2d");
+            if (context) {
+                try {
+                    context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+                    setDisplayToolbar(false);
+                } catch (err) {
+                    console.log(err);
+                }
+            }
+        }
+    }
+
 
     if (!open) return null;
     return (
@@ -112,11 +131,11 @@ export const GeoCamera: React.FC<GeoCameraProps> = ({
             />
 
             <div 
-                className='absolute shadow bg-white rounded-full h-[60px] w-[60px] bottom-[20vh] left-[50%] translate-x-[-50%] z-40'
+                className='absolute shadow bg-white rounded-full h-[60px] w-[60px] bottom-[15vh] left-[50%] translate-x-[-50%] z-40'
                 onClick={handleCapture}
             ></div>
             {!isCalibrating &&
-                <div className='text-white ktext-label absolute bottom-[12vh] left-[50%] translate-x-[-50%] z-40'>{coords.lat + ', ' + coords.lng}</div>
+                <div className='text-white ktext-label absolute bottom-[10vh] left-[50%] translate-x-[-50%] z-40'>{coords.lat + ', ' + coords.lng}</div>
             }
             {isCalibrating &&
                 <div className='h-full w-full absolute flex flex-col justify-center items-center z-50 text-white ktext-base bg-black bg-opacity-90'>
@@ -126,6 +145,25 @@ export const GeoCamera: React.FC<GeoCameraProps> = ({
                     </div>
 
                     <span>{coords.lat + ', ' + coords.lng}</span>
+                </div>
+            }
+
+            {displayToolbar &&
+                <div className='fixed flex flex-row justify-between items-center p-6 bottom-0 w-full h-[8vh] bg-dark bg-opacity-60 text-main'>
+                    <div 
+                        className='ktext-base-little cursor-pointer'
+                        onClick={removeCapture}
+                    >Reprendre</div>
+                    <div 
+                        className='ktext-base-little cursor-pointer'
+                        onClick={() => {
+                            canvasRef.current?.toBlob(blob => {
+                                props.onCapture && props.onCapture(blob, coords);
+                            }, "image/jpeg", 1);
+                            removeCapture();
+                            props.onClose();
+                        }}
+                    >Valider</div>
                 </div>
             }
 
