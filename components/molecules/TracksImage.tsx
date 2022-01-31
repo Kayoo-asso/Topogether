@@ -42,6 +42,7 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
   const { observe, unobserve, width: containerWidth, height: containerHeight, entry } = useDimensions({
     onResize: ({ observe, unobserve, width, height, entry }) => {
       // Triggered whenever the size of the target is changed...
+      console.log("Resizing TracksImage");
       unobserve(); // To stop observing the current target element
       observe(); // To re-start observing the current target element
     },

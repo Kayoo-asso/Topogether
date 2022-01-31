@@ -41,3 +41,5 @@ export const BoulderMarker: React.FC<BoulderMarkerProps> = watchDependencies(({
 
     return null;
 });
+
+BoulderMarker.displayName = "BoulderMarker";

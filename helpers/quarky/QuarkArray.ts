@@ -1,13 +1,37 @@
 import { batch } from ".";
 import { Flattened, CloneInitIterator } from "./iterators";
 import { QuarkIter } from "./QuarkIter";
-import { quark, Quark, Signal, untrack, ValueOrWrappedFunction } from "./quarky";
+import { derive, quark, Quark, Signal, untrack, ValueOrWrappedFunction } from "./quarky";
 
 const alwaysFalse = () => false;
 
 export interface QuarkArrayCallbacks<T, Q extends Quark<T> = Quark<T>> {
     onAdd?: (item: T) => Q,
     onDelete?: (item: Q) => void,
+}
+
+interface Node<T> {
+    value: T,
+    next: Node<T> | null,
+}
+
+function map<T, U>(input: Quark<T>[], fn: (item: T) => U) {
+    const result: Array<Signal<Node<U>>> = new Array(input.length);
+    let next: Signal<Node<U>> | null = null;
+    for (let i = input.length - 1; i >= 0; --i) {
+        next = derive(() => ({
+            value: fn(input[i]()),
+            next: next ? next() : null
+        }));
+        result[i] = next;
+    }
+}
+
+type LinkedList<T> = Quark<Node<T> | null>;
+
+interface DerivedListNode<T> {
+    value: T,
+    next: Signal<T> | null
 }
 
 // NOTE: the return values of all the array methods become invalid if done within a batch (since modifications apply later)
