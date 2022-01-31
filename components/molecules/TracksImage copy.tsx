@@ -58,11 +58,13 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
     imgWidth = containerHeight * imgRatio;
     imgHeight = containerHeight;
     divWidth = imgWidth;
-    // divHeight = imgHeight;
   }
   rx = props.image.width != 0
   ? imgWidth / props.image.width
-  : 1;  
+  : 1;
+
+    console.log(containerHeight);
+  
 
   const getCursorUrl = () => {
     let cursorColor = 'grey';
@@ -132,8 +134,8 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
         className={`${props.imageClassName ? props.imageClassName : ''}`}
         src={props.image ? props.image.url : staticUrl.defaultKayoo}
         alt="Rocher"
-        width={imgWidth}
-        height={imgHeight}
+        layout="fill"
+        objectFit="cover"
       />
     </div>
   );

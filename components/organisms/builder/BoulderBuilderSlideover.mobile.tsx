@@ -58,7 +58,7 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
             selectedTrack={props.selectedTrack}
             displayPhantomTracks={displayPhantomTracks}
             displayTracksDetails={!!selectedTrack?.id}
-            containerClassName={'max-h-[300px]' + (props.currentImage.width/props.currentImage.height > 1 ? ' overflow-hidden rounded-t-lg' : '')}
+            containerClassName={props.currentImage.width/props.currentImage.height > 1 ? ' overflow-hidden rounded-t-lg' : ' h-[300px]'}
           />
           {imageToDisplayIndex < boulder.images.length - 1 && !selectedTrack &&
             <Icon 
