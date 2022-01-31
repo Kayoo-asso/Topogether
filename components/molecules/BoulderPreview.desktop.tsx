@@ -24,7 +24,7 @@ export const BoulderPreviewDesktop: React.FC<BoulderPreviewDesktopProps> = watch
                     image={props.currentImage}
                     tracks={boulder.tracks}
                     selectedTrack={props.selectedTrack}
-                    containerClassName='max-h-[200px]'
+                    containerClassName='h-[200px]'
                 />
             </div>
             
@@ -35,6 +35,7 @@ export const BoulderPreviewDesktop: React.FC<BoulderPreviewDesktopProps> = watch
                     rows={1}
                     onImageClick={(id) => props.setCurrentImage(boulder.images.find(img => img.id === id)!)}
                     allowUpload={displayAddButton}
+                    onImageDelete={(id) => console.log('delete '+id)} // TODO
                     onChange={(files) => {
                         // TODO
                     }}

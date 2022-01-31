@@ -18,15 +18,18 @@ export const InfoForm: React.FC<InfoFormProps> = watchDependencies((props: InfoF
             onClick={(e) => e.stopPropagation()}
         >
             <div className='flex flex-row gap-6 items-end'>
-                <ImageInput 
-                    value={topo.image}
-                    onChange={(files) => {
-                        props.topo.set({
-                            ...topo,
-                            image: files[0],
-                        })
-                    }}
-                />
+                <div className='w-32 md:mt-4'>
+                    <ImageInput 
+                        value={topo.image}
+                        onChange={(files) => {
+                            props.topo.set({
+                                ...topo,
+                                image: files[0],
+                            })
+                        }}
+                        onDelete={() => console.log('delete')} //TODO
+                    />
+                </div>
                 <TextInput 
                     id='topo-name'
                     label='Nom du spot'

@@ -1,16 +1,18 @@
 import React, { useRef, useState } from 'react';
 import Compressor from 'compressorjs';
 import {
-  isBetween, isImageType, Image
+  isBetween, isImageType, Image as ImageType
 } from 'types';
 // eslint-disable-next-line import/no-cycle
 import { ImageButton } from '../../atoms';
+import { v4 } from 'uuid';
 
 interface ImageInputProps {
   label?: string,
   multiple?: boolean,
-  value?: Image,
-  onChange: (files: File[]) => void,
+  value?: ImageType,
+  onChange: (images: ImageType[]) => void,
+  onDelete?: () => void,
 }
 
 enum FileUploadError {
@@ -28,7 +30,7 @@ export const ImageInput: React.FC<ImageInputProps> = ({
 
   const handleFileInput = async (files: FileList) => {
     const errors: [string, FileUploadError][] = [];
-    const uploaded: File[] = [];
+    const uploaded: ImageType[] = [];
     setLoading(true);
 
     for (const file of files) {
@@ -37,23 +39,50 @@ export const ImageInput: React.FC<ImageInputProps> = ({
       } else if (!isBetween(file.size, 0, 10e6)) {
         errors.push([file.name, FileUploadError.TooLarge]);
       } else {
+        const img = new Image;
         new Compressor(file, {
           quality: 0.6,
           strict: true,
           success(compressed: File) {
-            uploaded.push(compressed);
+            const objectUrl = URL.createObjectURL(compressed)
+            img.src = objectUrl;
+            img.onload = () => {
+              const imgData: ImageType = {
+                id: v4(),
+                url: objectUrl,
+                width: img.width,
+                height: img.height,
+              }
+              uploaded.push(imgData);
+              if (uploaded.length === files.length) {
+                props.onChange(uploaded);
+                setLoading(false);
+              }
+            };
           },
           error(err) {
             console.log(err.message);
             // upload uncompressed version
-            uploaded.push(file);
+            const objectUrl = URL.createObjectURL(file)
+            img.src = objectUrl;
+            img.onload = () => {
+              const imgData: ImageType = {
+                id: v4(),
+                url: objectUrl,
+                width: img.width,
+                height: img.height,
+              }
+              uploaded.push(imgData);
+              if (uploaded.length === files.length) {
+                props.onChange(uploaded);
+                setLoading(false);
+              }
+            };
           }
         })
       }
     }
     
-    props.onChange(uploaded);
-    setLoading(false);
     setErrors(errors);
   };
 
@@ -75,6 +104,7 @@ export const ImageInput: React.FC<ImageInputProps> = ({
         onClick={() => {
           if (!loading) fileInputRef.current?.click();
         }}
+        onDelete={props.onDelete}
       />
       <div className={`ktext-error text-error pt-1 w-22 h-22 ${errors.length > 0 ? '' : 'hidden'}`}>
         {errors}

@@ -172,7 +172,8 @@ export const MapControl: React.FC<MapControlProps> = ({
           <div className="flex items-end">
             <div className="w-1/3 text-left" />
             <div className="w-1/3 text-center">
-              {displayPhotoButton && (
+              {displayPhotoButton && 
+                <div className='md:hidden'>
                   <RoundButton
                     iconName="camera"
                     white={false}
@@ -181,7 +182,8 @@ export const MapControl: React.FC<MapControlProps> = ({
                     iconSizeClass="h-7 w-7"
                     onClick={props.onPhotoButtonClick}
                   />
-              )}
+                </div>
+              }
             </div>
             <div className="w-1/3 text-right">
               {displayUserMarker && (

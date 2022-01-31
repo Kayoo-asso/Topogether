@@ -16,7 +16,7 @@ interface MultipleImageInputProps {
   selected?: UUID,
   onImageClick?: (id: UUID) => void,
   onImageDelete?: (id: UUID) => void,
-  onChange: (files: File[]) => void,
+  onChange: (images: Image[]) => void,
 }
 
 export const MultipleImageInput: React.FC<MultipleImageInputProps> = ({
@@ -57,7 +57,7 @@ export const MultipleImageInput: React.FC<MultipleImageInputProps> = ({
         />
       )}
 
-      {[ ...Array(cols).keys()].map((i, index) => {
+      {[ ...Array(nbVisible).keys()].map((i, index) => {
         if (toDisplay[index])
           return (
             <ImageThumb

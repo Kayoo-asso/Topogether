@@ -34,6 +34,7 @@ export const BoulderBuilderSlideagainstDesktop: React.FC<BoulderBuilderSlideagai
                             boulder={props.boulder}
                             selectedTrack={props.selectedTrack}
                             currentImage={props.currentImage}
+                            displayAddButton
                             setCurrentImage={props.setCurrentImage}
                         />
                     </div>

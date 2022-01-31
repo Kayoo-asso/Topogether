@@ -50,16 +50,18 @@ export const AccessForm: React.FC<AccessFormProps> = watchDependencies((props: A
                     return (
                         <div className='flex flex-col gap-2' key={index}>
                             <div className='flex flex-row gap-6 items-end'>
-                                <ImageInput 
-                                    value={step.image}
-                                    onChange={(files) => {
-                                        newSteps[index].image = files[0];
-                                        props.access.set({
-                                            ...access,
-                                            steps: newSteps,
-                                        })
-                                    }}
-                                />
+                                <div className='w-32'>
+                                    <ImageInput 
+                                        value={step.image}
+                                        onChange={(files) => {
+                                            newSteps[index].image = files[0];
+                                            props.access.set({
+                                                ...access,
+                                                steps: newSteps,
+                                            })
+                                        }}
+                                    />
+                                </div>
                                 <TextArea 
                                     id={'step'+index+'-description'}
                                     label='Description'

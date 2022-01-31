@@ -44,7 +44,6 @@ export const InfoFormSlideover: React.FC<InfoFormSlideoverProps> = ({
                 >
                     <InfoForm 
                         topo={props.topo}
-                        className='mt-6'
                     />
                 </SlideoverLeftDesktop>
             }

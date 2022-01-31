@@ -16,48 +16,38 @@ export const ImageThumb: React.FC<ImageThumbProps> = ({
   selected = false,
   ...props
 }: ImageThumbProps) => {
-  // TypeScript is not able to know that props.onClick or props.onDelete
-  // are not undefined within the new closures
-  const onClick = props.onClick
-    ? () => props.onClick!(props.image.id)
-    : undefined;
 
-  const onDelete = props.onDelete
-    ? () => props.onDelete!(props.image.id)
-    : undefined;
-
-    const { observe, unobserve, width: containerWidth, height: containerHeight, entry } = useDimensions({
-      onResize: ({ observe, unobserve, width, height, entry }) => {
-        // Triggered whenever the size of the target is changed...
-        unobserve(); // To stop observing the current target element
-        observe(); // To re-start observing the current target element
-      },
-    });
+  const { observe, unobserve, width: containerWidth, height: containerHeight, entry } = useDimensions({
+    onResize: ({ observe, unobserve, width, height, entry }) => {
+      // Triggered whenever the size of the target is changed...
+      unobserve(); // To stop observing the current target element
+      observe(); // To re-start observing the current target element
+    },
+  });
 
   return (
     // eslint-disable-next-line jsx-a11y/click-events-have-key-events
     <div
       ref={observe}
-      className={`${selected ? 'border-main' : 'border-dark'}${onClick ? ' cursor-pointer' : ''} \
+      className={`${selected ? 'border-main' : 'border-dark'}${props.onClick ? ' cursor-pointer' : ''} \
       group border-2 w-full flex flex-col justify-center relative`}
-      onClick={onClick}
+      onClick={() => props.onClick && props.onClick(props.image.id)}
       role="button"
       tabIndex={0}
       style={{
         height: containerWidth
       }}
     >
-      {onDelete
-        && (
-        <div className="absolute z-10 -top---3 -right---3 lg:hidden group-hover:block">
+      {props.onDelete &&
+        <div 
+          className="absolute z-10 -top-[15px] -right-[8px] hidden md:group-hover:block" 
+          onClick={(e) => e.stopPropagation()}
+        >
           <DeleteButton
-            onClick={() => {
-              console.log('delete image');
-              onDelete();
-            }}
+            onClick={() => props.onDelete && props.onDelete(props.image.id)}
           />
         </div>
-)}
+      }
       <NextImage
         src={props.image.url}
         alt="user generated image"

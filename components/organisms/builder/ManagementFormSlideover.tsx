@@ -44,7 +44,6 @@ export const ManagementFormSlideover: React.FC<ManagementFormSlideoverProps> = (
                 >
                     <ManagementForm 
                         manager={props.managers.quarkAt(0)}
-                        className='mt-6'
                     />
                 </SlideoverLeftDesktop>
             }

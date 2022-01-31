@@ -17,15 +17,18 @@ export const ManagementForm: React.FC<ManagementFormProps> = watchDependencies((
             onClick={(e) => e.stopPropagation()}
         >
             <div className='flex flex-row gap-6 items-end'>
-                <ImageInput 
-                    value={manager.image}
-                    onChange={(files) => {
-                        props.manager.set({
-                            ...manager,
-                            image: files[0],
-                        })
-                    }}
-                />
+                <div className='w-32 md:mt-4'>
+                    <ImageInput 
+                        value={manager.image}
+                        onChange={(files) => {
+                            props.manager.set({
+                                ...manager,
+                                image: files[0],
+                            })
+                        }}
+                        onDelete={() => console.log('delete')} //TODO
+                    />
+                </div>
                 <TextInput 
                     id='manager-name'
                     label='Nom de la structure'

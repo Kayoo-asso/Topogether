@@ -18,15 +18,18 @@ export const ParkingForm: React.FC<ParkingFormProps> = watchDependencies((props:
             onClick={(e) => e.stopPropagation()}
         >
             <div className='flex flex-row gap-6 items-end'>
-                <ImageInput 
-                    value={parking.image}
-                    onChange={(files) => {
-                        props.parking.set({
-                            ...parking,
-                            image: files[0],
-                        })
-                    }}
-                />
+                <div className='w-28 md:mt-4'>
+                    <ImageInput 
+                        value={parking.image}
+                        onChange={(files) => {
+                            props.parking.set({
+                                ...parking,
+                                image: files[0],
+                            })
+                        }}
+                        onDelete={() => console.log('delete')} //TODO
+                    />
+                </div>
                 <div className='flex flex-col gap-2 justify-between h-full'>
                     <div className='ktext-subtitle'>Parking</div>
                     <TextInput 
