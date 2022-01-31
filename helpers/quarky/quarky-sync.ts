@@ -2,15 +2,15 @@ import { batch, registerPostUpdateHook } from ".";
 import { getBroadcaster } from "./BroadcastChannel";
 import { quark, Quark, isSSR } from "./quarky";
 
-export interface SyncQuark<T, Message = T> extends Quark<T> {
+export interface SyncQuark<T, Serializable = T> extends Quark<T> {
     readonly id: string,
-    readonly export?: (value: T) => Message,
-    readonly import?: (message: Message, current: T) => T,
+    readonly export?: (value: T) => Serializable,
+    readonly import?: (message: Serializable, current: T) => T,
 }
 
-export interface SyncQuarkOptions<T, Message = T> {
-    export: (value: T) => Message,
-    import: (message: Message, current: T) => T,
+export interface SyncQuarkOptions<T, Serializable = T> {
+    export: (value: T) => Serializable,
+    import: (message: Serializable, current: T) => T,
 }
 
 interface QuarkyMessage {

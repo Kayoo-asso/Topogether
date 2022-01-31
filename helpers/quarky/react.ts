@@ -11,10 +11,11 @@ export interface WatchDependenciesOptions<T> {
 
 export function watchDependencies<T>(component: React.FunctionComponent<T>, options?: WatchDependenciesOptions<T>) {
   const wrapped = (props: T, context?: any) => {
-    const [, forceRender] = useState([]);
+    // symbols are always unique
+    const [, forceRender] = useState(Symbol());
     // the forceRender will be invoked by the state management lib on update
     const observer = useMemo(() =>
-      observerEffect(() => forceRender([]))
+      observerEffect(() => forceRender(Symbol()))
       , []);
     useEffect(() => observer.dispose, []);
 
@@ -25,8 +26,9 @@ export function watchDependencies<T>(component: React.FunctionComponent<T>, opti
   }
 
   if (!options || options.memo === true) return React.memo(wrapped);
-  if (!options.memo) return wrapped;
-  return React.memo(wrapped, options.memo);
+  // here options.memo is necessarily a function
+  if (options.memo) return React.memo(wrapped, options.memo);
+  return wrapped;
 }
 
 // useCreateQuark and useCreateDerivation have to be 2 separate hooks,

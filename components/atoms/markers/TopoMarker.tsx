@@ -43,3 +43,5 @@ export const TopoMarker: React.FC<TopoMarkerProps> = watchDependencies(({
 
     return null;
 });
+
+TopoMarker.displayName = "TopoMarker";

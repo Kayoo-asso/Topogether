@@ -6,7 +6,7 @@ import { formatDate, staticUrl } from 'helpers';
 import equal from 'fast-deep-equal/es6';
 import { LightTopo, TopoStatus } from 'types';
 import { useRouter } from 'next/router';
-import { useContextMenu } from 'helpers/hooks/useContextMenu';
+import { useContextMenu, useFirstEffect } from 'helpers/hooks/useContextMenu';
 import { topo } from 'helpers/fakeData/fakeTopoV2';
 import { UserActionDropdown } from './UserActionDropdown';
 import { AdminActionDropdown } from './AdminActionDropdown';
@@ -47,6 +47,10 @@ export const TopoCard: React.FC<TopoCardProps> = React.memo((props: TopoCardProp
   };
 
   useContextMenu(setDropdownDisplayed);
+  // useFirstEffect(() => {
+  //   console.log("Running initial effect");
+  //   return () => console.log("Running initial effect destructor");
+  // });
 
   return (
     <>
@@ -91,10 +95,10 @@ export const TopoCard: React.FC<TopoCardProps> = React.memo((props: TopoCardProp
         </div>
       </Link>
       {dropdownDisplayed && !props.isAdmin && (
-      <UserActionDropdown dropdownPosition={dropdownPosition} topoId={props.topo.id} />
+        <UserActionDropdown dropdownPosition={dropdownPosition} topoId={props.topo.id} />
       )}
       {dropdownDisplayed && props.isAdmin && (
-      <AdminActionDropdown topoId={props.topo.id} status={props.topo.status} dropdownPosition={dropdownPosition} />
+        <AdminActionDropdown topoId={props.topo.id} status={props.topo.status} dropdownPosition={dropdownPosition} />
       )}
     </>
   );

@@ -41,3 +41,5 @@ export const ParkingMarker: React.FC<ParkingMarkerProps> = watchDependencies(({
 
     return null;
 });
+
+ParkingMarker.displayName = "ParkingMarker";

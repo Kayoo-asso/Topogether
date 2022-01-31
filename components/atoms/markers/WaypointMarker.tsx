@@ -41,3 +41,5 @@ export const WaypointMarker: React.FC<WaypointMarkerProps> = watchDependencies((
 
     return null;
 });
+
+WaypointMarker.displayName = "WaypointMarker";
