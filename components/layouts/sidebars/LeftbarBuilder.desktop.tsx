@@ -1,11 +1,12 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { Button, Icon } from 'components';
+import React, { useContext, useState } from 'react';
+import { Button, createTrack, Icon } from 'components';
 import { UserContext } from 'helpers';
-import { Quark, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
-import { Boulder, Grade, Sector, Track, UUID } from 'types';
+import { Quark, QuarkArray, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
+import { Boulder, Grade, Name, Sector, Track, UUID } from 'types';
+import { v4 } from 'uuid';
 
 interface LeftbarBuilderDesktopProps {
-    sectors: Iterable<Quark<Sector>>,
+    sectors: QuarkArray<Sector>,
     selectedBoulder: SelectQuarkNullable<Boulder>,
     onBoulderSelect: (boulderQuark: Quark<Boulder>) => void,
     onTrackSelect: (trackQuark: Quark<Track>, boulderQuark: Quark<Boulder>) => void,
@@ -14,10 +15,9 @@ interface LeftbarBuilderDesktopProps {
 
 export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = watchDependencies((props: LeftbarBuilderDesktopProps) => {
     const { session } = useContext(UserContext);
-    const sectors = Array.from(props.sectors);
     const selectedBoulder = props.selectedBoulder();
 
-    const [displayedSectors, setDisplayedSectors] = useState<Array<UUID>>(sectors.map(sector => sector().id));
+    const [displayedSectors, setDisplayedSectors] = useState<Array<UUID>>(props.sectors.map(sector => sector.id).toArray());
     const [displayedBoulders, setDisplayedBoulders] = useState<Array<UUID>>([]);
 
     const getGradeColorClass = (grade: Grade) => {
@@ -42,15 +42,15 @@ export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = watch
 
     if (!session) return null;
     return (
-        <div className='bg-white border-r border-grey-medium min-w-[280px] w-[280px] h-full hidden md:flex flex-col px-6 py-10 z-500'>
+        <div className='bg-white border-r border-grey-medium min-w-[280px] w-[280px] h-full hidden md:flex flex-col px-2 py-10 z-500'>
             
-            <div className='h-[90%] scroll-y-auto pb-6'>
-                {sectors.map((sectorQuark, index) => {
+            <div className='h-[95%] overflow-y-auto mb-6 px-4'>
+                {props.sectors.quarks().map((sectorQuark, index) => {
                     const sector = sectorQuark();
                     const bouldersIter = sector.boulders.quarks();
                     const boulderQuarks = Array.from(bouldersIter);
                     return (
-                        <div key={sector.id} className='flex flex-col'>
+                        <div key={sector.id} className='flex flex-col mb-10'>
                             <div className="ktext-label text-grey-medium">Secteur {index + 1}</div>
                             <div className="ktext-section-title text-main cursor-pointer mb-2 flex flex-row justify-between">
                                 {sector.name}
@@ -70,8 +70,8 @@ export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = watch
                                 <div className='flex flex-col gap-1 ml-3'>
                                     {boulderQuarks.map((boulderQuark) => {
                                         const boulder = boulderQuark();
-                                        const TracksIter = boulder.tracks.quarks();
-                                        const TrackQuarks = Array.from(TracksIter);
+                                        const tracksIter = boulder.tracks.quarks();
+                                        const trackQuarks = Array.from(tracksIter);
                                         return (
                                             <React.Fragment key={boulder.id}>
                                                 <div className='flex flex-row cursor-pointer text-dark items-center justify-between'>
@@ -95,7 +95,7 @@ export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = watch
                                                 
                                                 {displayedBoulders.includes(boulder.id) &&
                                                     <div className='flex flex-col ml-4 mb-4'>
-                                                        {TrackQuarks.map((trackQuark) => {
+                                                        {trackQuarks.map((trackQuark) => {
                                                             const track = trackQuark();
                                                             return (
                                                                 <div 
@@ -110,6 +110,12 @@ export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = watch
                                                                 </div>
                                                             )
                                                         })}
+                                                        <div
+                                                            className='text-grey-medium cursor-pointer mt-2'
+                                                            onClick={() => createTrack(boulder, session.id)}
+                                                        >
+                                                            + Nouveau passage
+                                                        </div>
                                                     </div>
                                                 }
                                             </React.Fragment>
@@ -122,10 +128,21 @@ export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = watch
                 })}
             </div>
 
-            <Button
-                content='Valider le topo'
-                onClick={props.onValidate}
-            />
+            <div className='px-6'>
+                <Button
+                    content='Nouveau secteur'
+                    white
+                    onClick={() => {
+                        const newSector: Sector = {
+                            id: v4(),
+                            name: 'Secteur ' + (props.sectors.length + 1) as Name,
+                            boulders: new QuarkArray(),
+                            waypoints: new QuarkArray()
+                        }
+                        props.sectors.push(newSector);
+                    }}
+                />
+            </div>
         </div>
     )
 });

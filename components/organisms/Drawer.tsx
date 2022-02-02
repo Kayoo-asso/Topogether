@@ -121,7 +121,7 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies((props: DrawerPro
             currentTool={selectedTool}
             editable
             displayTracksDetails
-            containerClassName='h-[93vh]'
+            containerClassName={props.image.width >= props.image.height ? 'h-[93vh]' : 'h-[93vh]'}
             onImageClick={(pos) => addPointToLine(pos)}
             onPointClick={(pointType, index) => {
               if (selectedTool === 'ERASER') deletePointToLine(pointType, index);

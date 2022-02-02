@@ -119,11 +119,11 @@ const BuilderMapPage: NextPage = () => {
   }, [selectedWaypoint]);
 
   const createBoulder = useCallback((location: GeoCoordinates, image?: Image, selectBoulder = false) => {
-    const orderIndex = topo.sectors.at(0).boulders.length + 1
+    const orderIndex = topo.sectors.at(0).boulders.length;
     const newBoulder: Boulder = {
       id: v4(),
       orderIndex: orderIndex,
-      name: 'Bloc ' + orderIndex as Name,
+      name: 'Bloc ' + (orderIndex + 1) as Name,
       location: location,
       isHighball: false,
       mustSee: false,
@@ -186,7 +186,7 @@ const BuilderMapPage: NextPage = () => {
 
       <div className="h-content md:h-full relative flex flex-row md:overflow-hidden">
         <LeftbarBuilderDesktop 
-          sectors={topo.sectors.quarks()}
+          sectors={topo.sectors}
           selectedBoulder={selectedBoulder}
           onBoulderSelect={toggleBoulderSelect}
           onTrackSelect={toggleTrackSelect}
@@ -232,6 +232,7 @@ const BuilderMapPage: NextPage = () => {
                           : currentTool === 'WAYPOINT' ? 'url(/assets/icons/colored/_help-round.svg), auto'
                           : ''
           }
+          draggableMarkers
           waypoints={waypoints}
           onWaypointClick={toggleWaypointSelect}
           boulders={boulders}

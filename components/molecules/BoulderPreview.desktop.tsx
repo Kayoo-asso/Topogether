@@ -25,6 +25,7 @@ export const BoulderPreviewDesktop: React.FC<BoulderPreviewDesktopProps> = watch
                     tracks={boulder.tracks}
                     selectedTrack={props.selectedTrack}
                     containerClassName='h-[200px]'
+                    test={true}
                 />
             </div>
             
