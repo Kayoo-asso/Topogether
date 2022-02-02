@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import NextImage from 'next/image';
 import {
   Image, PointEnum, DrawerToolEnum, Position, Track
@@ -20,6 +20,7 @@ interface TracksImageProps {
   displayPhantomTracks?: boolean,
   displayTracksDetails?: boolean,
   editable?: boolean,
+  test?: any
   currentTool?: DrawerToolEnum,
   onImageClick?: (pos: Position) => void,
   onPointClick?: (pointType: PointEnum, index: number) => void,
@@ -38,29 +39,22 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
   containerClassName = '',
   ...props
 }: TracksImageProps) => {
-  const { observe, width: containerWidth, height: containerHeight } = useDimensions();
+  const { observe, width: containerWidth, height: containerHeight } = useDimensions({
+  });
   
   let imgWidth;
   let imgHeight;
-  // Only one of those will be set
-  let divWidth;
-  let divHeight;
-
-  let rx: number;
-
-  const imgRatio = props.image.width / props.image.height;
-  if (imgRatio > 1) {
+  const containerR = containerWidth / containerHeight;
+  const imageR = props.image.width / props.image.height;
+  if (imageR > containerR) {
     imgWidth = containerWidth;
-    imgHeight = containerWidth / imgRatio;
-    divHeight = imgHeight;
+    imgHeight = props.image.height * (containerWidth / props.image.width);
   }
   else {
-    imgWidth = containerHeight * imgRatio;
     imgHeight = containerHeight;
-    divWidth = imgWidth;
-    // divHeight = imgHeight;
+    imgWidth = props.image.width * (containerHeight / props.image.height);
   }
-  rx = props.image.width != 0
+  const rx = props.image.width != 0
   ? imgWidth / props.image.width
   : 1;  
 
@@ -84,18 +78,21 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
     return cursorUrl;
   };
 
+  if (props.test) console.log(imgWidth, imgHeight);
+
   return (
     <div
       ref={observe}
-      className={`relative w-full ${containerClassName}`}
+      className={`relative w-full flex flex-row items-center justify-center ${containerClassName}`}
       style={{
-        height: divHeight,
-        minHeight: divHeight,
-        width: divWidth,
+        // minHeight: imgHeight,
+        // minWidth: imgWidth,
       }}
     >
       <svg
-        style={{ cursor: `url(${getCursorUrl()}) ${props.currentTool === 'ERASER' ? '3 7': ''}, auto` }}
+        style={{ 
+          cursor: `url(${getCursorUrl()}) ${props.currentTool === 'ERASER' ? '3 7': ''}, auto`,
+        }}
         className={"svg-canvas absolute z-50 " + (props.canvasClassName ? props.canvasClassName : '')}
         width={imgWidth}
         height={imgHeight}

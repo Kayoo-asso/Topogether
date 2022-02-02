@@ -24,7 +24,7 @@ const gradeColors = {
   None: 'border-grey-light bg-grey-light text-white',
 };
 
-export const createTrack = (boulder: Boulder, creatorId: UUID, selectTrack = false) => {
+export const createTrack = (boulder: Boulder, creatorId: UUID) => {
   const newTrack: Track = {
     id: v4(),
     creatorId: creatorId,
@@ -102,7 +102,10 @@ export const TracksListBuilder: React.FC<TracksListBuilderProps> = watchDependen
 
         <div
           className="ktext-subtitle text-grey-medium px-5 py-5 md:py-3 cursor-pointer border-b border-grey-light hover:bg-grey-superlight"
-          onClick={() => createTrack(boulder, session!.id,)}
+          onClick={() => {
+            const newQuarkTrack = createTrack(boulder, session!.id);
+            props.selectedTrack.select(newQuarkTrack);
+          }}
         >
           <span className="ml-2 mr-5 text-xl">+</span>
           {' '}

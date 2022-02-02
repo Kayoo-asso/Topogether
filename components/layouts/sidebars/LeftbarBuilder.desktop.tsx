@@ -1,11 +1,12 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { Button, Icon } from 'components';
+import React, { useContext, useState } from 'react';
+import { Button, createTrack, Icon } from 'components';
 import { UserContext } from 'helpers';
-import { Quark, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
-import { Boulder, Grade, Sector, Track, UUID } from 'types';
+import { Quark, QuarkArray, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
+import { Boulder, Grade, Name, Sector, Track, UUID } from 'types';
+import { v4 } from 'uuid';
 
 interface LeftbarBuilderDesktopProps {
-    sectors: Iterable<Quark<Sector>>,
+    sectors: QuarkArray<Sector>,
     selectedBoulder: SelectQuarkNullable<Boulder>,
     onBoulderSelect: (boulderQuark: Quark<Boulder>) => void,
     onTrackSelect: (trackQuark: Quark<Track>, boulderQuark: Quark<Boulder>) => void,
@@ -14,10 +15,9 @@ interface LeftbarBuilderDesktopProps {
 
 export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = watchDependencies((props: LeftbarBuilderDesktopProps) => {
     const { session } = useContext(UserContext);
-    const sectors = Array.from(props.sectors);
     const selectedBoulder = props.selectedBoulder();
 
-    const [displayedSectors, setDisplayedSectors] = useState<Array<UUID>>(sectors.map(sector => sector().id));
+    const [displayedSectors, setDisplayedSectors] = useState<Array<UUID>>(props.sectors.map(sector => sector.id).toArray());
     const [displayedBoulders, setDisplayedBoulders] = useState<Array<UUID>>([]);
 
     const getGradeColorClass = (grade: Grade) => {
@@ -42,21 +42,21 @@ export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = watch
 
     if (!session) return null;
     return (
-        <div className='bg-white border-r border-grey-medium min-w-[280px] w-[280px] h-full hidden md:flex flex-col px-6 py-10 z-500'>
+        <div className='bg-white border-r border-grey-medium min-w-[280px] w-[280px] h-full hidden md:flex flex-col px-2 py-10 z-500'>
             
-            <div className='h-[90%] scroll-y-auto pb-6'>
-                {sectors.map((sectorQuark, index) => {
+            <div className='h-[95%] overflow-y-auto mb-6 px-4'>
+                {props.sectors.quarks().map((sectorQuark, index) => {
                     const sector = sectorQuark();
                     const bouldersIter = sector.boulders.quarks();
                     const boulderQuarks = Array.from(bouldersIter);
                     return (
-                        <div key={sector.id} className='flex flex-col'>
+                        <div key={sector.id} className='flex flex-col mb-10'>
                             <div className="ktext-label text-grey-medium">Secteur {index + 1}</div>
-                            <div className="ktext-section-title text-main cursor-pointer mb-2 flex flex-row justify-between">
-                                {sector.name}
+                            <div className="ktext-section-title text-main cursor-pointer mb-2 flex flex-row items-center">
                                 <Icon
                                     name='arrow-simple'
-                                    SVGClassName={'w-3 h-3 stroke-main stroke-2 ' + (displayedSectors.includes(sector.id) ? 'rotate-90' : '-rotate-90')}
+                                    wrapperClassName='pr-3'
+                                    SVGClassName={'w-3 h-3 stroke-main stroke-2 ' + (displayedSectors.includes(sector.id) ? '-rotate-90' : 'rotate-180')}
                                     onClick={() => {
                                         const newDS = [...displayedSectors];
                                         if (newDS.includes(sector.id)) newDS.splice(newDS.indexOf(sector.id), 1)
@@ -64,26 +64,32 @@ export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = watch
                                         setDisplayedSectors(newDS);
                                     }}
                                 />
+                                <div
+                                    onClick={() => {
+                                        const newDS = [...displayedSectors];
+                                        if (!newDS.includes(sector.id)) {
+                                            newDS.push(sector.id);
+                                            setDisplayedSectors(newDS);
+                                        }
+                                    }}
+                                >
+                                    {sector.name}
+                                </div>
                             </div>
                             
                             {displayedSectors.includes(sector.id) &&
                                 <div className='flex flex-col gap-1 ml-3'>
                                     {boulderQuarks.map((boulderQuark) => {
                                         const boulder = boulderQuark();
-                                        const TracksIter = boulder.tracks.quarks();
-                                        const TrackQuarks = Array.from(TracksIter);
+                                        const tracksIter = boulder.tracks.quarks();
+                                        const trackQuarks = Array.from(tracksIter);
                                         return (
                                             <React.Fragment key={boulder.id}>
-                                                <div className='flex flex-row cursor-pointer text-dark items-center justify-between'>
-                                                    <div
-                                                        onClick={() => props.onBoulderSelect(boulderQuark)}
-                                                    >
-                                                        <span className={'mr-2' + (selectedBoulder?.id === boulder.id ? ' font-semibold' : '')}>{boulder.orderIndex + 1}.</span>
-                                                        <span className={'ktext-base' + (selectedBoulder?.id === boulder.id ? ' font-semibold' : '')}>{boulder.name}</span>
-                                                    </div>
+                                                <div className='flex flex-row cursor-pointer text-dark items-center'>
                                                     <Icon
                                                         name='arrow-simple'
-                                                        SVGClassName={'w-3 h-3 stroke-dark ' + (displayedBoulders.includes(boulder.id) ? 'rotate-90' : '-rotate-90')}
+                                                        wrapperClassName='pr-3'
+                                                        SVGClassName={'w-3 h-3 stroke-dark ' + (selectedBoulder?.id === boulder.id ? 'stroke-2 ' : '') + (displayedBoulders.includes(boulder.id) ? '-rotate-90' : 'rotate-180')}
                                                         onClick={() => {
                                                             const newDB = [...displayedBoulders];
                                                             if (newDB.includes(boulder.id)) newDB.splice(newDB.indexOf(boulder.id), 1)
@@ -91,11 +97,24 @@ export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = watch
                                                             setDisplayedBoulders(newDB);
                                                         }}
                                                     />
+                                                    <div
+                                                        onClick={() => {
+                                                            props.onBoulderSelect(boulderQuark);
+                                                            const newDB = [...displayedBoulders];
+                                                            if (!newDB.includes(boulder.id)) {
+                                                                newDB.push(boulder.id);
+                                                                setDisplayedBoulders(newDB);
+                                                            }
+                                                        }}
+                                                    >
+                                                        <span className={'mr-2' + (selectedBoulder?.id === boulder.id ? ' font-semibold' : '')}>{boulder.orderIndex + 1}.</span>
+                                                        <span className={'ktext-base' + (selectedBoulder?.id === boulder.id ? ' font-semibold' : '')}>{boulder.name}</span>
+                                                    </div>
                                                 </div>
                                                 
                                                 {displayedBoulders.includes(boulder.id) &&
                                                     <div className='flex flex-col ml-4 mb-4'>
-                                                        {TrackQuarks.map((trackQuark) => {
+                                                        {trackQuarks.map((trackQuark) => {
                                                             const track = trackQuark();
                                                             return (
                                                                 <div 
@@ -110,6 +129,12 @@ export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = watch
                                                                 </div>
                                                             )
                                                         })}
+                                                        <div
+                                                            className='text-grey-medium cursor-pointer mt-2'
+                                                            onClick={() => createTrack(boulder, session.id)}
+                                                        >
+                                                            + Nouveau passage
+                                                        </div>
                                                     </div>
                                                 }
                                             </React.Fragment>
@@ -122,10 +147,21 @@ export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = watch
                 })}
             </div>
 
-            <Button
-                content='Valider le topo'
-                onClick={props.onValidate}
-            />
+            <div className='px-6'>
+                <Button
+                    content='Nouveau secteur'
+                    white
+                    onClick={() => {
+                        const newSector: Sector = {
+                            id: v4(),
+                            name: 'Secteur ' + (props.sectors.length + 1) as Name,
+                            boulders: new QuarkArray(),
+                            waypoints: new QuarkArray()
+                        }
+                        props.sectors.push(newSector);
+                    }}
+                />
+            </div>
         </div>
     )
 });
