@@ -24,7 +24,7 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(({
       placeholder={props.label}
       id={props.id}
       value={props.value}
-      className={`peer h-10 border-dark ktext-base border-b-2 ${displayLabel ? 'placeholder-transparent' : ''} focus:border-main focus:outline-none w-full ${pointer ? ' cursor-pointer' : ''}`}
+      className={`peer h-20 border-dark ktext-base border-b-2 ${displayLabel ? 'placeholder-transparent' : ''} focus:border-main focus:outline-none w-full ${pointer ? ' cursor-pointer' : ''}`}
     />
 
     {displayLabel && (
@@ -36,9 +36,8 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(({
       </label>
     )}
 
-    {props.error && 
-      <div className="ktext-error text-error">{props.error}</div>
-    }
+    {props.error
+      && <div className="ktext-error text-error">{props.error}</div>}
   </div>
 ));
 
