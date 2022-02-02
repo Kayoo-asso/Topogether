@@ -16,21 +16,12 @@ interface InfoFormProps {
 export const InfoForm: React.FC<InfoFormProps> = watchDependencies((props: InfoFormProps) => {
     const topo = props.topo();
 
-    const handleChildren = useCallback(() => {
-        const amenities = toggleFlag<Amenities>(topo.amenities, Amenities.AdaptedToChildren);
-        props.topo.set({
-        ...topo,
-        amenities,
-    });
-    }, [props.topo, topo]);
-
-    const handleToilets = useCallback(() => {
-        const amenities = toggleFlag<Amenities>(topo.amenities, Amenities.Toilets);
-        props.topo.set({
-        ...topo,
-        amenities,
-    });
-    }, [props.topo, topo]);
+    const handleAmenities = useCallback((amenity) => () => {
+        props.topo.set((t) => ({
+        ...t,
+        amenities: toggleFlag(t.amenities, amenity),
+      }));
+    }, [props.topo]);
 
     return (
       <div
@@ -42,11 +33,11 @@ export const InfoForm: React.FC<InfoFormProps> = watchDependencies((props: InfoF
             <ImageInput
               value={topo.image}
               onChange={(files) => {
-                            props.topo.set({
-                                ...topo,
-                                image: files[0],
-                            });
-                        }}
+                          props.topo.set({
+                              ...topo,
+                              image: files[0],
+                          });
+                      }}
               onDelete={() => console.log('delete')}
             />
           </div>
@@ -55,27 +46,109 @@ export const InfoForm: React.FC<InfoFormProps> = watchDependencies((props: InfoF
             label="Nom du spot"
             value={topo.name}
             onChange={(e) => props.topo.set({
-                        ...topo,
-                        name: e.target.value as Name,
-                    })}
+                      ...topo,
+                      name: e.target.value as Name,
+                  })}
           />
         </div>
+
+        <TextArea
+          id="topo-description"
+          label="Description"
+          value={topo.description}
+          onChange={(e) => props.topo.set({
+                  ...topo,
+                  description: e.target.value as Description,
+              })}
+        />
+
+        <Select
+          id="topo-rock-type"
+          label="Type de roche"
+          options={[
+                  { value: 'Gneiss' },
+              ]}
+          value={topo.rockTypes}
+          onChange={(value) => props.topo.set({
+                  ...topo,
+                  rockTypes: value,
+              })}
+        />
+
+        <TextInput
+          id="topo-altitude"
+          label="Altitude (m)"
+          type="number"
+          value={topo.altitude}
+          onChange={(e) => props.topo.set({
+                  ...topo,
+                  altitude: parseInt(e.target.value),
+              })}
+        />
 
         <Checkbox
           label="Spot adapté aux enfants"
           checked={hasFlag(topo.amenities, Amenities.AdaptedToChildren)}
-          onClick={handleChildren}
+          onClick={useCallback(handleAmenities(Amenities.AdaptedToChildren), [handleAmenities])}
+        />
+
+        <div className="flex flex-row gap-3">
+          <Checkbox
+            label="Toilettes"
+            checked={hasFlag(topo.amenities, Amenities.Toilets)}
+            onClick={useCallback(handleAmenities(Amenities.Toilets), [handleAmenities])}
+
+          />
+          <Checkbox
+            label="Poubelles"
+            checked={hasFlag(topo.amenities, Amenities.Bins)}
+            onClick={useCallback(handleAmenities(Amenities.Bins), [handleAmenities])}
+
+          />
+        </div>
+
+        <div className="flex flex-row gap-3">
+          <Checkbox
+            label="Point d'eau"
+            checked={hasFlag(topo.amenities, Amenities.Waterspot)}
+            onClick={useCallback(handleAmenities(Amenities.Waterspot), [handleAmenities])}
+
+          />
+          <Checkbox
+            label="Espace picnic"
+            checked={hasFlag(topo.amenities, Amenities.PicnicArea)}
+            onClick={useCallback(handleAmenities(Amenities.PicnicArea), [handleAmenities])}
+
+          />
+        </div>
+
+        <Checkbox
+          label="Abris en cas de pluie"
+          checked={hasFlag(topo.amenities, Amenities.Shelter)}
+          onClick={useCallback(handleAmenities(Amenities.Shelter), [handleAmenities])}
+
         />
 
         <Checkbox
-          label="Toilettes"
-          checked={hasFlag(topo.amenities, Amenities.Toilets)}
-          onClick={handleToilets}
+          label="Autres"
+          checked={topo.hasOtherAmenities}
+          onClick={() => props.topo.set({
+                  ...topo,
+                  hasOtherAmenities: !topo.hasOtherAmenities,
+              })}
         />
+        <Show when={() => topo.hasOtherAmenities}>
+          <TextArea
+            id="topo-other-amenities"
+            label="Autres équipements"
+            value={topo.otherAmenities}
+            onChange={(e) => props.topo.set({
+                      ...topo,
+                      otherAmenities: e.target.value as Description,
+                  })}
+          />
+        </Show>
 
       </div>
-    );
+  );
 });
-    function handleCheck<T>(amenities: Amenities | undefined, AdaptedToChildren: Amenities): Amenities | undefined {
-        throw new Error('Function not implemented.');
-    }
