@@ -52,11 +52,11 @@ export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = watch
                     return (
                         <div key={sector.id} className='flex flex-col mb-10'>
                             <div className="ktext-label text-grey-medium">Secteur {index + 1}</div>
-                            <div className="ktext-section-title text-main cursor-pointer mb-2 flex flex-row justify-between">
-                                {sector.name}
+                            <div className="ktext-section-title text-main cursor-pointer mb-2 flex flex-row items-center">
                                 <Icon
                                     name='arrow-simple'
-                                    SVGClassName={'w-3 h-3 stroke-main stroke-2 ' + (displayedSectors.includes(sector.id) ? 'rotate-90' : '-rotate-90')}
+                                    wrapperClassName='pr-3'
+                                    SVGClassName={'w-3 h-3 stroke-main stroke-2 ' + (displayedSectors.includes(sector.id) ? '-rotate-90' : 'rotate-180')}
                                     onClick={() => {
                                         const newDS = [...displayedSectors];
                                         if (newDS.includes(sector.id)) newDS.splice(newDS.indexOf(sector.id), 1)
@@ -64,6 +64,17 @@ export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = watch
                                         setDisplayedSectors(newDS);
                                     }}
                                 />
+                                <div
+                                    onClick={() => {
+                                        const newDS = [...displayedSectors];
+                                        if (!newDS.includes(sector.id)) {
+                                            newDS.push(sector.id);
+                                            setDisplayedSectors(newDS);
+                                        }
+                                    }}
+                                >
+                                    {sector.name}
+                                </div>
                             </div>
                             
                             {displayedSectors.includes(sector.id) &&
@@ -74,16 +85,11 @@ export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = watch
                                         const trackQuarks = Array.from(tracksIter);
                                         return (
                                             <React.Fragment key={boulder.id}>
-                                                <div className='flex flex-row cursor-pointer text-dark items-center justify-between'>
-                                                    <div
-                                                        onClick={() => props.onBoulderSelect(boulderQuark)}
-                                                    >
-                                                        <span className={'mr-2' + (selectedBoulder?.id === boulder.id ? ' font-semibold' : '')}>{boulder.orderIndex + 1}.</span>
-                                                        <span className={'ktext-base' + (selectedBoulder?.id === boulder.id ? ' font-semibold' : '')}>{boulder.name}</span>
-                                                    </div>
+                                                <div className='flex flex-row cursor-pointer text-dark items-center'>
                                                     <Icon
                                                         name='arrow-simple'
-                                                        SVGClassName={'w-3 h-3 stroke-dark ' + (displayedBoulders.includes(boulder.id) ? 'rotate-90' : '-rotate-90')}
+                                                        wrapperClassName='pr-3'
+                                                        SVGClassName={'w-3 h-3 stroke-dark ' + (selectedBoulder?.id === boulder.id ? 'stroke-2 ' : '') + (displayedBoulders.includes(boulder.id) ? '-rotate-90' : 'rotate-180')}
                                                         onClick={() => {
                                                             const newDB = [...displayedBoulders];
                                                             if (newDB.includes(boulder.id)) newDB.splice(newDB.indexOf(boulder.id), 1)
@@ -91,6 +97,19 @@ export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = watch
                                                             setDisplayedBoulders(newDB);
                                                         }}
                                                     />
+                                                    <div
+                                                        onClick={() => {
+                                                            props.onBoulderSelect(boulderQuark);
+                                                            const newDB = [...displayedBoulders];
+                                                            if (!newDB.includes(boulder.id)) {
+                                                                newDB.push(boulder.id);
+                                                                setDisplayedBoulders(newDB);
+                                                            }
+                                                        }}
+                                                    >
+                                                        <span className={'mr-2' + (selectedBoulder?.id === boulder.id ? ' font-semibold' : '')}>{boulder.orderIndex + 1}.</span>
+                                                        <span className={'ktext-base' + (selectedBoulder?.id === boulder.id ? ' font-semibold' : '')}>{boulder.name}</span>
+                                                    </div>
                                                 </div>
                                                 
                                                 {displayedBoulders.includes(boulder.id) &&
