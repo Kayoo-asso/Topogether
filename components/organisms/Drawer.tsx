@@ -3,7 +3,7 @@ import {
   DrawerToolEnum, Image, LinearRing, PointEnum, Position, Track,
 } from 'types';
 import { ModalDelete, Toolbar, TracksImage } from 'components';
-import { QuarkArray, SelectQuarkNullable, useCreateQuark, watchDependencies } from 'helpers/quarky';
+import { QuarkArray, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
 import { v4 } from 'uuid';
 
 interface DrawerProps {
@@ -17,6 +17,12 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies((props: DrawerPro
   const [selectedTool, setSelectedTool] = useState<DrawerToolEnum>('LINE_DRAWER');
   const [displayOtherTracks, setDisplayOtherTracks] = useState(false);
   const [displayClearModal, setDisplayClearModal] = useState(false);
+
+  useEffect(() => {
+    document.addEventListener('keydown', function (event) {
+      if (event.ctrlKey && event.key === 'z') rewind();
+    });
+  }, []);
 
   const selectedTrack = props.selectedTrack()!;
 
@@ -101,12 +107,6 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies((props: DrawerPro
       [pos[0] + size, pos[1] - size],
     ]
   }
-
-  useEffect(() => {
-    document.addEventListener('keydown', function (event) {
-      if (event.ctrlKey && event.key === 'z') rewind();
-    });
-  }, []);
 
   return (
     <>

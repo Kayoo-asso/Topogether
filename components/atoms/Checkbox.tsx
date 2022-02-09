@@ -1,12 +1,12 @@
 /* eslint-disable jsx-a11y/control-has-associated-label */
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 import { Icon } from './Icon';
 
 interface CheckboxProps {
   checked?: boolean,
   label?: string,
   className?: string,
-  onClick: () => void;
+  onClick: (checked: boolean) => void;
 }
 
 export const Checkbox: React.FC<CheckboxProps> = ({
@@ -14,7 +14,7 @@ export const Checkbox: React.FC<CheckboxProps> = ({
   ...props
 }: CheckboxProps) => {
   const handleClick = useCallback(() => {
-    props.onClick();
+    props.onClick(!checked);
   }, [props]);
 
   const iconOpacity = checked ? 'opacity-100' : 'opacity-0';
@@ -24,14 +24,11 @@ export const Checkbox: React.FC<CheckboxProps> = ({
   return (
     <div
       className={`flex flex-row space-between ${props.className}`}
-      role="checkbox"
-      aria-checked={checked}
-      tabIndex={0}
       onClick={handleClick}
       onKeyDown={handleClick}
     >
       <div className="relative h-5 w-5">
-        <div className={`absolute h-5 w-5 left-0 top-0 stroke-dark rounded-[0.4rem] border-2 border-dark cursor-pointer ${containerOpacity} ${rotation} transition-transform`} />
+        <div className={`absolute h-5 w-5 left-0 top-0 stroke-dark rounded-[0.2rem] border-2 border-dark cursor-pointer ${containerOpacity} ${rotation} transition-transform`} />
         <Icon
           SVGClassName="absolute left-0 top-0 h-5 w-5 stroke-main"
           wrapperClassName={`absolute left-0 top-0 ${iconOpacity} transition-opacity`}

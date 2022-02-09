@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import NextImage from 'next/image';
 import {
   Image, PointEnum, DrawerToolEnum, Position, Track
@@ -27,10 +27,6 @@ interface TracksImageProps {
   onImageLoad?: (width: number, height: number) => void,
 }
 
-// NOTES:
-// - The useDimensions hook from react-cool-dimensions can be used to dynamically size this component, based on its container
-// TODOS:
-// - Verify that the useDimensions hook works for dynamically resizing TracksImage
 export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
   displayTracks = true,
   displayPhantomTracks = true,
@@ -39,8 +35,7 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
   containerClassName = '',
   ...props
 }: TracksImageProps) => {
-  const { observe, width: containerWidth, height: containerHeight } = useDimensions({
-  });
+  const { observe, width: containerWidth, height: containerHeight } = useDimensions({});
   
   let imgWidth;
   let imgHeight;
@@ -78,16 +73,10 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
     return cursorUrl;
   };
 
-  if (props.test) console.log(imgWidth, imgHeight);
-
   return (
     <div
       ref={observe}
       className={`relative w-full flex flex-row items-center justify-center ${containerClassName}`}
-      style={{
-        // minHeight: imgHeight,
-        // minWidth: imgWidth,
-      }}
     >
       <svg
         style={{ 
