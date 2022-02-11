@@ -1,24 +1,26 @@
+import { Checkbox } from 'components';
+import { hasFlag, listFlags } from 'helpers';
 import React, {
   useRef, useState,
 } from 'react';
+import { Bitflag } from 'types';
 import { Icon } from '../../atoms/Icon';
-import { Dropdown, DropdownOption } from './Dropdown';
 import { TextInput } from './TextInput';
 
-interface MultipleSelectProps {
+interface MultipleSelectProps<T extends Bitflag> {
   id: string;
   label?: string;
-  options: DropdownOption[];
-  values: DropdownOption[],
-  onChange: (value: DropdownOption[]) => void;
+  bitflagNames: [T, string][];
+  value: T | undefined,
+  onChange: (value: T) => void;
   className?: string;
 }
 
-export const MultipleSelect: React.FC<MultipleSelectProps> = (props) => {
+export const MultipleSelect = <T extends Bitflag>(props:MultipleSelectProps<T>) => {
   const ref = useRef<HTMLInputElement>(null);
   const [isOpen, setIsOpen] = useState(false);
 
-  const textValue = props.values.map((value) => value.label || value.value).join(', ');
+  const textValue = props.value && listFlags(props.value, props.bitflagNames).join(', ');
 
   return (
     <div
@@ -45,18 +47,23 @@ export const MultipleSelect: React.FC<MultipleSelectProps> = (props) => {
       />
 
       {isOpen && (
-        <Dropdown
-          type="checkbox"
-          fullSize
-          onSelect={(option) => {
-            const newValue = [...props.values];
-            if (props.values.includes(option)) newValue.slice(props.values.indexOf(option), 1);
-            else newValue.push(option);
-            props.onChange(newValue); 
-          }}
-          options={props.options}
-        />
-      )}
+        props.bitflagNames.map(([flag,name]) => (
+          <div
+            className="py-4 text-dark ktext-base cursor-pointer flex flex-row items-center"
+            key={name}
+            onKeyDown={() => { props.onChange(flag); }}
+            onMouseDown={() => { props.onChange(flag); }}
+            role="menuitem"
+            tabIndex={0}
+          >
+            <Checkbox
+              className="mr-2"
+              checked={props.value && hasFlag(props.value, flag)}
+              onClick={() => { props.onChange(flag); }}
+            />
+            {name}
+          </div>
+      )))}
     </div>
   );
 };

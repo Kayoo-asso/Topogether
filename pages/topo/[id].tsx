@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import type { NextPage } from 'next';
 import { 
-  ApproachSlideover, InfoSlideover, ManagementSlideover,
+  AccessSlideover, InfoSlideover, ManagementSlideover,
   BoulderSlideagainstDesktop,  BoulderSlideoverMobile, TrackSlideagainstDesktop,
   Show,
   Header, LeftbarDesktop, 
@@ -126,7 +126,7 @@ const Topo: NextPage = () => {
           />
         </Show>
         <Show when={() => displayApproach}>
-          <ApproachSlideover
+          <AccessSlideover
             accesses={topo().accesses}
             open={displayApproach}
             onClose={() => setCurrentDisplay(undefined)}

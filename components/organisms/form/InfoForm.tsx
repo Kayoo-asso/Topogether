@@ -1,12 +1,13 @@
 import React, { useCallback } from 'react';
 import {
- Checkbox, ImageInput, Select, Show, TextArea, TextInput,
+ Checkbox, ImageInput, MultipleSelect, Select, Show, TextArea, TextInput,
 } from 'components';
 import { Quark, watchDependencies } from 'helpers/quarky';
 import {
- Amenities, Description, Name, Topo,
+ Amenities, Description, Name, RockTypes, Topo,
 } from 'types';
-import { hasFlag, toggleFlag } from 'helpers';
+import { hasFlag, rockNames, toggleFlag } from 'helpers';
+import { RockTypeNames } from 'types/EnumNames';
 
 interface InfoFormProps {
     topo: Quark<Topo>,
@@ -62,17 +63,16 @@ export const InfoForm: React.FC<InfoFormProps> = watchDependencies((props: InfoF
               })}
         />
 
-        <Select
+        <MultipleSelect<RockTypes>
           id="topo-rock-type"
           label="Type de roche"
-          options={[
-                  { value: 'Gneiss' },
-              ]}
+          bitflagNames={rockNames}
           value={topo.rockTypes}
-          onChange={(value) => props.topo.set({
-                  ...topo,
-                  rockTypes: value,
-              })}
+          onChange={(value) => 
+            props.topo.set((t) => ({
+            ...t,
+            rockTypes: toggleFlag(topo.rockTypes, value),
+          }))}
         />
 
         <TextInput

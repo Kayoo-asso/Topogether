@@ -17,9 +17,9 @@ interface SelectProps {
   options: DropdownOption[];
   big?: boolean,
   white?: boolean,
-  value?: string;
+  value?: any;
   error?: string,
-  onSelect: (value: any) => void;
+  onChange: (value: any) => void;
 }
 
 export const Select: React.FC<SelectProps> = ({
@@ -30,6 +30,7 @@ export const Select: React.FC<SelectProps> = ({
   const ref = useRef<HTMLInputElement>(null);
   const [isOpen, setIsOpen] = useState(false);
 
+  const selectedOption = props.options.find(o => o.value === props.value);
   return (
     <div
       id={props.id}
@@ -43,7 +44,7 @@ export const Select: React.FC<SelectProps> = ({
         id={`${props.id}-input`}
         big={big}
         white={white}
-        value={props.value || ''}
+        value={selectedOption?.label || selectedOption?.value || ''}
         error={props.error}
         readOnly
         pointer
@@ -57,26 +58,26 @@ export const Select: React.FC<SelectProps> = ({
         }}
       />
       {isOpen && (
-      <Dropdown
-        fullSize
-        options={[{
-            value: props.label,
-            isSection: true,
-            action: () => {
-              setIsOpen(false);
-              props.onSelect(undefined);
-            }
-          }]
-          .concat(props.options.map((opt) => ({
-            ...opt,
-            isSection: false,
-            action: () => {
-              setIsOpen(false);
-              props.onSelect(opt.value);
-            }
-          })))
-        }
-      />
+        <Dropdown
+          fullSize
+          options={[{
+              value: props.label,
+              isSection: true,
+              action: () => {
+                setIsOpen(false);
+                props.onChange(undefined);
+              }
+            }]
+            .concat(props.options.map((opt) => ({
+              ...opt,
+              isSection: false,
+              action: () => {
+                setIsOpen(false);
+                props.onChange(opt.value);
+              }
+            })))
+          }
+        />
       )}
     </div>
   );

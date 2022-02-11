@@ -1,7 +1,9 @@
 import React from 'react';
-import { Button, Checkbox, MultipleSelect, TextArea, TextInput } from 'components';
+import { Button, Checkbox, MultipleSelect, Select, TextArea, TextInput } from 'components';
 import { Quark, watchDependencies } from 'helpers/quarky';
-import { Description, Name, Track } from 'types';
+import { ClimbTechniques, Description, Name, Track } from 'types';
+import { ClimbTechniquesName, toggleFlag } from 'helpers';
+import { ReceptionName } from 'types/EnumNames';
 
 interface TrackFormProps {
     track: Quark<Track>,
@@ -54,37 +56,29 @@ export const TrackForm: React.FC<TrackFormProps> = watchDependencies((props: Tra
                     })}
                 />
             </div>
-                    
-            <MultipleSelect 
+
+            <MultipleSelect<ClimbTechniques>
                 id='track-techniques'
                 label='Techniques'
-                //TODO FINISH
-                options={[
-                    {
-                        value: 'Lolotte'
-                    },
-                    {
-                        value: 'Dulfer'
-                    }
-                ]}
-                values={[]}
-                onChange={(opts) => console.log(opts)}
+                bitflagNames={ClimbTechniquesName}
+                value={track.techniques}
+                onChange={(value) => {
+                    props.track.set((t) => ({
+                    ...t,
+                    techniques: toggleFlag(track.techniques, value)
+                }))}}
             />
 
-            <MultipleSelect 
+            <Select 
                 id='track-receptions'
                 label='Réception'
                 //TODO FINISH
-                options={[
-                    {
-                        value: 'Bonne'
-                    },
-                    {
-                        value: 'Mauvaise'
-                    }
-                ]}
-                values={[]}
-                onChange={(opts) => console.log(opts)}
+                options={Object.entries(ReceptionName).map(([value, label]) => ({label, value }))}
+                value={track.reception}
+                onChange={(value) => props.track.set({
+                    ...track,
+                    reception: value,
+                })}
             />
 
             <TextInput 

@@ -2,6 +2,7 @@ import React from 'react';
 import { Button, ImageInput, Select, TextArea, TextInput } from 'components';
 import { Quark, watchDependencies } from 'helpers/quarky';
 import { Description, TopoAccess } from 'types';
+import { DifficultyName } from 'types/EnumNames';
 
 interface AccessFormProps {
     access: Quark<TopoAccess>,
@@ -17,12 +18,10 @@ export const AccessForm: React.FC<AccessFormProps> = watchDependencies((props: A
             onClick={(e) => e.stopPropagation()}
         >
             <div className='flex flex-row gap-6 items-end'>
-                <Select 
+                <Select
                     id='access-difficulty'
                     label='Difficulté'
-                    options={[
-                        { value: 'Facile' },
-                    ]}
+                    options={Object.entries(DifficultyName).map(([value, label]) => ({label, value }))}
                     value={access.difficulty}
                     onChange={(value) => props.access.set({
                         ...access,
