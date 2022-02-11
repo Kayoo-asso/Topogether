@@ -47,28 +47,28 @@ export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = watch
         if (res.destination && sourceSector && destinationSector) { 
             const oldIndex = res.source.index;
             const newIndex = res.destination.index;
-            const draggedBoulder = sourceSector.boulders.quarkAt(oldIndex);
-            console.log('----------------------');
-            console.log("dropping " + draggedBoulder().name);
-            console.log('oldIndex : ' + oldIndex);
-            console.log('newIndex : ' + newIndex);
+            const draggedBoulder = sourceSector.boulders.findQuark(b => b.orderIndex === oldIndex)!;
+            // console.log('----------------------');
+            // console.log("dropping " + draggedBoulder().name);
+            // console.log('oldIndex : ' + oldIndex);
+            // console.log('newIndex : ' + newIndex);
             if (destinationSector.id !== sourceSector.id) {
                 for (const bQ of sourceSector.boulders.quarks()) {
                     if (bQ().orderIndex > oldIndex) {
-                        console.log('-1 on boulder '+ bQ().name)
-                        bQ.set({
-                            ...bQ(),
-                            orderIndex: bQ().orderIndex - 1
-                        })
+                        // console.log('-1 on boulder '+ bQ().name)
+                        bQ.set(prev => ({
+                            ...prev,
+                            orderIndex: prev.orderIndex - 1
+                        }));
                     }
                 }
                 for (const bQ of destinationSector.boulders.quarks()) {
                     if (bQ().orderIndex >= newIndex) {
-                        console.log('+1 on boulder '+ bQ().name)
-                        bQ.set({
-                            ...bQ(),
-                            orderIndex: bQ().orderIndex + 1
-                        })
+                        // console.log('+1 on boulder '+ bQ().name)
+                        bQ.set(prev => ({
+                            ...prev,
+                            orderIndex: prev.orderIndex + 1
+                        }))
                     }
                 }
             }
@@ -76,21 +76,21 @@ export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = watch
                 if (oldIndex < newIndex)
                     for (const bQ of sourceSector.boulders.quarks()) {  
                         if (bQ().orderIndex > oldIndex && bQ().orderIndex <= newIndex) {
-                            console.log('-1 on boulder '+ bQ().name)
-                            bQ.set({
-                                ...bQ(),
-                                orderIndex: bQ().orderIndex - 1
-                            })
+                            // console.log('-1 on boulder '+ bQ().name)
+                            bQ.set(prev => ({
+                                ...prev,
+                                orderIndex: prev.orderIndex - 1
+                            }))
                         }
                     }
                 else
                     for (const bQ of sourceSector.boulders.quarks()) {  
                         if (bQ().orderIndex < oldIndex && bQ().orderIndex >= newIndex) {
-                            console.log('+1 on boulder '+ bQ().name)
-                            bQ.set({
-                                ...bQ(),
-                                orderIndex: bQ().orderIndex + 1
-                            })
+                            // console.log('+1 on boulder '+ bQ().name)
+                            bQ.set(prev => ({
+                                ...prev,
+                                orderIndex: prev.orderIndex + 1
+                            }))
                         }
                     }
             }
@@ -155,7 +155,7 @@ export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = watch
                                                     const boulder = boulderQuark();
                                                     const tracksIter = boulder.tracks.quarks();
                                                     const trackQuarks = Array.from(tracksIter);
-                                                    console.log(boulder.name + ' : ' + boulder.orderIndex);
+                                                    // console.log(boulder.name + ' : ' + boulder.orderIndex);
                                                     return (
                                                         <Draggable key={boulder.id} draggableId={boulder.id} index={boulder.orderIndex}>
                                                             {(provided) => (
