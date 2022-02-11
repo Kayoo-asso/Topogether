@@ -94,8 +94,9 @@ const BuilderMapPage: NextPage = () => {
     selectedTrack.select(undefined);
     selectedParking.select(undefined);
     selectedWaypoint.select(undefined);
-    if (selectedBoulder()?.id === boulderQuark().id) { selectedBoulder.select(undefined); } else {
-      setCurrentImage(boulderQuark().images[0]);
+    if (selectedBoulder()?.id === boulderQuark().id) selectedBoulder.select(undefined);
+    else {
+      setCurrentImage(boulderQuark().images[0] || defaultImage);
       selectedBoulder.select(boulderQuark);
     }
   }, [selectedBoulder]);
@@ -244,7 +245,7 @@ const BuilderMapPage: NextPage = () => {
           onPhotoButtonClick={() => setDisplayGeoCamera(true)}
           onClick={(e) => {
             if (e.latLng) {
-switch (currentTool) {
+              switch (currentTool) {
                 case 'ROCK':
                   createBoulder({ lat: e.latLng.lat(), lng: e.latLng.lng() });
                   break;

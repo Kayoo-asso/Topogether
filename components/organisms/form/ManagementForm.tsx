@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Button, ImageInput, TextArea, TextInput } from 'components';
 import { Quark, watchDependencies } from 'helpers/quarky';
 import { Description, Manager, Name } from 'types';
@@ -9,7 +9,14 @@ interface ManagementFormProps {
 }
 
 export const ManagementForm: React.FC<ManagementFormProps> = watchDependencies((props: ManagementFormProps) => {
+    const nameInputRef = useRef<HTMLInputElement>(null);
     const manager = props.manager();
+
+    useEffect(() => {
+        if (nameInputRef.current) {
+          nameInputRef.current.focus();
+        }
+      }, []);
 
     return (
         <div 
@@ -30,6 +37,7 @@ export const ManagementForm: React.FC<ManagementFormProps> = watchDependencies((
                     />
                 </div>
                 <TextInput 
+                    ref={nameInputRef}
                     id='manager-name'
                     label='Nom de la structure'
                     value={manager.name}

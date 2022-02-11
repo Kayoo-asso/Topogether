@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import {
  Checkbox, ImageInput, Select, Show, TextArea, TextInput,
 } from 'components';
@@ -14,7 +14,14 @@ interface InfoFormProps {
 }
 
 export const InfoForm: React.FC<InfoFormProps> = watchDependencies((props: InfoFormProps) => {
+    const nameInputRef = useRef<HTMLInputElement>(null);
     const topo = props.topo();
+
+    useEffect(() => {
+      if (nameInputRef.current) {
+        nameInputRef.current.focus();
+      }
+    }, []);
 
     const handleAmenities = useCallback((amenity) => () => {
         props.topo.set((t) => ({
@@ -22,6 +29,7 @@ export const InfoForm: React.FC<InfoFormProps> = watchDependencies((props: InfoF
         amenities: toggleFlag(t.amenities, amenity),
       }));
     }, [props.topo]);
+    
 
     return (
       <div
@@ -42,13 +50,14 @@ export const InfoForm: React.FC<InfoFormProps> = watchDependencies((props: InfoF
             />
           </div>
           <TextInput
+            ref={nameInputRef}
             id="topo-name"
             label="Nom du spot"
             value={topo.name}
             onChange={(e) => props.topo.set({
-                      ...topo,
-                      name: e.target.value as Name,
-                  })}
+                ...topo,
+                name: e.target.value as Name,
+            })}
           />
         </div>
 
@@ -57,9 +66,9 @@ export const InfoForm: React.FC<InfoFormProps> = watchDependencies((props: InfoF
           label="Description"
           value={topo.description}
           onChange={(e) => props.topo.set({
-                  ...topo,
-                  description: e.target.value as Description,
-              })}
+              ...topo,
+              description: e.target.value as Description,
+          })}
         />
 
         <Select

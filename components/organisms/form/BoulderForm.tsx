@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Checkbox, TextInput } from 'components';
 import { Quark, watchDependencies } from 'helpers/quarky';
 import { Boulder, Name } from 'types';
@@ -9,7 +9,14 @@ interface BoulderFormProps {
 }
 
 export const BoulderForm: React.FC<BoulderFormProps> = watchDependencies((props: BoulderFormProps) => {
+    const nameInputRef = useRef<HTMLInputElement>(null);
     const boulder = props.boulder();
+
+    useEffect(() => {
+        if (nameInputRef.current) {
+            nameInputRef.current.focus();
+        }
+    }, []);
 
     return (
         <div 
@@ -17,6 +24,7 @@ export const BoulderForm: React.FC<BoulderFormProps> = watchDependencies((props:
             onClick={(e) => e.stopPropagation()}
         >
             <TextInput 
+                ref={nameInputRef}
                 id='boulder-name'
                 label='Nom du bloc'
                 value={boulder.name}

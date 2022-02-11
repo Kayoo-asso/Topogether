@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Button, ImageInput, TextArea, TextInput } from 'components';
 import { Quark, watchDependencies } from 'helpers/quarky';
 import { Description, Name, Parking } from 'types';
@@ -10,7 +10,14 @@ interface ParkingFormProps {
 }
 
 export const ParkingForm: React.FC<ParkingFormProps> = watchDependencies((props: ParkingFormProps) => {
+    const nameInputRef = useRef<HTMLInputElement>(null);
     const parking = props.parking();
+
+    useEffect(() => {
+        if (nameInputRef.current) {
+            nameInputRef.current.focus();
+        }
+    }, []);
 
     return (
         <div 
@@ -33,6 +40,7 @@ export const ParkingForm: React.FC<ParkingFormProps> = watchDependencies((props:
                 <div className='flex flex-col gap-2 justify-between h-full'>
                     <div className='ktext-subtitle'>Parking</div>
                     <TextInput 
+                        ref={nameInputRef}
                         id='parking-name'
                         label='Nom'
                         value={parking.name}

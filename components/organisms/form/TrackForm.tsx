@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Button, Checkbox, MultipleSelect, TextArea, TextInput } from 'components';
 import { Quark, watchDependencies } from 'helpers/quarky';
 import { Description, Name, Track } from 'types';
@@ -10,7 +10,14 @@ interface TrackFormProps {
 }
 
 export const TrackForm: React.FC<TrackFormProps> = watchDependencies((props: TrackFormProps) => {
+    const nameInputRef = useRef<HTMLInputElement>(null);
     const track = props.track();
+
+    useEffect(() => {
+        if (nameInputRef.current) {
+            nameInputRef.current.focus();
+        }
+    }, []);
 
     return (
         <>
@@ -19,6 +26,7 @@ export const TrackForm: React.FC<TrackFormProps> = watchDependencies((props: Tra
             onClick={(e) => e.stopPropagation()}
         >
             <TextInput 
+                ref={nameInputRef}
                 id='track-name'
                 label='Nom de la voie'
                 value={track.name}

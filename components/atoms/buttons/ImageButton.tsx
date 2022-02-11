@@ -37,7 +37,7 @@ export const ImageButton: React.FC<ImageButtonProps> = ({
     role="button"
     tabIndex={0}
     style={{
-      height: containerWidth
+      height: containerWidth,
     }}
   >
     {loading
@@ -69,6 +69,6 @@ export const ImageButton: React.FC<ImageButtonProps> = ({
       </>
     }
     {!loading && !props.image
-      && <span className=''>{text}</span>}
+      && <span className='m-2'>{text}</span>}
   </div>
 )};

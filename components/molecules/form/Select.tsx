@@ -19,7 +19,7 @@ interface SelectProps {
   white?: boolean,
   value?: string;
   error?: string,
-  onSelect: (value: any) => void;
+  onChange: (value: any) => void;
 }
 
 export const Select: React.FC<SelectProps> = ({
@@ -64,7 +64,7 @@ export const Select: React.FC<SelectProps> = ({
             isSection: true,
             action: () => {
               setIsOpen(false);
-              props.onSelect(undefined);
+              props.onChange(undefined);
             }
           }]
           .concat(props.options.map((opt) => ({
@@ -72,7 +72,7 @@ export const Select: React.FC<SelectProps> = ({
             isSection: false,
             action: () => {
               setIsOpen(false);
-              props.onSelect(opt.value);
+              props.onChange(opt.value);
             }
           })))
         }

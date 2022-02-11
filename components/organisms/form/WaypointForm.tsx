@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Button, ImageInput, TextArea, TextInput } from 'components';
 import { Quark, watchDependencies } from 'helpers/quarky';
 import { Description, Name, Waypoint } from 'types';
@@ -10,7 +10,14 @@ interface WaypointFormProps {
 }
 
 export const WaypointForm: React.FC<WaypointFormProps> = watchDependencies((props: WaypointFormProps) => {
+    const nameInputRef = useRef<HTMLInputElement>(null);
     const waypoint = props.waypoint();
+
+    useEffect(() => {
+        if (nameInputRef.current) {
+            nameInputRef.current.focus();
+        }
+    }, []);
 
     return (
         <div 
@@ -33,6 +40,7 @@ export const WaypointForm: React.FC<WaypointFormProps> = watchDependencies((prop
                 <div className='flex flex-col gap-2 justify-between h-full'>
                     <div className='ktext-subtitle'>Point de repère</div>
                     <TextInput 
+                        ref={nameInputRef}
                         id='waypoint-name'
                         label='Nom'
                         value={waypoint.name}
