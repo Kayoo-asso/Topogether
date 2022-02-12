@@ -3,7 +3,7 @@ import { hasFlag, listFlags } from 'helpers';
 import React, {
   useRef, useState,
 } from 'react';
-import { Bitflag, Enums, TopoType, TopoTypes } from 'types';
+import { Bitflag, Enums, TopoType } from 'types';
 import { Icon } from '../../atoms/Icon';
 import { TextInput } from './TextInput';
 
@@ -16,7 +16,7 @@ type BitflagMultipleSelectProps<T extends Bitflag> = {
   className?: string;
 }
 
-type EnumMultipleSelectProps<T extends TopoTypes> = {
+type EnumMultipleSelectProps<T extends TopoType> = {
   id: string;
   label?: string;
   names:  {[key in T]: string} 
@@ -46,6 +46,7 @@ export const MultipleSelect = <T extends Bitflag | Enums>(props:MultipleSelectPr
           value={textValue}
           pointer
           readOnly
+          inputClassName='pr-4'
           onClick={() => setIsOpen(!isOpen)}
         />
         <Icon
