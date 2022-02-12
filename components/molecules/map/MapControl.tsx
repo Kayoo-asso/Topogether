@@ -48,7 +48,7 @@ export const MapControl: React.FC<MapControlProps> = ({
   const [satelliteView, setSatelliteView] = useState(false);
   const maxBoulders = props.topos ? Math.max(...props.topos.map(t => t().nbBoulders).toArray()) : 0;
   const defaultTopoFilterOptions: TopoFilterOptions = {
-    types: null,
+    types: [],
     boulderRange: [0, maxBoulders],
     gradeRange: [3, 9],
     adaptedToChildren: false,

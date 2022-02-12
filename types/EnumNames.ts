@@ -1,5 +1,5 @@
 import { RockTypes } from "./Bitflags";
-import { Reception, Difficulty } from "./Enums";
+import { Reception, Difficulty, TopoType } from "./Enums";
 
 export const DifficultyName: {[key in Difficulty]: string} = {
   [Difficulty.Good]: 'Facile',
@@ -13,4 +13,12 @@ export const ReceptionName: {[key in Reception]: string} = {
   [Reception.OK]: 'Moyenne : sol irrégulier ou en pente',
   [Reception.None]: "ATTENTION ! Pas d'espace de réception",
   [Reception.Dangerous]: 'Dangereuse : rocher présent'
+};
+
+export const TopoTypeName: {[key in TopoType]: string} = {
+  [TopoType.Artificial]: 'Artificiel',
+  [TopoType.Boulder]: 'Bloc',
+  [TopoType.Cliff]: "Falaise",
+  [TopoType.DeepWater]: 'Deep water',
+  [TopoType.Multipitch]: 'Grande voie'
 };

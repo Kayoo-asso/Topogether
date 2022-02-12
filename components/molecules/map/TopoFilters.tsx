@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Checkbox, Icon, RoundButton } from 'components';
 import { LightGrade, TopoType } from 'types';
-import { DropdownOption, GradeSliderInput, MultipleSelect, SliderInput } from '..';
+import { GradeSliderInput, MultipleSelect, SliderInput } from '..';
+import { TopoTypeName } from 'types/EnumNames';
 
 
 export interface TopoFilterOptions {
-    types: TopoType[] | null,
+    types: TopoType[],
     boulderRange: [number, number],
     gradeRange: [Exclude<LightGrade, 'None'>, Exclude<LightGrade, 'None'>],
     adaptedToChildren: boolean,
@@ -17,34 +18,44 @@ interface TopoFiltersProps {
     values: TopoFilterOptions,
     onChange: (options: TopoFilterOptions) => void,
 }
-
 export const TopoFilters: React.FC<TopoFiltersProps> = ({
     initialOpen = false,
     ...props
 }: TopoFiltersProps) => {
+    console.log(props.values);
     const [open, setOpen] = useState(initialOpen);
 
-    const updateTopoFilters = <K extends keyof TopoFilterOptions>(option: K, value: TopoFilterOptions[K]) => {
+    const updateTopoFilters = useCallback(<K extends keyof TopoFilterOptions>(option: K, value: TopoFilterOptions[K]) => {
         const newOptions: TopoFilterOptions = {...props.options};
+        console.log(newOptions);
         newOptions[option] = value;
         props.onChange(newOptions);
-    }
+    }, []);
+
+    const updateTypeFilters = (value: TopoType) => {
+        if(props.values.types.find(v => value === v)) {
+            props.onChange({
+                    ...props.values,
+                    types: props.values.types.filter(v => v !== value)
+                });
+        } else {
+            console.log('here')
+            props.onChange({
+                    ...props.values,
+                    types: [...props.values.types, value]
+                });
+        }
+     };
+
 
     const renderFilters = () => (
         <React.Fragment>
-            <MultipleSelect 
+            <MultipleSelect<{ [e in TopoType]: string }> 
                 id='topo-types'
                 label='Types de spot'
-                options={[
-                    {
-                        value: 'Bloc',
-                    }, 
-                    {
-                        value: 'Deepwater',
-                    },
-                ]}
-                values={[{ value: props.values.types }] as DropdownOption[]}
-                onChange={option => updateTopoFilters('types', option.map(opt => opt.value))}
+                names={TopoTypeName}
+                values={props.values.types || []}
+                onChange={value => updateTypeFilters(value)}
             />
             <div>
                 <div className='ktext-label text-grey-medium'>Nombre de blocs</div>

@@ -75,3 +75,5 @@ export type PointEnum =
 
 export type AreaEnum =
 'FORBIDDEN_AREA';
+
+export type Enums = TopoType  | TopoStatus
