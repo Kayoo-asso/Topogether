@@ -21,7 +21,7 @@ export const AccessForm: React.FC<AccessFormProps> = watchDependencies((props: A
                 <Select
                     id='access-difficulty'
                     label='Difficulté'
-                    options={Object.entries(DifficultyName).map(([value, label]) => ({label, value }))}
+                    names={DifficultyName}
                     value={access.difficulty}
                     onChange={(value) => props.access.set({
                         ...access,

@@ -73,7 +73,7 @@ export const TrackForm: React.FC<TrackFormProps> = watchDependencies((props: Tra
                 id='track-receptions'
                 label='Réception'
                 //TODO FINISH
-                options={Object.entries(ReceptionName).map(([value, label]) => ({label, value }))}
+                names={ReceptionName}
                 value={track.reception}
                 onChange={(value) => props.track.set({
                     ...track,

@@ -5,7 +5,7 @@ import { Icon } from '../../atoms/Icon';
 import { Dropdown } from './Dropdown';
 import { TextInput } from './TextInput';
 
-interface DropdownOption {
+interface SelectOption {
   label?: string;
   value: any;
 }
@@ -14,7 +14,7 @@ interface SelectProps {
   id: string;
   label: string;
   wrapperClassname?: string;
-  options: DropdownOption[];
+  names:  {[key in string]: string} 
   big?: boolean,
   white?: boolean,
   value?: any;
@@ -30,7 +30,7 @@ export const Select: React.FC<SelectProps> = ({
   const ref = useRef<HTMLInputElement>(null);
   const [isOpen, setIsOpen] = useState(false);
 
-  const selectedOption = props.options.find(o => o.value === props.value);
+  const selectedOption = props.names[props.value]
   return (
     <div
       id={props.id}
@@ -44,7 +44,7 @@ export const Select: React.FC<SelectProps> = ({
         id={`${props.id}-input`}
         big={big}
         white={white}
-        value={selectedOption?.label || selectedOption?.value || ''}
+        value={selectedOption || ''}
         error={props.error}
         readOnly
         pointer
@@ -58,26 +58,47 @@ export const Select: React.FC<SelectProps> = ({
         }}
       />
       {isOpen && (
-        <Dropdown
-          fullSize
-          options={[{
-              value: props.label,
-              isSection: true,
-              action: () => {
-                setIsOpen(false);
-                props.onChange(undefined);
-              }
-            }]
-            .concat(props.options.map((opt) => ({
-              ...opt,
-              isSection: false,
-              action: () => {
-                setIsOpen(false);
-                props.onChange(opt.value);
-              }
-            })))
-          }
-        />
+        <div
+        className={`shadow absolute z-100 w-full px-7 py-5 bg-white rounded-b`}
+      >
+        {Object.entries(props.names).map(([value, label]) => (
+            <div
+              className="py-4 text-dark ktext-base cursor-pointer flex flex-row items-center"
+              key={value}
+              onKeyDown={() => {
+                props.onChange(value);
+              }}
+              onMouseDown={() => {
+                props.onChange(value);
+              }}
+              role="menuitem"
+              tabIndex={0}
+            >
+              {label}
+    
+            </div>
+          ))}
+      </div>
+        // <Dropdown
+        //   fullSize
+        //   options={[{
+        //       value: props.label,
+        //       isSection: true,
+        //       action: () => {
+        //         setIsOpen(false);
+        //         props.onChange(undefined);
+        //       }
+        //     }]
+        //     .concat(props.options.map((opt) => ({
+        //       ...opt,
+        //       isSection: false,
+        //       action: () => {
+        //         setIsOpen(false);
+        //         props.onChange(opt.value);
+        //       }
+        //     })))
+        //   }
+        // />
       )}
     </div>
   );
