@@ -7,7 +7,6 @@ import {
  Amenities, Description, Name, RockTypes, Topo,
 } from 'types';
 import { hasFlag, rockNames, toggleFlag } from 'helpers';
-import { RockTypeNames } from 'types/EnumNames';
 
 interface InfoFormProps {
     topo: Quark<Topo>,

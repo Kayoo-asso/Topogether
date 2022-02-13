@@ -83,21 +83,22 @@ export const MapControl: React.FC<MapControlProps> = ({
     result &&= (boulderFilterOptions.mustSee ? boulder.mustSee : true);
     return result;
   }
+
   const topoFilter = (topo: LightTopo) => {
-    let result = (topoFilterOptions.types === null || topoFilterOptions.types.includes(topo.type!)) &&
-        topo.nbBoulders >= topoFilterOptions.boulderRange[0] &&
-        topo.nbBoulders <= topoFilterOptions.boulderRange[1];
-    
-    let foundBouldersAtGrade = false;
-    for (let grade = topoFilterOptions.gradeRange[0]; grade <= topoFilterOptions.gradeRange[1]; grade++) {
-        if (!topo.grades || topo.grades[grade] > 0) {
-            foundBouldersAtGrade = true;
-            break;
-        }
+    if(topoFilterOptions.types.length && !topoFilterOptions.types.includes(topo.type!)) {
+        return false;
     }
-    result &&= foundBouldersAtGrade;
-    result &&= topoFilterOptions.adaptedToChildren ? hasFlag(topo.amenities, Amenities.AdaptedToChildren) : true;
-    return result;
+    if(topo.nbBoulders < topoFilterOptions.boulderRange[0] || topo.nbBoulders > topoFilterOptions.boulderRange[1]) {
+        return false;
+    } 
+
+    const foundBouldersAtGrade = Object.entries(topo.grades).some(([grade, count]) =>
+         Number(grade) >= topoFilterOptions.gradeRange[0] && Number(grade) <= topoFilterOptions.gradeRange[1] && count !== 0);
+
+    if(!foundBouldersAtGrade) {
+      return false;
+    }
+    return topoFilterOptions.adaptedToChildren ? hasFlag(topo.amenities, Amenities.AdaptedToChildren) : true;
   }
 
   const getBoundsFromSearchbar = (geometry: google.maps.places.PlaceGeometry) => {
