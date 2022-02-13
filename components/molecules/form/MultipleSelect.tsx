@@ -111,15 +111,15 @@ export const MultipleSelect = <T extends Bitflag | Enums>(props:MultipleSelectPr
             <div
               className="py-4 text-dark ktext-base cursor-pointer flex flex-row items-center"
               key={name}
-              onKeyDown={() => { props.onChange(value); }}
-              onMouseDown={() => { props.onChange(value); }}
+              onKeyDown={() => { props.onChange(+value); }}
+              onMouseDown={() => { props.onChange(+value); }}
               role="menuitem"
               tabIndex={0}
             >
               <Checkbox
                 className="mr-2"
-                checked={props.values.includes(value)}
-                onClick={() => { props.onChange(value); }}
+                checked={props.values.includes(+value)}
+                onClick={() => { props.onChange(+value); }}
               />
               {name}
             </div>

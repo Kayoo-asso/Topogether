@@ -26,26 +26,28 @@ export const TopoFilters: React.FC<TopoFiltersProps> = ({
     const [open, setOpen] = useState(initialOpen);
 
     const updateTopoFilters = useCallback(<K extends keyof TopoFilterOptions>(option: K, value: TopoFilterOptions[K]) => {
-        const newOptions: TopoFilterOptions = {...props.options};
-        console.log(newOptions);
-        newOptions[option] = value;
-        props.onChange(newOptions);
-    }, []);
+        props.onChange({
+            ...props.values, 
+            [option]: value
+        });
+    }, [props.values]);
 
-    const updateTypeFilters = (value: TopoType) => {
-        if(props.values.types.find(v => value === v)) {
+    const updateTypeFilters = useCallback((value: TopoType) => {
+        console.log(value);
+        console.log(props.values.types);
+
+        if(props.values.types.includes(value)) {
             props.onChange({
                     ...props.values,
                     types: props.values.types.filter(v => v !== value)
                 });
         } else {
-            console.log('here')
             props.onChange({
                     ...props.values,
                     types: [...props.values.types, value]
                 });
         }
-     };
+     }, [props.values]);
 
 
     const renderFilters = () => (
@@ -55,7 +57,7 @@ export const TopoFilters: React.FC<TopoFiltersProps> = ({
                 label='Types de spot'
                 names={TopoTypeName}
                 values={props.values.types || []}
-                onChange={value => updateTypeFilters(value)}
+                onChange={updateTypeFilters}
             />
             <div>
                 <div className='ktext-label text-grey-medium'>Nombre de blocs</div>
