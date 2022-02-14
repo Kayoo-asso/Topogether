@@ -2,7 +2,8 @@ import React, { useContext } from 'react';
 import { AverageNote, GradeCircle } from 'components';
 import { gradeToLightGrade, Track } from 'types';
 import { Quark, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
-import { DeviceContext } from 'helpers';
+import { ClimbTechniquesName, DeviceContext, listFlags } from 'helpers';
+import { OrientationName, ReceptionName } from 'types/EnumNames';
 
 interface TracksListProps {
   tracks: Iterable<Quark<Track>>,
@@ -69,17 +70,15 @@ export const TracksList: React.FC<TracksListProps> = watchDependencies((props: T
                 <div className='flex flex-row gap-2 justify-between mt-4'>
                   <div className="flex flex-col w-1/3">
                     <div className="ktext-subtitle">Techniques</div>
-                    {/* TODO */}
+                     {listFlags(track.techniques!, ClimbTechniquesName).join(', ')}
                   </div>
 
                   <div className="flex flex-col w-1/3">
-                    <div className="ktext-subtitle">Réception</div>
-                    {/* TODO */}
+                    <div><span className="ktext-subtitle">Réception : </span>{ReceptionName[track.reception!]}</div>
                   </div>
 
                   <div className="flex flex-col w-1/3">
-                    <div className="ktext-subtitle">Orientation</div>
-                    {/* TODO */}
+                    <div><span className="ktext-subtitle">Orientation :</span>{OrientationName[track.orientation!]}</div>
                   </div>
                 </div>
               </>

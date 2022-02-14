@@ -1,5 +1,5 @@
 import { RockTypes } from "./Bitflags";
-import { Reception, Difficulty, TopoType } from "./Enums";
+import { Reception, Difficulty, TopoType, Orientation } from "./Enums";
 
 export const DifficultyName: {[key in Difficulty]: string} = {
   [Difficulty.Good]: 'Facile',
@@ -22,3 +22,14 @@ export const TopoTypeName: {[key in TopoType]: string} = {
   [TopoType.DeepWater]: 'Deep water',
   [TopoType.Multipitch]: 'Grande voie'
 };
+
+export const OrientationName: {[key in Orientation]: string} = {
+    [Orientation.N]: 'N',
+    [Orientation.NE]: 'NE',
+    [Orientation.E]: 'E',
+    [Orientation.SE]: 'SE',
+    [Orientation.S]: 'S',
+    [Orientation.SW]: 'SW',
+    [Orientation.W]: 'W',
+    [Orientation.NW]: 'NW',
+}
