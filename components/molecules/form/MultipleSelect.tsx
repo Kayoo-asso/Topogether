@@ -59,24 +59,24 @@ export const MultipleSelect = <T extends Bitflag | Enums>(props:MultipleSelectPr
           }}
         />
 
-        {isOpen && (
-          props.bitflagNames.map(([flag,name]) => (
+        {isOpen && <div className='pl-4 py-2 bg-white rounded-b h-[200px] absolute overflow-y-auto overflow-x-none z-100 w-full right-0 shadow'>
+          {props.bitflagNames.map(([flag,name]) => (
             <div
               className="py-4 text-dark ktext-base cursor-pointer flex flex-row items-center"
               key={name}
-              onKeyDown={() => { props.onChange(flag); }}
-              onMouseDown={() => { props.onChange(flag); }}
+              onKeyDown={(e) => { props.onChange(flag); e.stopPropagation() }}
+              onMouseDown={(e) => { props.onChange(flag); e.stopPropagation()}}
               role="menuitem"
               tabIndex={0}
             >
               <Checkbox
                 className="mr-2"
                 checked={props.value && hasFlag(props.value, flag)}
-                onClick={() => { props.onChange(flag); }}
+                onClick={(e) => { props.onChange(flag); e.stopPropagation()}}
               />
               {name}
-            </div>
-        )))}
+            </div>))}
+        </div>}
       </div>
     );
   } else {
@@ -106,8 +106,8 @@ export const MultipleSelect = <T extends Bitflag | Enums>(props:MultipleSelectPr
           }}
         />
 
-        {isOpen && (
-          Object.entries(props.names).map(([value,name]) => (
+        {isOpen && <div className='pl-4 py-2 bg-white rounded-b h-[200px] absolute overflow-y-auto overflow-x-none z-100 w-full right-0 shadow'>
+          {Object.entries(props.names).map(([value,name]) => (
             <div
               className="py-4 text-dark ktext-base cursor-pointer flex flex-row items-center"
               key={name}
@@ -123,7 +123,8 @@ export const MultipleSelect = <T extends Bitflag | Enums>(props:MultipleSelectPr
               />
               {name}
             </div>
-        )))}
+        ))}
+        </div>}
       </div>
     );
   }
