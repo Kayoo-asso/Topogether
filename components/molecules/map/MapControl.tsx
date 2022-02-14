@@ -3,8 +3,8 @@ import { Wrapper } from '@googlemaps/react-wrapper';
 import { BoulderMarker, For, Map, ParkingMarker, RoundButton, SatelliteButton, Show, TopoMarker, WaypointMarker } from 'components';
 import { BoulderFilterOptions, BoulderFilters, MapSearchbarProps, TopoFilterOptions, TopoFilters } from '.';
 import { MapSearchbar } from '..';
-import { Amenities, Boulder, gradeToLightGrade, LightGrade, LightTopo, MapProps, MarkerProps, Parking, Waypoint } from 'types';
-import { googleGetPlace, hasFlag } from 'helpers';
+import { Amenities, Boulder, ClimbTechniques, gradeToLightGrade, LightGrade, LightTopo, MapProps, MarkerProps, Parking, Waypoint } from 'types';
+import { googleGetPlace, hasFlag, hasSomeFlags, mergeFlags } from 'helpers';
 import { Quark, QuarkIter, reactKey } from 'helpers/quarky';
 
 interface MapControlProps extends MapProps {
@@ -56,7 +56,7 @@ export const MapControl: React.FC<MapControlProps> = ({
   const [topoFilterOptions, setTopoFilterOptions] = useState<TopoFilterOptions>(defaultTopoFilterOptions);
   const maxTracks = props.boulders ? Math.max(...props.boulders.map(b => b().tracks.length).toArray()) : 0;
   const defaultBoulderFilterOptions: BoulderFilterOptions = {
-    techniques: null,
+    techniques: ClimbTechniques.None,
     tracksRange: [0, maxTracks],
     gradeRange: [3, 9],
     mustSee: false
@@ -64,24 +64,25 @@ export const MapControl: React.FC<MapControlProps> = ({
   const [boulderFilterOptions, setBoulderFilterOptions] = useState<BoulderFilterOptions>(defaultBoulderFilterOptions);
 
   const boulderFilter = (boulder: Boulder) => {
-    const boulderTechniques = boulder.tracks.toArray().map(track => track.techniques);
-    let result = (boulderFilterOptions.techniques === null || boulderFilterOptions.techniques.some(tech => boulderTechniques.includes(tech))) &&
-        boulder.tracks.length >= boulderFilterOptions.tracksRange[0] &&
-        boulder.tracks.length <= boulderFilterOptions.tracksRange[1];
+    const boulderTechniques = mergeFlags(boulder.tracks.toArray().map(track => track.techniques).filter(tech => !!tech) as  ClimbTechniques[]);
+
+    if(boulderFilterOptions.techniques !== ClimbTechniques.None && !hasSomeFlags(boulderFilterOptions.techniques, boulderTechniques)) {
+        return false;
+    }
+    
+    if(boulder.tracks.length < boulderFilterOptions.tracksRange[0] || boulder.tracks.length > boulderFilterOptions.tracksRange[1]) {
+        return false;
+    }
 
     if (boulderFilterOptions.gradeRange[0] !== 3 || boulderFilterOptions.gradeRange[1] !== 9) {
       const boulderGrades: LightGrade[] = boulder.tracks.toArray().map(track => gradeToLightGrade(track.grade));
-      let foundBouldersAtGrade = false;
-      for (let grade = boulderFilterOptions.gradeRange[0]; grade <= boulderFilterOptions.gradeRange[1]; grade++) {
-          if (boulderGrades.includes(grade)) {
-              foundBouldersAtGrade = true;
-              break;
-          }
+      const foundBouldersAtGrade = boulderGrades.some(grade => grade >= boulderFilterOptions.gradeRange[0] && grade <= boulderFilterOptions.gradeRange[1]);
+   
+      if(!foundBouldersAtGrade) {
+        return false;
       }
-      result &&= foundBouldersAtGrade;
     }
-    result &&= (boulderFilterOptions.mustSee ? boulder.mustSee : true);
-    return result;
+    return boulderFilterOptions.mustSee ? boulder.mustSee : true;
   }
 
   const topoFilter = (topo: LightTopo) => {
@@ -90,13 +91,14 @@ export const MapControl: React.FC<MapControlProps> = ({
     }
     if(topo.nbBoulders < topoFilterOptions.boulderRange[0] || topo.nbBoulders > topoFilterOptions.boulderRange[1]) {
         return false;
-    } 
+    }
+    if (topoFilterOptions.gradeRange[0] !== 3 || topoFilterOptions.gradeRange[1] !== 9) {
+        const foundBouldersAtGrade = Object.entries(topo.grades).some(([grade, count]) =>
+            Number(grade) >= topoFilterOptions.gradeRange[0] && Number(grade) <= topoFilterOptions.gradeRange[1] && count !== 0);
 
-    const foundBouldersAtGrade = Object.entries(topo.grades).some(([grade, count]) =>
-         Number(grade) >= topoFilterOptions.gradeRange[0] && Number(grade) <= topoFilterOptions.gradeRange[1] && count !== 0);
-
-    if(!foundBouldersAtGrade) {
-      return false;
+        if(!foundBouldersAtGrade) {
+            return false;
+        }
     }
     return topoFilterOptions.adaptedToChildren ? hasFlag(topo.amenities, Amenities.AdaptedToChildren) : true;
   }

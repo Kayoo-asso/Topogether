@@ -43,7 +43,7 @@ export const MultipleSelect = <T extends Bitflag | Enums>(props:MultipleSelectPr
           ref={ref}
           label={props.label}
           id={`${props.id}-input`}
-          value={textValue}
+          value={textValue || ''}
           pointer
           readOnly
           inputClassName='pr-4'
@@ -91,7 +91,7 @@ export const MultipleSelect = <T extends Bitflag | Enums>(props:MultipleSelectPr
           ref={ref}
           label={props.label}
           id={`${props.id}-input`}
-          value={textValue}
+          value={textValue || ''}
           pointer
           readOnly
           onClick={() => setIsOpen(!isOpen)}

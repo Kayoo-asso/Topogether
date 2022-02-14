@@ -33,9 +33,6 @@ export const TopoFilters: React.FC<TopoFiltersProps> = ({
     }, [props.values]);
 
     const updateTypeFilters = useCallback((value: TopoType) => {
-        console.log(value);
-        console.log(props.values.types);
-
         if(props.values.types.includes(value)) {
             props.onChange({
                     ...props.values,
@@ -70,6 +67,7 @@ export const TopoFilters: React.FC<TopoFiltersProps> = ({
             <div>
                 <div className='ktext-label text-grey-medium'>Difficultés</div>
                 <GradeSliderInput 
+                    values={props.options.gradeRange}
                     onChange={range => updateTopoFilters('gradeRange', range)}
                 />
             </div>

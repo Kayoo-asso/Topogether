@@ -79,26 +79,6 @@ export const Select: React.FC<SelectProps> = ({
             </div>
           ))}
       </div>
-        // <Dropdown
-        //   fullSize
-        //   options={[{
-        //       value: props.label,
-        //       isSection: true,
-        //       action: () => {
-        //         setIsOpen(false);
-        //         props.onChange(undefined);
-        //       }
-        //     }]
-        //     .concat(props.options.map((opt) => ({
-        //       ...opt,
-        //       isSection: false,
-        //       action: () => {
-        //         setIsOpen(false);
-        //         props.onChange(opt.value);
-        //       }
-        //     })))
-        //   }
-        // />
       )}
     </div>
   );
