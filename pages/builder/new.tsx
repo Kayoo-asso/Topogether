@@ -8,6 +8,7 @@ import {
 import Link from 'next/link';
 import { v4 } from 'uuid';
 import { QuarkArray, QuarkIter, useCreateQuark, watchDependencies } from 'helpers/quarky';
+import { TopoTypeName } from 'types/EnumNames';
 
 const NewPage: NextPage = () => {
   const { session } = useContext(UserContext);
@@ -104,7 +105,7 @@ const NewPage: NextPage = () => {
                       });
                     }}
                 />
-                <div className="flex flex-row items-center w-full justify-between md:justify-end">
+                <div className="flex flex-row items-center w-full justify-between md  :justify-end">
                   <Link href="/builder/dashboard">
                     <div className="ktext-base-little cursor-pointer text-white md:mr-16">Annuler</div>
                   </Link>
@@ -122,17 +123,11 @@ const NewPage: NextPage = () => {
                 <Select
                   id="topo-type"
                   label="Type de spot"
-                  options={[
-                    { value: TopoType.Boulder, label: 'Blocs' }, 
-                    { value: TopoType.Cliff, label: 'Falaise' },
-                    { value: TopoType.DeepWater, label: 'Deepwater' },
-                    { value: TopoType.Multipitch, label: 'Grande voie' },
-                    { value: TopoType.Artificial, label: 'Artificiel' },
-                  ]}
+                  names={TopoTypeName}
                   big
                   white
                   wrapperClassname="w-full mb-10"
-                  value={mapTypeIdToLabel(topo.type)}
+                  value={topo.type}
                   error={typeError}
                   onChange={(val: TopoType | undefined) => {
                         setTypeError(undefined);

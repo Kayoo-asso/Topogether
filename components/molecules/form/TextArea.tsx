@@ -33,7 +33,7 @@ export const TextArea = ({
   }, [height]);
 
   return (
-    <div className={`relative mt-3 w-full ${className}`}>
+    <div className={`relative mt-6 w-full ${className}`}>
       <textarea
         ref={ref}
         {...props}

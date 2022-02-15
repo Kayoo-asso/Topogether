@@ -25,10 +25,13 @@ export const Checkbox: React.FC<CheckboxProps> = ({
     <div
       className={`flex flex-row space-between ${props.className}`}
       onClick={handleClick}
-      onKeyDown={handleClick}
+      onKeyDown={(e) => { if(e.key === 'Enter') {handleClick()}}}
+      role="checkbox"
+      tabIndex={0}
     >
       <div className="relative h-5 w-5">
-        <div className={`absolute h-5 w-5 left-0 top-0 stroke-dark rounded-[0.2rem] border-2 border-dark cursor-pointer ${containerOpacity} ${rotation} transition-transform`} />
+        <div className={`absolute h-5 w-5 left-0 top-0 stroke-dark rounded-[0.2rem] 
+          border-2 border-dark cursor-pointer ${containerOpacity} ${rotation} transition-all`} />
         <Icon
           SVGClassName="absolute left-0 top-0 h-5 w-5 stroke-main"
           wrapperClassName={`absolute left-0 top-0 ${iconOpacity} transition-opacity`}

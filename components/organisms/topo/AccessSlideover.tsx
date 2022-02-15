@@ -4,31 +4,22 @@ import { QuarkArray } from 'helpers/quarky';
 import { Difficulty, TopoAccess } from 'types';
 import { DeviceContext } from 'helpers';
 import { default as NextImage } from 'next/image';
+import { DifficultyName } from 'types/EnumNames';
 
-interface ApproachSlideoverProps {
+interface AccessSlideoverProps {
     accesses: QuarkArray<TopoAccess>,
     open?: boolean,
     className?: string,
     onClose: () => void,
 }
 
-export const ApproachSlideover: React.FC<ApproachSlideoverProps> = ({
+export const AccessSlideover: React.FC<AccessSlideoverProps> = ({
     open = true,
     ...props
-}: ApproachSlideoverProps) => {
+}: AccessSlideoverProps) => {
     const device = useContext(DeviceContext);
     const [accessTab, setAccessTab] = useState(0);
     const access = props.accesses ? props.accesses.toArray()[accessTab] : undefined;
-
-    const getDifficultyName = (acces: TopoAccess) => {
-        switch (acces?.difficulty) {
-            case Difficulty.Bad: return 'Difficile';
-            case Difficulty.Dangerous: return 'Dangereuse';
-            case Difficulty.Good: return 'Facile';
-            case Difficulty.OK: return 'Moyen';
-            default: 'N/A';
-        }
-    }
 
     const getTabOptions = (): TabOption[] => {
         const tabs: TabOption[] = [];
@@ -60,7 +51,7 @@ export const ApproachSlideover: React.FC<ApproachSlideoverProps> = ({
                         />
                     }
                     <div className='flex flex-row justify-between md:flex-col'>
-                        {access.difficulty && <div><span className='font-semibold'>Difficulté : </span>{getDifficultyName(access)}</div>}
+                        {access.difficulty && <div><span className='font-semibold'>Difficulté : </span>{DifficultyName[access.difficulty]}</div>}
                         {access.duration && <div><span className='font-semibold'>Durée : </span>{access.duration}min</div>}
                     </div>
                 </div>

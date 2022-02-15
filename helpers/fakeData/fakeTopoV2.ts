@@ -1,5 +1,5 @@
 import { Quark } from 'helpers/quarky';
-import { BoulderData, Line, Name, Image, TrackData, Description, Difficulty, ClimbTechniques, SectorData, TopoData, Amenities, TopoStatus, TopoType, RockTypes, TopoAccess, Topo, Parking, StringBetween, Manager, UUID } from 'types';
+import { BoulderData, Line, Name, Image, TrackData, Description, Difficulty, ClimbTechniques, SectorData, TopoData, Amenities, TopoStatus, TopoType, RockTypes, TopoAccess, Topo, Parking, StringBetween, Manager, UUID, Reception } from 'types';
 import { v4 as uuid } from 'uuid';
 import { quarkifyTopo } from './quarkifyTopo';
 
@@ -86,7 +86,7 @@ export const tracks: TrackData[] = [
         orderIndex: 0,
         name: "Passage 1" as Name,
         grade: "4+",
-        reception: Difficulty.OK,
+        reception: Reception.OK,
         techniques: ClimbTechniques.Adherence,
         description: "Une petite montée facile" as Description,
 
@@ -106,7 +106,7 @@ export const tracks: TrackData[] = [
         description: "Le départ assis est sévère mais le reste de la voie est trivial" as Description,
         height: 2,
         grade: "6a",
-        reception: Difficulty.OK,
+        reception: Reception.OK,
         // -> Bitflag example
         techniques: ClimbTechniques.Adherence | ClimbTechniques.Pince,
 

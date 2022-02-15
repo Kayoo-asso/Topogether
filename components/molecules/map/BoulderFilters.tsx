@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Checkbox, Icon, RoundButton } from 'components';
-import { Boulder, ClimbTechniques, gradeToLightGrade, LightGrade } from 'types';
-import { DropdownOption, GradeSliderInput, MultipleSelect, SliderInput } from '..';
+import { ClimbTechniques, LightGrade } from 'types';
+import { GradeSliderInput, MultipleSelect, SliderInput } from '..';
+import { ClimbTechniquesName, toggleFlag } from 'helpers';
 
 
 export interface BoulderFilterOptions {
-    techniques: ClimbTechniques[] | null,
+    techniques: ClimbTechniques,
     tracksRange: [number, number],
     gradeRange: [Exclude<LightGrade, 'None'>, Exclude<LightGrade, 'None'>],
     mustSee: boolean,
@@ -24,27 +25,27 @@ export const BoulderFilters: React.FC<BoulderFiltersProps> = ({
 }: BoulderFiltersProps) => {
     const [open, setOpen] = useState(initialOpen);
 
-    const updateBoulderFilters = <K extends keyof BoulderFilterOptions>(option: K, value: BoulderFilterOptions[K]) => {
-        const newOptions: BoulderFilterOptions = {...props.options};
-        newOptions[option] = value;
-        props.onChange(newOptions);
-    }
+    const updateBoulderFilters = useCallback(<K extends keyof BoulderFilterOptions>(option: K, value: BoulderFilterOptions[K]) => {
+        props.onChange({
+            ...props.values, 
+            [option]: value
+        });
+    }, [props.values]);
+
+    const updateClimbTechniquesFilters = useCallback((value: ClimbTechniques) => {
+        props.onChange({
+            ...props.values,
+            techniques: toggleFlag(props.values.techniques, value)
+    })}, [props.values]);
 
     const renderFilters = () => (
         <React.Fragment>
-            <MultipleSelect 
-                id='boulder-techniques'
+             <MultipleSelect<ClimbTechniques>
+                id='track-techniques'
                 label='Techniques'
-                options={[
-                    {
-                        value: 'Bloc',
-                    }, 
-                    {
-                        value: 'Deepwater',
-                    },
-                ]}
-                values={[{ value: props.values.techniques }] as DropdownOption[]}
-                onChange={option => updateBoulderFilters('techniques', option.map(opt => opt.value))}
+                bitflagNames={ClimbTechniquesName}
+                value={props.values.techniques}
+                onChange={updateClimbTechniquesFilters}
             />
             <div>
                 <div className='ktext-label text-grey-medium'>Nombre de voies</div>
@@ -57,6 +58,7 @@ export const BoulderFilters: React.FC<BoulderFiltersProps> = ({
             <div>
                 <div className='ktext-label text-grey-medium'>Difficultés</div>
                 <GradeSliderInput 
+                    values={props.options.gradeRange}
                     onChange={value => updateBoulderFilters('gradeRange', value)}
                 />
             </div>

@@ -1,7 +1,9 @@
 import React from 'react';
 import { GradeCircle, SlideagainstRightDesktop } from 'components';
 import { Signal } from 'helpers/quarky';
-import { gradeToLightGrade, Track } from 'types';
+import { gradeToLightGrade, Orientation, Track } from 'types';
+import { ClimbTechniquesName, listFlags } from 'helpers';
+import { OrientationName, ReceptionName } from 'types/EnumNames';
 
 interface TrackSlideagainstDesktopProps {
     track: Signal<Track>,
@@ -37,14 +39,11 @@ export const TrackSlideagainstDesktop: React.FC<TrackSlideagainstDesktopProps> =
                 </div>
 
                 <div className='flex flex-col gap-3 mt-4'>
-                    <div className="ktext-subtitle">Techniques : </div>
-                    {/* TODO */}
+                    <div><span className="ktext-subtitle">Techniques : </span>{listFlags(track.techniques!, ClimbTechniquesName).join(', ')}</div>
+                    
+                    <div><span className="ktext-subtitle">Réception : </span>{ReceptionName[track.reception!]}</div>
 
-                    <div className="ktext-subtitle">Réception : </div>
-                    {/* TODO */}
-
-                    <div className="ktext-subtitle">Orientation : </div>
-                    {/* TODO */}
+                    <div><span className="ktext-subtitle">Orientation :</span>{OrientationName[track.orientation!]}</div>
                 </div>
 
             </div>

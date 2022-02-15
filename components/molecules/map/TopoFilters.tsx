@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Checkbox, Icon, RoundButton } from 'components';
 import { LightGrade, TopoType } from 'types';
-import { DropdownOption, GradeSliderInput, MultipleSelect, SliderInput } from '..';
+import { GradeSliderInput, MultipleSelect, SliderInput } from '..';
+import { TopoTypeName } from 'types/EnumNames';
 
 
 export interface TopoFilterOptions {
-    types: TopoType[] | null,
+    types: TopoType[],
     boulderRange: [number, number],
     gradeRange: [Exclude<LightGrade, 'None'>, Exclude<LightGrade, 'None'>],
     adaptedToChildren: boolean,
@@ -17,34 +18,43 @@ interface TopoFiltersProps {
     values: TopoFilterOptions,
     onChange: (options: TopoFilterOptions) => void,
 }
-
 export const TopoFilters: React.FC<TopoFiltersProps> = ({
     initialOpen = false,
     ...props
 }: TopoFiltersProps) => {
+    console.log(props.values);
     const [open, setOpen] = useState(initialOpen);
 
-    const updateTopoFilters = <K extends keyof TopoFilterOptions>(option: K, value: TopoFilterOptions[K]) => {
-        const newOptions: TopoFilterOptions = {...props.options};
-        newOptions[option] = value;
-        props.onChange(newOptions);
-    }
+    const updateTopoFilters = useCallback(<K extends keyof TopoFilterOptions>(option: K, value: TopoFilterOptions[K]) => {
+        props.onChange({
+            ...props.values, 
+            [option]: value
+        });
+    }, [props.values]);
+
+    const updateTypeFilters = useCallback((value: TopoType) => {
+        if(props.values.types.includes(value)) {
+            props.onChange({
+                    ...props.values,
+                    types: props.values.types.filter(v => v !== value)
+                });
+        } else {
+            props.onChange({
+                    ...props.values,
+                    types: [...props.values.types, value]
+                });
+        }
+     }, [props.values]);
+
 
     const renderFilters = () => (
         <React.Fragment>
-            <MultipleSelect 
+            <MultipleSelect<TopoType> 
                 id='topo-types'
                 label='Types de spot'
-                options={[
-                    {
-                        value: 'Bloc',
-                    }, 
-                    {
-                        value: 'Deepwater',
-                    },
-                ]}
-                values={[{ value: props.values.types }] as DropdownOption[]}
-                onChange={option => updateTopoFilters('types', option.map(opt => opt.value))}
+                names={TopoTypeName}
+                values={props.values.types || []}
+                onChange={updateTypeFilters}
             />
             <div>
                 <div className='ktext-label text-grey-medium'>Nombre de blocs</div>
@@ -57,6 +67,7 @@ export const TopoFilters: React.FC<TopoFiltersProps> = ({
             <div>
                 <div className='ktext-label text-grey-medium'>Difficultés</div>
                 <GradeSliderInput 
+                    values={props.options.gradeRange}
                     onChange={range => updateTopoFilters('gradeRange', range)}
                 />
             </div>
@@ -83,6 +94,8 @@ export const TopoFilters: React.FC<TopoFiltersProps> = ({
                     <div 
                         className='flex flex-row items-center shadow bg-main rounded-lg p-3 pt-4 pl-5 cursor-pointer max-w-[150px]' 
                         onClick={() => setOpen(false)}
+                        role="button"
+                        tabIndex={0}
                     >
                         <Icon 
                             name='filter'

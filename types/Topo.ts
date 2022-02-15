@@ -1,7 +1,7 @@
 import type { Quark, QuarkArray } from 'helpers/quarky';
 import type { Amenities, ClimbTechniques, RockTypes } from './Bitflags';
 import type {
-  Difficulty, Grade, LightGrade, Orientation, TopoStatus, TopoType,
+  Reception, Grade, LightGrade, Orientation, TopoStatus, TopoType, Difficulty,
 } from './Enums';
 import type { LinearRing, LineCoords, Position } from './GeoJson';
 import type { UUID, GeoCoordinates, RequireAtLeastOne, StringBetween, Name, Description } from './Utils';
@@ -161,7 +161,7 @@ export interface TrackData {
 
   nbAnchors?: number,
   techniques?: ClimbTechniques,
-  reception?: Difficulty,
+  reception?: Reception,
   orientation?: Orientation,
   isTraverse: boolean,
   isSittingStart: boolean,

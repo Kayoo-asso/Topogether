@@ -6,7 +6,7 @@ export * from './ParkingSlide';
 export * from './WaypointSlide';
 
 export * from './InfoSlideover';
-export * from './ApproachSlideover';
+export * from './AccessSlideover';
 export * from './ManagementSlideover';
 
 export * from './TracksList';

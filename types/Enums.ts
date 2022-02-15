@@ -5,6 +5,13 @@ export enum Difficulty {
     Dangerous,
 }
 
+export enum Reception {
+  Good,
+  OK,
+  None,
+  Dangerous,
+}
+
 export enum Orientation {
     N,
     NE,
