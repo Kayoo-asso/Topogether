@@ -12,12 +12,14 @@ interface HandleProps {
 const Handle = (props: HandleProps) => (
   <div
     className="absolute -ml-1 mt-1.5 z-20 w-6 h-6 border-0 text-center bg-main rounded-full cursor-pointer flex items-center content-center"
+    role="button"
+    tabIndex={0}
     style={{
       left: `${props.handle.percent}%`,
     }}
     {...props.getHandleProps(props.handle.id)}
   >
-    <div className="text-white w-full ktext-base text-xs font-bold">
+    <div className="text-white w-full ktext-base text-xs font-bold" >
       {props.handle.value}
     </div>
   </div>

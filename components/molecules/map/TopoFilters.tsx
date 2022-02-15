@@ -94,6 +94,8 @@ export const TopoFilters: React.FC<TopoFiltersProps> = ({
                     <div 
                         className='flex flex-row items-center shadow bg-main rounded-lg p-3 pt-4 pl-5 cursor-pointer max-w-[150px]' 
                         onClick={() => setOpen(false)}
+                        role="button"
+                        tabIndex={0}
                     >
                         <Icon 
                             name='filter'
