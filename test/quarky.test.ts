@@ -1,4 +1,3 @@
-import exp from "constants";
 import { Quark, derive, effect, quark, batch, untrack, Signal, selectSignal, selectQuark, Effect, onCleanup } from "helpers/quarky/"
 import { getConsoleErrorSpy } from "test/utils";
 

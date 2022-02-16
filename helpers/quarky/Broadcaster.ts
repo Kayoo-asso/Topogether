@@ -56,6 +56,24 @@ export class NativeBroadcaster<T> implements Broadcaster<T> {
     }
 }
 
+/**
+ * copied from crosstab
+ * @link https://github.com/tejacques/crosstab/blob/master/src/crosstab.js#L32
+ */
+export function getLocalStorage() {
+    let localStorage;
+    if (typeof window === 'undefined') return null;
+    try {
+        localStorage = window.localStorage;
+        localStorage = window['ie8-eventlistener/storage'] || window.localStorage;
+    } catch (e) {
+        // New versions of Firefox throw a Security exception
+        // if cookies are disabled. See
+        // https://bugzilla.mozilla.org/show_bug.cgi?id=1028153
+    }
+    return localStorage;
+}
+
 // function getCount(key: string): number {
 //     const val = localStorage.getItem(key);
 //     return val ? +val : 0;

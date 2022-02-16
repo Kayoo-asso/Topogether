@@ -1,5 +1,5 @@
 import { batch, registerPostUpdateHook } from ".";
-import { getBroadcaster } from "./BroadcastChannel";
+import { getBroadcaster } from "./Broadcaster";
 import { quark, Quark, isSSR } from "./quarky";
 
 export interface SyncQuark<T, Serializable = T> extends Quark<T> {
