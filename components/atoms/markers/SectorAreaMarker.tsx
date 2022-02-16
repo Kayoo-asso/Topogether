@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import { useMarker, usePolygon } from "helpers";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { GeoCoordinates, MarkerEventHandlers, PolygonEventHandlers, Sector } from "types";
@@ -24,38 +24,35 @@ export const SectorAreaMarker: React.FC<SectorAreaMarkerProps> = watchDependenci
         fillColor: '#04D98B',
         strokeColor: '#04D98B',
         strokeWeight: 2,
-    };
-
-    
-
+    }; 
     const handlers: PolygonEventHandlers = {
         onClick: useCallback(() => props.onClick && props.onClick(props.sector), [props.sector, props.onClick]),
-        onDragEnd: useCallback((e: google.maps.MapMouseEvent) => {
-            const newPath: GeoCoordinates[] = [];
-            const newBounds: google.maps.LatLng[] | undefined = polygon.current?.getPath().getArray();
-            if (newBounds) {
-                newBounds.map(b => newPath.push({
-                    lat: b.lat(),
-                    lng: b.lng()
-                }));
-                console.log(newPath);
-                props.sector.set({
-                    ...sector,
-                    path: newPath
-                })
-            }
-        }, [props.sector])
+        onDragEnd: useCallback(() => updatePath(), [props.sector])
     }
-    const polygon = usePolygon(options, handlers) as React.MutableRefObject<google.maps.Polygon>;
-    google.maps.event.addListener(polygon.current, 'click', function() {
-        console.log("0")
-        google.maps.event.addListener(polygon.current.getPath(), 'insert_at', function() {
-            console.log("1");
-        });
-        google.maps.event.addListener(polygon.current.getPath(), 'insert_at', function() {
-            console.log("ok");
-        });
-    });
+    const polygon = usePolygon(options, handlers);
+
+
+    const updatePath = useCallback(() => {
+        const newPath: GeoCoordinates[] = [];
+        const newBounds: google.maps.LatLng[] | undefined = polygon.current?.getPath().getArray();
+        if (newBounds) {
+            newBounds.map(b => newPath.push({
+                lat: b.lat(),
+                lng: b.lng()
+            }));
+            props.sector.set({
+                ...sector,
+                path: newPath
+            })
+        }
+    }, [polygon.current, sector]);
+    useEffect(() => {
+        if (polygon.current) {
+            google.maps.event.addListener(polygon.current.getPath(), 'insert_at', updatePath);
+            google.maps.event.addListener(polygon.current.getPath(), 'set_at', updatePath);
+            google.maps.event.addListener(polygon.current.getPath(), 'remove_at', updatePath);
+        }
+    }, [polygon.current, sector])
 
     return null;
 });
