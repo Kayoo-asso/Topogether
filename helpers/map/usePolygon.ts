@@ -51,4 +51,6 @@ export function usePolygon(options: google.maps.PolygonOptions, handlers: Polygo
             listeners.current = [];
         }
     }, [polygon.current, handlers.onClick, handlers.onContextMenu, handlers.onDoubleClick, handlers.onDrag, handlers.onDragEnd, handlers.onDragStart, handlers.onMouseDown, handlers.onMouseMove, handlers.onMouseOut, handlers.onMouseOver, handlers.onMouseUp]);
+
+    return polygon;
 }

@@ -81,7 +81,7 @@ const BuilderMapPage: NextPage = () => {
   const [displayModalDelete, setDisplayModalDelete] = useState(false);
 
   const toggleSectorSelect = useCallback(() => {
-    
+
   }, [selectedSector, selectedBoulder])
   const toggleBoulderSelect = useCallback((boulderQuark: Quark<Boulder>) => {
     selectedTrack.select(undefined);
@@ -185,6 +185,7 @@ const BuilderMapPage: NextPage = () => {
       <div className="h-content md:h-full relative flex flex-row md:overflow-hidden">
         <LeftbarBuilderDesktop
           sectors={topo.sectors}
+          boulders={topo.boulders}
           selectedBoulder={selectedBoulder}
           onBoulderSelect={toggleBoulderSelect}
           onTrackSelect={toggleTrackSelect}

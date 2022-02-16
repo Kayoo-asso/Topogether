@@ -18,9 +18,6 @@ interface LeftbarBuilderDesktopProps {
 export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = watchDependencies((props: LeftbarBuilderDesktopProps) => {
     const { session } = useContext(UserContext);
     const selectedBoulder = props.selectedBoulder();
-    const sectors = props.sectors.map(s => {
-        return {...s, boulders: props.boulders.filter(b => b.sectorId === s.id)}
-    });
 
     const [displayedSectors, setDisplayedSectors] = useState<Array<UUID>>(props.sectors.map(sector => sector.id).toArray());
     const [displayedBoulders, setDisplayedBoulders] = useState<Array<UUID>>([]);
@@ -46,59 +43,59 @@ export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = watch
     }
 
     const handleDragEnd = useCallback((res: DropResult) => {
-        const sourceSector = props.sectors.find(s => s.id === res.source.droppableId);
-        const destinationSector = props.sectors.find(s => s.id === res.destination?.droppableId);
-        if (res.destination && sourceSector && destinationSector) { 
-            const oldIndex = res.source.index;
-            const newIndex = res.destination.index;
-            const draggedBoulder = sourceSector.boulders.findQuark(b => b.orderIndex === oldIndex)!;
-            if (destinationSector.id !== sourceSector.id) {
-                for (const bQ of sourceSector.boulders.quarks()) {
-                    if (bQ().orderIndex > oldIndex) {
-                        bQ.set(prev => ({
-                            ...prev,
-                            orderIndex: prev.orderIndex - 1
-                        }));
-                    }
-                }
-                for (const bQ of destinationSector.boulders.quarks()) {
-                    if (bQ().orderIndex >= newIndex) {
-                        bQ.set(prev => ({
-                            ...prev,
-                            orderIndex: prev.orderIndex + 1
-                        }))
-                    }
-                }
-            }
-            else {
-                if (oldIndex < newIndex)
-                    for (const bQ of sourceSector.boulders.quarks()) {  
-                        if (bQ().orderIndex > oldIndex && bQ().orderIndex <= newIndex) {
-                            // console.log('-1 on boulder '+ bQ().name)
-                            bQ.set(prev => ({
-                                ...prev,
-                                orderIndex: prev.orderIndex - 1
-                            }))
-                        }
-                    }
-                else
-                    for (const bQ of sourceSector.boulders.quarks()) {  
-                        if (bQ().orderIndex < oldIndex && bQ().orderIndex >= newIndex) {
-                            // console.log('+1 on boulder '+ bQ().name)
-                            bQ.set(prev => ({
-                                ...prev,
-                                orderIndex: prev.orderIndex + 1
-                            }))
-                        }
-                    }
-            }
-            draggedBoulder.set({
-                ...draggedBoulder(),
-                orderIndex: newIndex
-            });
-            sourceSector.boulders.remove(draggedBoulder());
-            destinationSector.boulders.push(draggedBoulder());
-        }
+        // const sourceSector = props.sectors.find(s => s.id === res.source.droppableId);
+        // const destinationSector = props.sectors.find(s => s.id === res.destination?.droppableId);
+        // if (res.destination && sourceSector && destinationSector) { 
+        //     const oldIndex = res.source.index;
+        //     const newIndex = res.destination.index;
+        //     const draggedBoulder = sourceSector.boulders.findQuark(b => b.orderIndex === oldIndex)!;
+        //     if (destinationSector.id !== sourceSector.id) {
+        //         for (const bQ of sourceSector.boulders.quarks()) {
+        //             if (bQ().orderIndex > oldIndex) {
+        //                 bQ.set(prev => ({
+        //                     ...prev,
+        //                     orderIndex: prev.orderIndex - 1
+        //                 }));
+        //             }
+        //         }
+        //         for (const bQ of destinationSector.boulders.quarks()) {
+        //             if (bQ().orderIndex >= newIndex) {
+        //                 bQ.set(prev => ({
+        //                     ...prev,
+        //                     orderIndex: prev.orderIndex + 1
+        //                 }))
+        //             }
+        //         }
+        //     }
+        //     else {
+        //         if (oldIndex < newIndex)
+        //             for (const bQ of sourceSector.boulders.quarks()) {  
+        //                 if (bQ().orderIndex > oldIndex && bQ().orderIndex <= newIndex) {
+        //                     // console.log('-1 on boulder '+ bQ().name)
+        //                     bQ.set(prev => ({
+        //                         ...prev,
+        //                         orderIndex: prev.orderIndex - 1
+        //                     }))
+        //                 }
+        //             }
+        //         else
+        //             for (const bQ of sourceSector.boulders.quarks()) {  
+        //                 if (bQ().orderIndex < oldIndex && bQ().orderIndex >= newIndex) {
+        //                     // console.log('+1 on boulder '+ bQ().name)
+        //                     bQ.set(prev => ({
+        //                         ...prev,
+        //                         orderIndex: prev.orderIndex + 1
+        //                     }))
+        //                 }
+        //             }
+        //     }
+        //     draggedBoulder.set({
+        //         ...draggedBoulder(),
+        //         orderIndex: newIndex
+        //     });
+        //     sourceSector.boulders.remove(draggedBoulder());
+        //     destinationSector.boulders.push(draggedBoulder());
+        // }
     }, []);
 
     if (!session) return null;
@@ -108,9 +105,9 @@ export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = watch
             <DragDropContext onDragEnd={handleDragEnd}>  
                 <div className='h-[95%] overflow-y-auto mb-6 px-4'>
 
-                    {/* {sectors.map((sectorQuark, sectorIndex) => {
+                    {props.sectors.quarks().map((sectorQuark, sectorIndex) => {
                         const sector = sectorQuark();
-                        const bouldersIter = sector.boulders.quarks();
+                        const bouldersIter = props.boulders.quarks().filter(b => b().sectorId === sector.id);
                         const boulderQuarks = Array.from(bouldersIter);
                         return (
                             <Droppable droppableId={sector.id} key={sector.id}>
@@ -145,7 +142,7 @@ export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = watch
                                         {displayedSectors.includes(sector.id) &&
                                             // BOULDERS
                                             <div className='flex flex-col gap-1 ml-3'>
-                                                {sector.boulders.length < 1 &&
+                                                {boulderQuarks.length < 1 &&
                                                     <div className=''>
                                                         Aucun rocher référencé
                                                     </div>
@@ -224,24 +221,17 @@ export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = watch
                                 )}
                             </Droppable>
                         )
-                    })} */}
+                    })}
   
                 </div>               
             </DragDropContext>
 
+            {/* TODO: Add the boulders without sectors */}
+
             <div className='px-6'>
                 <Button
-                    content='Nouveau secteur'
-                    white
-                    onClick={() => {
-                        const newSector: Sector = {
-                            id: v4(),
-                            name: 'Secteur ' + (props.sectors.length + 1) as Name,
-                            boulders: new QuarkArray(),
-                            waypoints: new QuarkArray()
-                        }
-                        props.sectors.push(newSector);
-                    }}
+                    content='Valider le topo'
+                    onClick={props.onValidate}
                 />
             </div>
         </div>

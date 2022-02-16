@@ -222,6 +222,19 @@ export const MapControl: React.FC<MapControlProps> = ({
           // }}
           {...props}
         >
+          <Show when={() => props.sectors}>
+            <For each={() => props.sectors!.toArray()}>
+              {(sector) => 
+                <SectorAreaMarker 
+                  key={reactKey(sector)}
+                  draggable={draggableMarkers}
+                  editable={draggableMarkers}
+                  sector={sector}
+                  onClick={props.onSectorClick}
+                />
+              }
+            </For>
+          </Show>
           <Show when={() => props.waypoints}>
             <For each={() => props.waypoints!.toArray()}>
                 {(waypoint) => 
@@ -243,19 +256,6 @@ export const MapControl: React.FC<MapControlProps> = ({
                   boulder={boulder}
                   onClick={props.onBoulderClick}
                 />   
-              }
-            </For>
-          </Show>
-          <Show when={() => props.sectors}>
-            <For each={() => props.sectors!.toArray()}>
-              {(sector) => 
-                <SectorAreaMarker 
-                  key={reactKey(sector)}
-                  draggable={draggableMarkers}
-                  editable={draggableMarkers}
-                  sector={sector}
-                  onClick={props.onSectorClick}
-                />
               }
             </For>
           </Show>
