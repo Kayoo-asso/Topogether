@@ -13,7 +13,14 @@ export interface MarkerProps {
   handlers?: MarkerEventHandlers
 };
 
+export interface PolygonProps {
+  id: UUID,
+  options?: Omit<google.maps.PolygonOptions, 'map'>,
+  handlers?: PolygonEventHandlers
+};
+
 export type MapMouseEvent = google.maps.MapMouseEvent;
+export type PolyMouseEvent = google.maps.PolyMouseEvent;
 export type IconMouseEvent = google.maps.IconMouseEvent;
 
 export type MapEventHandlers = {
@@ -64,6 +71,22 @@ export type MarkerEventHandlers = {
   onZIndexChange?: () => void,
 };
 
+export type PolygonEventHandlers = {
+  onClick?: (event: PolyMouseEvent) => void,
+  onContextMenu?: (event: PolyMouseEvent) => void,
+  onDoubleClick?: (event: MapMouseEvent) => void,
+  onDrag?: (event: MapMouseEvent) => void,
+  onDragEnd?: (event: MapMouseEvent) => void,
+  onDragStart?: (event: MapMouseEvent) => void,
+  onMouseDown?: (event: PolyMouseEvent) => void,
+  onMouseMove?: (event: PolyMouseEvent) => void,
+  onMouseOut?: (event: PolyMouseEvent) => void,
+  onMouseOver?: (event: PolyMouseEvent) => void,
+  onMouseUp?: (event: PolyMouseEvent) => void,
+  // no support for onRightClick, since onContextMenu should be used instead
+  // https://developers.google.com/maps/documentation/javascript/reference/marker#Marker.rightclick
+};
+
 
 // === Map events ===
 export const mapEvents = [
@@ -96,7 +119,7 @@ type EventName = Events[number][0];
 type EventHandlerName = Events[number][1];
 
 // Compile-time check that we have the exact same handler names
-// in the`events` array and the `MapEventHandlers` type.
+// in the`mapEvents` array and the `MapEventHandlers` type.
 // (this is an isomorphism proof)
 // These two functions are the proof.
 function _handlersIsomorphismForward(handler: EventHandlerName): keyof MapEventHandlers {
@@ -134,12 +157,12 @@ export const markerEvents = [
   ['zindex_changed', 'onZIndexChange'],
 ] as const;
 
-type MarkerEvents = typeof markerEvents;
-type MarkerEventName = MarkerEvents[number][0];
-type MarkerEventHandlerName = MarkerEvents[number][1];
+type MarkerEvent = typeof markerEvents;
+type MarkerEventName = MarkerEvent[number][0];
+type MarkerEventHandlerName = MarkerEvent[number][1];
 
 // Compile-time check that we have the exact same handler names
-// in the`events` array and the `MapEventHandlers` type.
+// in the`markerEvents` array and the `MarkerEventHandlers` type.
 // (this is an isomorphism proof)
 // These two functions are the proof.
 function _markerHandlersIsomorphismForward(handler: MarkerEventHandlerName): keyof MarkerEventHandlers {
@@ -147,5 +170,38 @@ function _markerHandlersIsomorphismForward(handler: MarkerEventHandlerName): key
 }
 
 function _markerHandlersIsomorphismBackward(handler: keyof MarkerEventHandlers): MarkerEventHandlerName {
+  return handler;
+}
+
+// === Polygon events ===
+export const polygonEvents = [
+  ['click', 'onClick'],
+  ['contextmenu', 'onContextMenu'],
+  ['dblclick', 'onDoubleClick'],
+  ['drag', 'onDrag'],
+  ['dragend', 'onDragEnd'],
+  ['dragstart', 'onDragStart'],
+  ['mousedown', 'onMouseDown'],
+  ['mousemove', 'onMouseMove'],
+  ['mouseout', 'onMouseOut'],
+  ['mouseover', 'onMouseOver'],
+  ['mouseup', 'onMouseUp'],
+  // no support for onRightClick, since onContextMenu should be used instead
+  // https://developers.google.com/maps/documentation/javascript/reference/marker#Marker.rightclick
+] as const;
+
+type PolygonEvent = typeof polygonEvents;
+type PolygonEventName = PolygonEvent[number][0];
+type PolygonEventHandlerName = PolygonEvent[number][1];
+
+// Compile-time check that we have the exact same handler names
+// in the`polygonEvents` array and the `PolygonEventHandlers` type.
+// (this is an isomorphism proof)
+// These two functions are the proof.
+function _polygonHandlersIsomorphismForward(handler: PolygonEventHandlerName): keyof PolygonEventHandlers {
+  return handler;
+}
+
+function _polygonHandlersIsomorphismBackward(handler: keyof PolygonEventHandlers): PolygonEventHandlerName {
   return handler;
 }
