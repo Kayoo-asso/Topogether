@@ -8,6 +8,7 @@ import { v4 } from 'uuid';
 
 interface LeftbarBuilderDesktopProps {
     sectors: QuarkArray<Sector>,
+    boulders: QuarkArray<Boulder>,
     selectedBoulder: SelectQuarkNullable<Boulder>,
     onBoulderSelect: (boulderQuark: Quark<Boulder>) => void,
     onTrackSelect: (trackQuark: Quark<Track>, boulderQuark: Quark<Boulder>) => void,
@@ -17,6 +18,9 @@ interface LeftbarBuilderDesktopProps {
 export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = watchDependencies((props: LeftbarBuilderDesktopProps) => {
     const { session } = useContext(UserContext);
     const selectedBoulder = props.selectedBoulder();
+    const sectors = props.sectors.map(s => {
+        return {...s, boulders: props.boulders.filter(b => b.sectorId === s.id)}
+    });
 
     const [displayedSectors, setDisplayedSectors] = useState<Array<UUID>>(props.sectors.map(sector => sector.id).toArray());
     const [displayedBoulders, setDisplayedBoulders] = useState<Array<UUID>>([]);
@@ -103,7 +107,8 @@ export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = watch
                     
             <DragDropContext onDragEnd={handleDragEnd}>  
                 <div className='h-[95%] overflow-y-auto mb-6 px-4'>
-                    {props.sectors.quarks().map((sectorQuark, sectorIndex) => {
+
+                    {/* {sectors.map((sectorQuark, sectorIndex) => {
                         const sector = sectorQuark();
                         const bouldersIter = sector.boulders.quarks();
                         const boulderQuarks = Array.from(bouldersIter);
@@ -219,9 +224,8 @@ export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = watch
                                 )}
                             </Droppable>
                         )
-                    })}
-
-                    
+                    })} */}
+  
                 </div>               
             </DragDropContext>
 

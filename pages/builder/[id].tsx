@@ -13,7 +13,7 @@ import {
  blobToImage, defaultImage, DeviceContext, UserContext,
 } from 'helpers';
 import {
- Boulder, GeoCoordinates, Image, MapToolEnum, Name, Parking, Track, Waypoint,
+ Boulder, GeoCoordinates, Image, MapToolEnum, Name, Parking, Sector, Track, Waypoint,
 } from 'types';
 import {
  Quark, QuarkArray, QuarkIter, useSelectQuark, watchDependencies,
@@ -35,6 +35,7 @@ const BuilderMapPage: NextPage = () => {
   const [currentTool, setCurrentTool] = useState<MapToolEnum>();
   const [currentImage, setCurrentImage] = useState<Image>(defaultImage);
   const selectedTrack = useSelectQuark<Track>();
+  const selectedSector = useSelectQuark<Sector>();
   const selectedBoulder = useSelectQuark<Boulder>();
   const selectedParking = useSelectQuark<Parking>();
   const selectedWaypoint = useSelectQuark<Waypoint>();
@@ -79,6 +80,9 @@ const BuilderMapPage: NextPage = () => {
   const [displayModalValidate, setDisplayModalValidate] = useState(false);
   const [displayModalDelete, setDisplayModalDelete] = useState(false);
 
+  const toggleSectorSelect = useCallback(() => {
+    
+  }, [selectedSector, selectedBoulder])
   const toggleBoulderSelect = useCallback((boulderQuark: Quark<Boulder>) => {
     selectedTrack.select(undefined);
     selectedParking.select(undefined);
@@ -232,6 +236,7 @@ const BuilderMapPage: NextPage = () => {
           displayBoulderFilter
           onBoulderClick={toggleBoulderSelect}
           sectors={sectors}
+          onSectorClick={toggleSectorSelect}
           parkings={parkings}
           onParkingClick={toggleParkingSelect}
           onPhotoButtonClick={() => setDisplayGeoCamera(true)}

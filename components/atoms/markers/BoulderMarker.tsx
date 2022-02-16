@@ -18,12 +18,19 @@ export const BoulderMarker: React.FC<BoulderMarkerProps> = watchDependencies(({
     const icon: google.maps.Icon = {
         url: '/assets/icons/colored/_rock.svg',
         scaledSize: markerSize(30),
+        labelOrigin: new google.maps.Point(15, 34)
     }
 
     const options: google.maps.MarkerOptions = {
         icon,
         draggable,
-        position: boulder.location
+        position: boulder.location,
+        label: {
+            text: boulder.orderIndex.toString(),
+            color: '#04D98B',
+            fontFamily: 'Poppins',
+            fontWeight: '500'
+        }
     };
 
     const handlers: MarkerEventHandlers = {
