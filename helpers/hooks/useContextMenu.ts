@@ -36,8 +36,6 @@ export function useContextMenu(setOpen: (open: boolean) => void) {
         };
         document.addEventListener('mousedown', onMouseDown, { capture: true });
         document.addEventListener('contextmenu', onContextMenu, { capture: true });
-        document.addEventListener('touchmove', 
-        () => {console.log('like u cared'); setOpen(false)}, { capture: true });
 
         return () => {
             document.removeEventListener('mousedown', onMouseDown, { capture: true });
