@@ -1,4 +1,4 @@
-import type { Quark, QuarkArray } from 'helpers/quarky';
+import type { QuarkArray } from 'helpers/quarky';
 import type { Amenities, ClimbTechniques, RockTypes } from './Bitflags';
 import type {
   Reception, Grade, LightGrade, Orientation, TopoStatus, TopoType, Difficulty,
@@ -8,17 +8,16 @@ import type { UUID, GeoCoordinates, RequireAtLeastOne, StringBetween, Name, Desc
 import type { TrackRating, User } from './User';
 import type { Image } from './Image';
 
-export type Topo = Omit<TopoData, 'sectors' | 'parkings' | 'accesses' | 'managers'> & {
+export type Topo = Omit<TopoData, 'sectors' | 'boulders' | 'waypoints' | 'parkings' | 'accesses' | 'managers'> & {
   sectors: QuarkArray<Sector>,
+  boulders: QuarkArray<Boulder>,
+  waypoints: QuarkArray<Waypoint>,
   parkings: QuarkArray<Parking>,
   accesses: QuarkArray<TopoAccess>,
   managers: QuarkArray<Manager>,
 };
 
-export type Sector = Omit<SectorData, 'boulders' | 'waypoints'> & {
-  boulders: QuarkArray<Boulder>,
-  waypoints: QuarkArray<Waypoint>,
-};
+export type Sector = SectorData;
 
 export type Boulder = Omit<BoulderData, 'tracks'> & {
   tracks: QuarkArray<Track>,
@@ -63,6 +62,8 @@ export interface TopoData {
   danger?: Description
 
   sectors: SectorData[], // -> Quark<Array<Quark<Sector>>>
+  boulders: BoulderData[],
+  waypoints: Waypoint[]
   parkings: Parking[],
   accesses: TopoAccess[],
   managers: Manager[],
@@ -122,14 +123,12 @@ export interface Manager {
 export interface SectorData {
   readonly id: UUID,
   name: Name,
-  description?: Description
-
-  boulders: BoulderData[],
-  waypoints: Waypoint[]
+  path: GeoCoordinates[],
 }
 
 export interface Waypoint {
   readonly id: UUID,
+  sectorId?: UUID,
   name: Name,
   location: GeoCoordinates,
   image?: Image,
@@ -138,6 +137,7 @@ export interface Waypoint {
 
 export interface BoulderData {
   readonly id: UUID,
+  sectorId?: UUID,
   location: GeoCoordinates,
   name: Name,
   orderIndex: number,

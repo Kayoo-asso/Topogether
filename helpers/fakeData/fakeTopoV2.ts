@@ -1,6 +1,6 @@
 import { Quark } from 'helpers/quarky';
-import { BoulderData, Line, Name, Image, TrackData, Description, Difficulty, ClimbTechniques, SectorData, TopoData, Amenities, TopoStatus, TopoType, RockTypes, TopoAccess, Topo, Parking, StringBetween, Manager, UUID, Reception } from 'types';
-import { v4 as uuid } from 'uuid';
+import { BoulderData, Line, Name, Image, TrackData, Description, Difficulty, ClimbTechniques, SectorData, TopoData, Amenities, TopoStatus, TopoType, RockTypes, TopoAccess, Topo, Parking, StringBetween, Manager, UUID, Reception, Waypoint } from 'types';
+import { v4 as uuid, v4 } from 'uuid';
 import { quarkifyTopo } from './quarkifyTopo';
 
 // Note: using hardcoded strings instead of UUIDs everywhere to make cross-tab sync work with the fake data
@@ -122,7 +122,7 @@ export const tracks: TrackData[] = [
 
 export const boulders: BoulderData[] = [
     {
-        id: "boulder-1" as UUID,
+        id: v4(),
         name: "PearlHarbor" as Name,
         location: {
             lat: 45.70201,
@@ -134,6 +134,34 @@ export const boulders: BoulderData[] = [
         orderIndex: 0,
         images: [images[0], images[1], images[2], images[3]],
         tracks
+    },
+    {
+        id: v4(),
+        name: "Mystiquette" as Name,
+        location: {
+            lat: 45.70401,
+            lng: 4.606412,
+        },
+        isHighball: true,
+        mustSee: false,
+        dangerousDescent: false,
+        orderIndex: 1,
+        images: [images[0], images[1], images[2], images[3]],
+        tracks
+    },
+    {
+        id: v4(),
+        name: "Hoummmmous" as Name,
+        location: {
+            lat: 45.70461,
+            lng: 4.606712,
+        },
+        isHighball: true,
+        mustSee: false,
+        dangerousDescent: false,
+        orderIndex: 2,
+        images: [images[0], images[1], images[2], images[3]],
+        tracks
     }
 ]
 
@@ -141,18 +169,21 @@ export const sectors: SectorData[] = [
     {
         id: "sector-1" as UUID,
         name: "ABO" as Name,
-        boulders,
-        waypoints: [
+        path: [
             {
-                id: uuid(),
-                name: 'Pont de pierre' as Name,
-                location: {
-                    lat: 45.70256,
-                    lng: 4.605462,
-                },
-                description: "C'est un joli petit pont tout mignon qui permet de traverser une rivière ... DE SANNNNNG GNIAHAHAHAHA !!!" as Description,
-            }
-        ]
+                lat: 45.70201,
+                lng: 4.605412,
+            },
+            {
+                lat: 45.70461,
+                lng: 4.606712,
+            },
+            {
+                lat: 45.70661,
+                lng: 4.606912,
+            },
+        ],
+        
     }
 ]
 
@@ -214,6 +245,18 @@ export const managers: Manager[] = [
     }
 ]
 
+export const waypoints: Waypoint[] = [
+    {
+        id: uuid(),
+        name: 'Pont de pierre' as Name,
+        location: {
+            lat: 45.70256,
+            lng: 4.605462,
+        },
+        description: "C'est un joli petit pont tout mignon qui permet de traverser une rivière ... DE SANNNNNG GNIAHAHAHAHA !!!" as Description,
+    }
+]
+
 export const topo: TopoData = {
     id: "topo-1" as UUID,
     name: "Yzéron" as Name,
@@ -238,6 +281,8 @@ export const topo: TopoData = {
     validatorId: validatorId,
 
     sectors: sectors,
+    boulders: boulders,
+    waypoints: waypoints,
     parkings: parkings,
     accesses: access,
     managers: managers,

@@ -1,4 +1,4 @@
-import { UUID } from "./UUID";
+import { UUID } from "./Utils";
 
 export type MapProps =
   MapEventHandlers

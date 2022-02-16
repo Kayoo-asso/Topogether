@@ -2,17 +2,14 @@ import { Boulder, BoulderData, Line, Manager, Parking, SectorData, TopoData, Tra
 import { TrackRating, User } from "./User";
 import { UUID } from "./Utils";
 
-export type TopoDTO = Omit<TopoData, 'sectors' | 'parkings' | 'access' | 'image'> & {
+export type TopoDTO = Omit<TopoData, 'sectors' | 'boulders' | 'waypoints' | 'parkings' | 'access' | 'image'> & {
     imageId?: UUID
 };
 
-export type SectorDTO = Omit<SectorData, 'boulders' | 'waypoints'> & {
-    boulderIds: UUID[],
-    waypointIds: UUID[]
-};
+export type SectorDTO = SectorData;
 
 export type BoulderDTO = Omit<Boulder, 'tracks' | 'images'> & {
-    sectorId: UUID
+    topoId: UUID
 };
 
 export type TrackDTO = Omit<Track, 'lines' | 'ratings'> & {
@@ -33,7 +30,7 @@ export type ParkingDTO = Omit<Parking, 'image'> & {
 }
 
 export type WaypointDTO = Omit<Waypoint, 'image'> & {
-    sectorId: UUID,
+    topoId: UUID,
     imageId?: UUID,
 }
 

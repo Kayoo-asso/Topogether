@@ -57,6 +57,7 @@ export const gradeToLightGrade = (grade?: Grade): LightGrade => {
 
 export type MapToolEnum =
 'ROCK' |
+'SECTOR' |
 'PARKING' |
 'WAYPOINT';
 

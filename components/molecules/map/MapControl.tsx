@@ -1,9 +1,9 @@
 import React, { useRef, useState } from 'react';
 import { Wrapper } from '@googlemaps/react-wrapper';
-import { BoulderMarker, For, Map, ParkingMarker, RoundButton, SatelliteButton, Show, TopoMarker, WaypointMarker } from 'components';
+import { BoulderMarker, For, Map, ParkingMarker, RoundButton, SatelliteButton, SectorAreaMarker, Show, TopoMarker, WaypointMarker } from 'components';
 import { BoulderFilterOptions, BoulderFilters, MapSearchbarProps, TopoFilterOptions, TopoFilters } from '.';
 import { MapSearchbar } from '..';
-import { Amenities, Boulder, ClimbTechniques, gradeToLightGrade, LightGrade, LightTopo, MapProps, MarkerProps, Parking, Waypoint } from 'types';
+import { Amenities, Boulder, ClimbTechniques, gradeToLightGrade, LightGrade, LightTopo, MapProps, MarkerProps, Parking, Sector, Waypoint } from 'types';
 import { googleGetPlace, hasFlag, hasSomeFlags, mergeFlags } from 'helpers';
 import { Quark, QuarkIter, reactKey } from 'helpers/quarky';
 
@@ -21,6 +21,8 @@ interface MapControlProps extends MapProps {
   boulders?: QuarkIter<Quark<Boulder>>,
   onBoulderClick?: (boulder: Quark<Boulder>) => void,
   displayBoulderFilter?: boolean,
+  sectors?: QuarkIter<Quark<Sector>>,
+  onSectorClick?: (sector: Quark<Sector>) => void,
   parkings?: QuarkIter<Quark<Parking>>,
   onParkingClick?: (parking: Quark<Parking>) => void,
   topos?: QuarkIter<Quark<LightTopo>>,
@@ -234,12 +236,26 @@ export const MapControl: React.FC<MapControlProps> = ({
           </Show>
           <Show when={() => props.boulders}>
             <For each={() => props.boulders!.filter(b => boulderFilter(b())).toArray()}>
-              {(boulder) => <BoulderMarker
+              {(boulder) => 
+                <BoulderMarker
                   key={reactKey(boulder)}
                   draggable={draggableMarkers}
                   boulder={boulder}
                   onClick={props.onBoulderClick}
                 />   
+              }
+            </For>
+          </Show>
+          <Show when={() => props.sectors}>
+            <For each={() => props.sectors!.toArray()}>
+              {(sector) => 
+                <SectorAreaMarker 
+                  key={reactKey(sector)}
+                  draggable={draggableMarkers}
+                  editable={draggableMarkers}
+                  sector={sector}
+                  onClick={props.onSectorClick}
+                />
               }
             </For>
           </Show>

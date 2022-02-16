@@ -11,6 +11,7 @@ interface HeaderDesktopProps {
   displayMapTools?: boolean,
   MapToolsActivated?: boolean,
   onRockClick?: () => void,
+  onSectorClick?: () => void,
   onParkingClick?: () => void,
   onWaypointClick?: () => void,
   currentTool?: MapToolEnum,
@@ -70,6 +71,11 @@ export const HeaderDesktop: React.FC<HeaderDesktopProps> = ({
             name="rock"
             SVGClassName={`h-7 w-7 ${!props.MapToolsActivated ? 'stroke-grey-medium' : props.currentTool === 'ROCK' ? 'stroke-main' : 'stroke-white'}`}
             onClick={props.MapToolsActivated ? props.onRockClick : undefined}
+          />
+          <Icon
+            name="sector"
+            SVGClassName={`h-7 w-7 ${!props.MapToolsActivated ? 'stroke-grey-medium fill-grey-medium' : props.currentTool === 'SECTOR' ? 'stroke-main fill-main' : 'stroke-white fill-white'}`}
+            onClick={props.MapToolsActivated ? props.onSectorClick : undefined}
           />
           <Icon
             name="parking"

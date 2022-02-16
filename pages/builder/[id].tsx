@@ -27,21 +27,10 @@ const BuilderMapPage: NextPage = () => {
   const device = useContext(DeviceContext);
 
   const topo = quarkTopo();
-  const boulders = useMemo(
-() => topo.sectors
-      .lazy()
-      .map((x) => x.boulders.quarks())
-      .flatten(),
-       [topo.sectors],
-);
+  const sectors = useMemo(() => topo.sectors?.quarks(), [topo.sectors]) || new QuarkIter<Quark<Parking>>([]);
+  const boulders = useMemo(() => topo.boulders?.quarks(), [topo.boulders]) || new QuarkIter<Quark<Boulder>>([])
   const parkings = useMemo(() => topo.parkings?.quarks(), [topo.parkings]) || new QuarkIter<Quark<Parking>>([]);
-  const waypoints = useMemo(
-() => topo.sectors
-      .lazy()
-      .map((s) => s.waypoints.quarks())
-      .flatten(),
-       [topo.sectors],
-) || new QuarkIter<Quark<Waypoint>>([]);
+  const waypoints = useMemo(() => topo.waypoints?.quarks(), [topo.waypoints]) || new QuarkIter<Quark<Waypoint>>([]);
 
   const [currentTool, setCurrentTool] = useState<MapToolEnum>();
   const [currentImage, setCurrentImage] = useState<Image>(defaultImage);
@@ -123,7 +112,7 @@ const BuilderMapPage: NextPage = () => {
   }, [selectedWaypoint]);
 
   const createBoulder = useCallback((location: GeoCoordinates, image?: Image, selectBoulder = false) => {
-    const orderIndex = topo.sectors.at(0).boulders.length;
+    const orderIndex = topo.boulders.length;
     const newBoulder: Boulder = {
       id: v4(),
       orderIndex,
@@ -135,8 +124,8 @@ const BuilderMapPage: NextPage = () => {
       tracks: new QuarkArray(),
       images: image ? [image] : [],
     };
-    topo.sectors.at(0).boulders.push(newBoulder);
-    const newBoulderQuark = topo.sectors.at(0).boulders.quarkAt(-1);
+    topo.boulders.push(newBoulder);
+    const newBoulderQuark = topo.boulders.quarkAt(-1);
     if (selectBoulder) {
       selectedBoulder.select(newBoulderQuark);
       if (image) setCurrentImage(newBoulder.images[0]);
@@ -158,11 +147,11 @@ const BuilderMapPage: NextPage = () => {
   const createWaypoint = useCallback((location: GeoCoordinates, selectWaypoint = false) => {
     const newWaypoint: Waypoint = {
       id: v4(),
-      name: `point de repère ${topo.sectors.at(0).waypoints ? topo.sectors.at(0).waypoints.length + 1 : '1'}` as Name,
+      name: `point de repère ${topo.waypoints ? topo.waypoints.length + 1 : '1'}` as Name,
       location,
     };
-    topo.sectors.at(0).waypoints.push(newWaypoint);
-    const newWaypointQuark = topo.sectors.at(0).waypoints.quarkAt(-1);
+    topo.waypoints.push(newWaypoint);
+    const newWaypointQuark = topo.waypoints.quarkAt(-1);
     if (selectWaypoint) selectedWaypoint.select(newWaypointQuark);
     return newWaypointQuark;
   }, [topo]);
@@ -184,6 +173,7 @@ const BuilderMapPage: NextPage = () => {
         MapToolsActivated={!selectedTrack()}
         currentTool={currentTool}
         onRockClick={() => setCurrentTool(currentTool === 'ROCK' ? undefined : 'ROCK')}
+        onSectorClick={() => setCurrentTool(currentTool === 'SECTOR' ? undefined : 'SECTOR')}
         onParkingClick={() => setCurrentTool(currentTool === 'PARKING' ? undefined : 'PARKING')}
         onWaypointClick={() => setCurrentTool(currentTool === 'WAYPOINT' ? undefined : 'WAYPOINT')}
       />
@@ -231,6 +221,7 @@ const BuilderMapPage: NextPage = () => {
               findPlaces: false,
           }}
           draggableCursor={currentTool === 'ROCK' ? 'url(/assets/icons/colored/_rock.svg), auto'
+                          : currentTool === 'SECTOR' ? 'url(/assets/icons/colored/line-point/_line-point-grey.svg), auto'
                           : currentTool === 'PARKING' ? 'url(/assets/icons/colored/_parking.svg), auto'
                           : currentTool === 'WAYPOINT' ? 'url(/assets/icons/colored/_help-round.svg), auto'
                           : ''}
@@ -240,6 +231,7 @@ const BuilderMapPage: NextPage = () => {
           boulders={boulders}
           displayBoulderFilter
           onBoulderClick={toggleBoulderSelect}
+          sectors={sectors}
           parkings={parkings}
           onParkingClick={toggleParkingSelect}
           onPhotoButtonClick={() => setDisplayGeoCamera(true)}
@@ -248,6 +240,9 @@ const BuilderMapPage: NextPage = () => {
               switch (currentTool) {
                 case 'ROCK':
                   createBoulder({ lat: e.latLng.lat(), lng: e.latLng.lng() });
+                  break;
+                case 'SECTOR':
+
                   break;
                 case 'PARKING':
                   createParking({ lat: e.latLng.lat(), lng: e.latLng.lng() });
@@ -326,7 +321,7 @@ const BuilderMapPage: NextPage = () => {
               open
               waypoint={waypoint}
               onDeleteWaypoint={() => {
-                    topo.sectors.at(0).waypoints.removeQuark(waypoint);
+                    topo.waypoints.removeQuark(waypoint);
                     selectedWaypoint.select(undefined);
                   }}
               onClose={() => selectedWaypoint.select(undefined)}

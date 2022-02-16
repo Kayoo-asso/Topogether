@@ -17,18 +17,12 @@ const Topo: NextPage = () => {
   const { id } = router.query;
   const device = useContext(DeviceContext);
 
-  const topo = quarkTopo;
-  const boulders = useMemo(() => topo().sectors
-      .lazy()
-      .map(s => s.boulders.quarks())
-      .flatten()
-  , [topo().sectors]);
-  const parkings = useMemo(() => topo().parkings?.quarks(), [topo().parkings]) || new QuarkIter<Quark<Parking>>([]);
-  const waypoints = useMemo(() => topo().sectors
-      .lazy()
-      .map(s => s.waypoints.quarks())
-      .flatten()
-  , [topo().sectors]) || new QuarkIter<Quark<Waypoint>>([]);
+  const topo = quarkTopo();
+  const sectors = useMemo(() => topo.sectors?.quarks(), [topo.sectors]) || new QuarkIter<Quark<Parking>>([]);
+  const boulders = useMemo(() => topo.boulders?.quarks(), [topo.boulders]) || new QuarkIter<Quark<Boulder>>([])
+  const parkings = useMemo(() => topo.parkings?.quarks(), [topo.parkings]) || new QuarkIter<Quark<Parking>>([]);
+  const waypoints = useMemo(() => topo.waypoints?.quarks(), [topo.waypoints]) || new QuarkIter<Quark<Waypoint>>([]);
+
 
   const [currentImage, setCurrentImage] = useState<Image>(defaultImage);
   const selectedTrack = useSelectQuark<Track>();
@@ -103,7 +97,7 @@ const Topo: NextPage = () => {
   return (
     <>
       <Header
-        title={topo().name}
+        title={topo.name}
         backLink='/'
         menuOptions={[
           { value: 'Infos du topo', action: () => setCurrentDisplay('INFO')},
@@ -119,7 +113,7 @@ const Topo: NextPage = () => {
 
         <Show when={() => displayInfo}>
           <InfoSlideover 
-            topo={topo}
+            topo={quarkTopo}
             open={displayInfo}
             onClose={() => setCurrentDisplay(undefined)}
             className={currentDisplay === 'INFO' ? 'z-100' : 'z-50'}
@@ -127,7 +121,7 @@ const Topo: NextPage = () => {
         </Show>
         <Show when={() => displayApproach}>
           <AccessSlideover
-            accesses={topo().accesses}
+            accesses={topo.accesses}
             open={displayApproach}
             onClose={() => setCurrentDisplay(undefined)}
             className={currentDisplay === 'APPROACH' ? 'z-100' : 'z-50'}
@@ -135,7 +129,7 @@ const Topo: NextPage = () => {
         </Show>
         <Show when={() => displayManagement}>
           <ManagementSlideover
-            managers={topo().managers}
+            managers={topo.managers}
             open={displayManagement}
             onClose={() => setCurrentDisplay(undefined)}
             className={currentDisplay === 'MANAGEMENT' ? 'z-100' : 'z-50'}
@@ -193,7 +187,7 @@ const Topo: NextPage = () => {
                   open
                   boulder={boulder}
                   selectedTrack={selectedTrack}
-                  topoCreatorId={topo().creatorId}
+                  topoCreatorId={topo.creatorId}
                   currentImage={currentImage}
                   setCurrentImage={setCurrentImage}
                   onClose={() => {
@@ -207,7 +201,7 @@ const Topo: NextPage = () => {
               <BoulderSlideagainstDesktop
                 boulder={boulder}
                 selectedTrack={selectedTrack}
-                topoCreatorId={topo().creatorId}
+                topoCreatorId={topo.creatorId}
                 currentImage={currentImage || defaultImage}
                 setCurrentImage={setCurrentImage}
                 onClose={() => {

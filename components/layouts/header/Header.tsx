@@ -9,6 +9,7 @@ interface HeaderProps {
     displayMapTools?: boolean,
     MapToolsActivated?: boolean,
     onRockClick?: () => void,
+    onSectorClick?: () => void,
     onParkingClick?: () => void,
     onWaypointClick?: () => void,
     currentTool?: MapToolEnum,

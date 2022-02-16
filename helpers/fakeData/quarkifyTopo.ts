@@ -5,35 +5,31 @@ import { BoulderData, Grade, Line, Name, Image, TrackData, Description, Difficul
 
 export const quarkifyTopo = (topo: TopoData): Quark<Topo> => quark<Topo>({
     ...topo,
-    sectors: new QuarkArray(topo.sectors.map(quarkifySector)),
+    sectors: new QuarkArray(topo.sectors),
+    boulders: new QuarkArray(topo.boulders.map(quarkifyBoulder), {
+        onAdd: (boulder) => syncQuark<Boulder, BoulderDTO>(boulder.id, boulder, {
+            export: getBoulderExport(topo.id),
+            import: ({ topoId, ...dto }, boulder) => ({
+                ...boulder,
+                ...dto
+            })
+        })
+    }),
+    waypoints: new QuarkArray(topo.waypoints),
     parkings: new QuarkArray(topo.parkings),
     accesses: new QuarkArray(topo.accesses),
     managers: new QuarkArray(topo.managers),
 });
 
-const getBoulderExport = (sectorId: UUID) => (boulder: Boulder): BoulderDTO => ({
+const getBoulderExport = (topoId: UUID) => (boulder: Boulder): BoulderDTO => ({
     id: boulder.id,
-    sectorId,
+    topoId,
     location: boulder.location,
     name: boulder.name,
     orderIndex: boulder.orderIndex,
     isHighball: boulder.isHighball,
     mustSee: boulder.mustSee,
     dangerousDescent: boulder.dangerousDescent
-});
-
-const quarkifySector = (sector: SectorData): Sector => ({
-    ...sector,
-    boulders: new QuarkArray(sector.boulders.map(quarkifyBoulder), {
-        onAdd: (boulder) => syncQuark<Boulder, BoulderDTO>(boulder.id, boulder, {
-            export: getBoulderExport(sector.id),
-            import: ({ sectorId, ...dto }, boulder) => ({
-                ...boulder,
-                ...dto
-            })
-        })
-    }),
-    waypoints: new QuarkArray(sector.waypoints)
 });
 
 const getTrackExport = (boulderId: UUID) => (track: Track): TrackDTO => ({
