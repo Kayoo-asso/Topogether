@@ -5,7 +5,7 @@ import type { NextPage } from 'next';
 import {
   BoulderBuilderSlideoverMobile,
   MapControl, Show,
-  Header, InfoFormSlideover, ManagementFormSlideover, TrackFormSlideagainstDesktop, ModalValidateTopo, ModalDeleteTopo, GeoCamera, Drawer, LeftbarBuilderDesktop, BoulderBuilderSlideagainstDesktop, ParkingBuilderSlide, AccessFormSlideover, WaypointBuilderSlide, createTrack,
+  Header, InfoFormSlideover, ManagementFormSlideover, TrackFormSlideagainstDesktop, ModalValidateTopo, ModalDeleteTopo, GeoCamera, Drawer, LeftbarBuilderDesktop, BoulderBuilderSlideagainstDesktop, ParkingBuilderSlide, AccessFormSlideover, WaypointBuilderSlide, createTrack, Dropdown,
 } from 'components';
 import { useRouter } from 'next/router';
 import { quarkTopo } from 'helpers/fakeData/fakeTopoV2';
@@ -19,6 +19,7 @@ import {
  Quark, QuarkArray, QuarkIter, useSelectQuark, watchDependencies,
 } from 'helpers/quarky';
 import { v4 } from 'uuid';
+import { useContextMenu } from 'helpers/hooks/useContextMenu';
 
 const BuilderMapPage: NextPage = () => {
   const { session } = useContext(UserContext);
@@ -39,10 +40,12 @@ const BuilderMapPage: NextPage = () => {
   const selectedBoulder = useSelectQuark<Boulder>();
   const selectedParking = useSelectQuark<Parking>();
   const selectedWaypoint = useSelectQuark<Waypoint>();
-
+  
   const [displayGeoCamera, setDisplayGeoCamera] = useState(false);
   const [displayDrawer, setDisplayDrawer] = useState(false);
-
+  const [boulderDropdown, setBoulderDropdown] = useState<Boulder | boolean>(false);
+  const [dropdownPosition, setDropdownPosition] = useState<{ x: number, y: number }>();
+  useContextMenu(setBoulderDropdown);
   const [displayInfo, setDisplayInfo] = useState<boolean>(false);
   const [displayApproach, setDisplayApproach] = useState<boolean>(false);
   const [displayManagement, setDisplayManagement] = useState<boolean>(false);
@@ -115,6 +118,13 @@ const BuilderMapPage: NextPage = () => {
     if (selectedWaypoint()?.id === waypointQuark().id) { selectedWaypoint.select(undefined); } else selectedWaypoint.select(waypointQuark);
   }, [selectedWaypoint]);
 
+  const displayBoulderDropdown = useCallback((e: any, boulderQuark: Quark<Boulder>) => {
+    setBoulderDropdown(boulderQuark());
+    setDropdownPosition({ x: e.domEvent.pageX, y: e.domEvent.pageY });
+    console.log(e.target)
+    console.log(e.domEvent)
+  }, []);
+
   const createBoulder = useCallback((location: GeoCoordinates, image?: Image, selectBoulder = false) => {
     const orderIndex = topo.boulders.length;
     const newBoulder: Boulder = {
@@ -159,6 +169,8 @@ const BuilderMapPage: NextPage = () => {
     if (selectWaypoint) selectedWaypoint.select(newWaypointQuark);
     return newWaypointQuark;
   }, [topo]);
+
+  const closeDropdown = useCallback(() => setBoulderDropdown(false), []);
 
   if (!session || typeof id !== 'string' || !topo) return null;
   return (
@@ -236,11 +248,13 @@ const BuilderMapPage: NextPage = () => {
           boulders={boulders}
           displayBoulderFilter
           onBoulderClick={toggleBoulderSelect}
+          onBoulderContextMenu={displayBoulderDropdown}
           sectors={sectors}
           onSectorClick={toggleSectorSelect}
           parkings={parkings}
           onParkingClick={toggleParkingSelect}
           onPhotoButtonClick={() => setDisplayGeoCamera(true)}
+          onMapZoomChange={closeDropdown}
           onClick={(e) => {
             if (e.latLng) {
               switch (currentTool) {
@@ -258,8 +272,8 @@ const BuilderMapPage: NextPage = () => {
                   break;
                 default: break;
               }
-}
-          }}
+            }
+        }}
         />
 
         <Show when={() => [device !== 'MOBILE', selectedTrack.quark()] as const}>
@@ -374,6 +388,18 @@ const BuilderMapPage: NextPage = () => {
             }}
           onClose={() => setDisplayGeoCamera(false)}
         />
+      </Show>
+
+      <Show when={() => boulderDropdown}>
+      <Dropdown
+            style={{ left: `${dropdownPosition?.x}px`, top: `${dropdownPosition?.y}px` }}
+            options={[
+                { value: 'Ouvrir', action: () => {} },
+                { value: 'Télécharger',  action: () => {} },
+                { value: 'Envoyer en validation',  action: () => {} },
+                { value: 'Supprimer', action: () => {} },
+                ]}
+            />
       </Show>
 
       <Show when={() => [(device !== 'MOBILE' || displayDrawer), selectedBoulder(), selectedTrack()] as const}>

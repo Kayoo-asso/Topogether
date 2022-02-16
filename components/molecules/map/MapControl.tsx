@@ -20,6 +20,7 @@ interface MapControlProps extends MapProps {
   onWaypointClick?: (waypoint: Quark<Waypoint>) => void,
   boulders?: QuarkIter<Quark<Boulder>>,
   onBoulderClick?: (boulder: Quark<Boulder>) => void,
+  onBoulderContextMenu?: (e: Event, boulder: Quark<Boulder>) => void,
   displayBoulderFilter?: boolean,
   sectors?: QuarkIter<Quark<Sector>>,
   onSectorClick?: (sector: Quark<Sector>) => void,
@@ -255,6 +256,7 @@ export const MapControl: React.FC<MapControlProps> = ({
                   draggable={draggableMarkers}
                   boulder={boulder}
                   onClick={props.onBoulderClick}
+                  onContextMenu={props.onBoulderContextMenu}
                 />   
               }
             </For>

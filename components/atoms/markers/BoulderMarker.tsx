@@ -7,6 +7,7 @@ interface BoulderMarkerProps {
     boulder: Quark<Boulder>,
     draggable?: boolean,
     onClick?: (boulder: Quark<Boulder>) => void,
+    onContextMenu?: (e: any, boulder: Quark<Boulder>) => void
 }
 
 export const BoulderMarker: React.FC<BoulderMarkerProps> = watchDependencies(({
@@ -36,13 +37,15 @@ export const BoulderMarker: React.FC<BoulderMarkerProps> = watchDependencies(({
     const handlers: MarkerEventHandlers = {
         onClick: useCallback(() => props.onClick && props.onClick(props.boulder), [props.boulder, props.onClick]),
         onDragEnd: useCallback((e: google.maps.MapMouseEvent) => {
+            console.log('lol')
             if (e.latLng) {
                 props.boulder.set({
                     ...boulder,
                     location: { lat: e.latLng.lat(), lng: e.latLng.lng() }
                 })
             }
-        }, [props.boulder])
+        }, [props.boulder]),
+        onContextMenu: useCallback((e) => props.onContextMenu && props.onContextMenu(e, props.boulder), [props.boulder, props.onContextMenu])
     }
     useMarker(options, handlers);
 
