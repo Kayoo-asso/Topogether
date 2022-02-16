@@ -25,7 +25,7 @@ export const Dropdown: React.FC<DropdownProps> = React.memo(({
   ...props
 }: DropdownProps) => (
   <div
-    className={`shadow absolute z-100 ${fullSize ? 'w-full' : 'w-auto'} px-7 py-5 bg-white rounded ${className}`}
+    className={`shadow absolute z-100 ${fullSize ? 'w-full' : 'w-auto'} px-7 bg-white rounded ${className}`}
     style={props.style}
   >
     {props.options.map((opt, i) => (
@@ -48,7 +48,7 @@ export const Dropdown: React.FC<DropdownProps> = React.memo(({
         </div>
       ) : (
         <div
-          className="py-4 text-dark ktext-base cursor-pointer flex flex-row items-center"
+          className="h-16 text-dark ktext-base cursor-pointer flex flex-row items-center"
           key={opt.value}
           onKeyDown={() => {
             props.onSelect && props.onSelect(opt);

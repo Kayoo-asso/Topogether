@@ -40,12 +40,12 @@ export const SVGArea: React.FC<SVGAreaProps> = ({
 
   const dragAllPoints = (diffX: number, diffY: number) => {
     if (props.onChange) {
-      const newArea: LinearRing = {
-        0: [props.area[0][0] + diffX/rx, props.area[0][1] + diffY/rx],
-        1: [props.area[1][0] + diffX/rx, props.area[1][1] + diffY/rx],
-        2: [props.area[2][0] + diffX/rx, props.area[2][1] + diffY/rx],
-        3: [props.area[3][0] + diffX/rx, props.area[3][1] + diffY/rx],
-      };
+      const newArea: LinearRing = [
+        [props.area[0][0] + diffX/rx, props.area[0][1] + diffY/rx],
+        [props.area[1][0] + diffX/rx, props.area[1][1] + diffY/rx],
+        [props.area[2][0] + diffX/rx, props.area[2][1] + diffY/rx],
+        [props.area[3][0] + diffX/rx, props.area[3][1] + diffY/rx],
+      ];
       props.onChange(newArea);
     }
   };

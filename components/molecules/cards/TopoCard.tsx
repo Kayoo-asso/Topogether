@@ -6,8 +6,7 @@ import { formatDate, staticUrl } from 'helpers';
 import equal from 'fast-deep-equal/es6';
 import { LightTopo, TopoStatus } from 'types';
 import { useRouter } from 'next/router';
-import { useContextMenu, useFirstEffect } from 'helpers/hooks/useContextMenu';
-import { topo } from 'helpers/fakeData/fakeTopoV2';
+import { useContextMenu } from 'helpers/hooks/useContextMenu';
 import { UserActionDropdown } from './UserActionDropdown';
 import { AdminActionDropdown } from './AdminActionDropdown';
 
@@ -42,19 +41,11 @@ export const TopoCard: React.FC<TopoCardProps> = React.memo((props: TopoCardProp
   const [dropdownDisplayed, setDropdownDisplayed] = useState(false);
   const [dropdownPosition, setDropdownPosition] = useState<{ x: number, y: number }>();
 
-  const openTopo = () => {
-    router.push(`/topo/${props.topo.id}`);
-  };
-
   useContextMenu(setDropdownDisplayed);
-  // useFirstEffect(() => {
-  //   console.log("Running initial effect");
-  //   return () => console.log("Running initial effect destructor");
-  // });
 
   return (
     <>
-      <Link href={`/topo/${props.topo.id}`} passHref>
+      <Link href={`/builder/${props.topo.id}`} passHref>
         <div onContextMenu={(e) => {
           setDropdownDisplayed(!dropdownDisplayed);
           setDropdownPosition({ x: e.pageX, y: e.pageY });
