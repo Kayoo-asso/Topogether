@@ -1,11 +1,8 @@
 import { GeoCoordinates } from "types";
 
 export function polygonContains(polygon: GeoCoordinates[], point: GeoCoordinates): boolean {
-    if (polygon.length < 4) {
-        throw new Error("Polygons should contain at least 4 points");
-    }
-    if (polygon[0].lat !== polygon[polygon.length - 1].lat || polygon[0].lng !== polygon[polygon.length - 1].lng) {
-        throw new Error("The first and last points of a polygon should be identical");
+    if (polygon.length < 3) {
+        throw new Error("Polygons should contain at least 3 points");
     }
 
     // We are using the raycasting algorithm:
@@ -17,32 +14,39 @@ export function polygonContains(polygon: GeoCoordinates[], point: GeoCoordinates
     // an intersection.
     // If the ray intersects the polygon an odd number of times, the point is within the polygon
     // If it intersects it an even number of times, the point is outside.
-    
-    const targetY = point.lat;
+
     let intersectCount = 0;
-    for (let i = 0; i < polygon.length - 1; ++i) {
-        const { lng: x0, lat: y0 } = polygon[i];
-        const { lng: x1, lat: y1 } = polygon[i + 1];
-        if (y1 === y0) {
-            intersectCount += (
-                point.lat === y0 &&
-                point.lng >= Math.min(x0, x1) &&
-                point.lng <= Math.max(x0, x1)
-            ) as any;
-        }
-        else {
-            const slope = (x1 - x0) / (y1 - y0);
-            const targetX = x0 + slope * (targetY - y0);
-            const minX = Math.min(x0, x1, point.lng);
-            const maxX = Math.max(x0, x1, point.lng);
-            // intersectCount += true <=> intersectCount += 1
-            // intersectCount += false <=> intersectCount += 0
-            // this avoids an `if` statement
-            intersectCount += (
-                targetX >= minX &&
-                targetX <= maxX
-            ) as any;
-        }
+    for (let i = 0; i < polygon.length; ++i) {
+        // intersectCount += true <=> intersectCount += 1
+        // intersectCount += false <=> intersectCount += 0
+        // this avoids an `if` statement
+        intersectCount += rayIntersects(point.lat, point.lng, polygon[i], polygon[i+1]) as any;
     }
+    // check the last edge
+    intersectCount += rayIntersects(point.lat, point.lng, polygon[polygon.length - 1], polygon[0]) as any;
+
     return intersectCount % 2 === 1;
+}
+
+function rayIntersects(lat: number, lng: number, p0: GeoCoordinates, p1: GeoCoordinates): boolean {
+    const { lng: x0, lat: y0 } = p0;
+    const { lng: x1, lat: y1 } = p1;
+    if (y1 === y0) {
+        return (
+            lat === y0 &&
+            lng >= Math.min(x0, x1) &&
+            lng <= Math.max(x0, x1)
+        );
+    }
+    else {
+        const slope = (x1 - x0) / (y1 - y0);
+        // the latitude of the point is the Y-coordinate of the ray
+        const targetX = x0 + slope * (lat - y0);
+        const minX = Math.min(x0, x1, lng);
+        const maxX = Math.max(x0, x1, lng);
+        return (
+            targetX >= minX &&
+            targetX <= maxX
+        );
+    }
 }
