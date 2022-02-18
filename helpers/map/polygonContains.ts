@@ -20,31 +20,32 @@ export function polygonContains(polygon: GeoCoordinates[], point: GeoCoordinates
         // intersectCount += true <=> intersectCount += 1
         // intersectCount += false <=> intersectCount += 0
         // this avoids an `if` statement
-        intersectCount += rayIntersects(point.lat, point.lng, polygon[i], polygon[i+1]) as any;
+        intersectCount += rayIntersects(point.lng, point.lat, polygon[i], polygon[i+1]) as any;
     }
     // check the last edge
-    intersectCount += rayIntersects(point.lat, point.lng, polygon[polygon.length - 1], polygon[0]) as any;
+    intersectCount += rayIntersects(point.lng, point.lat, polygon[polygon.length - 1], polygon[0]) as any;
 
     return intersectCount % 2 === 1;
 }
 
-function rayIntersects(lat: number, lng: number, p0: GeoCoordinates, p1: GeoCoordinates): boolean {
+function rayIntersects(lng: number, lat: number, p0: GeoCoordinates, p1: GeoCoordinates): boolean {
     const { lng: x0, lat: y0 } = p0;
     const { lng: x1, lat: y1 } = p1;
+    const minX = Math.min(x0, x1);
+    const maxX = Math.max(x0, x1);
     if (y1 === y0) {
         return (
             lat === y0 &&
-            lng >= Math.min(x0, x1) &&
-            lng <= Math.max(x0, x1)
+            lng >= minX &&
+            lng <= maxX
         );
     }
     else {
         const slope = (x1 - x0) / (y1 - y0);
         // the latitude of the point is the Y-coordinate of the ray
         const targetX = x0 + slope * (lat - y0);
-        const minX = Math.min(x0, x1, lng);
-        const maxX = Math.max(x0, x1, lng);
         return (
+            targetX >= lng &&
             targetX >= minX &&
             targetX <= maxX
         );
