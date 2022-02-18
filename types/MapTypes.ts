@@ -39,6 +39,8 @@ export type MapEventHandlers = {
   onMouseMove?: (event: MapMouseEvent) => void,
   onMouseOut?: (event: MapMouseEvent) => void,
   onMouseOver?: (event: MapMouseEvent) => void,
+  // onMouseDown?: (event: MapMouseEvent) => void,
+  // onMouseUp?: (event: MapMouseEvent) => void,
   onProjectionChange?: () => void,
   onTilesLoad?: () => void,
   onTiltChange?: () => void
@@ -87,6 +89,22 @@ export type PolygonEventHandlers = {
   // https://developers.google.com/maps/documentation/javascript/reference/marker#Marker.rightclick
 };
 
+export type PolylineEventHandlers = {
+  onClick?: (event: PolyMouseEvent) => void,
+  onContextMenu?: (event: PolyMouseEvent) => void,
+  onDoubleClick?: (event: MapMouseEvent) => void,
+  onDrag?: (event: MapMouseEvent) => void,
+  onDragEnd?: (event: MapMouseEvent) => void,
+  onDragStart?: (event: MapMouseEvent) => void,
+  onMouseDown?: (event: PolyMouseEvent) => void,
+  onMouseMove?: (event: PolyMouseEvent) => void,
+  onMouseOut?: (event: PolyMouseEvent) => void,
+  onMouseOver?: (event: PolyMouseEvent) => void,
+  onMouseUp?: (event: PolyMouseEvent) => void,
+  // no support for onRightClick, since onContextMenu should be used instead
+  // https://developers.google.com/maps/documentation/javascript/reference/marker#Marker.rightclick
+};
+
 
 // === Map events ===
 export const mapEvents = [
@@ -105,6 +123,8 @@ export const mapEvents = [
   ['mousemove', 'onMouseMove'],
   ['mouseout', 'onMouseOut'],
   ['mouseover', 'onMouseOver'],
+  // ['mousedown', 'onMouseDown'],
+  // ['mouseup', 'onMouseUp'],
   ['projection_changed', 'onProjectionChange'],
   // no support for 'renderingtype_changed'
   // no support for 'rightclick', as 'contextmenu' should be used instead
@@ -203,5 +223,18 @@ function _polygonHandlersIsomorphismForward(handler: PolygonEventHandlerName): k
 }
 
 function _polygonHandlersIsomorphismBackward(handler: keyof PolygonEventHandlers): PolygonEventHandlerName {
+  return handler;
+}
+
+export const polylineEvents = polygonEvents;
+type PolylineEvent = typeof polylineEvents;
+type PolylineEventName = PolylineEvent[number][0];
+type PolylineEventHandlerName = PolylineEvent[number][1];
+
+function _polylineHandlersIsomorphismForward(handler: PolylineEventHandlerName): keyof PolylineEventHandlers {
+  return handler;
+}
+
+function _polylineHandlersIsomorphismBackward(handler: keyof PolylineEventHandlers): PolylineEventHandlerName {
   return handler;
 }

@@ -13,10 +13,10 @@ import {
  blobToImage, defaultImage, DeviceContext, UserContext,
 } from 'helpers';
 import {
- Boulder, GeoCoordinates, Image, MapToolEnum, Name, Parking, Sector, Track, Waypoint,
+ Boulder, GeoCoordinates, Image, MapToolEnum, Name, Parking, Sector, SectorData, Track, Waypoint,
 } from 'types';
 import {
- Quark, QuarkArray, QuarkIter, useSelectQuark, watchDependencies,
+ Quark, QuarkArray, QuarkIter, useCreateQuark, useSelectQuark, watchDependencies,
 } from 'helpers/quarky';
 import { v4 } from 'uuid';
 import { useContextMenu } from 'helpers/hooks/useContextMenu';
@@ -125,6 +125,26 @@ const BuilderMapPage: NextPage = () => {
     console.log(e.domEvent)
   }, []);
 
+  useEffect(() => {
+    //TODO : gestion du entrée et du échec
+  }, []);
+  const [creatingSector, setCreatingSector] = useState<GeoCoordinates[]>([]);
+  const [freePointCreatingSector, setFreePointCreatingSector] = useState<GeoCoordinates>();
+  const handleCreatingSector = useCallback((location: GeoCoordinates) => {
+    console.log(location);
+    setCreatingSector(creatingSector => [...creatingSector, location])
+  }, [creatingSector]);
+  const createSector = useCallback(() => {
+    if (creatingSector.length > 2) {
+      const newSector: SectorData = {
+        id: v4(),
+        name: 'Nouveau secteur' as Name,
+        path: [...creatingSector]
+      };
+      topo.sectors.push(newSector);
+      setCreatingSector([]);
+    }
+  }, [topo.sectors, creatingSector]);
   const createBoulder = useCallback((location: GeoCoordinates, image?: Image, selectBoulder = false) => {
     const orderIndex = topo.boulders.length;
     const newBoulder: Boulder = {
@@ -169,6 +189,7 @@ const BuilderMapPage: NextPage = () => {
     if (selectWaypoint) selectedWaypoint.select(newWaypointQuark);
     return newWaypointQuark;
   }, [topo]);
+  console.log("Rerendering page");
 
   const closeDropdown = useCallback(() => setBoulderDropdown(false), []);
 
@@ -249,6 +270,8 @@ const BuilderMapPage: NextPage = () => {
           displayBoulderFilter
           onBoulderClick={toggleBoulderSelect}
           onBoulderContextMenu={displayBoulderDropdown}
+          creatingSector={freePointCreatingSector ? creatingSector.concat(freePointCreatingSector) : creatingSector}
+          onCreatingSectorOriginClick={createSector}
           sectors={sectors}
           onSectorClick={toggleSectorSelect}
           parkings={parkings}
@@ -256,13 +279,14 @@ const BuilderMapPage: NextPage = () => {
           onPhotoButtonClick={() => setDisplayGeoCamera(true)}
           onMapZoomChange={closeDropdown}
           onClick={(e) => {
+            console.log(e);
             if (e.latLng) {
               switch (currentTool) {
                 case 'ROCK':
                   createBoulder({ lat: e.latLng.lat(), lng: e.latLng.lng() });
                   break;
                 case 'SECTOR':
-
+                  handleCreatingSector({ lat: e.latLng.lat(), lng: e.latLng.lng() });
                   break;
                 case 'PARKING':
                   createParking({ lat: e.latLng.lat(), lng: e.latLng.lng() });
@@ -273,7 +297,16 @@ const BuilderMapPage: NextPage = () => {
                 default: break;
               }
             }
-        }}
+          }}
+          onMouseMove={(e) => {
+            if (creatingSector && creatingSector.length > 0 && e.latLng) {
+              console.log('set');
+              setFreePointCreatingSector({
+                lat: e.latLng!.lat(),
+                lng: e.latLng!.lng(),
+              });
+            }
+          }}
         />
 
         <Show when={() => [device !== 'MOBILE', selectedTrack.quark()] as const}>

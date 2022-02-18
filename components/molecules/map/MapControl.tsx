@@ -1,9 +1,9 @@
 import React, { useRef, useState } from 'react';
 import { Wrapper } from '@googlemaps/react-wrapper';
-import { BoulderMarker, For, Map, ParkingMarker, RoundButton, SatelliteButton, SectorAreaMarker, Show, TopoMarker, WaypointMarker } from 'components';
+import { BoulderMarker, CreatingSectorAreaMarker, For, Map, ParkingMarker, RoundButton, SatelliteButton, SectorAreaMarker, Show, TopoMarker, WaypointMarker } from 'components';
 import { BoulderFilterOptions, BoulderFilters, MapSearchbarProps, TopoFilterOptions, TopoFilters } from '.';
 import { MapSearchbar } from '..';
-import { Amenities, Boulder, ClimbTechniques, gradeToLightGrade, LightGrade, LightTopo, MapProps, MarkerProps, Parking, Sector, Waypoint } from 'types';
+import { Amenities, Boulder, ClimbTechniques, GeoCoordinates, gradeToLightGrade, LightGrade, LightTopo, MapProps, MarkerProps, Parking, Sector, Waypoint } from 'types';
 import { googleGetPlace, hasFlag, hasSomeFlags, mergeFlags } from 'helpers';
 import { Quark, QuarkIter, reactKey } from 'helpers/quarky';
 
@@ -22,6 +22,8 @@ interface MapControlProps extends MapProps {
   onBoulderClick?: (boulder: Quark<Boulder>) => void,
   onBoulderContextMenu?: (e: Event, boulder: Quark<Boulder>) => void,
   displayBoulderFilter?: boolean,
+  creatingSector?: GeoCoordinates[],
+  onCreatingSectorOriginClick?: () => void,
   sectors?: QuarkIter<Quark<Sector>>,
   onSectorClick?: (sector: Quark<Sector>) => void,
   parkings?: QuarkIter<Quark<Parking>>,
@@ -223,6 +225,12 @@ export const MapControl: React.FC<MapControlProps> = ({
           // }}
           {...props}
         >
+          <Show when={() => props.creatingSector && props.creatingSector.length > 0}>
+            <CreatingSectorAreaMarker 
+                path={props.creatingSector!}
+                onOriginClick={props.onCreatingSectorOriginClick}
+              />
+          </Show>
           <Show when={() => props.sectors}>
             <For each={() => props.sectors!.toArray()}>
               {(sector) => 

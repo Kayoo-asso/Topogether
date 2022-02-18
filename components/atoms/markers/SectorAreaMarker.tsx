@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect } from "react";
-import { useMarker, usePolygon } from "helpers";
+import { usePolygon } from "helpers";
 import { Quark, watchDependencies } from "helpers/quarky";
-import { GeoCoordinates, MarkerEventHandlers, PolygonEventHandlers, Sector } from "types";
+import { GeoCoordinates, PolygonEventHandlers, Sector } from "types";
 
 interface SectorAreaMarkerProps {
     sector: Quark<Sector>,
@@ -24,19 +24,14 @@ export const SectorAreaMarker: React.FC<SectorAreaMarkerProps> = watchDependenci
         fillColor: '#04D98B',
         strokeColor: '#04D98B',
         strokeWeight: 2,
-    }; 
-    const handlers: PolygonEventHandlers = {
-        onClick: useCallback(() => props.onClick && props.onClick(props.sector), [props.sector, props.onClick]),
-        onDragEnd: useCallback(() => updatePath(), [props.sector])
-    }
-    const polygon = usePolygon(options, handlers);
-
+    };
+    let polygon: React.MutableRefObject<google.maps.Polygon | undefined>;
+    let dragging = false;
 
     const updatePath = useCallback(() => {
-        const newPath: GeoCoordinates[] = [];
         const newBounds: google.maps.LatLng[] | undefined = polygon.current?.getPath().getArray();
-        if (newBounds) {
-            newBounds.map(b => newPath.push({
+        if (newBounds && !dragging) {
+            const newPath: GeoCoordinates[] = newBounds.map(b => ({
                 lat: b.lat(),
                 lng: b.lng()
             }));
@@ -45,12 +40,25 @@ export const SectorAreaMarker: React.FC<SectorAreaMarkerProps> = watchDependenci
                 path: newPath
             })
         }
-    }, [polygon.current, sector]);
+    }, [props.sector]);
+
+    const handlers: PolygonEventHandlers = {
+        onDragStart: useCallback(() => dragging = true, [updatePath]),
+        onClick: useCallback(() => props.onClick && props.onClick(props.sector), [props.sector, props.onClick]),
+        onDragEnd: useCallback(() => { dragging = false; updatePath() }, [updatePath])
+    }
+    polygon = usePolygon(options, handlers);
+
     useEffect(() => {
         if (polygon.current) {
-            google.maps.event.addListener(polygon.current.getPath(), 'insert_at', updatePath);
-            google.maps.event.addListener(polygon.current.getPath(), 'set_at', updatePath);
-            google.maps.event.addListener(polygon.current.getPath(), 'remove_at', updatePath);
+            const l1 = google.maps.event.addListener(polygon.current.getPath(), 'insert_at', updatePath);
+            const l2 = google.maps.event.addListener(polygon.current.getPath(), 'set_at', updatePath);
+            const l3 = google.maps.event.addListener(polygon.current.getPath(), 'remove_at', updatePath);
+            return () => {
+                l1.remove();
+                l2.remove();
+                l3.remove();
+            }
         }
     }, [polygon.current, sector])
 
