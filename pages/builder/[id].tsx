@@ -10,13 +10,13 @@ import {
 import { useRouter } from 'next/router';
 import { quarkTopo } from 'helpers/fakeData/fakeTopoV2';
 import {
- blobToImage, defaultImage, DeviceContext, UserContext,
+ blobToImage, defaultImage, DeviceContext, polygonContains, UserContext,
 } from 'helpers';
 import {
  Boulder, GeoCoordinates, Image, MapToolEnum, Name, Parking, Sector, SectorData, Track, Waypoint,
 } from 'types';
 import {
- Quark, QuarkArray, QuarkIter, useCreateQuark, useSelectQuark, watchDependencies,
+ Quark, QuarkArray, QuarkIter, useSelectQuark, watchDependencies,
 } from 'helpers/quarky';
 import { v4 } from 'uuid';
 import { useContextMenu } from 'helpers/hooks/useContextMenu';
@@ -121,17 +121,11 @@ const BuilderMapPage: NextPage = () => {
   const displayBoulderDropdown = useCallback((e: any, boulderQuark: Quark<Boulder>) => {
     setBoulderDropdown(boulderQuark());
     setDropdownPosition({ x: e.domEvent.pageX, y: e.domEvent.pageY });
-    console.log(e.target)
-    console.log(e.domEvent)
   }, []);
 
-  useEffect(() => {
-    //TODO : gestion du entrée et du échec
-  }, []);
   const [creatingSector, setCreatingSector] = useState<GeoCoordinates[]>([]);
   const [freePointCreatingSector, setFreePointCreatingSector] = useState<GeoCoordinates>();
   const handleCreatingSector = useCallback((location: GeoCoordinates) => {
-    console.log(location);
     setCreatingSector(creatingSector => [...creatingSector, location])
   }, [creatingSector]);
   const createSector = useCallback(() => {
@@ -141,6 +135,16 @@ const BuilderMapPage: NextPage = () => {
         name: 'Nouveau secteur' as Name,
         path: [...creatingSector]
       };
+      for (const boulder of boulders) {
+        console.log(boulder().name + ' : ')
+        console.log(polygonContains(creatingSector, boulder().location));
+        if (polygonContains(creatingSector, boulder().location)) {
+          boulder.set(boulder => ({
+            ...boulder,
+            sectorId: newSector.id
+          }))
+        }
+      }
       topo.sectors.push(newSector);
       setCreatingSector([]);
     }
@@ -189,8 +193,17 @@ const BuilderMapPage: NextPage = () => {
     if (selectWaypoint) selectedWaypoint.select(newWaypointQuark);
     return newWaypointQuark;
   }, [topo]);
-  console.log("Rerendering page");
 
+  useEffect(() => {
+    window.addEventListener('keydown', (e) => {
+      console.log(creatingSector.length)
+      if (creatingSector.length > 0 && e.code === 'Enter') createSector();
+      else if (creatingSector.length > 0 && e.code === 'Escape') {
+        setCreatingSector([]);
+      }
+    });
+  }, [creatingSector]);
+  
   const closeDropdown = useCallback(() => setBoulderDropdown(false), []);
 
   if (!session || typeof id !== 'string' || !topo) return null;
@@ -279,7 +292,6 @@ const BuilderMapPage: NextPage = () => {
           onPhotoButtonClick={() => setDisplayGeoCamera(true)}
           onMapZoomChange={closeDropdown}
           onClick={(e) => {
-            console.log(e);
             if (e.latLng) {
               switch (currentTool) {
                 case 'ROCK':
@@ -300,12 +312,15 @@ const BuilderMapPage: NextPage = () => {
           }}
           onMouseMove={(e) => {
             if (creatingSector && creatingSector.length > 0 && e.latLng) {
-              console.log('set');
               setFreePointCreatingSector({
                 lat: e.latLng!.lat(),
                 lng: e.latLng!.lng(),
               });
             }
+          }}
+          onCreatingSectorPolylineClick={() => {
+            if (freePointCreatingSector)
+              handleCreatingSector(freePointCreatingSector);     
           }}
         />
 

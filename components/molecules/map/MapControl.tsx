@@ -24,6 +24,7 @@ interface MapControlProps extends MapProps {
   displayBoulderFilter?: boolean,
   creatingSector?: GeoCoordinates[],
   onCreatingSectorOriginClick?: () => void,
+  onCreatingSectorPolylineClick?: () => void,
   sectors?: QuarkIter<Quark<Sector>>,
   onSectorClick?: (sector: Quark<Sector>) => void,
   parkings?: QuarkIter<Quark<Parking>>,
@@ -228,6 +229,7 @@ export const MapControl: React.FC<MapControlProps> = ({
           <Show when={() => props.creatingSector && props.creatingSector.length > 0}>
             <CreatingSectorAreaMarker 
                 path={props.creatingSector!}
+                onPolylineClick={props.onCreatingSectorPolylineClick}
                 onOriginClick={props.onCreatingSectorOriginClick}
               />
           </Show>

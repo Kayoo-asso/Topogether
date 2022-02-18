@@ -16,7 +16,7 @@ export function polygonContains(polygon: GeoCoordinates[], point: GeoCoordinates
     // If it intersects it an even number of times, the point is outside.
 
     let intersectCount = 0;
-    for (let i = 0; i < polygon.length; ++i) {
+    for (let i = 0; i < polygon.length - 1; ++i) {
         // intersectCount += true <=> intersectCount += 1
         // intersectCount += false <=> intersectCount += 0
         // this avoids an `if` statement
