@@ -4,7 +4,7 @@ import { BoulderMarker, CreatingSectorAreaMarker, For, Map, ParkingMarker, Round
 import { BoulderFilterOptions, BoulderFilters, MapSearchbarProps, TopoFilterOptions, TopoFilters } from '.';
 import { MapSearchbar } from '..';
 import { Amenities, Boulder, ClimbTechniques, GeoCoordinates, gradeToLightGrade, LightGrade, LightTopo, MapProps, MarkerProps, Parking, Sector, Waypoint } from 'types';
-import { googleGetPlace, hasFlag, hasSomeFlags, mergeFlags } from 'helpers';
+import { BoulderOrder, googleGetPlace, hasFlag, hasSomeFlags, mergeFlags } from 'helpers';
 import { Quark, QuarkIter, reactKey } from 'helpers/quarky';
 
 interface MapControlProps extends MapProps {
@@ -19,6 +19,7 @@ interface MapControlProps extends MapProps {
   waypoints?: QuarkIter<Quark<Waypoint>>,
   onWaypointClick?: (waypoint: Quark<Waypoint>) => void,
   boulders?: QuarkIter<Quark<Boulder>>,
+  bouldersOrder: BoulderOrder[],
   onBoulderClick?: (boulder: Quark<Boulder>) => void,
   onBoulderContextMenu?: (e: Event, boulder: Quark<Boulder>) => void,
   displayBoulderFilter?: boolean,
@@ -238,10 +239,13 @@ export const MapControl: React.FC<MapControlProps> = ({
               {(sector) => 
                 <SectorAreaMarker 
                   key={reactKey(sector)}
+                  sector={sector}
+                  sectors={props.sectors}
+                  boulders={props.boulders}
                   draggable={draggableMarkers}
                   editable={draggableMarkers}
-                  sector={sector}
                   onClick={props.onSectorClick}
+                  onMouseMoveOnSector={props.onMouseMove}
                 />
               }
             </For>
@@ -265,6 +269,8 @@ export const MapControl: React.FC<MapControlProps> = ({
                   key={reactKey(boulder)}
                   draggable={draggableMarkers}
                   boulder={boulder}
+                  sectors={props.sectors}
+                  boulderOrder={props.bouldersOrder.find(bo => bo.id === boulder().id)!}
                   onClick={props.onBoulderClick}
                   onContextMenu={props.onBoulderContextMenu}
                 />   

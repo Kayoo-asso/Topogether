@@ -69,7 +69,7 @@ export interface TopoData {
   managers: Manager[],
 }
 
-export type LightTopo = Omit<TopoData, 'sectors' | 'parkings' | 'accesses' | 'managers'> & {
+export type LightTopo = Omit<TopoData, 'sectors' | 'boulders' | 'waypoints' | 'parkings' | 'accesses' | 'managers'> & {
   firstParkingLocation?: GeoCoordinates,
   nbSectors: number,
   nbTracks: number,
@@ -124,6 +124,7 @@ export interface SectorData {
   readonly id: UUID,
   name: Name,
   path: GeoCoordinates[],
+  boulders: UUID[],
 }
 
 export interface Waypoint {
@@ -137,10 +138,8 @@ export interface Waypoint {
 
 export interface BoulderData {
   readonly id: UUID,
-  sectorId?: UUID,
   location: GeoCoordinates,
   name: Name,
-  orderIndex: number,
   isHighball: boolean,
   mustSee: boolean,
   dangerousDescent: boolean,

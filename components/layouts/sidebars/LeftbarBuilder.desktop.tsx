@@ -1,7 +1,7 @@
 import React, { useCallback, useContext, useState } from 'react';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import { Button, createTrack, Icon } from 'components';
-import { UserContext } from 'helpers';
+import { BoulderOrder, polygonContains, UserContext } from 'helpers';
 import { Quark, QuarkArray, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
 import { Boulder, Grade, Name, Sector, Track, UUID } from 'types';
 import { v4 } from 'uuid';
@@ -9,6 +9,7 @@ import { v4 } from 'uuid';
 interface LeftbarBuilderDesktopProps {
     sectors: QuarkArray<Sector>,
     boulders: QuarkArray<Boulder>,
+    boulderOrder: BoulderOrder[],
     selectedBoulder: SelectQuarkNullable<Boulder>,
     onBoulderSelect: (boulderQuark: Quark<Boulder>) => void,
     onTrackSelect: (trackQuark: Quark<Track>, boulderQuark: Quark<Boulder>) => void,
@@ -101,14 +102,13 @@ export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = watch
     if (!session) return null;
     return (
         <div className='bg-white border-r border-grey-medium min-w-[280px] w-[280px] h-full hidden md:flex flex-col px-2 py-10 z-500'>
-                    
+                  
             <DragDropContext onDragEnd={handleDragEnd}>  
                 <div className='h-[95%] overflow-y-auto mb-6 px-4'>
 
                     {props.sectors.quarks().map((sectorQuark, sectorIndex) => {
                         const sector = sectorQuark();
-                        const bouldersIter = props.boulders.quarks().filter(b => b().sectorId === sector.id);
-                        const boulderQuarks = Array.from(bouldersIter);
+                        const boulderQuarks = sector.boulders.map(id => props.boulders.findQuark(b => b.id === id)!);
                         return (
                             <Droppable droppableId={sector.id} key={sector.id}>
                                 {(provided) => (
@@ -147,12 +147,13 @@ export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = watch
                                                         Aucun rocher référencé
                                                     </div>
                                                 }
-                                                {boulderQuarks.sort((a, b) => a().orderIndex - b().orderIndex).map((boulderQuark) => {
+                                                {boulderQuarks.map((boulderQuark) => {
                                                     const boulder = boulderQuark();
+                                                    const orderIndex = props.boulderOrder.find(bo => bo.id === boulder.id)!.index;
                                                     const tracksIter = boulder.tracks.quarks();
                                                     const trackQuarks = Array.from(tracksIter);
                                                     return (
-                                                        <Draggable key={boulder.id} draggableId={boulder.id} index={boulder.orderIndex}>
+                                                        <Draggable key={boulder.id} draggableId={boulder.id} index={orderIndex}>
                                                             {(provided) => (
                                                                 <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
                                                                     <div className='flex flex-row cursor-pointer text-dark items-center'>
@@ -177,7 +178,7 @@ export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = watch
                                                                                 }
                                                                             }}
                                                                         >
-                                                                            <span className={'mr-2' + (selectedBoulder?.id === boulder.id ? ' font-semibold' : '')}>{boulder.orderIndex + 1}.</span>
+                                                                            <span className={'mr-2' + (selectedBoulder?.id === boulder.id ? ' font-semibold' : '')}>{orderIndex + 1}.</span>
                                                                             <span className={'ktext-base' + (selectedBoulder?.id === boulder.id ? ' font-semibold' : '')}>{boulder.name}</span>
                                                                         </div>
                                                                     </div>

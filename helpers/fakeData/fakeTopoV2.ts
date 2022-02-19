@@ -123,7 +123,6 @@ export const tracks: TrackData[] = [
 export const boulders: BoulderData[] = [
     {
         id: v4(),
-        sectorId: "sector-1" as UUID,
         name: "PearlHarbor" as Name,
         location: {
             lat: 45.70201,
@@ -132,13 +131,11 @@ export const boulders: BoulderData[] = [
         isHighball: true,
         mustSee: false,
         dangerousDescent: false,
-        orderIndex: 0,
         images: [images[0], images[1], images[2], images[3]],
         tracks
     },
     {
         id: v4(),
-        sectorId: "sector-1" as UUID,
         name: "Mystiquette" as Name,
         location: {
             lat: 45.70401,
@@ -147,13 +144,11 @@ export const boulders: BoulderData[] = [
         isHighball: true,
         mustSee: false,
         dangerousDescent: false,
-        orderIndex: 1,
         images: [images[0], images[1], images[2], images[3]],
         tracks
     },
     {
         id: v4(),
-        sectorId: "sector-1" as UUID,
         name: "Hoummmmous" as Name,
         location: {
             lat: 45.70461,
@@ -162,7 +157,6 @@ export const boulders: BoulderData[] = [
         isHighball: true,
         mustSee: false,
         dangerousDescent: false,
-        orderIndex: 2,
         images: [images[0], images[1], images[2], images[3]],
         tracks
     }
@@ -186,7 +180,7 @@ export const sectors: SectorData[] = [
                 lng: 4.606912,
             },
         ],
-        
+        boulders: [boulders[0].id, boulders[1].id, boulders[2].id],
     }
 ]
 

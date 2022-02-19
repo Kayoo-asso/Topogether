@@ -1,10 +1,12 @@
 import React, { useCallback } from "react";
-import { markerSize, useMarker } from "helpers";
-import { Quark, watchDependencies } from "helpers/quarky";
-import { Boulder, MarkerEventHandlers } from "types";
+import { BoulderOrder, markerSize, polygonContains, useMarker } from "helpers";
+import { Quark, QuarkIter, watchDependencies } from "helpers/quarky";
+import { Boulder, MarkerEventHandlers, Sector } from "types";
 
 interface BoulderMarkerProps {
     boulder: Quark<Boulder>,
+    boulderOrder: BoulderOrder,
+    sectors?: QuarkIter<Quark<Sector>>,
     draggable?: boolean,
     onClick?: (boulder: Quark<Boulder>) => void,
     onContextMenu?: (e: any, boulder: Quark<Boulder>) => void
@@ -27,24 +29,49 @@ export const BoulderMarker: React.FC<BoulderMarkerProps> = watchDependencies(({
         draggable,
         position: boulder.location,
         label: {
-            text: (boulder.orderIndex + 1).toString(),
+            text: (props.boulderOrder.index + 1 + '. '+boulder.name).toString(),
             color: '#04D98B',
             fontFamily: 'Poppins',
             fontWeight: '500'
         }
     };
 
+    const updatePosition = useCallback((e) => {
+        if (e.latLng) {
+            props.boulder.set({
+                ...boulder,
+                location: { lat: e.latLng.lat(), lng: e.latLng.lng() }
+            })
+        }
+    }, [props.boulder])
+
+    const updateContainingSector = useCallback(() => {
+        if (props.sectors) {
+            const boulder = props.boulder();
+
+            // Get away this boulder from all sectors
+            props.sectors.toArray().forEach(sector => sector.set(s => ({
+                    ...s,
+                    boulders: [...s.boulders].filter(id => id !== boulder.id)
+                }))
+            )
+
+            // Put this boulder in the right sector
+            for (const sectorQuark of props.sectors) {
+                const sector = sectorQuark();
+                const isInPolygon = polygonContains(sector.path, boulder.location);
+                if (isInPolygon) 
+                    sectorQuark.set(s => ({
+                        ...s,
+                        boulders: [...s.boulders, boulder.id],
+                    }))
+            }
+        }
+    }, [props.sectors, props.boulder]);
+
     const handlers: MarkerEventHandlers = {
         onClick: useCallback(() => props.onClick && props.onClick(props.boulder), [props.boulder, props.onClick]),
-        onDragEnd: useCallback((e: google.maps.MapMouseEvent) => {
-            console.log('lol')
-            if (e.latLng) {
-                props.boulder.set({
-                    ...boulder,
-                    location: { lat: e.latLng.lat(), lng: e.latLng.lng() }
-                })
-            }
-        }, [props.boulder]),
+        onDragEnd: useCallback((e: google.maps.MapMouseEvent) => { updatePosition(e); updateContainingSector() }, [updatePosition, updateContainingSector]),
         onContextMenu: useCallback((e) => props.onContextMenu && props.onContextMenu(e, props.boulder), [props.boulder, props.onContextMenu])
     }
     useMarker(options, handlers);

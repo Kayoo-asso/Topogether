@@ -10,13 +10,13 @@ import {
 import { useRouter } from 'next/router';
 import { quarkTopo } from 'helpers/fakeData/fakeTopoV2';
 import {
- blobToImage, defaultImage, DeviceContext, polygonContains, UserContext,
+ blobToImage, defaultImage, DeviceContext, getOrderIndexes, polygonContains, splitArray, UserContext,
 } from 'helpers';
 import {
- Boulder, GeoCoordinates, Image, MapToolEnum, Name, Parking, Sector, SectorData, Track, Waypoint,
+ Boulder, GeoCoordinates, Image, MapToolEnum, Name, Parking, Sector, SectorData, Track, UUID, Waypoint,
 } from 'types';
 import {
- Quark, QuarkArray, QuarkIter, useSelectQuark, watchDependencies,
+ Quark, QuarkArray, QuarkIter, useCreateDerivation, useSelectQuark, watchDependencies,
 } from 'helpers/quarky';
 import { v4 } from 'uuid';
 import { useContextMenu } from 'helpers/hooks/useContextMenu';
@@ -32,6 +32,7 @@ const BuilderMapPage: NextPage = () => {
   const boulders = useMemo(() => topo.boulders?.quarks(), [topo.boulders]) || new QuarkIter<Quark<Boulder>>([])
   const parkings = useMemo(() => topo.parkings?.quarks(), [topo.parkings]) || new QuarkIter<Quark<Parking>>([]);
   const waypoints = useMemo(() => topo.waypoints?.quarks(), [topo.waypoints]) || new QuarkIter<Quark<Waypoint>>([]);
+  const boulderOrder = useCreateDerivation(() => getOrderIndexes(boulders, sectors));
 
   const [currentTool, setCurrentTool] = useState<MapToolEnum>();
   const [currentImage, setCurrentImage] = useState<Image>(defaultImage);
@@ -128,32 +129,36 @@ const BuilderMapPage: NextPage = () => {
   const handleCreatingSector = useCallback((location: GeoCoordinates) => {
     setCreatingSector(creatingSector => [...creatingSector, location])
   }, [creatingSector]);
+  const emptyCreatingSector = () => {
+    setCreatingSector([]);
+    setFreePointCreatingSector(undefined);
+  }
   const createSector = useCallback(() => {
     if (creatingSector.length > 2) {
+      const boulderInsideIds = boulders.toArray().filter(b => polygonContains(creatingSector, b().location)).map(b => b().id)
+      
+      // Get away all contained boulders from other sectors
+      topo.sectors.quarks().toArray().forEach(sector => sector.set(s => ({
+          ...s,
+          boulders: [...s.boulders].filter(id => !boulderInsideIds.includes(id))
+        }))
+      )
+      
+      // Create new sector with all contained boulders inside
       const newSector: SectorData = {
         id: v4(),
         name: 'Nouveau secteur' as Name,
-        path: [...creatingSector]
+        path: [...creatingSector],
+        boulders: boulderInsideIds
       };
-      for (const boulder of boulders) {
-        console.log(boulder().name + ' : ')
-        console.log(polygonContains(creatingSector, boulder().location));
-        if (polygonContains(creatingSector, boulder().location)) {
-          boulder.set(boulder => ({
-            ...boulder,
-            sectorId: newSector.id
-          }))
-        }
-      }
       topo.sectors.push(newSector);
-      setCreatingSector([]);
+      emptyCreatingSector();
     }
   }, [topo.sectors, creatingSector]);
   const createBoulder = useCallback((location: GeoCoordinates, image?: Image, selectBoulder = false) => {
     const orderIndex = topo.boulders.length;
     const newBoulder: Boulder = {
       id: v4(),
-      orderIndex,
       name: `Bloc ${orderIndex + 1}` as Name,
       location,
       isHighball: false,
@@ -195,15 +200,14 @@ const BuilderMapPage: NextPage = () => {
   }, [topo]);
 
   useEffect(() => {
-    window.addEventListener('keydown', (e) => {
-      console.log(creatingSector.length)
+    const handleKey = (e: KeyboardEvent) => {
       if (creatingSector.length > 0 && e.code === 'Enter') createSector();
-      else if (creatingSector.length > 0 && e.code === 'Escape') {
-        setCreatingSector([]);
-      }
-    });
+      else if (creatingSector.length > 0 && e.code === 'Escape') emptyCreatingSector();
+    }
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
   }, [creatingSector]);
-  
+
   const closeDropdown = useCallback(() => setBoulderDropdown(false), []);
 
   if (!session || typeof id !== 'string' || !topo) return null;
@@ -232,6 +236,7 @@ const BuilderMapPage: NextPage = () => {
         <LeftbarBuilderDesktop
           sectors={topo.sectors}
           boulders={topo.boulders}
+          boulderOrder={boulderOrder()}
           selectedBoulder={selectedBoulder}
           onBoulderSelect={toggleBoulderSelect}
           onTrackSelect={toggleTrackSelect}
@@ -280,6 +285,7 @@ const BuilderMapPage: NextPage = () => {
           waypoints={waypoints}
           onWaypointClick={toggleWaypointSelect}
           boulders={boulders}
+          bouldersOrder={boulderOrder()}
           displayBoulderFilter
           onBoulderClick={toggleBoulderSelect}
           onBoulderContextMenu={displayBoulderDropdown}
