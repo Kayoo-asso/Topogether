@@ -1,7 +1,8 @@
 import { polygonContains } from "helpers";
 import { Boulder, Topo, UUID } from "types";
 
-export function sectorChanged(topo: Topo, sectorId: UUID, ordering: Map<UUID, number>) {
+export function sectorChanged(topo: Topo, sectorId: UUID, boulderOrder: Map<UUID, number>) {
+    console.log('sector changed')
     const sQ = topo.sectors.findQuark(x => x.id === sectorId)!;
     const sector = sQ();
 
@@ -28,7 +29,7 @@ export function sectorChanged(topo: Topo, sectorId: UUID, ordering: Map<UUID, nu
     if (toAdd.length > 0) {
         // Sort them according to their ordering numbers
         toAdd.sort((id1, id2) =>
-            compareNbs(ordering.get(id1)!, ordering.get(id2)!)
+            compareNbs(boulderOrder.get(id1)!, boulderOrder.get(id2)!)
         );
 
         // faster lookup while iterating over the sectors

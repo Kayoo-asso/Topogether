@@ -1,5 +1,5 @@
 export { buildGradeHistogram } from './buildGradeHistogram';
 export { buildBoulderGradeHistogram } from './buildBoulderGradeHistogram';
-export * from './getOrderIndexes';
+export * from './sortBoulders';
 export * from './boulderChanged';
 export * from './sectorChanged';

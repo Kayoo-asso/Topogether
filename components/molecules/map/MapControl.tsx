@@ -3,7 +3,7 @@ import { Wrapper } from '@googlemaps/react-wrapper';
 import { BoulderMarker, CreatingSectorAreaMarker, For, Map, ParkingMarker, RoundButton, SatelliteButton, SectorAreaMarker, Show, TopoMarker, WaypointMarker } from 'components';
 import { BoulderFilterOptions, BoulderFilters, MapSearchbarProps, TopoFilterOptions, TopoFilters } from '.';
 import { MapSearchbar } from '..';
-import { Amenities, Boulder, ClimbTechniques, GeoCoordinates, gradeToLightGrade, LightGrade, LightTopo, MapProps, MarkerProps, Parking, Sector, Waypoint } from 'types';
+import { Amenities, Boulder, ClimbTechniques, GeoCoordinates, gradeToLightGrade, LightGrade, LightTopo, MapProps, MarkerProps, Parking, Sector, Topo, UUID, Waypoint } from 'types';
 import { BoulderOrder, googleGetPlace, hasFlag, hasSomeFlags, mergeFlags } from 'helpers';
 import { Quark, QuarkIter, reactKey } from 'helpers/quarky';
 
@@ -16,10 +16,11 @@ interface MapControlProps extends MapProps {
   boundsToMarkers?: boolean,
   searchbarOptions?: MapSearchbarProps,
   className?: string,
+  topo?: Topo,
   waypoints?: QuarkIter<Quark<Waypoint>>,
   onWaypointClick?: (waypoint: Quark<Waypoint>) => void,
   boulders?: QuarkIter<Quark<Boulder>>,
-  bouldersOrder: BoulderOrder[],
+  bouldersOrder: Map<UUID, number>,
   onBoulderClick?: (boulder: Quark<Boulder>) => void,
   onBoulderContextMenu?: (e: Event, boulder: Quark<Boulder>) => void,
   displayBoulderFilter?: boolean,
@@ -240,8 +241,8 @@ export const MapControl: React.FC<MapControlProps> = ({
                 <SectorAreaMarker 
                   key={reactKey(sector)}
                   sector={sector}
-                  sectors={props.sectors}
-                  boulders={props.boulders}
+                  topo={props.topo}
+                  boulderOrder={props.bouldersOrder}
                   draggable={draggableMarkers}
                   editable={draggableMarkers}
                   onClick={props.onSectorClick}
@@ -269,8 +270,8 @@ export const MapControl: React.FC<MapControlProps> = ({
                   key={reactKey(boulder)}
                   draggable={draggableMarkers}
                   boulder={boulder}
-                  sectors={props.sectors}
-                  boulderOrder={props.bouldersOrder.find(bo => bo.id === boulder().id)!}
+                  boulderOrder={props.bouldersOrder}
+                  topo={props.topo}
                   onClick={props.onBoulderClick}
                   onContextMenu={props.onBoulderContextMenu}
                 />   

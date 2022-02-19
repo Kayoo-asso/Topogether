@@ -9,7 +9,7 @@ import { v4 } from 'uuid';
 interface LeftbarBuilderDesktopProps {
     sectors: QuarkArray<Sector>,
     boulders: QuarkArray<Boulder>,
-    boulderOrder: BoulderOrder[],
+    boulderOrder: Map<UUID, number>,
     selectedBoulder: SelectQuarkNullable<Boulder>,
     onBoulderSelect: (boulderQuark: Quark<Boulder>) => void,
     onTrackSelect: (trackQuark: Quark<Track>, boulderQuark: Quark<Boulder>) => void,
@@ -149,7 +149,7 @@ export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = watch
                                                 }
                                                 {boulderQuarks.map((boulderQuark) => {
                                                     const boulder = boulderQuark();
-                                                    const orderIndex = props.boulderOrder.find(bo => bo.id === boulder.id)!.index;
+                                                    const orderIndex = props.boulderOrder.get(boulder.id)!;
                                                     const tracksIter = boulder.tracks.quarks();
                                                     const trackQuarks = Array.from(tracksIter);
                                                     return (
@@ -178,7 +178,7 @@ export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = watch
                                                                                 }
                                                                             }}
                                                                         >
-                                                                            <span className={'mr-2' + (selectedBoulder?.id === boulder.id ? ' font-semibold' : '')}>{orderIndex + 1}.</span>
+                                                                            <span className={'mr-2' + (selectedBoulder?.id === boulder.id ? ' font-semibold' : '')}>{orderIndex}.</span>
                                                                             <span className={'ktext-base' + (selectedBoulder?.id === boulder.id ? ' font-semibold' : '')}>{boulder.name}</span>
                                                                         </div>
                                                                     </div>

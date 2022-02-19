@@ -10,10 +10,10 @@ import {
 import { useRouter } from 'next/router';
 import { quarkTopo } from 'helpers/fakeData/fakeTopoV2';
 import {
- blobToImage, defaultImage, DeviceContext, getOrderIndexes, polygonContains, splitArray, UserContext,
+ blobToImage, defaultImage, DeviceContext, sortBoulders, polygonContains, UserContext,
 } from 'helpers';
 import {
- Boulder, GeoCoordinates, Image, MapToolEnum, Name, Parking, Sector, SectorData, Track, UUID, Waypoint,
+ Boulder, GeoCoordinates, Image, MapToolEnum, Name, Parking, Sector, SectorData, Track, Waypoint,
 } from 'types';
 import {
  Quark, QuarkArray, QuarkIter, useCreateDerivation, useSelectQuark, watchDependencies,
@@ -32,7 +32,7 @@ const BuilderMapPage: NextPage = () => {
   const boulders = useMemo(() => topo.boulders?.quarks(), [topo.boulders]) || new QuarkIter<Quark<Boulder>>([])
   const parkings = useMemo(() => topo.parkings?.quarks(), [topo.parkings]) || new QuarkIter<Quark<Parking>>([]);
   const waypoints = useMemo(() => topo.waypoints?.quarks(), [topo.waypoints]) || new QuarkIter<Quark<Waypoint>>([]);
-  const boulderOrder = useCreateDerivation(() => getOrderIndexes(boulders, sectors));
+  const boulderOrder = useCreateDerivation(() => sortBoulders(topo.boulders, topo.sectors));
 
   const [currentTool, setCurrentTool] = useState<MapToolEnum>();
   const [currentImage, setCurrentImage] = useState<Image>(defaultImage);
@@ -282,6 +282,7 @@ const BuilderMapPage: NextPage = () => {
                           : currentTool === 'WAYPOINT' ? 'url(/assets/icons/colored/_help-round.svg), auto'
                           : ''}
           draggableMarkers
+          topo={topo}
           waypoints={waypoints}
           onWaypointClick={toggleWaypointSelect}
           boulders={boulders}
