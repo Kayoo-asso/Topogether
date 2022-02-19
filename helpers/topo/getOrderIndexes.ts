@@ -9,6 +9,22 @@ export type BoulderOrder = {
     index: number,
 }
 
+export function sortBoulders(boulders: Iterable<Boulder>, sectors: Iterable<Sector>): Map<UUID, number> {
+    let idx = 1;
+    let map: Map<UUID, number> = new Map();
+    for (const sector of sectors) {
+        for (const boulderId of sector.boulders) {
+            map.set(boulderId, idx++)
+        }
+    }
+    for (const boulder of boulders) {
+        if (!map.has(boulder.id)) {
+            map.set(boulder.id, idx++);
+        }
+    }
+    return map;
+} 
+
 export const getOrderIndexes = (boulders: QuarkIter<Quark<Boulder>>, sectors: QuarkIter<Quark<Sector>>): BoulderOrder[] => {
     const boulderIndexes = [];
     const bouldersIdInSectors = sectors.toArray().map(s => s().boulders).flat();
