@@ -1,8 +1,9 @@
 import React, { useCallback } from "react";
 import { boulderChanged, markerSize, useMarker } from "helpers";
 import { Quark, watchDependencies } from "helpers/quarky";
-import { Boulder, MarkerEventHandlers, Topo, UUID } from "types";
+import { Boulder, GeoCoordinates, MarkerEventHandlers, Topo, UUID } from "types";
 
+// TODO: Why is props.topo optional? Pretty sure a BoulderMarker cannot be shown without a topo being selected
 interface BoulderMarkerProps {
     boulder: Quark<Boulder>,
     boulderOrder: Map<UUID, number>,
@@ -36,14 +37,14 @@ export const BoulderMarker: React.FC<BoulderMarkerProps> = watchDependencies(({
         }
     };
 
-    const updatePosition = useCallback((e) => {
-        if (e.latLng) {
-            props.boulder.set({
-                ...boulder,
-                location: { lat: e.latLng.lat(), lng: e.latLng.lng() }
-            })
-        }
-    }, [props.boulder])
+    // const updatePosition = useCallback((e) => {
+    //     if (e.latLng) {
+    //         props.boulder.set({
+    //             ...boulder,
+    //             location: { lat: e.latLng.lat(), lng: e.latLng.lng() }
+    //         })
+    //     }
+    // }, [props.boulder])
 
     // const updateContainingSector = useCallback(() => {
     //     if (props.sectors) {
@@ -72,9 +73,21 @@ export const BoulderMarker: React.FC<BoulderMarkerProps> = watchDependencies(({
     const handlers: MarkerEventHandlers = {
         onClick: useCallback(() => props.onClick && props.onClick(props.boulder), [props.boulder, props.onClick]),
         onDragEnd: useCallback((e: google.maps.MapMouseEvent) => { 
-            updatePosition(e); 
-            if (props.topo) boulderChanged(props.topo, boulder) 
-        }, [updatePosition, props.topo, boulder]),
+            if (e.latLng) {
+                const loc: GeoCoordinates = {
+                    lat: e.latLng.lat(),
+                    lng: e.latLng.lng()
+                };
+                props.boulder.set({
+                    ...boulder,
+                    location: loc
+                });
+                // TODO: ignoring that props.topo is optional for now
+                boulderChanged(props.topo!, boulder.id, loc);
+            }
+            // updatePosition(e); 
+            // if (props.topo) boulderChanged(props.topo, boulder) 
+        }, [props.topo, boulder]),
         onContextMenu: useCallback((e) => props.onContextMenu && props.onContextMenu(e, props.boulder), [props.boulder, props.onContextMenu])
     }
     useMarker(options, handlers);

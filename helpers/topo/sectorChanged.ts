@@ -2,7 +2,6 @@ import { polygonContains } from "helpers";
 import { Boulder, Topo, UUID } from "types";
 
 export function sectorChanged(topo: Topo, sectorId: UUID, boulderOrder: Map<UUID, number>) {
-    console.log('sector changed')
     const sQ = topo.sectors.findQuark(x => x.id === sectorId)!;
     const sector = sQ();
 

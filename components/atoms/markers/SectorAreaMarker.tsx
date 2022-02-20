@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { polygonContains, sectorChanged, splitArray, usePolygon } from "helpers";
 import { Quark, QuarkIter, watchDependencies } from "helpers/quarky";
 import { Boulder, GeoCoordinates, PolygonEventHandlers, Sector, Topo, UUID } from "types";
@@ -29,11 +29,11 @@ export const SectorAreaMarker: React.FC<SectorAreaMarkerProps> = watchDependenci
         strokeWeight: 2,
     };
     let polygon: React.MutableRefObject<google.maps.Polygon | undefined>;
-    let dragging = false;
+    let dragging = useRef(false);
 
     const updatePath = useCallback(() => {
         const newBounds: google.maps.LatLng[] | undefined = polygon.current?.getPath().getArray();
-        if (newBounds && !dragging) {
+        if (newBounds && !dragging.current) {
             const newPath: GeoCoordinates[] = newBounds.map(b => ({
                 lat: b.lat(),
                 lng: b.lng()
@@ -43,7 +43,7 @@ export const SectorAreaMarker: React.FC<SectorAreaMarkerProps> = watchDependenci
                 path: newPath
             }));
         }
-    }, [props.sector]);
+    }, [props.sector, dragging]);
 
     // const updateContainedBoulders = useCallback(() => {
     //     if (props.boulders && props.sectors) {
@@ -92,11 +92,11 @@ export const SectorAreaMarker: React.FC<SectorAreaMarkerProps> = watchDependenci
     // }, [props.boulders, props.sector]);
 
     const handlers: PolygonEventHandlers = {
-        onDragStart: useCallback(() => dragging = true, [updatePath]),
+        onDragStart: useCallback(() => dragging.current = true, [updatePath]),
         onClick: useCallback(() => props.onClick && props.onClick(props.sector), [props.sector, props.onClick]),
         onMouseMove: useCallback((e) => props.onMouseMoveOnSector && props.onMouseMoveOnSector(e), [props.sector, props.onMouseMoveOnSector]),
         onDragEnd: useCallback(() => { 
-            dragging = false; 
+            dragging.current = false; 
             updatePath(); 
             if (props.topo && props.boulderOrder) sectorChanged(props.topo, sector.id, props.boulderOrder); 
         }, [updatePath, props.topo, sector, props.boulderOrder])
