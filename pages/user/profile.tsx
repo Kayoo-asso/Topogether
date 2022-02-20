@@ -1,7 +1,5 @@
 import React, { useContext } from 'react';
 import type { NextPage } from 'next';
-import { ProfileDesktop, ProfileMobile } from 'components';
-import { isDesktop, isMobile } from 'react-device-detect';
 import { UserContext } from 'helpers';
 
 const ProfilePage: NextPage = () => {
@@ -12,8 +10,7 @@ const ProfilePage: NextPage = () => {
   }
   return (
     <>
-      {isMobile && (<ProfileMobile user={session} />)}
-      {isDesktop && (<ProfileDesktop user={session} />)}
+      
     </>
   );
 };
