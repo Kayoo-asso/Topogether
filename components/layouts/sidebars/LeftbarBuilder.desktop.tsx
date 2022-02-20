@@ -2,8 +2,8 @@ import React, { useCallback, useContext, useState } from 'react';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import { BoulderItemLeftbar, Button, createTrack, Icon } from 'components';
 import { arrayMove, splitArray, UserContext } from 'helpers';
-import { Quark, QuarkArray, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
-import { Boulder, Sector, Topo, Track, UUID } from 'types';
+import { Quark, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
+import { Boulder, Topo, Track, UUID } from 'types';
 
 interface LeftbarBuilderDesktopProps {
     topoQuark: Quark<Topo>,
@@ -20,6 +20,7 @@ export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = watch
     const topo = props.topoQuark();
     const sectors = topo.sectors;
     const [bouldersIn, bouldersOut] = splitArray(topo.boulders.quarks().toArray(), b => sectors.toArray().map(s => s.boulders).flat().includes(b().id))
+    const bouldersOutSorted = topo.lonelyBoulders.map(id => bouldersOut.find(b => b().id === id)!);
 
     const [displayedSectors, setDisplayedSectors] = useState<Array<UUID>>(sectors.map(sector => sector.id).toArray());
     const [displayedBoulders, setDisplayedBoulders] = useState<Array<UUID>>([]);
@@ -148,7 +149,7 @@ export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = watch
                                 <div className='flex flex-col mb-10' {...provided.droppableProps} ref={provided.innerRef}>
                                     <div className="ktext-label text-grey-medium mb-2">Sans secteur</div>
                                     <div className='flex flex-col gap-1 ml-3'>
-                                        {boulderQuarks.map((boulderQuark, index) => {
+                                        {bouldersOutSorted.map((boulderQuark, index) => {
                                             const boulder = boulderQuark();
                                             return (
                                                 <Draggable key={boulder.id} draggableId={boulder.id} index={index}>

@@ -1,16 +1,16 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import type { NextPage } from 'next';
 import { 
   AccessSlideover, InfoSlideover, ManagementSlideover,
   BoulderSlideagainstDesktop,  BoulderSlideoverMobile, TrackSlideagainstDesktop,
   Show,
   Header, LeftbarDesktop, 
-  MapControl, ParkingSlide, WaypointSlide, TracksImage } from 'components';
+  MapControl, ParkingSlide, WaypointSlide, TracksImage, LeftbarTopoDesktop } from 'components';
 import { useRouter } from 'next/router';
 import { quarkTopo } from 'helpers/fakeData/fakeTopoV2';
-import { defaultImage, DeviceContext } from 'helpers';
+import { defaultImage, DeviceContext, sortBoulders } from 'helpers';
 import { Boulder, Image, Parking, Track, Waypoint } from 'types';
-import { Quark, QuarkArray, QuarkIter, useQuarkyCallback, useSelectQuark, watchDependencies } from 'helpers/quarky';
+import { Quark, QuarkArray, QuarkIter, useCreateDerivation, useQuarkyCallback, useSelectQuark, watchDependencies } from 'helpers/quarky';
 
 const Topo: NextPage = () => {
   const router = useRouter();
@@ -22,7 +22,7 @@ const Topo: NextPage = () => {
   const boulders = useMemo(() => topo.boulders?.quarks(), [topo.boulders]) || new QuarkIter<Quark<Boulder>>([])
   const parkings = useMemo(() => topo.parkings?.quarks(), [topo.parkings]) || new QuarkIter<Quark<Parking>>([]);
   const waypoints = useMemo(() => topo.waypoints?.quarks(), [topo.waypoints]) || new QuarkIter<Quark<Waypoint>>([]);
-
+  const boulderOrder = useCreateDerivation(() => sortBoulders(topo.sectors, topo.lonelyBoulders));
 
   const [currentImage, setCurrentImage] = useState<Image>(defaultImage);
   const selectedTrack = useSelectQuark<Track>();
@@ -41,6 +41,15 @@ const Topo: NextPage = () => {
       selectedBoulder.select(boulderQuark);
     }
   }, [selectedBoulder]);
+  const toggleTrackSelect = useCallback((trackQuark: Quark<Track>, boulderQuark: Quark<Boulder>) => {
+    selectedBoulder.select(undefined);
+    selectedParking.select(undefined);
+    selectedWaypoint.select(undefined);
+    if (selectedTrack()?.id === trackQuark().id) { selectedTrack.select(undefined); } else {
+      selectedBoulder.select(boulderQuark);
+      selectedTrack.select(trackQuark);
+    }
+  }, [selectedTrack]);
   const toggleParkingSelect = useQuarkyCallback((parkingQuark: Quark<Parking>) => {
     selectedBoulder.select(undefined);
     selectedTrack.select(undefined);
@@ -107,8 +116,12 @@ const Topo: NextPage = () => {
       />
 
       <div className="h-content md:h-full relative flex flex-row md:overflow-hidden">
-        <LeftbarDesktop
-            currentMenuItem="MAP"
+        <LeftbarTopoDesktop
+          topoQuark={quarkTopo}
+          boulderOrder={boulderOrder()}
+          selectedBoulder={selectedBoulder}
+          onBoulderSelect={toggleBoulderSelect}
+          onTrackSelect={toggleTrackSelect}
         />
 
         <Show when={() => displayInfo}>
@@ -146,15 +159,16 @@ const Topo: NextPage = () => {
               findTopos: false,
               findPlaces: false,
           }}
+          topo={quarkTopo}
           waypoints={waypoints}
           onWaypointClick={toggleWaypointSelect}
           boulders={boulders}
+          bouldersOrder={boulderOrder()}
           displayBoulderFilter
           onBoulderClick={toggleBoulderSelect}
           parkings={parkings}
           onParkingClick={toggleParkingSelect}
-        />
-        
+        />       
 
         <Show when={() => [device !== 'MOBILE', selectedTrack.quark()] as const}>
           {([, track]) => 
