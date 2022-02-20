@@ -4,7 +4,7 @@ import { BoulderMarker, CreatingSectorAreaMarker, For, Map, ParkingMarker, Round
 import { BoulderFilterOptions, BoulderFilters, MapSearchbarProps, TopoFilterOptions, TopoFilters } from '.';
 import { MapSearchbar } from '..';
 import { Amenities, Boulder, ClimbTechniques, GeoCoordinates, gradeToLightGrade, LightGrade, LightTopo, MapProps, MarkerProps, Parking, Sector, Topo, UUID, Waypoint } from 'types';
-import { BoulderOrder, googleGetPlace, hasFlag, hasSomeFlags, mergeFlags } from 'helpers';
+import { googleGetPlace, hasFlag, hasSomeFlags, mergeFlags } from 'helpers';
 import { Quark, QuarkIter, reactKey } from 'helpers/quarky';
 
 interface MapControlProps extends MapProps {
@@ -16,7 +16,7 @@ interface MapControlProps extends MapProps {
   boundsToMarkers?: boolean,
   searchbarOptions?: MapSearchbarProps,
   className?: string,
-  topo?: Topo,
+  topo?: Quark<Topo>,
   waypoints?: QuarkIter<Quark<Waypoint>>,
   onWaypointClick?: (waypoint: Quark<Waypoint>) => void,
   boulders?: QuarkIter<Quark<Boulder>>,

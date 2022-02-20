@@ -1,13 +1,13 @@
 import React, { useCallback } from "react";
 import { boulderChanged, markerSize, useMarker } from "helpers";
-import { Quark, watchDependencies } from "helpers/quarky";
+import { Quark, useQuarkyCallback, watchDependencies } from "helpers/quarky";
 import { Boulder, GeoCoordinates, MarkerEventHandlers, Topo, UUID } from "types";
 
 // TODO: Why is props.topo optional? Pretty sure a BoulderMarker cannot be shown without a topo being selected
 interface BoulderMarkerProps {
     boulder: Quark<Boulder>,
     boulderOrder: Map<UUID, number>,
-    topo?: Topo,
+    topo?: Quark<Topo>,
     draggable?: boolean,
     onClick?: (boulder: Quark<Boulder>) => void,
     onContextMenu?: (e: any, boulder: Quark<Boulder>) => void
@@ -37,42 +37,9 @@ export const BoulderMarker: React.FC<BoulderMarkerProps> = watchDependencies(({
         }
     };
 
-    // const updatePosition = useCallback((e) => {
-    //     if (e.latLng) {
-    //         props.boulder.set({
-    //             ...boulder,
-    //             location: { lat: e.latLng.lat(), lng: e.latLng.lng() }
-    //         })
-    //     }
-    // }, [props.boulder])
-
-    // const updateContainingSector = useCallback(() => {
-    //     if (props.sectors) {
-    //         const boulder = props.boulder();
-
-    //         // Get away this boulder from all sectors
-    //         props.sectors.toArray().forEach(sector => sector.set(s => ({
-    //                 ...s,
-    //                 boulders: [...s.boulders].filter(id => id !== boulder.id)
-    //             }))
-    //         )
-
-    //         // Put this boulder in the right sector
-    //         for (const sectorQuark of props.sectors) {
-    //             const sector = sectorQuark();
-    //             const isInPolygon = polygonContains(sector.path, boulder.location);
-    //             if (isInPolygon) 
-    //                 sectorQuark.set(s => ({
-    //                     ...s,
-    //                     boulders: [...s.boulders, boulder.id],
-    //                 }))
-    //         }
-    //     }
-    // }, [props.sectors, props.boulder]);
-
     const handlers: MarkerEventHandlers = {
         onClick: useCallback(() => props.onClick && props.onClick(props.boulder), [props.boulder, props.onClick]),
-        onDragEnd: useCallback((e: google.maps.MapMouseEvent) => { 
+        onDragEnd: useQuarkyCallback((e: google.maps.MapMouseEvent) => { 
             if (e.latLng) {
                 const loc: GeoCoordinates = {
                     lat: e.latLng.lat(),
@@ -82,11 +49,8 @@ export const BoulderMarker: React.FC<BoulderMarkerProps> = watchDependencies(({
                     ...boulder,
                     location: loc
                 });
-                // TODO: ignoring that props.topo is optional for now
                 boulderChanged(props.topo!, boulder.id, loc);
             }
-            // updatePosition(e); 
-            // if (props.topo) boulderChanged(props.topo, boulder) 
         }, [props.topo, boulder]),
         onContextMenu: useCallback((e) => props.onContextMenu && props.onContextMenu(e, props.boulder), [props.boulder, props.onContextMenu])
     }

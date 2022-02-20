@@ -63,6 +63,7 @@ export interface TopoData {
 
   sectors: SectorData[], // -> Quark<Array<Quark<Sector>>>
   boulders: BoulderData[],
+  lonelyBoulders: UUID[],
   waypoints: Waypoint[]
   parkings: Parking[],
   accesses: TopoAccess[],

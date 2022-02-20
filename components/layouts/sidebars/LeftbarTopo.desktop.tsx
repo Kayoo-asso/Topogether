@@ -1,12 +1,13 @@
 import React, { useCallback, useContext, useState } from 'react';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import { BoulderItemLeftbar, Button, createTrack, Icon } from 'components';
-import { arrayMove, splitArray, UserContext } from 'helpers';
+import { splitArray, UserContext } from 'helpers';
 import { Quark, QuarkArray, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
-import { Boulder, Sector, Topo, Track, UUID } from 'types';
+import { Boulder, Sector, Track, UUID } from 'types';
 
-interface LeftbarBuilderDesktopProps {
-    topoQuark: Quark<Topo>,
+interface LeftbarTopoDesktopProps {
+    sectors: QuarkArray<Sector>,
+    boulders: QuarkArray<Boulder>,
     boulderOrder: Map<UUID, number>,
     selectedBoulder: SelectQuarkNullable<Boulder>,
     onBoulderSelect: (boulderQuark: Quark<Boulder>) => void,
@@ -14,46 +15,24 @@ interface LeftbarBuilderDesktopProps {
     onValidate: () => void,
 }
 
-export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = watchDependencies((props: LeftbarBuilderDesktopProps) => {
+export const LeftbarTopoDesktop: React.FC<LeftbarTopoDesktopProps> = watchDependencies((props: LeftbarTopoDesktopProps) => {
     const { session } = useContext(UserContext);
     const selectedBoulder = props.selectedBoulder();
-    const topo = props.topoQuark();
-    const sectors = topo.sectors;
-    const [bouldersIn, bouldersOut] = splitArray(topo.boulders.quarks().toArray(), b => sectors.toArray().map(s => s.boulders).flat().includes(b().id))
+    const [bouldersIn, bouldersOut] = splitArray(props.boulders.quarks().toArray(), b => props.sectors.toArray().map(s => s.boulders).flat().includes(b().id))
 
-    const [displayedSectors, setDisplayedSectors] = useState<Array<UUID>>(sectors.map(sector => sector.id).toArray());
+    const [displayedSectors, setDisplayedSectors] = useState<Array<UUID>>(props.sectors.map(sector => sector.id).toArray());
     const [displayedBoulders, setDisplayedBoulders] = useState<Array<UUID>>([]);
-    
+
     const handleDragEnd = useCallback((res: DropResult) => {
-        if (res.destination) {
-            if (res.source.droppableId === 'no-sector') {
-                let newLonelyBoulders = [...topo.lonelyBoulders];
-                newLonelyBoulders = arrayMove(newLonelyBoulders, res.source.index, res.destination.index);
-                props.topoQuark.set(t => ({
-                    ...t,
-                    lonelyBoulders: newLonelyBoulders
-                }))
-            }
-            else {
-                const sector = sectors.findQuark(s => s.id === res.source.droppableId);
-                if (sector) {
-                    let newSectorBoulders = [...sector().boulders];
-                    newSectorBoulders = arrayMove(newSectorBoulders, res.source.index, res.destination.index);
-                    sector.set(s => ({
-                        ...s,
-                        boulders: newSectorBoulders
-                    }))
-                }
-            }
-        }
-    }, [topo, sectors]);
+        console.log(res);
+    }, []);
 
     if (!session) return null;
     return (
         <div className='bg-white border-r border-grey-medium min-w-[280px] w-[280px] h-full hidden md:flex flex-col px-2 py-10 z-500'>
             <div className='h-[95%] overflow-y-auto mb-6 px-4'>
 
-                {sectors.quarks().map((sectorQuark, sectorIndex) => {
+                {props.sectors.quarks().map((sectorQuark, sectorIndex) => {
                     const sector = sectorQuark();
                     const boulderQuarks = sector.boulders.map(id => bouldersIn.find(b => b().id === id)!);
                     return (
@@ -95,15 +74,16 @@ export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = watch
                                                         Aucun rocher référencé
                                                     </div>
                                                 }
-                                                {boulderQuarks.map((boulderQuark, index) => {
+                                                {boulderQuarks.map((boulderQuark) => {
                                                     const boulder = boulderQuark();
+                                                    const orderIndex = props.boulderOrder.get(boulder.id)!;
                                                     return (
-                                                        <Draggable key={boulder.id} draggableId={boulder.id} index={index}>
+                                                        <Draggable key={boulder.id} draggableId={boulder.id} index={orderIndex}>
                                                             {(provided) => (
                                                                 <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
                                                                     <BoulderItemLeftbar 
                                                                         boulder={boulderQuark}
-                                                                        orderIndex={props.boulderOrder.get(boulder.id)!}
+                                                                        orderIndex={orderIndex}
                                                                         selected={selectedBoulder?.id === boulder.id}
                                                                         displayed={displayedBoulders.includes(boulder.id)}
                                                                         onArrowClick={() => {
@@ -142,51 +122,47 @@ export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = watch
   
                 <DragDropContext onDragEnd={handleDragEnd}>
                     <Droppable droppableId='no-sector'>
-                        {(provided) => {
-                            const boulderQuarks = topo.lonelyBoulders.map(id => bouldersOut.find(b => b().id === id)!);
-                            return (
-                                <div className='flex flex-col mb-10' {...provided.droppableProps} ref={provided.innerRef}>
-                                    <div className="ktext-label text-grey-medium mb-2">Sans secteur</div>
-                                    <div className='flex flex-col gap-1 ml-3'>
-                                        {boulderQuarks.map((boulderQuark, index) => {
-                                            const boulder = boulderQuark();
-                                            return (
-                                                <Draggable key={boulder.id} draggableId={boulder.id} index={index}>
-                                                    {(provided) => (
-                                                        <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
-                                                            <BoulderItemLeftbar 
-                                                                boulder={boulderQuark}
-                                                                orderIndex={props.boulderOrder.get(boulder.id)!}
-                                                                selected={selectedBoulder?.id === boulder.id}
-                                                                displayed={displayedBoulders.includes(boulder.id)}
-                                                                onArrowClick={() => {
-                                                                    const newDB = [...displayedBoulders];
-                                                                    if (newDB.includes(boulder.id)) newDB.splice(newDB.indexOf(boulder.id), 1)
-                                                                    else newDB.push(boulder.id);
-                                                                    setDisplayedBoulders(newDB);
-                                                                }}
-                                                                onNameClick={() => {
-                                                                    props.onBoulderSelect(boulderQuark);
-                                                                    const newDB = [...displayedBoulders];
-                                                                    if (!newDB.includes(boulder.id)) {
-                                                                        newDB.push(boulder.id);
-                                                                        setDisplayedBoulders(newDB);
-                                                                    }
-                                                                }}
-                                                                onTrackClick={(trackQuark) => props.onTrackSelect(trackQuark, boulderQuark)}
-                                                                displayCreateTrack
-                                                                onCreateTrack={() => createTrack(boulder, session.id)}
-                                                            />
-                                                        </div>
-                                                    )}
-                                                </Draggable>
-                                            )
-                                        })}
-                                    </div>
-                                    {provided.placeholder}
-                                </div>
-                            )
-                        }}
+                        {(provided) => (
+                            <div className='flex flex-col mb-10' {...provided.droppableProps} ref={provided.innerRef}>
+                                <div className="ktext-label text-grey-medium">Sans secteur</div>
+                                {bouldersOut.map(boulderQuark => {
+                                    const boulder = boulderQuark();
+                                    const orderIndex = props.boulderOrder.get(boulder.id)!;
+                                    return (
+                                        <Draggable key={boulder.id} draggableId={boulder.id} index={orderIndex}>
+                                            {(provided) => (
+                                                <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
+                                                    <BoulderItemLeftbar 
+                                                        boulder={boulderQuark}
+                                                        orderIndex={orderIndex}
+                                                        selected={selectedBoulder?.id === boulder.id}
+                                                        displayed={displayedBoulders.includes(boulder.id)}
+                                                        onArrowClick={() => {
+                                                            const newDB = [...displayedBoulders];
+                                                            if (newDB.includes(boulder.id)) newDB.splice(newDB.indexOf(boulder.id), 1)
+                                                            else newDB.push(boulder.id);
+                                                            setDisplayedBoulders(newDB);
+                                                        }}
+                                                        onNameClick={() => {
+                                                            props.onBoulderSelect(boulderQuark);
+                                                            const newDB = [...displayedBoulders];
+                                                            if (!newDB.includes(boulder.id)) {
+                                                                newDB.push(boulder.id);
+                                                                setDisplayedBoulders(newDB);
+                                                            }
+                                                        }}
+                                                        onTrackClick={(trackQuark) => props.onTrackSelect(trackQuark, boulderQuark)}
+                                                        displayCreateTrack
+                                                        onCreateTrack={() => createTrack(boulder, session.id)}
+                                                    />
+                                                </div>
+                                            )}
+                                        </Draggable>
+                                    )
+                                })}
+                                {provided.placeholder}
+                            </div>
+                        )}
                     </Droppable>
                 </DragDropContext>
 

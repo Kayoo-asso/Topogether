@@ -32,7 +32,7 @@ const BuilderMapPage: NextPage = () => {
   const boulders = useMemo(() => topo.boulders?.quarks(), [topo.boulders]) || new QuarkIter<Quark<Boulder>>([])
   const parkings = useMemo(() => topo.parkings?.quarks(), [topo.parkings]) || new QuarkIter<Quark<Parking>>([]);
   const waypoints = useMemo(() => topo.waypoints?.quarks(), [topo.waypoints]) || new QuarkIter<Quark<Waypoint>>([]);
-  const boulderOrder = useCreateDerivation(() => sortBoulders(topo.boulders, topo.sectors));
+  const boulderOrder = useCreateDerivation(() => sortBoulders(topo.sectors, topo.lonelyBoulders));
 
   const [currentTool, setCurrentTool] = useState<MapToolEnum>();
   const [currentImage, setCurrentImage] = useState<Image>(defaultImage);
@@ -234,8 +234,7 @@ const BuilderMapPage: NextPage = () => {
 
       <div className="h-content md:h-full relative flex flex-row md:overflow-hidden">
         <LeftbarBuilderDesktop
-          sectors={topo.sectors}
-          boulders={topo.boulders}
+          topoQuark={quarkTopo}
           boulderOrder={boulderOrder()}
           selectedBoulder={selectedBoulder}
           onBoulderSelect={toggleBoulderSelect}
@@ -282,7 +281,7 @@ const BuilderMapPage: NextPage = () => {
                           : currentTool === 'WAYPOINT' ? 'url(/assets/icons/colored/_help-round.svg), auto'
                           : ''}
           draggableMarkers
-          topo={topo}
+          topo={quarkTopo}
           waypoints={waypoints}
           onWaypointClick={toggleWaypointSelect}
           boulders={boulders}

@@ -159,6 +159,19 @@ export const boulders: BoulderData[] = [
         dangerousDescent: false,
         images: [images[0], images[1], images[2], images[3]],
         tracks
+    },
+    {
+        id: v4(),
+        name: "SupremeNTM" as Name,
+        location: {
+            lat: 45.70661,
+            lng: 4.608712,
+        },
+        isHighball: false,
+        mustSee: true,
+        dangerousDescent: true,
+        images: [images[0], images[1]],
+        tracks
     }
 ]
 
@@ -279,6 +292,7 @@ export const topo: TopoData = {
 
     sectors: sectors,
     boulders: boulders,
+    lonelyBoulders: [boulders[3].id],
     waypoints: waypoints,
     parkings: parkings,
     accesses: access,

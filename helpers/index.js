@@ -14,3 +14,4 @@ export * from './formatDate';
 export * from './blobToImage';
 
 export * from './splitArray';
+export * from './arrayMove';
