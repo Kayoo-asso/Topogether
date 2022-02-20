@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react';
-import { LightTopo, TopoStatus } from 'types';
+import { LightTopo, Topo, TopoStatus, UUID } from 'types';
 import { NoTopoCard } from './NoTopoCard';
 import { TopoCard } from './TopoCard';
 
@@ -9,7 +9,7 @@ interface TopoCardListProps {
   status: TopoStatus;
   title?: ReactNode;
   lastCard?: ReactNode;
-  isAdmin?: boolean;
+  onContextMenu: (topo: LightTopo, position: {x: number, y: number}) => void
 }
 export const TopoCardList:React.FC<TopoCardListProps> = (props: TopoCardListProps) => (
   <div className="pt-4">
@@ -24,7 +24,11 @@ export const TopoCardList:React.FC<TopoCardListProps> = (props: TopoCardListProp
       || props.status === TopoStatus.Validated)
        && <NoTopoCard topoStatus={props.status} />}
         {props.topos.map((topo) => (
-          <TopoCard key={topo.id} topo={topo} isAdmin={props.isAdmin} />
+          <TopoCard 
+            key={topo.id}
+            topo={topo}
+            onContextMenu={props.onContextMenu}
+            />
         ))}
         {props.lastCard}
       </div>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { v4 as uuid } from 'uuid';
 import type { NextPage } from 'next';
 import {
@@ -7,6 +7,8 @@ import {
 } from 'components';
 import { LightTopo, TopoStatus } from 'types';
 import { fakeLightTopo } from 'helpers/fakeData/fakeLightTopo';
+import { useContextMenu } from 'helpers/hooks/useContextMenu';
+import { UserActionDropdown } from 'components/molecules/cards/UserActionDropdown';
 
 const DashboardPage: NextPage = () => {
   const [lightTopos, setLightTopos] = useState<LightTopo[]>([
@@ -69,8 +71,21 @@ const DashboardPage: NextPage = () => {
   const draftLightTopos = lightTopos.filter((topo) => topo.status === TopoStatus.Draft);
   const submittedLightTopos = lightTopos.filter((topo) => topo.status === TopoStatus.Submitted);
   const validatedLightTopos = lightTopos.filter((topo) => topo.status === TopoStatus.Validated);
+  const ref = useRef<HTMLDivElement>(null);
+  const [dropdownDisplayed, setDropdownDisplayed] = useState(false);
+  const [topoDropdown, setTopoDropddown] = useState<LightTopo>();
+  const [dropdownPosition, setDropdownPosition] = useState<{ x: number, y: number }>();
+
 
   { /* TODO: get Light Topos */ }
+
+  useContextMenu(setDropdownDisplayed, ref.current);
+
+  const onContextMenu = useCallback((topo: LightTopo, position: {x: number, y: number}) => {
+    setDropdownDisplayed(true);
+    setTopoDropddown(topo);
+    setDropdownPosition(position);
+  }, [ref]);
 
   return (
     <>
@@ -84,7 +99,7 @@ const DashboardPage: NextPage = () => {
           currentMenuItem="BUILDER"
         />
 
-        <div className="bg-white overflow-y-auto h-contentPlusHeader md:h-contentPlusShell overflow-x-hidden relative">
+        <div ref={ref} className="bg-white overflow-y-auto h-contentPlusHeader md:h-contentPlusShell overflow-x-hidden">
           <div className="px-4 md:px-8 py-6 flex flex-row-reverse justify-between items-center">
             <Button content="Créer un topo" href="/builder/new" />
             <div className="md:hidden ktext-section-title text-center">Mes topos</div>
@@ -101,7 +116,8 @@ const DashboardPage: NextPage = () => {
             )}
             lastCard={
               <AddTopoCard />
-          }
+            }
+            onContextMenu={onContextMenu}
           />
 
           <TopoCardList
@@ -114,6 +130,7 @@ const DashboardPage: NextPage = () => {
                 En attente de validation
               </div>
             )}
+            onContextMenu={onContextMenu}
           />
 
           <TopoCardList
@@ -126,9 +143,13 @@ const DashboardPage: NextPage = () => {
                 Validés
               </div>
             )}
+            onContextMenu={onContextMenu}
           />
         </div>
       </div>
+      {dropdownDisplayed && topoDropdown && (
+        <UserActionDropdown dropdownPosition={dropdownPosition} topo={topoDropdown} />
+      )}
     </>
 );
 };

@@ -1,5 +1,5 @@
 import React, {
- EffectCallback, useEffect, useRef, useState,
+ EffectCallback, useEffect, useRef,
 } from 'react';
 
 let someoneExists = false;
@@ -27,11 +27,15 @@ export function useFirstEffect(effect: EffectCallback) {
         }, []);
     // }
 }
-export function useContextMenu(setOpen: (open: boolean) => void) {
+export function useContextMenu(setOpen: (open: boolean) => void, container?: HTMLElement | null) {
     useEffect(() => {
-        const onMouseDown = (e: MouseEvent) => { setOpen(false); };
+        const onScroll = (e: Event) => e.preventDefault()
+        const onMouseDown = (e: MouseEvent) => { setOpen(false);             
+        container?.removeEventListener('wheel', onScroll);
+    };
         const onContextMenu = (e: MouseEvent) => {
             setOpen(false);
+            container?.addEventListener('wheel', onScroll);
             if(process.env.NODE_ENV === "production") e.preventDefault();
         };
         document.addEventListener('mousedown', onMouseDown, { capture: true });
@@ -41,5 +45,5 @@ export function useContextMenu(setOpen: (open: boolean) => void) {
             document.removeEventListener('mousedown', onMouseDown, { capture: true });
             document.removeEventListener('contextmenu', onContextMenu, { capture: true });
         };
-    });
+    }, [container, setOpen]);
 }
