@@ -1,20 +1,19 @@
 import React, { useCallback, useMemo } from 'react';
 import { Dropdown } from 'components';
 import equal from 'fast-deep-equal/es6';
-import { TopoStatus, UUID } from 'types';
+import { LightTopo, TopoStatus } from 'types';
 import { useRouter } from 'next/router';
 import { DropdownOption } from '..';
 
 interface AdminActionDropdownProps {
-  topoId: UUID;
-  status: TopoStatus
+  topo: LightTopo;
   dropdownPosition?: { x: number, y: number };
 }
 
 export const AdminActionDropdown: React.FC<AdminActionDropdownProps> = React.memo((props: AdminActionDropdownProps) => {
   const router = useRouter();
 
-  const openTopo = useCallback(() => router.push(`/topo/${props.topoId}`), [router, props.topoId]);
+  const openTopo = useCallback(() => router.push(`/topo/${props.topo.id}`), [router, props.topo.id]);
 
   const editTopo = useCallback(() => console.log('Editing topo...'), []);
 
@@ -29,14 +28,14 @@ export const AdminActionDropdown: React.FC<AdminActionDropdownProps> = React.mem
   const actions = useMemo<DropdownOption[]>(() => [
     { value: 'Ouvrir', action: openTopo },
     { value: 'Modifier', action: editTopo },
-	...(props.status === TopoStatus.Submitted
+	...(props.topo.status === TopoStatus.Submitted
 	? [
 		{ value: 'Valider', action: () => validateTopo() },
 		{ value: 'Refuser', action: () => rejectTopo() }]
 	: []),
     { value: 'Contacter le créateur', action: contactCreator },
     { value: 'Supprimer', action: deleteTopo },
-  ], [props.status, openTopo, editTopo, validateTopo, rejectTopo, contactCreator, deleteTopo]);
+  ], [props.topo.status, openTopo, editTopo, validateTopo, rejectTopo, contactCreator, deleteTopo]);
 
   return (
     <Dropdown

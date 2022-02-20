@@ -1,18 +1,16 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import NextImage from 'next/image';
-import { Card, Icon, Dropdown } from 'components';
+import { Card, Icon } from 'components';
 import { formatDate, staticUrl } from 'helpers';
 import equal from 'fast-deep-equal/es6';
-import { LightTopo, TopoStatus } from 'types';
+import { LightTopo, Topo, TopoStatus, UUID } from 'types';
 import { useRouter } from 'next/router';
-import { useContextMenu } from 'helpers/hooks/useContextMenu';
-import { UserActionDropdown } from './UserActionDropdown';
-import { AdminActionDropdown } from './AdminActionDropdown';
+
 
 interface TopoCardProps {
   topo: LightTopo;
-  isAdmin?: boolean;
+  onContextMenu: (topo: LightTopo, position: {x: number, y: number}) => void
 }
 
 const getTopoIcons = (status: TopoStatus) => {
@@ -38,19 +36,12 @@ export const TopoCard: React.FC<TopoCardProps> = React.memo((props: TopoCardProp
     return '';
   };
 
-  const [dropdownDisplayed, setDropdownDisplayed] = useState(false);
-  const [dropdownPosition, setDropdownPosition] = useState<{ x: number, y: number }>();
-
-  useContextMenu(setDropdownDisplayed);
-
   return (
     <>
       <Link href={`/builder/${props.topo.id}`} passHref>
         <div onContextMenu={(e) => {
-          setDropdownDisplayed(!dropdownDisplayed);
-          setDropdownPosition({ x: e.pageX, y: e.pageY });
-          e.preventDefault();
-        }}
+            props.onContextMenu(props.topo, {x: e.pageX, y: e.pageY});
+            e.preventDefault()}}
         >
           <Card className="relative text-center text-grey-medium bg-white flex flex-col cursor-pointer">
             <div className="w-full h-[70px] md:h-44 top-0 relative">
@@ -85,12 +76,6 @@ export const TopoCard: React.FC<TopoCardProps> = React.memo((props: TopoCardProp
           </Card>
         </div>
       </Link>
-      {dropdownDisplayed && !props.isAdmin && (
-        <UserActionDropdown dropdownPosition={dropdownPosition} topoId={props.topo.id} />
-      )}
-      {dropdownDisplayed && props.isAdmin && (
-        <AdminActionDropdown topoId={props.topo.id} status={props.topo.status} dropdownPosition={dropdownPosition} />
-      )}
     </>
   );
 }, equal);

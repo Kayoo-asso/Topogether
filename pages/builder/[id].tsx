@@ -5,7 +5,7 @@ import type { NextPage } from 'next';
 import {
   BoulderBuilderSlideoverMobile,
   MapControl, Show,
-  Header, InfoFormSlideover, ManagementFormSlideover, TrackFormSlideagainstDesktop, ModalValidateTopo, ModalDeleteTopo, GeoCamera, Drawer, LeftbarBuilderDesktop, BoulderBuilderSlideagainstDesktop, ParkingBuilderSlide, AccessFormSlideover, WaypointBuilderSlide, createTrack, Dropdown,
+  Header, InfoFormSlideover, ManagementFormSlideover, TrackFormSlideagainstDesktop, ModalValidateTopo, ModalDeleteTopo, GeoCamera, Drawer, LeftbarBuilderDesktop, BoulderBuilderSlideagainstDesktop, ParkingBuilderSlide, AccessFormSlideover, WaypointBuilderSlide, createTrack, Dropdown, BoulderMarkerDropdown,
 } from 'components';
 import { useRouter } from 'next/router';
 import { quarkTopo } from 'helpers/fakeData/fakeTopoV2';
@@ -44,9 +44,10 @@ const BuilderMapPage: NextPage = () => {
   
   const [displayGeoCamera, setDisplayGeoCamera] = useState(false);
   const [displayDrawer, setDisplayDrawer] = useState(false);
-  const [boulderDropdown, setBoulderDropdown] = useState<Boulder | boolean>(false);
+  const [boulderDropdown, setBoulderDropdown] = useState<Boulder>();
   const [dropdownPosition, setDropdownPosition] = useState<{ x: number, y: number }>();
-  useContextMenu(setBoulderDropdown);
+  const [isDropdownDisplayed, setIsDropdownDisplayed] = useState(false);
+  useContextMenu(setIsDropdownDisplayed);
   const [displayInfo, setDisplayInfo] = useState<boolean>(false);
   const [displayApproach, setDisplayApproach] = useState<boolean>(false);
   const [displayManagement, setDisplayManagement] = useState<boolean>(false);
@@ -120,6 +121,7 @@ const BuilderMapPage: NextPage = () => {
   }, [selectedWaypoint]);
 
   const displayBoulderDropdown = useCallback((e: any, boulderQuark: Quark<Boulder>) => {
+    setIsDropdownDisplayed(true);
     setBoulderDropdown(boulderQuark());
     setDropdownPosition({ x: e.domEvent.pageX, y: e.domEvent.pageY });
   }, []);
@@ -208,7 +210,7 @@ const BuilderMapPage: NextPage = () => {
     return () => window.removeEventListener('keydown', handleKey);
   }, [creatingSector]);
 
-  const closeDropdown = useCallback(() => setBoulderDropdown(false), []);
+  const closeDropdown = useCallback(() => setIsDropdownDisplayed(false), []);
 
   if (!session || typeof id !== 'string' || !topo) return null;
   return (
@@ -445,16 +447,8 @@ const BuilderMapPage: NextPage = () => {
         />
       </Show>
 
-      <Show when={() => boulderDropdown}>
-      <Dropdown
-            style={{ left: `${dropdownPosition?.x}px`, top: `${dropdownPosition?.y}px` }}
-            options={[
-                { value: 'Ouvrir', action: () => {} },
-                { value: 'Télécharger',  action: () => {} },
-                { value: 'Envoyer en validation',  action: () => {} },
-                { value: 'Supprimer', action: () => {} },
-                ]}
-            />
+      <Show when={() => isDropdownDisplayed}>
+        <BoulderMarkerDropdown dropdownPosition={dropdownPosition} boulder={boulderDropdown!}/>
       </Show>
 
       <Show when={() => [(device !== 'MOBILE' || displayDrawer), selectedBoulder(), selectedTrack()] as const}>
