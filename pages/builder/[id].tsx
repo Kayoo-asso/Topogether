@@ -316,7 +316,6 @@ const BuilderMapPage: NextPage = () => {
           boulders={boulders}
           bouldersOrder={boulderOrder()}
           selectedBoulder={selectedBoulder}
-          displayBoulderFilter
           onBoulderClick={toggleBoulderSelect}
           onBoulderContextMenu={displayBoulderDropdown}        
           waypoints={waypoints}

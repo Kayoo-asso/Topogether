@@ -271,7 +271,7 @@ export const MapControl: React.FC<MapControlProps> = ({
             </For>
           </Show>
           <Show when={() => props.boulders}>
-            <For each={() => props.boulders!.filter(b => boulderFilter(b())).toArray()}>
+            <For each={() => displayBoulderFilter ? props.boulders!.filter(b => boulderFilter(b())).toArray() : props.boulders!.toArray()}>
               {(boulder) => 
                 <BoulderMarker
                   key={reactKey(boulder)}
