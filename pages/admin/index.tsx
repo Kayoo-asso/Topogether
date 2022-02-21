@@ -72,7 +72,7 @@ const AdminPage: NextPage = () => {
   
     { /* TODO: get Light Topos */ }
   
-    useContextMenu(setDropdownDisplayed, ref.current);
+    useContextMenu(() => setDropdownDisplayed(false), ref.current);
   
     const onContextMenu = useCallback((topo: LightTopo, position: {x: number, y: number}) => {
         setDropdownDisplayed(true);

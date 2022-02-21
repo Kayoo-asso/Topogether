@@ -41,13 +41,13 @@ const BuilderMapPage: NextPage = () => {
   const selectedTrack = useSelectQuark<Track>();
   const selectedParking = useSelectQuark<Parking>();
   const selectedWaypoint = useSelectQuark<Waypoint>();
+  const boulderRightClicked = useSelectQuark<Boulder>();
   
   const [displayGeoCamera, setDisplayGeoCamera] = useState(false);
   const [displayDrawer, setDisplayDrawer] = useState(false);
-  const [boulderDropdown, setBoulderDropdown] = useState<Boulder>();
   const [dropdownPosition, setDropdownPosition] = useState<{ x: number, y: number }>();
-  const [isDropdownDisplayed, setIsDropdownDisplayed] = useState(false);
-  useContextMenu(setIsDropdownDisplayed);
+  const closeDropdown = useCallback(() => boulderRightClicked.select(undefined), []);
+  useContextMenu(() => boulderRightClicked.select(undefined));
   const [displayInfo, setDisplayInfo] = useState<boolean>(false);
   const [displayApproach, setDisplayApproach] = useState<boolean>(false);
   const [displayManagement, setDisplayManagement] = useState<boolean>(false);
@@ -94,6 +94,7 @@ const BuilderMapPage: NextPage = () => {
     selectedTrack.select(undefined);
     selectedParking.select(undefined);
     selectedWaypoint.select(undefined);
+    console.log(boulderQuark)
     if (selectedBoulder()?.id === boulderQuark().id) selectedBoulder.select(undefined);
     else {
       setCurrentImage(boulderQuark().images[0] || defaultImage);
@@ -123,8 +124,7 @@ const BuilderMapPage: NextPage = () => {
   }, [selectedWaypoint]);
 
   const displayBoulderDropdown = useCallback((e: any, boulderQuark: Quark<Boulder>) => {
-    setIsDropdownDisplayed(true);
-    setBoulderDropdown(boulderQuark());
+    boulderRightClicked.select(boulderQuark);
     setDropdownPosition({ x: e.domEvent.pageX, y: e.domEvent.pageY });
   }, []);
 
@@ -232,8 +232,6 @@ const BuilderMapPage: NextPage = () => {
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
   }, [creatingSector]);
-
-  const closeDropdown = useCallback(() => setIsDropdownDisplayed(false), []);
 
   if (!session || typeof id !== 'string' || !topo) return null;
   return (
@@ -458,8 +456,9 @@ const BuilderMapPage: NextPage = () => {
         />
       </Show>
 
-      <Show when={() => isDropdownDisplayed}>
-        <BoulderMarkerDropdown dropdownPosition={dropdownPosition} boulder={boulderDropdown!}/>
+      <Show when={() => boulderRightClicked.quark()}>
+          {(quarkBoulder) =>
+        <BoulderMarkerDropdown dropdownPosition={dropdownPosition} toggleTrackSelect={toggleTrackSelect} boulder={quarkBoulder}/>}
       </Show>
 
       <Show when={() => [(device !== 'MOBILE' || displayDrawer), selectedBoulder(), selectedTrack()] as const}>
