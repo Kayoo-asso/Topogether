@@ -31,7 +31,7 @@ const Topo: NextPage = () => {
   const selectedParking = useSelectQuark<Parking>();
   const selectedWaypoint = useSelectQuark<Waypoint>();
 
-  const toggleSectorSelect = useCallback((sectorQuark: Quark<Sector>) => {
+  const toggleSectorSelect = useCallback((e, sectorQuark: Quark<Sector>) => {
     if (selectedSector()?.id === sectorQuark().id)
       selectedSector.select(undefined);
     else selectedSector.select(sectorQuark);
@@ -167,14 +167,18 @@ const Topo: NextPage = () => {
           }}
           topo={quarkTopo}
           sectors={sectors}
+          selectedSector={selectedSector} 
           onSectorClick={toggleSectorSelect}
-          waypoints={waypoints}
-          onWaypointClick={toggleWaypointSelect}
           boulders={boulders}
+          selectedBoulder={selectedBoulder}
           bouldersOrder={boulderOrder()}
           displayBoulderFilter
+          waypoints={waypoints}
+          selectedWaypoint={selectedWaypoint}
+          onWaypointClick={toggleWaypointSelect}
           onBoulderClick={toggleBoulderSelect}
           parkings={parkings}
+          selectedParking={selectedParking}
           onParkingClick={toggleParkingSelect}
         />       
 

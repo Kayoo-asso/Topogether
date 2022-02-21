@@ -8,8 +8,7 @@ const LoginPage: NextPage = () => {
     <>
       <HeaderDesktop
           backLink="/"
-          title="Nouveau topo"
-          displayLogin
+          title="Connexion"
       />
 
       <div className="w-full h-full flex flex-col items-center justify-center bg-bottom bg-white md:bg-[url('/assets/img/login_background.png')] md:bg-cover">

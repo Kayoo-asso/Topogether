@@ -44,7 +44,7 @@ export const LoginForm: React.FC = (props) => {
                 error={emailError}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-            /> 
+            />
 
             <TextInput 
                 id='password'
@@ -67,7 +67,7 @@ export const LoginForm: React.FC = (props) => {
                     <Button 
                         content="Se connecter"
                         fullWidth
-                        onClick={() => login()}
+                        onClick={login}
                     />
                 </div>
             </div>

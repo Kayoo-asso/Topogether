@@ -55,7 +55,7 @@ const ForgotPasswordPage: NextPage = () => {
             <Button 
                 content="Réinitialiser le mot de passe"
                 fullWidth
-                onClick={() => send()}
+                onClick={send}
             />
 
             <Link href="/user/login">
