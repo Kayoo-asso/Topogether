@@ -1,11 +1,11 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import type { NextPage } from 'next';
-import { UserContext } from 'helpers';
-import { Button, HeaderDesktop, TextInput } from 'components';
+import { Button, Header, TextInput } from 'components';
 import Link from 'next/link';
+import NextImage from 'next/image';
+import { staticUrl } from 'helpers';
 
 const SignupPage: NextPage = () => {
-  const { session } = useContext(UserContext);
   const [pseudo, setPseudo] = useState<string>();
   const [email, setEmail] = useState<string>();
   const [password, setPassword] = useState<string>();
@@ -28,22 +28,29 @@ const SignupPage: NextPage = () => {
       }
   }
 
-  if (!session) {
-    return null;
-  }
   return (
     <>
-      <HeaderDesktop
-          backLink="/"
+      <Header
+          backLink="/user/login"
           title="Création de compte"
           displayLogin
       />
 
       <div className="w-full h-full flex flex-col items-center justify-center bg-bottom bg-white md:bg-[url('/assets/img/login_background.png')] md:bg-cover">
-        <div className="p-10 w-full bg-white md:w-[500px] md:shadow md:rounded-lg">
+        <div className="p-10 w-full bg-white md:w-[500px] md:shadow md:rounded-lg -mt-16 md:mt-0">
 
           <div className='flex flex-col gap-6 items-center w-full'>
             <div className="ktext-section-title self-start hidden md:block">Créer un compte</div>
+
+            <div className="h-[150px] w-[150px] relative md:hidden">
+                <NextImage
+                    src={staticUrl.logo_color}
+                    priority
+                    alt="Logo Topogether"
+                    layout="fill"
+                    objectFit="contain"
+                />
+            </div>
 
             <TextInput 
                 id='pseudo'

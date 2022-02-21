@@ -24,13 +24,13 @@ const ForgotPasswordPage: NextPage = () => {
   return (
     <>
     <Header
-        backLink="/"
+        backLink="/user/login"
         title="Mot de passe oublié"
         displayLogin
     />
 
       <div className="w-full h-full flex flex-col items-center justify-center bg-white bg-bottom md:bg-[url('/assets/img/login_background.png')] md:bg-cover">
-        <div className="p-10 w-full bg-white mb-10 md:w-[500px] md:shadow md:rounded-lg">
+        <div className="p-10 w-full bg-white mb-10 md:w-[500px] md:shadow md:rounded-lg -mt-16 md:mt-0">
 
           <div className='flex flex-col gap-8 items-center w-full'>
             <div className="ktext-section-title self-start hidden md:block">Se connecter</div>

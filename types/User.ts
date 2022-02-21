@@ -13,9 +13,9 @@ export type User = {
   citizenship?: Name,
   city?: Name,
   isAcceptingNewsInfos?: boolean,
-  // phone?: string,
-  // gender?: string,
-  // password?: string,
+  phone?: string,
+  gender?: string,
+  password?: string,
 };
 
 export type Role = 'ADMIN' | 'USER';

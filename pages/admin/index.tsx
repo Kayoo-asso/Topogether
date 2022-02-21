@@ -86,7 +86,7 @@ const AdminPage: NextPage = () => {
     return (
         <>
             <Header
-                backLink="#"
+                backLink="/user/profile"
                 title="Administration"
             />
 

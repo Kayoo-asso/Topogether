@@ -1,5 +1,4 @@
-import { RockTypes } from "./Bitflags";
-import { Reception, Difficulty, TopoType, Orientation } from "./Enums";
+import { Reception, Difficulty, TopoType, Orientation, Gender } from "./Enums";
 
 export const DifficultyName: {[key in Difficulty]: string} = {
   [Difficulty.Good]: 'Facile',
@@ -33,3 +32,9 @@ export const OrientationName: {[key in Orientation]: string} = {
     [Orientation.W]: 'W',
     [Orientation.NW]: 'NW',
 }
+
+export const GenderName: {[key in Gender]: string} = {
+  [Gender.Female]: 'Femme',
+  [Gender.Male]: 'Homme',
+  [Gender.Other]: 'Autre',
+};
