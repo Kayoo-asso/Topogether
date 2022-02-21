@@ -9,7 +9,7 @@ import {
 import { useRouter } from 'next/router';
 import { quarkTopo } from 'helpers/fakeData/fakeTopoV2';
 import { defaultImage, DeviceContext, sortBoulders } from 'helpers';
-import { Boulder, Image, Parking, Track, Waypoint } from 'types';
+import { Boulder, Image, Parking, Sector, Track, Waypoint } from 'types';
 import { Quark, QuarkArray, QuarkIter, useCreateDerivation, useQuarkyCallback, useSelectQuark, watchDependencies } from 'helpers/quarky';
 
 const Topo: NextPage = () => {
@@ -25,11 +25,15 @@ const Topo: NextPage = () => {
   const boulderOrder = useCreateDerivation(() => sortBoulders(topo.sectors, topo.lonelyBoulders));
 
   const [currentImage, setCurrentImage] = useState<Image>(defaultImage);
-  const selectedTrack = useSelectQuark<Track>();
+  const selectedSector = useSelectQuark<Sector>();
   const selectedBoulder = useSelectQuark<Boulder>();
+  const selectedTrack = useSelectQuark<Track>();
   const selectedParking = useSelectQuark<Parking>();
   const selectedWaypoint = useSelectQuark<Waypoint>();
 
+  const toggleSectorSelect = useCallback(() => {
+    //TODO
+  }, [selectedSector, selectedBoulder]);
   const toggleBoulderSelect = useQuarkyCallback((boulderQuark: Quark<Boulder>) => {
     selectedTrack.select(undefined);
     selectedParking.select(undefined);
@@ -160,6 +164,8 @@ const Topo: NextPage = () => {
               findPlaces: false,
           }}
           topo={quarkTopo}
+          sectors={sectors}
+          onSectorClick={toggleSectorSelect}
           waypoints={waypoints}
           onWaypointClick={toggleWaypointSelect}
           boulders={boulders}

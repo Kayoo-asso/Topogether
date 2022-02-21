@@ -25,7 +25,13 @@ export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = watch
     const [displayedSectors, setDisplayedSectors] = useState<Array<UUID>>(sectors.map(sector => sector.id).toArray());
     const [displayedBoulders, setDisplayedBoulders] = useState<Array<UUID>>([]);
     
+    const [draggingSectorId, setDraggingSectorId] = useState();
+    const handleDragStart = useCallback((res) => {
+        setDraggingSectorId(res.source.droppableId);
+    }, []);
+
     const handleDragEnd = useCallback((res: DropResult) => {
+        setDraggingSectorId(undefined);
         if (res.destination) {
             if (res.source.droppableId === 'no-sector') {
                 let newLonelyBoulders = [...topo.lonelyBoulders];
@@ -58,12 +64,12 @@ export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = watch
                     const sector = sectorQuark();
                     const boulderQuarks = sector.boulders.map(id => bouldersIn.find(b => b().id === id)!);
                     return (
-                        <DragDropContext onDragEnd={handleDragEnd} key={sector.id}>  
+                        <DragDropContext onDragEnd={handleDragEnd} onDragStart={handleDragStart} key={sector.id}>  
                             <Droppable droppableId={sector.id} key={sector.id}>
                                 {(provided) => (
-                                    <div className='flex flex-col mb-10' {...provided.droppableProps} ref={provided.innerRef}>
+                                    <div className='flex flex-col mb-6' {...provided.droppableProps} ref={provided.innerRef}>
                                         <div className="ktext-label text-grey-medium">Secteur {sectorIndex + 1}</div>
-                                        <div className="ktext-section-title text-main cursor-pointer mb-2 flex flex-row items-center">
+                                        <div className="ktext-section-title text-main cursor-pointer mb-1 flex flex-row items-center">
                                             <Icon
                                                 name='arrow-simple'
                                                 wrapperClassName='pr-3'
@@ -90,7 +96,7 @@ export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = watch
                                         
                                         {displayedSectors.includes(sector.id) &&
                                             // BOULDERS
-                                            <div className='flex flex-col gap-1 ml-3'>
+                                            <div className={'flex flex-col gap-1 ml-1 p-2 rounded-sm ' + (draggingSectorId === sector.id ? 'bg-grey-superlight' : '')}>
                                                 {boulderQuarks.length < 1 &&
                                                     <div className=''>
                                                         Aucun rocher référencé
@@ -130,25 +136,23 @@ export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = watch
                                                         </Draggable>
                                                     )
                                                 })}
+                                                {provided.placeholder}
                                             </div>
-                                        }
-                                        {provided.placeholder}
-                                    </div>
-                                    
+                                        }   
+                                    </div>    
                                 )}
                             </Droppable>
                         </DragDropContext>
                     )
                 })}
   
-                <DragDropContext onDragEnd={handleDragEnd}>
+                <DragDropContext onDragEnd={handleDragEnd} onDragStart={handleDragStart}>
                     <Droppable droppableId='no-sector'>
                         {(provided) => {
-                            const boulderQuarks = topo.lonelyBoulders.map(id => bouldersOut.find(b => b().id === id)!);
                             return (
-                                <div className='flex flex-col mb-10' {...provided.droppableProps} ref={provided.innerRef}>
-                                    <div className="ktext-label text-grey-medium mb-2">Sans secteur</div>
-                                    <div className='flex flex-col gap-1 ml-3'>
+                                <div className='flex flex-col' {...provided.droppableProps} ref={provided.innerRef}>
+                                    <div className="ktext-label text-grey-medium mb-1">Sans secteur</div>
+                                    <div className={'flex flex-col gap-1 ml-1 p-2 rounded-sm ' + (draggingSectorId === 'no-sector' ? 'bg-grey-superlight' : '')}>
                                         {bouldersOutSorted.map((boulderQuark, index) => {
                                             const boulder = boulderQuark();
                                             return (
@@ -183,8 +187,8 @@ export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = watch
                                                 </Draggable>
                                             )
                                         })}
-                                    </div>
-                                    {provided.placeholder}
+                                        {provided.placeholder}
+                                    </div>   
                                 </div>
                             )
                         }}

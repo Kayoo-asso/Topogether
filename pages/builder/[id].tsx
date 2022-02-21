@@ -36,9 +36,9 @@ const BuilderMapPage: NextPage = () => {
 
   const [currentTool, setCurrentTool] = useState<MapToolEnum>();
   const [currentImage, setCurrentImage] = useState<Image>(defaultImage);
-  const selectedTrack = useSelectQuark<Track>();
   const selectedSector = useSelectQuark<Sector>();
   const selectedBoulder = useSelectQuark<Boulder>();
+  const selectedTrack = useSelectQuark<Track>();
   const selectedParking = useSelectQuark<Parking>();
   const selectedWaypoint = useSelectQuark<Waypoint>();
   
@@ -86,8 +86,8 @@ const BuilderMapPage: NextPage = () => {
   const [displayModalDelete, setDisplayModalDelete] = useState(false);
 
   const toggleSectorSelect = useCallback(() => {
-
-  }, [selectedSector, selectedBoulder])
+    //TODO
+  }, [selectedSector, selectedBoulder]);
   const toggleBoulderSelect = useCallback((boulderQuark: Quark<Boulder>) => {
     selectedTrack.select(undefined);
     selectedParking.select(undefined);
@@ -284,6 +284,8 @@ const BuilderMapPage: NextPage = () => {
                           : ''}
           draggableMarkers
           topo={quarkTopo}
+          sectors={sectors}
+          onSectorClick={toggleSectorSelect}
           waypoints={waypoints}
           onWaypointClick={toggleWaypointSelect}
           boulders={boulders}
@@ -293,8 +295,6 @@ const BuilderMapPage: NextPage = () => {
           onBoulderContextMenu={displayBoulderDropdown}
           creatingSector={freePointCreatingSector ? creatingSector.concat(freePointCreatingSector) : creatingSector}
           onCreatingSectorOriginClick={createSector}
-          sectors={sectors}
-          onSectorClick={toggleSectorSelect}
           parkings={parkings}
           onParkingClick={toggleParkingSelect}
           onPhotoButtonClick={() => setDisplayGeoCamera(true)}
