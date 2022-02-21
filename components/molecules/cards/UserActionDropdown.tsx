@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { Dropdown } from 'components';
 import equal from 'fast-deep-equal/es6';
-import { LightTopo } from 'types';
+import { LightTopo, TopoStatus } from 'types';
 import { useRouter } from 'next/router';
 
 interface UserActionDropdownProps {
@@ -22,11 +22,14 @@ export const UserActionDropdown: React.FC<UserActionDropdownProps> = React.memo(
 
   return (
     <Dropdown
+      className='w-64'
       style={{ left: `${props.dropdownPosition?.x}px`, top: `${props.dropdownPosition?.y}px` }}
       options={[
 		{ value: 'Ouvrir', action: openTopo },
 		{ value: 'Télécharger', action: downloadTopo },
-		{ value: 'Envoyer en validation', action: sendTopoToValidation },
+        ...(props.topo.status === TopoStatus.Draft
+            ? [{ value: 'Envoyer en validation', action: sendTopoToValidation }]
+            : []),
 		{ value: 'Supprimer', action: deleteTopo },
 		]}
     />

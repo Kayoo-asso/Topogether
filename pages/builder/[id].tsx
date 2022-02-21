@@ -180,6 +180,14 @@ const BuilderMapPage: NextPage = () => {
     }
     return newBoulderQuark;
   }, [topo]);
+  const deleteBoulder = useCallback((boulder) => {
+      console.log('in delete boulder')
+    topo.boulders.removeQuark(boulder);
+    if(selectedBoulder.quark() === boulder) {
+        console.log('is the same')
+        selectedBoulder.select(undefined);
+    }
+  }, []);
   const createParking = useCallback((location: GeoCoordinates, selectParking = false) => {
     const newParking: Parking = {
       id: v4(),
@@ -457,7 +465,7 @@ const BuilderMapPage: NextPage = () => {
 
       <Show when={() => boulderRightClicked.quark()}>
           {(quarkBoulder) =>
-        <BoulderMarkerDropdown dropdownPosition={dropdownPosition} toggleTrackSelect={toggleTrackSelect} boulder={quarkBoulder}/>}
+        <BoulderMarkerDropdown dropdownPosition={dropdownPosition} toggleTrackSelect={toggleTrackSelect} boulder={quarkBoulder} deleteBoulder={deleteBoulder}/>}
       </Show>
 
       <Show when={() => [(device !== 'MOBILE' || displayDrawer), selectedBoulder(), selectedTrack()] as const}>

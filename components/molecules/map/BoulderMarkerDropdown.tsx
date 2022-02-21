@@ -8,6 +8,7 @@ interface BoulderMarkerDropdownProps {
     boulder: Quark<Boulder>;
     dropdownPosition?: { x: number, y: number };
     toggleTrackSelect: (track: Quark<Track>, boulderQuark: Quark<Boulder>) => void;
+    deleteBoulder: (boulder: Quark<Boulder>) => void;
 }
 
 export const BoulderMarkerDropdown: React.FC<BoulderMarkerDropdownProps> = watchDependencies((props: BoulderMarkerDropdownProps) => {
@@ -19,7 +20,7 @@ export const BoulderMarkerDropdown: React.FC<BoulderMarkerDropdownProps> = watch
     };
     const addImage = useCallback(() => console.log('Downloading the topo...'), []);
 
-    const deleteBoulder = useCallback(() => console.log('Deleting topo...'), []);
+    const deleteBoulder = useCallback(() => props.deleteBoulder(props.boulder), [props.boulder]);
 
     return (
         <Dropdown
