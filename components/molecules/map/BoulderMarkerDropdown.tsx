@@ -1,21 +1,26 @@
 import React, { useCallback, useContext } from 'react';
 import { createTrack, Dropdown } from 'components';
-import equal from 'fast-deep-equal/es6';
-import { Boulder, UUID } from 'types';
+import { Boulder, Track } from 'types';
 import { UserContext } from 'helpers';
+import { Quark, SelectQuark, watchDependencies } from 'helpers/quarky';
 
 interface BoulderMarkerDropdownProps {
-    boulder: Boulder;
+    boulder: Quark<Boulder>;
     dropdownPosition?: { x: number, y: number };
+    toggleTrackSelect: (track: Quark<Track>, boulderQuark: Quark<Boulder>) => void;
+    deleteBoulder: (boulder: Quark<Boulder>) => void;
 }
 
-export const BoulderMarkerDropdown: React.FC<BoulderMarkerDropdownProps> = React.memo((props: BoulderMarkerDropdownProps) => {
+export const BoulderMarkerDropdown: React.FC<BoulderMarkerDropdownProps> = watchDependencies((props: BoulderMarkerDropdownProps) => {
     const { session } = useContext(UserContext);
 
-    const addTrack = () => {console.log('trololol'); createTrack(props.boulder, session!.id)};
+    const addTrack = () => {
+        const trackQuark = createTrack(props.boulder(), session!.id);
+        props.toggleTrackSelect(trackQuark, props.boulder);
+    };
     const addImage = useCallback(() => console.log('Downloading the topo...'), []);
 
-    const deleteBoulder = useCallback(() => console.log('Deleting topo...'), []);
+    const deleteBoulder = useCallback(() => props.deleteBoulder(props.boulder), [props.boulder]);
 
     return (
         <Dropdown
@@ -27,6 +32,6 @@ export const BoulderMarkerDropdown: React.FC<BoulderMarkerDropdownProps> = React
             ]}
         />
     );
-}, equal);
+});
 
 BoulderMarkerDropdown.displayName = 'BoulderMarkerDropdown';

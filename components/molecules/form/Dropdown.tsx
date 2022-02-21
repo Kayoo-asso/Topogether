@@ -25,7 +25,7 @@ export const Dropdown: React.FC<DropdownProps> = React.memo(({
   ...props
 }: DropdownProps) => (
   <div
-    className={`shadow absolute z-100 ${fullSize ? 'w-full' : 'w-auto'} px-7 bg-white rounded ${className}`}
+    className={`shadow absolute z-100 ${fullSize ? 'w-full' : ''} px-7 bg-white rounded ${className}`}
     style={props.style}
   >
     {props.options.map((opt, i) => (
