@@ -25,7 +25,7 @@ export const ParkingForm: React.FC<ParkingFormProps> = watchDependencies((props:
             onClick={(e) => e.stopPropagation()}
         >
             <div className='flex flex-row gap-6 items-end'>
-                <div className='w-28 md:mt-4'>
+                <div className='w-28'>
                     <ImageInput 
                         value={parking.image}
                         onChange={(files) => {
@@ -38,7 +38,7 @@ export const ParkingForm: React.FC<ParkingFormProps> = watchDependencies((props:
                     />
                 </div>
                 <div className='flex flex-col gap-2 justify-between h-full'>
-                    <div className='ktext-subtitle'>Parking</div>
+                    <div className='ktext-subtitle md:mb-3'>Parking</div>
                     <TextInput 
                         ref={nameInputRef}
                         id='parking-name'

@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef } from "react";
 import { sectorChanged, usePolygon } from "helpers";
 import { Quark, useQuarkyCallback, watchDependencies } from "helpers/quarky";
-import { GeoCoordinates, PolygonEventHandlers, Sector, Topo, UUID } from "types";
+import { GeoCoordinates, PolygonEventHandlers, PolyMouseEvent, Sector, Topo, UUID } from "types";
 
 interface SectorAreaMarkerProps {
     sector: Quark<Sector>,
@@ -10,7 +10,8 @@ interface SectorAreaMarkerProps {
     boulderOrder?: Map<UUID, number>,
     draggable?: boolean,
     editable?: boolean,
-    onClick?: (sector: Quark<Sector>) => void,
+    clickable?: boolean
+    onClick?: (e: PolyMouseEvent, sector: Quark<Sector>) => void,
     onMouseMoveOnSector?: (e: any) => void,
 }
 
@@ -18,6 +19,7 @@ export const SectorAreaMarker: React.FC<SectorAreaMarkerProps> = watchDependenci
     draggable = false,
     editable = false,
     selected = false,
+    clickable = false,
     ...props
 }: SectorAreaMarkerProps) => {
     const sector = props.sector();
@@ -26,6 +28,7 @@ export const SectorAreaMarker: React.FC<SectorAreaMarkerProps> = watchDependenci
         paths: sector.path,
         draggable,
         editable,
+        clickable,
         fillColor: '#04D98B',
         fillOpacity: selected ? 0.4 : 0.2,
         strokeColor: '#04D98B',
@@ -51,7 +54,9 @@ export const SectorAreaMarker: React.FC<SectorAreaMarkerProps> = watchDependenci
 
     const handlers: PolygonEventHandlers = {
         onDragStart: useCallback(() => dragging.current = true, [updatePath]),
-        onClick: useCallback(() => props.onClick && props.onClick(props.sector), [props.sector, props.onClick]),
+        onClick: useCallback((e: PolyMouseEvent) => {
+            props.onClick && props.onClick(e, props.sector)
+        }, [props.sector, props.onClick]),
         onMouseMove: useCallback((e) => props.onMouseMoveOnSector && props.onMouseMoveOnSector(e), [props.sector, props.onMouseMoveOnSector]),
         onDragEnd: useQuarkyCallback(() => { 
             dragging.current = false; 

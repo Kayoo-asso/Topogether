@@ -3,7 +3,7 @@ import { Wrapper } from '@googlemaps/react-wrapper';
 import { BoulderMarker, CreatingSectorAreaMarker, For, Map, ParkingMarker, RoundButton, SatelliteButton, SectorAreaMarker, Show, TopoMarker, WaypointMarker } from 'components';
 import { BoulderFilterOptions, BoulderFilters, MapSearchbarProps, TopoFilterOptions, TopoFilters } from '.';
 import { MapSearchbar } from '..';
-import { Amenities, Boulder, ClimbTechniques, GeoCoordinates, gradeToLightGrade, LightGrade, LightTopo, MapProps, MarkerProps, Parking, Sector, Topo, UUID, Waypoint } from 'types';
+import { Amenities, Boulder, ClimbTechniques, GeoCoordinates, gradeToLightGrade, LightGrade, LightTopo, MapProps, MarkerProps, Parking, PolyMouseEvent, Sector, Topo, UUID, Waypoint } from 'types';
 import { googleGetPlace, hasFlag, hasSomeFlags, mergeFlags } from 'helpers';
 import { Quark, QuarkIter, reactKey, SelectQuarkNullable } from 'helpers/quarky';
 
@@ -27,7 +27,7 @@ interface MapControlProps extends MapProps {
   onCreatingSectorPolylineClick?: () => void,
   sectors?: QuarkIter<Quark<Sector>>,
   selectedSector?: SelectQuarkNullable<Sector>,
-  onSectorClick?: (sector: Quark<Sector>) => void,
+  onSectorClick?: (e: PolyMouseEvent, sector: Quark<Sector>) => void,
   boulders?: QuarkIter<Quark<Boulder>>,
   bouldersOrder: Map<UUID, number>,
   selectedBoulder?: SelectQuarkNullable<Boulder>,
@@ -246,6 +246,7 @@ export const MapControl: React.FC<MapControlProps> = ({
                   key={reactKey(sector)}
                   sector={sector}
                   selected={props.selectedSector ? props.selectedSector()?.id === sector().id : false}
+                  clickable={!props.draggableCursor}
                   topo={props.topo}
                   boulderOrder={props.bouldersOrder}
                   draggable={draggableMarkers}

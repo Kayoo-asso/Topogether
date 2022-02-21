@@ -25,7 +25,7 @@ export const WaypointForm: React.FC<WaypointFormProps> = watchDependencies((prop
             onClick={(e) => e.stopPropagation()}
         >
             <div className='flex flex-row gap-6 items-end'>
-                <div className='w-28 md:mt-4'>
+                <div className='w-28'>
                     <ImageInput 
                         value={waypoint.image}
                         onChange={(images) => {
@@ -38,7 +38,7 @@ export const WaypointForm: React.FC<WaypointFormProps> = watchDependencies((prop
                     />
                 </div>
                 <div className='flex flex-col gap-2 justify-between h-full'>
-                    <div className='ktext-subtitle'>Point de repère</div>
+                    <div className='ktext-subtitle md:mb-3'>Point de repère</div>
                     <TextInput 
                         ref={nameInputRef}
                         id='waypoint-name'

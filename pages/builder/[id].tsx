@@ -10,7 +10,7 @@ import {
 import { useRouter } from 'next/router';
 import { quarkTopo } from 'helpers/fakeData/fakeTopoV2';
 import {
- blobToImage, defaultImage, DeviceContext, sortBoulders, polygonContains, UserContext,
+ blobToImage, defaultImage, DeviceContext, sortBoulders, polygonContains, UserContext, boulderChanged,
 } from 'helpers';
 import {
  Boulder, GeoCoordinates, Image, MapToolEnum, Name, Parking, Sector, SectorData, Track, Waypoint,
@@ -173,6 +173,7 @@ const BuilderMapPage: NextPage = () => {
     };
     topo.boulders.push(newBoulder);
     const newBoulderQuark = topo.boulders.quarkAt(-1);
+    boulderChanged(quarkTopo, newBoulder.id, newBoulder.location, true);
     if (selectBoulder) {
       selectedBoulder.select(newBoulderQuark);
       if (image) setCurrentImage(newBoulder.images[0]);
@@ -202,6 +203,26 @@ const BuilderMapPage: NextPage = () => {
     if (selectWaypoint) selectedWaypoint.select(newWaypointQuark);
     return newWaypointQuark;
   }, [topo]);
+
+  const handleCreateNewMarker = useCallback((e) => {
+    if (e.latLng) {
+      switch (currentTool) {
+        case 'ROCK':
+          createBoulder({ lat: e.latLng.lat(), lng: e.latLng.lng() });
+          break;
+        case 'SECTOR':
+          handleCreatingSector({ lat: e.latLng.lat(), lng: e.latLng.lng() });
+          break;
+        case 'PARKING':
+          createParking({ lat: e.latLng.lat(), lng: e.latLng.lng() });
+          break;
+        case 'WAYPOINT':
+          createWaypoint({ lat: e.latLng.lat(), lng: e.latLng.lng() });
+          break;
+        default: break;
+      }
+    }
+  }, [currentTool, createBoulder, createParking, createWaypoint, handleCreatingSector]);
 
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
@@ -290,7 +311,10 @@ const BuilderMapPage: NextPage = () => {
           onCreatingSectorOriginClick={createSector}
           sectors={sectors}
           selectedSector={selectedSector}    
-          onSectorClick={toggleSectorSelect}
+          onSectorClick={(e, sectorQuark) => {
+            if (currentTool) handleCreateNewMarker(e);
+            else toggleSectorSelect(sectorQuark);
+          }}
           boulders={boulders}
           bouldersOrder={boulderOrder()}
           selectedBoulder={selectedBoulder}
@@ -305,25 +329,7 @@ const BuilderMapPage: NextPage = () => {
           onParkingClick={toggleParkingSelect}
           onPhotoButtonClick={() => setDisplayGeoCamera(true)}
           onMapZoomChange={closeDropdown}
-          onClick={(e) => {
-            if (e.latLng) {
-              switch (currentTool) {
-                case 'ROCK':
-                  createBoulder({ lat: e.latLng.lat(), lng: e.latLng.lng() });
-                  break;
-                case 'SECTOR':
-                  handleCreatingSector({ lat: e.latLng.lat(), lng: e.latLng.lng() });
-                  break;
-                case 'PARKING':
-                  createParking({ lat: e.latLng.lat(), lng: e.latLng.lng() });
-                  break;
-                case 'WAYPOINT':
-                  createWaypoint({ lat: e.latLng.lat(), lng: e.latLng.lng() });
-                  break;
-                default: break;
-              }
-            }
-          }}
+          onClick={handleCreateNewMarker}
           onMouseMove={(e) => {
             if (creatingSector && creatingSector.length > 0 && e.latLng) {
               setFreePointCreatingSector({
