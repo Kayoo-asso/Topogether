@@ -7,6 +7,7 @@ import { Boulder, GeoCoordinates, MarkerEventHandlers, Topo, UUID } from "types"
 interface BoulderMarkerProps {
     boulder: Quark<Boulder>,
     boulderOrder: Map<UUID, number>,
+    selected?: boolean,
     topo?: Quark<Topo>,
     draggable?: boolean,
     onClick?: (boulder: Quark<Boulder>) => void,
@@ -15,12 +16,13 @@ interface BoulderMarkerProps {
 
 export const BoulderMarker: React.FC<BoulderMarkerProps> = watchDependencies(({
     draggable = false,
+    selected = false,
     ...props
 }: BoulderMarkerProps) => {
     const boulder = props.boulder();
 
     const icon: google.maps.Icon = {
-        url: '/assets/icons/colored/_rock.svg',
+        url: selected ? '/assets/icons/colored/_rock_bold.svg' : '/assets/icons/colored/_rock.svg',
         scaledSize: markerSize(30),
         labelOrigin: new google.maps.Point(15, 34)
     }
@@ -33,7 +35,7 @@ export const BoulderMarker: React.FC<BoulderMarkerProps> = watchDependencies(({
             text: (props.boulderOrder.get(boulder.id)! + '. '+boulder.name).toString(),
             color: '#04D98B',
             fontFamily: 'Poppins',
-            fontWeight: '500'
+            fontWeight: selected ? '700' : '500'
         }
     };
 

@@ -31,8 +31,10 @@ const Topo: NextPage = () => {
   const selectedParking = useSelectQuark<Parking>();
   const selectedWaypoint = useSelectQuark<Waypoint>();
 
-  const toggleSectorSelect = useCallback(() => {
-    //TODO
+  const toggleSectorSelect = useCallback((sectorQuark: Quark<Sector>) => {
+    if (selectedSector()?.id === sectorQuark().id)
+      selectedSector.select(undefined);
+    else selectedSector.select(sectorQuark);
   }, [selectedSector, selectedBoulder]);
   const toggleBoulderSelect = useQuarkyCallback((boulderQuark: Quark<Boulder>) => {
     selectedTrack.select(undefined);

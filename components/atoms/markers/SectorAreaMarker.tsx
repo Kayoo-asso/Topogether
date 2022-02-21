@@ -5,6 +5,7 @@ import { GeoCoordinates, PolygonEventHandlers, Sector, Topo, UUID } from "types"
 
 interface SectorAreaMarkerProps {
     sector: Quark<Sector>,
+    selected?: boolean,
     topo?: Quark<Topo>
     boulderOrder?: Map<UUID, number>,
     draggable?: boolean,
@@ -16,6 +17,7 @@ interface SectorAreaMarkerProps {
 export const SectorAreaMarker: React.FC<SectorAreaMarkerProps> = watchDependencies(({
     draggable = false,
     editable = false,
+    selected = false,
     ...props
 }: SectorAreaMarkerProps) => {
     const sector = props.sector();
@@ -25,7 +27,9 @@ export const SectorAreaMarker: React.FC<SectorAreaMarkerProps> = watchDependenci
         draggable,
         editable,
         fillColor: '#04D98B',
+        fillOpacity: selected ? 0.4 : 0.2,
         strokeColor: '#04D98B',
+        strokeOpacity: selected ? 1 : 0.4,
         strokeWeight: 2,
     };
     let polygon: React.MutableRefObject<google.maps.Polygon | undefined>;

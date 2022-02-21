@@ -85,8 +85,10 @@ const BuilderMapPage: NextPage = () => {
   const [displayModalValidate, setDisplayModalValidate] = useState(false);
   const [displayModalDelete, setDisplayModalDelete] = useState(false);
 
-  const toggleSectorSelect = useCallback(() => {
-    //TODO
+  const toggleSectorSelect = useCallback((sectorQuark: Quark<Sector>) => {
+    if (selectedSector()?.id === sectorQuark().id)
+      selectedSector.select(undefined);
+    else selectedSector.select(sectorQuark);
   }, [selectedSector, selectedBoulder]);
   const toggleBoulderSelect = useCallback((boulderQuark: Quark<Boulder>) => {
     selectedTrack.select(undefined);
@@ -284,18 +286,22 @@ const BuilderMapPage: NextPage = () => {
                           : ''}
           draggableMarkers
           topo={quarkTopo}
-          sectors={sectors}
-          onSectorClick={toggleSectorSelect}
-          waypoints={waypoints}
-          onWaypointClick={toggleWaypointSelect}
-          boulders={boulders}
-          bouldersOrder={boulderOrder()}
-          displayBoulderFilter
-          onBoulderClick={toggleBoulderSelect}
-          onBoulderContextMenu={displayBoulderDropdown}
           creatingSector={freePointCreatingSector ? creatingSector.concat(freePointCreatingSector) : creatingSector}
           onCreatingSectorOriginClick={createSector}
+          sectors={sectors}
+          selectedSector={selectedSector}    
+          onSectorClick={toggleSectorSelect}
+          boulders={boulders}
+          bouldersOrder={boulderOrder()}
+          selectedBoulder={selectedBoulder}
+          displayBoulderFilter
+          onBoulderClick={toggleBoulderSelect}
+          onBoulderContextMenu={displayBoulderDropdown}        
+          waypoints={waypoints}
+          selectedWaypoint={selectedWaypoint}
+          onWaypointClick={toggleWaypointSelect}
           parkings={parkings}
+          selectedParking={selectedParking}
           onParkingClick={toggleParkingSelect}
           onPhotoButtonClick={() => setDisplayGeoCamera(true)}
           onMapZoomChange={closeDropdown}

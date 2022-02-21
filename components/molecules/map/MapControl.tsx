@@ -5,38 +5,42 @@ import { BoulderFilterOptions, BoulderFilters, MapSearchbarProps, TopoFilterOpti
 import { MapSearchbar } from '..';
 import { Amenities, Boulder, ClimbTechniques, GeoCoordinates, gradeToLightGrade, LightGrade, LightTopo, MapProps, MarkerProps, Parking, Sector, Topo, UUID, Waypoint } from 'types';
 import { googleGetPlace, hasFlag, hasSomeFlags, mergeFlags } from 'helpers';
-import { Quark, QuarkIter, reactKey } from 'helpers/quarky';
+import { Quark, QuarkIter, reactKey, SelectQuarkNullable } from 'helpers/quarky';
 
 interface MapControlProps extends MapProps {
+  className?: string,
   initialZoom?: number,
-  displaySearchbar?: boolean,
+  boundsToMarkers?: boolean,
   displaySatelliteButton?: boolean,
   displayUserMarker?: boolean,
   displayPhotoButton?: boolean,
-  boundsToMarkers?: boolean,
+  onPhotoButtonClick?: () => void,
+  displaySearchbar?: boolean,
   searchbarOptions?: MapSearchbarProps,
-  className?: string,
+  onSearchResultSelect?: () => void,
   topo?: Quark<Topo>,
-  waypoints?: QuarkIter<Quark<Waypoint>>,
-  onWaypointClick?: (waypoint: Quark<Waypoint>) => void,
-  boulders?: QuarkIter<Quark<Boulder>>,
-  bouldersOrder: Map<UUID, number>,
-  onBoulderClick?: (boulder: Quark<Boulder>) => void,
-  onBoulderContextMenu?: (e: Event, boulder: Quark<Boulder>) => void,
-  displayBoulderFilter?: boolean,
+  topos?: QuarkIter<Quark<LightTopo>>,
+  displayTopoFilter?: boolean,
+  onTopoClick?: (topo: Quark<LightTopo>) => void,
   creatingSector?: GeoCoordinates[],
   onCreatingSectorOriginClick?: () => void,
   onCreatingSectorPolylineClick?: () => void,
   sectors?: QuarkIter<Quark<Sector>>,
+  selectedSector?: SelectQuarkNullable<Sector>,
   onSectorClick?: (sector: Quark<Sector>) => void,
+  boulders?: QuarkIter<Quark<Boulder>>,
+  bouldersOrder: Map<UUID, number>,
+  selectedBoulder?: SelectQuarkNullable<Boulder>,
+  onBoulderClick?: (boulder: Quark<Boulder>) => void,
+  onBoulderContextMenu?: (e: Event, boulder: Quark<Boulder>) => void,
+  displayBoulderFilter?: boolean,
+  waypoints?: QuarkIter<Quark<Waypoint>>,
+  selectedWaypoint?: SelectQuarkNullable<Waypoint>,
+  onWaypointClick?: (waypoint: Quark<Waypoint>) => void,
   parkings?: QuarkIter<Quark<Parking>>,
+  selectedParking?: SelectQuarkNullable<Parking>,
   onParkingClick?: (parking: Quark<Parking>) => void,
-  topos?: QuarkIter<Quark<LightTopo>>,
-  onTopoClick?: (topo: Quark<LightTopo>) => void,
-  displayTopoFilter?: boolean,
-  draggableMarkers?: boolean,
-  onSearchResultSelect?: () => void,
-  onPhotoButtonClick?: () => void,
+  draggableMarkers?: boolean,  
   onMapZoomChange?: (zoom: number | undefined) => void,
 }
 
@@ -241,6 +245,7 @@ export const MapControl: React.FC<MapControlProps> = ({
                 <SectorAreaMarker 
                   key={reactKey(sector)}
                   sector={sector}
+                  selected={props.selectedSector ? props.selectedSector()?.id === sector().id : false}
                   topo={props.topo}
                   boulderOrder={props.bouldersOrder}
                   draggable={draggableMarkers}
@@ -258,6 +263,7 @@ export const MapControl: React.FC<MapControlProps> = ({
                     key={reactKey(waypoint)}
                     draggable={draggableMarkers}
                     waypoint={waypoint}
+                    selected={props.selectedWaypoint ? props.selectedWaypoint()?.id === waypoint().id : false}
                     onClick={props.onWaypointClick}
                   />
                 }
@@ -271,6 +277,7 @@ export const MapControl: React.FC<MapControlProps> = ({
                   draggable={draggableMarkers}
                   boulder={boulder}
                   boulderOrder={props.bouldersOrder}
+                  selected={props.selectedBoulder ? props.selectedBoulder()?.id === boulder().id : false}
                   topo={props.topo}
                   onClick={props.onBoulderClick}
                   onContextMenu={props.onBoulderContextMenu}
@@ -285,6 +292,7 @@ export const MapControl: React.FC<MapControlProps> = ({
                     key={reactKey(parking)}
                     draggable={draggableMarkers}
                     parking={parking}
+                    selected={props.selectedParking ? props.selectedParking()?.id === parking().id : false}
                     onClick={props.onParkingClick}
                   />
                 }

@@ -6,17 +6,19 @@ import { MarkerEventHandlers, Waypoint } from "types";
 interface WaypointMarkerProps {
     waypoint: Quark<Waypoint>,
     draggable?: boolean,
+    selected?: boolean,
     onClick?: (waypoint: Quark<Waypoint>) => void,
 }
 
 export const WaypointMarker: React.FC<WaypointMarkerProps> = watchDependencies(({
     draggable = false,
+    selected = false,
     ...props
 }: WaypointMarkerProps) => {
     const waypoint = props.waypoint();
 
     const icon: google.maps.Icon = {
-        url: '/assets/icons/colored/_help-round.svg',
+        url: selected ? '/assets/icons/colored/_help-round_bold.svg' : '/assets/icons/colored/_help-round.svg',
         scaledSize: markerSize(30)
     };
 

@@ -5,18 +5,20 @@ import { Parking, MarkerEventHandlers } from "types";
 
 interface ParkingMarkerProps {
     parking: Quark<Parking>,
+    selected?: boolean,
     draggable?: boolean,
     onClick?: (parking: Quark<Parking>) => void,
 }
 
 export const ParkingMarker: React.FC<ParkingMarkerProps> = watchDependencies(({
     draggable = false,
+    selected = false,
     ...props
 }: ParkingMarkerProps) => {
     const parking = props.parking();
 
     const icon: google.maps.Icon = {
-        url: '/assets/icons/colored/_parking.svg',
+        url: selected ? '/assets/icons/colored/_parking_bold.svg' : '/assets/icons/colored/_parking.svg',
         scaledSize: markerSize(30)
     };
 
