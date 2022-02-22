@@ -81,6 +81,10 @@ const ChangePasswordPage: NextPage = () => {
                 fullWidth
                 onClick={modifyPassword}
             />
+
+            <Link href="/user/profile">
+                <div className="ktext-base-little text-main cursor-pointer hidden md:flex md:w-full">Retour</div>
+            </Link>
           </div>
 
         </div>

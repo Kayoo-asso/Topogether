@@ -5,7 +5,7 @@ import type { NextPage } from 'next';
 import {
   BoulderBuilderSlideoverMobile,
   MapControl, Show,
-  Header, InfoFormSlideover, ManagementFormSlideover, TrackFormSlideagainstDesktop, ModalValidateTopo, ModalDeleteTopo, GeoCamera, Drawer, LeftbarBuilderDesktop, BoulderBuilderSlideagainstDesktop, ParkingBuilderSlide, AccessFormSlideover, WaypointBuilderSlide, createTrack, Dropdown, BoulderMarkerDropdown,
+  Header, InfoFormSlideover, ManagementFormSlideover, TrackFormSlideagainstDesktop, ModalValidateTopo, ModalDeleteTopo, GeoCamera, Drawer, LeftbarBuilderDesktop, BoulderBuilderSlideagainstDesktop, ParkingBuilderSlide, AccessFormSlideover, WaypointBuilderSlide, createTrack, Dropdown, BoulderMarkerDropdown, ModalRenameSector,
 } from 'components';
 import { useRouter } from 'next/router';
 import { quarkTopo } from 'helpers/fakeData/fakeTopoV2';
@@ -16,7 +16,7 @@ import {
  Boulder, GeoCoordinates, Image, MapToolEnum, Name, Parking, Sector, SectorData, Track, Waypoint,
 } from 'types';
 import {
- Quark, QuarkArray, QuarkIter, useCreateDerivation, useSelectQuark, watchDependencies,
+ Quark, QuarkArray, QuarkIter, useCreateDerivation, useQuarkyCallback, useSelectQuark, watchDependencies,
 } from 'helpers/quarky';
 import { v4 } from 'uuid';
 import { useContextMenu } from 'helpers/hooks/useContextMenu';
@@ -85,12 +85,13 @@ const BuilderMapPage: NextPage = () => {
   const [displayModalValidate, setDisplayModalValidate] = useState(false);
   const [displayModalDelete, setDisplayModalDelete] = useState(false);
 
-  const toggleSectorSelect = useCallback((sectorQuark: Quark<Sector>) => {
+  const [displayModalSectorRename, setDisplayModalSectorRename] = useState(false);
+  const toggleSectorSelect = useQuarkyCallback((sectorQuark: Quark<Sector>) => {
     if (selectedSector()?.id === sectorQuark().id)
       selectedSector.select(undefined);
     else selectedSector.select(sectorQuark);
   }, [selectedSector, selectedBoulder]);
-  const toggleBoulderSelect = useCallback((boulderQuark: Quark<Boulder>) => {
+  const toggleBoulderSelect = useQuarkyCallback((boulderQuark: Quark<Boulder>) => {
     selectedTrack.select(undefined);
     selectedParking.select(undefined);
     selectedWaypoint.select(undefined);
@@ -101,7 +102,7 @@ const BuilderMapPage: NextPage = () => {
       selectedBoulder.select(boulderQuark);
     }
   }, [selectedBoulder]);
-  const toggleTrackSelect = useCallback((trackQuark: Quark<Track>, boulderQuark: Quark<Boulder>) => {
+  const toggleTrackSelect = useQuarkyCallback((trackQuark: Quark<Track>, boulderQuark: Quark<Boulder>) => {
     selectedBoulder.select(undefined);
     selectedParking.select(undefined);
     selectedWaypoint.select(undefined);
@@ -110,13 +111,13 @@ const BuilderMapPage: NextPage = () => {
       selectedTrack.select(trackQuark);
     }
   }, [selectedTrack]);
-  const toggleParkingSelect = useCallback((parkingQuark: Quark<Parking>) => {
+  const toggleParkingSelect = useQuarkyCallback((parkingQuark: Quark<Parking>) => {
     selectedBoulder.select(undefined);
     selectedTrack.select(undefined);
     selectedWaypoint.select(undefined);
     if (selectedParking()?.id === parkingQuark().id) { selectedParking.select(undefined); } else selectedParking.select(parkingQuark);
   }, [selectedParking]);
-  const toggleWaypointSelect = useCallback((waypointQuark: Quark<Waypoint>) => {
+  const toggleWaypointSelect = useQuarkyCallback((waypointQuark: Quark<Waypoint>) => {
     selectedBoulder.select(undefined);
     selectedTrack.select(undefined);
     selectedParking.select(undefined);
@@ -137,7 +138,7 @@ const BuilderMapPage: NextPage = () => {
     setCreatingSector([]);
     setFreePointCreatingSector(undefined);
   }
-  const createSector = useCallback(() => {
+  const createSector = useQuarkyCallback(() => {
     if (creatingSector.length > 2) {
       const boulderInsideIds = boulders.toArray().filter(b => polygonContains(creatingSector, b().location)).map(b => b().id)
       
@@ -156,6 +157,9 @@ const BuilderMapPage: NextPage = () => {
         boulders: boulderInsideIds
       };
       topo.sectors.push(newSector);
+      const newSectorQuark = topo.sectors.quarkAt(-1);
+      selectedSector.select(newSectorQuark);
+      setDisplayModalSectorRename(true);
       emptyCreatingSector();
     }
   }, [topo.sectors, creatingSector]);
@@ -477,6 +481,15 @@ const BuilderMapPage: NextPage = () => {
             onValidate={() => setDisplayDrawer(false)}
           />
           )}
+      </Show>
+
+      <Show when={() => [displayModalSectorRename, selectedSector()] as const}>
+        {([, sSector]) => (
+          <ModalRenameSector 
+            sector={sectors.toArray().find(s => s().id === sSector.id)!}
+            onClose={() => setDisplayModalSectorRename(false)}
+          />
+        )}
       </Show>
 
     </>
