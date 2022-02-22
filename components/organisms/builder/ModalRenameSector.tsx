@@ -22,7 +22,8 @@ export const ModalRenameSector: React.FC<ModalRenameSectorProps> = (props: Modal
 
     return (
         <Modal onClose={props.onClose} >
-            <div className='p-6 pt-10'>
+            <div className='flex flex-col gap-6 p-6 pt-10'>
+                <div>Renommer le secteur</div>
                 <TextInput 
                     ref={inputRef}
                     id='sector-name'
