@@ -4,6 +4,7 @@
 .env
 .cert
 .postgresql
+.vscode
 
 # dependencies
 /node_modules
@@ -40,3 +41,8 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
+
+# Supabase
+**/supabase/.branches
+**/supabase/.temp
+**/supabase/.env

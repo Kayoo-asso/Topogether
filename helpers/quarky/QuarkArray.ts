@@ -15,25 +15,6 @@ interface Node<T> {
     next: Node<T> | null,
 }
 
-function map<T, U>(input: Quark<T>[], fn: (item: T) => U) {
-    const result: Array<Signal<Node<U>>> = new Array(input.length);
-    let next: Signal<Node<U>> | null = null;
-    for (let i = input.length - 1; i >= 0; --i) {
-        next = derive(() => ({
-            value: fn(input[i]()),
-            next: next ? next() : null
-        }));
-        result[i] = next;
-    }
-}
-
-type LinkedList<T> = Quark<Node<T> | null>;
-
-interface DerivedListNode<T> {
-    value: T,
-    next: Signal<T> | null
-}
-
 // NOTE: the return values of all the array methods become invalid if done within a batch (since modifications apply later)
 // Should we not return anything instead? Or wrap them in a Ref object, to ensure the values can be used at the end of the batch
 // TODO: ensure onAdd and onDelete are called properly for every array method

@@ -3,6 +3,14 @@ export type GeoCoordinates = {
   lng: number,
 };
 
+export type Result<Success, Error> = {
+  success: true,
+  data: Success
+} | {
+  success: false,
+  error: Error
+};
+
 export type Name = StringBetween<1, 512>;
 export type Description = StringBetween<1, 5000>;
 

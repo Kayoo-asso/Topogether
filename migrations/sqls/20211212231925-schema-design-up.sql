@@ -1,29 +1,11 @@
 -- Up migration
 -- TODO: remove all gen_random_uuid(), these will be created on the front-end
 
-CREATE TABLE images (
-    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-    -- UNIQUE constraint also provides us with an index on the path
-    path STRING NOT NULL UNIQUE
-);
+-- Type definitions
+CREATE TYPE public.role AS ENUM('USER', 'ADMIN');
+CREATE TYPE public.topostatus AS ENUM('Draft', 'Submitted', 'Validated');
 
-CREATE TYPE Role AS ENUM('USER', 'ADMIN');
-
-CREATE TABLE users (
-    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-    pseudo STRING(255) UNIQUE NOT NULL,
-    email STRING(1000) UNIQUE NOT NULL,
-    role Role DEFAULT 'USER' NOT NULL,
-    created TIMESTAMPTZ DEFAULT NOW() NOT NULL,
-    first_name STRING(500),
-    last_name STRING(500),
-
-    image_id UUID REFERENCES images(id) ON DELETE SET NULL
-);
-
-CREATE TYPE TopoStatus AS ENUM('Draft', 'Submitted', 'Validated');
-
-CREATE TYPE TopoType AS ENUM(
+CREATE TYPE public.topotype AS ENUM(
     'Boulder',
     'Cliff',
     'Deep water',
@@ -31,12 +13,49 @@ CREATE TYPE TopoType AS ENUM(
     'Artificial'
 );
 
-CREATE TYPE Difficulty AS ENUM('Good', 'OK', 'Bad', 'Dangerous');
+CREATE TYPE public.difficulty AS ENUM('Good', 'OK', 'Bad', 'Dangerous');
+
+CREATE TYPE public.orientation AS ENUM('N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW');
+
+CREATE TYPE public.grade AS ENUM(
+    '3', '3+',
+    '4', '4+',
+    '5a', '5a+', '5b', '5b+', '5c', '5c+',
+    '6a', '6a+', '6b', '6b+', '6c', '6c+',
+    '7a', '7a+', '7b', '7b+', '7c', '7c+',
+    '8a', '8a+', '8b', '8b+', '8c', '8c+',
+    '9a', '9a+', '9b', '9b+', '9c', '9c+'
+);
+
+CREATE TYPE public.rating AS ENUM('1', '2', '3', '4', '5');
+
+-- Tables
+
+CREATE TABLE public.images (
+    id UUID PRIMARY KEY,
+    -- UNIQUE constraint also provides us with an index on the path
+    path TEXT NOT NULL UNIQUE
+);
+
+
+CREATE TABLE public.users (
+    id UUID PRIMARY KEY,
+    pseudo STRING(255) UNIQUE NOT NULL,
+    email STRING(1000) UNIQUE NOT NULL,
+    role Role DEFAULT 'USER' NOT NULL,
+    created TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+    first_name STRING(500),
+    last_name STRING(500),
+
+    image_id UUID REFERENCES images ON DELETE SET NULL
+);
+
+
 
 -- CockroachDB does not have triggers, `modified` column has to be maintained manually
 CREATE TABLE topos (
     -- Mandatory
-    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    id UUID PRIMARY KEY,
     name STRING(500) NOT NULL,
     created TIMESTAMPTZ DEFAULT NOW() NOT NULL,
     modified TIMESTAMPTZ NOT NULL,
@@ -63,7 +82,7 @@ CREATE TABLE topos (
 );
 
 CREATE TABLE parkings (
-    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    id UUID PRIMARY KEY,
     spaces INT NOT NULL,
     location GEOGRAPHY(POINT) NOT NULL,
     description STRING(5000),
@@ -73,7 +92,7 @@ CREATE TABLE parkings (
 );
 
 CREATE TABLE sectors (
-    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    id UUID PRIMARY KEY,
     name STRING(255),
     description STRING(5000),
 
@@ -82,7 +101,7 @@ CREATE TABLE sectors (
 );
 
 CREATE TABLE boulders (
-    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    id UUID PRIMARY KEY,
     order_index INT NOT NULL,
     location GEOGRAPHY(POINT) NOT NULL,
     name STRING(255),
@@ -95,53 +114,16 @@ CREATE TABLE boulders (
 
 -- TODO: add orderIndex
 CREATE TABLE boulder_images (
-    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    id UUID PRIMARY KEY,
     image_id UUID NOT NULL REFERENCES images(id) ON DELETE CASCADE,
     boulder_id UUID NOT NULL REFERENCES boulders(id) ON DELETE CASCADE
 );
+    
 
-CREATE TYPE Orientation AS ENUM('N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW');
-
-CREATE TYPE Grade AS ENUM(
-    '3',
-    '3+',
-    '4',
-    '4+',
-    '5a',
-    '5a+',
-    '5b',
-    '5b+',
-    '5c',
-    '5c+',
-    '6a',
-    '6a+',
-    '6b',
-    '6b+',
-    '6c',
-    '6c+',
-    '7a',
-    '7a+',
-    '7b',
-    '7b+',
-    '7c',
-    '7c+',
-    '8a',
-    '8a+',
-    '8b',
-    '8b+',
-    '8c',
-    '8c+',
-    '9a',
-    '9a+',
-    '9b',
-    '9b+',
-    '9c',
-    '9c+'
-);
 
 CREATE TABLE tracks (
     -- Required
-    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    id UUID PRIMARY KEY,
     grade Grade NOT NULL,
     reception Difficulty NOT NULL,
     -- Optional    
@@ -160,7 +142,7 @@ CREATE TABLE tracks (
 );
 
 CREATE TABLE lines (
-    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    id UUID PRIMARY KEY,
     orderIndex INT NOT NULL,
     nb_anchors INT DEFAULT 0 NOT NULL,
     line GEOMETRY(LINESTRING) NOT NULL,
@@ -171,13 +153,12 @@ CREATE TABLE lines (
     track_id UUID NOT NULL REFERENCES tracks(id) ON DELETE CASCADE
 );
 
-CREATE TYPE Rating AS ENUM('1', '2', '3', '4', '5');
 
 CREATE TABLE track_rating (
-    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-    finished BOOL NOT NULL,
+    id UUID PRIMARY KEY,
+    finished BOOLEAN NOT NULL,
     rating Rating NOT NULL,
-    comment String(5000),
+    comment VARCHAR(5000),
     
     track_id UUID NOT NULL REFERENCES tracks(id) ON DELETE CASCADE,
     author_id UUID REFERENCES users(id) ON DELETE SET NULL

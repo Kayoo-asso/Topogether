@@ -113,7 +113,7 @@ export interface Manager {
   name: Name,
   description?: Description
   image?: Image
-  adress?: Name
+  adress?: StringBetween<1, 2000>,
   zip?: number,
   city?: Name,
   contactName: Name,
@@ -170,7 +170,8 @@ export interface TrackData {
 
   lines: Line[],
   ratings: TrackRating[],
-  creatorId: UUID,
+  // optional, if the creator's profile was deleted
+  creatorId?: UUID,
 }
 
 export interface Line {
