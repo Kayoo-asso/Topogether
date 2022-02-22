@@ -53,10 +53,14 @@ export function useSelectQuark<T>(initial?: Quark<T>): SelectQuark<T> | SelectQu
   return useMemo(() => selectQuark<T>(initial as any), []);
 }
 
-export function useQuarkyCallback<T>(callback: (input: T) => void, deps: React.DependencyList): (input: T) => void {
-  return useCallback((input: T) => {
-    batch(() => callback(input))
-  }, deps);
+export function useQuarkyCallback<T extends (...args: any[]) => any>(
+  callback: T,
+  deps: React.DependencyList
+): T {
+  // Have to force TypeScript's hand here
+  return useCallback(
+    (...args: any[]) => batch(() => callback(...args))
+  , deps) as T;
 }
 
 const quarkKeys: WeakMap<Signal<any>, number> = new WeakMap();
