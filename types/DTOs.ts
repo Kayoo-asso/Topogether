@@ -1,7 +1,7 @@
 import { NamedExoticComponent } from "react";
 import { Boulder, BoulderData, Line, Manager, Parking, SectorData, TopoData, Track, TrackData, Waypoint } from "./Topo";
 import { TrackRating, User } from "./User";
-import { Name, UUID } from "./Utils";
+import { Name, StringBetween, UUID } from "./Utils";
 
 export type TopoDTO = Omit<TopoData, 'sectors' | 'boulders' | 'waypoints' | 'parkings' | 'access' | 'image'> & {
     imageId?: UUID
@@ -40,3 +40,5 @@ export type ManagerDTO = Omit<Manager, 'image'> & {
     topoId: UUID,
     imageId?: UUID
 }
+
+

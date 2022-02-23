@@ -21,8 +21,7 @@ const ProfilePage: NextPage = () => {
   const [firstName, setFirstName] = useState<string | undefined>(session.firstName);
   const [lastName, setLastName] = useState<string | undefined>(session.lastName);
   const [birthDate, setBirthDate] = useState<Date | undefined>(session.birthDate);
-  const [gender, setGender] = useState<string | undefined>(session.gender);
-  const [citizenship, setCitizenship] = useState<string | undefined>(session.citizenship);
+  const [country, setCountry] = useState<string | undefined>(session.country);
   const [city, setCity] = useState<string | undefined>(session.city);
   const [phone, setPhone] = useState<string | undefined>(session.phone);
 
@@ -59,7 +58,7 @@ const ProfilePage: NextPage = () => {
         <div className='flex flex-row justify-center rounded-lg px-6 pb-10'>
           <div className='h-[100px] w-[100px] relative'>
             <NextImage
-                src={session.image?.url || staticUrl.defaultProfilePicture}
+                src={session.imageUrl || staticUrl.defaultProfilePicture}
                 priority
                 alt="Image de profile"
                 layout="fill"
@@ -129,21 +128,14 @@ const ProfilePage: NextPage = () => {
                 value={birthDate}
                 onChange={(e) => setBirthDate(e.target.value)}
             />
-            <Select 
-                id='gender'
-                label='Genre'
-                value={gender}
-                names={GenderName}
-                onChange={(e) => setGender(e.target.value)}
-            />
           </div>
 
           <div className='flex flex-row gap-2'>
             <TextInput 
                 id='citizenship'
                 label='Pays'
-                value={citizenship}
-                onChange={(e) => setCitizenship(e.target.value)}
+                value={country}
+                onChange={(e) => setCountry(e.target.value)}
             />
             <TextInput 
                 id='city'
