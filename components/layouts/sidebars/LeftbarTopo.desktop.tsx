@@ -1,8 +1,9 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import { BoulderItemLeftbar, createTrack, Icon } from 'components';
-import { splitArray, UserContext } from 'helpers';
+import { splitArray } from 'helpers';
 import { Quark, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
 import { Boulder, Topo, Track, UUID } from 'types';
+import { api } from 'helpers/services/ApiService';
 
 interface LeftbarTopoDesktopProps {
     topoQuark: Quark<Topo>,
@@ -13,7 +14,8 @@ interface LeftbarTopoDesktopProps {
 }
 
 export const LeftbarTopoDesktop: React.FC<LeftbarTopoDesktopProps> = watchDependencies((props: LeftbarTopoDesktopProps) => {
-    const { session } = useContext(UserContext);
+    const session = api.user();
+
     const selectedBoulder = props.selectedBoulder();
     const topo = props.topoQuark();
     const sectors = topo.sectors;

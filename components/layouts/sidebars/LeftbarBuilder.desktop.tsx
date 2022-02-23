@@ -1,9 +1,10 @@
-import React, { useCallback, useContext, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import { BoulderItemLeftbar, Button, createTrack, Icon } from 'components';
-import { arrayMove, splitArray, UserContext } from 'helpers';
+import { arrayMove, splitArray } from 'helpers';
 import { Quark, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
 import { Boulder, Topo, Track, UUID } from 'types';
+import { api } from 'helpers/services/ApiService';
 
 interface LeftbarBuilderDesktopProps {
     topoQuark: Quark<Topo>,
@@ -15,7 +16,8 @@ interface LeftbarBuilderDesktopProps {
 }
 
 export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = watchDependencies((props: LeftbarBuilderDesktopProps) => {
-    const { session } = useContext(UserContext);
+    const session = api.user();
+
     const selectedBoulder = props.selectedBoulder();
     const topo = props.topoQuark();
     const sectors = topo.sectors;

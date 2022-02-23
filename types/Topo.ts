@@ -70,7 +70,7 @@ export interface TopoData {
   managers: Manager[],
 }
 
-export type LightTopo = Omit<TopoData, 'sectors' | 'boulders' | 'waypoints' | 'parkings' | 'accesses' | 'managers'> & {
+export type LightTopo = Omit<TopoData, 'sectors' | 'boulders' | 'lonelyBoulders' | 'waypoints' | 'parkings' | 'accesses' | 'managers'> & {
   firstParkingLocation?: GeoCoordinates,
   nbSectors: number,
   nbTracks: number,

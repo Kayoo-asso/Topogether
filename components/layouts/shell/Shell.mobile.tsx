@@ -1,13 +1,13 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import React, { useContext, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { Icon } from 'components';
-import { UserContext } from 'helpers';
+import { api } from 'helpers/services/ApiService';
 
 export const ShellMobile: React.FC = () => {
   const router = useRouter();
-  const { session } = useContext(UserContext);
+  const session = api.user();
   const initialActiveTab = useMemo(() => {
     if (router.pathname.includes('user')) {
       return 0;

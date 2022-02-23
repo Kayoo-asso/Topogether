@@ -1,50 +1,63 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
+import { useRouter } from 'next/router'
 import type { NextPage } from 'next';
-import { staticUrl, UserContext, validateEmail } from 'helpers';
+import { staticUrl } from 'helpers';
 import NextImage from 'next/image';
-import { Button, HeaderDesktop, ImageInput, LeftbarDesktop, ModalDelete, Select, Tabs, TextInput } from 'components';
-import { GenderName } from 'types/EnumNames';
+import { Button, HeaderDesktop, ImageInput, LeftbarDesktop, ModalDelete, Tabs, TextInput } from 'components';
 import Link from 'next/link';
 import { watchDependencies } from 'helpers/quarky';
+import { isEmail, Name, StringBetween } from 'types';
+import { api, AuthResult } from 'helpers/services/ApiService';
 
 const ProfilePage: NextPage = watchDependencies(() => {
-  const { session, setSession } = useContext(UserContext);
-  if (!session || !setSession) {
-    return null;
-  }
+  const router = useRouter();
+  const session = api.user();
+  if (!session) router.push('/');
 
   const [displayDeleteAccountModal, setDisplayDeleteAccountModal] = useState(false);
   
-  const [email, setEmail] = useState<string>(session.email);
+  const [email, setEmail] = useState<string>(session!.email);
   const [emailError, setEmailError] = useState<string>();
   
-  const [pseudo, setPseudo] = useState<string>(session.pseudo);
-  const [firstName, setFirstName] = useState<string | undefined>(session.firstName);
-  const [lastName, setLastName] = useState<string | undefined>(session.lastName);
-  const [birthDate, setBirthDate] = useState<Date | undefined>(session.birthDate);
-  const [gender, setGender] = useState<string | undefined>(session.gender);
-  const [citizenship, setCitizenship] = useState<string | undefined>(session.citizenship);
-  const [city, setCity] = useState<string | undefined>(session.city);
-  const [phone, setPhone] = useState<string | undefined>(session.phone);
+  const [pseudo, setPseudo] = useState<string>(session!.pseudo);
+  const [firstName, setFirstName] = useState<string | undefined>(session!.firstName);
+  const [lastName, setLastName] = useState<string | undefined>(session!.lastName);
+  const [imageUrl, setImageUrl] = useState<string | undefined>(session!.imageUrl);
+  const [birthDate, setBirthDate] = useState<Date | undefined>(session!.birthDate);
+  const [country, setCountry] = useState<string | undefined>(session!.country);
+  const [city, setCity] = useState<string | undefined>(session!.city);
+  const [phone, setPhone] = useState<string | undefined>(session!.phone);
 
   const [pseudoError, setPseudoError] = useState<string>();
   const [phoneError, setPhoneError] = useState<string>();
 
-  const checkErrors = () => {
+  const [successMessage, setSuccessMessage] = useState<string>();
+  const [errorMessage, setErrorMessage] = useState<string>();
+
+  const modifyProfil = async () => {
     let hasError = false;
     if (!pseudo) { setPseudoError("Pseudo invalide"); hasError = true; }
-    if (phone && !phone.match(/\d/g)) { setPhoneError("Numéro de téléphone invalide"); hasError = true; }
+    if (phone && (!phone.match(/\d/g) || phone.length < 6 || phone.length > 30)) { setPhoneError("Numéro de téléphone invalide"); hasError = true; }
 
-    return !hasError;
-  }
-  const modifyProfil = () => {
-    if (checkErrors()) {
-      console.log("modify profil");
+    if (!hasError) {
+      const res = await api.updateUserInfo({
+        ...session!,
+        pseudo: pseudo as Name,
+        firstName: firstName as Name,
+        lastName: lastName as Name,
+        imageUrl,
+        birthDate,
+        country: country as Name,
+        city: city as Name,
+        phone: phone as StringBetween<1, 30>
+      })
+      if (res === AuthResult.Success) setSuccessMessage('Profil modifié');
+      else setErrorMessage("Une erreur est survenue. Merci de réssayer.");
     }
   }
 
   const changeMail = () => {
-    if (!email || (email && !validateEmail(email))) setEmailError("Email invalide");
+    if (!email || (email && !isEmail(email))) setEmailError("Email invalide");
     else {
       console.log("change mail");
     }
@@ -70,7 +83,7 @@ const ProfilePage: NextPage = watchDependencies(() => {
           <div className='flex flex-row justify-center md:justify-start rounded-lg px-6 pb-10'>
             <div className='h-[100px] w-[100px] relative'>
               <NextImage
-                  src={session.image?.url || staticUrl.defaultProfilePicture}
+                  src={imageUrl || staticUrl.defaultProfilePicture}
                   priority
                   alt="Image de profile"
                   layout="fill"
@@ -78,24 +91,26 @@ const ProfilePage: NextPage = watchDependencies(() => {
               />
               <div className='hidden'>
                 <ImageInput 
-                  onChange={}
+                  onChange={(images) => {
+                    // TODO
+                  }}
                 />
               </div>
             </div>
             
             <div className='hidden md:flex flex-col ml-6 w-1/2'>
-              <div className='ktext-subtitle'>{session.pseudo}</div>
-              {session.role === 'ADMIN' && <div className='text-main ktext-label mb-6'>Super-administrateur</div>}
+              <div className='ktext-subtitle'>{session!.pseudo}</div>
+              {session!.role === 'ADMIN' && <div className='text-main ktext-label mb-6'>Super-administrateur</div>}
               <TextInput 
                   id='pseudo'
                   label='Pseudo'
                   error={pseudoError}
-                  value={session.pseudo}
+                  value={session!.pseudo}
                   onChange={(e) => setPseudo(e.target.value)}
               />
             </div>
 
-            {session.role === 'ADMIN' &&
+            {session!.role === 'ADMIN' &&
               <div className='absolute right-[5%]'>
                 <Button
                   content='Admin'
@@ -133,7 +148,7 @@ const ProfilePage: NextPage = watchDependencies(() => {
                   id='pseudo'
                   label='Pseudo'
                   error={pseudoError}
-                  value={session.pseudo}
+                  value={pseudo}
                   onChange={(e) => setPseudo(e.target.value)}
               />
             </div>
@@ -180,21 +195,14 @@ const ProfilePage: NextPage = watchDependencies(() => {
                   value={birthDate}
                   onChange={(e) => setBirthDate(e.target.value)}
               />
-              <Select 
-                  id='gender'
-                  label='Genre'
-                  value={gender}
-                  names={GenderName}
-                  onChange={(e) => setGender(e.target.value)}
-              />
             </div>
 
             <div className='flex flex-row gap-2'>
               <TextInput 
                   id='citizenship'
                   label='Pays'
-                  value={citizenship}
-                  onChange={(e) => setCitizenship(e.target.value)}
+                  value={country}
+                  onChange={(e) => setCountry(e.target.value)}
               />
               <TextInput 
                   id='city'
@@ -209,6 +217,8 @@ const ProfilePage: NextPage = watchDependencies(() => {
                 fullWidth
                 onClick={modifyProfil}
             />
+            <div className='ktext-error'>{errorMessage}</div>
+            <div className='text-main'>{successMessage}</div>
 
             <div className='flex flex-row justify-between md:pt-10'>
               <Link href="/user/changePassword">

@@ -1,23 +1,27 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import type { NextPage } from 'next';
-import { LightTopo, Name, Sector, StringBetween, Topo, TopoType } from 'types';
-import { fontainebleauLocation, UserContext } from 'helpers';
+import { LightTopo, StringBetween, TopoType } from 'types';
+import { fontainebleauLocation } from 'helpers';
 import {
- Button, HeaderDesktop, MapControl, Select, TextInput, TopoMarker,
+ Button, HeaderDesktop, MapControl, Select, TextInput,
 } from 'components';
 import Link from 'next/link';
 import { v4 } from 'uuid';
-import { QuarkArray, QuarkIter, useCreateQuark, watchDependencies } from 'helpers/quarky';
+import { QuarkIter, useCreateQuark, watchDependencies } from 'helpers/quarky';
 import { TopoTypeName } from 'types/EnumNames';
+import { api } from 'helpers/services/ApiService';
+import { useRouter } from 'next/router';
 
 const NewPage: NextPage = () => {
-  const { session } = useContext(UserContext);
+  const session = api.user();
+  const router = useRouter();
+
   const [step, setStep] = useState(0);
 
   const topoData = {
     id: v4(),
     creatorId: session!.id,
-    creatorPseudo: 'Flavien' as Name,
+    creatorPseudo: session!.pseudo,
     name: '' as StringBetween<1, 255>,
     status: 0,
     type: undefined,
@@ -26,6 +30,11 @@ const NewPage: NextPage = () => {
     nbSectors: 0,
     nbBoulders: 0,
     nbTracks: 0,
+    grades: {
+      3: 0, 4: 0, 5:0, 6:0, 7:0, 8:0, 9:0, 
+      None: 0,
+      Total: 0,
+    }
   };
 
   const topoQuark = useCreateQuark<LightTopo>(topoData);
@@ -77,6 +86,7 @@ const NewPage: NextPage = () => {
     });
   });
 
+  if (!session) router.push('/');
   return (
     <>
       <HeaderDesktop

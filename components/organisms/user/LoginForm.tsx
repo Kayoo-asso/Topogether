@@ -3,8 +3,13 @@ import { Button, Checkbox, TextInput } from 'components';
 import Link from 'next/link';
 import NextImage from 'next/image';
 import { staticUrl } from 'helpers';
+import { api, AuthResult } from 'helpers/services/ApiService';
+import { Email } from 'types';
+import { useRouter } from 'next/router';
 
 export const LoginForm: React.FC = (props) => {
+    const router = useRouter();
+
     const [email, setEmail] = useState<string>();
     const [password, setPassword] = useState<string>();
     const [rememberChecked, setRememberChecked] = useState(false);
@@ -12,16 +17,18 @@ export const LoginForm: React.FC = (props) => {
     const [emailError, setEmailError] = useState<string>();
     const [passwordError, setPasswordError] = useState<string>();
 
-    const checkErrors = () => {
-        if (!email) setEmailError("Email invalide");
-        if (!password) setPasswordError("Password invalide");
+    const [errorMessage, setErrorMessage] = useState<string>();
 
-        if (email && password) return true;
-        else return false;
-    }
-    const login = () => {
-        if (checkErrors()) {
-            console.log("login");
+    const login = async () => {
+        let hasError = false;
+        if (!email) { setEmailError("Email invalide"); hasError = true };
+        if (!password) { setPasswordError("Password invalide"); hasError = true };
+
+        if (!hasError) {
+            const res = await api.signIn(email as Email, password!);
+            if (res === AuthResult.ConfirmationRequired) setErrorMessage("Merci de confirmer votre compte en cliquant sur le lien dans le mail qui vous a été envoyé.");
+            else if (res === AuthResult.Success) router.push("/");
+            else setErrorMessage("Authentification incorrecte");
         }
     }
 
@@ -69,6 +76,7 @@ export const LoginForm: React.FC = (props) => {
                         fullWidth
                         onClick={login}
                     />
+                    <div className='ktext-error'>{errorMessage}</div>
                 </div>
             </div>
 

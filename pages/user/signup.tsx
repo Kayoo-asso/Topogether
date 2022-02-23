@@ -4,8 +4,14 @@ import { Button, Header, TextInput } from 'components';
 import Link from 'next/link';
 import NextImage from 'next/image';
 import { staticUrl } from 'helpers';
+import { api, AuthResult } from 'helpers/services/ApiService';
+import { Email, isEmail, isName, Name } from 'types';
+import { useRouter } from 'next/router';
+
 
 const SignupPage: NextPage = () => {
+  const router = useRouter();
+
   const [pseudo, setPseudo] = useState<string>();
   const [email, setEmail] = useState<string>();
   const [password, setPassword] = useState<string>();
@@ -14,18 +20,21 @@ const SignupPage: NextPage = () => {
   const [emailError, setEmailError] = useState<string>();
   const [passwordError, setPasswordError] = useState<string>();
 
-  const checkErrors = () => {
-      if (!pseudo) setPseudoError("Pseudo invalide");
-      if (!email) setEmailError("Email invalide");
-      if (!password) setPasswordError("Password invalide");
+  const [errorMessage, setErrorMessage] = useState<string>();
 
-      if (pseudo && email && password) return true;
-      else return false;
-  }
-  const signup = () => {
-      if (checkErrors()) {
-          console.log("signup");
-      }
+  const signup = async () => {
+    let hasError = false;
+    if (!pseudo || !isName(pseudo)) { setPseudoError("Pseudo invalide"); hasError = true; }
+    if (!email || !isEmail(email)) { setEmailError("Email invalide"); hasError = true; }
+    if (!password) { setPasswordError("Mot de passe invalide"); hasError = true; }
+    else if (password.length < 8) { setPasswordError("Le mot de passe doit faire plus de 8 caractères"); hasError = true; }
+
+    if (!hasError) {
+      const res = await api.signup(email as Email, password!, pseudo as Name);
+      if (res === AuthResult.ConfirmationRequired) setErrorMessage("Pour valider votre compte, merci de cliquer sur le lien qui vous a été envoyé par email");
+      else if (res === AuthResult.Success) router.push("/");
+      else setErrorMessage("Une erreur est survenue. Merci de réessayer.")
+    }
   }
 
   return (
@@ -80,6 +89,7 @@ const SignupPage: NextPage = () => {
                 fullWidth
                 onClick={signup}
             />
+            <div className='ktext-error'>{errorMessage}</div>
 
             <Link href="/user/login">
                 <div className="ktext-base-little text-main cursor-pointer hidden md:block">Retour</div>

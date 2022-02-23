@@ -1,7 +1,8 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { Button, Icon, ProfilePicture } from 'components';
 import Link from 'next/link';
-import { staticUrl, UserContext } from 'helpers';
+import { staticUrl } from 'helpers';
+import { api } from 'helpers/services/ApiService';
 
 interface LeftbarDesktopProps {
     currentMenuItem?: 'BUILDER' | 'MAP' | 'USER' | 'ADMIN',
@@ -10,7 +11,7 @@ interface LeftbarDesktopProps {
 export const LeftbarDesktop: React.FC<LeftbarDesktopProps> = ({
     currentMenuItem = 'MAP',
 }: LeftbarDesktopProps) => {
-    const { session } = useContext(UserContext);
+  const session = api.user();
 
     if (!session) return null;
     return (

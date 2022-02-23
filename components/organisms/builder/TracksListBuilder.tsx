@@ -4,7 +4,8 @@ import { Boulder, gradeToLightGrade, Line, Name, Track, TrackRating, UUID } from
 import { Quark, QuarkArray, SelectQuarkNullable, useSelectQuark, watchDependencies } from 'helpers/quarky';
 import { TrackForm } from '../form/TrackForm';
 import { v4 } from 'uuid';
-import { DeviceContext, UserContext } from 'helpers';
+import { DeviceContext } from 'helpers';
+import { api } from 'helpers/services/ApiService';
 
 interface TracksListBuilderProps {
   boulder: Quark<Boulder>,
@@ -42,14 +43,16 @@ export const createTrack = (boulder: Boulder, creatorId: UUID) => {
 }
 
 export const TracksListBuilder: React.FC<TracksListBuilderProps> = watchDependencies((props: TracksListBuilderProps) => {
+  const session = api.user();
+
   const trackToDelete = useSelectQuark<Track>();;
-  const { session } = useContext(UserContext);
   const device = useContext(DeviceContext);
 
   const boulder = props.boulder();
   const tracks = boulder.tracks.quarks();
   const selectedTrack = props.selectedTrack();
 
+  if (!session) return null;
   return (
     <>
       <div className="w-full border-t border-grey-light">
