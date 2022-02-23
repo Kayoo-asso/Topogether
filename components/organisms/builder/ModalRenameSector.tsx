@@ -30,16 +30,18 @@ export const ModalRenameSector: React.FC<ModalRenameSectorProps> = (props: Modal
                     error={sectorNameError}
                     value={sector.name}
                     onChange={(e) => {
-                        if (e.target.value.length > 2) props.sector.set(s => ({
+                        props.sector.set(s => ({
                             ...s,
                             name: e.target.value as Name
                         }))
-                        else setSectorNameError("Le nom doit avoir plus de deux caractères")
+                        if (e.target.value.length > 2) setSectorNameError(undefined);
+                        else setSectorNameError("Le nom doit avoir plus de 2 caractères")
                     }}
                 />
                 <Button 
                     content='valider'
                     fullWidth
+                    activated={sector.name.length > 2}
                     onClick={() => props.onClose()}
                 />
             </div>

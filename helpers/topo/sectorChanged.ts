@@ -56,7 +56,6 @@ export const sectorChanged = (topoQuark: Quark<Topo>, sectorId: UUID, boulderOrd
         const newLonelyBoulders = [...topo.lonelyBoulders];
         // check for each removed boulder if it should be assigned to a new sector
         for (const removed of toRemove) {
-            console.log(removed.name);
             // remove from this sector
             existing.delete(removed.id)
             // try to add to another sector

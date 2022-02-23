@@ -10,7 +10,7 @@ import {
 import { useRouter } from 'next/router';
 import { quarkTopo } from 'helpers/fakeData/fakeTopoV2';
 import {
- blobToImage, defaultImage, DeviceContext, sortBoulders, polygonContains, boulderChanged,
+ blobToImage, defaultImage, DeviceContext, sortBoulders, polygonContains, boulderChanged, sectorChanged,
 } from 'helpers';
 import {
  Boulder, GeoCoordinates, Image, MapToolEnum, Name, Parking, Sector, SectorData, Track, Waypoint,
@@ -139,31 +139,23 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
     setCreatingSector([]);
     setFreePointCreatingSector(undefined);
   }
-  const createSector = useQuarkyCallback(() => {
+  const createSector = useCallback(() => {
     if (creatingSector.length > 2) {
-      const boulderInsideIds = boulders.toArray().filter(b => polygonContains(creatingSector, b().location)).map(b => b().id)
-      
-      // Get away all contained boulders from other sectors
-      topo.sectors.quarks().toArray().forEach(sector => sector.set(s => ({
-          ...s,
-          boulders: [...s.boulders].filter(id => !boulderInsideIds.includes(id))
-        }))
-      )
-      
-      // Create new sector with all contained boulders inside
       const newSector: SectorData = {
         id: v4(),
         name: 'Nouveau secteur' as Name,
         path: [...creatingSector],
-        boulders: boulderInsideIds
+        boulders: []
       };
       topo.sectors.push(newSector);
+      sectorChanged(quarkTopo, newSector.id, boulderOrder());
+
       const newSectorQuark = topo.sectors.quarkAt(-1);
       selectedSector.select(newSectorQuark);
       setDisplayModalSectorRename(true);
       emptyCreatingSector();
     }
-  }, [topo.sectors, creatingSector]);
+  }, [topo, topo.sectors, creatingSector]);
   const createBoulder = useCallback((location: GeoCoordinates, image?: Image, selectBoulder = false) => {
     const orderIndex = topo.boulders.length;
     const newBoulder: Boulder = {
