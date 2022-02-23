@@ -1,12 +1,12 @@
 import { api, AuthResult } from 'helpers/services/ApiService';
-import { Name, UserUpdate, User, UUID, Email } from 'types';
+import { Name, User, UUID, Email } from 'types';
 import { v4 as uuid } from 'uuid';
 import { createClient } from '@supabase/supabase-js';
 
 // === CLEANUP === 
 const masterClient = createClient(
     process.env.NEXT_PUBLIC_API_URL!,
-    process.env.NEXT_PUBLIC_API_MASTER_KEY_LOCAL!
+    process.env.API_MASTER_KEY_LOCAL!
 );
 
 let createdUsers: string[] = [];
@@ -53,8 +53,9 @@ test("Signing up and creating a profile", async () => {
     cleanupUser(user!.id);
 
     expect(await api.updateUserInfo({
-        city: "Lyon",
-    } as any)).toBe(AuthResult.Success);
+        ...user!,
+        city: "Lyon" as Name,
+    })).toBe(AuthResult.Success);
 
     expect(api.user()?.city).toBe("Lyon");
 });

@@ -66,11 +66,12 @@ security definer set search_path = public, extensions, auth, pg_temp
 as $$
 begin
     insert into public.users(id, user_name, email)
-    values (new.id, new.raw_user_meta_data::jsonb->>'user_name', new.email);
+    values (new.id, (new.raw_user_meta_data::jsonb->>'user_name')::varchar(500), new.email);
+    -- not very efficient (we just inserted into auth.users)
+    -- but we're never signing up a lot of users at once, so this is fine
     update auth.users
     set raw_user_meta_data = '{}'::jsonb
     where id = new.id;
-    -- values (new.id, new.raw_user_meta_data->>'user_name', new.email);
     return null;
 end;
 $$;
