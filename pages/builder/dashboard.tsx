@@ -90,7 +90,7 @@ const DashboardPage: NextPage = () => {
   return (
     <>
       <HeaderDesktop
-        backLink="#"
+        backLink="/"
         title="Mes topos"
       />
 

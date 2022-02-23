@@ -1,5 +1,5 @@
-import React, { useCallback, useContext } from 'react';
-import { DeviceContext, fontainebleauLocation } from 'helpers';
+import React, { useCallback } from 'react';
+import { fontainebleauLocation } from 'helpers';
 import type { NextPage } from 'next';
 import {
  HeaderDesktop, LeftbarDesktop, MapControl, Show, TopoPreview,
@@ -9,8 +9,6 @@ import { Quark, QuarkIter, useSelectQuark } from 'helpers/quarky';
 import { quarkLightTopo } from 'helpers/fakeData/fakeLightTopoV2';
 
 const WorldMapPage: NextPage = () => {
-  const device = useContext(DeviceContext);
-
   const topos: QuarkIter<Quark<LightTopo>> = new QuarkIter([quarkLightTopo]);
 
   const selectedTopo = useSelectQuark<LightTopo>();

@@ -29,7 +29,7 @@ interface MapControlProps extends MapProps {
   selectedSector?: SelectQuarkNullable<Sector>,
   onSectorClick?: (e: PolyMouseEvent, sector: Quark<Sector>) => void,
   boulders?: QuarkIter<Quark<Boulder>>,
-  bouldersOrder: Map<UUID, number>,
+  bouldersOrder?: Map<UUID, number>,
   selectedBoulder?: SelectQuarkNullable<Boulder>,
   onBoulderClick?: (boulder: Quark<Boulder>) => void,
   onBoulderContextMenu?: (e: Event, boulder: Quark<Boulder>) => void,
@@ -270,14 +270,14 @@ export const MapControl: React.FC<MapControlProps> = ({
                 }
             </For>
           </Show>
-          <Show when={() => props.boulders}>
+          <Show when={() => [props.boulders, props.bouldersOrder] as const}>
             <For each={() => displayBoulderFilter ? props.boulders!.filter(b => boulderFilter(b())).toArray() : props.boulders!.toArray()}>
               {(boulder) => 
                 <BoulderMarker
                   key={reactKey(boulder)}
                   draggable={draggableMarkers}
                   boulder={boulder}
-                  boulderOrder={props.bouldersOrder}
+                  boulderOrder={props.bouldersOrder!}
                   selected={props.selectedBoulder ? props.selectedBoulder()?.id === boulder().id : false}
                   topo={props.topo}
                   onClick={props.onBoulderClick}

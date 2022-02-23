@@ -15,3 +15,5 @@ export * from './blobToImage';
 
 export * from './splitArray';
 export * from './arrayMove';
+
+export * from './validateEmail';
