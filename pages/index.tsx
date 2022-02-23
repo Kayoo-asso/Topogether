@@ -34,10 +34,10 @@ const WorldMapPage: NextPage = () => {
           initialZoom={5}
           center={fontainebleauLocation}
           displayPhotoButton={false}
-          boundsToMarkers
           topos={topos}
           displayTopoFilter
           onTopoClick={toggleTopoSelect}
+          boundsTo={topos.toArray().length > 2 ? topos.toArray().map(t => t().location) : undefined}
         />
 
         <Show when={selectedTopo.quark}>

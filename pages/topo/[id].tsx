@@ -160,7 +160,6 @@ const Topo: NextPage = () => {
           initialZoom={16}
           center={boulders.toArray()[0]().location}
           displayPhotoButton={false}
-          boundsToMarkers
           searchbarOptions={{
               findTopos: false,
               findPlaces: false,
@@ -180,6 +179,7 @@ const Topo: NextPage = () => {
           parkings={parkings}
           selectedParking={selectedParking}
           onParkingClick={toggleParkingSelect}
+          boundsTo={boulders.toArray().map(b => b().location).concat(parkings.toArray().map(p => p().location))}
         />       
 
         <Show when={() => [device !== 'MOBILE', selectedTrack.quark()] as const}>
