@@ -12,7 +12,7 @@ import { TopoTypeName } from 'types/EnumNames';
 import { api } from 'helpers/services/ApiService';
 import { useRouter } from 'next/router';
 
-const NewPage: NextPage = () => {
+const NewPage: NextPage = watchDependencies(() => {
   const session = api.user();
   const router = useRouter();
 
@@ -241,6 +241,6 @@ const NewPage: NextPage = () => {
       </div>
     </>
   );
-};
+});
 
-export default watchDependencies(NewPage);
+export default NewPage;

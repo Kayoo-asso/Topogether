@@ -10,7 +10,7 @@ import {
 import { useRouter } from 'next/router';
 import { quarkTopo } from 'helpers/fakeData/fakeTopoV2';
 import {
- blobToImage, defaultImage, DeviceContext, sortBoulders, polygonContains, UserContext, boulderChanged,
+ blobToImage, defaultImage, DeviceContext, sortBoulders, polygonContains, boulderChanged,
 } from 'helpers';
 import {
  Boulder, GeoCoordinates, Image, MapToolEnum, Name, Parking, Sector, SectorData, Track, Waypoint,
@@ -20,9 +20,10 @@ import {
 } from 'helpers/quarky';
 import { v4 } from 'uuid';
 import { useContextMenu } from 'helpers/hooks/useContextMenu';
+import { api } from 'helpers/services/ApiService';
 
-const BuilderMapPage: NextPage = () => {
-  const { session } = useContext(UserContext);
+const BuilderMapPage: NextPage = watchDependencies(() => {
+  const session = api.user();
   const router = useRouter();
   const { id } = router.query;
   const device = useContext(DeviceContext);
@@ -494,6 +495,6 @@ const BuilderMapPage: NextPage = () => {
 
     </>
   );
-};
+});
 
-export default watchDependencies(BuilderMapPage);
+export default BuilderMapPage;

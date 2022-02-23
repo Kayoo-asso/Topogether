@@ -4,8 +4,9 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { Icon } from 'components';
 import { api } from 'helpers/services/ApiService';
+import { watchDependencies } from 'helpers/quarky';
 
-export const ShellMobile: React.FC = () => {
+export const ShellMobile: React.FC = watchDependencies(() => {
   const router = useRouter();
   const session = api.user();
   const initialActiveTab = useMemo(() => {
@@ -93,4 +94,4 @@ export const ShellMobile: React.FC = () => {
 
     </>
   );
-};
+});
