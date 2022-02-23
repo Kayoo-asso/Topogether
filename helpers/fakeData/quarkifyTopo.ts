@@ -40,6 +40,7 @@ function onBoulderDelete(boulder: Boulder, topoQuark: Quark<Topo>) {
         if (idx >= 0) {
             sector.boulders.splice(idx, 1);
             sectorQuark.set({ ...sector }); // force update
+            break;
         }
     }
 }
