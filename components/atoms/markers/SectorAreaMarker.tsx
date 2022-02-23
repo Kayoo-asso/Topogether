@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef } from "react";
 import { sectorChanged, usePolygon } from "helpers";
-import { Quark, useQuarkyCallback, watchDependencies } from "helpers/quarky";
+import { Quark, watchDependencies } from "helpers/quarky";
 import { GeoCoordinates, PolygonEventHandlers, PolyMouseEvent, Sector, Topo, UUID } from "types";
 
 interface SectorAreaMarkerProps {
@@ -11,7 +11,8 @@ interface SectorAreaMarkerProps {
     draggable?: boolean,
     editable?: boolean,
     clickable?: boolean
-    onClick?: (e: PolyMouseEvent, sector: Quark<Sector>) => void,
+    onClick?: (e: PolyMouseEvent) => void,
+    onDragStart?: (e: PolyMouseEvent) => void,
     onMouseMoveOnSector?: (e: any) => void,
 }
 
@@ -53,9 +54,9 @@ export const SectorAreaMarker: React.FC<SectorAreaMarkerProps> = watchDependenci
     }, [props.sector, dragging]);
 
     const handlers: PolygonEventHandlers = {
-        onDragStart: useCallback(() => dragging.current = true, [updatePath]),
+        onDragStart: useCallback((e) => { dragging.current = true; if (props.onDragStart) props.onDragStart(e) }, [updatePath]),
         onClick: useCallback((e: PolyMouseEvent) => {
-            props.onClick && props.onClick(e, props.sector)
+            props.onClick && props.onClick(e)
         }, [props.sector, props.onClick]),
         onMouseMove: useCallback((e) => props.onMouseMoveOnSector && props.onMouseMoveOnSector(e), [props.sector, props.onMouseMoveOnSector]),
         onDragEnd: useCallback(() => { 

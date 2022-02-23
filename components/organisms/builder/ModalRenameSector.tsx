@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Button, Modal, TextInput } from 'components';
 import { Quark } from 'helpers/quarky';
 import { Name, Sector } from 'types';
@@ -19,6 +19,16 @@ export const ModalRenameSector: React.FC<ModalRenameSectorProps> = (props: Modal
             inputRef.current.focus();
         }
     }, [inputRef.current]);
+
+    const handleUserKeyPress = useCallback((e) => {
+        if (e.key === 'Enter') props.onClose();
+    }, []);
+    useEffect(() => {
+        window.addEventListener("keydown", handleUserKeyPress);
+        return () => {
+            window.removeEventListener("keydown", handleUserKeyPress);
+        };
+    }, [handleUserKeyPress]);
 
     return (
         <Modal onClose={props.onClose} >

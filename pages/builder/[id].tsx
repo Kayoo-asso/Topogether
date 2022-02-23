@@ -313,6 +313,7 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
             if (currentTool) handleCreateNewMarker(e);
             else toggleSectorSelect(sectorQuark);
           }}
+          onSectorDragStart={(e, sectorQuark) => selectedSector.select(sectorQuark)}
           boulders={boulders}
           bouldersOrder={boulderOrder()}
           selectedBoulder={selectedBoulder}

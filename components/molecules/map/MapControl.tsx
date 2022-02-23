@@ -27,6 +27,7 @@ interface MapControlProps extends MapProps {
   sectors?: QuarkIter<Quark<Sector>>,
   selectedSector?: SelectQuarkNullable<Sector>,
   onSectorClick?: (e: PolyMouseEvent, sector: Quark<Sector>) => void,
+  onSectorDragStart?: (e: PolyMouseEvent, sector: Quark<Sector>) => void,
   boulders?: QuarkIter<Quark<Boulder>>,
   bouldersOrder?: Map<UUID, number>,
   selectedBoulder?: SelectQuarkNullable<Boulder>,
@@ -245,7 +246,8 @@ export const MapControl: React.FC<MapControlProps> = ({
                         boulderOrder={props.bouldersOrder}
                         draggable={draggableMarkers}
                         editable={draggableMarkers}
-                        onClick={props.onSectorClick}
+                        onClick={(e) => props.onSectorClick && props.onSectorClick(e, sector)}
+                        onDragStart={(e) => props.onSectorDragStart && props.onSectorDragStart(e, sector)}
                         onMouseMoveOnSector={props.onMouseMove}
                         />
                     }
