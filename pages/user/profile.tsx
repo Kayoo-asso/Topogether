@@ -75,14 +75,14 @@ const ProfilePage: NextPage = watchDependencies(() => {
           backLink="/"
           title="Profile"
       />
-      <div className='h-contentPlusHeader md:h-full w-full flex flex-row bg-white'>
+      <div className='h-contentPlusHeader md:h-full w-full flex flex-row bg-white overflow-auto'>
 
         <LeftbarDesktop
           currentMenuItem="USER"
         />
         
-        <div className='flex flex-col w-full justify-center md:px-12'>
-          <div className='flex flex-row justify-center md:justify-start rounded-lg px-6 pb-10 md:mt-[16px]'>
+        <div className='flex flex-col w-full h-full justify-center md:px-12'>
+          <div className='flex flex-row justify-center md:justify-start rounded-lg px-6 pb-10 pt-12 md:pt-[16px]'>
             <div className='h-[100px] w-[100px] relative cursor-pointer'>
               <ProfilePicture
                 src={imageUrl || staticUrl.defaultProfilePicture}
@@ -221,10 +221,10 @@ const ProfilePage: NextPage = watchDependencies(() => {
                 fullWidth
                 onClick={modifyProfil}
             />
-            <div className='ktext-error'>{errorMessage}</div>
-            <div className='text-main'>{successMessage}</div>
+            {errorMessage && <div className='ktext-error'>{errorMessage}</div>}
+            {successMessage && <div className='text-main'>{successMessage}</div>}
 
-            <div className='flex flex-row justify-between md:pt-10'>
+            <div className='flex flex-col items-center gap-4 mb-10 md:mb-0 md:pt-10'>
               <Link href="/user/changePassword">
                   <div className="ktext-base-little text-main cursor-pointer">Modifier le mot de passe</div>
               </Link>

@@ -15,6 +15,7 @@ export const Button: React.FC<ButtonProps> = ({
   white = false,
   fullWidth = false,
   activated = true,
+  className = '',
   ...props
 }: ButtonProps) => {
     const getUIClasses = () => {
@@ -25,7 +26,7 @@ export const Button: React.FC<ButtonProps> = ({
         else return 'bg-grey-light text-white cursor-default';
     }
     const button = (<button
-            className={`ktext-subtitle shadow rounded-full px-4 py-3 lg:px-8 h-[45px] lg:h-[50px] ${getUIClasses()} ${fullWidth ? 'w-full ' : ''} ${props.className}`}
+            className={`ktext-subtitle shadow rounded-full px-4 py-3 lg:px-8 h-[45px] lg:h-[50px] ${getUIClasses()} ${fullWidth ? 'w-full ' : ''} ${className}`}
             onClick={() => {
                 if (activated && props.onClick && !props.href) props.onClick()
             }}

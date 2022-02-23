@@ -237,21 +237,21 @@ export const MapControl: React.FC<MapControlProps> = ({
                 </Show>
                 <Show when={() => props.sectors}>
                     <For each={() => props.sectors!.toArray()}>
-                    {(sector) => 
-                        <SectorAreaMarker 
-                            key={reactKey(sector)}
-                            sector={sector}
-                            selected={props.selectedSector ? props.selectedSector()?.id === sector().id : false}
-                            clickable={!props.draggableCursor}
-                            topo={props.topo}
-                            boulderOrder={props.bouldersOrder}
-                            draggable={draggableMarkers}
-                            editable={draggableMarkers}
-                            onClick={(e) => props.onSectorClick && props.onSectorClick(e, sector)}
-                            onDragStart={(e) => props.onSectorDragStart && props.onSectorDragStart(e, sector)}
-                            onMouseMoveOnSector={props.onMouseMove}
-                        />
-                    }
+                        {(sector) => 
+                            <SectorAreaMarker 
+                                key={reactKey(sector)}
+                                sector={sector}
+                                selected={props.selectedSector ? props.selectedSector()?.id === sector().id : false}
+                                clickable={!props.draggableCursor}
+                                topo={props.topo}
+                                boulderOrder={props.bouldersOrder}
+                                draggable={draggableMarkers}
+                                editable={draggableMarkers}
+                                onClick={(e) => props.onSectorClick && props.onSectorClick(e, sector)}
+                                onDragStart={(e) => props.onSectorDragStart && props.onSectorDragStart(e, sector)}
+                                onMouseMoveOnSector={props.onMouseMove}
+                            />
+                        }
                     </For>
                 </Show>
                 <Show when={() => props.waypoints}>
