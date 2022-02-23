@@ -3,12 +3,8 @@ export type GeoCoordinates = {
   lng: number,
 };
 
-export type Result<Success, Error> = {
-  success: true,
-  data: Success
-} | {
-  success: false,
-  error: Error
+export type ExplicitUndefineds<T> = {
+  [K in keyof Required<T>]: T extends Record<K, T[K]> ? T[K] : (T[K] | undefined)
 };
 
 export type Name = StringBetween<1, 500>;

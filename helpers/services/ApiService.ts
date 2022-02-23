@@ -1,7 +1,7 @@
-import { ApiError, createClient, PostgrestError, SupabaseClient, User as AuthUser } from "@supabase/supabase-js";
-import { Email, Name, Result, User, UserUpdate } from 'types';
-import { useState } from 'react';
+import { createClient, SupabaseClient, User as AuthUser } from "@supabase/supabase-js";
+import { DBUser, DBUserUpdate, Email, Name, User } from 'types';
 import { Quark, quark } from 'helpers/quarky';
+import { DBConvert } from "./DBConvert";
 
 export enum AuthResult {
     Success,
@@ -11,13 +11,13 @@ export enum AuthResult {
 
 export class ApiService {
     client: SupabaseClient;
-    user: Quark<User | null>;
+    private _user: Quark<User | null>;
 
     constructor() {
         const API_URL = process.env.NEXT_PUBLIC_API_URL!;
         const API_KEY = process.env.NEXT_PUBLIC_ANON_KEY!;
         this.client = createClient(API_URL, API_KEY);
-        this.user = quark<User | null>(null);
+        this._user = quark<User | null>(null);
     }
 
     async initSession() {
@@ -28,22 +28,25 @@ export class ApiService {
         }
     }
 
-    private async _loadUser(user: AuthUser): Promise<AuthResult.Success | AuthResult.Error> {
+    private async _loadUser(authUser: AuthUser): Promise<AuthResult.Success | AuthResult.Error> {
         const { data, error } = await this.client
-            .from<User>("users")
+            .from<DBUser>("users")
             .select("*")
-            .match({ id: user.id })
+            .match({ id: authUser.id })
             .single();
 
-        if (error) {
+        if (error || !data) {
             console.debug("Error loading up user: ", error);
             return AuthResult.Error;
         }
-        console.log("Loaded up user: ", data);
-        console.log("Created is Date: ", data?.created instanceof Date);
-
-        this.user.set(data);
+        
+        const user = DBConvert.userFromDB(data!);
+        this._user.set(user);
         return AuthResult.Success;
+    }
+
+    user(): User | null {
+        return this._user();
     }
 
     async signup(email: Email, password: string, pseudo: Name): Promise<AuthResult> {
@@ -63,7 +66,6 @@ export class ApiService {
         if (!user) {
             return AuthResult.ConfirmationRequired;
         }
-        console.log("Received user: ", user);
         return await this._loadUser(user);
     }
 
@@ -89,18 +91,16 @@ export class ApiService {
     }
 
     async updateUserInfo(user: User): Promise<AuthResult.Success | AuthResult.Error> {
+        const update = DBConvert.userToDB(user);
         const { error } = await this.client
-            .from<User>("users")
-            .update(info);
+            .from<DBUserUpdate>("users")
+            .update(update);
         if (error) {
             console.debug("Error updating user info: ", error);
             return AuthResult.Error;
         }
         // ASSUME the user is not null atm
-        this.user.set(prev => ({
-            ...prev!,
-            ...info
-        }));
+        this._user.set(user);
         return AuthResult.Success;
     }
 

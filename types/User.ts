@@ -1,5 +1,5 @@
 import { Image, Rating } from 'types';
-import { Description, Email, Name, StringBetween, UUID } from './Utils';
+import { Description, Email, ExplicitUndefineds, Name, StringBetween, UUID } from './Utils';
 
 export type User = {
   id: UUID,
@@ -18,23 +18,27 @@ export type User = {
 
 // The values that can be updated in the database
 // NOTE: the email has to be updated through the authentication service
-// Same for the password
-export interface UserUpdate {
+export interface DBUser {
   id: UUID,
-  pseudo: Name,
-  imageUrl?: string,
-  firstName?: Name,
-  lastName?: Name,
+  user_name: Name,
+  email: Email, // cannot be updated directly
+  role: Role, // cannot be updated directly
+  created: string,
+  image_url?: string,
+  first_name?: Name,
+  last_name?: Name,
   country?: Name,
   city?: Name,
   phone?: StringBetween<1, 30>,
-  birth?: Date,
+  birth?: string,
 }
 
-export interface PublicProfile {
+export type DBUserUpdate = ExplicitUndefineds<Omit<DBUser, 'email' | 'role' | 'created'>>;
+
+export interface DBProfile {
   pseudo: Name,
-  firstName?: Name,
-  lastName?: Name,
+  first_name?: Name,
+  last_name?: Name,
   country?: Name,
   city?: Name
 }

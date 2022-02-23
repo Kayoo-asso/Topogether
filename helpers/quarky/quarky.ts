@@ -468,7 +468,7 @@ function processUpdates(start: number) {
 function processDeactivations() {
     // allows processing deactivation chains efficiently
     let d = DeactivationCandidates.pop();
-    while (d !== undefined) {
+    while (d) {
         if (d.obs.length === 0) {
             // console.log(`Deactivating ${d.name}. Epoch ${Epoch}, lastChange: ${d.lastChange}, lastVerified: ${d.lastVerified}`);
             for (let i = d.obs.length - 1; i >= 0; --i) {

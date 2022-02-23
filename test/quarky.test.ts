@@ -518,7 +518,7 @@ test("Persisting effects", () => {
     let persistentEffect: Effect | undefined = undefined;
     let counter = 0;
     const wrapperEffect = effect([triggerWrapper], () => {
-        if (persistentEffect === undefined) {
+        if (!persistentEffect) {
             persistentEffect = effect([inc], () => {
                 counter += 1;
             }, { lazy: true, persistent: true })
@@ -932,10 +932,3 @@ test("Quarky behaves like a demand-driven computation graph", () => {
     expect(safeDiv()).toBe(undefined);
     expect(divRuns).toBe(1);
 });
-
-test("Print NODE_ENV", () => {
-    console.log("NODE_ENV: ", process.env.NODE_ENV);
-    console.log("NEXT_PUBLIC_API_URL: ", process.env.NEXT_PUBLIC_API_URL);
-    console.log("API_URL: ", process.env.API_URL);
-    throw new Error();
-})
