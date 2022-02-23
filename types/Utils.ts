@@ -45,6 +45,14 @@ export function isStringBetween<Min extends number, Max extends number>(
   return min <= s.length && s.length < max;
 }
 
+export function isName(name: string): name is Name {
+  return isStringBetween(name, 1, 500);
+}
+
+export function isDescription(description: string): description is Description {
+  return isStringBetween(description, 1, 5000);
+}
+
 // taken from zod
 // https://github.com/colinhacks/zod/blob/master/src/types.ts#L424
 const emailRegex = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
