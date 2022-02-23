@@ -54,15 +54,24 @@ export class ApiService {
             email,
             password
         }, {
+            redirectTo: "/",
             data: { user_name: pseudo }
         });
-        this.client.from("topos").select
         if (error) {
+            // user already exists
+            if (error.status === 400) {
+
+            }
+            // server error
+            if (error.status === 500) {
+
+            }
             console.debug("Sign up error: ", error);
             console.debug("Session: ", session);
             console.debug("User: ", user);
             return AuthResult.Error;
         }
+
         if (!user) {
             return AuthResult.ConfirmationRequired;
         }
@@ -103,7 +112,6 @@ export class ApiService {
         this._user.set(user);
         return AuthResult.Success;
     }
-
 }
 
 export const api = new ApiService();

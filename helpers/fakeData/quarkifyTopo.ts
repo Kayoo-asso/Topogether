@@ -3,23 +3,46 @@ import { CleanupHelper, effect, Effect, Quark, quark, QuarkArray } from 'helpers
 import { syncQuark } from 'helpers/quarky/quarky-sync';
 import { BoulderData, Grade, Line, Name, Image, TrackData, Description, Difficulty, ClimbTechniques, SectorData, TopoData, Amenities, TopoStatus, TopoType, RockTypes, TopoAccess, UUID, Track, Boulder, Sector, Topo, BoulderDTO, TrackDTO } from 'types';
 
-export const quarkifyTopo = (topo: TopoData): Quark<Topo> => quark<Topo>({
-    ...topo,
-    sectors: new QuarkArray(topo.sectors),
-    boulders: new QuarkArray(topo.boulders.map(quarkifyBoulder), {
-        onAdd: (boulder) => syncQuark<Boulder, BoulderDTO>(boulder.id, boulder, {
-            export: getBoulderExport(topo.id),
-            import: ({ topoId, ...dto }, boulder) => ({
-                ...boulder,
-                ...dto
-            })
-        })
-    }),
-    waypoints: new QuarkArray(topo.waypoints),
-    parkings: new QuarkArray(topo.parkings),
-    accesses: new QuarkArray(topo.accesses),
-    managers: new QuarkArray(topo.managers),
-});
+export function quarkifyTopo(topo: TopoData): Quark<Topo> {
+    const topoQuark = quark<Topo>({
+        ...topo,
+        sectors: new QuarkArray(topo.sectors),
+        boulders: new QuarkArray(topo.boulders.map(quarkifyBoulder), {
+            onAdd: (boulder) => syncQuark<Boulder, BoulderDTO>(boulder.id, boulder, {
+                export: getBoulderExport(topo.id),
+                import: ({ topoId, ...dto }, boulder) => ({
+                    ...boulder,
+                    ...dto
+                })
+            }),
+        }),
+        waypoints: new QuarkArray(topo.waypoints),
+        parkings: new QuarkArray(topo.parkings),
+        accesses: new QuarkArray(topo.accesses),
+        managers: new QuarkArray(topo.managers),
+    });
+
+    topoQuark().boulders.onDelete = (boulderQuark) => onBoulderDelete(boulderQuark(), topoQuark);
+    return topoQuark;
+}
+
+function onBoulderDelete(boulder: Boulder, topoQuark: Quark<Topo>) {
+    const topo = topoQuark();
+    const aloneIdx = topo.lonelyBoulders.indexOf(boulder.id);
+    if (aloneIdx >= 0) {
+        topo.lonelyBoulders.splice(aloneIdx, 1);
+        topoQuark.set({ ...topo }); // force update
+        return;
+    }
+    for (const sectorQuark of topo.sectors.quarks()) {
+        const sector = sectorQuark();
+        const idx = sector.boulders.indexOf(boulder.id);
+        if (idx >= 0) {
+            sector.boulders.splice(idx, 1);
+            sectorQuark.set({ ...sector }); // force update
+        }
+    }
+}
 
 const getBoulderExport = (topoId: UUID) => (boulder: Boulder): BoulderDTO => ({
     id: boulder.id,

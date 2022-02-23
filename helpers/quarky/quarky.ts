@@ -336,12 +336,13 @@ export function selectQuark<T>(initial?: Quark<T>): SelectQuark<T> | SelectQuark
 
 export function batch<T>(work: () => T): T {
     const start = PendingLeaves.length;
-    const prev = Scheduled;
+    const prevSchedule = Scheduled;
     Scheduled = true;
     const result = work();
     processUpdates(start);
-    if (!prev) processDeactivations();
-    Scheduled = prev;
+    // if there is nothing scheduled after this batch, deactivate the nodes
+    if (!prevSchedule) processDeactivations();
+    Scheduled = prevSchedule;
     return result;
 }
 
