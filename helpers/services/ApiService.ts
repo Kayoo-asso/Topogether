@@ -96,6 +96,7 @@ export class ApiService {
             console.debug("Sign out error: ", error);
             return AuthResult.Error;
         }
+        this._user.set(null);
         return AuthResult.Success;
     }
 

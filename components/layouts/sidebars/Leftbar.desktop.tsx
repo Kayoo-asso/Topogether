@@ -17,19 +17,11 @@ export const LeftbarDesktop: React.FC<LeftbarDesktopProps> = watchDependencies((
     if (!session) return null;
     return (
       <div className="hidden md:flex flex-col bg-white border-r border-grey-medium min-w-[280px] w-[280px] h-full px-8 py-10 z-200">
-        <Link href='/user/profile' passHref>
-          <div className="grid grid-cols-3 items-center mb-[50%] cursor-pointer">
+          <div className="mb-20 mt-2">
             <div>
-              <ProfilePicture
-                src={session.imageUrl || staticUrl.defaultProfilePicture}
-              />
-            </div>
-            <div>
-              <div className="ktext-subtitle text-dark">{session?.pseudo}</div>
-              <div className="ktext-label text-main col-span-2">{session?.role === 'ADMIN' ? 'Administrateur' : 'Grimpeur'}</div>
+              Bonjour <span className="ktext-subtitle text-main">{session?.pseudo}</span> !
             </div>
           </div>
-        </Link> 
 
         <div className="flex-1 flex flex-col gap-10">
           <Link href="/builder/dashboard" passHref>

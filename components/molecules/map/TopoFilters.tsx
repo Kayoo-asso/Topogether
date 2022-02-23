@@ -22,7 +22,6 @@ export const TopoFilters: React.FC<TopoFiltersProps> = ({
     initialOpen = false,
     ...props
 }: TopoFiltersProps) => {
-    console.log(props.values);
     const [open, setOpen] = useState(initialOpen);
 
     const updateTopoFilters = useCallback(<K extends keyof TopoFilterOptions>(option: K, value: TopoFilterOptions[K]) => {

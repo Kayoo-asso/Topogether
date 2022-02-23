@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import type { NextPage } from 'next';
 import { staticUrl } from 'helpers';
 import NextImage from 'next/image';
-import { Button, HeaderDesktop, ImageInput, LeftbarDesktop, ModalDelete, Tabs, TextInput } from 'components';
+import { Button, HeaderDesktop, ImageInput, LeftbarDesktop, ModalDelete, ProfilePicture, Tabs, TextInput } from 'components';
 import Link from 'next/link';
 import { watchDependencies } from 'helpers/quarky';
 import { isEmail, Name, StringBetween } from 'types';
@@ -83,18 +83,12 @@ const ProfilePage: NextPage = watchDependencies(() => {
         
         <div className='flex flex-col w-full justify-center md:px-12'>
           <div className='flex flex-row justify-center md:justify-start rounded-lg px-6 pb-10 md:mt-[16px]'>
-            <div 
-              className='h-[100px] w-[100px] relative cursor-pointer' 
-              onClick={() => {
-                if (imageInputRef.current) imageInputRef.current.click();
-              }}
-            >
-              <NextImage
-                  src={imageUrl || staticUrl.defaultProfilePicture}
-                  priority
-                  alt="Image de profile"
-                  layout="fill"
-                  objectFit="contain"
+            <div className='h-[100px] w-[100px] relative cursor-pointer'>
+              <ProfilePicture
+                src={imageUrl || staticUrl.defaultProfilePicture}
+                onClick={() => {
+                  if (imageInputRef.current) imageInputRef.current.click();
+                }}
               />
               <div className='hidden'>
                 <ImageInput 

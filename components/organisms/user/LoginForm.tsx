@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Button, Checkbox, TextInput } from 'components';
 import Link from 'next/link';
 import NextImage from 'next/image';
@@ -19,7 +19,8 @@ export const LoginForm: React.FC = (props) => {
 
     const [errorMessage, setErrorMessage] = useState<string>();
 
-    const login = async () => {
+    const login = useCallback(async () => {
+        console.log(email);
         let hasError = false;
         if (!email) { setEmailError("Email invalide"); hasError = true };
         if (!password) { setPasswordError("Password invalide"); hasError = true };
@@ -30,7 +31,17 @@ export const LoginForm: React.FC = (props) => {
             else if (res === AuthResult.Success) router.push("/");
             else setErrorMessage("Authentification incorrecte");
         }
-    }
+    }, [email, password]);
+
+    const handleUserKeyPress = useCallback((e) => {
+        if (e.key === 'Enter') login();
+    }, [email, password]);
+    useEffect(() => {
+        window.addEventListener("keydown", handleUserKeyPress);
+        return () => {
+            window.removeEventListener("keydown", handleUserKeyPress);
+        };
+    }, [handleUserKeyPress]);
 
     return (
         <div className='flex flex-col gap-6 items-center w-full'>

@@ -130,6 +130,7 @@ export const MapControl: React.FC<MapControlProps> = ({
             if (newBounds) {
                 locations.forEach(loc => newBounds.extend(new google.maps.LatLng(loc)));
             }
+            console.log(newBounds);
             mapRef.current.fitBounds(newBounds);
         }
     }
@@ -238,17 +239,17 @@ export const MapControl: React.FC<MapControlProps> = ({
                     <For each={() => props.sectors!.toArray()}>
                     {(sector) => 
                         <SectorAreaMarker 
-                        key={reactKey(sector)}
-                        sector={sector}
-                        selected={props.selectedSector ? props.selectedSector()?.id === sector().id : false}
-                        clickable={!props.draggableCursor}
-                        topo={props.topo}
-                        boulderOrder={props.bouldersOrder}
-                        draggable={draggableMarkers}
-                        editable={draggableMarkers}
-                        onClick={(e) => props.onSectorClick && props.onSectorClick(e, sector)}
-                        onDragStart={(e) => props.onSectorDragStart && props.onSectorDragStart(e, sector)}
-                        onMouseMoveOnSector={props.onMouseMove}
+                            key={reactKey(sector)}
+                            sector={sector}
+                            selected={props.selectedSector ? props.selectedSector()?.id === sector().id : false}
+                            clickable={!props.draggableCursor}
+                            topo={props.topo}
+                            boulderOrder={props.bouldersOrder}
+                            draggable={draggableMarkers}
+                            editable={draggableMarkers}
+                            onClick={(e) => props.onSectorClick && props.onSectorClick(e, sector)}
+                            onDragStart={(e) => props.onSectorDragStart && props.onSectorDragStart(e, sector)}
+                            onMouseMoveOnSector={props.onMouseMove}
                         />
                     }
                     </For>

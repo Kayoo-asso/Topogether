@@ -7,8 +7,11 @@ import {
 import { LightTopo } from 'types';
 import { Quark, QuarkIter, useSelectQuark } from 'helpers/quarky';
 import { quarkLightTopo } from 'helpers/fakeData/fakeLightTopoV2';
+import { api } from 'helpers/services/ApiService';
 
 const WorldMapPage: NextPage = () => {
+  const session = api.user();
+
   const topos: QuarkIter<Quark<LightTopo>> = new QuarkIter([quarkLightTopo]);
 
   const selectedTopo = useSelectQuark<LightTopo>();
@@ -23,6 +26,7 @@ const WorldMapPage: NextPage = () => {
       <HeaderDesktop
         backLink="#"
         title="Carte des topos"
+        displayLogin={session ? false : true}
       />
 
       <div className="flex flex-row relative h-contentPlusHeader md:h-full">

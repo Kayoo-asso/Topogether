@@ -8,7 +8,7 @@ interface ProfilePictureProps {
 
 export const ProfilePicture: React.FC<ProfilePictureProps> = (props: ProfilePictureProps) => (
   <div
-    className={`shadow relative rounded-full border border-main p-7 z-20 h-[60px] w-[60px]${props.onClick ? ' cursor-pointer' : ''}`}
+    className={`shadow relative rounded-full border border-main z-20 h-full w-full${props.onClick ? ' cursor-pointer' : ''}`}
     onClick={() => {
 		  props.onClick && props.onClick();
     }}

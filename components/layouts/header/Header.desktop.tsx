@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
 import NextImage from 'next/image';
-import { Dropdown, DropdownOption, Icon } from 'components';
+import { Dropdown, DropdownOption, Icon, ProfilePicture } from 'components';
 import Link from 'next/link';
 import { MapToolEnum } from 'types';
+import { api } from 'helpers/services/ApiService';
+import { staticUrl } from 'helpers';
+import { useRouter } from 'next/router';
+import { watchDependencies } from 'helpers/quarky';
 
 interface HeaderDesktopProps {
   backLink: string,
@@ -16,15 +20,20 @@ interface HeaderDesktopProps {
   onWaypointClick?: () => void,
   currentTool?: MapToolEnum,
   displayLogin?: boolean,
+  displayUser?: boolean,
 }
 
-export const HeaderDesktop: React.FC<HeaderDesktopProps> = ({
+export const HeaderDesktop: React.FC<HeaderDesktopProps> = watchDependencies(({
   displayMapTools = false,
   displayLogin = false,
+  displayUser = true,
   ...props
 }: HeaderDesktopProps) => {
+  const session = api.user();
+  const router = useRouter();
+
   const [menuOpen, setMenuOpen] = useState(false);
-  const [displayTitleTooltip, setDisplayTitleTooltip] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
 
   return (
     <div className="bg-dark items-center h-header hidden md:flex">
@@ -90,14 +99,37 @@ export const HeaderDesktop: React.FC<HeaderDesktopProps> = ({
         </div>
       )}
 
-      {displayLogin && (
+      {displayLogin && !session &&
         <Link href="/user/login" passHref>
           <div className="ktext-base text-white cursor-pointer mr-[3%]">
             Se connecter
           </div>
         </Link>
-      )}
+      }
+
+      {displayUser && session &&
+        <div className='w-1/12 flex justify-center items-center'>
+          <div className='h-[45px] w-[45px] relative'>
+            <ProfilePicture
+              src={session.imageUrl || staticUrl.defaultProfilePicture}
+              onClick={() => setUserMenuOpen(m => !m)}
+            />
+          </div>
+          {userMenuOpen &&
+            <Dropdown 
+              options={[
+                { value: 'Mon profil', action: () => router.push('/user/profile')},
+                { value: 'Se déconnecter', action: async () => { await api.signOut(); router.push('/'); }}
+              ]}
+              className='w-[200px] -ml-[180px] mt-[180px]'
+            />
+          }
+        </div>
+      }
+      
+
+  
 
     </div>
   );
-};
+});
