@@ -10,7 +10,6 @@ import { Quark, QuarkIter, reactKey, SelectQuarkNullable } from 'helpers/quarky'
 interface MapControlProps extends MapProps {
   className?: string,
   initialZoom?: number,
-  boundsToMarkers?: boolean,
   displaySatelliteButton?: boolean,
   displayUserMarker?: boolean,
   displayPhotoButton?: boolean,
@@ -40,7 +39,8 @@ interface MapControlProps extends MapProps {
   parkings?: QuarkIter<Quark<Parking>>,
   selectedParking?: SelectQuarkNullable<Parking>,
   onParkingClick?: (parking: Quark<Parking>) => void,
-  draggableMarkers?: boolean,  
+  draggableMarkers?: boolean,
+  boundsTo?: GeoCoordinates[],
   onMapZoomChange?: (zoom: number | undefined) => void,
 }
 
@@ -50,7 +50,6 @@ export const MapControl: React.FC<MapControlProps> = ({
     displaySatelliteButton = true,
     displayUserMarker = true,
     displayPhotoButton = true,
-    boundsToMarkers = false,
     displayTopoFilter = false,
     displayBoulderFilter = false,
     draggableMarkers = false,
@@ -124,16 +123,12 @@ export const MapControl: React.FC<MapControlProps> = ({
             mapRef.current.fitBounds(newBounds);
         }
     }
-    const getBoundsFromMarker = (markers: MarkerProps[]) => {
+    const getBoundsTo = (locations: GeoCoordinates[]) => {
         if (mapRef.current) {
             const newBounds = new google.maps.LatLngBounds();
-            markers.map(marker => {
-                if (marker.options?.position && newBounds) {
-                    newBounds.extend(new google.maps.LatLng(
-                        marker.options?.position
-                    ));
-                }
-            });
+            if (newBounds) {
+                locations.forEach(loc => newBounds.extend(new google.maps.LatLng(loc)));
+            }
             mapRef.current.fitBounds(newBounds);
         }
     }
@@ -216,103 +211,102 @@ export const MapControl: React.FC<MapControlProps> = ({
                 </div>
 
 
-        <Map
-          ref={mapRef}
-          zoom={initialZoom} 
-          mapTypeId={satelliteView ? 'satellite' : 'roadmap'}
-          className={props.className ? props.className : ''}
-          onZoomChange={() => {
-            if (mapRef.current && props.onMapZoomChange) {
-              props.onMapZoomChange(mapRef.current.getZoom());
-            }
-          }}
-          // TODO
-          // onLoad={() => {
-          //   if (boundsToMarkers && props.children) getBoundsFromMarker(props.children);
-          // }}
-          {...props}
-        >
-          <Show when={() => props.creatingSector && props.creatingSector.length > 0}>
-            <CreatingSectorAreaMarker 
-                path={props.creatingSector!}
-                onPolylineClick={props.onCreatingSectorPolylineClick}
-                onOriginClick={props.onCreatingSectorOriginClick}
-              />
-          </Show>
-          <Show when={() => props.sectors}>
-            <For each={() => props.sectors!.toArray()}>
-              {(sector) => 
-                <SectorAreaMarker 
-                  key={reactKey(sector)}
-                  sector={sector}
-                  selected={props.selectedSector ? props.selectedSector()?.id === sector().id : false}
-                  clickable={!props.draggableCursor}
-                  topo={props.topo}
-                  boulderOrder={props.bouldersOrder}
-                  draggable={draggableMarkers}
-                  editable={draggableMarkers}
-                  onClick={props.onSectorClick}
-                  onMouseMoveOnSector={props.onMouseMove}
-                />
-              }
-            </For>
-          </Show>
-          <Show when={() => props.waypoints}>
-            <For each={() => props.waypoints!.toArray()}>
-                {(waypoint) => 
-                  <WaypointMarker 
-                    key={reactKey(waypoint)}
-                    draggable={draggableMarkers}
-                    waypoint={waypoint}
-                    selected={props.selectedWaypoint ? props.selectedWaypoint()?.id === waypoint().id : false}
-                    onClick={props.onWaypointClick}
-                  />
-                }
-            </For>
-          </Show>
-          <Show when={() => [props.boulders, props.bouldersOrder] as const}>
-            <For each={() => displayBoulderFilter ? props.boulders!.filter(b => boulderFilter(b())).toArray() : props.boulders!.toArray()}>
-              {(boulder) => 
-                <BoulderMarker
-                  key={reactKey(boulder)}
-                  draggable={draggableMarkers}
-                  boulder={boulder}
-                  boulderOrder={props.bouldersOrder!}
-                  selected={props.selectedBoulder ? props.selectedBoulder()?.id === boulder().id : false}
-                  topo={props.topo}
-                  onClick={props.onBoulderClick}
-                  onContextMenu={props.onBoulderContextMenu}
-                />   
-              }
-            </For>
-          </Show>
-          <Show when={() => props.parkings}>
-            <For each={() => props.parkings!.toArray()}>
-                {(parking) => 
-                  <ParkingMarker 
-                    key={reactKey(parking)}
-                    draggable={draggableMarkers}
-                    parking={parking}
-                    selected={props.selectedParking ? props.selectedParking()?.id === parking().id : false}
-                    onClick={props.onParkingClick}
-                  />
-                }
-            </For>
-          </Show>
-          <Show when={() => props.topos}>
-            <For each={() => props.topos!.filter(t => topoFilter(t())).toArray()}>
-                {(topo) =>
-                  <TopoMarker 
-                    key={reactKey(topo)}
-                    draggable={draggableMarkers}
-                    topo={topo}
-                    onClick={props.onTopoClick}
-                  />
-                }
-            </For>
-          </Show>
-        </Map>
-      </Wrapper>
-    </div>
-  );
+                <Map
+                    ref={mapRef}
+                    zoom={initialZoom} 
+                    mapTypeId={satelliteView ? 'satellite' : 'roadmap'}
+                    className={props.className ? props.className : ''}
+                    onZoomChange={() => {
+                        if (mapRef.current && props.onMapZoomChange) {
+                        props.onMapZoomChange(mapRef.current.getZoom());
+                        }
+                    }}
+                    onLoad={() => {
+                        if (props.boundsTo && props.boundsTo.length > 0) getBoundsTo(props.boundsTo);
+                    }}
+                    {...props}
+                >
+                <Show when={() => props.creatingSector && props.creatingSector.length > 0}>
+                    <CreatingSectorAreaMarker 
+                        path={props.creatingSector!}
+                        onPolylineClick={props.onCreatingSectorPolylineClick}
+                        onOriginClick={props.onCreatingSectorOriginClick}
+                    />
+                </Show>
+                <Show when={() => props.sectors}>
+                    <For each={() => props.sectors!.toArray()}>
+                    {(sector) => 
+                        <SectorAreaMarker 
+                        key={reactKey(sector)}
+                        sector={sector}
+                        selected={props.selectedSector ? props.selectedSector()?.id === sector().id : false}
+                        clickable={!props.draggableCursor}
+                        topo={props.topo}
+                        boulderOrder={props.bouldersOrder}
+                        draggable={draggableMarkers}
+                        editable={draggableMarkers}
+                        onClick={props.onSectorClick}
+                        onMouseMoveOnSector={props.onMouseMove}
+                        />
+                    }
+                    </For>
+                </Show>
+                <Show when={() => props.waypoints}>
+                    <For each={() => props.waypoints!.toArray()}>
+                        {(waypoint) => 
+                        <WaypointMarker 
+                            key={reactKey(waypoint)}
+                            draggable={draggableMarkers}
+                            waypoint={waypoint}
+                            selected={props.selectedWaypoint ? props.selectedWaypoint()?.id === waypoint().id : false}
+                            onClick={props.onWaypointClick}
+                        />
+                        }
+                    </For>
+                </Show>
+                <Show when={() => [props.boulders, props.bouldersOrder] as const}>
+                    <For each={() => displayBoulderFilter ? props.boulders!.filter(b => boulderFilter(b())).toArray() : props.boulders!.toArray()}>
+                    {(boulder) => 
+                        <BoulderMarker
+                        key={reactKey(boulder)}
+                        draggable={draggableMarkers}
+                        boulder={boulder}
+                        boulderOrder={props.bouldersOrder!}
+                        selected={props.selectedBoulder ? props.selectedBoulder()?.id === boulder().id : false}
+                        topo={props.topo}
+                        onClick={props.onBoulderClick}
+                        onContextMenu={props.onBoulderContextMenu}
+                        />   
+                    }
+                    </For>
+                </Show>
+                <Show when={() => props.parkings}>
+                    <For each={() => props.parkings!.toArray()}>
+                        {(parking) => 
+                        <ParkingMarker 
+                            key={reactKey(parking)}
+                            draggable={draggableMarkers}
+                            parking={parking}
+                            selected={props.selectedParking ? props.selectedParking()?.id === parking().id : false}
+                            onClick={props.onParkingClick}
+                        />
+                        }
+                    </For>
+                </Show>
+                <Show when={() => props.topos}>
+                    <For each={() => props.topos!.filter(t => topoFilter(t())).toArray()}>
+                        {(topo) =>
+                        <TopoMarker 
+                            key={reactKey(topo)}
+                            draggable={draggableMarkers}
+                            topo={topo}
+                            onClick={props.onTopoClick}
+                        />
+                        }
+                    </For>
+                </Show>
+                </Map>
+            </Wrapper>
+        </div>
+    );
 };

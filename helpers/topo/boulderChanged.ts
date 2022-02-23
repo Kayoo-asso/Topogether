@@ -1,8 +1,8 @@
 import { polygonContains } from "helpers";
-import { Quark } from "helpers/quarky";
+import { batch, Quark } from "helpers/quarky";
 import { GeoCoordinates, Topo, UUID } from "types";
 
-export function boulderChanged(topoQuark: Quark<Topo>, boulderId: UUID, newLocation: GeoCoordinates, newBoulder: boolean = false) {
+export const boulderChanged = (topoQuark: Quark<Topo>, boulderId: UUID, newLocation: GeoCoordinates, newBoulder: boolean = false) => batch(() => {
     const topo = topoQuark();
     let skipUpdate = false;
     let inSector = false;
@@ -41,12 +41,10 @@ export function boulderChanged(topoQuark: Quark<Topo>, boulderId: UUID, newLocat
             }
         }
         if (!found && (inSector || newBoulder)) {
-            console.log('ok')
             topoQuark.set(t => ({
                 ...t,
                 lonelyBoulders: [...topo.lonelyBoulders, boulderId]
             }))
         }
     }
-
-}
+})

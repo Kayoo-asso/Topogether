@@ -62,7 +62,7 @@ export const SectorAreaMarker: React.FC<SectorAreaMarkerProps> = watchDependenci
             dragging.current = false; 
             updatePath(); 
             if (props.topo && props.boulderOrder) {
-                sectorChanged(props.topo, sector.id, props.boulderOrder)
+                sectorChanged(props.topo, sector.id, props.boulderOrder);
             }
         }, [updatePath, props.topo, sector, props.boulderOrder])
     }

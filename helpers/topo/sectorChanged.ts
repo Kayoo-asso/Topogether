@@ -11,6 +11,7 @@ export const sectorChanged = (topoQuark: Quark<Topo>, sectorId: UUID, boulderOrd
     const toAdd: UUID[] = [];
     const toRemove: Boulder[] = [];
     const existing = new Set(sector.boulders);
+    let lonelies = [...topo.lonelyBoulders];
 
     for (const boulder of topo.boulders) {
         const geoContains = polygonContains(sector.path, boulder.location);
@@ -39,16 +40,13 @@ export const sectorChanged = (topoQuark: Quark<Topo>, sectorId: UUID, boulderOrd
             const s = sQ();
             // skip the sector that just changed (probably not necessary but does not hurt)
             if (s.id === sectorId) continue;
-            const newBoulders = s.boulders.filter(b => !addedSet.has(b));
+            const newBoulders = s.boulders.filter(id => !addedSet.has(id));
             // only update the sector if some boulders have been removed
             if (newBoulders.length !== s.boulders.length) {
                 sQ.set({ ...s, boulders: newBoulders })
             }
         }
-        topoQuark.set(t => ({
-            ...t,
-            lonelyBoulders: topo.lonelyBoulders.filter(id => !addedSet.has(id))
-        }))
+        lonelies = lonelies.filter(id => !addedSet.has(id));
     }
 
     // Remove boulders from this sector, and assign them to another sector if possible
@@ -67,13 +65,15 @@ export const sectorChanged = (topoQuark: Quark<Topo>, sectorId: UUID, boulderOrd
                     break; // only add to a single sector
                 }
             }
-            if (!found) newLonelyBoulders.push(removed.id);
+            if (!found) lonelies.push(removed.id);
         }
-        topoQuark.set(t => ({
-            ...t,
-            lonelyBoulders: newLonelyBoulders
-        }))
     }
+
+    // Update the lonely boulder list in the topo
+    topoQuark.set(t => ({
+        ...t,
+        lonelyBoulders: lonelies
+    }));
 
     // Update the boulder list for this sector
     sQ.set({

@@ -96,7 +96,6 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
     selectedTrack.select(undefined);
     selectedParking.select(undefined);
     selectedWaypoint.select(undefined);
-    console.log(boulderQuark)
     if (selectedBoulder()?.id === boulderQuark().id) selectedBoulder.select(undefined);
     else {
       setCurrentImage(boulderQuark().images[0] || defaultImage);
@@ -169,8 +168,9 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
       images: image ? [image] : [],
     };
     topo.boulders.push(newBoulder);
-    const newBoulderQuark = topo.boulders.quarkAt(-1);
     boulderChanged(quarkTopo, newBoulder.id, newBoulder.location, true);
+
+    const newBoulderQuark = topo.boulders.quarkAt(-1);
     if (selectBoulder) {
       selectedBoulder.select(newBoulderQuark);
       if (image) setCurrentImage(newBoulder.images[0]);
@@ -178,12 +178,8 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
     return newBoulderQuark;
   }, [topo]);
   const deleteBoulder = useCallback((boulder) => {
-      console.log('in delete boulder')
     topo.boulders.removeQuark(boulder);
-    if(selectedBoulder.quark() === boulder) {
-        console.log('is the same')
-        selectedBoulder.select(undefined);
-    }
+    if (selectedBoulder.quark() === boulder) selectedBoulder.select(undefined);
   }, []);
   const createParking = useCallback((location: GeoCoordinates, selectParking = false) => {
     const newParking: Parking = {
@@ -298,12 +294,11 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
         <MapControl
           initialZoom={16}
           center={boulders.toArray()[0]().location}
-          boundsToMarkers
           searchbarOptions={{
               findTopos: false,
               findPlaces: false,
           }}
-          draggableCursor={currentTool === 'ROCK' ? 'url(/assets/icons/colored/_rock.svg), auto'
+          draggableCursor={currentTool === 'ROCK' ? 'url(/assets/icons/colored/_rock.svg) 16 32, auto'
                           : currentTool === 'SECTOR' ? 'url(/assets/icons/colored/line-point/_line-point-grey.svg), auto'
                           : currentTool === 'PARKING' ? 'url(/assets/icons/colored/_parking.svg), auto'
                           : currentTool === 'WAYPOINT' ? 'url(/assets/icons/colored/_help-round.svg), auto'
@@ -344,6 +339,7 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
             if (freePointCreatingSector)
               handleCreatingSector(freePointCreatingSector);     
           }}
+          boundsTo={boulders.toArray().map(b => b().location).concat(parkings.toArray().map(p => p().location))}
         />
 
         <Show when={() => [device !== 'MOBILE', selectedTrack.quark()] as const}>

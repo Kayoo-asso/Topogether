@@ -23,7 +23,7 @@ export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = watch
     const sectors = topo.sectors;
     const [bouldersIn, bouldersOut] = splitArray(topo.boulders.quarks().toArray(), b => sectors.toArray().map(s => s.boulders).flat().includes(b().id))
     const bouldersOutSorted = topo.lonelyBoulders.map(id => bouldersOut.find(b => b().id === id)!);
-    // console.log(topo.lonelyBoulders);
+    console.log(topo.lonelyBoulders);
 
     const [displayedSectors, setDisplayedSectors] = useState<Array<UUID>>(sectors.map(sector => sector.id).toArray());
     const [displayedBoulders, setDisplayedBoulders] = useState<Array<UUID>>([]);
@@ -157,6 +157,7 @@ export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = watch
                                     <div className="ktext-label text-grey-medium mb-1">Sans secteur</div>
                                     <div className={'flex flex-col gap-1 ml-1 p-2 rounded-sm ' + (draggingSectorId === 'no-sector' ? 'bg-grey-superlight' : '')}>
                                         {bouldersOutSorted.map((boulderQuark, index) => {
+                                            // console.log(index);
                                             const boulder = boulderQuark();
                                             return (
                                                 <Draggable key={boulder.id} draggableId={boulder.id} index={index}>
