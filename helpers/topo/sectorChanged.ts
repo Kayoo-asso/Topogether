@@ -1,8 +1,8 @@
 import { polygonContains } from "helpers";
-import { Quark } from "helpers/quarky";
+import { batch, Quark } from "helpers/quarky";
 import { Boulder, Topo, UUID } from "types";
 
-export function sectorChanged(topoQuark: Quark<Topo>, sectorId: UUID, boulderOrder: Map<UUID, number>) {
+export const sectorChanged = (topoQuark: Quark<Topo>, sectorId: UUID, boulderOrder: Map<UUID, number>) => batch(() => {
     const topo = topoQuark();
     const sQ = topo.sectors.findQuark(x => x.id === sectorId)!;
     const sector = sQ();
@@ -53,8 +53,10 @@ export function sectorChanged(topoQuark: Quark<Topo>, sectorId: UUID, boulderOrd
 
     // Remove boulders from this sector, and assign them to another sector if possible
     if (toRemove.length > 0) {
+        const newLonelyBoulders = [...topo.lonelyBoulders];
         // check for each removed boulder if it should be assigned to a new sector
         for (const removed of toRemove) {
+            console.log(removed.name);
             // remove from this sector
             existing.delete(removed.id)
             // try to add to another sector
@@ -66,13 +68,12 @@ export function sectorChanged(topoQuark: Quark<Topo>, sectorId: UUID, boulderOrd
                     break; // only add to a single sector
                 }
             }
-            if (!found) {
-                topoQuark.set(t => ({
-                    ...t,
-                    lonelyBoulders: [...topo.lonelyBoulders, removed.id]
-                }))
-            }
+            if (!found) newLonelyBoulders.push(removed.id);
         }
+        topoQuark.set(t => ({
+            ...t,
+            lonelyBoulders: newLonelyBoulders
+        }))
     }
 
     // Update the boulder list for this sector
@@ -80,7 +81,7 @@ export function sectorChanged(topoQuark: Quark<Topo>, sectorId: UUID, boulderOrd
         ...sector,
         boulders: [...existing, ...toAdd]
     });
-}
+});
 
 
 // Returns -1 if a < b

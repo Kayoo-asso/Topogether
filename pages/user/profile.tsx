@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useRouter } from 'next/router'
+import React, { useEffect, useRef, useState } from 'react';
+import { useRouter } from 'next/router';
 import type { NextPage } from 'next';
 import { staticUrl } from 'helpers';
 import NextImage from 'next/image';
@@ -13,6 +13,8 @@ const ProfilePage: NextPage = watchDependencies(() => {
   const router = useRouter();
   const session = api.user();
   if (!session) router.push('/');
+
+  const imageInputRef = useRef<HTMLInputElement>(null);
 
   const [displayDeleteAccountModal, setDisplayDeleteAccountModal] = useState(false);
   
@@ -80,8 +82,13 @@ const ProfilePage: NextPage = watchDependencies(() => {
         />
         
         <div className='flex flex-col w-full justify-center md:px-12'>
-          <div className='flex flex-row justify-center md:justify-start rounded-lg px-6 pb-10'>
-            <div className='h-[100px] w-[100px] relative'>
+          <div className='flex flex-row justify-center md:justify-start rounded-lg px-6 pb-10 md:mt-[16px]'>
+            <div 
+              className='h-[100px] w-[100px] relative cursor-pointer' 
+              onClick={() => {
+                if (imageInputRef.current) imageInputRef.current.click();
+              }}
+            >
               <NextImage
                   src={imageUrl || staticUrl.defaultProfilePicture}
                   priority
@@ -91,6 +98,7 @@ const ProfilePage: NextPage = watchDependencies(() => {
               />
               <div className='hidden'>
                 <ImageInput 
+                  ref={imageInputRef}
                   onChange={(images) => {
                     // TODO
                   }}
@@ -99,13 +107,15 @@ const ProfilePage: NextPage = watchDependencies(() => {
             </div>
             
             <div className='hidden md:flex flex-col ml-6 w-1/2'>
-              <div className='ktext-subtitle'>{session!.pseudo}</div>
-              {session!.role === 'ADMIN' && <div className='text-main ktext-label mb-6'>Super-administrateur</div>}
+              <div className='mb-6'>
+                <div className='ktext-subtitle'>{pseudo}</div>
+                {session!.role === 'ADMIN' && <div className='text-main ktext-label'>Super-administrateur</div>}
+              </div>
               <TextInput 
                   id='pseudo'
                   label='Pseudo'
                   error={pseudoError}
-                  value={session!.pseudo}
+                  value={pseudo}
                   onChange={(e) => setPseudo(e.target.value)}
               />
             </div>

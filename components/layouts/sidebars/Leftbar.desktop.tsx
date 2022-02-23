@@ -18,7 +18,7 @@ export const LeftbarDesktop: React.FC<LeftbarDesktopProps> = watchDependencies((
     return (
       <div className="hidden md:flex flex-col bg-white border-r border-grey-medium min-w-[280px] w-[280px] h-full px-8 py-10 z-200">
         <Link href='/user/profile' passHref>
-          <div className="grid grid-cols-3 items-center pb-[50%] cursor-pointer">
+          <div className="grid grid-cols-3 items-center mb-[50%] cursor-pointer">
             <div>
               <ProfilePicture
                 src={session.imageUrl || staticUrl.defaultProfilePicture}
@@ -26,7 +26,7 @@ export const LeftbarDesktop: React.FC<LeftbarDesktopProps> = watchDependencies((
             </div>
             <div>
               <div className="ktext-subtitle text-dark">{session?.pseudo}</div>
-              <div className="ktext-label text-main col-span-2">{session?.role === 'ADMIN' ? 'Administrateur' : 'Grimpeur cartographe'}</div>
+              <div className="ktext-label text-main col-span-2">{session?.role === 'ADMIN' ? 'Administrateur' : 'Grimpeur'}</div>
             </div>
           </div>
         </Link> 

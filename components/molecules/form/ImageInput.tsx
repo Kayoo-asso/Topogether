@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, forwardRef } from 'react';
 import Compressor from 'compressorjs';
 import {
   isBetween, isImageType, Image as ImageType
@@ -20,11 +20,13 @@ enum FileUploadError {
   TooLarge
 }
 
-export const ImageInput: React.FC<ImageInputProps> = ({
+export const ImageInput = forwardRef<HTMLInputElement, ImageInputProps>(({
   multiple = false,
   ...props
-}) => {
+}: ImageInputProps, ref) => {
+  //TODO : find a way to get back the ref to parent components
   const fileInputRef = useRef<HTMLInputElement>(null);
+
   const [errors, setErrors] = useState<[string, FileUploadError][]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -111,4 +113,4 @@ export const ImageInput: React.FC<ImageInputProps> = ({
       </div>
     </>
   );
-};
+});

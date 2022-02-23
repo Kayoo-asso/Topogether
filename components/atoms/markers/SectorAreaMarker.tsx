@@ -58,10 +58,12 @@ export const SectorAreaMarker: React.FC<SectorAreaMarkerProps> = watchDependenci
             props.onClick && props.onClick(e, props.sector)
         }, [props.sector, props.onClick]),
         onMouseMove: useCallback((e) => props.onMouseMoveOnSector && props.onMouseMoveOnSector(e), [props.sector, props.onMouseMoveOnSector]),
-        onDragEnd: useQuarkyCallback(() => { 
+        onDragEnd: useCallback(() => { 
             dragging.current = false; 
             updatePath(); 
-            if (props.topo && props.boulderOrder) sectorChanged(props.topo, sector.id, props.boulderOrder); 
+            if (props.topo && props.boulderOrder) {
+                sectorChanged(props.topo, sector.id, props.boulderOrder)
+            }
         }, [updatePath, props.topo, sector, props.boulderOrder])
     }
     polygon = usePolygon(options, handlers);

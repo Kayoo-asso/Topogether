@@ -105,7 +105,6 @@ export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = watch
                                                     </div>
                                                 }
                                                 {boulderQuarks.map((boulderQuark, index) => {
-                                                    console.log(boulderQuarks)
                                                     const boulder = boulderQuark();
                                                     return (
                                                         <Draggable key={boulder.id} draggableId={boulder.id} index={index}>
