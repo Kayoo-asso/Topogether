@@ -130,7 +130,6 @@ export const MapControl: React.FC<MapControlProps> = ({
             if (newBounds) {
                 locations.forEach(loc => newBounds.extend(new google.maps.LatLng(loc)));
             }
-            console.log(newBounds);
             mapRef.current.fitBounds(newBounds);
         }
     }

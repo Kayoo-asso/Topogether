@@ -13,7 +13,7 @@ export type User = {
   country?: Name,
   city?: Name,
   phone?: StringBetween<1, 30>,
-  birthDate?: Date,
+  birthDate?: string,
 };
 
 // The values that can be updated in the database

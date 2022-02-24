@@ -39,7 +39,7 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
   
   let imgWidth;
   let imgHeight;
-  const containerR = containerWidth / containerHeight;
+  const containerR = containerHeight > 0 ? containerWidth / containerHeight : 0;
   const imageR = props.image.width / props.image.height;
   if (imageR > containerR) {
     imgWidth = containerWidth;
@@ -51,7 +51,7 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
   }
   const rx = props.image.width != 0
   ? imgWidth / props.image.width
-  : 1;  
+  : 1;
 
   const getCursorUrl = () => {
     let cursorColor = 'grey';

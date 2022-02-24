@@ -27,6 +27,7 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
   const [trackTab, setTrackTab] = useState(true);
 
   const [imageToDisplayIndex, setImageToDisplayIndex] = useState(0);
+  console.log(props.currentImage);
 
   const [displayPhantomTracks, setDisplayPhantomTracks] = useState(false);
 
@@ -58,7 +59,7 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
             selectedTrack={props.selectedTrack}
             displayPhantomTracks={displayPhantomTracks}
             displayTracksDetails={!!selectedTrack?.id}
-            containerClassName={props.currentImage.width/props.currentImage.height > 1 ? ' overflow-hidden rounded-t-lg' : ' h-[300px]'}
+            containerClassName={props.currentImage.width/props.currentImage.height > 1 ? 'overflow-hidden rounded-t-lg' : 'h-[300px]'}
           />
           {imageToDisplayIndex < boulder.images.length - 1 && !selectedTrack &&
             <Icon 

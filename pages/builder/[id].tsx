@@ -227,12 +227,17 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
 
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
-      if (creatingSector.length > 0 && e.code === 'Enter') createSector();
-      else if (creatingSector.length > 0 && e.code === 'Escape') emptyCreatingSector();
+      if (e.code === 'Enter') {
+        if (creatingSector.length > 0) createSector();
+      }
+      else if (e.code === 'Escape') {
+        if (creatingSector.length > 0) emptyCreatingSector();
+        if (currentTool) setCurrentTool(undefined);
+      }
     }
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
-  }, [creatingSector]);
+  }, [creatingSector, currentTool]);
 
   if (!session || typeof id !== 'string' || !topo) return null;
   return (

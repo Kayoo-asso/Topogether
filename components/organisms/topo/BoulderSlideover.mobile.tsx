@@ -44,6 +44,7 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = wat
       open
       initialFull={false}
       onSizeChange={(f) => setFull(f)}
+      onClose={props.onClose}
     >
       {/* BOULDER IMAGE */}
       {full && (
@@ -67,7 +68,7 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = wat
             selectedTrack={props.selectedTrack}
             displayPhantomTracks={displayPhantomTracks}
             displayTracksDetails={!!selectedTrack?.id}
-            containerClassName={'max-h-[300px]' + (props.currentImage.width/props.currentImage.height > 1 ? ' overflow-hidden rounded-t-lg' : '')}
+            containerClassName={props.currentImage.width/props.currentImage.height > 1 ? 'overflow-hidden rounded-t-lg h-full' : 'h-[300px]'}
           />
 
           {imageToDisplayIndex < boulder.images.length-1 &&
