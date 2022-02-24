@@ -27,8 +27,6 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
   const [trackTab, setTrackTab] = useState(true);
 
   const [imageToDisplayIndex, setImageToDisplayIndex] = useState(0);
-  console.log(props.currentImage);
-
   const [displayPhantomTracks, setDisplayPhantomTracks] = useState(false);
 
   return (

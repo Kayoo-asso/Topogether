@@ -1,10 +1,12 @@
 import React, { useRef, useState } from 'react';
 import { distanceLatLng, useAsyncEffect, useUserMedia } from 'helpers';
 import { Icon } from 'components';
-import { GeoCoordinates } from 'types';
+import { GeoCoordinates, MapToolEnum } from 'types';
 
 interface GeoCameraProps {
     open?: boolean,
+    currentTool: MapToolEnum,
+    onChangeTool: (tool: MapToolEnum) => void,
     onCapture?: (blob: Blob | null, coordinates: GeoCoordinates) => void,
     onClose: () => void,
 }
@@ -24,6 +26,8 @@ export const GeoCamera: React.FC<GeoCameraProps> = ({
     });
     const [isCalibrating, setIsCalibrating] = useState(true);
     const [displayToolbar, setDisplayToolbar] = useState(false);
+
+    const [displayItemSelectMenu, setDisplayItemSelectMenu] = useState(false);
 
     useAsyncEffect((isAlive) => {
         const options = {
@@ -50,7 +54,7 @@ export const GeoCamera: React.FC<GeoCameraProps> = ({
             }
         }
         const watcher = navigator.geolocation.watchPosition(onPosChange, onError, options);
-    }, [])
+    }, []);
 
     const videoRef = useRef<HTMLVideoElement>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -111,10 +115,42 @@ export const GeoCamera: React.FC<GeoCameraProps> = ({
         }
     }
 
+    const itemType = props.currentTool === 'PARKING' ? 'parking' :
+        props.currentTool === 'WAYPOINT' ? 'point de repère' : 'bloc';    
 
     if (!open) return null;
     return (
         <div className='w-full h-full absolute overflow-hidden z-1000'>
+            <div className='absolute z-100 top-4 left-4'>
+                <div 
+                    className='text-main flex flex-row items-center'
+                    onClick={() => setDisplayItemSelectMenu(d => !d)}
+                >
+                    Créer un {itemType}
+                    <Icon 
+                        name='arrow-full'
+                        SVGClassName={'fill-main h-3 w-3 rotate-90 ml-3' + (displayItemSelectMenu ? ' -rotate-90' : '')}
+                    />
+                </div>
+                {displayItemSelectMenu &&
+                    <div className='text-white' onClick={() => setDisplayItemSelectMenu(false)}>
+                        {props.currentTool !== 'ROCK' && <div className='mt-1' onClick={() => props.onChangeTool('ROCK')}>Créer un bloc</div>}
+                        {props.currentTool !== 'PARKING' && <div className='mt-1' onClick={() => props.onChangeTool('PARKING')}>Créer un parking</div>}
+                        {props.currentTool !== 'WAYPOINT' && <div className='mt-1' onClick={() => props.onChangeTool('WAYPOINT')}>Créer un point de repère</div>}
+                    </div>
+                }
+            </div>
+            <div 
+                className='absolute z-100 top-4 right-4'
+                onClick={props.onClose}
+            >
+                <Icon 
+                    name='clear'
+                    SVGClassName='stroke-white h-8 w-8'
+                    onClick={props.onClose}
+                />
+            </div>
+
             <video 
                 ref={videoRef} 
                 onCanPlay={handleCanPlay} 
@@ -166,17 +202,6 @@ export const GeoCamera: React.FC<GeoCameraProps> = ({
                     >Valider</div>
                 </div>
             }
-
-            <div 
-                className='absolute z-100 top-4 right-4'
-                onClick={props.onClose}
-            >
-                <Icon 
-                    name='clear'
-                    SVGClassName='stroke-white h-8 w-8'
-                    onClick={props.onClose}
-                />
-            </div>
         </div>
     )
 }

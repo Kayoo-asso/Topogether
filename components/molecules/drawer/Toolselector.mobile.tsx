@@ -22,28 +22,40 @@ export const ToolselectorMobile: React.FC<ToolselectorMobileProps> = (props: Too
                         center
                         SVGClassName={props.selectedTool === 'FORBIDDEN_AREA_DRAWER' ?'h-8 w-8 stroke-main' : 'h-6 w-6 stroke-white'}
                         wrapperClassName={props.selectedTool === 'FORBIDDEN_AREA_DRAWER' ? 'order-5' : 'order-1'}
-                        onClick={() => props.onToolSelect('FORBIDDEN_AREA_DRAWER')}
+                        onClick={() => {
+                            props.onToolSelect('FORBIDDEN_AREA_DRAWER');
+                            setOpen(false);
+                        }}
                     />
                     <Icon 
                         name='climbing-shoe'
                         center
                         SVGClassName={props.selectedTool === 'FOOT_DEPARTURE_DRAWER' ? 'h-8 w-8 stroke-main' : 'h-7 w-7 stroke-white'}
                         wrapperClassName={props.selectedTool === 'FOOT_DEPARTURE_DRAWER' ? 'order-5' : 'order-2'}
-                        onClick={() => props.onToolSelect('FOOT_DEPARTURE_DRAWER')}
+                        onClick={() => {
+                            props.onToolSelect('FOOT_DEPARTURE_DRAWER');
+                            setOpen(false);
+                        }}
                     />
                     <Icon 
                         name='hand'
                         center
                         SVGClassName={props.selectedTool === 'HAND_DEPARTURE_DRAWER' ? 'h-8 w-8 stroke-main' : 'h-6 w-6 stroke-white'}
                         wrapperClassName={props.selectedTool === 'HAND_DEPARTURE_DRAWER' ? 'order-5' : 'order-3'}
-                        onClick={() => props.onToolSelect('HAND_DEPARTURE_DRAWER')}
+                        onClick={() => {
+                            props.onToolSelect('HAND_DEPARTURE_DRAWER');
+                            setOpen(false);
+                        }}
                     />
                     <Icon
                         name='topo'
                         center
                         SVGClassName={props.selectedTool === 'LINE_DRAWER' ? 'h-8 w-8 stroke-main' : 'h-6 w-6 stroke-white'}
                         wrapperClassName={props.selectedTool === 'LINE_DRAWER' ? 'order-5' : 'order-4'}
-                        onClick={() => props.onToolSelect('LINE_DRAWER')}
+                        onClick={() => {
+                            props.onToolSelect('LINE_DRAWER');
+                            setOpen(false);
+                        }}
                     />
                 </>
             }

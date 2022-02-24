@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { Wrapper } from '@googlemaps/react-wrapper';
-import { BoulderMarker, CreatingSectorAreaMarker, For, Map, ParkingMarker, RoundButton, SatelliteButton, SectorAreaMarker, Show, TopoMarker, WaypointMarker } from 'components';
+import { BoulderMarker, CreatingSectorAreaMarker, For, Icon, Map, ParkingMarker, RoundButton, SatelliteButton, SectorAreaMarker, Show, TopoMarker, WaypointMarker } from 'components';
 import { BoulderFilterOptions, BoulderFilters, MapSearchbarProps, TopoFilterOptions, TopoFilters } from '.';
 import { MapSearchbar } from '..';
 import { Amenities, Boulder, ClimbTechniques, GeoCoordinates, gradeToLightGrade, LightGrade, LightTopo, MapProps, MarkerProps, Parking, PolyMouseEvent, Sector, Topo, UUID, Waypoint } from 'types';
@@ -192,7 +192,7 @@ export const MapControl: React.FC<MapControlProps> = ({
                                         iconClass="stroke-white"
                                         iconSizeClass="h-7 w-7"
                                         onClick={props.onPhotoButtonClick}
-                                    />
+                                    />   
                                 </div>
                             }
                         </div>

@@ -181,11 +181,12 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
     topo.boulders.removeQuark(boulder);
     if (selectedBoulder.quark() === boulder) selectedBoulder.select(undefined);
   }, []);
-  const createParking = useCallback((location: GeoCoordinates, selectParking = false) => {
+  const createParking = useCallback((location: GeoCoordinates, image = undefined, selectParking = false) => {
     const newParking: Parking = {
       id: v4(),
       spaces: 0,
       name: `parking ${topo.parkings ? topo.parkings.length + 1 : '1'}` as Name,
+      image: image ? image : [],
       location,
     };
     topo.parkings.push(newParking);
@@ -193,10 +194,11 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
     if (selectParking) selectedParking.select(newParkingQuark);
     return newParkingQuark;
   }, [topo]);
-  const createWaypoint = useCallback((location: GeoCoordinates, selectWaypoint = false) => {
+  const createWaypoint = useCallback((location: GeoCoordinates, image = undefined, selectWaypoint = false) => {
     const newWaypoint: Waypoint = {
       id: v4(),
       name: `point de repère ${topo.waypoints ? topo.waypoints.length + 1 : '1'}` as Name,
+      image: image ? image : [],
       location,
     };
     topo.waypoints.push(newWaypoint);
@@ -330,7 +332,10 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
           parkings={parkings}
           selectedParking={selectedParking}
           onParkingClick={toggleParkingSelect}
-          onPhotoButtonClick={() => setDisplayGeoCamera(true)}
+          onPhotoButtonClick={() => {
+            setCurrentTool('ROCK');
+            setDisplayGeoCamera(true);
+          }}
           onMapZoomChange={closeDropdown}
           onClick={handleCreateNewMarker}
           onMouseMove={(e) => {
@@ -438,24 +443,35 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
 
       <Show when={() => displayGeoCamera}>
         <GeoCamera
+          currentTool={currentTool || 'ROCK'}
+          onChangeTool={(tool) => setCurrentTool(tool)}
           onCapture={async (blob, coordinates) => {
               if (blob) {
                 const img = await blobToImage(blob);
                 setCurrentImage(img);
-                if (selectedBoulder()) {
-                  const newImages = selectedBoulder()!.images;
-                  newImages.push(img);
-                  selectedBoulder.quark()!.set({
-                    ...selectedBoulder()!,
-                    images: newImages,
-                  });
-                  selectedTrack.select(createTrack(selectedBoulder()!, session.id));
-                } else {
-                  const newBoulderQuark = createBoulder(coordinates, img);
-                  selectedTrack.select(createTrack(newBoulderQuark(), session.id));
-                  selectedBoulder.select(newBoulderQuark);
+                if (currentTool === 'ROCK') {
+                  if (selectedBoulder()) {
+                    const newImages = selectedBoulder()!.images;
+                    newImages.push(img);
+                    selectedBoulder.quark()!.set({
+                      ...selectedBoulder()!,
+                      images: newImages,
+                    });
+                    selectedTrack.select(createTrack(selectedBoulder()!, session.id));
+                  } 
+                  else {
+                    const newBoulderQuark = createBoulder(coordinates, img);
+                    selectedTrack.select(createTrack(newBoulderQuark(), session.id));
+                    selectedBoulder.select(newBoulderQuark);
+                  }
+                  setDisplayDrawer(true);
                 }
-                setDisplayDrawer(true);
+                else if (currentTool === 'PARKING') {
+                  createParking(coordinates, img, true);
+                }
+                else if (currentTool === 'WAYPOINT') {
+                  createWaypoint(coordinates, img, true);
+                }
               }
             }}
           onClose={() => setDisplayGeoCamera(false)}

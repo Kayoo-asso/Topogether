@@ -19,9 +19,11 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies((props: DrawerPro
   const [displayClearModal, setDisplayClearModal] = useState(false);
 
   useEffect(() => {
-    document.addEventListener('keydown', function (event) {
-      if (event.ctrlKey && event.key === 'z') rewind();
-    });
+    const handleKeydown = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.key === 'z') rewind();
+    }
+    window.addEventListener('keydown', handleKeydown);
+    return () => window.removeEventListener('keydown', handleKeydown);
   }, []);
 
   const selectedTrack = props.selectedTrack()!;
