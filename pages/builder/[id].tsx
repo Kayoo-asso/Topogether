@@ -6,7 +6,7 @@ import {
   BoulderBuilderSlideoverMobile, SectorBuilderSlideoverMobile,
   MapControl, Show,
   Header, InfoFormSlideover, ManagementFormSlideover, TrackFormSlideagainstDesktop, 
-  BoulderMarkerDropdown, ParkingMarkerDropdown, WaypointMarkerDropdown, SectorMarkerDropdown,
+  BoulderMarkerDropdown, ParkingMarkerDropdown, WaypointMarkerDropdown, SectorAreaMarkerDropdown,
   ModalValidateTopo, ModalDeleteTopo, GeoCamera, Drawer, LeftbarBuilderDesktop, BoulderBuilderSlideagainstDesktop,
   ParkingBuilderSlide, AccessFormSlideover, WaypointBuilderSlide, ModalRenameSector, ModalDelete, 
 } from 'components';
@@ -492,11 +492,11 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
 
       <Show when={() => sectorRightClicked.quark()}>
           {(quarkSector) =>
-            <SectorMarkerDropdown 
-            dropdownPosition={dropdownPosition}
-            sector={quarkSector}
-            deleteSector={() => toDeleteSector.select(quarkSector)} 
-            renameSector={() => console.log("TODO")}            />
+            <SectorAreaMarkerDropdown 
+              dropdownPosition={dropdownPosition}
+              sector={quarkSector}
+              deleteSector={() => toDeleteSector.select(quarkSector)} 
+              renameSector={() => console.log("TODO")}/>
           }
       </Show>
 

@@ -64,7 +64,7 @@ export const SectorAreaMarker: React.FC<SectorAreaMarkerProps> = watchDependenci
                 sectorChanged(props.topo, sector.id, props.boulderOrder);
             }
         }, [updatePath, props.topo, sector, props.boulderOrder]),
-        onContextMenu: useCallback((e) => {console.log('right click'); props.onContextMenu && props.onContextMenu(e, props.sector)}, [props.sector, props.onContextMenu])
+        onContextMenu: useCallback((e) => {props.onContextMenu && props.onContextMenu(e, props.sector)}, [props.sector, props.onContextMenu])
     }
     polygon = usePolygon(options, handlers);
 

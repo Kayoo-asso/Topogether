@@ -4,7 +4,7 @@ import { Sector } from 'types';
 import { Quark, watchDependencies } from 'helpers/quarky';
 import { api } from 'helpers/services/ApiService';
 
-interface SectorMarkerDropdownProps {
+interface SectorAreaMarkerDropdownProps {
     sector: Quark<Sector>;
     dropdownPosition?: { x: number, y: number };
     deleteSector: (sector: Quark<Sector>) => void;
@@ -12,7 +12,7 @@ interface SectorMarkerDropdownProps {
 
 }
 
-export const SectorMarkerDropdown: React.FC<SectorMarkerDropdownProps> = watchDependencies((props: SectorMarkerDropdownProps) => {
+export const SectorAreaMarkerDropdown: React.FC<SectorAreaMarkerDropdownProps> = watchDependencies((props: SectorAreaMarkerDropdownProps) => {
     const session = api.user();
 
     // surement que ces useCallback ne sont pas nécessaire si les props le sont
@@ -31,4 +31,4 @@ export const SectorMarkerDropdown: React.FC<SectorMarkerDropdownProps> = watchDe
     );
 });
 
-SectorMarkerDropdown.displayName = 'SectorMarkerDropdown';
+SectorAreaMarkerDropdown.displayName = 'SectorAreaMarkerDropdown';
