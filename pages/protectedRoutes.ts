@@ -25,7 +25,7 @@ const ProtectedRoute = ({ router, children }: { router: NextRouter, children: JS
   if (isBrowser() && !isAuthenticated && pathIsProtected) {
     router.push('/user/login');
   }
-
+ 
   return children || null;
 };
 
