@@ -40,7 +40,7 @@ export const BoulderSlideagainstDesktop: React.FC<BoulderSlideagainstDesktopProp
                         <div 
                             className='ktext-label text-grey-medium cursor-pointer'
                             onClick={() => {
-                                const data = [new ClipboardItem({ "text/plain": new Blob([boulder.location.lat+','+boulder.location.lng], { type: "text/plain" }) })];
+                                const data = [new ClipboardItem({ "text/plain": new Blob([boulder.location[1] + ',' + boulder.location[0]], { type: "text/plain" }) })];
                                 navigator.clipboard.write(data).then(function() {
                                     setFlashMessage("Coordonnées copiées dans le presse papier.");
                                 }, function() {
@@ -48,7 +48,7 @@ export const BoulderSlideagainstDesktop: React.FC<BoulderSlideagainstDesktopProp
                                 });
                             }}
                         >
-                            {parseFloat(boulder.location.lat.toFixed(12)) + ',' + parseFloat(boulder.location.lng.toFixed(12))}
+                            {parseFloat(boulder.location[1].toFixed(12)) + ',' + parseFloat(boulder.location[0].toFixed(12))}
                         </div>
                         {boulder.isHighball && <div className='ktext-label text-grey-medium'>High Ball</div>}
                         {boulder.mustSee && <div className='ktext-label text-grey-medium mb-15'>Incontournable !</div>}

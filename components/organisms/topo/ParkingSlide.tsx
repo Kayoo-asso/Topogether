@@ -36,14 +36,14 @@ export const ParkingSlide: React.FC<ParkingSlideProps> = watchDependencies(({
                     <div 
                         className='ktext-label text-grey-medium cursor-pointer'
                         onClick={() => {
-                            const data = [new ClipboardItem({ "text/plain": new Blob([parking.location.lat+','+parking.location.lng], { type: "text/plain" }) })];
+                            const data = [new ClipboardItem({ "text/plain": new Blob([parking.location[1] + ',' + parking.location[0]], { type: "text/plain" }) })];
                             navigator.clipboard.write(data).then(function() {
                                 setFlashMessage("Coordonnées copiées dans le presse papier.");
                             }, function() {
                                 setFlashMessage("Impossible de copier les coordonées.");
                             });
                         }}
-                    >{parseFloat(parking.location.lat.toFixed(12)) + ',' + parseFloat(parking.location.lng.toFixed(12))}</div>
+                    >{parseFloat(parking.location[1].toFixed(12)) + ',' + parseFloat(parking.location[0].toFixed(12))}</div>
                 </div>
 
                 <div className='w-full relative max-h-[200px] h-[60%] md:h-[25%]'>

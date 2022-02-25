@@ -27,7 +27,7 @@ export const WaypointForm: React.FC<WaypointFormProps> = watchDependencies((prop
             <div className='flex flex-row gap-6 items-end'>
                 <div className='w-28'>
                     <ImageInput 
-                        value={waypoint.image}
+                        value={waypoint.image?.url}
                         onChange={(images) => {
                             props.waypoint.set({
                                 ...waypoint,
@@ -57,26 +57,20 @@ export const WaypointForm: React.FC<WaypointFormProps> = watchDependencies((prop
                     id='waypoint-latitude'
                     label='Latitude'
                     type='number'
-                    value={waypoint.location.lat}
+                    value={waypoint.location[1]}
                     onChange={(e) => props.waypoint.set({
                         ...waypoint,
-                        location: {
-                            lat: parseFloat(e.target.value),
-                            lng: waypoint.location.lng
-                        }
+                        location: [waypoint.location[0], parseFloat(e.target.value)]
                     })}
                 />
                 <TextInput 
                     id='waypoint-longitude'
                     label='Longitude'
                     type='number'
-                    value={waypoint.location.lng}
+                    value={waypoint.location[0]}
                     onChange={(e) => props.waypoint.set({
                         ...waypoint,
-                        location: {
-                            lat: waypoint.location.lat,
-                            lng: parseFloat(e.target.value)
-                        }
+                        location: [parseFloat(e.target.value), waypoint.location[1]]
                     })}
                 />
             </div>

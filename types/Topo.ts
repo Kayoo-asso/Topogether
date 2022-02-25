@@ -262,7 +262,7 @@ export interface TrackData {
   height?: number,
   grade?: Grade,
   orientation?: Orientation,
-  reception?: Difficulty,
+  reception?: Reception,
   anchors?: number,
   techniques?: ClimbTechniques,
 

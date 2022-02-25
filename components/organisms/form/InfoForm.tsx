@@ -39,7 +39,7 @@ export const InfoForm: React.FC<InfoFormProps> = watchDependencies((props: InfoF
         <div className="flex flex-row gap-6 items-end">
           <div className="w-32 md:mt-4">
             <ImageInput
-              value={topo.image}
+              value={topo.image?.url}
               onChange={(files) => {
                           props.topo.set({
                               ...topo,

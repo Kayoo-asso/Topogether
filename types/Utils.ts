@@ -1,7 +1,3 @@
-// export type GeoCoordinates = {
-//   lat: number,
-//   lng: number,
-// };
 export type GeoCoordinates = [lng: number, lat: number];
 
 export type ExplicitUndefineds<T> = {

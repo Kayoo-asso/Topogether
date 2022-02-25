@@ -51,10 +51,10 @@ export const ManagementSlideover: React.FC<ManagementSlideoverProps> = ({
                         />
                     }
                     <div className='flex flex-row justify-end gap-6 items-center pb-6 md:pt-8'>
-                        {manager.image && 
+                        {manager.imageUrl && 
                             <div className="w-1/2 relative mt-2 min-h-[100px]">
                                 <NextImage
-                                    src={manager.image.url}
+                                    src={manager.imageUrl}
                                     alt={"Logo gestionnaire "+managerTab}
                                     layout="fill"
                                     objectFit="contain"

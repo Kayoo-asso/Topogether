@@ -8,9 +8,7 @@ import useDimensions from 'react-cool-dimensions';
 
 const App = ({ Component, pageProps }: AppProps) => {
   const [device, setDevice] = useState<Device>('MOBILE');
-  const {
-    observe, unobserve, width, height, entry,
-  } = useDimensions({
+  const { observe } = useDimensions({
     onResize: ({
       observe, unobserve, width, height, entry,
     }) => {

@@ -35,14 +35,14 @@ export const WaypointSlide: React.FC<WaypointSlideProps> = watchDependencies(({
                     <div 
                         className='ktext-label text-grey-medium cursor-pointer'
                         onClick={() => {
-                            const data = [new ClipboardItem({ "text/plain": new Blob([waypoint.location.lat+','+waypoint.location.lng], { type: "text/plain" }) })];
+                            const data = [new ClipboardItem({ "text/plain": new Blob([waypoint.location[1] + ',' + waypoint.location[0]], { type: "text/plain" }) })];
                             navigator.clipboard.write(data).then(function() {
                                 setFlashMessage("Coordonnées copiées dans le presse papier.");
                             }, function() {
                                 setFlashMessage("Impossible de copier les coordonées.");
                             });
                         }}
-                    >{parseFloat(waypoint.location.lat.toFixed(12)) + ',' + parseFloat(waypoint.location.lng.toFixed(12))}</div>
+                    >{parseFloat(waypoint.location[1].toFixed(12)) + ',' + parseFloat(waypoint.location[0].toFixed(12))}</div>
                 </div>
 
                 <div className='w-full relative max-h-[200px] h-[60%] md:h-[25%]'>

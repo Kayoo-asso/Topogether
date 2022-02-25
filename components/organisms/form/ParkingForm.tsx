@@ -27,7 +27,7 @@ export const ParkingForm: React.FC<ParkingFormProps> = watchDependencies((props:
             <div className='flex flex-row gap-6 items-end'>
                 <div className='w-28'>
                     <ImageInput 
-                        value={parking.image}
+                        value={parking.image?.url}
                         onChange={(files) => {
                             props.parking.set({
                                 ...parking,
@@ -57,26 +57,20 @@ export const ParkingForm: React.FC<ParkingFormProps> = watchDependencies((props:
                     id='parking-latitude'
                     label='Latitude'
                     type='number'
-                    value={parking.location.lat}
+                    value={parking.location[1]}
                     onChange={(e) => props.parking.set({
                         ...parking,
-                        location: {
-                            lat: parseFloat(e.target.value),
-                            lng: parking.location.lng
-                        }
+                        location: [parking.location[0], parseFloat(e.target.value)]
                     })}
                 />
                 <TextInput 
                     id='parking-longitude'
                     label='Longitude'
                     type='number'
-                    value={parking.location.lng}
+                    value={parking.location[0]}
                     onChange={(e) => props.parking.set({
                         ...parking,
-                        location: {
-                            lat: parking.location.lat,
-                            lng: parseFloat(e.target.value)
-                        }
+                        location: [parseFloat(e.target.value), parking.location[1]]
                     })}
                 />
             </div>

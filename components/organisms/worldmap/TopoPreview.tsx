@@ -44,7 +44,7 @@ export const TopoPreview: React.FC<TopoPreviewProps> = (props: TopoPreviewProps)
                 <div 
                     className='px-4 ktext-label text-center md:text-left text-grey-medium cursor-pointer'
                     onClick={() => {
-                        const data = [new ClipboardItem({ "text/plain": new Blob([topo.location.lat+','+topo.location.lng], { type: "text/plain" }) })];
+                        const data = [new ClipboardItem({ "text/plain": new Blob([topo.location[1] + ',' + topo.location[0]], { type: "text/plain" }) })];
                         navigator.clipboard.write(data).then(function() {
                             setFlashMessage("Coordonnées copiées dans le presse papier.");
                         }, function() {
@@ -52,7 +52,7 @@ export const TopoPreview: React.FC<TopoPreviewProps> = (props: TopoPreviewProps)
                         });
                     }}
                 >
-                    {parseFloat(topo.location.lat.toFixed(12)) + ',' + parseFloat(topo.location.lng.toFixed(12))}
+                    {parseFloat(topo.location[1].toFixed(12)) + ',' + parseFloat(topo.location[0].toFixed(12))}
                 </div>
 
                 <div className="w-full h-[160px] relative mt-4">
@@ -107,11 +107,13 @@ export const TopoPreview: React.FC<TopoPreviewProps> = (props: TopoPreviewProps)
                             href={'/topo/'+topo.id}
                         />
                     </div>
-                    <div className="pb-4">
-                        <ParkingButton
-                        onClick={() => setModalParkingOpen(true)}
-                        />
-                    </div>
+                    {topo.firstParkingLocation &&
+                        <div className="pb-4">
+                            <ParkingButton
+                                onClick={() => setModalParkingOpen(true)}
+                            />
+                        </div>
+                    }
                 </div>
             </div>
         </>
@@ -139,7 +141,7 @@ export const TopoPreview: React.FC<TopoPreviewProps> = (props: TopoPreviewProps)
             </SlideagainstRightDesktop>
         }
 
-        {modalParkingOpen &&
+        {modalParkingOpen && topo.firstParkingLocation &&
             <ParkingModal
                 parkingLocation={topo.firstParkingLocation}
                 onClose={() => setModalParkingOpen(false)}

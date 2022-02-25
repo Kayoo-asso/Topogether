@@ -1,6 +1,5 @@
 import React from 'react';
 import NextImage from 'next/image';
-import { Image } from 'types';
 // eslint-disable-next-line import/no-cycle
 import { Icon } from 'components';
 import useDimensions from 'react-cool-dimensions';
@@ -8,7 +7,7 @@ import { DeleteButton } from '.';
 
 interface ImageButtonProps {
   text?: string,
-  image?: Image,
+  imageUrl?: string,
   loading?: boolean,
   onClick: () => void,
   onDelete?: () => void,
@@ -48,7 +47,7 @@ export const ImageButton: React.FC<ImageButtonProps> = ({
           center
         />
       )}
-    {!loading && props.image &&
+    {!loading && props.imageUrl &&
       <>
         {props.onDelete &&
           <div 
@@ -61,14 +60,14 @@ export const ImageButton: React.FC<ImageButtonProps> = ({
           </div>
         }
         <NextImage
-          src={props.image.url}
+          src={props.imageUrl}
           alt="user generated image"
           layout="fill"
           objectFit="contain"
         />
       </>
     }
-    {!loading && !props.image
+    {!loading && !props.imageUrl
       && <span className='m-2'>{text}</span>}
   </div>
 )};

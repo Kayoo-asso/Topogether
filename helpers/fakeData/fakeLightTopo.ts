@@ -1,5 +1,5 @@
 import {
-  Amenities, Description, Difficulty, LightTopo, Name, RockTypes, StringBetween, TopoStatus, TopoType,
+  Amenities, Description, LightTopo, Name, RockTypes, TopoStatus, TopoType,
 } from 'types';
 import { v4 as uuid } from 'uuid';
 
@@ -14,13 +14,14 @@ export const fakeLightTopo: LightTopo = {
   type: TopoType.Boulder,
   isForbidden: false,
 
-  location: { lat: 45.701356, lng: 4.607264 },
+  location: [4.607264, 45.701356],
   // no idea if there"s actually composite rock at Yzeron
   rockTypes: RockTypes.Gneiss | RockTypes.Composite,
   amenities: Amenities.Bins | Amenities.AdaptedToChildren,
   otherAmenities: undefined,
 
   creatorId: uuid(),
+  creatorPseudo: 'Flavien' as Name,
   validatorId: uuid(),
   image: {
     id: uuid(),

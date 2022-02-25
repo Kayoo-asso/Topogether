@@ -39,26 +39,20 @@ export const BoulderForm: React.FC<BoulderFormProps> = watchDependencies((props:
                     id='boulder-latitude'
                     label='Latitude'
                     type='number'
-                    value={boulder.location.lat}
+                    value={boulder.location[1]}
                     onChange={(e) => props.boulder.set({
                         ...boulder,
-                        location: {
-                            lat: parseFloat(e.target.value),
-                            lng: boulder.location.lng
-                        }
+                        location: [boulder.location[0], parseFloat(e.target.value)]
                     })}
                 />
                 <TextInput 
                     id='boulder-longitude'
                     label='Longitude'
                     type='number'
-                    value={boulder.location.lng}
+                    value={boulder.location[0]}
                     onChange={(e) => props.boulder.set({
                         ...boulder,
-                        location: {
-                            lat: boulder.location.lat,
-                            lng: parseFloat(e.target.value)
-                        }
+                        location: [parseFloat(e.target.value), boulder.location[1]]
                     })}
                 />
             </div>

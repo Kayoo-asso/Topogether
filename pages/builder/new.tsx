@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import type { NextPage } from 'next';
 import { LightTopo, StringBetween, TopoType } from 'types';
-import { fontainebleauLocation } from 'helpers';
+import { fontainebleauLocation, toLatLng } from 'helpers';
 import {
  Button, HeaderDesktop, MapControl, Select, TextInput,
 } from 'components';
@@ -170,7 +170,7 @@ const NewPage: NextPage = watchDependencies(() => {
                     displayPhotoButton={false}
                     displayUserMarker={false}
                     zoom={10}
-                    center={fontainebleauLocation}
+                    center={toLatLng(fontainebleauLocation)}
                     topos={new QuarkIter([topoQuark])}
                     draggableMarkers
                   />
@@ -185,15 +185,12 @@ const NewPage: NextPage = watchDependencies(() => {
                       big
                       white
                       wrapperClassName="w-full mb-10"
-                      value={topo.location?.lat || ''}
+                      value={topo.location[1] || ''}
                       onChange={(e) => {
                             setLatitudeError(undefined);
                             topoQuark.set({
                               ...topo,
-                              location: {
-                                lng: topo.location.lng,
-                                lat: parseFloat(e.target.value)
-                              }
+                              location: [topo.location[0], parseFloat(e.target.value)]
                             })
                         }}
                     />
@@ -204,15 +201,12 @@ const NewPage: NextPage = watchDependencies(() => {
                       big
                       white
                       wrapperClassName="w-full mb-10"
-                      value={topo.location?.lng || ''}
+                      value={topo.location[0] || ''}
                       onChange={(e) => {
                             setLongitudeError(undefined);
                             topoQuark.set({
                               ...topo,
-                              location: {
-                                lng: parseFloat(e.target.value),
-                                lat: topo.location.lat
-                              }
+                              location: [parseFloat(e.target.value), topo.location[1]]
                             })
                         }}
                     />
@@ -228,9 +222,9 @@ const NewPage: NextPage = watchDependencies(() => {
                       content="Créer"
                       white
                       onClick={() => {
-                            if (isNaN(topo.location.lat)) setLatitudeError('Latitude invalide');
-                            if (isNaN(topo.location.lng)) setLongitudeError('Longitude invalide');
-                            if (!isNaN(topo.location.lat) && !isNaN(topo.location.lng)) createTopo();
+                            if (isNaN(topo.location[1])) setLatitudeError('Latitude invalide');
+                            if (isNaN(topo.location[0])) setLongitudeError('Longitude invalide');
+                            if (!isNaN(topo.location[1]) && !isNaN(topo.location[0])) createTopo();
                         }}
                     />
                   </div>

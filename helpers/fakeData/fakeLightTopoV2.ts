@@ -1,7 +1,6 @@
 import { quark, Quark } from 'helpers/quarky';
-import { BoulderData, Line, Name, Image, TrackData, Description, Difficulty, ClimbTechniques, SectorData, TopoData, Amenities, TopoStatus, TopoType, RockTypes, TopoAccess, Topo, Parking, StringBetween, LightTopo } from 'types';
-import { v4 as uuid, v4 } from 'uuid';
-import { quarkifyTopo } from './quarkifyTopo';
+import { Name, Image, Description, Amenities, TopoStatus, TopoType, RockTypes, LightTopo } from 'types';
+import { v4 as uuid } from 'uuid';
 
 export const images: Image[] = [
     // Topo image
@@ -27,7 +26,7 @@ export const lightTopo: LightTopo = {
 
     altitude: 775,
     closestCity: "Yzéron" as Name,
-    location: { lat: 45.701356, lng: 4.607264 },
+    location: [4.607264, 45.701356],
 
     isForbidden: false,
     amenities: Amenities.AdaptedToChildren | Amenities.Waterspot | Amenities.PicnicArea,
@@ -41,7 +40,7 @@ export const lightTopo: LightTopo = {
     creatorPseudo: 'Flavien' as Name,
     validatorId: validatorId,
 
-    firstParkingLocation: { lat: 45.701321, lng: 4.607274 },
+    firstParkingLocation: [4.607274, 45.701321],
     nbSectors: 4,
     nbBoulders: 82,
     nbTracks: 241,
