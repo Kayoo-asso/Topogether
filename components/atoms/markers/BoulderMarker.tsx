@@ -11,7 +11,7 @@ interface BoulderMarkerProps {
     topo?: Quark<Topo>,
     draggable?: boolean,
     onClick?: (boulder: Quark<Boulder>) => void,
-    onContextMenu?: (e: any, boulder: Quark<Boulder>) => void
+    onContextMenu?: (e: Event, boulder: Quark<Boulder>) => void
 }
 
 export const BoulderMarker: React.FC<BoulderMarkerProps> = watchDependencies(({

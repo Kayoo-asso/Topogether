@@ -7,7 +7,7 @@ export interface DropdownOption {
   isSection?: boolean;
   action?: () => void;
   icon?: string;
-  checked?: boolean;
+  disabled?: boolean;
 }
 
 interface DropdownProps {
@@ -33,14 +33,6 @@ export const Dropdown: React.FC<DropdownProps> = React.memo(({
         <div
           className={`text-grey-medium ktext-label uppercase ${i > 0 && 'mt-5'}`}
           key={opt.value}
-          onKeyDown={() => {
-            props.onSelect && props.onSelect(opt);
-            opt.action && opt.action();
-          }}
-          onMouseDown={() => {
-            props.onSelect && props.onSelect(opt);
-            opt.action && opt.action();
-          }}
           role="menuitem"
           tabIndex={0}
         >
@@ -48,35 +40,26 @@ export const Dropdown: React.FC<DropdownProps> = React.memo(({
         </div>
       ) : (
         <div
-          className="h-16 text-dark ktext-base cursor-pointer flex flex-row items-center"
+          className={`h-16 ${opt.disabled ? 'text-grey-medium': 'text-dark cursor-pointer'} ktext-base flex flex-row items-center`}
           key={opt.value}
           onKeyDown={() => {
             props.onSelect && props.onSelect(opt);
-            opt.action && opt.action();
+            opt.action && !opt.disabled && opt.action();
           }}
           onMouseDown={() => {
             props.onSelect && props.onSelect(opt);
-            opt.action && opt.action();
+            opt.action && !opt.disabled && opt.action();
           }}
           role="menuitem"
           tabIndex={0}
         >
-          {props.type === 'checkbox' && props.onSelect && (
-            <Checkbox
-              className="mr-2"
-              checked={opt.checked}
-              onClick={() => { props.onSelect && props.onSelect(opt); }}
-            />
-          )}
           {opt.icon && (
-          <Icon
-            name={opt.icon}
-            SVGClassName="stroke-black h-5 w-5 mr-5"
-          />
-          )}
-
+            <Icon
+              name={opt.icon}
+              SVGClassName={`${opt.disabled ? 'stroke-grey-medium': 'stroke-black'} h-5 w-5 mr-5`}
+            />
+            )}
           {opt.label || opt.value}
-
         </div>
       )))}
   </div>

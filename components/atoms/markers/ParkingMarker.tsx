@@ -8,6 +8,7 @@ interface ParkingMarkerProps {
     selected?: boolean,
     draggable?: boolean,
     onClick?: (parking: Quark<Parking>) => void,
+    onContextMenu?: (e: Event, parking: Quark<Parking>) => void,
 }
 
 export const ParkingMarker: React.FC<ParkingMarkerProps> = watchDependencies(({
@@ -37,7 +38,8 @@ export const ParkingMarker: React.FC<ParkingMarkerProps> = watchDependencies(({
                     location: [e.latLng.lng(), e.latLng.lat()]
                 })
             }
-        }, [props.parking])
+        }, [props.parking]),
+        onContextMenu: useCallback((e) => props.onContextMenu && props.onContextMenu(e, props.parking), [props.parking, props.onContextMenu])
     }
     useMarker(options, handlers);
 

@@ -39,9 +39,11 @@ interface MapControlProps extends MapProps {
   waypoints?: QuarkIter<Quark<Waypoint>>,
   selectedWaypoint?: SelectQuarkNullable<Waypoint>,
   onWaypointClick?: (waypoint: Quark<Waypoint>) => void,
+  onWaypointContextMenu?: (e: Event, waypoint: Quark<Waypoint>) => void,
   parkings?: QuarkIter<Quark<Parking>>,
   selectedParking?: SelectQuarkNullable<Parking>,
   onParkingClick?: (parking: Quark<Parking>) => void,
+  onParkingContextMenu?: (e: Event, parking: Quark<Parking>) => void,
   draggableMarkers?: boolean,
   boundsTo?: GeoCoordinates[],
   onMapZoomChange?: (zoom: number | undefined) => void,
@@ -276,6 +278,7 @@ export const MapControl: React.FC<MapControlProps> = ({
                             waypoint={waypoint}
                             selected={props.selectedWaypoint ? props.selectedWaypoint()?.id === waypoint().id : false}
                             onClick={props.onWaypointClick}
+                            onContextMenu={props.onWaypointContextMenu}
                         />
                         }
                     </For>
@@ -305,6 +308,7 @@ export const MapControl: React.FC<MapControlProps> = ({
                             parking={parking}
                             selected={props.selectedParking ? props.selectedParking()?.id === parking().id : false}
                             onClick={props.onParkingClick}
+                            onContextMenu={props.onParkingContextMenu}
                         />
                         }
                     </For>

@@ -20,7 +20,7 @@ export const BoulderMarkerDropdown: React.FC<BoulderMarkerDropdownProps> = watch
             props.toggleTrackSelect(trackQuark, props.boulder);
         }
     };
-    const addImage = useCallback(() => console.log('Downloading the topo...'), []);
+    const addImage = useCallback(() => console.log('Downloading the image...'), []);
 
     const deleteBoulder = useCallback(() => props.deleteBoulder(props.boulder), [props.boulder]);
 
@@ -30,7 +30,7 @@ export const BoulderMarkerDropdown: React.FC<BoulderMarkerDropdownProps> = watch
             style={{ left: `${props.dropdownPosition?.x}px`, top: `${props.dropdownPosition?.y}px` }}
             options={[
                 { value: 'Ajouter un passage', action: addTrack },
-                { value: 'Ajouter une image', action: addImage },
+                { value: 'Ajouter une image', disabled: true, action: addImage },
                 { value: 'Supprimer', action: deleteBoulder },
             ]}
         />

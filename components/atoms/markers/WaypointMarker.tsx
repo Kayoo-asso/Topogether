@@ -8,6 +8,7 @@ interface WaypointMarkerProps {
     draggable?: boolean,
     selected?: boolean,
     onClick?: (waypoint: Quark<Waypoint>) => void,
+    onContextMenu?: (e: Event, waypoint: Quark<Waypoint>) => void,
 }
 
 export const WaypointMarker: React.FC<WaypointMarkerProps> = watchDependencies(({
@@ -37,7 +38,8 @@ export const WaypointMarker: React.FC<WaypointMarkerProps> = watchDependencies((
                     location: [e.latLng.lng(), e.latLng.lat()]
                 })
             }
-        }, [props.waypoint])
+        }, [props.waypoint]),
+        onContextMenu: useCallback((e) => props.onContextMenu && props.onContextMenu(e, props.waypoint), [props.waypoint, props.onContextMenu])
     }
     useMarker(options, handlers);
 
