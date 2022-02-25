@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { BoulderItemLeftbar, Icon } from 'components';
 import { arrayMove, createTrack, splitArray } from 'helpers';
 import { Quark, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
@@ -25,7 +25,8 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> = watchDependen
 
     const [displayedSectors, setDisplayedSectors] = useState<Array<UUID>>(sectors.map(sector => sector.id).toArray());
     const [displayedBoulders, setDisplayedBoulders] = useState<Array<UUID>>([]);
-    
+    // console.log(displayedSectors);
+    // console.log(sectors.toArray());
     const [draggingSectorId, setDraggingSectorId] = useState();
     const handleDragStart = useCallback((res) => {
         setDraggingSectorId(res.source.droppableId);
@@ -55,6 +56,11 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> = watchDependen
             }
         }
     }, [topo, sectors]);
+
+    useEffect(() => {
+        const lastSectorId = topo.sectors.toArray()[topo.sectors.length - 1].id;
+        if (!displayedSectors.includes(lastSectorId)) setDisplayedSectors(ds => [...ds, lastSectorId]);
+    }, [topo.sectors.toArray()[topo.sectors.length - 1]]);
 
     if (!session) return null;
     return (
