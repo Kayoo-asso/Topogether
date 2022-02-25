@@ -6,12 +6,12 @@ import {
   BoulderBuilderSlideoverMobile, SectorBuilderSlideoverMobile,
   MapControl, Show,
   Header, InfoFormSlideover, ManagementFormSlideover, TrackFormSlideagainstDesktop, 
-  ModalValidateTopo, ModalDeleteTopo, GeoCamera, Drawer, LeftbarBuilderDesktop, BoulderBuilderSlideagainstDesktop, ParkingBuilderSlide, AccessFormSlideover, WaypointBuilderSlide, createTrack, BoulderMarkerDropdown, ModalRenameSector, ModalDelete, 
+  ModalValidateTopo, ModalDeleteTopo, GeoCamera, Drawer, LeftbarBuilderDesktop, BoulderBuilderSlideagainstDesktop, ParkingBuilderSlide, AccessFormSlideover, WaypointBuilderSlide, BoulderMarkerDropdown, ModalRenameSector, ModalDelete, 
 } from 'components';
 import { useRouter } from 'next/router';
 import { quarkTopo } from 'helpers/fakeData/fakeTopoV2';
 import {
- blobToImage, defaultImage, DeviceContext, sortBoulders, boulderChanged, sectorChanged, fromLatLng, toLatLng,
+ blobToImage, defaultImage, DeviceContext, sortBoulders, boulderChanged, sectorChanged, createTrack,
 } from 'helpers';
 import {
  Boulder, GeoCoordinates, Image, MapToolEnum, Name, Parking, Sector, SectorData, Track, Waypoint,

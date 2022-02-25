@@ -32,7 +32,7 @@ export const BoulderMarker: React.FC<BoulderMarkerProps> = watchDependencies(({
         draggable,
         position: toLatLng(boulder.location),
         label: {
-            text: (props.boulderOrder.get(boulder.id)! + '. '+boulder.name).toString(),
+            text: (props.boulderOrder.get(boulder.id)! + (process.env.NODE_ENV === 'development' ? '. '+boulder.name : '')).toString(),
             color: '#04D98B',
             fontFamily: 'Poppins',
             fontWeight: selected ? '700' : '500'
