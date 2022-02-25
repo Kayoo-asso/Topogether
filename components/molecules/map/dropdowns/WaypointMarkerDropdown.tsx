@@ -10,20 +10,20 @@ interface WaypointMarkerDropdownProps {
     deleteWaypoint: (waypoint: Quark<Waypoint>) => void;
 }
 
-export const WayPointMarkerDropdown: React.FC<WaypointMarkerDropdownProps> = watchDependencies((props: WaypointMarkerDropdownProps) => {
+export const WaypointMarkerDropdown: React.FC<WaypointMarkerDropdownProps> = watchDependencies((props: WaypointMarkerDropdownProps) => {
     const session = api.user();
 
-    const deleteWayPoint = useCallback(() => props.deleteWaypoint(props.waypoint), [props.waypoint]);
+    const deleteWaypoint = useCallback(() => props.deleteWaypoint(props.waypoint), [props.waypoint]);
 
     if (!session) return null;
     return (
         <Dropdown
             style={{ left: `${props.dropdownPosition?.x}px`, top: `${props.dropdownPosition?.y}px` }}
             options={[
-                { value: 'Supprimer', action: deleteWayPoint },
+                { value: 'Supprimer', action: deleteWaypoint },
             ]}
         />
     );
 });
 
-WayPointMarkerDropdown.displayName = 'WaypointMarkerDropdown';
+WaypointMarkerDropdown.displayName = 'WaypointMarkerDropdown';

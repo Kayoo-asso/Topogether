@@ -36,8 +36,10 @@ export function usePolygon(options: google.maps.PolygonOptions, handlers: Polygo
         if (polygon.current) {
             const l = [];
             for (const [eventName, handlerName] of polygonEvents) {
+                console.log(handlerName)
                 const handler = handlers[handlerName];
                 if (handler) {
+                    console.log('add listener')
                     const listener = polygon.current.addListener(eventName, handler);
                     l.push(listener)
                 }

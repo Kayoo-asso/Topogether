@@ -4,13 +4,13 @@ import { Parking } from 'types';
 import { Quark, watchDependencies } from 'helpers/quarky';
 import { api } from 'helpers/services/ApiService';
 
-interface PakingMarkerDropdownProps {
+interface ParkingMarkerDropdownProps {
     parking: Quark<Parking>;
     dropdownPosition?: { x: number, y: number };
-    deleteParking: (boulder: Quark<Parking>) => void;
+    deleteParking: (parking: Quark<Parking>) => void;
 }
 
-export const PakingMarkerDropdown: React.FC<PakingMarkerDropdownProps> = watchDependencies((props: PakingMarkerDropdownProps) => {
+export const ParkingMarkerDropdown: React.FC<ParkingMarkerDropdownProps> = watchDependencies((props: ParkingMarkerDropdownProps) => {
     const session = api.user();
 
     const deleteParking = useCallback(() => props.deleteParking(props.parking), [props.parking]);
@@ -26,4 +26,4 @@ export const PakingMarkerDropdown: React.FC<PakingMarkerDropdownProps> = watchDe
     );
 });
 
-PakingMarkerDropdown.displayName = 'PakingMarkerDropdown';
+ParkingMarkerDropdown.displayName = 'ParkingMarkerDropdown';

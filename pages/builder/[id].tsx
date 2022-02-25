@@ -6,12 +6,15 @@ import {
   BoulderBuilderSlideoverMobile, SectorBuilderSlideoverMobile,
   MapControl, Show,
   Header, InfoFormSlideover, ManagementFormSlideover, TrackFormSlideagainstDesktop, 
-  ModalValidateTopo, ModalDeleteTopo, GeoCamera, Drawer, LeftbarBuilderDesktop, BoulderBuilderSlideagainstDesktop, ParkingBuilderSlide, AccessFormSlideover, WaypointBuilderSlide, createTrack, BoulderMarkerDropdown, ModalRenameSector, ModalDelete, 
+  ModalValidateTopo, ModalDeleteTopo, GeoCamera, Drawer, 
+  LeftbarBuilderDesktop, BoulderBuilderSlideagainstDesktop, ParkingBuilderSlide, AccessFormSlideover, 
+  WaypointBuilderSlide, createTrack, ModalRenameSector, ModalDelete,
+  BoulderMarkerDropdown, ParkingMarkerDropdown, WaypointMarkerDropdown, SectorMarkerDropdown
 } from 'components';
 import { useRouter } from 'next/router';
 import { quarkTopo } from 'helpers/fakeData/fakeTopoV2';
 import {
- blobToImage, defaultImage, DeviceContext, sortBoulders, boulderChanged, sectorChanged, fromLatLng, toLatLng,
+ blobToImage, defaultImage, DeviceContext, sortBoulders, boulderChanged, sectorChanged, fromLatLng, toLatLng, useContextMenu
 } from 'helpers';
 import {
  Boulder, GeoCoordinates, Image, MapToolEnum, Name, Parking, Sector, SectorData, Track, Waypoint,
@@ -20,10 +23,7 @@ import {
  Quark, QuarkArray, QuarkIter, useCreateDerivation, useQuarkyCallback, useSelectQuark, watchDependencies,
 } from 'helpers/quarky';
 import { v4 } from 'uuid';
-import { useContextMenu } from 'helpers/hooks/useContextMenu';
 import { api } from 'helpers/services/ApiService';
-import { WayPointMarkerDropdown } from 'components/molecules/map/dropdowns/WayPointMarkerDropdown';
-import { PakingMarkerDropdown } from 'components/molecules/map/dropdowns/ParkingMarkerDropdown';
 
 const BuilderMapPage: NextPage = watchDependencies(() => {
   const session = api.user();
@@ -42,16 +42,21 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
   const [currentImage, setCurrentImage] = useState<Image>(defaultImage);
   const selectedSector = useSelectQuark<Sector>();
   const toDeleteSector = useSelectQuark<Sector>();
+  const sectorRightClicked = useSelectQuark<Sector>();
+
   const selectedBoulder = useSelectQuark<Boulder>();
   const toDeleteBoulder = useSelectQuark<Boulder>();
-  const selectedTrack = useSelectQuark<Track>();
+  const boulderRightClicked = useSelectQuark<Boulder>();
+
   const selectedParking = useSelectQuark<Parking>();
   const toDeleteParking = useSelectQuark<Parking>();
-  const selectedWaypoint = useSelectQuark<Waypoint>();
-  const toDeleteWaypoint = useSelectQuark<Waypoint>();
-  const boulderRightClicked = useSelectQuark<Boulder>();
-  const waypointRightClicked = useSelectQuark<Waypoint>();
   const parkingRightClicked = useSelectQuark<Parking>();
+
+  const selectedWaypoint = useSelectQuark<Waypoint>();
+  const waypointRightClicked = useSelectQuark<Waypoint>();
+  const toDeleteWaypoint = useSelectQuark<Waypoint>();
+
+  const selectedTrack = useSelectQuark<Track>();
 
   const [dropdownPosition, setDropdownPosition] = useState<{ x: number, y: number }>();
   const closeDropdown = useCallback(() => boulderRightClicked.select(undefined), []);
@@ -59,6 +64,7 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
     boulderRightClicked.select(undefined);
     waypointRightClicked.select(undefined);
     parkingRightClicked.select(undefined);
+    sectorRightClicked.select(undefined);
   });
   
   const [displaySectorSlideover, setDisplaySectorSlideover] = useState<boolean>(false);
@@ -156,6 +162,11 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
 
   const displayParkingDropdown = useCallback((e: any, parkingQuark: Quark<Parking>) => {
     parkingRightClicked.select(parkingQuark);
+    setDropdownPosition({ x: e.domEvent.pageX, y: e.domEvent.pageY });
+  }, []);
+
+  const displaySectorDropdown = useCallback((e: any, sectorQuark: Quark<Sector>) => {
+    sectorRightClicked.select(sectorQuark);
     setDropdownPosition({ x: e.domEvent.pageX, y: e.domEvent.pageY });
   }, []);
 
@@ -378,6 +389,7 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
             if (currentTool) handleCreateNewMarker(e);
             else toggleSectorSelect(sectorQuark);
           }}
+          onSectorContextMenu={displaySectorDropdown}
           onSectorDragStart={(e, sectorQuark) => selectedSector.select(sectorQuark)}
           boulders={boulders}
           bouldersOrder={boulderOrder()}
@@ -547,9 +559,19 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
           }
       </Show>
 
+      <Show when={() => sectorRightClicked.quark()}>
+          {(quarkSector) =>
+            <SectorMarkerDropdown 
+            dropdownPosition={dropdownPosition}
+            sector={quarkSector}
+            deleteSector={() => toDeleteSector.select(quarkSector)} 
+            renameSector={() => console.log("TODO")}            />
+          }
+      </Show>
+
       <Show when={() => waypointRightClicked.quark()}>
           {(quarkWaypoint) =>
-            <WayPointMarkerDropdown 
+            <WaypointMarkerDropdown 
               dropdownPosition={dropdownPosition} 
               waypoint={quarkWaypoint} 
               deleteWaypoint={() => toDeleteWaypoint.select(quarkWaypoint)}
@@ -559,7 +581,7 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
 
       <Show when={() => parkingRightClicked.quark()}>
           {(quarkParking) =>
-            <PakingMarkerDropdown 
+            <ParkingMarkerDropdown 
               dropdownPosition={dropdownPosition} 
               parking={quarkParking}
               deleteParking={() => toDeleteParking.select(quarkParking)}

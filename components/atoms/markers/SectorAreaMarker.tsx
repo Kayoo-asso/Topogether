@@ -14,6 +14,7 @@ interface SectorAreaMarkerProps {
     onClick?: (e: PolyMouseEvent) => void,
     onDragStart?: (e: PolyMouseEvent) => void,
     onMouseMoveOnSector?: (e: any) => void,
+    onContextMenu?: (e: any, sector: Quark<Sector>) => void,
 }
 
 export const SectorAreaMarker: React.FC<SectorAreaMarkerProps> = watchDependencies(({
@@ -62,7 +63,8 @@ export const SectorAreaMarker: React.FC<SectorAreaMarkerProps> = watchDependenci
             if (props.topo && props.boulderOrder) {
                 sectorChanged(props.topo, sector.id, props.boulderOrder);
             }
-        }, [updatePath, props.topo, sector, props.boulderOrder])
+        }, [updatePath, props.topo, sector, props.boulderOrder]),
+        onContextMenu: useCallback((e) => {console.log('right click'); props.onContextMenu && props.onContextMenu(e, props.sector)}, [props.sector, props.onContextMenu])
     }
     polygon = usePolygon(options, handlers);
 
