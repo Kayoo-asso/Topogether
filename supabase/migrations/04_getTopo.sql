@@ -1,4 +1,3 @@
-
 -- Here's an explanation of how we are going to gather all children
 -- of a parent into a JSON array
 -- 1. Find each child record
