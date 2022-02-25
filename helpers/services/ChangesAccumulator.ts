@@ -35,7 +35,7 @@ dbRequest.onupgradeneeded = (ev) => {
         db.createObjectStore(store); 
     }
     storesToCreate = [];
-    upgradeRequested = false;
+    // upgradeRequested = false;
 };
 
 function requestUpgrade() {
@@ -63,21 +63,21 @@ export class ChangeAccumulator<K extends IDBValidKey, T> {
 
     constructor(id: string) {
         this.id = id;
-        if (!db.objectStoreNames.contains(id)) {
+        if (db!.objectStoreNames.contains(id)) {
             storesToCreate.push(id);
             requestUpgrade();
         }
     }
 
     onOpen(store: IDBObjectStore) {
-        store.
+        // store.
     }
 
     scheduleFlush() {
-        if (!this.updateScheduled) {
-            this.updateScheduled = true;
-            queueMicrotask(() => {}) // do stuff;
-        }
+        // if (!this.updateScheduled) {
+        //     this.updateScheduled = true;
+        //     queueMicrotask(() => {}) // do stuff;
+        // }
     }
 
     add(key: K, value: T) {
@@ -86,7 +86,7 @@ export class ChangeAccumulator<K extends IDBValidKey, T> {
     }
 
     delete(key: K) {
-        this.pendingChanges.set(key, DELETED);
+        // this.pendingChanges.set(key, DELETED);
     }
 
 

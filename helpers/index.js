@@ -10,7 +10,6 @@ export * from './readFileAsync';
 export * from './distanceBetween';
 export * from './markerSize';
 export * from './bitflagHelpers';
-export * from './horizontalScroll';
 export * from './formatDate';
 export * from './blobToImage';
 export * from './dropbox';
