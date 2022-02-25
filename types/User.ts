@@ -1,46 +1,33 @@
-import { Image, Rating } from 'types';
-import { Description, Email, ExplicitUndefineds, Name, StringBetween, UUID } from './Utils';
+import { Rating } from 'types';
+import { Description, Email, Name, StringBetween, UUID } from './Utils';
 
+// NOTE: the email has to be updated through the authentication service
 export type User = {
   id: UUID,
-  pseudo: Name,
+  userName: Name,
   email: Email,
   readonly role: Role,
-  readonly created: Date,
+  // ISO timestamp format
+  // Wrap in a new Date() object if needed
+  readonly created: string, 
   imageUrl?: string,
   firstName?: Name,
   lastName?: Name,
   country?: Name,
   city?: Name,
   phone?: StringBetween<1, 30>,
-  birthDate?: string,
+  birthDate?: string, // has to be in YYYY/MM/DD format
 };
 
-// The values that can be updated in the database
-// NOTE: the email has to be updated through the authentication service
-export interface DBUser {
+export interface Profile {
   id: UUID,
-  user_name: Name,
-  email: Email, // cannot be updated directly
-  role: Role, // cannot be updated directly
+  userName: Name,
+  role: Role,
   created: string,
-  image_url?: string,
-  first_name?: Name,
-  last_name?: Name,
-  country?: Name,
+  firstName?: Name,
+  lastName?: Name,
   city?: Name,
-  phone?: StringBetween<1, 30>,
-  birth?: string,
-}
-
-export type DBUserUpdate = ExplicitUndefineds<Omit<DBUser, 'email' | 'role' | 'created'>>;
-
-export interface DBProfile {
-  pseudo: Name,
-  first_name?: Name,
-  last_name?: Name,
-  country?: Name,
-  city?: Name
+  country?: Name
 }
 
 export type Role = 'ADMIN' | 'USER';

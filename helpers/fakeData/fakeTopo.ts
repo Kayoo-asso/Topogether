@@ -10,10 +10,7 @@ const sectors: SectorData[] = [
             {
                 id: uuid(),
                 name: "Pearl Harbor" as StringBetween<1, 255>,
-                location: {
-                    lat: 45.70201,
-                    lng: 4.605412
-                },
+                location: [4.605412, 45.70201],
                 isHighBall: true,
                 hasDangerousDescent: true,
                 "isMustSee": false,
@@ -133,10 +130,7 @@ const sectors: SectorData[] = [
             {
                 "id": 16,
                 "name": "Gaêllys",
-                "location": {
-                    "lat": 45.702065,
-                    "lng": 4.605291
-                },
+                "location": [4.605291, 45.702065],
                 "isHighBall": false,
                 "isMustSee": false,
                 "orderIndex": 2,

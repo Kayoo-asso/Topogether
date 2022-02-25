@@ -1,7 +1,7 @@
 create table users (
     -- Cascading deletes is important, so that we can remove a user from the `auth` schema
     id uuid primary key references auth.users on delete cascade,
-    user_name text not null,
+    "userName" text not null,
     -- The email can be found in the `auth.users` table.
     -- It is maintained in sync by a trigger (see below)
     email varchar(1000) not null,
@@ -9,13 +9,13 @@ create table users (
     role role default 'USER' not null,
     created timestamptz default now() not null,
 
-    image_url text,
-    first_name varchar(500),
-    last_name varchar(500),
+    "imageUrl" text,
+    "firstName" varchar(500),
+    "lastName" varchar(500),
     country varchar(500),
     city varchar(500),
     phone varchar(30),
-    birth_date date
+    "birthDate" date
 );
 
 alter table users enable row level security;
@@ -65,8 +65,8 @@ language plpgsql
 security definer set search_path = public, extensions, auth, pg_temp
 as $$
 begin
-    insert into users(id, user_name, email)
-    values (new.id, (new.raw_user_meta_data::jsonb->>'user_name')::varchar(500), new.email);
+    insert into users(id, "userName", email)
+    values (new.id, (new.raw_user_meta_data::jsonb->>'userName')::varchar(500), new.email);
     -- not very efficient (we just inserted into auth.users)
     -- but we're never signing up a lot of users at once, so this is fine
     update auth.users
@@ -142,11 +142,11 @@ create trigger on_account_update before update on users
 create view public.profiles as
     select 
         id,
-        user_name as "userName",
+        "userName",
         role,
         created,
-        first_name as "firstName",
-        last_name as "lastName",
+        "firstName",
+        "lastName",
         country,
         city
     from public.users;

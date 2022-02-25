@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { fontainebleauLocation } from 'helpers';
+import { fontainebleauLocation, toLatLng } from 'helpers';
 import type { NextPage } from 'next';
 import {
  HeaderDesktop, LeftbarDesktop, MapControl, Show, TopoPreview,
@@ -36,7 +36,7 @@ const WorldMapPage: NextPage = () => {
 
         <MapControl
           initialZoom={5}
-          center={fontainebleauLocation}
+          center={toLatLng(fontainebleauLocation)}
           topos={topos}
           displayTopoFilter
           onTopoClick={toggleTopoSelect}

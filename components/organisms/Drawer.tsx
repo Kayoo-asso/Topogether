@@ -33,6 +33,7 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies((props: DrawerPro
     if (!newLineQuark) {
       selectedTrack.lines.push({
         id: v4(),
+        order: selectedTrack.lines.length,
         imageId: props.image.id,
         points: [],
       });

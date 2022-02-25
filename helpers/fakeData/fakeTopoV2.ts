@@ -45,7 +45,8 @@ const validatorId = "validator" as UUID;
 export const lines: Line[] = [
     // Line 0, track 0
     {
-        id: "line-1" as UUID,
+        id: v4(),
+        order: 0,
         imageId: images[1].id,
         points: [
             [2044, 1948],
@@ -60,7 +61,8 @@ export const lines: Line[] = [
     },
     // Line 1, track 1
     {
-        id: "line-2" as UUID,
+        id: v4(),
+        order: 1,
         imageId: images[1].id,
         points: [
             [2207, 1942],
@@ -97,6 +99,7 @@ export const tracks: TrackData[] = [
         lines: [lines[0]],
         ratings: [],
         creatorId: topoCreatorId,
+        hasMantle: false,
     },
     // Track 1, boulder 0
     {
@@ -117,6 +120,7 @@ export const tracks: TrackData[] = [
         lines: [lines[1]],
         ratings: [],
         creatorId: topoCreatorId,
+        hasMantle: false,
     },
 ]
 
@@ -124,10 +128,7 @@ export const boulders: BoulderData[] = [
     {
         id: v4(),
         name: "PearlHarbor" as Name,
-        location: {
-            lat: 45.70201,
-            lng: 4.605412,
-        },
+        location: [4.605412, 45.70201],
         isHighball: true,
         mustSee: false,
         dangerousDescent: false,
@@ -137,10 +138,7 @@ export const boulders: BoulderData[] = [
     {
         id: v4(),
         name: "Mystiquette" as Name,
-        location: {
-            lat: 45.70401,
-            lng: 4.606412,
-        },
+        location: [4.606412, 45.70401],
         isHighball: true,
         mustSee: false,
         dangerousDescent: false,
@@ -150,10 +148,7 @@ export const boulders: BoulderData[] = [
     {
         id: v4(),
         name: "Hoummmmous" as Name,
-        location: {
-            lat: 45.70461,
-            lng: 4.606712,
-        },
+        location: [4.606712, 45.70461],
         isHighball: true,
         mustSee: false,
         dangerousDescent: false,
@@ -163,10 +158,7 @@ export const boulders: BoulderData[] = [
     {
         id: v4(),
         name: "SupremeNTM" as Name,
-        location: {
-            lat: 45.70661,
-            lng: 4.608712,
-        },
+        location: [4.608712, 45.70661],
         isHighball: false,
         mustSee: true,
         dangerousDescent: true,
@@ -177,21 +169,12 @@ export const boulders: BoulderData[] = [
 
 export const sectors: SectorData[] = [
     {
-        id: "sector-1" as UUID,
+        id: v4(),
         name: "ABO" as Name,
         path: [
-            {
-                lat: 45.70101,
-                lng: 4.604512,
-            },
-            {
-                lat: 45.70401,
-                lng: 4.608712,
-            },
-            {
-                lat: 45.70661,
-                lng: 4.606912,
-            },
+            [4.604512, 45.70101],
+            [4.608712, 45.70401],
+            [4.606912, 45.70661]
         ],
         boulders: [boulders[0].id, boulders[1].id, boulders[2].id],
     }
@@ -199,32 +182,32 @@ export const sectors: SectorData[] = [
 
 export const access: TopoAccess[] = [
     {
-        id: "access-1" as UUID,
+        id: v4(),
         duration: 15,
         difficulty: Difficulty.OK,
         steps: [
             {
                 description: "Depuis le parking, prendre le sentier qui monte dans la continuité de la route. Après 12-15min de marche, vous arriverez à une esplanade d'herbe surmontant une petite falaise (où il est possible de faire de l'initiation). Un panneau indique le site d'escalade à l'entrée de l'esplanade.\nDepuis l'esplanade, prendre le sentier qui part derrière le panneau pour monter vers les premiers blocs." as Description,
-                image: images[0]
+                imageUrl: images[0].url
             },
             {
                 description: "Et ceci est une autre étape incroyable pour s'approcher du spot." as Description,
-                image: images[0]
+                imageUrl: images[0].url
             }
         ]
     },
     {
-        id: "access-2" as UUID,
+        id: v4(),
         duration: 25,
         difficulty: Difficulty.OK,
         steps: [
             {
                 description: "Depuis le parking, prendre le sentier qui monte dans la continuité de la route. Après 12-15min de marche, vous arriverez à une esplanade d'herbe surmontant une petite falaise (où il est possible de faire de l'initiation). Un panneau indique le site d'escalade à l'entrée de l'esplanade.\nDepuis l'esplanade, prendre le sentier qui part derrière le panneau pour monter vers les premiers blocs." as Description,
-                image: images[0]
+                imageUrl: images[0].url
             },
             {
                 description: "Et ceci est une autre étape incroyable pour s'approcher du spot." as Description,
-                image: images[0]
+                imageUrl: images[0].url
             }
         ]
     },    
@@ -232,9 +215,9 @@ export const access: TopoAccess[] = [
 
 export const parkings: Parking[] = [
     {
-        id: "parking-1" as UUID,
+        id: v4(),
         spaces: 80,
-        location: { lat: 45.701321, lng: 4.607274 },
+        location: [4.607274, 45.701321],
         name: 'Parking 1' as StringBetween<1, 255>,
         description: 'Le parking de Rocher Canon est facile d’accès depuis la N12. Attention toutefois, beaucoup de GPS indique un itinéraire qui passe à travers la forêt et qui est en fait fermé. Il faut bien arriver par la N12. ' as StringBetween<1, 5000>,
         image: images[2]
@@ -243,9 +226,9 @@ export const parkings: Parking[] = [
 
 export const managers: Manager[] = [
     {
-        id: "manager-1" as UUID,
+        id: v4(),
         name: 'La dégaine' as Name,
-        image: images[3],
+        imageUrl: images[3].url,
         contactName: 'Jérôme Foobar' as Name,
         contactPhone: '06 69 43 44 92' as Name,
         contactMail: 'ladegaine@ladegaine.com' as Name,
@@ -257,18 +240,15 @@ export const managers: Manager[] = [
 
 export const waypoints: Waypoint[] = [
     {
-        id: uuid(),
+        id: v4(),
         name: 'Pont de pierre' as Name,
-        location: {
-            lat: 45.70256,
-            lng: 4.605462,
-        },
+        location: [4.605462, 45.70256],
         description: "C'est un joli petit pont tout mignon qui permet de traverser une rivière ... DE SANNNNNG GNIAHAHAHAHA !!!" as Description,
     }
 ]
 
 export const topo: TopoData = {
-    id: "topo-1" as UUID,
+    id: v4(),
     name: "Yzéron" as Name,
     description: "Le site d'Yzéron est situé sur le massif de Py froid à environ 800m d'altitude. Il est le plus grand site de bloc de la région Lyonnaise avec une grande diversité de profil (dévers, dalle, réta...). L'esplanade sépare la plus grande partie du site en amont, et une falaise idéale pour l'initiation, située en contrebas. La forêt protège une bonne partie du site contre les aléas météorologiques ce qui, combiné à l'altitude, permet la pratique de la grimpe toute l'année." as Description,
     status: TopoStatus.Draft,
@@ -276,7 +256,7 @@ export const topo: TopoData = {
 
     altitude: 775,
     closestCity: "Yzéron" as Name,
-    location: { lat: 45.701356, lng: 4.607264 },
+    location: [4.607264, 45.701356],
 
     isForbidden: false,
     amenities: Amenities.AdaptedToChildren | Amenities.Waterspot | Amenities.PicnicArea,

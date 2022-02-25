@@ -37,7 +37,7 @@ export const ParkingModal: React.FC<ParkingModalProps> = (props: ParkingModalPro
                             className='py-5' 
                             onClick={(e) => {
                                 e.stopPropagation();
-                                const data = [new ClipboardItem({ "text/plain": new Blob([props.parkingLocation.lat+','+props.parkingLocation.lng], { type: "text/plain" }) })];
+                                const data = [new ClipboardItem({ "text/plain": new Blob([props.parkingLocation[1]+','+props.parkingLocation[0]], { type: "text/plain" }) })];
                                 navigator.clipboard.write(data).then(function() {
                                     setFlashMessage("Coordonnées copiées dans le presse papier.");
                                 }, function() {

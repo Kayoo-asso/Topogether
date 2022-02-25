@@ -12,10 +12,8 @@ const Template: ComponentStory<typeof SliderInput> = (args) => <div className="w
 
 export const Simple = Template.bind({});
 Simple.args = {
-  name: 'number-of-tracks',
   onChange: (e) => { console.log(e); },
   domain: [110, 168],
   values: [110, 168],
   step: 1,
-  color: 'main',
 };

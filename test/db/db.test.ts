@@ -22,26 +22,7 @@ type Children = {
     // parent_id: number,
 }
 
-test("Inserting and recovering spatial data", async () => {
-    const children: Children[] = [
-        { id: 1, name: "foo" },
-        { id: 2, name: "bar" },
-        { id: 3, name: "baz" }
-    ];
-    const parent: Parent = {
-        id: 1,
-        children: [2, 1, 3]
-    }
-    console.log("Children insert result: ", JSON.stringify(
-        await client.from<Children>("children").insert(children)
-    ));
-    console.log("Parent insert result: ", JSON.stringify(
-        await client.from<Parent>("parents").insert(parent)
-    ));
-    const res2 = await client.rpc("children_in_order", {
-        parent_id: 1
-    });
-    console.log("RPC result: ", JSON.stringify(res2));
+test.skip("Inserting and recovering spatial data", async () => {
 
     throw new Error();
 });

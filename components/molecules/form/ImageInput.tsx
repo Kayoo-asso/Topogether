@@ -10,7 +10,7 @@ import { v4 } from 'uuid';
 interface ImageInputProps {
   label?: string,
   multiple?: boolean,
-  value?: ImageType,
+  value?: string,
   onChange: (images: ImageType[]) => void,
   onDelete?: () => void,
 }
@@ -101,7 +101,7 @@ export const ImageInput = forwardRef<HTMLInputElement, ImageInputProps>(({
       />
       <ImageButton
         text={props.label}
-        image={props.value}
+        imageUrl={props.value}
         loading={loading}
         onClick={() => {
           if (!loading) fileInputRef.current?.click();

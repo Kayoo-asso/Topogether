@@ -51,9 +51,9 @@ export const AccessForm: React.FC<AccessFormProps> = watchDependencies((props: A
                             <div className='flex flex-row gap-6 items-end'>
                                 <div className='w-32'>
                                     <ImageInput 
-                                        value={step.image}
+                                        value={step.imageUrl}
                                         onChange={(files) => {
-                                            newSteps[index].image = files[0];
+                                            newSteps[index].imageUrl = files[0].url;
                                             props.access.set({
                                                 ...access,
                                                 steps: newSteps,

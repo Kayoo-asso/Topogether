@@ -7,7 +7,7 @@ import { api, AuthResult } from 'helpers/services/ApiService';
 import { Email } from 'types';
 import { useRouter } from 'next/router';
 
-export const LoginForm: React.FC = (props) => {
+export const LoginForm: React.FC = () => {
     const router = useRouter();
 
     const [email, setEmail] = useState<string>();
@@ -20,10 +20,9 @@ export const LoginForm: React.FC = (props) => {
     const [errorMessage, setErrorMessage] = useState<string>();
 
     const login = useCallback(async () => {
-        console.log(email);
         let hasError = false;
         if (!email) { setEmailError("Email invalide"); hasError = true };
-        if (!password) { setPasswordError("Password invalide"); hasError = true };
+        if (!password) { setPasswordError("Mot de passe invalide"); hasError = true };
 
         if (!hasError) {
             const res = await api.signIn(email as Email, password!);
@@ -87,7 +86,7 @@ export const LoginForm: React.FC = (props) => {
                         fullWidth
                         onClick={login}
                     />
-                    <div className='ktext-error'>{errorMessage}</div>
+                    <div className='ktext-error text-error mt-3'>{errorMessage}</div>
                 </div>
             </div>
 

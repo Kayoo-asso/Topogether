@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { boulderChanged, markerSize, useMarker } from "helpers";
+import { boulderChanged, markerSize, toLatLng, useMarker } from "helpers";
 import { Quark, useQuarkyCallback, watchDependencies } from "helpers/quarky";
 import { Boulder, GeoCoordinates, MarkerEventHandlers, Topo, UUID } from "types";
 
@@ -30,7 +30,7 @@ export const BoulderMarker: React.FC<BoulderMarkerProps> = watchDependencies(({
     const options: google.maps.MarkerOptions = {
         icon,
         draggable,
-        position: boulder.location,
+        position: toLatLng(boulder.location),
         label: {
             text: (props.boulderOrder.get(boulder.id)! + '. '+boulder.name).toString(),
             color: '#04D98B',
@@ -43,10 +43,7 @@ export const BoulderMarker: React.FC<BoulderMarkerProps> = watchDependencies(({
         onClick: useCallback(() => props.onClick && props.onClick(props.boulder), [props.boulder, props.onClick]),
         onDragEnd: useQuarkyCallback((e: google.maps.MapMouseEvent) => { 
             if (e.latLng) {
-                const loc: GeoCoordinates = {
-                    lat: e.latLng.lat(),
-                    lng: e.latLng.lng()
-                };
+                const loc: GeoCoordinates = [e.latLng.lng(), e.latLng.lat()];
                 props.boulder.set({
                     ...boulder,
                     location: loc

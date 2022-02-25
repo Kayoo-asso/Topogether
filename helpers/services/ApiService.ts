@@ -1,5 +1,5 @@
 import { createClient, SupabaseClient, User as AuthUser } from "@supabase/supabase-js";
-import { DBUser, DBUserUpdate, Email, Image, Name, TopoData, User, UUID } from 'types';
+import { Email, Image, Name, TopoData, User, UUID } from 'types';
 import { Quark, quark } from 'helpers/quarky';
 import { DBConvert } from "./DBConvert";
 
@@ -30,7 +30,7 @@ export class ApiService {
 
     private async _loadUser(authUser: AuthUser): Promise<AuthResult.Success | AuthResult.Error> {
         const { data, error } = await this.client
-            .from<DBUser>("users")
+            .from<User>("users")
             .select("*")
             .match({ id: authUser.id })
             .single();
@@ -40,8 +40,7 @@ export class ApiService {
             return AuthResult.Error;
         }
         
-        const user = DBConvert.userFromDB(data!);
-        this._user.set(user);
+        this._user.set(data);
         return AuthResult.Success;
     }
 
@@ -55,7 +54,7 @@ export class ApiService {
             password
         }, {
             redirectTo: "/",
-            data: { user_name: pseudo }
+            data: { userName: pseudo }
         });
         if (error) {
             // user already exists
@@ -101,10 +100,9 @@ export class ApiService {
     }
 
     async updateUserInfo(user: User): Promise<AuthResult.Success | AuthResult.Error> {
-        const update = DBConvert.userToDB(user);
         const { error } = await this.client
-            .from<DBUserUpdate>("users")
-            .update(update);
+            .from<User>("users")
+            .update(user);
         if (error) {
             console.debug("Error updating user info: ", error);
             return AuthResult.Error;

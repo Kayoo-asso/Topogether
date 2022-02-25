@@ -11,7 +11,7 @@ import {
 import { useRouter } from 'next/router';
 import { quarkTopo } from 'helpers/fakeData/fakeTopoV2';
 import {
- blobToImage, defaultImage, DeviceContext, sortBoulders, boulderChanged, sectorChanged,
+ blobToImage, defaultImage, DeviceContext, sortBoulders, boulderChanged, sectorChanged, fromLatLng, toLatLng,
 } from 'helpers';
 import {
  Boulder, GeoCoordinates, Image, MapToolEnum, Name, Parking, Sector, SectorData, Track, Waypoint,
@@ -233,19 +233,12 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
 
   const handleCreateNewMarker = useCallback((e) => {
     if (e.latLng) {
+      const loc: GeoCoordinates = [e.latLng.lng(), e.latLng.lat()]
       switch (currentTool) {
-        case 'ROCK':
-          createBoulder({ lat: e.latLng.lat(), lng: e.latLng.lng() });
-          break;
-        case 'SECTOR':
-          handleCreatingSector({ lat: e.latLng.lat(), lng: e.latLng.lng() });
-          break;
-        case 'PARKING':
-          createParking({ lat: e.latLng.lat(), lng: e.latLng.lng() });
-          break;
-        case 'WAYPOINT':
-          createWaypoint({ lat: e.latLng.lat(), lng: e.latLng.lng() });
-          break;
+        case 'ROCK': createBoulder(loc); break;
+        case 'SECTOR': handleCreatingSector(loc); break;
+        case 'PARKING': createParking(loc); break;
+        case 'WAYPOINT': createWaypoint(loc); break;
         default: break;
       }
     }
@@ -345,7 +338,7 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
 
         <MapControl
           initialZoom={16}
-          center={boulders.toArray()[0]().location}
+          center={toLatLng(boulders.toArray()[0]().location)}
           displaySectorButton
           onSectorButtonClick={() => setDisplaySectorSlideover(true)}
           searchbarOptions={{
@@ -388,10 +381,7 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
           onClick={handleCreateNewMarker}
           onMouseMove={(e) => {
             if (creatingSector && creatingSector.length > 0 && e.latLng) {
-              setFreePointCreatingSector({
-                lat: e.latLng!.lat(),
-                lng: e.latLng!.lng(),
-              });
+              setFreePointCreatingSector([e.latLng!.lng(), e.latLng!.lat()]);
             }
           }}
           onCreatingSectorPolylineClick={() => {
