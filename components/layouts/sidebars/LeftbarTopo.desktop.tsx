@@ -28,3 +28,5 @@ export const LeftbarTopoDesktop: React.FC<LeftbarTopoDesktopProps> = watchDepend
         </div>
     )
 });
+
+LeftbarTopoDesktop.displayName = "Leftbar Topo Desktop";

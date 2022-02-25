@@ -170,7 +170,6 @@ const Topo: NextPage = () => {
 
         <MapControl
           initialZoom={16}
-          center={toLatLng(boulders.toArray()[0]().location)}
           displaySectorButton
           onSectorButtonClick={() => setDisplaySectorSlideover(true)}
           searchbarOptions={{

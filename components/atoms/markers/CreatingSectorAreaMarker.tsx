@@ -22,12 +22,14 @@ export const CreatingSectorAreaMarker: React.FC<CreatingSectorAreaMarkerProps> =
     usePolyline(polylineOptions, polylineHandlers);
 
     if (props.path.length > 3)
-        return (<ValidationMarker 
-            position={props.path[0]}
-            onClick={props.onOriginClick}
-        />)
+        return (
+            <ValidationMarker 
+                position={props.path[0]}
+                onClick={props.onOriginClick}
+            />
+        )
     
     return null;
 };
 
-CreatingSectorAreaMarker.displayName = "CreatingSectorAreaMarker";
+CreatingSectorAreaMarker.displayName = "Creating Sector AreaMarker";

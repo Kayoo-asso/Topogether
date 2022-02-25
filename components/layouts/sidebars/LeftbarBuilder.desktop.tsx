@@ -37,3 +37,5 @@ export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = watch
         </div>
     )
 });
+
+LeftbarBuilderDesktop.displayName = "Leftbar Builder Desktop";

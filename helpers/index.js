@@ -4,6 +4,7 @@ export * from './topo';
 export * from './context';
 export * from './map';
 export * from './globals';
+export * from './builder';
 
 export * from './readFileAsync';
 export * from './distanceBetween';

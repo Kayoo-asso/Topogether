@@ -73,3 +73,5 @@ export const LeftbarDesktop: React.FC<LeftbarDesktopProps> = watchDependencies((
       </div>
     );
 });
+
+LeftbarDesktop.displayName = "Leftbar Desktop";
