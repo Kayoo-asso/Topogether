@@ -43,12 +43,13 @@ export const createBoulder = (topoQuark: Quark<Topo>, location: GeoCoordinates, 
     const newBoulderQuark = topo.boulders.quarkAt(-1);
     return newBoulderQuark;
 }
-export const deleteBoulder = (topo: Topo, boulder: Quark<Boulder>, selectedBoulder: SelectQuarkNullable<Boulder>) => {
-    topo.boulders.removeQuark(boulder);
+export const deleteBoulder = (topoQuark: Quark<Topo>, boulder: Quark<Boulder>, selectedBoulder: SelectQuarkNullable<Boulder>) => {
+    topoQuark().boulders.removeQuark(boulder);
+    // boulderChanged(topoQuark, newBoulder.id, newBoulder.location, true);
     if (selectedBoulder.quark() === boulder) selectedBoulder.select(undefined);
 }
 
-export const createParking = (topo: Topo, location: GeoCoordinates, image = undefined) => {
+export const createParking = (topo: Topo, location: GeoCoordinates, image?: Image) => {
     const newParking: Parking = {
       id: v4(),
       spaces: 0,
@@ -65,7 +66,7 @@ export const deleteParking = (topo: Topo, parking: Quark<Parking>, selectedParki
     if (selectedParking.quark() === parking) selectedParking.select(undefined);
 }
 
-export const createWaypoint = (topo: Topo, location: GeoCoordinates, image = undefined) => {
+export const createWaypoint = (topo: Topo, location: GeoCoordinates, image?: Image) => {
     const newWaypoint: Waypoint = {
       id: v4(),
       name: `point de repère ${topo.waypoints ? topo.waypoints.length + 1 : '1'}` as Name,

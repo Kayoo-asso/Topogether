@@ -82,4 +82,4 @@ export const SectorAreaMarker: React.FC<SectorAreaMarkerProps> = watchDependenci
     return null;
 });
 
-SectorAreaMarker.displayName = "SectorAreaMarker";
+SectorAreaMarker.displayName = "Sector Area Marker";

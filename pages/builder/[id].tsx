@@ -11,7 +11,7 @@ import {
 import { useRouter } from 'next/router';
 import { quarkTopo } from 'helpers/fakeData/fakeTopoV2';
 import {
- blobToImage, defaultImage, DeviceContext, sortBoulders, boulderChanged, sectorChanged, createTrack,
+ blobToImage, defaultImage, DeviceContext, sortBoulders, boulderChanged, sectorChanged, createTrack, createBoulder, createParking, createWaypoint, createSector, deleteSector, deleteBoulder, deleteParking, deleteWaypoint,
 } from 'helpers';
 import {
  Boulder, GeoCoordinates, Image, MapToolEnum, Name, Parking, Sector, SectorData, Track, Waypoint,
@@ -144,111 +144,45 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
   const [creatingSector, setCreatingSector] = useState<GeoCoordinates[]>([]);
   const [freePointCreatingSector, setFreePointCreatingSector] = useState<GeoCoordinates>();
   const handleCreatingSector = useCallback((location: GeoCoordinates) => {
-    setCreatingSector(creatingSector => [...creatingSector, location])
+    setCreatingSector(creatingSector => [...creatingSector, location]);
   }, [creatingSector]);
+  const handleFreePointCreatingSector = useCallback((e) => {
+    if (creatingSector && creatingSector.length > 0 && e.latLng) {
+      const loc: GeoCoordinates = [e.latLng.lng(), e.latLng.lat()]
+      setFreePointCreatingSector(loc);
+    }
+  }, [creatingSector]);
+  const handleCreatingSectorPolylineClick = useCallback(() => {
+    if (freePointCreatingSector) handleCreatingSector(freePointCreatingSector);  
+  }, [freePointCreatingSector]);
+  const handleCreatingSectorOriginClick = useCallback(() => {
+    if (creatingSector.length > 2) {
+      selectedSector.select(createSector(quarkTopo, creatingSector, boulderOrder()));
+      emptyCreatingSector();
+      setDisplayModalSectorRename(true);
+    }
+  }, [creatingSector]); 
   const emptyCreatingSector = () => {
     setCreatingSector([]);
     setFreePointCreatingSector(undefined);
   }
-  const createSector = useCallback(() => {
-    if (creatingSector.length > 2) {
-      const newSector: SectorData = {
-        id: v4(),
-        name: 'Nouveau secteur' as Name,
-        path: [...creatingSector],
-        boulders: []
-      };
-      topo.sectors.push(newSector);
-      sectorChanged(quarkTopo, newSector.id, boulderOrder());
-
-      const newSectorQuark = topo.sectors.quarkAt(-1);
-      selectedSector.select(newSectorQuark);
-      setDisplayModalSectorRename(true);
-      emptyCreatingSector();
-    }
-  }, [topo, topo.sectors, creatingSector]);
-  const deleteSector = useQuarkyCallback((sector) => {
-    topo.sectors.removeQuark(sector);
-    if (selectedSector.quark() === sector) selectedSector.select(undefined);
-  }, []);
-  const createBoulder = useCallback((location: GeoCoordinates, image?: Image, selectBoulder = false) => {
-    const orderIndex = topo.boulders.length;
-    const newBoulder: Boulder = {
-      id: v4(),
-      name: `Bloc ${orderIndex + 1}` as Name,
-      location,
-      isHighball: false,
-      mustSee: false,
-      dangerousDescent: false,
-      tracks: new QuarkArray(),
-      images: image ? [image] : [],
-    };
-    topo.boulders.push(newBoulder);
-    boulderChanged(quarkTopo, newBoulder.id, newBoulder.location, true);
-
-    const newBoulderQuark = topo.boulders.quarkAt(-1);
-    if (selectBoulder) {
-      selectedBoulder.select(newBoulderQuark);
-      if (image) setCurrentImage(newBoulder.images[0]);
-    }
-    return newBoulderQuark;
-  }, [topo]);
-  const deleteBoulder = useQuarkyCallback((boulder) => {
-    topo.boulders.removeQuark(boulder);
-    if (selectedBoulder.quark() === boulder) selectedBoulder.select(undefined);
-  }, []);
-  const createParking = useCallback((location: GeoCoordinates, image = undefined, selectParking = false) => {
-    const newParking: Parking = {
-      id: v4(),
-      spaces: 0,
-      name: `parking ${topo.parkings ? topo.parkings.length + 1 : '1'}` as Name,
-      image: image ? image : [],
-      location,
-    };
-    topo.parkings.push(newParking);
-    const newParkingQuark = topo.parkings.quarkAt(-1);
-    if (selectParking) selectedParking.select(newParkingQuark);
-    return newParkingQuark;
-  }, [topo]);
-  const deleteParking = useQuarkyCallback((parking) => {
-    topo.parkings.removeQuark(parking);
-    if (selectedParking.quark() === parking) selectedParking.select(undefined);
-  }, []);
-  const createWaypoint = useCallback((location: GeoCoordinates, image = undefined, selectWaypoint = false) => {
-    const newWaypoint: Waypoint = {
-      id: v4(),
-      name: `point de repère ${topo.waypoints ? topo.waypoints.length + 1 : '1'}` as Name,
-      image: image ? image : [],
-      location,
-    };
-    topo.waypoints.push(newWaypoint);
-    const newWaypointQuark = topo.waypoints.quarkAt(-1);
-    if (selectWaypoint) selectedWaypoint.select(newWaypointQuark);
-    return newWaypointQuark;
-  }, [topo]);
-  const deleteWaypoint = useQuarkyCallback((waypoint) => {
-    topo.waypoints.removeQuark(waypoint);
-    if (selectedWaypoint.quark() === waypoint) selectedWaypoint.select(undefined);
-  }, []);
 
   const handleCreateNewMarker = useCallback((e) => {
     if (e.latLng) {
-      const loc: GeoCoordinates = [e.latLng.lng(), e.latLng.lat()]
+      const loc: GeoCoordinates = [e.latLng.lng(), e.latLng.lat()];
       switch (currentTool) {
-        case 'ROCK': createBoulder(loc); break;
+        case 'ROCK': createBoulder(quarkTopo, loc); break;
         case 'SECTOR': handleCreatingSector(loc); break;
-        case 'PARKING': createParking(loc); break;
-        case 'WAYPOINT': createWaypoint(loc); break;
+        case 'PARKING': createParking(topo, loc); break;
+        case 'WAYPOINT': createWaypoint(topo, loc); break;
         default: break;
       }
     }
-  }, [currentTool, createBoulder, createParking, createWaypoint, handleCreatingSector]);
+  }, [topo, currentTool, createBoulder, createParking, createWaypoint, handleCreatingSector]);
 
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
-      if (e.code === 'Enter') {
-        if (creatingSector.length > 0) createSector();
-      }
+      if (e.code === 'Enter') handleCreatingSectorOriginClick();
       else if (e.code === 'Escape') {
         if (creatingSector.length > 0) emptyCreatingSector();
         if (currentTool) setCurrentTool(undefined);
@@ -269,6 +203,36 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
   }, [creatingSector, currentTool]);
+
+  const handleGeoCameraCapture = useCallback(async (blob, coordinates) => {
+    if (blob) {
+      const img = await blobToImage(blob);
+      setCurrentImage(img);
+      if (currentTool === 'ROCK') {
+        if (selectedBoulder()) {
+          const newImages = selectedBoulder()!.images;
+          newImages.push(img);
+          selectedBoulder.quark()!.set({
+            ...selectedBoulder()!,
+            images: newImages,
+          });
+          selectedTrack.select(createTrack(selectedBoulder()!, session!.id));
+        } 
+        else {
+          const newBoulderQuark = createBoulder(quarkTopo, coordinates, img);
+          selectedTrack.select(createTrack(newBoulderQuark(), session!.id));
+          selectedBoulder.select(newBoulderQuark);
+        }
+        setDisplayDrawer(true);
+      }
+      else if (currentTool === 'PARKING') {
+        selectedParking.select(createParking(topo, coordinates, img));
+      }
+      else if (currentTool === 'WAYPOINT') {
+        selectedWaypoint.select(createWaypoint(topo, coordinates, img));
+      }
+    }
+  }, [topo, currentTool, selectedBoulder()]);
 
   if (!session || typeof id !== 'string' || !topo) return null;
   return (
@@ -355,8 +319,8 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
                           : ''}
           draggableMarkers
           topo={quarkTopo}
-          creatingSector={freePointCreatingSector ? creatingSector.concat(freePointCreatingSector) : creatingSector}
-          onCreatingSectorOriginClick={createSector}
+          creatingSector={freePointCreatingSector ? creatingSector.concat([freePointCreatingSector]) : creatingSector}
+          onCreatingSectorOriginClick={handleCreatingSectorOriginClick}
           sectors={sectors}
           selectedSector={selectedSector}    
           onSectorClick={(e, sectorQuark) => {
@@ -382,15 +346,8 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
           }}
           onMapZoomChange={closeDropdown}
           onClick={handleCreateNewMarker}
-          onMouseMove={(e) => {
-            if (creatingSector && creatingSector.length > 0 && e.latLng) {
-              setFreePointCreatingSector([e.latLng!.lng(), e.latLng!.lat()]);
-            }
-          }}
-          onCreatingSectorPolylineClick={() => {
-            if (freePointCreatingSector)
-              handleCreatingSector(freePointCreatingSector);     
-          }}
+          onMouseMove={handleFreePointCreatingSector}
+          onCreatingSectorPolylineClick={handleCreatingSectorPolylineClick}
           boundsTo={boulders.toArray().map(b => b().location).concat(parkings.toArray().map(p => p().location))}
         />
 
@@ -486,35 +443,7 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
         <GeoCamera
           currentTool={currentTool || 'ROCK'}
           onChangeTool={(tool) => setCurrentTool(tool)}
-          onCapture={async (blob, coordinates) => {
-              if (blob) {
-                const img = await blobToImage(blob);
-                setCurrentImage(img);
-                if (currentTool === 'ROCK') {
-                  if (selectedBoulder()) {
-                    const newImages = selectedBoulder()!.images;
-                    newImages.push(img);
-                    selectedBoulder.quark()!.set({
-                      ...selectedBoulder()!,
-                      images: newImages,
-                    });
-                    selectedTrack.select(createTrack(selectedBoulder()!, session.id));
-                  } 
-                  else {
-                    const newBoulderQuark = createBoulder(coordinates, img);
-                    selectedTrack.select(createTrack(newBoulderQuark(), session.id));
-                    selectedBoulder.select(newBoulderQuark);
-                  }
-                  setDisplayDrawer(true);
-                }
-                else if (currentTool === 'PARKING') {
-                  createParking(coordinates, img, true);
-                }
-                else if (currentTool === 'WAYPOINT') {
-                  createWaypoint(coordinates, img, true);
-                }
-              }
-            }}
+          onCapture={handleGeoCameraCapture}
           onClose={() => setDisplayGeoCamera(false)}
         />
       </Show>
@@ -553,7 +482,7 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
       <Show when={() => toDeleteSector.quark()}>
         {(sector) => (
           <ModalDelete
-            onDelete={() => deleteSector(sector)}
+            onDelete={() => deleteSector(topo, sector, selectedSector)}
             onClose={() => toDeleteSector.select(undefined)}
           >
             Êtes-vous sûr de vouloir supprimer le secteur ?
@@ -563,7 +492,7 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
       <Show when={() => toDeleteBoulder.quark()}>
         {(boulder) => (
           <ModalDelete
-            onDelete={() => deleteBoulder(boulder)}
+            onDelete={() => deleteBoulder(quarkTopo, boulder, selectedBoulder)}
             onClose={() => toDeleteBoulder.select(undefined)}
           >
             Êtes-vous sûr de vouloir supprimer le bloc et toutes les voies associées ?
@@ -573,7 +502,7 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
       <Show when={() => toDeleteParking.quark()}>
         {(parking) => (
           <ModalDelete
-            onDelete={() => deleteParking(parking)}
+            onDelete={() => deleteParking(topo, parking, selectedParking)}
             onClose={() => toDeleteParking.select(undefined)}
           >
             Êtes-vous sûr de vouloir supprimer le parking ?
@@ -583,7 +512,7 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
       <Show when={() => toDeleteWaypoint.quark()}>
         {(waypoint) => (
           <ModalDelete
-            onDelete={() => deleteWaypoint(waypoint)}
+            onDelete={() => deleteWaypoint(topo, waypoint, selectedWaypoint)}
             onClose={() => toDeleteWaypoint.select(undefined)}
           >
             Êtes-vous sûr de vouloir supprimer le point de repère ?
