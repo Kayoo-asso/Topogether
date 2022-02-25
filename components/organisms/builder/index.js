@@ -14,3 +14,6 @@ export * from './TracksListBuilder';
 
 export * from './ParkingBuilderSlide';
 export * from './WaypointBuilderSlide';
+
+export * from './SectorBuilderSlideover.mobile';
+export * from './SectorSlideover.mobile';

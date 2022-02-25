@@ -3,14 +3,15 @@ import React, {
 } from 'react';
 import type { NextPage } from 'next';
 import {
-  BoulderBuilderSlideoverMobile,
+  BoulderBuilderSlideoverMobile, SectorBuilderSlideoverMobile,
   MapControl, Show,
-  Header, InfoFormSlideover, ManagementFormSlideover, TrackFormSlideagainstDesktop, ModalValidateTopo, ModalDeleteTopo, GeoCamera, Drawer, LeftbarBuilderDesktop, BoulderBuilderSlideagainstDesktop, ParkingBuilderSlide, AccessFormSlideover, WaypointBuilderSlide, createTrack, Dropdown, BoulderMarkerDropdown, ModalRenameSector, ModalDelete,
+  Header, InfoFormSlideover, ManagementFormSlideover, TrackFormSlideagainstDesktop, 
+  ModalValidateTopo, ModalDeleteTopo, GeoCamera, Drawer, LeftbarBuilderDesktop, BoulderBuilderSlideagainstDesktop, ParkingBuilderSlide, AccessFormSlideover, WaypointBuilderSlide, createTrack, BoulderMarkerDropdown, ModalRenameSector, ModalDelete, 
 } from 'components';
 import { useRouter } from 'next/router';
 import { quarkTopo } from 'helpers/fakeData/fakeTopoV2';
 import {
- blobToImage, defaultImage, DeviceContext, sortBoulders, polygonContains, boulderChanged, sectorChanged,
+ blobToImage, defaultImage, DeviceContext, sortBoulders, boulderChanged, sectorChanged,
 } from 'helpers';
 import {
  Boulder, GeoCoordinates, Image, MapToolEnum, Name, Parking, Sector, SectorData, Track, Waypoint,
@@ -52,13 +53,15 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
   const closeDropdown = useCallback(() => boulderRightClicked.select(undefined), []);
   useContextMenu(() => boulderRightClicked.select(undefined));
   
-  const [displayGeoCamera, setDisplayGeoCamera] = useState(false);
-  const [displayDrawer, setDisplayDrawer] = useState(false);
+  const [displaySectorSlideover, setDisplaySectorSlideover] = useState<boolean>(false);
+  const [displayGeoCamera, setDisplayGeoCamera] = useState<boolean>(false);
+  const [displayDrawer, setDisplayDrawer] = useState<boolean>(false);
   const [displayInfo, setDisplayInfo] = useState<boolean>(false);
   const [displayApproach, setDisplayApproach] = useState<boolean>(false);
   const [displayManagement, setDisplayManagement] = useState<boolean>(false);
   const [currentDisplay, setCurrentDisplay] = useState<'INFO' | 'APPROACH' | 'MANAGEMENT'>();
   useEffect(() => {
+    setDisplaySectorSlideover(false);
     selectedTrack.select(undefined);
     selectedBoulder.select(undefined);
     selectedParking.select(undefined);
@@ -98,6 +101,7 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
     else selectedSector.select(sectorQuark);
   }, [selectedSector, selectedBoulder]);
   const toggleBoulderSelect = useQuarkyCallback((boulderQuark: Quark<Boulder>) => {
+    setDisplaySectorSlideover(false);
     selectedTrack.select(undefined);
     selectedParking.select(undefined);
     selectedWaypoint.select(undefined);
@@ -108,6 +112,7 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
     }
   }, [selectedBoulder]);
   const toggleTrackSelect = useQuarkyCallback((trackQuark: Quark<Track>, boulderQuark: Quark<Boulder>) => {
+    setDisplaySectorSlideover(false);
     selectedBoulder.select(undefined);
     selectedParking.select(undefined);
     selectedWaypoint.select(undefined);
@@ -117,12 +122,14 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
     }
   }, [selectedTrack]);
   const toggleParkingSelect = useQuarkyCallback((parkingQuark: Quark<Parking>) => {
+    setDisplaySectorSlideover(false);
     selectedBoulder.select(undefined);
     selectedTrack.select(undefined);
     selectedWaypoint.select(undefined);
     if (selectedParking()?.id === parkingQuark().id) { selectedParking.select(undefined); } else selectedParking.select(parkingQuark);
   }, [selectedParking]);
   const toggleWaypointSelect = useQuarkyCallback((waypointQuark: Quark<Waypoint>) => {
+    setDisplaySectorSlideover(false);
     selectedBoulder.select(undefined);
     selectedTrack.select(undefined);
     selectedParking.select(undefined);
@@ -298,6 +305,18 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
           onTrackSelect={toggleTrackSelect}
           onValidate={() => setDisplayModalValidateTopo(true)}
         />
+        <Show when={() => [device === 'MOBILE', displaySectorSlideover] as const}>
+          {() => (
+            <SectorBuilderSlideoverMobile 
+              topoQuark={quarkTopo}
+              boulderOrder={boulderOrder()}
+              selectedBoulder={selectedBoulder}
+              onBoulderSelect={toggleBoulderSelect}
+              onTrackSelect={toggleTrackSelect}
+              onClose={() => setDisplaySectorSlideover(false)}
+            />
+          )}
+        </Show>
 
         <Show when={() => displayInfo}>
           <InfoFormSlideover
@@ -327,6 +346,8 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
         <MapControl
           initialZoom={16}
           center={boulders.toArray()[0]().location}
+          displaySectorButton
+          onSectorButtonClick={() => setDisplaySectorSlideover(true)}
           searchbarOptions={{
               findTopos: false,
               findPlaces: false,
@@ -358,6 +379,7 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
           parkings={parkings}
           selectedParking={selectedParking}
           onParkingClick={toggleParkingSelect}
+          displayPhotoButton
           onPhotoButtonClick={() => {
             setCurrentTool('ROCK');
             setDisplayGeoCamera(true);

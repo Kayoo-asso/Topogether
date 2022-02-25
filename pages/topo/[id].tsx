@@ -2,9 +2,8 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 import type { NextPage } from 'next';
 import { 
   AccessSlideover, InfoSlideover, ManagementSlideover,
-  BoulderSlideagainstDesktop,  BoulderSlideoverMobile, TrackSlideagainstDesktop,
-  Show,
-  Header, LeftbarDesktop, 
+  BoulderSlideagainstDesktop,  BoulderSlideoverMobile, TrackSlideagainstDesktop, SectorSlideoverMobile,
+  Show, Header,
   MapControl, ParkingSlide, WaypointSlide, TracksImage, LeftbarTopoDesktop } from 'components';
 import { useRouter } from 'next/router';
 import { quarkTopo } from 'helpers/fakeData/fakeTopoV2';
@@ -73,6 +72,7 @@ const Topo: NextPage = () => {
     else selectedWaypoint.select(waypointQuark)
   }, [selectedWaypoint]);
 
+  const [displaySectorSlideover, setDisplaySectorSlideover] = useState<boolean>(false);
   const [displayInfo, setDisplayInfo] = useState<boolean>(false);
   const [displayApproach, setDisplayApproach] = useState<boolean>(false);
   const [displayManagement, setDisplayManagement] = useState<boolean>(false);
@@ -129,6 +129,18 @@ const Topo: NextPage = () => {
           onBoulderSelect={toggleBoulderSelect}
           onTrackSelect={toggleTrackSelect}
         />
+        <Show when={() => [device === 'MOBILE', displaySectorSlideover] as const}>
+          {() => (
+            <SectorSlideoverMobile 
+              topoQuark={quarkTopo}
+              boulderOrder={boulderOrder()}
+              selectedBoulder={selectedBoulder}
+              onBoulderSelect={toggleBoulderSelect}
+              onTrackSelect={toggleTrackSelect}
+              onClose={() => setDisplaySectorSlideover(false)}
+            />
+          )}
+        </Show>
 
         <Show when={() => displayInfo}>
           <InfoSlideover 
@@ -159,7 +171,8 @@ const Topo: NextPage = () => {
         <MapControl
           initialZoom={16}
           center={boulders.toArray()[0]().location}
-          displayPhotoButton={false}
+          displaySectorButton
+          onSectorButtonClick={() => setDisplaySectorSlideover(true)}
           searchbarOptions={{
               findTopos: false,
               findPlaces: false,

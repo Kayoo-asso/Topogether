@@ -14,6 +14,8 @@ interface MapControlProps extends MapProps {
   displayUserMarker?: boolean,
   displayPhotoButton?: boolean,
   onPhotoButtonClick?: () => void,
+  displaySectorButton?: boolean,
+  onSectorButtonClick?: () => void,
   displaySearchbar?: boolean,
   searchbarOptions?: MapSearchbarProps,
   onSearchResultSelect?: () => void,
@@ -50,7 +52,8 @@ export const MapControl: React.FC<MapControlProps> = ({
     displaySearchbar = true,
     displaySatelliteButton = true,
     displayUserMarker = true,
-    displayPhotoButton = true,
+    displayPhotoButton = false,
+    displaySectorButton = false,
     displayTopoFilter = false,
     displayBoulderFilter = false,
     draggableMarkers = false,
@@ -181,7 +184,18 @@ export const MapControl: React.FC<MapControlProps> = ({
                     </div>
 
                     <div className="flex items-end">
-                        <div className="w-1/3 text-left" />
+                        <div className="w-1/3 text-left">
+                            {displaySectorButton && 
+                                <div className='md:hidden'>
+                                    <RoundButton
+                                        iconName="sector"
+                                        iconClass="stroke-main fill-main"
+                                        iconSizeClass="h-7 w-7"
+                                        onClick={props.onSectorButtonClick}
+                                    />
+                                </div>
+                            }
+                        </div>
                         <div className="w-1/3 text-center">
                             {displayPhotoButton &&
                                 <div className='md:hidden'>

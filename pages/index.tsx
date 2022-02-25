@@ -37,7 +37,6 @@ const WorldMapPage: NextPage = () => {
         <MapControl
           initialZoom={5}
           center={fontainebleauLocation}
-          displayPhotoButton={false}
           topos={topos}
           displayTopoFilter
           onTopoClick={toggleTopoSelect}
