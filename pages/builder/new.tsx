@@ -15,12 +15,16 @@ import { useRouter } from 'next/router';
 const NewPage: NextPage = watchDependencies(() => {
   const session = api.user();
   const router = useRouter();
+  useEffect(() => {
+    if (!session) router.push('/user/login');
+  }, []);
+  if (!session) return <></>;
 
   const [step, setStep] = useState(0);
 
   const topoData = {
     id: v4(),
-    creatorId: session!.id,
+    creatorId: session.id,
     creatorPseudo: session!.userName,
     name: '' as StringBetween<1, 255>,
     status: 0,
@@ -85,8 +89,7 @@ const NewPage: NextPage = watchDependencies(() => {
       }
     });
   });
-
-  if (!session) router.push('/');
+  
   return (
     <>
       <HeaderDesktop

@@ -9,10 +9,10 @@ import useDimensions from 'react-cool-dimensions';
 const App = ({ Component, pageProps }: AppProps) => {
   const [device, setDevice] = useState<Device>('MOBILE');
   const { observe } = useDimensions({
-    onResize: ({
-      observe, unobserve, width, height, entry,
-    }) => {
-      if (width > 768) { setDevice('DESKTOP'); } else if (width > 640) { setDevice('TABLET'); } else setDevice('MOBILE');
+    onResize: ({ observe, unobserve, width }) => {
+      if (width > 768) { setDevice('DESKTOP'); } 
+      else if (width > 640) { setDevice('TABLET'); } 
+      else setDevice('MOBILE');
     },
   });
 
@@ -30,10 +30,13 @@ const App = ({ Component, pageProps }: AppProps) => {
         <title>Topogether</title>
         <link rel="manifest" href="/manifest.json" />
       </Head>
+
         <DeviceContext.Provider value={device}>
           <div ref={observe} className="w-screen h-screen flex items-end flex-col">
             <div id="content" className="flex-1 w-screen absolute bg-grey-light flex flex-col h-full md:h-screen overflow-hidden">
+              
               <Component {...pageProps} />
+              
             </div>
 
             <div id="footer" className="bg-dark z-500 absolute bottom-0 h-shell md:hidden">

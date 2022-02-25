@@ -1,5 +1,4 @@
 import React, { useCallback } from 'react';
-import { fontainebleauLocation, toLatLng } from 'helpers';
 import type { NextPage } from 'next';
 import {
  HeaderDesktop, LeftbarDesktop, MapControl, Show, TopoPreview,

@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import type { NextPage } from 'next';
 import { staticUrl } from 'helpers';
-import NextImage from 'next/image';
 import { Button, HeaderDesktop, ImageInput, LeftbarDesktop, ModalDelete, ProfilePicture, Tabs, TextInput } from 'components';
 import Link from 'next/link';
 import { watchDependencies } from 'helpers/quarky';
@@ -11,8 +10,11 @@ import { api, AuthResult } from 'helpers/services/ApiService';
 
 const ProfilePage: NextPage = watchDependencies(() => {
   const router = useRouter();
-  const session = api.user();
-  if (!session) router.push('/');
+  let session = api.user();
+  useEffect(() => {
+    if (!session) router.push('/login');
+  }, []);
+  if (!session) return <></>;
 
   const imageInputRef = useRef<HTMLInputElement>(null);
 
@@ -21,14 +23,14 @@ const ProfilePage: NextPage = watchDependencies(() => {
   const [email, setEmail] = useState<string>(session!.email);
   const [emailError, setEmailError] = useState<string>();
   
-  const [userName, setUserName] = useState<string>(session!.userName);
-  const [firstName, setFirstName] = useState<string | undefined>(session!.firstName);
-  const [lastName, setLastName] = useState<string | undefined>(session!.lastName);
-  const [imageUrl, setImageUrl] = useState<string | undefined>(session!.imageUrl);
-  const [birthDate, setBirthDate] = useState<string | undefined>(session!.birthDate); //TODO convert into Date
-  const [country, setCountry] = useState<string | undefined>(session!.country);
-  const [city, setCity] = useState<string | undefined>(session!.city);
-  const [phone, setPhone] = useState<string | undefined>(session!.phone);
+  const [userName, setUserName] = useState<string>(session.userName);
+  const [firstName, setFirstName] = useState<string | undefined>(session.firstName);
+  const [lastName, setLastName] = useState<string | undefined>(session.lastName);
+  const [imageUrl, setImageUrl] = useState<string | undefined>(session.imageUrl);
+  const [birthDate, setBirthDate] = useState<string | undefined>(session.birthDate); //TODO convert into Date
+  const [country, setCountry] = useState<string | undefined>(session.country);
+  const [city, setCity] = useState<string | undefined>(session.city);
+  const [phone, setPhone] = useState<string | undefined>(session.phone);
 
   const [userNameError, setUserNameError] = useState<string>();
   const [phoneError, setPhoneError] = useState<string>();

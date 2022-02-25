@@ -9,6 +9,7 @@ import { watchDependencies } from 'helpers/quarky';
 export const ShellMobile: React.FC = watchDependencies(() => {
   const router = useRouter();
   const session = api.user();
+  
   const initialActiveTab = useMemo(() => {
     if (router.pathname.includes('user')) {
       return 0;
