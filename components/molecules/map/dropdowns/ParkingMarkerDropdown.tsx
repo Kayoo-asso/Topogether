@@ -6,7 +6,7 @@ import { api } from 'helpers/services/ApiService';
 
 interface ParkingMarkerDropdownProps {
     parking: Quark<Parking>;
-    dropdownPosition?: { x: number, y: number };
+    position?: { x: number, y: number };
     deleteParking: (parking: Quark<Parking>) => void;
 }
 
@@ -18,7 +18,7 @@ export const ParkingMarkerDropdown: React.FC<ParkingMarkerDropdownProps> = watch
     if (!session) return null;
     return (
         <Dropdown
-            style={{ left: `${props.dropdownPosition?.x}px`, top: `${props.dropdownPosition?.y}px` }}
+            position={props.position}
             options={[
                 { value: 'Supprimer', action: deleteParking },
             ]}

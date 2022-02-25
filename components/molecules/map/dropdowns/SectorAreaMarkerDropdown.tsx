@@ -6,10 +6,9 @@ import { api } from 'helpers/services/ApiService';
 
 interface SectorAreaMarkerDropdownProps {
     sector: Quark<Sector>;
-    dropdownPosition?: { x: number, y: number };
+    position?: { x: number, y: number };
     deleteSector: (sector: Quark<Sector>) => void;
     renameSector: (sector: Quark<Sector>) => void;
-
 }
 
 export const SectorAreaMarkerDropdown: React.FC<SectorAreaMarkerDropdownProps> = watchDependencies((props: SectorAreaMarkerDropdownProps) => {
@@ -22,7 +21,7 @@ export const SectorAreaMarkerDropdown: React.FC<SectorAreaMarkerDropdownProps> =
     if (!session) return null;
     return (
         <Dropdown
-            style={{ left: `${props.dropdownPosition?.x}px`, top: `${props.dropdownPosition?.y}px` }}
+            position={props.position}
             options={[
                 { value: 'Renommer', action: renameSector },
                 { value: 'Supprimer', action: deleteSector },

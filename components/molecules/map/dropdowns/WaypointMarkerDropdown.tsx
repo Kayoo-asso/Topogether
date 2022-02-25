@@ -6,7 +6,7 @@ import { api } from 'helpers/services/ApiService';
 
 interface WaypointMarkerDropdownProps {
     waypoint: Quark<Waypoint>;
-    dropdownPosition?: { x: number, y: number };
+    position?: { x: number, y: number };
     deleteWaypoint: (waypoint: Quark<Waypoint>) => void;
 }
 
@@ -18,7 +18,7 @@ export const WaypointMarkerDropdown: React.FC<WaypointMarkerDropdownProps> = wat
     if (!session) return null;
     return (
         <Dropdown
-            style={{ left: `${props.dropdownPosition?.x}px`, top: `${props.dropdownPosition?.y}px` }}
+            position={props.position}
             options={[
                 { value: 'Supprimer', action: deleteWaypoint },
             ]}

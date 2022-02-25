@@ -79,7 +79,7 @@ const DashboardPage: NextPage = () => {
 
   { /* TODO: get Light Topos */ }
 
-  useContextMenu(setDropdownDisplayed, ref.current);
+  useContextMenu(() => setDropdownDisplayed(false), ref.current);
 
   const onContextMenu = useCallback((topo: LightTopo, position: {x: number, y: number}) => {
     setDropdownDisplayed(true);
@@ -147,8 +147,8 @@ const DashboardPage: NextPage = () => {
           />
         </div>
       </div>
-      {dropdownDisplayed && topoDropdown && (
-        <UserActionDropdown dropdownPosition={dropdownPosition} topo={topoDropdown} />
+      {dropdownDisplayed && topoDropdown && dropdownPosition && (
+        <UserActionDropdown position={dropdownPosition} topo={topoDropdown} />
       )}
     </>
 );

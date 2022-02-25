@@ -19,9 +19,8 @@ import {
  Boulder, GeoCoordinates, Image, MapToolEnum, Name, Parking, Sector, SectorData, Track, Waypoint,
 } from 'types';
 import {
- Quark, QuarkArray, QuarkIter, useCreateDerivation, useQuarkyCallback, useSelectQuark, watchDependencies,
+ Quark, QuarkIter, useCreateDerivation, useQuarkyCallback, useSelectQuark, watchDependencies,
 } from 'helpers/quarky';
-import { v4 } from 'uuid';
 import { api } from 'helpers/services/ApiService';
 
 const BuilderMapPage: NextPage = watchDependencies(() => {
@@ -482,7 +481,7 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
       <Show when={() => boulderRightClicked.quark()}>
           {(quarkBoulder) =>
             <BoulderMarkerDropdown 
-              dropdownPosition={dropdownPosition} 
+              position={dropdownPosition} 
               toggleTrackSelect={toggleTrackSelect} 
               boulder={quarkBoulder} 
               deleteBoulder={() => toDeleteBoulder.select(quarkBoulder)}
@@ -493,7 +492,7 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
       <Show when={() => sectorRightClicked.quark()}>
           {(quarkSector) =>
             <SectorAreaMarkerDropdown 
-              dropdownPosition={dropdownPosition}
+              position={dropdownPosition}
               sector={quarkSector}
               deleteSector={() => toDeleteSector.select(quarkSector)} 
               renameSector={() => console.log("TODO")}/>
@@ -503,7 +502,7 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
       <Show when={() => waypointRightClicked.quark()}>
           {(quarkWaypoint) =>
             <WaypointMarkerDropdown 
-              dropdownPosition={dropdownPosition} 
+              position={dropdownPosition} 
               waypoint={quarkWaypoint} 
               deleteWaypoint={() => toDeleteWaypoint.select(quarkWaypoint)}
             />
@@ -513,7 +512,7 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
       <Show when={() => parkingRightClicked.quark()}>
           {(quarkParking) =>
             <ParkingMarkerDropdown 
-              dropdownPosition={dropdownPosition} 
+              position={dropdownPosition} 
               parking={quarkParking}
               deleteParking={() => toDeleteParking.select(quarkParking)}
             />

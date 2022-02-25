@@ -24,7 +24,6 @@ const getTopoIcons = (status: TopoStatus) => {
 };
 
 export const TopoCard: React.FC<TopoCardProps> = React.memo((props: TopoCardProps) => {
-  const router = useRouter();
   const getAction = () => {
     if (props.topo.status === TopoStatus.Validated && props.topo.validatedAt) {
       return `Validé le ${formatDate(props.topo.validatedAt)}`;
