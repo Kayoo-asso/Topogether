@@ -86,7 +86,7 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
         width={imgWidth}
         height={imgHeight}
         onMouseDown={(e) => {
-          if (e.button === 0 && props.onImageClick && editable && e.target.nodeName === 'svg') { // Left-click on the canvas only
+          if (e.button === 0 && props.onImageClick && editable && e.currentTarget.nodeName === 'svg') { // Left-click on the canvas only
             const pos = getMousePosInside(e);
             const rPos = [pos[0] / rx, pos[1] / rx] as Position;
             props.onImageClick(rPos);

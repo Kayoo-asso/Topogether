@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { BoulderItemLeftbar, createTrack, Icon } from 'components';
-import { splitArray } from 'helpers';
+import { BoulderItemLeftbar, Icon } from 'components';
+import { createTrack, splitArray } from 'helpers';
 import { Quark, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
 import { Boulder, Topo, Track, UUID } from 'types';
 import { api } from 'helpers/services/ApiService';
