@@ -6,22 +6,21 @@ import {
   BoulderBuilderSlideoverMobile, SectorBuilderSlideoverMobile,
   MapControl, Show,
   Header, InfoFormSlideover, ManagementFormSlideover, TrackFormSlideagainstDesktop, 
-  BoulderMarkerDropdown, ParkingMarkerDropdown, WaypointMarkerDropdown, SectorAreaMarkerDropdown,
+  BoulderMarkerDropdown, ParkingMarkerDropdown, WaypointMarkerDropdown,
   ModalValidateTopo, ModalDeleteTopo, GeoCamera, Drawer, LeftbarBuilderDesktop, BoulderBuilderSlideagainstDesktop,
-  ParkingBuilderSlide, AccessFormSlideover, WaypointBuilderSlide, ModalRenameSector, ModalDelete, 
+  ParkingBuilderSlide, AccessFormSlideover, WaypointBuilderSlide, ModalRenameSector, ModalDelete, SectorAreaMarkerDropdown, 
 } from 'components';
 import { useRouter } from 'next/router';
 import { quarkTopo } from 'helpers/fakeData/fakeTopoV2';
 import {
- blobToImage, defaultImage, DeviceContext, sortBoulders, boulderChanged, sectorChanged, useContextMenu, createTrack, createBoulder, createParking, createWaypoint, createSector, deleteSector, deleteBoulder, deleteParking, deleteWaypoint,
+ blobToImage, defaultImage, DeviceContext, sortBoulders, useContextMenu, createTrack, createBoulder, createParking, createWaypoint, createSector, deleteSector, deleteBoulder, deleteParking, deleteWaypoint,
 } from 'helpers';
 import {
- Boulder, GeoCoordinates, Image, MapToolEnum, Name, Parking, Sector, SectorData, Track, Waypoint,
+ Boulder, GeoCoordinates, Image, MapToolEnum, Parking, Sector, Track, Waypoint,
 } from 'types';
 import {
- Quark, QuarkArray, QuarkIter, useCreateDerivation, useQuarkyCallback, useSelectQuark, watchDependencies,
+ Quark, QuarkIter, useCreateDerivation, useQuarkyCallback, useSelectQuark, watchDependencies,
 } from 'helpers/quarky';
-import { v4 } from 'uuid';
 import { api } from 'helpers/services/ApiService';
 
 const BuilderMapPage: NextPage = watchDependencies(() => {
@@ -153,17 +152,14 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
     boulderRightClicked.select(boulderQuark);
     setDropdownPosition({ x: e.domEvent.pageX, y: e.domEvent.pageY });
   }, []);
-
   const displayWaypointDropdown = useCallback((e: any, waypointQuark: Quark<Waypoint>) => {
     waypointRightClicked.select(waypointQuark);
     setDropdownPosition({ x: e.domEvent.pageX, y: e.domEvent.pageY });
   }, []);
-
   const displayParkingDropdown = useCallback((e: any, parkingQuark: Quark<Parking>) => {
     parkingRightClicked.select(parkingQuark);
     setDropdownPosition({ x: e.domEvent.pageX, y: e.domEvent.pageY });
   }, []);
-
   const displaySectorDropdown = useCallback((e: any, sectorQuark: Quark<Sector>) => {
     sectorRightClicked.select(sectorQuark);
     setDropdownPosition({ x: e.domEvent.pageX, y: e.domEvent.pageY });
@@ -185,7 +181,8 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
   }, [freePointCreatingSector]);
   const handleCreatingSectorOriginClick = useCallback(() => {
     if (creatingSector.length > 2) {
-      selectedSector.select(createSector(quarkTopo, creatingSector, boulderOrder()));
+      const newSectorQuark = createSector(quarkTopo, creatingSector, boulderOrder())
+      selectedSector.select(newSectorQuark);
       emptyCreatingSector();
       setDisplayModalSectorRename(true);
     }
@@ -496,7 +493,11 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
               dropdownPosition={dropdownPosition}
               sector={quarkSector}
               deleteSector={() => toDeleteSector.select(quarkSector)} 
-              renameSector={() => console.log("TODO")}/>
+              renameSector={() => {
+                selectedSector.select(quarkSector);
+                setDisplayModalSectorRename(true);
+              }}
+            />
           }
       </Show>
 
@@ -543,7 +544,7 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
       <Show when={() => toDeleteSector.quark()}>
         {(sector) => (
           <ModalDelete
-            onDelete={() => deleteSector(topo, sector, selectedSector)}
+            onDelete={() => deleteSector(quarkTopo, sector, selectedSector)}
             onClose={() => toDeleteSector.select(undefined)}
           >
             Êtes-vous sûr de vouloir supprimer le secteur ?

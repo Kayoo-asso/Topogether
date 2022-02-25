@@ -19,10 +19,15 @@ export const createSector = (topoQuark: Quark<Topo>, creatingSector: GeoCoordina
       return newSectorQuark;
     }
 }
-export const deleteSector = (topo: Topo, sector: Quark<SectorData>, selectedSector: SelectQuarkNullable<SectorData>) => {
-    topo.sectors.removeQuark(sector);
-    if (selectedSector.quark() === sector) selectedSector.select(undefined);
-  }
+export const deleteSector = (topoQuark: Quark<Topo>, sector: Quark<SectorData>, selectedSector: SelectQuarkNullable<SectorData>) => {
+  const topo = topoQuark();
+  topoQuark.set(t => ({
+    ...t,
+    lonelyBoulders: topo.lonelyBoulders.concat(sector().boulders)
+  }))
+  topo.sectors.removeQuark(sector);
+  if (selectedSector.quark() === sector) selectedSector.select(undefined);
+}
 
 export const createBoulder = (topoQuark: Quark<Topo>, location: GeoCoordinates, image?: Image) => {
     const topo = topoQuark();
@@ -45,7 +50,6 @@ export const createBoulder = (topoQuark: Quark<Topo>, location: GeoCoordinates, 
 }
 export const deleteBoulder = (topoQuark: Quark<Topo>, boulder: Quark<Boulder>, selectedBoulder: SelectQuarkNullable<Boulder>) => {
     topoQuark().boulders.removeQuark(boulder);
-    // boulderChanged(topoQuark, newBoulder.id, newBoulder.location, true);
     if (selectedBoulder.quark() === boulder) selectedBoulder.select(undefined);
 }
 
