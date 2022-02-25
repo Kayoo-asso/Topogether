@@ -4,8 +4,7 @@ import React, {
 } from 'react';
 import { useEffectWithDeepEqual } from 'helpers';
 import mapStyles from 'styles/mapStyles';
-import equal from 'fast-deep-equal/es6';
-import { mapEvents, MapProps, markerEvents, MarkerProps, UUID } from 'types';
+import { mapEvents, MapProps, MarkerProps } from 'types';
 
 const containerStyles: React.CSSProperties = {
   width: '100%',

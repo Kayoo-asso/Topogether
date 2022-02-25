@@ -338,7 +338,6 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
 
         <MapControl
           initialZoom={16}
-          center={toLatLng(boulders.toArray()[0]().location)}
           displaySectorButton
           onSectorButtonClick={() => setDisplaySectorSlideover(true)}
           searchbarOptions={{
