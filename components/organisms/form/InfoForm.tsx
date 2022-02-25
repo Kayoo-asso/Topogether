@@ -7,6 +7,7 @@ import {
  Amenities, Description, Name, RockTypes, Topo,
 } from 'types';
 import { hasFlag, rockNames, toggleFlag } from 'helpers';
+import { BitflagMultipleSelect } from 'components/molecules/form/BitflagMultipleSelect';
 
 interface InfoFormProps {
     topo: Quark<Topo>,
@@ -71,7 +72,7 @@ export const InfoForm: React.FC<InfoFormProps> = watchDependencies((props: InfoF
           })}
         />
 
-        <MultipleSelect<RockTypes>
+        <BitflagMultipleSelect<RockTypes>
           id="topo-rock-type"
           label="Type de roche"
           bitflagNames={rockNames}

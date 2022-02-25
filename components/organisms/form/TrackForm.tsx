@@ -4,6 +4,7 @@ import { Quark, watchDependencies } from 'helpers/quarky';
 import { ClimbTechniques, Description, Name, Track } from 'types';
 import { ClimbTechniquesName, toggleFlag } from 'helpers';
 import { ReceptionName } from 'types/EnumNames';
+import { BitflagMultipleSelect } from 'components/molecules/form/BitflagMultipleSelect';
 
 interface TrackFormProps {
     track: Quark<Track>,
@@ -65,7 +66,7 @@ export const TrackForm: React.FC<TrackFormProps> = watchDependencies((props: Tra
                 />
             </div>
 
-            <MultipleSelect<ClimbTechniques>
+            <BitflagMultipleSelect<ClimbTechniques>
                 id='track-techniques'
                 label='Techniques'
                 bitflagNames={ClimbTechniquesName}
