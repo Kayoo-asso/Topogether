@@ -113,11 +113,11 @@ export class ApiService {
     }
 
     async uploadImage(files: File[]): Promise<Image[]> {
-
+        return [];
     }
 
     async deleteImage(path: string): Promise<boolean> {
-
+        return false;
     }
 
     async getTopo(id: UUID): Promise<TopoData | null> {
