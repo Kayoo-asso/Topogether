@@ -1,4 +1,4 @@
-import { NumberBetween } from './NumberBetween';
+import { NumberBetween } from "./Utils";
 
 export const imageTypes = [
   'image/png',

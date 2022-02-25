@@ -21,7 +21,7 @@ const NewPage: NextPage = watchDependencies(() => {
   const topoData = {
     id: v4(),
     creatorId: session!.id,
-    creatorPseudo: session!.pseudo,
+    creatorPseudo: session!.userName,
     name: '' as StringBetween<1, 255>,
     status: 0,
     type: undefined,

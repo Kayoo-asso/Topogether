@@ -21,7 +21,7 @@ const ProfilePage: NextPage = watchDependencies(() => {
   const [email, setEmail] = useState<string>(session!.email);
   const [emailError, setEmailError] = useState<string>();
   
-  const [pseudo, setPseudo] = useState<string>(session!.pseudo);
+  const [userName, setUserName] = useState<string>(session!.userName);
   const [firstName, setFirstName] = useState<string | undefined>(session!.firstName);
   const [lastName, setLastName] = useState<string | undefined>(session!.lastName);
   const [imageUrl, setImageUrl] = useState<string | undefined>(session!.imageUrl);
@@ -30,7 +30,7 @@ const ProfilePage: NextPage = watchDependencies(() => {
   const [city, setCity] = useState<string | undefined>(session!.city);
   const [phone, setPhone] = useState<string | undefined>(session!.phone);
 
-  const [pseudoError, setPseudoError] = useState<string>();
+  const [userNameError, setUserNameError] = useState<string>();
   const [phoneError, setPhoneError] = useState<string>();
 
   const [successMessage, setSuccessMessage] = useState<string>();
@@ -38,13 +38,13 @@ const ProfilePage: NextPage = watchDependencies(() => {
 
   const modifyProfil = async () => {
     let hasError = false;
-    if (!pseudo) { setPseudoError("Pseudo invalide"); hasError = true; }
+    if (!userName) { setUserNameError("Pseudo invalide"); hasError = true; }
     if (phone && (!phone.match(/\d/g) || phone.length < 6 || phone.length > 30)) { setPhoneError("Numéro de téléphone invalide"); hasError = true; }
 
     if (!hasError) {
       const res = await api.updateUserInfo({
         ...session!,
-        pseudo: pseudo as Name,
+        userName: userName as Name,
         firstName: firstName as Name,
         lastName: lastName as Name,
         imageUrl,
@@ -102,15 +102,15 @@ const ProfilePage: NextPage = watchDependencies(() => {
             
             <div className='hidden md:flex flex-col ml-6 w-1/2'>
               <div className='mb-6'>
-                <div className='ktext-subtitle'>{pseudo}</div>
+                <div className='ktext-subtitle'>{userName}</div>
                 {session!.role === 'ADMIN' && <div className='text-main ktext-label'>Super-administrateur</div>}
               </div>
               <TextInput 
                   id='pseudo'
                   label='Pseudo'
-                  error={pseudoError}
-                  value={pseudo}
-                  onChange={(e) => setPseudo(e.target.value)}
+                  error={userNameError}
+                  value={userName}
+                  onChange={(e) => setUserName(e.target.value)}
               />
             </div>
 
@@ -151,9 +151,9 @@ const ProfilePage: NextPage = watchDependencies(() => {
               <TextInput 
                   id='pseudo'
                   label='Pseudo'
-                  error={pseudoError}
-                  value={pseudo}
-                  onChange={(e) => setPseudo(e.target.value)}
+                  error={userNameError}
+                  value={userName}
+                  onChange={(e) => setUserName(e.target.value)}
               />
             </div>
 
