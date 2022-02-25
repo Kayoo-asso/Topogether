@@ -16,6 +16,7 @@ interface SectorListBuilderProps {
 
 export const SectorListBuilder: React.FC<SectorListBuilderProps> = watchDependencies((props: SectorListBuilderProps) => {
     const session = api.user();
+    if (!session) return <></>;
 
     const selectedBoulder = props.selectedBoulder();
     const topo = props.topoQuark();
@@ -25,8 +26,7 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> = watchDependen
 
     const [displayedSectors, setDisplayedSectors] = useState<Array<UUID>>(sectors.map(sector => sector.id).toArray());
     const [displayedBoulders, setDisplayedBoulders] = useState<Array<UUID>>([]);
-    // console.log(displayedSectors);
-    // console.log(sectors.toArray());
+
     const [draggingSectorId, setDraggingSectorId] = useState();
     const handleDragStart = useCallback((res) => {
         setDraggingSectorId(res.source.droppableId);
@@ -62,7 +62,6 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> = watchDependen
         if (!displayedSectors.includes(lastSectorId)) setDisplayedSectors(ds => [...ds, lastSectorId]);
     }, [topo.sectors.toArray()[topo.sectors.length - 1]]);
 
-    if (!session) return null;
     return (
         <div className='h-[95%] overflow-y-auto mb-6 px-4'>
             {sectors.quarks().map((sectorQuark, sectorIndex) => {

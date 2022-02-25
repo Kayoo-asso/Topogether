@@ -12,7 +12,7 @@ interface BoulderItemLeftbarProps {
     onNameClick: () => void,
     onTrackClick: (trackQuark: Quark<Track>) => void,
     displayCreateTrack: boolean,
-    onCreateTrack: () => void,
+    onCreateTrack?: () => void,
 }
 
 export const BoulderItemLeftbar: React.FC<BoulderItemLeftbarProps> = watchDependencies((props: BoulderItemLeftbarProps) => {

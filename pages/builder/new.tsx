@@ -10,14 +10,9 @@ import { v4 } from 'uuid';
 import { QuarkIter, useCreateQuark, watchDependencies } from 'helpers/quarky';
 import { TopoTypeName } from 'types/EnumNames';
 import { api } from 'helpers/services/ApiService';
-import { useRouter } from 'next/router';
 
 const NewPage: NextPage = watchDependencies(() => {
   const session = api.user();
-  const router = useRouter();
-  useEffect(() => {
-    if (!session) router.push('/user/login');
-  }, []);
   if (!session) return <></>;
 
   const [step, setStep] = useState(0);

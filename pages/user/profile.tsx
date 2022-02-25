@@ -1,5 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { useRouter } from 'next/router';
+import React, { useRef, useState } from 'react';
 import type { NextPage } from 'next';
 import { staticUrl } from 'helpers';
 import { Button, HeaderDesktop, ImageInput, LeftbarDesktop, ModalDelete, ProfilePicture, Tabs, TextInput } from 'components';
@@ -9,11 +8,7 @@ import { isEmail, Name, StringBetween } from 'types';
 import { api, AuthResult } from 'helpers/services/ApiService';
 
 const ProfilePage: NextPage = watchDependencies(() => {
-  const router = useRouter();
   let session = api.user();
-  useEffect(() => {
-    if (!session) router.push('/login');
-  }, []);
   if (!session) return <></>;
 
   const imageInputRef = useRef<HTMLInputElement>(null);

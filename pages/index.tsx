@@ -7,6 +7,7 @@ import { LightTopo } from 'types';
 import { Quark, QuarkIter, useSelectQuark } from 'helpers/quarky';
 import { quarkLightTopo } from 'helpers/fakeData/fakeLightTopoV2';
 import { api } from 'helpers/services/ApiService';
+import { fontainebleauLocation, toLatLng } from 'helpers';
 
 const WorldMapPage: NextPage = () => {
   const session = api.user();
@@ -38,7 +39,8 @@ const WorldMapPage: NextPage = () => {
           topos={topos}
           displayTopoFilter
           onTopoClick={toggleTopoSelect}
-          boundsTo={topos.toArray().length > 2 ? topos.toArray().map(t => t().location) : undefined}
+          center={toLatLng(fontainebleauLocation)}
+          boundsTo={topos.toArray().map(t => t().location)}
         />
 
         <Show when={selectedTopo.quark}>

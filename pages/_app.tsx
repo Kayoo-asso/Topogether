@@ -5,8 +5,11 @@ import Head from 'next/head';
 import { DeviceContext, Device } from 'helpers';
 import { ShellMobile } from 'components';
 import useDimensions from 'react-cool-dimensions';
+import ProtectedRoute from './protectedRoutes';
+import { useRouter } from 'next/router';
 
 const App = ({ Component, pageProps }: AppProps) => {
+  const router = useRouter();
   const [device, setDevice] = useState<Device>('MOBILE');
   const { observe } = useDimensions({
     onResize: ({ observe, unobserve, width }) => {
@@ -35,8 +38,10 @@ const App = ({ Component, pageProps }: AppProps) => {
           <div ref={observe} className="w-screen h-screen flex items-end flex-col">
             <div id="content" className="flex-1 w-screen absolute bg-grey-light flex flex-col h-full md:h-screen overflow-hidden">
               
-              <Component {...pageProps} />
-              
+              <ProtectedRoute router={router}>
+                <Component {...pageProps} />
+              </ProtectedRoute>
+
             </div>
 
             <div id="footer" className="bg-dark z-500 absolute bottom-0 h-shell md:hidden">

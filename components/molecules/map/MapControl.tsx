@@ -1,10 +1,10 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Wrapper } from '@googlemaps/react-wrapper';
-import { BoulderMarker, CreatingSectorAreaMarker, For, Icon, Map, ParkingMarker, RoundButton, SatelliteButton, SectorAreaMarker, Show, TopoMarker, WaypointMarker } from 'components';
+import { BoulderMarker, CreatingSectorAreaMarker, For, Map, ParkingMarker, RoundButton, SatelliteButton, SectorAreaMarker, Show, TopoMarker, WaypointMarker } from 'components';
 import { BoulderFilterOptions, BoulderFilters, MapSearchbarProps, TopoFilterOptions, TopoFilters } from '.';
 import { MapSearchbar } from '..';
 import { Amenities, Boulder, ClimbTechniques, GeoCoordinates, gradeToLightGrade, LightGrade, LightTopo, MapProps, MarkerProps, Parking, PolyMouseEvent, Sector, Topo, UUID, Waypoint } from 'types';
-import { googleGetPlace, hasFlag, hasSomeFlags, mergeFlags, toLatLng } from 'helpers';
+import { fontainebleauLocation, googleGetPlace, hasFlag, hasSomeFlags, mergeFlags, toLatLng } from 'helpers';
 import { Quark, QuarkIter, reactKey, SelectQuarkNullable } from 'helpers/quarky';
 
 interface MapControlProps extends MapProps {
@@ -63,6 +63,7 @@ export const MapControl: React.FC<MapControlProps> = ({
     ...props
 }: MapControlProps) => {
     const mapRef = useRef<google.maps.Map>(null);
+
     const [satelliteView, setSatelliteView] = useState(false);
     const maxBoulders = props.topos ? Math.max(...props.topos.map(t => t().nbBoulders).toArray()) : 0;
     const defaultTopoFilterOptions: TopoFilterOptions = {
@@ -136,9 +137,18 @@ export const MapControl: React.FC<MapControlProps> = ({
             if (newBounds) {
                 locations.forEach(loc => newBounds.extend(new google.maps.LatLng(toLatLng(loc))));
             }
+            console.log('bounds');
             mapRef.current.fitBounds(newBounds);
         }
     }
+    useEffect(() => {
+        if (props.boundsTo && props.boundsTo.length > 1) {
+            const bounds = props.boundsTo;
+            window.setTimeout(() => {
+                getBoundsTo(bounds);
+            }, 1)
+        }   
+    }, []);
 
     return (
         <div className="relative w-full h-full md:flex-1">
@@ -236,11 +246,8 @@ export const MapControl: React.FC<MapControlProps> = ({
                     className={props.className ? props.className : ''}
                     onZoomChange={() => {
                         if (mapRef.current && props.onMapZoomChange) {
-                        props.onMapZoomChange(mapRef.current.getZoom());
+                            props.onMapZoomChange(mapRef.current.getZoom());
                         }
-                    }}
-                    onLoad={() => {
-                        if (props.boundsTo && props.boundsTo.length > 0) getBoundsTo(props.boundsTo);
                     }}
                     {...props}
                 >
@@ -289,14 +296,14 @@ export const MapControl: React.FC<MapControlProps> = ({
                     <For each={() => displayBoulderFilter ? props.boulders!.filter(b => boulderFilter(b())).toArray() : props.boulders!.toArray()}>
                     {(boulder) => 
                         <BoulderMarker
-                        key={reactKey(boulder)}
-                        draggable={draggableMarkers}
-                        boulder={boulder}
-                        boulderOrder={props.bouldersOrder!}
-                        selected={props.selectedBoulder ? props.selectedBoulder()?.id === boulder().id : false}
-                        topo={props.topo}
-                        onClick={props.onBoulderClick}
-                        onContextMenu={props.onBoulderContextMenu}
+                            key={reactKey(boulder)}
+                            draggable={draggableMarkers}
+                            boulder={boulder}
+                            boulderOrder={props.bouldersOrder!}
+                            selected={props.selectedBoulder ? props.selectedBoulder()?.id === boulder().id : false}
+                            topo={props.topo}
+                            onClick={props.onBoulderClick}
+                            onContextMenu={props.onBoulderContextMenu}
                         />   
                     }
                     </For>

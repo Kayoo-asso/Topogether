@@ -191,6 +191,7 @@ const Topo: NextPage = () => {
           parkings={parkings}
           selectedParking={selectedParking}
           onParkingClick={toggleParkingSelect}
+          center={toLatLng(topo.location)}
           boundsTo={boulders.toArray().map(b => b().location).concat(parkings.toArray().map(p => p().location))}
         />       
 

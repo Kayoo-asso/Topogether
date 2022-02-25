@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { BoulderItemLeftbar, Icon } from 'components';
-import { createTrack, splitArray } from 'helpers';
+import { splitArray } from 'helpers';
 import { Quark, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
 import { Boulder, Topo, Track, UUID } from 'types';
-import { api } from 'helpers/services/ApiService';
 
 interface SectorListProps {
     topoQuark: Quark<Topo>,
@@ -14,8 +13,6 @@ interface SectorListProps {
 }
 
 export const SectorList:React.FC<SectorListProps> = watchDependencies((props: SectorListProps) => {
-    const session = api.user();
-
     const selectedBoulder = props.selectedBoulder();
     const topo = props.topoQuark();
     const sectors = topo.sectors;
@@ -25,7 +22,6 @@ export const SectorList:React.FC<SectorListProps> = watchDependencies((props: Se
     const [displayedSectors, setDisplayedSectors] = useState<Array<UUID>>(sectors.map(sector => sector.id).toArray());
     const [displayedBoulders, setDisplayedBoulders] = useState<Array<UUID>>([]);
 
-    if (!session) return null;
     return (
         <div className='h-[95%] overflow-y-auto mb-6 px-4'>
             {sectors.quarks().map((sectorQuark, sectorIndex) => {
@@ -91,8 +87,7 @@ export const SectorList:React.FC<SectorListProps> = watchDependencies((props: Se
                                                     }
                                                 }}
                                                 onTrackClick={(trackQuark) => props.onTrackSelect(trackQuark, boulderQuark)}
-                                                displayCreateTrack
-                                                onCreateTrack={() => createTrack(boulder, session.id)}
+                                                displayCreateTrack={false}
                                             />
                                         </div>
                                     )
@@ -131,8 +126,7 @@ export const SectorList:React.FC<SectorListProps> = watchDependencies((props: Se
                                         }
                                     }}
                                     onTrackClick={(trackQuark) => props.onTrackSelect(trackQuark, boulderQuark)}
-                                    displayCreateTrack
-                                    onCreateTrack={() => createTrack(boulder, session.id)}
+                                    displayCreateTrack={false}
                                 />
                             </div>
                         )

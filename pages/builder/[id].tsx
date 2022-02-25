@@ -13,7 +13,7 @@ import {
 import { useRouter } from 'next/router';
 import { quarkTopo } from 'helpers/fakeData/fakeTopoV2';
 import {
- blobToImage, defaultImage, DeviceContext, sortBoulders, useContextMenu, createTrack, createBoulder, createParking, createWaypoint, createSector, deleteSector, deleteBoulder, deleteParking, deleteWaypoint,
+ blobToImage, defaultImage, DeviceContext, sortBoulders, useContextMenu, createTrack, createBoulder, createParking, createWaypoint, createSector, deleteSector, deleteBoulder, deleteParking, deleteWaypoint, toLatLng,
 } from 'helpers';
 import {
  Boulder, GeoCoordinates, Image, MapToolEnum, Parking, Sector, Track, Waypoint,
@@ -25,6 +25,7 @@ import { api } from 'helpers/services/ApiService';
 
 const BuilderMapPage: NextPage = watchDependencies(() => {
   const session = api.user();
+  if (!session) return <></>;
   const router = useRouter();
   const { id } = router.query;
   const device = useContext(DeviceContext);
@@ -241,11 +242,11 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
             ...selectedBoulder()!,
             images: newImages,
           });
-          selectedTrack.select(createTrack(selectedBoulder()!, session!.id));
+          selectedTrack.select(createTrack(selectedBoulder()!, session.id));
         } 
         else {
           const newBoulderQuark = createBoulder(quarkTopo, coordinates, img);
-          selectedTrack.select(createTrack(newBoulderQuark(), session!.id));
+          selectedTrack.select(createTrack(newBoulderQuark(), session.id));
           selectedBoulder.select(newBoulderQuark);
         }
         setDisplayDrawer(true);
@@ -259,7 +260,6 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
     }
   }, [topo, currentTool, selectedBoulder()]);
 
-  if (!session || typeof id !== 'string' || !topo) return null;
   return (
     <>
       <Header
@@ -376,6 +376,7 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
           onClick={handleCreateNewMarker}
           onMouseMove={handleFreePointCreatingSector}
           onCreatingSectorPolylineClick={handleCreatingSectorPolylineClick}
+          center={toLatLng(topo.location)}
           boundsTo={boulders.toArray().map(b => b().location).concat(parkings.toArray().map(p => p().location))}
         />
 

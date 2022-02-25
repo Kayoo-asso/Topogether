@@ -22,6 +22,7 @@ type MapMarker = MarkerProps &
 // Omitting the type tells the compiler that this component takes no props
 // Omitting React.PropsWithChildren<T> tells the compiler that this component takes no children
 export const Map = forwardRef<google.maps.Map, React.PropsWithChildren<MapProps>>((props, mapRef) => {
+
   const {
     onBoundsChange,
     onCenterChange,
