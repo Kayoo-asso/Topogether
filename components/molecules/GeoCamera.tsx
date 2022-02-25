@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { distanceLatLng, useAsyncEffect, useUserMedia } from 'helpers';
+import { distanceLatLng, fromLatLng, useAsyncEffect, useUserMedia } from 'helpers';
 import { Icon } from 'components';
 import { GeoCoordinates, MapToolEnum } from 'types';
 
@@ -194,7 +194,8 @@ export const GeoCamera: React.FC<GeoCameraProps> = ({
                         className='ktext-base-little cursor-pointer'
                         onClick={() => {
                             canvasRef.current?.toBlob(blob => {
-                                props.onCapture && props.onCapture(blob, coords);
+                                props.onCapture && props.onCapture(blob, fromLatLng(coords));
+
                             }, "image/jpeg", 1);
                             removeCapture();
                             props.onClose();

@@ -48,7 +48,7 @@ export const TopoFilters: React.FC<TopoFiltersProps> = ({
 
     const renderFilters = () => (
         <React.Fragment>
-            <MultipleSelect<TopoType> 
+            <MultipleSelect 
                 id='topo-types'
                 label='Types de spot'
                 names={TopoTypeName}

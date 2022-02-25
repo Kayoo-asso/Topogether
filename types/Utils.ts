@@ -1,7 +1,8 @@
-export type GeoCoordinates = {
-  lat: number,
-  lng: number,
-};
+// export type GeoCoordinates = {
+//   lat: number,
+//   lng: number,
+// };
+export type GeoCoordinates = [lng: number, lat: number];
 
 export type ExplicitUndefineds<T> = {
   [K in keyof Required<T>]: T extends Record<K, T[K]> ? T[K] : (T[K] | undefined)

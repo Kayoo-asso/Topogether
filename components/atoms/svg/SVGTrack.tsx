@@ -40,7 +40,7 @@ export const SVGTrack: React.FC<SVGTrackProps> = watchDependencies(({
                 grade={track.grade}
                 pointSize={8}
                 phantom={!highlighted}
-                trackOrderIndex={track.orderIndex}
+                trackOrderIndex={track.index}
                 onClick={props.onLineClick}
                 onPointClick={(index) => props.onPointClick && props.onPointClick('LINE_POINT', index)}
             />

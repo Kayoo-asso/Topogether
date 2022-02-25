@@ -4,7 +4,7 @@ import { BoulderMarker, CreatingSectorAreaMarker, For, Icon, Map, ParkingMarker,
 import { BoulderFilterOptions, BoulderFilters, MapSearchbarProps, TopoFilterOptions, TopoFilters } from '.';
 import { MapSearchbar } from '..';
 import { Amenities, Boulder, ClimbTechniques, GeoCoordinates, gradeToLightGrade, LightGrade, LightTopo, MapProps, MarkerProps, Parking, PolyMouseEvent, Sector, Topo, UUID, Waypoint } from 'types';
-import { googleGetPlace, hasFlag, hasSomeFlags, mergeFlags } from 'helpers';
+import { googleGetPlace, hasFlag, hasSomeFlags, mergeFlags, toLatLng } from 'helpers';
 import { Quark, QuarkIter, reactKey, SelectQuarkNullable } from 'helpers/quarky';
 
 interface MapControlProps extends MapProps {
@@ -128,7 +128,7 @@ export const MapControl: React.FC<MapControlProps> = ({
         if (mapRef.current) {
             const newBounds = new google.maps.LatLngBounds();
             if (newBounds) {
-                locations.forEach(loc => newBounds.extend(new google.maps.LatLng(loc)));
+                locations.forEach(loc => newBounds.extend(new google.maps.LatLng(toLatLng(loc))));
             }
             mapRef.current.fitBounds(newBounds);
         }

@@ -1,4 +1,6 @@
-create table public.topos (
+-- TODO: better security regarding the value of topos.status
+
+create table topos (
     -- mandatory
     id uuid primary key,
     name varchar(500) not null,
@@ -14,32 +16,31 @@ create table public.topos (
 
     -- bitflags
     amenities int4 default 0 not null,
-    rock_types int4 default 0 not null,
+    "rockTypes" int4 default 0 not null,
 
     -- optional
+    imageUrl text,
     description varchar(5000),
-    fauna_protection varchar(5000),
+    "faunaProtection" varchar(5000),
     ethics varchar(5000),
     danger varchar(5000),
     cleaned date,
     altitude integer,
-    approach_time integer,
-    other_amenities varchar(5000),
+    "approachTime" integer,
+    "otherAmenities" varchar(5000),
 
     -- required to maintain the ordering
-    lonely_boulders uuid[] not null default '{}',
+    "lonelyBoulders" uuid[] not null default '{}',
 
     -- relations
-    creator_id uuid references public.users(id) on delete set null,
-    validator_id uuid references public.users(id) on delete set null
-    -- added later: image_id
-    -- image_id uuid references public.images(id) on delete set null
+    "creatorId" uuid references public.users(id) on delete set null,
+    "validatorId" uuid references public.users(id) on delete set null
 );
 
-create table public.topo_contributors (
+create table topo_contributors (
     topo_id uuid not null,
     user_id uuid not null,
-    role public.contributor_role not null,
+    role contributor_role not null,
 
     primary key (topo_id, user_id)
 );
@@ -83,24 +84,24 @@ language plpgsql
 security definer set search_path = public
 as $$
 begin
-    insert into public.topo_contributors (topo_id, user_id, role)
-    values (new.id, new.creator_id, 'ADMIN');
+    insert into topo_contributors (topo_id, user_id, role)
+    values (new.id, new."creatorId", 'ADMIN');
     return new;
 end;
 $$;
 
 create trigger on_topo_created
-    after insert on public.topos
+    after insert on topos
     for each row execute procedure setup_topo_admin();
 
-alter table public.topo_contributors enable row level security;
+alter table topo_contributors enable row level security;
 
 create policy "Topo contributors are visible by everyone"
     on topo_contributors for select
     using ( true );
 
 -- TODO: may need more fine-grained policies, to avoid one topo admin downgrading / kicking out other topo admins
-create policy "Only tpo admins can manage contributors"
+create policy "Only topo admins can manage contributors"
     on topo_contributors for all
     -- the `using` case will also be applied for the `with check` case
     using ( is_topo_admin(topo_id, auth.uid()) );
@@ -110,7 +111,7 @@ create policy "Admins are omnipotent"
     -- the `using` case will also be applied for the `with check` cases
     using ( is_admin(auth.uid()) );
 
-alter table public.topos enable row level security;
+alter table topos enable row level security;
 
 create policy "Topos are visible by everyone"
     on topos for select
@@ -119,8 +120,8 @@ create policy "Topos are visible by everyone"
 create policy "Topos can be inserted by their creator."
     on topos for insert
     with check (
-        creator_id is not null and
-        auth.uid() = creator_id
+        "creatorId" is not null and
+        auth.uid() = "creatorId"
     );
 
 create policy "Topos can be modified by contributors"
@@ -140,15 +141,15 @@ create policy "Admins are omnipotent"
 create table managers (
     id uuid primary key,
     name varchar(500) not null,
-    contactName varchar(500) not null,
-    contactPhone varchar(30),
-    contactMail varchar(500),
+    "contactName" varchar(500) not null,
+    "contactPhone" varchar(30),
+    "contactMail" varchar(500),
     description varchar(5000),
-    address varchar(2000),
+    address varchar(5000),
     zip integer,
     city varchar(500),
-    image_url text,
-    topo_id uuid not null references public.topos(id) on delete cascade
+    "imageUrl" text, 
+    "topoId" uuid not null references public.topos(id) on delete cascade
 );
 
 alter table managers enable row level security;
@@ -160,7 +161,7 @@ create policy "Managers are visible for everyone"
 create policy "Managers can be modified by topo admins"
     on managers for all
     -- the `using` case will also be applied for the `with check` cases
-    using ( is_topo_admin(topo_id, auth.uid()) );
+    using ( is_topo_admin("topoId", auth.uid()) );
 
 create policy "Admins are omnipotent"
     on managers for all
@@ -168,44 +169,83 @@ create policy "Admins are omnipotent"
     using ( is_admin(auth.uid()) );
 
 
--- TOPO IMAGES
 
-create table public.topo_images (
+-- TOPO ACCESS
+
+create table topo_accesses (
     id uuid primary key,
-    url text not null,
-    topo_id uuid not null references public.topos(id) on delete cascade
+    duration int,
+    danger varchar(5000),
+    difficulty difficulty,
+    steps jsonb, -- hack, to avoid creating a separate table just for steps
+    "topoId" uuid not null references topos(id) on delete cascade
 );
 
-alter table public.topos add column
-    image_id uuid references public.topo_images(id);
+alter table topo_accesses enable row level security;
 
-alter table public.topo_images enable row level security;
+-- simple check that each step contains a description
+-- (since this is the expected shape by clients, this avoids crashes)
+-- TODO" more extensive checking?
+create function validate_topo_access_steps(steps jsonb)
+returns boolean
+as $$
+declare
+    step jsonb;
+begin
+    if jsonb_typeof(steps) <> 'array' then
+        return false;
+    end if;
+    if jsonb_array_length(steps) = 0 then
+        return true;
+    end if;
+    for step in select jsonb_array_elements(steps) loop
+        if step->'description' is null then
+            return false;
+        end if;
+    end loop;
+    return true;
+end;
+$$ language plpgsql;
 
-create policy "Images are visible to everyone"
-    on topo_images for select
+create policy "Topo accesses are visible for everyone"
+    on topo_accesses for select
     using ( true );
 
-create policy "Images can only be created by contributors"
-    on topo_images for insert
-    with check ( is_contributor(topo_id, auth.uid()) );
+create policy "Topo accesses can be created by topo contributors"
+    on topo_accesses for insert
+    with check (
+        is_contributor("topoId", auth.uid() ) and
+        validate_topo_access_steps(steps)
+    );
 
--- No image modifications
+create policy "Topo accesses can be updated by topo contributors"
+    on topo_accesses for update
+    using (
+        is_contributor("topoId", auth.uid() ) and
+        validate_topo_access_steps(steps)
+    );
 
--- Image deletions are done through a special API route,
--- to delete them in the object storage as well (Dropbox atm)
+create policy "Topo accesses can be deleted by topo contributors"
+    on topo_accesses for delete
+    using ( is_contributor("topoId", auth.uid()) );
+
+create policy "Admins are omnipotent"
+    on topo_accesses for all
+    -- the `using` case will also be applied for the `with check` cases
+    using ( is_admin(auth.uid()) and validate_topo_access_steps(steps) );
 
 -- PARKINGS
-create table public.parkings (
+create table parkings (
     id uuid primary key,
     spaces int not null,
     location geography(point) not null,
     description varchar(5000),
+    imageUrl text,
 
-    topo_id uuid not null references public.topos(id) on delete cascade,
-    image_id uuid references public.topo_images(id) on delete set null
+    "topoId" uuid not null references public.topos(id) on delete cascade
 );
 
-alter table public.parkings enable row level security;
+alter table parkings enable row level security;
 
 create policy "Parkings are visible for everyone"
     on parkings for select
@@ -214,52 +254,25 @@ create policy "Parkings are visible for everyone"
 create policy "Parkings can be modified by topo contributors"
     on parkings for all
     -- the `using` case will also be applied for the `with check` cases
-    using ( is_contributor(topo_id, auth.uid()) );
+    using ( is_contributor("topoId", auth.uid()) );
 
 create policy "Admins are omnipotent"
     on parkings for all
     -- the `using` case will also be applied for the `with check` cases
     using ( is_admin(auth.uid()) );
 
-
--- TOPO ACCESS
-create table topo_accesses (
-    id uuid primary key,
-    duration int,
-    danger varchar(5000),
-    difficulty public.difficulty,
-    steps jsonb, -- easy way out
-    topo_id uuid not null references public.topos(id) on delete cascade
-);
-
-alter table topo_accesses enable row level security;
-
-create policy "Topo accesses are visible for everyone"
-    on topo_accesses for select
-    using ( true );
-
-create policy "Topo accesses can be modified by topo contributors"
-    on topo_accesses for all
-    -- the `using` case will also be applied for the `with check` cases
-    using ( is_contributor(topo_id, auth.uid()) );
-
-create policy "Admins are omnipotent"
-    on topo_accesses for all
-    -- the `using` case will also be applied for the `with check` cases
-    using ( is_admin(auth.uid()) );
-
 -- WAYPOINTS
-create table public.waypoints (
+create table waypoints (
     id uuid primary key,
     name varchar(500) not null,
     location geography(point) not null,
     description varchar(5000),
-    image_url text,
+    "imageUrl" text,
 
-    topo_id uuid not null references public.topos(id) on delete cascade
+    "topoId" uuid not null references public.topos(id) on delete cascade
 );
 
-alter table public.waypoints enable row level security;
+alter table waypoints enable row level security;
 
 create policy "Waypoints are visible for everyone"
     on waypoints for select
@@ -268,7 +281,7 @@ create policy "Waypoints are visible for everyone"
 create policy "Waypoints can be modified by topo contributors"
     on waypoints for all
     -- the `using` case will also be applied for the `with check` cases
-    using ( is_contributor(topo_id, auth.uid()) );
+    using ( is_contributor("topoId", auth.uid()) );
 
 create policy "Admins are omnipotent"
     on waypoints for all
@@ -281,11 +294,10 @@ create table public.sectors (
     name varchar(255) not null,
     path geography(polygon) not null,
 
-    topo_id uuid not null references public.topos(id) on delete cascade,
-    image_id uuid references public.topo_images(id) on delete set null
+    "topoId" uuid not null references public.topos(id) on delete cascade
 );
 
-alter table public.sectors enable row level security;
+alter table sectors enable row level security;
 
 create policy "Sectors are visible for everyone"
     on sectors for select
@@ -294,7 +306,7 @@ create policy "Sectors are visible for everyone"
 create policy "Sectors can be modified by topo contributors"
     on sectors for all
     -- the `using` case will also be applied for the `with check` cases
-    using ( is_contributor(topo_id, auth.uid()) );
+    using ( is_contributor("topoId", auth.uid()) );
 
 create policy "Admins are omnipotent"
     on sectors for all
@@ -302,19 +314,18 @@ create policy "Admins are omnipotent"
     using ( is_admin(auth.uid()) );
 
 -- BOULDERS
-create table public.boulders (
+create table boulders (
     id uuid primary key,
     location geography(point) not null,
     name varchar(500) not null,
-    is_highball boolean default false not null,
-    must_see boolean default false not null,
-    dangerous_descent boolean default false not null,
+    "isHighball" boolean default false not null,
+    "mustSee" boolean default false not null,
+    "dangerousDescent" boolean default false not null,
 
-    tracks uuid[] default '{}' not null,
-    topo_id uuid not null references public.topos(id) on delete cascade
+    "topoId" uuid not null references topos(id) on delete cascade
 );
 
-alter table public.boulders enable row level security;
+alter table boulders enable row level security;
 
 create policy "Boulders are visible for everyone"
     on boulders for select
@@ -322,41 +333,63 @@ create policy "Boulders are visible for everyone"
 
 create policy "Boulders can be modified by topo contributors"
     on boulders for all
-    using ( is_contributor(topo_id, auth.uid()) );
+    using ( is_contributor("topoId", auth.uid()) );
 
 create policy "Admins are omnipotent"
     on boulders for all
     -- the `using` case will also be applied for the `with check` cases
     using ( is_admin(auth.uid()) );
 
--- TRACKS
-create table public.tracks (
+-- BOULDER IMAGES
+create table public.boulder_images (
     id uuid primary key,
+    url text not null,
+    width int4 not null,
+    height int4 not null,
+    "topoId" uuid not null references public.topos(id) on delete cascade
+);
+
+alter table public.boulder_images enable row level security;
+
+create policy "Images are visible to everyone"
+    on public.boulder_images for select
+    using ( true );
+
+create policy "Images can only be created by contributors"
+    on public.boulder_images for insert
+    with check ( is_contributor("topoId", auth.uid()) );
+
+-- No image modifications.
+-- Image deletions are done through a special API route,
+-- to delete them in the object storage as well (Dropbox atm).
+
+-- TRACKS
+create table tracks (
+    id uuid primary key,
+    index double precision not null,
 
     name varchar(500),
     description varchar(5000),
     height integer,
-    grade public.grade,
-    orientation public.orientation,
-    reception public.difficulty,
+    grade grade,
+    orientation orientation,
+    reception difficulty,
     anchors integer,
     -- bitflag
     techniques integer DEFAULT 0 not null,
 
-    is_traverse boolean default false not null,
-    is_sitting_start boolean default false not null,
-    must_see boolean default false not null,
-    has_mantle boolean default false not null,
-
-    lines uuid[] default '{}' not null,
+    "isTraverse" boolean default false not null,
+    "isSittingStart" boolean default false not null,
+    "mustSee" boolean default false not null,
+    "hasMantle" boolean default false not null,
 
     -- this duplication makes row level security easier
-    topo_id uuid references public.topos(id) on delete cascade,
-    boulder_id uuid not null references public.boulders(id) on delete cascade,
-    creator_id uuid references public.users(id) on delete set null
+    "topoId" uuid not null references public.topos(id) on delete cascade,
+    "boulderId" uuid not null references public.boulders(id) on delete cascade,
+    "creatorId" uuid references public.users(id) on delete set null
 );
 
-alter table public.tracks enable row level security;
+alter table tracks enable row level security;
 
 create policy "Tracks are visible for everyone"
     on tracks for select
@@ -365,7 +398,7 @@ create policy "Tracks are visible for everyone"
 -- TODO: add authorizations specific to track creators, even if they are not topo contributors?
 create policy "Tracks can be modified by topo contributors"
     on tracks for all
-    using ( is_contributor(topo_id, auth.uid()) );
+    using ( is_contributor("topoId", auth.uid()) );
 
 create policy "Admins are omnipotent"
     on tracks for all
@@ -373,8 +406,10 @@ create policy "Admins are omnipotent"
     using ( is_admin(auth.uid()) );
 
 -- LINES
-create table public.lines (
+create table lines (
     id uuid primary key,
+    index double precision not null,
+
     points geography(linestring) not null,
     forbidden geography(multipolygon),
     hand1 geometry(point),
@@ -382,12 +417,12 @@ create table public.lines (
     foot1 geometry(point),
     foot2 geometry(point),
 
-    topo_id uuid not null references public.topos(id) on delete cascade,
-    track_id uuid not null references public.tracks(id) on delete cascade,
-    image_id uuid references public.topo_images(id) on delete set null
+    "imageId" uuid references public.boulder_images(id) on delete set null,
+    "topoId" uuid not null references public.topos(id) on delete cascade,
+    "trackId" uuid not null references public.tracks(id) on delete cascade
 );
 
-alter table public.lines enable row level security;
+alter table lines enable row level security;
 
 create policy "Lines are visible for everyone"
     on lines for select
@@ -395,8 +430,8 @@ create policy "Lines are visible for everyone"
 
 create policy "Lines can be modified by topo contributors"
     on lines for all
-    using ( is_contributor(topo_id, auth.uid()) )
-    with check ( is_contributor(topo_id, auth.uid()));
+    -- will also be used for the `with check` cases
+    using ( is_contributor("topoId", auth.uid()) );
 
 create policy "Admins are omnipotent"
     on lines for all
@@ -404,23 +439,23 @@ create policy "Admins are omnipotent"
     using ( is_admin(auth.uid()) );
 
 -- TRACK RATINGS
-create table public.ratings (
+create table ratings (
     id uuid primary key,
     finished boolean not null,
-    rating public.rating not null,
+    rating rating not null,
     comment varchar(5000),
     
     -- only needed for efficient RLS if topo admins / contributors can edit ratings
-    -- topo_id uuid not null references public.topos(id) on delete cascade,
-    track_id uuid not null references public.tracks(id) on delete cascade,
-    user_id uuid references public.users(id) on delete set null
+    -- topo_id uuid not null references topos(id) on delete cascade,
+    "trackId" uuid not null references public.tracks(id) on delete cascade,
+    "userId" uuid references public.users(id) on delete set null
 );
 
-alter table public.ratings enable row level security;
+alter table ratings enable row level security;
 
 create policy "Ratings can be modified by their authors"
     on ratings for all
-    using ( user_id = auth.uid() );
+    using ( "userId" = auth.uid() );
 
 create policy "Admins are omnipotent"
     on ratings for all
@@ -429,40 +464,40 @@ create policy "Admins are omnipotent"
 
 
 -- Setup modification timestamping on topos and nested entities
-create trigger handle_updated_at before update on public.topos 
+create trigger handle_updated_at before update on topos 
   for each row execute procedure moddatetime (modified);
 
-create function topo_was_modified()
+create function public.topo_was_modified()
 returns trigger
 language plpgsql
 as $$
 begin
     update topos
     set modified = now()
-    where topos.id = new.topo_id;
+    where topos.id = new."topoId";
 end;
 $$;
 
-create trigger handle_updated_at after insert or update on public.boulders
-    for each row execute procedure topo_was_modified();
+create trigger handle_updated_at after insert or update on boulders
+    for each row execute procedure public.topo_was_modified();
 
-create trigger handle_updated_at after insert or update on public.sectors
-    for each row execute procedure topo_was_modified();
+create trigger handle_updated_at after insert or update on sectors
+    for each row execute procedure public.topo_was_modified();
 
-create trigger handle_updated_at after insert or update on public.tracks
-    for each row execute procedure topo_was_modified();
+create trigger handle_updated_at after insert or update on tracks
+    for each row execute procedure public.topo_was_modified();
 
-create trigger handle_updated_at after insert or update on public.lines
-    for each row execute procedure topo_was_modified();
+create trigger handle_updated_at after insert or update on lines
+    for each row execute procedure public.topo_was_modified();
 
-create trigger handle_updated_at after insert or update on public.waypoints
-    for each row execute procedure topo_was_modified();
+create trigger handle_updated_at after insert or update on waypoints
+    for each row execute procedure public.topo_was_modified();
 
-create trigger handle_updated_at after insert or update on public.parkings
-    for each row execute procedure topo_was_modified();
+create trigger handle_updated_at after insert or update on parkings
+    for each row execute procedure public.topo_was_modified();
 
-create trigger handle_updated_at after insert or update on public.managers
-    for each row execute procedure topo_was_modified();
+create trigger handle_updated_at after insert or update on managers
+    for each row execute procedure public.topo_was_modified();
 
-create trigger handle_updated_at after insert or update on public.topo_accesses
-    for each row execute procedure topo_was_modified();
+create trigger handle_updated_at after insert or update on topo_accesses
+    for each row execute procedure public.topo_was_modified();

@@ -1,4 +1,5 @@
 import { NamedExoticComponent } from "react";
+import { GeomCoordinates } from "./GeoJson";
 import { Boulder, BoulderData, Line, Manager, Parking, SectorData, TopoData, Track, TrackData, Waypoint } from "./Topo";
 import { TrackRating, User } from "./User";
 import { Name, StringBetween, UUID } from "./Utils";

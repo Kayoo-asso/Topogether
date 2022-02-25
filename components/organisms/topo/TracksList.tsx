@@ -42,7 +42,7 @@ export const TracksList: React.FC<TracksListProps> = watchDependencies((props: T
               <GradeCircle
                 grade={grade}
                 className="cursor-pointer"
-                content={(track.orderIndex + 1).toString()}
+                content={(track.index + 1).toString()}
               />
 
               {track.grade && (

@@ -1,3 +1,7 @@
+export type GeomShapes = Exclude<Geometry, GeometryCollection>;
+export type GeomCoordinatesOf<T extends GeomShapes> = T["coordinates"]; 
+export type GeomCoordinates = GeomCoordinatesOf<GeomShapes>;
+
 /**
  * Typescript types for the GeoJSON RFC7946 specification. This is not fully RFC-compliant due to lack of support for
  * ranged number data types.

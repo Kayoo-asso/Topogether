@@ -1,5 +1,5 @@
 import { createClient, SupabaseClient, User as AuthUser } from "@supabase/supabase-js";
-import { DBUser, DBUserUpdate, Email, Name, User } from 'types';
+import { DBUser, DBUserUpdate, Email, Image, Name, TopoData, User, UUID } from 'types';
 import { Quark, quark } from 'helpers/quarky';
 import { DBConvert } from "./DBConvert";
 
@@ -112,6 +112,25 @@ export class ApiService {
         // ASSUME the user is not null atm
         this._user.set(user);
         return AuthResult.Success;
+    }
+
+    async uploadImage(files: File[]): Promise<Image[]> {
+
+    }
+
+    async deleteImage(path: string): Promise<boolean> {
+
+    }
+
+    async getTopo(id: UUID): Promise<TopoData | null> {
+        const { data, error } = await this.client
+            .rpc<TopoData>("getTopo", { topo_id: id })
+            .single();
+        if (error || !data) {
+            console.error("Error getting topo data: ", error);
+            return null;
+        }
+        return data;
     }
 }
 

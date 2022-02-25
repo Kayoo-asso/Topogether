@@ -1,4 +1,4 @@
-create table public.users (
+create table users (
     -- Cascading deletes is important, so that we can remove a user from the `auth` schema
     id uuid primary key references auth.users on delete cascade,
     user_name text not null,
@@ -6,7 +6,7 @@ create table public.users (
     -- It is maintained in sync by a trigger (see below)
     email varchar(1000) not null,
 
-    role public.role default 'USER' not null,
+    role role default 'USER' not null,
     created timestamptz default now() not null,
 
     image_url text,
@@ -18,7 +18,7 @@ create table public.users (
     birth_date date
 );
 
-alter table public.users enable row level security;
+alter table users enable row level security;
 
 create function is_admin(user_id uuid)
 returns boolean 
@@ -27,7 +27,7 @@ as $$
 begin
     return exists (
         select 1
-        from public.users
+        from users
         where
             users.id = user_id and
             users.role = 'ADMIN'
@@ -37,35 +37,35 @@ $$;
 
 
 create policy "Only users can see and modify their own account."
-    on public.users for all
+    on users for all
     -- the `using` case will also be applied for the `with check` case
     using ( auth.uid() = id );
 
 create policy "Admins are omnipotent"
-    on public.users for all
+    on users for all
     -- the `using` case will also be applied for the `with check` cases
     using ( is_admin(auth.uid()) );
 
 -- Profiles w/ ADMIN role can only be created using the master key
 
 create policy "Only users with USER role can be inserted."
-    on public.users for insert
+    on users for insert
     with check ( role = 'USER' );
 
 create policy "Users can only be updated to USER role"
-    on public.users for update
+    on users for update
     using ( role = 'USER' );
 
--- Create an entry in `public.users` for each new user
+-- Create an entry in `users` for each new user
 -- This assumes the user_name was provided as additional data.
 -- This clears the user_name from the user meta data in `auth.users`
-create function public.handle_new_user()
+create function handle_new_user()
 returns trigger
 language plpgsql
 security definer set search_path = public, extensions, auth, pg_temp
 as $$
 begin
-    insert into public.users(id, user_name, email)
+    insert into users(id, user_name, email)
     values (new.id, (new.raw_user_meta_data::jsonb->>'user_name')::varchar(500), new.email);
     -- not very efficient (we just inserted into auth.users)
     -- but we're never signing up a lot of users at once, so this is fine
@@ -77,15 +77,15 @@ end;
 $$;
 
 create trigger on_new_user after insert on auth.users
-    for each row execute function public.handle_new_user();
+    for each row execute function handle_new_user();
 
 -- I don't think we need security definer here?
-create function public.sync_email()
+create function sync_email()
 returns trigger
 language plpgsql
 as $$
 begin
-    update public.users
+    update users
     set email = new.email
     where id = new.id;
     return null;
@@ -95,11 +95,11 @@ $$;
 create trigger on_email_change after update on auth.users
     for each row
     when ( old.email <> new.email )
-    execute function public.sync_email();
+    execute function sync_email();
 
 -- When a user account is deleted (by the user themselves, or an admin),
 -- also delete the corresponding entry in `auth.users`.
-create function public.handle_deleted_user()
+create function handle_deleted_user()
 returns trigger
 language plpgsql
 security definer set search_path = public
@@ -111,11 +111,11 @@ begin
 end;
 $$;
 
-create trigger on_delete_user after delete on public.users
-    for each row execute function public.handle_deleted_user();
+create trigger on_delete_user after delete on users
+    for each row execute function handle_deleted_user();
 
 -- Prevent direct email or role changes in the `users` table
-create function public.enforce_security()
+create function enforce_security()
 returns trigger
 language plpgsql
 as $$
@@ -134,25 +134,22 @@ begin
 end;
 $$;
 
-create trigger on_account_update before update on public.users
-    for each row execute function public.enforce_security();
+create trigger on_account_update before update on users
+    for each row execute function enforce_security();
 
 
--- IMPORTANT: views bypass row-level security!
--- In this case, this is what we want, since we want to expose this information to everyone,
--- while keeping the rest of the `users` table private.
+-- ### PROFILES ###
 create view public.profiles as
-    select user_name, first_name, last_name, city, country
+    select 
+        id,
+        user_name as "userName",
+        role,
+        created,
+        first_name as "firstName",
+        last_name as "lastName",
+        country,
+        city
     from public.users;
 
-create rule "No inserts" as
-on insert to public.profiles
-    do instead nothing;
-
-create rule "No updates" as
-on update to public.profiles
-    do instead nothing;
-
-create rule "No deletes" as 
-on delete to public.profiles
-    do instead nothing;
+-- Avoids the view bypassing row-level security
+alter view public.profiles owner to authenticated;

@@ -1,4 +1,3 @@
-
 CREATE TYPE public.role AS ENUM('USER', 'ADMIN');
 CREATE TYPE public.contributor_role as ENUM('CONTRIBUTOR', 'ADMIN');
 

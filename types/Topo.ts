@@ -3,10 +3,11 @@ import type { Amenities, ClimbTechniques, RockTypes } from './Bitflags';
 import type {
   Reception, Grade, LightGrade, Orientation, TopoStatus, TopoType, Difficulty,
 } from './Enums';
-import type { LinearRing, LineCoords, Position } from './GeoJson';
-import type { UUID, GeoCoordinates, RequireAtLeastOne, StringBetween, Name, Description } from './Utils';
+import type { LinearRing, LineCoords, LineString, MultiPolygon, Point, Polygon, Position } from './GeoJson';
+import type { UUID, GeoCoordinates, RequireAtLeastOne, StringBetween, Name, Description, Email } from './Utils';
 import type { TrackRating, User } from './User';
 import type { Image } from './Image';
+import { UUIDSchema } from './schemas/PrimitiveSchemas';
 
 export type Topo = Omit<TopoData, 'sectors' | 'boulders' | 'waypoints' | 'parkings' | 'accesses' | 'managers'> & {
   sectors: QuarkArray<Sector>,
@@ -70,6 +71,42 @@ export interface TopoData {
   managers: Manager[],
 }
 
+export interface DBTopo {
+  id: UUID,
+  name: Name,
+  status: TopoStatus,
+  type: TopoType,
+  location: Point,
+  forbidden: boolean,
+
+  // Timestamps, wrap them in a Date if needed.
+  // these describe the topo data in the app
+  modified: string,
+  submitted?: string,
+  validated?: string,
+  // this one is about the physical place
+  cleaned?: string, 
+
+  amenities: Amenities,
+  rockTypes: RockTypes,
+
+  description?: Description,
+  faunaProtection?: Description,
+  ethics?: Description,
+  danger?: Description,
+  altitude?: number,
+  approachTime?: number,
+  otherAmenities?: Description,
+
+  lonelyBoulders: UUID[],
+
+  imageUrl?: string,
+
+  // these can be null, in case the person's account is deleted
+  creatorId?: UUID,
+  validatorId?: UUID,
+}
+
 export type LightTopo = Omit<TopoData, 'sectors' | 'boulders' | 'lonelyBoulders' | 'waypoints' | 'parkings' | 'accesses' | 'managers'> & {
   firstParkingLocation?: GeoCoordinates,
   nbSectors: number,
@@ -85,19 +122,57 @@ export type GradeHistogram = {
   Total: number
 };
 
+export interface Manager {
+  readonly id: UUID,
+  name: Name,
+  contactName: Name,
+  contactPhone?: StringBetween<1, 30>,
+  contactMail?: Name,
+  description?: Description
+  adress?: Description,
+  zip?: number,
+  city?: Name,
+  imageUrl?: string
+}
+
+export interface DBManager {
+  id: UUID,
+  name: Name,
+  contactName: Name,
+  contactPhone?: StringBetween<1, 30>,
+  contactMail?: Email,
+  description?: Description,
+  address?: Description,
+  zip?: number,
+  city?: Name,
+  imageUrl?: string,
+
+  topoId: UUID,
+}
+
 // TODO: is the RequireAtLeastOne correct?
 export type TopoAccess = RequireAtLeastOne<{
   readonly id: UUID,
   danger?: Description,
   difficulty?: Difficulty,
   duration?: number,
-  steps?: TopoAccessStep[],
+  steps: TopoAccessStep[],
 }, 'danger' | 'difficulty' | 'duration' | 'steps' >;
 
 export interface TopoAccessStep {
   description: Description
-  image?: Image,
+  imageUrl?: string,
 }
+
+export interface DBTopoAccess {
+  id: UUID,
+  duration?: number,
+  danger?: Description,
+  difficulty?: Difficulty,
+  steps: TopoAccessStep[], // this is required and WILL be validated in the DB
+  topoId: UUID
+}
+
 
 export interface Parking {
   readonly id: UUID,
@@ -108,17 +183,32 @@ export interface Parking {
   image?: Image
 }
 
-export interface Manager {
+export interface DBParking {
+  id: UUID,
+  spaces: number,
+  location: Point,
+  description?: Description,
+  imageUrl?: string,
+
+  topoId: UUID,
+}
+
+export interface Waypoint {
   readonly id: UUID,
   name: Name,
-  description?: Description
-  image?: Image
-  adress?: StringBetween<1, 2000>,
-  zip?: number,
-  city?: Name,
-  contactName: Name,
-  contactPhone?: Name,
-  contactMail?: Name,
+  location: GeoCoordinates,
+  image?: Image,
+  description?: Description,
+}
+
+export interface DBWaypoint {
+  id: UUID,
+  name: Name,
+  location: Point,
+  description?: Description,
+  imageUrl?: string,
+
+  topoId: UUID,
 }
 
 export interface SectorData {
@@ -128,14 +218,15 @@ export interface SectorData {
   boulders: UUID[],
 }
 
-export interface Waypoint {
-  readonly id: UUID,
-  sectorId?: UUID,
+export interface DBSector {
+  id: UUID,
   name: Name,
-  location: GeoCoordinates,
-  image?: Image,
-  description?: Description,
+  path: Polygon,
+
+  topoId: UUID,
+  imageId?: UUID,
 }
+
 
 export interface BoulderData {
   readonly id: UUID,
@@ -150,23 +241,35 @@ export interface BoulderData {
   images: Image[]
 }
 
+export interface DBBoulder {
+  id: UUID,
+  location: Point,
+  name: Name,
+  isHighball: boolean,
+  mustSee: boolean,
+  dangerousDescent: boolean,
+
+  topoId: UUID,
+}
+
 // Order defined by the x-coordinate of the first point of the first line
 export interface TrackData {
   readonly id: UUID,
-  orderIndex: number,
+  index: number,
+
   name?: Name,
   description?: Description,
   height?: number,
   grade?: Grade,
-
-  nbAnchors?: number,
-  techniques?: ClimbTechniques,
-  reception?: Reception,
   orientation?: Orientation,
+  reception?: Difficulty,
+  anchors?: number,
+  techniques?: ClimbTechniques,
+
   isTraverse: boolean,
   isSittingStart: boolean,
   mustSee: boolean
-  hasMantle?: boolean,
+  hasMantle: boolean,
 
   lines: Line[],
   ratings: TrackRating[],
@@ -174,8 +277,32 @@ export interface TrackData {
   creatorId?: UUID,
 }
 
+export interface DBTrack {
+  id: UUID,
+  index: number,
+
+  name?: Name,
+  description?: Description,
+  height?: number,
+  grade?: Grade,
+  orientation?: Orientation,
+  reception?: Difficulty,
+  anchors?: number,
+  techniques?: ClimbTechniques,
+
+  isTraverse: boolean,
+  isSittingStart: boolean,
+  mustSee?: boolean,
+  hasMantle?: boolean,
+
+  topoId: UUID,
+  boulderId: UUID,
+  creatorId?: UUID,
+}
+
 export interface Line {
   readonly id: UUID,
+  order: number,
   points: Position[],
   // a LinearRing delineates the contour of a polygon
   forbidden?: LinearRing[],
@@ -186,4 +313,19 @@ export interface Line {
 
   // the images are provided with the boulder
   imageId: UUID
+}
+
+export interface DBLine {
+  id: UUID,
+  order: number,
+  points: LineString, // linestring
+  forbidden: MultiPolygon, // multipolygon
+  hand1: Point,
+  hand2: Point,
+  foot1: Point,
+  foot2: Point,
+
+  topoId: UUID,
+  trackId: UUID,
+  imageId: UUID,
 }

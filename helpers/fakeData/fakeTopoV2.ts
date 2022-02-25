@@ -83,7 +83,7 @@ export const tracks: TrackData[] = [
     // Track 0, boulder 0
     {
         id: "track-1" as UUID,
-        orderIndex: 0,
+        index: 0,
         name: "Passage 1" as Name,
         grade: "4+",
         reception: Reception.OK,
@@ -101,7 +101,7 @@ export const tracks: TrackData[] = [
     // Track 1, boulder 0
     {
         id: "track-2" as UUID,
-        orderIndex: 1,
+        index: 1,
         name: "Passage 2" as Name,
         description: "Le départ assis est sévère mais le reste de la voie est trivial" as Description,
         height: 2,

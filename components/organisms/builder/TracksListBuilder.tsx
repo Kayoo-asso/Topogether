@@ -29,7 +29,7 @@ export const createTrack = (boulder: Boulder, creatorId: UUID) => {
   const newTrack: Track = {
     id: v4(),
     creatorId: creatorId,
-    orderIndex: boulder.tracks.length,
+    index: boulder.tracks.length,
     name: 'Voie ' + (boulder.tracks.length+1) as Name,
     mustSee: false,
     isTraverse: false,
@@ -70,7 +70,7 @@ export const TracksListBuilder: React.FC<TracksListBuilderProps> = watchDependen
                 <GradeCircle
                   grade={grade}
                   className="cursor-pointer"
-                  content={(track.orderIndex + 1).toString()}
+                  content={(track.index + 1).toString()}
                 />
 
                 {track.grade && (
