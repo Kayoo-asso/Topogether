@@ -130,8 +130,8 @@ const AdminPage: NextPage = () => {
                     </div>
                 </div>
             </div>
-            {dropdownDisplayed && topoDropdown && (
-                <AdminActionDropdown topo={topoDropdown} dropdownPosition={dropdownPosition} />
+            {dropdownDisplayed && topoDropdown && dropdownPosition && (
+                <AdminActionDropdown topo={topoDropdown} position={dropdownPosition} />
             )}
         </>
     );
