@@ -123,7 +123,7 @@ export const GeoCamera: React.FC<GeoCameraProps> = ({
         <div className='w-full h-full absolute overflow-hidden z-1000'>
             <div className='absolute z-100 top-4 left-4'>
                 <div 
-                    className='text-main flex flex-row items-center'
+                    className={'flex flex-row items-center ' + (props.currentTool === 'PARKING' ? 'text-second' : props.currentTool === 'WAYPOINT' ? 'text-third' : 'text-main')}
                     onClick={() => setDisplayItemSelectMenu(d => !d)}
                 >
                     Créer un {itemType}
@@ -134,9 +134,9 @@ export const GeoCamera: React.FC<GeoCameraProps> = ({
                 </div>
                 {displayItemSelectMenu &&
                     <div className='text-white' onClick={() => setDisplayItemSelectMenu(false)}>
-                        {props.currentTool !== 'ROCK' && <div className='mt-1' onClick={() => props.onChangeTool('ROCK')}>Créer un bloc</div>}
-                        {props.currentTool !== 'PARKING' && <div className='mt-1' onClick={() => props.onChangeTool('PARKING')}>Créer un parking</div>}
-                        {props.currentTool !== 'WAYPOINT' && <div className='mt-1' onClick={() => props.onChangeTool('WAYPOINT')}>Créer un point de repère</div>}
+                        {props.currentTool !== 'ROCK' && <div className='mt-1 text-main' onClick={() => props.onChangeTool('ROCK')}>Créer un bloc</div>}
+                        {props.currentTool !== 'PARKING' && <div className='mt-1 text-second' onClick={() => props.onChangeTool('PARKING')}>Créer un parking</div>}
+                        {props.currentTool !== 'WAYPOINT' && <div className='mt-1 text-third' onClick={() => props.onChangeTool('WAYPOINT')}>Créer un point de repère</div>}
                     </div>
                 }
             </div>

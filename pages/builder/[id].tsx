@@ -5,7 +5,7 @@ import type { NextPage } from 'next';
 import {
   BoulderBuilderSlideoverMobile,
   MapControl, Show,
-  Header, InfoFormSlideover, ManagementFormSlideover, TrackFormSlideagainstDesktop, ModalValidateTopo, ModalDeleteTopo, GeoCamera, Drawer, LeftbarBuilderDesktop, BoulderBuilderSlideagainstDesktop, ParkingBuilderSlide, AccessFormSlideover, WaypointBuilderSlide, createTrack, Dropdown, BoulderMarkerDropdown, ModalRenameSector,
+  Header, InfoFormSlideover, ManagementFormSlideover, TrackFormSlideagainstDesktop, ModalValidateTopo, ModalDeleteTopo, GeoCamera, Drawer, LeftbarBuilderDesktop, BoulderBuilderSlideagainstDesktop, ParkingBuilderSlide, AccessFormSlideover, WaypointBuilderSlide, createTrack, Dropdown, BoulderMarkerDropdown, ModalRenameSector, ModalDelete,
 } from 'components';
 import { useRouter } from 'next/router';
 import { quarkTopo } from 'helpers/fakeData/fakeTopoV2';
@@ -38,17 +38,22 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
   const [currentTool, setCurrentTool] = useState<MapToolEnum>();
   const [currentImage, setCurrentImage] = useState<Image>(defaultImage);
   const selectedSector = useSelectQuark<Sector>();
+  const toDeleteSector = useSelectQuark<Sector>();
   const selectedBoulder = useSelectQuark<Boulder>();
+  const toDeleteBoulder = useSelectQuark<Boulder>();
   const selectedTrack = useSelectQuark<Track>();
   const selectedParking = useSelectQuark<Parking>();
+  const toDeleteParking = useSelectQuark<Parking>();
   const selectedWaypoint = useSelectQuark<Waypoint>();
+  const toDeleteWaypoint = useSelectQuark<Waypoint>();
   const boulderRightClicked = useSelectQuark<Boulder>();
-  
-  const [displayGeoCamera, setDisplayGeoCamera] = useState(false);
-  const [displayDrawer, setDisplayDrawer] = useState(false);
+
   const [dropdownPosition, setDropdownPosition] = useState<{ x: number, y: number }>();
   const closeDropdown = useCallback(() => boulderRightClicked.select(undefined), []);
   useContextMenu(() => boulderRightClicked.select(undefined));
+  
+  const [displayGeoCamera, setDisplayGeoCamera] = useState(false);
+  const [displayDrawer, setDisplayDrawer] = useState(false);
   const [displayInfo, setDisplayInfo] = useState<boolean>(false);
   const [displayApproach, setDisplayApproach] = useState<boolean>(false);
   const [displayManagement, setDisplayManagement] = useState<boolean>(false);
@@ -83,8 +88,8 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
     }
   }, [currentDisplay]);
 
-  const [displayModalValidate, setDisplayModalValidate] = useState(false);
-  const [displayModalDelete, setDisplayModalDelete] = useState(false);
+  const [displayModalValidateTopo, setDisplayModalValidateTopo] = useState(false);
+  const [displayModalDeleteTopo, setDisplayModalDeleteTopo] = useState(false);
 
   const [displayModalSectorRename, setDisplayModalSectorRename] = useState(false);
   const toggleSectorSelect = useQuarkyCallback((sectorQuark: Quark<Sector>) => {
@@ -155,6 +160,10 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
       emptyCreatingSector();
     }
   }, [topo, topo.sectors, creatingSector]);
+  const deleteSector = useQuarkyCallback((sector) => {
+    topo.sectors.removeQuark(sector);
+    if (selectedSector.quark() === sector) selectedSector.select(undefined);
+  }, []);
   const createBoulder = useCallback((location: GeoCoordinates, image?: Image, selectBoulder = false) => {
     const orderIndex = topo.boulders.length;
     const newBoulder: Boulder = {
@@ -177,7 +186,7 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
     }
     return newBoulderQuark;
   }, [topo]);
-  const deleteBoulder = useCallback((boulder) => {
+  const deleteBoulder = useQuarkyCallback((boulder) => {
     topo.boulders.removeQuark(boulder);
     if (selectedBoulder.quark() === boulder) selectedBoulder.select(undefined);
   }, []);
@@ -194,6 +203,10 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
     if (selectParking) selectedParking.select(newParkingQuark);
     return newParkingQuark;
   }, [topo]);
+  const deleteParking = useQuarkyCallback((parking) => {
+    topo.parkings.removeQuark(parking);
+    if (selectedParking.quark() === parking) selectedParking.select(undefined);
+  }, []);
   const createWaypoint = useCallback((location: GeoCoordinates, image = undefined, selectWaypoint = false) => {
     const newWaypoint: Waypoint = {
       id: v4(),
@@ -206,6 +219,10 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
     if (selectWaypoint) selectedWaypoint.select(newWaypointQuark);
     return newWaypointQuark;
   }, [topo]);
+  const deleteWaypoint = useQuarkyCallback((waypoint) => {
+    topo.waypoints.removeQuark(waypoint);
+    if (selectedWaypoint.quark() === waypoint) selectedWaypoint.select(undefined);
+  }, []);
 
   const handleCreateNewMarker = useCallback((e) => {
     if (e.latLng) {
@@ -235,6 +252,15 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
       else if (e.code === 'Escape') {
         if (creatingSector.length > 0) emptyCreatingSector();
         if (currentTool) setCurrentTool(undefined);
+        else {
+          selectedSector.select(undefined);
+          selectedBoulder.select(undefined);
+          selectedParking.select(undefined); 
+          selectedWaypoint.select(undefined);
+        }
+      }
+      else if (e.code === 'Delete') {
+
       }
     }
     window.addEventListener('keydown', handleKey);
@@ -251,8 +277,8 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
           { value: 'Infos du topo', action: () => setCurrentDisplay('INFO') },
           { value: 'Marche d\'approche', action: () => setCurrentDisplay('APPROACH') },
           { value: 'Gestionnaires du spot', action: () => setCurrentDisplay('MANAGEMENT') },
-          { value: 'Valider le topo', action: () => setDisplayModalValidate(!displayModalValidate) },
-          { value: 'Supprimer le topo', action: () => setDisplayModalDelete(!displayModalDelete) },
+          { value: 'Valider le topo', action: () => setDisplayModalValidateTopo(!displayModalValidateTopo) },
+          { value: 'Supprimer le topo', action: () => setDisplayModalDeleteTopo(!displayModalDeleteTopo) },
         ]}
         displayMapTools
         MapToolsActivated={!selectedTrack()}
@@ -270,7 +296,7 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
           selectedBoulder={selectedBoulder}
           onBoulderSelect={toggleBoulderSelect}
           onTrackSelect={toggleTrackSelect}
-          onValidate={() => setDisplayModalValidate(true)}
+          onValidate={() => setDisplayModalValidateTopo(true)}
         />
 
         <Show when={() => displayInfo}>
@@ -426,16 +452,16 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
               )}
         </Show>
 
-        <Show when={() => displayModalValidate}>
+        <Show when={() => displayModalValidateTopo}>
           <ModalValidateTopo
             topo={quarkTopo}
-            onClose={() => setDisplayModalValidate(false)}
+            onClose={() => setDisplayModalValidateTopo(false)}
           />
         </Show>
-        <Show when={() => displayModalDelete}>
+        <Show when={() => displayModalDeleteTopo}>
           <ModalDeleteTopo
             topo={quarkTopo}
-            onClose={() => setDisplayModalDelete(false)}
+            onClose={() => setDisplayModalDeleteTopo(false)}
           />
         </Show>
 
@@ -480,7 +506,13 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
 
       <Show when={() => boulderRightClicked.quark()}>
           {(quarkBoulder) =>
-        <BoulderMarkerDropdown dropdownPosition={dropdownPosition} toggleTrackSelect={toggleTrackSelect} boulder={quarkBoulder} deleteBoulder={deleteBoulder}/>}
+            <BoulderMarkerDropdown 
+              dropdownPosition={dropdownPosition} 
+              toggleTrackSelect={toggleTrackSelect} 
+              boulder={quarkBoulder} 
+              deleteBoulder={() => toDeleteBoulder.select(quarkBoulder)}
+            />
+          }
       </Show>
 
       <Show when={() => [(device !== 'MOBILE' || displayDrawer), selectedBoulder(), selectedTrack()] as const}>
@@ -500,6 +532,47 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
             sector={sectors.toArray().find(s => s().id === sSector.id)!}
             onClose={() => setDisplayModalSectorRename(false)}
           />
+        )}
+      </Show>
+
+      <Show when={() => toDeleteSector.quark()}>
+        {(sector) => (
+          <ModalDelete
+            onDelete={() => deleteSector(sector)}
+            onClose={() => toDeleteSector.select(undefined)}
+          >
+            Êtes-vous sûr de vouloir supprimer le secteur ?
+          </ModalDelete>
+        )}
+      </Show>
+      <Show when={() => toDeleteBoulder.quark()}>
+        {(boulder) => (
+          <ModalDelete
+            onDelete={() => deleteBoulder(boulder)}
+            onClose={() => toDeleteBoulder.select(undefined)}
+          >
+            Êtes-vous sûr de vouloir supprimer le bloc et toutes les voies associées ?
+          </ModalDelete>
+        )}
+      </Show>
+      <Show when={() => toDeleteParking.quark()}>
+        {(parking) => (
+          <ModalDelete
+            onDelete={() => deleteParking(parking)}
+            onClose={() => toDeleteParking.select(undefined)}
+          >
+            Êtes-vous sûr de vouloir supprimer le parking ?
+          </ModalDelete>
+        )}
+      </Show>
+      <Show when={() => toDeleteWaypoint.quark()}>
+        {(waypoint) => (
+          <ModalDelete
+            onDelete={() => deleteWaypoint(waypoint)}
+            onClose={() => toDeleteWaypoint.select(undefined)}
+          >
+            Êtes-vous sûr de vouloir supprimer le point de repère ?
+          </ModalDelete>
         )}
       </Show>
 
