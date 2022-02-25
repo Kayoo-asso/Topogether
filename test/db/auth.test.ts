@@ -30,22 +30,22 @@ afterEach(async () => {
 
 const user1: User = {
     id: null!, // replaced within tests
-    pseudo: "SuperPierre" as Name,
+    userName: "SuperPierre" as Name,
     email: "pierre@kayoo-asso.fr" as Email,
     role: "USER",
-    created: new Date(),
+    created: new Date().toISOString(),
     imageUrl: "Pretend there's an image here",
     firstName: "Pierre" as Name,
     lastName: "Tournelolotte" as Name,
     country: "France" as Name,
     city: "Lyon" as Name,
     phone: "0xdeadbeef" as any,
-    birthDate: new Date(2020, 9, 12),
+    birthDate: "2020/09/12",
 };
 const user1Password = "Abricadabrou";
 
-test.skip("Signing up and creating a profile", async () => {
-    expect(await api.signup(user1.email, user1Password, user1.pseudo))
+test("Signing up and creating a profile", async () => {
+    expect(await api.signup(user1.email, user1Password, user1.userName))
         .toBe(AuthResult.Success);
 
     const user = api.user();
