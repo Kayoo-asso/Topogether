@@ -7,6 +7,7 @@ interface SectorBuilderSlideoverMobileProps {
     topoQuark: Quark<Topo>,
     boulderOrder: Map<UUID, number>,
     selectedBoulder: SelectQuarkNullable<Boulder>,
+    onCreateSector: () => void,
     onBoulderSelect: (boulderQuark: Quark<Boulder>) => void,
     onTrackSelect: (trackQuark: Quark<Track>, boulderQuark: Quark<Boulder>) => void,
     onClose: () => void,
@@ -34,6 +35,10 @@ export const SectorBuilderSlideoverMobile: React.FC<SectorBuilderSlideoverMobile
           <Button 
             content="Nouveau secteur"
             className='w-3/4'
+            onClick={() => {
+              props.onCreateSector();
+              props.onClose();
+            }}
           />
         </div>
       </div>
@@ -41,3 +46,4 @@ export const SectorBuilderSlideoverMobile: React.FC<SectorBuilderSlideoverMobile
   );
 });
 
+SectorBuilderSlideoverMobile.displayName = "Sector Builder Slideover Mobile";

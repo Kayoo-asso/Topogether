@@ -86,3 +86,5 @@ export const BoulderItemLeftbar: React.FC<BoulderItemLeftbarProps> = watchDepend
         </>
     )
 });
+
+BoulderItemLeftbar.displayName = 'Boulder Item Leftbar';

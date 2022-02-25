@@ -260,7 +260,10 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
         }
       }
       else if (e.code === 'Delete') {
-
+        if (selectedSector()) toDeleteSector.select(selectedSector.quark());
+        else if (selectedBoulder()) toDeleteBoulder.select(selectedBoulder.quark());
+        else if (selectedParking()) toDeleteParking.select(selectedParking.quark());
+        else if (selectedWaypoint()) toDeleteWaypoint.select(selectedWaypoint.quark());
       }
     }
     window.addEventListener('keydown', handleKey);
@@ -304,6 +307,7 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
               topoQuark={quarkTopo}
               boulderOrder={boulderOrder()}
               selectedBoulder={selectedBoulder}
+              onCreateSector={() => setCurrentTool('SECTOR')}
               onBoulderSelect={toggleBoulderSelect}
               onTrackSelect={toggleTrackSelect}
               onClose={() => setDisplaySectorSlideover(false)}

@@ -30,4 +30,4 @@ export const CreatingSectorAreaMarker: React.FC<CreatingSectorAreaMarkerProps> =
     return null;
 };
 
-CreatingSectorAreaMarker.displayName = "CreatingSectorAreaMarker";
+CreatingSectorAreaMarker.displayName = "Creating Sector AreaMarker";
