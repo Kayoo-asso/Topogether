@@ -137,7 +137,6 @@ export const MapControl: React.FC<MapControlProps> = ({
             if (newBounds) {
                 locations.forEach(loc => newBounds.extend(new google.maps.LatLng(toLatLng(loc))));
             }
-            console.log('bounds');
             mapRef.current.fitBounds(newBounds);
         }
     }
@@ -149,10 +148,10 @@ export const MapControl: React.FC<MapControlProps> = ({
             }, 1)
         }   
     }, []);
-
+    
     return (
         <div className="relative w-full h-full md:flex-1">
-            <Wrapper apiKey="AIzaSyDoHIGgvyVVi_1_6zVWD4AOQPfHWN7zSkU" libraries={['places']}>
+            <Wrapper apiKey={process.env.NEXT_PUBLIC_GOOGLE_API_KEY || ''} libraries={['places']}>
 
                 <div
                     className="absolute h-full w-full p-3 grid grid-rows-2"
