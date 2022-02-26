@@ -3,11 +3,11 @@ import type { Amenities, ClimbTechniques, RockTypes } from './Bitflags';
 import type {
   Reception, Grade, LightGrade, Orientation, TopoStatus, TopoType, Difficulty,
 } from './Enums';
-import type { LinearRing, LineCoords, LineString, MultiPolygon, Point, Polygon, Position } from './GeoJson';
+import type { LinearRing, LineString, MultiPolygon, Point, Polygon, Position } from './GeoJson';
 import type { UUID, GeoCoordinates, RequireAtLeastOne, StringBetween, Name, Description, Email } from './Utils';
-import type { TrackRating, User } from './User';
+import type { TrackRating } from './User';
 import type { Image } from './Image';
-import { UUIDSchema } from './schemas/PrimitiveSchemas';
+// import { UUIDSchema } from './schemas/PrimitiveSchemas';
 
 export type Topo = Omit<TopoData, 'sectors' | 'boulders' | 'waypoints' | 'parkings' | 'accesses' | 'managers'> & {
   sectors: QuarkArray<Sector>,
