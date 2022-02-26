@@ -14,7 +14,7 @@ const launchNavigation = (location: GeoCoordinates, provider: 'apple' | 'google'
   else {
     isDesktop ?
       window.open("https://www.google.com/maps/dir/?api=1&travelmode=driving&layer=traffic&destination=" + lat + "," + lng) :
-      window.open("maps://www.google.com/maps/dir/?api=1&travelmode=driving&layer=traffic&destination=" + lat + "," + lng);
+      window.open("https://maps.google.com/maps/dir/?api=1&travelmode=driving&layer=traffic&destination=" + lat + "," + lng);
   }
 }
 
