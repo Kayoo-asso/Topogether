@@ -95,4 +95,6 @@ export const WaypointForm: React.FC<WaypointFormProps> = watchDependencies((prop
 
         </div>
     )
-})
+});
+
+WaypointForm.displayName = "WaypointForm";

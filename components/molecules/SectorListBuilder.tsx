@@ -202,3 +202,5 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> = watchDependen
         </div>
     )
 });
+
+SectorListBuilder.displayName = "Sector List Builder";

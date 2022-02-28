@@ -111,3 +111,5 @@ export const TracksListBuilder: React.FC<TracksListBuilderProps> = watchDependen
     </>
   );
 });
+
+TracksListBuilder.displayName = "TracksListBuilder";

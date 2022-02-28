@@ -106,3 +106,5 @@ export const ParkingSlide: React.FC<ParkingSlideProps> = watchDependencies(({
         </>
     )
 });
+
+ParkingSlide.displayName = "ParkingSlide";

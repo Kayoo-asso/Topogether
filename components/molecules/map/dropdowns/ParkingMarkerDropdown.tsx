@@ -26,4 +26,4 @@ export const ParkingMarkerDropdown: React.FC<ParkingMarkerDropdownProps> = watch
     );
 });
 
-ParkingMarkerDropdown.displayName = 'ParkingMarkerDropdown';
+ParkingMarkerDropdown.displayName = 'Parking Marker Dropdown';

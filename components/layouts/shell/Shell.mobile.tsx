@@ -96,3 +96,5 @@ export const ShellMobile: React.FC = watchDependencies(() => {
     </>
   );
 });
+
+ShellMobile.displayName = "Shell Mobile";

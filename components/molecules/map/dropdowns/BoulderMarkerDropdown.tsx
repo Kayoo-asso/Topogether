@@ -38,4 +38,4 @@ export const BoulderMarkerDropdown: React.FC<BoulderMarkerDropdownProps> = watch
     );
 });
 
-BoulderMarkerDropdown.displayName = 'BoulderMarkerDropdown';
+BoulderMarkerDropdown.displayName = 'Boulder Marker Dropdown';

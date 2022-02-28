@@ -105,4 +105,6 @@ export const AccessForm: React.FC<AccessFormProps> = watchDependencies((props: A
 
         </div>
     )
-})
+});
+
+AccessForm.displayName = "AccessForm";

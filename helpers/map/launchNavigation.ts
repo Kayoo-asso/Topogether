@@ -8,7 +8,8 @@ const launchNavigation = (location: GeoCoordinates, provider: 'apple' | 'google'
     navigator.geolocation.getCurrentPosition((pos) => {
       isDesktop ?
         window.open('https://maps.apple.com/?saddr=' + pos.coords.latitude + ',' + pos.coords.longitude + '&daddr=' + lat + ',' + lng + '&dirflg=d') :
-        window.open('https://maps.apple.com/?saddr=' + pos.coords.latitude + ',' + pos.coords.longitude + '&daddr=' + lat + ',' + lng + '&dirflg=d');
+        // TODO : fix Apple plan opening
+        window.open('maps://?saddr=' + pos.coords.latitude + ',' + pos.coords.longitude + '&daddr=' + lat + ',' + lng + '&dirflg=d');
     });
   }
   else {

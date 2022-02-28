@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { Flash, Icon, ParkingButton, ParkingModal, SlideagainstRightDesktop, SlideoverMobile } from 'components';
+import { Flash, Icon, SlideagainstRightDesktop, SlideoverMobile } from 'components';
 import { Quark, watchDependencies } from 'helpers/quarky';
 import { Waypoint } from 'types';
 import { DeviceContext, staticUrl } from 'helpers';
@@ -93,3 +93,5 @@ export const WaypointSlide: React.FC<WaypointSlideProps> = watchDependencies(({
         </>
     )
 });
+
+WaypointSlide.displayName = "WaypointSlide";

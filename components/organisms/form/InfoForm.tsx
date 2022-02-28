@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef } from 'react';
 import {
- Checkbox, ImageInput, MultipleSelect, Select, Show, TextArea, TextInput,
+ Checkbox, ImageInput, Show, TextArea, TextInput,
 } from 'components';
 import { Quark, watchDependencies } from 'helpers/quarky';
 import {
@@ -161,3 +161,5 @@ export const InfoForm: React.FC<InfoFormProps> = watchDependencies((props: InfoF
       </div>
   );
 });
+
+InfoForm.displayName = "InfoForm";

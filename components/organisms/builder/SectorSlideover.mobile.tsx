@@ -33,3 +33,5 @@ export const SectorSlideoverMobile: React.FC<SectorSlideoverMobileProps> = watch
     </SlideoverMobile>
   );
 });
+
+SectorSlideoverMobile.displayName = "SectorSlideoverMobile";

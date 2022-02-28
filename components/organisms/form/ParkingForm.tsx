@@ -107,4 +107,6 @@ export const ParkingForm: React.FC<ParkingFormProps> = watchDependencies((props:
 
         </div>
     )
-})
+});
+
+ParkingForm.displayName = "ParkingForm";

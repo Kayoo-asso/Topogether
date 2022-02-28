@@ -144,3 +144,5 @@ export const HeaderDesktop: React.FC<HeaderDesktopProps> = watchDependencies(({
     </div>
   );
 });
+
+HeaderDesktop.displayName = "Header Desktop";

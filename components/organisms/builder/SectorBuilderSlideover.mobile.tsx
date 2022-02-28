@@ -46,4 +46,4 @@ export const SectorBuilderSlideoverMobile: React.FC<SectorBuilderSlideoverMobile
   );
 });
 
-SectorBuilderSlideoverMobile.displayName = "Sector Builder Slideover Mobile";
+SectorBuilderSlideoverMobile.displayName = "SectorBuilderSlideoverMobile";

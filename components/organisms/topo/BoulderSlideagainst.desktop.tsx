@@ -123,3 +123,5 @@ export const BoulderSlideagainstDesktop: React.FC<BoulderSlideagainstDesktopProp
         </>
     )
 });
+
+BoulderSlideagainstDesktop.displayName = "BoulderSlideagainstDesktop";

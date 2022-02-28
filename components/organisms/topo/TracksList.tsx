@@ -91,3 +91,5 @@ export const TracksList: React.FC<TracksListProps> = watchDependencies((props: T
     </div>
   );
 });
+
+TracksList.displayName = "TracksList";

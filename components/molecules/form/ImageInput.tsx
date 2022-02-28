@@ -63,7 +63,6 @@ export const ImageInput = forwardRef<HTMLInputElement, ImageInputProps>(({
             };
           },
           error(err) {
-            console.log(err.message);
             // upload uncompressed version
             const objectUrl = URL.createObjectURL(file)
             img.src = objectUrl;

@@ -61,3 +61,5 @@ export const WaypointBuilderSlide: React.FC<WaypointBuilderSlideProps> = watchDe
         </>
     )
 });
+
+WaypointBuilderSlide.displayName = "WaypointBuilderSlide";
