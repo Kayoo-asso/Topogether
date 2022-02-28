@@ -45,7 +45,7 @@ const App = ({ Component, pageProps }: AppProps) => {
       </Head>
 
         <DeviceContext.Provider value={device}>
-          <div ref={observe} className="w-screen h-screen flex items-end flex-col">
+          <div ref={observe} className="w-screen h-screen flex items-end flex-col overflow-hidden">
             <div id="content" className="flex-1 w-screen absolute bg-grey-light flex flex-col h-full md:h-screen overflow-hidden">
               
               <ProtectedRoute router={router}>

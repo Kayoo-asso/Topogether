@@ -15,7 +15,7 @@ export const SlideoverMobile: React.FC<SlideoverMobileProps> = ({
   initialFull = false,
   ...props
 }: SlideoverMobileProps) => {
-  const fullTranslate = 5; // 100% - x of the screen
+  const fullTranslate = 3; // 100% - x of the screen
   const littleTranslate = 85;
   const [full, setFull] = useState(initialFull);
   const [translateY, setTranslateY] = useState<number>(100);
