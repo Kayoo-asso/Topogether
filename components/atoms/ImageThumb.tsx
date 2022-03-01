@@ -1,12 +1,12 @@
 import React from 'react';
 import NextImage from 'next/image';
-import { Image, UUID } from 'types';
+import { BoulderImage, UUID } from 'types';
 // eslint-disable-next-line import/no-cycle
 import { DeleteButton } from 'components';
 import useDimensions from 'react-cool-dimensions';
 
 interface ImageThumbProps {
-  image: Image,
+  image: BoulderImage,
   selected?: boolean,
   onDelete?: (id: UUID) => void,
   onClick?: (id: UUID) => void,

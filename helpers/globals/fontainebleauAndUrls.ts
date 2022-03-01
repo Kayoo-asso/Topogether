@@ -1,4 +1,4 @@
-import { Image } from "types";
+import { BoulderImage } from "types";
 import { v4 } from "uuid";
 
 export const fontainebleauLocation = {
@@ -18,7 +18,7 @@ export const staticUrl = {
   deleteWarning: `/assets/img/Warning delete topogether boulder escalade topo.png`,
 };
 
-export const defaultImage: Image = {
+export const defaultImage: BoulderImage = {
   id: v4(),
   url: staticUrl.defaultKayoo,
   width: 501,

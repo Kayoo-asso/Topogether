@@ -1,4 +1,4 @@
-import { SectorData, StringBetween, TopoData, TopoStatus } from "types";
+import { Name, SectorData, StringBetween, TopoData, TopoStatus } from "types";
 import { v4 as uuid } from "uuid";
 
 const sectors: SectorData[] = [
@@ -9175,7 +9175,7 @@ export const fakeTopo: TopoData = {
         id: 4,
         url: "/public/uploads/topo/main-image/dad449499de38f1bdee5872de1a354d52fff6183.jpeg",
     },
-    name: "Yzéron",
+    name: "Yzéron" as Name,
     otherGears: undefined,
     otherRemarks: undefined,
     parkings: [],

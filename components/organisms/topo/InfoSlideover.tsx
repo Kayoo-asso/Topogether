@@ -46,7 +46,7 @@ export const InfoSlideover: React.FC<InfoSlideoverProps> = ({
                     Topo créé par <span className="text-main cursor-pointer">{topo.creatorPseudo}</span>
                 </div>
 
-                {topo.isForbidden && 
+                {topo.forbidden && 
                     <div className='text-error ktext-section-title w-full text-center'>Site interdit !</div>
                 }
                 

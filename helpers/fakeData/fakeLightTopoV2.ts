@@ -1,9 +1,9 @@
 import { quark, Quark } from 'helpers/quarky';
-import { BoulderData, Line, Name, Image, TrackData, Description, Difficulty, ClimbTechniques, SectorData, TopoData, Amenities, TopoStatus, TopoType, RockTypes, TopoAccess, Topo, Parking, StringBetween, LightTopo } from 'types';
+import { BoulderData, Line, Name, BoulderImage, TrackData, Description, Difficulty, ClimbTechniques, SectorData, TopoData, Amenities, TopoStatus, TopoType, RockTypes, TopoAccess, Topo, Parking, StringBetween, LightTopo } from 'types';
 import { v4 as uuid, v4 } from 'uuid';
 import { quarkifyTopo } from './quarkifyTopo';
 
-export const images: Image[] = [
+export const images: BoulderImage[] = [
     // Topo image
     {
         id: uuid(),
@@ -29,7 +29,7 @@ export const lightTopo: LightTopo = {
     closestCity: "Yzéron" as Name,
     location: { lat: 45.701356, lng: 4.607264 },
 
-    isForbidden: false,
+    forbidden: false,
     amenities: Amenities.AdaptedToChildren | Amenities.Waterspot | Amenities.PicnicArea,
     // the real topo doesn't have composite rock, but this allows us to test the bitflag
     rockTypes: RockTypes.Gneiss | RockTypes.Composite,

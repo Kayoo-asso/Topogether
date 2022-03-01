@@ -8,7 +8,7 @@ import {
 import { useRouter } from 'next/router';
 import { quarkTopo } from 'helpers/fakeData/fakeTopoV2';
 import { defaultImage, DeviceContext, sortBoulders } from 'helpers';
-import { Boulder, Image, Parking, Sector, Track, Waypoint } from 'types';
+import { Boulder, BoulderImage, Parking, Sector, Track, Waypoint } from 'types';
 import { Quark, QuarkArray, QuarkIter, useCreateDerivation, useQuarkyCallback, useSelectQuark, watchDependencies } from 'helpers/quarky';
 
 const Topo: NextPage = () => {
@@ -23,7 +23,7 @@ const Topo: NextPage = () => {
   const waypoints = useMemo(() => topo.waypoints?.quarks(), [topo.waypoints]) || new QuarkIter<Quark<Waypoint>>([]);
   const boulderOrder = useCreateDerivation(() => sortBoulders(topo.sectors, topo.lonelyBoulders));
 
-  const [currentImage, setCurrentImage] = useState<Image>(defaultImage);
+  const [currentImage, setCurrentImage] = useState<BoulderImage>(defaultImage);
   const selectedSector = useSelectQuark<Sector>();
   const selectedBoulder = useSelectQuark<Boulder>();
   const selectedTrack = useSelectQuark<Track>();

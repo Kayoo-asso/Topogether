@@ -1,14 +1,14 @@
 import React, { Dispatch, SetStateAction, useState } from 'react';
 import { BoulderPreviewDesktop, Flash, Icon, SlideagainstRightDesktop, TracksList } from 'components';
 import { Quark, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
-import { Boulder, Image, Track, UUID } from 'types';
+import { Boulder, BoulderImage, Track, UUID } from 'types';
 
 interface BoulderSlideagainstDesktopProps {
     boulder: Quark<Boulder>,
     selectedTrack: SelectQuarkNullable<Track>,
     topoCreatorId?: UUID,
-    currentImage: Image,
-    setCurrentImage: Dispatch<SetStateAction<Image>>,
+    currentImage: BoulderImage,
+    setCurrentImage: Dispatch<SetStateAction<BoulderImage>>,
     onClose: () => void,
 }
 

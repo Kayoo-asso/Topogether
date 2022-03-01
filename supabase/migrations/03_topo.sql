@@ -5,7 +5,6 @@ create table topos (
     id uuid primary key,
     name varchar(500) not null,
     status topostatus default('Draft') not null,
-    type topotype not null,
     location geography(point) not null,
     forbidden boolean not null,
 
@@ -20,13 +19,13 @@ create table topos (
 
     -- optional
     imageUrl text,
+    type topotype,
     description varchar(5000),
     "faunaProtection" varchar(5000),
     ethics varchar(5000),
     danger varchar(5000),
     cleaned date,
     altitude integer,
-    "approachTime" integer,
     "otherAmenities" varchar(5000),
 
     -- required to maintain the ordering
@@ -43,6 +42,13 @@ create table topo_contributors (
     role contributor_role not null,
 
     primary key (topo_id, user_id)
+);
+
+-- TODO: trigger on topo delete to delete all images
+create table topo_images (
+    id uuid primary key,
+    -- TODO: on delete, cascade
+    topo_id uuid not null references public.topos(id)
 );
 
 create function is_contributor(topo_id uuid, user_id uuid)
@@ -174,9 +180,9 @@ create policy "Admins are omnipotent"
 
 create table topo_accesses (
     id uuid primary key,
-    duration int,
     danger varchar(5000),
     difficulty difficulty,
+    duration int,
     steps jsonb, -- hack, to avoid creating a separate table just for steps
     "topoId" uuid not null references topos(id) on delete cascade
 );
@@ -185,7 +191,7 @@ alter table topo_accesses enable row level security;
 
 -- simple check that each step contains a description
 -- (since this is the expected shape by clients, this avoids crashes)
--- TODO" more extensive checking?
+-- TODO: more extensive checking for undesired properties?
 create function validate_topo_access_steps(steps jsonb)
 returns boolean
 as $$
@@ -292,7 +298,7 @@ create policy "Admins are omnipotent"
 create table public.sectors (
     id uuid primary key,
     name varchar(255) not null,
-    path geography(polygon) not null,
+    path geography(linestring) not null,
 
     "topoId" uuid not null references public.topos(id) on delete cascade
 );
@@ -411,7 +417,7 @@ create table lines (
     index double precision not null,
 
     points geography(linestring) not null,
-    forbidden geography(multipolygon),
+    forbidden geography(multilinestring),
     hand1 geometry(point),
     hand2 geometry(point),
     foot1 geometry(point),

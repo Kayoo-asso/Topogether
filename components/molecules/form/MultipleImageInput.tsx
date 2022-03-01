@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { Icon, ImageThumb } from 'components';
 import {
-  Image, UUID,
+  BoulderImage, UUID,
 } from 'types';
 import { ImageInput } from '.';
 
 // TODO : GESTION DES TRACKSIMAGE
 
 interface MultipleImageInputProps {
-  images: Image[],
+  images: BoulderImage[],
   label?: string,
   rows?: number,
   cols?: number,
@@ -16,7 +16,7 @@ interface MultipleImageInputProps {
   selected?: UUID,
   onImageClick?: (id: UUID) => void,
   onImageDelete?: (id: UUID) => void,
-  onChange: (images: Image[]) => void,
+  onChange: (images: BoulderImage[]) => void,
 }
 
 export const MultipleImageInput: React.FC<MultipleImageInputProps> = ({

@@ -6,13 +6,13 @@ import { v4 as uuid } from 'uuid';
 export const fakeLightTopo: LightTopo = {
   id: uuid(),
   name: 'Yzéron' as Name,
-  submittedAt: new Date(2019, 1, 2),
-  validatedAt: new Date(2019, 3, 1),
-  modifiedAt: new Date(2020, 1, 1),
+  submitted: new Date(2019, 1, 2),
+  validated: new Date(2019, 3, 1),
+  modified: new Date(2020, 1, 1),
   cleaned: new Date(2019, 11, 23),
   status: TopoStatus.Draft,
   type: TopoType.Boulder,
-  isForbidden: false,
+  forbidden: false,
 
   location: { lat: 45.701356, lng: 4.607264 },
   // no idea if there"s actually composite rock at Yzeron

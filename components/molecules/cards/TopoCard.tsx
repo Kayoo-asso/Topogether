@@ -26,12 +26,12 @@ const getTopoIcons = (status: TopoStatus) => {
 export const TopoCard: React.FC<TopoCardProps> = React.memo((props: TopoCardProps) => {
   const router = useRouter();
   const getAction = () => {
-    if (props.topo.status === TopoStatus.Validated && props.topo.validatedAt) {
-      return `Validé le ${formatDate(props.topo.validatedAt)}`;
-    } if (props.topo.status === TopoStatus.Submitted && props.topo.submittedAt) {
-      return `Envoyé le ${formatDate(props.topo.submittedAt)}`;
-    } if (props.topo.status === TopoStatus.Draft && props.topo.modifiedAt) {
-      return `Modifié le ${formatDate(props.topo.modifiedAt)}`;
+    if (props.topo.status === TopoStatus.Validated && props.topo.validated) {
+      return `Validé le ${formatDate(props.topo.validated)}`;
+    } if (props.topo.status === TopoStatus.Submitted && props.topo.submitted) {
+      return `Envoyé le ${formatDate(props.topo.submitted)}`;
+    } if (props.topo.status === TopoStatus.Draft && props.topo.modified) {
+      return `Modifié le ${formatDate(props.topo.modified)}`;
     }
     return '';
   };

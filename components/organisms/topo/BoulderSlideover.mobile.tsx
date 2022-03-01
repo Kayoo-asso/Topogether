@@ -3,7 +3,7 @@ import {
   GradeScale, Icon, LikeButton, SlideoverMobile, TracksImage, Show,
 } from 'components';
 import {
- Boulder, Image, Track, UUID,
+ Boulder, BoulderImage, Track, UUID,
 } from 'types';
 import { buildBoulderGradeHistogram, staticUrl } from 'helpers';
 import { default as NextImage } from 'next/image';
@@ -15,8 +15,8 @@ interface BoulderSlideoverMobileProps {
   open?: boolean,
   selectedTrack: SelectQuarkNullable<Track>,
   topoCreatorId?: UUID,
-  currentImage: Image,
-  setCurrentImage: Dispatch<SetStateAction<Image>>,
+  currentImage: BoulderImage,
+  setCurrentImage: Dispatch<SetStateAction<BoulderImage>>,
   onClose: () => void,
 }
 

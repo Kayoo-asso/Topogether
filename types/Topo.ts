@@ -1,13 +1,12 @@
 import type { QuarkArray } from 'helpers/quarky';
 import type { Amenities, ClimbTechniques, RockTypes } from './Bitflags';
 import type {
-  Reception, Grade, LightGrade, Orientation, TopoStatus, TopoType, Difficulty,
+  Grade, LightGrade, Orientation, TopoStatus, TopoType, Difficulty,
 } from './Enums';
-import type { LinearRing, LineCoords, LineString, MultiPolygon, Point, Polygon, Position } from './GeoJson';
+import type { LinearRing, LineCoords, LineString, MultiLineString, MultiPolygon, Point, Polygon, Position } from './GeoJson';
 import type { UUID, GeoCoordinates, RequireAtLeastOne, StringBetween, Name, Description, Email } from './Utils';
-import type { TrackRating, User } from './User';
-import type { Image } from './Image';
-import { UUIDSchema } from './schemas/PrimitiveSchemas';
+import type { Profile, TrackRating, User } from './User';
+import type { BoulderImage } from './Image';
 
 export type Topo = Omit<TopoData, 'sectors' | 'boulders' | 'waypoints' | 'parkings' | 'accesses' | 'managers'> & {
   sectors: QuarkArray<Sector>,
@@ -32,17 +31,17 @@ export type Track = Omit<TrackData, 'ratings' | 'lines'> & {
 export interface TopoData {
   readonly id: UUID,
   name: Name,
-  // Creation = first validation
-  submittedAt?: Date,
-  validatedAt?: Date,
-  // IMPORTANT: modifying anything in a topo changes the last modified at
-  // TODO: if someone is editing a topo offline, should we reflect that
-  // in the modifiedAt date for them?
-  modifiedAt?: Date,
-  cleaned?: Date,
   status: TopoStatus,
   type?: TopoType,
-  isForbidden: boolean,
+  forbidden: boolean,
+
+  // Date strings in ISO format
+  // Convert into Date objects if needed
+  modified: string,
+  submitted?: string,
+  validated?: string,
+  // this one is about the physical spot
+  cleaned?: string,
 
   location: GeoCoordinates,
   rockTypes?: RockTypes,
@@ -50,10 +49,11 @@ export interface TopoData {
   hasOtherAmenities?: boolean,
   otherAmenities?: Description
 
-  creatorId: UUID,
-  creatorPseudo: Name,
-  validatorId?: UUID,
-  image?: Image,
+  // these are optional, in case the profile has been deleted
+  // (or the topo has not yet been validated)
+  creator?: Profile,
+  validator?: Profile,
+  imageUrl?: string,
 
   closestCity?: Name,
   altitude?: number,
@@ -75,10 +75,9 @@ export interface DBTopo {
   id: UUID,
   name: Name,
   status: TopoStatus,
-  type: TopoType,
   location: Point,
   forbidden: boolean,
-
+  
   // Timestamps, wrap them in a Date if needed.
   // these describe the topo data in the app
   modified: string,
@@ -86,16 +85,16 @@ export interface DBTopo {
   validated?: string,
   // this one is about the physical place
   cleaned?: string, 
-
+  
   amenities: Amenities,
   rockTypes: RockTypes,
-
+  
+  type?: TopoType,
   description?: Description,
   faunaProtection?: Description,
   ethics?: Description,
   danger?: Description,
   altitude?: number,
-  approachTime?: number,
   otherAmenities?: Description,
 
   lonelyBoulders: UUID[],
@@ -127,7 +126,7 @@ export interface Manager {
   name: Name,
   contactName: Name,
   contactPhone?: StringBetween<1, 30>,
-  contactMail?: Name,
+  contactMail?: Email,
   description?: Description
   adress?: Description,
   zip?: number,
@@ -166,9 +165,9 @@ export interface TopoAccessStep {
 
 export interface DBTopoAccess {
   id: UUID,
-  duration?: number,
   danger?: Description,
   difficulty?: Difficulty,
+  duration?: number,
   steps: TopoAccessStep[], // this is required and WILL be validated in the DB
   topoId: UUID
 }
@@ -180,7 +179,7 @@ export interface Parking {
   location: GeoCoordinates,
   name?: Name,
   description?: Description
-  image?: Image
+  imageUrl?: string
 }
 
 export interface DBParking {
@@ -197,7 +196,7 @@ export interface Waypoint {
   readonly id: UUID,
   name: Name,
   location: GeoCoordinates,
-  image?: Image,
+  imageUrl?: string,
   description?: Description,
 }
 
@@ -221,12 +220,10 @@ export interface SectorData {
 export interface DBSector {
   id: UUID,
   name: Name,
-  path: Polygon,
+  path: LineString,
 
   topoId: UUID,
-  imageId?: UUID,
 }
-
 
 export interface BoulderData {
   readonly id: UUID,
@@ -238,7 +235,7 @@ export interface BoulderData {
 
   tracks: TrackData[],
   // can be cross-referenced by lines within each track
-  images: Image[]
+  images: BoulderImage[]
 }
 
 export interface DBBoulder {
@@ -292,8 +289,8 @@ export interface DBTrack {
 
   isTraverse: boolean,
   isSittingStart: boolean,
-  mustSee?: boolean,
-  hasMantle?: boolean,
+  mustSee: boolean,
+  hasMantle: boolean,
 
   topoId: UUID,
   boulderId: UUID,
@@ -302,10 +299,10 @@ export interface DBTrack {
 
 export interface Line {
   readonly id: UUID,
-  order: number,
+  index: number,
   points: Position[],
-  // a LinearRing delineates the contour of a polygon
-  forbidden?: LinearRing[],
+  // list of polygons, assuming each LineCoords is closed
+  forbidden?: GeoCoordinates[][],
   // Starting points = max 2 for hand, max 2 for feet
   // Could not find a way to represent an array of length <= 2 in TypeScript types
   handDepartures?: Position[],
@@ -317,13 +314,14 @@ export interface Line {
 
 export interface DBLine {
   id: UUID,
-  order: number,
-  points: LineString, // linestring
-  forbidden: MultiPolygon, // multipolygon
-  hand1: Point,
-  hand2: Point,
-  foot1: Point,
-  foot2: Point,
+  index: number,
+  points: LineString, 
+  // list of polygons, assuming each LineString is closed
+  forbidden?: MultiLineString, 
+  hand1?: Point,
+  hand2?: Point,
+  foot1?: Point,
+  foot2?: Point,
 
   topoId: UUID,
   trackId: UUID,

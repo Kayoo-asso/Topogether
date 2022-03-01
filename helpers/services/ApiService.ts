@@ -1,12 +1,18 @@
 import { createClient, SupabaseClient, User as AuthUser } from "@supabase/supabase-js";
-import { Email, Image, Name, TopoData, User, UUID } from 'types';
+import { DBBoulder, DBLine, DBManager, DBParking, DBSector, DBTopoAccess, DBTrack, DBWaypoint, Email, BoulderImage, ImageType, Name, TopoData, User, UUID, DBBoulderImage, Topo, DBTopo } from 'types';
 import { Quark, quark } from 'helpers/quarky';
 import { DBConvert } from "./DBConvert";
+import { DBSchema } from "idb";
 
 export enum AuthResult {
     Success,
     ConfirmationRequired,
     Error
+}
+
+export interface ImageUploadSuccess {
+    id: UUID,
+    url: string,
 }
 
 export class ApiService {
@@ -112,12 +118,35 @@ export class ApiService {
         return AuthResult.Success;
     }
 
-    async uploadImage(files: File[]): Promise<Image[]> {
-
+    // TODO: better error handling using try / catch?
+    async uploadImages(files: [File, ImageType][]): Promise<(ImageUploadSuccess | null)[]> {
+        const promises: Promise<Response>[] = files.map(([file, type]) => 
+            fetch("api/images/upload?type=" + type, {
+                method: "PUT",
+                body: file
+            })
+        );
+        const res = await Promise.all(promises);
+        const output: (ImageUploadSuccess | null)[] = new Array(res.length);
+        for (const response of res) {
+            if (response.ok) {
+                const data = await response.json() as ImageUploadSuccess;
+                output.push(data);
+            } else {
+                output.push(null);
+            }
+        }
+        return output;
     }
 
     async deleteImage(path: string): Promise<boolean> {
-
+        const res = await fetch("/api/images/delete", {
+            method: "DELETE",
+            body: JSON.stringify({
+                path
+            })
+        });
+        return res.ok;
     }
 
     async getTopo(id: UUID): Promise<TopoData | null> {
@@ -129,6 +158,95 @@ export class ApiService {
             return null;
         }
         return data;
+    }
+
+    async saveTopo(topo: Topo): Promise<boolean> {
+        const dbTopo = DBConvert.topo(topo);
+        const dbSectors: DBSector[] = [];
+        const dbWaypoints: DBWaypoint[] = [];
+        const dbManagers: DBManager[] = [];
+        const dbParkings: DBParking[] = [];
+        const dbAccesses: DBTopoAccess[] = [];
+        const dbBoulders: DBBoulder[] = [];
+        const dbBoulderImages: DBBoulderImage[] = [];
+        const dbTracks: DBTrack[] = [];
+        const dbLines: DBLine[] = [];
+
+        for (const p of topo.parkings) {
+            dbParkings.push(DBConvert.parking(p, topo.id));
+        }
+
+        for (const w of topo.waypoints) {
+            dbWaypoints.push(DBConvert.waypoint(w, topo.id));
+        }
+
+        for (const m of topo.managers) {
+            dbManagers.push(DBConvert.manager(m, topo.id));
+        }
+
+        for (const a of topo.accesses) {
+            dbAccesses.push(DBConvert.topoAccess(a, topo.id));
+        }
+
+        for (const s of topo.sectors) {
+            dbSectors.push(DBConvert.sector(s, topo.id));
+        }
+
+        for (const b of topo.boulders) {
+            dbBoulders.push(DBConvert.boulder(b, topo.id));
+            for (const i of b.images) {
+                dbBoulderImages.push(DBConvert.boulderImage(i, topo.id));
+            }
+            for (const t of b.tracks) {
+                dbTracks.push(DBConvert.track(t, topo.id, b.id));
+                for (const l of t.lines) {
+                    dbLines.push(DBConvert.line(l, topo.id, t.id));
+                }
+            }
+        }
+        const promises = [
+            this.client
+                .from<DBTopo>("topos")
+                .upsert(dbTopo, { returning: "minimal" }),
+            this.client
+                .from<DBParking>("parkings")
+                .upsert(dbParkings, { returning: "minimal" }),
+            this.client
+                .from<DBWaypoint>("waypoints")
+                .upsert(dbWaypoints, { returning: "minimal" }),
+            this.client
+                .from<DBManager>("managers")
+                .upsert(dbManagers, { returning: "minimal" }),
+            this.client
+                .from<DBTopoAccess>("topo_accesses")
+                .upsert(dbAccesses, { returning: "minimal" }),
+            this.client
+                .from<DBSector>("sectors")
+                .upsert(dbSectors, { returning: "minimal" }),
+            this.client
+                .from<DBBoulder>("boulders")
+                .upsert(dbBoulders, { returning: "minimal" }),
+            this.client
+                .from<DBBoulderImage>("boulder_images")
+                .upsert(dbBoulderImages, { returning: "minimal" })
+            ,
+            this.client
+                .from<DBTrack>("tracks")
+                .upsert(dbTracks, { returning: "minimal" }),
+            this.client
+                .from<DBLine>("lines")
+                .upsert(dbLines, { returning: "minimal" }),
+        ];
+
+        const results = await Promise.all(promises);
+        let error = false;
+        for (const res of results) {
+            if (res.error) {
+                error = true;
+                console.error("Error saving topo to DB: ", res.error);
+            }
+        }
+        return error;
     }
 }
 

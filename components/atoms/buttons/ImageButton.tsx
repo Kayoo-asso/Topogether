@@ -1,6 +1,6 @@
 import React from 'react';
 import NextImage from 'next/image';
-import { Image } from 'types';
+import { BoulderImage } from 'types';
 // eslint-disable-next-line import/no-cycle
 import { Icon } from 'components';
 import useDimensions from 'react-cool-dimensions';
@@ -8,7 +8,7 @@ import { DeleteButton } from '.';
 
 interface ImageButtonProps {
   text?: string,
-  image?: Image,
+  image?: BoulderImage,
   loading?: boolean,
   onClick: () => void,
   onDelete?: () => void,

@@ -2,7 +2,7 @@ import React, { Dispatch, SetStateAction, useMemo, useState } from 'react';
 import {
   GradeScale, RoundButton, SlideoverMobile, TracksImage, Icon
 } from 'components';
-import { Boulder, Image, Track } from 'types';
+import { Boulder, BoulderImage, Track } from 'types';
 import { buildBoulderGradeHistogram, staticUrl } from 'helpers';
 import { default as NextImage } from 'next/image';
 import { Quark, watchDependencies, SelectQuarkNullable } from 'helpers/quarky';
@@ -12,8 +12,8 @@ import { BoulderForm } from '..';
 interface BoulderBuilderSlideoverMobileProps {
   boulder: Quark<Boulder>,
   selectedTrack: SelectQuarkNullable<Track>,
-  currentImage: Image,
-  setCurrentImage: Dispatch<SetStateAction<Image>>,
+  currentImage: BoulderImage,
+  setCurrentImage: Dispatch<SetStateAction<BoulderImage>>,
   onPhotoButtonClick?: () => void,
   onDrawButtonClick: () => void,
   onClose: () => void,

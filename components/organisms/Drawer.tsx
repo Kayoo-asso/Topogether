@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import {
-  DrawerToolEnum, Image, LinearRing, PointEnum, Position, Track,
+  DrawerToolEnum, BoulderImage, LinearRing, PointEnum, Position, Track,
 } from 'types';
 import { ModalDelete, Toolbar, TracksImage } from 'components';
 import { QuarkArray, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
 import { v4 } from 'uuid';
 
 interface DrawerProps {
-  image: Image,
+  image: BoulderImage,
   tracks: QuarkArray<Track>,
   selectedTrack: SelectQuarkNullable<Track>,
   onValidate: () => void,

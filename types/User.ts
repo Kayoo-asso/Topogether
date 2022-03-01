@@ -1,4 +1,4 @@
-import { Image, Rating } from 'types';
+import { BoulderImage, Rating } from 'types';
 import { Description, Email, ExplicitUndefineds, Name, StringBetween, UUID } from './Utils';
 
 // NOTE: the email has to be updated through the authentication service

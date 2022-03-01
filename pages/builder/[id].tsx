@@ -14,7 +14,7 @@ import {
  blobToImage, defaultImage, DeviceContext, sortBoulders, boulderChanged, sectorChanged,
 } from 'helpers';
 import {
- Boulder, GeoCoordinates, Image, MapToolEnum, Name, Parking, Sector, SectorData, Track, Waypoint,
+ Boulder, GeoCoordinates, BoulderImage, MapToolEnum, Name, Parking, Sector, SectorData, Track, Waypoint,
 } from 'types';
 import {
  Quark, QuarkArray, QuarkIter, useCreateDerivation, useQuarkyCallback, useSelectQuark, watchDependencies,
@@ -37,7 +37,7 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
   const boulderOrder = useCreateDerivation(() => sortBoulders(topo.sectors, topo.lonelyBoulders));
 
   const [currentTool, setCurrentTool] = useState<MapToolEnum>();
-  const [currentImage, setCurrentImage] = useState<Image>(defaultImage);
+  const [currentImage, setCurrentImage] = useState<BoulderImage>(defaultImage);
   const selectedSector = useSelectQuark<Sector>();
   const toDeleteSector = useSelectQuark<Sector>();
   const selectedBoulder = useSelectQuark<Boulder>();
@@ -171,7 +171,7 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
     topo.sectors.removeQuark(sector);
     if (selectedSector.quark() === sector) selectedSector.select(undefined);
   }, []);
-  const createBoulder = useCallback((location: GeoCoordinates, image?: Image, selectBoulder = false) => {
+  const createBoulder = useCallback((location: GeoCoordinates, image?: BoulderImage, selectBoulder = false) => {
     const orderIndex = topo.boulders.length;
     const newBoulder: Boulder = {
       id: v4(),
