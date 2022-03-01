@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import NextImage from 'next/image';
 import { Dropdown, DropdownOption, Icon, ProfilePicture } from 'components';
 import Link from 'next/link';
@@ -34,6 +34,17 @@ export const HeaderDesktop: React.FC<HeaderDesktopProps> = watchDependencies(({
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const handleKeydown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setMenuOpen(false);
+        setUserMenuOpen(false);
+      }
+    }
+    window.addEventListener('keydown', handleKeydown);
+    return () => window.removeEventListener('keydown', handleKeydown);
+  }, []);
 
   return (
     <div className="bg-dark items-center h-header hidden md:flex">
@@ -133,3 +144,5 @@ export const HeaderDesktop: React.FC<HeaderDesktopProps> = watchDependencies(({
     </div>
   );
 });
+
+HeaderDesktop.displayName = "Header Desktop";

@@ -4,8 +4,7 @@ import React, {
 } from 'react';
 import { useEffectWithDeepEqual } from 'helpers';
 import mapStyles from 'styles/mapStyles';
-import equal from 'fast-deep-equal/es6';
-import { mapEvents, MapProps, markerEvents, MarkerProps, UUID } from 'types';
+import { mapEvents, MapProps, MarkerProps } from 'types';
 
 const containerStyles: React.CSSProperties = {
   width: '100%',
@@ -23,6 +22,7 @@ type MapMarker = MarkerProps &
 // Omitting the type tells the compiler that this component takes no props
 // Omitting React.PropsWithChildren<T> tells the compiler that this component takes no children
 export const Map = forwardRef<google.maps.Map, React.PropsWithChildren<MapProps>>((props, mapRef) => {
+
   const {
     onBoundsChange,
     onCenterChange,

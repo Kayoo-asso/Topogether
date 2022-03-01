@@ -1,10 +1,9 @@
 import React, { useContext } from 'react';
 import { GradeCircle, Icon, ModalDelete} from 'components';
-import { Boulder, gradeToLightGrade, Line, Name, Track, TrackRating, UUID } from 'types';
-import { Quark, QuarkArray, SelectQuarkNullable, useSelectQuark, watchDependencies } from 'helpers/quarky';
+import { Boulder, gradeToLightGrade, Track } from 'types';
+import { Quark, SelectQuarkNullable, useSelectQuark, watchDependencies } from 'helpers/quarky';
 import { TrackForm } from '../form/TrackForm';
-import { v4 } from 'uuid';
-import { DeviceContext } from 'helpers';
+import { createTrack, DeviceContext } from 'helpers';
 import { api } from 'helpers/services/ApiService';
 
 interface TracksListBuilderProps {
@@ -24,23 +23,6 @@ const gradeColors = {
   9: 'text-grade-9',
   None: 'border-grey-light bg-grey-light text-white',
 };
-
-export const createTrack = (boulder: Boulder, creatorId: UUID) => {
-  const newTrack: Track = {
-    id: v4(),
-    creatorId: creatorId,
-    index: boulder.tracks.length,
-    name: 'Voie ' + (boulder.tracks.length+1) as Name,
-    mustSee: false,
-    isTraverse: false,
-    isSittingStart: false,
-    lines: new QuarkArray<Line>([]),
-    ratings: new QuarkArray<TrackRating>([])
-  }
-  boulder.tracks.push(newTrack);
-  const newTrackQuark = boulder.tracks.quarkAt(-1);
-  return newTrackQuark;
-}
 
 export const TracksListBuilder: React.FC<TracksListBuilderProps> = watchDependencies((props: TracksListBuilderProps) => {
   const session = api.user();
@@ -129,3 +111,5 @@ export const TracksListBuilder: React.FC<TracksListBuilderProps> = watchDependen
     </>
   );
 });
+
+TracksListBuilder.displayName = "TracksListBuilder";

@@ -1,7 +1,7 @@
 import React, { useRef, useState, forwardRef } from 'react';
 import Compressor from 'compressorjs';
 import {
-  isBetween, isImageType, BoulderImage 
+  isBetween, BoulderImage 
 } from 'types';
 // eslint-disable-next-line import/no-cycle
 import { ImageButton } from '../../atoms';
@@ -10,7 +10,7 @@ import { v4 } from 'uuid';
 interface ImageInputProps {
   label?: string,
   multiple?: boolean,
-  value?: BoulderImage,
+  value?: string,
   onChange: (images: BoulderImage[]) => void,
   onDelete?: () => void,
 }
@@ -36,7 +36,7 @@ export const ImageInput = forwardRef<HTMLInputElement, ImageInputProps>(({
     setLoading(true);
 
     for (const file of files) {
-      if (!isImageType(file.type)) {
+      if (file.type !== "image/png" && file.type !== "image/jpg" && file.type !== "image/jpeg") {
         errors.push([file.name, FileUploadError.NotImageType]);
       } else if (!isBetween(file.size, 0, 10e6)) {
         errors.push([file.name, FileUploadError.TooLarge]);
@@ -63,7 +63,6 @@ export const ImageInput = forwardRef<HTMLInputElement, ImageInputProps>(({
             };
           },
           error(err) {
-            console.log(err.message);
             // upload uncompressed version
             const objectUrl = URL.createObjectURL(file)
             img.src = objectUrl;
@@ -101,7 +100,7 @@ export const ImageInput = forwardRef<HTMLInputElement, ImageInputProps>(({
       />
       <ImageButton
         text={props.label}
-        image={props.value}
+        imageUrl={props.value}
         loading={loading}
         onClick={() => {
           if (!loading) fileInputRef.current?.click();

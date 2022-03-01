@@ -6,25 +6,26 @@ import {
   BoulderBuilderSlideoverMobile, SectorBuilderSlideoverMobile,
   MapControl, Show,
   Header, InfoFormSlideover, ManagementFormSlideover, TrackFormSlideagainstDesktop, 
-  ModalValidateTopo, ModalDeleteTopo, GeoCamera, Drawer, LeftbarBuilderDesktop, BoulderBuilderSlideagainstDesktop, ParkingBuilderSlide, AccessFormSlideover, WaypointBuilderSlide, createTrack, BoulderMarkerDropdown, ModalRenameSector, ModalDelete, 
+  BoulderMarkerDropdown, ParkingMarkerDropdown, WaypointMarkerDropdown,
+  ModalValidateTopo, ModalDeleteTopo, GeoCamera, Drawer, LeftbarBuilderDesktop, BoulderBuilderSlideagainstDesktop,
+  ParkingBuilderSlide, AccessFormSlideover, WaypointBuilderSlide, ModalRenameSector, ModalDelete, SectorAreaMarkerDropdown, 
 } from 'components';
 import { useRouter } from 'next/router';
 import { quarkTopo } from 'helpers/fakeData/fakeTopoV2';
 import {
- blobToImage, defaultImage, DeviceContext, sortBoulders, boulderChanged, sectorChanged,
+ blobToImage, defaultImage, DeviceContext, sortBoulders, useContextMenu, createTrack, createBoulder, createParking, createWaypoint, createSector, deleteSector, deleteBoulder, deleteParking, deleteWaypoint, toLatLng,
 } from 'helpers';
 import {
- Boulder, GeoCoordinates, BoulderImage, MapToolEnum, Name, Parking, Sector, SectorData, Track, Waypoint,
+ Boulder, GeoCoordinates, BoulderImage, MapToolEnum, Parking, Sector, Track, Waypoint,
 } from 'types';
 import {
- Quark, QuarkArray, QuarkIter, useCreateDerivation, useQuarkyCallback, useSelectQuark, watchDependencies,
+ Quark, QuarkIter, useCreateDerivation, useQuarkyCallback, useSelectQuark, watchDependencies,
 } from 'helpers/quarky';
-import { v4 } from 'uuid';
-import { useContextMenu } from 'helpers/hooks/useContextMenu';
 import { api } from 'helpers/services/ApiService';
 
 const BuilderMapPage: NextPage = watchDependencies(() => {
   const session = api.user();
+  if (!session) return <></>;
   const router = useRouter();
   const { id } = router.query;
   const device = useContext(DeviceContext);
@@ -40,18 +41,30 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
   const [currentImage, setCurrentImage] = useState<BoulderImage>(defaultImage);
   const selectedSector = useSelectQuark<Sector>();
   const toDeleteSector = useSelectQuark<Sector>();
+  const sectorRightClicked = useSelectQuark<Sector>();
+
   const selectedBoulder = useSelectQuark<Boulder>();
   const toDeleteBoulder = useSelectQuark<Boulder>();
-  const selectedTrack = useSelectQuark<Track>();
+  const boulderRightClicked = useSelectQuark<Boulder>();
+
   const selectedParking = useSelectQuark<Parking>();
   const toDeleteParking = useSelectQuark<Parking>();
+  const parkingRightClicked = useSelectQuark<Parking>();
+
   const selectedWaypoint = useSelectQuark<Waypoint>();
+  const waypointRightClicked = useSelectQuark<Waypoint>();
   const toDeleteWaypoint = useSelectQuark<Waypoint>();
-  const boulderRightClicked = useSelectQuark<Boulder>();
+
+  const selectedTrack = useSelectQuark<Track>();
 
   const [dropdownPosition, setDropdownPosition] = useState<{ x: number, y: number }>();
   const closeDropdown = useCallback(() => boulderRightClicked.select(undefined), []);
-  useContextMenu(() => boulderRightClicked.select(undefined));
+  useContextMenu(() => {
+    boulderRightClicked.select(undefined);
+    waypointRightClicked.select(undefined);
+    parkingRightClicked.select(undefined);
+    sectorRightClicked.select(undefined);
+  });
   
   const [displaySectorSlideover, setDisplaySectorSlideover] = useState<boolean>(false);
   const [displayGeoCamera, setDisplayGeoCamera] = useState<boolean>(false);
@@ -137,125 +150,64 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
   }, [selectedWaypoint]);
 
   const displayBoulderDropdown = useCallback((e: any, boulderQuark: Quark<Boulder>) => {
-    boulderRightClicked.select(boulderQuark);
     setDropdownPosition({ x: e.domEvent.pageX, y: e.domEvent.pageY });
+    boulderRightClicked.select(boulderQuark);
+  }, []);
+  const displayWaypointDropdown = useCallback((e: any, waypointQuark: Quark<Waypoint>) => {
+    setDropdownPosition({ x: e.domEvent.pageX, y: e.domEvent.pageY });
+    waypointRightClicked.select(waypointQuark);
+  }, []);
+  const displayParkingDropdown = useCallback((e: any, parkingQuark: Quark<Parking>) => {
+    setDropdownPosition({ x: e.domEvent.pageX, y: e.domEvent.pageY });
+    parkingRightClicked.select(parkingQuark);
+  }, []);
+  const displaySectorDropdown = useCallback((e: any, sectorQuark: Quark<Sector>) => {
+    setDropdownPosition({ x: e.domEvent.pageX, y: e.domEvent.pageY });
+    sectorRightClicked.select(sectorQuark);
   }, []);
 
   const [creatingSector, setCreatingSector] = useState<GeoCoordinates[]>([]);
   const [freePointCreatingSector, setFreePointCreatingSector] = useState<GeoCoordinates>();
   const handleCreatingSector = useCallback((location: GeoCoordinates) => {
-    setCreatingSector(creatingSector => [...creatingSector, location])
+    setCreatingSector(creatingSector => [...creatingSector, location]);
   }, [creatingSector]);
+  const handleFreePointCreatingSector = useCallback((e) => {
+    if (creatingSector && creatingSector.length > 0 && e.latLng) {
+      const loc: GeoCoordinates = [e.latLng.lng(), e.latLng.lat()]
+      setFreePointCreatingSector(loc);
+    }
+  }, [creatingSector]);
+  const handleCreatingSectorPolylineClick = useCallback(() => {
+    if (freePointCreatingSector) handleCreatingSector(freePointCreatingSector);  
+  }, [freePointCreatingSector]);
+  const handleCreatingSectorOriginClick = useCallback(() => {
+    if (creatingSector.length > 2) {
+      const newSectorQuark = createSector(quarkTopo, creatingSector, boulderOrder())
+      selectedSector.select(newSectorQuark);
+      emptyCreatingSector();
+      setDisplayModalSectorRename(true);
+    }
+  }, [creatingSector]); 
   const emptyCreatingSector = () => {
     setCreatingSector([]);
     setFreePointCreatingSector(undefined);
   }
-  const createSector = useCallback(() => {
-    if (creatingSector.length > 2) {
-      const newSector: SectorData = {
-        id: v4(),
-        name: 'Nouveau secteur' as Name,
-        path: [...creatingSector],
-        boulders: []
-      };
-      topo.sectors.push(newSector);
-      sectorChanged(quarkTopo, newSector.id, boulderOrder());
-
-      const newSectorQuark = topo.sectors.quarkAt(-1);
-      selectedSector.select(newSectorQuark);
-      setDisplayModalSectorRename(true);
-      emptyCreatingSector();
-    }
-  }, [topo, topo.sectors, creatingSector]);
-  const deleteSector = useQuarkyCallback((sector) => {
-    topo.sectors.removeQuark(sector);
-    if (selectedSector.quark() === sector) selectedSector.select(undefined);
-  }, []);
-  const createBoulder = useCallback((location: GeoCoordinates, image?: BoulderImage, selectBoulder = false) => {
-    const orderIndex = topo.boulders.length;
-    const newBoulder: Boulder = {
-      id: v4(),
-      name: `Bloc ${orderIndex + 1}` as Name,
-      location,
-      isHighball: false,
-      mustSee: false,
-      dangerousDescent: false,
-      tracks: new QuarkArray(),
-      images: image ? [image] : [],
-    };
-    topo.boulders.push(newBoulder);
-    boulderChanged(quarkTopo, newBoulder.id, newBoulder.location, true);
-
-    const newBoulderQuark = topo.boulders.quarkAt(-1);
-    if (selectBoulder) {
-      selectedBoulder.select(newBoulderQuark);
-      if (image) setCurrentImage(newBoulder.images[0]);
-    }
-    return newBoulderQuark;
-  }, [topo]);
-  const deleteBoulder = useQuarkyCallback((boulder) => {
-    topo.boulders.removeQuark(boulder);
-    if (selectedBoulder.quark() === boulder) selectedBoulder.select(undefined);
-  }, []);
-  const createParking = useCallback((location: GeoCoordinates, image = undefined, selectParking = false) => {
-    const newParking: Parking = {
-      id: v4(),
-      spaces: 0,
-      name: `parking ${topo.parkings ? topo.parkings.length + 1 : '1'}` as Name,
-      image: image ? image : [],
-      location,
-    };
-    topo.parkings.push(newParking);
-    const newParkingQuark = topo.parkings.quarkAt(-1);
-    if (selectParking) selectedParking.select(newParkingQuark);
-    return newParkingQuark;
-  }, [topo]);
-  const deleteParking = useQuarkyCallback((parking) => {
-    topo.parkings.removeQuark(parking);
-    if (selectedParking.quark() === parking) selectedParking.select(undefined);
-  }, []);
-  const createWaypoint = useCallback((location: GeoCoordinates, image = undefined, selectWaypoint = false) => {
-    const newWaypoint: Waypoint = {
-      id: v4(),
-      name: `point de repère ${topo.waypoints ? topo.waypoints.length + 1 : '1'}` as Name,
-      image: image ? image : [],
-      location,
-    };
-    topo.waypoints.push(newWaypoint);
-    const newWaypointQuark = topo.waypoints.quarkAt(-1);
-    if (selectWaypoint) selectedWaypoint.select(newWaypointQuark);
-    return newWaypointQuark;
-  }, [topo]);
-  const deleteWaypoint = useQuarkyCallback((waypoint) => {
-    topo.waypoints.removeQuark(waypoint);
-    if (selectedWaypoint.quark() === waypoint) selectedWaypoint.select(undefined);
-  }, []);
-
   const handleCreateNewMarker = useCallback((e) => {
     if (e.latLng) {
+      const loc: GeoCoordinates = [e.latLng.lng(), e.latLng.lat()];
       switch (currentTool) {
-        case 'ROCK':
-          createBoulder({ lat: e.latLng.lat(), lng: e.latLng.lng() });
-          break;
-        case 'SECTOR':
-          handleCreatingSector({ lat: e.latLng.lat(), lng: e.latLng.lng() });
-          break;
-        case 'PARKING':
-          createParking({ lat: e.latLng.lat(), lng: e.latLng.lng() });
-          break;
-        case 'WAYPOINT':
-          createWaypoint({ lat: e.latLng.lat(), lng: e.latLng.lng() });
-          break;
+        case 'ROCK': createBoulder(quarkTopo, loc); break;
+        case 'SECTOR': handleCreatingSector(loc); break;
+        case 'PARKING': createParking(topo, loc); break;
+        case 'WAYPOINT': createWaypoint(topo, loc); break;
         default: break;
       }
     }
-  }, [currentTool, createBoulder, createParking, createWaypoint, handleCreatingSector]);
+  }, [topo, currentTool, createBoulder, createParking, createWaypoint, handleCreatingSector]);
 
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
-      if (e.code === 'Enter') {
-        if (creatingSector.length > 0) createSector();
-      }
+      if (e.code === 'Enter') handleCreatingSectorOriginClick();
       else if (e.code === 'Escape') {
         if (creatingSector.length > 0) emptyCreatingSector();
         if (currentTool) setCurrentTool(undefined);
@@ -267,14 +219,46 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
         }
       }
       else if (e.code === 'Delete') {
-
+        if (selectedSector()) toDeleteSector.select(selectedSector.quark());
+        else if (selectedBoulder()) toDeleteBoulder.select(selectedBoulder.quark());
+        else if (selectedParking()) toDeleteParking.select(selectedParking.quark());
+        else if (selectedWaypoint()) toDeleteWaypoint.select(selectedWaypoint.quark());
       }
     }
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
   }, [creatingSector, currentTool]);
 
-  if (!session || typeof id !== 'string' || !topo) return null;
+  const handleGeoCameraCapture = useCallback(async (blob, coordinates) => {
+    if (blob) {
+      const img = await blobToImage(blob);
+      setCurrentImage(img);
+      if (currentTool === 'ROCK') {
+        if (selectedBoulder()) {
+          const newImages = selectedBoulder()!.images;
+          newImages.push(img);
+          selectedBoulder.quark()!.set({
+            ...selectedBoulder()!,
+            images: newImages,
+          });
+          selectedTrack.select(createTrack(selectedBoulder()!, session.id));
+        } 
+        else {
+          const newBoulderQuark = createBoulder(quarkTopo, coordinates, img);
+          selectedTrack.select(createTrack(newBoulderQuark(), session.id));
+          selectedBoulder.select(newBoulderQuark);
+        }
+        setDisplayDrawer(true);
+      }
+      else if (currentTool === 'PARKING') {
+        selectedParking.select(createParking(topo, coordinates, img));
+      }
+      else if (currentTool === 'WAYPOINT') {
+        selectedWaypoint.select(createWaypoint(topo, coordinates, img));
+      }
+    }
+  }, [topo, currentTool, selectedBoulder()]);
+
   return (
     <>
       <Header
@@ -311,6 +295,7 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
               topoQuark={quarkTopo}
               boulderOrder={boulderOrder()}
               selectedBoulder={selectedBoulder}
+              onCreateSector={() => setCurrentTool('SECTOR')}
               onBoulderSelect={toggleBoulderSelect}
               onTrackSelect={toggleTrackSelect}
               onClose={() => setDisplaySectorSlideover(false)}
@@ -345,7 +330,6 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
 
         <MapControl
           initialZoom={16}
-          center={boulders.toArray()[0]().location}
           displaySectorButton
           onSectorButtonClick={() => setDisplaySectorSlideover(true)}
           searchbarOptions={{
@@ -359,14 +343,15 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
                           : ''}
           draggableMarkers
           topo={quarkTopo}
-          creatingSector={freePointCreatingSector ? creatingSector.concat(freePointCreatingSector) : creatingSector}
-          onCreatingSectorOriginClick={createSector}
+          creatingSector={freePointCreatingSector ? creatingSector.concat([freePointCreatingSector]) : creatingSector}
+          onCreatingSectorOriginClick={handleCreatingSectorOriginClick}
           sectors={sectors}
           selectedSector={selectedSector}    
           onSectorClick={(e, sectorQuark) => {
             if (currentTool) handleCreateNewMarker(e);
             else toggleSectorSelect(sectorQuark);
           }}
+          onSectorContextMenu={displaySectorDropdown}
           onSectorDragStart={(e, sectorQuark) => selectedSector.select(sectorQuark)}
           boulders={boulders}
           bouldersOrder={boulderOrder()}
@@ -376,9 +361,11 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
           waypoints={waypoints}
           selectedWaypoint={selectedWaypoint}
           onWaypointClick={toggleWaypointSelect}
+          onWaypointContextMenu={displayWaypointDropdown}        
           parkings={parkings}
           selectedParking={selectedParking}
           onParkingClick={toggleParkingSelect}
+          onParkingContextMenu={displayParkingDropdown}        
           displayPhotoButton
           onPhotoButtonClick={() => {
             setCurrentTool('ROCK');
@@ -386,18 +373,9 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
           }}
           onMapZoomChange={closeDropdown}
           onClick={handleCreateNewMarker}
-          onMouseMove={(e) => {
-            if (creatingSector && creatingSector.length > 0 && e.latLng) {
-              setFreePointCreatingSector({
-                lat: e.latLng!.lat(),
-                lng: e.latLng!.lng(),
-              });
-            }
-          }}
-          onCreatingSectorPolylineClick={() => {
-            if (freePointCreatingSector)
-              handleCreatingSector(freePointCreatingSector);     
-          }}
+          onMouseMove={handleFreePointCreatingSector}
+          onCreatingSectorPolylineClick={handleCreatingSectorPolylineClick}
+          center={toLatLng(topo.location)}
           boundsTo={boulders.toArray().map(b => b().location).concat(parkings.toArray().map(p => p().location))}
         />
 
@@ -435,7 +413,7 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
             return (
               <BoulderBuilderSlideagainstDesktop
                 boulder={boulder}
-                topoCreatorId={topo.creatorId}
+                topoCreatorId={topo.creator?.id}
                 selectedTrack={selectedTrack}
                 setCurrentImage={setCurrentImage}
                 currentImage={currentImage}
@@ -493,35 +471,7 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
         <GeoCamera
           currentTool={currentTool || 'ROCK'}
           onChangeTool={(tool) => setCurrentTool(tool)}
-          onCapture={async (blob, coordinates) => {
-              if (blob) {
-                const img = await blobToImage(blob);
-                setCurrentImage(img);
-                if (currentTool === 'ROCK') {
-                  if (selectedBoulder()) {
-                    const newImages = selectedBoulder()!.images;
-                    newImages.push(img);
-                    selectedBoulder.quark()!.set({
-                      ...selectedBoulder()!,
-                      images: newImages,
-                    });
-                    selectedTrack.select(createTrack(selectedBoulder()!, session.id));
-                  } 
-                  else {
-                    const newBoulderQuark = createBoulder(coordinates, img);
-                    selectedTrack.select(createTrack(newBoulderQuark(), session.id));
-                    selectedBoulder.select(newBoulderQuark);
-                  }
-                  setDisplayDrawer(true);
-                }
-                else if (currentTool === 'PARKING') {
-                  createParking(coordinates, img, true);
-                }
-                else if (currentTool === 'WAYPOINT') {
-                  createWaypoint(coordinates, img, true);
-                }
-              }
-            }}
+          onCapture={handleGeoCameraCapture}
           onClose={() => setDisplayGeoCamera(false)}
         />
       </Show>
@@ -529,10 +479,44 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
       <Show when={() => boulderRightClicked.quark()}>
           {(quarkBoulder) =>
             <BoulderMarkerDropdown 
-              dropdownPosition={dropdownPosition} 
+              position={dropdownPosition} 
               toggleTrackSelect={toggleTrackSelect} 
               boulder={quarkBoulder} 
               deleteBoulder={() => toDeleteBoulder.select(quarkBoulder)}
+            />
+          }
+      </Show>
+
+      <Show when={() => sectorRightClicked.quark()}>
+          {(quarkSector) =>
+            <SectorAreaMarkerDropdown 
+              position={dropdownPosition}
+              sector={quarkSector}
+              deleteSector={() => toDeleteSector.select(quarkSector)} 
+              renameSector={() => {
+                selectedSector.select(quarkSector);
+                setDisplayModalSectorRename(true);
+              }}
+            />
+          }
+      </Show>
+
+      <Show when={() => waypointRightClicked.quark()}>
+          {(quarkWaypoint) =>
+            <WaypointMarkerDropdown 
+              position={dropdownPosition} 
+              waypoint={quarkWaypoint} 
+              deleteWaypoint={() => toDeleteWaypoint.select(quarkWaypoint)}
+            />
+          }
+      </Show>
+
+      <Show when={() => parkingRightClicked.quark()}>
+          {(quarkParking) =>
+            <ParkingMarkerDropdown 
+              position={dropdownPosition} 
+              parking={quarkParking}
+              deleteParking={() => toDeleteParking.select(quarkParking)}
             />
           }
       </Show>
@@ -560,7 +544,7 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
       <Show when={() => toDeleteSector.quark()}>
         {(sector) => (
           <ModalDelete
-            onDelete={() => deleteSector(sector)}
+            onDelete={() => deleteSector(quarkTopo, sector, selectedSector)}
             onClose={() => toDeleteSector.select(undefined)}
           >
             Êtes-vous sûr de vouloir supprimer le secteur ?
@@ -570,7 +554,7 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
       <Show when={() => toDeleteBoulder.quark()}>
         {(boulder) => (
           <ModalDelete
-            onDelete={() => deleteBoulder(boulder)}
+            onDelete={() => deleteBoulder(quarkTopo, boulder, selectedBoulder)}
             onClose={() => toDeleteBoulder.select(undefined)}
           >
             Êtes-vous sûr de vouloir supprimer le bloc et toutes les voies associées ?
@@ -580,7 +564,7 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
       <Show when={() => toDeleteParking.quark()}>
         {(parking) => (
           <ModalDelete
-            onDelete={() => deleteParking(parking)}
+            onDelete={() => deleteParking(topo, parking, selectedParking)}
             onClose={() => toDeleteParking.select(undefined)}
           >
             Êtes-vous sûr de vouloir supprimer le parking ?
@@ -590,7 +574,7 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
       <Show when={() => toDeleteWaypoint.quark()}>
         {(waypoint) => (
           <ModalDelete
-            onDelete={() => deleteWaypoint(waypoint)}
+            onDelete={() => deleteWaypoint(topo, waypoint, selectedWaypoint)}
             onClose={() => toDeleteWaypoint.select(undefined)}
           >
             Êtes-vous sûr de vouloir supprimer le point de repère ?

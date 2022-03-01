@@ -1,10 +1,7 @@
-import { BoulderImage } from "types";
+import { GeoCoordinates, BoulderImage } from "types";
 import { v4 } from "uuid";
 
-export const fontainebleauLocation = {
-  lat: 48.399065,
-  lng: 2.697569,
-};
+export const fontainebleauLocation: GeoCoordinates = [2.697569, 48.399065];
 
 export const topogetherUrl = 'https://builder.topogether.com';// import.meta.env.VITE_TOPOGETHER_URL,
 export const staticUrl = {

@@ -1,7 +1,9 @@
 import React, { Dispatch, SetStateAction, useState } from 'react';
-import { BoulderPreviewDesktop, Flash, Icon, SlideagainstRightDesktop, TracksList } from 'components';
+import { BoulderPreviewDesktop, Button, Flash, Icon, Modal, SlideagainstRightDesktop, TracksList } from 'components';
 import { Quark, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
 import { Boulder, BoulderImage, Track, UUID } from 'types';
+import { LoginForm } from '..';
+import { api } from 'helpers/services/ApiService';
 
 interface BoulderSlideagainstDesktopProps {
     boulder: Quark<Boulder>,
@@ -13,6 +15,8 @@ interface BoulderSlideagainstDesktopProps {
 }
 
 export const BoulderSlideagainstDesktop: React.FC<BoulderSlideagainstDesktopProps> = watchDependencies((props: BoulderSlideagainstDesktopProps) => {
+    const session = api.user();
+    
     const [flashMessage, setFlashMessage] = useState<string>();
     const [officialTrackTab, setOfficialTrackTab] = useState(true);
     const boulder = props.boulder();
@@ -20,6 +24,8 @@ export const BoulderSlideagainstDesktop: React.FC<BoulderSlideagainstDesktopProp
     const displayedTracks = boulder.tracks
         .quarks()
         .filter((track) => ((track().creatorId) === props.topoCreatorId) === officialTrackTab);
+
+    const [displayModalLoginRedirect, setDisplayModalLoginRedirect] = useState(false);
 
     return (
         <>
@@ -40,7 +46,7 @@ export const BoulderSlideagainstDesktop: React.FC<BoulderSlideagainstDesktopProp
                         <div 
                             className='ktext-label text-grey-medium cursor-pointer'
                             onClick={() => {
-                                const data = [new ClipboardItem({ "text/plain": new Blob([boulder.location.lat+','+boulder.location.lng], { type: "text/plain" }) })];
+                                const data = [new ClipboardItem({ "text/plain": new Blob([boulder.location[1] + ',' + boulder.location[0]], { type: "text/plain" }) })];
                                 navigator.clipboard.write(data).then(function() {
                                     setFlashMessage("Coordonnées copiées dans le presse papier.");
                                 }, function() {
@@ -48,7 +54,7 @@ export const BoulderSlideagainstDesktop: React.FC<BoulderSlideagainstDesktopProp
                                 });
                             }}
                         >
-                            {parseFloat(boulder.location.lat.toFixed(12)) + ',' + parseFloat(boulder.location.lng.toFixed(12))}
+                            {parseFloat(boulder.location[1].toFixed(12)) + ',' + parseFloat(boulder.location[0].toFixed(12))}
                         </div>
                         {boulder.isHighball && <div className='ktext-label text-grey-medium'>High Ball</div>}
                         {boulder.mustSee && <div className='ktext-label text-grey-medium mb-15'>Incontournable !</div>}
@@ -82,6 +88,18 @@ export const BoulderSlideagainstDesktop: React.FC<BoulderSlideagainstDesktopProp
                             }}
                         />
                     </div>
+                    {!officialTrackTab &&
+                        <div className="flex flex-col mt-4 px-5 items-center">
+                            <Button 
+                                content="Ajouter une voie"
+                                fullWidth
+                                onClick={() => {
+                                    if (session) alert("à venir");
+                                    else setDisplayModalLoginRedirect(true);
+                                }}
+                            />
+                        </div>
+                    }
                 </>
             </SlideagainstRightDesktop>
 
@@ -91,6 +109,19 @@ export const BoulderSlideagainstDesktop: React.FC<BoulderSlideagainstDesktopProp
             >
                 {flashMessage}
             </Flash>
+
+            {displayModalLoginRedirect &&
+                <Modal 
+                    onClose={() => setDisplayModalLoginRedirect(false)}
+                >
+                    <div className='p-8 mt-4'>
+                        <div className='text-center mb-8'>Pour ajouter une voie "Communauté", vous devez être connecté.</div>
+                        <LoginForm onLogin={() => setDisplayModalLoginRedirect(false)} />
+                    </div>
+                </Modal>
+            }
         </>
     )
 });
+
+BoulderSlideagainstDesktop.displayName = "BoulderSlideagainstDesktop";

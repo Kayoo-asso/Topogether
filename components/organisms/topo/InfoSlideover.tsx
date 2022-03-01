@@ -24,7 +24,7 @@ export const InfoSlideover: React.FC<InfoSlideoverProps> = ({
 
     for (const sector of topo.sectors) {
         nbOfBoulders += sector.boulders.length
-        for (const boulder of sector.boulders) {
+        for (const boulder of topo.boulders) {
             nbOfTracks += boulder.tracks.length
         }
     }
@@ -67,7 +67,7 @@ export const InfoSlideover: React.FC<InfoSlideoverProps> = ({
                         <div
                             className='cursor-pointer text-grey-medium'
                             onClick={() => {
-                                const data = [new ClipboardItem({ "text/plain": new Blob([topo.location.lat+','+topo.location.lng], { type: "text/plain" }) })];
+                                const data = [new ClipboardItem({ "text/plain": new Blob([topo.location[1] + ',' + topo.location[0]], { type: "text/plain" }) })];
                                 navigator.clipboard.write(data).then(function() {
                                     setFlashMessage("Coordonnées copiées dans le presse papier.");
                                 }, function() {
@@ -75,7 +75,7 @@ export const InfoSlideover: React.FC<InfoSlideoverProps> = ({
                                 });
                             }}
                         >
-                            {parseFloat(topo.location.lat.toFixed(12)) + ',' + parseFloat(topo.location.lng.toFixed(12))}
+                            {parseFloat(topo.location[1].toFixed(12)) + ',' + parseFloat(topo.location[0].toFixed(12))}
                         </div>
                         <div className='hidden md:block'>
                             Topo créé par <span className="text-main cursor-pointer">{topo.creatorPseudo}</span>

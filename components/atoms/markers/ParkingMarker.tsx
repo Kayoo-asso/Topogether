@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { markerSize, useMarker } from "helpers";
+import { markerSize, toLatLng, useMarker } from "helpers";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { Parking, MarkerEventHandlers } from "types";
 
@@ -8,6 +8,7 @@ interface ParkingMarkerProps {
     selected?: boolean,
     draggable?: boolean,
     onClick?: (parking: Quark<Parking>) => void,
+    onContextMenu?: (e: Event, parking: Quark<Parking>) => void,
 }
 
 export const ParkingMarker: React.FC<ParkingMarkerProps> = watchDependencies(({
@@ -25,7 +26,7 @@ export const ParkingMarker: React.FC<ParkingMarkerProps> = watchDependencies(({
     const options: google.maps.MarkerOptions = {
         icon,
         draggable,
-        position: parking.location
+        position: toLatLng(parking.location)
     };
 
     const handlers: MarkerEventHandlers = {
@@ -34,10 +35,11 @@ export const ParkingMarker: React.FC<ParkingMarkerProps> = watchDependencies(({
             if (e.latLng) {
                 props.parking.set({
                     ...parking,
-                    location: { lat: e.latLng.lat(), lng: e.latLng.lng() }
+                    location: [e.latLng.lng(), e.latLng.lat()]
                 })
             }
-        }, [props.parking])
+        }, [props.parking]),
+        onContextMenu: useCallback((e) => props.onContextMenu && props.onContextMenu(e, props.parking), [props.parking, props.onContextMenu])
     }
     useMarker(options, handlers);
 

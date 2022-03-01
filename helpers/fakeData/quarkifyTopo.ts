@@ -1,7 +1,6 @@
-import { BoulderBuilderSlideagainstDesktop } from 'components';
-import { CleanupHelper, effect, Effect, Quark, quark, QuarkArray } from 'helpers/quarky';
+import { Quark, quark, QuarkArray } from 'helpers/quarky';
 import { syncQuark } from 'helpers/quarky/quarky-sync';
-import { BoulderData, Grade, Line, Name, BoulderImage, TrackData, Description, Difficulty, ClimbTechniques, SectorData, TopoData, Amenities, TopoStatus, TopoType, RockTypes, TopoAccess, UUID, Track, Boulder, Sector, Topo, BoulderDTO, TrackDTO } from 'types';
+import { BoulderData, TrackData, TopoData, UUID, Track, Boulder, Topo, BoulderDTO, TrackDTO } from 'types';
 
 export function quarkifyTopo(topo: TopoData): Quark<Topo> {
     const topoQuark = quark<Topo>({
@@ -50,7 +49,6 @@ const getBoulderExport = (topoId: UUID) => (boulder: Boulder): BoulderDTO => ({
     topoId,
     location: boulder.location,
     name: boulder.name,
-    orderIndex: boulder.orderIndex,
     isHighball: boulder.isHighball,
     mustSee: boulder.mustSee,
     dangerousDescent: boulder.dangerousDescent

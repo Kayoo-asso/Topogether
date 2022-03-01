@@ -11,10 +11,8 @@ import { addTrackToHistogram, defaultGradeHistogram } from "./buildBoulderGradeH
 // So we could replace the reads with a peek here
 
 export function buildGradeHistogram(topo: Topo): Signal<GradeHistogram> {
-    return topo.sectors
+    return topo.boulders
         .lazy()
-        .map(x => x.boulders)
-        .flatten()
         .map(x => x.tracks)
         .flatten()
         .reduce(addTrackToHistogram, defaultGradeHistogram);

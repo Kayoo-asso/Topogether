@@ -166,3 +166,5 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
     </SlideoverMobile>
   );
 });
+
+BoulderBuilderSlideoverMobile.displayName = "BoulderBuilderSlideoverMobile";

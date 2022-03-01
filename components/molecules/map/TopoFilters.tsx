@@ -48,10 +48,10 @@ export const TopoFilters: React.FC<TopoFiltersProps> = ({
 
     const renderFilters = () => (
         <React.Fragment>
-            <MultipleSelect 
+            <MultipleSelect<number> 
                 id='topo-types'
                 label='Types de spot'
-                names={TopoTypeName}
+                options={Object.entries(TopoTypeName).map(([stringValue, label]) => ({value: +stringValue, label}))}
                 values={props.values.types || []}
                 onChange={updateTypeFilters}
             />

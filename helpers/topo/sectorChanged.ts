@@ -51,7 +51,6 @@ export const sectorChanged = (topoQuark: Quark<Topo>, sectorId: UUID, boulderOrd
 
     // Remove boulders from this sector, and assign them to another sector if possible
     if (toRemove.length > 0) {
-        const newLonelyBoulders = [...topo.lonelyBoulders];
         // check for each removed boulder if it should be assigned to a new sector
         for (const removed of toRemove) {
             // remove from this sector

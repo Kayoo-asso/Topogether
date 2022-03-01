@@ -6,67 +6,68 @@ import {
   Button, HeaderDesktop, LeftbarDesktop, TopoCardList,
 } from 'components';
 import { LightTopo, TopoStatus } from 'types';
-import { fakeLightTopo } from 'helpers/fakeData/fakeLightTopo';
+import { quarkLightTopo } from 'helpers/fakeData/fakeLightTopoV2';
 import { useContextMenu } from 'helpers/hooks/useContextMenu';
 import { UserActionDropdown } from 'components/molecules/cards/UserActionDropdown';
 
 const DashboardPage: NextPage = () => {
   const [lightTopos, setLightTopos] = useState<LightTopo[]>([
-    fakeLightTopo,
-    {
-      ...fakeLightTopo,
-      status: TopoStatus.Submitted,
-      id: uuid(),
-      name: 'Les roches qui dansent très souvent',
-    },
-    {
-      ...fakeLightTopo,
-      status: TopoStatus.Submitted,
-      id: uuid(),
-      name: 'Les roches qui dansent très souvent',
-    },
-    {
-      ...fakeLightTopo,
-      status: TopoStatus.Submitted,
-      id: uuid(),
-      name: 'Les roches qui dansent très souvent',
-    },
-    {
-      ...fakeLightTopo,
-      status: TopoStatus.Submitted,
-      id: '4',
-      name: 'Les roches qui dansent très souvent',
-    },
-    {
-      ...fakeLightTopo,
-      status: TopoStatus.Submitted,
-      id: uuid(),
-      name: 'Les roches qui dansent très souvent',
-    },
-    {
-      ...fakeLightTopo,
-      status: TopoStatus.Submitted,
-      id: uuid(),
-      name: 'Les roches qui dansent très souvent',
-    },
-    {
-      ...fakeLightTopo,
-      status: TopoStatus.Submitted,
-      id: uuid(),
+    quarkLightTopo(),
+    quarkLightTopo()
+    // {
+    //   ...fakeLightTopo,
+    //   status: TopoStatus.Submitted,
+    //   id: uuid(),
+    //   name: 'Les roches qui dansent très souvent',
+    // },
+    // {
+    //   ...fakeLightTopo,
+    //   status: TopoStatus.Submitted,
+    //   id: uuid(),
+    //   name: 'Les roches qui dansent très souvent',
+    // },
+    // {
+    //   ...fakeLightTopo,
+    //   status: TopoStatus.Submitted,
+    //   id: uuid(),
+    //   name: 'Les roches qui dansent très souvent',
+    // },
+    // {
+    //   ...fakeLightTopo,
+    //   status: TopoStatus.Submitted,
+    //   id: '4',
+    //   name: 'Les roches qui dansent très souvent',
+    // },
+    // {
+    //   ...fakeLightTopo,
+    //   status: TopoStatus.Submitted,
+    //   id: uuid(),
+    //   name: 'Les roches qui dansent très souvent',
+    // },
+    // {
+    //   ...fakeLightTopo,
+    //   status: TopoStatus.Submitted,
+    //   id: uuid(),
+    //   name: 'Les roches qui dansent très souvent',
+    // },
+    // {
+    //   ...fakeLightTopo,
+    //   status: TopoStatus.Submitted,
+    //   id: uuid(),
 
-    },
-    {
-      ...fakeLightTopo,
-      status: TopoStatus.Validated,
-      id: '8',
+    // },
+    // {
+    //   ...fakeLightTopo,
+    //   status: TopoStatus.Validated,
+    //   id: '8',
 
-    },
-    {
-      ...fakeLightTopo,
-      status: TopoStatus.Draft,
-      id: uuid(),
+    // },
+    // {
+    //   ...fakeLightTopo,
+    //   status: TopoStatus.Draft,
+    //   id: uuid(),
 
-    },
+    // },
   ]);
   const draftLightTopos = lightTopos.filter((topo) => topo.status === TopoStatus.Draft);
   const submittedLightTopos = lightTopos.filter((topo) => topo.status === TopoStatus.Submitted);
@@ -79,7 +80,7 @@ const DashboardPage: NextPage = () => {
 
   { /* TODO: get Light Topos */ }
 
-  useContextMenu(setDropdownDisplayed, ref.current);
+  useContextMenu(() => setDropdownDisplayed(false), ref.current);
 
   const onContextMenu = useCallback((topo: LightTopo, position: {x: number, y: number}) => {
     setDropdownDisplayed(true);
@@ -147,8 +148,8 @@ const DashboardPage: NextPage = () => {
           />
         </div>
       </div>
-      {dropdownDisplayed && topoDropdown && (
-        <UserActionDropdown dropdownPosition={dropdownPosition} topo={topoDropdown} />
+      {dropdownDisplayed && topoDropdown && dropdownPosition && (
+        <UserActionDropdown position={dropdownPosition} topo={topoDropdown} />
       )}
     </>
 );

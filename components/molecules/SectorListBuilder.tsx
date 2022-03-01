@@ -1,6 +1,6 @@
-import React, { useCallback, useState } from 'react';
-import { BoulderItemLeftbar, createTrack, Icon } from 'components';
-import { arrayMove, splitArray } from 'helpers';
+import React, { useCallback, useEffect, useState } from 'react';
+import { BoulderItemLeftbar, Icon } from 'components';
+import { arrayMove, createTrack, splitArray } from 'helpers';
 import { Quark, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
 import { Boulder, Topo, Track, UUID } from 'types';
 import { api } from 'helpers/services/ApiService';
@@ -16,6 +16,7 @@ interface SectorListBuilderProps {
 
 export const SectorListBuilder: React.FC<SectorListBuilderProps> = watchDependencies((props: SectorListBuilderProps) => {
     const session = api.user();
+    if (!session) return <></>;
 
     const selectedBoulder = props.selectedBoulder();
     const topo = props.topoQuark();
@@ -25,7 +26,7 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> = watchDependen
 
     const [displayedSectors, setDisplayedSectors] = useState<Array<UUID>>(sectors.map(sector => sector.id).toArray());
     const [displayedBoulders, setDisplayedBoulders] = useState<Array<UUID>>([]);
-    
+
     const [draggingSectorId, setDraggingSectorId] = useState();
     const handleDragStart = useCallback((res) => {
         setDraggingSectorId(res.source.droppableId);
@@ -56,7 +57,11 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> = watchDependen
         }
     }, [topo, sectors]);
 
-    if (!session) return null;
+    useEffect(() => {
+        const lastSectorId = topo.sectors.toArray()[topo.sectors.length - 1].id;
+        if (!displayedSectors.includes(lastSectorId)) setDisplayedSectors(ds => [...ds, lastSectorId]);
+    }, [topo.sectors.toArray()[topo.sectors.length - 1]]);
+
     return (
         <div className='h-[95%] overflow-y-auto mb-6 px-4'>
             {sectors.quarks().map((sectorQuark, sectorIndex) => {
@@ -197,3 +202,5 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> = watchDependen
         </div>
     )
 });
+
+SectorListBuilder.displayName = "Sector List Builder";

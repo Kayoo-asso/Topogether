@@ -68,7 +68,7 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = wat
             selectedTrack={props.selectedTrack}
             displayPhantomTracks={displayPhantomTracks}
             displayTracksDetails={!!selectedTrack?.id}
-            containerClassName={props.currentImage.width/props.currentImage.height > 1 ? 'overflow-hidden rounded-t-lg h-full' : 'h-[300px]'}
+            containerClassName={props.currentImage.width/props.currentImage.height > 1 ? 'overflow-hidden rounded-t-lg h-full' : 'h-[35vh]'}
           />
 
           {imageToDisplayIndex < boulder.images.length-1 &&
@@ -169,3 +169,5 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = wat
     </SlideoverMobile>
   );
 });
+
+BoulderSlideoverMobile.displayName = "BoulderSlideoverMobile";

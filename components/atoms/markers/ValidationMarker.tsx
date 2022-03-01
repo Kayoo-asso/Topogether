@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { markerSize, useMarker } from "helpers";
+import { markerSize, toLatLng, useMarker } from "helpers";
 import { GeoCoordinates, PolygonEventHandlers } from "types";
 
 interface ValidationMarkerProps {
@@ -9,9 +9,8 @@ interface ValidationMarkerProps {
 
 export const ValidationMarker: React.FC<ValidationMarkerProps> = (props: ValidationMarkerProps) => {
 
-
     const firstPointOptions: google.maps.MarkerOptions = {
-        position: props.position,
+        position: toLatLng(props.position),
         icon: {
             path: google.maps.SymbolPath.CIRCLE,
             scale: 14,
@@ -32,7 +31,7 @@ export const ValidationMarker: React.FC<ValidationMarkerProps> = (props: Validat
     }
     const checkOptions: google.maps.MarkerOptions = {
         icon: checkIcon,
-        position: props.position,
+        position: toLatLng(props.position),
     };
     const checkHandlers: PolygonEventHandlers = {
         onClick: useCallback(() => props.onClick && props.onClick(), [props.position, props.onClick]),

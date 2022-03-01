@@ -3,9 +3,9 @@ import type { Amenities, ClimbTechniques, RockTypes } from './Bitflags';
 import type {
   Grade, LightGrade, Orientation, TopoStatus, TopoType, Difficulty,
 } from './Enums';
-import type { LinearRing, LineCoords, LineString, MultiLineString, MultiPolygon, Point, Polygon, Position } from './GeoJson';
+import type { LinearRing, LineString, MultiPolygon, Point, Polygon, Position } from './GeoJson';
 import type { UUID, GeoCoordinates, RequireAtLeastOne, StringBetween, Name, Description, Email } from './Utils';
-import type { Profile, TrackRating, User } from './User';
+import type { Profile, TrackRating } from './User';
 import type { BoulderImage } from './Image';
 
 export type Topo = Omit<TopoData, 'sectors' | 'boulders' | 'waypoints' | 'parkings' | 'accesses' | 'managers'> & {
@@ -53,7 +53,7 @@ export interface TopoData {
   // (or the topo has not yet been validated)
   creator?: Profile,
   validator?: Profile,
-  imageUrl?: string,
+  image?: BoulderImage,
 
   closestCity?: Name,
   altitude?: number,
@@ -99,7 +99,7 @@ export interface DBTopo {
 
   lonelyBoulders: UUID[],
 
-  imageUrl?: string,
+  imageId?: UUID,
 
   // these can be null, in case the person's account is deleted
   creatorId?: UUID,
@@ -259,7 +259,7 @@ export interface TrackData {
   height?: number,
   grade?: Grade,
   orientation?: Orientation,
-  reception?: Difficulty,
+  reception?: Reception,
   anchors?: number,
   techniques?: ClimbTechniques,
 

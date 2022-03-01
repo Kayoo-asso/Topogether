@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef } from "react";
-import { sectorChanged, usePolygon } from "helpers";
+import { sectorChanged, toLatLng, usePolygon } from "helpers";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { GeoCoordinates, PolygonEventHandlers, PolyMouseEvent, Sector, Topo, UUID } from "types";
 
@@ -14,6 +14,7 @@ interface SectorAreaMarkerProps {
     onClick?: (e: PolyMouseEvent) => void,
     onDragStart?: (e: PolyMouseEvent) => void,
     onMouseMoveOnSector?: (e: any) => void,
+    onContextMenu?: (e: any, sector: Quark<Sector>) => void,
 }
 
 export const SectorAreaMarker: React.FC<SectorAreaMarkerProps> = watchDependencies(({
@@ -26,7 +27,7 @@ export const SectorAreaMarker: React.FC<SectorAreaMarkerProps> = watchDependenci
     const sector = props.sector();
 
     const options: google.maps.PolygonOptions = {
-        paths: sector.path,
+        paths: sector.path.map(p => toLatLng(p)),
         draggable,
         editable,
         clickable,
@@ -42,10 +43,7 @@ export const SectorAreaMarker: React.FC<SectorAreaMarkerProps> = watchDependenci
     const updatePath = useCallback(() => {
         const newBounds: google.maps.LatLng[] | undefined = polygon.current?.getPath().getArray();
         if (newBounds && !dragging.current) {
-            const newPath: GeoCoordinates[] = newBounds.map(b => ({
-                lat: b.lat(),
-                lng: b.lng()
-            }));
+            const newPath: GeoCoordinates[] = newBounds.map(b => ([b.lng(), b.lat()]));
             props.sector.set(s => ({
                 ...s,
                 path: newPath
@@ -65,7 +63,8 @@ export const SectorAreaMarker: React.FC<SectorAreaMarkerProps> = watchDependenci
             if (props.topo && props.boulderOrder) {
                 sectorChanged(props.topo, sector.id, props.boulderOrder);
             }
-        }, [updatePath, props.topo, sector, props.boulderOrder])
+        }, [updatePath, props.topo, sector, props.boulderOrder]),
+        onContextMenu: useCallback((e) => {props.onContextMenu && props.onContextMenu(e, props.sector)}, [props.sector, props.onContextMenu])
     }
     polygon = usePolygon(options, handlers);
 
@@ -85,4 +84,4 @@ export const SectorAreaMarker: React.FC<SectorAreaMarkerProps> = watchDependenci
     return null;
 });
 
-SectorAreaMarker.displayName = "SectorAreaMarker";
+SectorAreaMarker.displayName = "Sector Area Marker";

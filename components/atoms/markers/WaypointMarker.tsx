@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { markerSize, useMarker } from "helpers";
+import { markerSize, toLatLng, useMarker } from "helpers";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { MarkerEventHandlers, Waypoint } from "types";
 
@@ -8,6 +8,7 @@ interface WaypointMarkerProps {
     draggable?: boolean,
     selected?: boolean,
     onClick?: (waypoint: Quark<Waypoint>) => void,
+    onContextMenu?: (e: Event, waypoint: Quark<Waypoint>) => void,
 }
 
 export const WaypointMarker: React.FC<WaypointMarkerProps> = watchDependencies(({
@@ -25,7 +26,7 @@ export const WaypointMarker: React.FC<WaypointMarkerProps> = watchDependencies((
     const options: google.maps.MarkerOptions = {
         icon,
         draggable,
-        position: waypoint.location
+        position: toLatLng(waypoint.location)
     };
 
     const handlers: MarkerEventHandlers = {
@@ -34,10 +35,11 @@ export const WaypointMarker: React.FC<WaypointMarkerProps> = watchDependencies((
             if (e.latLng) {
                 props.waypoint.set({
                     ...waypoint,
-                    location: { lat: e.latLng.lat(), lng: e.latLng.lng() }
+                    location: [e.latLng.lng(), e.latLng.lat()]
                 })
             }
-        }, [props.waypoint])
+        }, [props.waypoint]),
+        onContextMenu: useCallback((e) => props.onContextMenu && props.onContextMenu(e, props.waypoint), [props.waypoint, props.onContextMenu])
     }
     useMarker(options, handlers);
 

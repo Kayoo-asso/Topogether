@@ -21,7 +21,7 @@ function Component({ when, fallback, children}: ShowPropsInternal) {
     let showContent = true;
     if (Array.isArray(result)) {
         for (let i = 0; i < result.length; i++) {
-            showContent &&= !!result[i];
+            showContent && (showContent = !!result[i]);
         }
     } else {
         showContent = !!result;

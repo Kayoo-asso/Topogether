@@ -1,10 +1,10 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Wrapper } from '@googlemaps/react-wrapper';
-import { BoulderMarker, CreatingSectorAreaMarker, For, Icon, Map, ParkingMarker, RoundButton, SatelliteButton, SectorAreaMarker, Show, TopoMarker, WaypointMarker } from 'components';
+import { BoulderMarker, CreatingSectorAreaMarker, For, Map, ParkingMarker, RoundButton, SatelliteButton, SectorAreaMarker, Show, TopoMarker, WaypointMarker } from 'components';
 import { BoulderFilterOptions, BoulderFilters, MapSearchbarProps, TopoFilterOptions, TopoFilters } from '.';
 import { MapSearchbar } from '..';
 import { Amenities, Boulder, ClimbTechniques, GeoCoordinates, gradeToLightGrade, LightGrade, LightTopo, MapProps, MarkerProps, Parking, PolyMouseEvent, Sector, Topo, UUID, Waypoint } from 'types';
-import { googleGetPlace, hasFlag, hasSomeFlags, mergeFlags, toLatLng } from 'helpers';
+import { fontainebleauLocation, googleGetPlace, hasFlag, hasSomeFlags, mergeFlags, toLatLng } from 'helpers';
 import { Quark, QuarkIter, reactKey, SelectQuarkNullable } from 'helpers/quarky';
 
 interface MapControlProps extends MapProps {
@@ -30,6 +30,7 @@ interface MapControlProps extends MapProps {
   selectedSector?: SelectQuarkNullable<Sector>,
   onSectorClick?: (e: PolyMouseEvent, sector: Quark<Sector>) => void,
   onSectorDragStart?: (e: PolyMouseEvent, sector: Quark<Sector>) => void,
+  onSectorContextMenu?: (e: Event, boulder: Quark<Sector>) => void,
   boulders?: QuarkIter<Quark<Boulder>>,
   bouldersOrder?: Map<UUID, number>,
   selectedBoulder?: SelectQuarkNullable<Boulder>,
@@ -39,9 +40,11 @@ interface MapControlProps extends MapProps {
   waypoints?: QuarkIter<Quark<Waypoint>>,
   selectedWaypoint?: SelectQuarkNullable<Waypoint>,
   onWaypointClick?: (waypoint: Quark<Waypoint>) => void,
+  onWaypointContextMenu?: (e: Event, waypoint: Quark<Waypoint>) => void,
   parkings?: QuarkIter<Quark<Parking>>,
   selectedParking?: SelectQuarkNullable<Parking>,
   onParkingClick?: (parking: Quark<Parking>) => void,
+  onParkingContextMenu?: (e: Event, parking: Quark<Parking>) => void,
   draggableMarkers?: boolean,
   boundsTo?: GeoCoordinates[],
   onMapZoomChange?: (zoom: number | undefined) => void,
@@ -60,6 +63,7 @@ export const MapControl: React.FC<MapControlProps> = ({
     ...props
 }: MapControlProps) => {
     const mapRef = useRef<google.maps.Map>(null);
+
     const [satelliteView, setSatelliteView] = useState(false);
     const maxBoulders = props.topos ? Math.max(...props.topos.map(t => t().nbBoulders).toArray()) : 0;
     const defaultTopoFilterOptions: TopoFilterOptions = {
@@ -136,10 +140,18 @@ export const MapControl: React.FC<MapControlProps> = ({
             mapRef.current.fitBounds(newBounds);
         }
     }
-
+    useEffect(() => {
+        if (props.boundsTo && props.boundsTo.length > 1) {
+            const bounds = props.boundsTo;
+            window.setTimeout(() => {
+                getBoundsTo(bounds);
+            }, 1)
+        }   
+    }, []);
+    
     return (
         <div className="relative w-full h-full md:flex-1">
-            <Wrapper apiKey="AIzaSyDoHIGgvyVVi_1_6zVWD4AOQPfHWN7zSkU" libraries={['places']}>
+            <Wrapper apiKey={process.env.NEXT_PUBLIC_GOOGLE_API_KEY || ''} libraries={['places']}>
 
                 <div
                     className="absolute h-full w-full p-3 grid grid-rows-2"
@@ -233,11 +245,8 @@ export const MapControl: React.FC<MapControlProps> = ({
                     className={props.className ? props.className : ''}
                     onZoomChange={() => {
                         if (mapRef.current && props.onMapZoomChange) {
-                        props.onMapZoomChange(mapRef.current.getZoom());
+                            props.onMapZoomChange(mapRef.current.getZoom());
                         }
-                    }}
-                    onLoad={() => {
-                        if (props.boundsTo && props.boundsTo.length > 0) getBoundsTo(props.boundsTo);
                     }}
                     {...props}
                 >
@@ -263,6 +272,7 @@ export const MapControl: React.FC<MapControlProps> = ({
                                 onClick={(e) => props.onSectorClick && props.onSectorClick(e, sector)}
                                 onDragStart={(e) => props.onSectorDragStart && props.onSectorDragStart(e, sector)}
                                 onMouseMoveOnSector={props.onMouseMove}
+                                onContextMenu={props.onSectorContextMenu}
                             />
                         }
                     </For>
@@ -276,6 +286,7 @@ export const MapControl: React.FC<MapControlProps> = ({
                             waypoint={waypoint}
                             selected={props.selectedWaypoint ? props.selectedWaypoint()?.id === waypoint().id : false}
                             onClick={props.onWaypointClick}
+                            onContextMenu={props.onWaypointContextMenu}
                         />
                         }
                     </For>
@@ -284,14 +295,14 @@ export const MapControl: React.FC<MapControlProps> = ({
                     <For each={() => displayBoulderFilter ? props.boulders!.filter(b => boulderFilter(b())).toArray() : props.boulders!.toArray()}>
                     {(boulder) => 
                         <BoulderMarker
-                        key={reactKey(boulder)}
-                        draggable={draggableMarkers}
-                        boulder={boulder}
-                        boulderOrder={props.bouldersOrder!}
-                        selected={props.selectedBoulder ? props.selectedBoulder()?.id === boulder().id : false}
-                        topo={props.topo}
-                        onClick={props.onBoulderClick}
-                        onContextMenu={props.onBoulderContextMenu}
+                            key={reactKey(boulder)}
+                            draggable={draggableMarkers}
+                            boulder={boulder}
+                            boulderOrder={props.bouldersOrder!}
+                            selected={props.selectedBoulder ? props.selectedBoulder()?.id === boulder().id : false}
+                            topo={props.topo}
+                            onClick={props.onBoulderClick}
+                            onContextMenu={props.onBoulderContextMenu}
                         />   
                     }
                     </For>
@@ -305,6 +316,7 @@ export const MapControl: React.FC<MapControlProps> = ({
                             parking={parking}
                             selected={props.selectedParking ? props.selectedParking()?.id === parking().id : false}
                             onClick={props.onParkingClick}
+                            onContextMenu={props.onParkingContextMenu}
                         />
                         }
                     </For>

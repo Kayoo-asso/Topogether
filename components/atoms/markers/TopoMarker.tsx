@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
-import { markerSize, TopoTypeToColor, useMarker } from "helpers";
+import { markerSize, toLatLng, TopoTypeToColor, useMarker } from "helpers";
 import { Quark, watchDependencies } from "helpers/quarky";
-import { MarkerEventHandlers, TopoType, LightTopo, Topo } from "types";
+import { MarkerEventHandlers, TopoType, LightTopo } from "types";
 
 interface TopoMarkerProps {
     topo: Quark<LightTopo>,
@@ -25,7 +25,7 @@ export const TopoMarker: React.FC<TopoMarkerProps> = watchDependencies(({
     const options: google.maps.MarkerOptions = {
         icon,
         draggable,
-        position: topo.location
+        position: toLatLng(topo.location)
     };
 
     const handlers: MarkerEventHandlers = {
@@ -34,7 +34,7 @@ export const TopoMarker: React.FC<TopoMarkerProps> = watchDependencies(({
             if (e.latLng) {
                 props.topo.set({
                     ...topo,
-                    location: { lat: e.latLng.lat(), lng: e.latLng.lng() }
+                    location: [e.latLng.lng(), e.latLng.lat()]
                 })
             }
         }, [props.topo])

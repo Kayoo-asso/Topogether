@@ -4,61 +4,14 @@ import {
 } from 'components';
 import React, { useCallback, useRef, useState } from 'react';
 import { LightTopo, TopoStatus } from 'types';
-import { fakeLightTopo } from 'helpers/fakeData/fakeLightTopo';
-import { v4 as uuid } from 'uuid';
+import { quarkLightTopo } from 'helpers/fakeData/fakeLightTopoV2';
 import { AdminActionDropdown } from 'components/molecules/cards/AdminActionDropdown';
 import { useContextMenu } from 'helpers/hooks/useContextMenu';
 
 const AdminPage: NextPage = () => {
     const lightTopos: LightTopo[] = [
-        fakeLightTopo,
-        {
-            ...fakeLightTopo,
-            status: TopoStatus.Submitted,
-            id: uuid(),
-            name: 'Les roches qui dansent très souvent',
-        },
-        {
-            ...fakeLightTopo,
-            status: TopoStatus.Submitted,
-            id: uuid(),
-            name: 'Les roches qui dansent très souvent',
-        },
-        {
-            ...fakeLightTopo,
-            status: TopoStatus.Submitted,
-            id: uuid(),
-
-        },
-        {
-            ...fakeLightTopo,
-            status: TopoStatus.Validated,
-            id: '8',
-
-        },
-        {
-            ...fakeLightTopo,
-            status: TopoStatus.Draft,
-            id: uuid(),
-
-        }, {
-            ...fakeLightTopo,
-            status: TopoStatus.Submitted,
-            id: uuid(),
-            name: 'Les roches qui dansent très souvent',
-        },
-        {
-            ...fakeLightTopo,
-            status: TopoStatus.Submitted,
-            id: uuid(),
-            name: 'Les roches qui dansent très souvent',
-        },
-        {
-            ...fakeLightTopo,
-            status: TopoStatus.Submitted,
-            id: uuid(),
-            name: 'Les roches qui dansent très souvent',
-        }
+        quarkLightTopo(),
+        quarkLightTopo()
     ];
     const [selectedStatus, setSelectedStatus] = useState<TopoStatus>(TopoStatus.Draft);
 
@@ -130,8 +83,8 @@ const AdminPage: NextPage = () => {
                     </div>
                 </div>
             </div>
-            {dropdownDisplayed && topoDropdown && (
-                <AdminActionDropdown topo={topoDropdown} dropdownPosition={dropdownPosition} />
+            {dropdownDisplayed && topoDropdown && dropdownPosition && (
+                <AdminActionDropdown topo={topoDropdown} position={dropdownPosition} />
             )}
         </>
     );

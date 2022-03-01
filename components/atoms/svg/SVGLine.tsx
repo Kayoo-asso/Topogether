@@ -191,3 +191,5 @@ export const SVGLine: React.FC<SVGLineProps> = watchDependencies(({
     </>
   );
 });
+
+SVGLine.displayName = "SVGLine";

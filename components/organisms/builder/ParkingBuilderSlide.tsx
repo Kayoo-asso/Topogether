@@ -61,3 +61,5 @@ export const ParkingBuilderSlide: React.FC<ParkingBuilderSlideProps> = watchDepe
         </>
     )
 });
+
+ParkingBuilderSlide.displayName = "ParkingBuilderSlide";

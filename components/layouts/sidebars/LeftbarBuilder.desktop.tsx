@@ -2,7 +2,6 @@ import React from 'react';
 import { Button, SectorListBuilder } from 'components';
 import { Quark, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
 import { Boulder, Topo, Track, UUID } from 'types';
-import { api } from 'helpers/services/ApiService';
 
 interface LeftbarBuilderDesktopProps {
     topoQuark: Quark<Topo>,
@@ -14,9 +13,7 @@ interface LeftbarBuilderDesktopProps {
 }
 
 export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = watchDependencies((props: LeftbarBuilderDesktopProps) => {
-    const session = api.user();
 
-    if (!session) return null;
     return (
         <div className='bg-white border-r border-grey-medium min-w-[280px] w-[280px] h-full hidden md:flex flex-col px-2 py-10 z-500'>
             
@@ -37,3 +34,5 @@ export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = watch
         </div>
     )
 });
+
+LeftbarBuilderDesktop.displayName = "Leftbar Builder Desktop";

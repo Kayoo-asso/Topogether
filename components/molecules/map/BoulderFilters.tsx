@@ -1,9 +1,8 @@
 import React, { useState, useCallback } from 'react';
 import { Checkbox, Icon, RoundButton } from 'components';
 import { ClimbTechniques, LightGrade } from 'types';
-import { GradeSliderInput, MultipleSelect, SliderInput } from '..';
+import { GradeSliderInput, BitflagMultipleSelect, SliderInput } from '..';
 import { ClimbTechniquesName, toggleFlag } from 'helpers';
-
 
 export interface BoulderFilterOptions {
     techniques: ClimbTechniques,
@@ -40,7 +39,7 @@ export const BoulderFilters: React.FC<BoulderFiltersProps> = ({
 
     const renderFilters = () => (
         <React.Fragment>
-             <MultipleSelect<ClimbTechniques>
+             <BitflagMultipleSelect<ClimbTechniques>
                 id='track-techniques'
                 label='Techniques'
                 bitflagNames={ClimbTechniquesName}

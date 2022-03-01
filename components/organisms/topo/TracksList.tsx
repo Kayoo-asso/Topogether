@@ -62,6 +62,7 @@ export const TracksList: React.FC<TracksListProps> = watchDependencies((props: T
                 wrapperClassName="col-span-2" 
               />
             </div>
+
             {props.selectedTrack()?.id === track.id && device === 'MOBILE' &&
               <>
                 <div className='mt-4'>
@@ -87,7 +88,8 @@ export const TracksList: React.FC<TracksListProps> = watchDependencies((props: T
         );
       })}
 
-
     </div>
   );
 });
+
+TracksList.displayName = "TracksList";

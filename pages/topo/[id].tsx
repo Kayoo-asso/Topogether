@@ -7,7 +7,7 @@ import {
   MapControl, ParkingSlide, WaypointSlide, TracksImage, LeftbarTopoDesktop } from 'components';
 import { useRouter } from 'next/router';
 import { quarkTopo } from 'helpers/fakeData/fakeTopoV2';
-import { defaultImage, DeviceContext, sortBoulders } from 'helpers';
+import { defaultImage, DeviceContext, sortBoulders, toLatLng } from 'helpers';
 import { Boulder, BoulderImage, Parking, Sector, Track, Waypoint } from 'types';
 import { Quark, QuarkArray, QuarkIter, useCreateDerivation, useQuarkyCallback, useSelectQuark, watchDependencies } from 'helpers/quarky';
 
@@ -170,7 +170,6 @@ const Topo: NextPage = () => {
 
         <MapControl
           initialZoom={16}
-          center={boulders.toArray()[0]().location}
           displaySectorButton
           onSectorButtonClick={() => setDisplaySectorSlideover(true)}
           searchbarOptions={{
@@ -192,6 +191,7 @@ const Topo: NextPage = () => {
           parkings={parkings}
           selectedParking={selectedParking}
           onParkingClick={toggleParkingSelect}
+          center={toLatLng(topo.location)}
           boundsTo={boulders.toArray().map(b => b().location).concat(parkings.toArray().map(p => p().location))}
         />       
 

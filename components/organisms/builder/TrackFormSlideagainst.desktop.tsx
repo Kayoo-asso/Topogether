@@ -38,3 +38,5 @@ export const TrackFormSlideagainstDesktop: React.FC<TrackFormSlideagainstDesktop
         </>
     )
 });
+
+TrackFormSlideagainstDesktop.displayName = "TrackFormSlideagainstDesktop";

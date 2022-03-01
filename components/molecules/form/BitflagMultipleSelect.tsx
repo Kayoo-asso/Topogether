@@ -3,7 +3,7 @@ import { hasFlag, listFlags } from 'helpers';
 import React, {
   useRef, useState,
 } from 'react';
-import { Bitflag, Enums } from 'types';
+import { Bitflag } from 'types';
 import { Icon } from '../../atoms/Icon';
 import { TextInput } from './TextInput';
 
@@ -16,7 +16,7 @@ interface BitflagMultipleSelectProps<T extends Bitflag> {
   className?: string;
 }
 
-export const BitflagMultipleSelect = <T extends Bitflag | {[e in Enums]: string}>(props:BitflagMultipleSelect<T>) => {
+export const BitflagMultipleSelect = <T extends Bitflag>(props:BitflagMultipleSelectProps<T>) => {
   const ref = useRef<HTMLInputElement>(null);
   const [isOpen, setIsOpen] = useState(false);
 

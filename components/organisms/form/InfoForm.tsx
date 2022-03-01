@@ -1,12 +1,13 @@
 import React, { useCallback, useEffect, useRef } from 'react';
 import {
- Checkbox, ImageInput, MultipleSelect, Select, Show, TextArea, TextInput,
+ Checkbox, ImageInput, Show, TextArea, TextInput,
 } from 'components';
 import { Quark, watchDependencies } from 'helpers/quarky';
 import {
  Amenities, Description, Name, RockTypes, Topo,
 } from 'types';
 import { hasFlag, rockNames, toggleFlag } from 'helpers';
+import { BitflagMultipleSelect } from 'components/molecules/form/BitflagMultipleSelect';
 
 interface InfoFormProps {
     topo: Quark<Topo>,
@@ -39,7 +40,7 @@ export const InfoForm: React.FC<InfoFormProps> = watchDependencies((props: InfoF
         <div className="flex flex-row gap-6 items-end">
           <div className="w-32 md:mt-4">
             <ImageInput
-              value={topo.image}
+              value={topo.image?.url}
               onChange={(files) => {
                           props.topo.set({
                               ...topo,
@@ -71,7 +72,7 @@ export const InfoForm: React.FC<InfoFormProps> = watchDependencies((props: InfoF
           })}
         />
 
-        <MultipleSelect<RockTypes>
+        <BitflagMultipleSelect<RockTypes>
           id="topo-rock-type"
           label="Type de roche"
           bitflagNames={rockNames}
@@ -160,3 +161,5 @@ export const InfoForm: React.FC<InfoFormProps> = watchDependencies((props: InfoF
       </div>
   );
 });
+
+InfoForm.displayName = "InfoForm";

@@ -139,3 +139,5 @@ export const SVGTrack: React.FC<SVGTrackProps> = watchDependencies(({
         {track.lines.quarks().map(constructNodes)}
     </>
 });
+
+SVGTrack.displayName = "SVGTrack";

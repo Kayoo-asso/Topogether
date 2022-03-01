@@ -1,5 +1,5 @@
-import { BoulderImage, Rating } from 'types';
-import { Description, Email, ExplicitUndefineds, Name, StringBetween, UUID } from './Utils';
+import { Rating } from 'types';
+import { Description, Email, Name, StringBetween, UUID } from './Utils';
 
 // NOTE: the email has to be updated through the authentication service
 export type User = {

@@ -1,6 +1,6 @@
 import { MapContext } from "components";
 import { useEffectWithDeepEqual } from "helpers";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef } from "react";
 import { MarkerEventHandlers, markerEvents } from "types";
 
 export function useMarker(options: google.maps.MarkerOptions, handlers: MarkerEventHandlers) {
