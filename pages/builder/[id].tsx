@@ -150,20 +150,20 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
   }, [selectedWaypoint]);
 
   const displayBoulderDropdown = useCallback((e: any, boulderQuark: Quark<Boulder>) => {
-    boulderRightClicked.select(boulderQuark);
     setDropdownPosition({ x: e.domEvent.pageX, y: e.domEvent.pageY });
+    boulderRightClicked.select(boulderQuark);
   }, []);
   const displayWaypointDropdown = useCallback((e: any, waypointQuark: Quark<Waypoint>) => {
-    waypointRightClicked.select(waypointQuark);
     setDropdownPosition({ x: e.domEvent.pageX, y: e.domEvent.pageY });
+    waypointRightClicked.select(waypointQuark);
   }, []);
   const displayParkingDropdown = useCallback((e: any, parkingQuark: Quark<Parking>) => {
-    parkingRightClicked.select(parkingQuark);
     setDropdownPosition({ x: e.domEvent.pageX, y: e.domEvent.pageY });
+    parkingRightClicked.select(parkingQuark);
   }, []);
   const displaySectorDropdown = useCallback((e: any, sectorQuark: Quark<Sector>) => {
-    sectorRightClicked.select(sectorQuark);
     setDropdownPosition({ x: e.domEvent.pageX, y: e.domEvent.pageY });
+    sectorRightClicked.select(sectorQuark);
   }, []);
 
   const [creatingSector, setCreatingSector] = useState<GeoCoordinates[]>([]);
