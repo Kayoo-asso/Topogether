@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { useCircle, useMarker } from "helpers";
+import { useAsyncEffect, useCircle, useMarker } from "helpers";
 import { MarkerEventHandlers } from "types";
 
 interface UserMarkerProps {
@@ -11,37 +11,36 @@ export const UserMarker: React.FC<UserMarkerProps> = (props: UserMarkerProps) =>
     const [userPosition, setUserPosition] = useState<google.maps.LatLngLiteral>();
     const [userPositionAccuracy, setUserPositionAccuracy] = useState<number>();
     const [userHeading, setUserHeading] = useState<number | null>(null);
-    const [userSpeed, setUserSpeed] = useState<number | null>(null);
-    const onPosChange = async ({ coords }: { coords: GeolocationCoordinates }) => {
-        // console.log(coords);
-        // alert(coords.heading);
-        const pos = {
-            lat: coords.latitude,
-            lng: coords.longitude
+
+    useAsyncEffect((isAlive) => {
+        const options = {
+            // Timeout = 3 seconds (default = infinite). TODO: agree on the best value
+            timeout: 3000,
+            enableHighAccuracy: true,
+        };
+        const onPosChange = (pos: GeolocationPosition) => {
+            if (isAlive.current) {
+                const coords = {
+                    lat: pos.coords.latitude,
+                    lng: pos.coords.longitude
+                }
+                setUserPosition(coords);
+                if (props.onUserPosChange) props.onUserPosChange(coords);            
+                setUserPositionAccuracy(pos.coords.accuracy);
+                setUserHeading(pos.coords.heading);
+            }
         }
-        setUserPosition(pos);
-        if (props.onUserPosChange) props.onUserPosChange(pos);
-        
-        setUserPositionAccuracy(coords.accuracy);
-        setUserHeading(coords.heading);
-        setUserSpeed(coords.speed);
-    } 
-    useEffect(() => {
-        let watcher: number;
-        if (navigator.geolocation) {
-            watcher = navigator.geolocation.watchPosition(
-                onPosChange,
-                err => console.log(err),
-                { enableHighAccuracy: true, timeout: 10000 }
-            )
+        const onError = (err: GeolocationPositionError) => {
+            console.log(err);
         }
+        const watcher = navigator.geolocation.watchPosition(onPosChange, onError, options);
         return () => {
             navigator.geolocation.clearWatch(watcher);
         }
     }, []);
 
     // Main blue dot
-    const icon: google.maps.Symbol = {
+    const mainIcon: google.maps.Symbol = {
         path: window.google.maps.SymbolPath.CIRCLE,
         scale: 8, 
         fillOpacity: 1,
@@ -49,16 +48,16 @@ export const UserMarker: React.FC<UserMarkerProps> = (props: UserMarkerProps) =>
         strokeColor: 'white',
         strokeWeight: 2,
     };
-    const options: google.maps.MarkerOptions = {
-        icon,
+    const mainOptions: google.maps.MarkerOptions = {
+        icon: mainIcon,
         zIndex: 5,
         cursor: 'inherit',
         position: userPosition
     };
-    const handlers: MarkerEventHandlers = {
+    const mainHandlers: MarkerEventHandlers = {
         onClick: useCallback(() => props.onClick && props.onClick(), [props.onClick]),
     }
-    useMarker(options, handlers);
+    useMarker(mainOptions, mainHandlers);
 
 
     const circleOptions = {

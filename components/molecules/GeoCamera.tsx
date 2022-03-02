@@ -24,6 +24,7 @@ export const GeoCamera: React.FC<GeoCameraProps> = ({
         lat: 0,
         lng: 0,
     });
+    const [distance, setDistance] = useState(0);
     const [isCalibrating, setIsCalibrating] = useState(true);
     const [displayToolbar, setDisplayToolbar] = useState(false);
 
@@ -38,7 +39,8 @@ export const GeoCamera: React.FC<GeoCameraProps> = ({
         const onPosChange = (pos: GeolocationPosition) => {
             if (isAlive.current) {
                 const dist = distanceLatLng(coords.lat, coords.lng, pos.coords.latitude, pos.coords.longitude)
-                if (dist < 5 || true) {
+                setDistance(dist);
+                if (dist < 5) {
                     setIsCalibrating(false);
                     navigator.geolocation.clearWatch(watcher);
                 }
@@ -181,6 +183,7 @@ export const GeoCamera: React.FC<GeoCameraProps> = ({
                     </div>
 
                     <span>{coords.lat + ', ' + coords.lng}</span>
+                    <div>{distance + 'm'}</div>
                 </div>
             }
 
