@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { useMarker } from "helpers";
+import { useCircle, useMarker } from "helpers";
 import { MarkerEventHandlers } from "types";
 
 interface UserMarkerProps {
@@ -60,22 +60,17 @@ export const UserMarker: React.FC<UserMarkerProps> = (props: UserMarkerProps) =>
     }
     useMarker(options, handlers);
 
-    // Precision blue area
-    const precisionIcon: google.maps.Symbol = {
-        path: window.google.maps.SymbolPath.CIRCLE,
-        scale: userPositionAccuracy ? Math.min(userPositionAccuracy, 50) : 50, 
-        fillOpacity: 0.3,
-        fillColor: '#4EABFF',
+
+    const circleOptions = {
+        center: userPosition,
+        radius: userPositionAccuracy,
         strokeWeight: 0,
-    };
-    const precisionsOptions: google.maps.MarkerOptions = {
-        icon: precisionIcon,
+        fillColor: "#4EABFF",
+        fillOpacity: 0.3,
+        cursor: 'grab',
         zIndex: 2,
-        cursor: 'inherit',
-        position: userPosition
     };
-    const precisionHandlers: MarkerEventHandlers = {}
-    useMarker(precisionsOptions, precisionHandlers);
+    useCircle(circleOptions);
 
     // Heading
     const headingIcon: google.maps.Symbol = {
