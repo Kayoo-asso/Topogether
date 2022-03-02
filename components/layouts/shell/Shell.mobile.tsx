@@ -37,8 +37,6 @@ export const ShellMobile: React.FC = watchDependencies(() => {
           <div
             className={`${activeTab === 0 ? 'border-t-main border-t-6' : ''} h-full cursor-pointer`}
             onClick={() => changeTab(0)}
-            role="button"
-            tabIndex={0}
           >
             <Icon
               name="user"
@@ -52,8 +50,6 @@ export const ShellMobile: React.FC = watchDependencies(() => {
           <div
             className={`${activeTab === 1 ? 'border-t-main border-t-6' : ''} h-full  cursor-pointer`}
             onClick={() => changeTab(1)}
-            role="button"
-            tabIndex={0}
           >
             <Icon
               name="waypoint"
@@ -70,8 +66,6 @@ export const ShellMobile: React.FC = watchDependencies(() => {
               if (session) changeTab(2);
               else setDisplayModalLogin(true);
             }}
-            role="button"
-            tabIndex={0}
           >
             <Icon
               name="topo"
@@ -81,20 +75,8 @@ export const ShellMobile: React.FC = watchDependencies(() => {
           </div>
         </Link>
       </div>
-
-      {/* {displayModalLogin
-        && (
-        <ModalLogin
-          open
-          onClose={() => setDisplayModalLogin(false)}
-          onLoginSuccess={() => {
-            router.push('/my');
-          }}
-        />
-        )} */}
-
     </>
   );
 });
 
-ShellMobile.displayName = "Shell Mobile";
+ShellMobile.displayName = "ShellMobile";
