@@ -6,5 +6,6 @@ export * from './launchNavigation';
 export * from './useMarker';
 export * from './usePolygon';
 export * from './usePolyline';
+export * from './useCircle';
 export * from './polygonContains';
 export * from './TopoTypeToColor';

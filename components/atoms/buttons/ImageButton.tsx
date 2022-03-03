@@ -33,8 +33,6 @@ export const ImageButton: React.FC<ImageButtonProps> = ({
     ref={observe}
     className="ktext-subtext relative text-center shadow text-main border-main border-2 w-full flex flex-col justify-center group cursor-pointer"
     onClick={props.onClick}
-    role="button"
-    tabIndex={0}
     style={{
       height: containerWidth,
     }}

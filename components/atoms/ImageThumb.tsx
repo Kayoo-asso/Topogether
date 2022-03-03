@@ -32,8 +32,6 @@ export const ImageThumb: React.FC<ImageThumbProps> = ({
       className={`${selected ? 'border-main' : 'border-dark'}${props.onClick ? ' cursor-pointer' : ''} \
       group border-2 w-full flex flex-col justify-center relative`}
       onClick={() => props.onClick && props.onClick(props.image.id)}
-      role="button"
-      tabIndex={0}
       style={{
         height: containerWidth
       }}

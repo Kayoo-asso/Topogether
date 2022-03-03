@@ -12,8 +12,6 @@ interface HandleProps {
 const Handle = (props: HandleProps) => (
   <div
     className="absolute -ml-1 mt-1.5 z-20 w-6 h-6 border-0 text-center bg-main rounded-full cursor-pointer flex items-center content-center"
-    role="button"
-    tabIndex={0}
     style={{
       left: `${props.handle.percent}%`,
     }}
