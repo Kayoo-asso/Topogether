@@ -4,10 +4,9 @@ import NextImage from 'next/image';
 import { Card, Icon } from 'components';
 import { formatDate, staticUrl } from 'helpers';
 import equal from 'fast-deep-equal/es6';
-import { LightTopo, Topo, TopoStatus, UUID } from 'types';
-import { useRouter } from 'next/router';
+import { LightTopo, TopoStatus } from 'types';
 
-
+let timer: NodeJS.Timeout;
 interface TopoCardProps {
   topo: LightTopo;
   onContextMenu: (topo: LightTopo, position: {x: number, y: number}) => void
@@ -41,6 +40,12 @@ export const TopoCard: React.FC<TopoCardProps> = React.memo((props: TopoCardProp
         <div onContextMenu={(e) => {
             props.onContextMenu(props.topo, {x: e.pageX, y: e.pageY});
             e.preventDefault()}}
+            onTouchStart={(e) => {
+              timer = setTimeout(() => props.onContextMenu(props.topo, {x: e.touches[0].pageX, y: e.touches[0].pageY}), 500)
+            }}
+            onTouchEnd={() => {
+              if(timer) clearTimeout(timer);
+            }}    
         >
           <Card className="relative text-center text-grey-medium bg-white flex flex-col cursor-pointer">
             <div className="w-full h-[70px] md:h-44 top-0 relative">

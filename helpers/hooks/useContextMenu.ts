@@ -31,7 +31,7 @@ export function useContextMenu(close: () => void, container?: HTMLElement | null
     useEffect(() => {
         const onScroll = (e: Event) => e.preventDefault()
         const onMouseDown = (e: MouseEvent) => {
-            close();             
+            close();
             container?.removeEventListener('wheel', onScroll);
         };
         const onContextMenu = (e: MouseEvent) => {
