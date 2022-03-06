@@ -16,7 +16,7 @@ interface BitflagMultipleSelectProps<T extends Bitflag> {
   className?: string;
 }
 
-export const BitflagMultipleSelect = <T extends Bitflag>(props:BitflagMultipleSelectProps<T>) => {
+export const BitflagMultipleSelect = <T extends Bitflag>(props: BitflagMultipleSelectProps<T>) => {
   const ref = useRef<HTMLInputElement>(null);
   const [isOpen, setIsOpen] = useState(false);
 
@@ -46,24 +46,27 @@ export const BitflagMultipleSelect = <T extends Bitflag>(props:BitflagMultipleSe
         }}
       />
 
-      {isOpen && (
-        props.bitflagNames.map(([flag,name]) => (
-          <div
-            className="py-4 text-dark ktext-base cursor-pointer flex flex-row items-center"
-            key={name}
-            onKeyDown={() => { props.onChange(flag); }}
-            onMouseDown={() => { props.onChange(flag); }}
-            role="menuitem"
-            tabIndex={0}
-          >
-            <Checkbox
-              className="mr-2"
-              checked={props.value && hasFlag(props.value, flag)}
-              onClick={() => { props.onChange(flag); }}
-            />
-            {name}
-          </div>
-      )))}
+      {isOpen && (<div className='pl-4 py-2 bg-white rounded-b h-[200px] absolute overflow-y-auto overflow-x-none z-100 w-full right-0 shadow'>
+        {
+          props.bitflagNames.map(([flag, name]) => (
+            <div
+              className="py-4 text-dark ktext-base cursor-pointer flex flex-row items-center"
+              key={name}
+              onKeyDown={() => { props.onChange(flag); }}
+              onMouseDown={() => { props.onChange(flag); }}
+              role="menuitem"
+              tabIndex={0}
+            >
+              <Checkbox
+                className="mr-2"
+                checked={props.value && hasFlag(props.value, flag)}
+                onClick={() => { props.onChange(flag); }}
+              />
+              {name}
+            </div>
+          ))}
+      </div>
+      )}
     </div>
   );
 };
