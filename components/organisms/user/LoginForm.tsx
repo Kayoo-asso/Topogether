@@ -79,7 +79,7 @@ export const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
                 onChange={(e) => setPassword(e.target.value)}
             />
 
-            <div className='flex flex-col w-full md:flex-row justify-start md:justify-between items-center mb-3 mt-3 md:mb-6'>
+            <div className='flex flex-col w-full md:flex-row justify-start md:justify-between items-center md:mb-6'>
                 <div className="hidden md:block">
                     <Checkbox 
                         checked={rememberChecked}
@@ -97,6 +97,7 @@ export const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
                 </div>
             </div>
 
+            <div className='flex flex-col gap-16 w-full'>
             <div className='flex flex-row w-full justify-center md:justify-between items-center'>
                 <Link href="/user/signup">
                     <div className="ktext-base-little text-main cursor-pointer hidden md:block">Créer un compte</div>
@@ -106,12 +107,13 @@ export const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
                 </Link>
             </div>
 
-            <div className='w-full pt-20 -mb-4 md:hidden'>
+            <div className='w-full md:hidden'>
                 <Button 
                     content="Créer un compte"
                     fullWidth
                     href='/user/signup'
                 />
+            </div>
             </div>
 
         </div>

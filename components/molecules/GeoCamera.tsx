@@ -40,7 +40,7 @@ export const GeoCamera: React.FC<GeoCameraProps> = ({
             if (isAlive.current) {
                 const dist = distanceLatLng(coords.lat, coords.lng, pos.coords.latitude, pos.coords.longitude)
                 setDistance(dist);
-                if (dist < 5) {
+                if (dist < 5 || process.env.NODE_ENV === 'development') {
                     setIsCalibrating(false);
                     navigator.geolocation.clearWatch(watcher);
                 }
