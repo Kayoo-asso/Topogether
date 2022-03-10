@@ -58,13 +58,13 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
   const selectedTrack = useSelectQuark<Track>();
 
   const [dropdownPosition, setDropdownPosition] = useState<{ x: number, y: number }>();
-  const closeDropdown = useCallback(() => boulderRightClicked.select(undefined), []);
-  useContextMenu(() => {
+  const closeDropdown = useCallback(() =>  {
     boulderRightClicked.select(undefined);
     waypointRightClicked.select(undefined);
     parkingRightClicked.select(undefined);
     sectorRightClicked.select(undefined);
-  });
+  }, []);
+  useContextMenu(closeDropdown);
   
   const [displaySectorSlideover, setDisplaySectorSlideover] = useState<boolean>(false);
   const [displayGeoCamera, setDisplayGeoCamera] = useState<boolean>(false);

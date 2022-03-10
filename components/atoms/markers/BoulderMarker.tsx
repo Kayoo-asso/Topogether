@@ -4,6 +4,7 @@ import { Quark, useQuarkyCallback, watchDependencies } from "helpers/quarky";
 import { Boulder, GeoCoordinates, MarkerEventHandlers, Topo, UUID } from "types";
 
 // TODO: Why is props.topo optional? Pretty sure a BoulderMarker cannot be shown without a topo being selected
+let timer: NodeJS.Timeout;
 interface BoulderMarkerProps {
     boulder: Quark<Boulder>,
     boulderOrder: Map<UUID, number>,
@@ -51,7 +52,13 @@ export const BoulderMarker: React.FC<BoulderMarkerProps> = watchDependencies(({
                 boulderChanged(props.topo!, boulder.id, loc);
             }
         }, [props.topo, boulder]),
-        onContextMenu: useCallback((e) => props.onContextMenu && props.onContextMenu(e, props.boulder), [props.boulder, props.onContextMenu])
+        onContextMenu: useCallback((e) => props.onContextMenu && props.onContextMenu(e, props.boulder), [props.boulder, props.onContextMenu]),
+        onMouseDown: useCallback((e) => {
+            timer = setTimeout(() => {props.onContextMenu && props.onContextMenu(e, props.boulder)}, 500)
+        }, [props.boulder, props.onContextMenu]),
+        onMouseUp: useCallback(() => {
+            if(timer) clearTimeout(timer);
+        }, []) 
     }
     useMarker(options, handlers);
 

@@ -31,8 +31,11 @@ export function useContextMenu(close: () => void, container?: HTMLElement | null
     useEffect(() => {
         const onScroll = (e: Event) => e.preventDefault()
         const onMouseDown = (e: MouseEvent) => {
-            close();             
+            close();
             container?.removeEventListener('wheel', onScroll);
+        };
+        const onTouch = (e: TouchEvent) => {
+            close();
         };
         const onContextMenu = (e: MouseEvent) => {
             close();
@@ -41,6 +44,7 @@ export function useContextMenu(close: () => void, container?: HTMLElement | null
         };
         document.addEventListener('mousedown', onMouseDown, { capture: false });
         document.addEventListener('contextmenu', onContextMenu, { capture: true });
+        document.addEventListener('touchstart', onTouch, { capture: true });
 
         return () => {
             document.removeEventListener('mousedown', onMouseDown, { capture: true });

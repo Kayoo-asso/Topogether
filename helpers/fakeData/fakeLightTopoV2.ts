@@ -60,6 +60,12 @@ export const lightTopo: LightTopo = {
         'None': 12,
         Total: 241
     },
+    submittedAt: new Date(),
+    validatedAt: new Date(),
+    // IMPORTANT: modifying anything in a topo changes the last modified at
+    // TODO: if someone is editing a topo offline, should we reflect that
+    // in the modifiedAt date for them?
+    modifiedAt: new Date(),
 }
 
 export const quarkLightTopo: Quark<LightTopo> = quark(lightTopo);
