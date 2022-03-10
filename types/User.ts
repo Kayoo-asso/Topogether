@@ -1,5 +1,5 @@
 import { Rating } from 'types';
-import { Description, Email, Name, StringBetween, UUID } from './Utils';
+import { Description, Email, Name, NullableOptional, StringBetween, UUID } from './Utils';
 
 // NOTE: the email has to be updated through the authentication service
 export type User = {
@@ -10,14 +10,16 @@ export type User = {
   // ISO timestamp format
   // Wrap in a new Date() object if needed
   readonly created: string, 
-  imageUrl?: string,
   firstName?: Name,
   lastName?: Name,
   country?: Name,
   city?: Name,
   phone?: StringBetween<1, 30>,
-  birthDate?: string, // has to be in YYYY/MM/DD format
+  birthDate?: string, // has to be in YYYY-MM-DD format
+  imagePath?: string,
 };
+
+export type DBUser = NullableOptional<User>;
 
 export interface Profile {
   id: UUID,
@@ -27,15 +29,20 @@ export interface Profile {
   firstName?: Name,
   lastName?: Name,
   city?: Name,
-  country?: Name
+  country?: Name,
+  imagePath?: string,
 }
 
 export type Role = 'ADMIN' | 'USER';
 
 export interface TrackRating {
   id: UUID,
-  authorId: UUID,
   finished: boolean,
   rating: Rating,
   comment?: Description,
+  authorId: UUID,
 }
+
+export type DBTrackRating = NullableOptional<TrackRating & {
+  trackId: UUID
+}>;

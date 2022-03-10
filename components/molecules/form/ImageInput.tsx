@@ -51,7 +51,7 @@ export const ImageInput = forwardRef<HTMLInputElement, ImageInputProps>(({
             img.onload = () => {
               const imgData: BoulderImage = {
                 id: v4(),
-                url: objectUrl,
+                imagePath: objectUrl,
                 width: img.width,
                 height: img.height,
               }
@@ -69,7 +69,7 @@ export const ImageInput = forwardRef<HTMLInputElement, ImageInputProps>(({
             img.onload = () => {
               const imgData: BoulderImage = {
                 id: v4(),
-                url: objectUrl,
+                imagePath: objectUrl,
                 width: img.width,
                 height: img.height,
               }

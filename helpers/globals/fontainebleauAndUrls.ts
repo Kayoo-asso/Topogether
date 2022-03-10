@@ -17,7 +17,7 @@ export const staticUrl = {
 
 export const defaultImage: BoulderImage = {
   id: v4(),
-  url: staticUrl.defaultKayoo,
+  imagePath: staticUrl.defaultKayoo,
   width: 501,
   height: 501
 }

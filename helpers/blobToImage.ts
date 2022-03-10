@@ -8,7 +8,7 @@ export const blobToImage = async (blob: Blob): Promise<BoulderImage> => {
         imgElt.src = url;
         imgElt.onload = () => resolve({
             id: v4(),
-            url: url,
+            imagePath: url,
             width: imgElt.width,
             height: imgElt.height,
         });

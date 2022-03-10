@@ -151,7 +151,7 @@ export class ApiService {
 
     async getTopo(id: UUID): Promise<TopoData | null> {
         const { data, error } = await this.client
-            .rpc<TopoData>("getTopo", { topo_id: id })
+            .rpc<TopoData>("get_topo", { _topo_id: id })
             .single();
         if (error || !data) {
             console.error("Error getting topo data: ", error);
@@ -160,7 +160,93 @@ export class ApiService {
         return data;
     }
 
-    async saveTopo(topo: Topo): Promise<boolean> {
+    async getTopo2(id: UUID): Promise<TopoData | null> {
+        // Notes on this query:
+        //
+        // 1. If multiple tables reference a parent with the same name for the foreign key,
+        // we disambiguate by specifying the name of the table we want to retrieve.
+        // https://postgrest.org/en/stable/api.html#hint-disambiguation
+        //
+        // 2. We map each geometry column purely to its coordinates array
+        //
+        // 3. In some cases, we specify properties explicitly, to strip away the additional
+        // "topoId" foreign key that exist in the DB for performant joins.
+        // This applies for tracks, boulder images and lines, for instance.
+        const { data, error } = await this.client
+            .from("topos")
+            .select(`
+                id,
+                name,
+                status,
+                forbidden,
+                modified,
+                submitted,
+                validated,
+                amenities,
+                rockTypes,
+                type,
+                description,
+                faunaProtection,
+                ethics,
+                danger,
+                cleaned,
+                altitude,
+                closestCity,
+                otherAmenities,
+                lonelyBoulders,
+                imagePath,
+                location:location->coordinates,
+                creator:profiles!creatorId (*),
+                validator:profiles!validatorId (*),
+                parkings:parkings!topoId (
+                    id, spaces, description, imagePath,
+                    location:location->coordinates
+                ),
+                waypoints:waypoints!topoId (
+                    id, name, description, imagePath,
+                    location: location->coordinates
+                ),
+                accesses:topo_accesses!topoId (*),
+                managers:managers!topoId (*),
+                sectors:sectors!topoId (
+                    *,
+                    path:path->coordinates
+                ),
+                boulders:boulders!topoId (
+                    id, name, isHighball, mustSee, dangerousDescent,
+                    location:location->coordinates,
+                    images:boulder_images!boulderId(
+                        id, index, width, height, imagePath
+                    ),
+                    tracks:tracks!boulderId(
+                        id, index, name, description, height, grade, orientation, reception, anchors, techniques,
+                        isTraverse, isSittingStart, mustSee, hasMantle,
+                        creatorId,
+                        lines:lines!trackId(
+                            id, index,
+                            points:points->coordinates,
+                            forbidden:forbidden->coordinates,
+                            hand1:hand1->coordinates,
+                            hand2:hand2->coordinates,
+                            foot1:foot1->coordinates,
+                            foot2:foot2->coordinates,
+                            imageId
+                        )
+                    )
+                )
+            `)
+            .match({ id })
+            .single();
+        if (error) {
+            console.error("Error getting topo data: ", error);
+            return null;
+        }
+        return data;
+    }
+
+    // Promises have to be awaited in order, to make sure
+    // foreign key references do not fail
+    async saveTopo(topo: Topo | TopoData): Promise<boolean> {
         const dbTopo = DBConvert.topo(topo);
         const dbSectors: DBSector[] = [];
         const dbWaypoints: DBWaypoint[] = [];
@@ -172,38 +258,51 @@ export class ApiService {
         const dbTracks: DBTrack[] = [];
         const dbLines: DBLine[] = [];
 
-        for (const p of topo.parkings) {
-            dbParkings.push(DBConvert.parking(p, topo.id));
-        }
-
-        for (const w of topo.waypoints) {
-            dbWaypoints.push(DBConvert.waypoint(w, topo.id));
-        }
-
-        for (const m of topo.managers) {
-            dbManagers.push(DBConvert.manager(m, topo.id));
-        }
-
-        for (const a of topo.accesses) {
-            dbAccesses.push(DBConvert.topoAccess(a, topo.id));
-        }
-
-        for (const s of topo.sectors) {
-            dbSectors.push(DBConvert.sector(s, topo.id));
-        }
-
-        for (const b of topo.boulders) {
-            dbBoulders.push(DBConvert.boulder(b, topo.id));
-            for (const i of b.images) {
-                dbBoulderImages.push(DBConvert.boulderImage(i, topo.id));
+        if (topo.parkings) {
+            for (const p of topo.parkings) {
+                dbParkings.push(DBConvert.parking(p, topo.id));
             }
-            for (const t of b.tracks) {
-                dbTracks.push(DBConvert.track(t, topo.id, b.id));
-                for (const l of t.lines) {
-                    dbLines.push(DBConvert.line(l, topo.id, t.id));
+        }
+
+        if (topo.waypoints) {
+            for (const w of topo.waypoints) {
+                dbWaypoints.push(DBConvert.waypoint(w, topo.id));
+            }
+        }
+
+        if (topo.managers) {
+            for (const m of topo.managers) {
+                dbManagers.push(DBConvert.manager(m, topo.id));
+            }
+        }
+
+        if (topo.accesses) {
+            for (const a of topo.accesses) {
+                dbAccesses.push(DBConvert.topoAccess(a, topo.id));
+            }
+        }
+
+        if (topo.sectors) {
+            for (const s of topo.sectors) {
+                dbSectors.push(DBConvert.sector(s, topo.id));
+            }
+        }
+
+        if (topo.boulders) {
+            for (const b of topo.boulders) {
+                dbBoulders.push(DBConvert.boulder(b, topo.id));
+                for (const i of b.images) {
+                    dbBoulderImages.push(DBConvert.boulderImage(i, topo.id, b.id));
+                }
+                for (const t of b.tracks) {
+                    dbTracks.push(DBConvert.track(t, topo.id, b.id));
+                    for (const l of t.lines) {
+                        dbLines.push(DBConvert.line(l, topo.id, t.id));
+                    }
                 }
             }
         }
+        // Ordering is important, to make sure foreign key relations do not break!
         const promises = [
             this.client
                 .from<DBTopo>("topos")
@@ -228,8 +327,7 @@ export class ApiService {
                 .upsert(dbBoulders, { returning: "minimal" }),
             this.client
                 .from<DBBoulderImage>("boulder_images")
-                .upsert(dbBoulderImages, { returning: "minimal" })
-            ,
+                .upsert(dbBoulderImages, { returning: "minimal" }),
             this.client
                 .from<DBTrack>("tracks")
                 .upsert(dbTracks, { returning: "minimal" }),
@@ -237,16 +335,16 @@ export class ApiService {
                 .from<DBLine>("lines")
                 .upsert(dbLines, { returning: "minimal" }),
         ];
-
-        const results = await Promise.all(promises);
-        let error = false;
-        for (const res of results) {
-            if (res.error) {
-                error = true;
-                console.error("Error saving topo to DB: ", res.error);
-            }
+        let success = true;
+        for (const promise of promises) {
+           const res = await promise;
+           if (res.error) {
+               success = false;
+               console.error("Error saving topo to DB: ", res.error);
+           }
         }
-        return error;
+        return success;
+
     }
 }
 

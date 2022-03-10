@@ -63,10 +63,10 @@ export const AccessSlideover: React.FC<AccessSlideoverProps> = ({
                                 <div className='font-semibold'>Etape {index+1}</div>
                             }
                             <div>{step.description}</div>
-                            {step.imageUrl &&
+                            {step.imagePath &&
                                 <div className="w-auto relative mt-2 h-[200px]">
                                     <NextImage
-                                        src={step.imageUrl}
+                                        src={step.imagePath}
                                         className="rounded-lg"
                                         alt={"Marche d'approche étape "+index}
                                         layout="fill"

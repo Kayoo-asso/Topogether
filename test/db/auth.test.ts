@@ -34,7 +34,7 @@ const user1: User = {
     email: "pierre@kayoo-asso.fr" as Email,
     role: "USER",
     created: new Date().toISOString(),
-    imageUrl: "Pretend there's an image here",
+    imagePath: "Pretend there's an image here",
     firstName: "Pierre" as Name,
     lastName: "Tournelolotte" as Name,
     country: "France" as Name,

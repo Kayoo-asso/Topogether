@@ -1,10 +1,10 @@
 import type { QuarkArray } from 'helpers/quarky';
 import type { Amenities, ClimbTechniques, RockTypes } from './Bitflags';
 import type {
-  Grade, LightGrade, Orientation, TopoStatus, TopoType, Difficulty,
+  Grade, LightGrade, Orientation, TopoStatus, TopoType, Difficulty, Reception,
 } from './Enums';
-import type { LinearRing, LineString, MultiPolygon, Point, Polygon, Position } from './GeoJson';
-import type { UUID, GeoCoordinates, RequireAtLeastOne, StringBetween, Name, Description, Email } from './Utils';
+import type { LinearRing, LineString, MultiLineString, MultiPolygon, Point, Polygon, Position } from './GeoJson';
+import type { UUID, GeoCoordinates, RequireAtLeastOne, StringBetween, Name, Description, Email, NullableOptional } from './Utils';
 import type { Profile, TrackRating } from './User';
 import type { BoulderImage } from './Image';
 
@@ -46,32 +46,32 @@ export interface TopoData {
   location: GeoCoordinates,
   rockTypes?: RockTypes,
   amenities?: Amenities,
-  hasOtherAmenities?: boolean,
-  otherAmenities?: Description
-
+  
   // these are optional, in case the profile has been deleted
   // (or the topo has not yet been validated)
   creator?: Profile,
   validator?: Profile,
-  image?: BoulderImage,
-
+  imagePath?: string,
+  
   closestCity?: Name,
-  altitude?: number,
   description?: Description,
   faunaProtection?: Description,
   ethics?: Description,
   danger?: Description
+  altitude?: number,
+  otherAmenities?: Description
 
-  sectors: SectorData[], // -> Quark<Array<Quark<Sector>>>
-  boulders: BoulderData[],
   lonelyBoulders: UUID[],
+
+  sectors: SectorData[],
+  boulders: BoulderData[],
   waypoints: Waypoint[]
   parkings: Parking[],
   accesses: TopoAccess[],
   managers: Manager[],
 }
 
-export interface DBTopo {
+export type DBTopo = NullableOptional<{
   id: UUID,
   name: Name,
   status: TopoStatus,
@@ -84,7 +84,7 @@ export interface DBTopo {
   submitted?: string,
   validated?: string,
   // this one is about the physical place
-  cleaned?: string, 
+  cleaned?: string,
   
   amenities: Amenities,
   rockTypes: RockTypes,
@@ -95,16 +95,16 @@ export interface DBTopo {
   ethics?: Description,
   danger?: Description,
   altitude?: number,
+  closestCity?: Name,
   otherAmenities?: Description,
 
   lonelyBoulders: UUID[],
 
-  imageId?: UUID,
-
   // these can be null, in case the person's account is deleted
   creatorId?: UUID,
   validatorId?: UUID,
-}
+  imagePath?: string,
+}>;
 
 export type LightTopo = Omit<TopoData, 'sectors' | 'boulders' | 'lonelyBoulders' | 'waypoints' | 'parkings' | 'accesses' | 'managers'> & {
   firstParkingLocation?: GeoCoordinates,
@@ -128,13 +128,13 @@ export interface Manager {
   contactPhone?: StringBetween<1, 30>,
   contactMail?: Email,
   description?: Description
-  adress?: Description,
+  address?: Description,
   zip?: number,
   city?: Name,
-  imageUrl?: string
+  imagePath?: string,
 }
 
-export interface DBManager {
+export type DBManager = NullableOptional<{
   id: UUID,
   name: Name,
   contactName: Name,
@@ -144,10 +144,10 @@ export interface DBManager {
   address?: Description,
   zip?: number,
   city?: Name,
-  imageUrl?: string,
-
+  
   topoId: UUID,
-}
+  imagePath?: string,
+}>;
 
 // TODO: is the RequireAtLeastOne correct?
 export type TopoAccess = RequireAtLeastOne<{
@@ -160,18 +160,18 @@ export type TopoAccess = RequireAtLeastOne<{
 
 export interface TopoAccessStep {
   description: Description
-  imageUrl?: string,
+  imagePath?: string,
 }
 
-export interface DBTopoAccess {
+export type DBTopoAccess = NullableOptional<{
   id: UUID,
   danger?: Description,
   difficulty?: Difficulty,
   duration?: number,
-  steps: TopoAccessStep[], // this is required and WILL be validated in the DB
-  topoId: UUID
-}
+  steps: TopoAccessStep[],
 
+  topoId: UUID,
+}>;
 
 export interface Parking {
   readonly id: UUID,
@@ -179,51 +179,56 @@ export interface Parking {
   location: GeoCoordinates,
   name?: Name,
   description?: Description
-  imageUrl?: string
+  imagePath?: string
 }
 
-export interface DBParking {
+export type DBParking = NullableOptional<{
   id: UUID,
   spaces: number,
   location: Point,
+  name?: Name,
   description?: Description,
-  imageUrl?: string,
+  imagePath?: string,
 
   topoId: UUID,
-}
+}>;
 
 export interface Waypoint {
   readonly id: UUID,
   name: Name,
   location: GeoCoordinates,
-  imageUrl?: string,
   description?: Description,
+  imagePath?: string,
 }
 
-export interface DBWaypoint {
+export type DBWaypoint = NullableOptional<{
   id: UUID,
   name: Name,
   location: Point,
   description?: Description,
-  imageUrl?: string,
-
+  
   topoId: UUID,
-}
+  imagePath?: string,
+}>;
 
 export interface SectorData {
   readonly id: UUID,
   name: Name,
   path: GeoCoordinates[],
+  index: number,
+
   boulders: UUID[],
 }
 
-export interface DBSector {
+export type DBSector = NullableOptional<{
   id: UUID,
   name: Name,
   path: LineString,
+  index: number,
+  boulders: UUID[],
 
   topoId: UUID,
-}
+}>;
 
 export interface BoulderData {
   readonly id: UUID,
@@ -238,7 +243,7 @@ export interface BoulderData {
   images: BoulderImage[]
 }
 
-export interface DBBoulder {
+export type DBBoulder = NullableOptional<{
   id: UUID,
   location: Point,
   name: Name,
@@ -247,7 +252,7 @@ export interface DBBoulder {
   dangerousDescent: boolean,
 
   topoId: UUID,
-}
+}>;
 
 // Order defined by the x-coordinate of the first point of the first line
 export interface TrackData {
@@ -274,7 +279,7 @@ export interface TrackData {
   creatorId?: UUID,
 }
 
-export interface DBTrack {
+export type DBTrack = NullableOptional<{
   id: UUID,
   index: number,
 
@@ -283,7 +288,7 @@ export interface DBTrack {
   height?: number,
   grade?: Grade,
   orientation?: Orientation,
-  reception?: Difficulty,
+  reception?: Reception,
   anchors?: number,
   techniques?: ClimbTechniques,
 
@@ -295,7 +300,7 @@ export interface DBTrack {
   topoId: UUID,
   boulderId: UUID,
   creatorId?: UUID,
-}
+}>;
 
 export interface Line {
   readonly id: UUID,
@@ -305,19 +310,21 @@ export interface Line {
   forbidden?: GeoCoordinates[][],
   // Starting points = max 2 for hand, max 2 for feet
   // Could not find a way to represent an array of length <= 2 in TypeScript types
-  handDepartures?: Position[],
-  feetDepartures?: Position[],
+  hand1?: Position,
+  hand2?: Position,
+  foot1?: Position,
+  foot2?: Position,
 
   // the images are provided with the boulder
   imageId: UUID
 }
 
-export interface DBLine {
+export type DBLine = NullableOptional<{
   id: UUID,
   index: number,
-  points: LineString, 
+  points: LineString,
   // list of polygons, assuming each LineString is closed
-  forbidden?: MultiLineString, 
+  forbidden?: MultiLineString,
   hand1?: Point,
   hand2?: Point,
   foot1?: Point,
@@ -326,4 +333,4 @@ export interface DBLine {
   topoId: UUID,
   trackId: UUID,
   imageId: UUID,
-}
+}>;

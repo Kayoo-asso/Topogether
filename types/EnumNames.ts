@@ -1,4 +1,4 @@
-import { Reception, Difficulty, TopoType, Orientation, Gender } from "./Enums";
+import { Reception, Difficulty, TopoType, Orientation } from "./Enums";
 
 export const DifficultyName: {[key in Difficulty]: string} = {
   [Difficulty.Good]: 'Facile',
@@ -10,8 +10,8 @@ export const DifficultyName: {[key in Difficulty]: string} = {
 export const ReceptionName: {[key in Reception]: string} = {
   [Reception.Good]: 'Bonne : sol plat',
   [Reception.OK]: 'Moyenne : sol irrégulier ou en pente',
+  [Reception.Dangerous]: 'Dangereuse : rocher présent',
   [Reception.None]: "ATTENTION ! Pas d'espace de réception",
-  [Reception.Dangerous]: 'Dangereuse : rocher présent'
 };
 
 export const TopoTypeName: {[key in TopoType]: string} = {
@@ -32,9 +32,3 @@ export const OrientationName: {[key in Orientation]: string} = {
     [Orientation.W]: 'W',
     [Orientation.NW]: 'NW',
 }
-
-export const GenderName: {[key in Gender]: string} = {
-  [Gender.Female]: 'Femme',
-  [Gender.Male]: 'Homme',
-  [Gender.Other]: 'Autre',
-};

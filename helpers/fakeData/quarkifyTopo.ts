@@ -6,7 +6,7 @@ export function quarkifyTopo(topo: TopoData): Quark<Topo> {
     const topoQuark = quark<Topo>({
         ...topo,
         sectors: new QuarkArray(topo.sectors),
-        boulders: new QuarkArray(topo.boulders.map(quarkifyBoulder), {
+        boulders: new QuarkArray(topo.boulders?.map(quarkifyBoulder), {
             onAdd: (boulder) => syncQuark<Boulder, BoulderDTO>(boulder.id, boulder, {
                 export: getBoulderExport(topo.id),
                 import: ({ topoId, ...dto }, boulder) => ({

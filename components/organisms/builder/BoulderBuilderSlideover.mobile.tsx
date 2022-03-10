@@ -110,7 +110,7 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
           {!full && (
             <div className="w-full relative h-[60px]">
               <NextImage
-                src={boulder.images[0] ? boulder.images[0].url : staticUrl.defaultKayoo}
+                src={boulder.images[0] ? boulder.images[0].imagePath : staticUrl.defaultKayoo}
                 className="rounded-sm"
                 alt="Boulder"
                 priority

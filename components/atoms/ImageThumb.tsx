@@ -47,7 +47,7 @@ export const ImageThumb: React.FC<ImageThumbProps> = ({
         </div>
       }
       <NextImage
-        src={props.image.url}
+        src={props.image.imagePath}
         alt="user generated image"
         layout="fill"
         objectFit="contain"

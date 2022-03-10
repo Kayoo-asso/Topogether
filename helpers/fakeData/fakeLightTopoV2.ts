@@ -6,7 +6,7 @@ export const images: BoulderImage[] = [
     // Topo image
     {
         id: uuid(),
-        url: "https://builder.topogether.com/public/uploads/topo/main-image/dad449499de38f1bdee5872de1a354d52fff6183.jpeg",
+        imagePath: "https://builder.topogether.com/public/uploads/topo/main-image/dad449499de38f1bdee5872de1a354d52fff6183.jpeg",
         width: 4592,
         height: 3064,
     },

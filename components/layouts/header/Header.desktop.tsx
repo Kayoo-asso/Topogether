@@ -122,7 +122,7 @@ export const HeaderDesktop: React.FC<HeaderDesktopProps> = watchDependencies(({
         <div className='w-1/12 flex justify-center items-center'>
           <div className='h-[45px] w-[45px] relative'>
             <ProfilePicture
-              src={session.imageUrl || staticUrl.defaultProfilePicture}
+              src={session.imagePath || staticUrl.defaultProfilePicture}
               onClick={() => setUserMenuOpen(m => !m)}
             />
           </div>

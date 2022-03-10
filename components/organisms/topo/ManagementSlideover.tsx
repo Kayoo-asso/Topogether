@@ -51,10 +51,10 @@ export const ManagementSlideover: React.FC<ManagementSlideoverProps> = ({
                         />
                     }
                     <div className='flex flex-row justify-end gap-6 items-center pb-6 md:pt-8'>
-                        {manager.imageUrl && 
+                        {manager.imagePath && 
                             <div className="w-1/2 relative mt-2 min-h-[100px]">
                                 <NextImage
-                                    src={manager.imageUrl}
+                                    src={manager.imagePath}
                                     alt={"Logo gestionnaire "+managerTab}
                                     layout="fill"
                                     objectFit="contain"
@@ -67,7 +67,7 @@ export const ManagementSlideover: React.FC<ManagementSlideoverProps> = ({
                     <div className='flex flex-row gap-4'>
                         <div className='flex flex-col gap-1 w-1/2'>
                             <div className='ktext-subtitle'>Adresse</div>
-                            <div className='ktext-base-little'>{manager.adress}</div>
+                            <div className='ktext-base-little'>{manager.address}</div>
                             <div className='ktext-base-little'>{manager.zip} {manager.city}</div>
                         </div>
 

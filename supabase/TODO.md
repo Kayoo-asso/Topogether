@@ -1,0 +1,4 @@
+- Test that `public.profiles` exposes all profiles, but prevents any update / insert / delete / truncate
+- Implement full-text search on topo / sector / boulder names
+- Create indices for foreign key columns
+- Integration tests for every security- or integrity-related trigger

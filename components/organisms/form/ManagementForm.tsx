@@ -26,11 +26,11 @@ export const ManagementForm: React.FC<ManagementFormProps> = watchDependencies((
             <div className='flex flex-row gap-6 items-end'>
                 <div className='w-32 md:mt-4'>
                     <ImageInput 
-                        value={manager.imageUrl}
+                        value={manager.imagePath}
                         onChange={(files) => {
                             props.manager.set({
                                 ...manager,
-                                imageUrl: files[0].url,
+                                imagePath: files[0].imagePath,
                             })
                         }}
                         onDelete={() => console.log('delete')} //TODO
@@ -51,10 +51,10 @@ export const ManagementForm: React.FC<ManagementFormProps> = watchDependencies((
             <TextInput 
                 id='manager-adress'
                 label='Adresse'
-                value={manager.adress}
+                value={manager.address}
                 onChange={(e) => props.manager.set({
                     ...manager,
-                    adress: e.target.value as Name
+                    address: e.target.value as Name
                 })}
             />
             <div className='flex flex-row gap-3'>

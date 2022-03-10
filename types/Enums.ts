@@ -8,8 +8,8 @@ export enum Difficulty {
 export enum Reception {
   Good,
   OK,
-  None,
   Dangerous,
+  None,
 }
 
 export enum Orientation {
@@ -37,12 +37,6 @@ export enum TopoType {
     DeepWater,
     Multipitch,
     Artificial,
-}
-
-export enum Gender {
-  Male,
-  Female,
-  Other
 }
 
 export const grades = ['3', '3+', '4', '4+', '5a', '5a+', '5b', '5b+', '5c', '5c+', '6a', '6a+', '6b', '6b+', '6c', '6c+',

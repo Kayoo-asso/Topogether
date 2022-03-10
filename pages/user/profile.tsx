@@ -21,7 +21,7 @@ const ProfilePage: NextPage = watchDependencies(() => {
   const [userName, setUserName] = useState<string>(session.userName);
   const [firstName, setFirstName] = useState<string | undefined>(session.firstName);
   const [lastName, setLastName] = useState<string | undefined>(session.lastName);
-  const [imageUrl, setImageUrl] = useState<string | undefined>(session.imageUrl);
+  const [imageUrl, setImageUrl] = useState<string | undefined>(session.imagePath);
   const [birthDate, setBirthDate] = useState<string | undefined>(session.birthDate); //TODO convert into Date
   const [country, setCountry] = useState<string | undefined>(session.country);
   const [city, setCity] = useState<string | undefined>(session.city);
@@ -44,7 +44,7 @@ const ProfilePage: NextPage = watchDependencies(() => {
         userName: userName as Name,
         firstName: firstName as Name,
         lastName: lastName as Name,
-        imageUrl,
+        imagePath: imageUrl,
         birthDate,
         country: country as Name,
         city: city as Name,

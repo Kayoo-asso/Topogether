@@ -1,4 +1,5 @@
-import { Amenities, Boulder, BoulderData, BoulderImage, DBBoulder, DBBoulderImage, DBLine, DBManager, DBParking, DBSector, DBTopo, DBTopoAccess, DBTrack, DBWaypoint, Line, LinearRing, LineCoords, Manager, Parking, PolygonCoords, Position, RockTypes, Sector, SectorData, Topo, TopoAccess, TopoData, TopoType, Track, TrackData, UUID, Waypoint, WaypointDTO } from "types";
+import { createRouteLoader } from "next/dist/client/route-loader";
+import { Amenities, Boulder, BoulderData, BoulderImage, DBBoulder, DBBoulderImage, DBLine, DBManager, DBParking, DBSector, DBTopo, DBTopoAccess, DBTrack, DBWaypoint, Line, LinearRing, LineCoords, LineString, Manager, MultiLineString, Parking, Point, PolygonCoords, Position, RockTypes, Sector, SectorData, Topo, TopoAccess, TopoData, TopoType, Track, TrackData, UUID, Waypoint, WaypointDTO } from "types";
 
 // IMPORTANT: perform all conversions by explicitly assigning all properties.
 // DO NOT destructure one of the input arguments into the result
@@ -6,6 +7,34 @@ import { Amenities, Boulder, BoulderData, BoulderImage, DBBoulder, DBBoulderImag
 // This WILL result in a database error when trying to insert / update
 // with additional properties.
 
+const toPointNullable = (p?: Position): Point | null =>
+    p ? toPoint(p) : null;
+
+const toPoint = (p: Position): Point => ({
+    type: "Point",
+    coordinates: p
+});
+
+const toLineString = (l: Position[]): LineString => {
+    if (l.length < 2) throw new Error("Error: found a LineString with <2 points");
+    return {
+        type: "LineString",
+        coordinates: l as LineCoords
+    }
+}
+
+const toMultiLineString = (l?: Position[][]): MultiLineString | null => {
+    if (!l) return null;
+    l.forEach(x => {
+        if (x.length < 2) {
+            throw new Error("Error: found a line within a MultiLineString with less than 2 points")
+        }
+    });
+    return {
+        type: "MultiLineString",
+        coordinates: l as LineCoords[]
+    };
+}
 
 // TODO: better validation of spatial types 
 export class DBConvert {
@@ -13,57 +42,37 @@ export class DBConvert {
         const result: DBLine = {
             id: line.id,
             index: line.index,
-            points: {
-                type: "LineString",
-                coordinates: line.points as LineCoords
-            },
+            points: toLineString(line.points),
             topoId,
             trackId,
-            imageId: line.imageId
-        }
-        if (line.forbidden) {
-            result.forbidden = {
-                type: "MultiLineString",
-                coordinates: line.forbidden as LineCoords[],
-            }
-        }
-        if (line.handDepartures) {
-            result.hand1 = {
-                type: "Point",
-                coordinates: line.handDepartures[0]
-            };
-            result.hand2 = {
-                type: "Point",
-                coordinates: line.handDepartures[1]
-            }
-        }
-        if (line.feetDepartures) {
-            result.foot1 = {
-                type: "Point",
-                coordinates: line.feetDepartures[0]
-            };
-            result.foot2 = {
-                type: "Point",
-                coordinates: line.feetDepartures[1]
-            };
-        }
-
+            imageId: line.imageId,
+            forbidden: null,
+            hand1: null,
+            hand2: null,
+            foot1: null,
+            foot2: null
+        };
+        result.forbidden = toMultiLineString(line.forbidden);
+        result.hand1 = toPointNullable(line.hand1);
+        result.hand2 = toPointNullable(line.hand2);
+        result.foot1 = toPointNullable(line.foot1);
+        result.foot2 = toPointNullable(line.foot2);
         return result;
     }
 
-    static track(track: Track, topoId: UUID, boulderId: UUID): DBTrack {
+    static track(track: Track | TrackData, topoId: UUID, boulderId: UUID): DBTrack {
         return {
             id: track.id,
             index: track.index,
 
-            name: track.name,
-            description: track.description,
-            height: track.height,
-            grade: track.grade,
-            orientation: track.orientation,
-            reception: track.reception,
-            anchors: track.anchors,
-            techniques: track.techniques,
+            name: track.name ?? null,
+            description: track.description ?? null,
+            height: track.height ?? null,
+            grade: track.grade ?? null,
+            orientation: track.orientation ?? null,
+            reception: track.reception ?? null,
+            anchors: track.anchors ?? null,
+            techniques: track.techniques ?? null,
 
             isTraverse: track.isTraverse,
             isSittingStart: track.isSittingStart,
@@ -72,17 +81,14 @@ export class DBConvert {
 
             topoId,
             boulderId,
-            creatorId: track.creatorId
+            creatorId: track.creatorId ?? null
         }
     }
 
-    static boulder(boulder: Boulder, topoId: UUID): DBBoulder {
+    static boulder(boulder: Boulder | BoulderData, topoId: UUID): DBBoulder {
         return {
             id: boulder.id,
-            location: {
-                type: "Point",
-                coordinates: boulder.location
-            },
+            location: toPoint(boulder.location),
             name: boulder.name,
             isHighball: boulder.isHighball,
             mustSee: boulder.mustSee,
@@ -91,26 +97,27 @@ export class DBConvert {
         };
     }
 
-    static boulderImage(img: BoulderImage, topoId: UUID): DBBoulderImage {
+    static boulderImage(img: BoulderImage, topoId: UUID, boulderId: UUID): DBBoulderImage {
         return {
             id: img.id,
-            url: img.url,
+            index: img.index,
             width: img.width,
             height: img.height,
-            topoId
+            topoId,
+            boulderId,
+            imagePath: img.imagePath,
         };
     }
 
     // TODO: better validation of sector.path?
     // Or let the DB take care of it
-    static sector(sector: Sector, topoId: UUID): DBSector {
+    static sector(sector: Sector | SectorData, topoId: UUID): DBSector {
         return {
             id: sector.id,
+            index: sector.index,
             name: sector.name,
-            path: {
-                type: "LineString",
-                coordinates: sector.path as LineCoords
-            },
+            path: toLineString(sector.path),
+            boulders: sector.boulders,
             topoId,
         };
     }
@@ -118,13 +125,11 @@ export class DBConvert {
     static parking(parking: Parking, topoId: UUID): DBParking {
         return {
             id: parking.id,
+            name: parking.name ?? null,
             spaces: parking.spaces,
-            location: {
-                type: "Point",
-                coordinates: parking.location
-            },
-            description: parking.description,
-            imageUrl: parking.imageUrl,
+            location: toPoint(parking.location),
+            description: parking.description ?? null,
+            imagePath: parking.imagePath ?? null,
             topoId
         };
     }
@@ -133,12 +138,9 @@ export class DBConvert {
         return {
             id: waypoint.id,
             name: waypoint.name,
-            location: {
-                type: "Point",
-                coordinates: waypoint.location
-            },
-            description: waypoint.description,
-            imageUrl: waypoint.imageUrl,
+            location: toPoint(waypoint.location),
+            description: waypoint.description ?? null,
+            imagePath: waypoint.imagePath ?? null,
             topoId,
         };
     }
@@ -148,13 +150,13 @@ export class DBConvert {
             id: manager.id,
             name: manager.name,
             contactName: manager.contactName,
-            contactMail: manager.contactMail,
-            contactPhone: manager.contactPhone,
-            description: manager.description,
-            address: manager.adress,
-            zip: manager.zip,
-            city: manager.city,
-            imageUrl: manager.imageUrl,
+            contactMail: manager.contactMail ?? null,
+            contactPhone: manager.contactPhone ?? null,
+            description: manager.description ?? null,
+            address: manager.address ?? null,
+            zip: manager.zip ?? null,
+            city: manager.city ?? null,
+            imagePath: manager.imagePath ?? null,
             topoId
         };
     }
@@ -162,47 +164,45 @@ export class DBConvert {
     static topoAccess(access: TopoAccess, topoId: UUID): DBTopoAccess {
         return {
             id: access.id,
-            danger: access.danger,
-            difficulty: access.difficulty,
-            duration: access.duration,
+            danger: access.danger ?? null,
+            difficulty: access.difficulty ?? null,
+            duration: access.duration ?? null,
             steps: access.steps ?? [],
             topoId
         }
     }
 
-    static topo(topo: Topo): DBTopo {
+    static topo(topo: Topo| TopoData): DBTopo {
         return {
             id: topo.id,
             name: topo.name,
             status: topo.status,
-            location: {
-                type: "Point",
-                coordinates: topo.location
-            },
+            location: toPoint(topo.location),
             forbidden: topo.forbidden,
 
             modified: topo.modified,
-            submitted: topo.submitted,
-            validated: topo.validated,
-            cleaned: topo.cleaned,
+            submitted: topo.submitted ?? null,
+            validated: topo.validated ?? null,
+            cleaned: topo.cleaned ?? null,
 
             amenities: topo.amenities ?? Amenities.None,
             rockTypes: topo.rockTypes ?? RockTypes.None,
 
-            type: topo.type,
-            description: topo.description,
-            faunaProtection: topo.faunaProtection,
-            ethics: topo.ethics,
-            danger: topo.danger,
-            altitude: topo.altitude,
-            otherAmenities: topo.otherAmenities,
+            type: topo.type ?? null,
+            description: topo.description ?? null,
+            faunaProtection: topo.faunaProtection ?? null,
+            ethics: topo.ethics ?? null,
+            danger: topo.danger ?? null,
+            altitude: topo.altitude ?? null,
+            closestCity: topo.closestCity ?? null,
+            otherAmenities: topo.otherAmenities ?? null,
 
             lonelyBoulders: topo.lonelyBoulders,
-
-            imageUrl: topo.imageUrl,
-
-            creatorId: topo.creator?.id,
-            validatorId: topo.validator?.id
+            
+            // TODO: is this behavior correct?
+            creatorId: topo.creator?.id ?? null,
+            validatorId: topo.validator?.id ?? null,
+            imagePath: topo.imagePath ?? null,
         };
     }
 }
