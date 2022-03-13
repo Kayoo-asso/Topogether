@@ -1,4 +1,5 @@
 import { DropdownOption } from "components";
+import { ReactNode } from "react";
 import { MapToolEnum } from "types";
 import { HeaderDesktop, HeaderMobile } from ".";
 
@@ -14,6 +15,7 @@ interface HeaderProps {
     onWaypointClick?: () => void,
     currentTool?: MapToolEnum,
     displayLogin?: boolean,
+    children?: ReactNode;
   }
 
   export const Header: React.FC<HeaderProps> = (props: HeaderProps) => {

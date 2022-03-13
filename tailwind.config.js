@@ -277,6 +277,7 @@ module.exports = {
       subtitle: ['0.8125rem', {lineHeight: '1.25rem'}]
     },
     fontWeight: {
+      light: '300',
       normal: '400',
       medium: '500',
       semibold: '600',
