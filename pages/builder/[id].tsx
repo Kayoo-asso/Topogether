@@ -8,7 +8,7 @@ import {
   Header, InfoFormSlideover, ManagementFormSlideover, TrackFormSlideagainstDesktop, 
   BoulderMarkerDropdown, ParkingMarkerDropdown, WaypointMarkerDropdown,
   ModalValidateTopo, ModalDeleteTopo, GeoCamera, Drawer, LeftbarBuilderDesktop, BoulderBuilderSlideagainstDesktop,
-  ParkingBuilderSlide, AccessFormSlideover, WaypointBuilderSlide, ModalRenameSector, ModalDelete, SectorAreaMarkerDropdown, 
+  ParkingBuilderSlide, AccessFormSlideover, WaypointBuilderSlide, ModalRenameSector, ModalDelete, SectorAreaMarkerDropdown, BuilderProgressIndicator, 
 } from 'components';
 import { useRouter } from 'next/router';
 import { quarkTopo } from 'helpers/fakeData/fakeTopoV2';
@@ -278,8 +278,9 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
         onSectorClick={() => setCurrentTool(currentTool === 'SECTOR' ? undefined : 'SECTOR')}
         onParkingClick={() => setCurrentTool(currentTool === 'PARKING' ? undefined : 'PARKING')}
         onWaypointClick={() => setCurrentTool(currentTool === 'WAYPOINT' ? undefined : 'WAYPOINT')}
-      />
-
+      >
+      <BuilderProgressIndicator topo={quarkTopo}/>
+      </Header>
       <div className="h-content md:h-full relative flex flex-row md:overflow-hidden">
         <LeftbarBuilderDesktop
           topoQuark={quarkTopo}

@@ -68,7 +68,7 @@ export const MultipleImageInput: React.FC<MultipleImageInputProps> = ({
               onDelete={props.onImageDelete}
             />
           )
-        else return <div className='w-full'></div>
+        else return <div className='w-full' key={index}></div>
       })}
 
       {allowUpload && (

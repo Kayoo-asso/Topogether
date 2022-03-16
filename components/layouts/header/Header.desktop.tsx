@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 import NextImage from 'next/image';
 import { Dropdown, DropdownOption, Icon, ProfilePicture } from 'components';
 import Link from 'next/link';
@@ -21,6 +21,7 @@ interface HeaderDesktopProps {
   currentTool?: MapToolEnum,
   displayLogin?: boolean,
   displayUser?: boolean,
+  children?: ReactNode;
 }
 
 export const HeaderDesktop: React.FC<HeaderDesktopProps> = watchDependencies(({
@@ -48,7 +49,6 @@ export const HeaderDesktop: React.FC<HeaderDesktopProps> = watchDependencies(({
 
   return (
     <div className="bg-dark items-center h-header hidden md:flex">
-
       <Link href={props.backLink} passHref>
         <div className="w-1/12 relative h-[70%] cursor-pointer">
           <NextImage
@@ -69,22 +69,24 @@ export const HeaderDesktop: React.FC<HeaderDesktopProps> = watchDependencies(({
           {props.title}
         </span>
         {props.menuOptions && (
-            <Icon
-              name="arrow-full"
-              center
-              SVGClassName="fill-white w-4 h-4 rotate-90 ml-[20px]"
-              onClick={() => setMenuOpen(!menuOpen)}
-            />
+          <Icon
+            name="arrow-full"
+            center
+            SVGClassName="fill-white w-4 h-4 rotate-90 ml-[20px]"
+            onClick={() => setMenuOpen(!menuOpen)}
+          />
         )}
         {props.menuOptions && menuOpen && (
-            <Dropdown
-              options={props.menuOptions}
-              onSelect={() => setMenuOpen(false)}
-              className="z-1000 top-[7%]"
-            />
+          <Dropdown
+            options={props.menuOptions}
+            onSelect={() => setMenuOpen(false)}
+            className="z-1000 top-[7%]"
+          />
         )}
       </div>
-
+      <div className="flex-1 flex flex-row items-center">
+        {props.children}
+      </div>
       {displayMapTools && (
         <div className="flex flex-row gap-8 mr-[40%]">
           <Icon
@@ -127,20 +129,16 @@ export const HeaderDesktop: React.FC<HeaderDesktopProps> = watchDependencies(({
             />
           </div>
           {userMenuOpen &&
-            <Dropdown 
+            <Dropdown
               options={[
-                { value: 'Mon profil', action: () => router.push('/user/profile')},
-                { value: 'Se déconnecter', action: async () => { await api.signOut(); router.push('/'); }}
+                { value: 'Mon profil', action: () => router.push('/user/profile') },
+                { value: 'Se déconnecter', action: async () => { await api.signOut(); router.push('/'); } }
               ]}
               className='w-[200px] -ml-[180px] mt-[180px]'
             />
           }
         </div>
       }
-      
-
-  
-
     </div>
   );
 });

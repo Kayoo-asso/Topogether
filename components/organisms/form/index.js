@@ -6,3 +6,4 @@ export * from './WaypointForm';
 export * from './ManagementForm';
 export * from './AccessForm';
 export * from './InfoForm';
+export * from './BuilderProgressIndicator'

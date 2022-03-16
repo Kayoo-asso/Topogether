@@ -17,6 +17,7 @@
   .ktext-label-superbig { @apply font-sans font-semibold text-3xl uppercase }
   .ktext-error { @apply font-sans font-normal text-xs italic }
   .ktext-subtext { @apply font-sans font-normal text-xs }
+  .ktext-light { @apply font-sans font-light text-xs }
 }
 
 .hide-after-two-lines {
