@@ -32,7 +32,7 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(({
       placeholder={props.label}
       type={type}
       id={props.id}
-      value={props.value}
+      value={props.value || ''}
       className={`peer h-10 ktext-base focus:outline-none w-full \
         ${big ? 'border-b-3' : 'border-b-2'}  \
         ${white ? 'border-white bg-white bg-opacity-0 text-white' : 'border-dark focus:border-main text-dark'} \ 

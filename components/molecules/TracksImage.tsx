@@ -80,7 +80,7 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
     >
       <svg
         style={{ 
-          cursor: `url(${getCursorUrl()}) ${props.currentTool === 'ERASER' ? '3 7': ''}, auto`,
+          cursor: editable ? `url(${getCursorUrl()}) ${props.currentTool === 'ERASER' ? '3 7': ''}, auto` : '',
         }}
         className={"svg-canvas absolute z-50 " + (props.canvasClassName ? props.canvasClassName : '')}
         width={imgWidth}

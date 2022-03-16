@@ -17,7 +17,7 @@ const ForgotPasswordPage: NextPage = () => {
   }
   const send = () => {
       if (checkErrors()) {
-          console.log("Change password");
+          console.log("Reset password"); //TODO
       }
   }
 
