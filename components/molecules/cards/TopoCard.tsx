@@ -50,7 +50,7 @@ export const TopoCard: React.FC<TopoCardProps> = React.memo((props: TopoCardProp
           <Card className="relative text-center text-grey-medium bg-white flex flex-col cursor-pointer">
             <div className="w-full h-[70px] md:h-44 top-0 relative">
               <NextImage
-                src={props.topo.image ? props.topo.image.url : staticUrl.defaultKayoo}
+                src={props.topo.imagePath || staticUrl.defaultKayoo}
                 className="rounded-t-lg"
                 alt="topo-image"
                 layout="fill"

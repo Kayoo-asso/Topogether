@@ -42,7 +42,7 @@ const Topo: NextPage = () => {
     if (selectedBoulder()?.id === boulderQuark().id)
         selectedBoulder.select(undefined);
     else {
-      setCurrentImage(boulderQuark().images[0]);
+      if (boulderQuark().images[0]) setCurrentImage(boulderQuark().images[0]);
       selectedBoulder.select(boulderQuark);
     }
   }, [selectedBoulder]);
@@ -107,6 +107,10 @@ const Topo: NextPage = () => {
       setDisplayManagement(false);
     }
   }, [currentDisplay]);
+
+  useEffect(() => {
+    console.log(currentImage);
+  }, [currentImage]);
 
   if (typeof id !== 'string' || !topo) return null;
   return (
@@ -226,7 +230,7 @@ const Topo: NextPage = () => {
                   open
                   boulder={boulder}
                   selectedTrack={selectedTrack}
-                  topoCreatorId={topo.creatorId}
+                  topoCreatorId={topo.creator?.id}
                   currentImage={currentImage}
                   setCurrentImage={setCurrentImage}
                   onClose={() => {
@@ -240,7 +244,7 @@ const Topo: NextPage = () => {
               <BoulderSlideagainstDesktop
                 boulder={boulder}
                 selectedTrack={selectedTrack}
-                topoCreatorId={topo.creatorId}
+                topoCreatorId={topo.creator?.id}
                 currentImage={currentImage || defaultImage}
                 setCurrentImage={setCurrentImage}
                 onClose={() => {

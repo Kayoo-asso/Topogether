@@ -1,5 +1,4 @@
 import React, { useCallback, useRef, useState } from 'react';
-import { v4 as uuid } from 'uuid';
 import type { NextPage } from 'next';
 import {
   AddTopoCard,
@@ -14,60 +13,6 @@ const DashboardPage: NextPage = () => {
   const [lightTopos, setLightTopos] = useState<LightTopo[]>([
     quarkLightTopo(),
     quarkLightTopo()
-    // {
-    //   ...fakeLightTopo,
-    //   status: TopoStatus.Submitted,
-    //   id: uuid(),
-    //   name: 'Les roches qui dansent très souvent',
-    // },
-    // {
-    //   ...fakeLightTopo,
-    //   status: TopoStatus.Submitted,
-    //   id: uuid(),
-    //   name: 'Les roches qui dansent très souvent',
-    // },
-    // {
-    //   ...fakeLightTopo,
-    //   status: TopoStatus.Submitted,
-    //   id: uuid(),
-    //   name: 'Les roches qui dansent très souvent',
-    // },
-    // {
-    //   ...fakeLightTopo,
-    //   status: TopoStatus.Submitted,
-    //   id: '4',
-    //   name: 'Les roches qui dansent très souvent',
-    // },
-    // {
-    //   ...fakeLightTopo,
-    //   status: TopoStatus.Submitted,
-    //   id: uuid(),
-    //   name: 'Les roches qui dansent très souvent',
-    // },
-    // {
-    //   ...fakeLightTopo,
-    //   status: TopoStatus.Submitted,
-    //   id: uuid(),
-    //   name: 'Les roches qui dansent très souvent',
-    // },
-    // {
-    //   ...fakeLightTopo,
-    //   status: TopoStatus.Submitted,
-    //   id: uuid(),
-
-    // },
-    // {
-    //   ...fakeLightTopo,
-    //   status: TopoStatus.Validated,
-    //   id: '8',
-
-    // },
-    // {
-    //   ...fakeLightTopo,
-    //   status: TopoStatus.Draft,
-    //   id: uuid(),
-
-    // },
   ]);
   const draftLightTopos = lightTopos.filter((topo) => topo.status === TopoStatus.Draft);
   const submittedLightTopos = lightTopos.filter((topo) => topo.status === TopoStatus.Submitted);

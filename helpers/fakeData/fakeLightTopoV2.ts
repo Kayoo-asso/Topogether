@@ -6,6 +6,7 @@ export const images: BoulderImage[] = [
     // Topo image
     {
         id: uuid(),
+        index: 0,
         imagePath: "https://builder.topogether.com/public/uploads/topo/main-image/dad449499de38f1bdee5872de1a354d52fff6183.jpeg",
         width: 4592,
         height: 3064,
@@ -24,8 +25,6 @@ export const lightTopo: LightTopo = {
     status: TopoStatus.Draft,
     type: TopoType.Boulder,
 
-    modified: (new Date()).toISOString(),
-
     altitude: 775,
     closestCity: "Yzéron" as Name,
     location: [4.607264, 45.701356],
@@ -37,12 +36,12 @@ export const lightTopo: LightTopo = {
 
     danger: "Il y a beaucoup de pentes" as Description,
 
-    image: images[0],
+    imagePath: images[0].imagePath,
     creator: {
         id: topoCreatorId,
         userName: 'Flavien' as Name,
         role: 'ADMIN',
-        created: (new Date(2020, 09, 14)).toISOString()
+        created: (new Date(2020, 9, 14)).toISOString()
     },
 
     firstParkingLocation: [4.607274, 45.701321],
@@ -60,12 +59,12 @@ export const lightTopo: LightTopo = {
         'None': 12,
         Total: 241
     },
-    submittedAt: new Date(),
-    validatedAt: new Date(),
+    submitted: (new Date(2020, 9, 14)).toISOString(),
+    validated: (new Date(2020, 9, 14)).toISOString(),
+    modified: (new Date(2020, 9, 14)).toISOString(),
     // IMPORTANT: modifying anything in a topo changes the last modified at
     // TODO: if someone is editing a topo offline, should we reflect that
     // in the modifiedAt date for them?
-    modifiedAt: new Date(),
 }
 
 export const quarkLightTopo: Quark<LightTopo> = quark(lightTopo);

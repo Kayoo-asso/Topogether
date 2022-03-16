@@ -45,60 +45,98 @@ export const SVGTrack: React.FC<SVGTrackProps> = watchDependencies(({
                 onPointClick={(index) => props.onPointClick && props.onPointClick('LINE_POINT', index)}
             />
         )
-
-        // Hand and feet departures
+       
         if (displayTrackDetails && highlighted) {
-            if (line.handDepartures) {
-                for (let i = 0; i < line.handDepartures.length; i++) {
-                    const [handX, handY] = line.handDepartures[i];
-                    nodes.push(
-                        <SVGPoint
-                            key={'hand' + i}
-                            iconHref={`/assets/icons/colored/hand-full/_hand-full-${colorNumber}.svg`}
-                            x={handX * props.r}
-                            y={handY * props.r}
-                            draggable={editable}
-                            eraser={props.currentTool === 'ERASER'}
-                            onDrag={(pos) => {
-                                if (editable) {
-                                    const newHands = [...line.handDepartures!]
-                                    newHands[i] = [pos[0] / props.r, pos[1] / props.r];
-                                    quarkLine?.set({
-                                        ...line,
-                                        handDepartures: newHands,
-                                    })
-                                }
-                            }}
-                            onClick={() => props.onPointClick && props.onPointClick('HAND_DEPARTURE_POINT', i)}
-                        />
-                    );
-                }
+            // Hands departure
+            if (line.hand1) {
+                const [handX, handY] = line.hand1;
+                nodes.push(
+                    <SVGPoint
+                        key={'hand1'}
+                        iconHref={`/assets/icons/colored/hand-full/_hand-full-${colorNumber}.svg`}
+                        x={handX * props.r}
+                        y={handY * props.r}
+                        draggable={editable}
+                        eraser={props.currentTool === 'ERASER'}
+                        onDrag={(pos) => {
+                            if (editable) {
+                                quarkLine?.set({
+                                    ...line,
+                                    hand1: [pos[0] / props.r, pos[1] / props.r],
+                                })
+                            }
+                        }}
+                        onClick={() => props.onPointClick && props.onPointClick('HAND_DEPARTURE_POINT', -1)}
+                    />
+                );
             }
-            if (line.feetDepartures) {
-                for (let i = 0; i < line.feetDepartures.length; i++) {
-                    const [footX, footY] = line.feetDepartures[i];
-                    nodes.push(
-                        <SVGPoint
-                            key={'foot' + i}
-                            iconHref={`/assets/icons/colored/climbing-shoe-full/_climbing-shoe-full-${colorNumber}.svg`}
-                            x={footX * props.r}
-                            y={footY * props.r}
-                            draggable={editable}
-                            eraser={props.currentTool === 'ERASER'}
-                            onDrag={(pos) => {
-                                if (editable) {
-                                    const newFeet = [...line.feetDepartures!]
-                                    newFeet[i] = [pos[0] / props.r, pos[1] / props.r];
-                                    quarkLine?.set({
-                                        ...line,
-                                        feetDepartures: newFeet,
-                                    })
-                                }
-                            }}
-                            onClick={() => props.onPointClick && props.onPointClick('FOOT_DEPARTURE_POINT', i)}
-                        />
-                    );
-                }
+            if (line.hand2) {
+                const [handX, handY] = line.hand2;
+                nodes.push(
+                    <SVGPoint
+                        key={'hand2'}
+                        iconHref={`/assets/icons/colored/hand-full/_hand-full-${colorNumber}.svg`}
+                        x={handX * props.r}
+                        y={handY * props.r}
+                        draggable={editable}
+                        eraser={props.currentTool === 'ERASER'}
+                        onDrag={(pos) => {
+                            if (editable) {
+                                quarkLine?.set({
+                                    ...line,
+                                    hand2: [pos[0] / props.r, pos[1] / props.r],
+                                })
+                            }
+                        }}
+                        onClick={() => props.onPointClick && props.onPointClick('HAND_DEPARTURE_POINT', 0)}
+                    />
+                );
+            }
+
+            // Feet departure
+            if (line.foot1) {
+                const [footX, footY] = line.foot1;
+                nodes.push(
+                    <SVGPoint
+                        key={'foot1'}
+                        iconHref={`/assets/icons/colored/climbing-shoe-full/_climbing-shoe-full-${colorNumber}.svg`}
+                        x={footX * props.r}
+                        y={footY * props.r}
+                        draggable={editable}
+                        eraser={props.currentTool === 'ERASER'}
+                        onDrag={(pos) => {
+                            if (editable) {
+                                quarkLine?.set({
+                                    ...line,
+                                    foot1: [pos[0] / props.r, pos[1] / props.r],
+                                })
+                            }
+                        }}
+                        onClick={() => props.onPointClick && props.onPointClick('FOOT_DEPARTURE_POINT', 0)}
+                    />
+                );
+            }
+            if (line.foot2) {
+                const [footX, footY] = line.foot2;
+                nodes.push(
+                    <SVGPoint
+                        key={'foot2'}
+                        iconHref={`/assets/icons/colored/climbing-shoe-full/_climbing-shoe-full-${colorNumber}.svg`}
+                        x={footX * props.r}
+                        y={footY * props.r}
+                        draggable={editable}
+                        eraser={props.currentTool === 'ERASER'}
+                        onDrag={(pos) => {
+                            if (editable) {
+                                quarkLine?.set({
+                                    ...line,
+                                    foot2: [pos[0] / props.r, pos[1] / props.r],
+                                })
+                            }
+                        }}
+                        onClick={() => props.onPointClick && props.onPointClick('FOOT_DEPARTURE_POINT', -1)}
+                    />
+                );
             }
         }
 
@@ -130,10 +168,8 @@ export const SVGTrack: React.FC<SVGTrackProps> = watchDependencies(({
                 );
             }
         }
-
         return nodes;
     }
-    // constructNodes(track.lines.quarkAt(0));
 
     return <>
         {track.lines.quarks().map(constructNodes)}

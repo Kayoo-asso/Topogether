@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { useAsyncEffect, useCircle, useMarker } from "helpers";
 import { MarkerEventHandlers } from "types";
 

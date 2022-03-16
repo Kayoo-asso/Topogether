@@ -17,14 +17,13 @@ const NewPage: NextPage = watchDependencies(() => {
 
   const [step, setStep] = useState(0);
 
-  const topoData = {
+  const topoData: LightTopo = {
     id: v4(),
-    creatorId: session.id,
-    creatorPseudo: session!.userName,
+    creator: session,
     name: '' as StringBetween<1, 255>,
     status: 0,
     type: undefined,
-    isForbidden: false,
+    forbidden: false,
     location: fontainebleauLocation,
     nbSectors: 0,
     nbBoulders: 0,
@@ -33,7 +32,8 @@ const NewPage: NextPage = watchDependencies(() => {
       3: 0, 4: 0, 5:0, 6:0, 7:0, 8:0, 9:0, 
       None: 0,
       Total: 0,
-    }
+    },
+    modified: new Date().getDay()+'-'+new Date().getMonth()+'-'+new Date().getDay(),
   };
 
   const topoQuark = useCreateQuark<LightTopo>(topoData);
