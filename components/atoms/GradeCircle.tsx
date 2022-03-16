@@ -48,8 +48,8 @@ export const GradeCircle: React.FC<GradeCircleProps> = ({
   const sizeStyles = size === 'big'
     ? 'p-3 w-6 h-6 border-2'
     : size === 'little' 
-    ?'p-1 w-5 h-5 border'
-    : 'p-2 w-6 h-6 border';
+    ?'p-1 w-5 h-5 border-2'
+    : 'p-2 w-6 h-6 border-2';
   
   const content = props.content
     || (props.grade === "None" ? "n/a" : props.grade);

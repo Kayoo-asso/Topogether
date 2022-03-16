@@ -108,10 +108,6 @@ const Topo: NextPage = () => {
     }
   }, [currentDisplay]);
 
-  useEffect(() => {
-    console.log(currentImage);
-  }, [currentImage]);
-
   if (typeof id !== 'string' || !topo) return null;
   return (
     <>
