@@ -10,14 +10,15 @@ interface LeftbarBuilderDesktopProps {
     onBoulderSelect: (boulderQuark: Quark<Boulder>) => void,
     onTrackSelect: (trackQuark: Quark<Track>, boulderQuark: Quark<Boulder>) => void,
     onValidate: () => void,
+    activateValidation: boolean
 }
 
 export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = watchDependencies((props: LeftbarBuilderDesktopProps) => {
 
     return (
         <div className='bg-white border-r border-grey-medium min-w-[280px] w-[280px] h-full hidden md:flex flex-col px-2 py-10 z-500'>
-            
-            <SectorListBuilder 
+
+            <SectorListBuilder
                 topoQuark={props.topoQuark}
                 boulderOrder={props.boulderOrder}
                 selectedBoulder={props.selectedBoulder}
@@ -29,6 +30,7 @@ export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = watch
                 <Button
                     content='Valider le topo'
                     onClick={props.onValidate}
+                    activated={props.activateValidation}
                 />
             </div>
         </div>

@@ -7,4 +7,4 @@ export * from './Select';
 export * from './MultipleSelect';
 export * from './SliderInput';
 export * from './GradeSliderInput';
-export * from './BitflagMultipleSelect'
+export * from './BitflagMultipleSelect';

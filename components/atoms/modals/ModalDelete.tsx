@@ -13,13 +13,13 @@ interface ModalDeleteProps {
 export const ModalDelete: React.FC<ModalDeleteProps> = (props: ModalDeleteProps) => {
 
     return (
-        <Modal 
+        <Modal
             className={props.className}
             onClose={props.onClose}
         >
             <div className='p-6 pt-10'>
                 <div className='w-full h-[100px] relative mb-5'>
-                    <NextImage 
+                    <NextImage
                         src={staticUrl.deleteWarning}
                         priority
                         alt="Supprimer"
@@ -30,7 +30,7 @@ export const ModalDelete: React.FC<ModalDeleteProps> = (props: ModalDeleteProps)
                 <div className='mb-5'>
                     {props.children}
                 </div>
-                <Button 
+                <Button
                     content='Supprimer'
                     fullWidth
                     onClick={() => {
@@ -39,6 +39,6 @@ export const ModalDelete: React.FC<ModalDeleteProps> = (props: ModalDeleteProps)
                     }}
                 />
             </div>
-        </Modal> 
+        </Modal>
     )
 }
