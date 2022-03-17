@@ -48,7 +48,7 @@ export const TopoCard: React.FC<TopoCardProps> = React.memo((props: TopoCardProp
             }}    
         >
           <Card className="relative text-center text-grey-medium bg-white flex flex-col cursor-pointer">
-            <div className="w-full h-[70px] md:h-44 top-0 relative">
+            <div className="w-full h-[50%] md:h-[75%] top-0 relative">
               <NextImage
                 src={props.topo.imagePath || staticUrl.defaultKayoo}
                 className="rounded-t-lg"
@@ -58,24 +58,31 @@ export const TopoCard: React.FC<TopoCardProps> = React.memo((props: TopoCardProp
                 priority
               />
             </div>
-            <div className="md:pl-2 flex flex-row md:h-12 md:ml-4 md:items-center md:justify-center">
+            <div className="h-[50%] md:h-[25%] md:px-5 flex flex-row md:items-center md:justify-center">
               <div className="hidden md:block">
                 {getTopoIcons(props.topo.status)}
               </div>
+              
               <div className="p-2 md:pr-6 w-full flex flex-col items-start">
-                <div className="w-full pr-2 truncate ktext-title text-left text-dark font-bold text-xs">
-                  {props.topo.name}
-                </div>
-                <div className="w-full border-t-[1px] text-xxs flex flex-row flex-wrap items-end justify-between py-1">
-                  <span className="whitespace-nowrap">{`${props.topo.nbBoulders} blocs - ${props.topo.nbTracks} passages`}</span>
-                  <div className="md:hidden">
+
+                <div className='flex flex-row items-center mb-1 md:my-1'>
+                  <div className="pr-2 md:hidden">
                     {getTopoIcons(props.topo.status)}
                   </div>
+                  <div className="pr-2 truncate ktext-title text-left text-dark font-bold text-xs">
+                    {props.topo.name}
+                  </div>
+                </div>
+              
+
+                <div className="w-full border-t-[1px] text-xxs flex flex-row flex-wrap items-end justify-between py-1">
+                  <span className="whitespace-nowrap">{`${props.topo.nbBoulders} blocs - ${props.topo.nbTracks} passages`}</span>
                   <span className="mr-1 whitespace-nowrap">
                     {getAction()}
                   </span>
                 </div>
               </div>
+
             </div>
           </Card>
         </div>

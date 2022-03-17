@@ -40,12 +40,12 @@ const DashboardPage: NextPage = () => {
         title="Mes topos"
       />
 
-      <div className="flex flex-row h-content md:h-full">
+      <div className="flex flex-row w-full h-content md:h-full">
         <LeftbarDesktop
           currentMenuItem="BUILDER"
         />
 
-        <div ref={ref} className="bg-white overflow-y-auto h-contentPlusHeader md:h-contentPlusShell overflow-x-hidden">
+        <div ref={ref} className="bg-white w-full overflow-y-auto h-contentPlusHeader md:h-contentPlusShell overflow-x-hidden">
           <div className="px-4 md:px-8 py-6 flex flex-row-reverse justify-between items-center">
             <Button content="Créer un topo" href="/builder/new" />
             <div className="md:hidden ktext-section-title text-center">Mes topos</div>

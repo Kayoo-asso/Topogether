@@ -48,10 +48,7 @@ export const MultipleImageInput: React.FC<MultipleImageInputProps> = ({
   // index of last image to display
   const sliceEnd = sliceStart + nbVisible;
   const toDisplay = props.images.slice(sliceStart, sliceEnd);
-
-  console.log(props.boulder);
-  console.log(props.boulder?.tracks.filter(track => track.lines.filter(line => line.imageId === toDisplay[1].id).toArray().length > 0).toArray());
-
+  
   return (
     <div className='flex flex-row gap-1.5 w-full'>
       {displayLeftArrow && (
