@@ -7,11 +7,11 @@ import { SVGTrack } from 'components';
 import { staticUrl } from 'helpers/globals';
 import useDimensions from 'react-cool-dimensions';
 import { getMousePosInside } from '../../helpers';
-import { QuarkArray, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
+import { Quark, QuarkArray, QuarkIter, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
 
 interface TracksImageProps {
   image: BoulderImage,
-  tracks: QuarkArray<Track>,
+  tracks: QuarkIter<Quark<Track>>,
   selectedTrack?: SelectQuarkNullable<Track>,
   imageClassName?: string,
   containerClassName?: string,
@@ -102,7 +102,7 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
           }
         }}
       >
-        {props.tracks.quarks().map(trackQuark => {
+        {props.tracks.map(trackQuark => {
           const highlighted = selectedTrack === undefined ||
                 trackQuark().id === selectedTrack.id;           
           if (highlighted || displayPhantomTracks) 
@@ -118,7 +118,7 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
                 displayTrackDetails={displayTracksDetails}
                 displayTrackOrderIndexes={displayTrackOrderIndexes}
                 trackWeight={tracksWeight}
-                onLineClick={(props.tracks.length > 1 && props.selectedTrack) ? () => props.selectedTrack!.select(trackQuark) : undefined}
+                onLineClick={props.selectedTrack ? () => props.selectedTrack!.select(trackQuark) : undefined}
                 onPointClick={props.onPointClick}
               />
             )

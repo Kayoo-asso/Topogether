@@ -22,7 +22,7 @@ export const BoulderPreviewDesktop: React.FC<BoulderPreviewDesktopProps> = watch
             <div className='bg-dark w-full flex flex-col items-center'>
                 <TracksImage 
                     image={props.currentImage}
-                    tracks={boulder.tracks}
+                    tracks={boulder.tracks.quarks()}
                     selectedTrack={props.selectedTrack}
                     containerClassName='h-[180px]'
                 />
