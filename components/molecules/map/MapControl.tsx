@@ -3,8 +3,8 @@ import { Wrapper } from '@googlemaps/react-wrapper';
 import { BoulderMarker, CreatingSectorAreaMarker, For, Map, ParkingMarker, RoundButton, SatelliteButton, SectorAreaMarker, Show, TopoMarker, UserMarker, WaypointMarker } from 'components';
 import { BoulderFilterOptions, BoulderFilters, MapSearchbarProps, TopoFilterOptions, TopoFilters } from '.';
 import { MapSearchbar } from '..';
-import { Amenities, Boulder, ClimbTechniques, GeoCoordinates, gradeToLightGrade, LightGrade, LightTopo, MapProps, MarkerProps, Parking, PolyMouseEvent, Sector, Topo, UUID, Waypoint } from 'types';
-import { fontainebleauLocation, googleGetPlace, hasFlag, hasSomeFlags, mergeFlags, toLatLng } from 'helpers';
+import { Amenities, Boulder, ClimbTechniques, GeoCoordinates, gradeToLightGrade, LightGrade, LightTopo, MapProps, Parking, PolyMouseEvent, Sector, Topo, UUID, Waypoint } from 'types';
+import { googleGetPlace, hasFlag, hasSomeFlags, mergeFlags, toLatLng } from 'helpers';
 import { Quark, QuarkIter, reactKey, SelectQuarkNullable } from 'helpers/quarky';
 
 interface MapControlProps extends MapProps {

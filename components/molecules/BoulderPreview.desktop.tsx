@@ -25,19 +25,19 @@ export const BoulderPreviewDesktop: React.FC<BoulderPreviewDesktopProps> = watch
                     tracks={boulder.tracks}
                     selectedTrack={props.selectedTrack}
                     containerClassName='h-[180px]'
-                    test={true}
                 />
             </div>
             
             <div className='flex flex-row w-full mt-3'>
                 <MultipleImageInput 
                     images={boulder.images}
+                    boulder={boulder}
                     selected={props.currentImage?.id}
                     rows={1}
                     onImageClick={(id) => props.setCurrentImage(boulder.images.find(img => img.id === id)!)}
                     allowUpload={displayAddButton}
                     onImageDelete={(id) => console.log('delete '+id)} // TODO
-                    onChange={(files) => {
+                    onChange={(images) => {
                         // TODO
                     }}
                 />

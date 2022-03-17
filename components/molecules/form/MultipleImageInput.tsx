@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
 import { Icon, ImageThumb } from 'components';
 import {
-  BoulderImage, UUID,
+  Boulder,
+  BoulderImage, Track, UUID,
 } from 'types';
 import { ImageInput } from '.';
+import { QuarkArray } from 'helpers/quarky';
 
 // TODO : GESTION DES TRACKSIMAGE
 
 interface MultipleImageInputProps {
   images: BoulderImage[],
+  boulder?: Boulder,
   label?: string,
   rows?: number,
   cols?: number,
@@ -46,6 +49,9 @@ export const MultipleImageInput: React.FC<MultipleImageInputProps> = ({
   const sliceEnd = sliceStart + nbVisible;
   const toDisplay = props.images.slice(sliceStart, sliceEnd);
 
+  console.log(props.boulder);
+  console.log(props.boulder?.tracks.filter(track => track.lines.filter(line => line.imageId === toDisplay[1].id).toArray().length > 0).toArray());
+
   return (
     <div className='flex flex-row gap-1.5 w-full'>
       {displayLeftArrow && (
@@ -63,13 +69,15 @@ export const MultipleImageInput: React.FC<MultipleImageInputProps> = ({
             <ImageThumb
               key={toDisplay[index].id}
               image={toDisplay[index]}
+              tracks={new QuarkArray(props.boulder?.tracks.filter(track => track.lines.filter(line => line.imageId === toDisplay[index].id).toArray().length > 0).toArray())}
+              // test={true}
               selected={toDisplay[index].id === props.selected}
               onClick={props.onImageClick}
               onDelete={props.onImageDelete}
             />
           )
         else return <div className='w-full' key={index}></div>
-      })}
+      })} 
 
       {allowUpload && (
         <ImageInput

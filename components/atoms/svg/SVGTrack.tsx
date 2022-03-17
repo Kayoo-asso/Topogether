@@ -11,6 +11,8 @@ interface SVGTrackProps {
     currentTool?: DrawerToolEnum,
     imageId: UUID,
     displayTrackDetails?: boolean,
+    displayTrackOrderIndexes?: boolean
+    trackWeight?: number,
     onPointClick?: (pointType: PointEnum, index: number) => void,
     onLineClick?: () => void,
 }
@@ -19,6 +21,8 @@ export const SVGTrack: React.FC<SVGTrackProps> = watchDependencies(({
     editable = false,
     highlighted = true,
     displayTrackDetails = false,
+    displayTrackOrderIndexes = true,
+    trackWeight = 2,
     ...props
 }: SVGTrackProps) => {
     const track = props.track();
@@ -38,9 +42,10 @@ export const SVGTrack: React.FC<SVGTrackProps> = watchDependencies(({
                 editable={editable && highlighted}
                 eraser={props.currentTool === 'ERASER'}
                 grade={track.grade}
-                pointSize={8}
                 phantom={!highlighted}
                 trackOrderIndex={track.index}
+                trackWeight={trackWeight}
+                displayTrackOrderIndex={displayTrackOrderIndexes}
                 onClick={props.onLineClick}
                 onPointClick={(index) => props.onPointClick && props.onPointClick('LINE_POINT', index)}
             />

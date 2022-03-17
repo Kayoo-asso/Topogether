@@ -11,8 +11,8 @@ interface SVGLineProps {
     editable?: boolean,
     eraser?: boolean,
     displayTrackOrderIndex?: boolean,
+    trackWeight?: number,
     trackOrderIndex: number,
-    pointSize?: number,
     phantom?: boolean,
     onClick?: () => void,
     onPointClick?: (index: number) => void,
@@ -23,12 +23,13 @@ export const SVGLine: React.FC<SVGLineProps> = watchDependencies(({
     eraser = false,
     phantom = false,
     displayTrackOrderIndex = true,
+    trackWeight = 2,
     ...props
 }: SVGLineProps) => {
     const line = props.line();
     const points: Position[] = line.points.map(([x, y]) => [x * props.r, y * props.r]);
     const path = getPathFromPoints(points, 'CURVE');
-    const pointSize = 8;
+    const pointSize = trackWeight * 4;
     const firstX = points[0][0];
     const firstY = points[0][1];
 
@@ -120,12 +121,17 @@ export const SVGLine: React.FC<SVGLineProps> = watchDependencies(({
     }
   }
 
+  console.log(trackWeight)
+
   return (
     <>
         <path
-            className={`fill-[none] stroke-2 ${getStrokeColorClass()} ${phantom ? 'z-10 opacity-50' : 'z-30'}${props.onClick ? ' cursor-pointer' : ''}`}
+            className={`fill-[none] ${getStrokeColorClass()} ${phantom ? 'z-10 opacity-50' : 'z-30'}${props.onClick ? ' cursor-pointer' : ''}`}
             d={path}
             onClick={props.onClick}
+            style={{
+              strokeWidth: trackWeight + 'px'
+            }}
         />
 
         {editable &&

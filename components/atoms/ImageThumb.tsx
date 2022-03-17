@@ -1,12 +1,15 @@
 import React from 'react';
 import NextImage from 'next/image';
-import { BoulderImage, UUID } from 'types';
+import { BoulderImage, Track, UUID } from 'types';
 // eslint-disable-next-line import/no-cycle
 import { DeleteButton } from 'components';
 import useDimensions from 'react-cool-dimensions';
+import { TracksImage } from 'components/molecules';
+import { QuarkArray } from 'helpers/quarky';
 
 interface ImageThumbProps {
   image: BoulderImage,
+  tracks?: QuarkArray<Track>
   selected?: boolean,
   onDelete?: (id: UUID) => void,
   onClick?: (id: UUID) => void,
@@ -46,12 +49,23 @@ export const ImageThumb: React.FC<ImageThumbProps> = ({
           />
         </div>
       }
-      <NextImage
-        src={props.image.imagePath}
-        alt="user generated image"
-        layout="fill"
-        objectFit="contain"
-      />
+      {props.tracks && 
+        <TracksImage 
+          image={props.image}
+          tracks={props.tracks}
+          displayTrackOrderIndexes={false}
+          programmativeHeight={containerWidth}
+          tracksWeight={1}
+        />
+      }
+      {!props.tracks && 
+        <NextImage
+          src={props.image.imagePath}
+          alt="user generated image"
+          layout="fill"
+          objectFit="contain"
+        />
+      }
     </div>
   );
 };

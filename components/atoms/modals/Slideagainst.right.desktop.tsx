@@ -13,7 +13,7 @@ interface SlideagainstRightDesktopProps {
     children?: ReactNode,
 }
 
-const isTopo = (item: Signal<Boulder> | Signal<Topo> | Signal<LightTopo>): item is Signal<Topo> => (item as Signal<Topo>)().creatorId !== undefined;
+const isTopo = (item: Signal<Boulder> | Signal<Topo> | Signal<LightTopo>): item is Signal<Topo> => (item as Signal<Topo>)().creator?.id !== undefined;
 
 export const SlideagainstRightDesktop: React.FC<SlideagainstRightDesktopProps> = ({
     open = false,

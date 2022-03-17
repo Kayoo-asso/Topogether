@@ -20,7 +20,6 @@ const notSelectedColorStyles = {
   7: 'border-grade-7 text-grade-7',
   8: 'border-grade-8 text-grade-8',
   9: 'border-grade-9 text-grade-9',
-  // TODO: verify that text-grey-light is actually readable
   None: 'border-grey-light text-grey-light'
 }
 

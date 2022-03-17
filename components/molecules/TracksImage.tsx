@@ -12,15 +12,17 @@ import { QuarkArray, SelectQuarkNullable, watchDependencies } from 'helpers/quar
 interface TracksImageProps {
   image: BoulderImage,
   tracks: QuarkArray<Track>,
-  selectedTrack: SelectQuarkNullable<Track>,
+  selectedTrack?: SelectQuarkNullable<Track>,
   imageClassName?: string,
   containerClassName?: string,
+  programmativeHeight?: number,
   canvasClassName?: string,
   displayTracks?: boolean,
   displayPhantomTracks?: boolean,
   displayTracksDetails?: boolean,
+  displayTrackOrderIndexes?: boolean,
+  tracksWeight?: number,
   editable?: boolean,
-  test?: any
   currentTool?: DrawerToolEnum,
   onImageClick?: (pos: Position) => void,
   onPointClick?: (pointType: PointEnum, index: number) => void,
@@ -31,11 +33,15 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
   displayTracks = true,
   displayPhantomTracks = true,
   displayTracksDetails = false,
+  displayTrackOrderIndexes = true,
+  tracksWeight = 2,
   editable = false,
   containerClassName = '',
   ...props
 }: TracksImageProps) => {
   const { observe, width: containerWidth, height: containerHeight } = useDimensions({});
+
+  const selectedTrack = props.selectedTrack && props.selectedTrack();
   
   let imgWidth;
   let imgHeight;
@@ -55,7 +61,7 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
 
   const getCursorUrl = () => {
     let cursorColor = 'grey';
-    if (props.selectedTrack()?.grade) cursorColor = props.selectedTrack()!.grade![0];
+    if (selectedTrack?.grade) cursorColor = selectedTrack.grade![0];
 
     let cursorUrl = '/assets/icons/colored/';
     switch (props.currentTool) {
@@ -77,6 +83,9 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
     <div
       ref={observe}
       className={`relative w-full flex flex-row items-center justify-center ${containerClassName}`}
+      style={props.programmativeHeight ? {
+        height: props.programmativeHeight + 'px'
+      } : {}}
     >
       <svg
         style={{ 
@@ -94,8 +103,8 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
         }}
       >
         {props.tracks.quarks().map(trackQuark => {
-          const highlighted = props.selectedTrack() === undefined ||
-                trackQuark().id === props.selectedTrack()!.id;           
+          const highlighted = selectedTrack === undefined ||
+                trackQuark().id === selectedTrack.id;           
           if (highlighted || displayPhantomTracks) 
             return (
               <SVGTrack 
@@ -107,7 +116,9 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
                 editable={editable}
                 highlighted={highlighted}
                 displayTrackDetails={displayTracksDetails}
-                onLineClick={props.tracks.length > 1 ? () => props.selectedTrack.select(trackQuark) : undefined}
+                displayTrackOrderIndexes={displayTrackOrderIndexes}
+                trackWeight={tracksWeight}
+                onLineClick={(props.tracks.length > 1 && props.selectedTrack) ? () => props.selectedTrack!.select(trackQuark) : undefined}
                 onPointClick={props.onPointClick}
               />
             )

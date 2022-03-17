@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react';
-import { LightTopo, Topo, TopoStatus, UUID } from 'types';
+import { LightTopo, TopoStatus } from 'types';
 import { NoTopoCard } from './NoTopoCard';
 import { TopoCard } from './TopoCard';
 

@@ -23,7 +23,6 @@ export const SVGPoint: React.FC<SVGPointProps> = ({
   // don't put x & y here, to avoid derived state
   // The main risk is that internal state becomes out-of-sync with parent components
   // https://reactjs.org/blog/2018/06/07/you-probably-dont-need-derived-state.html
-  // TODO: is active necessary? Does onPointerMove fire when pointer capure is not set?
   const [position, setPosition] = useState({
     active: false,
     offsetX: 0,
