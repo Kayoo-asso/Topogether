@@ -4,14 +4,16 @@ import {
  HeaderDesktop, LeftbarDesktop, MapControl, Show, TopoPreview,
 } from 'components';
 import { LightTopo } from 'types';
-import { Quark, QuarkIter, useSelectQuark } from 'helpers/quarky';
+import { Quark, QuarkIter, useSelectQuark, watchDependencies } from 'helpers/quarky';
 import { quarkLightTopo } from 'helpers/fakeData/fakeLightTopoV2';
 import { api } from 'helpers/services/ApiService';
 import { fontainebleauLocation, toLatLng } from 'helpers';
+import { saveFakeTopo } from 'helpers/fakeData/saveFakeTopo';
 
 const WorldMapPage: NextPage = () => {
   const session = api.user();
 
+  // saveFakeTopo();
   const topos: QuarkIter<Quark<LightTopo>> = new QuarkIter([quarkLightTopo]);
 
   const selectedTopo = useSelectQuark<LightTopo>();
@@ -56,4 +58,4 @@ const WorldMapPage: NextPage = () => {
   );
 };
 
-export default WorldMapPage;
+export default watchDependencies(WorldMapPage);

@@ -7,6 +7,7 @@ const isBrowser = () => typeof window !== "undefined";
 const ProtectedRoute = ({ router, children }: { router: NextRouter, children: JSX.Element }) => {
   //Identify authenticated user
   const user = api.user();
+  console.log(user);
   const isAuthenticated = !!user;
 
   let unprotectedRoutes = [

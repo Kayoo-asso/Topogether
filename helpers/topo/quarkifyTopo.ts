@@ -1,20 +1,12 @@
 import { Quark, quark, QuarkArray } from 'helpers/quarky';
 import { syncQuark } from 'helpers/quarky/quarky-sync';
-import { BoulderData, TrackData, TopoData, UUID, Track, Boulder, Topo, BoulderDTO, TrackDTO } from 'types';
+import { BoulderData, TrackData, TopoData, UUID, Track, Boulder, Topo } from 'types';
 
 export function quarkifyTopo(topo: TopoData): Quark<Topo> {
     const topoQuark = quark<Topo>({
         ...topo,
         sectors: new QuarkArray(topo.sectors),
-        boulders: new QuarkArray(topo.boulders?.map(quarkifyBoulder), {
-            onAdd: (boulder) => syncQuark<Boulder, BoulderDTO>(boulder.id, boulder, {
-                export: getBoulderExport(topo.id),
-                import: ({ topoId, ...dto }, boulder) => ({
-                    ...boulder,
-                    ...dto
-                })
-            }),
-        }),
+        boulders: new QuarkArray(topo.boulders?.map(quarkifyBoulder)),
         waypoints: new QuarkArray(topo.waypoints),
         parkings: new QuarkArray(topo.parkings),
         accesses: new QuarkArray(topo.accesses),
@@ -44,47 +36,9 @@ function onBoulderDelete(boulder: Boulder, topoQuark: Quark<Topo>) {
     }
 }
 
-const getBoulderExport = (topoId: UUID) => (boulder: Boulder): BoulderDTO => ({
-    id: boulder.id,
-    topoId,
-    location: boulder.location,
-    name: boulder.name,
-    isHighball: boulder.isHighball,
-    mustSee: boulder.mustSee,
-    dangerousDescent: boulder.dangerousDescent
-});
-
-const getTrackExport = (boulderId: UUID) => (track: Track): TrackDTO => ({
-    id: track.id,
-    boulderId,
-    index: track.index,
-    name: track.name,
-    description: track.description,
-    height: track.height,
-    grade: track.grade,
-    anchors: track.anchors,
-    techniques: track.techniques,
-    reception: track.reception,
-    orientation: track.orientation,
-    isTraverse: track.isTraverse,
-    isSittingStart: track.isSittingStart,
-    mustSee: track.mustSee,
-    hasMantle: track.hasMantle,
-    creatorId: track.creatorId,
-})
-
 const quarkifyBoulder = (boulder: BoulderData): Boulder => ({
     ...boulder,
-    tracks: new QuarkArray(boulder.tracks.map(quarkifyTrack), {
-        onAdd: (track) => syncQuark<Track, TrackDTO>(track.id, track, {
-            export: getTrackExport(boulder.id),
-            // remove the boulderId
-            import: ({ boulderId, ...dto }, track) => ({
-                ...track,
-                ...dto
-            }),
-        })
-    })
+    tracks: new QuarkArray(boulder.tracks.map(quarkifyTrack))
 });
 
 const quarkifyTrack = (track: TrackData): Track => ({

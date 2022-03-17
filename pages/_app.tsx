@@ -18,7 +18,6 @@ const App = ({ Component, pageProps }: AppProps) => {
       else setDevice('MOBILE');
     },
   });
-  
 
   return (
     <>

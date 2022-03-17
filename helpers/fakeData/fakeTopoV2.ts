@@ -1,7 +1,7 @@
 import { Quark } from 'helpers/quarky';
+import { quarkifyTopo } from 'helpers/topo';
 import { BoulderData, Line, Name, BoulderImage, TrackData, Description, Difficulty, ClimbTechniques, SectorData, TopoData, Amenities, TopoStatus, TopoType, RockTypes, TopoAccess, Topo, Parking, StringBetween, Manager, UUID, Reception, Waypoint, Email } from 'types';
 import { v4 as uuid } from 'uuid';
-import { quarkifyTopo } from './quarkifyTopo';
 
 // Note: use UUIDs everywhere for proper testing with the DB
 

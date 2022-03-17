@@ -38,8 +38,8 @@ create table topos (
 );
 
 create table topo_contributors (
-    topo_id uuid not null references public.topos(id),
-    user_id uuid not null references public.users(id),
+    topo_id uuid not null references public.topos(id) on delete cascade,
+    user_id uuid not null references public.users(id) on delete cascade,
     role contributor_role not null,
 
     primary key (topo_id, user_id)
