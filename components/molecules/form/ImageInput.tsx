@@ -35,7 +35,8 @@ export const ImageInput = forwardRef<HTMLInputElement, ImageInputProps>(({
     const uploaded: BoulderImage[] = [];
     setLoading(true);
 
-    for (const file of files) {
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
       if (file.type !== "image/png" && file.type !== "image/jpg" && file.type !== "image/jpeg") {
         errors.push([file.name, FileUploadError.NotImageType]);
       } else if (!isBetween(file.size, 0, 10e6)) {
@@ -51,6 +52,7 @@ export const ImageInput = forwardRef<HTMLInputElement, ImageInputProps>(({
             img.onload = () => {
               const imgData: BoulderImage = {
                 id: v4(),
+                index: i,
                 imagePath: objectUrl,
                 width: img.width,
                 height: img.height,
@@ -69,6 +71,7 @@ export const ImageInput = forwardRef<HTMLInputElement, ImageInputProps>(({
             img.onload = () => {
               const imgData: BoulderImage = {
                 id: v4(),
+                index: i,
                 imagePath: objectUrl,
                 width: img.width,
                 height: img.height,
