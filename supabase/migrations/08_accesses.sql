@@ -46,6 +46,7 @@ begin
 end;
 $$ language plpgsql;
 
+-- TODO: use a set difference to optimise this?
 create function internal.on_access_update()
 returns trigger
 security definer

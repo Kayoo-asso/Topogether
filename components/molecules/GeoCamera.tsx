@@ -1,7 +1,8 @@
-import React, { useRef, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { distanceLatLng, fromLatLng, useAsyncEffect, useUserMedia } from 'helpers';
 import { Icon } from 'components';
 import { GeoCoordinates, MapToolEnum } from 'types';
+import { useGeolocation } from 'helpers/hooks/useGeolocation';
 
 interface GeoCameraProps {
     open?: boolean,
@@ -30,33 +31,26 @@ export const GeoCamera: React.FC<GeoCameraProps> = ({
 
     const [displayItemSelectMenu, setDisplayItemSelectMenu] = useState(false);
 
-    useAsyncEffect((isAlive) => {
-        const options = {
-            // Timeout = 3 seconds (default = infinite). TODO: agree on the best value
-            timeout: 3000,
-            enableHighAccuracy: true,
-        };
-        const onPosChange = (pos: GeolocationPosition) => {
-            if (isAlive.current) {
-                const dist = distanceLatLng(coords.lat, coords.lng, pos.coords.latitude, pos.coords.longitude)
-                setDistance(dist);
-                if (dist < 5 || process.env.NODE_ENV === 'development') {
-                    setIsCalibrating(false);
-                    navigator.geolocation.clearWatch(watcher);
-                }
-                setCoords({
-                    lat: pos.coords.latitude,
-                    lng: pos.coords.longitude
-                });
-            }
-        };
-        const onError = (err: GeolocationPositionError) => {
+    useGeolocation({
+        onPosChange: (pos) => {
+            const dist = distanceLatLng(coords.lat, coords.lng, pos.coords.latitude, pos.coords.longitude);
+            setDistance(dist);
+            const calibrating = dist < 5 || process.env.NODE_ENV === "development";
+            setIsCalibrating(calibrating);
+            setCoords({
+                lat: pos.coords.latitude,
+                lng: pos.coords.longitude
+            });
+        },
+        onError: useCallback((err) => {
             if (err.code === 3) {
                 console.log('Geolocation timed out!');
             }
-        }
-        const watcher = navigator.geolocation.watchPosition(onPosChange, onError, options);
-    }, []);
+            else {
+                console.log('Geolocation error:', err);
+            }
+        }, [])
+    });
 
     const videoRef = useRef<HTMLVideoElement>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -117,8 +111,11 @@ export const GeoCamera: React.FC<GeoCameraProps> = ({
         }
     }
 
-    const itemType = props.currentTool === 'PARKING' ? 'parking' :
-        props.currentTool === 'WAYPOINT' ? 'point de repère' : 'bloc';    
+    const itemType = props.currentTool === 'PARKING'
+        ? 'parking'
+        : props.currentTool === 'WAYPOINT'
+            ? 'point de repère'
+            : 'bloc';    
 
     if (!open) return null;
     return (
@@ -178,7 +175,7 @@ export const GeoCamera: React.FC<GeoCameraProps> = ({
             {isCalibrating &&
                 <div className='h-full w-full absolute flex flex-col justify-center items-center z-50 text-white ktext-base bg-black bg-opacity-90'>
                     <div className='mb-10 text-center'>
-                        Calibrage de la caméra <br />
+                        Calibrage de la géolocalisation <br />
                         Merci de patienter...
                     </div>
 

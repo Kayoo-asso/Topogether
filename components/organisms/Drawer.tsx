@@ -3,7 +3,7 @@ import {
   DrawerToolEnum, BoulderImage, LinearRing, PointEnum, Position, Track,
 } from 'types';
 import { ModalDelete, Toolbar, TracksImage } from 'components';
-import { QuarkArray, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
+import { QuarkArray, QuarkIter, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
 import { v4 } from 'uuid';
 
 interface DrawerProps {
@@ -132,7 +132,7 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies((props: DrawerPro
           {/* TODO: CHANGE SIZING */}
           <TracksImage
             image={props.image}
-            tracks={displayOtherTracks ? props.tracks : new QuarkArray([selectedTrack])}
+            tracks={displayOtherTracks ? props.tracks.quarks() : new QuarkIter([props.selectedTrack.quark()!])}
             selectedTrack={props.selectedTrack}
             currentTool={selectedTool}
             editable

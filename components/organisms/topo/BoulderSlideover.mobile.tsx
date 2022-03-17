@@ -64,7 +64,7 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = wat
 
           <TracksImage
             image={props.currentImage}
-            tracks={boulder.tracks}
+            tracks={boulder.tracks.quarks()}
             selectedTrack={props.selectedTrack}
             displayPhantomTracks={displayPhantomTracks}
             displayTracksDetails={!!selectedTrack?.id}

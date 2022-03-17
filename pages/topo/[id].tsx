@@ -207,7 +207,7 @@ const Topo: NextPage = () => {
                   {/* TODO: CHANGE SIZING */}
                   <TracksImage
                     image={currentImage}
-                    tracks={new QuarkArray([track()])}
+                    tracks={new QuarkIter([track])}
                     selectedTrack={selectedTrack}
                     displayTracksDetails
                   />
