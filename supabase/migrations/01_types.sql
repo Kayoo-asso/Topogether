@@ -35,6 +35,7 @@ CREATE TYPE public.grade_category as ENUM(
 );
 
 create type public.sized_image as (
+    id uuid,
     path text,
     height integer,
     width integer

@@ -56,38 +56,40 @@ returns trigger
 security definer
 as $$
 begin
-    with before as (
-        select "imagePath"
-        from unnest(old.steps)
-    ), after as (
-        select "imagePath"
-        from unnest(new.steps)
-    ), 
-    -- Hackery to execute two sql statements that use `before` and `after` tables
-    terrible_hack as (
-        update public.images
-        set users = users - 1
-        where path in ( before ) and path not in ( after)
-    )
-    update public.images
-    set users = users + 1
-    where path in ( after ) and path not in ( before );
+    -- with before as (
+    --     select "imagePath"
+    --     from unnest(old.steps)
+    -- ), after as (
+    --     select "imagePath"
+    --     from unnest(new.steps)
+    -- ), 
+    -- -- Hackery to execute two sql statements that use `before` and `after` tables
+    -- terrible_hack as (
+    --     update public.images
+    --     set users = users - 1
+    --     where path in ( before ) and path not in ( after)
+    -- )
+    -- update public.images
+    -- set users = users + 1
+    -- where path in ( after ) and path not in ( before );
     -- update public.images
     -- set users = users - 1
     -- where path in (before except after
-    -- update public.images
-    -- set users = users - 1
-    -- where path in (
-    --     select "imagePath"
-    --     from unnest(old.steps)
-    -- );
 
-    -- update public.images
-    -- set users = users + 1
-    -- where path in (
-    --     select "imagePath"
-    --     from unnest(new.steps)
-    -- );
+
+    update public.images
+    set users = users - 1
+    where path in (
+        select "imagePath"
+        from unnest(old.steps)
+    );
+
+    update public.images
+    set users = users + 1
+    where path in (
+        select "imagePath"
+        from unnest(new.steps)
+    );
 
     return null;
 end;

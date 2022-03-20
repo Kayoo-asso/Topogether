@@ -1,9 +1,6 @@
 import React, { useState } from 'react';
 import { Icon, ImageThumb } from 'components';
-import {
-  Boulder,
-  BoulderImage, Track, UUID,
-} from 'types';
+import { Boulder, BoulderImage, UUID } from 'types';
 import { ImageInput } from '.';
 import { QuarkArray } from 'helpers/quarky';
 

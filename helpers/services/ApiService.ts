@@ -223,9 +223,6 @@ export class ApiService {
                 boulders:boulders!topoId (
                     id, name, isHighball, mustSee, dangerousDescent,
                     location:location->coordinates,
-                    images:boulder_images!boulderId(
-                        id, index, width, height, imagePath
-                    ),
                     tracks:tracks!boulderId(
                         id, index, name, description, height, grade, orientation, reception, anchors, techniques,
                         isTraverse, isSittingStart, mustSee, hasMantle,
@@ -262,7 +259,6 @@ export class ApiService {
         const dbParkings: DBParking[] = [];
         const dbAccesses: DBTopoAccess[] = [];
         const dbBoulders: DBBoulder[] = [];
-        const dbBoulderImages: DBBoulderImage[] = [];
         const dbTracks: DBTrack[] = [];
         const dbLines: DBLine[] = [];
 
@@ -299,9 +295,6 @@ export class ApiService {
         if (topo.boulders) {
             for (const b of topo.boulders) {
                 dbBoulders.push(DBConvert.boulder(b, topo.id));
-                for (const i of b.images) {
-                    dbBoulderImages.push(DBConvert.boulderImage(i, topo.id, b.id));
-                }
                 for (const t of b.tracks) {
                     dbTracks.push(DBConvert.track(t, topo.id, b.id));
                     for (const l of t.lines) {
@@ -333,9 +326,6 @@ export class ApiService {
             this.client
                 .from<DBBoulder>("boulders")
                 .upsert(dbBoulders, { returning: "minimal" }),
-            this.client
-                .from<DBBoulderImage>("boulder_images")
-                .upsert(dbBoulderImages, { returning: "minimal" }),
             this.client
                 .from<DBTrack>("tracks")
                 .upsert(dbTracks, { returning: "minimal" }),

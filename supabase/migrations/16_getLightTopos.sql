@@ -3,7 +3,7 @@ create type public.light_topo as (
     id uuid,
     name varchar(500),
     status smallint, -- TypeScript enum
-    location double precision[],
+    location jsonb,
     forbidden boolean,
 
     -- timestamps
@@ -97,7 +97,9 @@ begin
     where id = _topo."creatorId";
 
     select 
-        id, name, status, location, forbidden,
+        id, name, status, 
+        location::jsonb->coordinates as location,
+        forbidden,
         modified, submitted, validated,
         amenities, "rockTypes",
         type, description, altitude, "closestCity",

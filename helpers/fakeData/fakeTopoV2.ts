@@ -8,14 +8,12 @@ import { v4 as uuid } from 'uuid';
 export const images: BoulderImage[] = [
     {
         id: uuid(),
-        index: 0,
         imagePath: "https://builder.topogether.com/public/uploads/topo/main-image/dad449499de38f1bdee5872de1a354d52fff6183.jpeg",
         width: 4592,
         height: 3064,
     },
     {
         id: uuid(),
-        index: 0.5, // check that fractional indices work
         imagePath: "https://builder.topogether.com/public/uploads/boulder/image/5b558375709fbbacae9e5dcb746c8e10e7fa083f.jpeg",
         width: 4592,
         height: 3064,
@@ -24,7 +22,6 @@ export const images: BoulderImage[] = [
     },
     {
         id: uuid(),
-        index: 1,
         imagePath: "https://builder.topogether.com/public/uploads/boulder/image/a486a4432feafc909d335e8f18ee5448212af176.jpeg",
         width: 1334,
         height: 2000,

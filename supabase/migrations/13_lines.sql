@@ -11,7 +11,7 @@ create table lines (
     foot1 geometry(point),
     foot2 geometry(point),
 
-    "imageId" uuid references public.boulder_images(id) on delete set null,
+    "imageId" uuid,
     "topoId" uuid not null references public.topos(id) on delete cascade,
     "trackId" uuid not null references public.tracks(id) on delete cascade
 );
