@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Wrapper } from '@googlemaps/react-wrapper';
-import { BoulderMarker, CreatingSectorAreaMarker, For, Map, ParkingMarker, RoundButton, SatelliteButton, SectorAreaMarker, Show, TopoMarker, UserMarker, WaypointMarker } from 'components';
+import { BoulderMarker, CreatingSectorAreaMarker, For, Map, ParkingMarker, RoundButton, SatelliteButton, SectorAreaMarker, Show, UserMarker, WaypointMarker, TopoMarker, CreatingTopoMarker } from 'components';
 import { BoulderFilterOptions, BoulderFilters, MapSearchbarProps, TopoFilterOptions, TopoFilters } from '.';
 import { MapSearchbar } from '..';
 import { Amenities, Boulder, ClimbTechniques, GeoCoordinates, gradeToLightGrade, LightGrade, LightTopo, MapProps, Parking, PolyMouseEvent, Sector, Topo, UUID, Waypoint } from 'types';
-import { googleGetPlace, hasFlag, hasSomeFlags, mergeFlags, toLatLng } from 'helpers';
+import { googleGetPlace, hasFlag, hasSomeFlags, mergeFlags, toLatLng, TopoCreate } from 'helpers';
 import { Quark, QuarkIter, reactKey, SelectQuarkNullable } from 'helpers/quarky';
 
 interface MapControlProps extends MapProps {
@@ -20,9 +20,10 @@ interface MapControlProps extends MapProps {
   searchbarOptions?: MapSearchbarProps,
   onSearchResultSelect?: () => void,
   topo?: Quark<Topo>,
-  topos?: QuarkIter<Quark<LightTopo>>,
+  creatingTopo?: Quark<TopoCreate>,
+  topos?: LightTopo[],
   displayTopoFilter?: boolean,
-  onTopoClick?: (topo: Quark<LightTopo>) => void,
+  onTopoClick?: (topo: LightTopo) => void,
   creatingSector?: GeoCoordinates[],
   onCreatingSectorOriginClick?: () => void,
   onCreatingSectorPolylineClick?: () => void,
@@ -66,7 +67,7 @@ export const MapControl: React.FC<MapControlProps> = ({
 
     const [userPosition, setUserPosition] = useState<google.maps.LatLngLiteral>();
     const [satelliteView, setSatelliteView] = useState(false);
-    const maxBoulders = props.topos ? Math.max(...props.topos.map(t => t().nbBoulders).toArray()) : 0;
+    const maxBoulders = props.topos ? Math.max(...props.topos.map(t => t.nbBoulders)) : 0;
     const defaultTopoFilterOptions: TopoFilterOptions = {
         types: [],
         boulderRange: [0, maxBoulders],
@@ -323,16 +324,24 @@ export const MapControl: React.FC<MapControlProps> = ({
                         </For>
                     </Show>
                     <Show when={() => props.topos}>
-                        <For each={() => props.topos!.filter(t => topoFilter(t())).toArray()}>
+                        <For each={() => props.topos!.filter(t => topoFilter(t))}>
                             {(topo) =>
                             <TopoMarker 
-                                key={reactKey(topo)}
+                                key={topo.id}
                                 draggable={draggableMarkers}
                                 topo={topo}
                                 onClick={props.onTopoClick}
                             />
                             }
                         </For>
+                    </Show>
+                    <Show when={() => props.creatingTopo}>
+                        {(creatingTopo) => 
+                            <CreatingTopoMarker
+                                draggable={draggableMarkers}
+                                topo={creatingTopo}
+                            />
+                        }
                     </Show>
                     <Show when={() => displayUserMarker}>
                         <UserMarker

@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { Dropdown } from 'components';
 import { Parking } from 'types';
 import { Quark, watchDependencies } from 'helpers/quarky';
-import { api } from 'helpers/services/ApiService';
+import { api } from 'helpers/services';
 
 interface ParkingMarkerDropdownProps {
     parking: Quark<Parking>;

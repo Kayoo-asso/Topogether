@@ -4,11 +4,10 @@ import {
 } from 'components';
 import { default as NextImage } from 'next/image';
 import { LightTopo } from 'types';
-import { Signal } from 'helpers/quarky';
 import { DeviceContext, staticUrl, TopoTypeToColor } from 'helpers';
 
 interface TopoPreviewProps {
-  topo: Signal<LightTopo>,
+  topo: LightTopo,
   open?: boolean,
   onClose: () => void,
 }
@@ -17,7 +16,7 @@ export const TopoPreview: React.FC<TopoPreviewProps> = (props: TopoPreviewProps)
     const device = useContext(DeviceContext);
     const [modalParkingOpen, setModalParkingOpen] = useState(false);
     const [flashMessage, setFlashMessage] = useState<string>();
-    const topo = props.topo();
+    const topo = props.topo;
 
     const topoPreviewContent = () => (
         <>
@@ -57,7 +56,7 @@ export const TopoPreview: React.FC<TopoPreviewProps> = (props: TopoPreviewProps)
 
                 <div className="w-full h-[160px] relative mt-4">
                     <NextImage
-                    src={topo.image?.url || staticUrl.defaultKayoo}
+                    src={topo.imagePath || staticUrl.defaultKayoo}
                     alt="image principale du topo"
                     priority
                     layout="fill"
@@ -93,7 +92,7 @@ export const TopoPreview: React.FC<TopoPreviewProps> = (props: TopoPreviewProps)
 
                     <div className="w-2/3 md:w-full flex items-end justify-end md:justify-center md:mt-5 md:h-[120px]">
                         <GradeHistogram
-                            topo={props.topo()}
+                            topo={topo}
                             size='little'
                         />
                     </div>
@@ -107,7 +106,7 @@ export const TopoPreview: React.FC<TopoPreviewProps> = (props: TopoPreviewProps)
                             href={'/topo/'+topo.id}
                         />
                     </div>
-                    {topo.firstParkingLocation &&
+                    {topo.parkingLocation &&
                         <div className="pb-4">
                             <ParkingButton
                                 onClick={() => setModalParkingOpen(true)}
@@ -141,9 +140,9 @@ export const TopoPreview: React.FC<TopoPreviewProps> = (props: TopoPreviewProps)
             </SlideagainstRightDesktop>
         }
 
-        {modalParkingOpen && topo.firstParkingLocation &&
+        {modalParkingOpen && topo.parkingLocation &&
             <ParkingModal
-                parkingLocation={topo.firstParkingLocation}
+                parkingLocation={topo.parkingLocation}
                 onClose={() => setModalParkingOpen(false)}
             />
         }

@@ -1,4 +1,4 @@
-import { api } from "helpers/services/ApiService";
+import { api } from "helpers/services";
 import { NextRouter } from 'next/router';
 
 //check if you are on the client (browser) or server
@@ -7,7 +7,6 @@ const isBrowser = () => typeof window !== "undefined";
 const ProtectedRoute = ({ router, children }: { router: NextRouter, children: JSX.Element }) => {
   //Identify authenticated user
   const user = api.user();
-  console.log(user);
   const isAuthenticated = !!user;
 
   let unprotectedRoutes = [

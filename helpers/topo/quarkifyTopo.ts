@@ -24,7 +24,7 @@ export function quarkifyTopo(data: TopoData): Quark<Topo> {
     return q;
 }
 
-type TopoCreate = Omit<TopoData, 'sectors' | 'boulders' | 'waypoints' | 'accesses' | 'parkings' | 'managers' | 'lonelyBoulders'>;
+export type TopoCreate = Omit<TopoData, 'sectors' | 'boulders' | 'waypoints' | 'accesses' | 'parkings' | 'managers' | 'lonelyBoulders'>;
 
 export function createTopo(data: TopoCreate): Quark<Topo> {
     const dataWithArrays: TopoData = {

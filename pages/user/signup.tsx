@@ -4,7 +4,7 @@ import { Button, Header, TextInput } from 'components';
 import Link from 'next/link';
 import NextImage from 'next/image';
 import { staticUrl } from 'helpers';
-import { api, AuthResult } from 'helpers/services/ApiService';
+import { api, AuthResult } from 'helpers/services';
 import { Email, isEmail, isName, Name } from 'types';
 import { useRouter } from 'next/router';
 

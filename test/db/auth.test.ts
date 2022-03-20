@@ -1,4 +1,4 @@
-import { api, AuthResult } from 'helpers/services/ApiService';
+import { api, AuthResult } from 'helpers/services';
 import { Name, User, UUID, Email } from 'types';
 import { v4 as uuid } from 'uuid';
 import { createClient } from '@supabase/supabase-js';

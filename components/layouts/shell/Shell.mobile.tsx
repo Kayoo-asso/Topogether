@@ -3,7 +3,7 @@ import React, { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { Icon } from 'components';
-import { api } from 'helpers/services/ApiService';
+import { api } from 'helpers/services';
 import { watchDependencies } from 'helpers/quarky';
 
 export const ShellMobile: React.FC = watchDependencies(() => {

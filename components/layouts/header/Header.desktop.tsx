@@ -3,7 +3,7 @@ import NextImage from 'next/image';
 import { Dropdown, DropdownOption, Icon, ProfilePicture } from 'components';
 import Link from 'next/link';
 import { MapToolEnum } from 'types';
-import { api } from 'helpers/services/ApiService';
+import { api } from 'helpers/services';
 import { staticUrl } from 'helpers';
 import { useRouter } from 'next/router';
 import { watchDependencies } from 'helpers/quarky';

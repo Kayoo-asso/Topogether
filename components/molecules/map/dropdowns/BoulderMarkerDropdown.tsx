@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { Dropdown } from 'components';
 import { Boulder, Track } from 'types';
 import { Quark, watchDependencies } from 'helpers/quarky';
-import { api } from 'helpers/services/ApiService';
+import { api } from 'helpers/services';
 import { createTrack } from 'helpers';
 
 interface BoulderMarkerDropdownProps {

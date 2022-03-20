@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { Dropdown } from 'components';
 import { Waypoint } from 'types';
 import { Quark, watchDependencies } from 'helpers/quarky';
-import { api } from 'helpers/services/ApiService';
+import { api } from 'helpers/services';
 
 interface WaypointMarkerDropdownProps {
     waypoint: Quark<Waypoint>;

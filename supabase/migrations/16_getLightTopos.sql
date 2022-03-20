@@ -59,7 +59,7 @@ declare
     "parkingLocation" jsonb;
     creator public.profiles;
     grades jsonb;
-    result light_topo;
+    result public.light_topo;
 begin
     select count(*)
     into "nbSectors"
@@ -96,7 +96,7 @@ begin
     from public.profiles
     where id = _topo."creatorId";
 
-    select (
+    select 
         id, name, status, location, forbidden,
         modified, submitted, validated,
         amenities, "rockTypes",
@@ -105,12 +105,11 @@ begin
         "imagePath",
         creator,
 
-        "nbSectors",
-        "nbTracks",
-        "nbBoulders",
         "parkingLocation",
+        "nbSectors",
+        "nbBoulders",
+        "nbTracks",
         grades
-    )
     into result
     from _topo;
 
@@ -123,8 +122,9 @@ returns setof public.light_topo
 as $$
 begin
     return query
-    select build_light_topo(*)
-    from public.topos;
+    select light_topo.*
+    from public.topos t,
+    build_light_topo(t) light_topo;
 end;
 $$ language plpgsql;
 
@@ -133,8 +133,10 @@ returns setof public.light_topo
 as $$
 begin
     return query
-    select build_light_topo(*)
-    from public.topos
-    where "creatorId" = _creator_id;
+    select x.* from (
+        select build_light_topo(t.*)
+        from public.topos as t
+        where "creatorId" = _creator_id
+    ) as x;
 end;
 $$ language plpgsql;

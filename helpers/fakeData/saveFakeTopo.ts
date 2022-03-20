@@ -1,4 +1,4 @@
-import { api } from "helpers/services/ApiService";
+import { api } from "helpers/services";
 import { topoData } from "./fakeTopoV2";
 
 export const saveFakeTopo = async () => {

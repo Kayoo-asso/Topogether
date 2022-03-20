@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import type { NextPage } from 'next';
 import { LightTopo, StringBetween, TopoType } from 'types';
-import { fontainebleauLocation, toLatLng } from 'helpers';
+import { fontainebleauLocation, toLatLng, TopoCreate } from 'helpers';
 import {
  Button, HeaderDesktop, MapControl, Select, TextInput,
 } from 'components';
@@ -9,7 +9,7 @@ import Link from 'next/link';
 import { v4 } from 'uuid';
 import { QuarkIter, useCreateQuark, watchDependencies } from 'helpers/quarky';
 import { TopoTypeName } from 'types/EnumNames';
-import { api } from 'helpers/services/ApiService';
+import { api } from 'helpers/services';
 
 const NewPage: NextPage = watchDependencies(() => {
   const session = api.user();
@@ -17,7 +17,7 @@ const NewPage: NextPage = watchDependencies(() => {
 
   const [step, setStep] = useState(0);
 
-  const topoData: LightTopo = {
+  const topoData: TopoCreate = {
     id: v4(),
     creator: session,
     name: '' as StringBetween<1, 255>,
@@ -25,18 +25,10 @@ const NewPage: NextPage = watchDependencies(() => {
     type: undefined,
     forbidden: false,
     location: fontainebleauLocation,
-    nbSectors: 0,
-    nbBoulders: 0,
-    nbTracks: 0,
-    grades: {
-      3: 0, 4: 0, 5:0, 6:0, 7:0, 8:0, 9:0, 
-      None: 0,
-      Total: 0,
-    },
     modified: new Date().getDay()+'-'+new Date().getMonth()+'-'+new Date().getDay(),
   };
 
-  const topoQuark = useCreateQuark<LightTopo>(topoData);
+  const topoQuark = useCreateQuark<TopoCreate>(topoData);
   const topo = topoQuark();
 
   const [nameError, setNameError] = useState<string>();
@@ -169,7 +161,7 @@ const NewPage: NextPage = watchDependencies(() => {
                     displayUserMarker={false}
                     zoom={10}
                     center={toLatLng(fontainebleauLocation)}
-                    topos={new QuarkIter([topoQuark])}
+                    creatingTopo={topoQuark}
                     draggableMarkers
                   />
                 </div>

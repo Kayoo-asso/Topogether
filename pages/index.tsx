@@ -1,61 +1,47 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import type { NextPage } from 'next';
-import {
- HeaderDesktop, LeftbarDesktop, MapControl, Show, TopoPreview,
-} from 'components';
-import { LightTopo } from 'types';
-import { Quark, QuarkIter, useSelectQuark, watchDependencies } from 'helpers/quarky';
-import { quarkLightTopo } from 'helpers/fakeData/fakeLightTopoV2';
-import { api } from 'helpers/services/ApiService';
-import { fontainebleauLocation, toLatLng } from 'helpers';
-import { saveFakeTopo } from 'helpers/fakeData/saveFakeTopo';
+import { Error404, HeaderDesktop, Loading, RootWorldMap } from 'components';
+import { useAsyncData } from 'helpers/hooks/useAsyncData';
+import { api } from 'helpers/services';
+
+export async function getServerSideProps() {
+  const data = {};
+  return { props: { data } }
+}
 
 const WorldMapPage: NextPage = () => {
   const session = api.user();
 
-  // saveFakeTopo();
-  const topos: QuarkIter<Quark<LightTopo>> = new QuarkIter([quarkLightTopo]);
+  const toposQuery = useAsyncData(() => api.getAllLightTopos(), []);
 
-  const selectedTopo = useSelectQuark<LightTopo>();
-  const toggleTopoSelect = useCallback((topoQuark: Quark<LightTopo>) => {
-    if (selectedTopo()?.id === topoQuark().id) {
-      selectedTopo.select(undefined);
-    } else selectedTopo.select(topoQuark);
-  }, [selectedTopo]);
+  // ERROR
+  if (toposQuery.type === 'error') return <Error404 title="Aucun topo n'a été trouvé" />
 
-  return (
+  //LOADING
+  else if (toposQuery.type === 'loading') return (
     <>
       <HeaderDesktop
-        backLink="#"
-        title="Carte des topos"
+        title="Chargement des topos..."
+        backLink='#'
         displayLogin={session ? false : true}
       />
-
-      <div className="flex flex-row relative h-contentPlusHeader md:h-full">
-        <LeftbarDesktop
-          currentMenuItem="MAP"
-        />
-
-        <MapControl
-          initialZoom={5}
-          topos={topos}
-          displayTopoFilter
-          onTopoClick={toggleTopoSelect}
-          center={toLatLng(fontainebleauLocation)}
-          boundsTo={topos.toArray().map(t => t().location)}
-        />
-
-        <Show when={selectedTopo.quark}>
-          {(topo) => (
-            <TopoPreview
-              topo={topo}
-              onClose={() => selectedTopo.select(undefined)}
-            />
-            )}
-        </Show>
-      </div>
+      <Loading />
     </>
-  );
+  )
+
+  // SUCCESS
+  else {
+    // BUT NO DATA...
+    if (!toposQuery.data) return <Error404 title="Aucun topo n'a été trouvé" />
+    else {
+      return (
+        <RootWorldMap 
+          lightTopos={toposQuery.data}
+          user={session}
+        />
+      );
+    }
+  }
 };
 
-export default watchDependencies(WorldMapPage);
+export default WorldMapPage;

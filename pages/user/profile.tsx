@@ -5,7 +5,7 @@ import { Button, HeaderDesktop, ImageInput, LeftbarDesktop, ModalDelete, Profile
 import Link from 'next/link';
 import { watchDependencies } from 'helpers/quarky';
 import { isEmail, Name, StringBetween } from 'types';
-import { api, AuthResult } from 'helpers/services/ApiService';
+import { api, AuthResult } from 'helpers/services';
 
 const ProfilePage: NextPage = watchDependencies(() => {
   let session = api.user();

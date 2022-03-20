@@ -65,8 +65,15 @@ export interface SyncService {
 //    (account switching should generally require to be online)
 export class InMemorySync implements SyncService {
     constructor() {
-        window.addEventListener('online', () => this._isOnline.set(true));
-        window.addEventListener('offline', () => this._isOnline.set(false));
+        // for server-side rendering
+        if (typeof window !== "undefined") {
+            this._isOnline = quark(window.navigator.onLine);
+            window.addEventListener('online', () => this._isOnline.set(true));
+            window.addEventListener('offline', () => this._isOnline.set(false));
+        } else {
+            this._isOnline = quark<boolean>(false);
+        }
+        
         if (process.env.NODE_ENV !== "test") {
             setInterval(async () => {
                 if (this._isOnline()) {
@@ -77,7 +84,8 @@ export class InMemorySync implements SyncService {
     }
 
     private readonly _status: Quark<SyncStatus> = quark<SyncStatus>(SyncStatus.UpToDate);
-    private readonly _isOnline: Quark<boolean> = quark(navigator.onLine);
+    // careful to handle SSR, where `window` is undefined
+    private readonly _isOnline: Quark<boolean>;
 
 
     status(): SyncStatus {
@@ -302,6 +310,7 @@ export class InMemorySync implements SyncService {
     // assumes `updates` have been swapped with a new Map for the property on the object
    private async upsert<K extends UpdateKey>(this: InMemorySync, table: string, key: K) {
        const updates = this[key] as Map<UUID, UpdateValue<K>>;
+       if(updates.size === 0) return Promise.resolve(true);
        const values = updates.values();
        this[key] = new Map();
        return api.client
@@ -320,6 +329,9 @@ export class InMemorySync implements SyncService {
 
     private async delete<K extends DeleteKey>(table: string, key: K) {
         const set = this[key];
+        if(set.size === 0) {
+            return Promise.resolve(true);
+        }
         this[key] = new Set();
         return api.client
             .from(table)

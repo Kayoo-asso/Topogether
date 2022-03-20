@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, Icon } from 'components';
 import Link from 'next/link';
-import { api } from 'helpers/services/ApiService';
+import { api } from 'helpers/services';
 import { watchDependencies } from 'helpers/quarky';
 
 interface LeftbarDesktopProps {
