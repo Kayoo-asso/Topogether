@@ -22,6 +22,7 @@ as $$
     where path = _path;
 $$ language sql volatile;
 
+
 create function internal.stop_using_img (_path text)
 returns void
 as $$

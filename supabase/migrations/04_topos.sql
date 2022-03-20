@@ -1,5 +1,7 @@
 -- ### TOPOS + CONTRIBUTORS ###
 -- 0. Tables
+
+-- IF YOU UPDATE THIS, UPDATE LIGHTOPO
 create table topos (
     -- mandatory
     id uuid primary key,
@@ -50,24 +52,17 @@ create table topo_contributors (
 -- Argument names have a `_` prefix to avoid ambiguity in PL/pgSQL
 create function is_contributor(_topo_id uuid, _user_id uuid)
 returns boolean
-language plpgsql
 as $$
-declare
-    result boolean;
 begin
-    result := exists (
+    return exists (
         select 1
-        from topo_contributors
+        from topo_contributors as t
         where
-            topo_id = _topo_id and
-            user_id = _user_id
+            t.topo_id = _topo_id and
+            t.user_id = _user_id
     );
-    if result <> true then
-        raise exception 'User % is not a contributor of the topo %', _user_id, _topo_id;
-    end if;
-    return result;
 end;
-$$;
+$$ language plpgsql;
 
 create function is_topo_admin(_topo_id uuid, _user_id uuid)
 returns boolean

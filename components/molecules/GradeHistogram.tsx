@@ -27,7 +27,7 @@ export const GradeHistogram: React.FC<GradeHistogramProps> = ({
   const histogram = isLight(props.topo)
                       ? props.topo.grades
                       : buildGradeHistogram(props.topo)();
-
+  const total = 0; // TODO: recompute total from histogram
   const { Total, None, ...grades } = histogram;
   const maxNbOfTracks = Math.max(...Object.values(grades));
   const ratio = histogram.Total / maxNbOfTracks;

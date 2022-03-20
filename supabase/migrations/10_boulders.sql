@@ -1,6 +1,7 @@
 -- BOULDERS
 
 -- 0. Table
+
 create table boulders (
     id uuid primary key,
     location geometry(point) not null,
@@ -8,6 +9,7 @@ create table boulders (
     "isHighball" boolean default false not null,
     "mustSee" boolean default false not null,
     "dangerousDescent" boolean default false not null,
+    images public.sized_image[] default '{}' not null,
 
     "topoId" uuid not null references topos(id) on delete cascade
 );
@@ -27,3 +29,62 @@ create policy "Admins are omnipotent"
     on boulders for all
     -- the `using` case will also be applied for the `with check` cases
     using ( is_admin(auth.uid()) );
+
+-- TODO: can we refactor to share logic with `public.topo_accesses` ?
+create function internal.on_boulder_insert()
+returns trigger
+security definer
+as $$
+declare
+    img public.sized_image;
+begin
+    update public.images
+    set users = users + 1
+    where path in (
+        select path
+        from unnest(new.images)
+    );
+    return null;
+end;
+$$ language plpgsql;
+
+create function internal.on_boulder_update()
+returns trigger
+security definer
+as $$
+begin
+    with before as (
+        select "imagePath"
+        from unnest(old.images)
+    ), after as (
+        select "imagePath"
+        from unnest(new.images)
+    ), 
+    -- Hackery to execute two sql statements that use `before` and `after` tables
+    terrible_hack as (
+        update public.images
+        set users = users - 1
+        where path in ( before ) and path not in ( after)
+    )
+    update public.images
+    set users = users + 1
+    where path in ( after ) and path not in ( before );
+
+    return null;
+end;
+$$ language plpgsql;
+
+create function internal.on_boulder_delete()
+returns trigger
+security definer
+as $$
+begin
+    update public.images
+    set users = users - 1
+    where path in (
+        select path
+        from unnest(old.images)
+    );
+    return null;
+end;
+$$ language plpgsql;

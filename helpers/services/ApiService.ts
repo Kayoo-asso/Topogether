@@ -1,5 +1,5 @@
 import { createClient, SupabaseClient, User as AuthUser } from "@supabase/supabase-js";
-import { DBBoulder, DBLine, DBManager, DBParking, DBSector, DBTopoAccess, DBTrack, DBWaypoint, Email, BoulderImage, ImageType, Name, TopoData, User, UUID, DBBoulderImage, Topo, DBTopo } from 'types';
+import { DBBoulder, DBLine, DBManager, DBParking, DBSector, DBTopoAccess, DBTrack, DBWaypoint, Email, BoulderImage, ImageType, Name, TopoData, User, UUID, DBBoulderImage, Topo, DBTopo, LightTopo } from 'types';
 import { Quark, quark } from 'helpers/quarky';
 import { DBConvert } from "./DBConvert";
 import { DBSchema } from "idb";
@@ -15,6 +15,8 @@ export interface ImageUploadSuccess {
     url: string,
 }
 
+export interface BasicUser {}
+
 export class ApiService {
     client: SupabaseClient;
     private _user: Quark<User | null>;
@@ -29,6 +31,10 @@ export class ApiService {
     async initSession() {
         const authUser = this.client.auth.user();
         if (authUser) {
+            // this._user.set({
+            //     id: authUser.id as UUID,
+            //     email: authUser.email as Email
+            // });
             // don't handle possible API error here
             await this._loadUser(authUser);
         }
@@ -149,18 +155,18 @@ export class ApiService {
         return res.ok;
     }
 
-    async getTopo(id: UUID): Promise<TopoData | null> {
+    async getAllLightTopos(): Promise<LightTopo[]> {
         const { data, error } = await this.client
-            .rpc<TopoData>("get_topo", { _topo_id: id })
-            .single();
+            .rpc<LightTopo>("all_light_topos");
+
         if (error || !data) {
-            console.error("Error getting topo data: ", error);
-            return null;
+            console.error("Error getting light topos: ", error);
+            return [];
         }
         return data;
     }
 
-    async getTopo2(id: UUID): Promise<TopoData | null> {
+    async getTopo(id: UUID): Promise<TopoData | null> {
         // Notes on this query:
         //
         // 1. If multiple tables reference a parent with the same name for the foreign key,
@@ -198,10 +204,12 @@ export class ApiService {
                 location:location->coordinates,
                 creator:profiles!creatorId (*),
                 validator:profiles!validatorId (*),
+
                 parkings:parkings!topoId (
                     id, spaces, description, imagePath,
                     location:location->coordinates
                 ),
+
                 waypoints:waypoints!topoId (
                     id, name, description, imagePath,
                     location: location->coordinates
@@ -348,5 +356,3 @@ export class ApiService {
     }
 }
 
-export const api = new ApiService();
-api.initSession();

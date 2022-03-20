@@ -2,6 +2,12 @@ import { Rating } from 'types';
 import { Description, Email, Name, NullableOptional, StringBetween, UUID } from './Utils';
 
 // NOTE: the email has to be updated through the authentication service
+export interface BasicUser {
+  id: UUID,
+  email: Email,
+  userName: Name,
+}
+
 export type User = {
   id: UUID,
   userName: Name,

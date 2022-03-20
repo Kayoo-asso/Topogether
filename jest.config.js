@@ -15,6 +15,7 @@ const customJestConfig = {
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   // adding '.' to moduleDirectories makes for nice import paths
   moduleDirectories: ['node_modules', '.'],
+  roots: ['<rootDir>/test/'],
   testPathIgnorePatterns
 }
 

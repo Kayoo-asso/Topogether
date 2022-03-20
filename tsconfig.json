@@ -10,8 +10,6 @@
       "dom.iterable",
       "esnext"
     ],
-    // Get latest React types (for React 18 RC)
-    "types": ["react/next", "react-dom/next"],
     // Used to add types to libraries
     "allowJs": true,
     // Set this to `true`, otherwise TypeScript complains about missing type declarations

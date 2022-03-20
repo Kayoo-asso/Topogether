@@ -30,4 +30,14 @@ CREATE TYPE public.grade AS ENUM(
     '9a', '9a+', '9b', '9b+', '9c', '9c+'
 );
 
+CREATE TYPE public.grade_category as ENUM(
+    '3', '4', '5', '6', '7', '8', '9', 'None'
+);
+
+create type public.sized_image as (
+    path text,
+    height integer,
+    width integer
+);
+
 -- CREATE TYPE public.rating AS ENUM('1', '2', '3', '4', '5');

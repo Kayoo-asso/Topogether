@@ -1,20 +1,44 @@
+import { quarkTopo } from 'helpers/fakeData/fakeTopoV2';
 import { Quark, quark, QuarkArray } from 'helpers/quarky';
-import { syncQuark } from 'helpers/quarky/quarky-sync';
-import { BoulderData, TrackData, TopoData, UUID, Track, Boulder, Topo } from 'types';
+import { sync } from 'helpers/services';
+import { withCoalescedInvoke } from 'next/dist/lib/coalesced-function';
+import { BoulderData, TrackData, TopoData, UUID, Track, Boulder, Topo, SectorData, Line, Sector, Manager, Waypoint, TopoAccess, Parking } from 'types';
 
-export function quarkifyTopo(topo: TopoData): Quark<Topo> {
-    const topoQuark = quark<Topo>({
-        ...topo,
-        sectors: new QuarkArray(topo.sectors),
-        boulders: new QuarkArray(topo.boulders?.map(quarkifyBoulder)),
-        waypoints: new QuarkArray(topo.waypoints),
-        parkings: new QuarkArray(topo.parkings),
-        accesses: new QuarkArray(topo.accesses),
-        managers: new QuarkArray(topo.managers),
-    });
+export function quarkifyTopo(data: TopoData): Quark<Topo> {
+    const topo: Topo = {
+        ...data,
+        sectors: quarkifySectors(data.sectors, data.id),
+        boulders: quarkifyBoulders(data.boulders, data.id),
+        waypoints: quarkifyWaypoints(data.waypoints, data.id),
+        accesses: quarkifyTopoAccesses(data.accesses, data.id),
+        parkings: quarkifyParkings(data.parkings, data.id),
+        managers: quarkifyManagers(data.managers, data.id)
+    };
+    const onChange = (topo: Topo) => sync.topoUpdate(topo);
+    const q = quark(topo, { onChange });
+    // Bit of hackery so that the delete handlers of the QuarkArrays for boulders and sectors
+    // can have a reference to the quark of the topo
+    q().sectors.onDelete = (sector) => onSectorDelete(sector, q);
+    q().boulders.onDelete = (boulder) => onBoulderDelete(boulder, q);
 
-    topoQuark().boulders.onDelete = (boulderQuark) => onBoulderDelete(boulderQuark(), topoQuark);
-    return topoQuark;
+    return q;
+}
+
+type TopoCreate = Omit<TopoData, 'sectors' | 'boulders' | 'waypoints' | 'accesses' | 'parkings' | 'managers' | 'lonelyBoulders'>;
+
+export function createTopo(data: TopoCreate): Quark<Topo> {
+    const dataWithArrays: TopoData = {
+        ...data,
+        sectors: [],
+        boulders: [],
+        managers: [],
+        waypoints: [],
+        accesses: [],
+        parkings: [],
+        lonelyBoulders: [],
+    }
+    sync.topoUpdate(dataWithArrays);
+    return quarkifyTopo(dataWithArrays);
 }
 
 function onBoulderDelete(boulder: Boulder, topoQuark: Quark<Topo>) {
@@ -34,22 +58,100 @@ function onBoulderDelete(boulder: Boulder, topoQuark: Quark<Topo>) {
             break;
         }
     }
+    sync.boulderDelete(boulder);
 }
 
-const quarkifyBoulder = (boulder: BoulderData): Boulder => ({
-    ...boulder,
-    tracks: new QuarkArray(boulder.tracks.map(quarkifyTrack))
-});
+function onSectorDelete(sector: Sector, topoQuark: Quark<Topo>) {
+    topoQuark.set(prev => ({
+        ...prev,
+        lonelyBoulders: [...prev.lonelyBoulders, ...sector.boulders]
+    }));
+    sync.sectorDelete(sector);
+}
 
-const quarkifyTrack = (track: TrackData): Track => ({
-    ...track,
-    lines: new QuarkArray(track.lines, {
-        onAdd: (line) => syncQuark(line.id, line)
-    }),
-    ratings: new QuarkArray(track.ratings, {
-        onAdd: (rating) => syncQuark(rating.id, rating)
-    })
-});
+
+function quarkifyParkings(parkings: Parking[], topoId: UUID): QuarkArray<Parking> {
+    const onChange = (parking: Parking) => sync.parkingUpdate(parking, topoId);
+    return new QuarkArray(parkings, {
+        quarkifier: (p) => quark(p, { onChange }),
+        onAdd: onChange,
+        onDelete: (parking) => sync.parkingDelete(parking)
+    });
+}
+
+function quarkifyTopoAccesses(accesses: TopoAccess[], topoId: UUID): QuarkArray<TopoAccess> {
+    const onChange = (access: TopoAccess) => sync.topoAccessUpdate(access, topoId);
+    return new QuarkArray(accesses, {
+        quarkifier: (a) => quark(a, { onChange }),
+        onAdd: onChange,
+        onDelete: (access) => sync.topoAccessDelete(access)
+    });
+}
+
+function quarkifyWaypoints(waypoints: Waypoint[], topoId: UUID): QuarkArray<Waypoint> {
+    const onChange = (waypoint: Waypoint) => sync.waypointUpdate(waypoint, topoId);
+    return new QuarkArray(waypoints, {
+        quarkifier: (w) => quark(w, { onChange }),
+        onAdd: onChange,
+        onDelete: (waypoint) => sync.waypointDelete(waypoint)
+    });
+}
+
+function quarkifyManagers(managers: Manager[], topoId: UUID): QuarkArray<Manager> {
+    const onChange = (manager: Manager) => sync.managerUpdate(manager, topoId);
+    return new QuarkArray(managers, {
+        quarkifier: (s) => quark(s, { onChange }),
+        onAdd: onChange,
+        onDelete: (manager) => sync.managerDelete(manager)
+    });
+}
+
+function quarkifySectors(sectors: Sector[], topoId: UUID): QuarkArray<Sector> {
+    const onChange = (sector: Sector) => sync.sectorUpdate(sector, topoId);
+    return new QuarkArray(sectors, {
+        quarkifier: (s) => quark(s, { onChange }),
+        onAdd: onChange,
+        onDelete: (sector) => sync.sectorDelete(sector)
+    });
+}
+
+function quarkifyBoulders(data: BoulderData[], topoId: UUID): QuarkArray<Boulder> {
+    const onChange = (boulder: Boulder) => sync.boulderUpdate(boulder, topoId);
+    const boulders: Boulder[] = data.map(boulder => ({
+        ...boulder,
+        tracks: quarkifyTracks(boulder.tracks, topoId, boulder.id),
+    }));
+    return new QuarkArray(boulders, {
+        quarkifier: (b) => quark(b, { onChange }),
+        onAdd: onChange,
+        onDelete: (boulder) => sync.boulderDelete(boulder)
+    });
+}
+
+
+function quarkifyTracks(data: TrackData[], topoId: UUID, boulderId: UUID): QuarkArray<Track> {
+    const onChange = (track: Track) => sync.trackUpdate(track, topoId, boulderId);
+    const tracks: Track[] = data.map(track => ({
+        ...track,
+        lines: quarkifyLines(track.lines, topoId, track.id),
+        ratings: new QuarkArray()
+    }));
+    return new QuarkArray(tracks, {
+        quarkifier: (t) => quark(t, { onChange }),
+        onAdd: onChange,
+        onDelete: (track) => sync.bouderDelete(track)
+    });
+}
+
+function quarkifyLines(lines: Line[], topoId: UUID, trackId: UUID): QuarkArray<Line> {
+    const onChange = (line: Line) => sync.lineUpdate(line, topoId, trackId);
+    return new QuarkArray(lines, {
+        quarkifier: (l) => quark(l, { onChange }),
+        onAdd: onChange,
+        onDelete: (line) => sync.lineDelete(line)
+    });
+}
+
 
 
 // function enableSync(topoQuark: Quarkify<TopoData, Entities>): Effect {

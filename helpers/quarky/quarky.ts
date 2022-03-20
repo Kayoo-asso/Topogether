@@ -48,7 +48,7 @@ export type CleanupHelper = (cleanup: (deleted: boolean) => void) => void;
 
 export interface QuarkOptions<T> {
     equal?: ((a: T, b: T) => boolean),
-    onChange?: (value: T) => void,
+    onChange?: ((value: T) => void) | ((next: T, prev: T) => void),
     name?: string,
 }
 
@@ -104,7 +104,7 @@ const enum NodeStatus {
 
 interface Leaf<T> extends Node {
     value: T,
-    readonly fn: ((value: T) => void) | undefined,
+    readonly fn: ((value: T) => void) | ((next: T, prev: T) => void) | undefined,
     readonly equal: (a: T, b: T) => boolean,
     readonly status: NodeStatus.Clean,
     readonly deps: null,

@@ -1,7 +1,7 @@
 -- TOPO ACCESSES
 
 -- 0. Table
-create type topo_access_step as (
+create type public.topo_access_step as (
     description varchar(5000),
     "imagePath" text
 );
@@ -21,12 +21,14 @@ returns trigger
 security definer
 as $$
 declare
-    step topo_access_step;
+    step public.topo_access_step;
 begin
-    foreach step in array new.steps loop
-        perform internal.use_img(step."imagePath");
-    end loop;
-
+    update public.images
+    set users = users + 1
+    where path in (
+        select "imagePath"
+        from unnest(new.steps)
+    );
     return null;
 end;
 $$ language plpgsql;
@@ -36,12 +38,14 @@ returns trigger
 security definer
 as $$
 declare
-    step topo_access_step;
+    step public.topo_access_step;
 begin
-    foreach step in array old.steps loop
-        perform internal.stop_using_img(step."imagePath");
-    end loop;
-
+    update public.images
+    set users = users - 1
+    where path in (
+        select "imagePath"
+        from unnest(old.steps)
+    );
     return null;
 end;
 $$ language plpgsql;
@@ -52,19 +56,38 @@ returns trigger
 security definer
 as $$
 begin
-    update public.images
-    set users = users - 1
-    where path in (
+    with before as (
         select "imagePath"
         from unnest(old.steps)
-    );
-
-    update public.images
-    set users = users + 1
-    where path in (
+    ), after as (
         select "imagePath"
         from unnest(new.steps)
-    );
+    ), 
+    -- Hackery to execute two sql statements that use `before` and `after` tables
+    terrible_hack as (
+        update public.images
+        set users = users - 1
+        where path in ( before ) and path not in ( after)
+    )
+    update public.images
+    set users = users + 1
+    where path in ( after ) and path not in ( before );
+    -- update public.images
+    -- set users = users - 1
+    -- where path in (before except after
+    -- update public.images
+    -- set users = users - 1
+    -- where path in (
+    --     select "imagePath"
+    --     from unnest(old.steps)
+    -- );
+
+    -- update public.images
+    -- set users = users + 1
+    -- where path in (
+    --     select "imagePath"
+    --     from unnest(new.steps)
+    -- );
 
     return null;
 end;

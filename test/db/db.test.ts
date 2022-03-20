@@ -1,9 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
-import exp from "constants";
 import { images, topoData } from "helpers/fakeData/fakeTopoV2";
-import { api, AuthResult } from "helpers/services/ApiService";
+import { api, AuthResult } from "helpers/services";
 import { DBParking, DBTopo, Email, LinearRing, LineCoords, LineString, MultiPolygon, Name, Point, Position, Topo, TopoData, User, UUID } from "types";
-import { v4 as uuid } from "uuid";
 import { usersShouldBeEqual } from "./equality";
 
 const client = api.client;
@@ -90,8 +88,12 @@ test("Integration test: signing up & saving topo", async () => {
         role: "ADMIN"
     });
 
+    // Get all light topos
+    // const lightTopos = await api.getAllLightTopos();
+    // console.log(lightTopos);
+
     // Get from DB and compare
-    const topoFromDb = await api.getTopo2(topoData.id);
+    const topoFromDb = await api.getTopo(topoData.id);
     // const expected: TopoData = {
     //     ...topoData,
     // }

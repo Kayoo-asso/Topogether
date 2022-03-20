@@ -1,4 +1,4 @@
-import { createRouteLoader } from "next/dist/client/route-loader";
+import { TopoCreate } from "helpers/topo";
 import { Amenities, Boulder, BoulderData, BoulderImage, DBBoulder, DBBoulderImage, DBLine, DBManager, DBParking, DBSector, DBTopo, DBTopoAccess, DBTrack, DBWaypoint, Line, LinearRing, LineCoords, LineString, Manager, MultiLineString, Parking, Point, PolygonCoords, Position, RockTypes, Sector, SectorData, Topo, TopoAccess, TopoData, TopoType, Track, TrackData, UUID, Waypoint, WaypointDTO } from "types";
 
 // IMPORTANT: perform all conversions by explicitly assigning all properties.
@@ -172,7 +172,7 @@ export class DBConvert {
         }
     }
 
-    static topo(topo: Topo| TopoData): DBTopo {
+    static topo(topo: Topo| TopoData | TopoCreate): DBTopo {
         return {
             id: topo.id,
             name: topo.name,

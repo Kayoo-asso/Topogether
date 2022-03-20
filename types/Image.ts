@@ -2,7 +2,6 @@ import { UUID } from "types";
 
 export interface BoulderImage {
   readonly id: UUID,
-  index: number,
   readonly imagePath: string
   readonly width: number,
   readonly height: number,

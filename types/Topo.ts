@@ -106,20 +106,50 @@ export type DBTopo = NullableOptional<{
   imagePath?: string,
 }>;
 
-export type LightTopo = Omit<TopoData, 'sectors' | 'boulders' | 'lonelyBoulders' | 'waypoints' | 'parkings' | 'accesses' | 'managers'> & {
-  firstParkingLocation?: GeoCoordinates,
+export interface LightTopo {
+  id: UUID,
+  name: Name,
+  status: TopoStatus,
+  location: GeoCoordinates,
+  forbidden: boolean,
+
+  modified: string,
+  submitted?: string,
+  validated?: string,
+
+  amenities: Amenities,
+  rockTypes: RockTypes,
+
+  type?: TopoType,
+  description?: Description,
+  altitude?: number,
+  closestCity?: Name,
+
+  imagePath?: string,
+  creator?: Profile,
+
+  parkingLocation?: GeoCoordinates,
   nbSectors: number,
-  nbTracks: number,
   nbBoulders: number,
-  grades: GradeHistogram,
-  // TODO: do we include access information here? Like access difficulty & time
-};
+  nbTracks: number,
+  grades: GradeHistogram
+}
+
+// export type LightTopoOld = Omit<TopoData, 'sectors' | 'boulders' | 'faunaProtection' | 'ethics' | 'danger' | 'cleaned' | 'otherAmenities' | 'lonelyBoulders' | 'waypoints' | 'parkings' | 'accesses' | 'managers' | 'validator'> & {
+//   parkingLocation?: GeoCoordinates,
+//   nbSectors: number,
+//   nbTracks: number,
+//   nbBoulders: number,
+//   grades: GradeHistogram,
+//   // TODO: do we include access information here? Like access difficulty & time
+// };
 
 export type GradeHistogram = {
   [K in LightGrade]: number
-} & {
-  Total: number
 };
+// } & {
+//   Total: number
+// };
 
 export interface Manager {
   readonly id: UUID,
