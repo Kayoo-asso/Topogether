@@ -12,7 +12,7 @@ interface RootWorldMapProps {
 }
 
 export const RootWorldMap: React.FC<RootWorldMapProps> = (props: RootWorldMapProps) => {
-  saveFakeTopo();
+  // saveFakeTopo();
 
   const [selectedTopo, setSelectedTopo] = useState<LightTopo>();
   const toggleTopoSelect = useCallback((t: LightTopo) => {
