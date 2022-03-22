@@ -2,10 +2,11 @@ import { Rating } from 'types';
 import { Description, Email, Name, NullableOptional, StringBetween, UUID } from './Utils';
 
 // NOTE: the email has to be updated through the authentication service
-export interface BasicUser {
+export interface Session {
   id: UUID,
   email: Email,
   userName: Name,
+  role: Role
 }
 
 export type User = {
@@ -15,7 +16,10 @@ export type User = {
   readonly role: Role,
   // ISO timestamp format
   // Wrap in a new Date() object if needed
-  readonly created: string, 
+  // Undefined when :
+  // a) connected through token and localStorage fails to provide info
+  // n) offline mode, when the account has not yet been sent to the DB
+  readonly created?: string, 
   firstName?: Name,
   lastName?: Name,
   country?: Name,
@@ -25,13 +29,13 @@ export type User = {
   imagePath?: string,
 };
 
-export type DBUser = NullableOptional<User>;
+export type DBUser = NullableOptional<Omit<User, 'created' | 'role' | 'email'>>;
 
 export interface Profile {
   id: UUID,
   userName: Name,
   role: Role,
-  created: string,
+  created?: string,
   firstName?: Name,
   lastName?: Name,
   city?: Name,

@@ -30,7 +30,7 @@ export const ManagementForm: React.FC<ManagementFormProps> = watchDependencies((
                         onChange={(files) => {
                             props.manager.set({
                                 ...manager,
-                                imagePath: files[0].imagePath,
+                                imagePath: files[0].path,
                             })
                         }}
                         onDelete={() => console.log('delete')} //TODO

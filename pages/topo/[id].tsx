@@ -2,7 +2,7 @@ import React from 'react';
 import type { NextPage } from 'next';
 import { Error404, Header, Loading, RootTopo } from 'components';
 import { useRouter } from 'next/router';
-import { quarkifyTopo } from 'helpers';
+import { editTopo, quarkifyTopo } from 'helpers';
 import { isUUID, Topo } from 'types';
 import { watchDependencies } from 'helpers/quarky';
 import { api } from 'helpers/services';
@@ -39,7 +39,7 @@ const Topo: NextPage = watchDependencies(() => {
     // BUT NO DATA...
     if (!topoQuery.data) return <Error404 title='Topo introuvable' />
     else {
-      const topoQuark = quarkifyTopo(topoQuery.data);
+      const topoQuark = editTopo(topoQuery.data);
       return (
         <RootTopo 
           topoQuark={topoQuark}
@@ -48,5 +48,7 @@ const Topo: NextPage = watchDependencies(() => {
     }
   }
 });
+
+Topo.displayName = "TopoPage";
 
 export default Topo;

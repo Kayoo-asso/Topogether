@@ -7,7 +7,6 @@ import {
     ModalValidateTopo, ModalDeleteTopo, GeoCamera, Drawer, LeftbarBuilderDesktop, BoulderBuilderSlideagainstDesktop,
     ParkingBuilderSlide, AccessFormSlideover, WaypointBuilderSlide, ModalRenameSector, ModalDelete, SectorAreaMarkerDropdown, BuilderProgressIndicator, 
 } from 'components';
-import { quarkTopo } from 'helpers/fakeData/fakeTopoV2';
 import { blobToImage, defaultImage, DeviceContext, sortBoulders, useContextMenu, createTrack, createBoulder, createParking, createWaypoint, createSector, deleteSector, deleteBoulder, deleteParking, deleteWaypoint, toLatLng } from 'helpers';
 import { Boulder, GeoCoordinates, BoulderImage, MapToolEnum, Parking, Sector, Track, Waypoint, Topo, Profile } from 'types';
 import { Quark, QuarkIter, useCreateDerivation, useQuarkyCallback, useSelectQuark, watchDependencies } from 'helpers/quarky';
@@ -172,7 +171,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
     }, [freePointCreatingSector]);
     const handleCreatingSectorOriginClick = useCallback(() => {
     if (creatingSector.length > 2) {
-        const newSectorQuark = createSector(quarkTopo, creatingSector, boulderOrder())
+        const newSectorQuark = createSector(props.topoQuark, creatingSector, boulderOrder())
         selectedSector.select(newSectorQuark);
         emptyCreatingSector();
         setDisplayModalSectorRename(true);
@@ -186,7 +185,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
     if (e.latLng) {
         const loc: GeoCoordinates = [e.latLng.lng(), e.latLng.lat()];
         switch (currentTool) {
-        case 'ROCK': createBoulder(quarkTopo, loc); break;
+        case 'ROCK': createBoulder(props.topoQuark, loc); break;
         case 'SECTOR': handleCreatingSector(loc); break;
         case 'PARKING': createParking(topo, loc); break;
         case 'WAYPOINT': createWaypoint(topo, loc); break;
@@ -234,7 +233,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
             selectedTrack.select(createTrack(selectedBoulder()!, props.user.id));
         } 
         else {
-            const newBoulderQuark = createBoulder(quarkTopo, coordinates, img);
+            const newBoulderQuark = createBoulder(props.topoQuark, coordinates, img);
             selectedTrack.select(createTrack(newBoulderQuark(), props.user.id));
             selectedBoulder.select(newBoulderQuark);
         }
@@ -269,11 +268,11 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
         onParkingClick={() => setCurrentTool(currentTool === 'PARKING' ? undefined : 'PARKING')}
         onWaypointClick={() => setCurrentTool(currentTool === 'WAYPOINT' ? undefined : 'WAYPOINT')}
         >
-        <BuilderProgressIndicator topo={quarkTopo}/>
+        <BuilderProgressIndicator topo={props.topoQuark}/>
         </Header>
         <div className="h-content md:h-full relative flex flex-row md:overflow-hidden">
         <LeftbarBuilderDesktop
-            topoQuark={quarkTopo}
+            topoQuark={props.topoQuark}
             boulderOrder={boulderOrder()}
             selectedBoulder={selectedBoulder}
             onBoulderSelect={toggleBoulderSelect}
@@ -283,7 +282,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
         <Show when={() => [device === 'MOBILE', displaySectorSlideover] as const}>
             {() => (
             <SectorBuilderSlideoverMobile 
-                topoQuark={quarkTopo}
+                topoQuark={props.topoQuark}
                 boulderOrder={boulderOrder()}
                 selectedBoulder={selectedBoulder}
                 onCreateSector={() => setCurrentTool('SECTOR')}
@@ -296,7 +295,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
 
         <Show when={() => displayInfo}>
             <InfoFormSlideover
-            topo={quarkTopo}
+            topo={props.topoQuark}
             open
             onClose={() => setCurrentDisplay(undefined)}
             className={currentDisplay === 'INFO' ? 'z-100' : ''}
@@ -333,7 +332,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                             : currentTool === 'WAYPOINT' ? 'url(/assets/icons/colored/_help-round.svg), auto'
                             : ''}
             draggableMarkers
-            topo={quarkTopo}
+            topo={props.topoQuark}
             creatingSector={freePointCreatingSector ? creatingSector.concat([freePointCreatingSector]) : creatingSector}
             onCreatingSectorOriginClick={handleCreatingSectorOriginClick}
             sectors={sectors}
@@ -445,13 +444,13 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
 
         <Show when={() => displayModalValidateTopo}>
             <ModalValidateTopo
-            topo={quarkTopo}
+            topo={props.topoQuark}
             onClose={() => setDisplayModalValidateTopo(false)}
             />
         </Show>
         <Show when={() => displayModalDeleteTopo}>
             <ModalDeleteTopo
-            topo={quarkTopo}
+            topo={props.topoQuark}
             onClose={() => setDisplayModalDeleteTopo(false)}
             />
         </Show>
@@ -535,7 +534,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
         <Show when={() => toDeleteSector.quark()}>
         {(sector) => (
             <ModalDelete
-            onDelete={() => deleteSector(quarkTopo, sector, selectedSector)}
+            onDelete={() => deleteSector(props.topoQuark, sector, selectedSector)}
             onClose={() => toDeleteSector.select(undefined)}
             >
             Êtes-vous sûr de vouloir supprimer le secteur ?
@@ -545,7 +544,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
         <Show when={() => toDeleteBoulder.quark()}>
         {(boulder) => (
             <ModalDelete
-            onDelete={() => deleteBoulder(quarkTopo, boulder, selectedBoulder)}
+            onDelete={() => deleteBoulder(props.topoQuark, boulder, selectedBoulder)}
             onClose={() => toDeleteBoulder.select(undefined)}
             >
             Êtes-vous sûr de vouloir supprimer le bloc et toutes les voies associées ?

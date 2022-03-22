@@ -21,7 +21,7 @@ create table tracks (
     -- this duplication makes row level security easier
     "topoId" uuid not null references public.topos(id) on delete cascade,
     "boulderId" uuid not null references public.boulders(id) on delete cascade,
-    "creatorId" uuid references public.users(id) on delete set null
+    "creatorId" uuid references public.accounts(id) on delete set null
 );
 
 alter table tracks enable row level security;

@@ -280,6 +280,7 @@ export type DBBoulder = NullableOptional<{
   isHighball: boolean,
   mustSee: boolean,
   dangerousDescent: boolean,
+  images: BoulderImage[],
 
   topoId: UUID,
 }>;

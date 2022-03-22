@@ -4,7 +4,6 @@ import {
   BoulderSlideagainstDesktop,  BoulderSlideoverMobile, TrackSlideagainstDesktop, SectorSlideoverMobile,
   Show, Header,
   MapControl, ParkingSlide, WaypointSlide, TracksImage, LeftbarTopoDesktop } from 'components';
-import { quarkTopo } from 'helpers/fakeData/fakeTopoV2';
 import { defaultImage, DeviceContext, sortBoulders, toLatLng } from 'helpers';
 import { Boulder, BoulderImage, Parking, Sector, Topo, Track, Waypoint } from 'types';
 import { Quark, QuarkIter, useCreateDerivation, useQuarkyCallback, useSelectQuark, watchDependencies } from 'helpers/quarky';
@@ -43,6 +42,7 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
     if (selectedBoulder()?.id === boulderQuark().id)
         selectedBoulder.select(undefined);
     else {
+      console.log("Boulder quark in toggleBoulderSelect: ", boulderQuark());
       if (boulderQuark().images[0]) setCurrentImage(boulderQuark().images[0]);
       selectedBoulder.select(boulderQuark);
     }
@@ -123,7 +123,7 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
 
       <div className="h-content md:h-full relative flex flex-row md:overflow-hidden">
         <LeftbarTopoDesktop
-          topoQuark={quarkTopo}
+          topoQuark={props.topoQuark}
           boulderOrder={boulderOrder()}
           selectedBoulder={selectedBoulder}
           onBoulderSelect={toggleBoulderSelect}
@@ -132,7 +132,7 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
         <Show when={() => [device === 'MOBILE', displaySectorSlideover] as const}>
           {() => (
             <SectorSlideoverMobile 
-              topoQuark={quarkTopo}
+              topoQuark={props.topoQuark}
               boulderOrder={boulderOrder()}
               selectedBoulder={selectedBoulder}
               onBoulderSelect={toggleBoulderSelect}
@@ -144,7 +144,7 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
 
         <Show when={() => displayInfo}>
           <InfoSlideover 
-            topo={quarkTopo}
+            topo={props.topoQuark}
             open={displayInfo}
             onClose={() => setCurrentDisplay(undefined)}
             className={currentDisplay === 'INFO' ? 'z-100' : 'z-50'}
@@ -176,7 +176,7 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
               findTopos: false,
               findPlaces: false,
           }}
-          topo={quarkTopo}
+          topo={props.topoQuark}
           sectors={sectors}
           selectedSector={selectedSector} 
           onSectorClick={toggleSectorSelect}
@@ -280,3 +280,5 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
     </>
   );
 });
+
+RootTopo.displayName = "RootTopo";

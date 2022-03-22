@@ -7,7 +7,7 @@ export const images: BoulderImage[] = [
     {
         id: uuid(),
         index: 0,
-        imagePath: "https://builder.topogether.com/public/uploads/topo/main-image/dad449499de38f1bdee5872de1a354d52fff6183.jpeg",
+        path: "https://builder.topogether.com/public/uploads/topo/main-image/dad449499de38f1bdee5872de1a354d52fff6183.jpeg",
         width: 4592,
         height: 3064,
     },
@@ -36,7 +36,7 @@ export const lightTopo: LightTopo = {
 
     danger: "Il y a beaucoup de pentes" as Description,
 
-    imagePath: images[0].imagePath,
+    imagePath: images[0].path,
     creator: {
         id: topoCreatorId,
         userName: 'Flavien' as Name,

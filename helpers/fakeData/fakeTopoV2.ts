@@ -1,20 +1,31 @@
 import { Quark } from 'helpers/quarky';
-import { quarkifyTopo } from 'helpers/topo';
-import { BoulderData, Line, Name, BoulderImage, TrackData, Description, Difficulty, ClimbTechniques, SectorData, TopoData, Amenities, TopoStatus, TopoType, RockTypes, TopoAccess, Topo, Parking, StringBetween, Manager, UUID, Reception, Waypoint, Email } from 'types';
+import { editTopo, quarkifyTopo } from 'helpers/topo';
+import { BoulderData, Line, Name, BoulderImage, TrackData, Description, Difficulty, ClimbTechniques, SectorData, TopoData, Amenities, TopoStatus, TopoType, RockTypes, TopoAccess, Topo, Parking, StringBetween, Manager, UUID, Reception, Waypoint, Email, User } from 'types';
 import { v4 as uuid } from 'uuid';
 
 // Note: use UUIDs everywhere for proper testing with the DB
 
+export const fakeTopoUUID = '0c5f28eb-8dde-4e1b-8fe0-d034031a3966' as UUID; 
+
+export const fakeAdmin: User & { password: string } = {
+    id: uuid(), // will be changed anyways,
+    userName: "SuperAdmin" as Name,
+    email: "superadmin@kayoo.fr" as Email,
+    password: "lailailai",
+    role: "ADMIN",
+}
+
+
 export const images: BoulderImage[] = [
     {
         id: uuid(),
-        imagePath: "https://builder.topogether.com/public/uploads/topo/main-image/dad449499de38f1bdee5872de1a354d52fff6183.jpeg",
+        path: "https://builder.topogether.com/public/uploads/topo/main-image/dad449499de38f1bdee5872de1a354d52fff6183.jpeg",
         width: 4592,
         height: 3064,
     },
     {
         id: uuid(),
-        imagePath: "https://builder.topogether.com/public/uploads/boulder/image/5b558375709fbbacae9e5dcb746c8e10e7fa083f.jpeg",
+        path: "https://builder.topogether.com/public/uploads/boulder/image/5b558375709fbbacae9e5dcb746c8e10e7fa083f.jpeg",
         width: 4592,
         height: 3064,
         // boulderImageDimensions = 674x450 in the original fakeTopo
@@ -22,14 +33,12 @@ export const images: BoulderImage[] = [
     },
     {
         id: uuid(),
-        imagePath: "https://builder.topogether.com/public/uploads/boulder/image/a486a4432feafc909d335e8f18ee5448212af176.jpeg",
+        path: "https://builder.topogether.com/public/uploads/boulder/image/a486a4432feafc909d335e8f18ee5448212af176.jpeg",
         width: 1334,
         height: 2000,
     },
 ]
 
-// TODO: create proper users and load them into quarks
-const topoCreatorId = uuid();
 
 export const lines: Line[] = [
     // Line 0, track 0
@@ -83,7 +92,7 @@ export const tracks: TrackData[] = [
 
         lines: [lines[0]],
         ratings: [],
-        creatorId: topoCreatorId,
+        creatorId: fakeAdmin.id,
         hasMantle: false,
     },
     // Track 1, boulder 0
@@ -104,7 +113,7 @@ export const tracks: TrackData[] = [
 
         lines: [lines[1]],
         ratings: [],
-        creatorId: topoCreatorId,
+        creatorId: fakeAdmin.id,
         hasMantle: false,
     },
 ]
@@ -184,11 +193,11 @@ export const access: TopoAccess[] = [
         steps: [
             {
                 description: "Depuis le parking, prendre le sentier qui monte dans la continuité de la route. Après 12-15min de marche, vous arriverez à une esplanade d'herbe surmontant une petite falaise (où il est possible de faire de l'initiation). Un panneau indique le site d'escalade à l'entrée de l'esplanade.\nDepuis l'esplanade, prendre le sentier qui part derrière le panneau pour monter vers les premiers blocs." as Description,
-                imagePath: images[0].imagePath
+                imagePath: images[0].path
             },
             {
                 description: "Et ceci est une autre étape incroyable pour s'approcher du spot." as Description,
-                imagePath: images[1].imagePath
+                imagePath: images[1].path
             }
         ]
     },
@@ -199,11 +208,11 @@ export const access: TopoAccess[] = [
         steps: [
             {
                 description: "Depuis le parking, prendre le sentier qui monte dans la continuité de la route. Après 12-15min de marche, vous arriverez à une esplanade d'herbe surmontant une petite falaise (où il est possible de faire de l'initiation). Un panneau indique le site d'escalade à l'entrée de l'esplanade.\nDepuis l'esplanade, prendre le sentier qui part derrière le panneau pour monter vers les premiers blocs." as Description,
-                imagePath: images[0].imagePath
+                imagePath: images[0].path
             },
             {
                 description: "Et ceci est une autre étape incroyable pour s'approcher du spot." as Description,
-                imagePath: images[1].imagePath
+                imagePath: images[1].path
             }
         ]
     },    
@@ -224,7 +233,7 @@ export const managers: Manager[] = [
     {
         id: uuid(),
         name: 'La dégaine' as Name,
-        imagePath: images[2].imagePath,
+        imagePath: images[2].path,
         contactName: 'Jérôme Foobar' as Name,
         contactPhone: '06 69 43 44 92' as Name,
         contactMail: 'ladegaine@ladegaine.com' as Email,
@@ -243,8 +252,8 @@ export const waypoints: Waypoint[] = [
     }
 ]
 
-export const topoData: TopoData = {
-    id: uuid(),
+export const fakeTopov2: TopoData = {
+    id: fakeTopoUUID,
     name: "Yzéron" as Name,
     description: "Le site d'Yzéron est situé sur le massif de Py froid à environ 800m d'altitude. Il est le plus grand site de bloc de la région Lyonnaise avec une grande diversité de profil (dévers, dalle, réta...). L'esplanade sépare la plus grande partie du site en amont, et une falaise idéale pour l'initiation, située en contrebas. La forêt protège une bonne partie du site contre les aléas météorologiques ce qui, combiné à l'altitude, permet la pratique de la grimpe toute l'année." as Description,
     status: TopoStatus.Draft,
@@ -264,13 +273,7 @@ export const topoData: TopoData = {
     danger: "Il y a beaucoup de pentes" as Description,
 
     imagePath: "https://builder.topogether.com/public/uploads/topo/main-image/dad449499de38f1bdee5872de1a354d52fff6183.jpeg",
-    creator: {
-        id: topoCreatorId,
-        userName: 'Flavien' as Name,
-        role: 'ADMIN',
-        created: (new Date(Date.now())).toISOString()
-    },
-    // validatorId: validatorId,
+    creator: fakeAdmin,
 
     sectors: sectors,
     boulders: boulders,
@@ -281,4 +284,4 @@ export const topoData: TopoData = {
     managers: managers,
 }
 
-export const quarkTopo: Quark<Topo> = quarkifyTopo(topoData);
+// export const quarkTopo: Quark<Topo> = editTopo(fakeTopov2);

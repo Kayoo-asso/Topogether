@@ -127,7 +127,7 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
 
       <NextImage
         className={`${props.imageClassName ? props.imageClassName : ''}`}
-        src={props.image ? props.image.imagePath : staticUrl.defaultKayoo}
+        src={props.image ? props.image.path : staticUrl.defaultKayoo}
         alt="Rocher"
         width={imgWidth}
         height={imgHeight}

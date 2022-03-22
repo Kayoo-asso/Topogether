@@ -4,7 +4,6 @@ import {
 } from 'components';
 import { LightTopo, User } from 'types';
 import { fontainebleauLocation, toLatLng } from 'helpers';
-import { saveFakeTopo } from 'helpers/fakeData/saveFakeTopo';
 
 interface RootWorldMapProps {
     lightTopos: LightTopo[],
@@ -12,8 +11,6 @@ interface RootWorldMapProps {
 }
 
 export const RootWorldMap: React.FC<RootWorldMapProps> = (props: RootWorldMapProps) => {
-  // saveFakeTopo();
-
   const [selectedTopo, setSelectedTopo] = useState<LightTopo>();
   const toggleTopoSelect = useCallback((t: LightTopo) => {
     if (selectedTopo?.id === t.id) {

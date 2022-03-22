@@ -1,5 +1,5 @@
-import { TopoCreate } from "helpers/topo";
-import { Amenities, Boulder, BoulderData, BoulderImage, DBBoulder, DBBoulderImage, DBLine, DBManager, DBParking, DBSector, DBTopo, DBTopoAccess, DBTrack, DBWaypoint, Line, LinearRing, LineCoords, LineString, Manager, MultiLineString, Parking, Point, PolygonCoords, Position, RockTypes, Sector, SectorData, Topo, TopoAccess, TopoData, TopoType, Track, TrackData, UUID, Waypoint, WaypointDTO } from "types";
+import { useReducer } from "react";
+import { Amenities, Boulder, BoulderData, BoulderImage, DBBoulder, DBLine, DBManager, DBParking, DBSector, DBTopo, DBTopoAccess, DBTrack, DBUser, DBWaypoint, Line, LinearRing, LineCoords, LineString, Manager, MultiLineString, Parking, Point, PolygonCoords, Position, RockTypes, Sector, SectorData, Topo, TopoAccess, TopoData, TopoType, Track, TrackData, User, UUID, Waypoint } from "types";
 
 // IMPORTANT: perform all conversions by explicitly assigning all properties.
 // DO NOT destructure one of the input arguments into the result
@@ -38,6 +38,20 @@ const toMultiLineString = (l?: Position[][]): MultiLineString | null => {
 
 // TODO: better validation of spatial types 
 export class DBConvert {
+    static user(user: User): DBUser {
+        return {
+            id: user.id,
+            userName: user.userName,
+            firstName: user.firstName ?? null,
+            lastName: user.lastName ?? null,
+            country: user.country ?? null,
+            city: user.city ?? null,
+            phone: user.phone ?? null,
+            birthDate: user.birthDate ?? null,
+            imagePath: user.imagePath ?? null,
+        }
+    }
+
     static line(line: Line, topoId: UUID, trackId: UUID): DBLine {
         const result: DBLine = {
             id: line.id,
@@ -93,19 +107,8 @@ export class DBConvert {
             isHighball: boulder.isHighball,
             mustSee: boulder.mustSee,
             dangerousDescent: boulder.dangerousDescent,
+            images: boulder.images,
             topoId
-        };
-    }
-
-    static boulderImage(img: BoulderImage, topoId: UUID, boulderId: UUID): DBBoulderImage {
-        return {
-            id: img.id,
-            index: img.index,
-            width: img.width,
-            height: img.height,
-            topoId,
-            boulderId,
-            imagePath: img.imagePath,
         };
     }
 
@@ -172,7 +175,7 @@ export class DBConvert {
         }
     }
 
-    static topo(topo: Topo| TopoData | TopoCreate): DBTopo {
+    static topo(topo: Topo| TopoData): DBTopo {
         return {
             id: topo.id,
             name: topo.name,

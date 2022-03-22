@@ -1,8 +1,8 @@
 import { createClient, SupabaseClient, User as AuthUser } from "@supabase/supabase-js";
-import { DBBoulder, DBLine, DBManager, DBParking, DBSector, DBTopoAccess, DBTrack, DBWaypoint, Email, BoulderImage, ImageType, Name, TopoData, User, UUID, DBBoulderImage, Topo, DBTopo, LightTopo } from 'types';
-import { Quark, quark } from 'helpers/quarky';
+import { DBBoulder, DBLine, DBManager, DBParking, DBSector, DBTopoAccess, DBTrack, DBWaypoint, Email, BoulderImage, ImageType, Name, TopoData, User, UUID, Topo, DBTopo, LightTopo, Session, Role } from 'types';
+import { Quark, quark, selectQuark, SelectQuark, SelectQuarkNullable } from 'helpers/quarky';
 import { DBConvert } from "./DBConvert";
-import { DBSchema } from "idb";
+import { sync } from ".";
 
 export enum AuthResult {
     Success,
@@ -15,7 +15,10 @@ export interface ImageUploadSuccess {
     url: string,
 }
 
-export interface BasicUser {}
+export const masterApi: SupabaseClient | null =
+    process.env.API_MASTER_KEY_LOCAL
+        ? createClient(process.env.NEXT_PUBLIC_API_URL!, process.env.API_MASTER_KEY_LOCAL!)
+        : null;
 
 export class ApiService {
     client: SupabaseClient;
@@ -25,26 +28,40 @@ export class ApiService {
         const API_URL = process.env.NEXT_PUBLIC_API_URL!;
         const API_KEY = process.env.NEXT_PUBLIC_ANON_KEY!;
         this.client = createClient(API_URL, API_KEY);
-        this._user = quark<User | null>(null);
+        const supabaseUser = this.client.auth.user();
+        if (supabaseUser) {
+            // Security checks
+            const role = supabaseUser.user_metadata.role;
+            if (role !== 'USER' && role !== 'ADMIN') {
+                throw new Error("Role not correctly saved in authentication token.");
+            }
+            if (!supabaseUser.email) {
+                throw new Error("Supabase user does not have email!");
+            }
+
+            const user: User = {
+                id: supabaseUser.id as UUID,
+                userName: "Loading..." as Name,
+                role: role,
+                email: supabaseUser.email as Email,
+            };
+            this._user = quark<User | null>(user);
+            // start loading the full profile from the network
+            // handles offline by caching request results
+            this._loadUser(supabaseUser);
+        } else {
+            this._user = quark<User | null>(null);
+        }
+
     }
 
-    async initSession() {
-        const authUser = this.client.auth.user();
-        if (authUser) {
-            // this._user.set({
-            //     id: authUser.id as UUID,
-            //     email: authUser.email as Email
-            // });
-            // don't handle possible API error here
-            await this._loadUser(authUser);
-        }
-    }
 
     private async _loadUser(authUser: AuthUser): Promise<AuthResult.Success | AuthResult.Error> {
         const { data, error } = await this.client
             .from<User>("users")
             .select("*")
             .match({ id: authUser.id })
+            // single and not maybeSingle, since the row has to exist if we have a Supabase auth token
             .single();
 
         if (error || !data) {
@@ -56,17 +73,23 @@ export class ApiService {
         return AuthResult.Success;
     }
 
+    updateUserInfo(user: User) {
+        sync.userUpdate(user);
+        this._user.set(user);
+    }
+
     user(): User | null {
         return this._user();
     }
 
     async signup(email: Email, password: string, pseudo: Name): Promise<AuthResult> {
+        const role: Role = "USER";
         const { user, session, error } = await this.client.auth.signUp({
             email,
             password
         }, {
             redirectTo: "/",
-            data: { userName: pseudo }
+            data: { userName: pseudo, role  }
         });
         if (error) {
             // user already exists
@@ -111,18 +134,6 @@ export class ApiService {
         return AuthResult.Success;
     }
 
-    async updateUserInfo(user: User): Promise<AuthResult.Success | AuthResult.Error> {
-        const { error } = await this.client
-            .from<User>("users")
-            .update(user);
-        if (error) {
-            console.debug("Error updating user info: ", error);
-            return AuthResult.Error;
-        }
-        // ASSUME the user is not null atm
-        this._user.set(user);
-        return AuthResult.Success;
-    }
 
     // TODO: better error handling using try / catch?
     async uploadImages(files: [File, ImageType][]): Promise<(ImageUploadSuccess | null)[]> {
@@ -223,6 +234,7 @@ export class ApiService {
                 boulders:boulders!topoId (
                     id, name, isHighball, mustSee, dangerousDescent,
                     location:location->coordinates,
+                    images,
                     tracks:tracks!boulderId(
                         id, index, name, description, height, grade, orientation, reception, anchors, techniques,
                         isTraverse, isSittingStart, mustSee, hasMantle,

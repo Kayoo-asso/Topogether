@@ -53,7 +53,7 @@ export const AccessForm: React.FC<AccessFormProps> = watchDependencies((props: A
                                     <ImageInput 
                                         value={step.imagePath}
                                         onChange={(files) => {
-                                            newSteps[index].imagePath = files[0].imagePath;
+                                            newSteps[index].imagePath = files[0].path;
                                             props.access.set({
                                                 ...access,
                                                 steps: newSteps,

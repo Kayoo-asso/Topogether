@@ -3,10 +3,10 @@ import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { api } from 'helpers/services';
 import { useAsyncData } from 'helpers/hooks/useAsyncData';
-import { watchDependencies } from 'helpers/quarky';
-import { isUUID } from 'types';
+import { Quark, watchDependencies } from 'helpers/quarky';
+import { isUUID, Topo, TopoData } from 'types';
 import { Error404, Header, Loading, RootBuilder } from 'components';
-import { quarkifyTopo } from 'helpers';
+import { editTopo, quarkifyTopo } from 'helpers';
 
 export async function getServerSideProps() {
   const data = {};
@@ -16,7 +16,10 @@ export async function getServerSideProps() {
 const BuilderMapPage: NextPage = watchDependencies(() => {
   const router = useRouter();
   const id = router.query.id?.toString();
-  if (!id || !isUUID(id)) { () => router.push('/'); return null; }
+  if (!id || !isUUID(id)) {
+    router.push('/');
+    return null;
+  }
 
   const session = api.user();
   if (!session) { () => router.push('/'); return null; }
@@ -43,7 +46,7 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
     // BUT NO DATA...
     if (!topoQuery.data) return <Error404 title="Topo introuvable" />
     else {
-      const topoQuark = quarkifyTopo(topoQuery.data);
+      const topoQuark: Quark<Topo> = editTopo(topoQuery.data as TopoData);
       return (
         <RootBuilder 
           topoQuark={topoQuark}

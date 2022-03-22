@@ -1,22 +1,5 @@
-import { api } from "helpers/services";
 import { BoulderData, Description, Difficulty, Parking, Sector, SectorData, TopoAccess, TopoData, TopoType, TrackData } from "types";
 import { v4 } from "uuid";
-import { topoData } from "./fakeTopoV2";
-
-export const saveFakeTopo = async () => {
-    const session = api.user();
-    const topo = topoData;
-
-    if (session) {
-        topo.creator = session;
-        for (const boulder of topo.boulders) {
-            for (const track of boulder.tracks) {
-                track.creatorId = session?.id;
-            }
-        }
-        const res = await api.saveTopo(topo);
-    }
-}
 
 export const convertOldTopo = (t: any) => {
     const accesses: TopoAccess[] = [{

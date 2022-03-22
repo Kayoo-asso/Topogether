@@ -1,4 +1,17 @@
-create table public.users (
+-- Prevent inserts / updates / deletes through views
+create function internal.do_nothing()
+returns trigger
+as $$
+begin
+    return null;
+end;
+$$ language plpgsql;
+
+-- 0. Internal table
+-- Made in the `public` schema, so a client with the service role key can bypass the RLS policies
+-- This is mostly used to change the role to ADMIN during local development
+
+create table public.accounts (
     -- Cascading deletes is important, so that we can remove a user from the `auth` schema
     id uuid primary key references auth.users on delete cascade,
     "userName" text not null,
@@ -19,8 +32,79 @@ create table public.users (
     "imagePath" text
 );
 
-alter table public.users enable row level security;
+-- No authorizations, all modifications have to go through one of the following:
+-- a) service role key
+-- b) triggers
+-- c) `public.users` view
+alter table public.accounts enable row level security;
 
+-- 1. Synchronise `public.accounts` with `auth.users`
+
+-- Create an entry in `users` for each new user
+-- This assumes the userName was provided as additional data.
+-- This clears the userName from the user meta data in `auth.users`
+create function internal.handle_new_user()
+returns trigger
+-- internal is needed for `public.accounts`
+-- extensions is needed for JSON operators for some reason
+-- pg_temp as last comes from Postgres' security guidelines
+security definer set search_path = internal, auth, extensions, pg_temp
+as $$
+begin
+    insert into public.accounts(id, "userName", email)
+    values (new.id, (new.raw_user_meta_data::jsonb->>'userName')::varchar(500), new.email);
+
+    update auth.users set
+        raw_user_meta_data = raw_user_meta_data-'userName' || '{"role": "USER" }'::jsonb
+    where id = new.id;
+
+    return null;
+end;
+$$ language plpgsql;
+
+create trigger on_new_user after insert on auth.users
+    for each row execute function internal.handle_new_user();
+
+create function internal.sync_email()
+returns trigger
+as $$
+begin
+    update public.accounts
+    set email = new.email
+    where id = new.id;
+    return null;
+end;
+$$ language plpgsql;
+
+create trigger on_email_change
+    after update of email -- only fire when the email changed
+    on auth.users
+    for each row
+    execute function internal.sync_email();
+
+create function internal.sync_role()
+returns trigger
+-- internal is needed for `public.accounts`
+-- extensions is needed for JSON operators for some reason
+-- auth is needed so that we can modify it
+-- pg_temp as last comes from Postgres' security guidelines
+security definer set search_path = internal, jsonb, auth, pg_temp
+as $$
+begin
+    update auth.users set
+        raw_user_meta_data = jsonb_set(raw_user_meta_data, '{role}', new.role::jsonb)
+    where id = new.id;
+    return null;
+end;
+$$ language plpgsql;
+
+create trigger on_role_change
+    after update of role
+    on public.accounts
+    for each row
+    execute function internal.sync_role();
+
+-- 2. `is_admin` function
 create function is_admin(_user_id uuid)
 returns boolean 
 as $$
@@ -35,114 +119,57 @@ begin
 end;
 $$ language plpgsql;
 
--- Users cannot INSERT a new account, they have to go through the auth process
-create policy "Only users can see their own account."
-    on public.users for select
-    -- the `using` case will also be applied for the `with check` case
-    using ( auth.uid() = id );
 
-create policy "Only users can update their account"
-    on public.users for update
-    using ( auth.uid() = id and role = 'USER' );
+-- 3. Setup `public` view of users, for profile editing
+create view public.users as 
+    select * from public.accounts;
+    -- where id = auth.uid(); -- important for security!
 
-create policy "Only users can delete their account"
-    on public.users for delete
-    using ( auth.uid() = id );
-
-create policy "Admins are omnipotent"
-    on public.users for all
-    -- the `using` case will also be applied for the `with check` cases
-    using ( is_admin(auth.uid()) );
-
--- Create an entry in `users` for each new user
--- This assumes the user_name was provided as additional data.
--- This clears the user_name from the user meta data in `auth.users`
-create function internal.handle_new_user()
-returns trigger
-language plpgsql
-security definer set search_path = public, extensions, auth, pg_temp
-as $$
-begin
-    insert into public.users(id, "userName", email)
-    values (new.id, (new.raw_user_meta_data::jsonb->>'userName')::varchar(500), new.email);
-    -- not very efficient (we just inserted into auth.users)
-    -- but we're never signing up a lot of users at once, so this is fine
-    update auth.users
-    set raw_user_meta_data = '{}'::jsonb
-    where id = new.id;
-    return null;
-end;
-$$;
-
-create trigger on_new_user after insert on auth.users
-    for each row execute function internal.handle_new_user();
-
-
--- Prevent direct email or role changes in the `users` table
 create function internal.handle_user_update()
 returns trigger
+security definer set search_path = internal
 as $$
 begin
-    if old.email <> new.email then
-        raise exception 'Email changes should go through the authentication service.';
-    end if;
-
     if old.role <> new.role then
-        raise exception 'User roles can only be changed by the database administrator.';
+        raise exception 'Role changes have to be done by a system administrator';
+    end if;
+    
+    if old.email <> new.email then
+        raise exception 'Email changes have to be done through the authentication system';
     end if;
 
-    new.created = old.created;
+    update public.users set 
+        "userName" = new."userName",
+        "firstName" = new."firstName",
+        "lastName" = new."lastName",
+        country = new.country,
+        city = new.city,
+        phone = new.phone,
+        "birthDate" = new."birthDate",
+        "imagePath" = new."imagePath"
+    where id = new.id;
 
     return new;
 end;
 $$ language plpgsql;
 
-
-create trigger on_update_user
-    before update of email, role, created
-    on public.users
-    for each row execute function internal.handle_user_update();
-
-
--- When a user account is deleted (by the user themselves, or an admin),
--- also delete the corresponding entry in `auth.users`.
-create function internal.handle_deleted_user()
-returns trigger
-security definer set search_path = public
-as $$
-begin
-    -- Remove from auth table
-    delete from auth.users
-    where id = old.id;
-    return null;
-end;
-$$ language plpgsql;
-
-create trigger on_delete_user after delete on public.users
-    for each row execute function internal.handle_deleted_user();
-
--- I don't think we need security definer here?
-create function internal.sync_email()
-returns trigger
-language plpgsql
-as $$
-begin
-    update users
-    set email = new.email
-    where id = new.id;
-    return null;
-end;
-$$;
-
-create trigger on_email_change
-    after update of email -- only fire when the email changed
-    on auth.users
+create trigger create_user_does_nothing
+    instead of insert on public.users
     for each row
-    when ( old.email <> new.email )
-    execute function internal.sync_email();
+    execute function internal.do_nothing();
+
+create trigger update_user
+    instead of update on public.users
+    for each row
+    execute function internal.handle_user_update();
+
+create trigger delete_user_does_nothing
+    instead of delete on public.users
+    for each row
+    execute function internal.do_nothing();
 
 
--- ### PROFILES ###
+-- 4. Profiles
 -- This view bypasses row-level security & allows everyone to view any profile
 create view public.profiles as
     select 
@@ -155,34 +182,26 @@ create view public.profiles as
         "lastName",
         country,
         city
-    from public.users;
+    from public.accounts;
 
--- Prevent inserts / updates / deletes through profiles
-create function internal.do_nothing()
-returns trigger
-as $$
-begin
-    return null;
-end;
-$$ language plpgsql;
 
 create trigger profiles_are_read_only
     instead of insert or update or delete 
     on public.profiles
     for each row execute function internal.do_nothing();
 
--- Image registration
+-- 5. Image registration
 
--- A user account never has any profile picture on creation
+-- A user account never has any profile picture on creation, so no need for an insert trigger
 
 create trigger img_changed
     after update of "imagePath"
-    on users
+    on public.accounts
     for each row
     when (old."imagePath" <> new."imagePath")
     execute function internal.img_changed();
 
 create trigger unregister_img
     after delete
-    on users
+    on public.accounts
     for each row execute function internal.unregister_img();

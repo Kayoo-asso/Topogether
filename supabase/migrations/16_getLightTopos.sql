@@ -26,15 +26,14 @@ create type public.light_topo as (
     "creator" public.profiles,
 
     -- additional stuff
-    "parkingLocation" double precision[],
+    "parkingLocation" jsonb,
     "nbSectors" int4,
     "nbBoulders" int4,
     "nbTracks" int4,
     grades jsonb
 
-
-    -- "creatorId" uuid references public.users(id) on delete set null,
-    -- "validatorId" uuid references public.users(id) on delete set null
+    -- "creatorId" uuid references public.accounts(id) on delete set null,
+    -- "validatorId" uuid references public.accounts(id) on delete set null
 );
 
 create function grade_to_category(grade public.grade)
@@ -44,7 +43,7 @@ begin
     if grade is null then
         return 'None';
     else
-        return left(grade, 1);
+        return left(grade::text, 1);
     end if;
 end;
 $$ language plpgsql;
@@ -76,7 +75,7 @@ begin
     from public.tracks
     where "topoId" = _topo.id;
 
-    select location::jsonb->coordinates
+    select location::jsonb->'coordinates'
     into "parkingLocation"
     from public.parkings
     where "topoId" = _topo.id
@@ -97,14 +96,14 @@ begin
     where id = _topo."creatorId";
 
     select 
-        id, name, status, 
-        location::jsonb->coordinates as location,
-        forbidden,
-        modified, submitted, validated,
-        amenities, "rockTypes",
-        type, description, altitude, "closestCity",
+        _topo.id, _topo.name, _topo.status, 
+        _topo.location::jsonb->'coordinates' as location,
+        _topo.forbidden,
+        _topo.modified, _topo.submitted, _topo.validated,
+        _topo.amenities, _topo."rockTypes",
+        _topo.type, _topo.description, _topo.altitude, _topo."closestCity",
 
-        "imagePath",
+        _topo."imagePath",
         creator,
 
         "parkingLocation",
@@ -112,8 +111,7 @@ begin
         "nbBoulders",
         "nbTracks",
         grades
-    into result
-    from _topo;
+    into result;
 
     return result;
 end;

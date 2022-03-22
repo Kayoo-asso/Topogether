@@ -35,13 +35,13 @@ create table topos (
 
     -- relations
     "imagePath" text,
-    "creatorId" uuid references public.users(id) on delete set null,
-    "validatorId" uuid references public.users(id) on delete set null
+    "creatorId" uuid references public.accounts(id) on delete set null,
+    "validatorId" uuid references public.accounts(id) on delete set null
 );
 
 create table topo_contributors (
     topo_id uuid not null references public.topos(id) on delete cascade,
-    user_id uuid not null references public.users(id) on delete cascade,
+    user_id uuid not null references public.accounts(id) on delete cascade,
     role contributor_role not null,
 
     primary key (topo_id, user_id)
@@ -53,14 +53,22 @@ create table topo_contributors (
 create function is_contributor(_topo_id uuid, _user_id uuid)
 returns boolean
 as $$
+declare
+    result boolean;
 begin
-    return exists (
-        select 1
+    result = exists (
+        select *
         from topo_contributors as t
         where
             t.topo_id = _topo_id and
             t.user_id = _user_id
     );
+
+    if result <> true then
+        raise exception '%s is not a contributor for %s', _user_id, _topo_id;
+    end if;
+
+    return result;
 end;
 $$ language plpgsql;
 

@@ -52,7 +52,7 @@ export const ImageThumb: React.FC<ImageThumbProps> = ({
       {props.tracks && 
         <TracksImage 
           image={props.image}
-          tracks={props.tracks}
+          tracks={props.tracks.quarks()}
           displayTrackOrderIndexes={false}
           programmativeHeight={containerWidth}
           tracksWeight={1}
@@ -60,7 +60,7 @@ export const ImageThumb: React.FC<ImageThumbProps> = ({
       }
       {!props.tracks && 
         <NextImage
-          src={props.image.imagePath}
+          src={props.image.path}
           alt="user generated image"
           layout="fill"
           objectFit="contain"

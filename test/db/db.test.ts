@@ -1,14 +1,10 @@
 import { createClient } from "@supabase/supabase-js";
-import { images, topoData } from "helpers/fakeData/fakeTopoV2";
+import { images, fakeTopov2 } from "helpers/fakeData/fakeTopoV2";
 import { api, AuthResult } from "helpers/services";
 import { DBParking, DBTopo, Email, LinearRing, LineCoords, LineString, MultiPolygon, Name, Point, Position, Topo, TopoData, User, UUID } from "types";
 import { usersShouldBeEqual } from "./equality";
 
 const client = api.client;
-const masterClient = createClient(
-    process.env.NEXT_PUBLIC_API_URL!,
-    process.env.API_MASTER_KEY_LOCAL!
-);
 
 const user: User = {
     id: undefined as any, // placeholder
@@ -49,8 +45,8 @@ test("Integration test: signing up & saving topo", async () => {
 
     // update the UUID in the data to match the one we got on sign up
     user.id = api.user()!.id; // important
-    topoData.creator = user;
-    topoData.boulders = topoData.boulders.map(b => ({
+    fakeTopov2.creator = user;
+    fakeTopov2.boulders = fakeTopov2.boulders.map(b => ({
         ...b,
         tracks: b.tracks.map(t => ({
             ...t,
@@ -72,18 +68,18 @@ test("Integration test: signing up & saving topo", async () => {
     usersShouldBeEqual(userFromDb.data!, user);
 
     // Save the fake topo
-    const topoSave = await api.saveTopo(topoData);
+    const topoSave = await api.saveTopo(fakeTopov2);
     expect(topoSave).toBe(true);
 
     // Check the current user was added as topo admin
     const { data, error } = await client
         .from<TopoContributor>("topo_contributors")
         .select('*')
-        .match({ topo_id: topoData.id })
+        .match({ topo_id: fakeTopov2.id })
         .single();
     expect(error).toBe(null);
     expect(data).toStrictEqual({
-        topo_id: topoData.id,
+        topo_id: fakeTopov2.id,
         user_id: user.id,
         role: "ADMIN"
     });
@@ -93,18 +89,18 @@ test("Integration test: signing up & saving topo", async () => {
     // console.log(lightTopos);
 
     // Get from DB and compare
-    const topoFromDb = await api.getTopo(topoData.id);
+    const topoFromDb = await api.getTopo(fakeTopov2.id);
     // const expected: TopoData = {
     //     ...topoData,
     // }
-    expect(topoFromDb).toStrictEqual(topoData);
+    expect(topoFromDb).toStrictEqual(fakeTopov2);
 
     // Clean the DB
     const topoDelete = await client
         .from<DBTopo>("topos")
         .delete()
         .match({
-            id: topoData.id
+            id: fakeTopov2.id
         });
     expect(topoDelete.error).toBe(null);
 

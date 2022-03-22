@@ -8,7 +8,7 @@ create table ratings (
     -- only needed for efficient RLS if topo admins / contributors can edit ratings
     -- topo_id uuid not null references topos(id) on delete cascade,
     "trackId" uuid not null references public.tracks(id) on delete cascade,
-    "authorId" uuid references public.users(id) on delete set null
+    "authorId" uuid references public.accounts(id) on delete set null
 );
 
 alter table ratings enable row level security;

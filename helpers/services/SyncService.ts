@@ -1,5 +1,5 @@
 import { quark, Quark } from "helpers/quarky/quarky";
-import { Boulder, BoulderImage, DBBoulder, DBBoulderImage, DBLine, DBManager, DBParking, DBSector, DBTopo, DBTopoAccess, DBTrack, DBWaypoint, Line, Manager, Parking, Sector, Topo, TopoAccess, TopoData, Track, User, UUID, Waypoint } from "types";
+import { Boulder, BoulderImage, DBBoulder, DBLine, DBManager, DBParking, DBSector, DBTopo, DBTopoAccess, DBTrack, DBUser, DBWaypoint, Line, Manager, Parking, Sector, Topo, TopoAccess, TopoData, Track, User, UUID, Waypoint } from "types";
 import { api } from "./";
 import { DBConvert } from "./DBConvert";
 
@@ -9,40 +9,44 @@ export const enum SyncStatus {
     UpToDate
 }
  
+// TODO:
+// - Add warnings when there are unsaved changes IN MEMORY (so either, not saved in IDB, or the full sync service is in memory)
+// - Prevent account switching when there are unsaved changes in general
 export interface SyncService {
     status(): SyncStatus;
     isOnline(): boolean;
 
     attemptSync(): Promise<boolean>;
 
-    // TODO: allow user profile updates?
+    // Everything is synchronous, since the SyncService should take care of making network requests in the background
+    userUpdate(user: User): void;
 
-    topoUpdate(topo: Topo | TopoData): Promise<void>;
-    topoDelete(topo: Topo): Promise<void>;
+    topoUpdate(topo: Topo | TopoData): void;
+    topoDelete(topo: Topo): void;
 
-    topoAccessUpdate(topoAccess: TopoAccess, topoId: UUID): Promise<void>;
-    topoAccessDelete(topoAccess: TopoAccess): Promise<void>;
+    topoAccessUpdate(topoAccess: TopoAccess, topoId: UUID): void;
+    topoAccessDelete(topoAccess: TopoAccess): void;
 
-    parkingUpdate(parking: Parking, topoId: UUID): Promise<void>;
-    parkingDelete(parking: Parking): Promise<void>;
+    parkingUpdate(parking: Parking, topoId: UUID): void;
+    parkingDelete(parking: Parking): void;
 
-    waypointUpdate(waypoint: Waypoint, topoId: UUID): Promise<void>;
-    waypointDelete(waypoint: Waypoint): Promise<void>;
+    waypointUpdate(waypoint: Waypoint, topoId: UUID): void;
+    waypointDelete(waypoint: Waypoint): void;
 
-    managerUpdate(manager: Manager, topoId: UUID): Promise<void>;
-    managerDelete(manager: Manager): Promise<void>;
+    managerUpdate(manager: Manager, topoId: UUID): void;
+    managerDelete(manager: Manager): void;
 
-    sectorUpdate(sector: Sector, topoId: UUID): Promise<void>;
-    sectorDelete(sector: Sector): Promise<void>;
+    sectorUpdate(sector: Sector, topoId: UUID): void;
+    sectorDelete(sector: Sector): void;
 
-    boulderUpdate(boulder: Boulder, topoId: UUID): Promise<void>;
-    boulderDelete(boulder: Boulder): Promise<void>;
+    boulderUpdate(boulder: Boulder, topoId: UUID): void;
+    boulderDelete(boulder: Boulder): void;
 
-    trackUpdate(track: Track, topoId: UUID, boulderId: UUID): Promise<void>;
-    bouderDelete(track: Track): Promise<void>; 
+    trackUpdate(track: Track, topoId: UUID, boulderId: UUID): void;
+    bouderDelete(track: Track): void; 
 
-    lineUpdate(line: Line, topoId: UUID, trackId: UUID): Promise<void>;
-    lineDelete(line: Line): Promise<void>;
+    lineUpdate(line: Line, topoId: UUID, trackId: UUID): void;
+    lineDelete(line: Line): void;
 }
 
 // 1. Synchronisation:
@@ -96,17 +100,24 @@ export class InMemorySync implements SyncService {
         return this._isOnline();
     }
 
+    // only one, since logging out when there are unsaved changes is not allowed
+    userUpdateData: DBUser | undefined;
+    userUpdate(user: User) {
+        this.userUpdateData = DBConvert.user(user);
+        this._status.set(SyncStatus.UnsavedChanges);
+    }
+
     updatedTopos: Map<UUID, DBTopo> = new Map();
     deletedTopos: Set<UUID> = new Set();
 
-    async topoUpdate(topo: Topo | TopoData) {
+    topoUpdate(topo: Topo | TopoData) {
         const dto = DBConvert.topo(topo);
         this.updatedTopos.set(dto.id, dto);
         this.deletedTopos.delete(dto.id);
         this._status.set(SyncStatus.UnsavedChanges);
     }
 
-    async topoDelete(topo: Topo) {
+    topoDelete(topo: Topo) {
         this.deletedTopos.add(topo.id);
         this.updatedTopos.delete(topo.id);
         this._status.set(SyncStatus.UnsavedChanges);
@@ -115,14 +126,14 @@ export class InMemorySync implements SyncService {
     updatedTopoAccesses: Map<UUID, DBTopoAccess> = new Map();
     deletedTopoAccesses: Set<UUID> = new Set();
 
-    async topoAccessUpdate(topoAccess: TopoAccess, topoId: UUID) {
+    topoAccessUpdate(topoAccess: TopoAccess, topoId: UUID) {
         const dto = DBConvert.topoAccess(topoAccess, topoId);
         this.updatedTopoAccesses.set(dto.id, dto);
         this.deletedTopoAccesses.delete(dto.id);
         this._status.set(SyncStatus.UnsavedChanges);
     }
 
-    async topoAccessDelete(topoAccess: TopoAccess) {
+    topoAccessDelete(topoAccess: TopoAccess) {
         this.deletedTopoAccesses.add(topoAccess.id);
         this.updatedTopoAccesses.delete(topoAccess.id);
         this._status.set(SyncStatus.UnsavedChanges);
@@ -131,14 +142,14 @@ export class InMemorySync implements SyncService {
     updatedParkings: Map<UUID, DBParking> = new Map();
     deletedParkings: Set<UUID> = new Set();
 
-    async parkingUpdate(parking: Parking, topoId: UUID) {
+    parkingUpdate(parking: Parking, topoId: UUID) {
         const dto = DBConvert.parking(parking, topoId);
         this.updatedParkings.set(dto.id, dto);
         this.deletedParkings.delete(dto.id);
         this._status.set(SyncStatus.UnsavedChanges);
     }
 
-    async parkingDelete(parking: Parking) {
+    parkingDelete(parking: Parking) {
         this.deletedParkings.add(parking.id);
         this.updatedParkings.delete(parking.id);
         this._status.set(SyncStatus.UnsavedChanges);
@@ -147,14 +158,14 @@ export class InMemorySync implements SyncService {
     updatedWaypoints: Map<UUID, DBWaypoint> = new Map();
     deletedWaypoints: Set<UUID> = new Set();
 
-    async waypointUpdate(waypoint: Waypoint, topoId: UUID) {
+    waypointUpdate(waypoint: Waypoint, topoId: UUID) {
         const dto = DBConvert.waypoint(waypoint, topoId);
         this.updatedWaypoints.set(dto.id, dto);
         this.deletedWaypoints.delete(dto.id);
         this._status.set(SyncStatus.UnsavedChanges);
     }
 
-    async waypointDelete(waypoint: Waypoint) {
+    waypointDelete(waypoint: Waypoint) {
         this.deletedWaypoints.add(waypoint.id);
         this.updatedWaypoints.delete(waypoint.id);
         this._status.set(SyncStatus.UnsavedChanges);
@@ -163,14 +174,14 @@ export class InMemorySync implements SyncService {
     updatedManagers: Map<UUID, DBManager> = new Map();
     deletedManagers: Set<UUID> = new Set();
     
-    async managerUpdate(manager: Manager, topoId: UUID) {
+    managerUpdate(manager: Manager, topoId: UUID) {
         const dto = DBConvert.manager(manager, topoId);
         this.updatedManagers.set(dto.id, dto);
         this.deletedManagers.delete(dto.id);
         this._status.set(SyncStatus.UnsavedChanges);
     }
     
-    async managerDelete(manager: Manager) {
+    managerDelete(manager: Manager) {
         this.deletedManagers.add(manager.id);
         this.updatedManagers.delete(manager.id);
         this._status.set(SyncStatus.UnsavedChanges);
@@ -179,14 +190,14 @@ export class InMemorySync implements SyncService {
     updatedSectors: Map<UUID, DBSector> = new Map();
     deletedSectors: Set<UUID> = new Set();
     
-    async sectorUpdate(sector: Sector, topoId: UUID) {
+    sectorUpdate(sector: Sector, topoId: UUID) {
         const dto = DBConvert.sector(sector, topoId);
         this.updatedSectors.set(dto.id, dto);
         this.deletedSectors.delete(dto.id);
         this._status.set(SyncStatus.UnsavedChanges);
     }
     
-    async sectorDelete(sector: Sector) {
+    sectorDelete(sector: Sector) {
         this.deletedSectors.add(sector.id);
         this.updatedSectors.delete(sector.id);
         this._status.set(SyncStatus.UnsavedChanges);
@@ -196,14 +207,14 @@ export class InMemorySync implements SyncService {
     deletedBoulders: Set<UUID> = new Set();
     
     // diff image changes?
-    async boulderUpdate(boulder: Boulder, topoId: UUID) {
+    boulderUpdate(boulder: Boulder, topoId: UUID) {
         const dto = DBConvert.boulder(boulder, topoId);
         this.updatedBoulders.set(dto.id, dto);
         this.deletedBoulders.delete(dto.id);
         this._status.set(SyncStatus.UnsavedChanges);
     }
     
-    async boulderDelete(boulder: Boulder) {
+    boulderDelete(boulder: Boulder) {
         this.deletedBoulders.add(boulder.id);
         this.updatedBoulders.delete(boulder.id);
         this._status.set(SyncStatus.UnsavedChanges);
@@ -212,14 +223,14 @@ export class InMemorySync implements SyncService {
     updatedTracks: Map<UUID, DBTrack> = new Map();
     deletedTracks: Set<UUID> = new Set();
     
-    async trackUpdate(track: Track, topoId: UUID, boulderId: UUID) {
+    trackUpdate(track: Track, topoId: UUID, boulderId: UUID) {
         const dto = DBConvert.track(track, topoId, boulderId);
         this.updatedTracks.set(dto.id, dto);
         this.deletedTracks.delete(dto.id);
         this._status.set(SyncStatus.UnsavedChanges);
     }
     
-    async bouderDelete(track: Track) {
+    bouderDelete(track: Track) {
         this.deletedTracks.add(track.id);
         this.updatedTracks.delete(track.id);
         this._status.set(SyncStatus.UnsavedChanges);
@@ -228,14 +239,14 @@ export class InMemorySync implements SyncService {
     updatedLines: Map<UUID, DBLine> = new Map();
     deletedLines: Set<UUID> = new Set();
 
-    async lineUpdate(line: Line, topoId: UUID, trackId: UUID) {
+    lineUpdate(line: Line, topoId: UUID, trackId: UUID) {
         const dto = DBConvert.line(line, topoId, trackId);
         this.updatedLines.set(dto.id, dto);
         this.deletedLines.delete(dto.id);
         this._status.set(SyncStatus.UnsavedChanges);
     }
 
-    async lineDelete(line: Line) {
+    lineDelete(line: Line) {
         this.deletedLines.add(line.id);
         this.updatedLines.delete(line.id);
         this._status.set(SyncStatus.UnsavedChanges);
@@ -261,15 +272,15 @@ export class InMemorySync implements SyncService {
     async attemptSync(): Promise<boolean> {
         this._status.set(SyncStatus.Saving);
         // no need for allSettled since the promises of the Supabase client never fail
-        const results = await Promise.all([
+        const promises = [
             this.upsert("topos", "updatedTopos"),
-            this.upsert("sectors", "updatedSectors"),
             this.upsert("boulders", "updatedBoulders"),
-            this.upsert("tracks", "updatedTracks"),
-            this.upsert("lines", "updatedLines"),
+            this.upsert("sectors", "updatedSectors"),
             this.upsert("managers", "updatedManagers"),
+            this.upsert("tracks", "updatedTracks"),
             this.upsert("parkings", "updatedParkings"),
             this.upsert("waypoints", "updatedWaypoints"),
+            this.upsert("lines", "updatedLines"),
             this.upsert("topo_accesses", "updatedTopoAccesses"),
 
             this.delete("topos", "deletedTopos"),
@@ -281,7 +292,12 @@ export class InMemorySync implements SyncService {
             this.delete("parkings", "deletedParkings"),
             this.delete("waypoints", "deletedWaypoints"),
             this.delete("topo_accesses", "deletedTopoAccesses"),
-        ]);
+        ];
+        const results = [];
+        for (const p of promises) {
+            results.push(await p);
+        }
+        // const results = await promises;
         const hasUnsavedChanges = 
             this.updatedTopos.size !== 0 ||
             this.updatedSectors.size !== 0 ||
@@ -304,11 +320,12 @@ export class InMemorySync implements SyncService {
             this.deletedTopoAccesses.size !== 0;
         this._status.set(hasUnsavedChanges ? SyncStatus.UnsavedChanges : SyncStatus.UpToDate);
         // return true if results only contains `true` booleans
+        console.log("End of attemptSync. Unsaved changes: ", this.status() === SyncStatus.UnsavedChanges );
         return !results.some(x => !x);
     }
 
     // assumes `updates` have been swapped with a new Map for the property on the object
-   private async upsert<K extends UpdateKey>(this: InMemorySync, table: string, key: K) {
+   private upsert<K extends UpdateKey>(this: InMemorySync, table: string, key: K) {
        const updates = this[key] as Map<UUID, UpdateValue<K>>;
        if(updates.size === 0) return Promise.resolve(true);
        const values = updates.values();
@@ -318,7 +335,7 @@ export class InMemorySync implements SyncService {
            .upsert(Array.from(values), { returning: "minimal" })
            .then(res => {
                if (res.error) {
-                   console.warn("Error updating " + table + ":", res.error);
+                   console.error("Error updating " + table + ":", res.error);
                    // added <any> type annotation because TypeScript is annoying
                    this[key] = mergeMaps(updates as Map<UUID, any>, this[key]);
                    return false;
@@ -327,7 +344,7 @@ export class InMemorySync implements SyncService {
            });
    }
 
-    private async delete<K extends DeleteKey>(table: string, key: K) {
+    private delete<K extends DeleteKey>(table: string, key: K) {
         const set = this[key];
         if(set.size === 0) {
             return Promise.resolve(true);
@@ -339,7 +356,7 @@ export class InMemorySync implements SyncService {
             .in("id", Array.from(set))
             .then(res => {
                 if (res.error) {
-                    console.warn("Error deleting from " + table + ":", res.error);
+                    console.error("Error deleting from " + table + ":", res.error);
                     this[key] = mergeSets(set, this[key]);
                     return false;
                 }
@@ -375,3 +392,4 @@ type DeleteKey = {
 }[keyof InMemorySync];
 
 type MapValue<T extends Map<unknown, unknown>> = T extends Map<infer _, infer V> ? V : never;
+
