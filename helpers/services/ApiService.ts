@@ -177,6 +177,19 @@ export class ApiService {
         return data;
     }
 
+    async getAllLightToposOfUser(userId: UUID): Promise<LightTopo[]> {
+        const { data, error } = await this.client
+            .rpc<LightTopo>("all_light_topos_of_user", {
+                _creator_id: userId
+            });
+
+        if (error || !data) {
+            console.error("Error getting light topos: ", error);
+            return [];
+        }
+        return data;
+    }
+
     async getTopo(id: UUID): Promise<TopoData | null> {
         // Notes on this query:
         //
