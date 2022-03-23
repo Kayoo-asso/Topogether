@@ -270,6 +270,7 @@ export class InMemorySync implements SyncService {
     // Actually enforce correct ordering using a SQL function?
     // Currently we keep retrying infinitely, even if some corruption happened in the updates
     async attemptSync(): Promise<boolean> {
+        if (this._status() === SyncStatus.UpToDate) return true;
         this._status.set(SyncStatus.Saving);
         // no need for allSettled since the promises of the Supabase client never fail
         const promises = [

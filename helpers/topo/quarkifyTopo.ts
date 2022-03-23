@@ -1,6 +1,6 @@
 import { Quark, quark, QuarkArray } from 'helpers/quarky';
 import { sync } from 'helpers/services';
-import { BoulderData, TrackData, TopoData, UUID, Track, Boulder, Topo, SectorData, Line, Sector, Manager, Waypoint, TopoAccess, Parking } from 'types';
+import { BoulderData, TrackData, TopoData, UUID, Track, Boulder, Topo, Line, Sector, Manager, Waypoint, TopoAccess, Parking } from 'types';
 
 export type TopoCreate = Omit<TopoData, 'sectors' | 'boulders' | 'waypoints' | 'accesses' | 'parkings' | 'managers' | 'lonelyBoulders'>;
 

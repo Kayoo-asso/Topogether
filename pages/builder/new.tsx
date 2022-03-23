@@ -1,19 +1,22 @@
 import React, { useEffect, useRef, useState } from 'react';
 import type { NextPage } from 'next';
-import { LightTopo, StringBetween, TopoType } from 'types';
-import { fontainebleauLocation, toLatLng, TopoCreate } from 'helpers';
+import { StringBetween, TopoType } from 'types';
+import { fontainebleauLocation, toLatLng, TopoCreate, createTopo } from 'helpers';
 import {
  Button, HeaderDesktop, MapControl, Select, TextInput,
 } from 'components';
 import Link from 'next/link';
 import { v4 } from 'uuid';
-import { QuarkIter, useCreateQuark, watchDependencies } from 'helpers/quarky';
+import { useCreateQuark, watchDependencies } from 'helpers/quarky';
 import { TopoTypeName } from 'types/EnumNames';
-import { api } from 'helpers/services';
+import { api } from 'helpers/services'; 
+import { useRouter } from 'next/router';
 
 const NewPage: NextPage = watchDependencies(() => {
   const session = api.user();
-  if (!session) return <></>;
+  if (!session) { () => router.push('/'); return null; }
+
+  const router = useRouter();
 
   const [step, setStep] = useState(0);
 
@@ -41,17 +44,6 @@ const NewPage: NextPage = watchDependencies(() => {
     if (nameInputRef.current) nameInputRef.current.focus();
   }, [nameInputRef]);
 
-  const mapTypeIdToLabel = (typeId: TopoType | undefined) => {
-    switch (typeId) {
-      case TopoType.Boulder: return 'Blocs';
-      case TopoType.Cliff: return 'Falaise';
-      case TopoType.DeepWater: return 'Deepwater';
-      case TopoType.Multipitch: return 'Grandes voies';
-      case TopoType.Artificial: return 'Artificiel';
-      default: return undefined;
-    }
-  }
-
   const goStep1 = () => {
     // TODO : check if the name already exists
     if (!topo.name) setNameError("Merci d'indiquer un nom valide");
@@ -61,9 +53,10 @@ const NewPage: NextPage = watchDependencies(() => {
     if (topo.type && isNaN(topo.type)) setTypeError("Merci d'indiquer un type de spot");
     else setStep(2);
   }
-  { /* TODO: add Create Topo */ }
-  const createTopo = () => {
-    console.log(topo);
+
+  const create = () => {
+    createTopo(topo);
+    router.push('/builder/'+topo.id);
   };
 
   useEffect(() => {
@@ -72,7 +65,7 @@ const NewPage: NextPage = watchDependencies(() => {
         e.preventDefault();
         if (step === 0) goStep1();
         else if (step === 1) goStep2();
-        else createTopo(); 
+        else create(); 
       }
     });
   });
@@ -214,7 +207,7 @@ const NewPage: NextPage = watchDependencies(() => {
                       onClick={() => {
                             if (isNaN(topo.location[1])) setLatitudeError('Latitude invalide');
                             if (isNaN(topo.location[0])) setLongitudeError('Longitude invalide');
-                            if (!isNaN(topo.location[1]) && !isNaN(topo.location[0])) createTopo();
+                            if (!isNaN(topo.location[1]) && !isNaN(topo.location[0])) create();
                         }}
                     />
                   </div>

@@ -25,7 +25,7 @@ export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = watch
                 onTrackSelect={props.onTrackSelect}
             />
 
-            <div className='px-6'>
+            <div className='px-6 text-center'>
                 <Button
                     content='Valider le topo'
                     onClick={props.onValidate}

@@ -3,9 +3,6 @@ import type { NextPage } from 'next';
 import { Error404, HeaderDesktop, Loading, RootWorldMap } from 'components';
 import { useAsyncData } from 'helpers/hooks/useAsyncData';
 import { api } from 'helpers/services';
-import { convertOldTopo } from 'helpers/fakeData/convertOldTopo';
-import { Yzeron } from 'helpers/fakeData/YzeronOLD';
-import { Payre } from 'helpers/fakeData/PayreOLD';
 
 export async function getServerSideProps() {
   const data = {};
