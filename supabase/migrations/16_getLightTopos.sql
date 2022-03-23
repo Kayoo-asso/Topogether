@@ -36,6 +36,38 @@ create type public.light_topo as (
     -- "validatorId" uuid references public.accounts(id) on delete set null
 );
 
+
+
+-- create view light_topos as select
+--     t.id, t.name, t.status,
+--     t.location::jsonb->'coordinates' as location,
+--     t.forbidden,
+--     t.modified, t.submitted, t.validated,
+--     t.amenities, t."rockTypes",
+--     t.type, t.description, t.altitude, t."closestCity",
+--     t."imagePath",
+
+--     creator,
+--     count(sector) as "nbSectors",
+--     count(boulder) as "nbBoulders",
+--     count(track) as "nbTracks",
+--     parking.location as "parkingLocation"
+--     from
+--         public.topos t
+--         left join public.sectors sector on sector."topoId" = t.id
+--         left join public.boulders boulder on boulder."topoId" = t.id
+--         left join public.tracks track on track."topoId" = t.id
+--         left join public.profiles creator on creator.id = t."creatorId"
+--         left join (
+--             select "topoId", location::jsonb->'coordinates' as location
+--             from public.parkings
+--             limit 1
+--         ) parking on parking."topoId" = t.id,
+
+--     -- the `group by` is necessary to make SQL happy with the use of `count(*)`
+--     group by t.id, creator, parking.location;
+
+
 create function grade_to_category(grade public.grade)
 returns public.grade_category
 as $$
@@ -117,25 +149,7 @@ begin
 end;
 $$ language plpgsql;
 
-create function all_light_topos()
-returns setof public.light_topo
-as $$
-begin
-    return query
+create view public.light_topos as
     select light_topo.*
     from public.topos t,
     build_light_topo(t) light_topo;
-end;
-$$ language plpgsql;
-
-create function all_light_topos_of_user(_creator_id uuid)
-returns setof public.light_topo
-as $$
-begin
-    return query
-    select light_topo.*
-    from public.topos t,
-    build_light_topo(t) light_topo
-    where t."creatorId" = _creator_id;
-end;
-$$ language plpgsql;

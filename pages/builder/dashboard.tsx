@@ -14,13 +14,17 @@ const DashboardPage: NextPage = () => {
   const session = api.user();
   if (!session) { () => router.push('/'); return null; }
 
-  const toposQuery = useAsyncData(() => api.getAllLightToposOfUser(session.id), []);
+  const toposQuery = useAsyncData(() =>
+    api.getLightTopos({
+      userId: session.id
+    }),
+    [session.id]);
 
   // ERROR
   if (toposQuery.type === 'error') { router.push('/'); return null; }
 
   //LOADING
-  else if (toposQuery.type === 'loading') 
+  else if (toposQuery.type === 'loading')
     return (
       <>
         <Header
@@ -32,17 +36,17 @@ const DashboardPage: NextPage = () => {
     )
 
   // SUCCESS
+  else {
+    // BUT NO DATA...
+    if (!toposQuery.data) return <Error404 title="Topos introuvables" />
     else {
-      // BUT NO DATA...
-      if (!toposQuery.data) return <Error404 title="Topos introuvables" />
-      else {
-        return (
-          <RootDashboard 
-            lightTopos={toposQuery.data}
-          />
-        );
-      }
+      return (
+        <RootDashboard
+          lightTopos={toposQuery.data}
+        />
+      );
     }
+  }
 };
 
 export default DashboardPage;

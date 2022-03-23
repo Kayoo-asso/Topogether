@@ -1,7 +1,5 @@
 import Compressor from "compressorjs";
-import { MapIterator } from "helpers/quarky/iterators";
 import { UUID } from "types";
-
 
 export type ImageUploadResult = ImageUploadSuccess | ImageUploadError;
 

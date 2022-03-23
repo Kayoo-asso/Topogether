@@ -1,5 +1,5 @@
 import { createClient, SupabaseClient, User as AuthUser } from "@supabase/supabase-js";
-import { DBBoulder, DBLine, DBManager, DBParking, DBSector, DBTopoAccess, DBTrack, DBWaypoint, Email, BoulderImage, Name, TopoData, User, UUID, Topo, DBTopo, LightTopo, Session, Role } from 'types';
+import { DBBoulder, DBLine, DBManager, DBParking, DBSector, DBTopoAccess, DBTrack, DBWaypoint, Email, BoulderImage, Name, TopoData, User, UUID, Topo, DBTopo, LightTopo, Session, Role, TopoStatus } from 'types';
 import { Quark, quark } from 'helpers/quarky';
 import { DBConvert } from "./DBConvert";
 import { sync } from ".";
@@ -11,6 +11,10 @@ export enum AuthResult {
     Error
 }
 
+export type LightTopoFilters = {
+    userId?: UUID,
+    status?: TopoStatus
+}
 
 export const masterApi: SupabaseClient | null =
     process.env.API_MASTER_KEY_LOCAL
@@ -132,22 +136,17 @@ export class ApiService {
         return AuthResult.Success;
     }
 
-    async getAllLightTopos(): Promise<LightTopo[]> {
-        const { data, error } = await this.client
-            .rpc<LightTopo>("all_light_topos");
-
-        if (error || !data) {
-            console.error("Error getting light topos: ", error);
-            return [];
+    async getLightTopos(filters?: LightTopoFilters): Promise<LightTopo[]> {
+        let query = this.client
+            .from<LightTopo>("light_topos")
+            .select('*');
+        if (filters?.status) {
+            query = query.eq('status', filters.status);
         }
-        return data;
-    }
-
-    async getAllLightToposOfUser(userId: UUID): Promise<LightTopo[]> {
-        const { data, error } = await this.client
-            .rpc<LightTopo>("all_light_topos_of_user", {
-                _creator_id: userId
-            });
+        if (filters?.userId) {
+            query = query.eq('creator->>id' as any, filters.userId)
+        }
+        const { data, error } = await query;
 
         if (error || !data) {
             console.error("Error getting light topos: ", error);
@@ -169,7 +168,7 @@ export class ApiService {
         // "topoId" foreign key that exist in the DB for performant joins.
         // This applies for tracks, boulder images and lines, for instance.
         const { data, error } = await this.client
-            .from("topos")
+            .from<TopoData>("topos")
             .select(`
                 id,
                 name,
@@ -232,108 +231,12 @@ export class ApiService {
                 )
             `)
             .match({ id })
-            .single();
+            .maybeSingle();
         if (error) {
             console.error("Error getting topo data: ", error);
             return null;
         }
         return data;
-    }
-
-    // Promises have to be awaited in order, to make sure
-    // foreign key references do not fail
-    async saveTopo(topo: Topo | TopoData): Promise<boolean> {
-        const dbTopo = DBConvert.topo(topo);
-        const dbSectors: DBSector[] = [];
-        const dbWaypoints: DBWaypoint[] = [];
-        const dbManagers: DBManager[] = [];
-        const dbParkings: DBParking[] = [];
-        const dbAccesses: DBTopoAccess[] = [];
-        const dbBoulders: DBBoulder[] = [];
-        const dbTracks: DBTrack[] = [];
-        const dbLines: DBLine[] = [];
-
-        if (topo.parkings) {
-            for (const p of topo.parkings) {
-                dbParkings.push(DBConvert.parking(p, topo.id));
-            }
-        }
-
-        if (topo.waypoints) {
-            for (const w of topo.waypoints) {
-                dbWaypoints.push(DBConvert.waypoint(w, topo.id));
-            }
-        }
-
-        if (topo.managers) {
-            for (const m of topo.managers) {
-                dbManagers.push(DBConvert.manager(m, topo.id));
-            }
-        }
-
-        if (topo.accesses) {
-            for (const a of topo.accesses) {
-                dbAccesses.push(DBConvert.topoAccess(a, topo.id));
-            }
-        }
-
-        if (topo.sectors) {
-            for (const s of topo.sectors) {
-                dbSectors.push(DBConvert.sector(s, topo.id));
-            }
-        }
-
-        if (topo.boulders) {
-            for (const b of topo.boulders) {
-                dbBoulders.push(DBConvert.boulder(b, topo.id));
-                for (const t of b.tracks) {
-                    dbTracks.push(DBConvert.track(t, topo.id, b.id));
-                    for (const l of t.lines) {
-                        dbLines.push(DBConvert.line(l, topo.id, t.id));
-                    }
-                }
-            }
-        }
-        // Ordering is important, to make sure foreign key relations do not break!
-        const promises = [
-            this.client
-                .from<DBTopo>("topos")
-                .upsert(dbTopo, { returning: "minimal" }),
-            this.client
-                .from<DBParking>("parkings")
-                .upsert(dbParkings, { returning: "minimal" }),
-            this.client
-                .from<DBWaypoint>("waypoints")
-                .upsert(dbWaypoints, { returning: "minimal" }),
-            this.client
-                .from<DBManager>("managers")
-                .upsert(dbManagers, { returning: "minimal" }),
-            this.client
-                .from<DBTopoAccess>("topo_accesses")
-                .upsert(dbAccesses, { returning: "minimal" }),
-            this.client
-                .from<DBSector>("sectors")
-                .upsert(dbSectors, { returning: "minimal" }),
-            this.client
-                .from<DBBoulder>("boulders")
-                .upsert(dbBoulders, { returning: "minimal" }),
-            this.client
-                .from<DBTrack>("tracks")
-                .upsert(dbTracks, { returning: "minimal" }),
-            this.client
-                .from<DBLine>("lines")
-                .upsert(dbLines, { returning: "minimal" }),
-        ];
-        let success = true;
-        for (const promise of promises) {
-           const res = await promise;
-           if (res.error) {
-               success = false;
-               console.error("Error saving topo to DB: ", res.error);
-           }
-        }
-        return success;
-
     }
 }
 
