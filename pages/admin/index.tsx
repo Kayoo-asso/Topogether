@@ -15,7 +15,7 @@ const AdminPage: NextPage = () => {
     const session = api.user();
     if (!session || session.role !== 'ADMIN') { () => router.push('/'); return null; }
 
-    const toposQuery = useAsyncData(() => api.getAllLightTopos(), []);
+    const toposQuery = useAsyncData(() => api.getLightTopos(), []);
 
     // ERROR
     if (toposQuery.type === 'error') return <Error404 title="Aucun topo n'a été trouvé" />
