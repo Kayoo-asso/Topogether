@@ -32,7 +32,7 @@ export async function seedLocalDb() {
             throw new Error("Synchronisation fails while seeding local DB (too many iterations)");
         }
         res = await sync.attemptSync();
-        iters += 0;
+        iters += 1;
     }
     return quark;
 }

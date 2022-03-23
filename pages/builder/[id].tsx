@@ -46,7 +46,7 @@ const BuilderMapPage: NextPage = watchDependencies(() => {
     // BUT NO DATA...
     if (!topoQuery.data) return <Error404 title="Topo introuvable" />
     else {
-      const topoQuark: Quark<Topo> = editTopo(topoQuery.data as TopoData);
+      const topoQuark: Quark<Topo> = editTopo(topoQuery.data);
       return (
         <RootBuilder 
           topoQuark={topoQuark}

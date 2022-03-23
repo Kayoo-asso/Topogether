@@ -133,10 +133,9 @@ returns setof public.light_topo
 as $$
 begin
     return query
-    select x.* from (
-        select build_light_topo(t.*)
-        from public.topos as t
-        where "creatorId" = _creator_id
-    ) as x;
+    select light_topo.*
+    from public.topos t,
+    build_light_topo(t) light_topo
+    where t."creatorId" = _creator_id;
 end;
 $$ language plpgsql;
