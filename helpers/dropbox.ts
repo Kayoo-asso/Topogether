@@ -1,6 +1,6 @@
 export async function dropboxUpload(path: string, body: BodyInit): Promise<string> {
-    console.log("Uploading image to path ", path);
-    console.log("Dropbox API key", process.env.DROPBOX_API_KEY);
+    console.log("Uploading image to path:", path);
+    console.log("Dropbox API key:", process.env.DROPBOX_API_KEY);
     const res = await fetch("https://content.dropboxapi.com/2/files/upload", {
         method: "POST",
         headers: {
@@ -12,8 +12,8 @@ export async function dropboxUpload(path: string, body: BodyInit): Promise<strin
         },
         body
     });
-    console.log("Dropbox upload response: ", res);
     const json = await res.json();
+    console.log("Dropbox upload response: ", json);
     if (json.error) {
         console.error("Error during Dropbox file upload!", json.error);
         // Vercel keeps logs for serverless functions that throw during execution
