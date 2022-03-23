@@ -136,7 +136,7 @@ export class ApiService {
 
 
     // TODO: better error handling using try / catch?
-    async uploadImages(files: [File, ImageType][]): Promise<(ImageUploadSuccess | null)[]> {
+    async uploadImages(files: File[]): Promise<(ImageUploadSuccess | null)[]> {
         const promises: Promise<Response>[] = files.map(([file, type]) => 
             fetch("api/images/upload?type=" + type, {
                 method: "PUT",
