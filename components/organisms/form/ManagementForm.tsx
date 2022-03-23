@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { ImageInput, TextArea, TextInput } from 'components';
 import { Quark, watchDependencies } from 'helpers/quarky';
-import { Description, Manager, Name } from 'types';
+import { Description, Email, Manager, Name } from 'types';
 
 interface ManagementFormProps {
     manager: Quark<Manager>,
@@ -106,7 +106,7 @@ export const ManagementForm: React.FC<ManagementFormProps> = watchDependencies((
                 value={manager.contactMail}
                 onChange={(e) => props.manager.set({
                     ...manager,
-                    contactMail: e.target.value as Name
+                    contactMail: e.target.value as Email
                 })}
             />
             <TextInput 

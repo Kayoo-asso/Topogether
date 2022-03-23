@@ -5,13 +5,12 @@ import {
 } from 'types';
 // eslint-disable-next-line import/no-cycle
 import { ImageButton } from '../../atoms';
-import { v4 } from 'uuid';
 
 interface ImageInputProps {
   label?: string,
   multiple?: boolean,
   value?: string,
-  onChange: (images: BoulderImage[]) => void,
+  onChange: (images: File[]) => void,
   onDelete?: () => void,
 }
 
@@ -32,7 +31,6 @@ export const ImageInput = forwardRef<HTMLInputElement, ImageInputProps>(({
 
   const handleFileInput = async (files: FileList) => {
     const errors: [string, FileUploadError][] = [];
-    const uploaded: BoulderImage[] = [];
     setLoading(true);
 
     for (let i = 0; i < files.length; i++) {
@@ -42,46 +40,49 @@ export const ImageInput = forwardRef<HTMLInputElement, ImageInputProps>(({
       } else if (!isBetween(file.size, 0, 10e6)) {
         errors.push([file.name, FileUploadError.TooLarge]);
       } else {
-        const img = new Image;
-        new Compressor(file, {
-          quality: 0.6,
-          strict: true,
-          success(compressed: File) {
-            const objectUrl = URL.createObjectURL(compressed)
-            img.src = objectUrl;
-            img.onload = () => {
-              const imgData: BoulderImage = {
-                id: v4(),
-                path: objectUrl,
-                width: img.width,
-                height: img.height,
-              }
-              uploaded.push(imgData);
-              if (uploaded.length === files.length) {
-                props.onChange(uploaded);
-                setLoading(false);
-              }
-            };
-          },
-          error(err) {
-            // upload uncompressed version
-            const objectUrl = URL.createObjectURL(file)
-            img.src = objectUrl;
-            img.onload = () => {
-              const imgData: BoulderImage = {
-                id: v4(),
-                path: objectUrl,
-                width: img.width,
-                height: img.height,
-              }
-              uploaded.push(imgData);
-              if (uploaded.length === files.length) {
-                props.onChange(uploaded);
-                setLoading(false);
-              }
-            };
-          }
-        })
+        props.onChange()
+
+        
+        // TODO : put into service
+        // new Compressor(file, {
+        //   quality: 0.6,
+        //   strict: true,
+        //   success(compressed: File) {
+        //     const objectUrl = URL.createObjectURL(compressed)
+        //     img.src = objectUrl;
+        //     img.onload = () => {
+        //       const imgData: BoulderImage = {
+        //         id: v4(),
+        //         path: objectUrl,
+        //         width: img.width,
+        //         height: img.height,
+        //       }
+        //       uploaded.push(imgData);
+        //       if (uploaded.length === files.length) {
+        //         props.onChange(uploaded);
+        //         setLoading(false);
+        //       }
+        //     };
+        //   },
+        //   error(err) {
+        //     // upload uncompressed version
+        //     const objectUrl = URL.createObjectURL(file)
+        //     img.src = objectUrl;
+        //     img.onload = () => {
+        //       const imgData: BoulderImage = {
+        //         id: v4(),
+        //         path: objectUrl,
+        //         width: img.width,
+        //         height: img.height,
+        //       }
+        //       uploaded.push(imgData);
+        //       if (uploaded.length === files.length) {
+        //         props.onChange(uploaded);
+        //         setLoading(false);
+        //       }
+        //     };
+        //   }
+        // })
       }
     }
     

@@ -4,8 +4,6 @@ import { Boulder, BoulderImage, UUID } from 'types';
 import { ImageInput } from '.';
 import { QuarkArray } from 'helpers/quarky';
 
-// TODO : GESTION DES TRACKSIMAGE
-
 interface MultipleImageInputProps {
   images: BoulderImage[],
   boulder?: Boulder,
@@ -64,7 +62,6 @@ export const MultipleImageInput: React.FC<MultipleImageInputProps> = ({
               key={toDisplay[index].id}
               image={toDisplay[index]}
               tracks={new QuarkArray(props.boulder?.tracks.filter(track => track.lines.filter(line => line.imageId === toDisplay[index].id).toArray().length > 0).toArray())}
-              // test={true}
               selected={toDisplay[index].id === props.selected}
               onClick={props.onImageClick}
               onDelete={props.onImageDelete}
