@@ -1,0 +1,20 @@
+-- create index topo_search_idx on public.topos
+--  using gin(to_tsvector('topo_name', name));
+
+-- create function light_topos_matching(_query text)
+-- returns setof public.light_topos
+-- as $$
+--     select light_topo.*
+--     from (
+--         select build_light_topo(t.*)
+--         from 
+--             public.topos t,
+--             to_tsquery(_query) query,
+--             to_tsvector(t.name) document,
+--             coalesce(ts_rank(document, query), 0) rank,
+--             similarity(query, t.name) similary
+--         where query @@ document or similary > 0,
+--         order by rank, similarity desc nulls last
+--     ) topo,
+--     build_light_topo(topo) light_topo
+-- $$ language sql volatile;

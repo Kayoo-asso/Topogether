@@ -20,7 +20,7 @@ const handler: NextApiHandler<ImageUploadApiResponse> = async (req, res) => {
     }
 
     const id = uuid();
-    let uploadPath = id + "." + extension;
+    let uploadPath = `/${id}.${extension}`;
     const actualPath = await dropboxUpload(uploadPath, req.body);
     res.status(200);
     res.json({
