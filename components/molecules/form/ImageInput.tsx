@@ -1,22 +1,44 @@
 import React, { useRef, useState, forwardRef } from 'react';
-import Compressor from 'compressorjs';
-import {
-  isBetween, BoulderImage 
-} from 'types';
 // eslint-disable-next-line import/no-cycle
 import { ImageButton } from '../../atoms';
+import { api, BoulderImageUploadResult, BoulderImageUploadSuccess, ImageUploadErrorReason } from 'helpers/services';
+import { BoulderImage } from 'types';
 
 interface ImageInputProps {
   label?: string,
   multiple?: boolean,
   value?: string,
-  onChange: (images: File[]) => void,
+  onChange: (images: BoulderImage[]) => void,
   onDelete?: () => void,
 }
 
-enum FileUploadError {
-  NotImageType,
-  TooLarge
+const processImages = async (files: FileList): Promise<BoulderImageUploadResult[]> => {
+  const promises = Array.from(files)
+    .map(processImage);
+  const results = await Promise.all(promises);
+  return results;
+}
+
+const processImage = async (file: File): Promise<BoulderImageUploadResult> => {
+  const res = await api.images.upload(file);
+  if (res.type === 'error') {
+    return res;
+  }
+  else { // SUCCESS FOR THIS IMAGE
+    const img = new Image;
+    const objectUrl = URL.createObjectURL(file)
+    img.src = objectUrl;
+    const promise = new Promise<BoulderImageUploadSuccess>((resolve, _reject) => {
+      img.onload = () => resolve({
+        type: 'success',
+        id: res.id,
+        path: res.path,
+        width: img.width,
+        height: img.height,
+      });
+    });
+    return await promise;
+  }
 }
 
 export const ImageInput = forwardRef<HTMLInputElement, ImageInputProps>(({
@@ -26,67 +48,41 @@ export const ImageInput = forwardRef<HTMLInputElement, ImageInputProps>(({
   //TODO : find a way to get back the ref to parent components
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const [errors, setErrors] = useState<[string, FileUploadError][]>([]);
+  const [error, setError] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
 
   const handleFileInput = async (files: FileList) => {
-    const errors: [string, FileUploadError][] = [];
+    const errors = {
+      'type': 0,
+      'size': 0,
+      'upload': 0,
+    };
     setLoading(true);
+    const images: BoulderImage[] = [];
 
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      if (file.type !== "image/png" && file.type !== "image/jpg" && file.type !== "image/jpeg") {
-        errors.push([file.name, FileUploadError.NotImageType]);
-      } else if (!isBetween(file.size, 0, 10e6)) {
-        errors.push([file.name, FileUploadError.TooLarge]);
-      } else {
-        props.onChange()
-
-        
-        // TODO : put into service
-        // new Compressor(file, {
-        //   quality: 0.6,
-        //   strict: true,
-        //   success(compressed: File) {
-        //     const objectUrl = URL.createObjectURL(compressed)
-        //     img.src = objectUrl;
-        //     img.onload = () => {
-        //       const imgData: BoulderImage = {
-        //         id: v4(),
-        //         path: objectUrl,
-        //         width: img.width,
-        //         height: img.height,
-        //       }
-        //       uploaded.push(imgData);
-        //       if (uploaded.length === files.length) {
-        //         props.onChange(uploaded);
-        //         setLoading(false);
-        //       }
-        //     };
-        //   },
-        //   error(err) {
-        //     // upload uncompressed version
-        //     const objectUrl = URL.createObjectURL(file)
-        //     img.src = objectUrl;
-        //     img.onload = () => {
-        //       const imgData: BoulderImage = {
-        //         id: v4(),
-        //         path: objectUrl,
-        //         width: img.width,
-        //         height: img.height,
-        //       }
-        //       uploaded.push(imgData);
-        //       if (uploaded.length === files.length) {
-        //         props.onChange(uploaded);
-        //         setLoading(false);
-        //       }
-        //     };
-        //   }
-        // })
+    const results = await processImages(files);
+    for (const res of results) {
+      if (res.type === 'error') {
+          if (res.reason === ImageUploadErrorReason.NonImage) errors.type++;
+          else if (res.reason === ImageUploadErrorReason.CompressionError) errors.size++;
+          else errors.upload++;
+      }
+      else { //SUCCESS
+        images.push({
+          id: res.id,
+          path: res.path,
+          width: res.width,
+          height: res.height,
+        });
       }
     }
-    
-    setErrors(errors);
+
+    setLoading(false);
+    props.onChange(images);
+    let error = ''
+    if (errors.type > 0) error += errors.type + " fichiers ne sont pas des images valides.\n";
+    if (errors.size > 0) error += errors.size + " fichiers sont trop lourds.\n";
+    if (errors.upload > 0) error += errors.upload + " n'ont pas pu être uploadés.";
   };
 
   return (
@@ -109,8 +105,8 @@ export const ImageInput = forwardRef<HTMLInputElement, ImageInputProps>(({
         }}
         onDelete={props.onDelete}
       />
-      <div className={`ktext-error text-error pt-1 w-22 h-22 ${errors.length > 0 ? '' : 'hidden'}`}>
-        {errors}
+      <div className={`ktext-error text-error pt-1 w-22 h-22 ${(error && error.length > 0) ? '' : 'hidden'}`}>
+        {error}
       </div>
     </>
   );

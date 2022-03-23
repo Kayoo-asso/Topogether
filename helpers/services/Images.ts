@@ -2,11 +2,16 @@ import Compressor from "compressorjs";
 import { UUID } from "types";
 
 export type ImageUploadResult = ImageUploadSuccess | ImageUploadError;
+export type BoulderImageUploadResult = BoulderImageUploadSuccess | ImageUploadError;
 
 export interface ImageUploadSuccess {
   type: 'success',
   id: UUID,
   path: string
+}
+export interface BoulderImageUploadSuccess extends ImageUploadSuccess {
+  width: number,
+  height: number,
 }
 
 export enum ImageUploadErrorReason {
@@ -71,7 +76,8 @@ export class ImageService {
     }
 
     // Upload image through API
-    const response = await fetch("api/images/upload", {
+    console.log("Uploading image of type " + file.type, file);
+    const response = await fetch("/api/images/upload", {
       method: "PUT",
       headers: {
         "Content-Type": file.type

@@ -8,6 +8,7 @@ import {
 } from 'types';
 import { hasFlag, rockNames, toggleFlag } from 'helpers';
 import { BitflagMultipleSelect } from 'components/molecules/form/BitflagMultipleSelect';
+import { api } from 'helpers/services';
 
 interface InfoFormProps {
     topo: Quark<Topo>,
@@ -40,13 +41,13 @@ export const InfoForm: React.FC<InfoFormProps> = watchDependencies((props: InfoF
         <div className="flex flex-row gap-6 items-end">
           <div className="w-32 md:mt-4">
             <ImageInput
-              value={topo.image?.url}
-              onChange={(files) => {
-                          props.topo.set({
-                              ...topo,
-                              image: files[0],
-                          });
-                      }}
+              value={topo.imagePath}
+              onChange={(images) => {
+                props.topo.set({
+                    ...topo,
+                    imagePath: images[0].path,
+                });
+              }}
               onDelete={() => console.log('delete')}
             />
           </div>
@@ -140,13 +141,13 @@ export const InfoForm: React.FC<InfoFormProps> = watchDependencies((props: InfoF
 
         <Checkbox
           label="Autres"
-          checked={topo.hasOtherAmenities}
+          checked={!!topo.otherAmenities}
           onClick={() => props.topo.set({
-                  ...topo,
-                  hasOtherAmenities: !topo.hasOtherAmenities,
-              })}
+            ...topo,
+            otherAmenities: topo.otherAmenities || ' ' as Description,
+          })}
         />
-        <Show when={() => topo.hasOtherAmenities}>
+        <Show when={() => topo.otherAmenities}>
           <TextArea
             id="topo-other-amenities"
             label="Autres équipements"
