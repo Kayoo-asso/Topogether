@@ -1,8 +1,9 @@
 import { createClient, SupabaseClient, User as AuthUser } from "@supabase/supabase-js";
-import { DBBoulder, DBLine, DBManager, DBParking, DBSector, DBTopoAccess, DBTrack, DBWaypoint, Email, BoulderImage, ImageType, Name, TopoData, User, UUID, Topo, DBTopo, LightTopo, Session, Role } from 'types';
-import { Quark, quark, selectQuark, SelectQuark, SelectQuarkNullable } from 'helpers/quarky';
+import { DBBoulder, DBLine, DBManager, DBParking, DBSector, DBTopoAccess, DBTrack, DBWaypoint, Email, BoulderImage, Name, TopoData, User, UUID, Topo, DBTopo, LightTopo, Session, Role } from 'types';
+import { Quark, quark } from 'helpers/quarky';
 import { DBConvert } from "./DBConvert";
 import { sync } from ".";
+import { ImageService } from "./Images";
 
 export enum AuthResult {
     Success,
@@ -10,10 +11,6 @@ export enum AuthResult {
     Error
 }
 
-export interface ImageUploadSuccess {
-    id: UUID,
-    url: string,
-}
 
 export const masterApi: SupabaseClient | null =
     process.env.API_MASTER_KEY_LOCAL
@@ -23,6 +20,7 @@ export const masterApi: SupabaseClient | null =
 export class ApiService {
     client: SupabaseClient;
     private _user: Quark<User | null>;
+    images: ImageService = new ImageService();
 
     constructor() {
         const API_URL = process.env.NEXT_PUBLIC_API_URL!;
@@ -132,38 +130,6 @@ export class ApiService {
         }
         this._user.set(null);
         return AuthResult.Success;
-    }
-
-
-    // TODO: better error handling using try / catch?
-    async uploadImages(files: File[]): Promise<(ImageUploadSuccess | null)[]> {
-        const promises: Promise<Response>[] = files.map(([file, type]) => 
-            fetch("api/images/upload?type=" + type, {
-                method: "PUT",
-                body: file
-            })
-        );
-        const res = await Promise.all(promises);
-        const output: (ImageUploadSuccess | null)[] = new Array(res.length);
-        for (const response of res) {
-            if (response.ok) {
-                const data = await response.json() as ImageUploadSuccess;
-                output.push(data);
-            } else {
-                output.push(null);
-            }
-        }
-        return output;
-    }
-
-    async deleteImage(path: string): Promise<boolean> {
-        const res = await fetch("/api/images/delete", {
-            method: "DELETE",
-            body: JSON.stringify({
-                path
-            })
-        });
-        return res.ok;
     }
 
     async getAllLightTopos(): Promise<LightTopo[]> {

@@ -1,14 +1,11 @@
-// Combination of Next.js + Vite settings for TypeScript
 {
   "compilerOptions": {
     // Gives us nicer paths to modules, by referring to them
     // from the root of the project
     "baseUrl": ".",
-    "target": "ESNext",
+    "target": "ES6",
     "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
+      "dom", "dom.iterable",
     ],
     // Used to add types to libraries
     "allowJs": true,
@@ -25,14 +22,13 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
-    "useDefineForClassFields": true,
     "allowSyntheticDefaultImports": true,
   },
   "include": [
     "next-env.d.ts",
     "**/*.ts",
-    "**/*.tsx",
-    "components/atoms/index.js", "helpers/hooks/index.js"],
+    "**/*.tsx"
+  ],
   "exclude": [
     "node_modules"
   ]

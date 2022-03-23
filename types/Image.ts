@@ -7,4 +7,3 @@ export interface BoulderImage {
   readonly height: number,
 }
 
-export type ImageType = "jpg" | "png";
