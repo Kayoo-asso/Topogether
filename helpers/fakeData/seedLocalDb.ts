@@ -1,4 +1,4 @@
-import { api, sync } from "helpers/services";
+import { api, auth, sync } from "helpers/services";
 import { editTopo, quarkifyTopo } from "helpers/topo";
 import { fakeAdmin, fakeTopov2 } from "./fakeTopoV2";
 
@@ -9,7 +9,7 @@ export async function seedLocalDb() {
         return editTopo(topoInDb);
     }
     
-    const user = api.user();
+    const user = auth.session();
     if (user === null) {
         throw new Error("Cannot seed DB while being logged out");
     }

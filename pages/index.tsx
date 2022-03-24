@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import type { NextPage } from 'next';
 import { Error404, HeaderDesktop, Loading, RootWorldMap } from 'components';
 import { useAsyncData } from 'helpers/hooks/useAsyncData';
-import { api } from 'helpers/services';
+import { api, auth } from 'helpers/services';
 
 export async function getServerSideProps() {
   const data = {};
@@ -10,9 +10,13 @@ export async function getServerSideProps() {
 }
 
 const WorldMapPage: NextPage = () => {
-  const session = api.user();
+  const session = auth.session();
 
   const toposQuery = useAsyncData(() => api.getLightTopos(), []);
+
+  useEffect(() => {
+    api.searchLightTopos("Yzron").then(topos => console.log("Search result:", topos));
+  }, []);
 
   // ERROR
   if (toposQuery.type === 'error') return <Error404 title="Aucun topo n'a été trouvé" />

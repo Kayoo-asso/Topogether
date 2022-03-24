@@ -122,8 +122,8 @@ $$ language plpgsql;
 
 -- 3. Setup `public` view of users, for profile editing
 create view public.users as 
-    select * from public.accounts;
-    -- where id = auth.uid(); -- important for security!
+    select * from public.accounts
+    where id = auth.uid(); -- important for security!
 
 create function internal.handle_user_update()
 returns trigger

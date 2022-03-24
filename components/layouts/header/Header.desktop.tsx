@@ -3,7 +3,7 @@ import NextImage from 'next/image';
 import { Dropdown, DropdownOption, Icon, ProfilePicture } from 'components';
 import Link from 'next/link';
 import { MapToolEnum } from 'types';
-import { api } from 'helpers/services';
+import { api, auth } from 'helpers/services';
 import { staticUrl } from 'helpers';
 import { useRouter } from 'next/router';
 import { watchDependencies } from 'helpers/quarky';
@@ -30,7 +30,7 @@ export const HeaderDesktop: React.FC<HeaderDesktopProps> = watchDependencies(({
   displayUser = true,
   ...props
 }: HeaderDesktopProps) => {
-  const session = api.user();
+  const session = auth.session();
   const router = useRouter();
 
   const [menuOpen, setMenuOpen] = useState(false);
@@ -124,7 +124,7 @@ export const HeaderDesktop: React.FC<HeaderDesktopProps> = watchDependencies(({
         <div className='w-1/12 flex justify-center items-center'>
           <div className='h-[45px] w-[45px] relative'>
             <ProfilePicture
-              src={session.imagePath || staticUrl.defaultProfilePicture}
+              src={session.user?.imagePath || staticUrl.defaultProfilePicture}
               onClick={() => setUserMenuOpen(m => !m)}
             />
           </div>
@@ -132,7 +132,7 @@ export const HeaderDesktop: React.FC<HeaderDesktopProps> = watchDependencies(({
             <Dropdown
               options={[
                 { value: 'Mon profil', action: () => router.push('/user/profile') },
-                { value: 'Se déconnecter', action: async () => { await api.signOut(); router.push('/'); } }
+                { value: 'Se déconnecter', action: async () => { await auth.signOut(); await router.push('/'); } }
               ]}
               className='w-[200px] -ml-[180px] mt-[180px]'
             />

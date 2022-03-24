@@ -48,7 +48,7 @@ test.skip("Signing up and creating a profile", async () => {
     expect(await api.signup(user1.email, user1Password, user1.userName))
         .toBe(AuthResult.Success);
 
-    const user = api.user();
+    const user = auth.session();
     expect(user).not.toBe(null);
     cleanupUser(user!.id);
 
@@ -57,7 +57,7 @@ test.skip("Signing up and creating a profile", async () => {
         city: "Lyon" as Name,
     })).toBe(AuthResult.Success);
 
-    expect(api.user()?.city).toBe("Lyon");
+    expect(auth.session()?.city).toBe("Lyon");
 });
 
 

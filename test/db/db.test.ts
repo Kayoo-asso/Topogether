@@ -44,7 +44,7 @@ test("Integration test: signing up & saving topo", async () => {
     }
 
     // update the UUID in the data to match the one we got on sign up
-    user.id = api.user()!.id; // important
+    user.id = auth.session()!.id; // important
     fakeTopov2.creator = user;
     fakeTopov2.boulders = fakeTopov2.boulders.map(b => ({
         ...b,
