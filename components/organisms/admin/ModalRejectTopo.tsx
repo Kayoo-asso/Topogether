@@ -1,19 +1,22 @@
 import { Button, Modal } from 'components';
 import { staticUrl } from 'helpers';
-import { Quark } from 'helpers/quarky';
+import { Quark, watchDependencies } from 'helpers/quarky';
 import NextImage from 'next/image';
 import React from 'react';
-import { Topo } from 'types';
+import { Topo, TopoStatus } from 'types';
 
-interface ModalValidateTopoProps {
+interface ModalRejectTopoProps {
     topo: Quark<Topo>,
     onClose: () => void,
 }
 
-export const ModalValidateTopo: React.FC<ModalValidateTopoProps> = (props: ModalValidateTopoProps) => {
-
-    const validateTopo = () => {
-        console.log("valider le topo");
+export const ModalRejectTopo: React.FC<ModalRejectTopoProps> = watchDependencies((props: ModalRejectTopoProps) => {
+    const rejectTopo = () => {
+        //TODO : add security (backend)
+        props.topo.set({
+            ...props.topo(),
+            status: TopoStatus.Draft
+        });
         props.onClose();
       }
 
@@ -22,22 +25,22 @@ export const ModalValidateTopo: React.FC<ModalValidateTopoProps> = (props: Modal
             <div className='p-6 pt-10'>
                 <div className='w-full h-[100px] relative mb-5'>
                     <NextImage 
-                        src={staticUrl.defaultProfilePicture}
+                        src={staticUrl.deleteWarning}
                         priority
-                        alt="Valider le topo"
+                        alt="Rejeter le topo"
                         layout="fill"
                         objectFit="contain"
                     />
                 </div>
                 <div className='mb-5'>
-                    Le topo sera envoyé en validation. Etes-vous sûr de vouloir continuer ?
+                    Le topo retournera en brouillon. Etes-vous sûr de vouloir continuer ?
                 </div>
                 <Button 
-                    content='valider'
+                    content='Rejeter'
                     fullWidth
-                    onClick={validateTopo}
+                    onClick={rejectTopo}
                 />
             </div>
         </Modal> 
     )
-}
+})

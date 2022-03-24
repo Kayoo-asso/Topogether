@@ -13,6 +13,7 @@ interface ModalDeleteTopoProps {
 export const ModalDeleteTopo: React.FC<ModalDeleteTopoProps> = (props: ModalDeleteTopoProps) => {
 
     const deleteTopo = () => {
+        //TODO : endpoint
         console.log("supprimer le topo");
         props.onClose();
       }

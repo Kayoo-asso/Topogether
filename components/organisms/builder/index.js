@@ -6,7 +6,7 @@ export * from './AccessFormSlideover';
 export * from './InfoFormSlideover';
 export * from './ManagementFormSlideover';
 
-export * from './ModalValidateTopo';
+export * from './ModalSubmitTopo';
 export * from './ModalDeleteTopo';
 export * from './ModalRenameSector';
 

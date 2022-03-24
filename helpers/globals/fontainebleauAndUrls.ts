@@ -3,7 +3,6 @@ import { v4 } from "uuid";
 
 export const fontainebleauLocation: GeoCoordinates = [2.697569, 48.399065];
 
-export const dropboxUrl = 'https://www.dropbox.com/s/6sxn2n2nx83xz5a/';
 export const topogetherUrl = 'https://builder.topogether.com';
 export const staticUrl = {
   logo_color: `/assets/img/Logo_green_topogether.png`,

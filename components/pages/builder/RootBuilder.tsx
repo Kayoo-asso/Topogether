@@ -4,7 +4,7 @@ import {
     MapControl, Show,
     Header, InfoFormSlideover, ManagementFormSlideover, TrackFormSlideagainstDesktop, 
     BoulderMarkerDropdown, ParkingMarkerDropdown, WaypointMarkerDropdown,
-    ModalValidateTopo, ModalDeleteTopo, GeoCamera, Drawer, LeftbarBuilderDesktop, BoulderBuilderSlideagainstDesktop,
+    ModalSubmitTopo, ModalDeleteTopo, GeoCamera, Drawer, LeftbarBuilderDesktop, BoulderBuilderSlideagainstDesktop,
     ParkingBuilderSlide, AccessFormSlideover, WaypointBuilderSlide, ModalRenameSector, ModalDelete, SectorAreaMarkerDropdown, BuilderProgressIndicator, 
 } from 'components';
 import { blobToImage, defaultImage, DeviceContext, sortBoulders, useContextMenu, createTrack, createBoulder, createParking, createWaypoint, createSector, deleteSector, deleteBoulder, deleteParking, deleteWaypoint, toLatLng } from 'helpers';
@@ -93,7 +93,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
     }
     }, [currentDisplay]);
 
-    const [displayModalValidateTopo, setDisplayModalValidateTopo] = useState(false);
+    const [displayModalSubmitTopo, setDisplayModalSubmitTopo] = useState(false);
     const [displayModalDeleteTopo, setDisplayModalDeleteTopo] = useState(false);
 
     const [displayModalSectorRename, setDisplayModalSectorRename] = useState(false);
@@ -257,7 +257,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
             { value: 'Infos du topo', action: () => setCurrentDisplay('INFO') },
             { value: 'Marche d\'approche', action: () => setCurrentDisplay('APPROACH') },
             { value: 'Gestionnaires du spot', action: () => setCurrentDisplay('MANAGEMENT') },
-            { value: 'Valider le topo', action: () => setDisplayModalValidateTopo(!displayModalValidateTopo) },
+            { value: 'Valider le topo', action: () => setDisplayModalSubmitTopo(!displayModalSubmitTopo) },
             { value: 'Supprimer le topo', action: () => setDisplayModalDeleteTopo(!displayModalDeleteTopo) },
         ]}
         displayMapTools
@@ -277,7 +277,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
             selectedBoulder={selectedBoulder}
             onBoulderSelect={toggleBoulderSelect}
             onTrackSelect={toggleTrackSelect}
-            onValidate={() => setDisplayModalValidateTopo(true)}
+            onSubmit={() => setDisplayModalSubmitTopo(true)}
         />
         <Show when={() => [device === 'MOBILE', displaySectorSlideover] as const}>
             {() => (
@@ -442,10 +442,10 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                 )}
         </Show>
 
-        <Show when={() => displayModalValidateTopo}>
-            <ModalValidateTopo
+        <Show when={() => displayModalSubmitTopo}>
+            <ModalSubmitTopo
             topo={props.topoQuark}
-            onClose={() => setDisplayModalValidateTopo(false)}
+            onClose={() => setDisplayModalSubmitTopo(false)}
             />
         </Show>
         <Show when={() => displayModalDeleteTopo}>
