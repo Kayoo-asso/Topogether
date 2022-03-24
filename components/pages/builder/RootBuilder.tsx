@@ -8,12 +8,12 @@ import {
     ParkingBuilderSlide, AccessFormSlideover, WaypointBuilderSlide, ModalRenameSector, ModalDelete, SectorAreaMarkerDropdown, BuilderProgressIndicator, 
 } from 'components';
 import { blobToImage, defaultImage, DeviceContext, sortBoulders, useContextMenu, createTrack, createBoulder, createParking, createWaypoint, createSector, deleteSector, deleteBoulder, deleteParking, deleteWaypoint, toLatLng } from 'helpers';
-import { Boulder, GeoCoordinates, BoulderImage, MapToolEnum, Parking, Sector, Track, Waypoint, Topo, Profile } from 'types';
+import { Boulder, GeoCoordinates, BoulderImage, MapToolEnum, Parking, Sector, Track, Waypoint, Topo, Profile, Session } from 'types';
 import { Quark, QuarkIter, useCreateDerivation, useQuarkyCallback, useSelectQuark, watchDependencies } from 'helpers/quarky';
 
 interface RootBuilderProps {
     topoQuark: Quark<Topo>,
-    user: Profile,
+    session: Session,
 }
 
 export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props: RootBuilderProps) => {
@@ -230,11 +230,11 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
             ...selectedBoulder()!,
             images: newImages,
             });
-            selectedTrack.select(createTrack(selectedBoulder()!, props.user.id));
+            selectedTrack.select(createTrack(selectedBoulder()!, props.session.id));
         } 
         else {
             const newBoulderQuark = createBoulder(props.topoQuark, coordinates, img);
-            selectedTrack.select(createTrack(newBoulderQuark(), props.user.id));
+            selectedTrack.select(createTrack(newBoulderQuark(), props.session.id));
             selectedBoulder.select(newBoulderQuark);
         }
         setDisplayDrawer(true);

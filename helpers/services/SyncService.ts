@@ -1,5 +1,5 @@
 import { quark, Quark } from "helpers/quarky/quarky";
-import { Boulder, BoulderImage, DBBoulder, DBLine, DBManager, DBParking, DBSector, DBTopo, DBTopoAccess, DBTrack, DBUser, DBWaypoint, Line, Manager, Parking, Sector, Topo, TopoAccess, TopoData, Track, User, UUID, Waypoint } from "types";
+import { Boulder, BoulderImage, DBBoulder, DBLine, DBManager, DBParking, DBSector, DBTopo, DBTopoAccess, DBTrack, DBUserUpdate, DBWaypoint, Line, Manager, Parking, Sector, Topo, TopoAccess, TopoData, Track, User, UUID, Waypoint } from "types";
 import { api } from "./";
 import { DBConvert } from "./DBConvert";
 
@@ -101,7 +101,7 @@ export class InMemorySync implements SyncService {
     }
 
     // only one, since logging out when there are unsaved changes is not allowed
-    userUpdateData: DBUser | undefined;
+    userUpdateData: DBUserUpdate | undefined;
     userUpdate(user: User) {
         this.userUpdateData = DBConvert.user(user);
         this._status.set(SyncStatus.UnsavedChanges);

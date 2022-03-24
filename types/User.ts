@@ -2,11 +2,13 @@ import { Rating } from 'types';
 import { Description, Email, Name, NullableOptional, StringBetween, UUID } from './Utils';
 
 // NOTE: the email has to be updated through the authentication service
+
 export interface Session {
   id: UUID,
   email: Email,
-  userName: Name,
-  role: Role
+  role: Role,
+  // note: id, email and role of User always match the session
+  user: User | null
 }
 
 export type User = {
@@ -29,7 +31,7 @@ export type User = {
   imagePath?: string,
 };
 
-export type DBUser = NullableOptional<Omit<User, 'created' | 'role' | 'email'>>;
+export type DBUserUpdate = NullableOptional<Omit<User, 'created' | 'role' | 'email'>>;
 
 export interface Profile {
   id: UUID,

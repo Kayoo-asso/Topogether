@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { Dropdown } from 'components';
 import { Waypoint } from 'types';
 import { Quark, watchDependencies } from 'helpers/quarky';
-import { api } from 'helpers/services';
+import { api, auth } from 'helpers/services';
 
 interface WaypointMarkerDropdownProps {
     waypoint: Quark<Waypoint>;
@@ -11,7 +11,7 @@ interface WaypointMarkerDropdownProps {
 }
 
 export const WaypointMarkerDropdown: React.FC<WaypointMarkerDropdownProps> = watchDependencies((props: WaypointMarkerDropdownProps) => {
-    const session = api.user();
+    const session = auth.session();
 
     const deleteWaypoint = useCallback(() => props.deleteWaypoint(props.waypoint), [props.waypoint]);
 

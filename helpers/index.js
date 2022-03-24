@@ -17,6 +17,7 @@ export * from './formatDate';
 export * from './blobToImage';
 export * from './dropbox';
 export * from './getImageUrl';
+export * from './jwtDecoder';
 
 export * from './splitArray';
 export * from './arrayMove';

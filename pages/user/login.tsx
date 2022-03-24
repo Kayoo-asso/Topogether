@@ -1,8 +1,31 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import type { NextPage } from 'next';
 import { HeaderDesktop, LoginForm } from 'components';
+import { NextRouter, useRouter } from 'next/router';
+import { api, auth, supabaseClient } from 'helpers/services';
+
+export const returnTo = "returnTo;"
+
+async function redirectIfLoggedIn(router: NextRouter) {
+  const destination = router.query[returnTo];
+  if (typeof destination !== "string") return;
+
+  // TODO: Add indicator
+  if (auth.session()) {
+    await supabaseClient.auth.refreshSession();
+    if (auth.session()) {
+      await router.push(destination);
+    }
+  }
+}
 
 const LoginPage: NextPage = () => {
+  const router = useRouter();
+
+  // This is bugged now, dunno why
+  useEffect(() => {
+    redirectIfLoggedIn(router);
+  }, [router])
   
   return (
     <>

@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { Dropdown } from 'components';
 import { Parking } from 'types';
 import { Quark, watchDependencies } from 'helpers/quarky';
-import { api } from 'helpers/services';
+import { api, auth } from 'helpers/services';
 
 interface ParkingMarkerDropdownProps {
     parking: Quark<Parking>;
@@ -11,7 +11,7 @@ interface ParkingMarkerDropdownProps {
 }
 
 export const ParkingMarkerDropdown: React.FC<ParkingMarkerDropdownProps> = watchDependencies((props: ParkingMarkerDropdownProps) => {
-    const session = api.user();
+    const session = auth.session();
 
     const deleteParking = useCallback(() => props.deleteParking(props.parking), [props.parking]);
 

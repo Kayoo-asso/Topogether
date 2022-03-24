@@ -3,7 +3,7 @@ import { BoulderItemLeftbar, Icon } from 'components';
 import { arrayMove, createTrack, splitArray } from 'helpers';
 import { Quark, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
 import { Boulder, Topo, Track, UUID } from 'types';
-import { api } from 'helpers/services';
+import { api, auth } from 'helpers/services';
 import { DragDropContext, Draggable, Droppable, DropResult } from 'react-beautiful-dnd';
 
 interface SectorListBuilderProps {
@@ -15,7 +15,7 @@ interface SectorListBuilderProps {
 }
 
 export const SectorListBuilder: React.FC<SectorListBuilderProps> = watchDependencies((props: SectorListBuilderProps) => {
-    const session = api.user();
+    const session = auth.session();
     if (!session) return <></>;
 
     const selectedBoulder = props.selectedBoulder();

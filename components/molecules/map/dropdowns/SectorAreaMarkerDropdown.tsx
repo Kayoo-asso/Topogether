@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { Dropdown } from 'components';
 import { Sector } from 'types';
 import { Quark, watchDependencies } from 'helpers/quarky';
-import { api } from 'helpers/services';
+import { api, auth } from 'helpers/services';
 
 interface SectorAreaMarkerDropdownProps {
     sector: Quark<Sector>;
@@ -12,7 +12,7 @@ interface SectorAreaMarkerDropdownProps {
 }
 
 export const SectorAreaMarkerDropdown: React.FC<SectorAreaMarkerDropdownProps> = watchDependencies((props: SectorAreaMarkerDropdownProps) => {
-    const session = api.user();
+    const session = auth.session();
 
     // surement que ces useCallback ne sont pas nécessaire si les props le sont
     const deleteSector = useCallback(() => props.deleteSector(props.sector), [props.sector]);

@@ -1,6 +1,6 @@
 import { IDBPDatabase, openDB } from "idb";
 import type { DBSchema } from "idb";
-import { DBBoulder, DBLine, DBManager, DBParking, DBSector, DBTopo, DBTopoAccess, DBTrack, DBUser, DBWaypoint, UUID } from "types";
+import { DBBoulder, DBLine, DBManager, DBParking, DBSector, DBTopo, DBTopoAccess, DBTrack, DBUserUpdate, DBWaypoint, UUID } from "types";
 
 type KVStore<T extends { id: UUID }> = {
     key: UUID,
@@ -12,7 +12,7 @@ type KVStore<T extends { id: UUID }> = {
 // Some TypeScript trickery, so that we can extract the keys of Schema
 // & still provide a type that extends idb's DBSchema
 type Schema = {
-    users: KVStore<DBUser>,
+    users: KVStore<DBUserUpdate>,
 
     topos: KVStore<DBTopo>,
     sectors: KVStore<DBSector>,
@@ -42,7 +42,7 @@ interface LocalDB {
 export class SyncDB implements LocalDB {
     db: IDBPDatabase<DB> | undefined;
 
-    users: Map<UUID, DBUser> = new Map();
+    users: Map<UUID, DBUserUpdate> = new Map();
     topos: Map<UUID, DBTopo> = new Map();
     sectors: Map<UUID, DBSector> = new Map();
     boulders: Map<UUID, DBBoulder> = new Map();

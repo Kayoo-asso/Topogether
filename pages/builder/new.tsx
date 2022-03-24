@@ -9,20 +9,20 @@ import Link from 'next/link';
 import { v4 } from 'uuid';
 import { useCreateQuark, watchDependencies } from 'helpers/quarky';
 import { TopoTypeName } from 'types/EnumNames';
-import { api } from 'helpers/services'; 
+import { api, auth } from 'helpers/services'; 
 import { useRouter } from 'next/router';
 
 const NewPage: NextPage = watchDependencies(() => {
-  const session = api.user();
-  if (!session) { () => router.push('/'); return null; }
-
+  const session = auth.session();
   const router = useRouter();
+
+  if (!session?.user) { router.push('/'); return null; }
 
   const [step, setStep] = useState(0);
 
   const topoData: TopoCreate = {
     id: v4(),
-    creator: session,
+    creator: session.user,
     name: '' as StringBetween<1, 255>,
     status: 0,
     type: undefined,

@@ -5,10 +5,10 @@ import { Button, HeaderDesktop, ImageInput, LeftbarDesktop, ModalDelete, Profile
 import Link from 'next/link';
 import { watchDependencies } from 'helpers/quarky';
 import { isEmail, Name, StringBetween } from 'types';
-import { api, AuthResult } from 'helpers/services';
+import { api, auth, AuthResult } from 'helpers/services';
 
 const ProfilePage: NextPage = watchDependencies(() => {
-  let session = api.user();
+  let session = auth.session()?.user;
   if (!session) return <></>;
 
   const imageInputRef = useRef<HTMLInputElement>(null);
@@ -39,7 +39,8 @@ const ProfilePage: NextPage = watchDependencies(() => {
     if (phone && (!phone.match(/\d/g) || phone.length < 6 || phone.length > 30)) { setPhoneError("Numéro de téléphone invalide"); hasError = true; }
 
     if (!hasError) {
-      const res = await api.updateUserInfo({
+      // TODO: return indicator for offline modifications
+      auth.updateUserInfo({
         ...session!,
         userName: userName as Name,
         firstName: firstName as Name,
@@ -50,8 +51,8 @@ const ProfilePage: NextPage = watchDependencies(() => {
         city: city as Name,
         phone: phone as StringBetween<1, 30>
       })
-      if (res === AuthResult.Success) setSuccessMessage('Profil modifié');
-      else setErrorMessage("Une erreur est survenue. Merci de réssayer.");
+      // if (res === AuthResult.Success) setSuccessMessage('Profil modifié');
+      // else setErrorMessage("Une erreur est survenue. Merci de réssayer.");
     }
   }
 

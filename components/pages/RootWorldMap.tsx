@@ -2,12 +2,12 @@ import React, { useCallback, useState } from 'react';
 import {
  HeaderDesktop, LeftbarDesktop, MapControl, Show, TopoPreview,
 } from 'components';
-import { LightTopo, User } from 'types';
+import { LightTopo, Session, User } from 'types';
 import { fontainebleauLocation, toLatLng } from 'helpers';
 
 interface RootWorldMapProps {
     lightTopos: LightTopo[],
-    user: User | null,
+    user: Session | null,
 }
 
 export const RootWorldMap: React.FC<RootWorldMapProps> = (props: RootWorldMapProps) => {
