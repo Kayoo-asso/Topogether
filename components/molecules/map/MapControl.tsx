@@ -155,15 +155,13 @@ export const MapControl: React.FC<MapControlProps> = ({
         <div className="relative w-full h-full md:flex-1">
             <Wrapper apiKey={process.env.NEXT_PUBLIC_GOOGLE_API_KEY || ''} libraries={['places']}>
 
-                <div
-                    className="absolute h-full w-full p-3 grid grid-rows-2"
-                >
+                <div className="absolute h-full w-full p-3 grid grid-rows-2">
                     <div className="flex">
                         <div className="w-1/2 text-left">
                             {displaySearchbar && (
                                 <MapSearchbar
-                                    onResultSelect={async (option) => {
-                                        const placeDetails = await googleGetPlace(option.value) as google.maps.places.PlaceResult;
+                                    onGoogleResultSelect={async (res) => {
+                                        const placeDetails = await googleGetPlace(res.place_id) as google.maps.places.PlaceResult;
                                         if (placeDetails.geometry) getBoundsFromSearchbar(placeDetails.geometry);
                                     }}
                                     {...props.searchbarOptions}

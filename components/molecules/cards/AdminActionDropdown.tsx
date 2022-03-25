@@ -1,10 +1,9 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { Dropdown } from 'components';
+import { Dropdown, ModalRejectTopo, ModalValidateTopo } from 'components';
 import equal from 'fast-deep-equal/es6';
 import { LightTopo, TopoStatus } from 'types';
 import { useRouter } from 'next/router';
 import { DropdownOption } from '..';
-import { ModalRejectTopo } from 'components/organisms';
 
 interface AdminActionDropdownProps {
     topo: LightTopo;
@@ -49,6 +48,9 @@ export const AdminActionDropdown: React.FC<AdminActionDropdownProps> = React.mem
             />
             {displayModalReject &&
                 <ModalRejectTopo topo={props.topo} onClose={() => setDisplayModalReject(false)}/>
+            }
+            {displayModalValidate &&
+                <ModalValidateTopo topo={props.topo} onClose={() => setDisplayModalValidate(false)}/>
             }
         </>
     );
