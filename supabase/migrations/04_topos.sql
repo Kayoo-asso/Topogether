@@ -53,22 +53,14 @@ create table topo_contributors (
 create function is_contributor(_topo_id uuid, _user_id uuid)
 returns boolean
 as $$
-declare
-    result boolean;
 begin
-    result = exists (
+    return exists (
         select *
         from topo_contributors as t
         where
             t.topo_id = _topo_id and
             t.user_id = _user_id
     );
-
-    if result <> true then
-        raise exception '%s is not a contributor for %s', _user_id, _topo_id;
-    end if;
-
-    return result;
 end;
 $$ language plpgsql;
 
@@ -133,9 +125,14 @@ create policy "Admins are omnipotent"
 -- 4. Policies for `topos`
 alter table topos enable row level security;
 
-create policy "Topos are visible by everyone"
+create policy "Topo visibility"
     on topos for select
-    using ( true );
+    using ( 
+        true
+        -- status = 2 means validated (TypeScript enum)
+        -- status = 2 or
+        -- public.is_contributor(id, auth.uid())
+    );
 
 create policy "Topos can be inserted by their creator."
     on topos for insert

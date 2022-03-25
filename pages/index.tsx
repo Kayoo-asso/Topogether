@@ -15,7 +15,7 @@ const WorldMapPage: NextPage = () => {
   const toposQuery = useAsyncData(() => api.getLightTopos(), []);
 
   useEffect(() => {
-    api.searchLightTopos("Yzron").then(topos => console.log("Search result:", topos));
+    api.searchLightTopos("Yzron", 20).then(topos => console.log("Search result:", topos));
   }, []);
 
   // ERROR

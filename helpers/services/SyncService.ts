@@ -336,7 +336,7 @@ export class InMemorySync implements SyncService {
            .upsert(Array.from(values), { returning: "minimal" })
            .then(res => {
                if (res.error) {
-                   console.error("Error updating " + table + ":", res.error);
+                   console.error(`Error ${res.status} updating ${table}:`, res.error);
                    // added <any> type annotation because TypeScript is annoying
                    this[key] = mergeMaps(updates as Map<UUID, any>, this[key]);
                    return false;

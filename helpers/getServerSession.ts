@@ -1,3 +1,4 @@
+import { parse } from "cookie";
 import { IncomingMessage } from "http";
 import type { NextApiRequestCookies } from "next/dist/server/api-utils";
 import { AccessTokenCookie, RefreshTokenCookie } from "pages/api/auth/setCookie";
@@ -6,12 +7,19 @@ import { AccessJWT, jwtDecoder } from "./jwtDecoder";
 import { api, auth, makeSession, supabaseClient } from "./services";
 
 export type NextRequest = IncomingMessage & {
-    cookies: NextApiRequestCookies
+    cookies?: NextApiRequestCookies
 };
 
 export async function getServerSession(req: NextRequest): Promise<Session | null> {
-    const accessToken = req.cookies[AccessTokenCookie];
-    const refreshToken = req.cookies[RefreshTokenCookie];
+    let cookies = req.cookies;
+    if (!cookies) {
+        const cookieHeader = req.headers['cookie'];
+        if (!cookieHeader) return null;
+        cookies = parse(cookieHeader);
+        console.log("Parsed cookies", cookies);
+    }
+    const accessToken = cookies[AccessTokenCookie];
+    const refreshToken = cookies[RefreshTokenCookie];
     if (!accessToken) return null;
 
     // Get access token expiry date
@@ -22,7 +30,7 @@ export async function getServerSession(req: NextRequest): Promise<Session | null
     if (!expired) {
         // We have to build the Session manually from the JWT, since
         // `supabaseclient.auth.setAuth` does not set the User
-        // supabaseClient.auth.setAuth(accessToken);
+        supabaseClient.auth.setAuth(accessToken);
         const { sub: id, email, user_metadata } = jwt; 
         return {
             id: id as UUID,

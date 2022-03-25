@@ -1,5 +1,5 @@
 import { useReducer } from "react";
-import { Amenities, Boulder, BoulderData, BoulderImage, DBBoulder, DBLine, DBManager, DBParking, DBSector, DBTopo, DBTopoAccess, DBTrack, DBUserUpdate, DBWaypoint, Line, LinearRing, LineCoords, LineString, Manager, MultiLineString, Parking, Point, PolygonCoords, Position, RockTypes, Sector, SectorData, Topo, TopoAccess, TopoData, TopoType, Track, TrackData, User, UUID, Waypoint } from "types";
+import { Amenities, Boulder, BoulderData, BoulderImage, DBBoulder, DBLine, DBManager, DBParking, DBSector, DBTopo, DBTopoAccess, DBTrack, DBUserUpdate, DBWaypoint, LightTopo, Line, LinearRing, LineCoords, LineString, Manager, MultiLineString, Parking, Point, PolygonCoords, Position, RockTypes, Sector, SectorData, Topo, TopoAccess, TopoData, TopoType, Track, TrackData, User, UUID, Waypoint } from "types";
 
 // IMPORTANT: perform all conversions by explicitly assigning all properties.
 // DO NOT destructure one of the input arguments into the result

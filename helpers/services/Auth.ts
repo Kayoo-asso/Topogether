@@ -160,10 +160,10 @@ export class AuthService {
         return session;
     }
 
-    private _onAuthStateChange(event: AuthChangeEvent, session: SupabaseSession | null) {
+    private async _onAuthStateChange(event: AuthChangeEvent, session: SupabaseSession | null) {
         if (!session || event === "SIGNED_OUT") {
             this._session.set(null);
-            fetchOnClient(authCookieRoute, {
+            await fetchOnClient(authCookieRoute, {
                 method: "DELETE"
             });
             return;
@@ -184,7 +184,7 @@ export class AuthService {
             refreshToken: session.refresh_token
         };
         // do we need to await this one?
-        fetchOnClient(authCookieRoute, {
+        await fetchOnClient(authCookieRoute, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"

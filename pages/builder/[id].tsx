@@ -2,7 +2,7 @@ import React from 'react';
 import type { GetServerSideProps, NextPage } from 'next';
 import { api } from 'helpers/services';
 import { watchDependencies } from 'helpers/quarky';
-import { isUUID, Session, TopoData } from 'types';
+import { isUUID, Session, TopoData, TopoStatus } from 'types';
 import { RootBuilder } from 'components';
 import { editTopo} from 'helpers';
 import { getServerSession } from 'helpers/getServerSession';
@@ -39,9 +39,10 @@ export const getServerSideProps: GetServerSideProps<BuilderProps> = async ({ req
     );
   }
 
-  if (!topo) {
+  if (!topo || topo.status !== TopoStatus.Draft) {
     return redirect("/404");
   }
+
   return { props: { topo, session } };
 }
 

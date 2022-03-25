@@ -7,6 +7,7 @@ import { api, auth } from 'helpers/services';
 import { staticUrl } from 'helpers';
 import { useRouter } from 'next/router';
 import { watchDependencies } from 'helpers/quarky';
+import { useSession } from 'helpers/hooks/useSession';
 
 interface HeaderDesktopProps {
   backLink: string,
@@ -30,7 +31,7 @@ export const HeaderDesktop: React.FC<HeaderDesktopProps> = watchDependencies(({
   displayUser = true,
   ...props
 }: HeaderDesktopProps) => {
-  const session = auth.session();
+  const session = useSession();
   const router = useRouter();
 
   const [menuOpen, setMenuOpen] = useState(false);

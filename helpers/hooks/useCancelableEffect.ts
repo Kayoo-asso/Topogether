@@ -1,4 +1,4 @@
-import React, { useEffect, useSyncExternalStore } from "react";
+import React, { useEffect } from "react";
 
 export interface LivenessRef {
     current: boolean,

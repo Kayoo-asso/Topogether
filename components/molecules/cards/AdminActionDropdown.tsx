@@ -48,7 +48,7 @@ export const AdminActionDropdown: React.FC<AdminActionDropdownProps> = React.mem
                 options={actions}
             />
             {displayModalReject &&
-                <ModalRejectTopo topo={} onClose={() => setDisplayModalReject(false)}/>
+                <ModalRejectTopo topo={props.topo} onClose={() => setDisplayModalReject(false)}/>
             }
         </>
     );

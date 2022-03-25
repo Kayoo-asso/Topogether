@@ -1,10 +1,17 @@
 import { SupabaseClient } from "@supabase/supabase-js";
-import { TopoData, UUID, LightTopo, TopoStatus } from 'types';
+import { TopoData, UUID, LightTopo, TopoStatus, DBTopo } from 'types';
+import { sync } from ".";
 import { ImageService } from "./Images";
 
 export type LightTopoFilters = {
     userId?: UUID,
     status?: TopoStatus
+}
+
+export enum UpdateResult {
+    Ok,
+    Unauthorized,
+    Error
 }
 
 export class ApiService {
@@ -19,6 +26,7 @@ export class ApiService {
         let query = this.client
             .from<LightTopo>("light_topos")
             .select('*');
+
         if (filters?.status) {
             query = query.eq('status', filters.status);
         }
@@ -34,18 +42,34 @@ export class ApiService {
         return data;
     }
 
-    async searchLightTopos(query: string): Promise<LightTopo[]> {
+    // 0.3 is the default similarity threshold for pg_trgm
+    async searchLightTopos(query: string, limit: number, similarity: number = 0.3): Promise<LightTopo[]> {
         const { error, data } = await this.client
             .rpc<LightTopo>("search_light_topos", {
                 _query: query,
-                _nb: 20,
-                _similarity: 0.3 // default similarity threshold
+                _nb: limit,
+                _similarity: similarity 
             });
         if (error) {
             console.error(`Error searching light topos for \"${query}\": `, error);
             return [];
         }
         return data ?? [];
+    }
+
+    async setTopoStatus(topoId: UUID, status: TopoStatus): Promise<UpdateResult> {
+        const { error, status: httpStatus } = await this.client
+            .from<DBTopo>("topos")
+            .update({ status })
+            .eq('id', topoId);
+        if (error) {
+            // Postgres error code
+            // see: https://postgrest.org/en/stable/api.html#http-status-codes
+            return error.code === "42501"
+                ? UpdateResult.Unauthorized
+                : UpdateResult.Error;
+        }
+        return UpdateResult.Ok;
     }
 
     async getTopo(id: UUID): Promise<TopoData | null> {
