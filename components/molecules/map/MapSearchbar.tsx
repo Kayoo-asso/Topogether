@@ -113,6 +113,7 @@ export const MapSearchbar: React.FC<MapSearchbarProps> = ({
                         <TextInput
                             id="searchbar"
                             ref={inputRef}
+                            autoComplete="off"
                             label="Recherche..."
                             displayLabel={false}
                             wrapperClassName="w-[95%] mt-[4px]"

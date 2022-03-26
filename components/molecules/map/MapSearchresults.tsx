@@ -19,11 +19,8 @@ export const MapSearchresults: React.FC<MapSearchresultsProps> = (props: MapSear
 
             {props.topoApiResults.length > 0 &&
                 props.topoApiResults.map((topo) =>
-                    <Link href={'/topo/'+topo.id}>
-                        <div 
-                            key={topo.id}
-                            className='flex flex-row gap-4 items-center py-3 text-dark cursor-pointer ktext-base'
-                        >
+                    <Link href={'/topo/'+topo.id} passHref key={topo.id}>
+                        <div className='flex flex-row gap-4 items-center py-3 text-dark cursor-pointer ktext-base'>
                             <div>
                                 <Icon name='waypoint' SVGClassName='w-5 h-5 fill-main' />
                             </div>

@@ -1,22 +1,52 @@
 import React, { useRef, useState } from 'react';
-import type { NextPage } from 'next';
+import type { GetServerSideProps, NextPage } from 'next';
 import { staticUrl } from 'helpers';
 import { Button, HeaderDesktop, ImageInput, LeftbarDesktop, ModalDelete, ProfilePicture, Tabs, TextInput } from 'components';
 import Link from 'next/link';
 import { watchDependencies } from 'helpers/quarky';
-import { isEmail, Name, StringBetween } from 'types';
-import { auth } from 'helpers/services';
-import { useSession } from 'helpers/hooks/useSession';
+import { isEmail, Name, StringBetween, User } from 'types';
+import { auth, supabaseClient } from 'helpers/services';
+import { getServerSession } from 'helpers/getServerSession';
 
-const ProfilePage: NextPage = watchDependencies(() => {
-  let session = useSession()?.user;
-  if (!session) return <></>;
+type ProfileProps = {
+  user: User
+}
 
+export const getServerSideProps: GetServerSideProps<ProfileProps> = async (ctx) => {
+  const session = await getServerSession(ctx.req);
+  if(!session) {
+    return {
+      redirect: {
+        destination: "/user/login",
+        permanent: false
+      }
+    }
+  }
+  const { data, error } = await supabaseClient
+    .from<User>("users")
+    .select("*")
+    .eq('id', session.id)
+    .single();
+
+  if(error || !data) {
+    console.error("Error retrieving user information for " + session.email);
+    return {
+      redirect: {
+        destination: "/user/login",
+        permanent: false
+      }
+    }
+  }
+  
+  return { props: { user: data } }
+}
+
+const ProfilePage: NextPage<ProfileProps> = watchDependencies(({ user:session }) => {
   const imageInputRef = useRef<HTMLInputElement>(null);
 
   const [displayDeleteAccountModal, setDisplayDeleteAccountModal] = useState(false);
   
-  const [email, setEmail] = useState<string>(session!.email);
+  const [email, setEmail] = useState<string>(session.email);
   const [emailError, setEmailError] = useState<string>();
   
   const [userName, setUserName] = useState<string>(session.userName);
@@ -32,7 +62,6 @@ const ProfilePage: NextPage = watchDependencies(() => {
   const [phoneError, setPhoneError] = useState<string>();
 
   const [successMessage, setSuccessMessage] = useState<string>();
-  const [errorMessage, setErrorMessage] = useState<string>();
 
   const modifyProfil = async () => {
     let hasError = false;
@@ -52,8 +81,7 @@ const ProfilePage: NextPage = watchDependencies(() => {
         city: city as Name,
         phone: phone as StringBetween<1, 30>
       })
-      // if (res === AuthResult.Success) setSuccessMessage('Profil modifié');
-      // else setErrorMessage("Une erreur est survenue. Merci de réssayer.");
+      setSuccessMessage('Profil modifié');
     }
   }
 
@@ -220,7 +248,6 @@ const ProfilePage: NextPage = watchDependencies(() => {
                 fullWidth
                 onClick={modifyProfil}
             />
-            {errorMessage && <div className='ktext-error'>{errorMessage}</div>}
             {successMessage && <div className='text-main'>{successMessage}</div>}
 
             <div className='flex flex-col items-center gap-4 mb-10 md:mb-0 md:pt-10'>
