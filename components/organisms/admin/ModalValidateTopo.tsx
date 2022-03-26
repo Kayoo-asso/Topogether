@@ -1,22 +1,18 @@
 import { Button, Modal } from 'components';
 import { staticUrl } from 'helpers';
-import { Quark, watchDependencies } from 'helpers/quarky';
+import { api } from 'helpers/services';
 import NextImage from 'next/image';
 import React from 'react';
-import { Topo, TopoStatus } from 'types';
+import { LightTopo, TopoStatus } from 'types';
 
 interface ModalValidateTopoProps {
-    topo: Quark<Topo>,
+    topo: LightTopo,
     onClose: () => void,
 }
 
-export const ModalValidateTopo: React.FC<ModalValidateTopoProps> = watchDependencies((props: ModalValidateTopoProps) => {
-    const validateTopo = () => {
-        //TODO : add security (backend)
-        props.topo.set({
-            ...props.topo(),
-            status: TopoStatus.Validated
-        });
+export const ModalValidateTopo: React.FC<ModalValidateTopoProps> = (props: ModalValidateTopoProps) => {
+    const validateTopo = async () => {
+        await api.setTopoStatus(props.topo.id, TopoStatus.Validated);
         props.onClose();
       }
 
@@ -43,4 +39,4 @@ export const ModalValidateTopo: React.FC<ModalValidateTopoProps> = watchDependen
             </div>
         </Modal> 
     )
-});
+}

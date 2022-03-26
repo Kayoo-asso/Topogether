@@ -1,24 +1,20 @@
 import { Button, Modal } from 'components';
 import { staticUrl } from 'helpers';
-import { Quark, watchDependencies } from 'helpers/quarky';
+import { api } from 'helpers/services';
 import NextImage from 'next/image';
 import React from 'react';
-import { Topo, TopoStatus } from 'types';
+import { LightTopo, TopoStatus } from 'types';
 
 interface ModalRejectTopoProps {
-    topo: Quark<Topo>,
+    topo: LightTopo,
     onClose: () => void,
 }
 
-export const ModalRejectTopo: React.FC<ModalRejectTopoProps> = watchDependencies((props: ModalRejectTopoProps) => {
-    const rejectTopo = () => {
-        //TODO : add security (backend)
-        props.topo.set({
-            ...props.topo(),
-            status: TopoStatus.Draft
-        });
+export const ModalRejectTopo: React.FC<ModalRejectTopoProps> = (props: ModalRejectTopoProps) => {
+    const rejectTopo = async () => {
+        await api.setTopoStatus(props.topo.id, TopoStatus.Draft);
         props.onClose();
-      }
+    }
 
     return (
         <Modal onClose={props.onClose} >
@@ -43,4 +39,4 @@ export const ModalRejectTopo: React.FC<ModalRejectTopoProps> = watchDependencies
             </div>
         </Modal> 
     )
-})
+}
