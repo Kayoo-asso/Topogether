@@ -1,11 +1,11 @@
 import { Icon } from 'components/atoms';
+import Link from 'next/link';
 import React from 'react';
 import { LightTopo } from 'types';
 
 interface MapSearchresultsProps {
     topoApiResults: LightTopo[],
     googleApiResults: google.maps.places.AutocompletePrediction[],
-    onTopoSelect: (topo: LightTopo) => void,
     onPlaceSelect: (res: google.maps.places.AutocompletePrediction) => void,
     onClose: () => void,
 }
@@ -19,16 +19,17 @@ export const MapSearchresults: React.FC<MapSearchresultsProps> = (props: MapSear
 
             {props.topoApiResults.length > 0 &&
                 props.topoApiResults.map((topo) =>
-                    <div 
-                        key={topo.id}
-                        className='flex flex-row gap-4 items-center py-3 text-dark cursor-pointer ktext-base'
-                        onClick={() => props.onTopoSelect(topo)}
-                    >
-                        <div>
-                            <Icon name='waypoint' SVGClassName='w-5 h-5 fill-main' />
+                    <Link href={'/topo/'+topo.id}>
+                        <div 
+                            key={topo.id}
+                            className='flex flex-row gap-4 items-center py-3 text-dark cursor-pointer ktext-base'
+                        >
+                            <div>
+                                <Icon name='waypoint' SVGClassName='w-5 h-5 fill-main' />
+                            </div>
+                            <div>{topo.name}</div>
                         </div>
-                        <div>{topo.name}</div>
-                    </div>
+                    </Link>
                 )
             }
 

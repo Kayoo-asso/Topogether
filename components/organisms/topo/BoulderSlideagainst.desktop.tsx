@@ -3,7 +3,7 @@ import { BoulderPreviewDesktop, Button, Flash, Icon, Modal, SlideagainstRightDes
 import { Quark, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
 import { Boulder, BoulderImage, Track, UUID } from 'types';
 import { LoginForm } from '..';
-import { api, auth } from 'helpers/services/';
+import { useSession } from 'helpers/hooks/useSession';
 
 interface BoulderSlideagainstDesktopProps {
     boulder: Quark<Boulder>,
@@ -15,7 +15,7 @@ interface BoulderSlideagainstDesktopProps {
 }
 
 export const BoulderSlideagainstDesktop: React.FC<BoulderSlideagainstDesktopProps> = watchDependencies((props: BoulderSlideagainstDesktopProps) => {
-    const session = auth.session();
+    const session = useSession();
     
     const [flashMessage, setFlashMessage] = useState<string>();
     const [officialTrackTab, setOfficialTrackTab] = useState(true);

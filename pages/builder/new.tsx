@@ -9,11 +9,11 @@ import Link from 'next/link';
 import { v4 } from 'uuid';
 import { useCreateQuark, watchDependencies } from 'helpers/quarky';
 import { TopoTypeName } from 'types/EnumNames';
-import { api, auth } from 'helpers/services'; 
 import { useRouter } from 'next/router';
+import { useSession } from 'helpers/hooks/useSession';
 
 const NewPage: NextPage = watchDependencies(() => {
-  const session = auth.session();
+  const session = useSession();
   const router = useRouter();
 
   if (!session?.user) { router.push('/'); return null; }

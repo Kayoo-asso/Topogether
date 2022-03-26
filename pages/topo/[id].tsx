@@ -2,7 +2,7 @@ import React from 'react';
 import type { NextPage } from 'next';
 import { Error404, Header, Loading, RootTopo } from 'components';
 import { useRouter } from 'next/router';
-import { editTopo, quarkifyTopo } from 'helpers';
+import { editTopo } from 'helpers';
 import { isUUID, Topo } from 'types';
 import { watchDependencies } from 'helpers/quarky';
 import { api } from 'helpers/services';

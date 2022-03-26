@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import type { NextPage } from 'next';
 import { HeaderDesktop, LoginForm } from 'components';
 import { NextRouter, useRouter } from 'next/router';
-import { api, auth, supabaseClient } from 'helpers/services';
+import { auth, supabaseClient } from 'helpers/services';
 
 export const returnTo = "returnTo;"
 

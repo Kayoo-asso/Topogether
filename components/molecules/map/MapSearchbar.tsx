@@ -135,7 +135,6 @@ export const MapSearchbar: React.FC<MapSearchbarProps> = ({
                 <MapSearchresults 
                     topoApiResults={topoApiResults}
                     googleApiResults={googleApiResults}
-                    onTopoSelect={(topo) => selectTopo(topo)}
                     onPlaceSelect={(place) => selectPlace(place)}
                     onClose={() => setResultsOpen(false)}
                 />

@@ -3,8 +3,8 @@ import { BoulderItemLeftbar, Icon } from 'components';
 import { arrayMove, createTrack, splitArray } from 'helpers';
 import { Quark, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
 import { Boulder, Topo, Track, UUID } from 'types';
-import { api, auth } from 'helpers/services';
 import { DragDropContext, Draggable, Droppable, DropResult } from 'react-beautiful-dnd';
+import { useSession } from 'helpers/hooks/useSession';
 
 interface SectorListBuilderProps {
     topoQuark: Quark<Topo>,
@@ -15,7 +15,7 @@ interface SectorListBuilderProps {
 }
 
 export const SectorListBuilder: React.FC<SectorListBuilderProps> = watchDependencies((props: SectorListBuilderProps) => {
-    const session = auth.session();
+    const session = useSession();
     if (!session) return <></>;
 
     const selectedBoulder = props.selectedBoulder();

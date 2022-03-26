@@ -3,12 +3,12 @@ import React, { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { Icon } from 'components';
-import { api, auth } from 'helpers/services';
 import { watchDependencies } from 'helpers/quarky';
+import { useSession } from 'helpers/hooks/useSession';
 
 export const ShellMobile: React.FC = watchDependencies(() => {
   const router = useRouter();
-  const session = auth.session();
+  const session =useSession();
   
   const initialActiveTab = useMemo(() => {
     if (router.pathname.includes('user')) {

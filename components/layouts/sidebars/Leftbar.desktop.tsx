@@ -1,8 +1,8 @@
 import React from 'react';
 import { Button, Icon } from 'components';
 import Link from 'next/link';
-import { api, auth } from 'helpers/services';
 import { watchDependencies } from 'helpers/quarky';
+import { useSession } from 'helpers/hooks/useSession';
 
 interface LeftbarDesktopProps {
     currentMenuItem?: 'BUILDER' | 'MAP' | 'USER' | 'ADMIN',
@@ -11,7 +11,7 @@ interface LeftbarDesktopProps {
 export const LeftbarDesktop: React.FC<LeftbarDesktopProps> = watchDependencies(({
     currentMenuItem = 'MAP',
 }: LeftbarDesktopProps) => {
-  const session = auth.session();
+  const session = useSession();
   if (!session) return <></>;
  
   return (

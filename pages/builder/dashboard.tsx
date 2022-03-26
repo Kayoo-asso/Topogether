@@ -1,6 +1,7 @@
 import { Error404, Header, Loading, RootDashboard } from 'components';
 import { useAsyncData } from 'helpers/hooks/useAsyncData';
-import { api, auth } from 'helpers/services';
+import { useSession } from 'helpers/hooks/useSession';
+import { api } from 'helpers/services';
 import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
 
@@ -11,7 +12,7 @@ export async function getServerSideProps() {
 
 const DashboardPage: NextPage = () => {
   const router = useRouter();
-  const session = auth.session();
+  const session = useSession();
   if (!session) { () => router.push('/'); return null; }
 
   const toposQuery = useAsyncData(() =>

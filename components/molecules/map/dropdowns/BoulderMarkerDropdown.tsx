@@ -2,8 +2,8 @@ import React, { useCallback } from 'react';
 import { Dropdown } from 'components';
 import { Boulder, Track } from 'types';
 import { Quark, watchDependencies } from 'helpers/quarky';
-import { api, auth } from 'helpers/services';
 import { createTrack } from 'helpers';
+import { useSession } from 'helpers/hooks/useSession';
 
 interface BoulderMarkerDropdownProps {
     boulder: Quark<Boulder>;
@@ -13,7 +13,7 @@ interface BoulderMarkerDropdownProps {
 }
 
 export const BoulderMarkerDropdown: React.FC<BoulderMarkerDropdownProps> = watchDependencies((props: BoulderMarkerDropdownProps) => {
-    const session = auth.session();
+    const session = useSession();
 
     const addTrack = () => {
         if (session) {

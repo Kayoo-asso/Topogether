@@ -5,10 +5,11 @@ import { Button, HeaderDesktop, ImageInput, LeftbarDesktop, ModalDelete, Profile
 import Link from 'next/link';
 import { watchDependencies } from 'helpers/quarky';
 import { isEmail, Name, StringBetween } from 'types';
-import { api, auth, AuthResult } from 'helpers/services';
+import { auth } from 'helpers/services';
+import { useSession } from 'helpers/hooks/useSession';
 
 const ProfilePage: NextPage = watchDependencies(() => {
-  let session = auth.session()?.user;
+  let session = useSession()?.user;
   if (!session) return <></>;
 
   const imageInputRef = useRef<HTMLInputElement>(null);
