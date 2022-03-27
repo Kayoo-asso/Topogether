@@ -2,8 +2,8 @@ import React, { useContext, useState } from 'react';
 import { Flash, Icon, SlideagainstRightDesktop, SlideoverMobile } from 'components';
 import { Quark, watchDependencies } from 'helpers/quarky';
 import { Waypoint } from 'types';
-import { DeviceContext, staticUrl } from 'helpers';
-import { default as NextImage } from 'next/image';
+import { DeviceContext } from 'helpers';
+import { CFImage } from 'components/atoms/CFImage';
 
 interface WaypointSlideProps {
     open: boolean,
@@ -46,8 +46,8 @@ export const WaypointSlide: React.FC<WaypointSlideProps> = watchDependencies(({
                 </div>
 
                 <div className='w-full relative max-h-[200px] h-[60%] md:h-[25%]'>
-                    <NextImage 
-                        src={waypoint.image ? waypoint.image.url : staticUrl.defaultKayoo}
+                    <CFImage 
+                        image={waypoint.image}
                         alt="Parking"
                         priority
                         layout="fill"

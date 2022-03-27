@@ -1,6 +1,6 @@
 import { Quark } from 'helpers/quarky';
 import { editTopo, quarkifyTopo } from 'helpers/topo';
-import { BoulderData, Line, Name, BoulderImage, TrackData, Description, Difficulty, ClimbTechniques, SectorData, TopoData, Amenities, TopoStatus, TopoType, RockTypes, TopoAccess, Topo, Parking, StringBetween, Manager, UUID, Reception, Waypoint, Email, User } from 'types';
+import { BoulderData, Line, Name, Image, TrackData, Description, Difficulty, ClimbTechniques, SectorData, TopoData, Amenities, TopoStatus, TopoType, RockTypes, TopoAccess, Topo, Parking, StringBetween, Manager, UUID, Reception, Waypoint, Email, User } from 'types';
 import { v4 as uuid } from 'uuid';
 
 // Note: use UUIDs everywhere for proper testing with the DB
@@ -16,23 +16,18 @@ export const fakeAdmin: User & { password: string } = {
 }
 
 
-export const images: BoulderImage[] = [
+export const images: Image[] = [
     {
         id: "c242dce4-1c96-412f-30e4-4467f140a500" as UUID,
-        width: 4592,
-        height: 3064,
+        ratio: '16:9'
     },
     {
         id: "dd74e0bb-c9dc-4e0e-02bf-f46a7783c500" as UUID,
-        width: 4592,
-        height: 3064,
-        // boulderImageDimensions = 674x450 in the original fakeTopo
-        // multiply every line coordinate by 4592 / 674 to scale the data
+        ratio: '16:9'
     },
     {
         id: "4ccb4044-4b25-440d-576a-865dd78a3b00" as UUID,
-        width: 1334,
-        height: 2000,
+        ratio: '16:9'
     },
 ]
 
@@ -190,11 +185,11 @@ export const access: TopoAccess[] = [
         steps: [
             {
                 description: "Depuis le parking, prendre le sentier qui monte dans la continuité de la route. Après 12-15min de marche, vous arriverez à une esplanade d'herbe surmontant une petite falaise (où il est possible de faire de l'initiation). Un panneau indique le site d'escalade à l'entrée de l'esplanade.\nDepuis l'esplanade, prendre le sentier qui part derrière le panneau pour monter vers les premiers blocs." as Description,
-                imageId: images[0].id
+                image: images[0]
             },
             {
                 description: "Et ceci est une autre étape incroyable pour s'approcher du spot." as Description,
-                imageId: images[1].id
+                image: images[1]
             }
         ]
     },
@@ -205,11 +200,11 @@ export const access: TopoAccess[] = [
         steps: [
             {
                 description: "Depuis le parking, prendre le sentier qui monte dans la continuité de la route. Après 12-15min de marche, vous arriverez à une esplanade d'herbe surmontant une petite falaise (où il est possible de faire de l'initiation). Un panneau indique le site d'escalade à l'entrée de l'esplanade.\nDepuis l'esplanade, prendre le sentier qui part derrière le panneau pour monter vers les premiers blocs." as Description,
-                imageId: images[0].id
+                image: images[0]
             },
             {
                 description: "Et ceci est une autre étape incroyable pour s'approcher du spot." as Description,
-                imageId: images[1].id
+                image: images[1]
             }
         ]
     },    
@@ -222,7 +217,7 @@ export const parkings: Parking[] = [
         location: [4.607274, 45.701321],
         name: 'Parking 1' as StringBetween<1, 255>,
         description: 'Le parking de Rocher Canon est facile d’accès depuis la N12. Attention toutefois, beaucoup de GPS indique un itinéraire qui passe à travers la forêt et qui est en fait fermé. Il faut bien arriver par la N12. ' as StringBetween<1, 5000>,
-        imageId: '42cc5d41-fef2-4681-aa95-4c435e0eb600' as UUID,
+        image: images[1],
     }
 ]
 
@@ -230,7 +225,7 @@ export const managers: Manager[] = [
     {
         id: uuid(),
         name: 'La dégaine' as Name,
-        imageId: images[2].id,
+        image: images[2],
         contactName: 'Jérôme Foobar' as Name,
         contactPhone: '06 69 43 44 92' as Name,
         contactMail: 'ladegaine@ladegaine.com' as Email,
@@ -243,6 +238,7 @@ export const managers: Manager[] = [
 export const waypoints: Waypoint[] = [
     {
         id: uuid(),
+        image: images[0],
         name: 'Pont de pierre' as Name,
         location: [4.605462, 45.70256],
         description: "C'est un joli petit pont tout mignon qui permet de traverser une rivière ... DE SANNNNNG GNIAHAHAHAHA !!!" as Description,
@@ -269,7 +265,7 @@ export const fakeTopov2: TopoData = {
 
     danger: "Il y a beaucoup de pentes" as Description,
 
-    imageId: "c242dce4-1c96-412f-30e4-4467f140a500" as UUID,
+    image: images[0],
     creator: fakeAdmin,
 
     sectors: sectors,

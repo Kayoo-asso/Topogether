@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { Icon, ImageThumb } from 'components';
-import { Boulder, BoulderImage, UUID } from 'types';
+import { Boulder, Image, UUID } from 'types';
 import { ImageInput } from '.';
 import { QuarkArray } from 'helpers/quarky';
 
 interface MultipleImageInputProps {
-  images: BoulderImage[],
+  images: Image[],
   boulder?: Boulder,
   label?: string,
   rows?: number,
@@ -14,7 +14,7 @@ interface MultipleImageInputProps {
   selected?: UUID,
   onImageClick?: (id: UUID) => void,
   onImageDelete?: (id: UUID) => void,
-  onChange: (images: BoulderImage[]) => void,
+  onChange: (images: Image[]) => void,
 }
 
 export const MultipleImageInput: React.FC<MultipleImageInputProps> = ({

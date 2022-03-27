@@ -2,8 +2,8 @@ import React, { useContext, useState } from 'react';
 import { Flash, Icon, ParkingButton, ParkingModal, SlideagainstRightDesktop, SlideoverMobile } from 'components';
 import { Quark, watchDependencies } from 'helpers/quarky';
 import { Parking } from 'types';
-import { DeviceContext, staticUrl } from 'helpers';
-import { default as NextImage } from 'next/image';
+import { DeviceContext } from 'helpers';
+import { CFImage } from 'components/atoms/CFImage';
 
 interface ParkingSlideProps {
     open: boolean,
@@ -47,8 +47,8 @@ export const ParkingSlide: React.FC<ParkingSlideProps> = watchDependencies(({
                 </div>
 
                 <div className='w-full relative max-h-[200px] h-[60%] md:h-[25%]'>
-                    <NextImage 
-                        src={parking.imagePath || staticUrl.defaultKayoo}
+                    <CFImage 
+                        image={parking.image}
                         alt="Parking"
                         priority
                         layout="fill"

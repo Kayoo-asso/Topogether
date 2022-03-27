@@ -3,7 +3,7 @@ import { Flash, SlideoverLeftDesktop, SlideoverMobile, TabOption, Tabs } from 'c
 import { QuarkArray } from 'helpers/quarky';
 import { Manager } from 'types';
 import { DeviceContext } from 'helpers';
-import { default as NextImage } from 'next/image';
+import { CFImage } from 'components/atoms/CFImage';
 
 interface ManagementSlideoverProps {
     managers: QuarkArray<Manager>,
@@ -51,10 +51,10 @@ export const ManagementSlideover: React.FC<ManagementSlideoverProps> = ({
                         />
                     }
                     <div className='flex flex-row justify-end gap-6 items-center pb-6 md:pt-8'>
-                        {manager.imagePath && 
+                        {manager.image && 
                             <div className="w-1/2 relative mt-2 min-h-[100px]">
-                                <NextImage
-                                    src={manager.imagePath}
+                                <CFImage
+                                    image={manager.image}
                                     alt={"Logo gestionnaire "+managerTab}
                                     layout="fill"
                                     objectFit="contain"

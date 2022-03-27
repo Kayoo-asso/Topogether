@@ -1,22 +1,19 @@
 import { quark, Quark } from 'helpers/quarky';
-import { Name, BoulderImage, Description, Amenities, TopoStatus, TopoType, RockTypes, LightTopo } from 'types';
+import { Name, Image, Description, Amenities, TopoStatus, TopoType, RockTypes, LightTopo } from 'types';
 import { v4 as uuid } from 'uuid';
 
-export const images: BoulderImage[] = [
+export const images: Image[] = [
     // Topo image
     {
         id: uuid(),
-        index: 0,
-        path: "https://builder.topogether.com/public/uploads/topo/main-image/dad449499de38f1bdee5872de1a354d52fff6183.jpeg",
-        width: 4592,
-        height: 3064,
+        ratio: '16:9',
     },
 ]
 
 // TODO: create proper users and load them into quarks
 const topoCreatorId = uuid();
-const contributorId = uuid();
-const validatorId = uuid();
+// const contributorId = uuid();
+// const validatorId = uuid();
 
 export const lightTopo: LightTopo = {
     id: uuid(),
@@ -34,9 +31,7 @@ export const lightTopo: LightTopo = {
     // the real topo doesn't have composite rock, but this allows us to test the bitflag
     rockTypes: RockTypes.Gneiss | RockTypes.Composite,
 
-    danger: "Il y a beaucoup de pentes" as Description,
-
-    imagePath: images[0].path,
+    image: images[0],
     creator: {
         id: topoCreatorId,
         userName: 'Flavien' as Name,
@@ -44,7 +39,7 @@ export const lightTopo: LightTopo = {
         created: (new Date(2020, 9, 14)).toISOString()
     },
 
-    firstParkingLocation: [4.607274, 45.701321],
+    parkingLocation: [4.607274, 45.701321],
     nbSectors: 4,
     nbBoulders: 82,
     nbTracks: 241,
@@ -56,8 +51,7 @@ export const lightTopo: LightTopo = {
         7: 41,
         8: 4,
         9: 0,
-        'None': 12,
-        Total: 241
+        'None': 12
     },
     submitted: (new Date(2020, 9, 14)).toISOString(),
     validated: (new Date(2020, 9, 14)).toISOString(),

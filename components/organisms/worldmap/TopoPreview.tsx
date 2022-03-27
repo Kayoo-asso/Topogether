@@ -2,9 +2,9 @@ import React, { useContext, useState } from 'react';
 import {
   Button, DownloadButton, Flash, Icon, LikeButton, Modal, GradeHistogram, ParkingButton, ParkingModal, SlideagainstRightDesktop
 } from 'components';
-import { default as NextImage } from 'next/image';
 import { LightTopo } from 'types';
-import { DeviceContext, staticUrl, TopoTypeToColor } from 'helpers';
+import { DeviceContext, TopoTypeToColor } from 'helpers';
+import { CFImage } from 'components/atoms/CFImage';
 
 interface TopoPreviewProps {
   topo: LightTopo,
@@ -55,12 +55,12 @@ export const TopoPreview: React.FC<TopoPreviewProps> = (props: TopoPreviewProps)
                 </div>
 
                 <div className="w-full h-[160px] relative mt-4">
-                    <NextImage
-                    src={topo.imagePath || staticUrl.defaultKayoo}
-                    alt="image principale du topo"
-                    priority
-                    layout="fill"
-                    objectFit="cover"
+                    <CFImage
+                        image={topo.image}
+                        alt="image principale du topo"
+                        priority
+                        layout="fill"
+                        objectFit="cover"
                     />
                 </div>
 

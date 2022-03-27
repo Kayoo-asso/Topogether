@@ -2,18 +2,18 @@ import React, { Dispatch, SetStateAction, useMemo, useState } from 'react';
 import {
   GradeScale, RoundButton, SlideoverMobile, TracksImage, Icon
 } from 'components';
-import { Boulder, BoulderImage, Track } from 'types';
+import { Boulder, Image, Track } from 'types';
 import { buildBoulderGradeHistogram, staticUrl } from 'helpers';
-import { default as NextImage } from 'next/image';
 import { Quark, watchDependencies, SelectQuarkNullable } from 'helpers/quarky';
 import { TracksListBuilder } from '.';
 import { BoulderForm } from '..';
+import { CFImage } from 'components/atoms/CFImage';
 
 interface BoulderBuilderSlideoverMobileProps {
   boulder: Quark<Boulder>,
   selectedTrack: SelectQuarkNullable<Track>,
-  currentImage: BoulderImage,
-  setCurrentImage: Dispatch<SetStateAction<BoulderImage>>,
+  currentImage?: Image,
+  setCurrentImage: Dispatch<SetStateAction<Image | undefined>>,
   onPhotoButtonClick?: () => void,
   onDrawButtonClick: () => void,
   onClose: () => void,
@@ -92,7 +92,7 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
         </div>
 
         <div className="flex flex-row items-center gap-6 justify-end col-span-2">
-          {selectedTrack && boulder.tracks.filter(track => track.lines.toArray().some(line => line.imageId === props.currentImage.id)).toArray().length > 1 &&
+          {selectedTrack && boulder.tracks.filter(track => track.lines.toArray().some(line => line.imageId === props.currentImage?.id)).toArray().length > 1 &&
             <Icon 
               name='many-tracks'
               SVGClassName={'w-6 h-6 ' + (displayPhantomTracks ? 'stroke-main' : 'stroke-grey-medium')}
@@ -109,8 +109,9 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
 
           {!full && (
             <div className="w-full relative h-[60px]">
-              <NextImage
-                src={boulder.images[0] ? boulder.images[0].path : staticUrl.defaultKayoo}
+              <CFImage
+                image={boulder.images[0] || staticUrl.defaultKayoo}
+                breakpoint='sm'
                 className="rounded-sm"
                 alt="Boulder"
                 priority

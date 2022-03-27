@@ -1,14 +1,14 @@
 import React from 'react';
-import NextImage from 'next/image';
-import { BoulderImage, Track, UUID } from 'types';
+import { Image, Track, UUID } from 'types';
 // eslint-disable-next-line import/no-cycle
 import { DeleteButton } from 'components';
 import useDimensions from 'react-cool-dimensions';
 import { TracksImage } from 'components/molecules';
 import { QuarkArray } from 'helpers/quarky';
+import { CFImage } from './CFImage';
 
 interface ImageThumbProps {
-  image: BoulderImage,
+  image: Image,
   tracks?: QuarkArray<Track>
   selected?: boolean,
   onDelete?: (id: UUID) => void,
@@ -19,7 +19,6 @@ export const ImageThumb: React.FC<ImageThumbProps> = ({
   selected = false,
   ...props
 }: ImageThumbProps) => {
-
   const { observe, unobserve, width: containerWidth, height: containerHeight, entry } = useDimensions({
     onResize: ({ observe, unobserve, width, height, entry }) => {
       // Triggered whenever the size of the target is changed...
@@ -59,8 +58,8 @@ export const ImageThumb: React.FC<ImageThumbProps> = ({
         />
       }
       {!props.tracks && 
-        <NextImage
-          src={props.image.path}
+        <CFImage
+          image={props.image}
           alt="user generated image"
           layout="fill"
           objectFit="contain"

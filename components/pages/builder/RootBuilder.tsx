@@ -7,8 +7,8 @@ import {
     ModalSubmitTopo, ModalDeleteTopo, GeoCamera, Drawer, LeftbarBuilderDesktop, BoulderBuilderSlideagainstDesktop,
     ParkingBuilderSlide, AccessFormSlideover, WaypointBuilderSlide, ModalRenameSector, ModalDelete, SectorAreaMarkerDropdown, BuilderProgressIndicator,
 } from 'components';
-import { blobToImage, defaultImage, DeviceContext, sortBoulders, useContextMenu, createTrack, createBoulder, createParking, createWaypoint, createSector, deleteSector, deleteBoulder, deleteParking, deleteWaypoint, toLatLng } from 'helpers';
-import { Boulder, GeoCoordinates, BoulderImage, MapToolEnum, Parking, Sector, Track, Waypoint, Topo, Profile, Session, isUUID } from 'types';
+import { blobToImage, DeviceContext, sortBoulders, useContextMenu, createTrack, createBoulder, createParking, createWaypoint, createSector, deleteSector, deleteBoulder, deleteParking, deleteWaypoint, toLatLng } from 'helpers';
+import { Boulder, GeoCoordinates, Image, MapToolEnum, Parking, Sector, Track, Waypoint, Topo, Profile, Session, isUUID } from 'types';
 import { Quark, QuarkIter, useCreateDerivation, useLazyQuarkyEffect, useQuarkyCallback, useSelectQuark, watchDependencies } from 'helpers/quarky';
 import { useRouter } from 'next/router';
 
@@ -31,7 +31,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
     const boulderOrder = useCreateDerivation(() => sortBoulders(topo.sectors, topo.lonelyBoulders));
 
     const [currentTool, setCurrentTool] = useState<MapToolEnum>();
-    const [currentImage, setCurrentImage] = useState<BoulderImage>(defaultImage);
+    const [currentImage, setCurrentImage] = useState<Image>();
     const selectedSector = useSelectQuark<Sector>();
     const toDeleteSector = useSelectQuark<Sector>();
     const sectorRightClicked = useSelectQuark<Sector>();
@@ -115,7 +115,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
         selectedWaypoint.select(undefined);
         if (selectedBoulder()?.id === boulderQuark().id) selectedBoulder.select(undefined);
         else {
-            setCurrentImage(boulderQuark().images[0] || defaultImage);
+            setCurrentImage(boulderQuark().images[0]);
             selectedBoulder.select(boulderQuark);
         }
     }, [selectedBoulder]);

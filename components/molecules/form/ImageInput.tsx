@@ -2,13 +2,13 @@ import React, { useRef, useState, forwardRef } from 'react';
 // eslint-disable-next-line import/no-cycle
 import { ImageButton } from '../../atoms';
 import { api, BoulderImageUploadResult, BoulderImageUploadSuccess, ImageUploadErrorReason } from 'helpers/services';
-import { BoulderImage } from 'types';
+import { Image } from 'types';
 
 interface ImageInputProps {
   label?: string,
   multiple?: boolean,
   value?: string,
-  onChange: (images: BoulderImage[]) => void,
+  onChange: (images: Image[]) => void,
   onDelete?: () => void,
 }
 
@@ -58,7 +58,7 @@ export const ImageInput = forwardRef<HTMLInputElement, ImageInputProps>(({
       'upload': 0,
     };
     setLoading(true);
-    const images: BoulderImage[] = [];
+    const images: Image[] = [];
 
     const results = await processImages(files);
     for (const res of results) {

@@ -1,10 +1,10 @@
 import React, { useContext, useState } from 'react';
 import { SlideoverLeftDesktop, SlideoverMobile, TabOption, Tabs } from 'components';
 import { QuarkArray } from 'helpers/quarky';
-import { Difficulty, TopoAccess } from 'types';
+import { TopoAccess } from 'types';
 import { DeviceContext } from 'helpers';
-import { default as NextImage } from 'next/image';
 import { DifficultyName } from 'types/EnumNames';
+import { CFImage } from 'components/atoms/CFImage';
 
 interface AccessSlideoverProps {
     accesses: QuarkArray<TopoAccess>,
@@ -63,10 +63,10 @@ export const AccessSlideover: React.FC<AccessSlideoverProps> = ({
                                 <div className='font-semibold'>Etape {index+1}</div>
                             }
                             <div>{step.description}</div>
-                            {step.imagePath &&
+                            {step.image &&
                                 <div className="w-auto relative mt-2 h-[200px]">
-                                    <NextImage
-                                        src={step.imagePath}
+                                    <CFImage
+                                        image={step.image}
                                         className="rounded-lg"
                                         alt={"Marche d'approche étape "+index}
                                         layout="fill"

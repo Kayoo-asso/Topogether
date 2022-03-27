@@ -1,10 +1,10 @@
 import React from 'react';
 import Link from 'next/link';
-import NextImage from 'next/image';
 import { Card, Icon } from 'components';
-import { formatDate, staticUrl } from 'helpers';
+import { formatDate } from 'helpers';
 import equal from 'fast-deep-equal/es6';
 import { LightTopo, TopoStatus } from 'types';
+import { CFImage } from 'components/atoms/CFImage';
 
 let timer: NodeJS.Timeout;
 interface TopoCardProps {
@@ -49,8 +49,8 @@ export const TopoCard: React.FC<TopoCardProps> = React.memo((props: TopoCardProp
         >
           <Card className="relative text-center text-grey-medium bg-white flex flex-col cursor-pointer">
             <div className="w-full h-[50%] md:h-[75%] top-0 relative">
-              <NextImage
-                src={props.topo.imagePath || staticUrl.defaultKayoo}
+              <CFImage
+                image={props.topo.image}
                 className="rounded-t-lg"
                 alt="topo-image"
                 layout="fill"

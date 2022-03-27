@@ -4,8 +4,8 @@ import {
   BoulderSlideagainstDesktop,  BoulderSlideoverMobile, TrackSlideagainstDesktop, SectorSlideoverMobile,
   Show, Header,
   MapControl, ParkingSlide, WaypointSlide, TracksImage, LeftbarTopoDesktop } from 'components';
-import { defaultImage, DeviceContext, sortBoulders, toLatLng } from 'helpers';
-import { Boulder, BoulderImage, isUUID, Parking, Sector, Topo, Track, Waypoint } from 'types';
+import { DeviceContext, sortBoulders, toLatLng } from 'helpers';
+import { Boulder, Image, isUUID, Parking, Sector, Topo, Track, Waypoint } from 'types';
 import { Quark, QuarkIter, useCreateDerivation, useLazyQuarkyEffect, useQuarkyCallback, useSelectQuark, watchDependencies } from 'helpers/quarky';
 import { useRouter } from 'next/router';
 
@@ -27,14 +27,12 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
   const waypoints = useMemo(() => topo.waypoints?.quarks(), [topo.waypoints]) || new QuarkIter<Quark<Waypoint>>([]);
   const boulderOrder = useCreateDerivation(() => sortBoulders(topo.sectors, topo.lonelyBoulders));
   
-  const [currentImage, setCurrentImage] = useState<BoulderImage>(defaultImage);
+  const [currentImage, setCurrentImage] = useState<Image>();
   const selectedSector = useSelectQuark<Sector>();
   const selectedBoulder = useSelectQuark<Boulder>();
   const selectedTrack = useSelectQuark<Track>();
   const selectedParking = useSelectQuark<Parking>();
   const selectedWaypoint = useSelectQuark<Waypoint>();
-
-
 
   const toggleSectorSelect = useCallback((e, sectorQuark: Quark<Sector>) => {
     if (selectedSector()?.id === sectorQuark().id)
@@ -56,7 +54,7 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
   // Hack: select boulder from query parameter
   if (firstRender.current) {
     firstRender.current = false;
-    if (typeof bId === "string") {
+    if (typeof bId === "string" && isUUID(bId)) {
       const boulder = boulders.find((b) => b().id === bId)();
       if (boulder) toggleBoulderSelect(boulder);
     }
@@ -260,7 +258,7 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
                 boulder={boulder}
                 selectedTrack={selectedTrack}
                 topoCreatorId={topo.creator?.id}
-                currentImage={currentImage || defaultImage}
+                currentImage={currentImage}
                 setCurrentImage={setCurrentImage}
                 onClose={() => {
                   selectedTrack.select(undefined);

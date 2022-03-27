@@ -1,7 +1,7 @@
 import React from 'react';
 import NextImage from 'next/image';
 import {
-  BoulderImage, PointEnum, DrawerToolEnum, Position, Track
+  Image, PointEnum, DrawerToolEnum, Position, Track
 } from 'types';
 import { SVGTrack } from 'components';
 import { staticUrl } from 'helpers/globals';
@@ -10,7 +10,7 @@ import { getMousePosInside } from '../../helpers';
 import { Quark, QuarkArray, QuarkIter, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
 
 interface TracksImageProps {
-  image: BoulderImage,
+  image: Image,
   tracks: QuarkIter<Quark<Track>>,
   selectedTrack?: SelectQuarkNullable<Track>,
   imageClassName?: string,

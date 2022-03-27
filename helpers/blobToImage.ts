@@ -1,7 +1,7 @@
-import { BoulderImage } from "types"
+import { Image } from "types"
 import { v4 } from "uuid";
 
-export const blobToImage = async (blob: Blob): Promise<BoulderImage> => {
+export const blobToImage = async (blob: Blob): Promise<Image> => {
     return new Promise((resolve, reject) => {
         const imgElt = document.createElement('img');
         const url = URL.createObjectURL(blob);

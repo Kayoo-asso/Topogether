@@ -3,20 +3,21 @@ import {
   GradeScale, Icon, LikeButton, SlideoverMobile, TracksImage, Show,
 } from 'components';
 import {
- Boulder, BoulderImage, Track, UUID,
+ Boulder, Image, Track, UUID,
 } from 'types';
 import { buildBoulderGradeHistogram, staticUrl } from 'helpers';
 import { default as NextImage } from 'next/image';
 import { Quark, watchDependencies, SelectQuarkNullable } from 'helpers/quarky';
 import { TracksList } from '..';
+import { CFImage } from 'components/atoms/CFImage';
 
 interface BoulderSlideoverMobileProps {
   boulder: Quark<Boulder>,
   open?: boolean,
   selectedTrack: SelectQuarkNullable<Track>,
   topoCreatorId?: UUID,
-  currentImage: BoulderImage,
-  setCurrentImage: Dispatch<SetStateAction<BoulderImage>>,
+  currentImage?: Image,
+  setCurrentImage: Dispatch<SetStateAction<Image | undefined>>,
   onClose: () => void,
 }
 
@@ -112,14 +113,15 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = wat
             }
             {full && (
               <LikeButton
-                item={props.boulder}
+                item={props.boulder()}
               />
             )}
 
             {!full && (
               <div className="w-full relative h-[60px]">
-                <NextImage
-                  src={boulder.images[0] ? boulder.images[0].path : staticUrl.defaultKayoo}
+                <CFImage
+                  image={boulder.images[0]}
+                  breakpoint='sm'
                   className="rounded-sm"
                   alt="Boulder"
                   priority

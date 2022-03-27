@@ -1,14 +1,14 @@
 import React, { Dispatch, SetStateAction } from 'react';
 import { Quark, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
-import { Boulder, BoulderImage, Track } from 'types';
+import { Boulder, Image, Track } from 'types';
 import { MultipleImageInput, TracksImage } from '.';
 
 interface BoulderPreviewDesktopProps {
     boulder: Quark<Boulder>,
     selectedTrack: SelectQuarkNullable<Track>,
     displayAddButton?: boolean,
-    currentImage: BoulderImage,
-    setCurrentImage: Dispatch<SetStateAction<BoulderImage>>, 
+    currentImage?: Image,
+    setCurrentImage: Dispatch<SetStateAction<Image | undefined>>, 
 }
 
 export const BoulderPreviewDesktop: React.FC<BoulderPreviewDesktopProps> = watchDependencies(({

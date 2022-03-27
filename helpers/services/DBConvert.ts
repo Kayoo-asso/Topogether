@@ -1,5 +1,4 @@
-import { useReducer } from "react";
-import { Amenities, Boulder, BoulderData, BoulderImage, DBBoulder, DBLine, DBManager, DBParking, DBSector, DBTopo, DBTopoAccess, DBTrack, DBUserUpdate, DBWaypoint, LightTopo, Line, LinearRing, LineCoords, LineString, Manager, MultiLineString, Parking, Point, PolygonCoords, Position, RockTypes, Sector, SectorData, Topo, TopoAccess, TopoData, TopoType, Track, TrackData, User, UUID, Waypoint } from "types";
+import { Amenities, Boulder, BoulderData, Image, DBBoulder, DBLine, DBManager, DBParking, DBSector, DBTopo, DBTopoAccess, DBTrack, DBUserUpdate, DBWaypoint, LightTopo, Line, LinearRing, LineCoords, LineString, Manager, MultiLineString, Parking, Point, PolygonCoords, Position, RockTypes, Sector, SectorData, Topo, TopoAccess, TopoData, TopoType, Track, TrackData, User, UUID, Waypoint } from "types";
 
 // IMPORTANT: perform all conversions by explicitly assigning all properties.
 // DO NOT destructure one of the input arguments into the result
@@ -48,7 +47,7 @@ export class DBConvert {
             city: user.city ?? null,
             phone: user.phone ?? null,
             birthDate: user.birthDate ?? null,
-            imagePath: user.imagePath ?? null,
+            imageId: user.imageId ?? null,
         }
     }
 
@@ -132,7 +131,7 @@ export class DBConvert {
             spaces: parking.spaces,
             location: toPoint(parking.location),
             description: parking.description ?? null,
-            imagePath: parking.imagePath ?? null,
+            image: parking.image ?? null,
             topoId
         };
     }
@@ -143,7 +142,7 @@ export class DBConvert {
             name: waypoint.name,
             location: toPoint(waypoint.location),
             description: waypoint.description ?? null,
-            imagePath: waypoint.imagePath ?? null,
+            image: waypoint.image ?? null,
             topoId,
         };
     }
@@ -159,7 +158,7 @@ export class DBConvert {
             address: manager.address ?? null,
             zip: manager.zip ?? null,
             city: manager.city ?? null,
-            imagePath: manager.imagePath ?? null,
+            image: manager.image ?? null,
             topoId
         };
     }
@@ -205,7 +204,7 @@ export class DBConvert {
             // TODO: is this behavior correct?
             creatorId: topo.creator?.id ?? null,
             validatorId: topo.validator?.id ?? null,
-            imagePath: topo.imagePath ?? null,
+            image: topo.image ?? null,
         };
     }
 }

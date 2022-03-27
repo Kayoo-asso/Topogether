@@ -1,4 +1,5 @@
 import { Rating } from 'types';
+import { Image } from './Image';
 import { Description, Email, Name, NullableOptional, StringBetween, UUID } from './Utils';
 
 // NOTE: the email has to be updated through the authentication service
@@ -28,7 +29,7 @@ export type User = {
   city?: Name,
   phone?: StringBetween<1, 30>,
   birthDate?: string, // has to be in YYYY-MM-DD format
-  imageId?: UUID,
+  image?: Image,
 };
 
 export type DBUserUpdate = NullableOptional<Omit<User, 'created' | 'role' | 'email'>>;

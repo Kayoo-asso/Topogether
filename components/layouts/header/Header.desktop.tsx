@@ -3,8 +3,7 @@ import NextImage from 'next/image';
 import { Dropdown, DropdownOption, Icon, ProfilePicture } from 'components';
 import Link from 'next/link';
 import { MapToolEnum } from 'types';
-import { api, auth } from 'helpers/services';
-import { staticUrl } from 'helpers';
+import { auth } from 'helpers/services';
 import { useRouter } from 'next/router';
 import { watchDependencies } from 'helpers/quarky';
 import { useSession } from 'helpers/hooks/useSession';
@@ -125,7 +124,7 @@ export const HeaderDesktop: React.FC<HeaderDesktopProps> = watchDependencies(({
         <div className='w-1/12 flex justify-center items-center'>
           <div className='h-[45px] w-[45px] relative'>
             <ProfilePicture
-              src={session.user?.imagePath || staticUrl.defaultProfilePicture}
+              image={session.user?.image}
               onClick={() => setUserMenuOpen(m => !m)}
             />
           </div>
