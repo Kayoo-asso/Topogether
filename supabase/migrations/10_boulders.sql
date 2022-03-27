@@ -71,13 +71,15 @@ begin
     update public.images
     set users = users + 1
     where id in (
-        select id from unnest(new.images)
+        select id
+        from unnest(new.images)
     );
 
     update public.images
     set users = users - 1
     where id in (
-        select id from unnest(old.images)
+        select id
+        from unnest(old.images)
     );
 
     return null;
@@ -98,3 +100,18 @@ begin
     return null;
 end;
 $$ language plpgsql;
+
+create trigger boulder_insert
+    after insert
+    on boulders
+    for each row execute function internal.on_boulder_insert();
+
+create trigger boulder_update
+    after update of images
+    on boulders
+    for each row execute function internal.on_boulder_update();
+
+create trigger boulder_delete
+    after delete
+    on boulders
+    for each row execute function internal.on_boulder_delete();

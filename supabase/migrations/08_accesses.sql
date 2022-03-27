@@ -26,8 +26,8 @@ begin
     update public.images
     set users = users + 1
     where id in (
-        select id
-        from unnest(new.steps)
+        select (image).id
+        from unnest(new.steps) as step
     );
     return null;
 end;
@@ -43,8 +43,8 @@ begin
     update public.images
     set users = users - 1
     where id in (
-        select id
-        from unnest(old.steps)
+        select (step.image).id
+        from unnest(old.steps) as step
     );
     return null;
 end;
@@ -80,15 +80,15 @@ begin
     update public.images
     set users = users - 1
     where id in (
-        select id
-        from unnest(old.steps)
+        select (step.image).id
+        from unnest(old.steps) as step
     );
 
     update public.images
     set users = users + 1
     where id in (
-        select id
-        from unnest(new.steps)
+        select (step.image).id
+        from unnest(new.steps) as step
     );
 
     return null;

@@ -42,7 +42,7 @@ create trigger img_changed
     after update of image
     on managers
     for each row
-    -- when (old.image.id <> new.image.id)
+    when ( (old.image).id <> (new.image).id )
     execute function internal.img_changed();
 
 create trigger unregister_img

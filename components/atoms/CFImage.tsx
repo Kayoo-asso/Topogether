@@ -6,6 +6,7 @@ import type {
 import { Variants } from "helpers/variants";
 import { staticUrl } from "helpers";
 import { useBreakpoint } from "helpers/hooks/useBreakpoints";
+import { cloudflareUrl } from "helpers/cloudflareUrl";
 
 export interface CFImageProps extends Omit<NextImageProps, 'src'> {
     image?: Image,
@@ -15,10 +16,8 @@ export interface CFImageProps extends Omit<NextImageProps, 'src'> {
 export const CFImage: React.FC<CFImageProps> = ({ image, breakpoint, ...props }) => {
     const bp = useBreakpoint();
     let url = staticUrl.defaultKayoo;
-    let variant = Variants["1:1"][breakpoint || bp];
     if (image) {
-        variant = Variants[image.ratio][breakpoint || bp];
-        url = `https://imagedelivery.net/9m8hQCHM9NXY8VKZ1mHt-A/${image.id}/${variant}`;
+        url = cloudflareUrl(image, breakpoint ?? bp);
     }
 
     return <NextImage src={url} {...props} />

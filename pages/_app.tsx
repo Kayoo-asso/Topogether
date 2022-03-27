@@ -20,7 +20,6 @@ type InitialProps = AppInitialProps & CustomProps;
 type Props = AppProps & CustomProps;
 
 const CustomApp = ({ Component, pageProps, session }: Props) => {
-  const router = useRouter();
   const [device, setDevice] = useState<Device>('MOBILE');
   const { observe } = useDimensions({
     onResize: ({ observe, unobserve, width }) => {

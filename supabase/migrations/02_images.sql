@@ -54,11 +54,12 @@ returns trigger
 security definer
 as $$
 begin
+
     if old.image is not null then
-        perform internal.stop_using_img(old.image.id);
+        perform internal.stop_using_img(old.image);
     end if;
     if new.image is not null then
-        perform internal.use_img(new.image.id);
+        perform internal.use_img(new.image);
     end if;
     return null;
 end;

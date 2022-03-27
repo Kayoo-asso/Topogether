@@ -183,7 +183,7 @@ async function upload(file: File, info: UploadInfo): Promise<[Image, true] | [Im
 }
 
 async function imgDimensions(file: File): Promise<ImageDimensions> {
-  const img = new Image();
+  const img = document.createElement("img");
   const objectUrl = URL.createObjectURL(file);
   const promise = new Promise<ImageDimensions>((resolve, _) => {
     img.onload = (event) => resolve({
