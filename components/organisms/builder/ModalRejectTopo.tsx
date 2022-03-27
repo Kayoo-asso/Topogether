@@ -1,39 +1,40 @@
 import { Button, Modal } from 'components';
 import { staticUrl } from 'helpers';
+import { api } from 'helpers/services';
 import NextImage from 'next/image';
-import { useRouter } from 'next/router';
 import React from 'react';
+import { LightTopo, TopoStatus } from 'types';
 
-interface ModalSubmitTopoProps {
-    onSubmit: () => void,
+interface ModalRejectTopoProps {
+    topo: LightTopo,
     onClose: () => void,
 }
 
-export const ModalSubmitTopo: React.FC<ModalSubmitTopoProps> = (props: ModalSubmitTopoProps) => {
-    const router = useRouter();
+export const ModalRejectTopo: React.FC<ModalRejectTopoProps> = (props: ModalRejectTopoProps) => {
+    const rejectTopo = async () => {
+        await api.setTopoStatus(props.topo.id, TopoStatus.Draft);
+        props.onClose();
+    }
 
     return (
         <Modal onClose={props.onClose} >
             <div className='p-6 pt-10'>
                 <div className='w-full h-[100px] relative mb-5'>
                     <NextImage 
-                        src={staticUrl.defaultProfilePicture}
+                        src={staticUrl.deleteWarning}
                         priority
-                        alt="Valider le topo"
+                        alt="Rejeter le topo"
                         layout="fill"
                         objectFit="contain"
                     />
                 </div>
                 <div className='mb-5'>
-                    Le topo sera envoyé en validation. Etes-vous sûr de vouloir continuer ?
+                    Le topo retournera en brouillon. Etes-vous sûr de vouloir continuer ?
                 </div>
                 <Button 
-                    content='valider'
+                    content='Rejeter'
                     fullWidth
-                    onClick={() => {
-                        props.onSubmit();
-                        props.onClose();
-                    }}
+                    onClick={rejectTopo}
                 />
             </div>
         </Modal> 

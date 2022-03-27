@@ -7,7 +7,7 @@ import { SVGTrack } from 'components';
 import { staticUrl } from 'helpers/globals';
 import useDimensions from 'react-cool-dimensions';
 import { getMousePosInside } from '../../helpers';
-import { Quark, QuarkArray, QuarkIter, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
+import { Quark, QuarkIter, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
 
 interface TracksImageProps {
   image: Image,

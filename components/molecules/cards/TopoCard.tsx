@@ -1,10 +1,9 @@
 import React from 'react';
 import Link from 'next/link';
-import { Card, Icon } from 'components';
+import { Card, Icon, CFImage } from 'components';
 import { formatDate } from 'helpers';
 import equal from 'fast-deep-equal/es6';
 import { LightTopo, TopoStatus } from 'types';
-import { CFImage } from 'components/atoms/CFImage';
 
 let timer: NodeJS.Timeout;
 interface TopoCardProps {

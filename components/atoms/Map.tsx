@@ -2,7 +2,7 @@ import React, {
   createContext,
   forwardRef, useEffect, useRef, useState,
 } from 'react';
-import { fontainebleauLocation, toLatLng, useEffectWithDeepEqual } from 'helpers';
+import { useEffectWithDeepEqual } from 'helpers';
 import mapStyles from 'styles/mapStyles';
 import { mapEvents, MapProps, MarkerProps } from 'types';
 

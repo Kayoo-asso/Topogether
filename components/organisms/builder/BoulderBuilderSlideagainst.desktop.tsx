@@ -8,8 +8,8 @@ interface BoulderBuilderSlideagainstDesktopProps {
     boulder: Quark<Boulder>,
     selectedTrack: SelectQuarkNullable<Track>,
     topoCreatorId?: UUID,
-    currentImage: Image,
-    setCurrentImage: Dispatch<SetStateAction<Image>>,
+    currentImage?: Image,
+    setCurrentImage: Dispatch<SetStateAction<Image | undefined>>,
     onClose: () => void,
 }
 

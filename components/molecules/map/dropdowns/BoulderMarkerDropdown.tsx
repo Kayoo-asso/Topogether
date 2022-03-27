@@ -21,6 +21,7 @@ export const BoulderMarkerDropdown: React.FC<BoulderMarkerDropdownProps> = watch
             props.toggleTrackSelect(trackQuark, props.boulder);
         }
     };
+    //TODO
     const addImage = useCallback(() => console.log('Downloading the image...'), []);
 
     const deleteBoulder = useCallback(() => props.deleteBoulder(props.boulder), [props.boulder]);

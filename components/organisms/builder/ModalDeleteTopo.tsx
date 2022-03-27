@@ -6,7 +6,7 @@ import NextImage from 'next/image';
 import { Topo } from 'types';
 
 interface ModalDeleteTopoProps {
-    topo: Quark<Topo>,
+    onDelete: () => void,
     onClose: () => void,
 }
 
@@ -36,7 +36,10 @@ export const ModalDeleteTopo: React.FC<ModalDeleteTopoProps> = (props: ModalDele
                 <Button 
                     content='Supprimer'
                     fullWidth
-                    onClick={deleteTopo}
+                    onClick={() => {
+                        props.onDelete();
+                        props.onClose();
+                    }}
                 />
             </div>
         </Modal> 
