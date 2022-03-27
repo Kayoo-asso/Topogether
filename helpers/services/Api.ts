@@ -112,7 +112,7 @@ export class ApiService {
                 validator:profiles!validatorId (*),
 
                 parkings:parkings!topoId (
-                    id, spaces, description, imagePath,
+                    id, name, spaces, description, imagePath,
                     location:location->coordinates
                 ),
 
