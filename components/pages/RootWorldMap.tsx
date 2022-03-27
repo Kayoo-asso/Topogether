@@ -1,13 +1,13 @@
 import React, { useCallback, useState } from 'react';
 import {
- HeaderDesktop, LeftbarDesktop, MapControl, Show, TopoPreview,
+  HeaderDesktop, LeftbarDesktop, MapControl, Show, TopoPreview,
 } from 'components';
-import { LightTopo, Session, User } from 'types';
+import { LightTopo, Session } from 'types';
 import { fontainebleauLocation, toLatLng } from 'helpers';
 
 interface RootWorldMapProps {
-    lightTopos: LightTopo[],
-    user: Session | null,
+  lightTopos: LightTopo[],
+  user: Session | null,
 }
 
 export const RootWorldMap: React.FC<RootWorldMapProps> = (props: RootWorldMapProps) => {
@@ -34,6 +34,10 @@ export const RootWorldMap: React.FC<RootWorldMapProps> = (props: RootWorldMapPro
         <MapControl
           initialZoom={5}
           topos={props.lightTopos}
+          searchbarOptions={{
+            findTopos: true,
+            findPlaces: true,
+          }}
           displayTopoFilter
           onTopoClick={toggleTopoSelect}
           center={toLatLng(fontainebleauLocation)}
@@ -46,7 +50,7 @@ export const RootWorldMap: React.FC<RootWorldMapProps> = (props: RootWorldMapPro
               topo={topo}
               onClose={() => setSelectedTopo(undefined)}
             />
-            )}
+          )}
         </Show>
       </div>
     </>

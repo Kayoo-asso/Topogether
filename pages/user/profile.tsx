@@ -244,7 +244,7 @@ const ProfilePage: NextPage<ProfileProps> = watchDependencies(({ user:session })
             </div>
 
             <Button
-                content="Valider"
+                content="Modifier le profile"
                 fullWidth
                 onClick={modifyProfil}
             />

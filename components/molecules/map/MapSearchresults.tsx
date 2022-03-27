@@ -1,12 +1,14 @@
 import { Icon } from 'components/atoms';
 import Link from 'next/link';
 import React from 'react';
-import { LightTopo } from 'types';
+import { Boulder, LightTopo } from 'types';
 
 interface MapSearchresultsProps {
     topoApiResults: LightTopo[],
     googleApiResults: google.maps.places.AutocompletePrediction[],
-    onPlaceSelect: (res: google.maps.places.AutocompletePrediction) => void,
+    boulderResults: Boulder[],
+    onPlaceSelect: (place: google.maps.places.AutocompletePrediction) => void,
+    onBoulderSelect: (boulder: Boulder) => void,
     onClose: () => void,
 }
 
@@ -27,6 +29,21 @@ export const MapSearchresults: React.FC<MapSearchresultsProps> = (props: MapSear
                             <div>{topo.name}</div>
                         </div>
                     </Link>
+                )
+            }
+
+            {props.boulderResults.length > 0 &&
+                props.boulderResults.map((boulder) => 
+                    <div 
+                        key={boulder.id} 
+                        className='flex flex-row gap-4 items-center py-3 text-dark cursor-pointer ktext-base'
+                        onClick={() => props.onBoulderSelect(boulder)}
+                    >
+                        <div>
+                            <Icon name='rock' SVGClassName='w-5 h-5 stroke-main' />
+                        </div>
+                        <div>{boulder.name}</div>
+                    </div>
                 )
             }
 

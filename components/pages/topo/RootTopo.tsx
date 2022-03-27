@@ -173,9 +173,9 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
           displaySectorButton
           onSectorButtonClick={() => setDisplaySectorSlideover(true)}
           searchbarOptions={{
-              findTopos: false,
-              findPlaces: false,
+            findBoulders: true,
           }}
+          onBoulderResultSelect={(boulder) => toggleBoulderSelect(boulders.find(b => b().id === boulder.id)()!)}
           topo={props.topoQuark}
           sectors={sectors}
           selectedSector={selectedSector} 

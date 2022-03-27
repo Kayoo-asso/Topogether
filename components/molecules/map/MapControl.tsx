@@ -18,7 +18,7 @@ interface MapControlProps extends MapProps {
   onSectorButtonClick?: () => void,
   displaySearchbar?: boolean,
   searchbarOptions?: MapSearchbarProps,
-  onSearchResultSelect?: () => void,
+  onBoulderResultSelect?: (boulder: Boulder) => void,
   topo?: Quark<Topo>,
   creatingTopo?: Quark<TopoCreate>,
   topos?: LightTopo[],
@@ -160,10 +160,12 @@ export const MapControl: React.FC<MapControlProps> = ({
                         <div className="w-1/2 text-left">
                             {displaySearchbar && (
                                 <MapSearchbar
+                                    boulders={props.topo ? props.topo().boulders.toArray() : undefined}
                                     onGoogleResultSelect={async (res) => {
                                         const placeDetails = await googleGetPlace(res.place_id) as google.maps.places.PlaceResult;
                                         if (placeDetails.geometry) getBoundsFromSearchbar(placeDetails.geometry);
                                     }}
+                                    onBoulderResultSelect={props.onBoulderResultSelect}
                                     {...props.searchbarOptions}
                                 />
                             )}

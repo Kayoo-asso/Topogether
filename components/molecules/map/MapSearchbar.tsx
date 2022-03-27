@@ -1,23 +1,27 @@
 import React, { useState, useEffect, useRef } from 'react';
+import Trigram from "trigram-search";
 import {
  RoundButton, TextInput, MapSearchresults,
 } from 'components';
 import { googleAutocomplete, useIsMounted } from '../../../helpers';
 import { api } from 'helpers/services';
 import { useRouter } from 'next/router';
-import { LightTopo } from 'types';
+import { Boulder, LightTopo } from 'types';
+import { TrigramOutput } from 'trigram-search/build/main/lib/ITrigram';
 
 export interface MapSearchbarProps {
     initialOpen?: boolean,
     placeholder?: string,
     focusOnOpen?: boolean,
     findTopos?: boolean,
+    boulders?: Boulder[],
     findBoulders?: boolean,
     findPlaces?: boolean,
     topoIdToRestrict?: number,
     onButtonClick?: (barOpen: boolean) => void,
     onOpenResults?: () => void,
     onGoogleResultSelect?: (place: google.maps.places.AutocompletePrediction) => void,
+    onBoulderResultSelect?: (boulder: Boulder) => void,
     // onAddTopoSelect?: () => void,
 }
 
@@ -26,9 +30,9 @@ export const MapSearchbar: React.FC<MapSearchbarProps> = ({
     initialOpen = false,
     placeholder = 'Votre recherche',
     focusOnOpen = true,
-    findTopos = true,
-    findBoulders = true,
-    findPlaces = true,
+    findTopos = false,
+    findBoulders = false,
+    findPlaces = false,
     ...props
 }: MapSearchbarProps) => {
     const router = useRouter();
@@ -38,8 +42,9 @@ export const MapSearchbar: React.FC<MapSearchbarProps> = ({
     const [resultsOpen, setResultsOpen] = useState(false);
     const [value, setValue] = useState('');
     const [topoApiResults, setTopoApiResults] = useState<LightTopo[]>([]);
-    // const [boulderApiResults, setBoulderApiResults] = useState<Boulder[]>([]);
     const [googleApiResults, setGoogleApiResults] = useState<google.maps.places.AutocompletePrediction[]>([]);
+    const [boulderResults, setBoulderResults] = useState<Boulder[]>([]);
+    const boulderSearcher = new Trigram(props.boulders, {idField: 'id', searchField: 'name', count: 5});
 
     const getPredictions = async () => {
         if (findTopos) {
@@ -47,8 +52,9 @@ export const MapSearchbar: React.FC<MapSearchbarProps> = ({
             setTopoApiResults(topoResults);
         }
         if (findBoulders) {
-            const boulderResults = []; //TODO : but before, necessary to have url for boulders
-
+            //TODO : have url for boulders
+            const boulderResults: TrigramOutput = boulderSearcher.find(value);
+            setBoulderResults(boulderResults.map(res => res.value as Boulder));
         }
         if (findPlaces) {
             const googleResults = await googleAutocomplete(value);
@@ -56,7 +62,7 @@ export const MapSearchbar: React.FC<MapSearchbarProps> = ({
         }
     };
     useEffect(() => {
-        if (value?.length > 1) {
+        if (value?.length > 2) {
             clearTimeout(timer);
             timer = setTimeout(() => {
                 getPredictions();
@@ -74,6 +80,11 @@ export const MapSearchbar: React.FC<MapSearchbarProps> = ({
         setValue(place.description);
         props.onGoogleResultSelect && props.onGoogleResultSelect(place);
     }
+    const selectBoulder = (boulder: Boulder) => {
+        setResultsOpen(false);
+        setValue(boulder.name);
+        props.onBoulderResultSelect && props.onBoulderResultSelect(boulder);
+    }
 
     useEffect(() => {
         if (resultsOpen && props.onOpenResults) props.onOpenResults();
@@ -89,6 +100,7 @@ export const MapSearchbar: React.FC<MapSearchbarProps> = ({
             if (topoApiResults.length > 0) selectTopo(topoApiResults[0]);
             else if (googleApiResults.length > 0) selectPlace(googleApiResults[0]);
         }
+        else if (e.code === 'Escape') setValue('');
     };
     useEffect(() => {
         if (inputRef.current) inputRef.current.addEventListener('keyup', handleKeyboardShortcuts);
@@ -136,7 +148,9 @@ export const MapSearchbar: React.FC<MapSearchbarProps> = ({
                 <MapSearchresults 
                     topoApiResults={topoApiResults}
                     googleApiResults={googleApiResults}
-                    onPlaceSelect={(place) => selectPlace(place)}
+                    boulderResults={boulderResults}
+                    onPlaceSelect={selectPlace}
+                    onBoulderSelect={selectBoulder}
                     onClose={() => setResultsOpen(false)}
                 />
             }
