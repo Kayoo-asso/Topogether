@@ -7,6 +7,7 @@ import {
 import { defaultImage, DeviceContext, sortBoulders, toLatLng } from 'helpers';
 import { Boulder, BoulderImage, Parking, Sector, Topo, Track, Waypoint } from 'types';
 import { Quark, QuarkIter, useCreateDerivation, useQuarkyCallback, useSelectQuark, watchDependencies } from 'helpers/quarky';
+import { useRouter } from 'next/router';
 
 
 interface RootTopoProps {
@@ -14,6 +15,8 @@ interface RootTopoProps {
 }
 
 export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootTopoProps) => {
+  const router = useRouter();
+  const { b: bId } = router.query; // Get boulder id from url if selected 
   const device = useContext(DeviceContext);
   const topo = props.topoQuark();
 
@@ -39,14 +42,22 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
     selectedTrack.select(undefined);
     selectedParking.select(undefined);
     selectedWaypoint.select(undefined);
-    if (selectedBoulder()?.id === boulderQuark().id)
+    const boulder = boulderQuark();
+    if (selectedBoulder()?.id === boulder.id)
         selectedBoulder.select(undefined);
     else {
-      console.log("Boulder quark in toggleBoulderSelect: ", boulderQuark());
-      if (boulderQuark().images[0]) setCurrentImage(boulderQuark().images[0]);
+      console.log("select boulder "+boulderQuark().name);
+      if (boulder.images[0]) setCurrentImage(boulder.images[0]);
       selectedBoulder.select(boulderQuark);
     }
   }, [selectedBoulder]);
+  useEffect(() => {
+    console.log("get boulder id from url :" + bId);
+    if (boulders && bId) {
+      const boulder = boulders.find((b) => b().id === bId)();
+      if (boulder) toggleBoulderSelect(boulder);
+    }
+  }, []);
   const toggleTrackSelect = useCallback((trackQuark: Quark<Track>, boulderQuark: Quark<Boulder>) => {
     selectedBoulder.select(undefined);
     selectedParking.select(undefined);
@@ -72,6 +83,12 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
       selectedWaypoint.select(undefined);
     else selectedWaypoint.select(waypointQuark)
   }, [selectedWaypoint]);
+  useEffect(() => {
+    const boulder = selectedBoulder();
+    console.log("replace url");
+    if (boulder) router.replace({ pathname: window.location.href.split('?')[0], query: { b: boulder.id } }, undefined, { shallow: true });
+    else router.replace({ pathname: window.location.href.split('?')[0] }, undefined, { shallow: true })
+  }, [selectedBoulder()]);
 
   const [displaySectorSlideover, setDisplaySectorSlideover] = useState<boolean>(false);
   const [displayInfo, setDisplayInfo] = useState<boolean>(false);
@@ -108,6 +125,10 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
       setDisplayManagement(false);
     }
   }, [currentDisplay]);
+
+  // useEffect(() => {
+  //   console.log(selectedParking());
+  // }, [selectedParking()]);
 
   return (
     <>
@@ -220,6 +241,7 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
 
         <Show when={selectedBoulder.quark}>
           {(boulder) => {
+            console.log(boulder);
             if (device === 'MOBILE') {
               return (
                 <BoulderSlideoverMobile 

@@ -10,6 +10,7 @@ import {
 import { blobToImage, defaultImage, DeviceContext, sortBoulders, useContextMenu, createTrack, createBoulder, createParking, createWaypoint, createSector, deleteSector, deleteBoulder, deleteParking, deleteWaypoint, toLatLng } from 'helpers';
 import { Boulder, GeoCoordinates, BoulderImage, MapToolEnum, Parking, Sector, Track, Waypoint, Topo, Profile, Session } from 'types';
 import { Quark, QuarkIter, useCreateDerivation, useQuarkyCallback, useSelectQuark, watchDependencies } from 'helpers/quarky';
+import { useRouter } from 'next/router';
 
 interface RootBuilderProps {
     topoQuark: Quark<Topo>,
@@ -17,6 +18,7 @@ interface RootBuilderProps {
 }
 
 export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props: RootBuilderProps) => {
+    const router = useRouter();
     const device = useContext(DeviceContext);
 
     const topo = props.topoQuark();
@@ -137,6 +139,11 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
         selectedParking.select(undefined);
         if (selectedWaypoint()?.id === waypointQuark().id) { selectedWaypoint.select(undefined); } else selectedWaypoint.select(waypointQuark);
     }, [selectedWaypoint]);
+    useEffect(() => {
+        const boulder = selectedBoulder();
+        if (boulder) router.replace({ pathname: window.location.href.split('?')[0], query: { b: boulder.id } }, undefined, { shallow: true });
+        else router.replace({ pathname: window.location.href.split('?')[0] }, undefined, { shallow: true })
+    }, [selectedBoulder()]);
 
     const displayBoulderDropdown = useCallback((e: any, boulderQuark: Quark<Boulder>) => {
         setDropdownPosition({ x: e.domEvent.pageX, y: e.domEvent.pageY });

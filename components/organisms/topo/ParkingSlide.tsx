@@ -31,7 +31,7 @@ export const ParkingSlide: React.FC<ParkingSlideProps> = watchDependencies(({
                             SVGClassName='h-6 w-6 fill-second'
                             center
                         />
-                        {parking.name}
+                        {parking.name || "Parking"}
                     </div>
                     <div 
                         className='ktext-label text-grey-medium cursor-pointer'
@@ -48,7 +48,7 @@ export const ParkingSlide: React.FC<ParkingSlideProps> = watchDependencies(({
 
                 <div className='w-full relative max-h-[200px] h-[60%] md:h-[25%]'>
                     <NextImage 
-                        src={parking.image ? parking.image.url : staticUrl.defaultKayoo}
+                        src={parking.imagePath || staticUrl.defaultKayoo}
                         alt="Parking"
                         priority
                         layout="fill"
