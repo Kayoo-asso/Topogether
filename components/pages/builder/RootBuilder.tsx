@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import {
     BoulderBuilderSlideoverMobile, SectorBuilderSlideoverMobile,
     MapControl, Show,
@@ -8,8 +8,8 @@ import {
     ParkingBuilderSlide, AccessFormSlideover, WaypointBuilderSlide, ModalRenameSector, ModalDelete, SectorAreaMarkerDropdown, BuilderProgressIndicator,
 } from 'components';
 import { blobToImage, defaultImage, DeviceContext, sortBoulders, useContextMenu, createTrack, createBoulder, createParking, createWaypoint, createSector, deleteSector, deleteBoulder, deleteParking, deleteWaypoint, toLatLng } from 'helpers';
-import { Boulder, GeoCoordinates, BoulderImage, MapToolEnum, Parking, Sector, Track, Waypoint, Topo, Profile, Session } from 'types';
-import { Quark, QuarkIter, useCreateDerivation, useQuarkyCallback, useSelectQuark, watchDependencies } from 'helpers/quarky';
+import { Boulder, GeoCoordinates, BoulderImage, MapToolEnum, Parking, Sector, Track, Waypoint, Topo, Profile, Session, isUUID } from 'types';
+import { Quark, QuarkIter, useCreateDerivation, useLazyQuarkyEffect, useQuarkyCallback, useSelectQuark, watchDependencies } from 'helpers/quarky';
 import { useRouter } from 'next/router';
 
 interface RootBuilderProps {
@@ -19,6 +19,8 @@ interface RootBuilderProps {
 
 export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props: RootBuilderProps) => {
     const router = useRouter();
+    const { b: bId } = router.query; // Get boulder id from url if selected 
+    const firstRender = useRef(true);
     const device = useContext(DeviceContext);
 
     const topo = props.topoQuark();
@@ -65,33 +67,35 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
     const [displayManagement, setDisplayManagement] = useState<boolean>(false);
     const [currentDisplay, setCurrentDisplay] = useState<'INFO' | 'APPROACH' | 'MANAGEMENT' | 'none'>();
     useEffect(() => {
-        setDisplaySectorSlideover(false);
-        selectedTrack.select(undefined);
-        selectedBoulder.select(undefined);
-        selectedParking.select(undefined);
-        selectedWaypoint.select(undefined);
-        if (currentDisplay === 'INFO') {
-            setDisplayInfo(true);
-            setTimeout(() => {
+        if (currentDisplay) {
+            setDisplaySectorSlideover(false);
+            selectedTrack.select(undefined);
+            selectedBoulder.select(undefined);
+            selectedParking.select(undefined);
+            selectedWaypoint.select(undefined);
+            if (currentDisplay === 'INFO') {
+                setDisplayInfo(true);
+                setTimeout(() => {
+                    setDisplayApproach(false);
+                    setDisplayManagement(false);
+                }, 150);
+            } else if (currentDisplay === 'APPROACH') {
+                setDisplayApproach(true);
+                setTimeout(() => {
+                    setDisplayInfo(false);
+                    setDisplayManagement(false);
+                }, 150);
+            } else if (currentDisplay === 'MANAGEMENT') {
+                setDisplayManagement(true);
+                setTimeout(() => {
+                    setDisplayInfo(false);
+                    setDisplayApproach(false);
+                }, 150);
+            } else {
+                setDisplayInfo(false);
                 setDisplayApproach(false);
                 setDisplayManagement(false);
-            }, 150);
-        } else if (currentDisplay === 'APPROACH') {
-            setDisplayApproach(true);
-            setTimeout(() => {
-                setDisplayInfo(false);
-                setDisplayManagement(false);
-            }, 150);
-        } else if (currentDisplay === 'MANAGEMENT') {
-            setDisplayManagement(true);
-            setTimeout(() => {
-                setDisplayInfo(false);
-                setDisplayApproach(false);
-            }, 150);
-        } else {
-            setDisplayInfo(false);
-            setDisplayApproach(false);
-            setDisplayManagement(false);
+            }
         }
     }, [currentDisplay]);
 
@@ -115,6 +119,14 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
             selectedBoulder.select(boulderQuark);
         }
     }, [selectedBoulder]);
+    // Hack: select boulder from query parameter
+    if (firstRender.current) {
+        firstRender.current = false;
+        if (typeof bId === "string" && isUUID(bId)) {
+        const boulder = boulders.find((b) => b().id === bId)();
+        if (boulder) toggleBoulderSelect(boulder);
+        }
+    }
     const toggleTrackSelect = useQuarkyCallback((trackQuark: Quark<Track>, boulderQuark: Quark<Boulder>) => {
         setDisplaySectorSlideover(false);
         selectedBoulder.select(undefined);
@@ -139,11 +151,10 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
         selectedParking.select(undefined);
         if (selectedWaypoint()?.id === waypointQuark().id) { selectedWaypoint.select(undefined); } else selectedWaypoint.select(waypointQuark);
     }, [selectedWaypoint]);
-    useEffect(() => {
-        const boulder = selectedBoulder();
-        if (boulder) router.replace({ pathname: window.location.href.split('?')[0], query: { b: boulder.id } }, undefined, { shallow: true });
-        else router.replace({ pathname: window.location.href.split('?')[0] }, undefined, { shallow: true })
-    }, [selectedBoulder()]);
+    useLazyQuarkyEffect(([boulder]) => {
+        if (boulder) router.push({ pathname: window.location.href.split('?')[0], query: { b: boulder.id } }, undefined, { shallow: true });
+        else router.push({ pathname: window.location.href.split('?')[0] }, undefined, { shallow: true })
+    }, [selectedBoulder]);
 
     const displayBoulderDropdown = useCallback((e: any, boulderQuark: Quark<Boulder>) => {
         setDropdownPosition({ x: e.domEvent.pageX, y: e.domEvent.pageY });
@@ -305,7 +316,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                     <InfoFormSlideover
                         topo={props.topoQuark}
                         open
-                        onClose={() => setCurrentDisplay(undefined)}
+                        onClose={() => setCurrentDisplay('none')}
                         className={currentDisplay === 'INFO' ? 'z-100' : ''}
                     />
                 </Show>
@@ -313,7 +324,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                     <AccessFormSlideover
                         accesses={topo.accesses}
                         open={displayApproach}
-                        onClose={() => setCurrentDisplay(undefined)}
+                        onClose={() => setCurrentDisplay('none')}
                         className={currentDisplay === 'APPROACH' ? 'z-100' : ''}
                     />
                 </Show>
@@ -321,7 +332,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                     <ManagementFormSlideover
                         managers={topo.managers}
                         open={displayManagement}
-                        onClose={() => setCurrentDisplay(undefined)}
+                        onClose={() => setCurrentDisplay('none')}
                         className={currentDisplay === 'MANAGEMENT' ? 'z-100' : ''}
                     />
                 </Show>

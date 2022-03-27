@@ -17,8 +17,8 @@ interface RootTopoProps {
 export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootTopoProps) => {
   const router = useRouter();
   const { b: bId } = router.query; // Get boulder id from url if selected 
-  const device = useContext(DeviceContext);
   const firstRender = useRef(true);
+  const device = useContext(DeviceContext);
   const topo = props.topoQuark();
   
   const sectors = useMemo(() => topo.sectors?.quarks(), [topo.sectors]) || new QuarkIter<Quark<Parking>>([]);
@@ -53,7 +53,6 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
       selectedBoulder.select(boulderQuark);
     }
   }, [selectedBoulder]);
-
   // Hack: select boulder from query parameter
   if (firstRender.current) {
     firstRender.current = false;
@@ -62,7 +61,6 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
       if (boulder) toggleBoulderSelect(boulder);
     }
   }
-
   const toggleTrackSelect = useCallback((trackQuark: Quark<Track>, boulderQuark: Quark<Boulder>) => {
     selectedBoulder.select(undefined);
     selectedParking.select(undefined);
@@ -99,7 +97,7 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
   const [displayManagement, setDisplayManagement] = useState<boolean>(false);
   const [currentDisplay, setCurrentDisplay] = useState<'INFO' | 'APPROACH' | 'MANAGEMENT' | 'none'>();
   useEffect(() => {
-    if (currentDisplay !== undefined) {
+    if (currentDisplay) {
       selectedBoulder.select(undefined);
       selectedTrack.select(undefined);
       selectedParking.select(undefined);
