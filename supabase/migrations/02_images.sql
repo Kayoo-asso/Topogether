@@ -14,27 +14,27 @@ create policy "Images are visible for everyone"
 -- Inserts are done through the upload API, which uses the service role key
 -- Deletes are done automatically
 
-create function internal.use_img (_id uuid)
+create function internal.use_img (_image public.img)
 returns void
 as $$
-    insert into public.images (id)
+    insert into public.images (id, users)
     values 
-        (_id)
+        (_image.id, 1)
     on conflict (id)
     do update set
         users = images.users + 1;
     -- update public.images
     -- set users = users + 1
-    -- where id = _id;
+    -- where id = _image.id;
 $$ language sql volatile;
 
 
-create function internal.stop_using_img (_id uuid)
+create function internal.stop_using_img (_image public.img)
 returns void
 as $$
     update public.images 
     set users = users - 1
-    where id = _id
+    where id = _image.id
 $$ language sql volatile;
 
 create function internal.check_new_img()
@@ -42,8 +42,8 @@ returns trigger
 security definer
 as $$
 begin
-    if new.image.id is not null then
-        perform internal.use_img(new.image.id);
+    if new.image is not null then
+        perform internal.use_img(new.image);
     end if;
     return null;
 end;
@@ -54,10 +54,10 @@ returns trigger
 security definer
 as $$
 begin
-    if old.image.id is not null then
+    if old.image is not null then
         perform internal.stop_using_img(old.image.id);
     end if;
-    if new.image.id is not null then
+    if new.image is not null then
         perform internal.use_img(new.image.id);
     end if;
     return null;
@@ -69,7 +69,7 @@ returns trigger
 security definer
 as $$
 begin
-    if old.image.id is not null then
+    if old.image is not null then
         perform internal.stop_using_img(old.image.id);
     end if;
     return null;

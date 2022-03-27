@@ -12,7 +12,7 @@ create table managers (
     zip integer,
     city varchar(500),
     "topoId" uuid not null references public.topos(id) on delete cascade,
-    image public.image
+    image public.img
 );
 
 -- 1. Policies

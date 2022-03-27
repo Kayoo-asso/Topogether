@@ -12,7 +12,6 @@ export interface CFImageProps extends Omit<NextImageProps, 'src'> {
     breakpoint?: Breakpoint
 }
 
-
 export const CFImage: React.FC<CFImageProps> = ({ image, breakpoint, ...props }) => {
     const bp = useBreakpoint();
     let url = staticUrl.defaultKayoo;

@@ -43,7 +43,7 @@ export interface Profile {
   lastName?: Name,
   city?: Name,
   country?: Name,
-  imageId?: UUID,
+  image?: Image,
 }
 
 export type Role = 'ADMIN' | 'USER';

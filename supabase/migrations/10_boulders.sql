@@ -9,7 +9,7 @@ create table boulders (
     "isHighball" boolean default false not null,
     "mustSee" boolean default false not null,
     "dangerousDescent" boolean default false not null,
-    images public.image[] default '{}' not null,
+    images public.img[] default '{}' not null,
 
     "topoId" uuid not null references topos(id) on delete cascade
 );
@@ -35,8 +35,6 @@ create function internal.on_boulder_insert()
 returns trigger
 security definer
 as $$
-declare
-    img public.image;
 begin
     update public.images
     set users = users + 1

@@ -47,7 +47,7 @@ export class DBConvert {
             city: user.city ?? null,
             phone: user.phone ?? null,
             birthDate: user.birthDate ?? null,
-            imageId: user.imageId ?? null,
+            image: user.image ?? null,
         }
     }
 

@@ -1,7 +1,7 @@
 import React, { useRef, useState, forwardRef } from 'react';
 // eslint-disable-next-line import/no-cycle
 import { ImageButton } from '../../atoms';
-import { api, BoulderImageUploadResult, BoulderImageUploadSuccess, ImageUploadErrorReason } from 'helpers/services';
+import { api, ImageUploadErrorReason } from 'helpers/services';
 import { Image } from 'types';
 
 interface ImageInputProps {
@@ -10,35 +10,6 @@ interface ImageInputProps {
   value?: string,
   onChange: (images: Image[]) => void,
   onDelete?: () => void,
-}
-
-const processImages = async (files: FileList): Promise<BoulderImageUploadResult[]> => {
-  const promises = Array.from(files)
-    .map(processImage);
-  const results = await Promise.all(promises);
-  return results;
-}
-
-const processImage = async (file: File): Promise<BoulderImageUploadResult> => {
-  const res = await api.images.upload(file);
-  if (res.type === 'error') {
-    return res;
-  }
-  else { // SUCCESS FOR THIS IMAGE
-    const img = new Image;
-    const objectUrl = URL.createObjectURL(file)
-    img.src = objectUrl;
-    const promise = new Promise<BoulderImageUploadSuccess>((resolve, _reject) => {
-      img.onload = () => resolve({
-        type: 'success',
-        id: res.id,
-        path: res.path,
-        width: img.width,
-        height: img.height,
-      });
-    });
-    return await promise;
-  }
 }
 
 export const ImageInput = forwardRef<HTMLInputElement, ImageInputProps>(({
@@ -52,37 +23,24 @@ export const ImageInput = forwardRef<HTMLInputElement, ImageInputProps>(({
   const [loading, setLoading] = useState<boolean>(false);
 
   const handleFileInput = async (files: FileList) => {
-    const errors = {
-      'type': 0,
-      'size': 0,
-      'upload': 0,
+    const errorcount = {
+      [ImageUploadErrorReason.NonImage]: 0,
+      [ImageUploadErrorReason.CompressionError]: 0,
+      [ImageUploadErrorReason.UploadError]: 0,
     };
     setLoading(true);
-    const images: Image[] = [];
 
-    const results = await processImages(files);
-    for (const res of results) {
-      if (res.type === 'error') {
-          if (res.reason === ImageUploadErrorReason.NonImage) errors.type++;
-          else if (res.reason === ImageUploadErrorReason.CompressionError) errors.size++;
-          else errors.upload++;
-      }
-      else { //SUCCESS
-        images.push({
-          id: res.id,
-          path: res.path,
-          width: res.width,
-          height: res.height,
-        });
-      }
+    const { images, errors } = await api.images.uploadMany(files);
+    for (const err of errors) {
+      errorcount[err.reason]++;
     }
 
     setLoading(false);
     props.onChange(images);
     let error = ''
-    if (errors.type > 0) error += errors.type + " fichiers ne sont pas des images valides.\n";
-    if (errors.size > 0) error += errors.size + " fichiers sont trop lourds.\n";
-    if (errors.upload > 0) error += errors.upload + " n'ont pas pu être uploadés.";
+    if (errorcount[ImageUploadErrorReason.NonImage] > 0) error += errorcount[ImageUploadErrorReason.NonImage] + " fichiers ne sont pas des images valides.\n";
+    if (errorcount[ImageUploadErrorReason.CompressionError] > 0) error += errorcount[ImageUploadErrorReason.CompressionError] + " fichiers sont trop lourds.\n";
+    if (errorcount[ImageUploadErrorReason.UploadError] > 0) error += errorcount[ImageUploadErrorReason.UploadError] + " n'ont pas pu être uploadés.";
   };
 
   return (

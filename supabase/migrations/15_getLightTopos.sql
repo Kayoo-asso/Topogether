@@ -22,7 +22,7 @@ create type public.light_topo as (
     "closestCity" varchar(500),
 
     -- relations
-    "imagePath" text,
+    "image" public.img,
     "creator" public.profiles,
 
     -- additional stuff
@@ -135,7 +135,7 @@ begin
         _topo.amenities, _topo."rockTypes",
         _topo.type, _topo.description, _topo.altitude, _topo."closestCity",
 
-        _topo."imagePath",
+        _topo.image,
         creator,
 
         "parkingLocation",

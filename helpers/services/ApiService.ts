@@ -2,7 +2,6 @@ import { SupabaseClient } from "@supabase/supabase-js";
 import { TopoData, UUID, LightTopo, TopoStatus, DBTopo, Topo } from 'types';
 import { auth, sync } from ".";
 import { ImageService } from "./ImageService";
-import { supabaseClient } from "./SupabaseClient";
 
 export type LightTopoFilters = {
     userId?: UUID,
@@ -111,18 +110,18 @@ export class ApiService {
                 closestCity,
                 otherAmenities,
                 lonelyBoulders,
-                imagePath,
+                image,
                 location:location->coordinates,
                 creator:profiles!creatorId (*),
                 validator:profiles!validatorId (*),
 
                 parkings:parkings!topoId (
-                    id, name, spaces, description, imagePath,
+                    id, name, spaces, description, image,
                     location:location->coordinates
                 ),
 
                 waypoints:waypoints!topoId (
-                    id, name, description, imagePath,
+                    id, name, description, image,
                     location: location->coordinates
                 ),
                 accesses:topo_accesses!topoId (*),

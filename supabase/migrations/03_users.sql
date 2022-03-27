@@ -29,7 +29,7 @@ create table public.accounts (
     phone varchar(30),
     "birthDate" date,
 
-    image public.image
+    image public.img
 );
 
 -- No authorizations, all modifications have to go through one of the following:
@@ -198,7 +198,6 @@ create trigger img_changed
     after update of image
     on public.accounts
     for each row
-    -- when (old.image.id <> new.image.id)
     execute function internal.img_changed();
 
 create trigger unregister_img

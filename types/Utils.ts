@@ -1,5 +1,13 @@
 export type GeoCoordinates = [lng: number, lat: number];
 
+export type Result<Success, Error> = {
+  type: 'success'
+  value: Success
+} | {
+  type: 'error',
+  error: Error
+};
+
 export type Name = StringBetween<1, 500>;
 export type Description = StringBetween<1, 5000>;
 
@@ -17,14 +25,6 @@ export type Email = string & {
 
 export type UUID = string & {
   readonly _isUUID: unique symbol
-};
-
-export type Result<Success, Error> = {
-  type: 'success',
-  value: Success
-} | {
-  type: 'error',
-  error: Error
 };
 
 export function isBetween<Min extends number, Max extends number>(

@@ -1,5 +1,3 @@
-import { Quark } from 'helpers/quarky';
-import { editTopo, quarkifyTopo } from 'helpers/topo';
 import { BoulderData, Line, Name, Image, TrackData, Description, Difficulty, ClimbTechniques, SectorData, TopoData, Amenities, TopoStatus, TopoType, RockTypes, TopoAccess, Topo, Parking, StringBetween, Manager, UUID, Reception, Waypoint, Email, User } from 'types';
 import { v4 as uuid } from 'uuid';
 
@@ -27,7 +25,7 @@ export const images: Image[] = [
     },
     {
         id: "4ccb4044-4b25-440d-576a-865dd78a3b00" as UUID,
-        ratio: '16:9'
+        ratio: '9:16'
     },
 ]
 

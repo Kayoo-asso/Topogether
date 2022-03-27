@@ -1,6 +1,7 @@
 import { NextApiHandler } from "next";
 import FormData from "form-data";
 import { UUID } from "types";
+import { UploadCountHeader, UploadInfo } from "helpers/services";
 
 const ACCOUNT_ID = process.env.CLOUDFLARE_ACCOUNT_ID;
 const API_TOKEN = process.env.CLOUDFLARE_API_TOKEN;
@@ -16,12 +17,7 @@ type UploadUrlResult = {
     messages: any[]
 }
 
-export type UploadInfo = {
-    id: UUID,
-    uploadURL: string
-}
 
-export const UploadCountHeader = "x-upload-count";
 
 const data = new FormData();
 data.append("requireSignedURLs", "false");

@@ -34,7 +34,7 @@ create table topos (
     "lonelyBoulders" uuid[] not null default '{}',
 
     -- relations
-    "image" public.image,
+    "image" public.img,
     "creatorId" uuid references public.accounts(id) on delete set null,
     "validatorId" uuid references public.accounts(id) on delete set null
 );

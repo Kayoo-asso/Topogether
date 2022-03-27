@@ -3,7 +3,7 @@
 -- 0. Table
 create type public.topo_access_step as (
     description varchar(5000),
-    image public.image
+    image public.img
 );
 
 create table topo_accesses (

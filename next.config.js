@@ -3,7 +3,7 @@
 module.exports = {
   reactStrictMode: true,
   images: {
-    domains: ['builder.topogether.com'],
+    domains: ['builder.topogether.com', 'imagedelivery.net'],
   },
   eslint: {
     // Warning: This allows production builds to successfully complete even if

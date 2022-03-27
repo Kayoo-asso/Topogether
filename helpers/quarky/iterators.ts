@@ -102,7 +102,7 @@ export class FlattenIterator<T> implements CloneInitIterator<Flattened<T>> {
             this.inner = value[Symbol.iterator]();
             return this.next();
         }
-        return { value, done };
+        return { value, done } as any;
     }
 
     init() {

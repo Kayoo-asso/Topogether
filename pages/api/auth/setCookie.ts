@@ -17,7 +17,6 @@ const deleteCookie = (cookie: string): string =>
     serialize(cookie, "", { ...cookieOptions, expires: new Date(0) })
 
 const handler: NextApiHandler<{}> = (req, res) => {
-    console.log("Called setCookie API route");
     if (req.method === "DELETE") {
         res.setHeader("Set-Cookie", [
             deleteCookie(AccessTokenCookie),

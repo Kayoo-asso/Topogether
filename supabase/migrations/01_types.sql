@@ -38,7 +38,7 @@ CREATE TYPE public.grade_category as ENUM(
     '3', '4', '5', '6', '7', '8', '9', 'None'
 );
 
-create type public.image as (
+create type public.img as (
     id uuid,
     ratio public.img_ratio
 );

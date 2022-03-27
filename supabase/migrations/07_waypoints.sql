@@ -8,7 +8,7 @@ create table waypoints (
     description varchar(5000),
 
     "topoId" uuid not null references public.topos(id) on delete cascade,
-    image public.image
+    image public.img
 );
 
 -- 1. Policies
