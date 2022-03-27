@@ -7,7 +7,7 @@ import { Image } from 'types';
 interface ImageInputProps {
   label?: string,
   multiple?: boolean,
-  value?: string,
+  value?: Image,
   onChange: (images: Image[]) => void,
   onDelete?: () => void,
 }
@@ -41,6 +41,7 @@ export const ImageInput = forwardRef<HTMLInputElement, ImageInputProps>(({
     if (errorcount[ImageUploadErrorReason.NonImage] > 0) error += errorcount[ImageUploadErrorReason.NonImage] + " fichiers ne sont pas des images valides.\n";
     if (errorcount[ImageUploadErrorReason.CompressionError] > 0) error += errorcount[ImageUploadErrorReason.CompressionError] + " fichiers sont trop lourds.\n";
     if (errorcount[ImageUploadErrorReason.UploadError] > 0) error += errorcount[ImageUploadErrorReason.UploadError] + " n'ont pas pu être uploadés.";
+    setError(error);
   };
 
   return (
@@ -56,7 +57,7 @@ export const ImageInput = forwardRef<HTMLInputElement, ImageInputProps>(({
       />
       <ImageButton
         text={props.label}
-        imageUrl={props.value}
+        image={props.value}
         loading={loading}
         onClick={() => {
           if (!loading) fileInputRef.current?.click();

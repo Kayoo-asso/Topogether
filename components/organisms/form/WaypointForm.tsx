@@ -27,14 +27,19 @@ export const WaypointForm: React.FC<WaypointFormProps> = watchDependencies((prop
             <div className='flex flex-row gap-6 items-end'>
                 <div className='w-28'>
                     <ImageInput 
-                        value={waypoint.image?.url}
+                        value={waypoint.image}
                         onChange={(images) => {
                             props.waypoint.set({
                                 ...waypoint,
                                 image: images[0],
                             })
                         }}
-                        onDelete={() => console.log('del')} //TODO
+                        onDelete={() => {
+                            props.waypoint.set({
+                                ...waypoint,
+                                image: undefined,
+                            })
+                        }}
                     />
                 </div>
                 <div className='flex flex-col gap-2 justify-between h-full'>

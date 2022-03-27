@@ -3,7 +3,7 @@ import type { Amenities, ClimbTechniques, RockTypes } from './Bitflags';
 import type {
   Grade, LightGrade, Orientation, TopoStatus, TopoType, Difficulty, Reception,
 } from './Enums';
-import type { LinearRing, LineString, MultiLineString, MultiPolygon, Point, Polygon, Position } from './GeoJson';
+import type { LineString, MultiLineString, Point, Position } from './GeoJson';
 import type { UUID, GeoCoordinates, RequireAtLeastOne, StringBetween, Name, Description, Email, NullableOptional } from './Utils';
 import type { Profile, TrackRating } from './User';
 import type { Image } from './Image';
@@ -51,7 +51,7 @@ export interface TopoData {
   // (or the topo has not yet been validated)
   creator?: Profile,
   validator?: Profile,
-  image: Image,
+  image?: Image,
   
   closestCity?: Name,
   description?: Description,
@@ -103,7 +103,7 @@ export type DBTopo = NullableOptional<{
   // these can be null, in case the person's account is deleted
   creatorId?: UUID,
   validatorId?: UUID,
-  image: Image,
+  image?: Image,
 }>;
 
 export interface LightTopo {
@@ -125,7 +125,7 @@ export interface LightTopo {
   altitude?: number,
   closestCity?: Name,
 
-  image: Image,
+  image?: Image,
   creator?: Profile,
 
   parkingLocation?: GeoCoordinates,
@@ -149,7 +149,7 @@ export interface Manager {
   address?: Description,
   zip?: number,
   city?: Name,
-  image: Image,
+  image?: Image,
 }
 
 export type DBManager = NullableOptional<{
@@ -164,7 +164,7 @@ export type DBManager = NullableOptional<{
   city?: Name,
   
   topoId: UUID,
-  image: Image,
+  image?: Image,
 }>;
 
 // TODO: is the RequireAtLeastOne correct?
@@ -178,7 +178,7 @@ export type TopoAccess = RequireAtLeastOne<{
 
 export interface TopoAccessStep {
   description: Description
-  image: Image,
+  image?: Image,
 }
 
 export type DBTopoAccess = NullableOptional<{
@@ -197,7 +197,7 @@ export interface Parking {
   location: GeoCoordinates,
   name?: Name,
   description?: Description
-  image: Image
+  image?: Image
 }
 
 export type DBParking = NullableOptional<{
@@ -206,7 +206,7 @@ export type DBParking = NullableOptional<{
   location: Point,
   name?: Name,
   description?: Description,
-  image: Image,
+  image?: Image,
 
   topoId: UUID,
 }>;
@@ -216,7 +216,7 @@ export interface Waypoint {
   name: Name,
   location: GeoCoordinates,
   description?: Description,
-  image: Image,
+  image?: Image,
 }
 
 export type DBWaypoint = NullableOptional<{
@@ -226,7 +226,7 @@ export type DBWaypoint = NullableOptional<{
   description?: Description,
   
   topoId: UUID,
-  image: Image,
+  image?: Image,
 }>;
 
 export interface SectorData {

@@ -1,10 +1,9 @@
 import React, { useRef, useState } from 'react';
 import type { GetServerSideProps, NextPage } from 'next';
-import { staticUrl } from 'helpers';
 import { Button, HeaderDesktop, ImageInput, LeftbarDesktop, ModalDelete, ProfilePicture, Tabs, TextInput } from 'components';
 import Link from 'next/link';
 import { watchDependencies } from 'helpers/quarky';
-import { isEmail, Name, StringBetween, User } from 'types';
+import { Image, isEmail, Name, StringBetween, User } from 'types';
 import { auth, supabaseClient } from 'helpers/services';
 import { getServerSession } from 'helpers/getServerSession';
 
@@ -52,7 +51,7 @@ const ProfilePage: NextPage<ProfileProps> = watchDependencies(({ user:session })
   const [userName, setUserName] = useState<string>(session.userName);
   const [firstName, setFirstName] = useState<string | undefined>(session.firstName);
   const [lastName, setLastName] = useState<string | undefined>(session.lastName);
-  const [imageUrl, setImageUrl] = useState<string | undefined>(session.imagePath);
+  const [image, setImage] = useState<Image | undefined>(session.image);
   const [birthDate, setBirthDate] = useState<string | undefined>(session.birthDate); //TODO convert into Date
   const [country, setCountry] = useState<string | undefined>(session.country);
   const [city, setCity] = useState<string | undefined>(session.city);
@@ -75,7 +74,7 @@ const ProfilePage: NextPage<ProfileProps> = watchDependencies(({ user:session })
         userName: userName as Name,
         firstName: firstName as Name,
         lastName: lastName as Name,
-        imagePath: imageUrl,
+        image: image,
         birthDate,
         country: country as Name,
         city: city as Name,
@@ -112,7 +111,7 @@ const ProfilePage: NextPage<ProfileProps> = watchDependencies(({ user:session })
           <div className='flex flex-row justify-center md:justify-start rounded-lg px-6 pb-10 pt-12 md:pt-[16px]'>
             <div className='h-[100px] w-[100px] relative cursor-pointer'>
               <ProfilePicture
-                src={imageUrl || staticUrl.defaultProfilePicture}
+                image={image}
                 onClick={() => {
                   if (imageInputRef.current) imageInputRef.current.click();
                 }}
@@ -121,7 +120,7 @@ const ProfilePage: NextPage<ProfileProps> = watchDependencies(({ user:session })
                 <ImageInput 
                   ref={imageInputRef}
                   onChange={(images) => {
-                    // TODO
+                    setImage(images[0]);
                   }}
                 />
               </div>

@@ -27,14 +27,19 @@ export const ParkingForm: React.FC<ParkingFormProps> = watchDependencies((props:
             <div className='flex flex-row gap-6 items-end'>
                 <div className='w-28'>
                     <ImageInput 
-                        value={parking.image?.url}
+                        value={parking.image}
                         onChange={(files) => {
                             props.parking.set({
                                 ...parking,
                                 image: files[0],
                             })
                         }}
-                        onDelete={() => console.log('delete')} //TODO
+                        onDelete={() => {
+                            props.parking.set({
+                                ...parking,
+                                image: undefined,
+                            })
+                        }}
                     />
                 </div>
                 <div className='flex flex-col gap-2 justify-between h-full'>

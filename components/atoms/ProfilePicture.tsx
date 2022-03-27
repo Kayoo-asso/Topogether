@@ -1,6 +1,8 @@
 import React from 'react';
 import { Image } from 'types';
+import NextImage from 'next/image';
 import { CFImage } from './CFImage';
+import { staticUrl } from 'helpers';
 
 interface ProfilePictureProps {
   image?: Image,
@@ -15,14 +17,26 @@ export const ProfilePicture: React.FC<ProfilePictureProps> = (props: ProfilePict
         props.onClick && props.onClick();
       }}
     >
-      <CFImage
-        image={props.image}
-        className="rounded-full"
-        priority
-        alt="Photo de profile"
-        layout="fill"
-        objectFit="cover"
-      />
+      {props.image &&
+        <CFImage
+          image={props.image}
+          className="rounded-full"
+          priority
+          alt="Photo de profile"
+          layout="fill"
+          objectFit="cover"
+        />
+      }
+      {!props.image &&
+        <NextImage 
+          src={staticUrl.defaultProfilePicture}
+          className="rounded-full"
+          priority
+          alt="Photo de profile"
+          layout="fill"
+          objectFit="cover"
+        />
+      } 
     </div>
   )
 };

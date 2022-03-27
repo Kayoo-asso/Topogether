@@ -8,7 +8,6 @@ import {
 } from 'types';
 import { hasFlag, rockNames, toggleFlag } from 'helpers';
 import { BitflagMultipleSelect } from 'components/molecules/form/BitflagMultipleSelect';
-import { api } from 'helpers/services';
 
 interface InfoFormProps {
     topo: Quark<Topo>,
@@ -41,14 +40,19 @@ export const InfoForm: React.FC<InfoFormProps> = watchDependencies((props: InfoF
         <div className="flex flex-row gap-6 items-end">
           <div className="w-32 md:mt-4">
             <ImageInput
-              value={topo.imagePath}
+              value={topo.image}
               onChange={(images) => {
                 props.topo.set({
                     ...topo,
-                    imagePath: images[0].path,
+                    image: images[0],
                 });
               }}
-              onDelete={() => console.log('delete')}
+              onDelete={() => {
+                props.topo.set({
+                    ...topo,
+                    image: undefined,
+                })
+            }}
             />
           </div>
           <TextInput

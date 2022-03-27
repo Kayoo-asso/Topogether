@@ -3,7 +3,6 @@ import NextImage from "next/image";
 import type {
     ImageProps as NextImageProps
 } from "next/image";
-import { Variants } from "helpers/variants";
 import { staticUrl } from "helpers";
 import { useBreakpoint } from "helpers/hooks/useBreakpoints";
 import { cloudflareUrl } from "helpers/cloudflareUrl";
