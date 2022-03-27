@@ -52,7 +52,6 @@ export const MapSearchbar: React.FC<MapSearchbarProps> = ({
             setTopoApiResults(topoResults);
         }
         if (findBoulders) {
-            //TODO : have url for boulders
             const boulderResults: TrigramOutput = boulderSearcher.find(value);
             setBoulderResults(boulderResults.map(res => res.value as Boulder));
         }

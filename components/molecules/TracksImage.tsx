@@ -131,6 +131,7 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
         alt="Rocher"
         width={imgWidth}
         height={imgHeight}
+        priority
       />
     </div>
   );

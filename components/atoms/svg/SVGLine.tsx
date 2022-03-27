@@ -121,8 +121,6 @@ export const SVGLine: React.FC<SVGLineProps> = watchDependencies(({
     }
   }
 
-  console.log(trackWeight)
-
   return (
     <>
         <path

@@ -63,7 +63,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
     const [displayInfo, setDisplayInfo] = useState<boolean>(false);
     const [displayApproach, setDisplayApproach] = useState<boolean>(false);
     const [displayManagement, setDisplayManagement] = useState<boolean>(false);
-    const [currentDisplay, setCurrentDisplay] = useState<'INFO' | 'APPROACH' | 'MANAGEMENT'>();
+    const [currentDisplay, setCurrentDisplay] = useState<'INFO' | 'APPROACH' | 'MANAGEMENT' | 'none'>();
     useEffect(() => {
         setDisplaySectorSlideover(false);
         selectedTrack.select(undefined);
