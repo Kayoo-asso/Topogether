@@ -68,13 +68,13 @@ export class QuarkIter<T> implements Iterable<T> {
         return () => {
             const iter = this.iterator.clone();
             iter.init();
-            let result: IteratorResult<T>;
-            do {
-                result = iter.next();
+            let result: IteratorResult<T> = iter.next();
+            while (!result.done) {
                 if (predicate(result.value)) {
                     return result.value;
                 }
-            } while (!result.done)
+                result = iter.next();
+            }
             return undefined;
         };
     }

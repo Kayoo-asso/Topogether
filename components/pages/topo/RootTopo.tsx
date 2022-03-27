@@ -56,7 +56,7 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
   // Hack: select boulder from query parameter
   if (firstRender.current) {
     firstRender.current = false;
-    if (typeof bId === "string" && isUUID(bId)) {
+    if (typeof bId === "string") {
       const boulder = boulders.find((b) => b().id === bId)();
       if (boulder) toggleBoulderSelect(boulder);
     }
