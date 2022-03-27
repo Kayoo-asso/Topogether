@@ -19,6 +19,14 @@ export type UUID = string & {
   readonly _isUUID: unique symbol
 };
 
+export type Result<Success, Error> = {
+  type: 'success',
+  value: Success
+} | {
+  type: 'error',
+  error: Error
+};
+
 export function isBetween<Min extends number, Max extends number>(
   x: number,
   min: Min,

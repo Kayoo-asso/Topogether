@@ -29,7 +29,7 @@ create table public.accounts (
     phone varchar(30),
     "birthDate" date,
 
-    "imagePath" text
+    image public.image
 );
 
 -- No authorizations, all modifications have to go through one of the following:
@@ -146,7 +146,7 @@ begin
         city = new.city,
         phone = new.phone,
         "birthDate" = new."birthDate",
-        "imagePath" = new."imagePath"
+        image = new.image
     where id = new.id;
 
     return new;
@@ -177,7 +177,7 @@ create view public.profiles as
         "userName",
         role,
         created,
-        "imagePath",
+        "image",
         "firstName",
         "lastName",
         country,
@@ -195,10 +195,10 @@ create trigger profiles_are_read_only
 -- A user account never has any profile picture on creation, so no need for an insert trigger
 
 create trigger img_changed
-    after update of "imagePath"
+    after update of image
     on public.accounts
     for each row
-    when (old."imagePath" <> new."imagePath")
+    -- when (old.image.id <> new.image.id)
     execute function internal.img_changed();
 
 create trigger unregister_img

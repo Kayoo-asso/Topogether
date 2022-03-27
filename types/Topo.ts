@@ -6,7 +6,7 @@ import type {
 import type { LinearRing, LineString, MultiLineString, MultiPolygon, Point, Polygon, Position } from './GeoJson';
 import type { UUID, GeoCoordinates, RequireAtLeastOne, StringBetween, Name, Description, Email, NullableOptional } from './Utils';
 import type { Profile, TrackRating } from './User';
-import type { BoulderImage } from './Image';
+import type { Image } from './Image';
 
 export type Topo = Omit<TopoData, 'sectors' | 'boulders' | 'waypoints' | 'parkings' | 'accesses' | 'managers'> & {
   sectors: QuarkArray<Sector>,
@@ -51,7 +51,7 @@ export interface TopoData {
   // (or the topo has not yet been validated)
   creator?: Profile,
   validator?: Profile,
-  imagePath?: string,
+  image: Image,
   
   closestCity?: Name,
   description?: Description,
@@ -103,7 +103,7 @@ export type DBTopo = NullableOptional<{
   // these can be null, in case the person's account is deleted
   creatorId?: UUID,
   validatorId?: UUID,
-  imagePath?: string,
+  image: Image,
 }>;
 
 export interface LightTopo {
@@ -125,7 +125,7 @@ export interface LightTopo {
   altitude?: number,
   closestCity?: Name,
 
-  imagePath?: string,
+  image: Image,
   creator?: Profile,
 
   parkingLocation?: GeoCoordinates,
@@ -135,21 +135,9 @@ export interface LightTopo {
   grades: GradeHistogram
 }
 
-// export type LightTopoOld = Omit<TopoData, 'sectors' | 'boulders' | 'faunaProtection' | 'ethics' | 'danger' | 'cleaned' | 'otherAmenities' | 'lonelyBoulders' | 'waypoints' | 'parkings' | 'accesses' | 'managers' | 'validator'> & {
-//   parkingLocation?: GeoCoordinates,
-//   nbSectors: number,
-//   nbTracks: number,
-//   nbBoulders: number,
-//   grades: GradeHistogram,
-//   // TODO: do we include access information here? Like access difficulty & time
-// };
-
 export type GradeHistogram = {
   [K in LightGrade]: number
 };
-// } & {
-//   Total: number
-// };
 
 export interface Manager {
   readonly id: UUID,
@@ -161,7 +149,7 @@ export interface Manager {
   address?: Description,
   zip?: number,
   city?: Name,
-  imagePath?: string,
+  image: Image,
 }
 
 export type DBManager = NullableOptional<{
@@ -176,7 +164,7 @@ export type DBManager = NullableOptional<{
   city?: Name,
   
   topoId: UUID,
-  imagePath?: string,
+  image: Image,
 }>;
 
 // TODO: is the RequireAtLeastOne correct?
@@ -190,7 +178,7 @@ export type TopoAccess = RequireAtLeastOne<{
 
 export interface TopoAccessStep {
   description: Description
-  imagePath?: string,
+  image: Image,
 }
 
 export type DBTopoAccess = NullableOptional<{
@@ -209,7 +197,7 @@ export interface Parking {
   location: GeoCoordinates,
   name?: Name,
   description?: Description
-  imagePath?: string
+  image: Image
 }
 
 export type DBParking = NullableOptional<{
@@ -218,7 +206,7 @@ export type DBParking = NullableOptional<{
   location: Point,
   name?: Name,
   description?: Description,
-  imagePath?: string,
+  image: Image,
 
   topoId: UUID,
 }>;
@@ -228,7 +216,7 @@ export interface Waypoint {
   name: Name,
   location: GeoCoordinates,
   description?: Description,
-  imagePath?: string,
+  image: Image,
 }
 
 export type DBWaypoint = NullableOptional<{
@@ -238,7 +226,7 @@ export type DBWaypoint = NullableOptional<{
   description?: Description,
   
   topoId: UUID,
-  imagePath?: string,
+  image: Image,
 }>;
 
 export interface SectorData {
@@ -270,7 +258,7 @@ export interface BoulderData {
 
   tracks: TrackData[],
   // can be cross-referenced by lines within each track
-  images: BoulderImage[]
+  images: Image[]
 }
 
 export type DBBoulder = NullableOptional<{
@@ -280,7 +268,7 @@ export type DBBoulder = NullableOptional<{
   isHighball: boolean,
   mustSee: boolean,
   dangerousDescent: boolean,
-  images: BoulderImage[],
+  images: Image[],
 
   topoId: UUID,
 }>;

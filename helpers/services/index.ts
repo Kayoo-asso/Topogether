@@ -1,23 +1,14 @@
-import { createClient  } from '@supabase/supabase-js';
-import type { SupabaseClient  } from '@supabase/supabase-js';
-import { ApiService } from './Api';
+import { ApiService } from './ApiService';
 import { InMemorySync, SyncService } from './SyncService';
-import { AuthService } from './Auth';
+import { AuthService } from './AuthService';
+import { supabaseClient } from './SupabaseClient';
 
-export * from './Api';
-export * from './Auth';
-export * from './Images';
+export * from './ApiService';
+export * from './AuthService';
+export * from './ImageService';
 export * from './SyncService';
+export * from './SupabaseClient';
 
-export const supabaseClient = createClient(
-    process.env.NEXT_PUBLIC_API_URL!,
-    process.env.NEXT_PUBLIC_ANON_KEY!
-);
-
-export const masterSupabaseClient: SupabaseClient | null =
-    process.env.API_MASTER_KEY_LOCAL
-        ? createClient(process.env.NEXT_PUBLIC_API_URL!, process.env.API_MASTER_KEY_LOCAL!)
-        : null;
 
 export const api = new ApiService(supabaseClient);
 export const auth = new AuthService(supabaseClient);

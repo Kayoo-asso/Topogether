@@ -1,7 +1,8 @@
 import { SupabaseClient } from "@supabase/supabase-js";
-import { TopoData, UUID, LightTopo, TopoStatus, DBTopo } from 'types';
-import { sync } from ".";
-import { ImageService } from "./Images";
+import { TopoData, UUID, LightTopo, TopoStatus, DBTopo, Topo } from 'types';
+import { auth, sync } from ".";
+import { ImageService } from "./ImageService";
+import { supabaseClient } from "./SupabaseClient";
 
 export type LightTopoFilters = {
     userId?: UUID,
@@ -70,6 +71,10 @@ export class ApiService {
                 : UpdateResult.Error;
         }
         return UpdateResult.Ok;
+    }
+
+    deleteTopo(topo: Topo | TopoData | LightTopo) {
+        sync.topoDelete(topo);
     }
 
     async getTopo(id: UUID): Promise<TopoData | null> {

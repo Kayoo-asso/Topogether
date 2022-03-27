@@ -1,10 +1,10 @@
 import { parse } from "cookie";
-import { IncomingMessage } from "http";
+import type { IncomingMessage } from "http";
 import type { NextApiRequestCookies } from "next/dist/server/api-utils";
 import { AccessTokenCookie, RefreshTokenCookie } from "pages/api/auth/setCookie";
 import { Email, Session, User, UUID } from "types";
 import { AccessJWT, jwtDecoder } from "./jwtDecoder";
-import { api, auth, makeSession, supabaseClient } from "./services";
+import { makeSession, supabaseClient } from "./services";
 
 export type NextRequest = IncomingMessage & {
     cookies?: NextApiRequestCookies
@@ -16,7 +16,6 @@ export async function getServerSession(req: NextRequest): Promise<Session | null
         const cookieHeader = req.headers['cookie'];
         if (!cookieHeader) return null;
         cookies = parse(cookieHeader);
-        console.log("Parsed cookies", cookies);
     }
     const accessToken = cookies[AccessTokenCookie];
     const refreshToken = cookies[RefreshTokenCookie];

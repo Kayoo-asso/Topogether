@@ -3,7 +3,7 @@
 -- 0. Table
 create type public.topo_access_step as (
     description varchar(5000),
-    "imagePath" text
+    image public.image
 );
 
 create table topo_accesses (
@@ -25,8 +25,8 @@ declare
 begin
     update public.images
     set users = users + 1
-    where path in (
-        select "imagePath"
+    where id in (
+        select id
         from unnest(new.steps)
     );
     return null;
@@ -42,8 +42,8 @@ declare
 begin
     update public.images
     set users = users - 1
-    where path in (
-        select "imagePath"
+    where id in (
+        select id
         from unnest(old.steps)
     );
     return null;
@@ -79,15 +79,15 @@ begin
 
     update public.images
     set users = users - 1
-    where path in (
-        select "imagePath"
+    where id in (
+        select id
         from unnest(old.steps)
     );
 
     update public.images
     set users = users + 1
-    where path in (
-        select "imagePath"
+    where id in (
+        select id
         from unnest(new.steps)
     );
 

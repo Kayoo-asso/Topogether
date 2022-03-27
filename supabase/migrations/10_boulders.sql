@@ -9,7 +9,7 @@ create table boulders (
     "isHighball" boolean default false not null,
     "mustSee" boolean default false not null,
     "dangerousDescent" boolean default false not null,
-    images public.sized_image[] default '{}' not null,
+    images public.image[] default '{}' not null,
 
     "topoId" uuid not null references topos(id) on delete cascade
 );
@@ -36,12 +36,12 @@ returns trigger
 security definer
 as $$
 declare
-    img public.sized_image;
+    img public.image;
 begin
     update public.images
     set users = users + 1
-    where path in (
-        select path
+    where id in (
+        select id
         from unnest(new.images)
     );
     return null;
@@ -72,14 +72,14 @@ begin
 
     update public.images
     set users = users + 1
-    where path in (
-        select path from unnest(new.images)
+    where id in (
+        select id from unnest(new.images)
     );
 
     update public.images
     set users = users - 1
-    where path in (
-        select path from unnest(old.images)
+    where id in (
+        select id from unnest(old.images)
     );
 
     return null;
@@ -93,8 +93,8 @@ as $$
 begin
     update public.images
     set users = users - 1
-    where path in (
-        select path
+    where id in (
+        select id
         from unnest(old.images)
     );
     return null;

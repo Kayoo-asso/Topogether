@@ -18,22 +18,19 @@ export const fakeAdmin: User & { password: string } = {
 
 export const images: BoulderImage[] = [
     {
-        id: uuid(),
-        path: "https://builder.topogether.com/public/uploads/topo/main-image/dad449499de38f1bdee5872de1a354d52fff6183.jpeg",
+        id: "c242dce4-1c96-412f-30e4-4467f140a500" as UUID,
         width: 4592,
         height: 3064,
     },
     {
-        id: uuid(),
-        path: "https://builder.topogether.com/public/uploads/boulder/image/5b558375709fbbacae9e5dcb746c8e10e7fa083f.jpeg",
+        id: "dd74e0bb-c9dc-4e0e-02bf-f46a7783c500" as UUID,
         width: 4592,
         height: 3064,
         // boulderImageDimensions = 674x450 in the original fakeTopo
         // multiply every line coordinate by 4592 / 674 to scale the data
     },
     {
-        id: uuid(),
-        path: "https://builder.topogether.com/public/uploads/boulder/image/a486a4432feafc909d335e8f18ee5448212af176.jpeg",
+        id: "4ccb4044-4b25-440d-576a-865dd78a3b00" as UUID,
         width: 1334,
         height: 2000,
     },
@@ -193,11 +190,11 @@ export const access: TopoAccess[] = [
         steps: [
             {
                 description: "Depuis le parking, prendre le sentier qui monte dans la continuité de la route. Après 12-15min de marche, vous arriverez à une esplanade d'herbe surmontant une petite falaise (où il est possible de faire de l'initiation). Un panneau indique le site d'escalade à l'entrée de l'esplanade.\nDepuis l'esplanade, prendre le sentier qui part derrière le panneau pour monter vers les premiers blocs." as Description,
-                imagePath: images[0].path
+                imageId: images[0].id
             },
             {
                 description: "Et ceci est une autre étape incroyable pour s'approcher du spot." as Description,
-                imagePath: images[1].path
+                imageId: images[1].id
             }
         ]
     },
@@ -208,11 +205,11 @@ export const access: TopoAccess[] = [
         steps: [
             {
                 description: "Depuis le parking, prendre le sentier qui monte dans la continuité de la route. Après 12-15min de marche, vous arriverez à une esplanade d'herbe surmontant une petite falaise (où il est possible de faire de l'initiation). Un panneau indique le site d'escalade à l'entrée de l'esplanade.\nDepuis l'esplanade, prendre le sentier qui part derrière le panneau pour monter vers les premiers blocs." as Description,
-                imagePath: images[0].path
+                imageId: images[0].id
             },
             {
                 description: "Et ceci est une autre étape incroyable pour s'approcher du spot." as Description,
-                imagePath: images[1].path
+                imageId: images[1].id
             }
         ]
     },    
@@ -225,7 +222,7 @@ export const parkings: Parking[] = [
         location: [4.607274, 45.701321],
         name: 'Parking 1' as StringBetween<1, 255>,
         description: 'Le parking de Rocher Canon est facile d’accès depuis la N12. Attention toutefois, beaucoup de GPS indique un itinéraire qui passe à travers la forêt et qui est en fait fermé. Il faut bien arriver par la N12. ' as StringBetween<1, 5000>,
-        imagePath: 'https://builder.topogether.com/public/uploads/parking/image/f1e65106ded2f0aafa14f1e6208a13178aae28b5.png',
+        imageId: '42cc5d41-fef2-4681-aa95-4c435e0eb600' as UUID,
     }
 ]
 
@@ -233,7 +230,7 @@ export const managers: Manager[] = [
     {
         id: uuid(),
         name: 'La dégaine' as Name,
-        imagePath: images[2].path,
+        imageId: images[2].id,
         contactName: 'Jérôme Foobar' as Name,
         contactPhone: '06 69 43 44 92' as Name,
         contactMail: 'ladegaine@ladegaine.com' as Email,
@@ -272,7 +269,7 @@ export const fakeTopov2: TopoData = {
 
     danger: "Il y a beaucoup de pentes" as Description,
 
-    imagePath: "https://builder.topogether.com/public/uploads/topo/main-image/dad449499de38f1bdee5872de1a354d52fff6183.jpeg",
+    imageId: "c242dce4-1c96-412f-30e4-4467f140a500" as UUID,
     creator: fakeAdmin,
 
     sectors: sectors,

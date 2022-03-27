@@ -8,7 +8,7 @@ create table waypoints (
     description varchar(5000),
 
     "topoId" uuid not null references public.topos(id) on delete cascade,
-    "imagePath" text
+    image public.image
 );
 
 -- 1. Policies
@@ -35,10 +35,10 @@ create trigger check_new_img
     for each row execute function internal.check_new_img();
 
 create trigger img_changed
-    after update of "imagePath"
+    after update of image
     on waypoints
     for each row
-    when (old."imagePath" <> new."imagePath")
+    -- when (old.image.id <> new.image.id)
     execute function internal.img_changed();
 
 create trigger unregister_img

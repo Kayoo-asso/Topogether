@@ -28,7 +28,7 @@ export type User = {
   city?: Name,
   phone?: StringBetween<1, 30>,
   birthDate?: string, // has to be in YYYY-MM-DD format
-  imagePath?: string,
+  imageId?: UUID,
 };
 
 export type DBUserUpdate = NullableOptional<Omit<User, 'created' | 'role' | 'email'>>;
@@ -42,7 +42,7 @@ export interface Profile {
   lastName?: Name,
   city?: Name,
   country?: Name,
-  imagePath?: string,
+  imageId?: UUID,
 }
 
 export type Role = 'ADMIN' | 'USER';

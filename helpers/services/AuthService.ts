@@ -104,8 +104,8 @@ export class AuthService {
         return AuthResult.ConfirmationRequired;
     }
 
-    async signIn(email: Email, password: string): Promise<AuthResult> {
-        const { user, error } = await this.client.auth.signIn({ email, password });
+    async signIn(email: Email, password: string, redirectTo?: string): Promise<AuthResult> {
+        const { user, error } = await this.client.auth.signIn({ email, password }, { redirectTo });
         if (error) {
             console.error("Sign in error: ", error);
             return AuthResult.Error;
@@ -117,14 +117,14 @@ export class AuthService {
         return await this._loadUser(session);
     }
 
-    async signOut(): Promise<AuthResult.Success | AuthResult.Error> {
+    async signOut(): Promise<boolean> {
         const { error } = await this.client.auth.signOut();
         if (error) {
             console.error("Sign out error: ", error);
-            return AuthResult.Error;
+            return false;
         }
         this._session.set(null);
-        return AuthResult.Success;
+        return true;
     }
 
     private async _loadUser(session: Session): Promise<AuthResult.Success | AuthResult.Error> {

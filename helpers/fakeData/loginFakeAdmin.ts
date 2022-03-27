@@ -2,13 +2,12 @@ import { auth, AuthResult } from "helpers/services";
 import { fakeAdmin } from "./fakeTopoV2";
 
 export async function loginFakeAdmin(): Promise<void> {
-
     let user = auth.session();
     // sign out, to avoid problems with stale tokens after DB reset
     if (user !== null) {
         localStorage.removeItem("supabase.auth.token");
     }
-    const signinRes = await auth.signIn(fakeAdmin.email, fakeAdmin.password);
+    const signinRes = await auth.signIn(fakeAdmin.email, fakeAdmin.password, "/builder/dashboard");
     user = auth.session();
     if (signinRes !== AuthResult.Success || user === null) {
         const signupRes = await auth.signUp(fakeAdmin.email, fakeAdmin.password, fakeAdmin.userName);

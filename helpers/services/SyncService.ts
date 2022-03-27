@@ -1,5 +1,5 @@
 import { quark, Quark } from "helpers/quarky/quarky";
-import { Boulder, BoulderImage, DBBoulder, DBLine, DBManager, DBParking, DBSector, DBTopo, DBTopoAccess, DBTrack, DBUserUpdate, DBWaypoint, Line, Manager, Parking, Sector, Topo, TopoAccess, TopoData, Track, User, UUID, Waypoint } from "types";
+import { Boulder, BoulderImage, DBBoulder, DBLine, DBManager, DBParking, DBSector, DBTopo, DBTopoAccess, DBTrack, DBUserUpdate, DBWaypoint, LightTopo, Line, Manager, Parking, Sector, Topo, TopoAccess, TopoData, Track, User, UUID, Waypoint } from "types";
 import { api } from "./";
 import { DBConvert } from "./DBConvert";
 
@@ -22,7 +22,7 @@ export interface SyncService {
     userUpdate(user: User): void;
 
     topoUpdate(topo: Topo | TopoData): void;
-    topoDelete(topo: Topo): void;
+    topoDelete(topo: Topo | TopoData | LightTopo): void;
 
     topoAccessUpdate(topoAccess: TopoAccess, topoId: UUID): void;
     topoAccessDelete(topoAccess: TopoAccess): void;
@@ -117,7 +117,7 @@ export class InMemorySync implements SyncService {
         this._status.set(SyncStatus.UnsavedChanges);
     }
 
-    topoDelete(topo: Topo) {
+    topoDelete(topo: Topo | TopoData | LightTopo) {
         this.deletedTopos.add(topo.id);
         this.updatedTopos.delete(topo.id);
         this._status.set(SyncStatus.UnsavedChanges);
