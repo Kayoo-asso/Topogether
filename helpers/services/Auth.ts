@@ -34,11 +34,7 @@ export function makeSession(user: SupabaseUser): Session {
 
 async function fetchOnClient(input: RequestInfo, init?: RequestInit): Promise<void> {
     if (typeof window !== "undefined") {
-        console.log("Fetching client-side");
         await fetch(input, init);
-    }
-    else {
-        console.log("Avoiding fetch server-side");
     }
 }
 
@@ -82,7 +78,6 @@ export class AuthService {
         const { user, session, error } = await this.client.auth.signUp({
             email, password
         }, {
-            redirectTo: "/",
             data: { userName: pseudo, role }
         });
         if (error) {
