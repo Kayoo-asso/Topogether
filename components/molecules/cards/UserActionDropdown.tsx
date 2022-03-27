@@ -23,7 +23,7 @@ export const UserActionDropdown: React.FC<UserActionDropdownProps> = React.memo(
 
     const sendTopoToValidation = useCallback(async () => await api.setTopoStatus(props.topo.id, TopoStatus.Submitted), []);
     //TODO
-    const deleteTopo = useCallback(() => console.log('Deleting topo...'), []);
+    const deleteTopo = useCallback(() => api.deleteTopo(props.topo), []);
 
     return (
         <>
