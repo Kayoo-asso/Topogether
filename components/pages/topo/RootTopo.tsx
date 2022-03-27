@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { 
   AccessSlideover, InfoSlideover, ManagementSlideover,
   BoulderSlideagainstDesktop,  BoulderSlideoverMobile, TrackSlideagainstDesktop, SectorSlideoverMobile,
@@ -18,20 +18,23 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
   const router = useRouter();
   const { b: bId } = router.query; // Get boulder id from url if selected 
   const device = useContext(DeviceContext);
+  const firstRender = useRef(true);
   const topo = props.topoQuark();
-
+  
   const sectors = useMemo(() => topo.sectors?.quarks(), [topo.sectors]) || new QuarkIter<Quark<Parking>>([]);
   const boulders = useMemo(() => topo.boulders?.quarks(), [topo.boulders]) || new QuarkIter<Quark<Boulder>>([])
   const parkings = useMemo(() => topo.parkings?.quarks(), [topo.parkings]) || new QuarkIter<Quark<Parking>>([]);
   const waypoints = useMemo(() => topo.waypoints?.quarks(), [topo.waypoints]) || new QuarkIter<Quark<Waypoint>>([]);
   const boulderOrder = useCreateDerivation(() => sortBoulders(topo.sectors, topo.lonelyBoulders));
-
+  
   const [currentImage, setCurrentImage] = useState<BoulderImage>(defaultImage);
   const selectedSector = useSelectQuark<Sector>();
   const selectedBoulder = useSelectQuark<Boulder>();
   const selectedTrack = useSelectQuark<Track>();
   const selectedParking = useSelectQuark<Parking>();
   const selectedWaypoint = useSelectQuark<Waypoint>();
+
+
 
   const toggleSectorSelect = useCallback((e, sectorQuark: Quark<Sector>) => {
     if (selectedSector()?.id === sectorQuark().id)
@@ -51,13 +54,16 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
       selectedBoulder.select(boulderQuark);
     }
   }, [selectedBoulder]);
-  useEffect(() => {
-    console.log("get boulder id from url :" + bId);
-    if (boulders && bId) {
+
+  // Hack: select boulder from query parameter
+  if (firstRender.current) {
+    firstRender.current = false;
+    if (typeof bId === "string") {
       const boulder = boulders.find((b) => b().id === bId)();
       if (boulder) toggleBoulderSelect(boulder);
     }
-  }, []);
+  }
+
   const toggleTrackSelect = useCallback((trackQuark: Quark<Track>, boulderQuark: Quark<Boulder>) => {
     selectedBoulder.select(undefined);
     selectedParking.select(undefined);
