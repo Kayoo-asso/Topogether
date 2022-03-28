@@ -4,7 +4,7 @@ import { api } from 'helpers/services';
 import { watchDependencies } from 'helpers/quarky';
 import { isUUID, Session, TopoData, TopoStatus } from 'types';
 import { RootBuilder } from 'components';
-import { editTopo} from 'helpers';
+import { editTopo } from 'helpers';
 import { getServerSession } from 'helpers/getServerSession';
 import { returnTo } from 'pages/user/login';
 

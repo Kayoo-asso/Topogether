@@ -7,7 +7,7 @@ import {
     ModalSubmitTopo, ModalDeleteTopo, GeoCamera, Drawer, LeftbarBuilderDesktop, BoulderBuilderSlideagainstDesktop,
     ParkingBuilderSlide, AccessFormSlideover, WaypointBuilderSlide, ModalRenameSector, ModalDelete, SectorAreaMarkerDropdown, BuilderProgressIndicator,
 } from 'components';
-import { blobToImage, DeviceContext, sortBoulders, useContextMenu, createTrack, createBoulder, createParking, createWaypoint, createSector, deleteSector, deleteBoulder, deleteParking, deleteWaypoint, toLatLng } from 'helpers';
+import { blobToImage, DeviceContext, sortBoulders, useContextMenu, createTrack, createBoulder, createParking, createWaypoint, createSector, deleteSector, deleteBoulder, deleteParking, deleteWaypoint, toLatLng, computeBuilderProgress } from 'helpers';
 import { Boulder, GeoCoordinates, Image, MapToolEnum, Parking, Sector, Track, Waypoint, Topo, Profile, Session, isUUID, TopoStatus } from 'types';
 import { Quark, QuarkIter, useCreateDerivation, useLazyQuarkyEffect, useQuarkyCallback, useSelectQuark, watchDependencies } from 'helpers/quarky';
 import { useRouter } from 'next/router';
@@ -124,8 +124,8 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
     if (firstRender.current) {
         firstRender.current = false;
         if (typeof bId === "string" && isUUID(bId)) {
-        const boulder = boulders.find((b) => b().id === bId)();
-        if (boulder) toggleBoulderSelect(boulder);
+            const boulder = boulders.find((b) => b().id === bId)();
+            if (boulder) toggleBoulderSelect(boulder);
         }
     }
     const toggleTrackSelect = useQuarkyCallback((trackQuark: Quark<Track>, boulderQuark: Quark<Boulder>) => {
@@ -267,6 +267,9 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
         }
     }, [topo, currentTool, selectedBoulder()]);
 
+    // The derivation doesnt work, it still recompute the progress at every render
+    const progress = useCreateDerivation<number>(() => computeBuilderProgress(props.topoQuark));
+
     return (
         <>
             <Header
@@ -276,7 +279,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                     { value: 'Infos du topo', action: () => setCurrentDisplay('INFO') },
                     { value: 'Marche d\'approche', action: () => setCurrentDisplay('APPROACH') },
                     { value: 'Gestionnaires du spot', action: () => setCurrentDisplay('MANAGEMENT') },
-                    { value: 'Valider le topo', action: () => setDisplayModalSubmitTopo(!displayModalSubmitTopo) },
+                    { value: 'Valider le topo', action: () => setDisplayModalSubmitTopo(!displayModalSubmitTopo), disabled: progress() !== 100 },
                     { value: 'Supprimer le topo', action: () => setDisplayModalDeleteTopo(!displayModalDeleteTopo) },
                 ]}
                 displayMapTools
@@ -287,7 +290,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                 onParkingClick={() => setCurrentTool(currentTool === 'PARKING' ? undefined : 'PARKING')}
                 onWaypointClick={() => setCurrentTool(currentTool === 'WAYPOINT' ? undefined : 'WAYPOINT')}
             >
-                <BuilderProgressIndicator topo={props.topoQuark} />
+                <BuilderProgressIndicator topo={props.topoQuark} progress={progress()} />
             </Header>
 
             <div className="h-content md:h-full relative flex flex-row md:overflow-hidden">
@@ -298,6 +301,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                     onBoulderSelect={toggleBoulderSelect}
                     onTrackSelect={toggleTrackSelect}
                     onSubmit={() => setDisplayModalSubmitTopo(true)}
+                    activateSubmission={progress() === 100}
                 />
                 <Show when={() => [device === 'MOBILE', displaySectorSlideover] as const}>
                     {() => (

@@ -1,7 +1,7 @@
 import React, {
     useRef, useState,
 } from 'react';
-import { Icon } from '../../atoms/Icon';
+import { Icon } from 'components';
 import { TextInput } from './TextInput';
 
 interface SelectProps {

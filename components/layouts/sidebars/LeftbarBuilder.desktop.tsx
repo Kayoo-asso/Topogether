@@ -9,6 +9,7 @@ interface LeftbarBuilderDesktopProps {
     selectedBoulder: SelectQuarkNullable<Boulder>,
     onBoulderSelect: (boulderQuark: Quark<Boulder>) => void,
     onTrackSelect: (trackQuark: Quark<Track>, boulderQuark: Quark<Boulder>) => void,
+    activateSubmission: boolean
     onSubmit: () => void,
 }
 
@@ -16,8 +17,8 @@ export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = watch
 
     return (
         <div className='bg-white border-r border-grey-medium min-w-[280px] w-[280px] h-full hidden md:flex flex-col px-2 py-10 z-500'>
-            
-            <SectorListBuilder 
+
+            <SectorListBuilder
                 topoQuark={props.topoQuark}
                 boulderOrder={props.boulderOrder}
                 selectedBoulder={props.selectedBoulder}
@@ -28,6 +29,7 @@ export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = watch
             <div className='px-6 text-center'>
                 <Button
                     content='Valider le topo'
+                    activated={props.activateSubmission}
                     onClick={props.onSubmit}
                 />
             </div>
