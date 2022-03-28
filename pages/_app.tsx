@@ -57,7 +57,7 @@ const CustomApp = ({ Component, pageProps, session }: Props) => {
         <DeviceContext.Provider value={device}>
           <div ref={observe} className="w-screen h-screen flex items-end flex-col">
             <div id="content" className="flex-1 w-screen absolute bg-grey-light flex flex-col h-full md:h-screen overflow-hidden">
-
+              {/* TODO */}
               {/* <ProtectedRoute router={router}> */}
               <Component {...pageProps} />
               {/* </ProtectedRoute> */}

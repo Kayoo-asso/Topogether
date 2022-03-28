@@ -9,21 +9,16 @@ import { api } from 'helpers/services';
 interface UserActionDropdownProps {
     topo: LightTopo;
     position: { x: number, y: number };
+    onSendToValidationClick: () => void,
+    onDeleteClick: () => void;
 }
 
 export const UserActionDropdown: React.FC<UserActionDropdownProps> = React.memo((props: UserActionDropdownProps) => {
     const router = useRouter();
 
-    const [displayModalSubmit, setDisplayModalSubmit] = useState(false);
-    const [displayModalDelete, setDisplayModalDelete] = useState(false);
-
     const openTopo = useCallback(() => router.push(`/topo/${props.topo.id}`), [router, props.topo]);
     //TODO
     const downloadTopo = useCallback(() => console.log('Downloading the topo...'), []);
-
-    const sendTopoToValidation = useCallback(async () => await api.setTopoStatus(props.topo.id, TopoStatus.Submitted), []);
-    //TODO
-    const deleteTopo = useCallback(() => api.deleteTopo(props.topo), []);
 
     return (
         <>
@@ -34,23 +29,11 @@ export const UserActionDropdown: React.FC<UserActionDropdownProps> = React.memo(
                     { value: 'Ouvrir', action: openTopo },
                     { value: 'Télécharger', action: downloadTopo },
                     ...(props.topo.status === TopoStatus.Draft
-                        ? [{ value: 'Envoyer en validation', action: () => setDisplayModalSubmit(true) }]
+                        ? [{ value: 'Envoyer en validation', action: props.onSendToValidationClick }]
                         : []),
-                    { value: 'Supprimer', action: () => setDisplayModalDelete(true) },
+                    { value: 'Supprimer', action: props.onDeleteClick },
                 ]}
             />
-            {displayModalSubmit &&
-                <ModalSubmitTopo 
-                    onSubmit={sendTopoToValidation} 
-                    onClose={() => setDisplayModalSubmit(false)}    
-                />
-            }
-            {displayModalDelete &&
-                <ModalDeleteTopo 
-                    onDelete={deleteTopo}
-                    onClose={() => setDisplayModalDelete(false)}
-                />
-            }
         </>
     );
 }, equal);

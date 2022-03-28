@@ -1,7 +1,6 @@
 import { Button, Modal } from 'components';
 import { staticUrl } from 'helpers';
 import NextImage from 'next/image';
-import { useRouter } from 'next/router';
 import React from 'react';
 
 interface ModalSubmitTopoProps {
@@ -10,7 +9,6 @@ interface ModalSubmitTopoProps {
 }
 
 export const ModalSubmitTopo: React.FC<ModalSubmitTopoProps> = (props: ModalSubmitTopoProps) => {
-    const router = useRouter();
 
     return (
         <Modal onClose={props.onClose} >

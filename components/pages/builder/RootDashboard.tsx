@@ -3,6 +3,8 @@ import { AddTopoCard, TopoCardList, HeaderDesktop, LeftbarDesktop, Button } from
 import { useContextMenu } from 'helpers';
 import { LightTopo, TopoStatus } from 'types';
 import { UserActionDropdown } from 'components/molecules/cards/UserActionDropdown';
+import { ModalDeleteTopo, ModalSubmitTopo } from 'components/organisms';
+import { api } from 'helpers/services';
 
 interface RootDashboardProps {
     lightTopos: LightTopo[],
@@ -18,6 +20,11 @@ export const RootDashboard: React.FC<RootDashboardProps> = (props: RootDashboard
     const [dropdownDisplayed, setDropdownDisplayed] = useState(false);
     const [topoDropdown, setTopoDropddown] = useState<LightTopo>();
     const [dropdownPosition, setDropdownPosition] = useState<{ x: number, y: number }>();
+
+    const [displayModalSubmit, setDisplayModalSubmit] = useState(false);
+    const [displayModalDelete, setDisplayModalDelete] = useState(false);
+    const sendTopoToValidation = useCallback(async () => await api.setTopoStatus(topoDropdown!.id, TopoStatus.Submitted), [topoDropdown]);
+    const deleteTopo = useCallback(() => api.deleteTopo(topoDropdown!), [topoDropdown]);
   
     useContextMenu(() => setDropdownDisplayed(false), ref.current);
   
@@ -88,8 +95,25 @@ export const RootDashboard: React.FC<RootDashboardProps> = (props: RootDashboard
           </div>
         </div>
         {dropdownDisplayed && topoDropdown && dropdownPosition && (
-          <UserActionDropdown position={dropdownPosition} topo={topoDropdown} />
+          <UserActionDropdown 
+            position={dropdownPosition} 
+            topo={topoDropdown}
+            onSendToValidationClick={() => setDisplayModalSubmit(true)}
+            onDeleteClick={() => setDisplayModalDelete(true)}
+          />
         )}
+        {displayModalSubmit &&
+            <ModalSubmitTopo 
+                onSubmit={sendTopoToValidation} 
+                onClose={() => setDisplayModalSubmit(false)}    
+            />
+        }
+        {displayModalDelete &&
+            <ModalDeleteTopo 
+                onDelete={deleteTopo}
+                onClose={() => setDisplayModalDelete(false)}
+            />
+        }
       </>
     );
 };
