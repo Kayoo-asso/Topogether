@@ -61,7 +61,7 @@ export const MultipleImageInput: React.FC<MultipleImageInputProps> = ({
             <ImageThumb
               key={toDisplay[index].id}
               image={toDisplay[index]}
-              tracks={new QuarkArray(props.boulder?.tracks.filter(track => track.lines.filter(line => line.imageId === toDisplay[index].id).toArray().length > 0).toArray())}
+              tracks={props.boulder?.tracks.quarks().filter(track => track().lines.filter(line => line.imageId === toDisplay[index].id).toArray().length > 0)}
               selected={toDisplay[index].id === props.selected}
               onClick={props.onImageClick}
               onDelete={props.onImageDelete}

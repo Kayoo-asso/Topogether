@@ -130,9 +130,9 @@ export class ImageService {
     const images: Image[] = []; 
     for (const [result, success] of afterUpload) {
       if (success) {
-        images.push(result);
+        images.push(result as Image);
       } else {
-        errors.push(result);
+        errors.push(result as ImageUploadError);
       }
     }
 

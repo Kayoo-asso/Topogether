@@ -6,7 +6,6 @@ import Head from 'next/head';
 import { DeviceContext, Device } from 'helpers';
 import { ShellMobile } from 'components';
 import useDimensions from 'react-cool-dimensions';
-import { useRouter } from 'next/router';
 import { getServerSession } from 'helpers/getServerSession';
 import { Session } from 'types';
 import { SessionContext } from 'components/SessionProvider';

@@ -23,7 +23,7 @@ export const computeBuilderProgress = (topo: Topo) => {
 const validateRule = (topo: Topo, rule: Rule): boolean => {
     switch (rule) {
         case 'TOPO_IMAGE':
-          return !!topo.imagePath;
+          return !!topo.image;
           case 'DESCRIPTION':
             return !!topo.description;
           case 'ROCK_TYPE':
