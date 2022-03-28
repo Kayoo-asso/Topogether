@@ -95,6 +95,9 @@ CustomApp.getInitialProps = async (context: AppContext): Promise<InitialProps> =
     req ? getServerSession(req) : Promise.resolve(null)
   ]);
 
+  // Make React DnD happy
+  resetServerContext();
+
   return { ...appProps, session, initialDevice: device };
 }
 

@@ -38,7 +38,9 @@ export function useCreateQuark<T>(value: T, options?: QuarkOptions<T>): Quark<T>
 }
 
 export function useCreateDerivation<T>(computation: () => T, deps?: React.DependencyList, options?: QuarkOptions<T>): Signal<T> {
-  return useMemo(() => derive(computation, options), deps);
+  return useMemo(() => {
+    return derive(computation, options)
+  }, deps);
 }
 
 export function useSelectSignal<T>(): SelectSignalNullable<T>;

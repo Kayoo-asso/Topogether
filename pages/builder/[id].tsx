@@ -7,7 +7,6 @@ import { RootBuilder } from 'components';
 import { editTopo } from 'helpers';
 import { getServerSession } from 'helpers/getServerSession';
 import { returnTo } from 'pages/user/login';
-import { resetServerContext } from "react-beautiful-dnd";
 
 type BuilderProps = {
   topo: TopoData,
@@ -25,7 +24,6 @@ const redirect = (destination: string) => ({
 
 export const getServerSideProps: GetServerSideProps<BuilderProps> = async ({ req, query, res }) => {
   const { id } = query;
-  resetServerContext();
   if (typeof id !== "string" || !isUUID(id)) {
     return redirect("/");
   }

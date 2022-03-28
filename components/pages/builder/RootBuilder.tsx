@@ -271,7 +271,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
     }, [topo, currentTool, selectedBoulder()]);
 
     // The derivation doesnt work, it still recompute the progress at every render
-    const progress = useCreateDerivation<number>(() => computeBuilderProgress(props.topoQuark));
+    const progress = useCreateDerivation<number>(() => computeBuilderProgress(props.topoQuark), [props.topoQuark], { name: "BuilderProgress" });
 
     return (
         <>

@@ -378,11 +378,11 @@ function readNode<T>(node: Derived<T>): T {
     if (Scope) {
         Scope.accessed.push(node);
     }
-    if (node.status !== NodeStatus.Clean && node.lastVerified < Epoch) {
+    // Active derivations keep the Tracking flag
+    if ((node.status & ~NodeStatus.Tracking) !== NodeStatus.Clean && node.lastVerified < Epoch) {
         if (node.status & NodeStatus.OnStack) {
             handleError("Quarky detected a cycle!");
         }
-        // TODO: remove once out of debug mode
         node.status |= NodeStatus.OnStack;
         runComputation(node);
         // we know the flag is set here
