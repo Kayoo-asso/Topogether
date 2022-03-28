@@ -58,8 +58,7 @@ export const TopoPreview: React.FC<TopoPreviewProps> = (props: TopoPreviewProps)
                     <CFImage
                         image={topo.image}
                         alt="image principale du topo"
-                        priority
-                        layout="fill"
+                        size='50vw'
                         objectFit="cover"
                     />
                 </div>

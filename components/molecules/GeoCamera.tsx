@@ -30,12 +30,11 @@ export const GeoCamera: React.FC<GeoCameraProps> = ({
     const [displayToolbar, setDisplayToolbar] = useState(false);
 
     const [displayItemSelectMenu, setDisplayItemSelectMenu] = useState(false);
-
     useGeolocation({
         onPosChange: (pos) => {
             const dist = distanceLatLng(coords.lat, coords.lng, pos.coords.latitude, pos.coords.longitude);
             setDistance(dist);
-            const calibrating = dist < 5 || process.env.NODE_ENV === "development";
+            const calibrating = dist > 5 && process.env.NODE_ENV !== "development";
             setIsCalibrating(calibrating);
             setCoords({
                 lat: pos.coords.latitude,

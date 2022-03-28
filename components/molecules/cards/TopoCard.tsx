@@ -52,9 +52,8 @@ export const TopoCard: React.FC<TopoCardProps> = React.memo((props: TopoCardProp
                 image={props.topo.image}
                 className="rounded-t-lg"
                 alt="topo-image"
-                layout="fill"
+                size={'25vw'}
                 objectFit="cover"
-                priority
               />
             </div>
             <div className="h-[50%] md:h-[25%] md:px-5 flex flex-row md:items-center md:justify-center">

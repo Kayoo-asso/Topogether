@@ -34,17 +34,19 @@ export const InfoSlideover: React.FC<InfoSlideoverProps> = ({
 
             <div className="absolute z-100 left-1 md:left-2 top-1 md:top-2 flex flex-row gap-6 px-6 pt-4">
                 <LikeButton
-                    item={props.topo}
+                    item={topo}
                 />
                 <DownloadButton
-                    topo={props.topo}
+                    topo={topo}
                 />
             </div>
 
             <div className='flex flex-col items-center md:items-start px-6 md:px-0 pt-5 md:pt-0'>
-                <div className='ktext-label text-center md:hidden'>
-                    Topo créé par <span className="text-main cursor-pointer">{topo.creatorPseudo}</span>
-                </div>
+                {topo.creator?.userName &&
+                    <div className='ktext-label text-center md:hidden'>
+                        Topo créé par <span className="text-main cursor-pointer">{topo.creator.userName}</span>
+                    </div>
+                }
 
                 {topo.forbidden && 
                     <div className='text-error ktext-section-title w-full text-center'>Site interdit !</div>
@@ -77,9 +79,11 @@ export const InfoSlideover: React.FC<InfoSlideoverProps> = ({
                         >
                             {parseFloat(topo.location[1].toFixed(12)) + ',' + parseFloat(topo.location[0].toFixed(12))}
                         </div>
-                        <div className='hidden md:block'>
-                            Topo créé par <span className="text-main cursor-pointer">{topo.creatorPseudo}</span>
-                        </div>
+                        {topo.creator?.userName &&
+                            <div className='hidden md:block'>
+                                Topo créé par <span className="text-main cursor-pointer">{topo.creator.userName}</span>
+                            </div>
+                        }
                     </div>
                 </div>
             </div>

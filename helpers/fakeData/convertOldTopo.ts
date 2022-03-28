@@ -8,7 +8,7 @@ export const convertOldTopo = (t: any) => {
         duration: t.approachTime,
         steps: [{
             description: t.approachDescription,
-            imagePath: undefined,
+            image: undefined,
         }]
     }];
 
@@ -53,7 +53,7 @@ export const convertOldTopo = (t: any) => {
         altitude: t.altitude,
         closestCity: t.closestCity,
         location: [t.location.lat, t.location.lng],
-        imagePath: t.imagePath,
+        image: t.image,
         status: t.status,
         type: TopoType.Boulder,
         forbidden: false,

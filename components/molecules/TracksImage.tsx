@@ -10,7 +10,7 @@ import { getMousePosInside } from '../../helpers';
 import { Quark, QuarkIter, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
 
 interface TracksImageProps {
-  image: Image,
+  image?: Image,
   tracks: QuarkIter<Quark<Track>>,
   selectedTrack?: SelectQuarkNullable<Track>,
   imageClassName?: string,
@@ -43,21 +43,21 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
 
   const selectedTrack = props.selectedTrack && props.selectedTrack();
   
-  let imgWidth;
-  let imgHeight;
-  const containerR = containerHeight > 0 ? containerWidth / containerHeight : 0;
-  const imageR = props.image.width / props.image.height;
-  if (imageR > containerR) {
-    imgWidth = containerWidth;
-    imgHeight = props.image.height * (containerWidth / props.image.width);
-  }
-  else {
-    imgHeight = containerHeight;
-    imgWidth = props.image.width * (containerHeight / props.image.height);
-  }
-  const rx = props.image.width != 0
-  ? imgWidth / props.image.width
-  : 1;
+  // let imgWidth;
+  // let imgHeight;
+  // const containerR = containerHeight > 0 ? containerWidth / containerHeight : 0;
+  // const imageR = props.image.width / props.image.height;
+  // if (imageR > containerR) {
+  //   imgWidth = containerWidth;
+  //   imgHeight = props.image.height * (containerWidth / props.image.width);
+  // }
+  // else {
+  //   imgHeight = containerHeight;
+  //   imgWidth = props.image.width * (containerHeight / props.image.height);
+  // }
+  // const rx = props.image.width != 0
+  // ? imgWidth / props.image.width
+  // : 1;
 
   const getCursorUrl = () => {
     let cursorColor = 'grey';
@@ -87,7 +87,7 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
         height: props.programmativeHeight + 'px'
       } : {}}
     >
-      <svg
+      {/* <svg
         style={{ 
           cursor: editable ? `url(${getCursorUrl()}) ${props.currentTool === 'ERASER' ? '3 7': ''}, auto` : '',
         }}
@@ -132,7 +132,7 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
         width={imgWidth}
         height={imgHeight}
         priority
-      />
+      /> */}
     </div>
   );
 });

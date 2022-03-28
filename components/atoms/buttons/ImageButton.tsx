@@ -60,7 +60,7 @@ export const ImageButton: React.FC<ImageButtonProps> = ({
         <CFImage
           image={props.image}
           alt="user generated image"
-          layout="fill"
+          size={`${containerWidth}px`}
           objectFit="contain"
         />
       </>

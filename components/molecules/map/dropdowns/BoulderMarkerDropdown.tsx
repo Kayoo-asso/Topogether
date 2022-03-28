@@ -22,7 +22,7 @@ export const BoulderMarkerDropdown: React.FC<BoulderMarkerDropdownProps> = watch
         }
     };
     //TODO
-    const addImage = useCallback(() => console.log('Downloading the image...'), []);
+    const addImage = useCallback(() => console.log('Adding image...'), []);
 
     const deleteBoulder = useCallback(() => props.deleteBoulder(props.boulder), [props.boulder]);
 

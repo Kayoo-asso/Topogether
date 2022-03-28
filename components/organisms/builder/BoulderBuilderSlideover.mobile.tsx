@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useMemo, useState } from 'react';
+import React, { Dispatch, SetStateAction, useState } from 'react';
 import {
   GradeScale, RoundButton, SlideoverMobile, TracksImage, Icon
 } from 'components';
@@ -51,14 +51,14 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
               }}
             />
           }
-          <TracksImage
+          {/* <TracksImage
             image={props.currentImage}
             tracks={boulder.tracks.quarks()}
             selectedTrack={props.selectedTrack}
             displayPhantomTracks={displayPhantomTracks}
             displayTracksDetails={!!selectedTrack?.id}
             containerClassName={props.currentImage.width/props.currentImage.height > 1 ? 'overflow-hidden rounded-t-lg' : 'h-[300px]'}
-          />
+          /> */}
           {imageToDisplayIndex < boulder.images.length - 1 && !selectedTrack &&
             <Icon 
               name="arrow-full"
@@ -110,12 +110,10 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
           {!full && (
             <div className="w-full relative h-[60px]">
               <CFImage
-                image={boulder.images[0] || staticUrl.defaultKayoo}
-                breakpoint='sm'
+                image={boulder.images[0]}
                 className="rounded-sm"
                 alt="Boulder"
-                priority
-                layout="fill"
+                size={"50vw"}
                 objectFit="contain"
               />
             </div>

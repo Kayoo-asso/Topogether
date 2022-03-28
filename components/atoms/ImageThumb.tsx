@@ -3,8 +3,7 @@ import { Image, Track, UUID } from 'types';
 // eslint-disable-next-line import/no-cycle
 import { DeleteButton } from 'components';
 import useDimensions from 'react-cool-dimensions';
-import { TracksImage } from 'components/molecules';
-import { Quark, QuarkArray, QuarkIter } from 'helpers/quarky';
+import { Quark, QuarkIter } from 'helpers/quarky';
 import { CFImage } from './CFImage';
 
 interface ImageThumbProps {
@@ -48,7 +47,7 @@ export const ImageThumb: React.FC<ImageThumbProps> = ({
           />
         </div>
       }
-      {props.tracks && 
+      {/* {props.tracks && 
         <TracksImage 
           image={props.image}
           tracks={props.tracks}
@@ -56,12 +55,13 @@ export const ImageThumb: React.FC<ImageThumbProps> = ({
           programmativeHeight={containerWidth}
           tracksWeight={1}
         />
-      }
+      } */}
       {!props.tracks && 
         <CFImage
           image={props.image}
           alt="user generated image"
           objectFit="contain"
+          size={`${containerWidth}px`}
         />
       }
     </div>

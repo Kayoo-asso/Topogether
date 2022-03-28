@@ -239,7 +239,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
 
     const handleGeoCameraCapture = useCallback(async (blob, coordinates) => {
         if (blob) {
-            const img = await blobToImage(blob);
+            const img = await blobToImage(blob); //TODO CHANGE WITH UPLOADIMAGE
             setCurrentImage(img);
             if (currentTool === 'ROCK') {
                 if (selectedBoulder()) {

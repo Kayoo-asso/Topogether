@@ -1,12 +1,7 @@
 import React, { Dispatch, SetStateAction, useMemo, useState } from 'react';
-import {
-  GradeScale, Icon, LikeButton, SlideoverMobile, TracksImage, Show,
-} from 'components';
-import {
- Boulder, Image, Track, UUID,
-} from 'types';
-import { buildBoulderGradeHistogram, staticUrl } from 'helpers';
-import { default as NextImage } from 'next/image';
+import { GradeScale, Icon, LikeButton, SlideoverMobile, TracksImage, Show } from 'components';
+import { Boulder, Image, Track, UUID } from 'types';
+import { buildBoulderGradeHistogram } from 'helpers';
 import { Quark, watchDependencies, SelectQuarkNullable } from 'helpers/quarky';
 import { TracksList } from '..';
 import { CFImage } from 'components/atoms/CFImage';
@@ -63,14 +58,14 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = wat
             />
           }
 
-          <TracksImage
+          {/* <TracksImage
             image={props.currentImage}
             tracks={boulder.tracks.quarks()}
             selectedTrack={props.selectedTrack}
             displayPhantomTracks={displayPhantomTracks}
             displayTracksDetails={!!selectedTrack?.id}
             containerClassName={props.currentImage.width / props.currentImage.height > 1 ? 'overflow-hidden rounded-t-lg h-full' : 'h-[35vh]'}
-          />
+          /> */}
 
           {imageToDisplayIndex < boulder.images.length-1 &&
             <Icon 
@@ -121,11 +116,9 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = wat
               <div className="w-full relative h-[60px]">
                 <CFImage
                   image={boulder.images[0]}
-                  breakpoint='sm'
                   className="rounded-sm"
                   alt="Boulder"
-                  priority
-                  layout="fill"
+                  size="50vw"
                   objectFit="contain"
                 />
               </div>

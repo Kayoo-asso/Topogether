@@ -49,8 +49,7 @@ export const WaypointSlide: React.FC<WaypointSlideProps> = watchDependencies(({
                     <CFImage 
                         image={waypoint.image}
                         alt="Parking"
-                        priority
-                        layout="fill"
+                        size='50vw'
                         objectFit="contain"
                     />
                 </div>
