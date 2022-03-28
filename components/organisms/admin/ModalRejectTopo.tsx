@@ -1,20 +1,14 @@
+import React from 'react';
 import { Button, Modal } from 'components';
 import { staticUrl } from 'helpers';
-import { api } from 'helpers/services';
 import NextImage from 'next/image';
-import React from 'react';
-import { LightTopo, TopoStatus } from 'types';
 
 interface ModalRejectTopoProps {
-    topo: LightTopo,
+    onReject: () => void,
     onClose: () => void,
 }
 
 export const ModalRejectTopo: React.FC<ModalRejectTopoProps> = (props: ModalRejectTopoProps) => {
-    const rejectTopo = async () => {
-        await api.setTopoStatus(props.topo.id, TopoStatus.Draft);
-        props.onClose();
-    }
 
     return (
         <Modal onClose={props.onClose} >
@@ -34,7 +28,7 @@ export const ModalRejectTopo: React.FC<ModalRejectTopoProps> = (props: ModalReje
                 <Button 
                     content='Rejeter'
                     fullWidth
-                    onClick={rejectTopo}
+                    onClick={props.onReject}
                 />
             </div>
         </Modal> 

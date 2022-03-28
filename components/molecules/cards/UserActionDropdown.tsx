@@ -1,10 +1,8 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 import { Dropdown } from 'components';
 import equal from 'fast-deep-equal/es6';
 import { LightTopo, TopoStatus } from 'types';
 import { useRouter } from 'next/router';
-import { ModalDeleteTopo, ModalSubmitTopo } from 'components/organisms';
-import { api } from 'helpers/services';
 
 interface UserActionDropdownProps {
     topo: LightTopo;
@@ -21,20 +19,18 @@ export const UserActionDropdown: React.FC<UserActionDropdownProps> = React.memo(
     const downloadTopo = useCallback(() => console.log('Downloading the topo...'), []);
 
     return (
-        <>
-            <Dropdown
-                className='w-64'
-                position={props.position}
-                options={[
-                    { value: 'Ouvrir', action: openTopo },
-                    { value: 'Télécharger', action: downloadTopo },
-                    ...(props.topo.status === TopoStatus.Draft
-                        ? [{ value: 'Envoyer en validation', action: props.onSendToValidationClick }]
-                        : []),
-                    { value: 'Supprimer', action: props.onDeleteClick },
-                ]}
-            />
-        </>
+        <Dropdown
+            className='w-64'
+            position={props.position}
+            options={[
+                { value: 'Ouvrir', action: openTopo },
+                { value: 'Télécharger', action: downloadTopo },
+                ...(props.topo.status === TopoStatus.Draft
+                    ? [{ value: 'Envoyer en validation', action: props.onSendToValidationClick }]
+                    : []),
+                { value: 'Supprimer', action: props.onDeleteClick },
+            ]}
+        />
     );
 }, equal);
 

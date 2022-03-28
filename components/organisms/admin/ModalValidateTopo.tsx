@@ -1,20 +1,14 @@
+import React from 'react';
 import { Button, Modal } from 'components';
 import { staticUrl } from 'helpers';
-import { api } from 'helpers/services';
 import NextImage from 'next/image';
-import React from 'react';
-import { LightTopo, TopoStatus } from 'types';
 
 interface ModalValidateTopoProps {
-    topo: LightTopo,
+    onValidate: () => void,
     onClose: () => void,
 }
 
 export const ModalValidateTopo: React.FC<ModalValidateTopoProps> = (props: ModalValidateTopoProps) => {
-    const validateTopo = async () => {
-        await api.setTopoStatus(props.topo.id, TopoStatus.Validated);
-        props.onClose();
-      }
 
     return (
         <Modal onClose={props.onClose} >
@@ -34,7 +28,7 @@ export const ModalValidateTopo: React.FC<ModalValidateTopoProps> = (props: Modal
                 <Button 
                     content='Valider'
                     fullWidth
-                    onClick={validateTopo}
+                    onClick={props.onValidate}
                 />
             </div>
         </Modal> 
