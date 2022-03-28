@@ -1,16 +1,19 @@
 import React, { useEffect } from 'react';
-import type { NextPage } from 'next';
+import type { GetServerSideProps, NextPage } from 'next';
 import { Error404, HeaderDesktop, Loading, RootWorldMap } from 'components';
 import { useAsyncData } from 'helpers/hooks/useAsyncData';
 import { api, auth } from 'helpers/services';
 import { useSession } from 'helpers/hooks/useSession';
 
-export async function getServerSideProps() {
+export const getServerSideProps: GetServerSideProps = async ({ req}) =>{
+
   const data = {};
+  // console.log("getServerSideProps headers on home page:", req.rawHeaders);
   return { props: { data } }
 }
 
 const WorldMapPage: NextPage = () => {
+  return null;
   const session = useSession();
   // console.log(session);
 

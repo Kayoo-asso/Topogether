@@ -10,12 +10,9 @@ export type CFImageProps = RawImageAttributes & {
     alt: string,
     style?: Omit<CSSProperties, 'objectFit'>,
     image?: Image,
-    objectFit: 'fill' | 'contain' | 'cover' | 'none' | 'scale-down',
     size: SourceSize | { raw: string },
     defaultImage?: StaticImageData,
 };
-
-
 
 type RawImageAttributes = Omit<
     DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElement>, HTMLImageElement>,
@@ -23,13 +20,9 @@ type RawImageAttributes = Omit<
 >
 
 export const CFImage: React.FC<CFImageProps> = ({ 
-    image, objectFit, size, style,
+    image, size, style,
     defaultImage = defaultKayoo,
     ...props }: CFImageProps) => {
-    const styles: CSSProperties = {
-        ...style,
-        objectFit,
-    };
     const defaultVariant = 1920; //TODO Change
     if (image) {
         const sources = VariantWidths.map(w => `${cloudflareUrl(image, w)} ${w}w`)
@@ -43,6 +36,6 @@ export const CFImage: React.FC<CFImageProps> = ({
         return <img src={src} width={width} height={height} srcSet={srcSet} style={styles} sizes={sizes} {...props} />;
     }
 
-    return <NextImage src={defaultImage} objectFit={objectFit} alt={props.alt} />
+    return <NextImage src={defaultImage} className={props.className} alt={props.alt} />
 
 }

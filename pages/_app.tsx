@@ -9,24 +9,29 @@ import useDimensions from 'react-cool-dimensions';
 import { getServerSession } from 'helpers/getServerSession';
 import { Session } from 'types';
 import { SessionContext } from 'components/SessionProvider';
+import { VariantWidth } from 'helpers/variants';
+import DeviceDetector from "device-detector-js";
 
 type CustomProps = {
-  session: Session | null
+  session: Session | null,
+  device: Device,
+  viewportWidth: number
 };
 
 type InitialProps = AppInitialProps & CustomProps;
 
 type Props = AppProps & CustomProps;
 
-const CustomApp = ({ Component, pageProps, session }: Props) => {
-  const [device, setDevice] = useState<Device>('MOBILE');
-  const { observe } = useDimensions({
-    onResize: ({ observe, unobserve, width }) => {
-      if (width > 768) { setDevice('DESKTOP'); }
-      else if (width > 640) { setDevice('TABLET'); }
-      else setDevice('MOBILE');
-    },
-  });
+const CustomApp = ({ Component, pageProps, session, device }: Props) => {
+  // const [device, setDevice] = useState<Device>('MOBILE');
+  // const { observe, width, height } = useDimensions({
+  //   onResize: ({ observe, unobserve, width }) => {
+  //     if (width > 768) { setDevice('DESKTOP'); }
+  //     else if (width > 640) { setDevice('TABLET'); }
+  //     else setDevice('MOBILE');
+  //   },
+  // });
+  console.log(`Loading App`);
 
   return (
     <>
@@ -55,11 +60,11 @@ const CustomApp = ({ Component, pageProps, session }: Props) => {
 
       <SessionContext.Provider value={session}>
         <DeviceContext.Provider value={device}>
-          <div ref={observe} className="w-screen h-screen flex items-end flex-col">
+          <div className="w-screen h-screen flex items-end flex-col">
             <div id="content" className="flex-1 w-screen absolute bg-grey-light flex flex-col h-full md:h-screen overflow-hidden">
               {/* TODO */}
               {/* <ProtectedRoute router={router}> */}
-              <Component {...pageProps} />
+              {/* <Component {...pageProps} /> */}
               {/* </ProtectedRoute> */}
 
             </div>
@@ -74,15 +79,58 @@ const CustomApp = ({ Component, pageProps, session }: Props) => {
   );
 };
 
+let firstRun = false;
 
 CustomApp.getInitialProps = async (context: AppContext): Promise<InitialProps> => {
   const req = context.ctx.req;
-  console.log("Headers of props request:", req?.headers);
+  if (!req) {
+    throw new Error()
+  }
+  console.log(`Component.displayName: ${context.Component.displayName}`)
+  console.log("firstRun:", firstRun);
+  console.log("Headers:", req.headers);
+  firstRun = true;
+
+  let viewportWidth: number | undefined = undefined;
+  if (req) {
+    if (req.headers['viewport-width']) {
+      viewportWidth = Number(req.headers['viewport-width']);
+    } else if(req.headers['user-agent']) {
+      console.log("No viewport-width header, using user-agent");
+      const detector = new DeviceDetector();
+      const device = detector.parse(req.headers['user-agent']).device?.type;
+      switch (device) {
+        case "smartphone":
+        case "portable media player":
+        case "wearable":
+        case "feature phone":
+        case "peripheral":
+        case "smart speaker":
+          viewportWidth = 640;
+        default:
+          // TODO: change
+          viewportWidth = 1024;
+      }
+    }
+  }
+  if (viewportWidth === undefined) {
+    viewportWidth = 1920;
+  }
+  const device: Device = viewportWidth < 768
+    ? "MOBILE"
+    :"DESKTOP";
+
+  if (context.ctx.res) {
+    context.ctx.res.setHeader('Accept-CH', "Viewport-Width");
+  }
+
+  console.log(`Detected device ${device} with vw ${viewportWidth}`);
+
   const [appProps, session] = await Promise.all([
     App.getInitialProps(context),
     req ? getServerSession(req) : Promise.resolve(null)
   ]);
-  return { ...appProps, session };
+  return { ...appProps, session, device, viewportWidth };
 }
 
 export default CustomApp;

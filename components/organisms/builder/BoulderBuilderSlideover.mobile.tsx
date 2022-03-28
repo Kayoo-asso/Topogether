@@ -38,7 +38,7 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
     >
       {/* BOULDER IMAGE */}
       {full && (
-        <div className="w-full bg-dark rounded-t-lg flex items-center justify-center">
+        <div className="w-full bg-dark rounded-t-lg relative">
           {imageToDisplayIndex > 0 && !selectedTrack &&
             <Icon 
               name="arrow-full"

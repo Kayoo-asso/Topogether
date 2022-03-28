@@ -43,6 +43,7 @@ export const MultipleImageInput: React.FC<MultipleImageInputProps> = ({
   // index of last image to display
   const sliceEnd = sliceStart + nbVisible;
   const toDisplay = props.images.slice(sliceStart, sliceEnd);
+
   
   return (
     <div className='flex flex-row gap-1.5 w-full'>
@@ -61,7 +62,7 @@ export const MultipleImageInput: React.FC<MultipleImageInputProps> = ({
             <ImageThumb
               key={toDisplay[index].id}
               image={toDisplay[index]}
-              tracks={props.boulder?.tracks.quarks().filter(track => track().lines.filter(line => line.imageId === toDisplay[index].id).toArray().length > 0)}
+              tracks={props.boulder?.tracks.quarks().filter(track => track().lines.find(line => line.imageId === toDisplay[index].id) !== undefined)}
               selected={toDisplay[index].id === props.selected}
               onClick={props.onImageClick}
               onDelete={props.onImageDelete}

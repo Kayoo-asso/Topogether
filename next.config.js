@@ -23,7 +23,7 @@ module.exports = {
         headers: [
           {
             key: 'Accept-CH',
-            value: 'Viewport-Width, Downlink'
+            value: 'Viewport-Width'
           }
         ],
       },

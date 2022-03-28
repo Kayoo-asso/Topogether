@@ -19,13 +19,13 @@ export const BoulderPreviewDesktop: React.FC<BoulderPreviewDesktopProps> = watch
 
     return (
         <div className='flex flex-col w-full items-center'>
-            <div className='bg-dark w-full flex flex-col items-center'>
-                {/* <TracksImage 
+            <div className='bg-dark w-full flex-1 relative'>
+                <TracksImage 
                     image={props.currentImage}
                     tracks={boulder.tracks.quarks()}
                     selectedTrack={props.selectedTrack}
                     containerClassName='h-[180px]'
-                /> */}
+                /> 
             </div>
             
             <div className='flex flex-row w-full mt-3'>

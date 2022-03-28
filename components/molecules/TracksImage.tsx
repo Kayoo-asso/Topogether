@@ -8,6 +8,7 @@ import { staticUrl } from 'helpers/globals';
 import useDimensions from 'react-cool-dimensions';
 import { getMousePosInside } from '../../helpers';
 import { Quark, QuarkIter, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
+import { CFImage } from 'components/atoms/CFImage';
 
 interface TracksImageProps {
   image?: Image,
@@ -78,6 +79,10 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
     }
     return cursorUrl;
   };
+
+  return (
+    <CFImage alt={"Rocher avec tracé de voies"} image={props.image} defaultVariant={1200} objectFit='contain' size='30vw' />
+  )
 
   return (
     <div
