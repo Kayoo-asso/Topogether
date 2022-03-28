@@ -20,7 +20,7 @@ export const ManagementFormSlideover: React.FC<ManagementFormSlideoverProps> = (
 
     return (
         <>
-            {device === 'MOBILE' &&
+            {device === 'mobile' &&
                 <SlideoverMobile
                     open
                     onlyFull
@@ -35,7 +35,7 @@ export const ManagementFormSlideover: React.FC<ManagementFormSlideoverProps> = (
                     </div>
                 </SlideoverMobile>
             }
-            {device !== 'MOBILE' && 
+            {device !== 'mobile' && 
                 <SlideoverLeftDesktop 
                     title="Gestionnaires du spot" 
                     className={props.className} 

@@ -160,7 +160,7 @@ export const InfoSlideover: React.FC<InfoSlideoverProps> = ({
 
     return (
         <>
-            {device === 'MOBILE' &&
+            {device === 'mobile' &&
                 <SlideoverMobile
                     open
                     initialFull={true}
@@ -170,7 +170,7 @@ export const InfoSlideover: React.FC<InfoSlideoverProps> = ({
                     {infosContent()}
                 </SlideoverMobile>
             }
-            {device !== 'MOBILE' && 
+            {device !== 'mobile' && 
                 <SlideoverLeftDesktop 
                     open={open}
                     onClose={props.onClose}

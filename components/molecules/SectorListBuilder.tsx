@@ -6,7 +6,7 @@ import { Boulder, Topo, Track, UUID } from 'types';
 import { DragDropContext, Draggable, Droppable, DropResult } from 'react-beautiful-dnd';
 import { useSession } from 'helpers/hooks/useSession';
 
-interface SectorListBuilderProps {
+export interface SectorListBuilderProps {
     topoQuark: Quark<Topo>,
     boulderOrder: Map<UUID, number>,
     selectedBoulder: SelectQuarkNullable<Boulder>,

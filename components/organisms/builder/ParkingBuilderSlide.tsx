@@ -21,7 +21,7 @@ export const ParkingBuilderSlide: React.FC<ParkingBuilderSlideProps> = watchDepe
 
     return (
         <>
-            {device === 'MOBILE' &&
+            {device === 'mobile' &&
                 <SlideoverMobile
                     open
                     initialFull={true}
@@ -36,7 +36,7 @@ export const ParkingBuilderSlide: React.FC<ParkingBuilderSlideProps> = watchDepe
                     </div>
                 </SlideoverMobile>
             }
-            {device !== 'MOBILE' && 
+            {device !== 'mobile' && 
                 <SlideagainstRightDesktop
                     open
                     onClose={props.onClose}

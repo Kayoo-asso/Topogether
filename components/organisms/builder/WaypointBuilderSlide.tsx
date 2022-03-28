@@ -21,7 +21,7 @@ export const WaypointBuilderSlide: React.FC<WaypointBuilderSlideProps> = watchDe
 
     return (
         <>
-            {device === 'MOBILE' &&
+            {device === 'mobile' &&
                 <SlideoverMobile
                     open
                     initialFull={true}
@@ -36,7 +36,7 @@ export const WaypointBuilderSlide: React.FC<WaypointBuilderSlideProps> = watchDe
                     </div>
                 </SlideoverMobile>
             }
-            {device !== 'MOBILE' && 
+            {device !== 'mobile' && 
                 <SlideagainstRightDesktop
                     open
                     onClose={props.onClose}

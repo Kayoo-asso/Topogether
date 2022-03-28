@@ -20,7 +20,7 @@ export const AccessFormSlideover: React.FC<AccessFormSlideoverProps> = ({
 
     return (
         <>
-            {device === 'MOBILE' &&
+            {device === 'mobile' &&
                 <SlideoverMobile
                     open
                     onlyFull
@@ -35,7 +35,7 @@ export const AccessFormSlideover: React.FC<AccessFormSlideoverProps> = ({
                     </div>
                 </SlideoverMobile>
             }
-            {device !== 'MOBILE' && 
+            {device !== 'mobile' && 
                 <SlideoverLeftDesktop 
                     title="Marche d'approche"  
                     open={open}

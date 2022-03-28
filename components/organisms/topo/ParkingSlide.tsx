@@ -51,7 +51,7 @@ export const ParkingSlide: React.FC<ParkingSlideProps> = watchDependencies(({
                         image={parking.image}
                         alt="Parking"
                         sizeHint='50vw'
-                        objectFit="contain"
+                        className="object-contain"
                     />
                 </div>
                 
@@ -70,7 +70,7 @@ export const ParkingSlide: React.FC<ParkingSlideProps> = watchDependencies(({
 
     return (
         <>
-            {device === 'MOBILE' &&
+            {device === 'mobile' &&
                 <SlideoverMobile
                     open
                     initialFull={true}
@@ -80,7 +80,7 @@ export const ParkingSlide: React.FC<ParkingSlideProps> = watchDependencies(({
                     {parkingContent()}
                 </SlideoverMobile>
             }
-            {device !== 'MOBILE' && 
+            {device !== 'mobile' && 
                 <SlideagainstRightDesktop
                     open
                     onClose={props.onClose}

@@ -9,6 +9,7 @@ interface ModalRenameSectorProps {
 }
 
 export const ModalRenameSector: React.FC<ModalRenameSectorProps> = (props: ModalRenameSectorProps) => {
+    // console.log(props.sector);
     const sector = props.sector();
 
     const [sectorNameError, setSectorNameError] = useState<string>();

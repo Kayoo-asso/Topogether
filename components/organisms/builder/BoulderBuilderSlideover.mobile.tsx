@@ -111,10 +111,9 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
             <div className="w-full relative h-[60px]">
               <CFImage
                 image={boulder.images[0]}
-                className="rounded-sm"
+                className="rounded-sm object-contain"
                 alt="Boulder"
                 sizeHint={"50vw"}
-                objectFit="contain"
               />
             </div>
           )}

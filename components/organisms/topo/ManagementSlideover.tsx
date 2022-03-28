@@ -57,7 +57,7 @@ export const ManagementSlideover: React.FC<ManagementSlideoverProps> = ({
                                     image={manager.image}
                                     alt={"Logo gestionnaire "+managerTab}
                                     sizeHint='30vw'
-                                    objectFit="contain"
+                                    className="object-contain"
                                 />
                             </div>
                         }
@@ -96,7 +96,7 @@ export const ManagementSlideover: React.FC<ManagementSlideoverProps> = ({
 
     return (
         <>
-            {device === 'MOBILE' &&
+            {device === 'mobile' &&
                 <SlideoverMobile
                     open
                     initialFull={true}
@@ -106,7 +106,7 @@ export const ManagementSlideover: React.FC<ManagementSlideoverProps> = ({
                     {managementContent()}
                 </SlideoverMobile>
             }
-            {device !== 'MOBILE' && 
+            {device !== 'mobile' && 
                 <SlideoverLeftDesktop 
                     title={"Gestionnaire"+(props.managers.length > 1 ? "s" : "")+" du spot"} 
                     open={open}

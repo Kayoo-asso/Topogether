@@ -67,10 +67,9 @@ export const AccessSlideover: React.FC<AccessSlideoverProps> = ({
                                 <div className="w-auto relative mt-2 h-[200px]">
                                     <CFImage
                                         image={step.image}
-                                        className="rounded-lg"
+                                        className="rounded-lg object-contain"
                                         alt={"Marche d'approche étape "+index}
                                         sizeHint="90vw"
-                                        objectFit="contain"
                                     />
                                 </div>
                             }
@@ -83,7 +82,7 @@ export const AccessSlideover: React.FC<AccessSlideoverProps> = ({
 
     return (
         <>
-            {device === 'MOBILE' &&
+            {device === 'mobile' &&
                 <SlideoverMobile
                     open
                     initialFull={true}
@@ -93,7 +92,7 @@ export const AccessSlideover: React.FC<AccessSlideoverProps> = ({
                     {approachContent()}
                 </SlideoverMobile>
             }
-            {device !== 'MOBILE' && 
+            {device !== 'mobile' && 
                 <SlideoverLeftDesktop 
                     title={"Marche"+(props.accesses.length > 1 ? "s" : "")+" d'approche"}
                     open={open}

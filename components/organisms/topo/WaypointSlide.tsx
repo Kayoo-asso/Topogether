@@ -50,7 +50,7 @@ export const WaypointSlide: React.FC<WaypointSlideProps> = watchDependencies(({
                         image={waypoint.image}
                         alt="Parking"
                         sizeHint='50vw'
-                        objectFit="contain"
+                        className="object-contain"
                     />
                 </div>
 
@@ -64,7 +64,7 @@ export const WaypointSlide: React.FC<WaypointSlideProps> = watchDependencies(({
 
     return (
         <>
-            {device === 'MOBILE' &&
+            {device === 'mobile' &&
                 <SlideoverMobile
                     open
                     initialFull={true}
@@ -74,7 +74,7 @@ export const WaypointSlide: React.FC<WaypointSlideProps> = watchDependencies(({
                     {waypointContent()}
                 </SlideoverMobile>
             }
-            {device !== 'MOBILE' && 
+            {device !== 'mobile' && 
                 <SlideagainstRightDesktop
                     open
                     onClose={props.onClose}
