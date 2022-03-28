@@ -37,3 +37,30 @@ export const Variants = {
         xl: "xl11", // 1152 x 1152
     }
 }
+
+const size = (width: number, height: number) => ({ width, height });
+
+export const VariantSizes = {
+    "16:9": {
+        sm: size(854, 460),
+        md: size(1366, 768),
+        lg: size(1600, 900),
+        xl: size(2048, 1152),
+    },
+    "9:16": {
+        sm: size(480, 854),
+        md: size(768, 1366),
+        lg: size(900, 1600),
+        xl: size(1152, 2048)
+    }
+}
+
+export const VariantWidths = [16, 32, 64, 96, 128, 256, 384, 640, 750, 828, 1080, 1200, 1920, 2048, 3840] as const;
+export type VariantWidth = typeof VariantWidths[number]
+
+type VW<W extends number> = `${W}vw`;
+type PX<W extends number> = `${W}px`;
+export type ViewportWidth = VW<number>;
+export type PixelWidth = PX<number>;
+
+export type SourceSize = ViewportWidth | PixelWidth;

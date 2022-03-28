@@ -20,10 +20,6 @@ CREATE TYPE public.contributor_role as ENUM('CONTRIBUTOR', 'ADMIN');
 
 -- CREATE TYPE public.orientation AS ENUM('N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW');
 
-CREATE TYPE public.img_ratio AS ENUM(
-    '16:9', '9:16', '4:3', '3:4', '1:1'
-);
-
 CREATE TYPE public.grade AS ENUM(
     '3', '3+',
     '4', '4+',
@@ -40,7 +36,7 @@ CREATE TYPE public.grade_category as ENUM(
 
 create type public.img as (
     id uuid,
-    ratio public.img_ratio
+    ratio double precision
 );
 
 -- CREATE TYPE public.rating AS ENUM('1', '2', '3', '4', '5');

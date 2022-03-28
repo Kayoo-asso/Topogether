@@ -78,6 +78,7 @@ const CustomApp = ({ Component, pageProps, session }: Props) => {
 
 CustomApp.getInitialProps = async (context: AppContext): Promise<InitialProps> => {
   const req = context.ctx.req;
+  console.log("Headers of props request:", req?.headers);
   const [appProps, session] = await Promise.all([
     App.getInitialProps(context),
     req ? getServerSession(req) : Promise.resolve(null)

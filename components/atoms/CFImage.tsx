@@ -1,24 +1,44 @@
-import { Breakpoint, Image } from "types"
-import NextImage from "next/image";
-import type {
-    ImageProps as NextImageProps
-} from "next/image";
-import { staticUrl } from "helpers";
-import { useBreakpoint } from "helpers/hooks/useBreakpoints";
+import { Image } from "types"
+import { SourceSize, VariantWidth, VariantWidths } from "helpers/variants";
 import { cloudflareUrl } from "helpers/cloudflareUrl";
+import { CSSProperties, DetailedHTMLProps, ImgHTMLAttributes } from "react";
+import defaultKayoo from 'public/assets/img/Kayoo_defaut_image.png';
+import NextImage from 'next/image';
 
-export interface CFImageProps extends Omit<NextImageProps, 'src'> {
+
+export type CFImageProps = RawImageAttributes & {
+    alt: string,
+    style?: Omit<CSSProperties, 'objectFit'>,
     image?: Image,
-    breakpoint?: Breakpoint
-}
+    defaultVariant: VariantWidth,
+    objectFit: 'fill' | 'contain' | 'cover' | 'none' | 'scale-down',
+    size: SourceSize | { raw: string }
+};
 
-export const CFImage: React.FC<CFImageProps> = ({ image, breakpoint, ...props }) => {
-    const bp = useBreakpoint();
-    let url = staticUrl.defaultKayoo;
+
+
+type RawImageAttributes = Omit<
+    DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElement>, HTMLImageElement>,
+    'src' | 'srcset' | 'width' | 'height' | 'sizes' | 'style'
+>
+
+export const CFImage: React.FC<CFImageProps> = ({ image, defaultVariant, objectFit, size, style, ...props }) => {
+    const styles: CSSProperties = {
+        ...style,
+        objectFit,
+    };
     if (image) {
-        url = cloudflareUrl(image, breakpoint ?? bp);
+        const sources = VariantWidths.map(w => `${cloudflareUrl(image, w)} ${w}w`)
+        const width = defaultVariant;
+        const height = width / image.ratio;
+        const srcSet = sources.join();
+        const src = cloudflareUrl(image, defaultVariant);
+        const sizes = typeof size === "string"
+            ? size
+            : size.raw;
+        return <img src={src} width={width} height={height} srcSet={srcSet} style={styles} sizes={sizes} {...props} />;
     }
 
-    return <NextImage src={url} {...props} />
+    return <NextImage src={defaultKayoo} objectFit={objectFit} alt={props.alt} />
 
 }

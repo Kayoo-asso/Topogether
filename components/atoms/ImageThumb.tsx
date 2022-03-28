@@ -4,12 +4,12 @@ import { Image, Track, UUID } from 'types';
 import { DeleteButton } from 'components';
 import useDimensions from 'react-cool-dimensions';
 import { TracksImage } from 'components/molecules';
-import { QuarkArray } from 'helpers/quarky';
+import { Quark, QuarkArray, QuarkIter } from 'helpers/quarky';
 import { CFImage } from './CFImage';
 
 interface ImageThumbProps {
   image: Image,
-  tracks?: QuarkArray<Track>
+  tracks?: QuarkIter<Quark<Track>>
   selected?: boolean,
   onDelete?: (id: UUID) => void,
   onClick?: (id: UUID) => void,
@@ -51,7 +51,7 @@ export const ImageThumb: React.FC<ImageThumbProps> = ({
       {props.tracks && 
         <TracksImage 
           image={props.image}
-          tracks={props.tracks.quarks()}
+          tracks={props.tracks}
           displayTrackOrderIndexes={false}
           programmativeHeight={containerWidth}
           tracksWeight={1}
@@ -61,7 +61,6 @@ export const ImageThumb: React.FC<ImageThumbProps> = ({
         <CFImage
           image={props.image}
           alt="user generated image"
-          layout="fill"
           objectFit="contain"
         />
       }

@@ -1,5 +1,5 @@
 import Compressor from "compressorjs";
-import { Image, UUID, Result, Ratio } from "types";
+import { Image, UUID, Result } from "types";
 
 // -- Exports for the API route --
 export type ImageUploadResult = {
@@ -143,9 +143,6 @@ export class ImageService {
   }
 }
 
-const ratios: Ratio[] = ['16:9', '9:16', '4:3', '3:4', '1:1'];
-const numericRatios = [16 / 9, 9 / 16, 4 / 3, 3 / 4, 1];
-
 async function upload(file: File, info: UploadInfo): Promise<[Image, true] | [ImageUploadError, false]> {
   const data = new FormData();
   data.append("file", file);
@@ -163,17 +160,7 @@ async function upload(file: File, info: UploadInfo): Promise<[Image, true] | [Im
     return [error, false];
   }
 
-  const r = width / height;
-  let minDistance = Math.abs(numericRatios[0] - r);
-  let ratioIndex = 0;
-  for (let i = 1; i < numericRatios.length; i++) {
-    const distance = Math.abs(numericRatios[i] - r);
-    if (distance < minDistance) {
-      minDistance = distance;
-      ratioIndex = i;
-    }
-  }
-  const ratio = ratios[ratioIndex];
+  const ratio = width / height;
 
   const img: Image = {
     id: info.id,

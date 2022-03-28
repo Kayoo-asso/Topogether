@@ -6,7 +6,7 @@ export const images: Image[] = [
     // Topo image
     {
         id: uuid(),
-        ratio: '16:9',
+        ratio: 16/9,
     },
 ]
 
