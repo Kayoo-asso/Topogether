@@ -11,6 +11,7 @@ import { Session } from 'types';
 import { SessionContext } from 'components/SessionProvider';
 import isMobile from 'ismobilejs';
 import { useFirstRender } from 'helpers/hooks/useFirstRender';
+import { resetServerContext } from 'react-beautiful-dnd';
 
 type CustomProps = {
   session: Session | null,

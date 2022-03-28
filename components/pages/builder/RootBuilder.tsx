@@ -7,11 +7,12 @@ import {
     ModalSubmitTopo, ModalDeleteTopo, GeoCamera, Drawer, LeftbarBuilderDesktop, BoulderBuilderSlideagainstDesktop,
     ParkingBuilderSlide, AccessFormSlideover, WaypointBuilderSlide, ModalRenameSector, ModalDelete, SectorAreaMarkerDropdown, BuilderProgressIndicator,
 } from 'components';
-import { blobToImage, DeviceContext, sortBoulders, useContextMenu, createTrack, createBoulder, createParking, createWaypoint, createSector, deleteSector, deleteBoulder, deleteParking, deleteWaypoint, toLatLng, computeBuilderProgress } from 'helpers';
+import { blobToImage, DeviceContext, sortBoulders, useContextMenu, createTrack, createBoulder, createParking, createWaypoint, createSector, deleteSector, deleteBoulder, deleteParking, deleteWaypoint, toLatLng, useDevice, computeBuilderProgress } from 'helpers';
 import { Boulder, GeoCoordinates, Image, MapToolEnum, Parking, Sector, Track, Waypoint, Topo, Profile, Session, isUUID, TopoStatus } from 'types';
 import { Quark, QuarkIter, useCreateDerivation, useLazyQuarkyEffect, useQuarkyCallback, useSelectQuark, watchDependencies } from 'helpers/quarky';
 import { useRouter } from 'next/router';
 import { api } from 'helpers/services';
+import { useFirstRender } from 'helpers/hooks/useFirstRender';
 
 interface RootBuilderProps {
     topoQuark: Quark<Topo>,
@@ -21,16 +22,16 @@ interface RootBuilderProps {
 export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props: RootBuilderProps) => {
     const router = useRouter();
     const { b: bId } = router.query; // Get boulder id from url if selected 
-    const firstRender = useRef(true);
-    const device = useContext(DeviceContext);
-
+    const firstRender = useFirstRender();
+    const device = useDevice();
+    
     const topo = props.topoQuark();
     const sectors = useMemo(() => topo.sectors?.quarks(), [topo.sectors]) || new QuarkIter<Quark<Parking>>([]);
     const boulders = useMemo(() => topo.boulders?.quarks(), [topo.boulders]) || new QuarkIter<Quark<Boulder>>([])
     const parkings = useMemo(() => topo.parkings?.quarks(), [topo.parkings]) || new QuarkIter<Quark<Parking>>([]);
     const waypoints = useMemo(() => topo.waypoints?.quarks(), [topo.waypoints]) || new QuarkIter<Quark<Waypoint>>([]);
     const boulderOrder = useCreateDerivation(() => sortBoulders(topo.sectors, topo.lonelyBoulders));
-
+    
     const [currentTool, setCurrentTool] = useState<MapToolEnum>();
     const [currentImage, setCurrentImage] = useState<Image>();
     const selectedSector = useSelectQuark<Sector>();
@@ -114,15 +115,16 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
         selectedTrack.select(undefined);
         selectedParking.select(undefined);
         selectedWaypoint.select(undefined);
-        if (selectedBoulder()?.id === boulderQuark().id) selectedBoulder.select(undefined);
+        if (selectedBoulder.quark() === boulderQuark) {
+            selectedBoulder.select(undefined);
+        }
         else {
             setCurrentImage(boulderQuark().images[0]);
             selectedBoulder.select(boulderQuark);
         }
     }, [selectedBoulder]);
     // Hack: select boulder from query parameter
-    if (firstRender.current) {
-        firstRender.current = false;
+    if (firstRender) {
         if (typeof bId === "string" && isUUID(bId)) {
             const boulder = boulders.find((b) => b().id === bId)();
             if (boulder) toggleBoulderSelect(boulder);
@@ -303,7 +305,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                     onSubmit={() => setDisplayModalSubmitTopo(true)}
                     activateSubmission={progress() === 100}
                 />
-                <Show when={() => [device === 'MOBILE', displaySectorSlideover] as const}>
+                <Show when={() => [device === 'mobile', displaySectorSlideover] as const}>
                     {() => (
                         <SectorBuilderSlideoverMobile
                             topoQuark={props.topoQuark}
@@ -393,7 +395,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                     boundsTo={boulders.toArray().map(b => b().location).concat(parkings.toArray().map(p => p().location))}
                 />
 
-                <Show when={() => [device !== 'MOBILE', selectedTrack.quark()] as const}>
+                <Show when={() => [device !== 'mobile', selectedTrack.quark()] as const}>
                     {([, track]) => (
                         <TrackFormSlideagainstDesktop
                             track={track}
@@ -408,7 +410,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
 
                 <Show when={() => selectedBoulder.quark()}>
                     {(boulder) => {
-                        if (device === 'MOBILE') {
+                        if (device === 'mobile') {
                             return (
                                 <BoulderBuilderSlideoverMobile
                                     boulder={boulder}
@@ -541,7 +543,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                 }
             </Show>
 
-            <Show when={() => [(device !== 'MOBILE' || displayDrawer), selectedBoulder(), selectedTrack()] as const}>
+            <Show when={() => [(device !== 'mobile' || displayDrawer), selectedBoulder(), selectedTrack()] as const}>
                 {([, sBoulder, sTrack]) => (
                     <Drawer
                         image={sBoulder.images.find((img) => img.id === sTrack.lines.lazy().toArray()[0]?.imageId) || currentImage!}

@@ -11,7 +11,7 @@ export type CFImageProps = RawImageAttributes & {
     alt: string,
     style?: Omit<CSSProperties, 'objectFit'>,
     image?: Image,
-    size: SourceSize | { raw: string },
+    sizeHint: SourceSize | { raw: string },
     defaultImage?: StaticImageData,
 };
 
@@ -21,7 +21,7 @@ type RawImageAttributes = Omit<
 >
 
 export const CFImage: React.FC<CFImageProps> = ({ 
-    image, size, style,
+    image, sizeHint, style,
     defaultImage = defaultKayoo,
     ...props }: CFImageProps) => {
     const device = useDevice()
@@ -36,9 +36,9 @@ export const CFImage: React.FC<CFImageProps> = ({
         const height = width / image.ratio;
         const srcSet = sources.join();
         const src = cloudflareUrl(image, defaultVariant);
-        const sizes = typeof size === "string"
-            ? size
-            : size.raw;
+        const sizes = typeof sizeHint === "string"
+            ? sizeHint
+            : sizeHint.raw;
         return <img src={src} width={width} height={height} srcSet={srcSet} style={style} sizes={sizes} {...props} />;
     }
 

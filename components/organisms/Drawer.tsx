@@ -128,20 +128,20 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies((props: DrawerPro
     <>
       <div className="absolute top-0 bg-black bg-opacity-90 h-full flex flex-col z-1000 w-full md:w-[calc(100%-600px)]">
 
-        <div className="flex-1 flex items-center relative justify-center">
-          {/* <TracksImage
+        <div className="flex-1 h-contentPlusShell flex items-center justify-center">
+          <TracksImage
+            sizeHint='100vw'
             image={props.image}
             tracks={displayOtherTracks ? props.tracks.quarks() : new QuarkIter([props.selectedTrack.quark()!])}
             selectedTrack={props.selectedTrack}
             currentTool={selectedTool}
             editable
             displayTracksDetails
-            containerClassName={props.image.width >= props.image.height ? 'h-[93vh]' : 'h-[93vh]'}
             onImageClick={(pos) => addPointToLine(pos)}
             onPointClick={(pointType, index) => {
               if (selectedTool === 'ERASER') deletePointToLine(pointType, index);
             }}
-          /> */}
+          />
         </div>
 
         <Toolbar

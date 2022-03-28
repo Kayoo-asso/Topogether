@@ -69,7 +69,7 @@ export const AccessSlideover: React.FC<AccessSlideoverProps> = ({
                                         image={step.image}
                                         className="rounded-lg"
                                         alt={"Marche d'approche étape "+index}
-                                        size="90vw"
+                                        sizeHint="90vw"
                                         objectFit="contain"
                                     />
                                 </div>

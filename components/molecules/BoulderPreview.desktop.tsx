@@ -8,7 +8,7 @@ interface BoulderPreviewDesktopProps {
     selectedTrack: SelectQuarkNullable<Track>,
     displayAddButton?: boolean,
     currentImage?: Image,
-    setCurrentImage: Dispatch<SetStateAction<Image | undefined>>, 
+    setCurrentImage: Dispatch<SetStateAction<Image | undefined>>,
 }
 
 export const BoulderPreviewDesktop: React.FC<BoulderPreviewDesktopProps> = watchDependencies(({
@@ -16,20 +16,19 @@ export const BoulderPreviewDesktop: React.FC<BoulderPreviewDesktopProps> = watch
     ...props
 }: BoulderPreviewDesktopProps) => {
     const boulder = props.boulder();
-
     return (
         <div className='flex flex-col w-full items-center'>
-            <div className='bg-dark w-full flex-1 relative'>
-                <TracksImage 
-                    image={props.currentImage}
-                    tracks={boulder.tracks.quarks()}
-                    selectedTrack={props.selectedTrack}
-                    containerClassName='h-[180px]'
-                /> 
-            </div>
-            
+            <TracksImage
+            // TODO: add proper max-h- constraint for images that are higher than large
+                className='bg-dark w-full max-h-[30vh]'
+                sizeHint='300px'
+                image={props.currentImage}
+                tracks={boulder.tracks.quarks()}
+                selectedTrack={props.selectedTrack}
+            />
+
             <div className='flex flex-row w-full mt-3'>
-                <MultipleImageInput 
+                <MultipleImageInput
                     images={boulder.images}
                     boulder={boulder}
                     selected={props.currentImage?.id}
@@ -44,10 +43,10 @@ export const BoulderPreviewDesktop: React.FC<BoulderPreviewDesktopProps> = watch
                     }}
                     onImageDelete={(id) => {
                         const newImages = props.boulder().images.filter((img) => img.id !== id);
-                        props.boulder.set({
-                            ...boulder,
-                            images: newImages,
-                        })
+                        props.boulder.set(prev => ({
+                            ...prev,
+                            images: [...prev.images, ...newImages],
+                        }))
                     }}
                 />
             </div>

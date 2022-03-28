@@ -146,7 +146,7 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
           onBoulderSelect={toggleBoulderSelect}
           onTrackSelect={toggleTrackSelect}
         />
-        <Show when={() => [device === 'MOBILE', displaySectorSlideover] as const}>
+        <Show when={() => [device === 'mobile', displaySectorSlideover] as const}>
           {() => (
             <SectorSlideoverMobile 
               topoQuark={props.topoQuark}
@@ -212,7 +212,7 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
           boundsTo={boulders.toArray().map(b => b().location).concat(parkings.toArray().map(p => p().location))}
         />       
 
-        <Show when={() => [device !== 'MOBILE', selectedTrack.quark()] as const}>
+        <Show when={() => [device !== 'mobile', selectedTrack.quark()] as const}>
           {([, track]) => 
             <>
               <TrackSlideagainstDesktop 
@@ -237,7 +237,7 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
 
         <Show when={selectedBoulder.quark}>
           {(boulder) => {
-            if (device === 'MOBILE') {
+            if (device === 'mobile') {
               return (
                 <BoulderSlideoverMobile 
                   open

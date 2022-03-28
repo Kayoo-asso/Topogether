@@ -59,7 +59,7 @@ export const TopoPreview: React.FC<TopoPreviewProps> = (props: TopoPreviewProps)
                         image={topo.image}
                         className="w-full object-contain"
                         alt="image principale du topo"
-                        size='50vw'
+                        sizeHint='50vw'
                     />
                 </div>
 

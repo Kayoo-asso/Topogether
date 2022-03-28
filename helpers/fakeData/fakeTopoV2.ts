@@ -25,7 +25,7 @@ export const images: Image[] = [
     },
     {
         id: "4ccb4044-4b25-440d-576a-865dd78a3b00" as UUID,
-        ratio: 16/9
+        ratio: 9/16
     },
 ]
 

@@ -9,15 +9,17 @@ import useDimensions from 'react-cool-dimensions';
 import { getMousePosInside } from '../../helpers';
 import { Quark, QuarkIter, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
 import { CFImage } from 'components/atoms/CFImage';
+import { SourceSize } from 'helpers/variants';
+import { imageConfigDefault } from 'next/dist/server/image-config';
 
 interface TracksImageProps {
   image?: Image,
   tracks: QuarkIter<Quark<Track>>,
   selectedTrack?: SelectQuarkNullable<Track>,
-  imageClassName?: string,
-  containerClassName?: string,
-  programmativeHeight?: number,
-  canvasClassName?: string,
+  // imageClassName?: string,
+  className?: string,
+  sizeHint: SourceSize,
+  // canvasClassName?: string,
   displayTracks?: boolean,
   displayPhantomTracks?: boolean,
   displayTracksDetails?: boolean,
@@ -37,7 +39,7 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
   displayTrackOrderIndexes = true,
   tracksWeight = 2,
   editable = false,
-  containerClassName = '',
+  className = '',
   ...props
 }: TracksImageProps) => {
   const { observe, width: containerWidth, height: containerHeight } = useDimensions({});
@@ -80,8 +82,26 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
     return cursorUrl;
   };
 
+  // see: https://stackoverflow.com/questions/43806515/position-svg-elements-over-an-image
   return (
-    <CFImage alt={"Rocher avec tracé de voies"} image={props.image} objectFit='contain' size='30vw' />
+    <div className={`${className} relative inline-block`}>
+      <CFImage
+        className='h-auto object-contain'
+        sizeHint={props.sizeHint}
+        image={props.image}
+        alt={"Rocher avec tracé de voies"}
+      />
+      <svg
+        className='absolute top-0 left-0 w-full h-full'
+        viewBox={`0 0 100 ${props.image ? 100 / props.image.ratio : 100}`}
+        preserveAspectRatio='xMidYMid'
+        onClick={(e) => {
+          console.log('SVG click event:', getMousePosInside(e));
+        }}
+      >
+        <circle cx='50' cy='50' r='4' fill='white' />
+      </svg>
+    </div>
   )
 
   return (

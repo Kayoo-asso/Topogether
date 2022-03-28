@@ -61,7 +61,7 @@ export const ImageThumb: React.FC<ImageThumbProps> = ({
           image={props.image}
           alt="user generated image"
           objectFit="contain"
-          size={`${containerWidth}px`}
+          sizeHint={`${containerWidth}px`}
         />
       }
     </div>

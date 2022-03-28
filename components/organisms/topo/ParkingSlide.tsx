@@ -50,7 +50,7 @@ export const ParkingSlide: React.FC<ParkingSlideProps> = watchDependencies(({
                     <CFImage 
                         image={parking.image}
                         alt="Parking"
-                        size='50vw'
+                        sizeHint='50vw'
                         objectFit="contain"
                     />
                 </div>
