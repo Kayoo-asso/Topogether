@@ -13,7 +13,9 @@ export const createSector = (topoQuark: Quark<Topo>, creatingSector: GeoCoordina
         path: [...creatingSector],
         boulders: []
       };
+      console.log(topo.sectors);
       topo.sectors.push(newSector);
+      console.log(topo.sectors);
       sectorChanged(topoQuark, newSector.id, boulderOrder);
 
       const newSectorQuark = topo.sectors.quarkAt(-1);

@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
     BoulderBuilderSlideoverMobile, SectorBuilderSlideoverMobile,
     MapControl, Show,
@@ -8,7 +8,7 @@ import {
     ParkingBuilderSlide, AccessFormSlideover, WaypointBuilderSlide, ModalRenameSector, ModalDelete, SectorAreaMarkerDropdown, BuilderProgressIndicator,
 } from 'components';
 import { blobToImage, sortBoulders, useContextMenu, createTrack, createBoulder, createParking, createWaypoint, createSector, deleteSector, deleteBoulder, deleteParking, deleteWaypoint, toLatLng, useDevice, computeBuilderProgress } from 'helpers';
-import { Boulder, GeoCoordinates, Image, MapToolEnum, Parking, Sector, Track, Waypoint, Topo, Profile, Session, isUUID, TopoStatus } from 'types';
+import { Boulder, GeoCoordinates, Image, MapToolEnum, Parking, Sector, Track, Waypoint, Topo, Session, isUUID, TopoStatus } from 'types';
 import { Quark, QuarkIter, useCreateDerivation, useLazyQuarkyEffect, useQuarkyCallback, useSelectQuark, watchDependencies } from 'helpers/quarky';
 import { useRouter } from 'next/router';
 import { api } from 'helpers/services';
@@ -192,12 +192,13 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
     }, [freePointCreatingSector]);
     const handleCreatingSectorOriginClick = useCallback(() => {
         if (creatingSector.length > 2) {
-            const newSectorQuark = createSector(props.topoQuark, creatingSector, boulderOrder())
+            const newSectorQuark = createSector(props.topoQuark, creatingSector, boulderOrder());
+            console.log(topo.sectors);
             selectedSector.select(newSectorQuark);
             emptyCreatingSector();
-            setDisplayModalSectorRename(true);
+            // setDisplayModalSectorRename(true);
         }
-    }, [creatingSector]);
+    }, [creatingSector, props.topoQuark]);
     const emptyCreatingSector = () => {
         setCreatingSector([]);
         setFreePointCreatingSector(undefined);
@@ -555,12 +556,15 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
             </Show>
 
             <Show when={() => [displayModalSectorRename, selectedSector()] as const}>
-                {([, sSector]) => (
+                {([, sSector]) => {
+                    console.log(sSector);
+                    console.log(topo.sectors.quarkAt(sSector.index));
+                    return (
                     <ModalRenameSector
                         sector={sectors.toArray().find(s => s().id === sSector.id)!}
                         onClose={() => setDisplayModalSectorRename(false)}
                     />
-                )}
+                )}}
             </Show>
 
             <Show when={() => toDeleteSector.quark()}>
