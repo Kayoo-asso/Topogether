@@ -81,7 +81,7 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
   };
 
   return (
-    <CFImage alt={"Rocher avec tracé de voies"} image={props.image} defaultVariant={1200} objectFit='contain' size='30vw' />
+    <CFImage alt={"Rocher avec tracé de voies"} image={props.image} objectFit='contain' size='30vw' />
   )
 
   return (

@@ -9,29 +9,30 @@ import useDimensions from 'react-cool-dimensions';
 import { getServerSession } from 'helpers/getServerSession';
 import { Session } from 'types';
 import { SessionContext } from 'components/SessionProvider';
-import { VariantWidth } from 'helpers/variants';
-import DeviceDetector from "device-detector-js";
+import isMobile from 'ismobilejs';
+import { useFirstRender } from 'helpers/hooks/useFirstRender';
 
 type CustomProps = {
   session: Session | null,
-  device: Device,
-  viewportWidth: number
+  initialDevice: Device,
 };
 
 type InitialProps = AppInitialProps & CustomProps;
-
 type Props = AppProps & CustomProps;
 
-const CustomApp = ({ Component, pageProps, session, device }: Props) => {
-  // const [device, setDevice] = useState<Device>('MOBILE');
-  // const { observe, width, height } = useDimensions({
-  //   onResize: ({ observe, unobserve, width }) => {
-  //     if (width > 768) { setDevice('DESKTOP'); }
-  //     else if (width > 640) { setDevice('TABLET'); }
-  //     else setDevice('MOBILE');
-  //   },
-  // });
-  console.log(`Loading App`);
+const breakpoints: Record<Device, number> = {
+  mobile: 0,
+  desktop: 640
+};
+
+const CustomApp = ({ Component, pageProps, session, initialDevice }: Props) => {
+  const { currentBreakpoint } = useDimensions({
+    breakpoints,
+    updateOnBreakpointChange: true
+  }) as { currentBreakpoint: Device };
+
+  const firstRender = useFirstRender();
+  const device = firstRender ? initialDevice : currentBreakpoint;
 
   return (
     <>
@@ -44,6 +45,7 @@ const CustomApp = ({ Component, pageProps, session, device }: Props) => {
         />
         <meta name="description" content="Des topos complets et collaboratifs" />
         <meta name="keywords" content="Escalade Climbing Topo Topographie Grimpe Cartographie" />
+
         <title>Topogether</title>
         <link rel="manifest" href="/manifest.json" />
 
@@ -62,11 +64,7 @@ const CustomApp = ({ Component, pageProps, session, device }: Props) => {
         <DeviceContext.Provider value={device}>
           <div className="w-screen h-screen flex items-end flex-col">
             <div id="content" className="flex-1 w-screen absolute bg-grey-light flex flex-col h-full md:h-screen overflow-hidden">
-              {/* TODO */}
-              {/* <ProtectedRoute router={router}> */}
-              {/* <Component {...pageProps} /> */}
-              {/* </ProtectedRoute> */}
-
+              <Component {...pageProps} />
             </div>
 
             <div id="footer" className="bg-dark z-500 absolute bottom-0 h-shell md:hidden">
@@ -79,58 +77,24 @@ const CustomApp = ({ Component, pageProps, session, device }: Props) => {
   );
 };
 
-let firstRun = false;
-
 CustomApp.getInitialProps = async (context: AppContext): Promise<InitialProps> => {
   const req = context.ctx.req;
-  if (!req) {
-    throw new Error()
-  }
-  console.log(`Component.displayName: ${context.Component.displayName}`)
-  console.log("firstRun:", firstRun);
-  console.log("Headers:", req.headers);
-  firstRun = true;
 
-  let viewportWidth: number | undefined = undefined;
-  if (req) {
-    if (req.headers['viewport-width']) {
-      viewportWidth = Number(req.headers['viewport-width']);
-    } else if(req.headers['user-agent']) {
-      console.log("No viewport-width header, using user-agent");
-      const detector = new DeviceDetector();
-      const device = detector.parse(req.headers['user-agent']).device?.type;
-      switch (device) {
-        case "smartphone":
-        case "portable media player":
-        case "wearable":
-        case "feature phone":
-        case "peripheral":
-        case "smart speaker":
-          viewportWidth = 640;
-        default:
-          // TODO: change
-          viewportWidth = 1024;
-      }
+  let device: Device = "mobile";
+  if (req && req.headers['user-agent']) {
+    const ua = req.headers['user-agent'];
+    const mobile = isMobile(ua).any;
+    if (!mobile) {
+      device = "desktop";
     }
   }
-  if (viewportWidth === undefined) {
-    viewportWidth = 1920;
-  }
-  const device: Device = viewportWidth < 768
-    ? "MOBILE"
-    :"DESKTOP";
-
-  if (context.ctx.res) {
-    context.ctx.res.setHeader('Accept-CH', "Viewport-Width");
-  }
-
-  console.log(`Detected device ${device} with vw ${viewportWidth}`);
 
   const [appProps, session] = await Promise.all([
     App.getInitialProps(context),
     req ? getServerSession(req) : Promise.resolve(null)
   ]);
-  return { ...appProps, session, device, viewportWidth };
+
+  return { ...appProps, session, initialDevice: device };
 }
 
 export default CustomApp;

@@ -1,15 +1,15 @@
 import React, { useContext, useState } from 'react';
 import {
-  Button, DownloadButton, Flash, Icon, LikeButton, Modal, GradeHistogram, ParkingButton, ParkingModal, SlideagainstRightDesktop
+    Button, DownloadButton, Flash, Icon, LikeButton, Modal, GradeHistogram, ParkingButton, ParkingModal, SlideagainstRightDesktop
 } from 'components';
 import { LightTopo } from 'types';
 import { DeviceContext, TopoTypeToColor } from 'helpers';
 import { CFImage } from 'components/atoms/CFImage';
 
 interface TopoPreviewProps {
-  topo: LightTopo,
-  open?: boolean,
-  onClose: () => void,
+    topo: LightTopo,
+    open?: boolean,
+    onClose: () => void,
 }
 
 export const TopoPreview: React.FC<TopoPreviewProps> = (props: TopoPreviewProps) => {
@@ -31,22 +31,22 @@ export const TopoPreview: React.FC<TopoPreviewProps> = (props: TopoPreviewProps)
 
             <div className="flex flex-col md:mt-4">
                 <div className="px-4 ktext-section-title justify-center md:justify-start flex flex-row items-center">
-                    <Icon 
+                    <Icon
                         name='waypoint'
                         SVGClassName={'h-6 w-6 ' + TopoTypeToColor(topo.type)} //TODO : change color depending on topo type
                     />
                     <div className='ml-2'>{topo.name}</div>
                 </div>
 
-                {(topo.closestCity && topo.closestCity !== topo.name) && 
+                {(topo.closestCity && topo.closestCity !== topo.name) &&
                     <div className='px-4 ktext-label text-center md:text-left text-grey-medium'>{topo.closestCity}</div>}
-                <div 
+                <div
                     className='px-4 ktext-label text-center md:text-left text-grey-medium cursor-pointer'
                     onClick={() => {
                         const data = [new ClipboardItem({ "text/plain": new Blob([topo.location[1] + ',' + topo.location[0]], { type: "text/plain" }) })];
-                        navigator.clipboard.write(data).then(function() {
+                        navigator.clipboard.write(data).then(function () {
                             setFlashMessage("Coordonnées copiées dans le presse papier.");
-                        }, function() {
+                        }, function () {
                             setFlashMessage("Impossible de copier les coordonées.");
                         });
                     }}
@@ -54,12 +54,12 @@ export const TopoPreview: React.FC<TopoPreviewProps> = (props: TopoPreviewProps)
                     {parseFloat(topo.location[1].toFixed(12)) + ',' + parseFloat(topo.location[0].toFixed(12))}
                 </div>
 
-                <div className="w-full h-[160px] relative mt-4">
+                <div className="mt-4 h-[160px] w-full overflow-hidden">
                     <CFImage
                         image={topo.image}
+                        className="w-full object-contain"
                         alt="image principale du topo"
                         size='50vw'
-                        objectFit="cover"
                     />
                 </div>
 
@@ -96,13 +96,13 @@ export const TopoPreview: React.FC<TopoPreviewProps> = (props: TopoPreviewProps)
                         />
                     </div>
                 </div>
-                
+
                 <div className='flex flex-col w-full md:absolute md:bottom-0'>
                     <div className="w-full p-4 mt-4">
                         <Button
                             content="Entrer"
                             fullWidth
-                            href={'/topo/'+topo.id}
+                            href={'/topo/' + topo.id}
                         />
                     </div>
                     {topo.parkingLocation &&
@@ -117,40 +117,40 @@ export const TopoPreview: React.FC<TopoPreviewProps> = (props: TopoPreviewProps)
         </>
     )
 
-  return (
-    <>
-        {device === 'MOBILE' &&
-            <Modal
-                withBackground={false}
-                onClose={props.onClose}
-            >
-                {topoPreviewContent()}
-            </Modal>
-        }
-        {device !== 'MOBILE' &&
-            <SlideagainstRightDesktop 
-                open
-                displayLikeButton
-                displayDlButton
-                item={props.topo}
-                onClose={props.onClose}
-            >
-                {topoPreviewContent()}
-            </SlideagainstRightDesktop>
-        }
+    return (
+        <>
+            {device === 'mobile'
+                ?
+                <Modal
+                    withBackground={false}
+                    onClose={props.onClose}
+                >
+                    {topoPreviewContent()}
+                </Modal>
+                :
+                <SlideagainstRightDesktop
+                    open
+                    displayLikeButton
+                    displayDlButton
+                    item={props.topo}
+                    onClose={props.onClose}
+                >
+                    {topoPreviewContent()}
+                </SlideagainstRightDesktop>
+            }
 
-        {modalParkingOpen && topo.parkingLocation &&
-            <ParkingModal
-                parkingLocation={topo.parkingLocation}
-                onClose={() => setModalParkingOpen(false)}
-            />
-        }
-        <Flash 
-            open={!!flashMessage}
-            onClose={() => setFlashMessage(undefined)}
-        >
-            {flashMessage}
-        </Flash>
-    </>
-  );
+            {modalParkingOpen && topo.parkingLocation &&
+                <ParkingModal
+                    parkingLocation={topo.parkingLocation}
+                    onClose={() => setModalParkingOpen(false)}
+                />
+            }
+            <Flash
+                open={!!flashMessage}
+                onClose={() => setFlashMessage(undefined)}
+            >
+                {flashMessage}
+            </Flash>
+        </>
+    );
 };

@@ -18,7 +18,6 @@ type UploadUrlResult = {
 }
 
 
-
 const data = new FormData();
 data.append("requireSignedURLs", "false");
 

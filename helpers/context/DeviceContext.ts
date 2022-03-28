@@ -1,5 +1,5 @@
 import React from 'react';
 
-export type Device = 'MOBILE' | 'TABLET' | 'DESKTOP';
+export type Device = 'mobile' | 'desktop';
 
-export const DeviceContext = React.createContext<Device>('MOBILE');
+export const DeviceContext = React.createContext<Device>(undefined!);

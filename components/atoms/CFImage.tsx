@@ -4,6 +4,7 @@ import { cloudflareUrl } from "helpers/cloudflareUrl";
 import { CSSProperties, DetailedHTMLProps, ImgHTMLAttributes } from "react";
 import defaultKayoo from 'public/assets/img/Kayoo_defaut_image.png';
 import NextImage from 'next/image';
+import { useDevice } from "helpers/hooks/useDevice";
 
 
 export type CFImageProps = RawImageAttributes & {
@@ -23,9 +24,14 @@ export const CFImage: React.FC<CFImageProps> = ({
     image, size, style,
     defaultImage = defaultKayoo,
     ...props }: CFImageProps) => {
-    const defaultVariant = 1920; //TODO Change
+    const device = useDevice()
     if (image) {
+        const defaultVariant = device === "mobile"
+            ? 640
+            : 1920; //TODO: optimize by checking size
         const sources = VariantWidths.map(w => `${cloudflareUrl(image, w)} ${w}w`)
+        // note: check that width and height are not actual constraints,
+        // only aspect ratio information
         const width = defaultVariant;
         const height = width / image.ratio;
         const srcSet = sources.join();
@@ -33,7 +39,7 @@ export const CFImage: React.FC<CFImageProps> = ({
         const sizes = typeof size === "string"
             ? size
             : size.raw;
-        return <img src={src} width={width} height={height} srcSet={srcSet} style={styles} sizes={sizes} {...props} />;
+        return <img src={src} width={width} height={height} srcSet={srcSet} style={style} sizes={sizes} {...props} />;
     }
 
     return <NextImage src={defaultImage} className={props.className} alt={props.alt} />
