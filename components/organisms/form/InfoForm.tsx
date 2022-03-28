@@ -40,14 +40,19 @@ export const InfoForm: React.FC<InfoFormProps> = watchDependencies((props: InfoF
         <div className="flex flex-row gap-6 items-end">
           <div className="w-32 md:mt-4">
             <ImageInput
-              value={topo.image?.url}
-              onChange={(files) => {
-                          props.topo.set({
-                              ...topo,
-                              image: files[0],
-                          });
-                      }}
-              onDelete={() => console.log('delete')}
+              value={topo.image}
+              onChange={(images) => {
+                props.topo.set({
+                    ...topo,
+                    image: images[0],
+                });
+              }}
+              onDelete={() => {
+                props.topo.set({
+                    ...topo,
+                    image: undefined,
+                })
+            }}
             />
           </div>
           <TextInput
@@ -140,13 +145,13 @@ export const InfoForm: React.FC<InfoFormProps> = watchDependencies((props: InfoF
 
         <Checkbox
           label="Autres"
-          checked={topo.hasOtherAmenities}
+          checked={!!topo.otherAmenities}
           onClick={() => props.topo.set({
-                  ...topo,
-                  hasOtherAmenities: !topo.hasOtherAmenities,
-              })}
+            ...topo,
+            otherAmenities: topo.otherAmenities || ' ' as Description,
+          })}
         />
-        <Show when={() => topo.hasOtherAmenities}>
+        <Show when={() => topo.otherAmenities}>
           <TextArea
             id="topo-other-amenities"
             label="Autres équipements"

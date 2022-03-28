@@ -27,10 +27,17 @@ export const GradeHistogram: React.FC<GradeHistogramProps> = ({
   const histogram = isLight(props.topo)
                       ? props.topo.grades
                       : buildGradeHistogram(props.topo)();
-
-  const { Total, None, ...grades } = histogram;
+  const total = histogram[3] 
+              + histogram[4] 
+              + histogram[5]
+              + histogram[6]
+              + histogram[7]
+              + histogram[8]
+              + histogram[9]
+              + histogram['None'];
+  const { None, ...grades } = histogram;
   const maxNbOfTracks = Math.max(...Object.values(grades));
-  const ratio = histogram.Total / maxNbOfTracks;
+  const ratio = total / maxNbOfTracks;
 
   // TODO: I removed the special case for grade categories whose count == 0,
   // since it did not show the category properly.
@@ -40,7 +47,7 @@ export const GradeHistogram: React.FC<GradeHistogramProps> = ({
 
       {lightGrades.slice(0, -1).map((grade) => {
         const count = histogram[grade];
-        const heightPercent = (count / histogram.Total * 100) * ratio;
+        const heightPercent = (count / total * 100) * ratio;
         const height = `${heightPercent}%`;
 
         return (

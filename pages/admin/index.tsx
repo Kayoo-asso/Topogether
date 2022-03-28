@@ -1,93 +1,50 @@
 import type { NextPage } from 'next';
-import {
-    Header, LeftbarDesktop, Tabs, TopoCard,
-} from 'components';
-import React, { useCallback, useRef, useState } from 'react';
-import { LightTopo, TopoStatus } from 'types';
-import { quarkLightTopo } from 'helpers/fakeData/fakeLightTopoV2';
-import { AdminActionDropdown } from 'components/molecules/cards/AdminActionDropdown';
-import { useContextMenu } from 'helpers/hooks/useContextMenu';
+import { api } from 'helpers/services';
+import { useAsyncData } from 'helpers/hooks/useAsyncData';
+import { useRouter } from 'next/router';
+import { Error404, Header, Loading } from 'components';
+import { RootAdmin } from 'components/pages/admin/RootAdmin';
+import { useSession } from 'helpers/hooks/useSession';
+
+export async function getServerSideProps() {
+    const data = {};
+    return { props: { data } }
+  }
 
 const AdminPage: NextPage = () => {
-    const lightTopos: LightTopo[] = [
-        quarkLightTopo(),
-        quarkLightTopo()
-    ];
-    const [selectedStatus, setSelectedStatus] = useState<TopoStatus>(TopoStatus.Draft);
+    const router = useRouter();
+    const session = useSession();
+    if (!session || session.role !== 'ADMIN') { () => router.push('/'); return null; }
 
-    const toposToDisplay = lightTopos.filter((topo) => topo.status === selectedStatus);
+    const toposQuery = useAsyncData(() => api.getLightTopos(), []);
 
-    const ref = useRef<HTMLDivElement>(null);
-    const [dropdownDisplayed, setDropdownDisplayed] = useState(false);
-    const [topoDropdown, setTopoDropddown] = useState<LightTopo>();
-    const [dropdownPosition, setDropdownPosition] = useState<{ x: number, y: number }>();
-  
-  
-    { /* TODO: get Light Topos */ }
-  
-    useContextMenu(() => setDropdownDisplayed(false), ref.current);
-  
-    const onContextMenu = useCallback((topo: LightTopo, position: {x: number, y: number}) => {
-        setDropdownDisplayed(true);
-        setTopoDropddown(topo);
-        setDropdownPosition(position);
-    }, [ref]);
+    // ERROR
+    if (toposQuery.type === 'error') return <Error404 title="Aucun topo n'a été trouvé" />
 
-
-    { /* TODO: GET LIGHT TOPOS */ }
-
-    return (
+    //LOADING
+    else if (toposQuery.type === 'loading') return (
         <>
             <Header
-                backLink="/user/profile"
-                title="Administration"
+                title="Chargement des topos..."
+                backLink='/'
             />
-
-            <div className="h-full flex flex-row bg-white">
-                <LeftbarDesktop
-                    currentMenuItem="ADMIN"
-                />
-
-                <div className="w-full h-[10%] mt-[10%]">
-                    <Tabs
-                        tabs={[{
-                            iconName: 'edit',
-                            iconStroke: true,
-                            color: 'second',
-                            action: () => setSelectedStatus(TopoStatus.Draft),
-                        },
-                        {
-                            iconName: 'recent',
-                            iconStroke: true,
-                            color: 'third',
-                            action: () => setSelectedStatus(TopoStatus.Submitted),
-                        },
-                        {
-                            iconName: 'checked',
-                            iconFill: true,
-                            color: 'main',
-                            action: () => setSelectedStatus(TopoStatus.Validated),
-                        },
-                        ]}
-                    />
-                    <div className="overflow-y-scroll h-contentPlusHeader md:h-contentPlusShell hide-scrollbar">
-                        <div className="min-w-full flex flex-row flex-wrap justify-evenly">
-                            {toposToDisplay.map((topo) => (
-                                <TopoCard
-                                    key={topo.id}
-                                    topo={topo}
-                                    onContextMenu={onContextMenu}
-                                />
-                            ))}
-                        </div>
-                    </div>
-                </div>
-            </div>
-            {dropdownDisplayed && topoDropdown && dropdownPosition && (
-                <AdminActionDropdown topo={topoDropdown} position={dropdownPosition} />
-            )}
+            <Loading />
         </>
-    );
+    )
+
+    // SUCCESS
+    else {
+        // BUT NO DATA...
+        if (!toposQuery.data) return <Error404 title="Aucun topo n'a été trouvé" />
+        else {
+            return (
+                <RootAdmin 
+                    lightTopos={toposQuery.data}
+                />
+            );
+        }
+    }
+    
 };
 
 export default AdminPage;

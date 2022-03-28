@@ -2,5 +2,6 @@ export * from './useRefState';
 export * from './useEffectWithDeepEqual';
 export * from './useIsMounted';
 export * from './useUserMedia';
-export * from './useAsyncEffect';
+export * from './useCancelableEffect';
 export * from './useContextMenu';
+export * from './useDevice';

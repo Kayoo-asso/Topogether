@@ -1,7 +1,11 @@
 export type GeoCoordinates = [lng: number, lat: number];
 
-export type ExplicitUndefineds<T> = {
-  [K in keyof Required<T>]: T extends Record<K, T[K]> ? T[K] : (T[K] | undefined)
+export type Result<Success, Error> = {
+  type: 'success'
+  value: Success
+} | {
+  type: 'error',
+  error: Error
 };
 
 export type Name = StringBetween<1, 500>;
@@ -50,12 +54,18 @@ export function isDescription(description: string): description is Description {
   return isStringBetween(description, 1, 5000);
 }
 
-// taken from zod
-// https://github.com/colinhacks/zod/blob/master/src/types.ts#L424
+// Email and UUID regexes taken from zod
+// https://github.com/colinhacks/zod/blob/master/src/types.ts
 const emailRegex = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+const uuidRegex =
+  /^([a-f0-9]{8}-[a-f0-9]{4}-[1-5][a-f0-9]{3}-[a-f0-9]{4}-[a-f0-9]{12}|00000000-0000-0000-0000-000000000000)$/i;
 
 export function isEmail(s: string): s is Email {
   return emailRegex.test(s);
+}
+
+export function isUUID(s: string): s is UUID {
+  return uuidRegex.test(s);
 }
 
 export type RequireAtLeastOne<T, Keys extends keyof T = keyof T> =
@@ -77,3 +87,19 @@ export type RequireOnlyOne<T, Keys extends keyof T = keyof T> =
     Required<Pick<T, K>>
     & Partial<Record<Exclude<Keys, K>, undefined>>
   }[Keys];
+
+type RequiredKeys<T> = {
+  [K in keyof T]-?: {} extends { [P in K]: T[K] } ? never : K
+}[keyof T]
+
+type OptionalKeys<T> = {
+  [K in keyof T]-?: {} extends { [P in K]: T[K] } ? K : never
+}[keyof T]
+
+type PickRequired<T> = Pick<T, RequiredKeys<T>>
+
+type PickOptional<T> = Pick<T, OptionalKeys<T>>
+
+type Nullable<T> = { [P in keyof T]-?: T[P] | null }
+
+export type NullableOptional<T> = PickRequired<T> & Nullable<PickOptional<T>>

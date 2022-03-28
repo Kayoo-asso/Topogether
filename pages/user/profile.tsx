@@ -1,27 +1,57 @@
 import React, { useRef, useState } from 'react';
-import type { NextPage } from 'next';
-import { staticUrl } from 'helpers';
+import type { GetServerSideProps, NextPage } from 'next';
 import { Button, HeaderDesktop, ImageInput, LeftbarDesktop, ModalDelete, ProfilePicture, Tabs, TextInput } from 'components';
 import Link from 'next/link';
 import { watchDependencies } from 'helpers/quarky';
-import { isEmail, Name, StringBetween } from 'types';
-import { api, AuthResult } from 'helpers/services/ApiService';
+import { Image, isEmail, Name, StringBetween, User } from 'types';
+import { auth, supabaseClient } from 'helpers/services';
+import { getServerSession } from 'helpers/getServerSession';
 
-const ProfilePage: NextPage = watchDependencies(() => {
-  let session = api.user();
-  if (!session) return <></>;
+type ProfileProps = {
+  user: User
+}
 
+export const getServerSideProps: GetServerSideProps<ProfileProps> = async (ctx) => {
+  const session = await getServerSession(ctx.req);
+  if(!session) {
+    return {
+      redirect: {
+        destination: "/user/login",
+        permanent: false
+      }
+    }
+  }
+  const { data, error } = await supabaseClient
+    .from<User>("users")
+    .select("*")
+    .eq('id', session.id)
+    .single();
+
+  if(error || !data) {
+    console.error("Error retrieving user information for " + session.email);
+    return {
+      redirect: {
+        destination: "/user/login",
+        permanent: false
+      }
+    }
+  }
+  
+  return { props: { user: data } }
+}
+
+const ProfilePage: NextPage<ProfileProps> = watchDependencies(({ user:session }) => {
   const imageInputRef = useRef<HTMLInputElement>(null);
 
   const [displayDeleteAccountModal, setDisplayDeleteAccountModal] = useState(false);
   
-  const [email, setEmail] = useState<string>(session!.email);
+  const [email, setEmail] = useState<string>(session.email);
   const [emailError, setEmailError] = useState<string>();
   
   const [userName, setUserName] = useState<string>(session.userName);
   const [firstName, setFirstName] = useState<string | undefined>(session.firstName);
   const [lastName, setLastName] = useState<string | undefined>(session.lastName);
-  const [imageUrl, setImageUrl] = useState<string | undefined>(session.imageUrl);
+  const [image, setImage] = useState<Image | undefined>(session.image);
   const [birthDate, setBirthDate] = useState<string | undefined>(session.birthDate); //TODO convert into Date
   const [country, setCountry] = useState<string | undefined>(session.country);
   const [city, setCity] = useState<string | undefined>(session.city);
@@ -31,7 +61,6 @@ const ProfilePage: NextPage = watchDependencies(() => {
   const [phoneError, setPhoneError] = useState<string>();
 
   const [successMessage, setSuccessMessage] = useState<string>();
-  const [errorMessage, setErrorMessage] = useState<string>();
 
   const modifyProfil = async () => {
     let hasError = false;
@@ -39,19 +68,19 @@ const ProfilePage: NextPage = watchDependencies(() => {
     if (phone && (!phone.match(/\d/g) || phone.length < 6 || phone.length > 30)) { setPhoneError("Numéro de téléphone invalide"); hasError = true; }
 
     if (!hasError) {
-      const res = await api.updateUserInfo({
+      // TODO: return indicator for offline modifications
+      auth.updateUserInfo({
         ...session!,
         userName: userName as Name,
         firstName: firstName as Name,
         lastName: lastName as Name,
-        imageUrl,
+        image: image,
         birthDate,
         country: country as Name,
         city: city as Name,
         phone: phone as StringBetween<1, 30>
       })
-      if (res === AuthResult.Success) setSuccessMessage('Profil modifié');
-      else setErrorMessage("Une erreur est survenue. Merci de réssayer.");
+      setSuccessMessage('Profil modifié');
     }
   }
 
@@ -82,7 +111,7 @@ const ProfilePage: NextPage = watchDependencies(() => {
           <div className='flex flex-row justify-center md:justify-start rounded-lg px-6 pb-10 pt-12 md:pt-[16px]'>
             <div className='h-[100px] w-[100px] relative cursor-pointer'>
               <ProfilePicture
-                src={imageUrl || staticUrl.defaultProfilePicture}
+                image={image}
                 onClick={() => {
                   if (imageInputRef.current) imageInputRef.current.click();
                 }}
@@ -91,7 +120,7 @@ const ProfilePage: NextPage = watchDependencies(() => {
                 <ImageInput 
                   ref={imageInputRef}
                   onChange={(images) => {
-                    // TODO
+                    setImage(images[0]);
                   }}
                 />
               </div>
@@ -214,11 +243,10 @@ const ProfilePage: NextPage = watchDependencies(() => {
             </div>
 
             <Button
-                content="Valider"
+                content="Modifier le profile"
                 fullWidth
                 onClick={modifyProfil}
             />
-            {errorMessage && <div className='ktext-error'>{errorMessage}</div>}
             {successMessage && <div className='text-main'>{successMessage}</div>}
 
             <div className='flex flex-col items-center gap-4 mb-10 md:mb-0 md:pt-10'>

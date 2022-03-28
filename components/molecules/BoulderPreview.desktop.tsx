@@ -7,8 +7,8 @@ interface BoulderPreviewDesktopProps {
     boulder: Quark<Boulder>,
     selectedTrack: SelectQuarkNullable<Track>,
     displayAddButton?: boolean,
-    currentImage: Image,
-    setCurrentImage: Dispatch<SetStateAction<Image>>, 
+    currentImage?: Image,
+    setCurrentImage: Dispatch<SetStateAction<Image | undefined>>, 
 }
 
 export const BoulderPreviewDesktop: React.FC<BoulderPreviewDesktopProps> = watchDependencies(({
@@ -19,26 +19,35 @@ export const BoulderPreviewDesktop: React.FC<BoulderPreviewDesktopProps> = watch
 
     return (
         <div className='flex flex-col w-full items-center'>
-            <div className='bg-dark w-full flex flex-col items-center'>
+            <div className='bg-dark w-full flex-1 relative'>
                 <TracksImage 
                     image={props.currentImage}
-                    tracks={boulder.tracks}
+                    tracks={boulder.tracks.quarks()}
                     selectedTrack={props.selectedTrack}
                     containerClassName='h-[180px]'
-                    test={true}
-                />
+                /> 
             </div>
             
             <div className='flex flex-row w-full mt-3'>
                 <MultipleImageInput 
                     images={boulder.images}
+                    boulder={boulder}
                     selected={props.currentImage?.id}
                     rows={1}
                     onImageClick={(id) => props.setCurrentImage(boulder.images.find(img => img.id === id)!)}
                     allowUpload={displayAddButton}
-                    onImageDelete={(id) => console.log('delete '+id)} // TODO
-                    onChange={(files) => {
-                        // TODO
+                    onChange={(images) => {
+                        props.boulder.set({
+                            ...boulder,
+                            images: images,
+                        })
+                    }}
+                    onImageDelete={(id) => {
+                        const newImages = props.boulder().images.filter((img) => img.id !== id);
+                        props.boulder.set({
+                            ...boulder,
+                            images: newImages,
+                        })
                     }}
                 />
             </div>

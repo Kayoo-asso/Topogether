@@ -1,12 +1,14 @@
 import React from 'react';
-import NextImage from 'next/image';
-import { Image, UUID } from 'types';
+import { Image, Track, UUID } from 'types';
 // eslint-disable-next-line import/no-cycle
 import { DeleteButton } from 'components';
 import useDimensions from 'react-cool-dimensions';
+import { Quark, QuarkIter } from 'helpers/quarky';
+import { CFImage } from './CFImage';
 
 interface ImageThumbProps {
   image: Image,
+  tracks?: QuarkIter<Quark<Track>>
   selected?: boolean,
   onDelete?: (id: UUID) => void,
   onClick?: (id: UUID) => void,
@@ -16,7 +18,6 @@ export const ImageThumb: React.FC<ImageThumbProps> = ({
   selected = false,
   ...props
 }: ImageThumbProps) => {
-
   const { observe, unobserve, width: containerWidth, height: containerHeight, entry } = useDimensions({
     onResize: ({ observe, unobserve, width, height, entry }) => {
       // Triggered whenever the size of the target is changed...
@@ -46,12 +47,23 @@ export const ImageThumb: React.FC<ImageThumbProps> = ({
           />
         </div>
       }
-      <NextImage
-        src={props.image.url}
-        alt="user generated image"
-        layout="fill"
-        objectFit="contain"
-      />
+      {/* {props.tracks && 
+        <TracksImage 
+          image={props.image}
+          tracks={props.tracks}
+          displayTrackOrderIndexes={false}
+          programmativeHeight={containerWidth}
+          tracksWeight={1}
+        />
+      } */}
+      {!props.tracks && 
+        <CFImage
+          image={props.image}
+          alt="user generated image"
+          objectFit="contain"
+          size={`${containerWidth}px`}
+        />
+      }
     </div>
   );
 };

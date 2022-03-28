@@ -20,7 +20,6 @@ const notSelectedColorStyles = {
   7: 'border-grade-7 text-grade-7',
   8: 'border-grade-8 text-grade-8',
   9: 'border-grade-9 text-grade-9',
-  // TODO: verify that text-grey-light is actually readable
   None: 'border-grey-light text-grey-light'
 }
 
@@ -48,8 +47,8 @@ export const GradeCircle: React.FC<GradeCircleProps> = ({
   const sizeStyles = size === 'big'
     ? 'p-3 w-6 h-6 border-2'
     : size === 'little' 
-    ?'p-1 w-5 h-5 border'
-    : 'p-2 w-6 h-6 border';
+    ?'p-1 w-5 h-5 border-2'
+    : 'p-2 w-6 h-6 border-2';
   
   const content = props.content
     || (props.grade === "None" ? "n/a" : props.grade);

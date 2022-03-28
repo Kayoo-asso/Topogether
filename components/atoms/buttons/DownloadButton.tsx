@@ -1,12 +1,11 @@
 import React from 'react';
-import { Signal } from 'helpers/quarky';
 import { LightTopo, Topo } from 'types';
 import { Icon } from '../Icon';
 
 interface DownloadButtonProps {
     downloaded?: boolean,
     className?: string,
-    topo: Signal<Topo> | Signal<LightTopo>
+    topo: Topo | LightTopo,
     onClick?: () => void,
 }
 

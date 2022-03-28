@@ -1,6 +1,4 @@
-import React, {
- EffectCallback, useEffect, useRef,
-} from 'react';
+import { EffectCallback, useEffect, useRef } from 'react';
 
 let someoneExists = false;
 
@@ -12,12 +10,12 @@ export function useFirstEffect(effect: EffectCallback) {
     // so this conditional respects the rules of Hooks
     // if (isFirst.current) {
     //     someoneExists = true;
-        console.log("first invocation of useFirstEffect");
+        // console.log("first invocation of useFirstEffect");
 
         useEffect(() => {
             if (!someoneExists) {
                 someoneExists = true;
-                console.log("About to run useFirstEffect funciton");
+                // console.log("About to run useFirstEffect function");
                 const cleanup = effect();
                 return () => {
                     if (cleanup) cleanup();

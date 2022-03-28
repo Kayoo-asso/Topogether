@@ -25,7 +25,7 @@ const ChangePasswordPage: NextPage = () => {
   }
   const modifyPassword = () => {
       if (checkErrors()) {
-          console.log("Change password");
+          console.log("Change password"); //TODO
       }
   }
 

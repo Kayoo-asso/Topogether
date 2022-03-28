@@ -257,7 +257,7 @@ function explicitEffect(signals: any[], computation: (deps: any[]) => void, opti
         for (let i = 0; i < signals.length; ++i) {
             input[i] = signals[i]();
         }
-        computation(signals);
+        computation(input);
     }
     const e = buildEffect(fn, NodeStatus.Effect | NodeStatus.Tracking, options?.name);
     const dispose = () => {

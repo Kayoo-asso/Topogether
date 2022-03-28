@@ -6,16 +6,14 @@ export const images: Image[] = [
     // Topo image
     {
         id: uuid(),
-        url: "https://builder.topogether.com/public/uploads/topo/main-image/dad449499de38f1bdee5872de1a354d52fff6183.jpeg",
-        width: 4592,
-        height: 3064,
+        ratio: 16/9,
     },
 ]
 
 // TODO: create proper users and load them into quarks
 const topoCreatorId = uuid();
-const contributorId = uuid();
-const validatorId = uuid();
+// const contributorId = uuid();
+// const validatorId = uuid();
 
 export const lightTopo: LightTopo = {
     id: uuid(),
@@ -28,19 +26,20 @@ export const lightTopo: LightTopo = {
     closestCity: "Yzéron" as Name,
     location: [4.607264, 45.701356],
 
-    isForbidden: false,
+    forbidden: false,
     amenities: Amenities.AdaptedToChildren | Amenities.Waterspot | Amenities.PicnicArea,
     // the real topo doesn't have composite rock, but this allows us to test the bitflag
     rockTypes: RockTypes.Gneiss | RockTypes.Composite,
 
-    danger: "Il y a beaucoup de pentes" as Description,
-
     image: images[0],
-    creatorId: topoCreatorId,
-    creatorPseudo: 'Flavien' as Name,
-    validatorId: validatorId,
+    creator: {
+        id: topoCreatorId,
+        userName: 'Flavien' as Name,
+        role: 'ADMIN',
+        created: (new Date(2020, 9, 14)).toISOString()
+    },
 
-    firstParkingLocation: [4.607274, 45.701321],
+    parkingLocation: [4.607274, 45.701321],
     nbSectors: 4,
     nbBoulders: 82,
     nbTracks: 241,
@@ -52,15 +51,14 @@ export const lightTopo: LightTopo = {
         7: 41,
         8: 4,
         9: 0,
-        'None': 12,
-        Total: 241
+        'None': 12
     },
-    submittedAt: new Date(),
-    validatedAt: new Date(),
+    submitted: (new Date(2020, 9, 14)).toISOString(),
+    validated: (new Date(2020, 9, 14)).toISOString(),
+    modified: (new Date(2020, 9, 14)).toISOString(),
     // IMPORTANT: modifying anything in a topo changes the last modified at
     // TODO: if someone is editing a topo offline, should we reflect that
     // in the modifiedAt date for them?
-    modifiedAt: new Date(),
 }
 
 export const quarkLightTopo: Quark<LightTopo> = quark(lightTopo);

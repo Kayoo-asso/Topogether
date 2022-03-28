@@ -8,8 +8,8 @@ interface BoulderBuilderSlideagainstDesktopProps {
     boulder: Quark<Boulder>,
     selectedTrack: SelectQuarkNullable<Track>,
     topoCreatorId?: UUID,
-    currentImage: Image,
-    setCurrentImage: Dispatch<SetStateAction<Image>>,
+    currentImage?: Image,
+    setCurrentImage: Dispatch<SetStateAction<Image | undefined>>,
     onClose: () => void,
 }
 
@@ -19,7 +19,7 @@ export const BoulderBuilderSlideagainstDesktop: React.FC<BoulderBuilderSlideagai
     return (
         <SlideagainstRightDesktop 
             open
-            item={props.boulder}
+            item={props.boulder()}
             displayLikeButton
             className='z-50'
             onClose={props.onClose}
@@ -49,9 +49,9 @@ export const BoulderBuilderSlideagainstDesktop: React.FC<BoulderBuilderSlideagai
                         onTrackClick={(trackQuark) => {
                             if (props.selectedTrack()?.id === trackQuark().id) props.selectedTrack.select(undefined);
                             else {
-                              const newImageIndex = boulder.images.findIndex(img => img.id === trackQuark().lines?.at(0)?.imageId);
-                              if (newImageIndex > -1) {
-                                props.setCurrentImage(boulder.images[newImageIndex]);
+                              const newImage = boulder.images.find(img => img.id === trackQuark().lines?.at(0)?.imageId);
+                              if (newImage) {
+                                props.setCurrentImage(newImage);
                               }
                               props.selectedTrack.select(trackQuark);
                             }

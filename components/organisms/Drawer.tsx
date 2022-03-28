@@ -3,7 +3,7 @@ import {
   DrawerToolEnum, Image, LinearRing, PointEnum, Position, Track,
 } from 'types';
 import { ModalDelete, Toolbar, TracksImage } from 'components';
-import { QuarkArray, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
+import { QuarkArray, QuarkIter, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
 import { v4 } from 'uuid';
 
 interface DrawerProps {
@@ -33,7 +33,7 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies((props: DrawerPro
     if (!newLineQuark) {
       selectedTrack.lines.push({
         id: v4(),
-        order: selectedTrack.lines.length,
+        index: selectedTrack.lines.length,
         imageId: props.image.id,
         points: [],
       });
@@ -51,21 +51,17 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies((props: DrawerPro
         });
         break;
       case 'HAND_DEPARTURE_DRAWER':
-        const newHandPoints = newLine.handDepartures || [];
-        if (newHandPoints.length < 2) newHandPoints.push(pos);
-        else { newHandPoints.splice(0, 1); newHandPoints.push(pos); }
         newLineQuark.set({
           ...newLine,
-          handDepartures: newHandPoints
+          hand1: newLine.hand2,
+          hand2: pos
         });
         break;
       case 'FOOT_DEPARTURE_DRAWER':
-        const newFootPoints = newLine.feetDepartures || [];
-        if (newFootPoints.length < 2) newFootPoints.push(pos);
-        else { newFootPoints.splice(0, 1); newFootPoints.push(pos); }
         newLineQuark.set({
           ...newLine,
-          feetDepartures: newFootPoints
+          foot1: newLine.foot2,
+          foot2: pos
         });
         break;
       case 'FORBIDDEN_AREA_DRAWER':
@@ -80,17 +76,34 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies((props: DrawerPro
   }
 
   const deletePointToLine = (pointType: PointEnum, index: number) => {
-    const key = pointType === 'LINE_POINT' ? 'points' :
-      pointType === 'HAND_DEPARTURE_POINT' ? 'handDepartures' :
-        pointType === 'FOOT_DEPARTURE_POINT' ? 'feetDepartures' :
-          'forbidden';
     const newLine = selectedTrack.lines.quarkAt(0);
     const line = newLine();
-    const points = line[key]!;
-    newLine.set({
-      ...line,
-      [key]: index === -1 ? [...points.slice(0, -1)] : [...points.slice(0, index), ...points.slice(index + 1)]
-    });
+    switch (pointType) {
+      case 'LINE_POINT': 
+        newLine.set({
+          ...line,
+          points: [...line.points.slice(0, index), ...line.points.slice(index + 1)]
+        }); break;
+      case 'HAND_DEPARTURE_POINT':
+        newLine.set({
+          ...line,
+          hand1: index === 0 ? undefined : line.hand1,
+          hand2: index === 1 || index === -1 ? undefined : line.hand2
+        }); break;
+      case 'FOOT_DEPARTURE_POINT':
+        newLine.set({
+          ...line,
+          foot1: index === 0 ? undefined : line.foot1,
+          foot2: index === 1 || index === -1 ? undefined : line.foot2
+        }); break;
+      case 'FORBIDDEN_AREA_POINT':
+        if (line.forbidden) {
+          newLine.set({
+            ...line,
+            forbidden: [...line.forbidden.slice(0, index), ...line.forbidden.slice(index + 1)]
+          }); 
+        } break;
+    }
   }
   const rewind = () => {
     const pointType: PointEnum | undefined = selectedTool === 'LINE_DRAWER' ? 'LINE_POINT' :
@@ -116,10 +129,9 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies((props: DrawerPro
       <div className="absolute top-0 bg-black bg-opacity-90 h-full flex flex-col z-1000 w-full md:w-[calc(100%-600px)]">
 
         <div className="flex-1 flex items-center relative justify-center">
-          {/* TODO: CHANGE SIZING */}
-          <TracksImage
+          {/* <TracksImage
             image={props.image}
-            tracks={displayOtherTracks ? props.tracks : new QuarkArray([selectedTrack])}
+            tracks={displayOtherTracks ? props.tracks.quarks() : new QuarkIter([props.selectedTrack.quark()!])}
             selectedTrack={props.selectedTrack}
             currentTool={selectedTool}
             editable
@@ -129,7 +141,7 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies((props: DrawerPro
             onPointClick={(pointType, index) => {
               if (selectedTool === 'ERASER') deletePointToLine(pointType, index);
             }}
-          />
+          /> */}
         </div>
 
         <Toolbar

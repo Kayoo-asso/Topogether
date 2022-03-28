@@ -1,19 +1,19 @@
 import React from 'react';
-import { LinearRing, Position } from 'types';
+import { GeoCoordinates, LinearRing, Position } from 'types';
 import { DraggablePolyline } from '.';
 import { pointsToPolylineStr, ratioPoint } from '../../../helpers';
 import { SVGPoint } from './SVGPoint';
 
 interface SVGAreaProps {
   // a LinearRing delineates the contour of a Polygon
-  area: LinearRing,
+  area: GeoCoordinates[],
   rx: number,
   ry: number,
   editable?: boolean,
   eraser?: boolean,
   pointSize: number,
   className?: string,
-  onChange?: (area: LinearRing) => void,
+  onChange?: (area: GeoCoordinates[]) => void,
   onClick?: () => void,
 }
 

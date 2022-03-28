@@ -1,130 +1,159 @@
-import { createClient, SupabaseClient, User as AuthUser } from "@supabase/supabase-js";
-import { Email, Image, Name, TopoData, User, UUID } from 'types';
-import { Quark, quark } from 'helpers/quarky';
-import { DBConvert } from "./DBConvert";
+import { SupabaseClient } from "@supabase/supabase-js";
+import { TopoData, UUID, LightTopo, TopoStatus, DBTopo, Topo } from 'types';
+import { auth, sync } from ".";
+import { ImageService } from "./ImageService";
 
-export enum AuthResult {
-    Success,
-    ConfirmationRequired,
+export type LightTopoFilters = {
+    userId?: UUID,
+    status?: TopoStatus
+}
+
+export enum UpdateResult {
+    Ok,
+    Unauthorized,
     Error
 }
 
 export class ApiService {
     client: SupabaseClient;
-    private _user: Quark<User | null>;
+    images: ImageService = new ImageService();
 
-    constructor() {
-        const API_URL = process.env.NEXT_PUBLIC_API_URL!;
-        const API_KEY = process.env.NEXT_PUBLIC_ANON_KEY!;
-        this.client = createClient(API_URL, API_KEY);
-        this._user = quark<User | null>(null);
+    constructor(client: SupabaseClient) {
+        this.client = client;
     }
 
-    async initSession() {
-        const authUser = this.client.auth.user();
-        if (authUser) {
-            // don't handle possible API error here
-            await this._loadUser(authUser);
+    async getLightTopos(filters?: LightTopoFilters): Promise<LightTopo[]> {
+        let query = this.client
+            .from<LightTopo>("light_topos")
+            .select('*');
+
+        if (filters?.status) {
+            query = query.eq('status', filters.status);
         }
-    }
-
-    private async _loadUser(authUser: AuthUser): Promise<AuthResult.Success | AuthResult.Error> {
-        const { data, error } = await this.client
-            .from<User>("users")
-            .select("*")
-            .match({ id: authUser.id })
-            .single();
+        if (filters?.userId) {
+            query = query.eq('creator->>id' as any, filters.userId)
+        }
+        const { data, error } = await query;
 
         if (error || !data) {
-            console.debug("Error loading up user: ", error);
-            return AuthResult.Error;
+            console.error("Error getting light topos: ", error);
+            return [];
         }
-        
-        this._user.set(data);
-        return AuthResult.Success;
+        return data;
     }
 
-    user(): User | null {
-        return this._user();
-    }
-
-    async signup(email: Email, password: string, pseudo: Name): Promise<AuthResult> {
-        const { user, session, error } = await this.client.auth.signUp({
-            email,
-            password
-        }, {
-            redirectTo: "/",
-            data: { userName: pseudo }
-        });
+    // 0.3 is the default similarity threshold for pg_trgm
+    async searchLightTopos(query: string, limit: number, similarity: number = 0.3): Promise<LightTopo[]> {
+        const { error, data } = await this.client
+            .rpc<LightTopo>("search_light_topos", {
+                _query: query,
+                _nb: limit,
+                _similarity: similarity 
+            });
         if (error) {
-            // user already exists
-            if (error.status === 400) {
-
-            }
-            // server error
-            if (error.status === 500) {
-
-            }
-            console.debug("Sign up error: ", error);
-            console.debug("Session: ", session);
-            console.debug("User: ", user);
-            return AuthResult.Error;
+            console.error(`Error searching light topos for \"${query}\": `, error);
+            return [];
         }
-
-        if (!user) {
-            return AuthResult.ConfirmationRequired;
-        }
-        return await this._loadUser(user);
+        return data ?? [];
     }
 
-    async signIn(email: Email, password: string): Promise<AuthResult> {
-        const { user, error } = await this.client.auth.signIn({ email, password });
+    async setTopoStatus(topoId: UUID, status: TopoStatus): Promise<UpdateResult> {
+        const { error, status: httpStatus } = await this.client
+            .from<DBTopo>("topos")
+            .update({ status })
+            .eq('id', topoId);
         if (error) {
-            console.debug("Sign in error: ", error);
-            return AuthResult.Error;
+            // Postgres error code
+            // see: https://postgrest.org/en/stable/api.html#http-status-codes
+            return error.code === "42501"
+                ? UpdateResult.Unauthorized
+                : UpdateResult.Error;
         }
-        if (!user) {
-            return AuthResult.ConfirmationRequired;
-        }
-        return await this._loadUser(user);
+        return UpdateResult.Ok;
     }
 
-    async signOut(): Promise<AuthResult.Success | AuthResult.Error> {
-        const { error } = await this.client.auth.signOut();
-        if (error) {
-            console.debug("Sign out error: ", error);
-            return AuthResult.Error;
-        }
-        this._user.set(null);
-        return AuthResult.Success;
-    }
-
-    async updateUserInfo(user: User): Promise<AuthResult.Success | AuthResult.Error> {
-        const { error } = await this.client
-            .from<User>("users")
-            .update(user);
-        if (error) {
-            console.debug("Error updating user info: ", error);
-            return AuthResult.Error;
-        }
-        // ASSUME the user is not null atm
-        this._user.set(user);
-        return AuthResult.Success;
-    }
-
-    async uploadImage(files: File[]): Promise<Image[]> {
-        return [];
-    }
-
-    async deleteImage(path: string): Promise<boolean> {
-        return false;
+    deleteTopo(topo: Topo | TopoData | LightTopo) {
+        sync.topoDelete(topo);
     }
 
     async getTopo(id: UUID): Promise<TopoData | null> {
+        // Notes on this query:
+        //
+        // 1. If multiple tables reference a parent with the same name for the foreign key,
+        // we disambiguate by specifying the name of the table we want to retrieve.
+        // https://postgrest.org/en/stable/api.html#hint-disambiguation
+        //
+        // 2. We map each geometry column purely to its coordinates array
+        //
+        // 3. In some cases, we specify properties explicitly, to strip away the additional
+        // "topoId" foreign key that exist in the DB for performant joins.
+        // This applies for tracks, boulder images and lines, for instance.
         const { data, error } = await this.client
-            .rpc<TopoData>("getTopo", { topo_id: id })
-            .single();
-        if (error || !data) {
+            .from<TopoData>("topos")
+            .select(`
+                id,
+                name,
+                status,
+                forbidden,
+                modified,
+                submitted,
+                validated,
+                amenities,
+                rockTypes,
+                type,
+                description,
+                faunaProtection,
+                ethics,
+                danger,
+                cleaned,
+                altitude,
+                closestCity,
+                otherAmenities,
+                lonelyBoulders,
+                image,
+                location:location->coordinates,
+                creator:profiles!creatorId (*),
+                validator:profiles!validatorId (*),
+
+                parkings:parkings!topoId (
+                    id, name, spaces, description, image,
+                    location:location->coordinates
+                ),
+
+                waypoints:waypoints!topoId (
+                    id, name, description, image,
+                    location: location->coordinates
+                ),
+                accesses:topo_accesses!topoId (*),
+                managers:managers!topoId (*),
+                sectors:sectors!topoId (
+                    *,
+                    path:path->coordinates
+                ),
+                boulders:boulders!topoId (
+                    id, name, isHighball, mustSee, dangerousDescent,
+                    location:location->coordinates,
+                    images,
+                    tracks:tracks!boulderId(
+                        id, index, name, description, height, grade, orientation, reception, anchors, techniques,
+                        isTraverse, isSittingStart, mustSee, hasMantle,
+                        creatorId,
+                        lines:lines!trackId(
+                            id, index,
+                            points:points->coordinates,
+                            forbidden:forbidden->coordinates,
+                            hand1:hand1->coordinates,
+                            hand2:hand2->coordinates,
+                            foot1:foot1->coordinates,
+                            foot2:foot2->coordinates,
+                            imageId
+                        )
+                    )
+                )
+            `)
+            .match({ id })
+            .maybeSingle();
+        if (error) {
             console.error("Error getting topo data: ", error);
             return null;
         }
@@ -132,5 +161,3 @@ export class ApiService {
     }
 }
 
-export const api = new ApiService();
-api.initSession();

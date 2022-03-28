@@ -7,18 +7,16 @@ import { useRouter } from 'next/router';
 interface UserActionDropdownProps {
     topo: LightTopo;
     position: { x: number, y: number };
+    onSendToValidationClick: () => void,
+    onDeleteClick: () => void;
 }
 
 export const UserActionDropdown: React.FC<UserActionDropdownProps> = React.memo((props: UserActionDropdownProps) => {
     const router = useRouter();
 
     const openTopo = useCallback(() => router.push(`/topo/${props.topo.id}`), [router, props.topo]);
-
+    //TODO
     const downloadTopo = useCallback(() => console.log('Downloading the topo...'), []);
-
-    const sendTopoToValidation = useCallback(() => console.log('Sending to validation...'), []);
-
-    const deleteTopo = useCallback(() => console.log('Deleting topo...'), []);
 
     return (
         <Dropdown
@@ -28,9 +26,9 @@ export const UserActionDropdown: React.FC<UserActionDropdownProps> = React.memo(
                 { value: 'Ouvrir', action: openTopo },
                 { value: 'Télécharger', action: downloadTopo },
                 ...(props.topo.status === TopoStatus.Draft
-                    ? [{ value: 'Envoyer en validation', action: sendTopoToValidation }]
+                    ? [{ value: 'Envoyer en validation', action: props.onSendToValidationClick }]
                     : []),
-                { value: 'Supprimer', action: deleteTopo },
+                { value: 'Supprimer', action: props.onDeleteClick },
             ]}
         />
     );

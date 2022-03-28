@@ -1,4 +1,6 @@
 export async function dropboxUpload(path: string, body: BodyInit): Promise<string> {
+    console.log("Uploading image to path:", path);
+    console.log("Dropbox API key:", process.env.DROPBOX_API_KEY);
     const res = await fetch("https://content.dropboxapi.com/2/files/upload", {
         method: "POST",
         headers: {
@@ -11,8 +13,9 @@ export async function dropboxUpload(path: string, body: BodyInit): Promise<strin
         body
     });
     const json = await res.json();
+    console.log("Dropbox upload response: ", json);
     if (json.error) {
-        console.error("Error during file upload!", json.error);
+        console.error("Error during Dropbox file upload!", json.error);
         // Vercel keeps logs for serverless functions that throw during execution
         throw new Error("File upload failed");
     }
@@ -30,7 +33,7 @@ export async function dropboxDelete(path: string): Promise<void> {
     });
     const json = await res.json();
     if (json.error) {
-        console.error("Error during file deletion!", json.error);
+        console.error("Error during Dropbox file deletion!", json.error);
         // Vercel keeps logs for serverless functions that throw during execution
         throw new Error("File deletion failed");
     }

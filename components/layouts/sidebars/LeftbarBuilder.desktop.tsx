@@ -9,8 +9,8 @@ interface LeftbarBuilderDesktopProps {
     selectedBoulder: SelectQuarkNullable<Boulder>,
     onBoulderSelect: (boulderQuark: Quark<Boulder>) => void,
     onTrackSelect: (trackQuark: Quark<Track>, boulderQuark: Quark<Boulder>) => void,
-    onValidate: () => void,
-    activateValidation: boolean
+    activateSubmission: boolean
+    onSubmit: () => void,
 }
 
 export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = watchDependencies((props: LeftbarBuilderDesktopProps) => {
@@ -26,11 +26,11 @@ export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = watch
                 onTrackSelect={props.onTrackSelect}
             />
 
-            <div className='px-6'>
+            <div className='px-6 text-center'>
                 <Button
                     content='Valider le topo'
-                    onClick={props.onValidate}
-                    activated={props.activateValidation}
+                    activated={props.activateSubmission}
+                    onClick={props.onSubmit}
                 />
             </div>
         </div>

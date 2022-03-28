@@ -2,8 +2,8 @@ import React, { useCallback } from 'react';
 import { Dropdown } from 'components';
 import { Boulder, Track } from 'types';
 import { Quark, watchDependencies } from 'helpers/quarky';
-import { api } from 'helpers/services/ApiService';
 import { createTrack } from 'helpers';
+import { useSession } from 'helpers/hooks/useSession';
 
 interface BoulderMarkerDropdownProps {
     boulder: Quark<Boulder>;
@@ -13,7 +13,7 @@ interface BoulderMarkerDropdownProps {
 }
 
 export const BoulderMarkerDropdown: React.FC<BoulderMarkerDropdownProps> = watchDependencies((props: BoulderMarkerDropdownProps) => {
-    const session = api.user();
+    const session = useSession();
 
     const addTrack = () => {
         if (session) {
@@ -21,7 +21,8 @@ export const BoulderMarkerDropdown: React.FC<BoulderMarkerDropdownProps> = watch
             props.toggleTrackSelect(trackQuark, props.boulder);
         }
     };
-    const addImage = useCallback(() => console.log('Downloading the image...'), []);
+    //TODO
+    const addImage = useCallback(() => console.log('Adding image...'), []);
 
     const deleteBoulder = useCallback(() => props.deleteBoulder(props.boulder), [props.boulder]);
 

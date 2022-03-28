@@ -1,6 +1,7 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { useAsyncEffect, useCircle, useMarker } from "helpers";
 import { MarkerEventHandlers } from "types";
+import { useGeolocation } from "helpers/hooks/useGeolocation";
 
 interface UserMarkerProps {
     onClick?: () => void,
@@ -12,32 +13,26 @@ export const UserMarker: React.FC<UserMarkerProps> = (props: UserMarkerProps) =>
     const [userPositionAccuracy, setUserPositionAccuracy] = useState<number>();
     const [userHeading, setUserHeading] = useState<number | null>(null);
 
-    useAsyncEffect((isAlive) => {
-        const options = {
-            // Timeout = 3 seconds (default = infinite). TODO: agree on the best value
-            timeout: 3000,
-            enableHighAccuracy: true,
-        };
-        const onPosChange = (pos: GeolocationPosition) => {
-            if (isAlive.current) {
-                const coords = {
-                    lat: pos.coords.latitude,
-                    lng: pos.coords.longitude
-                }
-                setUserPosition(coords);
-                if (props.onUserPosChange) props.onUserPosChange(coords);            
-                setUserPositionAccuracy(pos.coords.accuracy);
-                setUserHeading(pos.coords.heading);
+    useGeolocation({
+        onPosChange: useCallback((pos) => {
+            const coords = {
+                lat: pos.coords.latitude,
+                lng: pos.coords.longitude
+            };
+            setUserPosition(coords);
+            if (props.onUserPosChange) props.onUserPosChange(coords);
+            setUserPositionAccuracy(pos.coords.accuracy);
+            setUserHeading(pos.coords.heading);
+        }, [props.onUserPosChange]),
+        onError: useCallback((err) => {
+            if (err.code === 3) {
+                console.log('Geolocation timed out!');
             }
-        }
-        const onError = (err: GeolocationPositionError) => {
-            console.log(err);
-        }
-        const watcher = navigator.geolocation.watchPosition(onPosChange, onError, options);
-        return () => {
-            navigator.geolocation.clearWatch(watcher);
-        }
-    }, []);
+            else {
+                console.log('Geolocation error:', err);
+            }
+        }, [])
+    });
 
     // Main blue dot
     const mainIcon: google.maps.Symbol = {

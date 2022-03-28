@@ -1,5 +1,6 @@
 export * from './BoulderMarker';
 export * from './TopoMarker';
+export * from './CreatingTopoMarker';
 export * from './ParkingMarker';
 export * from './WaypointMarker';
 export * from './ValidationMarker';

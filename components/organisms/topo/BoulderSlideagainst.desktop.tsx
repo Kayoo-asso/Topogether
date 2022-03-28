@@ -3,19 +3,19 @@ import { BoulderPreviewDesktop, Button, Flash, Icon, Modal, SlideagainstRightDes
 import { Quark, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
 import { Boulder, Image, Track, UUID } from 'types';
 import { LoginForm } from '..';
-import { api } from 'helpers/services/ApiService';
+import { useSession } from 'helpers/hooks/useSession';
 
 interface BoulderSlideagainstDesktopProps {
     boulder: Quark<Boulder>,
     selectedTrack: SelectQuarkNullable<Track>,
     topoCreatorId?: UUID,
-    currentImage: Image,
-    setCurrentImage: Dispatch<SetStateAction<Image>>,
+    currentImage?: Image,
+    setCurrentImage: Dispatch<SetStateAction<Image | undefined>>,
     onClose: () => void,
 }
 
 export const BoulderSlideagainstDesktop: React.FC<BoulderSlideagainstDesktopProps> = watchDependencies((props: BoulderSlideagainstDesktopProps) => {
-    const session = api.user();
+    const session = useSession();
     
     const [flashMessage, setFlashMessage] = useState<string>();
     const [officialTrackTab, setOfficialTrackTab] = useState(true);
@@ -32,7 +32,7 @@ export const BoulderSlideagainstDesktop: React.FC<BoulderSlideagainstDesktopProp
             <SlideagainstRightDesktop 
                 open
                 displayLikeButton
-                item={props.boulder}
+                item={props.boulder()}
                 onClose={props.onClose}
             >
                 <>

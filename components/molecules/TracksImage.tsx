@@ -7,20 +7,23 @@ import { SVGTrack } from 'components';
 import { staticUrl } from 'helpers/globals';
 import useDimensions from 'react-cool-dimensions';
 import { getMousePosInside } from '../../helpers';
-import { QuarkArray, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
+import { Quark, QuarkIter, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
+import { CFImage } from 'components/atoms/CFImage';
 
 interface TracksImageProps {
-  image: Image,
-  tracks: QuarkArray<Track>,
-  selectedTrack: SelectQuarkNullable<Track>,
+  image?: Image,
+  tracks: QuarkIter<Quark<Track>>,
+  selectedTrack?: SelectQuarkNullable<Track>,
   imageClassName?: string,
   containerClassName?: string,
+  programmativeHeight?: number,
   canvasClassName?: string,
   displayTracks?: boolean,
   displayPhantomTracks?: boolean,
   displayTracksDetails?: boolean,
+  displayTrackOrderIndexes?: boolean,
+  tracksWeight?: number,
   editable?: boolean,
-  test?: any
   currentTool?: DrawerToolEnum,
   onImageClick?: (pos: Position) => void,
   onPointClick?: (pointType: PointEnum, index: number) => void,
@@ -31,31 +34,35 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
   displayTracks = true,
   displayPhantomTracks = true,
   displayTracksDetails = false,
+  displayTrackOrderIndexes = true,
+  tracksWeight = 2,
   editable = false,
   containerClassName = '',
   ...props
 }: TracksImageProps) => {
   const { observe, width: containerWidth, height: containerHeight } = useDimensions({});
+
+  const selectedTrack = props.selectedTrack && props.selectedTrack();
   
-  let imgWidth;
-  let imgHeight;
-  const containerR = containerHeight > 0 ? containerWidth / containerHeight : 0;
-  const imageR = props.image.width / props.image.height;
-  if (imageR > containerR) {
-    imgWidth = containerWidth;
-    imgHeight = props.image.height * (containerWidth / props.image.width);
-  }
-  else {
-    imgHeight = containerHeight;
-    imgWidth = props.image.width * (containerHeight / props.image.height);
-  }
-  const rx = props.image.width != 0
-  ? imgWidth / props.image.width
-  : 1;
+  // let imgWidth;
+  // let imgHeight;
+  // const containerR = containerHeight > 0 ? containerWidth / containerHeight : 0;
+  // const imageR = props.image.width / props.image.height;
+  // if (imageR > containerR) {
+  //   imgWidth = containerWidth;
+  //   imgHeight = props.image.height * (containerWidth / props.image.width);
+  // }
+  // else {
+  //   imgHeight = containerHeight;
+  //   imgWidth = props.image.width * (containerHeight / props.image.height);
+  // }
+  // const rx = props.image.width != 0
+  // ? imgWidth / props.image.width
+  // : 1;
 
   const getCursorUrl = () => {
     let cursorColor = 'grey';
-    if (props.selectedTrack()?.grade) cursorColor = props.selectedTrack()!.grade![0];
+    if (selectedTrack?.grade) cursorColor = selectedTrack.grade![0];
 
     let cursorUrl = '/assets/icons/colored/';
     switch (props.currentTool) {
@@ -74,13 +81,20 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
   };
 
   return (
+    <CFImage alt={"Rocher avec tracé de voies"} image={props.image} objectFit='contain' size='30vw' />
+  )
+
+  return (
     <div
       ref={observe}
       className={`relative w-full flex flex-row items-center justify-center ${containerClassName}`}
+      style={props.programmativeHeight ? {
+        height: props.programmativeHeight + 'px'
+      } : {}}
     >
-      <svg
+      {/* <svg
         style={{ 
-          cursor: `url(${getCursorUrl()}) ${props.currentTool === 'ERASER' ? '3 7': ''}, auto`,
+          cursor: editable ? `url(${getCursorUrl()}) ${props.currentTool === 'ERASER' ? '3 7': ''}, auto` : '',
         }}
         className={"svg-canvas absolute z-50 " + (props.canvasClassName ? props.canvasClassName : '')}
         width={imgWidth}
@@ -93,9 +107,9 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
           }
         }}
       >
-        {props.tracks.quarks().map(trackQuark => {
-          const highlighted = props.selectedTrack() === undefined ||
-                trackQuark().id === props.selectedTrack()!.id;           
+        {props.tracks.map(trackQuark => {
+          const highlighted = selectedTrack === undefined ||
+                trackQuark().id === selectedTrack.id;           
           if (highlighted || displayPhantomTracks) 
             return (
               <SVGTrack 
@@ -107,7 +121,9 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
                 editable={editable}
                 highlighted={highlighted}
                 displayTrackDetails={displayTracksDetails}
-                onLineClick={props.tracks.length > 1 ? () => props.selectedTrack.select(trackQuark) : undefined}
+                displayTrackOrderIndexes={displayTrackOrderIndexes}
+                trackWeight={tracksWeight}
+                onLineClick={props.selectedTrack ? () => props.selectedTrack!.select(trackQuark) : undefined}
                 onPointClick={props.onPointClick}
               />
             )
@@ -116,11 +132,12 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
 
       <NextImage
         className={`${props.imageClassName ? props.imageClassName : ''}`}
-        src={props.image ? props.image.url : staticUrl.defaultKayoo}
+        src={props.image ? props.image.path : staticUrl.defaultKayoo}
         alt="Rocher"
         width={imgWidth}
         height={imgHeight}
-      />
+        priority
+      /> */}
     </div>
   );
 });

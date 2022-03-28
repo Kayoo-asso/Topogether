@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { ImageInput, TextArea, TextInput } from 'components';
 import { Quark, watchDependencies } from 'helpers/quarky';
-import { Description, Manager, Name } from 'types';
+import { Description, Email, Manager, Name } from 'types';
 
 interface ManagementFormProps {
     manager: Quark<Manager>,
@@ -26,14 +26,19 @@ export const ManagementForm: React.FC<ManagementFormProps> = watchDependencies((
             <div className='flex flex-row gap-6 items-end'>
                 <div className='w-32 md:mt-4'>
                     <ImageInput 
-                        value={manager.imageUrl}
-                        onChange={(files) => {
+                        value={manager.image}
+                        onChange={(images) => {
                             props.manager.set({
                                 ...manager,
-                                imageUrl: files[0].url,
+                                image: images[0],
                             })
                         }}
-                        onDelete={() => console.log('delete')} //TODO
+                        onDelete={() => {
+                            props.manager.set({
+                                ...manager,
+                                image: undefined,
+                            })
+                        }}
                     />
                 </div>
                 <TextInput 
@@ -51,10 +56,10 @@ export const ManagementForm: React.FC<ManagementFormProps> = watchDependencies((
             <TextInput 
                 id='manager-adress'
                 label='Adresse'
-                value={manager.adress}
+                value={manager.address}
                 onChange={(e) => props.manager.set({
                     ...manager,
-                    adress: e.target.value as Name
+                    address: e.target.value as Name
                 })}
             />
             <div className='flex flex-row gap-3'>
@@ -106,7 +111,7 @@ export const ManagementForm: React.FC<ManagementFormProps> = watchDependencies((
                 value={manager.contactMail}
                 onChange={(e) => props.manager.set({
                     ...manager,
-                    contactMail: e.target.value as Name
+                    contactMail: e.target.value as Email
                 })}
             />
             <TextInput 

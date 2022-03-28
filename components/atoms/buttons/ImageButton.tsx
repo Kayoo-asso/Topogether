@@ -1,13 +1,14 @@
 import React from 'react';
-import NextImage from 'next/image';
 // eslint-disable-next-line import/no-cycle
 import { Icon } from 'components';
 import useDimensions from 'react-cool-dimensions';
 import { DeleteButton } from '.';
+import { CFImage } from '../CFImage';
+import { Image } from 'types';
 
 interface ImageButtonProps {
   text?: string,
-  imageUrl?: string,
+  image?: Image,
   loading?: boolean,
   onClick: () => void,
   onDelete?: () => void,
@@ -18,7 +19,6 @@ export const ImageButton: React.FC<ImageButtonProps> = ({
   loading = false,
   ...props
 }) => {
-  
   const { observe, unobserve, width: containerWidth, height: containerHeight, entry } = useDimensions({
     onResize: ({ observe, unobserve, width, height, entry }) => {
       // Triggered whenever the size of the target is changed...
@@ -45,7 +45,7 @@ export const ImageButton: React.FC<ImageButtonProps> = ({
           center
         />
       )}
-    {!loading && props.imageUrl &&
+    {!loading && props.image &&
       <>
         {props.onDelete &&
           <div 
@@ -57,15 +57,14 @@ export const ImageButton: React.FC<ImageButtonProps> = ({
             />
           </div>
         }
-        <NextImage
-          src={props.imageUrl}
+        <CFImage
+          image={props.image}
           alt="user generated image"
-          layout="fill"
-          objectFit="contain"
+          size={`${containerWidth}px`}
         />
       </>
     }
-    {!loading && !props.imageUrl
+    {!loading && !props.image
       && <span className='m-2'>{text}</span>}
   </div>
 )};

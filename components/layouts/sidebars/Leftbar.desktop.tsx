@@ -1,8 +1,8 @@
 import React from 'react';
 import { Button, Icon } from 'components';
 import Link from 'next/link';
-import { api } from 'helpers/services/ApiService';
 import { watchDependencies } from 'helpers/quarky';
+import { useSession } from 'helpers/hooks/useSession';
 
 interface LeftbarDesktopProps {
     currentMenuItem?: 'BUILDER' | 'MAP' | 'USER' | 'ADMIN',
@@ -11,14 +11,14 @@ interface LeftbarDesktopProps {
 export const LeftbarDesktop: React.FC<LeftbarDesktopProps> = watchDependencies(({
     currentMenuItem = 'MAP',
 }: LeftbarDesktopProps) => {
-  const session = api.user();
+  const session = useSession();
   if (!session) return <></>;
  
   return (
     <div className="hidden md:flex flex-col bg-white border-r border-grey-medium min-w-[280px] w-[280px] h-full px-8 py-10 z-200">
         <div className="mb-20 mt-2">
           <div>
-            Bonjour <span className="ktext-subtitle text-main">{session.userName}</span> !
+            Bonjour <span className="ktext-subtitle text-main">{session.user?.userName}</span> !
           </div>
         </div>
 

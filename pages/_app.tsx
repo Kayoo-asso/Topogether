@@ -1,24 +1,38 @@
 import React, { useState } from 'react';
 import 'styles/globals.css';
-import type { AppProps } from 'next/app';
+import App, { AppInitialProps } from 'next/app';
+import type { AppProps, AppContext } from 'next/app';
 import Head from 'next/head';
 import { DeviceContext, Device } from 'helpers';
 import { ShellMobile } from 'components';
 import useDimensions from 'react-cool-dimensions';
-import ProtectedRoute from './protectedRoutes';
-import { useRouter } from 'next/router';
+import { getServerSession } from 'helpers/getServerSession';
+import { Session } from 'types';
+import { SessionContext } from 'components/SessionProvider';
+import isMobile from 'ismobilejs';
+import { useFirstRender } from 'helpers/hooks/useFirstRender';
 
-const App = ({ Component, pageProps }: AppProps) => {
-  const router = useRouter();
-  const [device, setDevice] = useState<Device>('MOBILE');
-  const { observe } = useDimensions({
-    onResize: ({ observe, unobserve, width }) => {
-      if (width > 768) { setDevice('DESKTOP'); } 
-      else if (width > 640) { setDevice('TABLET'); } 
-      else setDevice('MOBILE');
-    },
-  });
-  
+type CustomProps = {
+  session: Session | null,
+  initialDevice: Device,
+};
+
+type InitialProps = AppInitialProps & CustomProps;
+type Props = AppProps & CustomProps;
+
+const breakpoints: Record<Device, number> = {
+  mobile: 0,
+  desktop: 640
+};
+
+const CustomApp = ({ Component, pageProps, session, initialDevice }: Props) => {
+  const { currentBreakpoint } = useDimensions({
+    breakpoints,
+    updateOnBreakpointChange: true
+  }) as { currentBreakpoint: Device };
+
+  const firstRender = useFirstRender();
+  const device = firstRender ? initialDevice : currentBreakpoint;
 
   return (
     <>
@@ -31,6 +45,7 @@ const App = ({ Component, pageProps }: AppProps) => {
         />
         <meta name="description" content="Des topos complets et collaboratifs" />
         <meta name="keywords" content="Escalade Climbing Topo Topographie Grimpe Cartographie" />
+
         <title>Topogether</title>
         <link rel="manifest" href="/manifest.json" />
 
@@ -45,14 +60,11 @@ const App = ({ Component, pageProps }: AppProps) => {
 
       </Head>
 
+      <SessionContext.Provider value={session}>
         <DeviceContext.Provider value={device}>
-          <div ref={observe} className="w-screen h-screen flex items-end flex-col">
+          <div className="w-screen h-screen flex items-end flex-col">
             <div id="content" className="flex-1 w-screen absolute bg-grey-light flex flex-col h-full md:h-screen overflow-hidden">
-              
-              <ProtectedRoute router={router}>
-                <Component {...pageProps} />
-              </ProtectedRoute>
-
+              <Component {...pageProps} />
             </div>
 
             <div id="footer" className="bg-dark z-500 absolute bottom-0 h-shell md:hidden">
@@ -60,8 +72,29 @@ const App = ({ Component, pageProps }: AppProps) => {
             </div>
           </div>
         </DeviceContext.Provider>
+      </SessionContext.Provider>
     </>
   );
 };
 
-export default App;
+CustomApp.getInitialProps = async (context: AppContext): Promise<InitialProps> => {
+  const req = context.ctx.req;
+
+  let device: Device = "mobile";
+  if (req && req.headers['user-agent']) {
+    const ua = req.headers['user-agent'];
+    const mobile = isMobile(ua).any;
+    if (!mobile) {
+      device = "desktop";
+    }
+  }
+
+  const [appProps, session] = await Promise.all([
+    App.getInitialProps(context),
+    req ? getServerSession(req) : Promise.resolve(null)
+  ]);
+
+  return { ...appProps, session, initialDevice: device };
+}
+
+export default CustomApp;

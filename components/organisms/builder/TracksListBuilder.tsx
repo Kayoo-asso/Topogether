@@ -4,7 +4,7 @@ import { Boulder, gradeToLightGrade, Track } from 'types';
 import { Quark, SelectQuarkNullable, useSelectQuark, watchDependencies } from 'helpers/quarky';
 import { TrackForm } from '../form/TrackForm';
 import { createTrack, DeviceContext } from 'helpers';
-import { api } from 'helpers/services/ApiService';
+import { useSession } from 'helpers/hooks/useSession';
 
 interface TracksListBuilderProps {
   boulder: Quark<Boulder>,
@@ -25,7 +25,7 @@ const gradeColors = {
 };
 
 export const TracksListBuilder: React.FC<TracksListBuilderProps> = watchDependencies((props: TracksListBuilderProps) => {
-  const session = api.user();
+  const session = useSession();
 
   const trackToDelete = useSelectQuark<Track>();;
   const device = useContext(DeviceContext);

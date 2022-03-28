@@ -5,9 +5,10 @@ import { derive, quark, Quark, Signal, untrack, ValueOrWrappedFunction } from ".
 
 const alwaysFalse = () => false;
 
-export interface QuarkArrayCallbacks<T, Q extends Quark<T> = Quark<T>> {
-    onAdd?: (item: T) => Q,
-    onDelete?: (item: Q) => void,
+export interface QuarkArrayCallbacks<T> {
+    quarkifier?: (item: T) => Quark<T>,
+    onAdd?: (item: T) => void,
+    onDelete?: (item: T) => void,
 }
 
 // NOTE: the return values of all the array methods become invalid if done within a batch (since modifications apply later)
@@ -15,25 +16,22 @@ export interface QuarkArrayCallbacks<T, Q extends Quark<T> = Quark<T>> {
 // TODO: ensure onAdd and onDelete are called properly for every array method
 export class QuarkArray<T> {
     #source: Quark<Array<Quark<T>>>;
-    onAdd: (item: T) => Quark<T>;
-    onDelete?: (item: Quark<T>) => void;
+    quarkifier: (item: T) => Quark<T>;
+    onAdd?: (item: T) => void;
+    onDelete?: (item: T) => void;
 
     // TODO: auto-setup callbacks (so it works even on push etc)
     constructor(
         items?: T[],
-        callbacks?: QuarkArrayCallbacks<T, any>,
+        callbacks?: QuarkArrayCallbacks<T>,
     ) {
+        this.quarkifier = callbacks?.quarkifier ?? quark;
+        this.onAdd = callbacks?.onAdd;
+        this.onDelete = callbacks?.onDelete;
         items = items ?? [];
-        const quarks: Array<Quark<T>> = new Array(items.length);
-        const quarkifier = callbacks?.onAdd ?? quark;
-        for (let i = 0; i < items.length; ++i) {
-            const q = quarkifier(items[i]);
-            quarks[i] = q;
-        }
+        const quarks = items.map(this.quarkifier);
         // the alwaysFalse allows us to modify the array in place and return the same reference to update the quark
         this.#source = quark(quarks, { equal: alwaysFalse });
-        this.onAdd = quarkifier;
-        this.onDelete = callbacks?.onDelete;
      }
 
     get length(): number {
@@ -118,26 +116,28 @@ export class QuarkArray<T> {
 
     // TODO: hook up predefined effects
     push(value: T): number {
-        const q = this.onAdd(value);
+        if(this.onAdd) this.onAdd(value);
+        const q = this.quarkifier(value);
         return this.#apply(x => x.push(q));
     }
 
     pop(): Quark<T> | undefined {
         const val = this.#apply(x => x.pop());
-        if (this.onDelete && val) untrack(() => this.onDelete!(val));
+        if (this.onDelete && val) untrack(() => this.onDelete!(val()));
         return val;
     }
 
     shift(): Quark<T> | undefined {
         const quark = this.#apply(x => x.shift());
-        if (quark && this.onDelete) untrack(() => this.onDelete!(quark));
+        if (quark && this.onDelete) untrack(() => this.onDelete!(quark()));
         return quark;
     }
 
     unshift(...items: T[]): number {
         const quarks = new Array(items.length);
         for (let i = 0; i < items.length; ++i) {
-            quarks[i] = this.onAdd(items[i]);
+            if (this.onAdd) this.onAdd(items[i]);
+            quarks[i] = this.quarkifier(items[i]);
         }
         return this.#apply(x => x.unshift(...quarks));
     }
@@ -156,9 +156,10 @@ export class QuarkArray<T> {
             const arr = this.#source();
             for (let i = 0; i < arr.length; i++) {
                 const q = arr[i];
-                if (q() === item) {
+                const val = q();
+                if (val === item) {
                     arr.splice(i, 1);
-                    if(this.onDelete) this.onDelete(q);
+                    if(this.onDelete) this.onDelete(val);
                     break;
                 }
             }
@@ -172,7 +173,7 @@ export class QuarkArray<T> {
             for (let i = 0; i < arr.length; i++) {
                 if (quark === arr[i]) {
                     arr.splice(i, 1);
-                    if (this.onDelete) this.onDelete(quark);
+                    if (this.onDelete) this.onDelete(quark());
                     break;
                 }
             }
@@ -189,7 +190,7 @@ export class QuarkArray<T> {
                 if (!selection(quark())) {
                     after.push(quark);
                 } else if(this.onDelete) {
-                    this.onDelete(quark);
+                    this.onDelete(quark());
                 }
             }
             this.#source.set(after)

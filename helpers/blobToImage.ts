@@ -8,9 +8,7 @@ export const blobToImage = async (blob: Blob): Promise<Image> => {
         imgElt.src = url;
         imgElt.onload = () => resolve({
             id: v4(),
-            url: url,
-            width: imgElt.width,
-            height: imgElt.height,
+            ratio: imgElt.width / imgElt.height,
         });
         imgElt.onerror = reject
     });

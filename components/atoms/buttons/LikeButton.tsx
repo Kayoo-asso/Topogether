@@ -1,4 +1,3 @@
-import { Signal } from 'helpers/quarky';
 import React from 'react';
 import { Boulder, LightTopo, Topo } from 'types';
 import { Icon } from '../Icon';
@@ -6,7 +5,7 @@ import { Icon } from '../Icon';
 interface LikeButtonProps {
   liked?: boolean,
   className?: string,
-  item: Signal<Boulder> | Signal<Topo> | Signal<LightTopo>,
+  item: Boulder | Topo | LightTopo,
   onClick?: () => void,
 }
 

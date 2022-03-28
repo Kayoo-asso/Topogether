@@ -3,3 +3,4 @@ export * from './sidebars';
 export * from './shell';
 
 export * from './Tabs';
+export * from './Loading';

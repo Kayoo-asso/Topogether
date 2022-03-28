@@ -3,21 +3,16 @@
 module.exports = {
   reactStrictMode: true,
   images: {
-    domains: ['builder.topogether.com'],
+    domains: ['builder.topogether.com', 'imagedelivery.net'],
   },
   eslint: {
     // Warning: This allows production builds to successfully complete even if
     // your project has ESLint errors.
     ignoreDuringBuilds: true,
   },
-  // no idea what the type for the Webpack config is
-  // webpack(config) {
-  //   config.module.rules.push({
-  //     test: /\.svg$/i,
-  //     issuer: /\.[jt]sx?$/,
-  //     use: ['@svgr/webpack']
-  //   });
-  //
-  //   return config;
-  // }
+  webpack(config) {
+    config.experiments = config.experiments || {};
+    config.experiments.topLevelAwait = true;
+    return config;
+  },
 }

@@ -4,7 +4,7 @@ import { Button, Header, TextInput } from 'components';
 import Link from 'next/link';
 import NextImage from 'next/image';
 import { staticUrl } from 'helpers';
-import { api, AuthResult } from 'helpers/services/ApiService';
+import { api, auth, AuthResult } from 'helpers/services';
 import { Email, isEmail, isName, Name } from 'types';
 import { useRouter } from 'next/router';
 
@@ -30,7 +30,7 @@ const SignupPage: NextPage = () => {
     else if (password.length < 8) { setPasswordError("Le mot de passe doit faire plus de 8 caractères"); hasError = true; }
 
     if (!hasError) {
-      const res = await api.signup(email as Email, password!, pseudo as Name);
+      const res = await auth.signUp(email as Email, password!, pseudo as Name);
       if (res === AuthResult.ConfirmationRequired) setErrorMessage("Pour valider votre compte, merci de cliquer sur le lien qui vous a été envoyé par email");
       else if (res === AuthResult.Success) router.push("/");
       else setErrorMessage("Une erreur est survenue. Merci de réessayer.")

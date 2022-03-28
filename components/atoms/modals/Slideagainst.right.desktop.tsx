@@ -8,12 +8,12 @@ interface SlideagainstRightDesktopProps {
     displayLikeButton?: boolean,
     displayDlButton?: boolean,
     className?: string,
-    item?: Signal<Boulder> | Signal<Topo> | Signal<LightTopo>,
+    item?: Boulder | Topo | LightTopo,
     onClose?: () => void,
     children?: ReactNode,
 }
 
-const isTopo = (item: Signal<Boulder> | Signal<Topo> | Signal<LightTopo>): item is Signal<Topo> => (item as Signal<Topo>)().creatorId !== undefined;
+const isTopo = (item: Boulder | Topo | LightTopo): item is Topo => (item as Topo).creator?.id !== undefined;
 
 export const SlideagainstRightDesktop: React.FC<SlideagainstRightDesktopProps> = ({
     open = false,

@@ -1,19 +1,19 @@
-import React, { Dispatch, SetStateAction, useMemo, useState } from 'react';
+import React, { Dispatch, SetStateAction, useState } from 'react';
 import {
   GradeScale, RoundButton, SlideoverMobile, TracksImage, Icon
 } from 'components';
 import { Boulder, Image, Track } from 'types';
 import { buildBoulderGradeHistogram, staticUrl } from 'helpers';
-import { default as NextImage } from 'next/image';
 import { Quark, watchDependencies, SelectQuarkNullable } from 'helpers/quarky';
 import { TracksListBuilder } from '.';
 import { BoulderForm } from '..';
+import { CFImage } from 'components/atoms/CFImage';
 
 interface BoulderBuilderSlideoverMobileProps {
   boulder: Quark<Boulder>,
   selectedTrack: SelectQuarkNullable<Track>,
-  currentImage: Image,
-  setCurrentImage: Dispatch<SetStateAction<Image>>,
+  currentImage?: Image,
+  setCurrentImage: Dispatch<SetStateAction<Image | undefined>>,
   onPhotoButtonClick?: () => void,
   onDrawButtonClick: () => void,
   onClose: () => void,
@@ -38,7 +38,7 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
     >
       {/* BOULDER IMAGE */}
       {full && (
-        <div className="w-full bg-dark rounded-t-lg flex items-center justify-center">
+        <div className="w-full bg-dark rounded-t-lg relative">
           {imageToDisplayIndex > 0 && !selectedTrack &&
             <Icon 
               name="arrow-full"
@@ -51,14 +51,14 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
               }}
             />
           }
-          <TracksImage
+          {/* <TracksImage
             image={props.currentImage}
-            tracks={boulder.tracks}
+            tracks={boulder.tracks.quarks()}
             selectedTrack={props.selectedTrack}
             displayPhantomTracks={displayPhantomTracks}
             displayTracksDetails={!!selectedTrack?.id}
             containerClassName={props.currentImage.width/props.currentImage.height > 1 ? 'overflow-hidden rounded-t-lg' : 'h-[300px]'}
-          />
+          /> */}
           {imageToDisplayIndex < boulder.images.length - 1 && !selectedTrack &&
             <Icon 
               name="arrow-full"
@@ -92,7 +92,7 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
         </div>
 
         <div className="flex flex-row items-center gap-6 justify-end col-span-2">
-          {selectedTrack && boulder.tracks.filter(track => track.lines.toArray().some(line => line.imageId === props.currentImage.id)).toArray().length > 1 &&
+          {selectedTrack && boulder.tracks.filter(track => track.lines.toArray().some(line => line.imageId === props.currentImage?.id)).toArray().length > 1 &&
             <Icon 
               name='many-tracks'
               SVGClassName={'w-6 h-6 ' + (displayPhantomTracks ? 'stroke-main' : 'stroke-grey-medium')}
@@ -109,12 +109,11 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
 
           {!full && (
             <div className="w-full relative h-[60px]">
-              <NextImage
-                src={boulder.images[0] ? boulder.images[0].url : staticUrl.defaultKayoo}
+              <CFImage
+                image={boulder.images[0]}
                 className="rounded-sm"
                 alt="Boulder"
-                priority
-                layout="fill"
+                size={"50vw"}
                 objectFit="contain"
               />
             </div>

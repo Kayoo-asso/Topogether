@@ -3,7 +3,7 @@ import { v4 } from "uuid";
 
 export const fontainebleauLocation: GeoCoordinates = [2.697569, 48.399065];
 
-export const topogetherUrl = 'https://builder.topogether.com';// import.meta.env.VITE_TOPOGETHER_URL,
+export const topogetherUrl = 'https://builder.topogether.com';
 export const staticUrl = {
   logo_color: `/assets/img/Logo_green_topogether.png`,
   logo_black: `/assets/images/Logo_black_topogether.png`,
@@ -14,10 +14,3 @@ export const staticUrl = {
   defaultKayoo: `/assets/img/Kayoo_defaut_image.png`,
   deleteWarning: `/assets/img/Warning delete topogether boulder escalade topo.png`,
 };
-
-export const defaultImage: Image = {
-  id: v4(),
-  url: staticUrl.defaultKayoo,
-  width: 501,
-  height: 501
-}

@@ -8,6 +8,7 @@ export const createSector = (topoQuark: Quark<Topo>, creatingSector: GeoCoordina
     if (creatingSector.length > 2) {
       const newSector: SectorData = {
         id: v4(),
+        index: topo.sectors.length,
         name: 'Nouveau secteur' as Name,
         path: [...creatingSector],
         boulders: []

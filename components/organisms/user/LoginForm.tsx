@@ -3,7 +3,7 @@ import { Button, Checkbox, TextInput } from 'components';
 import Link from 'next/link';
 import NextImage from 'next/image';
 import { staticUrl } from 'helpers';
-import { api, AuthResult } from 'helpers/services/ApiService';
+import { auth, AuthResult } from 'helpers/services';
 import { Email } from 'types';
 import { useRouter } from 'next/router';
 
@@ -14,8 +14,8 @@ interface LoginFormProps {
 export const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
     const router = useRouter();
 
-    const [email, setEmail] = useState<string>();
-    const [password, setPassword] = useState<string>();
+    const [email, setEmail] = useState<string>('');
+    const [password, setPassword] = useState<string>('');
     const [rememberChecked, setRememberChecked] = useState(false);
 
     const [emailError, setEmailError] = useState<string>();
@@ -29,7 +29,7 @@ export const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
         if (!password) { setPasswordError("Mot de passe invalide"); hasError = true };
 
         if (!hasError) {
-            const res = await api.signIn(email as Email, password!);
+            const res = await auth.signIn(email as Email, password!);
             if (res === AuthResult.ConfirmationRequired) setErrorMessage("Merci de confirmer votre compte en cliquant sur le lien dans le mail qui vous a été envoyé.");
             else if (res === AuthResult.Success) {
                 if (props.onLogin) props.onLogin();
@@ -98,22 +98,22 @@ export const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
             </div>
 
             <div className='flex flex-col gap-16 w-full'>
-            <div className='flex flex-row w-full justify-center md:justify-between items-center'>
-                <Link href="/user/signup">
-                    <div className="ktext-base-little text-main cursor-pointer hidden md:block">Créer un compte</div>
-                </Link>
-                <Link href="/user/forgotPassword">
-                    <div className="ktext-base-little text-main cursor-pointer">Mot de passe oublié ?</div>
-                </Link>
-            </div>
+                <div className='flex flex-row w-full justify-center md:justify-between items-center'>
+                    <Link href="/user/signup">
+                        <div className="ktext-base-little text-main cursor-pointer hidden md:block">Créer un compte</div>
+                    </Link>
+                    <Link href="/user/forgotPassword">
+                        <div className="ktext-base-little text-main cursor-pointer">Mot de passe oublié ?</div>
+                    </Link>
+                </div>
 
-            <div className='w-full md:hidden'>
-                <Button 
-                    content="Créer un compte"
-                    fullWidth
-                    href='/user/signup'
-                />
-            </div>
+                <div className='w-full md:hidden'>
+                    <Button 
+                        content="Créer un compte"
+                        fullWidth
+                        href='/user/signup'
+                    />
+                </div>
             </div>
 
         </div>
