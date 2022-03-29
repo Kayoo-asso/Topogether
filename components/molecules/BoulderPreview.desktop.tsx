@@ -36,10 +36,10 @@ export const BoulderPreviewDesktop: React.FC<BoulderPreviewDesktopProps> = watch
                     onImageClick={(id) => props.setCurrentImage(boulder.images.find(img => img.id === id)!)}
                     allowUpload={displayAddButton}
                     onChange={(images) => {
-                        props.boulder.set({
-                            ...boulder,
-                            images: images,
-                        })
+                        props.boulder.set(b => ({
+                            ...b,
+                            images: [...b.images, ...images],
+                        }))
                     }}
                     onImageDelete={(id) => {
                         const newImages = props.boulder().images.filter((img) => img.id !== id);
