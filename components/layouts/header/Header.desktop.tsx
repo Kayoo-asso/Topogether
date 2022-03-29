@@ -1,6 +1,7 @@
 import React, { ReactNode, useEffect, useState } from 'react';
 import NextImage from 'next/image';
-import { Dropdown, DropdownOption, Icon, ProfilePicture } from 'components';
+import { Icon, ProfilePicture } from 'components/atoms';
+import { Dropdown, DropdownOption } from 'components/molecules/form';
 import Link from 'next/link';
 import { MapToolEnum } from 'types';
 import { auth } from 'helpers/services';

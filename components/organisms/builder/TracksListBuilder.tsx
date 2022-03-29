@@ -74,7 +74,7 @@ export const TracksListBuilder: React.FC<TracksListBuilderProps> = watchDependen
                   />
                 }
               </div>
-              {selectedTrack?.id === track.id && device === 'MOBILE' &&
+              {selectedTrack?.id === track.id && device === 'mobile' &&
                 <TrackForm 
                   track={trackQuark}
                   className='mt-8'

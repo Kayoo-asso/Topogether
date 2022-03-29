@@ -1,7 +1,9 @@
 import React, { useCallback, useState } from 'react';
 import {
-  HeaderDesktop, LeftbarDesktop, MapControl, Show, TopoPreview,
+  MapControl, Show, TopoPreview,
 } from 'components';
+
+import { HeaderDesktop, LeftbarDesktop } from 'components/layouts';
 import { LightTopo, Session } from 'types';
 import { fontainebleauLocation, toLatLng } from 'helpers';
 
@@ -22,7 +24,7 @@ export const RootWorldMap: React.FC<RootWorldMapProps> = (props: RootWorldMapPro
     <>
       <HeaderDesktop
         backLink="#"
-        title="Carte des topos"
+        title="Carte des topo"
         displayLogin={props.user ? false : true}
       />
 

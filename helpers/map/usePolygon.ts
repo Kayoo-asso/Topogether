@@ -1,5 +1,5 @@
-import { MapContext } from "components";
 import { useEffectWithDeepEqual } from "helpers";
+import { MapContext } from "helpers/context";
 import { useContext, useEffect, useRef } from "react";
 import { PolygonEventHandlers, polygonEvents } from "types";
 

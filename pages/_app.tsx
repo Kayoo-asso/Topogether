@@ -4,11 +4,11 @@ import App, { AppInitialProps } from 'next/app';
 import type { AppProps, AppContext } from 'next/app';
 import Head from 'next/head';
 import { DeviceContext, Device } from 'helpers';
-import { ShellMobile } from 'components';
+import { ShellMobile } from 'components/layouts';
 import useDimensions from 'react-cool-dimensions';
 import { getServerSession } from 'helpers/getServerSession';
 import { Session } from 'types';
-import { SessionContext } from 'components/SessionProvider';
+import { SessionContext } from 'helpers';
 import isMobile from 'ismobilejs';
 import { useFirstRender } from 'helpers/hooks/useFirstRender';
 import { resetServerContext } from 'react-beautiful-dnd';
@@ -102,3 +102,4 @@ CustomApp.getInitialProps = async (context: AppContext): Promise<InitialProps> =
 }
 
 export default CustomApp;
+

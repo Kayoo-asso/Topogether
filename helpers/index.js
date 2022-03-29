@@ -23,6 +23,5 @@ export * from './arrayMove';
 
 // ensures this runs on any page that needs it
 if (process.env.NODE_ENV === "development" && typeof window !== "undefined") {
-    await loginFakeAdmin();
-    await seedLocalDb();
+    loginFakeAdmin().then(seedLocalDb);
 }

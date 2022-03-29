@@ -63,7 +63,7 @@ export const TracksList: React.FC<TracksListProps> = watchDependencies((props: T
               />
             </div>
 
-            {props.selectedTrack()?.id === track.id && device === 'MOBILE' &&
+            {props.selectedTrack()?.id === track.id && device === 'mobile' &&
               <>
                 <div className='mt-4'>
                   {track.description}

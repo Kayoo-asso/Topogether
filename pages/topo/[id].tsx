@@ -1,53 +1,46 @@
 import React from 'react';
-import type { NextPage } from 'next';
-import { Error404, Header, Loading, RootTopo } from 'components';
-import { useRouter } from 'next/router';
+import type { GetServerSideProps, NextPage } from 'next';
+import { RootTopo } from 'components';
 import { editTopo } from 'helpers';
-import { isUUID, Topo } from 'types';
-import { watchDependencies } from 'helpers/quarky';
+import { isUUID, TopoData } from 'types';
 import { api } from 'helpers/services';
-import { useAsyncData } from 'helpers/hooks/useAsyncData';
 
-export async function getServerSideProps() {
-  const data = {};
-  return { props: { data } }
+type TopoProps = {
+  topo: TopoData,
 }
 
-const Topo: NextPage = watchDependencies(() => {
-  const router = useRouter();
-  const id = router.query.id?.toString();
-  if (!id || !isUUID(id)) { () => router.push('/'); return null; }
-
-  const topoQuery = useAsyncData(() => api.getTopo(id), [id]);
-
-  // ERROR
-  if (topoQuery.type === 'error') { () => router.push('/'); return null; }
-
-  //LOADING
-  else if (topoQuery.type === 'loading') return (
-    <>
-      <Header
-        title="Chargement du topo..."
-        backLink='/'
-      />
-      <Loading />
-    </>
-  )
-
-  // SUCCESS
-  else {
-    // BUT NO DATA...
-    if (!topoQuery.data) return <Error404 title='Topo introuvable' />
-    else {
-      const topoQuark = editTopo(topoQuery.data);
-      return (
-        <RootTopo 
-          topoQuark={topoQuark}
-        />
-      );
-    }
+const redirect = (destination: string) => ({
+  redirect: {
+    destination,
+    permanent: false
   }
 });
+
+export const getServerSideProps: GetServerSideProps = async ({ query }) => {
+  const { id } = query;
+  if (typeof id !== "string" || !isUUID(id)) {
+    return redirect("/");
+  }
+
+  const topo = await api.getTopo(id);
+
+
+  if (!topo) {
+    return redirect("/404");
+  }
+
+  return { props: { topo } };
+}
+
+const Topo: NextPage<TopoProps> = ({ topo }) => {
+  // TODO: how to encode the fact that this topo cannot be edited?
+  const topoQuark = editTopo(topo);
+  return (
+    <RootTopo 
+      topoQuark={topoQuark}
+    />
+  );
+};
 
 Topo.displayName = "TopoPage";
 

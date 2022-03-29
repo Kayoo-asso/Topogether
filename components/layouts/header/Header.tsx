@@ -1,7 +1,7 @@
-import { DropdownOption } from "components";
+import type { DropdownOption } from "components";
 import { ReactNode } from "react";
 import { MapToolEnum } from "types";
-import { HeaderDesktop, HeaderMobile } from ".";
+import { HeaderDesktop, HeaderMobile } from "components/layouts/header";
 
 interface HeaderProps {
     backLink: string,
@@ -16,9 +16,9 @@ interface HeaderProps {
     currentTool?: MapToolEnum,
     displayLogin?: boolean,
     children?: ReactNode;
-  }
+}
 
-  export const Header: React.FC<HeaderProps> = (props: HeaderProps) => {
+export const Header: React.FC<HeaderProps> = (props: HeaderProps) => {
     return (
         <>
             <div className="md:hidden">
@@ -30,3 +30,5 @@ interface HeaderProps {
         </>
     )
 }
+
+Header.displayName = "Header";

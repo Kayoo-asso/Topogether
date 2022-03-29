@@ -2,13 +2,14 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
     BoulderBuilderSlideoverMobile, SectorBuilderSlideoverMobile,
     MapControl, Show,
-    Header, InfoFormSlideover, ManagementFormSlideover, TrackFormSlideagainstDesktop,
+    InfoFormSlideover, ManagementFormSlideover, TrackFormSlideagainstDesktop,
     BoulderMarkerDropdown, ParkingMarkerDropdown, WaypointMarkerDropdown,
-    ModalSubmitTopo, ModalDeleteTopo, GeoCamera, Drawer, LeftbarBuilderDesktop, BoulderBuilderSlideagainstDesktop,
+    ModalSubmitTopo, ModalDeleteTopo, GeoCamera, Drawer, BoulderBuilderSlideagainstDesktop,
     ParkingBuilderSlide, AccessFormSlideover, WaypointBuilderSlide, ModalRenameSector, ModalDelete, SectorAreaMarkerDropdown, BuilderProgressIndicator,
 } from 'components';
+import { Header, LeftbarBuilderDesktop } from 'components/layouts';
 import { blobToImage, sortBoulders, useContextMenu, createTrack, createBoulder, createParking, createWaypoint, createSector, deleteSector, deleteBoulder, deleteParking, deleteWaypoint, toLatLng, useDevice, computeBuilderProgress } from 'helpers';
-import { Boulder, GeoCoordinates, Image, MapToolEnum, Parking, Sector, Track, Waypoint, Topo, Session, isUUID, TopoStatus } from 'types';
+import { Boulder, GeoCoordinates, Image, MapToolEnum, Parking, Sector, Track, Waypoint, Topo, isUUID, TopoStatus } from 'types';
 import { Quark, QuarkIter, useCreateDerivation, useLazyQuarkyEffect, useQuarkyCallback, useSelectQuark, watchDependencies } from 'helpers/quarky';
 import { useRouter } from 'next/router';
 import { api } from 'helpers/services';
@@ -25,14 +26,14 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
     const { b: bId } = router.query; // Get boulder id from url if selected 
     const firstRender = useFirstRender();
     const device = useDevice();
-    
+
     const topo = props.topoQuark();
     const sectors = useMemo(() => topo.sectors?.quarks(), [topo.sectors]) || new QuarkIter<Quark<Parking>>([]);
     const boulders = useMemo(() => topo.boulders?.quarks(), [topo.boulders]) || new QuarkIter<Quark<Boulder>>([])
     const parkings = useMemo(() => topo.parkings?.quarks(), [topo.parkings]) || new QuarkIter<Quark<Parking>>([]);
     const waypoints = useMemo(() => topo.waypoints?.quarks(), [topo.waypoints]) || new QuarkIter<Quark<Waypoint>>([]);
     const boulderOrder = useCreateDerivation(() => sortBoulders(topo.sectors, topo.lonelyBoulders));
-    
+
     const [currentTool, setCurrentTool] = useState<MapToolEnum>();
     const [currentImage, setCurrentImage] = useState<Image>();
     const selectedSector = useSelectQuark<Sector>();
@@ -558,11 +559,12 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
             <Show when={() => [displayModalSectorRename, selectedSector()] as const}>
                 {([, sSector]) => {
                     return (
-                    <ModalRenameSector
-                        sector={sectors.toArray().find(s => s().id === sSector.id)!}
-                        onClose={() => setDisplayModalSectorRename(false)}
-                    />
-                )}}
+                        <ModalRenameSector
+                            sector={sectors.toArray().find(s => s().id === sSector.id)!}
+                            onClose={() => setDisplayModalSectorRename(false)}
+                        />
+                    )
+                }}
             </Show>
 
             <Show when={() => toDeleteSector.quark()}>
@@ -609,3 +611,5 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
         </>
     );
 });
+
+RootBuilder.displayName = "RootBuilder";

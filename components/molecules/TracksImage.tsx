@@ -1,16 +1,12 @@
 import React from 'react';
-import NextImage from 'next/image';
 import {
   Image, PointEnum, DrawerToolEnum, Position, Track
 } from 'types';
-import { SVGTrack } from 'components';
-import { staticUrl } from 'helpers/globals';
 import useDimensions from 'react-cool-dimensions';
-import { getMousePosInside } from '../../helpers';
+import { getMousePosInside } from 'helpers';
 import { Quark, QuarkIter, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
 import { CFImage } from 'components/atoms/CFImage';
 import { SourceSize } from 'helpers/variants';
-import { imageConfigDefault } from 'next/dist/server/image-config';
 
 interface TracksImageProps {
   image?: Image,
@@ -18,7 +14,7 @@ interface TracksImageProps {
   selectedTrack?: SelectQuarkNullable<Track>,
   // imageClassName?: string,
   className?: string,
-  sizeHint: SourceSize,
+  sizeHint: SourceSize, 
   // canvasClassName?: string,
   displayTracks?: boolean,
   displayPhantomTracks?: boolean,
@@ -104,14 +100,14 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
     </div>
   )
 
-  return (
-    <div
-      ref={observe}
-      className={`relative w-full flex flex-row items-center justify-center ${containerClassName}`}
-      style={props.programmativeHeight ? {
-        height: props.programmativeHeight + 'px'
-      } : {}}
-    >
+  // return (
+  //   <div
+  //     ref={observe}
+  //     className={`relative w-full flex flex-row items-center justify-center ${containerClassName}`}
+  //     style={props.programmativeHeight ? {
+  //       height: props.programmativeHeight + 'px'
+  //     } : {}}
+  //   >
       {/* <svg
         style={{ 
           cursor: editable ? `url(${getCursorUrl()}) ${props.currentTool === 'ERASER' ? '3 7': ''}, auto` : '',
@@ -158,8 +154,8 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
         height={imgHeight}
         priority
       /> */}
-    </div>
-  );
+    // </div>
+  // );
 });
 
 TracksImage.displayName = "TracksImage";

@@ -1,9 +1,8 @@
 import { Session } from "types";
-import React, { useDebugValue, useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { effect } from "helpers/quarky";
 import { auth } from "helpers/services";
-
-export const SessionContext = React.createContext<Session | null>(null);
+import { SessionContext } from "helpers/context";
 
 export type SessionProviderProps = React.PropsWithChildren<{
     value: Session | null

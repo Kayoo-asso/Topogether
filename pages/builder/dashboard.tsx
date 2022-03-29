@@ -1,53 +1,33 @@
-import { Error404, Header, Loading, RootDashboard } from 'components';
-import { useAsyncData } from 'helpers/hooks/useAsyncData';
-import { useSession } from 'helpers/hooks/useSession';
+import { RootDashboard } from 'components';
+import { getServerSession } from 'helpers/getServerSession';
 import { api } from 'helpers/services';
-import type { NextPage } from 'next';
-import { useRouter } from 'next/router';
+import type { GetServerSideProps, NextPage } from 'next';
+import { LightTopo } from 'types';
 
-export async function getServerSideProps() {
-  const data = {};
-  return { props: { data } }
+type DashboardProps = {
+  myTopos: LightTopo[]
 }
 
-const DashboardPage: NextPage = () => {
-  const router = useRouter();
-  const session = useSession();
-  if (!session) { () => router.push('/'); return null; }
-
-  const toposQuery = useAsyncData(() =>
-    api.getLightTopos({
-      userId: session.id
-    }),
-    [session.id]);
-
-  // ERROR
-  if (toposQuery.type === 'error') { router.push('/'); return null; }
-
-  //LOADING
-  else if (toposQuery.type === 'loading')
-    return (
-      <>
-        <Header
-          title="Chargement des topos..."
-          backLink='/'
-        />
-        <Loading />
-      </>
-    )
-
-  // SUCCESS
-  else {
-    // BUT NO DATA...
-    if (!toposQuery.data) return <Error404 title="Topos introuvables" />
-    else {
-      return (
-        <RootDashboard
-          lightTopos={toposQuery.data}
-        />
-      );
-    }
+export const getServerSideProps: GetServerSideProps<DashboardProps> = async ({ req }) => {
+  const session = await getServerSession(req);
+  if (!session) {
+    return {
+      redirect: {
+        destination: "/user/login",
+        permanent: false
+      }
+    };
   }
+  const myTopos = await api.getLightTopos({
+    userId: session.id
+  })
+  return { props: { myTopos } }
+}
+
+const DashboardPage: NextPage<DashboardProps> = ({ myTopos }) => {
+  return <RootDashboard
+    lightTopos={myTopos}
+  />;
 };
 
 export default DashboardPage;

@@ -1,5 +1,6 @@
 import React, { useCallback, useRef, useState } from 'react';
-import { AddTopoCard, TopoCardList, HeaderDesktop, LeftbarDesktop, Button } from 'components';
+import { AddTopoCard, TopoCardList, Button } from 'components';
+import { HeaderDesktop, LeftbarDesktop } from 'components/layouts';
 import { useContextMenu } from 'helpers';
 import { LightTopo, TopoStatus } from 'types';
 import { UserActionDropdown } from 'components/molecules/cards/UserActionDropdown';

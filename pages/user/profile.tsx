@@ -1,61 +1,65 @@
 import React, { useRef, useState } from 'react';
-import type { GetServerSideProps, NextPage } from 'next';
-import { Button, HeaderDesktop, ImageInput, LeftbarDesktop, ModalDelete, ProfilePicture, Tabs, TextInput } from 'components';
+import type { NextPage } from 'next';
+import { Button, ImageInput, ModalDelete, ProfilePicture, TextInput } from 'components';
+import { HeaderDesktop, LeftbarDesktop, Tabs } from 'components/layouts';
 import Link from 'next/link';
 import { watchDependencies } from 'helpers/quarky';
 import { Image, isEmail, Name, StringBetween, User } from 'types';
-import { auth, supabaseClient } from 'helpers/services';
-import { getServerSession } from 'helpers/getServerSession';
+import { auth } from 'helpers/services';
+import { useSession } from 'helpers/hooks/useSession';
 
 type ProfileProps = {
   user: User
 }
 
-export const getServerSideProps: GetServerSideProps<ProfileProps> = async (ctx) => {
-  const session = await getServerSession(ctx.req);
-  if(!session) {
-    return {
-      redirect: {
-        destination: "/user/login",
-        permanent: false
-      }
-    }
-  }
-  const { data, error } = await supabaseClient
-    .from<User>("users")
-    .select("*")
-    .eq('id', session.id)
-    .single();
+// export const getServerSideProps: GetServerSideProps<ProfileProps> = async (ctx) => {
+//   const session = await getServerSession(ctx.req);
+//   if(!session) {
+//     return {
+//       redirect: {
+//         destination: "/user/login",
+//         permanent: false
+//       }
+//     }
+//   }
+//   const { data, error } = await supabaseClient
+//     .from<User>("users")
+//     .select("*")
+//     .eq('id', session.id)
+//     .single();
 
-  if(error || !data) {
-    console.error("Error retrieving user information for " + session.email);
-    return {
-      redirect: {
-        destination: "/user/login",
-        permanent: false
-      }
-    }
-  }
+//   if(error || !data) {
+//     console.error("Error retrieving user information for " + session.email);
+//     return {
+//       redirect: {
+//         destination: "/user/login",
+//         permanent: false
+//       }
+//     }
+//   }
   
-  return { props: { user: data } }
-}
+//   return { props: { user: data } }
+// }
 
-const ProfilePage: NextPage<ProfileProps> = watchDependencies(({ user:session }) => {
+const ProfilePage: NextPage<ProfileProps> = watchDependencies(() => {
+  // Middleware will redirect in case those are null
+  const session = useSession()!;
+  const user = session.user!;
   const imageInputRef = useRef<HTMLInputElement>(null);
 
   const [displayDeleteAccountModal, setDisplayDeleteAccountModal] = useState(false);
   
-  const [email, setEmail] = useState<string>(session.email);
+  const [email, setEmail] = useState<string>(user.email);
   const [emailError, setEmailError] = useState<string>();
   
-  const [userName, setUserName] = useState<string>(session.userName);
-  const [firstName, setFirstName] = useState<string | undefined>(session.firstName);
-  const [lastName, setLastName] = useState<string | undefined>(session.lastName);
-  const [image, setImage] = useState<Image | undefined>(session.image);
-  const [birthDate, setBirthDate] = useState<string | undefined>(session.birthDate); //TODO convert into Date
-  const [country, setCountry] = useState<string | undefined>(session.country);
-  const [city, setCity] = useState<string | undefined>(session.city);
-  const [phone, setPhone] = useState<string | undefined>(session.phone);
+  const [userName, setUserName] = useState<string>(user.userName);
+  const [firstName, setFirstName] = useState<string | undefined>(user.firstName);
+  const [lastName, setLastName] = useState<string | undefined>(user.lastName);
+  const [image, setImage] = useState<Image | undefined>(user.image);
+  const [birthDate, setBirthDate] = useState<string | undefined>(user.birthDate); //TODO convert into Date
+  const [country, setCountry] = useState<string | undefined>(user.country);
+  const [city, setCity] = useState<string | undefined>(user.city);
+  const [phone, setPhone] = useState<string | undefined>(user.phone);
 
   const [userNameError, setUserNameError] = useState<string>();
   const [phoneError, setPhoneError] = useState<string>();
@@ -70,7 +74,7 @@ const ProfilePage: NextPage<ProfileProps> = watchDependencies(({ user:session })
     if (!hasError) {
       // TODO: return indicator for offline modifications
       auth.updateUserInfo({
-        ...session!,
+        ...user!,
         userName: userName as Name,
         firstName: firstName as Name,
         lastName: lastName as Name,
@@ -129,7 +133,7 @@ const ProfilePage: NextPage<ProfileProps> = watchDependencies(({ user:session })
             <div className='hidden md:flex flex-col ml-6 w-1/2'>
               <div className='mb-6'>
                 <div className='ktext-subtitle'>{userName}</div>
-                {session!.role === 'ADMIN' && <div className='text-main ktext-label'>Super-administrateur</div>}
+                {user!.role === 'ADMIN' && <div className='text-main ktext-label'>Super-administrateur</div>}
               </div>
               <TextInput 
                   id='pseudo'
@@ -140,7 +144,7 @@ const ProfilePage: NextPage<ProfileProps> = watchDependencies(({ user:session })
               />
             </div>
 
-            {session!.role === 'ADMIN' &&
+            {user!.role === 'ADMIN' &&
               <div className='absolute right-[5%]'>
                 <Button
                   content='Admin'

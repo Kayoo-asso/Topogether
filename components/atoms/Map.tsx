@@ -1,8 +1,7 @@
 import React, {
-  createContext,
   forwardRef, useEffect, useRef, useState,
 } from 'react';
-import { useEffectWithDeepEqual } from 'helpers';
+import { MapContext, useEffectWithDeepEqual } from 'helpers';
 import mapStyles from 'styles/mapStyles';
 import { mapEvents, MapProps, MarkerProps } from 'types';
 
@@ -11,7 +10,6 @@ const containerStyles: React.CSSProperties = {
   height: '100%',
 };
 
-export const MapContext = createContext<google.maps.Map>(null!);
 
 type MapMarker = MarkerProps &
 {

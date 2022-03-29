@@ -10,9 +10,9 @@ module.exports = {
     // your project has ESLint errors.
     ignoreDuringBuilds: true,
   },
-  webpack(config) {
-    config.experiments = config.experiments || {};
-    config.experiments.topLevelAwait = true;
-    return config;
-  },
+  // webpack(config) {
+  //   config.experiments = config.experiments || {};
+  //   config.experiments.topLevelAwait = true;
+  //   return config;
+  // },
 }

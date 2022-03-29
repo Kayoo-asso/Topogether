@@ -1,8 +1,7 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import type { GetServerSideProps, NextPage } from 'next';
-import { Error404, HeaderDesktop, Loading, RootWorldMap } from 'components';
-import { useAsyncData } from 'helpers/hooks/useAsyncData';
-import { api, auth } from 'helpers/services';
+import { RootWorldMap } from 'components';
+import { api } from 'helpers/services';
 import { useSession } from 'helpers/hooks/useSession';
 import { LightTopo } from 'types';
 

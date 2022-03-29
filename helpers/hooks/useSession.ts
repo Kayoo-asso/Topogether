@@ -1,4 +1,4 @@
-import { SessionContext } from "components/SessionProvider";
+import { SessionContext } from "helpers";
 import { useContext } from "react";
 import { Session } from "types";
 

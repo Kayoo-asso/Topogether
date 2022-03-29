@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import type { GetServerSideProps, NextPage } from 'next';
 import { api } from 'helpers/services';
 import { isUUID, TopoData, TopoStatus } from 'types';
-import { RootBuilder } from 'components';
+import { RootBuilder } from 'components/pages';
 import { editTopo } from 'helpers';
 
 type BuilderProps = {
