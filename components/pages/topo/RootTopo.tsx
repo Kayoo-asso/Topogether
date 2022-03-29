@@ -164,7 +164,7 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
             topo={props.topoQuark}
             open={displayInfo}
             onClose={() => setCurrentDisplay('none')}
-            className={currentDisplay === 'INFO' ? 'z-100' : 'z-50'}
+            className={currentDisplay === 'INFO' ? 'z-300' : 'z-50'}
           />
         </Show>
         <Show when={() => displayApproach}>
@@ -172,7 +172,7 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
             accesses={topo.accesses}
             open={displayApproach}
             onClose={() => setCurrentDisplay('none')}
-            className={currentDisplay === 'APPROACH' ? 'z-100' : 'z-50'}
+            className={currentDisplay === 'APPROACH' ? 'z-300' : 'z-50'}
           />
         </Show>
         <Show when={() => displayManagement}>
@@ -180,7 +180,7 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
             managers={topo.managers}
             open={displayManagement}
             onClose={() => setCurrentDisplay('none')}
-            className={currentDisplay === 'MANAGEMENT' ? 'z-100' : 'z-50'}
+            className={currentDisplay === 'MANAGEMENT' ? 'z-300' : 'z-50'}
           />
         </Show>
 
