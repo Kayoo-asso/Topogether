@@ -47,7 +47,7 @@ export const ImageThumb: React.FC<ImageThumbProps> = ({
           />
         </div>
       }
-      {/* {props.tracks && 
+      {/* {(props.tracks && props.tracks.toArray().length > 0) && 
         <TracksImage 
           image={props.image}
           tracks={props.tracks}
@@ -56,7 +56,7 @@ export const ImageThumb: React.FC<ImageThumbProps> = ({
           tracksWeight={1}
         />
       } */}
-      {!props.tracks && 
+      {(!props.tracks || props.tracks.toArray().length < 1) && 
         <CFImage
           image={props.image}
           alt="user generated image"

@@ -43,9 +43,9 @@ export const BoulderPreviewDesktop: React.FC<BoulderPreviewDesktopProps> = watch
                     }}
                     onImageDelete={(id) => {
                         const newImages = props.boulder().images.filter((img) => img.id !== id);
-                        props.boulder.set(prev => ({
-                            ...prev,
-                            images: [...prev.images, ...newImages],
+                        props.boulder.set(b => ({
+                            ...b,
+                            images: newImages,
                         }))
                     }}
                 />
