@@ -2,8 +2,9 @@ import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } 
 import { 
   AccessSlideover, InfoSlideover, ManagementSlideover,
   BoulderSlideagainstDesktop,  BoulderSlideoverMobile, TrackSlideagainstDesktop, SectorSlideoverMobile,
-  Show, Header,
-  MapControl, ParkingSlide, WaypointSlide, TracksImage, LeftbarTopoDesktop } from 'components';
+  Show, 
+  MapControl, ParkingSlide, WaypointSlide, TracksImage } from 'components';
+import { Header, LeftbarTopoDesktop } from 'components/layouts';
 import { DeviceContext, sortBoulders, toLatLng } from 'helpers';
 import { Boulder, Image, isUUID, Parking, Sector, Topo, Track, Waypoint } from 'types';
 import { Quark, QuarkIter, useCreateDerivation, useLazyQuarkyEffect, useQuarkyCallback, useSelectQuark, watchDependencies } from 'helpers/quarky';

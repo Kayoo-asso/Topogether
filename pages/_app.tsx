@@ -92,7 +92,7 @@ CustomApp.getInitialProps = async (context: AppContext): Promise<InitialProps> =
 
   const [appProps, session] = await Promise.all([
     App.getInitialProps(context),
-    req ? getServerSession(req) : Promise.resolve(null)
+    req ? getServerSession(req.headers['cookie']) : Promise.resolve(null)
   ]);
 
   // Make React DnD happy

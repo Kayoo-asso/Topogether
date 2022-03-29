@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { BoulderItemLeftbar, Icon } from 'components';
+import { Icon } from 'components';
+import { BoulderItemLeftbar } from 'components/layouts';
 import { splitArray } from 'helpers';
 import { Quark, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
 import { Boulder, Topo, Track, UUID } from 'types';

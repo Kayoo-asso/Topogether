@@ -9,7 +9,7 @@ type DashboardProps = {
 }
 
 export const getServerSideProps: GetServerSideProps<DashboardProps> = async ({ req }) => {
-  const session = await getServerSession(req);
+  const session = await getServerSession(req.headers['cookie']);
   if (!session) {
     return {
       redirect: {

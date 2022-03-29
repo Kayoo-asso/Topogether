@@ -83,7 +83,7 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
 
   // Explanation of how this works:
   // - width=100%, height=100% on everything, to let the consumer decide how to size the image
-  // - a wrapper with `position: relative` to anchor the SVG canvas that uses `position: absolute` in its top left corner
+  // - a wrapper with `position: relative` to anchor the SVG canvas, that uses `position: absolute`, in its top left corner
   //   (this allows the SVG canvas to overlap with the image)
   // - use object-fit to size the image
   // - produce a viewBox with the same aspect ratio as the original image
@@ -104,14 +104,14 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
   // Exercice : écrire une fonction prenant l'object-fit, le ratio de l'image, le BoundingRect de l'élement SVG &
   // les coordonnées du clic, pour en déduire les coordonnées dans la viewBox :)
   return (
-    <span className="inline-block relative w-full h-full">
+    <div className="relative w-full h-full">
       <CFImage
         className={'w-full h-full ' + objectFitClass[objectFit]}
         sizeHint={props.sizeHint}
         image={props.image}
         alt={"Rocher avec tracé de voies"}
       />
-      <svg className='absolute top-0 left-0 h-full w-full'
+      <svg className='absolute top-0 left-0 h-full w-full z-50'
         viewBox={`0 0 ${viewBoxWidth} ${viewBoxHeight}`}
         preserveAspectRatio={`xMidYMid ${preserveAspectRatio[objectFit]}`}
         onMouseDown={(e) => {
@@ -120,7 +120,7 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
       >
         <rect x={0} y={0} width={viewBoxWidth} height={viewBoxHeight} fill='yellow' fillOpacity={0.7}></rect>
       </svg>
-    </span>
+    </div>
   );
 
   // return (

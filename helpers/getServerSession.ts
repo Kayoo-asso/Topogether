@@ -1,22 +1,19 @@
 import { parse } from "cookie";
 import type { IncomingMessage } from "http";
 import type { NextApiRequestCookies } from "next/dist/server/api-utils";
+import { NextRequest } from "next/server";
 import { AccessTokenCookie, RefreshTokenCookie } from "pages/api/auth/setCookie";
 import { Email, Session, User, UUID } from "types";
 import { AccessJWT, jwtDecoder } from "./jwtDecoder";
 import { makeSession, supabaseClient } from "./services";
 
-export type NextRequest = IncomingMessage & {
+export type Req = IncomingMessage & {
     cookies?: NextApiRequestCookies
-};
+} | NextRequest;
 
-export async function getServerSession(req: NextRequest): Promise<Session | null> {
-    let cookies = req.cookies;
-    if (!cookies) {
-        const cookieHeader = req.headers['cookie'];
-        if (!cookieHeader) return null;
-        cookies = parse(cookieHeader);
-    }
+export async function getServerSession(cookieHeader: string | null | undefined, includeUser: boolean = true): Promise<Session | null> {
+    if (!cookieHeader) return null; 
+    const cookies = parse(cookieHeader);
     const accessToken = cookies[AccessTokenCookie];
     const refreshToken = cookies[RefreshTokenCookie];
     if (!accessToken) return null;
@@ -48,7 +45,7 @@ export async function getServerSession(req: NextRequest): Promise<Session | null
             session = makeSession(supaSession.user);
         }
     } 
-    if (session) {
+    if (session && includeUser) {
         const { data, error } = await supabaseClient
             .from<User>("users")
             .select('*')
