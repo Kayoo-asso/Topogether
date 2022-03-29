@@ -17,17 +17,17 @@ export const BoulderPreviewDesktop: React.FC<BoulderPreviewDesktopProps> = watch
 }: BoulderPreviewDesktopProps) => {
     const boulder = props.boulder();
     return (
-        <div className='flex flex-col w-full items-center'>
-            <TracksImage
-            // TODO: add proper max-h- constraint for images that are higher than large
-                className='bg-dark w-full h-[20vh]'
-                sizeHint='300px'
-                image={props.currentImage}
-                tracks={boulder.tracks.quarks()}
-                selectedTrack={props.selectedTrack}
-            />
+        <>
+            <div className='flex-1 bg-dark'>
+                <TracksImage
+                    sizeHint='300px'
+                    image={props.currentImage}
+                    tracks={boulder.tracks.quarks()}
+                    selectedTrack={props.selectedTrack}
+                />
+            </div>
 
-            <div className='flex flex-row w-full mt-3'>
+            <div className='flex flex-row w-full mt-3 min-h-max'>
                 <MultipleImageInput
                     images={boulder.images}
                     boulder={boulder}
@@ -50,7 +50,7 @@ export const BoulderPreviewDesktop: React.FC<BoulderPreviewDesktopProps> = watch
                     }}
                 />
             </div>
-        </div>
+        </>
     )
 });
 

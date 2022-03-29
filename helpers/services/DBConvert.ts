@@ -1,4 +1,4 @@
-import { Amenities, Boulder, BoulderData, Image, DBBoulder, DBLine, DBManager, DBParking, DBSector, DBTopo, DBTopoAccess, DBTrack, DBUserUpdate, DBWaypoint, LightTopo, Line, LinearRing, LineCoords, LineString, Manager, MultiLineString, Parking, Point, PolygonCoords, Position, RockTypes, Sector, SectorData, Topo, TopoAccess, TopoData, TopoType, Track, TrackData, User, UUID, Waypoint } from "types";
+import { Amenities, Boulder, BoulderData, Image, DBBoulder, DBLine, DBManager, DBParking, DBSector, DBTopo, DBTopoAccess, DBTrack, DBUserUpdate, DBWaypoint, LightTopo, Line, LinearRing, LineCoords, LineString, Manager, MultiLineString, Parking, Point, PolygonCoords, Position, RockTypes, Sector, SectorData, Topo, TopoAccess, TopoData, TopoType, Track, TrackData, User, UUID, Waypoint, ClimbTechniques } from "types";
 
 // IMPORTANT: perform all conversions by explicitly assigning all properties.
 // DO NOT destructure one of the input arguments into the result
@@ -85,7 +85,7 @@ export class DBConvert {
             orientation: track.orientation ?? null,
             reception: track.reception ?? null,
             anchors: track.anchors ?? null,
-            techniques: track.techniques ?? null,
+            techniques: track.techniques ?? ClimbTechniques.None,
 
             isTraverse: track.isTraverse,
             isSittingStart: track.isSittingStart,

@@ -309,7 +309,7 @@ export type DBTrack = NullableOptional<{
   orientation?: Orientation,
   reception?: Reception,
   anchors?: number,
-  techniques?: ClimbTechniques,
+  techniques: ClimbTechniques,
 
   isTraverse: boolean,
   isSittingStart: boolean,

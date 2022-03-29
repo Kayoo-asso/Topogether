@@ -297,7 +297,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                 <BuilderProgressIndicator topo={props.topoQuark} progress={progress()} />
             </Header>
 
-            <div className="h-content md:h-full relative flex flex-row md:overflow-hidden">
+            <div className="h-content md:h-contentPlusShell relative flex flex-row md:overflow-hidden">
                 <LeftbarBuilderDesktop
                     topoQuark={props.topoQuark}
                     boulderOrder={boulderOrder()}

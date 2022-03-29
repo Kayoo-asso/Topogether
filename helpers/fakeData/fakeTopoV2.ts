@@ -17,15 +17,15 @@ export const fakeAdmin: User & { password: string } = {
 export const images: Image[] = [
     {
         id: "c242dce4-1c96-412f-30e4-4467f140a500" as UUID,
-        ratio: 16/9
+        ratio: 4592/3064
     },
     {
         id: "dd74e0bb-c9dc-4e0e-02bf-f46a7783c500" as UUID,
-        ratio: 16/9
+        ratio: 4592/3064
     },
     {
         id: "4ccb4044-4b25-440d-576a-865dd78a3b00" as UUID,
-        ratio: 9/16
+        ratio: 1334/2000
     },
 ]
 
