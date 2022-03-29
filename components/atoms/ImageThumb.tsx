@@ -60,7 +60,7 @@ export const ImageThumb: React.FC<ImageThumbProps> = ({
         <CFImage
           image={props.image}
           alt="user generated image"
-          className='object-contain'
+          className='object-contain h-full'
           sizeHint={`${containerWidth}px`}
         />
       }

@@ -20,7 +20,7 @@ export const BoulderPreviewDesktop: React.FC<BoulderPreviewDesktopProps> = watch
         <div className='flex flex-col w-full items-center'>
             <TracksImage
             // TODO: add proper max-h- constraint for images that are higher than large
-                className='bg-dark w-full max-h-[30vh]'
+                className='bg-dark w-full h-[20vh]'
                 sizeHint='300px'
                 image={props.currentImage}
                 tracks={boulder.tracks.quarks()}
