@@ -10,8 +10,8 @@ export type ImageUploadResult = {
 export const UploadCountHeader = "x-upload-count";
 
 export type UploadInfo = {
-    id: UUID,
-    uploadURL: string
+  id: UUID,
+  uploadURL: string
 }
 
 // export type BoulderImageUploadSuccess = ImageUploadSuccess & ImageDimensions;
@@ -67,7 +67,7 @@ export class ImageService {
     const toUpload: File[] = [];
     for (const file of files) {
       if (!isImage(file)) {
-        errors.push({ filename: file.name, reason: ImageUploadErrorReason.NonImage }); 
+        errors.push({ filename: file.name, reason: ImageUploadErrorReason.NonImage });
       }
 
       else if (file.size > CLOUDFLARE_MAX_SIZE) {
@@ -86,11 +86,12 @@ export class ImageService {
               resolve(undefined);
             }
           })
-        }); 
+        });
         compressing.push(promise);
       }
 
       else {
+        // rename file
         toUpload.push(file);
       }
     }
@@ -127,7 +128,7 @@ export class ImageService {
       uploading.push(upload(toUpload[i], uploads[i]));
     }
     const afterUpload = await Promise.all(uploading);
-    const images: Image[] = []; 
+    const images: Image[] = [];
     for (const [result, success] of afterUpload) {
       if (success) {
         images.push(result as Image);
@@ -145,7 +146,10 @@ export class ImageService {
 
 async function upload(file: File, info: UploadInfo): Promise<[Image, true] | [ImageUploadError, false]> {
   const data = new FormData();
-  data.append("file", file);
+  const filename = process.env.NODE_ENV !== "production"
+    ? "dev_topogether_" + file.name
+    : file.name;
+  data.append("file", file, filename);
   const uploadRequest = fetch(info.uploadURL, {
     method: "POST",
     body: data
