@@ -18,8 +18,6 @@ type UploadUrlResult = {
 }
 
 
-const data = new FormData();
-data.append("requireSignedURLs", "false");
 
 const handler: NextApiHandler = async (req, res) => {
     if (req.method !== "POST") {
@@ -37,6 +35,8 @@ const handler: NextApiHandler = async (req, res) => {
     
     const promises: Promise<UploadUrlResult>[] = [];
     for (let i = 0; i < uploadCount; ++i) {
+        const data = new FormData();
+        data.append("requireSignedURLs", "false");
         promises.push(fetch(`https://api.cloudflare.com/client/v4/accounts/${ACCOUNT_ID}/images/v2/direct_upload`, {
             method: "POST",
             headers: {
@@ -46,8 +46,8 @@ const handler: NextApiHandler = async (req, res) => {
             body: data as any
         }).then(x => x.json()));
     }
-
     const results = await Promise.all(promises);
+
     const uploads: UploadInfo[] = [];
     for (const uploadResult of results) {
         if (!uploadResult.success) {
