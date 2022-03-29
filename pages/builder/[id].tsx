@@ -1,16 +1,12 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import type { GetServerSideProps, NextPage } from 'next';
 import { api } from 'helpers/services';
-import { watchDependencies } from 'helpers/quarky';
-import { isUUID, Session, TopoData, TopoStatus } from 'types';
+import { isUUID, TopoData, TopoStatus } from 'types';
 import { RootBuilder } from 'components';
 import { editTopo } from 'helpers';
-import { getServerSession } from 'helpers/getServerSession';
-import { returnTo } from 'pages/user/login';
 
 type BuilderProps = {
   topo: TopoData,
-  session: Session
 }
 
 const redirect = (destination: string) => ({
@@ -28,27 +24,19 @@ export const getServerSideProps: GetServerSideProps<BuilderProps> = async ({ req
     return redirect("/");
   }
 
-  const [topo, session] = await Promise.all([
-    api.getTopo(id),
-    getServerSession(req)
-  ]);
+  const topo = await api.getTopo(id);
 
-  if (!session) {
-    return redirect(
-      `/user/login?${returnTo}=${encodeURIComponent(`/builder/${id}`)}`
-    );
-  }
 
   if (!topo || topo.status !== TopoStatus.Draft) {
     return redirect("/404");
   }
 
-  return { props: { topo, session } };
+  return { props: { topo } };
 }
 
-const BuilderMapPage: NextPage<BuilderProps> = watchDependencies(({ topo, session }) => {
-  const quark = editTopo(topo);
-  return <RootBuilder topoQuark={quark} session={session} />
-});
+const BuilderMapPage: NextPage<BuilderProps> = ({ topo, }) => {
+  const quark = useMemo(() => editTopo(topo), []);
+  return <RootBuilder topoQuark={quark} />
+};
 
 export default BuilderMapPage;

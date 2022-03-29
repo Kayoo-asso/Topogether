@@ -16,8 +16,8 @@ export function watchDependencies<T>(component: React.FunctionComponent<T>, opti
     // the forceRender will be invoked by the state management lib on update
     const observer = useMemo(() =>
       observerEffect(() => forceRender(Symbol()))
-      , []);
-    useEffect(() => observer.dispose, []);
+      , [forceRender]);
+    useEffect(() => observer.dispose, [observer]);
 
     // this produces the React nodes, while registering dependencies with the state management lib
     const nodes = observer.watch(() => component(props, context));

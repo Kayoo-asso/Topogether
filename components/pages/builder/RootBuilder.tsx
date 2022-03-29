@@ -13,14 +13,15 @@ import { Quark, QuarkIter, useCreateDerivation, useLazyQuarkyEffect, useQuarkyCa
 import { useRouter } from 'next/router';
 import { api } from 'helpers/services';
 import { useFirstRender } from 'helpers/hooks/useFirstRender';
+import { useSession } from 'helpers/hooks/useSession';
 
 interface RootBuilderProps {
     topoQuark: Quark<Topo>,
-    session: Session,
 }
 
 export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props: RootBuilderProps) => {
     const router = useRouter();
+    const session = useSession()!;
     const { b: bId } = router.query; // Get boulder id from url if selected 
     const firstRender = useFirstRender();
     const device = useDevice();
@@ -193,10 +194,9 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
     const handleCreatingSectorOriginClick = useCallback(() => {
         if (creatingSector.length > 2) {
             const newSectorQuark = createSector(props.topoQuark, creatingSector, boulderOrder());
-            console.log(topo.sectors);
             selectedSector.select(newSectorQuark);
             emptyCreatingSector();
-            // setDisplayModalSectorRename(true);
+            setDisplayModalSectorRename(true);
         }
     }, [creatingSector, props.topoQuark]);
     const emptyCreatingSector = () => {
@@ -252,11 +252,11 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                         ...selectedBoulder()!,
                         images: newImages,
                     });
-                    selectedTrack.select(createTrack(selectedBoulder()!, props.session.id));
+                    selectedTrack.select(createTrack(selectedBoulder()!, session.id));
                 }
                 else {
                     const newBoulderQuark = createBoulder(props.topoQuark, coordinates, img);
-                    selectedTrack.select(createTrack(newBoulderQuark(), props.session.id));
+                    selectedTrack.select(createTrack(newBoulderQuark(), session.id));
                     selectedBoulder.select(newBoulderQuark);
                 }
                 setDisplayDrawer(true);
@@ -557,8 +557,6 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
 
             <Show when={() => [displayModalSectorRename, selectedSector()] as const}>
                 {([, sSector]) => {
-                    console.log(sSector);
-                    console.log(topo.sectors.quarkAt(sSector.index));
                     return (
                     <ModalRenameSector
                         sector={sectors.toArray().find(s => s().id === sSector.id)!}
