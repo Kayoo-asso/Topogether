@@ -3,7 +3,7 @@ import { SourceSize, VariantWidths } from "helpers/variants";
 import { cloudflareUrl } from "helpers/cloudflareUrl";
 import { CSSProperties, DetailedHTMLProps, ImgHTMLAttributes } from "react";
 import defaultKayoo from 'public/assets/img/Kayoo_defaut_image.png';
-import NextImage from 'next/image';
+import NextImage, { StaticImageData } from 'next/image';
 import { useDevice } from "helpers/hooks/useDevice";
 
 
