@@ -30,11 +30,11 @@
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
 }
-
 ::-webkit-scrollbar {
   background: transparent;
-  width: 20px;
+  width: 1rem;
 }
+
 ::-webkit-scrollbar-track {
   background-color: transparent;
 } 
@@ -54,7 +54,6 @@
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
 }
-
 
 @media only screen and (max-width : 1024px) {
   body {

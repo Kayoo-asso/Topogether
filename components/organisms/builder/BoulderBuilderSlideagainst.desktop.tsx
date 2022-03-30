@@ -24,7 +24,8 @@ export const BoulderBuilderSlideagainstDesktop: React.FC<BoulderBuilderSlideagai
             className='z-50'
             onClose={props.onClose}
         >
-            <div className="flex flex-col h-full w-full">
+            {/* Make room for scrollbar */}
+            <div className="flex flex-col h-full w-full overflow-scroll">
                 <BoulderForm
                     className='mt-3 mb-6'
                     boulder={props.boulder}
@@ -36,12 +37,6 @@ export const BoulderBuilderSlideagainstDesktop: React.FC<BoulderBuilderSlideagai
                     displayAddButton
                     setCurrentImage={props.setCurrentImage}
                 />
-                {/* <div className='px-5 mb-10 mt-3'>
-
-
-                    <div className='mt-3'>
-                    </div>
-                </div> */}
 
                 <TracksListBuilder
                     boulder={props.boulder}

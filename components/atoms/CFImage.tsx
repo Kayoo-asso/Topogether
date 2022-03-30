@@ -3,8 +3,9 @@ import { SourceSize, VariantWidths } from "helpers/variants";
 import { cloudflareUrl } from "helpers/cloudflareUrl";
 import { CSSProperties, DetailedHTMLProps, ImgHTMLAttributes } from "react";
 import defaultKayoo from 'public/assets/img/Kayoo_defaut_image.png';
-import NextImage, { StaticImageData } from 'next/image';
+import type { StaticImageData } from 'next/image';
 import { useDevice } from "helpers/hooks/useDevice";
+import Head from "next/head";
 
 
 export type CFImageProps = RawImageAttributes & {
@@ -16,15 +17,25 @@ export type CFImageProps = RawImageAttributes & {
 };
 
 type RawImageAttributes = Omit<
-    DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElement>, HTMLImageElement>,
-    'src' | 'srcset' | 'width' | 'height' | 'sizes' | 'style'
+    ImgHTMLAttributes<HTMLImageElement>,
+    'src' | 'srcset' | 'width' | 'height' | 'sizes' | 'style' | 'fetchpriority'
 >
 
+// TODO: implement priority using a <link> tag + next/head (as next/image does)
 export const CFImage: React.FC<CFImageProps> = ({ 
-    image, sizeHint, style,
+    image, sizeHint,
     defaultImage = defaultKayoo,
     ...props }: CFImageProps) => {
-    const device = useDevice()
+    
+    const device = useDevice();
+
+    let src = defaultImage.src;
+    let width = defaultImage.width;
+    let height = defaultImage.height;
+    let placeholder = defaultImage.blurDataURL;
+    let srcSet = undefined;
+    let sizes = undefined;
+
     if (image) {
         const defaultVariant = device === "mobile"
             ? 640
@@ -32,16 +43,25 @@ export const CFImage: React.FC<CFImageProps> = ({
         const sources = VariantWidths.map(w => `${cloudflareUrl(image, w)} ${w}w`)
         // note: check that width and height are not actual constraints,
         // only aspect ratio information
-        const width = defaultVariant;
-        const height = width / image.ratio;
-        const srcSet = sources.join();
-        const src = cloudflareUrl(image, defaultVariant);
-        const sizes = typeof sizeHint === "string"
+        width = defaultVariant;
+        height = width / image.ratio;
+        srcSet = sources.join();
+        src = cloudflareUrl(image, defaultVariant);
+        sizes = typeof sizeHint === "string"
             ? sizeHint
             : sizeHint.raw;
-        return <img src={src} width={width} height={height} srcSet={srcSet} style={style} sizes={sizes} {...props} />;
+        // no placeholder
+        placeholder = undefined;
     }
-
-    return <NextImage src={defaultImage} className={props.className} alt={props.alt} />
-
+        
+    return <img
+        src={src}
+        width={width}
+        height={height}
+        srcSet={srcSet}
+        sizes={sizes}
+        {...props}
+        loading={props.loading ?? 'lazy'}
+        decoding={props.decoding ?? 'async'}
+    />;
 }

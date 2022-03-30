@@ -130,7 +130,7 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies((props: DrawerPro
       {/* Here we position absolutely, using hardcoded 7vh for the header
           TODO: encode the size of header / toolbar / etc... as units Tailwind config?
       */}
-      <div className="absolute left-0 top-[7vh] h-content md:h-contentPlusShell w-full md:w-[calc(100%-600px)] z-1000">
+      <div className="absolute left-0 top-[7vh] h-content md:h-contentPlusShell w-full md:w-[calc(100%-600px)] z-500">
 
         {/* Same, we know absolute size, since both header + toolbar are 7vh each */}
         <div className="h-[86vh] bg-black b-opacity-90">

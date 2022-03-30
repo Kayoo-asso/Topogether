@@ -18,7 +18,7 @@ export const BoulderPreviewDesktop: React.FC<BoulderPreviewDesktopProps> = watch
     const boulder = props.boulder();
     return (
         <>
-            <div className='flex-1 bg-dark'>
+            <div className='bg-dark'>
                 <TracksImage
                     sizeHint='300px'
                     image={props.currentImage}
