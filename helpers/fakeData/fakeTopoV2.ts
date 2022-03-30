@@ -29,41 +29,40 @@ export const images: Image[] = [
     },
 ]
 
-
-export const lines: Line[] = [
-    // Line 0, track 0
-    {
-        id: uuid(),
-        index: 0,
-        imageId: images[1].id,
-        points: [
-            [2044, 1948],
-            [2125, 770],
-            [1764, 55],
-            [1717, 1349],
-            [2269, 1200]
-        ],
-        hand1: [1050, 620],
-    },
-    // Line 1, track 1
-    {
-        id: uuid(),
-        index: 1,
-        imageId: images[1].id,
-        points: [
-            [2207, 1942],
-            [2262, 787],
-            [1901, 51]
-        ],
-        forbidden: [
-            [[1200, 50],
-            [1650, 50],
-            [1650, 400],
-            [1200, 400]],
-        ],
-        foot1: [600, 250],
-    }
-]
+// export const lines: Line[] = [
+//     // Line 0, track 0
+//     {
+//         id: uuid(),
+//         index: 0,
+//         imageId: images[1].id,
+//         points: [
+//             [2044, 1948],
+//             [2125, 770],
+//             [1764, 55],
+//             [1717, 1349],
+//             [2269, 1200]
+//         ],
+//         hand1: [1050, 620],
+//     },
+//     // Line 1, track 1
+//     {
+//         id: uuid(),
+//         index: 1,
+//         imageId: images[1].id,
+//         points: [
+//             [2207, 1942],
+//             [2262, 787],
+//             [1901, 51]
+//         ],
+//         forbidden: [
+//             [[1200, 50],
+//             [1650, 50],
+//             [1650, 400],
+//             [1200, 400]],
+//         ],
+//         foot1: [600, 250],
+//     }
+// ]
 
 export const tracks: TrackData[] = [
     // Track 0, boulder 0
@@ -80,7 +79,7 @@ export const tracks: TrackData[] = [
         isSittingStart: true,
         mustSee: true,
 
-        lines: [lines[0]],
+        lines: [],
         ratings: [],
         creatorId: fakeAdmin.id,
         hasMantle: false,
@@ -101,7 +100,7 @@ export const tracks: TrackData[] = [
         isSittingStart: false,
         mustSee: false,
 
-        lines: [lines[1]],
+        lines: [],
         ratings: [],
         creatorId: fakeAdmin.id,
         hasMantle: false,

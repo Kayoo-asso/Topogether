@@ -15,7 +15,7 @@ const toPoint = (p: Position): Point => ({
 });
 
 const toLineString = (l: Position[]): LineString => {
-    if (l.length < 2) throw new Error("Error: found a LineString with <2 points");
+    // if (l.length < 2) throw new Error("Error: found a LineString with <2 points");
     return {
         type: "LineString",
         coordinates: l as LineCoords
@@ -55,7 +55,7 @@ export class DBConvert {
         const result: DBLine = {
             id: line.id,
             index: line.index,
-            points: toLineString(line.points),
+            points: line.points,
             topoId,
             trackId,
             imageId: line.imageId,

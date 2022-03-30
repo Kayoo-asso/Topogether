@@ -1,39 +1,40 @@
+import { defaultTracksWeight } from 'components/molecules';
 import React from 'react';
-import { GeoCoordinates, LinearRing, Position } from 'types';
+import { LinearRing, Position } from 'types';
 import { DraggablePolyline } from '.';
 import { pointsToPolylineStr, ratioPoint } from '../../../helpers';
 import { SVGPoint } from './SVGPoint';
 
 interface SVGAreaProps {
   // a LinearRing delineates the contour of a Polygon
-  area: GeoCoordinates[],
-  rx: number,
-  ry: number,
+  area: Position[],
   editable?: boolean,
   eraser?: boolean,
   pointSize: number,
   className?: string,
-  onChange?: (area: GeoCoordinates[]) => void,
+  onChange?: (area: Position[]) => void,
   onClick?: () => void,
 }
 
+// TODO 1: fix drag
+// Basically need to convert event coordinates -> viewBox coordinates
+// (maybe pass a ref to the invisible viewBox rectangle?)
+
+// TODO 2: allow areas other than a rectangle
 export const SVGArea: React.FC<SVGAreaProps> = ({
-  rx = 1,
-  ry = 1,
   editable = false,
   eraser = false,
-  pointSize = 5,
+  pointSize = defaultTracksWeight,
   className = '',
   ...props
 }: SVGAreaProps) => {
-  const initialPoints = Object.values(props.area)
-  const points = initialPoints.map(p => ratioPoint(p, rx)) as Position[];
-  points.push(ratioPoint(initialPoints[0], rx));
+  const points = props.area;
+  points.push(points[0]);
 
   const updateAreaPoint = (index: 0 | 1 | 2 | 3, newPos: Position) => {
     if (props.onChange) {
       const newArea = {...props.area};
-      newArea[index] = [newPos[0]/rx, newPos[1]/ry];
+      newArea[index] = [newPos[0], newPos[1]];
       props.onChange(newArea);
     }
   };
@@ -41,17 +42,17 @@ export const SVGArea: React.FC<SVGAreaProps> = ({
   const dragAllPoints = (diffX: number, diffY: number) => {
     if (props.onChange) {
       const newArea: LinearRing = [
-        [props.area[0][0] + diffX/rx, props.area[0][1] + diffY/rx],
-        [props.area[1][0] + diffX/rx, props.area[1][1] + diffY/rx],
-        [props.area[2][0] + diffX/rx, props.area[2][1] + diffY/rx],
-        [props.area[3][0] + diffX/rx, props.area[3][1] + diffY/rx],
+        [props.area[0][0] + diffX, props.area[0][1] + diffY],
+        [props.area[1][0] + diffX, props.area[1][1] + diffY],
+        [props.area[2][0] + diffX, props.area[2][1] + diffY],
+        [props.area[3][0] + diffX, props.area[3][1] + diffY],
       ];
       props.onChange(newArea);
     }
   };
 
   const renderPolyline = () => {
-    const lineStrokeWidth = 2;
+    const lineStrokeWidth = defaultTracksWeight / 2;
     if (editable) {
       return (
         <DraggablePolyline

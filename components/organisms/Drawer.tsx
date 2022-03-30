@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import {
-  DrawerToolEnum, Image, LinearRing, PointEnum, Position, Track,
+  DrawerToolEnum, Image, Line, LinearRing, PointEnum, Position, Track,
 } from 'types';
 import { ModalDelete, Toolbar, TracksImage } from 'components';
-import { QuarkArray, QuarkIter, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
+import { Quark, QuarkArray, QuarkIter, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
 import { v4 } from 'uuid';
 
 interface DrawerProps {
@@ -29,46 +29,47 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies((props: DrawerPro
   const selectedTrack = props.selectedTrack()!;
 
   const addPointToLine = (pos: Position) => {
-    let newLineQuark = selectedTrack.lines.findQuark(l => l.imageId === props.image.id);
-    if (!newLineQuark) {
+
+    // CAREFUL: lines with less than 2 points are not allowed (the DB )
+    let lineQuark = selectedTrack.lines.findQuark(l => l.imageId === props.image.id);
+    if (!lineQuark) {
       selectedTrack.lines.push({
         id: v4(),
         index: selectedTrack.lines.length,
         imageId: props.image.id,
         points: [],
       });
-      newLineQuark = selectedTrack.lines.findQuark(l => l.imageId === props.image.id)!;
+      lineQuark = selectedTrack.lines.findQuark(l => l.imageId === props.image.id)!;
     }
 
-    const newLine = newLineQuark();
+    const line = lineQuark();
     switch (selectedTool) {
       case 'LINE_DRAWER':
-        const newPoints = newLine.points || [];
-        newPoints.push(pos);
-        newLineQuark.set({
-          ...newLine,
-          points: newPoints
+        line.points.push(pos);
+        lineQuark.set({
+          ...line,
+          points: line.points
         });
         break;
       case 'HAND_DEPARTURE_DRAWER':
-        newLineQuark.set({
-          ...newLine,
-          hand1: newLine.hand2,
+        lineQuark.set({
+          ...line,
+          hand1: line.hand2,
           hand2: pos
         });
         break;
       case 'FOOT_DEPARTURE_DRAWER':
-        newLineQuark.set({
-          ...newLine,
-          foot1: newLine.foot2,
+        lineQuark.set({
+          ...line,
+          foot1: line.foot2,
           foot2: pos
         });
         break;
       case 'FORBIDDEN_AREA_DRAWER':
-        const newForbiddenPoints = newLine.forbidden || [];
+        const newForbiddenPoints = line.forbidden || [];
         newForbiddenPoints.push(constructArea(pos));
-        newLineQuark.set({
-          ...newLine,
+        lineQuark.set({
+          ...line,
           forbidden: newForbiddenPoints
         });
         break;

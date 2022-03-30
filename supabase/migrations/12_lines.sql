@@ -4,7 +4,8 @@ create table lines (
     id uuid primary key,
     index double precision not null,
 
-    points geometry(linestring) not null,
+    -- LineStrings require 2+ points, but we also accept lines with 0 or 1 point
+    points double precision[] not null,
     forbidden geometry(multilinestring),
     hand1 geometry(point),
     hand2 geometry(point),

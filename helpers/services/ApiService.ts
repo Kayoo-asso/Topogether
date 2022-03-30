@@ -140,7 +140,7 @@ export class ApiService {
                         creatorId,
                         lines:lines!trackId(
                             id, index,
-                            points:points->coordinates,
+                            points,
                             forbidden:forbidden->coordinates,
                             hand1:hand1->coordinates,
                             hand2:hand2->coordinates,

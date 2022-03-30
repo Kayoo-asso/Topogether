@@ -1,20 +1,19 @@
-import React from 'react';
+import React, { CSSProperties, useRef } from 'react';
 import {
   Image, PointEnum, DrawerToolEnum, Position, Track
 } from 'types';
-import useDimensions from 'react-cool-dimensions';
-import { getMousePosInside } from 'helpers';
 import { Quark, QuarkIter, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
 import { CFImage } from 'components/atoms/CFImage';
 import { SourceSize } from 'helpers/variants';
+import { SVGTrack } from 'components/atoms';
 
-interface TracksImageProps {
+type TracksImageProps = React.PropsWithChildren<{
   image?: Image,
   tracks: QuarkIter<Quark<Track>>,
   selectedTrack?: SelectQuarkNullable<Track>,
   // 'fill' could be possible, but it distorts the aspect ratio
-  objectFit?: 'contain' | 'cover', 
-  sizeHint: SourceSize, 
+  objectFit?: 'contain' | 'cover',
+  sizeHint: SourceSize,
   displayTracks?: boolean,
   displayPhantomTracks?: boolean,
   displayTracksDetails?: boolean,
@@ -25,7 +24,7 @@ interface TracksImageProps {
   onImageClick?: (pos: Position) => void,
   onPointClick?: (pointType: PointEnum, index: number) => void,
   onImageLoad?: (width: number, height: number) => void,
-}
+}>
 
 const objectFitClass = {
   contain: 'object-contain',
@@ -40,13 +39,16 @@ const preserveAspectRatio = {
   // fill: 'none'
 }
 
+export const viewBoxHeight = 4096;
+export const defaultTracksWeight = viewBoxHeight * 0.006;
+
 
 export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
   displayTracks = true,
   displayPhantomTracks = true,
   displayTracksDetails = false,
   displayTrackOrderIndexes = true,
-  tracksWeight = 2,
+  tracksWeight = defaultTracksWeight,
   objectFit = 'contain',
   editable = false,
   ...props
@@ -56,8 +58,8 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
   // so the most accurate way to scale the SVG viewBox is to set a height of 1000
   // and take width = ratio * height (multiplication is better than division)
   const ratio = props.image?.ratio ?? 1;
+  const viewBoxRef = useRef<SVGRectElement>(null);
 
-  const viewBoxHeight = 10000;
   const viewBoxWidth = ratio * viewBoxHeight;
 
   const getCursorUrl = () => {
@@ -79,6 +81,11 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
     }
     return cursorUrl;
   };
+
+
+  const cursorStyle: CSSProperties = {
+    cursor: editable ? `url(${getCursorUrl()}) ${props.currentTool === 'ERASER' ? '3 7' : ''}, auto` : '',
+  }
 
 
   // Explanation of how this works:
@@ -111,14 +118,58 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
         image={props.image}
         alt={"Rocher avec tracé de voies"}
       />
-      <svg className='absolute top-0 left-0 h-full w-full z-50'
+      <svg
+        className='absolute top-0 left-0 h-full w-full z-50'
+        style={cursorStyle}
         viewBox={`0 0 ${viewBoxWidth} ${viewBoxHeight}`}
         preserveAspectRatio={`xMidYMid ${preserveAspectRatio[objectFit]}`}
         onMouseDown={(e) => {
-          console.log("Mouse down on SVG canvas:", e);
+          // Handle clicks that are 1) in the viewBox and 2) on the SVG canvas directly
+          if (!props.onImageClick || e.currentTarget.nodeName !== "svg" || !viewBoxRef.current) return;
+
+          // viewBox coordinates
+          const box = viewBoxRef.current.getBoundingClientRect();
+
+          // click position in viewBox
+          const cx = e.clientX - box.x;
+          const cy = e.clientY - box.y;
+
+          // check that the click is in the viewBox
+          if (cx < 0 || cy < 0 || cx > box.width || cy > box.height) return;
+
+          const x = viewBoxWidth * cx / box.width;
+          const y = viewBoxHeight * cy / box.height;
+
+          props.onImageClick([x, y]);
         }}
       >
-        <rect x={0} y={0} width={viewBoxWidth} height={viewBoxHeight} fill='yellow' fillOpacity={0.7}></rect>
+        {/* Invisible rectangle of the size of the viewBox, to get its on-screen dimensions easily
+            (they could also be computed, but I'm lazy)
+        */}
+        <rect ref={viewBoxRef} x={0} y={0} width={viewBoxWidth} height={viewBoxHeight} visibility='hidden'></rect>
+
+        {props.image && props.tracks.map(trackQuark => {
+          const highlighted = selectedTrack === undefined ||
+            trackQuark().id === selectedTrack.id;
+          if (highlighted || displayPhantomTracks)
+            return (
+              <SVGTrack
+                key={trackQuark().id}
+                track={trackQuark}
+                currentTool={props.currentTool}
+                imageId={props.image!.id}
+                editable={editable}
+                highlighted={highlighted}
+                displayTrackDetails={displayTracksDetails}
+                displayTrackOrderIndexes={displayTrackOrderIndexes}
+                trackWeight={tracksWeight}
+                onLineClick={props.selectedTrack ? () => props.selectedTrack!.select(trackQuark) : undefined}
+                onPointClick={props.onPointClick}
+              />
+            )
+        })}
+        {props.image && props.children}
+
       </svg>
     </div>
   );
@@ -131,7 +182,7 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
   //       height: props.programmativeHeight + 'px'
   //     } : {}}
   //   >
-      {/* <svg
+  {/* <svg
         style={{ 
           cursor: editable ? `url(${getCursorUrl()}) ${props.currentTool === 'ERASER' ? '3 7': ''}, auto` : '',
         }}
@@ -177,7 +228,7 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
         height={imgHeight}
         priority
       /> */}
-    // </div>
+  // </div>
   // );
 });
 

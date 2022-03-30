@@ -341,7 +341,7 @@ export interface Line {
 export type DBLine = NullableOptional<{
   id: UUID,
   index: number,
-  points: LineString,
+  points: Position[],
   // list of polygons, assuming each LineString is closed
   forbidden?: MultiLineString,
   hand1?: Point,

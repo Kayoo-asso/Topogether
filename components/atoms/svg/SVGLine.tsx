@@ -5,39 +5,41 @@ import { Grade, gradeToLightGrade, Line, Position } from 'types';
 import { SVGPoint } from '.';
 
 interface SVGLineProps {
-    line: Quark<Line>,
-    r: number,
-    grade: Grade | undefined,
-    editable?: boolean,
-    eraser?: boolean,
-    displayTrackOrderIndex?: boolean,
-    trackWeight?: number,
-    trackOrderIndex: number,
-    phantom?: boolean,
-    onClick?: () => void,
-    onPointClick?: (index: number) => void,
+  line: Quark<Line>,
+  grade: Grade | undefined,
+  editable?: boolean,
+  eraser?: boolean,
+  displayTrackOrderIndex?: boolean,
+  trackWeight?: number,
+  trackOrderIndex: number,
+  phantom?: boolean,
+  onClick?: () => void,
+  onPointClick?: (index: number) => void,
 }
 
+// TODO: fix drag
+// Basically need to convert event coordinates -> viewBox coordinates
+// (maybe pass a ref to the invisible viewBox rectangle?)
 export const SVGLine: React.FC<SVGLineProps> = watchDependencies(({
-    editable = false,
-    eraser = false,
-    phantom = false,
-    displayTrackOrderIndex = true,
-    trackWeight = 2,
-    ...props
+  editable = false,
+  eraser = false,
+  phantom = false,
+  displayTrackOrderIndex = true,
+  trackWeight = 2,
+  ...props
 }: SVGLineProps) => {
-    const line = props.line();
-    const points: Position[] = line.points.map(([x, y]) => [x * props.r, y * props.r]);
-    const path = getPathFromPoints(points, 'CURVE');
-    const pointSize = trackWeight * 4;
-    const firstX = points[0][0];
-    const firstY = points[0][1];
+  const line = props.line();
+  const points = line.points;
+  const path = getPathFromPoints(points, 'CURVE');
+  const pointSize = trackWeight * 4;
+  const firstX = points[0][0];
+  const firstY = points[0][1];
 
-    const [originPosition, setOriginPosition] = useState({
-        active: false,
-        offsetX: 0,
-        offsetY: 0,
-    });
+  const [originPosition, setOriginPosition] = useState({
+    active: false,
+    offsetX: 0,
+    offsetY: 0,
+  });
 
   const handlePointerDown: React.PointerEventHandler<SVGCircleElement | SVGTextElement> = (e: React.PointerEvent) => {
     if (editable) {
@@ -53,14 +55,14 @@ export const SVGLine: React.FC<SVGLineProps> = watchDependencies(({
   };
   const handlePointerMove: React.PointerEventHandler<SVGCircleElement | SVGTextElement> = (e: React.PointerEvent) => {
     if (originPosition.active) {
-        const newX = e.clientX - originPosition.offsetX;
-        const newY = e.clientY - originPosition.offsetY;
-        const newPoints = [...line.points];
-        newPoints[0] = [newX/props.r, newY/props.r];
-        props.line.set({
-            ...line,
-            points: newPoints
-        });
+      const newX = e.clientX - originPosition.offsetX;
+      const newY = e.clientY - originPosition.offsetY;
+      const newPoints = [...line.points];
+      newPoints[0] = [newX, newY];
+      props.line.set({
+        ...line,
+        points: newPoints
+      });
     }
   };
   const handlePointerUp: React.PointerEventHandler<SVGCircleElement | SVGTextElement> = (e: React.PointerEvent) => {
@@ -123,75 +125,75 @@ export const SVGLine: React.FC<SVGLineProps> = watchDependencies(({
 
   return (
     <>
-        <path
-            className={`fill-[none] ${getStrokeColorClass()} ${phantom ? 'z-10 opacity-50' : 'z-30'}${props.onClick ? ' cursor-pointer' : ''}`}
-            d={path}
+      <path
+        className={`fill-[none] ${getStrokeColorClass()} ${phantom ? 'z-10 opacity-50' : 'z-30'}${props.onClick ? ' cursor-pointer' : ''}`}
+        d={path}
+        onClick={props.onClick}
+        style={{
+          strokeWidth: trackWeight + 'px'
+        }}
+      />
+
+      {editable &&
+        <>
+          {points.map((p, index) => (
+            <SVGPoint
+              key={index}
+              iconHref={`/assets/icons/colored/line-point/_line-point-${getColorNumber()}.svg`}
+              x={p[0] - pointSize / 2}
+              y={p[1] - pointSize / 2}
+              size={pointSize}
+              draggable={editable}
+              eraser={eraser}
+              onDrag={(pos) => {
+                if (editable) {
+                  const newPoints = [...line.points]
+                  newPoints[index] = [pos[0], pos[1]];
+                  props.line.set({
+                    ...line,
+                    points: newPoints,
+                  })
+                }
+              }}
+              onClick={(e) => {
+                if (eraser) e.stopPropagation();
+                props.onPointClick && props.onPointClick(index);
+              }}
+            />
+          ))};
+        </>
+      }
+
+      {displayTrackOrderIndex &&
+        <>
+          <circle
+            cx={firstX}
+            cy={firstY}
+            r={9}
+            className={`${getFillColorClass()} ${phantom ? 'z-20 opacity-50' : 'z-40'}${(!eraser && props.onClick) || phantom ? ' cursor-pointer' : ''}`}
             onClick={props.onClick}
-            style={{
-              strokeWidth: trackWeight + 'px'
-            }}
-        />
-
-        {editable &&
-            <>
-                {points.map((p, index) => (
-                    <SVGPoint 
-                        key={index}
-                        iconHref={`/assets/icons/colored/line-point/_line-point-${getColorNumber()}.svg`}
-                        x={p[0] - pointSize/2}
-                        y={p[1] - pointSize/2}
-                        size={pointSize}
-                        draggable={editable}
-                        eraser={eraser}
-                        onDrag={(pos) => {
-                            if (editable) {
-                              const newPoints = [...line.points]
-                              newPoints[index] = [pos[0]/props.r, pos[1]/props.r];
-                              props.line.set({
-                                  ...line,
-                                  points: newPoints,
-                              })
-                            }
-                        }}
-                        onClick={(e) => {
-                          if (eraser) e.stopPropagation();
-                          props.onPointClick && props.onPointClick(index); 
-                        }}
-                    />
-                ))};
-            </>
-        }
-
-        {displayTrackOrderIndex &&
-            <>
-                <circle
-                    cx={firstX}
-                    cy={firstY}
-                    r={9}
-                    className={`${getFillColorClass()} ${phantom ? 'z-20 opacity-50' : 'z-40'}${(!eraser && props.onClick) || phantom ? ' cursor-pointer' : ''}`}
-                    onClick={props.onClick}
-                    onPointerDown={handlePointerDown}
-                    onPointerUp={handlePointerUp}
-                    onPointerMove={handlePointerMove}
-                />
-                <text
-                    x={firstX}
-                    y={firstY}
-                    className={`${phantom ? 'z-20 opacity-50' : 'z-40'}${(!eraser && props.onClick) || phantom ? ' cursor-pointer' : ' cursor-default'}`}
-                    textAnchor="middle"
-                    stroke="white"
-                    strokeWidth="1px"
-                    fontSize="8px"
-                    dy="3px"
-                    onClick={props.onClick}
-                    onPointerDown={handlePointerDown}
-                    onPointerUp={handlePointerUp}
-                    onPointerMove={handlePointerMove}
-                >
-                    {props.trackOrderIndex + 1}
-                </text>
-            </>
-        }
+            onPointerDown={handlePointerDown}
+            onPointerUp={handlePointerUp}
+            onPointerMove={handlePointerMove}
+          />
+          <text
+            x={firstX}
+            y={firstY}
+            className={`${phantom ? 'z-20 opacity-50' : 'z-40'}${(!eraser && props.onClick) || phantom ? ' cursor-pointer' : ' cursor-default'}`}
+            textAnchor="middle"
+            stroke="white"
+            strokeWidth="1px"
+            fontSize="8px"
+            dy="3px"
+            onClick={props.onClick}
+            onPointerDown={handlePointerDown}
+            onPointerUp={handlePointerUp}
+            onPointerMove={handlePointerMove}
+          >
+            {props.trackOrderIndex + 1}
+          </text>
+        </>
+      }
     </>
   );
 });
