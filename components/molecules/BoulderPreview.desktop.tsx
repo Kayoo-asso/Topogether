@@ -16,6 +16,7 @@ export const BoulderPreviewDesktop: React.FC<BoulderPreviewDesktopProps> = watch
     ...props
 }: BoulderPreviewDesktopProps) => {
     const boulder = props.boulder();
+
     return (
         <div className="px-5">
             <div className='bg-dark'>
@@ -33,7 +34,9 @@ export const BoulderPreviewDesktop: React.FC<BoulderPreviewDesktopProps> = watch
                     boulder={boulder}
                     selected={props.currentImage?.id}
                     rows={1}
-                    onImageClick={(id) => props.setCurrentImage(boulder.images.find(img => img.id === id)!)}
+                    onImageClick={(id) => {
+                        props.setCurrentImage(boulder.images.find(img => img.id === id)!)
+                    }}
                     allowUpload={displayAddButton}
                     onChange={(images) => {
                         props.boulder.set(b => ({

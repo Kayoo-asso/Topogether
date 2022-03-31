@@ -7,6 +7,9 @@ import { defaultTracksWeight } from 'components/molecules';
 interface SVGTrackProps {
     track: Quark<Track>,
     editable?: boolean,
+    vb?: SVGRectElement | null,
+    vbWidth?: number,
+    vbHeight?: number,
     highlighted?: boolean,
     currentTool?: DrawerToolEnum,
     imageId: UUID,
@@ -39,6 +42,9 @@ export const SVGTrack: React.FC<SVGTrackProps> = watchDependencies(({
                 key={"line"}
                 line={quarkLine}
                 editable={editable && highlighted}
+                vb={props.vb}
+                vbWidth={props.vbWidth}
+                vbHeight={props.vbHeight}
                 eraser={props.currentTool === 'ERASER'}
                 grade={track.grade}
                 phantom={!highlighted}
@@ -61,13 +67,16 @@ export const SVGTrack: React.FC<SVGTrackProps> = watchDependencies(({
                         x={handX}
                         y={handY}
                         draggable={editable}
+                        vb={props.vb}
+                        vbWidth={props.vbWidth}
+                        vbHeight={props.vbHeight}
                         eraser={props.currentTool === 'ERASER'}
                         onDrag={(pos) => {
                             if (editable) {
                                 quarkLine?.set({
                                     ...line,
-                                    hand1: [pos[0], pos[1]],
-                                })
+                                    hand1: pos,
+                                });
                             }
                         }}
                         onClick={() => props.onPointClick && props.onPointClick('HAND_DEPARTURE_POINT', -1)}
@@ -83,12 +92,15 @@ export const SVGTrack: React.FC<SVGTrackProps> = watchDependencies(({
                         x={handX}
                         y={handY}
                         draggable={editable}
+                        vb={props.vb}
+                        vbWidth={props.vbWidth}
+                        vbHeight={props.vbHeight}
                         eraser={props.currentTool === 'ERASER'}
                         onDrag={(pos) => {
                             if (editable) {
                                 quarkLine?.set({
                                     ...line,
-                                    hand2: [pos[0], pos[1]],
+                                    hand2: pos,
                                 })
                             }
                         }}
@@ -106,13 +118,17 @@ export const SVGTrack: React.FC<SVGTrackProps> = watchDependencies(({
                         iconHref={`/assets/icons/colored/climbing-shoe-full/_climbing-shoe-full-${colorNumber}.svg`}
                         x={footX}
                         y={footY}
+                        size={450}
                         draggable={editable}
+                        vb={props.vb}
+                        vbWidth={props.vbWidth}
+                        vbHeight={props.vbHeight}
                         eraser={props.currentTool === 'ERASER'}
                         onDrag={(pos) => {
                             if (editable) {
                                 quarkLine?.set({
                                     ...line,
-                                    foot1: [pos[0], pos[1]],
+                                    foot1: pos,
                                 })
                             }
                         }}
@@ -128,13 +144,17 @@ export const SVGTrack: React.FC<SVGTrackProps> = watchDependencies(({
                         iconHref={`/assets/icons/colored/climbing-shoe-full/_climbing-shoe-full-${colorNumber}.svg`}
                         x={footX}
                         y={footY}
+                        size={450}
                         draggable={editable}
+                        vb={props.vb}
+                        vbWidth={props.vbWidth}
+                        vbHeight={props.vbHeight}
                         eraser={props.currentTool === 'ERASER'}
                         onDrag={(pos) => {
                             if (editable) {
                                 quarkLine?.set({
                                     ...line,
-                                    foot2: [pos[0], pos[1]],
+                                    foot2: pos,
                                 })
                             }
                         }}
@@ -153,8 +173,11 @@ export const SVGTrack: React.FC<SVGTrackProps> = watchDependencies(({
                         key={'area' + i}
                         area={area}
                         editable={editable}
+                        vb={props.vb}
+                        vbWidth={props.vbWidth}
+                        vbHeight={props.vbHeight}
                         eraser={props.currentTool === 'ERASER'}
-                        pointSize={defaultTracksWeight * 2}
+                        pointSize={defaultTracksWeight * 5}
                         onChange={(area) => {
                             if (editable) {
                                 const newForbiddens = [...line.forbidden!]

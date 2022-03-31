@@ -1,4 +1,4 @@
-import React, { CSSProperties, useRef } from 'react';
+import React, { CSSProperties, useEffect, useRef, useState } from 'react';
 import {
   Image, PointEnum, DrawerToolEnum, Position, Track
 } from 'types';
@@ -6,6 +6,7 @@ import { Quark, QuarkIter, SelectQuarkNullable, watchDependencies } from 'helper
 import { CFImage } from 'components/atoms/CFImage';
 import { SourceSize } from 'helpers/variants';
 import { SVGTrack } from 'components/atoms';
+import { getCoordsInViewbox } from 'helpers';
 
 type TracksImageProps = React.PropsWithChildren<{
   image?: Image,
@@ -59,6 +60,10 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
   // and take width = ratio * height (multiplication is better than division)
   const ratio = props.image?.ratio ?? 1;
   const viewBoxRef = useRef<SVGRectElement>(null);
+  const [vb, setVb] = useState<SVGRectElement | null>();
+  useEffect(() => {
+    setVb(viewBoxRef.current);
+  }, [viewBoxRef.current]);
 
   const viewBoxWidth = ratio * viewBoxHeight;
 
@@ -82,12 +87,10 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
     return cursorUrl;
   };
 
-
   const cursorStyle: CSSProperties = {
     cursor: editable ? `url(${getCursorUrl()}) ${props.currentTool === 'ERASER' ? '3 7' : ''}, auto` : '',
   }
-
-
+  
   // Explanation of how this works:
   // - width=100%, height=100% on everything, to let the consumer decide how to size the image
   // - a wrapper with `position: relative` to anchor the SVG canvas, that uses `position: absolute`, in its top left corner
@@ -123,24 +126,15 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
         style={cursorStyle}
         viewBox={`0 0 ${viewBoxWidth} ${viewBoxHeight}`}
         preserveAspectRatio={`xMidYMid ${preserveAspectRatio[objectFit]}`}
-        onMouseDown={(e) => {
-          // Handle clicks that are 1) in the viewBox and 2) on the SVG canvas directly
-          if (!props.onImageClick || e.currentTarget.nodeName !== "svg" || !viewBoxRef.current) return;
-
-          // viewBox coordinates
-          const box = viewBoxRef.current.getBoundingClientRect();
-
-          // click position in viewBox
-          const cx = e.clientX - box.x;
-          const cy = e.clientY - box.y;
-
-          // check that the click is in the viewBox
-          if (cx < 0 || cy < 0 || cx > box.width || cy > box.height) return;
-
-          const x = viewBoxWidth * cx / box.width;
-          const y = viewBoxHeight * cy / box.height;
-
-          props.onImageClick([x, y]);
+        onMouseDown={(e: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
+          const eltUnder = e.target as EventTarget & SVGSVGElement
+          if (e.buttons !== 1 ||  // Handle clicks that are 1) left-click,
+            !props.onImageClick || // 2) in the viewBox and
+            e.currentTarget.nodeName !== "svg" || eltUnder.nodeName !== "svg" ||// 3) on the SVG canvas directly
+            !viewBoxRef.current) 
+            return;
+          const coords = getCoordsInViewbox(viewBoxRef.current, viewBoxWidth, viewBoxHeight, e.clientX, e.clientY);
+          if (coords) props.onImageClick(coords);
         }}
       >
         {/* Invisible rectangle of the size of the viewBox, to get its on-screen dimensions easily
@@ -160,6 +154,9 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
                 currentTool={props.currentTool}
                 imageId={props.image!.id}
                 editable={editable}
+                vb={vb}
+                vbWidth={viewBoxWidth}
+                vbHeight={viewBoxHeight}
                 highlighted={highlighted}
                 displayTrackDetails={displayTracksDetails}
                 displayTrackOrderIndexes={displayTrackOrderIndexes}

@@ -1,3 +1,4 @@
+import { getCoordsInViewbox } from 'helpers';
 import React, { useState } from 'react';
 import { Position } from 'types';
 
@@ -5,6 +6,9 @@ interface SVGPointProps {
   x: number,
   y: number,
   draggable?: boolean,
+  vb?: SVGRectElement | null,
+  vbWidth?: number,
+  vbHeight?: number
   eraser?: boolean,
   iconHref?: string,
   size?: number,
@@ -22,6 +26,7 @@ export const SVGPoint: React.FC<SVGPointProps> = ({
   eraser = false,
   iconHref = '/assets/icons/colored/line-point/_line-point-grey.svg',
   className = 'fill-main',
+  size = 250,
   ...props
 }: SVGPointProps) => {
   // don't put x & y here, to avoid derived state
@@ -34,29 +39,38 @@ export const SVGPoint: React.FC<SVGPointProps> = ({
   });
 
   const handlePointerDown: React.PointerEventHandler<SVGImageElement> = (e: React.PointerEvent) => {
-    if (draggable) {
+    if (draggable && props.vb && props.vbWidth && props.vbHeight) {
       const el = e.currentTarget;
       el.setPointerCapture(e.pointerId);
-      setPosition({
-        ...position,
-        active: true,
-        offsetX: e.clientX - props.x,
-        offsetY: e.clientY - props.y,
-      });
+      const coords = getCoordsInViewbox(props.vb, props.vbWidth, props.vbHeight, e.clientX, e.clientY);
+      if (coords) {
+        setPosition({
+          ...position,
+          active: true,
+          offsetX: coords[0] - props.x,
+          offsetY: coords[1] - props.y,
+        });
+      }
     }
   };
   const handlePointerMove: React.PointerEventHandler<SVGImageElement> = (e: React.PointerEvent) => {
-    if (position.active) {
-      const newX = e.clientX - position.offsetX;
-      const newY = e.clientY - position.offsetY;
-      if (props.onDrag) props.onDrag([newX, newY]);
+    if (position.active && props.vb && props.vbWidth && props.vbHeight && props.onDrag) {
+      const coords = getCoordsInViewbox(props.vb, props.vbWidth, props.vbHeight, e.clientX, e.clientY);
+      if (coords) {
+        const newX = coords[0] - position.offsetX;
+        const newY = coords[1] - position.offsetY;
+        props.onDrag([newX, newY]);
+      }
     }
   };
   const handlePointerUp: React.PointerEventHandler<SVGImageElement> = (e: React.PointerEvent) => {
-    if (position.active) {
-      const newX = e.clientX - position.offsetX;
-      const newY = e.clientY - position.offsetY;
-      if (props.onDrag) props.onDrag([newX, newY]);
+    if (position.active && props.vb && props.vbWidth && props.vbHeight && props.onDrag) {
+      const coords = getCoordsInViewbox(props.vb, props.vbWidth, props.vbHeight, e.clientX, e.clientY);
+      if (coords) {
+        const newX = coords[0] - position.offsetX;
+        const newY = coords[1] - position.offsetY;
+        props.onDrag([newX, newY]);
+      }
       setPosition({
         offsetX: 0,
         offsetY: 0,
@@ -64,7 +78,6 @@ export const SVGPoint: React.FC<SVGPointProps> = ({
       });
     }
   };
-
 
   return (
       <image
@@ -75,7 +88,7 @@ export const SVGPoint: React.FC<SVGPointProps> = ({
           transformBox: 'fill-box'
         }}
         href={iconHref}
-        width={props.size || undefined}
+        width={size}
         onPointerDown={handlePointerDown}
         onPointerUp={handlePointerUp}
         onPointerMove={handlePointerMove}

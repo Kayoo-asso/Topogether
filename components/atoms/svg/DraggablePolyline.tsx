@@ -1,4 +1,4 @@
-import { pointsToPolylineStr } from 'helpers';
+import { getCoordsInViewbox, pointsToPolylineStr } from 'helpers';
 import React, { useState } from 'react';
 import { Position } from 'types';
 
@@ -7,6 +7,9 @@ interface DraggablePolylineProps {
   className?: string,
   strokeWidth?: number,
   pointer?: boolean,
+  vb?: SVGRectElement | null,
+  vbWidth?: number,
+  vbHeight?: number,
   onDrag?: (diffX: number, diffY: number) => void
   onClick?: () => void,
 }
@@ -24,26 +27,34 @@ export const DraggablePolyline: React.FC<DraggablePolylineProps> = ({
   });
 
   const handlePointerDown: React.PointerEventHandler<SVGPolylineElement> = (e: React.PointerEvent) => {
-    setCursorPosition({
-      x: e.clientX,
-      y: e.clientY,
-      active: true,
-    });
-    // Avoid registering clicks on the underlying SVG 
-    // TODO: verify that this works
-    e.stopPropagation();
+    if (props.vb && props.vbWidth && props.vbHeight) {
+      const coords = getCoordsInViewbox(props.vb, props.vbWidth, props.vbHeight, e.clientX, e.clientY)
+      if (coords) {
+        setCursorPosition({
+          x: coords[0],
+          y: coords[1],
+          active: true,
+        });
+      }
+      // Avoid registering clicks on the underlying SVG 
+      // TODO: verify that this works
+      e.stopPropagation();
+    }
   };
 
   const handlePointerMove: React.PointerEventHandler<SVGPolylineElement> = (e: React.PointerEvent) => {
-    if (cursorPosition.active) {
-      const diffX = e.clientX - cursorPosition.x;
-      const diffY = e.clientY - cursorPosition.y;
-      if (props.onDrag) props.onDrag(diffX, diffY);
-      setCursorPosition({
-        ...cursorPosition,
-        x: e.clientX,
-        y: e.clientY,
-      });
+    if (props.vb && props.vbWidth && props.vbHeight && props.onDrag && cursorPosition.active) {
+      const coords = getCoordsInViewbox(props.vb, props.vbWidth, props.vbHeight, e.clientX, e.clientY);
+      if (cursorPosition.active && coords) {
+        const diffX = coords[0] - cursorPosition.x;
+        const diffY = coords[1] - cursorPosition.y;
+        props.onDrag(diffX, diffY);
+        setCursorPosition({
+          ...cursorPosition,
+          x: coords[0],
+          y: coords[1],
+        });
+      }
     }
   };
   const handlePointerUp: React.PointerEventHandler<SVGPolylineElement> = (e: React.PointerEvent) => {

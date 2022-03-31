@@ -1,14 +1,17 @@
-import { defaultTracksWeight } from 'components/molecules';
 import React from 'react';
+import { defaultTracksWeight } from 'components/molecules';
 import { LinearRing, Position } from 'types';
 import { DraggablePolyline } from '.';
-import { pointsToPolylineStr, ratioPoint } from '../../../helpers';
+import { pointsToPolylineStr } from '../../../helpers';
 import { SVGPoint } from './SVGPoint';
 
 interface SVGAreaProps {
   // a LinearRing delineates the contour of a Polygon
   area: Position[],
   editable?: boolean,
+  vb?: SVGRectElement | null,
+  vbWidth?: number,
+  vbHeight?: number,
   eraser?: boolean,
   pointSize: number,
   className?: string,
@@ -29,12 +32,15 @@ export const SVGArea: React.FC<SVGAreaProps> = ({
   ...props
 }: SVGAreaProps) => {
   const points = props.area;
-  points.push(points[0]);
+  const extendPoints = [...props.area];
+  extendPoints.push(points[0]);
 
   const updateAreaPoint = (index: 0 | 1 | 2 | 3, newPos: Position) => {
     if (props.onChange) {
-      const newArea = {...props.area};
+      const newArea = [...props.area];
+      console.log(props.area);
       newArea[index] = [newPos[0], newPos[1]];
+      console.log(newArea);
       props.onChange(newArea);
     }
   };
@@ -52,14 +58,16 @@ export const SVGArea: React.FC<SVGAreaProps> = ({
   };
 
   const renderPolyline = () => {
-    const lineStrokeWidth = defaultTracksWeight / 2;
     if (editable) {
       return (
         <DraggablePolyline
           className={`stroke-second fill-second/10 z-20 ${eraser ? 'hover:fill-second/50' : ''} ${className}`}
-          strokeWidth={lineStrokeWidth}
-          points={points}
+          strokeWidth={defaultTracksWeight}
+          points={extendPoints}
           pointer={!eraser}
+          vb={props.vb}
+          vbWidth={props.vbWidth}
+          vbHeight={props.vbHeight}
           onDrag={(diffX, diffY) => {
             dragAllPoints(diffX, diffY);
           }}
@@ -71,20 +79,23 @@ export const SVGArea: React.FC<SVGAreaProps> = ({
     return (
       <polyline
         className={`stroke-second fill-second/10 z-20 ${className}`}
-        points={pointsToPolylineStr(points)}
-        strokeWidth={lineStrokeWidth}
+        points={pointsToPolylineStr(extendPoints)}
+        strokeWidth={defaultTracksWeight}
       />
     );
   };
 
   const renderPoints = () => {
-      return points.map((point, index) => (
+      return extendPoints.map((point, index) => (
         <SVGPoint
           key={index}
           x={point[0] - pointSize / 2}
           y={point[1] - pointSize / 2}
           iconHref='/assets/icons/colored/line-point/_line-point-second.svg'
           draggable={editable}
+          vb={props.vb}
+          vbWidth={props.vbWidth}
+          vbHeight={props.vbHeight}
           size={pointSize}
           className="fill-second"
           onDrag={(pos) => {

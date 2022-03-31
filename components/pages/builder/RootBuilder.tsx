@@ -223,9 +223,11 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
             else if (e.code === 'Escape') {
                 if (creatingSector.length > 0) emptyCreatingSector();
                 if (currentTool) setCurrentTool(undefined);
+                else if ((device !== 'mobile' || displayDrawer) && selectedBoulder() && selectedTrack()) return; //If the Drawer is open, Escape should only deactivate Drawer tools
                 else {
                     selectedSector.select(undefined);
                     selectedBoulder.select(undefined);
+                    selectedTrack.select(undefined);
                     selectedParking.select(undefined);
                     selectedWaypoint.select(undefined);
                 }
@@ -274,6 +276,11 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
     // The derivation doesnt work, it still recompute the progress at every render
     const progress = useCreateDerivation<number>(() => computeBuilderProgress(props.topoQuark), [props.topoQuark], { name: "BuilderProgress" });
 
+    // useEffect(() => {
+    //     console.log(currentImage);
+    //     console.log(selectedBoulder());
+    //     console.log(selectedTrack());
+    // }, [currentImage, selectedBoulder(), selectedTrack()]);
     return (
         <>
             <Header

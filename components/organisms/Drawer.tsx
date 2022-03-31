@@ -21,6 +21,10 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies((props: DrawerPro
   useEffect(() => {
     const handleKeydown = (e: KeyboardEvent) => {
       if (e.ctrlKey && e.key === 'z') rewind();
+      else if (e.code === 'Escape') {
+        setSelectedTool('LINE_DRAWER');
+        e.stopPropagation();
+      }
     }
     window.addEventListener('keydown', handleKeydown);
     return () => window.removeEventListener('keydown', handleKeydown);
@@ -116,7 +120,7 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies((props: DrawerPro
   }
 
   const constructArea = (pos: Position): LinearRing => {
-    const size = 150;
+    const size = 450;
     return [
       [pos[0] - size, pos[1] - size],
       [pos[0] - size, pos[1] + size],

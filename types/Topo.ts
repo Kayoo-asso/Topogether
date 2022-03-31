@@ -274,7 +274,7 @@ export type DBBoulder = NullableOptional<{
 }>;
 
 // Order defined by the x-coordinate of the first point of the first line
-export interface TrackData {
+export interface  TrackData {
   readonly id: UUID,
   index: number,
 

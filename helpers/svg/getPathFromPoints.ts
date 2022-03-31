@@ -49,6 +49,7 @@ export const getPathFromPoints = (points: Position[], type: PathEnum = "LINE") =
     if (type === "CURVE") command = bezierCommand;
 
     // build the d attributes by looping over the points
+    if (!points) return '';
     const d = points.reduce((acc, point, i, a) =>
         i === 0 ?
             `M ${point[0]},${point[1]}` :

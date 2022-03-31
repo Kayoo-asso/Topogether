@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
-import { getPathFromPoints } from 'helpers';
+import { getCoordsInViewbox, getPathFromPoints } from 'helpers';
 import { Quark, watchDependencies } from 'helpers/quarky';
-import { Grade, gradeToLightGrade, Line, Position } from 'types';
+import { Grade, gradeToLightGrade, Line } from 'types';
 import { SVGPoint } from '.';
 
 interface SVGLineProps {
   line: Quark<Line>,
   grade: Grade | undefined,
   editable?: boolean,
+  vb?: SVGRectElement | null,
+  vbWidth?: number,
+  vbHeight?: number,
   eraser?: boolean,
   displayTrackOrderIndex?: boolean,
   trackWeight?: number,
@@ -32,8 +35,8 @@ export const SVGLine: React.FC<SVGLineProps> = watchDependencies(({
   const points = line.points;
   const path = getPathFromPoints(points, 'CURVE');
   const pointSize = trackWeight * 4;
-  const firstX = points[0][0];
-  const firstY = points[0][1];
+  const firstX = points.length > 0 ? points[0][0] : null;
+  const firstY = points.length > 0 ? points[0][1] : null;
 
   const [originPosition, setOriginPosition] = useState({
     active: false,
@@ -42,27 +45,33 @@ export const SVGLine: React.FC<SVGLineProps> = watchDependencies(({
   });
 
   const handlePointerDown: React.PointerEventHandler<SVGCircleElement | SVGTextElement> = (e: React.PointerEvent) => {
-    if (editable) {
+    if (editable && props.vb && props.vbWidth && props.vbHeight && firstX !== null && firstY !== null) {
       const el = e.currentTarget;
       el.setPointerCapture(e.pointerId);
-      setOriginPosition({
-        ...originPosition,
-        active: true,
-        offsetX: e.clientX - firstX,
-        offsetY: e.clientY - firstY,
-      });
+      const coords = getCoordsInViewbox(props.vb, props.vbWidth, props.vbHeight, e.clientX, e.clientY);
+      if (coords) {
+        setOriginPosition({
+          ...originPosition,
+          active: true,
+          offsetX: coords[0] - firstX,
+          offsetY: coords[1] - firstY,
+        });
+      }
     }
   };
   const handlePointerMove: React.PointerEventHandler<SVGCircleElement | SVGTextElement> = (e: React.PointerEvent) => {
-    if (originPosition.active) {
-      const newX = e.clientX - originPosition.offsetX;
-      const newY = e.clientY - originPosition.offsetY;
-      const newPoints = [...line.points];
-      newPoints[0] = [newX, newY];
-      props.line.set({
-        ...line,
-        points: newPoints
-      });
+    if (originPosition.active && props.vb && props.vbWidth && props.vbHeight && editable) {
+      const coords = getCoordsInViewbox(props.vb, props.vbWidth, props.vbHeight, e.clientX, e.clientY);
+      if (coords) {
+        const newX = coords[0] - originPosition.offsetX;
+        const newY = coords[1] - originPosition.offsetY;
+        const newPoints = [...line.points];
+        newPoints[0] = [newX, newY];
+        props.line.set({
+          ...line,
+          points: newPoints
+        });
+      }
     }
   };
   const handlePointerUp: React.PointerEventHandler<SVGCircleElement | SVGTextElement> = (e: React.PointerEvent) => {
@@ -144,6 +153,9 @@ export const SVGLine: React.FC<SVGLineProps> = watchDependencies(({
               y={p[1] - pointSize / 2}
               size={pointSize}
               draggable={editable}
+              vb={props.vb}
+              vbWidth={props.vbWidth}
+              vbHeight={props.vbHeight}
               eraser={eraser}
               onDrag={(pos) => {
                 if (editable) {
@@ -164,12 +176,12 @@ export const SVGLine: React.FC<SVGLineProps> = watchDependencies(({
         </>
       }
 
-      {displayTrackOrderIndex &&
+      {displayTrackOrderIndex && firstX !== null && firstY !== null &&
         <>
           <circle
             cx={firstX}
             cy={firstY}
-            r={9}
+            r={160}
             className={`${getFillColorClass()} ${phantom ? 'z-20 opacity-50' : 'z-40'}${(!eraser && props.onClick) || phantom ? ' cursor-pointer' : ''}`}
             onClick={props.onClick}
             onPointerDown={handlePointerDown}
@@ -179,12 +191,12 @@ export const SVGLine: React.FC<SVGLineProps> = watchDependencies(({
           <text
             x={firstX}
             y={firstY}
-            className={`${phantom ? 'z-20 opacity-50' : 'z-40'}${(!eraser && props.onClick) || phantom ? ' cursor-pointer' : ' cursor-default'}`}
+            className={`select-none fill-white ${phantom ? 'z-20 opacity-50' : 'z-40'}${(!eraser && props.onClick) || phantom ? ' cursor-pointer' : ' cursor-default'}`}
             textAnchor="middle"
             stroke="white"
-            strokeWidth="1px"
-            fontSize="8px"
-            dy="3px"
+            strokeWidth="8px"
+            fontSize="180px"
+            dy="70px"
             onClick={props.onClick}
             onPointerDown={handlePointerDown}
             onPointerUp={handlePointerUp}
