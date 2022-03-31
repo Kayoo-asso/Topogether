@@ -1,6 +1,6 @@
 import { getServerSession } from "helpers/getServerSession";
-import { NextMiddleware, NextResponse } from "next/server";
-import { AccessTokenCookie, RefreshTokenCookie } from "./api/auth/setCookie";
+import { NextResponse } from "next/server";
+import type { NextMiddleware } from "next/server";
 
 let protectedRoutes = [
     '/builder',
@@ -23,7 +23,9 @@ export const middleware: NextMiddleware = async (req, event) => {
         const session = await getServerSession(req.headers.get('cookie'), false);
         if (!session) {
             console.log("Redirect to login");
-            return NextResponse.redirect("/user/login");
+            const url = req.nextUrl.clone();
+            url.pathname =  encodeURIComponent(`/user/login?redirectTo=${pathname}`);
+            return NextResponse.rewrite(url);
         }
     }
     return NextResponse.next();

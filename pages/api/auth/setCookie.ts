@@ -2,9 +2,8 @@ import { NextApiHandler } from "next";
 import { CookieSerializeOptions, serialize } from 'cookie';
 import { jwtDecoder, AccessJWT } from "helpers";
 import { AuthTokens } from "helpers/services";
+import { AccessTokenCookie, RefreshTokenCookie } from "helpers/auth/";
 
-export const AccessTokenCookie = "topogether-access";
-export const RefreshTokenCookie = "topogether-refresh";
 
 const cookieOptions: CookieSerializeOptions = {
     secure: process.env.NODE_ENV === "production",

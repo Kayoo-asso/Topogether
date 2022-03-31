@@ -13,7 +13,7 @@ export const getServerSideProps: GetServerSideProps<DashboardProps> = async ({ r
   if (!session) {
     return {
       redirect: {
-        destination: "/user/login",
+        destination: encodeURIComponent(`/user/login?redirectTo=/builder/dashboard`),
         permanent: false
       }
     };

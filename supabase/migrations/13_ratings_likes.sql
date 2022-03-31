@@ -13,6 +13,10 @@ create table ratings (
 
 alter table ratings enable row level security;
 
+create policy "Ratings are visible by everyone"
+    on ratings for select
+    using ( true );
+
 create policy "Ratings can be modified by their authors"
     on ratings for all
     using ( "authorId" = auth.uid() );
@@ -21,3 +25,11 @@ create policy "Admins are omnipotent"
     on ratings for all
     -- the `using` case will also be applied for the `with check` cases
     using ( is_admin(auth.uid()) );
+
+
+create table topo_likes (
+    topo_id uuid not null references public.topos(id) on delete cascade,
+    user_id uuid not null references public.accounts(id) on delete cascade,
+
+    primary key (topo_id, user_id)
+);

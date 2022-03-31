@@ -1,11 +1,11 @@
 import { parse } from "cookie";
 import type { IncomingMessage } from "http";
 import type { NextApiRequestCookies } from "next/dist/server/api-utils";
-import { NextRequest } from "next/server";
-import { AccessTokenCookie, RefreshTokenCookie } from "pages/api/auth/setCookie";
+import type { NextRequest } from "next/server";
+import { AccessTokenCookie, makeSession, RefreshTokenCookie } from "helpers/auth";
 import { Email, Session, User, UUID } from "types";
-import { AccessJWT, jwtDecoder } from "./jwtDecoder";
-import { makeSession, supabaseClient } from "./services";
+import { AccessJWT, jwtDecoder } from "helpers/jwtDecoder";
+import { supabaseClient } from "helpers/services/SupabaseClient";
 
 export type Req = IncomingMessage & {
     cookies?: NextApiRequestCookies

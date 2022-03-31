@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import type { GetServerSideProps, NextPage } from 'next';
 import { RootWorldMap } from 'components';
 import { api } from 'helpers/services';
@@ -16,6 +16,17 @@ export const getServerSideProps: GetServerSideProps<WorldMapProps> = async ({ re
 
 const WorldMapPage: NextPage<WorldMapProps> = ({ topos }) => {
   const session = useSession();
+
+  useEffect(() => {
+    async function contactWorker() {
+      await navigator.serviceWorker.ready;
+      if (navigator.serviceWorker.controller) {
+        navigator.serviceWorker.controller.postMessage({ command: 'log', message: 'hello world' })
+      }
+    }
+
+    contactWorker();
+  }, []);
 
   return (
     <RootWorldMap

@@ -1,4 +1,5 @@
 import { AuthChangeEvent, User as SupabaseUser, Session as SupabaseSession, SupabaseClient } from "@supabase/supabase-js";
+import { makeSession } from "helpers/auth";
 import { quark, Quark } from "helpers/quarky";
 import { Email, Name, Role, Session, User, UUID } from "types";
 import { sync } from ".";
@@ -16,21 +17,6 @@ export enum AuthResult {
 
 const authCookieRoute = "/api/auth/setCookie";
 
-export function makeSession(user: SupabaseUser): Session {
-    const role = user.user_metadata.role;
-    if (role !== "USER" && role !== "ADMIN") {
-        throw new Error("User role not correctly saved in authentication token");
-    }
-    if (!user.email) {
-        throw new Error("User does not have registered email!");
-    }
-    return {
-        id: user.id as UUID,
-        email: user.email as Email,
-        role: role,
-        user: null
-    };
-};
 
 async function fetchOnClient(input: RequestInfo, init?: RequestInit): Promise<void> {
     if (typeof window !== "undefined") {

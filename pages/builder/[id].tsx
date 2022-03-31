@@ -25,6 +25,7 @@ export const getServerSideProps: GetServerSideProps<BuilderProps> = async ({ req
   }
 
   const topo = await api.getTopo(id);
+  console.log("Calling builder getServerSideProps");
 
 
   if (!topo || topo.status !== TopoStatus.Draft) {
