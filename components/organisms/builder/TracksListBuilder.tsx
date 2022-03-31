@@ -37,7 +37,7 @@ export const TracksListBuilder: React.FC<TracksListBuilderProps> = watchDependen
   if (!session) return null;
   return (
     <>
-      <div className="w-full border-t border-grey-light">
+      <div className="w-full border-t border-grey-light mt-5">
 
         {tracks.map((trackQuark) => {
           const track = trackQuark();

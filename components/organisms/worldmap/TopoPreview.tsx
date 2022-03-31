@@ -3,7 +3,7 @@ import {
     Button, DownloadButton, Flash, Icon, LikeButton, Modal, GradeHistogram, ParkingButton, ParkingModal, SlideagainstRightDesktop
 } from 'components';
 import { LightTopo } from 'types';
-import { DeviceContext, TopoTypeToColor } from 'helpers';
+import { TopoTypeToColor } from 'helpers';
 import { CFImage } from 'components/atoms/CFImage';
 
 interface TopoPreviewProps {
@@ -13,7 +13,6 @@ interface TopoPreviewProps {
 }
 
 export const TopoPreview: React.FC<TopoPreviewProps> = (props: TopoPreviewProps) => {
-    const device = useContext(DeviceContext);
     const [modalParkingOpen, setModalParkingOpen] = useState(false);
     const [flashMessage, setFlashMessage] = useState<string>();
     const topo = props.topo;
@@ -63,7 +62,7 @@ export const TopoPreview: React.FC<TopoPreviewProps> = (props: TopoPreviewProps)
                     />
                 </div>
 
-                <div className="ktext-base-little mt-4 px-4 hide-after-two-lines overflow-hidden">
+                <div className="ktext-base-little mt-4 px-4 hide-after-three-lines overflow-hidden">
                     {topo.description}
                 </div>
 
@@ -119,15 +118,15 @@ export const TopoPreview: React.FC<TopoPreviewProps> = (props: TopoPreviewProps)
 
     return (
         <>
-            {device === 'mobile'
-                ?
+            <div className='md:hidden'>
                 <Modal
                     withBackground={false}
                     onClose={props.onClose}
                 >
                     {topoPreviewContent()}
                 </Modal>
-                :
+            </div>
+            <div className="hidden md:block">
                 <SlideagainstRightDesktop
                     open
                     displayLikeButton
@@ -137,7 +136,7 @@ export const TopoPreview: React.FC<TopoPreviewProps> = (props: TopoPreviewProps)
                 >
                     {topoPreviewContent()}
                 </SlideagainstRightDesktop>
-            }
+            </div>
 
             {modalParkingOpen && topo.parkingLocation &&
                 <ParkingModal

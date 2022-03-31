@@ -145,6 +145,7 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
       >
         {/* Invisible rectangle of the size of the viewBox, to get its on-screen dimensions easily
             (they could also be computed, but I'm lazy)
+            Another dev: I'm lazy too. Leave the rectangle.
         */}
         <rect ref={viewBoxRef} x={0} y={0} width={viewBoxWidth} height={viewBoxHeight} visibility='hidden'></rect>
 

@@ -1,12 +1,10 @@
 import { Image } from "types"
 import { SourceSize, VariantWidths } from "helpers/variants";
 import { cloudflareUrl } from "helpers/cloudflareUrl";
-import { CSSProperties, DetailedHTMLProps, ImgHTMLAttributes } from "react";
+import { CSSProperties, ImgHTMLAttributes } from "react";
 import defaultKayoo from 'public/assets/img/Kayoo_defaut_image.png';
 import type { StaticImageData } from 'next/image';
 import { useDevice } from "helpers/hooks/useDevice";
-import Head from "next/head";
-
 
 export type CFImageProps = RawImageAttributes & {
     alt: string,

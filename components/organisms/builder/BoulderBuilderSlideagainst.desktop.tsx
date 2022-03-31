@@ -27,7 +27,7 @@ export const BoulderBuilderSlideagainstDesktop: React.FC<BoulderBuilderSlideagai
             {/* Make room for scrollbar */}
             <div className="flex flex-col h-full w-full overflow-scroll">
                 <BoulderForm
-                    className='mt-3 mb-6'
+                    className='mt-3 mb-6 px-5'
                     boulder={props.boulder}
                 />
                 <BoulderPreviewDesktop
