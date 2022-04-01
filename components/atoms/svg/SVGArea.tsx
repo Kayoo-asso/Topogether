@@ -13,7 +13,7 @@ interface SVGAreaProps {
   vbWidth?: number,
   vbHeight?: number,
   eraser?: boolean,
-  pointSize: number,
+  pointSize?: number,
   className?: string,
   onChange?: (area: Position[]) => void,
   onClick?: () => void,
@@ -23,7 +23,7 @@ interface SVGAreaProps {
 export const SVGArea: React.FC<SVGAreaProps> = ({
   editable = false,
   eraser = false,
-  pointSize = defaultTracksWeight,
+  pointSize = defaultTracksWeight * 4,
   className = '',
   ...props
 }: SVGAreaProps) => {

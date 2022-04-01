@@ -110,7 +110,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
                 />
             </span>
             
-            <span className='w-1/5 md:w-3/12 md:flex md:justify-center'>
+            <span className='w-1/5 z-100 md:w-3/12 md:flex md:justify-center'>
                 <Gradeselector 
                     grade={props.grade}
                     onGradeSelect={props.onGradeSelect}

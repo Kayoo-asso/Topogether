@@ -2,7 +2,6 @@ import React from 'react';
 import { Quark, watchDependencies } from 'helpers/quarky';
 import { DrawerToolEnum, gradeToLightGrade, Line, PointEnum, Track, UUID } from 'types';
 import { SVGArea, SVGLine, SVGPoint } from '.';
-import { defaultTracksWeight } from 'components/molecules';
 
 interface SVGTrackProps {
     track: Quark<Track>,
@@ -177,7 +176,6 @@ export const SVGTrack: React.FC<SVGTrackProps> = watchDependencies(({
                         vbWidth={props.vbWidth}
                         vbHeight={props.vbHeight}
                         eraser={props.currentTool === 'ERASER'}
-                        pointSize={defaultTracksWeight * 5}
                         onChange={(area) => {
                             if (editable) {
                                 const newForbiddens = [...line.forbidden!]

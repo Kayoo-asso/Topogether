@@ -33,7 +33,6 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies((props: DrawerPro
   const selectedTrack = props.selectedTrack()!;
 
   const addPointToLine = (pos: Position) => {
-
     // CAREFUL: lines with less than 2 points are not allowed (the DB )
     let lineQuark = selectedTrack.lines.findQuark(l => l.imageId === props.image.id);
     if (!lineQuark) {
@@ -81,33 +80,39 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies((props: DrawerPro
   }
 
   const deletePointToLine = (pointType: PointEnum, index: number) => {
-    const newLine = selectedTrack.lines.quarkAt(0);
-    const line = newLine();
-    switch (pointType) {
-      case 'LINE_POINT':
-        newLine.set({
-          ...line,
-          points: [...line.points.slice(0, index), ...line.points.slice(index + 1)]
-        }); break;
-      case 'HAND_DEPARTURE_POINT':
-        newLine.set({
-          ...line,
-          hand1: index === 0 ? undefined : line.hand1,
-          hand2: index === 1 || index === -1 ? undefined : line.hand2
-        }); break;
-      case 'FOOT_DEPARTURE_POINT':
-        newLine.set({
-          ...line,
-          foot1: index === 0 ? undefined : line.foot1,
-          foot2: index === 1 || index === -1 ? undefined : line.foot2
-        }); break;
-      case 'FORBIDDEN_AREA_POINT':
-        if (line.forbidden) {
+    const newLine = selectedTrack.lines.quarkAt(0); //TODO : change the quarkAt when it will be possible to have multiple lines for a track
+    if (newLine) {
+      const line = newLine();
+      switch (pointType) {
+        case 'LINE_POINT':
+          if (line.points) {
+            if (index === -1) line.points.pop();
+            newLine.set({
+              ...line,
+              points: index === -1 ? [...line.points] : [...line.points.slice(0, index), ...line.points.slice(index + 1)]
+            });
+          } break;
+        case 'HAND_DEPARTURE_POINT':
           newLine.set({
             ...line,
-            forbidden: [...line.forbidden.slice(0, index), ...line.forbidden.slice(index + 1)]
-          });
-        } break;
+            hand1: index === 0 ? undefined : line.hand1,
+            hand2: index === 1 || index === -1 ? undefined : line.hand2
+          }); break;
+        case 'FOOT_DEPARTURE_POINT':
+          newLine.set({
+            ...line,
+            foot1: index === 0 ? undefined : line.foot1,
+            foot2: index === 1 || index === -1 ? undefined : line.foot2
+          }); break;
+        case 'FORBIDDEN_AREA_POINT':
+          if (line.forbidden) {
+            if (index === -1) line.forbidden.pop();
+            newLine.set({
+              ...line,
+              forbidden: index === -1 ? [...line.forbidden] : [...line.forbidden.slice(0, index), ...line.forbidden.slice(index + 1)]
+            });
+          } break;
+      }
     }
   }
   const rewind = () => {

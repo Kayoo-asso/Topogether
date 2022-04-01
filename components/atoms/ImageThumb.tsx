@@ -1,7 +1,7 @@
 import React from 'react';
 import { Image, Track, UUID } from 'types';
 // eslint-disable-next-line import/no-cycle
-import { DeleteButton } from 'components';
+import { DeleteButton, TracksImage } from 'components';
 import useDimensions from 'react-cool-dimensions';
 import { Quark, QuarkIter } from 'helpers/quarky';
 import { CFImage } from './CFImage';
@@ -47,15 +47,17 @@ export const ImageThumb: React.FC<ImageThumbProps> = ({
           />
         </div>
       }
-      {/* {(props.tracks && props.tracks.toArray().length > 0) && 
+      {(props.tracks && props.tracks.toArray().length > 0) && 
         <TracksImage 
           image={props.image}
           tracks={props.tracks}
-          displayTrackOrderIndexes={false}
-          programmativeHeight={containerWidth}
-          tracksWeight={1}
+          displayTracks
+          displayTrackOrderIndexes={true}
+          objectFit='contain'
+          sizeHint={`${containerWidth}px`}
+          tracksWeight={60}
         />
-      } */}
+      }
       {(!props.tracks || props.tracks.toArray().length < 1) && 
         <CFImage
           image={props.image}

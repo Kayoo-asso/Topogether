@@ -41,7 +41,7 @@ const preserveAspectRatio = {
 }
 
 export const viewBoxHeight = 4096;
-export const defaultTracksWeight = viewBoxHeight * 0.006;
+export const defaultTracksWeight = viewBoxHeight * 0.007;
 
 
 export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({

@@ -20,9 +20,6 @@ interface SVGLineProps {
   onPointClick?: (index: number) => void,
 }
 
-// TODO: fix drag
-// Basically need to convert event coordinates -> viewBox coordinates
-// (maybe pass a ref to the invisible viewBox rectangle?)
 export const SVGLine: React.FC<SVGLineProps> = watchDependencies(({
   editable = false,
   eraser = false,
@@ -181,7 +178,7 @@ export const SVGLine: React.FC<SVGLineProps> = watchDependencies(({
           <circle
             cx={firstX}
             cy={firstY}
-            r={160}
+            r={140}
             className={`${getFillColorClass()} ${phantom ? 'z-20 opacity-50' : 'z-40'}${(!eraser && props.onClick) || phantom ? ' cursor-pointer' : ''}`}
             onClick={props.onClick}
             onPointerDown={handlePointerDown}
@@ -195,8 +192,8 @@ export const SVGLine: React.FC<SVGLineProps> = watchDependencies(({
             textAnchor="middle"
             stroke="white"
             strokeWidth="8px"
-            fontSize="180px"
-            dy="70px"
+            fontSize="150px"
+            dy="60px"
             onClick={props.onClick}
             onPointerDown={handlePointerDown}
             onPointerUp={handlePointerUp}
