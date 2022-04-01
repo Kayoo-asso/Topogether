@@ -159,7 +159,6 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> = watchDependen
                                 <div className="ktext-label text-grey-medium mb-1">Sans secteur</div>
                                 <div className={'flex flex-col gap-1 ml-1 p-2 rounded-sm ' + (draggingSectorId === 'no-sector' ? 'bg-grey-superlight' : '')}>
                                     {bouldersOutSorted.map((boulderQuark, index) => {
-                                        // console.log(index);
                                         const boulder = boulderQuark();
                                         return (
                                             <Draggable key={boulder.id} draggableId={boulder.id} index={index}>

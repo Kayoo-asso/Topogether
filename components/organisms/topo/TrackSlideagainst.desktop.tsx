@@ -19,7 +19,9 @@ export const TrackSlideagainstDesktop: React.FC<TrackSlideagainstDesktopProps> =
 
     return (
         <SlideagainstRightDesktop 
+            className='overflow-scroll'
             open={open}
+            secondary
             onClose={props.onClose}
         >
             <div className='flex flex-col px-6 mb-10'>

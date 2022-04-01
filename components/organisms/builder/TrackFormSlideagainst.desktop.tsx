@@ -16,7 +16,9 @@ export const TrackFormSlideagainstDesktop: React.FC<TrackFormSlideagainstDesktop
     return (
         <>
             <SlideagainstRightDesktop 
+                className='overflow-scroll'
                 open
+                secondary
                 onClose={props.onClose}
             >
                 <div className='px-5 py-3 h-full'>

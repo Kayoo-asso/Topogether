@@ -276,11 +276,6 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
     // The derivation doesnt work, it still recompute the progress at every render
     const progress = useCreateDerivation<number>(() => computeBuilderProgress(props.topoQuark), [props.topoQuark], { name: "BuilderProgress" });
 
-    // useEffect(() => {
-    //     console.log(currentImage);
-    //     console.log(selectedBoulder());
-    //     console.log(selectedTrack());
-    // }, [currentImage, selectedBoulder(), selectedTrack()]);
     return (
         <>
             <Header
@@ -304,7 +299,9 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                 <BuilderProgressIndicator topo={props.topoQuark} progress={progress()} />
             </Header>
 
-            <div className="h-content md:h-contentPlusShell relative flex flex-row md:overflow-hidden">
+            {/* overflow-clip instead of overflow-hidden, so that the Slideagainst can appear off-screen without 
+                triggering a shift of content in this div */}
+            <div className="h-content md:h-contentPlusShell relative flex flex-row md:overflow-clip">
                 <LeftbarBuilderDesktop
                     topoQuark={props.topoQuark}
                     boulderOrder={boulderOrder()}

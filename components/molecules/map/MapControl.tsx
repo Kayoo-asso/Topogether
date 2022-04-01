@@ -152,7 +152,7 @@ export const MapControl: React.FC<MapControlProps> = ({
     }, []);
     
     return (
-        <div className="relative w-full h-full md:flex-1">
+        <div className="relative w-full h-full">
             <Wrapper apiKey={process.env.NEXT_PUBLIC_GOOGLE_API_KEY || ''} libraries={['places']}>
 
                 <div className="absolute h-full w-full p-3 grid grid-rows-2">

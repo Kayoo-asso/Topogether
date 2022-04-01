@@ -15,7 +15,6 @@ export * from './markerSize';
 export * from './bitflagHelpers';
 export * from './formatDate';
 export * from './blobToImage';
-export * from './dropbox';
 export * from './jwtDecoder';
 
 export * from './splitArray';

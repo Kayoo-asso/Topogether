@@ -1,10 +1,10 @@
-import { Signal } from 'helpers/quarky';
 import React, { ReactNode, useEffect, useState } from 'react';
 import { Boulder, LightTopo, Topo } from 'types';
 import { DownloadButton, LikeButton, Show } from '..';
 
 interface SlideagainstRightDesktopProps {
     open?: boolean,
+    secondary?: boolean,
     displayLikeButton?: boolean,
     displayDlButton?: boolean,
     className?: string,
@@ -17,23 +17,33 @@ const isTopo = (item: Boulder | Topo | LightTopo): item is Topo => (item as Topo
 
 export const SlideagainstRightDesktop: React.FC<SlideagainstRightDesktopProps> = ({
     open = false,
+    secondary = false,
     ...props
 }: SlideagainstRightDesktopProps) => {
     const size = 300;
-    const [marginRight, setMarginRight] = useState<number>(0);
-    console.log(`Rendering Slideagainst (open:${open}) with marginRight:`, marginRight);
 
-    // TODO: this sometimes causes React warnings, because it can call setMarginRight after the component was unmounted
+    const [offset, setOffset] = useState<number>(0);
     useEffect(() => {
-        window.setTimeout(() => setMarginRight(open ? size : 0), 1);    
+        if (open) {
+            setOffset(size + (secondary ? size : 0));
+        } else {
+            setOffset(0);
+        }
+        // window.setTimeout(() => setOffset(open ? size : 0), 1);    
       }, [open]);
 
     return (
         <div 
-            className={`absolute left-[100%] flex flex-col w-[300px] h-full py-5 border-l bg-white border-grey-medium z-40 ${props.className ? props.className : ''}`}
+            className={
+                `absolute top-0 flex flex-col w-[300px] h-full border-l py-5 bg-white border-grey-medium
+                ${secondary ? 'z-40' : 'z-50'}
+                ${props.className ? props.className : ''}`
+            }
             style={{ 
-                // marginRight: `-${marginRight}px`,
-                transform: `translate(-${marginRight}px)`,
+                // use `right` positioning, to tell the DOM this document should be outside the page
+                // (`left: 100%` and `right: 0` does not work, it grows the div containing this one)
+                right: `-${size}px`,
+                transform: `translate(-${offset}px)`,
                 transition: 'transform 0.15s ease-in-out'
             }}
         >
@@ -59,14 +69,14 @@ export const SlideagainstRightDesktop: React.FC<SlideagainstRightDesktopProps> =
                 <span 
                     className='cursor-pointer text-main ktext-base'
                     onClick={() => {
-                        setMarginRight(0)
+                        setOffset(0)
                         window.setTimeout(() => props.onClose && props.onClose(), 150);  
                         
                     }}
                 >Terminé</span>
             </div>
 
-            <div className='flex-1 overflow-auto relative'>
+            <div className='flex-1 relative'>
                 {props.children}
             </div>
         </div>

@@ -19,13 +19,12 @@ export const BoulderBuilderSlideagainstDesktop: React.FC<BoulderBuilderSlideagai
     return (
         <SlideagainstRightDesktop
             open
-            item={props.boulder()}
+            className='overflow-scroll'
             displayLikeButton
-            className='z-50'
+            item={props.boulder()}
             onClose={props.onClose}
         >
-            {/* Make room for scrollbar */}
-            <div className="flex flex-col h-full w-full overflow-scroll">
+            <div className="flex flex-col h-full w-full">
                 <BoulderForm
                     className='mt-3 mb-6 px-5'
                     boulder={props.boulder}

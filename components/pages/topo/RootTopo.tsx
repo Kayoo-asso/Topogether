@@ -1,9 +1,10 @@
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { 
+import {
   AccessSlideover, InfoSlideover, ManagementSlideover,
-  BoulderSlideagainstDesktop,  BoulderSlideoverMobile, TrackSlideagainstDesktop, SectorSlideoverMobile,
-  Show, 
-  MapControl, ParkingSlide, WaypointSlide, TracksImage } from 'components';
+  BoulderSlideagainstDesktop, BoulderSlideoverMobile, TrackSlideagainstDesktop, SectorSlideoverMobile,
+  Show,
+  MapControl, ParkingSlide, WaypointSlide, TracksImage
+} from 'components';
 import { Header, LeftbarTopoDesktop } from 'components/layouts';
 import { DeviceContext, sortBoulders, toLatLng } from 'helpers';
 import { Boulder, Image, isUUID, Parking, Sector, Topo, Track, Waypoint } from 'types';
@@ -23,13 +24,13 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
 
   const device = useContext(DeviceContext);
   const topo = props.topoQuark();
-  
+
   const sectors = useMemo(() => topo.sectors?.quarks(), [topo.sectors]) || new QuarkIter<Quark<Parking>>([]);
   const boulders = useMemo(() => topo.boulders?.quarks(), [topo.boulders]) || new QuarkIter<Quark<Boulder>>([])
   const parkings = useMemo(() => topo.parkings?.quarks(), [topo.parkings]) || new QuarkIter<Quark<Parking>>([]);
   const waypoints = useMemo(() => topo.waypoints?.quarks(), [topo.waypoints]) || new QuarkIter<Quark<Waypoint>>([]);
   const boulderOrder = useCreateDerivation(() => sortBoulders(topo.sectors, topo.lonelyBoulders));
-  
+
   const [currentImage, setCurrentImage] = useState<Image>();
   const selectedSector = useSelectQuark<Sector>();
   const selectedBoulder = useSelectQuark<Boulder>();
@@ -42,13 +43,14 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
       selectedSector.select(undefined);
     else selectedSector.select(sectorQuark);
   }, [selectedSector, selectedBoulder]);
+
   const toggleBoulderSelect = useQuarkyCallback((boulderQuark: Quark<Boulder>) => {
     selectedTrack.select(undefined);
     selectedParking.select(undefined);
     selectedWaypoint.select(undefined);
     const boulder = boulderQuark();
     if (selectedBoulder()?.id === boulder.id)
-        selectedBoulder.select(undefined);
+      selectedBoulder.select(undefined);
     else {
       if (boulder.images[0]) setCurrentImage(boulder.images[0]);
       selectedBoulder.select(boulderQuark);
@@ -134,13 +136,15 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
         title={topo.name}
         backLink='/'
         menuOptions={[
-          { value: 'Infos du topo', action: () => setCurrentDisplay('INFO')},
-          { value: 'Marche d\'approche', action: () => setCurrentDisplay('APPROACH')},
-          { value: 'Gestionnaires du site', action: () => setCurrentDisplay('MANAGEMENT')},
+          { value: 'Infos du topo', action: () => setCurrentDisplay('INFO') },
+          { value: 'Marche d\'approche', action: () => setCurrentDisplay('APPROACH') },
+          { value: 'Gestionnaires du site', action: () => setCurrentDisplay('MANAGEMENT') },
         ]}
       />
 
-      <div className="h-content md:h-full relative flex flex-row md:overflow-hidden">
+      {/* overflow-clip instead of overflow-hidden, so that the Slideagainst can appear off-screen without 
+                triggering a shift of content in this div */}
+      <div className="h-content md:h-full relative flex flex-row md:overflow-clip">
         <LeftbarTopoDesktop
           topoQuark={props.topoQuark}
           boulderOrder={boulderOrder()}
@@ -150,7 +154,7 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
         />
         <Show when={() => [device === 'mobile', displaySectorSlideover] as const}>
           {() => (
-            <SectorSlideoverMobile 
+            <SectorSlideoverMobile
               topoQuark={props.topoQuark}
               boulderOrder={boulderOrder()}
               selectedBoulder={selectedBoulder}
@@ -162,7 +166,7 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
         </Show>
 
         <Show when={() => displayInfo}>
-          <InfoSlideover 
+          <InfoSlideover
             topo={props.topoQuark}
             open={displayInfo}
             onClose={() => setCurrentDisplay('none')}
@@ -197,7 +201,7 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
           onBoulderResultSelect={(boulder) => toggleBoulderSelect(boulders.find(b => b().id === boulder.id)()!)}
           topo={props.topoQuark}
           sectors={sectors}
-          selectedSector={selectedSector} 
+          selectedSector={selectedSector}
           onSectorClick={toggleSectorSelect}
           boulders={boulders}
           selectedBoulder={selectedBoulder}
@@ -212,24 +216,25 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
           onParkingClick={toggleParkingSelect}
           center={toLatLng(topo.location)}
           boundsTo={boulders.toArray().map(b => b().location).concat(parkings.toArray().map(p => p().location))}
-        />       
+        />
 
         <Show when={() => [device !== 'mobile', selectedTrack.quark()] as const}>
-          {([, track]) => 
+          {([, track]) =>
             <>
-              <TrackSlideagainstDesktop 
+              <TrackSlideagainstDesktop
                 track={track}
                 onClose={() => selectedTrack.select(undefined)}
               />
               <div className="absolute top-0 bg-black bg-opacity-90 h-full flex flex-col z-1000 w-full md:w-[calc(100%-600px)]">
                 <div className="flex-1 flex items-center relative">
                   {/* TODO: CHANGE SIZING */}
-                  {/* <TracksImage
+                  <TracksImage
+                    sizeHint='100vw'
                     image={currentImage}
                     tracks={new QuarkIter([track])}
                     selectedTrack={selectedTrack}
                     displayTracksDetails
-                  /> */}
+                  />
                 </div>
               </div>
             </>
@@ -241,7 +246,7 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
           {(boulder) => {
             if (device === 'mobile') {
               return (
-                <BoulderSlideoverMobile 
+                <BoulderSlideoverMobile
                   open
                   boulder={boulder}
                   selectedTrack={selectedTrack}
@@ -273,29 +278,29 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
 
         <Show when={selectedParking.quark}>
           {(parking) => {
-              return (
-                <ParkingSlide 
-                  open
-                  parking={parking}
-                  onClose={() => selectedParking.select(undefined)}
-                />
-              )
+            return (
+              <ParkingSlide
+                open
+                parking={parking}
+                onClose={() => selectedParking.select(undefined)}
+              />
+            )
           }}
-        </Show> 
+        </Show>
         <Show when={selectedWaypoint.quark}>
           {(waypoint) => {
-              return (
-                <WaypointSlide 
-                  open
-                  waypoint={waypoint}
-                  onClose={() => selectedWaypoint.select(undefined)}
-                />
-              )
+            return (
+              <WaypointSlide
+                open
+                waypoint={waypoint}
+                onClose={() => selectedWaypoint.select(undefined)}
+              />
+            )
           }}
         </Show>
 
-      </div> 
-      
+      </div>
+
     </>
   );
 });

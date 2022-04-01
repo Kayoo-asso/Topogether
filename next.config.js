@@ -1,10 +1,10 @@
 /** @type {import('next').NextConfig} */
-const {InjectManifest} = require('workbox-webpack-plugin');
 
 const withPWA = require('next-pwa')
 
 module.exports = withPWA({
   pwa: {
+    disable: true,
     dest: 'public',
     swSrc: 'worker/sw.ts',
   },

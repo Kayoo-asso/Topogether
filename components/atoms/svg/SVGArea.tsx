@@ -19,10 +19,6 @@ interface SVGAreaProps {
   onClick?: () => void,
 }
 
-// TODO 1: fix drag
-// Basically need to convert event coordinates -> viewBox coordinates
-// (maybe pass a ref to the invisible viewBox rectangle?)
-
 // TODO 2: allow areas other than a rectangle
 export const SVGArea: React.FC<SVGAreaProps> = ({
   editable = false,
@@ -38,9 +34,7 @@ export const SVGArea: React.FC<SVGAreaProps> = ({
   const updateAreaPoint = (index: 0 | 1 | 2 | 3, newPos: Position) => {
     if (props.onChange) {
       const newArea = [...props.area];
-      console.log(props.area);
       newArea[index] = [newPos[0], newPos[1]];
-      console.log(newArea);
       props.onChange(newArea);
     }
   };
