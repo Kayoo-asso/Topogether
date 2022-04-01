@@ -27,13 +27,14 @@ const breakpoints: Record<Device, number> = {
 };
 
 const CustomApp = ({ Component, pageProps, session, initialDevice }: Props) => {
-  const { currentBreakpoint } = useDimensions({
+  const { observe, currentBreakpoint } = useDimensions({
     breakpoints,
     updateOnBreakpointChange: true
-  }) as { currentBreakpoint: Device };
+  });
+  console.log("Rerendered App with breakpoint " + currentBreakpoint);
 
   const firstRender = useFirstRender();
-  const device = firstRender ? initialDevice : currentBreakpoint;
+  const device = firstRender ? initialDevice : currentBreakpoint as Device;
 
   return (
     <>
@@ -63,7 +64,7 @@ const CustomApp = ({ Component, pageProps, session, initialDevice }: Props) => {
 
       <SessionContext.Provider value={session}>
         <DeviceContext.Provider value={device}>
-          <div className="w-screen h-screen flex items-end flex-col">
+          <div ref={observe} className="w-screen h-screen flex items-end flex-col">
             <div id="content" className="flex-1 w-screen absolute bg-grey-light flex flex-col h-full md:h-screen overflow-hidden">
               <Component {...pageProps} />
             </div>
