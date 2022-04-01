@@ -6,7 +6,7 @@ import {
   MapControl, ParkingSlide, WaypointSlide, TracksImage
 } from 'components';
 import { Header, LeftbarTopoDesktop } from 'components/layouts';
-import { DeviceContext, sortBoulders, toLatLng } from 'helpers';
+import { DeviceContext, decodeUUID, encodeUUID, sortBoulders, toLatLng } from 'helpers';
 import { Boulder, Image, isUUID, Parking, Sector, Topo, Track, Waypoint } from 'types';
 import { Quark, QuarkIter, useCreateDerivation, useLazyQuarkyEffect, useQuarkyCallback, useSelectQuark, watchDependencies } from 'helpers/quarky';
 import { useRouter } from 'next/router';
@@ -58,9 +58,12 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
   }, [selectedBoulder]);
   // Hack: select boulder from query parameter
   if (firstRender) {
-    if (typeof bId === "string" && isUUID(bId)) {
-      const boulder = boulders.find((b) => b().id === bId)();
-      if (boulder) toggleBoulderSelect(boulder);
+    if (typeof bId === "string") {
+      const expanded = decodeUUID(bId);
+      if (isUUID(expanded)) {
+        const boulder = boulders.find((b) => b().id === expanded)();
+        if (boulder) toggleBoulderSelect(boulder);
+      }
     }
   }
   const toggleTrackSelect = useCallback((trackQuark: Quark<Track>, boulderQuark: Quark<Boulder>) => {
@@ -89,7 +92,7 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
     else selectedWaypoint.select(waypointQuark)
   }, [selectedWaypoint]);
   useLazyQuarkyEffect(([boulder]) => {
-    if (boulder) router.push({ pathname: window.location.href.split('?')[0], query: { b: boulder.id } }, undefined, { shallow: true });
+    if (boulder) router.push({ pathname: window.location.href.split('?')[0], query: { b: encodeUUID(boulder.id) } }, undefined, { shallow: true });
     else router.push({ pathname: window.location.href.split('?')[0] }, undefined, { shallow: true })
   }, [selectedBoulder]);
 

@@ -3,7 +3,7 @@ import {
     Button, DownloadButton, Flash, Icon, LikeButton, Modal, GradeHistogram, ParkingButton, ParkingModal, SlideagainstRightDesktop
 } from 'components';
 import { LightTopo } from 'types';
-import { TopoTypeToColor } from 'helpers';
+import { encodeUUID, TopoTypeToColor } from 'helpers';
 import { CFImage } from 'components/atoms/CFImage';
 
 interface TopoPreviewProps {
@@ -101,7 +101,7 @@ export const TopoPreview: React.FC<TopoPreviewProps> = (props: TopoPreviewProps)
                         <Button
                             content="Entrer"
                             fullWidth
-                            href={'/topo/' + topo.id}
+                            href={'/topo/' + encodeUUID(topo.id)}
                         />
                     </div>
                     {topo.parkingLocation &&

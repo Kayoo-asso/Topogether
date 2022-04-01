@@ -1,7 +1,7 @@
 import React from 'react';
 import type { GetServerSideProps, NextPage } from 'next';
 import { RootTopo } from 'components';
-import { editTopo } from 'helpers';
+import { editTopo, decodeUUID } from 'helpers';
 import { isUUID, TopoData } from 'types';
 import { api } from 'helpers/services';
 
@@ -18,12 +18,13 @@ const redirect = (destination: string) => ({
 
 export const getServerSideProps: GetServerSideProps = async ({ query }) => {
   const { id } = query;
-  if (typeof id !== "string" || !isUUID(id)) {
-    return redirect("/");
-  }
+  if (typeof id !== "string") return redirect("/");
 
-  const topo = await api.getTopo(id);
+  const expanded = decodeUUID(id);
 
+  if(!isUUID(expanded)) return redirect("/");
+
+  const topo = await api.getTopo(expanded);
 
   if (!topo) {
     return redirect("/404");

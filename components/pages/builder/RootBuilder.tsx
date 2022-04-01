@@ -8,7 +8,7 @@ import {
     ParkingBuilderSlide, AccessFormSlideover, WaypointBuilderSlide, ModalRenameSector, ModalDelete, SectorAreaMarkerDropdown, BuilderProgressIndicator,
 } from 'components';
 import { Header, LeftbarBuilderDesktop } from 'components/layouts';
-import { blobToImage, sortBoulders, useContextMenu, createTrack, createBoulder, createParking, createWaypoint, createSector, deleteSector, deleteBoulder, deleteParking, deleteWaypoint, toLatLng, useDevice, computeBuilderProgress } from 'helpers';
+import { blobToImage, sortBoulders, useContextMenu, createTrack, createBoulder, createParking, createWaypoint, createSector, deleteSector, deleteBoulder, deleteParking, deleteWaypoint, toLatLng, useDevice, computeBuilderProgress, encodeUUID, decodeUUID } from 'helpers';
 import { Boulder, GeoCoordinates, Image, MapToolEnum, Parking, Sector, Track, Waypoint, Topo, isUUID, TopoStatus } from 'types';
 import { Quark, QuarkIter, useCreateDerivation, useLazyQuarkyEffect, useQuarkyCallback, useSelectQuark, watchDependencies } from 'helpers/quarky';
 import { useRouter } from 'next/router';
@@ -127,9 +127,12 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
     }, [selectedBoulder]);
     // Hack: select boulder from query parameter
     if (firstRender) {
-        if (typeof bId === "string" && isUUID(bId)) {
-            const boulder = boulders.find((b) => b().id === bId)();
-            if (boulder) toggleBoulderSelect(boulder);
+        if (typeof bId === "string") {
+            const expanded = decodeUUID(bId);
+            if (isUUID(expanded)) {
+                const boulder = boulders.find((b) => b().id === expanded)();
+                if (boulder) toggleBoulderSelect(boulder);
+            }
         }
     }
     const toggleTrackSelect = useQuarkyCallback((trackQuark: Quark<Track>, boulderQuark: Quark<Boulder>) => {
@@ -156,8 +159,8 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
         selectedParking.select(undefined);
         if (selectedWaypoint()?.id === waypointQuark().id) { selectedWaypoint.select(undefined); } else selectedWaypoint.select(waypointQuark);
     }, [selectedWaypoint]);
-    useLazyQuarkyEffect(([boulder]) => {
-        if (boulder) router.push({ pathname: window.location.href.split('?')[0], query: { b: boulder.id } }, undefined, { shallow: true });
+    useLazyQuarkyEffect(([selectedB]) => {
+        if (selectedB) router.push({ pathname: window.location.href.split('?')[0], query: { b: encodeUUID(selectedB.id) } }, undefined, { shallow: true });
         else router.push({ pathname: window.location.href.split('?')[0] }, undefined, { shallow: true })
     }, [selectedBoulder]);
 

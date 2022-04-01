@@ -1,4 +1,5 @@
 import { Icon } from 'components/atoms';
+import { encodeUUID } from 'helpers';
 import Link from 'next/link';
 import React from 'react';
 import { Boulder, LightTopo } from 'types';
@@ -22,7 +23,7 @@ export const MapSearchresults: React.FC<MapSearchresultsProps> = (props: MapSear
 
             {props.topoApiResults.length > 0 &&
                 props.topoApiResults.map((topo) =>
-                    <Link href={'/topo/'+topo.id} passHref key={topo.id}>
+                    <Link href={'/topo/' + encodeUUID(topo.id)} passHref key={topo.id}>
                         <div className='flex flex-row gap-4 items-center py-3 text-dark cursor-pointer ktext-base'>
                             <div>
                                 <Icon name='waypoint' SVGClassName='w-5 h-5 fill-main' />
@@ -34,9 +35,9 @@ export const MapSearchresults: React.FC<MapSearchresultsProps> = (props: MapSear
             }
 
             {props.boulderResults.length > 0 &&
-                props.boulderResults.map((boulder) => 
-                    <div 
-                        key={boulder.id} 
+                props.boulderResults.map((boulder) =>
+                    <div
+                        key={boulder.id}
                         className='flex flex-row gap-4 items-center py-3 text-dark cursor-pointer ktext-base'
                         onClick={() => props.onBoulderSelect(boulder)}
                     >
@@ -52,7 +53,7 @@ export const MapSearchresults: React.FC<MapSearchresultsProps> = (props: MapSear
                 <>
                     <div className="text-grey-medium ktext-label uppercase mt-5 mb-2">Lieux</div>
                     {props.googleApiResults.map((res) =>
-                        <div 
+                        <div
                             key={res.place_id}
                             className='flex flex-row gap-4 items-center py-3 text-dark cursor-pointer ktext-base'
                             onClick={() => props.onPlaceSelect(res)}

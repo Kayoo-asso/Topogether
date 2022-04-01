@@ -3,7 +3,7 @@ import type { GetServerSideProps, NextPage } from 'next';
 import { api } from 'helpers/services';
 import { isUUID, TopoData, TopoStatus } from 'types';
 import { RootBuilder } from 'components/pages';
-import { editTopo } from 'helpers';
+import { editTopo, decodeUUID } from 'helpers';
 
 type BuilderProps = {
   topo: TopoData,
@@ -20,11 +20,12 @@ const redirect = (destination: string) => ({
 
 export const getServerSideProps: GetServerSideProps<BuilderProps> = async ({ req, query, res }) => {
   const { id } = query;
-  if (typeof id !== "string" || !isUUID(id)) {
-    return redirect("/");
-  }
+  if (typeof id !== "string") return redirect("/");
 
-  const topo = await api.getTopo(id);
+  const expanded = decodeUUID(id);
+  if (!isUUID(expanded)) return redirect("/");
+
+  const topo = await api.getTopo(expanded);
 
   if (!topo || topo.status !== TopoStatus.Draft) {
     return redirect("/404");

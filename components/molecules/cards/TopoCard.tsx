@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { Card, Icon, CFImage } from 'components';
-import { formatDate } from 'helpers';
+import { formatDate, encodeUUID } from 'helpers';
 import equal from 'fast-deep-equal/es6';
 import { LightTopo, TopoStatus } from 'types';
 
@@ -35,7 +35,7 @@ export const TopoCard: React.FC<TopoCardProps> = React.memo((props: TopoCardProp
 
   return (
     <>
-      <Link href={`/builder/${props.topo.id}`} passHref>
+      <Link href={`/builder/${encodeUUID(props.topo.id)}`} passHref>
         <div onContextMenu={(e) => {
             props.onContextMenu(props.topo, {x: e.pageX, y: e.pageY});
             e.preventDefault()}}

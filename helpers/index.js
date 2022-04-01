@@ -16,6 +16,7 @@ export * from './bitflagHelpers';
 export * from './formatDate';
 export * from './blobToImage';
 export * from './jwtDecoder';
+export * from './shortenUUID';
 
 export * from './splitArray';
 export * from './arrayMove';
