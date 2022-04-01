@@ -37,10 +37,10 @@ export const TopoCard: React.FC<TopoCardProps> = React.memo((props: TopoCardProp
     <>
       <Link href={`/builder/${encodeUUID(props.topo.id)}`} passHref>
         <div onContextMenu={(e) => {
-            props.onContextMenu(props.topo, {x: e.pageX, y: e.pageY});
+            props.onContextMenu(props.topo, { x: e.pageX, y: e.pageY });
             e.preventDefault()}}
             onTouchStart={(e) => {
-              timer = setTimeout(() => props.onContextMenu(props.topo, {x: e.touches[0].pageX, y: e.touches[0].pageY}), 500)
+              timer = setTimeout(() => props.onContextMenu(props.topo, { x: e.touches[0].pageX, y: e.touches[0].pageY }), 500)
             }}
             onTouchEnd={() => {
               if(timer) clearTimeout(timer);
@@ -50,7 +50,7 @@ export const TopoCard: React.FC<TopoCardProps> = React.memo((props: TopoCardProp
             <div className="w-full h-[50%] md:h-[75%] top-0 relative">
               <CFImage
                 image={props.topo.image}
-                className="rounded-t-lg"
+                className="rounded-t-lg h-full object-cover"
                 alt="topo-image"
                 sizeHint={'25vw'}
               />

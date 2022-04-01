@@ -1,14 +1,13 @@
 import { Image } from "types"
 import { SourceSize, VariantWidths } from "helpers/variants";
 import { cloudflareUrl } from "helpers/cloudflareUrl";
-import { CSSProperties, ImgHTMLAttributes } from "react";
+import { ImgHTMLAttributes } from "react";
 import defaultKayoo from 'public/assets/img/Kayoo_defaut_image.png';
 import type { StaticImageData } from 'next/image';
 import { useDevice } from "helpers/hooks/useDevice";
 
 export type CFImageProps = RawImageAttributes & {
     alt: string,
-    style?: Omit<CSSProperties, 'objectFit'>,
     image?: Image,
     sizeHint: SourceSize | { raw: string },
     defaultImage?: StaticImageData,
