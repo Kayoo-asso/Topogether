@@ -19,7 +19,7 @@ export const ProfilePicture: React.FC<ProfilePictureProps> = (props: ProfilePict
       <CFImage
         image={props.image}
         className="rounded-full object-fit"
-        alt="Photo de profile"
+        alt="Photo de profil"
         sizeHint='15vw'
         defaultImage={defaultProfilePicture}
       />

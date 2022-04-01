@@ -9,6 +9,7 @@ import { DeviceContext, sortBoulders, toLatLng } from 'helpers';
 import { Boulder, Image, isUUID, Parking, Sector, Topo, Track, Waypoint } from 'types';
 import { Quark, QuarkIter, useCreateDerivation, useLazyQuarkyEffect, useQuarkyCallback, useSelectQuark, watchDependencies } from 'helpers/quarky';
 import { useRouter } from 'next/router';
+import { useFirstRender } from 'helpers/hooks/useFirstRender';
 
 
 interface RootTopoProps {
@@ -18,7 +19,8 @@ interface RootTopoProps {
 export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootTopoProps) => {
   const router = useRouter();
   const { b: bId } = router.query; // Get boulder id from url if selected 
-  const firstRender = useRef(true);
+  const firstRender = useFirstRender();
+
   const device = useContext(DeviceContext);
   const topo = props.topoQuark();
   
@@ -53,8 +55,7 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
     }
   }, [selectedBoulder]);
   // Hack: select boulder from query parameter
-  if (firstRender.current) {
-    firstRender.current = false;
+  if (firstRender) {
     if (typeof bId === "string" && isUUID(bId)) {
       const boulder = boulders.find((b) => b().id === bId)();
       if (boulder) toggleBoulderSelect(boulder);
