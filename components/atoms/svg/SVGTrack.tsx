@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Quark, watchDependencies } from 'helpers/quarky';
 import { DrawerToolEnum, gradeToLightGrade, Line, PointEnum, Track, UUID } from 'types';
 import { SVGArea, SVGLine, SVGPoint } from '.';
@@ -28,6 +28,7 @@ export const SVGTrack: React.FC<SVGTrackProps> = watchDependencies(({
     ...props
 }: SVGTrackProps) => {
     const track = props.track();
+    const [SVGUseId, setSVGUseId] = useState<string>();
     const colorNumber = track.grade ? gradeToLightGrade(track.grade) : 'grey';
 
     const constructNodes = (quarkLine: Quark<Line>) => {
@@ -167,15 +168,27 @@ export const SVGTrack: React.FC<SVGTrackProps> = watchDependencies(({
         if (displayTrackDetails && highlighted && line.forbidden) {
             for (let i = 0; i < line.forbidden.length; i++) {
                 const area = line.forbidden[i];
+                const id = 'area' + i;
                 nodes.push(
                     <SVGArea
-                        key={'area' + i}
+                        key={id}
+                        id={id}
                         area={area}
                         editable={editable}
                         vb={props.vb}
                         vbWidth={props.vbWidth}
                         vbHeight={props.vbHeight}
                         eraser={props.currentTool === 'ERASER'}
+                        onDragStart={() => {
+                            const area = document.querySelector('polyline#'+id);
+                            if (area) {
+                                const parent = area.parentNode;
+                                if (parent) {
+                                    parent.removeChild(area);
+                                    parent.append(area);
+                                }
+                            }
+                        }}
                         onChange={(area) => {
                             if (editable) {
                                 const newForbiddens = [...line.forbidden!]
@@ -190,6 +203,12 @@ export const SVGTrack: React.FC<SVGTrackProps> = watchDependencies(({
                     />,
                 );
             }
+        }
+
+        if (false) {
+            nodes.push(
+                <use xlinkHref={'#area0'} />
+            )
         }
         return nodes;
     }

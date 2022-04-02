@@ -71,7 +71,8 @@ export const CFImage: React.FC<CFImageProps> = ({
             {loading &&
                 <div className='bg-grey-light z-1000 absolute w-full h-full top-0'>
                     <Loading 
-                        bgWhite={false}
+                        bgWhite={false} 
+                        SVGClassName='w-12 h-12'
                     />
                 </div>
             }

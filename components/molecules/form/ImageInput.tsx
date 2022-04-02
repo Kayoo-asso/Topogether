@@ -31,8 +31,6 @@ export const ImageInput = forwardRef<HTMLInputElement, ImageInputProps>(({
     setLoading(true);
 
     const { images, errors } = await api.images.uploadMany(files);
-    console.log("Images after upload:", images);
-    console.log("Errors after upload:", errors);
     for (const err of errors) {
       errorcount[err.reason]++;
     }

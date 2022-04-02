@@ -8,6 +8,7 @@ import { SVGPoint } from './SVGPoint';
 interface SVGAreaProps {
   // a LinearRing delineates the contour of a Polygon
   area: Position[],
+  id?: string,
   editable?: boolean,
   vb?: SVGRectElement | null,
   vbWidth?: number,
@@ -15,11 +16,12 @@ interface SVGAreaProps {
   eraser?: boolean,
   pointSize?: number,
   className?: string,
+  onDragStart?: () => void,
   onChange?: (area: Position[]) => void,
   onClick?: () => void,
 }
 
-// TODO 2: allow areas other than a rectangle
+// TODO : allow areas other than a rectangle
 export const SVGArea: React.FC<SVGAreaProps> = ({
   editable = false,
   eraser = false,
@@ -55,13 +57,15 @@ export const SVGArea: React.FC<SVGAreaProps> = ({
     if (editable) {
       return (
         <DraggablePolyline
-          className={`stroke-second fill-second/10 z-20 ${eraser ? 'hover:fill-second/50' : ''} ${className}`}
+          id={props.id}
+          className={`stroke-second fill-second/10 ${eraser ? 'hover:fill-second/50' : ''} ${className}`}
           strokeWidth={defaultTracksWeight}
           points={extendPoints}
           pointer={!eraser}
           vb={props.vb}
           vbWidth={props.vbWidth}
           vbHeight={props.vbHeight}
+          onDragStart={props.onDragStart}
           onDrag={(diffX, diffY) => {
             dragAllPoints(diffX, diffY);
           }}
