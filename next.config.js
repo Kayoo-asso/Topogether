@@ -4,7 +4,8 @@ const withPWA = require('next-pwa')
 
 module.exports = withPWA({
   pwa: {
-    disable: true,
+    // disable during local development (unless focusing on SW)
+    disable: process.env.NODE_ENV !== "production",
     dest: 'public',
     swSrc: 'worker/sw.ts',
   },
@@ -17,10 +18,4 @@ module.exports = withPWA({
     // your project has ESLint errors.
     ignoreDuringBuilds: true,
   },
-
-  // webpack(config) {
-  //   config.experiments = config.experiments || {};
-  //   config.experiments.topLevelAwait = true;
-  //   return config;
-  // },
 });

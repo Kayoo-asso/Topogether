@@ -18,28 +18,34 @@ const images = new Route(({ request, sameOrigin, url }) => {
     cacheName: 'images',
     plugins: [
         new ExpirationPlugin({
-            // maxAgeSeconds
+            maxEntries: 100,
             purgeOnQuotaError: true
         })
     ]
 }));
 
+// Only cache scripts from the same origin for now
 const scripts = new Route(({ request, sameOrigin }) => {
-    return request.destination !== "script";
+    return request.destination !== "script" && sameOrigin;
 }, new CacheFirst({
     cacheName: 'scripts',
-    // plugins: [
+    plugins: [
         // this should clear old entries over time
-        // new ExpirationPlugin({
-        //     maxEntries: 500
-        // })
-    // ]
+        new ExpirationPlugin({
+            maxEntries: 50
+        })
+    ]
 }));
 
 const styles = new Route(({ request }) => {
   return request.destination === 'style';
 }, new CacheFirst({
-  cacheName: 'styles'
+    cacheName: 'styles',
+    plugins: [
+        new ExpirationPlugin({
+            maxEntries: 15
+        })
+    ]
 }));
 
 registerRoute(images);

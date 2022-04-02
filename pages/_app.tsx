@@ -31,7 +31,6 @@ const CustomApp = ({ Component, pageProps, session, initialDevice }: Props) => {
     breakpoints,
     updateOnBreakpointChange: true
   });
-  console.log("Rerendered App with breakpoint " + currentBreakpoint);
 
   const firstRender = useFirstRender();
   const device = firstRender ? initialDevice : currentBreakpoint as Device;

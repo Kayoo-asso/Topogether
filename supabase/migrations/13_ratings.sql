@@ -26,10 +26,3 @@ create policy "Admins are omnipotent"
     -- the `using` case will also be applied for the `with check` cases
     using ( is_admin(auth.uid()) );
 
-
-create table topo_likes (
-    topo_id uuid not null references public.topos(id) on delete cascade,
-    user_id uuid not null references public.accounts(id) on delete cascade,
-
-    primary key (topo_id, user_id)
-);

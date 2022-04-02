@@ -11,6 +11,7 @@ let protectedRoutes = [
 
 export const middleware: NextMiddleware = async (req, event) => {
     let restricted = false;
+
     const pathname = req.nextUrl.pathname;
     for (const route of protectedRoutes) {
         if (pathname.startsWith(route)) {
@@ -24,7 +25,7 @@ export const middleware: NextMiddleware = async (req, event) => {
         if (!session) {
             console.log("Redirect to login");
             const url = req.nextUrl.clone();
-            url.pathname =  encodeURIComponent(`/user/login?redirectTo=${pathname}`);
+            url.pathname = encodeURIComponent(`/user/login?redirectTo=${pathname}`);
             return NextResponse.rewrite(url);
         }
     }
