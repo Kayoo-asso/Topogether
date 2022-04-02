@@ -92,7 +92,7 @@ security definer set search_path = internal, jsonb, auth, pg_temp
 as $$
 begin
     update auth.users set
-        raw_user_meta_data = jsonb_set(raw_user_meta_data, '{role}', new.role::jsonb)
+        raw_user_meta_data = jsonb_set(raw_user_meta_data, '{role}', to_jsonb(new.role))
     where id = new.id;
     return null;
 end;

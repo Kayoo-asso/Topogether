@@ -57,5 +57,6 @@ export interface TrackRating {
 }
 
 export type DBTrackRating = NullableOptional<TrackRating & {
-  trackId: UUID
+  trackId: UUID,
+  topoId: UUID
 }>;

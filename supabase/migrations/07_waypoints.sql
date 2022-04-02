@@ -11,6 +11,8 @@ create table waypoints (
     image public.img
 );
 
+create index waypoints_topo_idx on public.waypoints("topoId");
+
 -- 1. Policies
 alter table waypoints enable row level security;
 

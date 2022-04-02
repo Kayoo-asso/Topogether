@@ -16,6 +16,8 @@ create table topo_accesses (
     "topoId" uuid not null references public.topos(id) on delete cascade
 );
 
+create index accesses_topo_idx on public.topo_accesses("topoId");
+
 create function internal.on_access_insert()
 returns trigger
 security definer

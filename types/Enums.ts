@@ -1,3 +1,6 @@
+// NEVER reorder the values of an enum, only add new values at the end.
+// This is necessary to avoid a mismatch with existing values in the database.
+
 export enum Difficulty {
     Good,
     OK,

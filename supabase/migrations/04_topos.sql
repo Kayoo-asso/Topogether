@@ -39,11 +39,15 @@ create table topos (
     "validatorId" uuid references public.accounts(id) on delete set null
 );
 
+create index topo_creator_idx on public.topos("creatorId");
+create index topo_validator_idx on public.topos("validatorId");
+
 create table topo_contributors (
     topo_id uuid not null references public.topos(id) on delete cascade,
     user_id uuid not null references public.accounts(id) on delete cascade,
     role contributor_role not null,
 
+    -- Important order has to be the same as the one in `WHERE` conditions from trigger functions
     primary key (topo_id, user_id)
 );
 

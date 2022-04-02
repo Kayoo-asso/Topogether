@@ -14,6 +14,8 @@ create table boulders (
     "topoId" uuid not null references topos(id) on delete cascade
 );
 
+create index boulders_topo_idx on public.boulders("topoId");
+
 -- 1. Policies
 alter table boulders enable row level security;
 

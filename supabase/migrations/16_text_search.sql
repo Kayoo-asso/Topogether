@@ -8,11 +8,6 @@
 create index trgm_idx on public.topos
     using gin(name gin_trgm_ops);
 
-
-
--- create index topo_search_idx on public.topos
---  using gin(to_tsvector('topo_name', name));
-
 create function search_light_topos(_query text, _nb integer, _similarity double precision)
 returns setof public.light_topos
 as $$
@@ -27,18 +22,4 @@ as $$
         limit _nb
         ) select_topos,
         build_light_topo(select_topos.*) light_topo;
-
-    -- select light_topo.*
-    -- from (
-    --     select build_light_topo(t.*)
-    --     from 
-    --         public.topos t,
-    --         to_tsquery(_query) query,
-    --         to_tsvector(t.name) document,
-    --         coalesce(ts_rank(document, query), 0) rank,
-    --         similarity(query, t.name) similary
-    --     where query @@ document or similary > 0,
-    --     order by rank, similarity desc nulls last
-    -- ) topo,
-    -- build_light_topo(topo) light_topo
 $$ language sql volatile;

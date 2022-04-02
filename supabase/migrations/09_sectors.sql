@@ -11,6 +11,8 @@ create table public.sectors (
     "topoId" uuid not null references public.topos(id) on delete cascade
 );
 
+create index sectors_topo_idx on public.sectors("topoId");
+
 -- 1. Policies
 alter table sectors enable row level security;
 

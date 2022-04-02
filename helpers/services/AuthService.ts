@@ -33,11 +33,8 @@ export class AuthService {
         const user = this.client.auth.user();
         // User was already logged in
         if (user) {
-            // 1. Synchronously update session info
-            const session: Session = makeSession(user);
-            this._session = quark<Session | null>(session);
-            // 2. Asynchronously fetch user data
-            this._loadUser(session);
+            this._session = quark<Session | null>(null);
+            this._loadUser(user);
         } else {
             this._session = quark<Session | null>(null);
         }
@@ -83,8 +80,7 @@ export class AuthService {
 
         // No confirmation required (probably dev environment)
         if (user) {
-            const session = makeSession(user);
-            return await this._loadUser(session);
+            return await this._loadUser(user);
         }
         // Regular scenario
         return AuthResult.ConfirmationRequired;
@@ -99,8 +95,7 @@ export class AuthService {
         if (!user) {
             return AuthResult.ConfirmationRequired;
         }
-        const session = makeSession(user);
-        return await this._loadUser(session);
+        return await this._loadUser(user);
     }
 
     async signOut(): Promise<boolean> {
@@ -113,7 +108,9 @@ export class AuthService {
         return true;
     }
 
-    private async _loadUser(session: Session): Promise<AuthResult.Success | AuthResult.Error> {
+    private async _loadUser(user: SupabaseUser): Promise<AuthResult.Success | AuthResult.Error> {
+        const session = makeSession(user);
+        this._session.set(session);
         const { data, error } = await this.client
             .from<User>("users")
             .select("*")
@@ -155,9 +152,8 @@ export class AuthService {
         }
         const currentSession = this._session();
         if (currentSession?.id !== session.user.id) {
-            const newSession = makeSession(session.user);
             // async call
-            this._loadUser(newSession);
+            this._loadUser(session.user);
         }
 
         let tokens: AuthTokens = {

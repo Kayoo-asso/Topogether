@@ -15,6 +15,8 @@ create table managers (
     image public.img
 );
 
+create index managers_topo_idx on public.managers("topoId");
+
 -- 1. Policies
 alter table managers enable row level security;
 

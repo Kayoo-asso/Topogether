@@ -1,4 +1,3 @@
-
 -- ### IMAGES ###
 create table public.images (
     id uuid primary key,

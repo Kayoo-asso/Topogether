@@ -12,6 +12,8 @@ create table parkings (
     image public.img
 );
 
+create index parkings_topo_idx on public.parkings("topoId");
+
 -- 1. Policies
 alter table parkings enable row level security;
 

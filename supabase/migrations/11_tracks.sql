@@ -24,6 +24,10 @@ create table tracks (
     "creatorId" uuid references public.accounts(id) on delete set null
 );
 
+create index tracks_topo_idx on public.tracks("topoId");
+create index tracks_boulder_idx on public.tracks("boulderId");
+create index tracks_creator_idx on public.tracks("creatorId");
+
 alter table tracks enable row level security;
 
 create policy "Tracks are visible for everyone"

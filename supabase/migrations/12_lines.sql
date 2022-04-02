@@ -17,6 +17,9 @@ create table lines (
     "trackId" uuid not null references public.tracks(id) on delete cascade
 );
 
+create index lines_topo_idx on public.lines("topoId");
+create index lines_track_idx on public.lines("trackId");
+
 alter table lines enable row level security;
 
 create policy "Lines are visible for everyone"
