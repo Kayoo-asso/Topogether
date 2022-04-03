@@ -1,8 +1,8 @@
 import React from 'react';
 import type { GetServerSideProps, NextPage } from 'next';
-import { RootNew } from 'components';
 import { getServerSession } from 'helpers/getServerSession';
 import { User } from 'types';
+import { RootNew } from 'components';
 
 type NewProps = {
   user: User,

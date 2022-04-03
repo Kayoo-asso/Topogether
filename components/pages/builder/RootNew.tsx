@@ -28,12 +28,13 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies((props: RootNew
     type: undefined,
     forbidden: false,
     location: fontainebleauLocation,
-    modified: new Date().getDay()+'-'+new Date().getMonth()+'-'+new Date().getDay(),
+    modified: new Date().getFullYear()+'-'+new Date().getMonth()+'-'+new Date().getDate(),
   };
 
   const topoQuark = useCreateQuark<TopoCreate>(topoData);
   const topo = topoQuark();
 
+  const [loading, setLoading] = useState<boolean>(false);
   const [nameError, setNameError] = useState<string>();
   const [typeError, setTypeError] = useState<string>();
   const [latitudeError, setLatitudeError] = useState<string>();
@@ -55,6 +56,8 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies((props: RootNew
   }
 
   const create = () => {
+    setLoading(true);
+    setStep(0);
     createTopo(topo);
     router.push('/builder/'+topo.id);
   };
@@ -142,6 +145,7 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies((props: RootNew
                     content="Suivant"
                     white
                     onClick={goStep2}
+                    activated={!loading}
                   />
                 </div>
               </div>
