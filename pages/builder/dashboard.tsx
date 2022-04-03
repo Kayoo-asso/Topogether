@@ -25,9 +25,7 @@ export const getServerSideProps: GetServerSideProps<DashboardProps> = async ({ r
 }
 
 const DashboardPage: NextPage<DashboardProps> = ({ myTopos }) => {
-  return <RootDashboard
-    lightTopos={myTopos}
-  />;
+  return <RootDashboard lightTopos={myTopos} />;
 };
 
 export default DashboardPage;
