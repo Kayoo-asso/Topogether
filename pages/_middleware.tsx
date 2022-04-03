@@ -4,6 +4,8 @@ import type { NextMiddleware } from "next/server";
 
 let protectedRoutes = [
     '/builder',
+    '/builder/new',
+    '/builder/dashboard',
     '/admin',
     '/user/changePassword',
     '/user/profile',

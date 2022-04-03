@@ -2,13 +2,14 @@ import React, { useEffect, useRef, useState } from 'react';
 import { StringBetween, TopoType, User } from 'types';
 import { fontainebleauLocation, toLatLng, TopoCreate, createTopo } from 'helpers';
 import {
- Button, HeaderDesktop, MapControl, Select, TextInput,
+ Button, MapControl, Select, TextInput,
 } from 'components';
 import Link from 'next/link';
 import { v4 } from 'uuid';
+import { useRouter } from 'next/router';
 import { useCreateQuark, watchDependencies } from 'helpers/quarky';
 import { TopoTypeName } from 'types/EnumNames';
-import { useRouter } from 'next/router';
+import { HeaderDesktop } from 'components/layouts';
 
 interface RootNewProps {
     user: User,
@@ -74,6 +75,7 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies((props: RootNew
       <HeaderDesktop
         backLink="/builder/dashboard"
         title="Nouveau topo"
+
       />
 
       <div className='h-contentPlusHeader md:h-full w-full flex flex-row items-center bg-main'>
