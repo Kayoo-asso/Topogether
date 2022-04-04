@@ -47,8 +47,7 @@ const ProfilePage: NextPage<ProfileProps> = watchDependencies(({ user }) => {
     if (phone && (!phone.match(/\d/g) || phone.length < 6 || phone.length > 30)) { setPhoneError("Numéro de téléphone invalide"); hasError = true; }
 
     if (!hasError) {
-      // TODO: return indicator for offline modifications
-      auth.updateUserInfo({
+      const result = await auth.updateUserInfo({
         ...user!,
         userName: userName as Name,
         firstName: firstName as Name,
@@ -59,7 +58,8 @@ const ProfilePage: NextPage<ProfileProps> = watchDependencies(({ user }) => {
         city: city as Name,
         phone: phone as StringBetween<1, 30>
       })
-      setSuccessMessage('Profil modifié');
+      if(result) setSuccessMessage('Profil modifié');
+      // TODO: error message
     }
   }
 

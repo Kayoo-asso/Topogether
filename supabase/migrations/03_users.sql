@@ -98,10 +98,10 @@ begin
 end;
 $$ language plpgsql;
 
-create trigger on_role_change
-    after update of role
+create trigger on_role_change before update
     on public.accounts
     for each row
+    when (old.role <> new.role)
     execute function internal.sync_role();
 
 -- 2. `is_admin` function
@@ -138,7 +138,7 @@ begin
         raise exception 'Email changes have to be done through the authentication system';
     end if;
 
-    update public.users set 
+    update public.accounts set 
         "userName" = new."userName",
         "firstName" = new."firstName",
         "lastName" = new."lastName",
@@ -194,8 +194,7 @@ create trigger profiles_are_read_only
 
 -- A user account never has any profile picture on creation, so no need for an insert trigger
 
-create trigger img_changed
-    after update of image
+create trigger img_changed after update
     on public.accounts
     for each row
     when ( (old.image).id <> (new.image).id )

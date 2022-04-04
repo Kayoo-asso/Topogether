@@ -4,6 +4,7 @@ import { LoginForm } from 'components';
 import { HeaderDesktop } from 'components/layouts';
 import { NextRouter, useRouter } from 'next/router';
 import { AuthService, supabaseClient, useAuth } from 'helpers/services';
+import { useQuarkyEffect } from 'helpers/quarky';
 
 
 async function ifLoggedIn(auth: AuthService, redirect: () => Promise<void>) {
@@ -30,7 +31,7 @@ const LoginPage: NextPage = () => {
   }, [redirectTo]);
 
   // This is bugged now, dunno why
-  useEffect(() => {
+  useQuarkyEffect(() => {
     ifLoggedIn(auth, redirect);
   }, [auth, router])
   
