@@ -1,3 +1,4 @@
+import { api } from 'helpers/services';
 import React, { ReactNode, useEffect, useState } from 'react';
 import { Boulder, LightTopo, Topo } from 'types';
 import { DownloadButton, LikeButton, Show } from '..';
@@ -13,7 +14,7 @@ interface SlideagainstRightDesktopProps {
     children?: ReactNode,
 }
 
-const isTopo = (item: Boulder | Topo | LightTopo): item is Topo => (item as Topo).managers !== undefined;
+const isTopo = (item: Boulder | Topo | LightTopo): item is Topo => (item as Topo).rockTypes !== undefined;
 
 export const SlideagainstRightDesktop: React.FC<SlideagainstRightDesktopProps> = ({
     open = false,
@@ -30,16 +31,16 @@ export const SlideagainstRightDesktop: React.FC<SlideagainstRightDesktopProps> =
             setOffset(0);
         }
         // window.setTimeout(() => setOffset(open ? size : 0), 1);    
-      }, [open]);
+    }, [open]);
 
     return (
-        <div 
+        <div
             className={
                 `absolute top-0 flex flex-col w-[300px] h-full border-l py-5 bg-white border-grey-medium
                 ${secondary ? 'z-40' : 'z-50'}
                 ${props.className ? props.className : ''}`
             }
-            style={{ 
+            style={{
                 // use `right` positioning, to tell the DOM this document should be outside the page
                 // (`left: 100%` and `right: 0` does not work, it grows the div containing this one)
                 right: `-${size}px`,
@@ -55,6 +56,14 @@ export const SlideagainstRightDesktop: React.FC<SlideagainstRightDesktopProps> =
                                 {props.displayLikeButton &&
                                     <LikeButton
                                         item={item}
+                                        liked={item.liked}
+                                        onClick={isTopo(item)
+                                            ? () => {
+                                                if (item.liked) api.unlikeTopo(item);
+                                                else api.likeTopo(item);
+                                            }
+                                            : undefined
+                                        }
                                     />
                                 }
                                 {props.displayDlButton && isTopo(item) &&
@@ -66,12 +75,12 @@ export const SlideagainstRightDesktop: React.FC<SlideagainstRightDesktopProps> =
                         }
                     </Show>
                 </div>
-                <span 
+                <span
                     className='cursor-pointer text-main ktext-base'
                     onClick={() => {
                         setOffset(0)
-                        window.setTimeout(() => props.onClose && props.onClose(), 150);  
-                        
+                        window.setTimeout(() => props.onClose && props.onClose(), 150);
+
                     }}
                 >Terminé</span>
             </div>

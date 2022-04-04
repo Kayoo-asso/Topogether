@@ -92,7 +92,6 @@ CustomApp.getInitialProps = async (context: AppContext): Promise<InitialProps> =
     }
   }
 
-  console.log(`[App.getInitialProps] [${req?.url}]`);
   const [appProps, session] = await Promise.all([
     App.getInitialProps(context),
     req && req.headers['cookie']

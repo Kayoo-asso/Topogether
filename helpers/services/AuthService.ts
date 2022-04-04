@@ -1,8 +1,6 @@
 import { AuthChangeEvent, Session as SupabaseSession, SupabaseClient } from "@supabase/supabase-js";
 import { quark, Quark } from "helpers/quarky";
 import { DBUserUpdate, Email, Name, Role, User, UUID } from "types";
-import { serialize } from "cookie";
-import { AccessTokenCookie } from "helpers/auth";
 import { createContext, useContext } from "react";
 import { DBConvert } from "./DBConvert";
 

@@ -30,7 +30,7 @@ const LoginPage: NextPage = () => {
     }
   }, [redirectTo]);
 
-  // This is bugged now, dunno why
+  // the Quarky effect allows it to trigger if we end up receiving a fresh session after this hook has run
   useQuarkyEffect(() => {
     ifLoggedIn(auth, redirect);
   }, [auth, router])

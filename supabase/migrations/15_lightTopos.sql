@@ -3,6 +3,7 @@ create type public.light_topo as (
     id uuid,
     name varchar(500),
     status smallint, -- TypeScript enum
+    liked boolean,
     location jsonb,
     forbidden boolean,
 
@@ -128,7 +129,8 @@ begin
     where id = _topo."creatorId";
 
     select 
-        _topo.id, _topo.name, _topo.status, 
+        _topo.id, _topo.name, _topo.status,
+        user_likes_topo(auth.uid(), _topo.id) as liked,
         _topo.location::jsonb->'coordinates' as location,
         _topo.forbidden,
         _topo.modified, _topo.submitted, _topo.validated,

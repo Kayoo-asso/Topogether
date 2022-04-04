@@ -1,8 +1,9 @@
 import { api, AuthService, sync } from "helpers/services";
-import { editTopo, quarkifyTopo } from "helpers/topo";
+import { createTopo, editTopo, quarkifyTopo } from "helpers/topo";
 import { fakeAdmin, fakeTopov2 } from "./fakeTopoV2";
 
 export async function seedLocalDb(auth: AuthService) {
+    console.log("Called seedLocalDB");
     const topoInDb = await api.getTopo(fakeTopov2.id);
     if (topoInDb) {
         console.log("Found fake topo in DB");
@@ -24,6 +25,7 @@ export async function seedLocalDb(auth: AuthService) {
             track.creatorId = user.id;
         }
     }
+    createTopo(fakeTopov2);
     const quark = quarkifyTopo(fakeTopov2, true);
     let res = await sync.attemptSync();
     let iters = 0;

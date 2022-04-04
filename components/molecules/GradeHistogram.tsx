@@ -1,6 +1,7 @@
 import React from 'react';
 import { lightGrades, LightTopo, Topo } from 'types';
 import { buildGradeHistogram } from 'helpers/topo/buildGradeHistogram';
+import { defaultGradeHistogram } from 'helpers/topo/buildBoulderGradeHistogram';
 
 interface GradeHistogramProps {
   topo: Topo | LightTopo,
@@ -25,16 +26,16 @@ export const GradeHistogram: React.FC<GradeHistogramProps> = ({
   ...props
 }: GradeHistogramProps) => {
   const histogram = isLight(props.topo)
-                      ? props.topo.grades
-                      : buildGradeHistogram(props.topo)();
-  const total = histogram[3] 
-              + histogram[4] 
-              + histogram[5]
-              + histogram[6]
-              + histogram[7]
-              + histogram[8]
-              + histogram[9]
-              + histogram['None'];
+    ? { ...defaultGradeHistogram(), ...(props.topo.grades || {}) }
+    : buildGradeHistogram(props.topo);
+  const total = histogram[3]
+    + histogram[4]
+    + histogram[5]
+    + histogram[6]
+    + histogram[7]
+    + histogram[8]
+    + histogram[9]
+    + histogram['None'];
   const { None, ...grades } = histogram;
   const maxNbOfTracks = Math.max(...Object.values(grades));
   const ratio = total / maxNbOfTracks;

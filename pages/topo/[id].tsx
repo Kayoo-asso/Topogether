@@ -22,12 +22,12 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
 
   const expanded = decodeUUID(id);
 
-  if(!isUUID(expanded)) return redirect("/");
+  if (!isUUID(expanded)) return redirect("/");
 
   const topo = await api.getTopo(expanded);
 
   if (!topo) {
-    return redirect("/404");
+    return { notFound: true };
   }
 
   return { props: { topo } };
@@ -37,7 +37,7 @@ const Topo: NextPage<TopoProps> = ({ topo }) => {
   // TODO: how to encode the fact that this topo cannot be edited?
   const topoQuark = editTopo(topo);
   return (
-    <RootTopo 
+    <RootTopo
       topoQuark={topoQuark}
     />
   );

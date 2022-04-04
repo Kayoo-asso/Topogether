@@ -1,5 +1,6 @@
 import { PROPERTY_TYPES } from "@babel/types";
-import { GetServerSideProps, GetServerSidePropsResult, Redirect } from "next";
+import { GetServerSideProps, GetServerSidePropsContext, GetServerSidePropsResult, PreviewData, Redirect } from "next";
+import { ParsedUrlQuery } from "querystring";
 import { Role, User, UUID } from "types";
 import { getServerUser } from "./getServerUser";
 
@@ -17,6 +18,13 @@ export type AccessJWT = {
 export const jwtDecoder = (jwt: string) =>
   JSON.parse(Buffer.from(jwt.split('.')[1], 'base64').toString('utf8'));
 
+export const loginRedirect = (source: string) => ({
+  redirect: {
+    destination: `/user/login?redirectTo=${source}`,
+    permanent: false
+  }
+});
+
 const isNotFound = <P>(props: GetServerSidePropsResult<P>): props is { notFound: true } => {
   return (props as any).notFound === true;
 }
@@ -28,16 +36,17 @@ const isPromise = (x: any): x is Promise<unknown> => {
   return !!x && (typeof x === 'object' || typeof x === 'function') && typeof x.then === 'function';
 }
 
-export function withAuth<P>(getServerSideProps: GetServerSideProps<P>, redirect: string = "/"): GetServerSideProps<P & { user: User }> {
+export function withAuth<
+  P extends { [key: string]: any } = { [key: string]: any },
+  Q extends ParsedUrlQuery = ParsedUrlQuery,
+  D extends PreviewData = PreviewData
+  >(
+    getServerSideProps: GetServerSideProps<P, Q, D>, redirect: string = "/"
+  ): GetServerSideProps<P & { user: User }, Q, D> {
   return async (ctx) => {
     const user = await getServerUser(ctx.req.cookies);
     if (!user) {
-      return {
-        redirect: {
-          destination: `/user/login?redirectTo=${redirect}`,
-          permanent: false
-        }
-      };
+      return loginRedirect(redirect);
     }
     const output = await getServerSideProps(ctx);
     if (isNotFound(output) || isRedirect(output)) return output;
@@ -48,4 +57,18 @@ export function withAuth<P>(getServerSideProps: GetServerSideProps<P>, redirect:
         user
     } };
   };
+}
+
+export function injectAuth<
+  P extends { [key: string]: any } = { [key: string]: any },
+  Q extends ParsedUrlQuery = ParsedUrlQuery,
+  D extends PreviewData = PreviewData
+>(getServerSideProps: (context: GetServerSidePropsContext<Q, D>, user: User) => Promise<GetServerSidePropsResult<P>>, redirect: string = "/"): GetServerSideProps<P, Q, D> {
+  return async (ctx) => {
+    const user = await getServerUser(ctx.req.cookies);
+    if (!user) {
+      return loginRedirect(redirect);
+    }
+    return await getServerSideProps(ctx, user);
+  }
 }

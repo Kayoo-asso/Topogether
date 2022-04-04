@@ -10,12 +10,12 @@ import { addTrackToHistogram, defaultGradeHistogram } from "./buildBoulderGradeH
 // Technically, we need to subscribe to each sector / boulder quark as well, in case someone replaces the QuarkArray within them?
 // So we could replace the reads with a peek here
 
-export function buildGradeHistogram(topo: Topo): Signal<GradeHistogram> {
+export function buildGradeHistogram(topo: Topo): GradeHistogram {
     return topo.boulders
         .lazy()
         .map(x => x.tracks)
         .flatten()
-        .reduce(addTrackToHistogram, defaultGradeHistogram);
+        .reduce(addTrackToHistogram, defaultGradeHistogram)();
 }
 
     // for (const sector of topo.sectors) {

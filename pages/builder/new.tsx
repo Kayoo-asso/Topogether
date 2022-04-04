@@ -1,12 +1,20 @@
 import React from 'react';
-import type { NextPage } from 'next';
+import type { GetServerSideProps, NextPage } from 'next';
 import { RootNew } from 'components';
 import { useSession } from "helpers/services";
+import { User } from 'types';
+import { withAuth } from 'helpers/auth';
 
+type BuilderNewProps = {
+  user: User
+}
 
-const NewPage: NextPage = () => {
-  // middleware should redirect before we hit this
-  const user = useSession()!;
+export const getServerSideProps: GetServerSideProps<BuilderNewProps> = withAuth(
+  async () => ({ props: {} }),
+  "/builder/new"
+);
+
+const NewPage: NextPage<BuilderNewProps> = ({ user }) => {
   return <RootNew user={user} />
 };
 

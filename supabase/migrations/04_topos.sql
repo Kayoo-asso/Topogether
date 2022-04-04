@@ -1,5 +1,4 @@
 -- ### TOPOS + CONTRIBUTORS ###
--- 0. Tables
 
 -- IF YOU UPDATE THIS, UPDATE LIGHTOPO
 create table topos (
@@ -51,40 +50,9 @@ create table topo_contributors (
     primary key (topo_id, user_id)
 );
 
--- 1. Utilities
+create index topo_contributors_user_idx on public.topo_contributors(user_id);
 
--- Argument names have a `_` prefix to avoid ambiguity in PL/pgSQL
-create function is_contributor(_topo_id uuid, _user_id uuid)
-returns boolean
-as $$
-begin
-    return exists (
-        select *
-        from topo_contributors as t
-        where
-            t.topo_id = _topo_id and
-            t.user_id = _user_id
-    );
-end;
-$$ language plpgsql;
-
-create function is_topo_admin(_topo_id uuid, _user_id uuid)
-returns boolean
-language plpgsql
-as $$
-begin
-    return exists (
-        select 1
-        from topo_contributors as t
-        where
-            t.topo_id = _topo_id and
-            t.user_id = _user_id and
-            t.role = 'ADMIN'
-    );
-end;
-$$;
-
--- 2. Topo admin setup on creation
+-- Topo triggers
 
 -- security definer attribute is required, because the user does not yet
 -- have the rights to be able to insert into topo_contributors
@@ -100,71 +68,11 @@ begin
 end;
 $$;
 
-
-create trigger on_topo_created
+create trigger before_topo_created
     after insert on topos
     for each row execute function internal.setup_topo_admin();
 
-
--- 3. Policies for `topo_contributors`
-alter table topo_contributors enable row level security;
-
-create policy "Topo contributors are visible by everyone"
-    on topo_contributors for select
-    using ( true );
-
--- TODO: may need more fine-grained policies, to avoid one topo admin downgrading / kicking out other topo admins
-create policy "Only topo admins can manage contributors"
-    on topo_contributors for all
-    -- the `using` case will also be applied for the `with check` case
-    using ( 
-        public.is_topo_admin(topo_id, auth.uid())
-    );
-
-create policy "Admins are omnipotent"
-    on topo_contributors for all
-    -- the `using` case will also be applied for the `with check` cases
-    using ( public.is_admin(auth.uid()) );
-
--- 4. Policies for `topos`
-alter table topos enable row level security;
-
-create policy "Topo visibility"
-    on topos for select
-    using ( 
-        true
-        -- status = 2 means validated (TypeScript enum)
-        -- status = 2 or
-        -- public.is_contributor(id, auth.uid())
-    );
-
-create policy "Topos can be inserted by their creator."
-    on topos for insert
-    with check (
-        "creatorId" is not null and 
-        auth.uid() = "creatorId"
-    );
-
-create policy "Topos can be modified by contributors"
-    on topos for update
-    using ( 
-        public.is_contributor(id, auth.uid())
-    );
-
-create policy "Topos can be deleted by their admin"
-    on topos for delete
-    using ( 
-        public.is_topo_admin(id, auth.uid())
-    );
-
-create policy "Admins are omnipotent"
-    on topos for all
-    -- the `using` case will also be applied for the `with check` cases
-    using ( 
-        public.is_admin(auth.uid())
-    );
-
--- 5. Image registration
+-- Image registration
 
 create trigger check_new_img
     after insert

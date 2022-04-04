@@ -1,12 +1,14 @@
 import { Quark, quark, QuarkArray } from 'helpers/quarky';
 import { sync } from 'helpers/services';
+import { DBConvert } from 'helpers/services/DBConvert';
 import { BoulderData, TrackData, TopoData, UUID, Track, Boulder, Topo, Line, Sector, Manager, Waypoint, TopoAccess, Parking } from 'types';
 
-export type TopoCreate = Omit<TopoData, 'sectors' | 'boulders' | 'waypoints' | 'accesses' | 'parkings' | 'managers' | 'lonelyBoulders'>;
+export type TopoCreate = Omit<TopoData, 'liked' | 'sectors' | 'boulders' | 'waypoints' | 'accesses' | 'parkings' | 'managers' | 'lonelyBoulders'>;
 
 export function createTopo(data: TopoCreate): Quark<Topo> {
     const dataWithArrays: TopoData = {
         ...data,
+        liked: false,
         sectors: [],
         boulders: [],
         managers: [],
@@ -15,7 +17,8 @@ export function createTopo(data: TopoCreate): Quark<Topo> {
         parkings: [],
         lonelyBoulders: [],
     }
-    return quarkifyTopo(dataWithArrays, true);
+    sync.topoCreate(DBConvert.topo(dataWithArrays))
+    return quarkifyTopo(dataWithArrays, false);
 }
 
 export function editTopo(topo: TopoData): Quark<Topo> {
@@ -155,7 +158,7 @@ function quarkifyTracks(data: TrackData[], topoId: UUID, boulderId: UUID, save: 
     return new QuarkArray(tracks, {
         quarkifier: (t) => quark(t, { onChange }),
         onAdd: onChange,
-        onDelete: (track) => sync.bouderDelete(track)
+        onDelete: (track) => sync.trackDelete(track)
     });
 }
 

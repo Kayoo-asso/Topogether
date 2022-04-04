@@ -1,4 +1,5 @@
 import { RootDashboard } from 'components';
+import { loginRedirect } from 'helpers/auth';
 import { getServerUser } from 'helpers/getServerUser';
 import { api } from 'helpers/services';
 import type { GetServerSideProps, NextPage } from 'next';
@@ -11,12 +12,7 @@ type DashboardProps = {
 export const getServerSideProps: GetServerSideProps<DashboardProps> = async ({ req }) => {
   const session = await getServerUser(req.cookies);
   if (!session) {
-    return {
-      redirect: {
-        destination: `/user/login?redirectTo=${encodeURIComponent(`/builder/dashboard`)}`,
-        permanent: false
-      }
-    };
+    return loginRedirect("/builder/dashboard");
   }
   const myTopos = await api.getLightTopos({
     userId: session.id

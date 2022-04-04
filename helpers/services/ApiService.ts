@@ -1,5 +1,5 @@
 import { SupabaseClient } from "@supabase/supabase-js";
-import { TopoData, UUID, LightTopo, TopoStatus, DBTopo, Topo } from 'types';
+import { TopoData, UUID, LightTopo, TopoStatus, DBTopo, Topo, Boulder } from 'types';
 import { sync } from ".";
 import { ImageService } from "./ImageService";
 
@@ -76,6 +76,19 @@ export class ApiService {
         sync.topoDelete(topo);
     }
 
+    likeTopo(topo: Topo | TopoData | LightTopo) {
+        sync.likeTopo(topo);
+    }
+    unlikeTopo(topo: Topo | TopoData | LightTopo) {
+        sync.unlikeTopo(topo);
+    }
+    likeBoulder(boulder: Boulder) {
+        sync.likeBoulder(boulder);
+    }
+    unlikeBoulder(boulder: Boulder) {
+        sync.unlikeBoulder(boulder);
+    }
+
     async getTopo(id: UUID): Promise<TopoData | null> {
         // Notes on this query:
         //
@@ -89,11 +102,12 @@ export class ApiService {
         // "topoId" foreign key that exist in the DB for performant joins.
         // This applies for tracks, boulder images and lines, for instance.
         const { data, error } = await this.client
-            .from<TopoData>("topos")
+            .from<TopoData>("topo_with_like")
             .select(`
                 id,
                 name,
                 status,
+                liked,
                 forbidden,
                 modified,
                 submitted,

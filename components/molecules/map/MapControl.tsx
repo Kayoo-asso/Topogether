@@ -114,7 +114,7 @@ export const MapControl: React.FC<MapControlProps> = ({
             return false;
         }
         if (topoFilterOptions.gradeRange[0] !== 3 || topoFilterOptions.gradeRange[1] !== 9) {
-            const foundBouldersAtGrade = Object.entries(topo.grades).some(([grade, count]) =>
+            const foundBouldersAtGrade = Object.entries(topo.grades || {}).some(([grade, count]) =>
                 Number(grade) >= topoFilterOptions.gradeRange[0] && Number(grade) <= topoFilterOptions.gradeRange[1] && count !== 0);
 
             if (!foundBouldersAtGrade) {

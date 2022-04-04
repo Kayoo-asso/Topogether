@@ -6,7 +6,6 @@ import Link from 'next/link';
 import { watchDependencies } from 'helpers/quarky';
 import { Image, isEmail, Name, StringBetween, User } from 'types';
 import { useAuth } from "helpers/services";
-import { getServerUser } from 'helpers/getServerUser';
 import { withAuth } from 'helpers/auth';
 
 type ProfileProps = {
@@ -41,14 +40,14 @@ const ProfilePage: NextPage<ProfileProps> = watchDependencies(({ user }) => {
 
   const [successMessage, setSuccessMessage] = useState<string>();
 
-  const modifyProfil = async () => {
+  const modifyProfile = async () => {
     let hasError = false;
     if (!userName) { setUserNameError("Pseudo invalide"); hasError = true; }
     if (phone && (!phone.match(/\d/g) || phone.length < 6 || phone.length > 30)) { setPhoneError("Numéro de téléphone invalide"); hasError = true; }
 
     if (!hasError) {
       const result = await auth.updateUserInfo({
-        ...user!,
+        ...user,
         userName: userName as Name,
         firstName: firstName as Name,
         lastName: lastName as Name,
@@ -108,7 +107,7 @@ const ProfilePage: NextPage<ProfileProps> = watchDependencies(({ user }) => {
             <div className='hidden md:flex flex-col ml-6 w-1/2'>
               <div className='mb-6'>
                 <div className='ktext-subtitle'>{userName}</div>
-                {user!.role === 'ADMIN' && <div className='text-main ktext-label'>Super-administrateur</div>}
+                {user.role === 'ADMIN' && <div className='text-main ktext-label'>Super-administrateur</div>}
               </div>
               <TextInput 
                   id='pseudo'
@@ -119,7 +118,7 @@ const ProfilePage: NextPage<ProfileProps> = watchDependencies(({ user }) => {
               />
             </div>
 
-            {user!.role === 'ADMIN' &&
+            {user.role === 'ADMIN' &&
               <div className='absolute right-[5%]'>
                 <Button
                   content='Admin'
@@ -222,9 +221,9 @@ const ProfilePage: NextPage<ProfileProps> = watchDependencies(({ user }) => {
             </div>
 
             <Button
-                content="Modifier le profile"
+                content="Modifier le profil"
                 fullWidth
-                onClick={modifyProfil}
+                onClick={modifyProfile}
             />
             {successMessage && <div className='text-main'>{successMessage}</div>}
 
@@ -251,7 +250,7 @@ const ProfilePage: NextPage<ProfileProps> = watchDependencies(({ user }) => {
           onClose={() => setDisplayDeleteAccountModal(false)}
           onDelete={deleteAccount}
         >
-          Toutes les données du compte seront définitivement supprimées. Etes-vous sûr de vouloir continuer ?
+          Toutes les données du compte seront définitivement supprimées. Êtes-vous sûr.e de vouloir continuer ?
         </ModalDelete>
       }
     </>

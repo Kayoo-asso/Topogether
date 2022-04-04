@@ -32,6 +32,7 @@ export interface TopoData {
   readonly id: UUID,
   name: Name,
   status: TopoStatus,
+  liked: boolean,
   type?: TopoType,
   forbidden: boolean,
 
@@ -110,6 +111,7 @@ export interface LightTopo {
   id: UUID,
   name: Name,
   status: TopoStatus,
+  liked: boolean,
   location: GeoCoordinates,
   forbidden: boolean,
 
@@ -132,7 +134,8 @@ export interface LightTopo {
   nbSectors: number,
   nbBoulders: number,
   nbTracks: number,
-  grades: GradeHistogram
+  // everything is optional here because that was much easier to write in SQL
+  grades?: Partial<GradeHistogram>
 }
 
 export type GradeHistogram = {
@@ -252,6 +255,7 @@ export interface BoulderData {
   readonly id: UUID,
   location: GeoCoordinates,
   name: Name,
+  liked: boolean,
   isHighball: boolean,
   mustSee: boolean,
   dangerousDescent: boolean,

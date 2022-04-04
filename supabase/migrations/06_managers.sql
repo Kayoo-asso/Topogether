@@ -41,7 +41,7 @@ create trigger check_new_img
     for each row execute function internal.check_new_img();
 
 create trigger img_changed
-    after update of image
+    after update
     on managers
     for each row
     when ( (old.image).id <> (new.image).id )

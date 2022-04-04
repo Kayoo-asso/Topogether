@@ -23,6 +23,7 @@ export const Icon: React.FC<IconProps> = ({
     }}
     loading={() => <span className="ktext-subtext">Loading...</span>}
     onClick={(e) => {
+      console.log("Clicked Icon. props.onClick:", props.onClick);
       if (props.onClick) {
         e.stopPropagation();
         props.onClick();

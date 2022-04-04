@@ -25,13 +25,16 @@ export const getServerSideProps: GetServerSideProps<BuilderProps> = async ({ req
   const expanded = decodeUUID(id);
   if (!isUUID(expanded)) return redirect("/");
 
-  const topo = await api.getTopo(expanded);
+  const [topo, canEdit] = await Promise.all([
+    api.getTopo(expanded),
+    api.client.rpc<boolean>("can_edit_topo", { _topo_id: expanded }).single()
+  ]);
 
-  if (!topo || topo.status !== TopoStatus.Draft) {
-    return redirect("/404");
+  if (topo && canEdit.data === true) {
+    return { props: { topo } };
   }
 
-  return { props: { topo } };
+  return { notFound: true };
 }
 
 const BuilderMapPage: NextPage<BuilderProps> = ({ topo, }) => {
