@@ -4,7 +4,7 @@ import { Boulder, gradeToLightGrade, Track } from 'types';
 import { Quark, SelectQuarkNullable, useSelectQuark, watchDependencies } from 'helpers/quarky';
 import { TrackForm } from '../form/TrackForm';
 import { createTrack, DeviceContext } from 'helpers';
-import { useSession } from 'helpers/hooks/useSession';
+import { useSession } from "helpers/services";
 
 interface TracksListBuilderProps {
   boulder: Quark<Boulder>,

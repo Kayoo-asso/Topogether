@@ -4,14 +4,6 @@ import { Description, Email, Name, NullableOptional, StringBetween, UUID } from 
 
 // NOTE: the email has to be updated through the authentication service
 
-export interface Session {
-  id: UUID,
-  email: Email,
-  role: Role,
-  // note: id, email and role of User always match the session
-  user: User | null
-}
-
 export type User = {
   id: UUID,
   userName: Name,

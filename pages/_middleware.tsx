@@ -1,6 +1,6 @@
-import { getServerSession } from "helpers/getServerSession";
 import { NextResponse } from "next/server";
 import type { NextMiddleware } from "next/server";
+import { AccessTokenCookie, RefreshTokenCookie } from "helpers/auth";
 
 let protectedRoutes = [
     '/builder',
@@ -11,25 +11,24 @@ let protectedRoutes = [
     '/user/profile',
 ];
 
-export const middleware: NextMiddleware = async (req, event) => {
-    let restricted = false;
+const route = (path: string) => {}
 
+export const middleware: NextMiddleware = async (req, event) => {
     const pathname = req.nextUrl.pathname;
-    for (const route of protectedRoutes) {
-        if (pathname.startsWith(route)) {
-            restricted = true;
-            break;
-        }
-    }
+    const restricted = protectedRoutes.includes(pathname);
     // TODO: improve security for admin and builder
     if (restricted) {
-        const session = await getServerSession(req.headers.get('cookie'), false);
-        if (!session) {
-            console.log("Redirect to login");
-            const url = req.nextUrl.clone();
-            url.pathname = encodeURIComponent(`/user/login?redirectTo=${pathname}`);
-            return NextResponse.rewrite(url);
-        }
+        // const accessToken = req.cookies[AccessTokenCookie];
+        // const refreshToken = req.cookies[RefreshTokenCookie];
+        console.log("Middleware running for restricted route " + pathname);
+        // const session = await getServerUser(req.headers.get('cookie'));
+        // if (!session) {
+        //     const url = req.nextUrl.clone();
+        //     url.pathname = "/user/login";
+        //     url.searchParams.set("redirectTo", pathname);
+        //     console.log("Redirect to " + url);
+        //     return NextResponse.rewrite(url);
+        // }
     }
     return NextResponse.next();
 }

@@ -3,7 +3,7 @@ import { Button, Checkbox, TextInput } from 'components';
 import Link from 'next/link';
 import NextImage from 'next/image';
 import { staticUrl } from 'helpers';
-import { auth, AuthResult } from 'helpers/services';
+import { SignInRes, useAuth } from 'helpers/services';
 import { Email } from 'types';
 import { useRouter } from 'next/router';
 
@@ -13,6 +13,7 @@ interface LoginFormProps {
 
 export const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
     const router = useRouter();
+    const auth = useAuth();
 
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
@@ -30,8 +31,8 @@ export const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
 
         if (!hasError) {
             const res = await auth.signIn(email as Email, password!);
-            if (res === AuthResult.ConfirmationRequired) setErrorMessage("Merci de confirmer votre compte en cliquant sur le lien dans le mail qui vous a été envoyé.");
-            else if (res === AuthResult.Success) {
+            if (res === SignInRes.ConfirmationRequired) setErrorMessage("Merci de confirmer votre compte en cliquant sur le lien dans le mail qui vous a été envoyé.");
+            else if (res === SignInRes.Ok) {
                 if (props.onLogin) props.onLogin();
                 else router.push("/");
             }

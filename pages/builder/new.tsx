@@ -1,27 +1,12 @@
 import React from 'react';
-import type { GetServerSideProps, NextPage } from 'next';
-import { getServerSession } from 'helpers/getServerSession';
-import { User } from 'types';
+import type { NextPage } from 'next';
 import { RootNew } from 'components';
+import { useSession } from "helpers/services";
 
-type NewProps = {
-  user: User,
-}
 
-export const getServerSideProps: GetServerSideProps<NewProps> = async ({ req }) => {
-  const session = await getServerSession(req.headers['cookie']);
-  if (!session?.user) {
-    return {
-      redirect: {
-        destination: encodeURIComponent(`/user/login?redirectTo=/builder/new`),
-        permanent: false
-      }
-    };
-  }
-  return { props: { user: session.user } }
-}
-
-const NewPage: NextPage<NewProps> = ({ user }) => {
+const NewPage: NextPage = () => {
+  // middleware should redirect before we hit this
+  const user = useSession()!;
   return <RootNew user={user} />
 };
 

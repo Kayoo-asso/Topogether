@@ -1,8 +1,7 @@
 import { NextApiHandler } from "next";
 import { CookieSerializeOptions, serialize } from 'cookie';
-import { jwtDecoder, AccessJWT } from "helpers";
-import { AuthTokens } from "helpers/services";
-import { AccessTokenCookie, RefreshTokenCookie } from "helpers/auth/";
+import { AuthTokens, supabaseClient } from "helpers/services";
+import { AccessTokenCookie, RefreshTokenCookie, jwtDecoder, AccessJWT } from "helpers/auth";
 
 
 const cookieOptions: CookieSerializeOptions = {
@@ -21,8 +20,7 @@ const handler: NextApiHandler<{}> = (req, res) => {
             deleteCookie(AccessTokenCookie),
             deleteCookie(RefreshTokenCookie)
         ]);
-        res.status(200);
-        res.json({});
+        res.status(200).end();
         return;
     }
     else if (req.method === "POST") {

@@ -14,7 +14,7 @@ import { Quark, QuarkIter, useCreateDerivation, useLazyQuarkyEffect, useQuarkyCa
 import { useRouter } from 'next/router';
 import { api } from 'helpers/services';
 import { useFirstRender } from 'helpers/hooks/useFirstRender';
-import { useSession } from 'helpers/hooks/useSession';
+import { useSession } from "helpers/services";
 
 interface RootBuilderProps {
     topoQuark: Quark<Topo>,

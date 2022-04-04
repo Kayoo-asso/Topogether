@@ -1,8 +1,8 @@
-import { api, auth, sync } from "helpers/services";
+import { api, AuthService, sync } from "helpers/services";
 import { editTopo, quarkifyTopo } from "helpers/topo";
 import { fakeAdmin, fakeTopov2 } from "./fakeTopoV2";
 
-export async function seedLocalDb() {
+export async function seedLocalDb(auth: AuthService) {
     const topoInDb = await api.getTopo(fakeTopov2.id);
     if (topoInDb) {
         console.log("Found fake topo in DB");

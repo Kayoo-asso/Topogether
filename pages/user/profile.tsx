@@ -1,50 +1,25 @@
 import React, { useRef, useState } from 'react';
-import type { NextPage } from 'next';
+import type { GetServerSideProps, NextPage } from 'next';
 import { Button, ImageInput, ModalDelete, ProfilePicture, TextInput } from 'components';
 import { HeaderDesktop, LeftbarDesktop, Tabs } from 'components/layouts';
 import Link from 'next/link';
 import { watchDependencies } from 'helpers/quarky';
 import { Image, isEmail, Name, StringBetween, User } from 'types';
-import { auth } from 'helpers/services';
-import { useSession } from 'helpers/hooks/useSession';
+import { useAuth } from "helpers/services";
+import { getServerUser } from 'helpers/getServerUser';
+import { withAuth } from 'helpers/auth';
 
 type ProfileProps = {
   user: User
 }
 
-// export const getServerSideProps: GetServerSideProps<ProfileProps> = async (ctx) => {
-//   const session = await getServerSession(ctx.req);
-//   if(!session) {
-//     return {
-//       redirect: {
-//         destination: "/user/login",
-//         permanent: false
-//       }
-//     }
-//   }
-//   const { data, error } = await supabaseClient
-//     .from<User>("users")
-//     .select("*")
-//     .eq('id', session.id)
-//     .single();
+export const getServerSideProps: GetServerSideProps<ProfileProps> = withAuth(
+  async () => ({ props: {} }),
+  "/user/profile"
+);
 
-//   if(error || !data) {
-//     console.error("Error retrieving user information for " + session.email);
-//     return {
-//       redirect: {
-//         destination: "/user/login",
-//         permanent: false
-//       }
-//     }
-//   }
-  
-//   return { props: { user: data } }
-// }
-
-const ProfilePage: NextPage<ProfileProps> = watchDependencies(() => {
-  // Middleware will redirect in case those are null
-  const session = useSession()!;
-  const user = session.user!;
+const ProfilePage: NextPage<ProfileProps> = watchDependencies(({ user }) => {
+  const auth = useAuth();
   const imageInputRef = useRef<HTMLInputElement>(null);
 
   const [displayDeleteAccountModal, setDisplayDeleteAccountModal] = useState(false);

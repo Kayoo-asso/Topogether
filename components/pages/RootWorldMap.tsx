@@ -4,12 +4,12 @@ import {
 } from 'components';
 
 import { HeaderDesktop, LeftbarDesktop } from 'components/layouts';
-import { LightTopo, Session } from 'types';
+import { LightTopo, User } from 'types';
 import { fontainebleauLocation, toLatLng } from 'helpers';
 
 interface RootWorldMapProps {
   lightTopos: LightTopo[],
-  user: Session | null,
+  user: User | null,
 }
 
 export const RootWorldMap: React.FC<RootWorldMapProps> = (props: RootWorldMapProps) => {

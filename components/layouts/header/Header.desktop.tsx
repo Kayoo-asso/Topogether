@@ -4,10 +4,9 @@ import { Icon, ProfilePicture } from 'components/atoms';
 import { Dropdown, DropdownOption } from 'components/molecules/form';
 import Link from 'next/link';
 import { MapToolEnum } from 'types';
-import { auth } from 'helpers/services';
+import { useAuth, useSession } from 'helpers/services';
 import { useRouter } from 'next/router';
 import { watchDependencies } from 'helpers/quarky';
-import { useSession } from 'helpers/hooks/useSession';
 
 interface HeaderDesktopProps {
   backLink: string,
@@ -31,7 +30,8 @@ export const HeaderDesktop: React.FC<HeaderDesktopProps> = watchDependencies(({
   displayUser = true,
   ...props
 }: HeaderDesktopProps) => {
-  const session = useSession();
+  const auth = useAuth();
+  const user = auth.session();
   const router = useRouter();
 
   const [menuOpen, setMenuOpen] = useState(false);
@@ -113,7 +113,7 @@ export const HeaderDesktop: React.FC<HeaderDesktopProps> = watchDependencies(({
         </div>
       )}
 
-      {displayLogin && !session &&
+      {displayLogin && !user &&
         <Link href="/user/login" passHref>
           <div className="ktext-base text-white cursor-pointer mr-[3%]">
             Se connecter
@@ -121,11 +121,11 @@ export const HeaderDesktop: React.FC<HeaderDesktopProps> = watchDependencies(({
         </Link>
       }
 
-      {displayUser && session &&
+      {displayUser && user &&
         <div className='w-1/12 flex justify-center items-center'>
           <div className='h-[45px] w-[45px] relative'>
             <ProfilePicture
-              image={session.user?.image}
+              image={user?.image}
               onClick={() => setUserMenuOpen(m => !m)}
             />
           </div>
@@ -133,7 +133,12 @@ export const HeaderDesktop: React.FC<HeaderDesktopProps> = watchDependencies(({
             <Dropdown
               options={[
                 { value: 'Mon profil', action: () => router.push('/user/profile') },
-                { value: 'Se déconnecter', action: async () => { await auth.signOut(); await router.push('/'); } }
+                {
+                  value: 'Se déconnecter', action: async () => {
+                    const success = await auth.signOut();
+                    if (success) await router.push('/');
+                  }
+                }
               ]}
               className='w-[200px] -ml-[180px] mt-[180px]'
             />

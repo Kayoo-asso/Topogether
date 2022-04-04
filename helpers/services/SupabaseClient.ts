@@ -3,7 +3,11 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 
 export const supabaseClient = createClient(
     process.env.NEXT_PUBLIC_API_URL!,
-    process.env.NEXT_PUBLIC_ANON_KEY!
+    process.env.NEXT_PUBLIC_ANON_KEY!,
+    { 
+        // this trick allows the Supabase client to work in Next.js middleware
+        fetch: typeof window === "undefined" ? fetch : undefined
+    }
 );
 
 

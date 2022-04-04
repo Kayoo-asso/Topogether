@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, Icon } from 'components';
 import Link from 'next/link';
 import { watchDependencies } from 'helpers/quarky';
-import { useSession } from 'helpers/hooks/useSession';
+import { useSession } from 'helpers/services';
 
 interface LeftbarDesktopProps {
     currentMenuItem?: 'BUILDER' | 'MAP' | 'USER' | 'ADMIN',
@@ -11,14 +11,13 @@ interface LeftbarDesktopProps {
 export const LeftbarDesktop: React.FC<LeftbarDesktopProps> = watchDependencies(({
     currentMenuItem = 'MAP',
 }: LeftbarDesktopProps) => {
-  const session = useSession();
-  if (!session) return <></>;
+  const user = useSession();
  
   return (
     <div className="hidden md:flex flex-col bg-white border-r border-grey-medium min-w-[280px] w-[280px] h-full px-8 py-10 z-200">
         <div className="mb-20 mt-2">
           <div>
-            Bonjour <span className="ktext-subtitle text-main">{session.user?.userName}</span> !
+            Bonjour <span className="ktext-subtitle text-main">{user?.userName}</span> !
           </div>
         </div>
 
@@ -50,7 +49,7 @@ export const LeftbarDesktop: React.FC<LeftbarDesktopProps> = watchDependencies((
             <span className={`ktext-title ${currentMenuItem === 'USER' ? 'text-main' : 'text-dark'}`}>Profile</span>
           </div>
         </Link>
-        {session.role === 'ADMIN' && (
+        {user?.role === 'ADMIN' && (
           <Link href="/admin" passHref>
             <div className="cursor-pointer flex flex-row">
               <Icon

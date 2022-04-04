@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import type { GetServerSideProps, NextPage } from 'next';
 import { RootWorldMap } from 'components';
 import { api } from 'helpers/services';
-import { useSession } from 'helpers/hooks/useSession';
+import { useSession } from "helpers/services";
 import { LightTopo } from 'types';
 
 type WorldMapProps = {

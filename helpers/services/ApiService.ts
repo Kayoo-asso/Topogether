@@ -1,6 +1,6 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 import { TopoData, UUID, LightTopo, TopoStatus, DBTopo, Topo } from 'types';
-import { auth, sync } from ".";
+import { sync } from ".";
 import { ImageService } from "./ImageService";
 
 export type LightTopoFilters = {

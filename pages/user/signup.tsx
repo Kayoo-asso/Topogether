@@ -4,13 +4,14 @@ import { Button, Header, TextInput } from 'components';
 import Link from 'next/link';
 import NextImage from 'next/image';
 import { staticUrl } from 'helpers';
-import { api, auth, AuthResult } from 'helpers/services';
+import { SignUpRes, useAuth } from 'helpers/services';
 import { Email, isEmail, isName, Name } from 'types';
 import { useRouter } from 'next/router';
 
 
 const SignupPage: NextPage = () => {
   const router = useRouter();
+  const auth = useAuth();
 
   const [pseudo, setPseudo] = useState<string>();
   const [email, setEmail] = useState<string>();
@@ -31,8 +32,9 @@ const SignupPage: NextPage = () => {
 
     if (!hasError) {
       const res = await auth.signUp(email as Email, password!, pseudo as Name);
-      if (res === AuthResult.ConfirmationRequired) setErrorMessage("Pour valider votre compte, merci de cliquer sur le lien qui vous a été envoyé par email");
-      else if (res === AuthResult.Success) router.push("/");
+      if (res === SignUpRes.ConfirmationRequired) setErrorMessage("Pour valider votre compte, merci de cliquer sur le lien qui vous a été envoyé par email");
+      else if (res === SignUpRes.LoggedIn) router.push("/");
+      else if (res === SignUpRes.AlreadyExists) setErrorMessage("Un utilisateur avec cet email existe déjà")
       else setErrorMessage("Une erreur est survenue. Merci de réessayer.")
     }
   }

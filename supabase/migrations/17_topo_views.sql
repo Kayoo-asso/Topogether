@@ -1,0 +1,3 @@
+-- TODO:
+-- Builder view (filters out topo based on contributor status of user)
+-- Public view (only keeps validated topos + adds "liked" status)

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import 'styles/globals.css';
 import App, { AppInitialProps } from 'next/app';
 import type { AppProps, AppContext } from 'next/app';
@@ -6,15 +6,16 @@ import Head from 'next/head';
 import { DeviceContext, Device } from 'helpers';
 import { ShellMobile } from 'components/layouts';
 import useDimensions from 'react-cool-dimensions';
-import { getServerSession } from 'helpers/getServerSession';
-import { Session } from 'types';
-import { SessionContext } from 'helpers';
+import { getServerUser } from 'helpers/getServerUser';
+import { User } from 'types';
 import isMobile from 'ismobilejs';
 import { useFirstRender } from 'helpers/hooks/useFirstRender';
 import { resetServerContext } from 'react-beautiful-dnd';
+import { AuthProvider } from 'components/AuthProvider';
+import { parse } from 'cookie';
 
 type CustomProps = {
-  session: Session | null,
+  session: User | null,
   initialDevice: Device,
 };
 
@@ -34,6 +35,7 @@ const CustomApp = ({ Component, pageProps, session, initialDevice }: Props) => {
 
   const firstRender = useFirstRender();
   const device = firstRender ? initialDevice : currentBreakpoint as Device;
+
 
   return (
     <>
@@ -61,7 +63,7 @@ const CustomApp = ({ Component, pageProps, session, initialDevice }: Props) => {
 
       </Head>
 
-      <SessionContext.Provider value={session}>
+      <AuthProvider initial={session}>
         <DeviceContext.Provider value={device}>
           <div ref={observe} className="w-screen h-screen flex items-end flex-col">
             <div id="content" className="flex-1 w-screen absolute bg-grey-light flex flex-col h-full md:h-screen overflow-hidden">
@@ -73,7 +75,7 @@ const CustomApp = ({ Component, pageProps, session, initialDevice }: Props) => {
             </div>
           </div>
         </DeviceContext.Provider>
-      </SessionContext.Provider>
+      </AuthProvider>
     </>
   );
 };
@@ -90,9 +92,12 @@ CustomApp.getInitialProps = async (context: AppContext): Promise<InitialProps> =
     }
   }
 
+  console.log(`[App.getInitialProps] [${req?.url}]`);
   const [appProps, session] = await Promise.all([
     App.getInitialProps(context),
-    req ? getServerSession(req.headers['cookie']) : Promise.resolve(null)
+    req && req.headers['cookie']
+      ? getServerUser(parse(req.headers['cookie']))
+      : Promise.resolve(null)
   ]);
 
   // Make React DnD happy

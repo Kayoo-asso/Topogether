@@ -5,7 +5,7 @@ import { arrayMove, createTrack, splitArray } from 'helpers';
 import { Quark, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
 import { Boulder, Topo, Track, UUID } from 'types';
 import { DragDropContext, Draggable, Droppable, DropResult } from 'react-beautiful-dnd';
-import { useSession } from 'helpers/hooks/useSession';
+import { useSession } from 'helpers/services';
 
 export interface SectorListBuilderProps {
     topoQuark: Quark<Topo>,
@@ -17,21 +17,21 @@ export interface SectorListBuilderProps {
 
 export const SectorListBuilder: React.FC<SectorListBuilderProps> = watchDependencies((props: SectorListBuilderProps) => {
     const session = useSession();
-    if (!session) return <></>;
-
+    
     const selectedBoulder = props.selectedBoulder();
     const topo = props.topoQuark();
     const sectors = topo.sectors;
     const [bouldersIn, bouldersOut] = splitArray(topo.boulders.quarks().toArray(), b => sectors.toArray().map(s => s.boulders).flat().includes(b().id))
     const bouldersOutSorted = topo.lonelyBoulders.map(id => bouldersOut.find(b => b().id === id)!);
-
+    
     const [displayedSectors, setDisplayedSectors] = useState<Array<UUID>>(sectors.map(sector => sector.id).toArray());
     const [displayedBoulders, setDisplayedBoulders] = useState<Array<UUID>>([]);
-
+    
     const [draggingSectorId, setDraggingSectorId] = useState();
     const handleDragStart = useCallback((res) => {
         setDraggingSectorId(res.source.droppableId);
     }, []);
+
 
     const handleDragEnd = useCallback((res: DropResult) => {
         setDraggingSectorId(undefined);
@@ -62,6 +62,8 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> = watchDependen
         const lastSectorId = topo.sectors.toArray()[topo.sectors.length - 1].id;
         if (!displayedSectors.includes(lastSectorId)) setDisplayedSectors(ds => [...ds, lastSectorId]);
     }, [topo.sectors.toArray()[topo.sectors.length - 1]]);
+
+    if (!session) return <></>;
 
     return (
         <div className='h-[95%] overflow-y-auto mb-6 px-4'>

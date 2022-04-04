@@ -3,7 +3,7 @@ import { Dropdown } from 'components';
 import { Boulder, Track } from 'types';
 import { Quark, watchDependencies } from 'helpers/quarky';
 import { createTrack } from 'helpers';
-import { useSession } from 'helpers/hooks/useSession';
+import { useSession } from 'helpers/services';
 
 interface BoulderMarkerDropdownProps {
     boulder: Quark<Boulder>;

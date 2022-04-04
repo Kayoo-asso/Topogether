@@ -3,7 +3,7 @@ import { BoulderPreviewDesktop, Button, Flash, Icon, Modal, SlideagainstRightDes
 import { Quark, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
 import { Boulder, Image, Track, UUID } from 'types';
 import { LoginForm } from '..';
-import { useSession } from 'helpers/hooks/useSession';
+import { useSession } from "helpers/services";
 
 interface BoulderSlideagainstDesktopProps {
     boulder: Quark<Boulder>,
