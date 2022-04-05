@@ -1,5 +1,5 @@
-import { UUID } from "types";
 import { Base64 } from "js-base64";
+import { UUID } from "types";
 
 const readHexByte = (uuid: UUID, start: number) => parseInt(uuid.substring(start, start + 2), 16);
 

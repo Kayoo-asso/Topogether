@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { StringBetween, TopoType, User } from 'types';
-import { fontainebleauLocation, toLatLng, TopoCreate, createTopo } from 'helpers';
+import { fontainebleauLocation, toLatLng, TopoCreate, createTopo, encodeUUID } from 'helpers';
 import {
  Button, MapControl, Select, TextInput,
 } from 'components';
@@ -10,6 +10,7 @@ import { useRouter } from 'next/router';
 import { useCreateQuark, watchDependencies } from 'helpers/quarky';
 import { TopoTypeName } from 'types/EnumNames';
 import { HeaderDesktop } from 'components/layouts';
+import { sync } from 'helpers/services';
 
 interface RootNewProps {
     user: User,
@@ -28,7 +29,6 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies((props: RootNew
     type: undefined,
     forbidden: false,
     location: fontainebleauLocation,
-    // pour modified on peut mettre un ISO string en fait, c'est pas push au serveur
     modified: new Date().toISOString(),
   };
 
@@ -56,11 +56,13 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies((props: RootNew
     else setStep(2);
   }
 
-  const create = () => {
+  const create = async () => {
     setLoading(true);
-    setStep(0);
     createTopo(topo);
-    router.push('/builder/'+topo.id);
+    await sync.attemptSync();
+    if (sync.status() === 2) {
+      router.push('/builder/'+encodeUUID(topo.id));
+    }
   };
 
   useEffect(() => {
@@ -210,6 +212,7 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies((props: RootNew
                     <Button
                       content="Créer"
                       white
+                      loading={loading}
                       onClick={() => {
                             if (isNaN(topo.location[1])) setLatitudeError('Latitude invalide');
                             if (isNaN(topo.location[0])) setLongitudeError('Longitude invalide');

@@ -24,12 +24,15 @@ export const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
 
     const [errorMessage, setErrorMessage] = useState<string>();
 
+    const [loading, setLoading] = useState(false);
+
     const login = useCallback(async () => {
         let hasError = false;
         if (!email) { setEmailError("Email invalide"); hasError = true };
         if (!password) { setPasswordError("Mot de passe invalide"); hasError = true };
 
         if (!hasError) {
+            setLoading(true);
             const res = await auth.signIn(email as Email, password!);
             if (res === SignInRes.ConfirmationRequired) setErrorMessage("Merci de confirmer votre compte en cliquant sur le lien dans le mail qui vous a été envoyé.");
             else if (res === SignInRes.Ok) {
@@ -37,6 +40,7 @@ export const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
                 else router.push("/");
             }
             else setErrorMessage("Authentification incorrecte");
+            setLoading(false);
         }
     }, [email, password]);
 
@@ -93,6 +97,7 @@ export const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
                         content="Se connecter"
                         fullWidth
                         onClick={login}
+                        loading={loading}
                     />
                     <div className='ktext-error text-error mt-3'>{errorMessage}</div>
                 </div>

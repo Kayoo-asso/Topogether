@@ -98,7 +98,7 @@ export const BoulderSlideagainstDesktop: React.FC<BoulderSlideagainstDesktopProp
                                 content="Ajouter une voie"
                                 fullWidth
                                 onClick={() => {
-                                    if (session) alert("à venir");
+                                    if (session) alert("à venir"); //TODO
                                     else setDisplayModalLoginRedirect(true);
                                 }}
                             />

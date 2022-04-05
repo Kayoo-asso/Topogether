@@ -12,7 +12,7 @@ export * from './markerSize';
 export * from './bitflagHelpers';
 export * from './formatDate';
 export * from './blobToImage';
-export * from './shortenUUID';
+export * from './encodeUUID';
 
 export * from './splitArray';
 export * from './arrayMove';

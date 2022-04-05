@@ -25,6 +25,8 @@ const ProfilePage: NextPage<ProfileProps> = watchDependencies(({ user }) => {
   
   const [email, setEmail] = useState<string>(user.email);
   const [emailError, setEmailError] = useState<string>();
+  const [successMessageChangeMail, setSuccessMessageChangeMail] = useState<string>();
+  const [errorMessageChangeMail, setErrorMessageChangeMail] = useState<string>();
   
   const [userName, setUserName] = useState<string>(user.userName);
   const [firstName, setFirstName] = useState<string | undefined>(user.firstName);
@@ -38,7 +40,11 @@ const ProfilePage: NextPage<ProfileProps> = watchDependencies(({ user }) => {
   const [userNameError, setUserNameError] = useState<string>();
   const [phoneError, setPhoneError] = useState<string>();
 
-  const [successMessage, setSuccessMessage] = useState<string>();
+  const [successMessageModify, setSuccessMessageModify] = useState<string>();
+  const [errorMessageModify, setErrorMessageModify] = useState<string>();
+
+  const [loadingModify, setLoadingModify] = useState(false);
+  const [loadingChangeMail, setLoadingChangeMail] = useState(false);
 
   const modifyProfile = async () => {
     let hasError = false;
@@ -46,7 +52,8 @@ const ProfilePage: NextPage<ProfileProps> = watchDependencies(({ user }) => {
     if (phone && (!phone.match(/\d/g) || phone.length < 6 || phone.length > 30)) { setPhoneError("Numéro de téléphone invalide"); hasError = true; }
 
     if (!hasError) {
-      const result = await auth.updateUserInfo({
+      setLoadingModify(true);
+      const res = await auth.updateUserInfo({
         ...user,
         userName: userName as Name,
         firstName: firstName as Name,
@@ -56,20 +63,25 @@ const ProfilePage: NextPage<ProfileProps> = watchDependencies(({ user }) => {
         country: country as Name,
         city: city as Name,
         phone: phone as StringBetween<1, 30>
-      })
-      if(result) setSuccessMessage('Profil modifié');
-      // TODO: error message
+      });
+      if (res) setSuccessMessageModify('Profil modifié');
+      else setErrorMessageModify('Une erreur est survenue. Merci de réessayer.');
+      setLoadingModify(false);
     }
   }
 
   const changeMail = () => {
     if (!email || (email && !isEmail(email))) setEmailError("Email invalide");
     else {
+      setLoadingChangeMail(true)
+      alert("à venir"); //TODO
       console.log("change mail");
+      setLoadingChangeMail(false);
     }
   }
 
   const deleteAccount = () => {
+    alert("à venir"); //TODO
     console.log("delete account");
   }
 
@@ -131,7 +143,7 @@ const ProfilePage: NextPage<ProfileProps> = watchDependencies(({ user }) => {
           
           <div className='w-full md:hidden'>
             <Tabs 
-              tabs={[]}
+              tabs={[]} //TODO
             />
           </div>
 
@@ -148,7 +160,10 @@ const ProfilePage: NextPage<ProfileProps> = watchDependencies(({ user }) => {
                   content="Modifier l'email"
                   fullWidth
                   onClick={changeMail}
+                  loading={loadingChangeMail}
               />
+              {successMessageChangeMail && <div className='ktext-error text-main text-center'>{successMessageChangeMail}</div>}
+              {errorMessageChangeMail && <div className='ktext-error text-error text-center'>{errorMessageChangeMail}</div>}
             </div>
 
             <div className='md:hidden'>
@@ -224,8 +239,10 @@ const ProfilePage: NextPage<ProfileProps> = watchDependencies(({ user }) => {
                 content="Modifier le profil"
                 fullWidth
                 onClick={modifyProfile}
+                loading={loadingModify}
             />
-            {successMessage && <div className='text-main'>{successMessage}</div>}
+            {successMessageModify && <div className='ktext-error text-main text-center'>{successMessageModify}</div>}
+            {errorMessageModify && <div className='ktext-error text-error text-center'>{errorMessageModify}</div>}
 
             <div className='flex flex-col items-center gap-4 mb-10 md:mb-0 md:pt-10'>
               <Link href="/user/changePassword">
