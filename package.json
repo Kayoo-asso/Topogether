@@ -44,6 +44,7 @@
     "@storybook/builder-webpack5": "^6.4.8",
     "@storybook/manager-webpack5": "^6.4.8",
     "@storybook/react": "^6.4.8",
+    "@svgr/webpack": "^6.2.1",
     "@types/cookie": "^0.4.1",
     "@types/google.maps": "^3.47.2",
     "@types/node": "17.0.0",
