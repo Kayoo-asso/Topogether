@@ -8,7 +8,7 @@ type AuthProviderProps = React.PropsWithChildren<{
     initial: User | null
 }>;
 
-export const AuthProvider: React.FC<AuthProviderProps> = ({ initial , children }) => {
+export const AuthProvider: React.FC<AuthProviderProps> = ({ initial, children }) => {
     const auth = useMemo(() => new AuthService(supabaseClient, initial), []);
 
     if (process.env.NODE_ENV === "development") {
@@ -20,11 +20,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ initial , children }
     }
 
     useEffect(() => {
-        supabaseClient.auth.getSessionFromUrl({ storeSession: true }).then(({ data, error }) => {
-            if (data) console.log("Data from URL session:", data);
-            else if (error) console.log("Error from URL session:", error);
-        });
-    })
+        supabaseClient.auth.getSessionFromUrl({ storeSession: true });
+    }, []);
 
     return <AuthContext.Provider value={auth}>
         {children}
