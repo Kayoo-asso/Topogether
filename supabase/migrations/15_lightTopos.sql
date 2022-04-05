@@ -69,7 +69,7 @@ create type public.light_topo as (
 --     group by t.id, creator, parking.location;
 
 
-create function grade_to_category(grade public.grade)
+create or replace function grade_to_category(grade public.grade)
 returns public.grade_category
 as $$
 begin
@@ -81,7 +81,7 @@ begin
 end;
 $$ language plpgsql;
 
-create function build_light_topo(_topo public.topos)
+create or replace function build_light_topo(_topo public.topos)
 returns public.light_topo
 as $$
 declare
@@ -151,7 +151,7 @@ begin
 end;
 $$ language plpgsql;
 
-create view public.light_topos as
+create or replace view public.light_topos as
     select light_topo.*
     from public.topos t,
     build_light_topo(t) light_topo;

@@ -1,57 +1,32 @@
 import type { GetServerSideProps, NextPage } from 'next';
 import { api } from 'helpers/services';
-import { useAsyncData } from 'helpers/hooks/useAsyncData';
-import { useRouter } from 'next/router';
-import { Error404, Header, Loading } from 'components';
 import { RootAdmin } from 'components/pages/admin/RootAdmin';
-import { useSession } from "helpers/services";
-import { User } from 'types';
-import { injectAuth } from 'helpers/auth';
+import { DBLightTopo, User } from 'types';
 import { getServerUser } from 'helpers/getServerUser';
+import { quarkifyLightTopos } from 'helpers/topo';
 
 type AdminProps = {
     user: User & { role: "ADMIN" }
+    topos: DBLightTopo[]
 }
 
 export const getServerSideProps: GetServerSideProps<AdminProps> = async ({ req }) => {
-    const user = await getServerUser(req.cookies);
+    const [user, topos] = await Promise.all([
+        getServerUser(req.cookies),
+        api.getLightTopos()
+    ]);
     if (!user || user.role !== "ADMIN") return { notFound: true };
     return {
         props: {
-            user: user as AdminProps["user"]
+            user: user as AdminProps["user"],
+            topos
         }
     }
 };
-const AdminPage: NextPage<AdminProps> = ({ user }) => {
-    const toposQuery = useAsyncData(() => api.getLightTopos(), []);
-
-    // ERROR
-    if (toposQuery.type === 'error') return <Error404 title="Aucun topo n'a été trouvé" />
-
-    //LOADING
-    else if (toposQuery.type === 'loading') return (
-        <>
-            <Header
-                title="Chargement des topos..."
-                backLink='/'
-            />
-            <Loading />
-        </>
-    )
-
-    // SUCCESS
-    else {
-        // BUT NO DATA...
-        if (!toposQuery.data) return <Error404 title="Aucun topo n'a été trouvé" />
-        else {
-            return (
-                <RootAdmin 
-                    lightTopos={toposQuery.data}
-                />
-            );
-        }
-    }
-    
+const AdminPage: NextPage<AdminProps> = ({ user, topos }) => {
+    return <RootAdmin
+        lightTopos={quarkifyLightTopos(topos)}
+    />
 };
 
 export default AdminPage;

@@ -1,5 +1,6 @@
 import { boulderChanged, sectorChanged } from "helpers";
-import { Quark, QuarkArray, SelectQuarkNullable } from "helpers/quarky";
+import { quark, Quark, QuarkArray, SelectQuarkNullable } from "helpers/quarky";
+import { sync } from "helpers/services";
 import { Boulder, GeoCoordinates, Image, Line, Name, Parking, SectorData, Topo, Track, TrackRating, UUID, Waypoint } from "types";
 import { v4 } from "uuid";
 
@@ -33,9 +34,11 @@ export const deleteSector = (topoQuark: Quark<Topo>, sector: Quark<SectorData>, 
 export const createBoulder = (topoQuark: Quark<Topo>, location: GeoCoordinates, image?: Image) => {
     const topo = topoQuark();
     const orderIndex = topo.boulders.length;
+    // terrible hack around `liked` for now
     const newBoulder: Boulder = {
       id: v4(),
       name: `Bloc ${orderIndex + 1}` as Name,
+      liked: undefined!,
       location,
       isHighball: false,
       mustSee: false,
@@ -43,6 +46,7 @@ export const createBoulder = (topoQuark: Quark<Topo>, location: GeoCoordinates, 
       tracks: new QuarkArray(),
       images: image ? [image] : [],
     };
+    newBoulder.liked = quark<boolean>(false, { onChange: (value) => sync.likeBoulder(newBoulder, value) })
     topo.boulders.push(newBoulder);
     boulderChanged(topoQuark, newBoulder.id, newBoulder.location, true);
 

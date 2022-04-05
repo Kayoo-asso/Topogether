@@ -110,6 +110,7 @@ export const tracks: TrackData[] = [
 export const boulders: BoulderData[] = [
     {
         id: uuid(),
+        liked: false,
         name: "PearlHarbor" as Name,
         location: [4.605412, 45.70201],
         isHighball: true,
@@ -124,6 +125,7 @@ export const boulders: BoulderData[] = [
     // is painful (*cries in DB tests*)
     {
         id: uuid(),
+        liked: false,
         name: "Mystiquette" as Name,
         location: [4.606412, 45.70401],
         isHighball: true,
@@ -136,6 +138,7 @@ export const boulders: BoulderData[] = [
     },
     {
         id: uuid(),
+        liked: false,
         name: "Hoummmmous" as Name,
         location: [4.606712, 45.70461],
         isHighball: true,
@@ -148,6 +151,7 @@ export const boulders: BoulderData[] = [
     },
     {
         id: uuid(),
+        liked: false,
         name: "SupremeNTM" as Name,
         location: [4.608712, 45.70661],
         isHighball: false,
@@ -245,6 +249,7 @@ export const waypoints: Waypoint[] = [
 export const fakeTopov2: TopoData = {
     id: fakeTopoUUID,
     name: "Yzéron" as Name,
+    liked: false,
     description: "Le site d'Yzéron est situé sur le massif de Py froid à environ 800m d'altitude. Il est le plus grand site de bloc de la région Lyonnaise avec une grande diversité de profil (dévers, dalle, réta...). L'esplanade sépare la plus grande partie du site en amont, et une falaise idéale pour l'initiation, située en contrebas. La forêt protège une bonne partie du site contre les aléas météorologiques ce qui, combiné à l'altitude, permet la pratique de la grimpe toute l'année." as Description,
     status: TopoStatus.Draft,
     type: TopoType.Boulder,

@@ -36,6 +36,7 @@ export const convertOldTopo = (t: any) => {
             const newB: BoulderData = {
                 id: v4(),
                 name: b.name,
+                liked: false,
                 isHighball: b.isHighball,
                 mustSee: b.isMustSee,
                 location: [b.location.lat, b.location.lng],
@@ -50,6 +51,7 @@ export const convertOldTopo = (t: any) => {
     const newTopo: TopoData = {
         id: v4(),
         name: t.name,
+        liked: false,
         altitude: t.altitude,
         closestCity: t.closestCity,
         location: [t.location.lat, t.location.lng],

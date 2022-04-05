@@ -33,12 +33,13 @@ returns trigger
 security definer
 as $$
 begin
-    update public.images
-    set users = users + 1
-    where id in (
-        select id
-        from unnest(new.images)
-    );
+    insert into public.images
+        select img.id as id, 1 as users 
+        from unnest(new.images) as img
+        where img.id is not null
+    on conflict (id)
+    do update set
+        users = images.users + 1;
     return null;
 end;
 $$ language plpgsql;
@@ -65,12 +66,13 @@ begin
     -- set users = users + 1
     -- where path in ( after ) and path not in ( before );
 
-    update public.images
-    set users = users + 1
-    where id in (
-        select id
-        from unnest(new.images)
-    );
+    insert into public.images
+        select img.id as id, 1 as users 
+        from unnest(new.images) as img
+        where img.id is not null
+    on conflict (id)
+    do update set
+        users = images.users + 1;
 
     update public.images
     set users = users - 1

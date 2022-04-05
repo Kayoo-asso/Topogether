@@ -27,10 +27,8 @@ export async function getServerUser(cookies: Cookies): Promise<User | null> {
     const key = accessToken + (refreshToken || '');
     const previous = sessions.get(key);
     if (previous) {
-        console.log("Found result from previous getServerUser run:", previous);
         return previous;
     }
-    console.log("First getServerUser");
 
     // Get access token expiry date
     const jwt = jwtDecoder(accessToken) as AccessJWT;
@@ -45,7 +43,6 @@ export async function getServerUser(cookies: Cookies): Promise<User | null> {
     }
     // TODO: do we need to send the refreshed access token back to the client?
     else if (refreshToken) {
-        console.log("Refreshing access token...");
         await supabaseClient.auth.api.refreshAccessToken(refreshToken)
         const { session } = await supabaseClient.auth.setSession(refreshToken);
         if (session?.user?.id) {

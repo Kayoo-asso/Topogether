@@ -1,6 +1,15 @@
 -- Setup modification timestamping on topos and nested entities
+create function internal.modified()
+returns trigger
+as $$
+begin
+    new.modified = now();
+    return new;
+end;
+$$ language plpgsql;
+
 create trigger handle_updated_at before update on topos 
-  for each row execute procedure moddatetime (modified);
+  for each row execute procedure internal.modified();
 
 create function internal.topo_was_modified()
 returns trigger

@@ -22,15 +22,14 @@ create function internal.on_access_insert()
 returns trigger
 security definer
 as $$
-declare
-    step public.topo_access_step;
 begin
-    update public.images
-    set users = users + 1
-    where id in (
-        select (image).id
+    insert into public.images
+        select (step.image).id as id, 1 as users 
         from unnest(new.steps) as step
-    );
+        where (step.image).id is not null
+    on conflict (id)
+    do update set
+        users = images.users + 1;
     return null;
 end;
 $$ language plpgsql;
@@ -39,14 +38,12 @@ create function internal.on_access_delete()
 returns trigger
 security definer
 as $$
-declare
-    step public.topo_access_step;
 begin
     update public.images
     set users = users - 1
     where id in (
-        select (image).id
-        from unnest(old.steps)
+        select (step.image).id
+        from unnest(old.steps) as step
     );
     return null;
 end;
@@ -76,21 +73,22 @@ begin
     -- where path in ( after ) and path not in ( before );
     -- update public.images
     -- set users = users - 1
-    -- where path in (before except after
+    -- where path in (before except after)
 
+    -- Basically insert + delete
+    insert into public.images
+        select (step.image).id as id, 1 as users 
+        from unnest(new.steps) as step
+        where (step.image).id is not null
+    on conflict (id)
+    do update set
+        users = images.users + 1;
 
     update public.images
     set users = users - 1
     where id in (
         select (step.image).id
         from unnest(old.steps) as step
-    );
-
-    update public.images
-    set users = users + 1
-    where id in (
-        select (step.image).id
-        from unnest(new.steps) as step
     );
 
     return null;
