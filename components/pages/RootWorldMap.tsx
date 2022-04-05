@@ -13,7 +13,7 @@ interface RootWorldMapProps {
 export const RootWorldMap: React.FC<RootWorldMapProps> = watchDependencies((props: RootWorldMapProps) => {
   const auth = useAuth();
   const user = auth.session();
-  console.log(user);
+
   const [selectedTopo, setSelectedTopo] = useState<LightTopo>();
   const toggleTopoSelect = useCallback((t: LightTopo) => {
     if (selectedTopo?.id === t.id) {

@@ -25,7 +25,7 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
   if (!isUUID(expanded)) return redirect("/");
 
   const topo = await api.getTopo(expanded);
-
+  
   if (!topo) {
     return { notFound: true };
   }

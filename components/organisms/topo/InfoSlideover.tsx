@@ -34,7 +34,7 @@ export const InfoSlideover: React.FC<InfoSlideoverProps> = ({
 
             <div className="absolute z-100 left-1 md:left-2 top-1 md:top-2 flex flex-row gap-6 px-6 pt-4">
                 <LikeButton
-                    item={topo}
+                    liked={topo.liked}
                 />
                 <DownloadButton
                     topo={topo}

@@ -108,7 +108,7 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = wat
             }
             {full && (
               <LikeButton
-                item={props.boulder()}
+                liked={boulder.liked}
               />
             )}
 

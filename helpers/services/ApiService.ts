@@ -134,7 +134,7 @@ export class ApiService {
                     path:path->coordinates
                 ),
                 boulders:boulders_with_like!topoId (
-                    id, name, isHighball, mustSee, dangerousDescent,
+                    id, name, liked, isHighball, mustSee, dangerousDescent,
                     location:location->coordinates,
                     images,
                     tracks:tracks!boulderId(

@@ -8,7 +8,8 @@ import type { UUID, GeoCoordinates, RequireAtLeastOne, StringBetween, Name, Desc
 import type { Profile, TrackRating } from './User';
 import type { Image } from './Image';
 
-export type Topo = Omit<TopoData, 'sectors' | 'boulders' | 'waypoints' | 'parkings' | 'accesses' | 'managers'> & {
+export type Topo = Omit<TopoData, 'liked' | 'sectors' | 'boulders' | 'waypoints' | 'parkings' | 'accesses' | 'managers'> & {
+  liked: Quark<boolean>,
   sectors: QuarkArray<Sector>,
   boulders: QuarkArray<Boulder>,
   waypoints: QuarkArray<Waypoint>,
@@ -19,7 +20,8 @@ export type Topo = Omit<TopoData, 'sectors' | 'boulders' | 'waypoints' | 'parkin
 
 export type Sector = SectorData;
 
-export type Boulder = Omit<BoulderData, 'tracks'> & {
+export type Boulder = Omit<BoulderData, 'tracks' | 'liked'> & {
+  liked: Quark<boolean>
   tracks: QuarkArray<Track>,
 };
 

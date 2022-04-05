@@ -400,8 +400,7 @@ function scheduleUpdates() {
         processUpdates(0);
         processDeactivations();
         Scheduled = false;
-    }
-}
+    } }
 
 function processUpdates(start: number) {
     ExternalBatcher(() => {
@@ -450,19 +449,19 @@ function processUpdates(start: number) {
                 if (e.status === NodeStatus.Clean) continue;
                 checkComputation(e);
             }
-        } while (PendingLeaves.length > start || ScheduledEffects.length > 0)
-        // Epoch += 1;
 
-        if (start === 0) {
             const subs = new Set(PendingSubs);
             PendingSubs.length = 0;
             for (const node of subs) {
                 node.fn!(node.value);
             }
-            for (let i = 0; i < PostUpdateHooks.length; ++i) {
-                PostUpdateHooks[i]();
-            }
+
+        } while (PendingLeaves.length > start || ScheduledEffects.length > 0)
+        // Epoch += 1;
+        for (let i = 0; i < PostUpdateHooks.length; ++i) {
+            PostUpdateHooks[i]();
         }
+
     });
 }
 

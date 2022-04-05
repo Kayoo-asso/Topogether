@@ -21,7 +21,7 @@ export const TopoPreview: React.FC<TopoPreviewProps> = (props: TopoPreviewProps)
         <>
             <div className="flex flex-row gap-5 px-6 pt-4 md:hidden">
                 <LikeButton
-                    item={props.topo}
+                    liked={props.topo.liked}
                 />
                 <DownloadButton
                     topo={props.topo}

@@ -73,6 +73,7 @@ as $$
     insert into public.topo_likes
     select id, auth.uid()
     from unnest(_ids) as id
+    on conflict do nothing
 $$ language sql volatile;
 
 create function unlike_topos(_ids uuid[])
@@ -81,7 +82,7 @@ security definer
 as $$
     delete from public.topo_likes
     where "topoId" in ( select unnest(_ids) )
-    -- and "userId" = auth.uid()
+    and "userId" = auth.uid()
 $$ language sql volatile;
 
 create function like_boulders(_ids uuid[])
@@ -91,6 +92,7 @@ as $$
     insert into public.boulder_likes
     select id, auth.uid()
     from unnest(_ids) as id
+    on conflict do nothing
 $$ language sql volatile;
 
 create function unlike_boulders(_ids uuid[])

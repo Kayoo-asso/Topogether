@@ -56,6 +56,7 @@ function onSectorDelete(sector: Sector, topoQuark: Quark<Topo>) {
 export function quarkifyTopo(data: TopoData, save: boolean): Quark<Topo> {
     const topo: Topo = {
         ...data,
+        liked: quark(data.liked, { onChange: (value) => sync.likeTopo(topo, value)}),
         sectors: quarkifySectors(data.sectors, data.id, save),
         boulders: quarkifyBoulders(data.boulders, data.id, save),
         waypoints: quarkifyWaypoints(data.waypoints, data.id, save),
@@ -142,6 +143,7 @@ function quarkifyBoulders(data: BoulderData[], topoId: UUID, save: boolean): Qua
     const onChange = (boulder: Boulder) => sync.boulderUpdate(boulder, topoId);
     const boulders: Boulder[] = data.map(boulder => ({
         ...boulder,
+        liked: quark(boulder.liked, { onChange: (value) => sync.likeBoulder(boulder, value) }),
         tracks: quarkifyTracks(boulder.tracks, topoId, boulder.id, save),
     }));
     if (save) boulders.forEach(onChange);
@@ -180,44 +182,3 @@ function quarkifyLines(lines: Line[], topoId: UUID, trackId: UUID, save: boolean
         onDelete: (line) => sync.lineDelete(line)
     });
 }
-
-
-
-// function enableSync(topoQuark: Quarkify<TopoData, Entities>): Effect {
-//     // not lazy
-//     const root = effect(() => {
-//         const topo = read(topoQuark);
-//         // sync topo...
-//         effect(() => {
-//             const sectors = read(topo.sectors);
-//             // compare to previous run for created / deleted sectors
-//             // previous run should be stored in the parent effect? 
-
-//             for (let i = 0; i < sectors.length; i++) {
-//                 effect(() => {
-//                     const sector = read(sectors[i]);
-//                     // sync sector...
-
-//                     effect(() => {
-//                         const boulders = read(sector.boulders);
-//                         // compare to previous run for created / deleted boulders
-
-//                         for (let i = 0; i < boulders.length; i++) {
-//                             effect(() => {
-//                                 const boulder = read(boulders[i]);
-//                             });
-//                         }
-//                     });
-//                 })
-//             }
-//         })
-//     });
-//     return root;
-// }
-
-// function syncTopo(topoQuark: Quarkify<TopoData, Entities>, create: boolean): Effect {
-//     return effect(() => {
-//         const topo = read(topoQuark);
-//         // send to ApiService
-//     }, { lazy: !create });
-// }

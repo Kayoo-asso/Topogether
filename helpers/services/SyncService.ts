@@ -1,5 +1,5 @@
 import { quark, Quark } from "helpers/quarky/quarky";
-import { Boulder, DBBoulder, DBLightTopo, DBLine, DBManager, DBParking, DBSector, DBTopo, DBTopoAccess, DBTrack, DBUserUpdate, DBWaypoint, LightTopo, Line, Manager, Parking, Sector, Topo, TopoAccess, TopoData, Track, User, UUID, Waypoint } from "types";
+import { Boulder, BoulderData, DBBoulder, DBLightTopo, DBLine, DBManager, DBParking, DBSector, DBTopo, DBTopoAccess, DBTrack, DBUserUpdate, DBWaypoint, LightTopo, Line, Manager, Parking, Sector, Topo, TopoAccess, TopoData, Track, User, UUID, Waypoint } from "types";
 import { api } from "./";
 import { DBConvert } from "./DBConvert";
 import { supabaseClient } from "./SupabaseClient";
@@ -20,7 +20,7 @@ export interface SyncService {
     attemptSync(): Promise<boolean>;
 
     likeTopo(topo: Topo | TopoData | LightTopo | DBLightTopo, value: boolean): void;
-    likeBoulder(boulder: Boulder, value: boolean): void;
+    likeBoulder(boulder: Boulder | BoulderData, value: boolean): void;
 
     topoCreate(topo: DBTopo): void;
     topoUpdate(topo: Topo | TopoData): void;
@@ -102,13 +102,6 @@ export class InMemorySync implements SyncService {
         return this._isOnline();
     }
 
-    // // only one, since logging out when there are unsaved changes is not allowed
-    // userUpdateData: DBUserUpdate | undefined;
-    // userUpdate(user: User) {
-    //     this.userUpdateData = DBConvert.user(user);
-    //     this._status.set(SyncStatus.UnsavedChanges);
-    // }
-
     // same name as RPC function
     like_topos: Set<UUID> = new Set();
     unlike_topos: Set<UUID> = new Set();
@@ -117,6 +110,7 @@ export class InMemorySync implements SyncService {
         if (value) {
             this.like_topos.add(topo.id);
             this.unlike_topos.delete(topo.id);
+            this._status.set(SyncStatus.UnsavedChanges);
         } else {
             this.like_topos.delete(topo.id);
             this.unlike_topos.add(topo.id);
@@ -128,7 +122,7 @@ export class InMemorySync implements SyncService {
     like_boulders: Set<UUID> = new Set();
     unlike_boulders: Set<UUID> = new Set();
 
-    likeBoulder(boulder: Boulder, value: boolean): void {
+    likeBoulder(boulder: Boulder | BoulderData, value: boolean): void {
         if (value) {
             this.like_boulders.add(boulder.id);
             this.unlike_boulders.delete(boulder.id);
@@ -151,7 +145,6 @@ export class InMemorySync implements SyncService {
 
     topoUpdate(topo: Topo | TopoData) {
         const dto = DBConvert.topo(topo);
-        this.likeTopo(topo, topo.liked);
         this.updatedTopos.set(dto.id, dto);
         this.deletedTopos.delete(dto.id);
         this._status.set(SyncStatus.UnsavedChanges);
@@ -249,7 +242,6 @@ export class InMemorySync implements SyncService {
     // diff image changes?
     boulderUpdate(boulder: Boulder, topoId: UUID) {
         const dto = DBConvert.boulder(boulder, topoId);
-        this.likeBoulder(boulder, boulder.liked);
         this.updatedBoulders.set(dto.id, dto);
         this.deletedBoulders.delete(dto.id);
         this._status.set(SyncStatus.UnsavedChanges);
@@ -312,6 +304,7 @@ export class InMemorySync implements SyncService {
     // Currently we keep retrying infinitely, even if some corruption happened in the updates
     async attemptSync(): Promise<boolean> {
         if (this._status() === SyncStatus.UpToDate) return true;
+
         this._status.set(SyncStatus.Saving);
         // no need for allSettled since the promises of the Supabase client never fail
         const promises = [
@@ -341,17 +334,16 @@ export class InMemorySync implements SyncService {
             this.like_rpc("unlike_topos"),
             this.like_rpc("unlike_boulders"),
         ];
-        const results = [];
-        for (const p of promises) {
-            results.push(await p);
-        }
+        await Promise.allSettled(promises);
         // all changes went through
+        let unsavedChanges = true;
         if (this._status() === SyncStatus.Saving) {
             this._status.set(SyncStatus.UpToDate);
+            unsavedChanges = false;
         }
         // return true if results only contains `true` booleans
-        console.log("End of attemptSync. Unsaved changes: ", this.status() === SyncStatus.UnsavedChanges);
-        return !results.some(x => !x);
+        console.log("End of attemptSync. Unsaved changes: ", unsavedChanges);
+        return unsavedChanges;
     }
 
     // assumes `updates` have been swapped with a new Map for the property on the object

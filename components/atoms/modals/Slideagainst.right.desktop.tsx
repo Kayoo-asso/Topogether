@@ -55,7 +55,7 @@ export const SlideagainstRightDesktop: React.FC<SlideagainstRightDesktopProps> =
                             <>
                                 {props.displayLikeButton &&
                                     <LikeButton
-                                        item={item}
+                                        liked={item.liked}
                                     />
                                 }
                                 {props.displayDlButton && isTopo(item) &&
