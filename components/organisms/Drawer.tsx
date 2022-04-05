@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import {
-  DrawerToolEnum, Image, Line, LinearRing, PointEnum, Position, Track,
+  DrawerToolEnum, Image, LinearRing, PointEnum, Position, Track,
 } from 'types';
 import { ModalDelete, Toolbar, TracksImage } from 'components';
-import { Quark, QuarkArray, QuarkIter, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
+import { QuarkArray, QuarkIter, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
 import { v4 } from 'uuid';
 
 interface DrawerProps {

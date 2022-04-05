@@ -141,7 +141,14 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
             (they could also be computed, but I'm lazy)
             Another dev: I'm lazy too. Leave the rectangle.
         */}
-        <rect ref={viewBoxRef} x={0} y={0} width={viewBoxWidth} height={viewBoxHeight} visibility='hidden'></rect>
+        <rect 
+          ref={viewBoxRef} 
+          x={0} 
+          y={0} 
+          width={viewBoxWidth} 
+          height={viewBoxHeight} 
+          visibility='hidden' 
+        />
 
         {props.image && props.tracks.map(trackQuark => {
           const highlighted = selectedTrack === undefined ||

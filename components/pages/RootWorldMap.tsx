@@ -1,18 +1,19 @@
 import React, { useCallback, useState } from 'react';
-import {
-  MapControl, Show, TopoPreview,
-} from 'components';
-
+import { MapControl, Show, TopoPreview } from 'components';
 import { HeaderDesktop, LeftbarDesktop } from 'components/layouts';
-import { LightTopo, User } from 'types';
+import { LightTopo } from 'types';
 import { fontainebleauLocation, toLatLng } from 'helpers';
+import { useAuth } from 'helpers/services';
+import { watchDependencies } from 'helpers/quarky';
 
 interface RootWorldMapProps {
   lightTopos: LightTopo[],
-  user: User | null,
 }
 
-export const RootWorldMap: React.FC<RootWorldMapProps> = (props: RootWorldMapProps) => {
+export const RootWorldMap: React.FC<RootWorldMapProps> = watchDependencies((props: RootWorldMapProps) => {
+  const auth = useAuth();
+  const user = auth.session();
+  console.log(user);
   const [selectedTopo, setSelectedTopo] = useState<LightTopo>();
   const toggleTopoSelect = useCallback((t: LightTopo) => {
     if (selectedTopo?.id === t.id) {
@@ -25,13 +26,15 @@ export const RootWorldMap: React.FC<RootWorldMapProps> = (props: RootWorldMapPro
       <HeaderDesktop
         backLink="#"
         title="Carte des topo"
-        displayLogin={props.user ? false : true}
+        displayLogin={user ? false : true}
       />
 
       <div className="flex flex-row relative h-contentPlusHeader md:h-full">
-        <LeftbarDesktop
-          currentMenuItem="MAP"
-        />
+        {user &&
+          <LeftbarDesktop
+            currentMenuItem="MAP"
+          />
+        }
 
         <MapControl
           initialZoom={5}
@@ -57,4 +60,4 @@ export const RootWorldMap: React.FC<RootWorldMapProps> = (props: RootWorldMapPro
       </div>
     </>
   );
-};
+});

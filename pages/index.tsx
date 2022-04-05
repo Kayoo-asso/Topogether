@@ -15,8 +15,6 @@ export const getServerSideProps: GetServerSideProps<WorldMapProps> = async ({ re
 }
 
 const WorldMapPage: NextPage<WorldMapProps> = ({ topos }) => {
-  const session = useSession();
-
   useEffect(() => {
     async function contactWorker() {
       await navigator.serviceWorker.ready;
@@ -31,7 +29,6 @@ const WorldMapPage: NextPage<WorldMapProps> = ({ topos }) => {
   return (
     <RootWorldMap
       lightTopos={topos}
-      user={session}
     />
   );
 };

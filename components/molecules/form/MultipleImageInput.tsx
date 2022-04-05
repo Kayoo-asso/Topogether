@@ -31,10 +31,6 @@ export const MultipleImageInput: React.FC<MultipleImageInputProps> = ({
   }
   const nbPages = Math.ceil(props.images.length / nbVisible);
 
-  if (page >= nbPages) {
-    setPage(nbPages - 1);
-  }
-
   const displayLeftArrow = page > 0;
   const displayRightArrow = page < nbPages - 1;
 

@@ -1,7 +1,7 @@
 import { Image } from "types"
 import { SourceSize, VariantWidths } from "helpers/variants";
 import { cloudflareUrl } from "helpers/cloudflareUrl";
-import { ImgHTMLAttributes, useState } from "react";
+import { ImgHTMLAttributes, LegacyRef, useEffect, useRef, useState } from "react";
 import defaultKayoo from 'public/assets/img/Kayoo_defaut_image.png';
 import type { StaticImageData } from 'next/image';
 import { useDevice } from "helpers/hooks/useDevice";
@@ -26,7 +26,14 @@ export const CFImage: React.FC<CFImageProps> = ({
     ...props 
 }: CFImageProps) => {
     const device = useDevice();
+    const imgRef = useRef<HTMLImageElement>(null);
     const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        //If the image is already in the page because it's in cache, onLoad does not trigger
+        //So we verify if the image already exists through its naturalHeight
+        if (imgRef.current?.naturalHeight !== 0) setLoading(false);
+    }, [imgRef.current]);
 
     let src = defaultImage.src;
     let width = defaultImage.width;
@@ -55,7 +62,16 @@ export const CFImage: React.FC<CFImageProps> = ({
         
     return (
         <div className='w-full h-full relative'>
+            {loading &&
+                <div className='bg-white absolute w-full h-full top-0 z-1000'>
+                    <Loading 
+                        bgWhite={false} 
+                        SVGClassName='w-12 h-12'
+                    />
+                </div>
+            }
             <img
+                ref={imgRef}
                 src={src}
                 width={width}
                 height={height}
@@ -68,14 +84,6 @@ export const CFImage: React.FC<CFImageProps> = ({
                     setLoading(false);
                 }}
             />
-            {loading &&
-                <div className='bg-grey-light z-1000 absolute w-full h-full top-0'>
-                    <Loading 
-                        bgWhite={false} 
-                        SVGClassName='w-12 h-12'
-                    />
-                </div>
-            }
         </div>
     )
 }
