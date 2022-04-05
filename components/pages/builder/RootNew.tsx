@@ -28,7 +28,8 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies((props: RootNew
     type: undefined,
     forbidden: false,
     location: fontainebleauLocation,
-    modified: new Date().getFullYear()+'-'+new Date().getMonth()+'-'+new Date().getDate(),
+    // pour modified on peut mettre un ISO string en fait, c'est pas push au serveur
+    modified: new Date().toISOString(),
   };
 
   const topoQuark = useCreateQuark<TopoCreate>(topoData);

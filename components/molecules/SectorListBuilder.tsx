@@ -32,7 +32,6 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> = watchDependen
         setDraggingSectorId(res.source.droppableId);
     }, []);
 
-
     const handleDragEnd = useCallback((res: DropResult) => {
         setDraggingSectorId(undefined);
         if (res.destination) {
@@ -58,10 +57,17 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> = watchDependen
         }
     }, [topo, sectors]);
 
+    // TODO @Flavien: vérifie que ma version marche correctement
+    // Si je comprends bien, le but c'est qu'à la création d'un nouveau secteur, celui-ci soit "ouvert",
+    // en partant du principe que l'utilisateur va vouloir travailler dessus
     useEffect(() => {
-        const lastSectorId = topo.sectors.toArray()[topo.sectors.length - 1].id;
-        if (!displayedSectors.includes(lastSectorId)) setDisplayedSectors(ds => [...ds, lastSectorId]);
-    }, [topo.sectors.toArray()[topo.sectors.length - 1]]);
+        if (topo.sectors.length > 0) {
+            const lastSector = topo.sectors.at(topo.sectors.length - 1);
+            if (!displayedSectors.includes(lastSector.id)) {
+                setDisplayedSectors([...displayedSectors, lastSector.id])
+            }
+        }
+    }, [topo.sectors.length]);
 
     if (!session) return <></>;
 
@@ -104,7 +110,7 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> = watchDependen
                                     {displayedSectors.includes(sector.id) &&
                                         // BOULDERS
                                         <div className={'flex flex-col gap-1 ml-1 p-2 rounded-sm ' + (draggingSectorId === sector.id ? 'bg-grey-superlight' : '')}>
-                                            {boulderQuarks.length < 1 &&
+                                            {boulderQuarks.length === 0 &&
                                                 <div className=''>
                                                     Aucun rocher référencé
                                                 </div>
