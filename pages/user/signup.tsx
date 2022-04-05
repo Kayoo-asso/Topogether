@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import type { NextPage } from 'next';
-import { Button, Header, TextInput } from 'components';
+import { Button, TextInput } from 'components';
+import { Header } from 'components/layouts/header/Header';
 import Link from 'next/link';
 import NextImage from 'next/image';
 import { staticUrl } from 'helpers';
@@ -22,6 +23,9 @@ const SignupPage: NextPage = () => {
   const [passwordError, setPasswordError] = useState<string>();
 
   const [errorMessage, setErrorMessage] = useState<string>();
+  const [validateEmailMessage, setValidateEmailMessage] = useState<string>();
+
+  const [loading, setLoading] = useState(false);
 
   const signup = async () => {
     let hasError = false;
@@ -31,11 +35,13 @@ const SignupPage: NextPage = () => {
     else if (password.length < 8) { setPasswordError("Le mot de passe doit faire plus de 8 caractères"); hasError = true; }
 
     if (!hasError) {
+      setLoading(true);
       const res = await auth.signUp(email as Email, password!, pseudo as Name);
-      if (res === SignUpRes.ConfirmationRequired) setErrorMessage("Pour valider votre compte, merci de cliquer sur le lien qui vous a été envoyé par email");
+      if (res === SignUpRes.ConfirmationRequired) setValidateEmailMessage("Pour valider votre compte, merci de cliquer sur le lien qui vous a été envoyé par email");
       else if (res === SignUpRes.LoggedIn) router.push("/");
-      else if (res === SignUpRes.AlreadyExists) setErrorMessage("Un utilisateur avec cet email existe déjà")
-      else setErrorMessage("Une erreur est survenue. Merci de réessayer.")
+      else if (res === SignUpRes.AlreadyExists) setEmailError("Un utilisateur avec cet email existe déjà")
+      else setErrorMessage("Une erreur est survenue. Merci de réessayer.");
+      setLoading(false);
     }
   }
 
@@ -44,7 +50,7 @@ const SignupPage: NextPage = () => {
       <Header
           backLink="/user/login"
           title="Création de compte"
-          displayLogin
+          displayLogin={true}
       />
 
       <div className="w-full h-full flex flex-col items-center justify-center bg-bottom bg-white md:bg-[url('/assets/img/login_background.png')] md:bg-cover">
@@ -90,8 +96,11 @@ const SignupPage: NextPage = () => {
                 content="Créer un compte"
                 fullWidth
                 onClick={signup}
+                activated={!validateEmailMessage}
+                loading={loading}
             />
-            <div className='ktext-error'>{errorMessage}</div>
+            {errorMessage && <div className='ktext-error text-error'>{errorMessage}</div>}
+            {validateEmailMessage && <div className='ktext-error text-main'>{validateEmailMessage}</div>}
 
             <Link href="/user/login">
                 <div className="ktext-base-little text-main cursor-pointer hidden md:block">Retour</div>

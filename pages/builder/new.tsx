@@ -1,7 +1,6 @@
 import React from 'react';
 import type { GetServerSideProps, NextPage } from 'next';
 import { RootNew } from 'components';
-import { useSession } from "helpers/services";
 import { User } from 'types';
 import { withAuth } from 'helpers/auth';
 
