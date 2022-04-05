@@ -1,12 +1,14 @@
 import React, { useEffect } from 'react';
 import type { GetServerSideProps, NextPage } from 'next';
 import { RootWorldMap } from 'components';
-import { api } from 'helpers/services';
+import { api, sync } from 'helpers/services';
 import { useSession } from "helpers/services";
-import { LightTopo } from 'types';
+import { DBLightTopo, LightTopo } from 'types';
+import { quark } from 'helpers/quarky';
+import { quarkifyLightTopos } from 'helpers';
 
 type WorldMapProps = {
-  topos: LightTopo[];
+  topos: DBLightTopo[];
 }
 
 export const getServerSideProps: GetServerSideProps<WorldMapProps> = async ({ req }) => {
@@ -15,20 +17,9 @@ export const getServerSideProps: GetServerSideProps<WorldMapProps> = async ({ re
 }
 
 const WorldMapPage: NextPage<WorldMapProps> = ({ topos }) => {
-  useEffect(() => {
-    async function contactWorker() {
-      await navigator.serviceWorker.ready;
-      if (navigator.serviceWorker.controller) {
-        navigator.serviceWorker.controller.postMessage({ command: 'log', message: 'hello world' })
-      }
-    }
-
-    contactWorker();
-  }, []);
-
   return (
     <RootWorldMap
-      lightTopos={topos}
+      lightTopos={quarkifyLightTopos(topos)}
     />
   );
 };

@@ -24,14 +24,9 @@ alter table lines enable row level security;
 
 create policy "Lines are visible for everyone"
     on lines for select
-    using ( true );
+    using ( public.can_view_topo("topoId") );
 
 create policy "Lines can be modified by topo contributors"
     on lines for all
     -- will also be used for the `with check` cases
-    using ( is_contributor("topoId", auth.uid()) );
-
-create policy "Admins are omnipotent"
-    on lines for all
-    -- the `using` case will also be applied for the `with check` cases
-    using ( is_admin(auth.uid()) );
+    using ( public.can_edit_topo("topoId") );

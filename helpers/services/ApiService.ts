@@ -1,11 +1,12 @@
 import { SupabaseClient } from "@supabase/supabase-js";
-import { TopoData, UUID, LightTopo, TopoStatus, DBTopo, Topo, Boulder } from 'types';
+import { quark } from "helpers/quarky";
+import { TopoData, UUID, LightTopo, TopoStatus, DBTopo, Topo, DBLightTopo } from 'types';
 import { sync } from ".";
 import { ImageService } from "./ImageService";
 
 export type LightTopoFilters = {
     userId?: UUID,
-    status?: TopoStatus
+    status?: TopoStatus,
 }
 
 export enum UpdateResult {
@@ -22,9 +23,10 @@ export class ApiService {
         this.client = client;
     }
 
-    async getLightTopos(filters?: LightTopoFilters): Promise<LightTopo[]> {
+    async getLightTopos(filters?: LightTopoFilters): Promise<DBLightTopo[]> {
+
         let query = this.client
-            .from<LightTopo>("light_topos")
+            .from<DBLightTopo>("light_topos")
             .select('*');
 
         if (filters?.status) {
@@ -48,7 +50,7 @@ export class ApiService {
             .rpc<LightTopo>("search_light_topos", {
                 _query: query,
                 _nb: limit,
-                _similarity: similarity 
+                _similarity: similarity
             });
         if (error) {
             console.error(`Error searching light topos for \"${query}\": `, error);
@@ -76,19 +78,6 @@ export class ApiService {
         sync.topoDelete(topo);
     }
 
-    likeTopo(topo: Topo | TopoData | LightTopo) {
-        sync.likeTopo(topo);
-    }
-    unlikeTopo(topo: Topo | TopoData | LightTopo) {
-        sync.unlikeTopo(topo);
-    }
-    likeBoulder(boulder: Boulder) {
-        sync.likeBoulder(boulder);
-    }
-    unlikeBoulder(boulder: Boulder) {
-        sync.unlikeBoulder(boulder);
-    }
-
     async getTopo(id: UUID): Promise<TopoData | null> {
         // Notes on this query:
         //
@@ -102,7 +91,7 @@ export class ApiService {
         // "topoId" foreign key that exist in the DB for performant joins.
         // This applies for tracks, boulder images and lines, for instance.
         const { data, error } = await this.client
-            .from<TopoData>("topo_with_like")
+            .from<TopoData>("topos_with_like")
             .select(`
                 id,
                 name,
@@ -144,7 +133,7 @@ export class ApiService {
                     *,
                     path:path->coordinates
                 ),
-                boulders:boulders!topoId (
+                boulders:boulders_with_like!topoId (
                     id, name, isHighball, mustSee, dangerousDescent,
                     location:location->coordinates,
                     images,

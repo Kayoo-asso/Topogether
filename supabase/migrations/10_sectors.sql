@@ -18,14 +18,9 @@ alter table sectors enable row level security;
 
 create policy "Sectors are visible for everyone"
     on sectors for select
-    using ( true );
+    using ( public.can_view_topo("topoId") );
 
 create policy "Sectors can be modified by topo contributors"
     on sectors for all
     -- the `using` case will also be applied for the `with check` cases
-    using ( is_contributor("topoId", auth.uid()) );
-
-create policy "Admins are omnipotent"
-    on sectors for all
-    -- the `using` case will also be applied for the `with check` cases
-    using ( is_admin(auth.uid()) );
+    using ( public.can_edit_topo("topoId") );

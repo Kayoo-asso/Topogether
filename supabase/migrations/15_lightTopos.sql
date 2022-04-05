@@ -130,7 +130,7 @@ begin
 
     select 
         _topo.id, _topo.name, _topo.status,
-        user_likes_topo(auth.uid(), _topo.id) as liked,
+        likes_topo(_topo.id) as liked,
         _topo.location::jsonb->'coordinates' as location,
         _topo.forbidden,
         _topo.modified, _topo.submitted, _topo.validated,

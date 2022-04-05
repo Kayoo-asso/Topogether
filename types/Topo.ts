@@ -1,4 +1,4 @@
-import type { QuarkArray } from 'helpers/quarky';
+import type { Quark, QuarkArray } from 'helpers/quarky';
 import type { Amenities, ClimbTechniques, RockTypes } from './Bitflags';
 import type {
   Grade, LightGrade, Orientation, TopoStatus, TopoType, Difficulty, Reception,
@@ -111,7 +111,7 @@ export interface LightTopo {
   id: UUID,
   name: Name,
   status: TopoStatus,
-  liked: boolean,
+  liked: Quark<boolean>,
   location: GeoCoordinates,
   forbidden: boolean,
 
@@ -137,6 +137,10 @@ export interface LightTopo {
   // everything is optional here because that was much easier to write in SQL
   grades?: Partial<GradeHistogram>
 }
+
+export type DBLightTopo = Omit<LightTopo, 'liked'> & {
+  liked: boolean
+};
 
 export type GradeHistogram = {
   [K in LightGrade]: number

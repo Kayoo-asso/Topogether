@@ -17,6 +17,7 @@ create index track_ratings_author_idx on public.track_ratings("authorId");
 
 alter table track_ratings enable row level security;
 
+-- No need to check the status of the topo, since ratings can only be placed on validated topos
 create policy "track_ratings are visible by everyone"
     on track_ratings for select
     using ( true );

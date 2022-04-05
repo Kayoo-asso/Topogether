@@ -1,12 +1,13 @@
 import { RootDashboard } from 'components';
+import { quarkifyLightTopos } from 'helpers';
 import { loginRedirect } from 'helpers/auth';
 import { getServerUser } from 'helpers/getServerUser';
 import { api } from 'helpers/services';
 import type { GetServerSideProps, NextPage } from 'next';
-import { LightTopo } from 'types';
+import { DBLightTopo, LightTopo } from 'types';
 
 type DashboardProps = {
-  myTopos: LightTopo[]
+  myTopos: DBLightTopo[]
 }
 
 export const getServerSideProps: GetServerSideProps<DashboardProps> = async ({ req }) => {
@@ -21,7 +22,7 @@ export const getServerSideProps: GetServerSideProps<DashboardProps> = async ({ r
 }
 
 const DashboardPage: NextPage<DashboardProps> = ({ myTopos }) => {
-  return <RootDashboard lightTopos={myTopos} />;
+  return <RootDashboard lightTopos={quarkifyLightTopos(myTopos)} />;
 };
 
 export default DashboardPage;

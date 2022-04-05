@@ -30,16 +30,11 @@ create index tracks_creator_idx on public.tracks("creatorId");
 
 alter table tracks enable row level security;
 
-create policy "Tracks are visible for everyone"
+create policy "Tracks visibility"
     on tracks for select
-    using ( true );
+    using ( public.can_view_topo("topoId") );
 
 -- TODO: add authorizations specific to track creators, even if they are not topo contributors?
 create policy "Tracks can be modified by topo contributors"
     on tracks for all
-    using ( is_contributor("topoId", auth.uid()) );
-
-create policy "Admins are omnipotent"
-    on tracks for all
-    -- the `using` case will also be applied for the `with check` cases
-    using ( is_admin(auth.uid()) );
+    using ( public.can_edit_topo("topoId") );

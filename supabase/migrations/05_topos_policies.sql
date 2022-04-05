@@ -123,8 +123,10 @@ create function check_status_change()
 returns trigger
 as $$
 begin
-    if (old.status = 0 and new.status = 1 and public.is_topo_admin(new.id,auth.uid()))
-    or (public.is_admin(auth.uid()))
+    if (
+        ((old.status = 0 and new.status = 1) or (old.status = 1 and new.status = 0)) and public.is_topo_admin(new.id,auth.uid()))
+        or (public.is_admin(auth.uid())
+    )
     then
         return new;
     else

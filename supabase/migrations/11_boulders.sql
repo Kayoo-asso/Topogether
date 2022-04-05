@@ -19,18 +19,13 @@ create index boulders_topo_idx on public.boulders("topoId");
 -- 1. Policies
 alter table boulders enable row level security;
 
-create policy "Boulders are visible for everyone"
+create policy "Boulders visibility"
     on boulders for select
-    using ( true );
+    using ( public.can_view_topo("topoId") );
 
 create policy "Boulders can be modified by topo contributors"
     on boulders for all
-    using ( is_contributor("topoId", auth.uid()) );
-
-create policy "Admins are omnipotent"
-    on boulders for all
-    -- the `using` case will also be applied for the `with check` cases
-    using ( is_admin(auth.uid()) );
+    using ( public.can_edit_topo("topoId") );
 
 -- TODO: can we refactor to share logic with `public.topo_accesses` ?
 create function internal.on_boulder_insert()

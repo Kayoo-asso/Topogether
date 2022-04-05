@@ -56,14 +56,6 @@ export const SlideagainstRightDesktop: React.FC<SlideagainstRightDesktopProps> =
                                 {props.displayLikeButton &&
                                     <LikeButton
                                         item={item}
-                                        liked={item.liked}
-                                        onClick={isTopo(item)
-                                            ? () => {
-                                                if (item.liked) api.unlikeTopo(item);
-                                                else api.likeTopo(item);
-                                            }
-                                            : undefined
-                                        }
                                     />
                                 }
                                 {props.displayDlButton && isTopo(item) &&

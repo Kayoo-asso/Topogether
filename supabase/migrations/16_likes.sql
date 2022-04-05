@@ -46,23 +46,23 @@ create policy "Admins are omnipotent"
     using ( true );
 
 -- 3. Utilities
-create function user_likes_topo(_user_id uuid, _topo_id uuid)
+create function likes_topo(_topo_id uuid)
 returns boolean
 as $$
     select exists(
         select 1 from public.topo_likes
         where "topoId" = _topo_id
-        and "userId" = _user_id
+        and "userId" = auth.uid()
     )
 $$ language sql volatile;
 
-create function user_likes_boulder(_user_id uuid, _boulder_id uuid)
+create function likes_boulder(_boulder_id uuid)
 returns boolean
 as $$
     select exists(
         select 1 from public.boulder_likes
         where "boulderId" = _boulder_id
-        and "userId" = _user_id
+        and "userId" = auth.uid()
     )
 $$ language sql volatile;
 
@@ -103,10 +103,10 @@ as $$
 $$ language sql volatile;
 
 -- 4. Topo and boulder views w/ likes
-create view topo_with_like as
-    select t.*, user_likes_topo(t.id, auth.uid()) as liked
+create view topos_with_like as
+    select t.*, likes_topo(t.id) as liked
     from public.topos as t;
 
-create view boulder_with_like as
-    select b.*, user_likes_boulder(b.id, auth.uid()) as liked
+create view boulders_with_like as
+    select b.*, likes_boulder(b.id) as liked
     from public.boulders as b;

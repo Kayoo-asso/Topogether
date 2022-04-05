@@ -1,5 +1,5 @@
 import { quark, Quark } from "helpers/quarky/quarky";
-import { Boulder, DBBoulder, DBLine, DBManager, DBParking, DBSector, DBTopo, DBTopoAccess, DBTrack, DBUserUpdate, DBWaypoint, LightTopo, Line, Manager, Parking, Sector, Topo, TopoAccess, TopoData, Track, User, UUID, Waypoint } from "types";
+import { Boulder, DBBoulder, DBLightTopo, DBLine, DBManager, DBParking, DBSector, DBTopo, DBTopoAccess, DBTrack, DBUserUpdate, DBWaypoint, LightTopo, Line, Manager, Parking, Sector, Topo, TopoAccess, TopoData, Track, User, UUID, Waypoint } from "types";
 import { api } from "./";
 import { DBConvert } from "./DBConvert";
 import { supabaseClient } from "./SupabaseClient";
@@ -19,11 +19,8 @@ export interface SyncService {
 
     attemptSync(): Promise<boolean>;
 
-    likeTopo(topo: Topo | TopoData | LightTopo): void;
-    unlikeTopo(topo: Topo | TopoData | LightTopo): void;
-
-    likeBoulder(boulder: Boulder): void;
-    unlikeBoulder(boulder: Boulder): void;
+    likeTopo(topo: Topo | TopoData | LightTopo | DBLightTopo, value: boolean): void;
+    likeBoulder(boulder: Boulder, value: boolean): void;
 
     topoCreate(topo: DBTopo): void;
     topoUpdate(topo: Topo | TopoData): void;
@@ -116,14 +113,14 @@ export class InMemorySync implements SyncService {
     like_topos: Set<UUID> = new Set();
     unlike_topos: Set<UUID> = new Set();
 
-    likeTopo(topo: Topo | TopoData | LightTopo): void {
-        this.like_topos.add(topo.id);
-        this.unlike_topos.delete(topo.id);
-        this._status.set(SyncStatus.UnsavedChanges);
-    }
-    unlikeTopo(topo: Topo | TopoData | LightTopo): void {
-        this.like_topos.delete(topo.id);
-        this.unlike_topos.add(topo.id);
+    likeTopo(topo: Topo | TopoData | LightTopo, value: boolean): void {
+        if (value) {
+            this.like_topos.add(topo.id);
+            this.unlike_topos.delete(topo.id);
+        } else {
+            this.like_topos.delete(topo.id);
+            this.unlike_topos.add(topo.id);
+        }
         this._status.set(SyncStatus.UnsavedChanges);
     }
 
@@ -131,14 +128,14 @@ export class InMemorySync implements SyncService {
     like_boulders: Set<UUID> = new Set();
     unlike_boulders: Set<UUID> = new Set();
 
-    likeBoulder(boulder: Boulder): void {
-        this.like_boulders.add(boulder.id);
-        this.unlike_boulders.delete(boulder.id);
-        this._status.set(SyncStatus.UnsavedChanges);
-    }
-    unlikeBoulder(boulder: Boulder): void {
-        this.like_boulders.delete(boulder.id);
-        this.unlike_boulders.add(boulder.id);
+    likeBoulder(boulder: Boulder, value: boolean): void {
+        if (value) {
+            this.like_boulders.add(boulder.id);
+            this.unlike_boulders.delete(boulder.id);
+        } else {
+            this.like_boulders.delete(boulder.id);
+            this.unlike_boulders.add(boulder.id);
+        }
         this._status.set(SyncStatus.UnsavedChanges);
     }
 
@@ -154,6 +151,7 @@ export class InMemorySync implements SyncService {
 
     topoUpdate(topo: Topo | TopoData) {
         const dto = DBConvert.topo(topo);
+        this.likeTopo(topo, topo.liked);
         this.updatedTopos.set(dto.id, dto);
         this.deletedTopos.delete(dto.id);
         this._status.set(SyncStatus.UnsavedChanges);
@@ -251,6 +249,7 @@ export class InMemorySync implements SyncService {
     // diff image changes?
     boulderUpdate(boulder: Boulder, topoId: UUID) {
         const dto = DBConvert.boulder(boulder, topoId);
+        this.likeBoulder(boulder, boulder.liked);
         this.updatedBoulders.set(dto.id, dto);
         this.deletedBoulders.delete(dto.id);
         this._status.set(SyncStatus.UnsavedChanges);

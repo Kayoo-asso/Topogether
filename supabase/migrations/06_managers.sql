@@ -22,7 +22,7 @@ alter table managers enable row level security;
 
 create policy "Managers are visible for everyone"
     on managers for select
-    using ( true );
+    using ( public.can_view_topo("topoId") );
 
 create policy "Managers can be modified by topo admins"
     on managers for all

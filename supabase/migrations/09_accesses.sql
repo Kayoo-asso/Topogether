@@ -45,8 +45,8 @@ begin
     update public.images
     set users = users - 1
     where id in (
-        select (step.image).id
-        from unnest(old.steps) as step
+        select (image).id
+        from unnest(old.steps)
     );
     return null;
 end;
@@ -100,18 +100,13 @@ $$ language plpgsql;
 -- 1. Policies for `topo_accesses`
 alter table topo_accesses enable row level security;
 
-create policy "Topo accesses are visible for everyone"
+create policy "Topo visibility"
     on topo_accesses for select
-    using ( true );
+    using ( public.can_view_topo("topoId") );
 
 create policy "Topo accesses can be modified by topo contributors"
     on topo_accesses for all
-    using ( is_contributor("topoId", auth.uid()) );
-
-create policy "Admins are omnipotent"
-    on topo_accesses for all
-    -- the `using` case will also be applied for the `with check` cases
-    using ( is_admin(auth.uid()) );
+    using ( public.can_edit_topo("topoId") );
 
 -- 2. Image registration for `topo_access`
 create trigger register_images after insert on topo_accesses

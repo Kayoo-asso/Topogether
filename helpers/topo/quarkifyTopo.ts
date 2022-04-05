@@ -1,7 +1,7 @@
 import { Quark, quark, QuarkArray } from 'helpers/quarky';
 import { sync } from 'helpers/services';
 import { DBConvert } from 'helpers/services/DBConvert';
-import { BoulderData, TrackData, TopoData, UUID, Track, Boulder, Topo, Line, Sector, Manager, Waypoint, TopoAccess, Parking } from 'types';
+import { BoulderData, TrackData, TopoData, UUID, Track, Boulder, Topo, Line, Sector, Manager, Waypoint, TopoAccess, Parking, DBLightTopo, LightTopo } from 'types';
 
 export type TopoCreate = Omit<TopoData, 'liked' | 'sectors' | 'boulders' | 'waypoints' | 'accesses' | 'parkings' | 'managers' | 'lonelyBoulders'>;
 
@@ -69,10 +69,18 @@ export function quarkifyTopo(data: TopoData, save: boolean): Quark<Topo> {
     // can have a reference to the quark of the topo
     q().sectors.onDelete = (sector) => onSectorDelete(sector, q);
     q().boulders.onDelete = (boulder) => onBoulderDelete(boulder, q);
-    
+
     if (save) onChange(topo);
 
     return q;
+}
+
+// terrible hack
+export function quarkifyLightTopos(data: DBLightTopo[]): LightTopo[] {
+    return data.map(t => ({
+        ...t,
+        liked: quark(t.liked, { onChange: (like) => sync.likeTopo(t, like) })
+    }))
 }
 
 function quarkifyParkings(parkings: Parking[], topoId: UUID, save: boolean): QuarkArray<Parking> {
@@ -137,7 +145,7 @@ function quarkifyBoulders(data: BoulderData[], topoId: UUID, save: boolean): Qua
         tracks: quarkifyTracks(boulder.tracks, topoId, boulder.id, save),
     }));
     if (save) boulders.forEach(onChange);
-    
+
     return new QuarkArray(boulders, {
         quarkifier: (b) => quark(b, { onChange }),
         onAdd: onChange,
@@ -153,7 +161,7 @@ function quarkifyTracks(data: TrackData[], topoId: UUID, boulderId: UUID, save: 
         lines: quarkifyLines(track.lines, topoId, track.id, save),
         ratings: new QuarkArray()
     }));
-    if(save) tracks.forEach(onChange);
+    if (save) tracks.forEach(onChange);
 
     return new QuarkArray(tracks, {
         quarkifier: (t) => quark(t, { onChange }),
