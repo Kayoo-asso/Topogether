@@ -1,10 +1,8 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import type { GetServerSideProps, NextPage } from 'next';
 import { RootWorldMap } from 'components';
-import { api, sync } from 'helpers/services';
-import { useSession } from "helpers/services";
-import { DBLightTopo, LightTopo } from 'types';
-import { quark } from 'helpers/quarky';
+import { api } from 'helpers/services';
+import { DBLightTopo } from 'types';
 import { quarkifyLightTopos } from 'helpers';
 
 type WorldMapProps = {

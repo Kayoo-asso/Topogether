@@ -19,6 +19,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ initial , children }
         }, []);
     }
 
+    useEffect(() => {
+        supabaseClient.auth.getSessionFromUrl({ storeSession: true }).then(({ data, error }) => {
+            if (data) console.log("Data from URL session:", data);
+            else if (error) console.log("Error from URL session:", error);
+        });
+    })
+
     return <AuthContext.Provider value={auth}>
         {children}
     </AuthContext.Provider>

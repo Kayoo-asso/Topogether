@@ -8,6 +8,7 @@ module.exports = withPWA({
     disable: process.env.NODE_ENV !== "production",
     dest: 'public',
     swSrc: 'worker/sw.ts',
+    buildExcludes: [/.*sw\.js$/]
   },
   reactStrictMode: false,
   images: {
