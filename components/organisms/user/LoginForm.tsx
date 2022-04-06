@@ -17,7 +17,6 @@ export const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
 
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
-    const [rememberChecked, setRememberChecked] = useState(false);
 
     const [emailError, setEmailError] = useState<string>();
     const [passwordError, setPasswordError] = useState<string>();
@@ -85,13 +84,6 @@ export const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
             />
 
             <div className='flex flex-col w-full md:flex-row justify-start md:justify-between items-center md:mb-6'>
-                <div className="hidden md:block">
-                    <Checkbox 
-                        checked={rememberChecked}
-                        label="Se souvenir de moi"
-                        onClick={() => setRememberChecked(!rememberChecked)}
-                    />
-               </div> 
                 <div className="w-full md:w-auto">
                     <Button 
                         content="Se connecter"

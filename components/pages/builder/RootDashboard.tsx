@@ -6,12 +6,13 @@ import { LightTopo, TopoStatus } from 'types';
 import { UserActionDropdown } from 'components/molecules/cards/UserActionDropdown';
 import { ModalDeleteTopo, ModalSubmitTopo } from 'components/organisms';
 import { api } from 'helpers/services';
+import { watchDependencies } from 'helpers/quarky';
 
 interface RootDashboardProps {
     lightTopos: LightTopo[],
 }
 
-export const RootDashboard: React.FC<RootDashboardProps> = (props: RootDashboardProps) => {
+export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies((props: RootDashboardProps) => {
     const lightTopos = props.lightTopos;
     const draftLightTopos = lightTopos.filter((topo) => topo.status === TopoStatus.Draft);
     const submittedLightTopos = lightTopos.filter((topo) => topo.status === TopoStatus.Submitted);
@@ -117,4 +118,4 @@ export const RootDashboard: React.FC<RootDashboardProps> = (props: RootDashboard
         }
       </>
     );
-};
+});

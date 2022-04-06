@@ -2,7 +2,7 @@ import React from 'react';
 import type { GetServerSideProps, NextPage } from 'next';
 import { RootWorldMap } from 'components';
 import { api } from 'helpers/services';
-import { DBLightTopo } from 'types';
+import { DBLightTopo, TopoStatus } from 'types';
 import { quarkifyLightTopos } from 'helpers';
 
 type WorldMapProps = {
@@ -10,7 +10,7 @@ type WorldMapProps = {
 }
 
 export const getServerSideProps: GetServerSideProps<WorldMapProps> = async ({ req }) => {
-  const topos = await api.getLightTopos();
+  const topos = await api.getLightTopos( { status: TopoStatus.Validated } );
   return { props: { topos } }
 }
 
