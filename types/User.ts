@@ -1,3 +1,4 @@
+import type { AuthTokens } from 'helpers/services';
 import { Rating } from 'types';
 import { Image } from './Image';
 import { Description, Email, Name, NullableOptional, StringBetween, UUID } from './Utils';

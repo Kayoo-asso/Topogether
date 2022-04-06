@@ -1,0 +1,4 @@
+-- TODO:
+-- a) Timestamps on submit / validation
+-- b) Allow manual status modifications in the DB
+-- c) Allow topo admins to transition a topo from submitted -> draft, without modifying anything else

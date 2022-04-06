@@ -60,7 +60,7 @@ export class ApiService {
     }
 
     async setTopoStatus(topoId: UUID, status: TopoStatus): Promise<UpdateResult> {
-        const { error, status: httpStatus } = await this.client
+        const { error } = await this.client
             .from<DBTopo>("topos")
             .update({ status })
             .eq('id', topoId);

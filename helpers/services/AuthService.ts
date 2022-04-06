@@ -1,12 +1,13 @@
 import { AuthChangeEvent, Session as SupabaseSession, SupabaseClient } from "@supabase/supabase-js";
 import { quark, Quark } from "helpers/quarky";
-import { DBUserUpdate, Email, Name, Role, User, UUID } from "types";
+import { DBUserUpdate, Email, Name, Role, User } from "types";
 import { createContext, useContext } from "react";
 import { DBConvert } from "./DBConvert";
+import { AccessTokenCookie, RefreshTokenCookie } from "helpers/auth";
 
 export type AuthTokens = {
-    accessToken: string,
-    refreshToken?: string
+    access_token: string,
+    refresh_token?: string
 }
 
 export enum SignUpRes {
@@ -27,14 +28,6 @@ export enum SignOutRes {
     Error
 }
 
-const authCookieRoute = "/api/auth/setCookie";
-
-async function fetchOnClient(input: RequestInfo, init?: RequestInit): Promise<void> {
-    if (typeof window !== "undefined") {
-        await fetch(input, init);
-    }
-}
-
 export const AuthContext = createContext<AuthService>(undefined!);
 
 export function useAuth(): AuthService {
@@ -45,14 +38,32 @@ export function useSession() {
     return useContext(AuthContext).session();
 }
 
+// Model for testing sessions from URL:
+// http://localhost:3000/#access_token=&expires_in=3600&refresh_token=&token_type=bearer&type=signup
 export class AuthService {
     private client: SupabaseClient;
-    private _session: Quark<User | null>
+    private _session: Quark<User | null>;
 
-    constructor(client: SupabaseClient, initialSession: User | null = null) {
+    constructor(client: SupabaseClient, serverSession: User | null = null) {
         this.client = client;
-        this._session = quark<User | null>(initialSession);
+
+        // ensures consistent rendering
+        this._session = quark<User | null>(serverSession);
+
+        // no need to check URL or setup a callback on the server
+        if (typeof window === "undefined") {
+            return;
+        }
+
+        // setup callback
         this.client.auth.onAuthStateChange(this._onAuthStateChange.bind(this));
+
+        // Check for a session from the URL, which takes precedence
+        client.auth.getSessionFromUrl({ storeSession: true }).then(({ data }) => {
+            if (data?.user) {
+                return this._loadDetails(data.user.id);
+            }
+        });
     }
 
     session(): User | null {
@@ -89,32 +100,21 @@ export class AuthService {
             console.error("Sign up error: ", error);
             console.error("Session: ", session);
             console.error("User: ", user);
-            // user already exists
-            if (error.status === 400) {
-                return SignUpRes.AlreadyExists;
-            }
-            // server error (all other statuses)
-            return SignUpRes.Error;
-        }
 
+            return error.status === 400
+                ? SignUpRes.AlreadyExists
+                : SignUpRes.Error; // generic server error
+        }
         // No confirmation required (probably dev environment)
-        if (session) {
-            if (user) {
-                const [, signIn] = await Promise.allSettled([
-                    this._setCookie(session),
-                    this._loadUser(user.id as UUID)
-                ]);
-                return signIn.status === "fulfilled" ? SignUpRes.LoggedIn : SignUpRes.Error;
-            } else {
-                await this._setCookie(session);
-            }
+        if (user) {
+            return await this._loadDetails(user.id) ? SignUpRes.LoggedIn : SignUpRes.Error;
         }
         // Regular scenario
         return SignUpRes.ConfirmationRequired;
     }
 
-    async signIn(email: Email, password: string, redirectTo?: string): Promise<SignInRes> {
-        const { user, error } = await this.client.auth.signIn({ email, password }, { redirectTo });
+    async signIn(email: Email, password: string): Promise<SignInRes> {
+        const { user, error } = await this.client.auth.signIn({ email, password });
         if (error) {
             console.error("Sign in error: ", error);
             return SignInRes.Error;
@@ -122,87 +122,96 @@ export class AuthService {
         if (!user) {
             return SignInRes.ConfirmationRequired;
         }
-        return await this._loadUser(user.id as UUID) ? SignInRes.Ok : SignInRes.Error;
+        return await this._loadDetails(user.id) ? SignInRes.Ok : SignInRes.Error;
     }
 
     async signOut(): Promise<boolean> {
-        const [res1, res2] = await Promise.allSettled([
-            this.client.auth.signOut(),
-            this._deleteCookie()
-        ]);
-        if (res1.status === "rejected" || res2.status === "rejected" || res1.value.error) {
-            console.error("Sign out error!", (res1 as any)?.value?.error);
+        const { error } = await this.client.auth.signOut();
+        if (error) {
+            console.error("Sign out error!", error);
             return false;
         }
         return true;
     }
 
-    private async _loadUser(id: UUID): Promise<boolean> {
+    private async _loadDetails(id: string | undefined): Promise<boolean> {
+        if (!id) {
+            this._session.set(null);
+            return true;
+        }
         const { data, error } = await this.client
             .from<User>("users")
             .select("*")
             .match({ id })
             // single and not maybeSingle, since the row has to exist if we have a Supabase user
             .single();
-
         if (error || !data) {
             console.error("Error loading up user data.", error);
             return false;
         }
-
         this._session.set(data);
         return true;
     }
 
-    private async _setCookie(session: SupabaseSession) {
-        const tokens: AuthTokens = {
-            accessToken: session.access_token,
-            refreshToken: session.refresh_token
-        };
-
-        await fetchOnClient(authCookieRoute, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(tokens)
-        });
-    }
-
-    private async _deleteCookie() {
-        await fetchOnClient(authCookieRoute, {
-            method: "DELETE"
-        });
-        this._session.set(null);
-    }
-
+    // Manually setting cookies w/ those options is as safe as localStorage,
+    // which is where Supabase usually stores auth tokens
     private async _onAuthStateChange(event: AuthChangeEvent, session: SupabaseSession | null) {
-        // those events are already handled in their functions, so that UI code can redirect immediately after receiving the result
-        if (event !== "TOKEN_REFRESHED") return;
-
-        // We have a session, update server cookies
-        if (session) {
-            const cookiePromise = this._setCookie(session);
-            // We have a user different from the one in session quark => refresh data
-            if (session.user && session.user.id !== this._session()?.id) {
-                await Promise.allSettled([
-                    cookiePromise,
-                    this._loadUser(session.user.id as UUID)
-                ]);
-            }
-            // We have no user in auth, but one in the session quark => remove it
-            else if (!session.user && this._session()) {
-                this._session.set(null);
-                await cookiePromise;
-                // Regular case, user stays the same, so we just refresh cookies on the server
-            } else {
-                await cookiePromise
+        if (event === "SIGNED_OUT") {
+            this._session.set(null);
+            deleteCookie(AccessTokenCookie);
+            deleteCookie(RefreshTokenCookie);
+        } else if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
+            if (session) {
+                const expires = session.expires_at
+                    ? new Date(1000 * session.expires_at)
+                    : undefined;
+                setCookie(AccessTokenCookie, session.access_token, { expires });
+                if (session.refresh_token) {
+                    console.log("Saving refresh token:", session.refresh_token);
+                    setCookie(RefreshTokenCookie, session.refresh_token);
+                }
             }
         }
-        // No more session, so we just clear the quark and the cookies
-        else {
-            await this._deleteCookie();
-        }
-
+        // else if (session && (session.access_token !== this.lastAccessToken || session.refresh_token !== this.lastRefreshToken)) {
+        //     await this._syncSession(session);
+        // }
     }
 }
+
+type CookieOptions = {
+    domain?: string,
+    path?: string,
+    maxAge?: number,
+    expires?: Date,
+    sameSite?: true | false | 'lax' | 'strict' | 'none',
+    secure?: boolean
+};
+
+
+function setCookie(name: string | number | boolean, value: string | number | boolean, options: CookieOptions = {}) {
+    options = {
+        path: '/',
+        sameSite: 'lax',
+        secure: process.env.NODE_ENV === "production",
+        // add other defaults here if necessary
+        ...options
+    };
+
+    if (options.expires instanceof Date) {
+        (options as any).expires = options.expires.toUTCString();
+    }
+
+    let updatedCookie = encodeURIComponent(name) + "=" + encodeURIComponent(value);
+
+    for (let optionKey in options) {
+        updatedCookie += "; " + optionKey;
+        let optionValue = options[optionKey as keyof CookieOptions];
+        if (optionValue !== true) {
+            updatedCookie += "=" + optionValue;
+        }
+    }
+
+    document.cookie = updatedCookie;
+}
+
+const deleteCookie = (name: string) => setCookie(name, '', { expires: new Date(0) });

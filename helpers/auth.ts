@@ -1,4 +1,5 @@
 import { PROPERTY_TYPES } from "@babel/types";
+import { ServerResponse } from "http";
 import { GetServerSideProps, GetServerSidePropsContext, GetServerSidePropsResult, PreviewData, Redirect } from "next";
 import { ParsedUrlQuery } from "querystring";
 import { Role, User, UUID } from "types";
@@ -15,7 +16,7 @@ export type AccessJWT = {
   user_metadata: { role: Role }
 }
 
-export const jwtDecoder = (jwt: string) =>
+export const jwtDecoder = (jwt: string): AccessJWT =>
   JSON.parse(Buffer.from(jwt.split('.')[1], 'base64').toString('utf8'));
 
 export const loginRedirect = (source: string) => ({
@@ -59,16 +60,6 @@ export function withAuth<
   };
 }
 
-export function injectAuth<
-  P extends { [key: string]: any } = { [key: string]: any },
-  Q extends ParsedUrlQuery = ParsedUrlQuery,
-  D extends PreviewData = PreviewData
->(getServerSideProps: (context: GetServerSidePropsContext<Q, D>, user: User) => Promise<GetServerSidePropsResult<P>>, redirect: string = "/"): GetServerSideProps<P, Q, D> {
-  return async (ctx) => {
-    const user = await getServerUser(ctx.req.cookies);
-    if (!user) {
-      return loginRedirect(redirect);
-    }
-    return await getServerSideProps(ctx, user);
-  }
+export function setCookies(res: ServerResponse, accessToken: string, refreshToken?: string) {
+  res
 }

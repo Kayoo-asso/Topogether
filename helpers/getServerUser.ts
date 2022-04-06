@@ -20,51 +20,44 @@ export type ServerSession = {
 }
 
 export async function getServerUser(cookies: Cookies): Promise<User | null> {
-    const accessToken = cookies[AccessTokenCookie];
-    const refreshToken = cookies[RefreshTokenCookie];
+    console.log("[GetServerUser]");
+
+    let accessToken: string | undefined = cookies[AccessTokenCookie];
+    const refreshToken: string | undefined = cookies[RefreshTokenCookie];
+    if ((!accessToken || jwtDecoder(accessToken).exp * 1000 < Date.now()) && refreshToken) {
+        console.log("Refreshing access token. Refresh token =", refreshToken);
+        const { session, error } = await supabaseClient.auth.setSession(refreshToken);
+        if (error) console.error("Error refreshing access token:", error);
+        accessToken = session?.access_token;
+    } else if (accessToken) {
+        console.log("Setting auth token");
+        // otherwise fetching won't work
+        supabaseClient.auth.setAuth(accessToken);
+    }
+
     if (!accessToken) return null;
     
     const key = accessToken + (refreshToken || '');
     const previous = sessions.get(key);
     if (previous) {
+        console.log("Found previous session");
         return previous;
     }
 
-    // Get access token expiry date
-    const jwt = jwtDecoder(accessToken) as AccessJWT;
-    // the expiration timestamp is in seconds, not ms
-    const expired = Date.now() > (jwt.exp * 1000);
+    let userId = jwtDecoder(accessToken).sub;
 
+    console.log("Feching server user " + userId);
 
-    let id: UUID | null = null;
-    if (!expired) {
-        supabaseClient.auth.setAuth(accessToken);
-        id = jwt.sub;
-    }
-    // TODO: do we need to send the refreshed access token back to the client?
-    else if (refreshToken) {
-        await supabaseClient.auth.api.refreshAccessToken(refreshToken)
-        const { session } = await supabaseClient.auth.setSession(refreshToken);
-        if (session?.user?.id) {
-            id = session.user.id as UUID;
-        }
-    }
-    if (id) {
-        const { data, error } = await supabaseClient
-            .from<User>("users")
-            .select('*')
-            .eq('id', id)
-            .single();
-        // Error cases fall back to returning null
-        if (error) {
-            console.error("Error retrieving user information", error);
-        } else if (!data) {
-            console.error("Error retrieving user information for " + id);
-        } else {
-            sessions.set(key, data);
-            return data;
-        }
-    }
-    sessions.set(key, null);
-    return null;
+    const { data, error } = await supabaseClient
+        .from<User>("users")
+        .select('*')
+        .eq('id', userId)
+        .single();
+    // Error cases fall back to returning null
+    if (error || !data) {
+        console.error("Error retrieving user information", error);
+        return null;
+    } 
+    sessions.set(key, data);
+    return data;
 }

@@ -1,4 +1,4 @@
-import { User } from "types";
+import { User} from "types";
 import React, { useEffect, useMemo } from "react";
 import { AuthContext, AuthService, supabaseClient } from "helpers/services";
 import { loginFakeAdmin } from "helpers/fakeData/loginFakeAdmin";
@@ -18,10 +18,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ initial, children })
             }
         }, []);
     }
-
-    useEffect(() => {
-        supabaseClient.auth.getSessionFromUrl({ storeSession: true });
-    }, []);
 
     return <AuthContext.Provider value={auth}>
         {children}
