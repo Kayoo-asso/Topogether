@@ -106,10 +106,10 @@ export const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
             <div className='flex flex-col gap-16 w-full'>
                 <div className='flex flex-row w-full justify-center md:justify-between items-center'>
                     <Link href="/user/signup">
-                        <div className="ktext-base-little text-main cursor-pointer hidden md:block">Créer un compte</div>
+                        <a className="ktext-base-little text-main cursor-pointer hidden md:block">Créer un compte</a>
                     </Link>
                     <Link href="/user/forgotPassword">
-                        <div className="ktext-base-little text-main cursor-pointer">Mot de passe oublié ?</div>
+                        <a className="ktext-base-little text-main cursor-pointer">Mot de passe oublié ?</a>
                     </Link>
                 </div>
 

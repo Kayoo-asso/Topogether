@@ -10,7 +10,6 @@ import { useRouter } from 'next/router';
 import { useCreateQuark, watchDependencies } from 'helpers/quarky';
 import { TopoTypeName } from 'types/EnumNames';
 import { HeaderDesktop } from 'components/layouts';
-import { sync } from 'helpers/services';
 
 interface RootNewProps {
     user: User,
@@ -58,10 +57,11 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies((props: RootNew
 
   const create = async () => {
     setLoading(true);
-    createTopo(topo);
-    await sync.attemptSync();
-    if (sync.status() === 2) {
-      router.push('/builder/'+encodeUUID(topo.id));
+    const newTopo = await createTopo(topo);
+    if (newTopo) {
+      await router.push('/builder/'+encodeUUID(newTopo.id));
+    } else {
+      console.error("TODO");
     }
   };
 
@@ -107,7 +107,7 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies((props: RootNew
                 />
                 <div className="flex flex-row items-center w-full justify-between md  :justify-end">
                   <Link href="/builder/dashboard">
-                    <div className="ktext-base-little cursor-pointer text-white md:mr-16">Annuler</div>
+                    <a className="ktext-base-little cursor-pointer text-white md:mr-16">Annuler</a>
                   </Link>
                   <Button
                     content="Suivant"

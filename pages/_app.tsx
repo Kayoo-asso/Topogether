@@ -24,7 +24,7 @@ type Props = AppProps & CustomProps;
 
 const breakpoints: Record<Device, number> = {
   mobile: 0,
-  desktop: 640
+  desktop: 768
 };
 
 const CustomApp = ({ Component, pageProps, session, initialDevice }: Props) => {

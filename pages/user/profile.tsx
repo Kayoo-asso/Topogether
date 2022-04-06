@@ -246,7 +246,7 @@ const ProfilePage: NextPage<ProfileProps> = watchDependencies(({ user }) => {
 
             <div className='flex flex-col items-center gap-4 mb-10 md:mb-0 md:pt-10'>
               <Link href="/user/changePassword">
-                  <div className="ktext-base-little text-main cursor-pointer">Modifier le mot de passe</div>
+                  <a className="ktext-base-little text-main cursor-pointer">Modifier le mot de passe</a>
               </Link>
 
               <div 

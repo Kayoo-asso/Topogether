@@ -18,10 +18,12 @@ export const HeaderMobile: React.FC<HeaderMobileProps> = (props: HeaderMobilePro
     <div className="bg-dark flex items-center h-header">
 
       <div className='w-1/6 flex justify-center'>
-        <Link href={props.backLink} passHref>
+        <Link href={props.backLink}>
+          <a>
             <ArrowSimple
               className="stroke-white stroke-1 w-4 h-4"
             />
+          </a>
         </Link>
       </div>
 

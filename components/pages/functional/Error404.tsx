@@ -15,8 +15,8 @@ export const Error404: React.FC<Error404Props> = (props: Error404Props) => {
                 title={props.title}
                 backLink='#'
             />
-            <Link href='/' passHref>
-                <div className='w-full h-full relative bg-white flex items-center justify-center cursor-pointer'>
+            <Link href='/'>
+                <a className='w-full h-full relative bg-white flex items-center justify-center cursor-pointer'>
                     <NextImage 
                         src='/assets/img/404_error_topo_climbing.png'
                         priority
@@ -24,7 +24,7 @@ export const Error404: React.FC<Error404Props> = (props: Error404Props) => {
                         layout="fill"
                         objectFit="contain"
                     />
-                </div>
+                </a>
             </Link>
         </>
     )

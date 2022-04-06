@@ -3,23 +3,23 @@ import Link from 'next/link';
 import { Loading } from 'components/layouts';
 
 interface ButtonProps {
-  content: string,
-  className?: string,
-  white?: boolean,
-  activated?: boolean,
-  loading?: boolean,
-  fullWidth?: boolean,
-  href?: string,
-  onClick?: () => void,
+    content: string,
+    className?: string,
+    white?: boolean,
+    activated?: boolean,
+    loading?: boolean,
+    fullWidth?: boolean,
+    href?: string,
+    onClick?: () => void,
 }
 
 export const Button: React.FC<ButtonProps> = ({
-  white = false,
-  fullWidth = false,
-  activated = true,
-  loading = false,
-  className = '',
-  ...props
+    white = false,
+    fullWidth = false,
+    activated = true,
+    loading = false,
+    className = '',
+    ...props
 }: ButtonProps) => {
     const getUIClasses = () => {
         if (activated && !loading) {
@@ -36,18 +36,20 @@ export const Button: React.FC<ButtonProps> = ({
             }}
         >
             <div>{props.content}</div>
-            {loading && 
+            {loading &&
                 <div>
                     <Loading SVGClassName='h-6 w-6 stroke-white' bgWhite={false} />
                 </div>
             }
         </button>
     );
-        
+
     return ((props.href && activated) ?
         <>
-            <Link href={props.href || ''} passHref>
-                {button}
+            <Link href={props.href || ''}>
+                <a>
+                    {button}
+                </a>
             </Link>
         </>
         : <>{button}</>);

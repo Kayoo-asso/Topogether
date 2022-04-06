@@ -83,7 +83,7 @@ const ChangePasswordPage: NextPage = () => {
             />
 
             <Link href="/user/profile">
-                <div className="ktext-base-little text-main cursor-pointer hidden md:flex md:w-full">Retour</div>
+                <a className="ktext-base-little text-main cursor-pointer hidden md:flex md:w-full">Retour</a>
             </Link>
           </div>
 

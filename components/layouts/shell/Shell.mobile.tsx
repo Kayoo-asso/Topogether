@@ -35,30 +35,30 @@ export const ShellMobile: React.FC = watchDependencies(() => {
   return (
     <>
       <div className="w-screen h-full bg-dark flex">
-        <Link href={session ? '/user/profile' : '/user/login'} passHref>
-          <div
+        <Link href={session ? '/user/profile' : '/user/login'}>
+          <a
             className={`h-full flex-1 flex justify-center items-center ${activeTab === 0 ? 'border-t-main border-t-6' : ''}`}
             onClick={() => changeTab(0)}
           >
             <UserIcon
               className={`h-5 w-5 ${activeTab === 0 ? 'fill-main' : 'fill-white'} `}
             />
-          </div>
+          </a>
         </Link>
 
-        <Link href={topoUrl || '/'} passHref>
-          <div
+        <Link href={topoUrl || '/'}>
+          <a
             className={`h-full flex-1 flex justify-center items-center ${activeTab === 1 ? 'border-t-main border-t-6' : ''}`}
             onClick={() => changeTab(1)}
           >
             <WaypointIcon
               className={`h-5 w-5 stroke-1 ${activeTab === 1 ? 'fill-main' : 'fill-white'} `}
             />
-          </div>
+          </a>
         </Link>
 
-        <Link href={session ? '/builder/dashboard' : '/user/login'} passHref>
-          <div
+        <Link href={session ? '/builder/dashboard' : '/user/login'}>
+          <a
             className={`h-full flex-1 flex justify-center items-center ${activeTab === 2 ? 'border-t-main border-t-6' : ''}`}
             onClick={() => {
               if (session) changeTab(2);
@@ -68,7 +68,7 @@ export const ShellMobile: React.FC = watchDependencies(() => {
             <TopoIcon
               className={`h-5 w-5 my-auto stroke-1 ${activeTab === 2 ? 'stroke-main' : 'stroke-white'} `}
             />
-          </div>
+          </a>
         </Link>
       </div>
     </>

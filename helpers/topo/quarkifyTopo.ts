@@ -1,13 +1,14 @@
 import { Quark, quark, QuarkArray } from 'helpers/quarky';
-import { sync } from 'helpers/services';
+import { supabaseClient, sync } from 'helpers/services';
 import { DBConvert } from 'helpers/services/DBConvert';
-import { BoulderData, TrackData, TopoData, UUID, Track, Boulder, Topo, Line, Sector, Manager, Waypoint, TopoAccess, Parking, DBLightTopo, LightTopo } from 'types';
+import { BoulderData, TrackData, TopoData, UUID, Track, Boulder, Topo, Line, Sector, Manager, Waypoint, TopoAccess, Parking, DBLightTopo, LightTopo, DBTopo } from 'types';
 
 export type TopoCreate = Omit<TopoData, 'liked' | 'sectors' | 'boulders' | 'waypoints' | 'accesses' | 'parkings' | 'managers' | 'lonelyBoulders'>;
 
-export function createTopo(data: TopoCreate): Quark<Topo> {
+// Quick hack for now
+export async function createTopo(create: TopoCreate): Promise<TopoData | null> {
     const dataWithArrays: TopoData = {
-        ...data,
+        ...create,
         liked: false,
         sectors: [],
         boulders: [],
@@ -17,8 +18,17 @@ export function createTopo(data: TopoCreate): Quark<Topo> {
         parkings: [],
         lonelyBoulders: [],
     }
-    sync.topoCreate(DBConvert.topo(dataWithArrays))
-    return quarkifyTopo(dataWithArrays, false);
+    const dto = DBConvert.topo(dataWithArrays);
+    const { error, status } = await supabaseClient
+        .from<DBTopo>("topos")
+        .insert(dto, { returning: "minimal" });
+    if (error) {
+        console.error("Error creating new topo:", error);
+        return null;
+    }
+    return {
+        ...dataWithArrays,
+    };
 }
 
 export function editTopo(topo: TopoData): Quark<Topo> {

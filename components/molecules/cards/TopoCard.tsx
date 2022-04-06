@@ -38,8 +38,8 @@ export const TopoCard: React.FC<TopoCardProps> = React.memo((props: TopoCardProp
 
   return (
     <>
-      <Link href={`/builder/${encodeUUID(props.topo.id)}`} passHref>
-        <div onContextMenu={(e) => {
+      <Link href={`/builder/${encodeUUID(props.topo.id)}`}>
+        <a onContextMenu={(e) => {
           props.onContextMenu(props.topo, { x: e.pageX, y: e.pageY });
           e.preventDefault()
         }}
@@ -86,7 +86,7 @@ export const TopoCard: React.FC<TopoCardProps> = React.memo((props: TopoCardProp
 
             </div>
           </Card>
-        </div>
+        </a>
       </Link>
     </>
   );

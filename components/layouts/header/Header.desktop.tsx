@@ -55,8 +55,8 @@ export const HeaderDesktop: React.FC<HeaderDesktopProps> = watchDependencies(({
 
   return (
     <div className="bg-dark items-center h-header hidden md:flex">
-      <Link href={props.backLink} passHref>
-        <div className="w-1/12 relative h-[70%] cursor-pointer">
+      <Link href={props.backLink}>
+        <a className="w-1/12 relative h-[70%] cursor-pointer">
           <NextImage
             src="/assets/img/Logo_white_topogether.png"
             priority
@@ -64,7 +64,7 @@ export const HeaderDesktop: React.FC<HeaderDesktopProps> = watchDependencies(({
             layout="fill"
             objectFit="contain"
           />
-        </div>
+        </a>
       </Link>
 
       <div
@@ -110,10 +110,10 @@ export const HeaderDesktop: React.FC<HeaderDesktopProps> = watchDependencies(({
       )}
 
       {displayLogin && !user &&
-        <Link href="/user/login" passHref>
-          <div className="ktext-base text-white cursor-pointer mr-[3%]">
+        <Link href="/user/login">
+          <a className="ktext-base text-white cursor-pointer mr-[3%]">
             Se connecter
-          </div>
+          </a>
         </Link>
       }
 

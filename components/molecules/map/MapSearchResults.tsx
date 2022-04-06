@@ -25,11 +25,11 @@ export const MapSearchResults: React.FC<MapSearchResultsProps> = (props: MapSear
 
             {props.topoApiResults.length > 0 &&
                 props.topoApiResults.map((topo) =>
-                    <Link href={'/topo/' + encodeUUID(topo.id)} passHref key={topo.id}>
-                        <div className='flex flex-row gap-4 items-center py-3 text-dark cursor-pointer ktext-base'>
+                    <Link href={'/topo/' + encodeUUID(topo.id)} key={topo.id}>
+                        <a className='flex flex-row gap-4 items-center py-3 text-dark cursor-pointer ktext-base'>
                             <WaypointIcon className='w-5 h-5 fill-main' />
                             <div>{topo.name}</div>
-                        </div>
+                        </a>
                     </Link>
                 )
             }

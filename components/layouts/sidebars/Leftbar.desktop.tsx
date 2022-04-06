@@ -26,38 +26,38 @@ export const LeftbarDesktop: React.FC<LeftbarDesktopProps> = watchDependencies((
       </div>
 
       <div className="flex-1 flex flex-col gap-10">
-        <Link href="/builder/dashboard" passHref>
-          <div className="cursor-pointer flex flex-row">
+        <Link href="/builder/dashboard">
+          <a className="flex flex-row">
             <TopoIcon
               className={`h-6 w-6 mr-4 ${currentMenuItem === 'BUILDER' ? 'stroke-main' : 'stroke-dark'}`}
             />
             <span className={`ktext-title ${currentMenuItem === 'BUILDER' ? 'text-main' : 'text-dark'}`}>Mes topos</span>
-          </div>
+          </a>
         </Link>
-        <Link href="/" passHref>
-          <div className="cursor-pointer flex flex-row">
+        <Link href="/">
+          <a className="flex flex-row">
             <WaypointIcon
               className={`h-6 w-6 mr-4 ${currentMenuItem === 'MAP' ? 'fill-main' : 'fill-dark'}`}
             />
             <span className={`ktext-title ${currentMenuItem === 'MAP' ? 'text-main' : 'text-dark'}`}>Carte</span>
-          </div>
+          </a>
         </Link>
-        <Link href="/user/profile" passHref>
-          <div className="cursor-pointer flex flex-row">
+        <Link href="/user/profile">
+          <a className="flex flex-row">
             <UserIcon
               className={`h-6 w-6 mr-4 ${currentMenuItem === 'USER' ? 'fill-main' : 'fill-dark'}`}
             />
             <span className={`ktext-title ${currentMenuItem === 'USER' ? 'text-main' : 'text-dark'}`}>Profile</span>
-          </div>
+          </a>
         </Link>
         {user?.role === 'ADMIN' && (
-          <Link href="/admin" passHref>
-            <div className="cursor-pointer flex flex-row">
+          <Link href="/admin">
+            <a className="flex flex-row">
               <KeyIcon
                 className={`h-6 w-6 mr-4 ${currentMenuItem === 'ADMIN' ? 'stroke-main' : 'stroke-dark'}`}
               />
               <span className={`ktext-title ${currentMenuItem === 'ADMIN' ? 'text-main' : 'text-dark'}`}>Admin</span>
-            </div>
+            </a>
           </Link>
         )}
       </div>

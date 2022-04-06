@@ -25,7 +25,7 @@ export async function seedLocalDb(auth: AuthService) {
             track.creatorId = user.id;
         }
     }
-    createTopo(fakeTopov2);
+    await createTopo(fakeTopov2);
     const quark = quarkifyTopo(fakeTopov2, true);
     let res = await sync.attemptSync();
     let iters = 0;
