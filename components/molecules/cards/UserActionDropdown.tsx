@@ -23,7 +23,9 @@ export const UserActionDropdown: React.FC<UserActionDropdownProps> = React.memo(
             className='w-64'
             position={props.position}
             options={[
-                { value: 'Ouvrir', action: openTopo },
+                ...(props.topo.status !== TopoStatus.Submitted
+                    ? [{ value: 'Ouvrir', action: openTopo }]
+                    : []),
                 { value: 'Télécharger', action: downloadTopo },
                 ...(props.topo.status === TopoStatus.Draft
                     ? [{ value: 'Envoyer en validation', action: props.onSendToValidationClick }]

@@ -12,8 +12,9 @@ interface RootDashboardProps {
     lightTopos: LightTopo[],
 }
 
-export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies((props: RootDashboardProps) => {
+export const RootDashboard: React.FC<RootDashboardProps> = (props: RootDashboardProps) => {
     const [lightTopos, setLightTopos] = useState(props.lightTopos);
+    console.log(lightTopos);
     const draftLightTopos = lightTopos.filter((topo) => topo.status === TopoStatus.Draft);
     const submittedLightTopos = lightTopos.filter((topo) => topo.status === TopoStatus.Submitted);
     const validatedLightTopos = lightTopos.filter((topo) => topo.status === TopoStatus.Validated);
@@ -25,7 +26,17 @@ export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies((pr
 
     const [displayModalSubmit, setDisplayModalSubmit] = useState(false);
     const [displayModalDelete, setDisplayModalDelete] = useState(false);
-    const sendTopoToValidation = useCallback(async () => await api.setTopoStatus(topoDropdown!.id, TopoStatus.Submitted), [topoDropdown]);
+
+    const sendTopoToValidation = useCallback(async () => {
+      if (topoDropdown) {
+        await api.setTopoStatus(topoDropdown!.id, TopoStatus.Submitted);
+        const submittedTopo = lightTopos.find(lt => lt.id === topoDropdown.id)!;
+        submittedTopo.submitted = new Date().toISOString();
+        submittedTopo.status = TopoStatus.Submitted;
+        setLightTopos(lightTopos.slice());
+      }
+    }, [topoDropdown, lightTopos]);
+
     const deleteTopo = useCallback(() => {
       const newLightTopos = lightTopos.filter(lt => lt.id !== topoDropdown?.id);
       api.deleteTopo(topoDropdown!);
@@ -83,6 +94,7 @@ export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies((pr
                   En attente de validation
                 </div>
               )}
+              clickable={false}
               onContextMenu={onContextMenu}
             />
   
@@ -122,4 +134,4 @@ export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies((pr
         }
       </>
     );
-});
+};

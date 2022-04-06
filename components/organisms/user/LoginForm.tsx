@@ -84,7 +84,7 @@ export const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
             />
 
             <div className='flex flex-col w-full md:flex-row justify-start md:justify-between items-center md:mb-6'>
-                <div className="w-full md:w-auto">
+                <div className="w-full">
                     <Button 
                         content="Se connecter"
                         fullWidth

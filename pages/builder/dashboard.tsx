@@ -4,7 +4,7 @@ import { loginRedirect } from 'helpers/auth';
 import { getServerUser } from 'helpers/getServerUser';
 import { api } from 'helpers/services';
 import type { GetServerSideProps, NextPage } from 'next';
-import { DBLightTopo, LightTopo } from 'types';
+import { DBLightTopo } from 'types';
 
 type DashboardProps = {
   myTopos: DBLightTopo[]
