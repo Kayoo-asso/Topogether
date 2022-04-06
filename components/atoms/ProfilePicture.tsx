@@ -22,10 +22,10 @@ export const ProfilePicture: React.FC<ProfilePictureProps> = ({
     >
       <CFImage
         image={props.image}
-        className="rounded-full object-fit"
+        className="rounded-full object-fit h-full"
         alt="Photo de profil"
         sizeHint='25vw'
-        isLoading={loading}
+        forceLoading={loading}
         defaultImage={defaultProfilePicture}
       />
     </div>

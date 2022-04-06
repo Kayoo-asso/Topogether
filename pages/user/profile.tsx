@@ -46,6 +46,20 @@ const ProfilePage: NextPage<ProfileProps> = watchDependencies(({ user }) => {
   const [loadingModify, setLoadingModify] = useState(false);
   const [loadingChangeMail, setLoadingChangeMail] = useState(false);
 
+  const sendModification = async () => {
+    console.log(image);
+    return await auth.updateUserInfo({
+      ...user,
+      userName: userName as Name,
+      firstName: firstName as Name,
+      lastName: lastName as Name,
+      image: image,
+      birthDate,
+      country: country as Name,
+      city: city as Name,
+      phone: phone as StringBetween<1, 30>
+    });
+  }
   const modifyProfile = async () => {
     let hasError = false;
     if (!userName) { setUserNameError("Pseudo invalide"); hasError = true; }
@@ -53,17 +67,7 @@ const ProfilePage: NextPage<ProfileProps> = watchDependencies(({ user }) => {
 
     if (!hasError) {
       setLoadingModify(true);
-      const res = await auth.updateUserInfo({
-        ...user,
-        userName: userName as Name,
-        firstName: firstName as Name,
-        lastName: lastName as Name,
-        image: image,
-        birthDate,
-        country: country as Name,
-        city: city as Name,
-        phone: phone as StringBetween<1, 30>
-      });
+      const res = await sendModification();
       if (res) setSuccessMessageModify('Profil modifié');
       else setErrorMessageModify('Une erreur est survenue. Merci de réessayer.');
       setLoadingModify(false);
@@ -104,9 +108,9 @@ const ProfilePage: NextPage<ProfileProps> = watchDependencies(({ user }) => {
                 ref={imageInputRef}
                 profileImageButton
                 value={image}
-                onChange={(images) => {
-                  console.log(images);
+                onChange={async (images) => {
                   setImage(images[0]);
+                  await sendModification();
                 }}
               />
             </div>

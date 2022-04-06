@@ -10,7 +10,7 @@ import { Loading } from "components/layouts";
 export type CFImageProps = RawImageAttributes & {
     alt: string,
     image?: Image,
-    isLoading?: boolean,
+    forceLoading?: boolean,
     sizeHint: SourceSize | { raw: string },
     defaultImage?: StaticImageData,
 };
@@ -29,6 +29,7 @@ export const CFImage: React.FC<CFImageProps> = ({
     const device = useDevice();
     const imgRef = useRef<HTMLImageElement>(null);
     const [loading, setLoading] = useState(true);
+    const { forceLoading, ...imgProps } = props;
 
     useEffect(() => {
         //If the image is already in the page because it's in cache, onLoad does not trigger
@@ -63,7 +64,7 @@ export const CFImage: React.FC<CFImageProps> = ({
         
     return (
         <div className='w-full h-full relative'>
-            {(loading || props.isLoading) &&
+            {(loading || forceLoading) &&
                 <div className='bg-white absolute w-full h-full top-0 z-1000'>
                     <Loading 
                         bgWhite={false} 
@@ -78,7 +79,7 @@ export const CFImage: React.FC<CFImageProps> = ({
                 height={height}
                 srcSet={srcSet}
                 sizes={sizes}
-                {...props}
+                {...imgProps}
                 loading={props.loading ?? 'lazy'}
                 decoding={props.decoding ?? 'async'}
                 onLoad={() => {
