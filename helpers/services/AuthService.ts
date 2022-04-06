@@ -5,11 +5,6 @@ import { createContext, useContext } from "react";
 import { DBConvert } from "./DBConvert";
 import { AccessTokenCookie, RefreshTokenCookie } from "helpers/auth";
 
-export type AuthTokens = {
-    access_token: string,
-    refresh_token?: string
-}
-
 export enum SignUpRes {
     LoggedIn,
     ConfirmationRequired,
@@ -172,9 +167,6 @@ export class AuthService {
                 }
             }
         }
-        // else if (session && (session.access_token !== this.lastAccessToken || session.refresh_token !== this.lastRefreshToken)) {
-        //     await this._syncSession(session);
-        // }
     }
 }
 
