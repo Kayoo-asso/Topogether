@@ -1,8 +1,16 @@
 import React, { useContext, useState } from 'react';
-import { DownloadButton, Flash, GradeHistogram, Icon, LikeButton, SlideoverLeftDesktop, SlideoverMobile } from 'components';
+import { DownloadButton, Flash, GradeHistogram, LikeButton, SlideoverLeftDesktop, SlideoverMobile } from 'components';
 import { Signal } from 'helpers/quarky';
 import { Amenities, Topo } from 'types';
 import { DeviceContext, hasFlag, listRockTypes, TopoTypeToColor } from 'helpers';
+import WaypointIcon from 'assets/icons/waypoint.svg';
+import Rock from 'assets/icons/rock.svg'
+import ManyTracks from 'assets/icons/many-tracks.svg';
+import Toilets from 'assets/icons/toilets.svg';
+import Picnic from 'assets/icons/picnic.svg';
+import WaterDrop from 'assets/icons/water-drop.svg';
+import Bin from 'assets/icons/bin.svg';
+import Umbrella from 'assets/icons/umbrella.svg';
 
 interface InfoSlideoverProps {
     topo: Signal<Topo>,
@@ -54,10 +62,8 @@ export const InfoSlideover: React.FC<InfoSlideoverProps> = ({
                 
                 <div className='ktext-big-title text-center mt-4 flex flex-row items-center'>
                     <div className='hidden md:inline mr-2'>
-                        <Icon 
-                            name='waypoint'
-                            SVGClassName={'w-6 h-6 ' + TopoTypeToColor(topo.type)}
-                            center
+                        <WaypointIcon 
+                            className={'w-6 h-6 ' + TopoTypeToColor(topo.type)}
                         />
                     </div>
                     {topo.name}
@@ -92,16 +98,14 @@ export const InfoSlideover: React.FC<InfoSlideoverProps> = ({
                 <div className='flex flex-row justify-between items-end min-h-[150px] md:justify-evenly'>
                     <div className='flex flex-col items-center'>
                         {nbOfBoulders}
-                        <Icon 
-                            name='rock'
-                            SVGClassName='h-8 w-8 stroke-dark'
+                        <Rock 
+                            className='h-8 w-8 stroke-dark'
                         /> 
                     </div>
                     <div className='flex flex-col items-center pr-8'>
                         {nbOfTracks}
-                        <Icon 
-                            name='many-tracks'
-                            SVGClassName='h-8 w-8 stroke-dark'
+                        <ManyTracks 
+                            className='h-8 w-8 stroke-dark'
                         />
                     </div>
                     <div className='h-full'>
@@ -128,25 +132,21 @@ export const InfoSlideover: React.FC<InfoSlideoverProps> = ({
                     <div>
                         <div className='font-semibold'>Equipements présents : </div>
                         <div className='flex flex-row gap-6 mt-2'>
-                            <Icon 
-                                name='toilets'
-                                SVGClassName={'h-5 w-5 ' + (hasFlag(topo.amenities, Amenities.Toilets) ? 'fill-main' : 'fill-grey-light')}
+                            <Toilets 
+                                className={'h-5 w-5 ' + (hasFlag(topo.amenities, Amenities.Toilets) ? 'fill-main' : 'fill-grey-light')}
                             />
-                            <Icon 
-                                name='picnic'
-                                SVGClassName={'h-6 w-6 ' + (hasFlag(topo.amenities, Amenities.PicnicArea) ? 'stroke-main' : 'stroke-grey-light')}
+                            <Picnic 
+                                className={'h-6 w-6 ' + (hasFlag(topo.amenities, Amenities.PicnicArea) ? 'stroke-main' : 'stroke-grey-light')}
                             />
-                            <Icon 
-                                name='water-drop'
-                                SVGClassName={'h-5 w-5 ' + (hasFlag(topo.amenities, Amenities.Waterspot) ? 'stroke-main' : 'stroke-grey-light')}
+                            <WaterDrop 
+                                className={'h-5 w-5 ' + (hasFlag(topo.amenities, Amenities.Waterspot) ? 'stroke-main' : 'stroke-grey-light')}
                             />
-                            <Icon 
-                                name='bin'
-                                SVGClassName={'h-5 w-5 ' + (hasFlag(topo.amenities, Amenities.Bins) ? 'stroke-main fill-main' : 'stroke-grey-light fill-grey-light')}
+                            <Bin 
+                                className={'h-5 w-5 ' + (hasFlag(topo.amenities, Amenities.Bins) ? 'stroke-main fill-main' : 'stroke-grey-light fill-grey-light')}
                             />
-                            <Icon 
+                            <Umbrella 
                                 name='umbrella'
-                                SVGClassName={'h-5 w-5 ' + (hasFlag(topo.amenities, Amenities.Shelter) ? 'fill-main' : 'fill-grey-light')}
+                                className={'h-5 w-5 ' + (hasFlag(topo.amenities, Amenities.Shelter) ? 'fill-main' : 'fill-grey-light')}
                             />
                             
                         </div>

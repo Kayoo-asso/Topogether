@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react';
-import { Icon } from '..';
+import Clear from 'assets/icons/clear.svg';
 
 interface ModalProps {
     withBackground?: boolean,
@@ -27,9 +27,8 @@ export const Modal: React.FC<ModalProps> = ({
                     className='absolute top-3 right-3 cursor-pointer'
                     onClick={props.onClose}
                 >
-                    <Icon 
-                        name='clear'
-                        SVGClassName='stroke-dark h-8 w-8'
+                    <Clear 
+                        className='stroke-dark h-8 w-8'
                     />
                 </div>
             </div>

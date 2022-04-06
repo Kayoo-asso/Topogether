@@ -1,10 +1,13 @@
 import React, { Dispatch, SetStateAction, useMemo, useState } from 'react';
-import { GradeScale, Icon, LikeButton, SlideoverMobile, TracksImage, Show } from 'components';
+import { GradeScale, LikeButton, SlideoverMobile, Show } from 'components';
 import { Boulder, Image, Track, UUID } from 'types';
 import { buildBoulderGradeHistogram } from 'helpers';
 import { Quark, watchDependencies, SelectQuarkNullable } from 'helpers/quarky';
 import { TracksList } from '..';
 import { CFImage } from 'components/atoms/CFImage';
+import ArrowFull from 'assets/icons/arrow-full.svg';
+import ManyTracks from 'assets/icons/many-tracks.svg';
+import AddIcon from 'assets/icons/add.svg';
 
 interface BoulderSlideoverMobileProps {
   boulder: Quark<Boulder>,
@@ -25,7 +28,7 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = wat
 
   const boulder = props.boulder();
   const selectedTrack = props.selectedTrack();
-  
+
   const [imageToDisplayIndex, setImageToDisplayIndex] = useState(0);
 
   const [displayPhantomTracks, setDisplayPhantomTracks] = useState(false);
@@ -46,16 +49,15 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = wat
       {full && (
         <div className="w-full bg-dark rounded-t-lg flex items-center justify-center">
           {imageToDisplayIndex > 0 &&
-            <Icon 
-              name="arrow-full"
-              center
-              SVGClassName="w-3 h-3 stroke-main fill-main rotate-180"
-              wrapperClassName='absolute left-4 z-100'
+            <button
+              className='absolute left-4 z-100'
               onClick={() => {
                 props.setCurrentImage(boulder.images[imageToDisplayIndex - 1]);
                 setImageToDisplayIndex(idx => idx - 1)
               }}
-            />
+            >
+              <ArrowFull className="w-3 h-3 stroke-main fill-main rotate-180" />
+            </button>
           }
 
           {/* <TracksImage
@@ -67,63 +69,64 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = wat
             containerClassName={props.currentImage.width / props.currentImage.height > 1 ? 'overflow-hidden rounded-t-lg h-full' : 'h-[35vh]'}
           /> */}
 
-          {imageToDisplayIndex < boulder.images.length-1 &&
-            <Icon 
-              name="arrow-full"
-              center
-              SVGClassName="w-3 h-3 stroke-main fill-main"
-              wrapperClassName='absolute right-4 z-100'
+          {imageToDisplayIndex < boulder.images.length - 1 &&
+            <button
+              className="absolute right-4 z-100"
               onClick={() => {
                 props.setCurrentImage(boulder.images[imageToDisplayIndex + 1]);
                 setImageToDisplayIndex(idx => idx + 1)
               }}
-            />
+            >
+              <ArrowFull className="w-3 h-3 stroke-main fill-main" />
+            </button>
           }
         </div>
       )}
 
       {/* BOULDER INFOS */}
-        <div className={`grid grid-cols-8 p-5 items-center ${full ? '' : ' mt-3'}`}>
-          <div className="col-span-6">
-            <div className="ktext-section-title">{boulder.name}</div>
-            {boulder.isHighball && full && <div className="ktext-base-little">High Ball</div>}
-            {boulder.dangerousDescent && full && <div className="ktext-base-little">Descente dangereuse !</div>}
-            {!full && (
-              <div className="flex items-center mt-2">
-                <GradeScale
-                  histogram={buildBoulderGradeHistogram(boulder)}
-                  circleSize="little"
-                />
-              </div>
-            )}
-          </div>
-
-          <div className="flex flex-row gap-5 justify-end col-span-2">
-            {selectedTrack &&
-              <Icon 
-                name='many-tracks'
-                SVGClassName={'w-6 h-6 ' + (displayPhantomTracks ? 'stroke-main' : 'stroke-grey-medium')}
-                onClick={() => setDisplayPhantomTracks(!displayPhantomTracks)}
+      <div className={`grid grid-cols-8 p-5 items-center ${full ? '' : ' mt-3'}`}>
+        <div className="col-span-6">
+          <div className="ktext-section-title">{boulder.name}</div>
+          {boulder.isHighball && full && <div className="ktext-base-little">High Ball</div>}
+          {boulder.dangerousDescent && full && <div className="ktext-base-little">Descente dangereuse !</div>}
+          {!full && (
+            <div className="flex items-center mt-2">
+              <GradeScale
+                histogram={buildBoulderGradeHistogram(boulder)}
+                circleSize="little"
               />
-            }
-            {full && (
-              <LikeButton
-                liked={boulder.liked}
-              />
-            )}
-
-            {!full && (
-              <div className="w-full relative h-[60px]">
-                <CFImage
-                  image={boulder.images[0]}
-                  className="rounded-sm object-contain"
-                  alt="Boulder"
-                  sizeHint="50vw"
-                  />
-              </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
+
+        <div className="flex flex-row gap-5 justify-end col-span-2">
+          {selectedTrack &&
+            <button
+              onClick={() => setDisplayPhantomTracks(!displayPhantomTracks)}
+            >
+              <ManyTracks
+                className={'w-6 h-6 ' + (displayPhantomTracks ? 'stroke-main' : 'stroke-grey-medium')}
+              />
+            </button>
+          }
+          {full && (
+            <LikeButton
+              liked={boulder.liked}
+            />
+          )}
+
+          {!full && (
+            <div className="w-full relative h-[60px]">
+              <CFImage
+                image={boulder.images[0]}
+                className="rounded-sm object-contain"
+                alt="Boulder"
+                sizeHint="50vw"
+              />
+            </div>
+          )}
+        </div>
+      </div>
 
       {/* TODO : show once good pattern */}
       {/* TABS */}
@@ -131,11 +134,13 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = wat
         <span className={`${officialTrackTab ? 'text-main' : 'text-grey-medium'}`} onClick={() => setOfficialTrackTab(true)}>officielles</span>
         <span className={`${!officialTrackTab ? 'text-main' : 'text-grey-medium'}`} onClick={() => setOfficialTrackTab(false)}>communautés</span>
         <span className="flex w-full justify-end">
-          <Icon
-            name="add"
-            SVGClassName="w-5 h-5 stroke-main"
+          <button
             onClick={() => console.log('create community track')} // TODO
-          />
+          >
+            <AddIcon
+              className="w-5 h-5 stroke-main"
+            />
+          </button>
         </span>
       </div>
 

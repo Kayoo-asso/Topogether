@@ -4,7 +4,6 @@ export * from './modals';
 export * from './markers';
 export * from './utils';
 
-export * from './Icon';
 export * from './ImageThumb';
 export * from './Checkbox';
 export * from './GradeCircle';

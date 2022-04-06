@@ -4,8 +4,8 @@ import React, {
   useRef, useState,
 } from 'react';
 import { Bitflag } from 'types';
-import { Icon } from '../../atoms/Icon';
 import { TextInput } from './TextInput';
+import ArrowSimple from 'assets/icons/arrow-simple.svg';
 
 interface BitflagMultipleSelectProps<T extends Bitflag> {
   id: string;
@@ -26,6 +26,10 @@ export const BitflagMultipleSelect = <T extends Bitflag>(props: BitflagMultipleS
     <div
       id={props.id}
       className={`relative cursor-pointer ${props.className}`}
+      onClick={() => {
+        setIsOpen(x => !x);
+        if (!isOpen) ref.current?.focus();
+      }}
     >
       <TextInput
         ref={ref}
@@ -34,16 +38,10 @@ export const BitflagMultipleSelect = <T extends Bitflag>(props: BitflagMultipleS
         value={textValue}
         pointer
         readOnly
-        onClick={() => setIsOpen(!isOpen)}
       />
-      <Icon
-        name="arrow-simple"
-        wrapperClassName={`absolute right-0 ${isOpen ? 'top-[14px]' : 'top-[8px]'}`}
-        SVGClassName={`${isOpen ? 'rotate-90' : '-rotate-90'} fill-dark w-4 h-4 left-22`}
-        onClick={() => {
-          setIsOpen(!isOpen);
-          if (!isOpen) ref.current?.focus();
-        }}
+
+      <ArrowSimple
+        className={`w-4 h-4 fill-dark absolute right-0 ${isOpen ? 'top-[14px] rotate-90' : 'top-[8px] -rotate-90'}`}
       />
 
       {isOpen && (<div className='pl-4 py-2 bg-white rounded-b h-[200px] absolute overflow-y-auto overflow-x-none z-100 w-full right-0 shadow'>

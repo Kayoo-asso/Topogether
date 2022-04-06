@@ -1,4 +1,4 @@
-export * from './Toolselector.mobile';
-export * from './Gradeselector';
+export * from './ToolSelectorMobile';
+export * from './GradeSelector';
 
 export * from './Toolbar';

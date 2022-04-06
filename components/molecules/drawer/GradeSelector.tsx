@@ -1,13 +1,13 @@
-import { Icon } from 'components';
 import React, { useEffect, useRef, useState } from 'react';
 import { Grade, grades } from 'types';
+import Circle from 'assets/icons/circle.svg';
 
 interface GradeselectorDrawerProps {
     grade?: Grade,
     onGradeSelect: (grade: Grade) => void,
 }
 
-export const Gradeselector: React.FC<GradeselectorDrawerProps> = (props: GradeselectorDrawerProps) => {
+export const GradeSelector: React.FC<GradeselectorDrawerProps> = (props: GradeselectorDrawerProps) => {
     const selectorContainerRef = useRef<HTMLDivElement>(null);
     const [open, setOpen] = useState(false);
 
@@ -43,9 +43,8 @@ export const Gradeselector: React.FC<GradeselectorDrawerProps> = (props: Gradese
             className={'flex flex-row cursor-pointer items-center ' + (props.grade ? 'ktext-base text-white' : 'ktext-title text-grey-medium')}
             onClick={() => setOpen(!open)}
         >
-            <Icon 
-                name='circle'
-                SVGClassName={'h-6 w-6 mr-2 ' + (props.grade ? getGradeColorClass(props.grade) : 'fill-grey-medium')}
+            <Circle 
+                className={'h-6 w-6 mr-2 ' + (props.grade ? getGradeColorClass(props.grade) : 'fill-grey-medium')}
             />
             {props.grade ? props.grade : 'Diff'}
         </span>
@@ -61,9 +60,8 @@ export const Gradeselector: React.FC<GradeselectorDrawerProps> = (props: Gradese
                             setOpen(false);
                         }}
                     >
-                        <Icon 
-                            name='circle'
-                            SVGClassName={'h-6 w-6 mr-2 ' + getGradeColorClass(grade)}
+                        <Circle
+                            className={'h-6 w-6 mr-2 ' + getGradeColorClass(grade)}
                         />
                         {grade}
                     </span>

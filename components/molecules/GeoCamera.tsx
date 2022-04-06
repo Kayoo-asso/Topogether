@@ -1,8 +1,9 @@
 import React, { useCallback, useRef, useState } from 'react';
 import { distanceLatLng, fromLatLng, useUserMedia } from 'helpers';
-import { Icon } from 'components';
 import { GeoCoordinates, MapToolEnum } from 'types';
 import { useGeolocation } from 'helpers/hooks/useGeolocation';
+import ArrowFull from 'assets/icons/arrow-full.svg';
+import Clear from 'assets/icons/clear.svg';
 
 interface GeoCameraProps {
     open?: boolean,
@@ -125,9 +126,8 @@ export const GeoCamera: React.FC<GeoCameraProps> = ({
                     onClick={() => setDisplayItemSelectMenu(d => !d)}
                 >
                     Créer un {itemType}
-                    <Icon 
-                        name='arrow-full'
-                        SVGClassName={'fill-main h-3 w-3 rotate-90 ml-3' + (displayItemSelectMenu ? ' -rotate-90' : '')}
+                    <ArrowFull
+                        className={'fill-main h-3 w-3 rotate-90 ml-3' + (displayItemSelectMenu ? ' -rotate-90' : '')}
                     />
                 </div>
                 {displayItemSelectMenu &&
@@ -142,9 +142,8 @@ export const GeoCamera: React.FC<GeoCameraProps> = ({
                 className='absolute z-100 top-4 right-4'
                 onClick={props.onClose}
             >
-                <Icon 
-                    name='clear'
-                    SVGClassName='stroke-white h-8 w-8'
+                <Clear 
+                    className='cursor-pointer stroke-white h-8 w-8'
                     onClick={props.onClose}
                 />
             </div>

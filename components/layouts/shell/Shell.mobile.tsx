@@ -2,9 +2,11 @@
 import React, { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { Icon } from 'components';
 import { watchDependencies } from 'helpers/quarky';
 import { useSession } from 'helpers/services';
+import TopoIcon from 'assets/icons/topo.svg';
+import UserIcon from 'assets/icons/user-mobile.svg';
+import WaypointIcon from 'assets/icons/waypoint.svg';
 
 export const ShellMobile: React.FC = watchDependencies(() => {
   const router = useRouter();
@@ -32,45 +34,39 @@ export const ShellMobile: React.FC = watchDependencies(() => {
 
   return (
     <>
-      <div className="shell-container w-screen min-h-full bg-dark grid grid-cols-3 items-center">
+      <div className="w-screen h-full bg-dark flex">
         <Link href={session ? '/user/profile' : '/user/login'} passHref>
           <div
-            className={`${activeTab === 0 ? 'border-t-main border-t-6' : ''} h-full cursor-pointer`}
+            className={`h-full flex-1 flex justify-center items-center ${activeTab === 0 ? 'border-t-main border-t-6' : ''}`}
             onClick={() => changeTab(0)}
           >
-            <Icon
-              name="user"
-              SVGClassName={`h-5 w-5 ${activeTab === 0 ? 'fill-main' : 'fill-white'} `}
-              center
+            <UserIcon
+              className={`h-5 w-5 ${activeTab === 0 ? 'fill-main' : 'fill-white'} `}
             />
           </div>
         </Link>
 
         <Link href={topoUrl || '/'} passHref>
           <div
-            className={`${activeTab === 1 ? 'border-t-main border-t-6' : ''} h-full  cursor-pointer`}
+            className={`h-full flex-1 flex justify-center items-center ${activeTab === 1 ? 'border-t-main border-t-6' : ''}`}
             onClick={() => changeTab(1)}
           >
-            <Icon
-              name="waypoint"
-              SVGClassName={`h-5 w-5 stroke-1 ${activeTab === 1 ? 'fill-main' : 'fill-white'} `}
-              center
+            <WaypointIcon
+              className={`h-5 w-5 stroke-1 ${activeTab === 1 ? 'fill-main' : 'fill-white'} `}
             />
           </div>
         </Link>
 
         <Link href={session ? '/builder/dashboard' : '/user/login'} passHref>
           <div
-            className={`${activeTab === 2 ? 'border-t-main border-t-6' : ''} h-full  cursor-pointer`}
+            className={`h-full flex-1 flex justify-center items-center ${activeTab === 2 ? 'border-t-main border-t-6' : ''}`}
             onClick={() => {
               if (session) changeTab(2);
               else setDisplayModalLogin(true);
             }}
           >
-            <Icon
-              name="topo"
-              SVGClassName={`h-5 w-5 stroke-1 ${activeTab === 2 ? 'stroke-main' : 'stroke-white'} `}
-              center
+            <TopoIcon
+              className={`h-5 w-5 my-auto stroke-1 ${activeTab === 2 ? 'stroke-main' : 'stroke-white'} `}
             />
           </div>
         </Link>

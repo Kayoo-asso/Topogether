@@ -2,7 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Quark, watchDependencies } from 'helpers/quarky';
 import { Topo } from 'types';
 import { Rule, rulesText, validateRule } from 'helpers';
-import { Icon } from 'components';
+import Clear from 'assets/icons/clear.svg';
+import Checked from 'assets/icons/checked.svg';
 
 interface BuilderProgressIndicatorProps {
     topo: Quark<Topo>,
@@ -11,16 +12,18 @@ interface BuilderProgressIndicatorProps {
 
 const displayRule = (topo: Topo, key: Rule) => {
     return (< div className='flex ml-7 items-center' >
-        {validateRule(topo, key) ? <Icon SVGClassName="h-3 w-3 m-2 stroke-main" name="checked" />
-            : <Icon SVGClassName="h-5 w-5 m-1 stroke-grey-medium" name='clear' />}
+        {validateRule(topo, key)
+            ? <Checked className="h-3 w-3 m-2 stroke-main" />
+            : <Clear className="h-5 w-5 m-1 stroke-grey-medium" />}
         <div>{rulesText[key]}</div>
     </div >)
 }
 
 const displayMainRule = (topo: Topo, key: Rule | 'INFOS_TOPO' | 'INFOS_ACCESS') => {
     return (< div className='flex items-center' >
-        {validateRule(topo, key) ? <Icon SVGClassName="h-4 w-4 m-2 stroke-main" name="checked" />
-            : <Icon SVGClassName="h-6 w-6 m-1 stroke-grey-medium" name='clear' />}
+        {validateRule(topo, key)
+            ? <Checked className="h-4 w-4 m-2 stroke-main"  />
+            : <Clear className="h-6 w-6 m-1 stroke-grey-medium" />}
         <div>{rulesText[key]}</div>
     </div >)
 }

@@ -1,7 +1,7 @@
 import React from 'react';
-import { Icon } from 'components';
 import { Quark, watchDependencies } from 'helpers/quarky';
 import { Boulder, Grade, Track } from 'types';
+import ArrowSimple from 'assets/icons/arrow-simple.svg';
 
 interface BoulderItemLeftbarProps {
     boulder: Quark<Boulder>,
@@ -43,12 +43,12 @@ export const BoulderItemLeftbar: React.FC<BoulderItemLeftbarProps> = watchDepend
     return (
         <>
             <div className='flex flex-row cursor-pointer text-dark items-center'>
-                <Icon
-                    name='arrow-simple'
-                    wrapperClassName='pr-3'
-                    SVGClassName={'w-3 h-3 stroke-dark ' + (props.selected ? 'stroke-2 ' : '') + (props.displayed ? '-rotate-90' : 'rotate-180')}
-                    onClick={props.onArrowClick}
-                />
+                <div className='pr-3'>
+                    <ArrowSimple
+                        className={'w-3 h-3 stroke-dark cursor-pointer ' + (props.selected ? 'stroke-2 ' : '') + (props.displayed ? '-rotate-90' : 'rotate-180')}
+                        onClick={props.onArrowClick}
+                    />
+                </div>
                 <div onClick={props.onNameClick}>
                     <span className={'mr-2' + (props.selected ? ' font-semibold' : '')}>{props.orderIndex}.</span>
                     <span className={'ktext-base' + (props.selected ? ' font-semibold' : '')}>{boulder.name}</span>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { TrackRating } from 'types';
-import { Icon } from '.';
+import Star from 'assets/icons/star.svg';
 
 interface AverageNoteProps {
   ratings: Iterable<TrackRating>,
@@ -23,9 +23,8 @@ export const AverageNote: React.FC<AverageNoteProps> = (props: AverageNoteProps)
     return (
       <div className={props.wrapperClassName ? props.wrapperClassName : ''}>
         <div className={`flex flex-row items-end ${props.className ? props.className : ''}`}>
-          <Icon
-            name="star"
-            SVGClassName="fill-main w-6 h-6"
+          <Star
+            className="fill-main w-6 h-6"
           />
           <span className="ktext-subtitle text-main mb-[-4px]">{avgNote}</span>
         </div>

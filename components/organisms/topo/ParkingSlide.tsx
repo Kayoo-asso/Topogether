@@ -1,9 +1,10 @@
 import React, { useContext, useState } from 'react';
-import { Flash, Icon, ParkingButton, ParkingModal, SlideagainstRightDesktop, SlideoverMobile } from 'components';
+import { Flash, ParkingButton, ParkingModal, SlideagainstRightDesktop, SlideoverMobile } from 'components';
 import { Quark, watchDependencies } from 'helpers/quarky';
 import { Parking } from 'types';
 import { DeviceContext } from 'helpers';
 import { CFImage } from 'components/atoms/CFImage';
+import ParkingIcon from 'assets/icons/parking.svg'
 
 interface ParkingSlideProps {
     open: boolean,
@@ -14,7 +15,7 @@ interface ParkingSlideProps {
 export const ParkingSlide: React.FC<ParkingSlideProps> = watchDependencies(({
     open = true,
     ...props
-  }: ParkingSlideProps) => {
+}: ParkingSlideProps) => {
     const device = useContext(DeviceContext);
 
     const [flashMessage, setFlashMessage] = useState<string>();
@@ -26,20 +27,18 @@ export const ParkingSlide: React.FC<ParkingSlideProps> = watchDependencies(({
             <div className='flex flex-col h-[90%] md:h-[85%] pt-10 md:pt-0 gap-6'>
                 <div className='flex flex-col items-center md:items-start px-6'>
                     <div className='ktext-big-title flex flex-row gap-3 items-center'>
-                        <Icon 
-                            name='parking'
-                            SVGClassName='h-6 w-6 fill-second'
-                            center
+                        <ParkingIcon
+                            className='h-6 w-6 fill-second'
                         />
                         {parking.name || "Parking"}
                     </div>
-                    <div 
+                    <div
                         className='ktext-label text-grey-medium cursor-pointer'
                         onClick={() => {
                             const data = [new ClipboardItem({ "text/plain": new Blob([parking.location[1] + ',' + parking.location[0]], { type: "text/plain" }) })];
-                            navigator.clipboard.write(data).then(function() {
+                            navigator.clipboard.write(data).then(function () {
                                 setFlashMessage("Coordonnées copiées dans le presse papier.");
-                            }, function() {
+                            }, function () {
                                 setFlashMessage("Impossible de copier les coordonées.");
                             });
                         }}
@@ -47,21 +46,21 @@ export const ParkingSlide: React.FC<ParkingSlideProps> = watchDependencies(({
                 </div>
 
                 <div className='w-full relative max-h-[200px] h-[60%] md:h-[25%]'>
-                    <CFImage 
+                    <CFImage
                         image={parking.image}
                         alt="Parking"
                         sizeHint='50vw'
                         className="object-contain"
                     />
                 </div>
-                
+
                 <div className='px-6 overflow-auto'>
                     <div><span className='font-semibold'>Nombre de places : </span>{parking.spaces}</div>
                     <div className='mt-2 ktext-base-little'>{parking.description}</div>
                 </div>
             </div>
             <div className='absolute text-center px-6 bottom-[9%] md:bottom-2 w-full'>
-                <ParkingButton 
+                <ParkingButton
                     onClick={() => setModalParkingOpen(true)}
                 />
             </div>
@@ -80,7 +79,7 @@ export const ParkingSlide: React.FC<ParkingSlideProps> = watchDependencies(({
                     {parkingContent()}
                 </SlideoverMobile>
             }
-            {device !== 'mobile' && 
+            {device !== 'mobile' &&
                 <SlideagainstRightDesktop
                     open
                     onClose={props.onClose}
@@ -89,7 +88,7 @@ export const ParkingSlide: React.FC<ParkingSlideProps> = watchDependencies(({
                 </SlideagainstRightDesktop>
             }
 
-            <Flash 
+            <Flash
                 open={!!flashMessage}
                 onClose={() => setFlashMessage(undefined)}
             >

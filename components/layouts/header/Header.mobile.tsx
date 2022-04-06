@@ -1,6 +1,8 @@
-import { Dropdown, DropdownOption, Icon } from 'components';
+import { Dropdown, DropdownOption } from 'components';
 import Link from 'next/link';
 import React, { useState } from 'react';
+import ArrowSimple from 'assets/icons/arrow-simple.svg';
+import MenuIcon from 'assets/icons/menu.svg';
 
 interface HeaderMobileProps {
   title: string,
@@ -15,15 +17,13 @@ export const HeaderMobile: React.FC<HeaderMobileProps> = (props: HeaderMobilePro
   return (
     <div className="bg-dark flex items-center h-header">
 
-      <Link href={props.backLink} passHref>
-        <div className="w-1/6 h-full">
-          <Icon
-            name="arrow-simple"
-            SVGClassName="stroke-white stroke-1 w-4 h-4"
-            center
-          />
-        </div>
-      </Link>
+      <div className='w-1/6 flex justify-center'>
+        <Link href={props.backLink} passHref>
+            <ArrowSimple
+              className="stroke-white stroke-1 w-4 h-4"
+            />
+        </Link>
+      </div>
 
       <div
         className="flex-1 text-white ktext-title whitespace-nowrap"
@@ -36,14 +36,11 @@ export const HeaderMobile: React.FC<HeaderMobileProps> = (props: HeaderMobilePro
       </div>
 
       {props.menuOptions && (
-        <div className="w-1/6">
-          <Icon
-            name="menu"
-            SVGClassName={`h-4 w-4 fill-white ${menuOpen ? 'rotate-90' : ''}`}
-            center
-            onClick={() => setMenuOpen(!menuOpen)}
+        <button className="w-1/6 flex justify-center" onClick={() => setMenuOpen(x => !x)}>
+          <MenuIcon
+            className={`h-4 w-4 fill-white ${menuOpen ? 'rotate-90' : ''}`}
           />
-        </div>
+        </button>
       )}
       {menuOpen && props.menuOptions
           && (

@@ -1,7 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
 import { Loading } from 'components/layouts';
-import { Icon } from '../Icon';
 
 interface ButtonProps {
   content: string,

@@ -1,10 +1,10 @@
 import React from 'react';
 // eslint-disable-next-line import/no-cycle
-import { Icon } from 'components';
 import useDimensions from 'react-cool-dimensions';
 import { DeleteButton } from '.';
 import { CFImage } from '../CFImage';
 import { Image } from 'types';
+import Spinner from 'assets/icons/spinner.svg';
 
 interface ImageButtonProps {
   text?: string,
@@ -31,7 +31,7 @@ export const ImageButton: React.FC<ImageButtonProps> = ({
   // eslint-disable-next-line jsx-a11y/click-events-have-key-events
   <div
     ref={observe}
-    className="ktext-subtext relative text-center shadow text-main border-main border-2 w-full flex flex-col justify-center group cursor-pointer"
+    className="ktext-subtext relative text-center shadow text-main border-main border-2 w-full flex flex-col justify-center items-center group cursor-pointer"
     onClick={props.onClick}
     style={{
       height: containerWidth,
@@ -39,10 +39,8 @@ export const ImageButton: React.FC<ImageButtonProps> = ({
   >
     {loading
       && (
-        <Icon
-          name="spinner"
-          SVGClassName="stroke-main w-10 h-10 animate-spin m-2"
-          center
+        <Spinner
+          className="stroke-main w-10 h-10 animate-spin m-2"
         />
       )}
     {!loading && props.image &&

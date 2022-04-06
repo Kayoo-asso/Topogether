@@ -1,8 +1,9 @@
 import React, { useState, useCallback } from 'react';
-import { Checkbox, Icon, RoundButton } from 'components';
+import { Checkbox, RoundButton } from 'components';
 import { ClimbTechniques, LightGrade } from 'types';
 import { GradeSliderInput, BitflagMultipleSelect, SliderInput } from '..';
 import { ClimbTechniquesName, toggleFlag } from 'helpers';
+import FilterIcon from 'assets/icons/filter.svg';
 
 export interface BoulderFilterOptions {
     techniques: ClimbTechniques,
@@ -73,11 +74,10 @@ export const BoulderFilters: React.FC<BoulderFiltersProps> = ({
         <>
             {!open &&
                 <RoundButton
-                    iconName="filter"
-                    iconClass="stroke-main fill-main"
-                    iconSizeClass="h-6 w-6"
                     onClick={() => setOpen(true)}
-                />
+                >
+                    <FilterIcon className='h-6 w-6 stroke-main fill-main' />
+                </RoundButton>
             }
             {open &&
                 <div className='bg-white z-40 relative shadow rounded-lg flex flex-col max-w-[60%] min-w-[250px]'>
@@ -85,9 +85,8 @@ export const BoulderFilters: React.FC<BoulderFiltersProps> = ({
                         className='flex flex-row items-center shadow bg-main rounded-lg p-3 pt-4 pl-5 cursor-pointer max-w-[150px]' 
                         onClick={() => setOpen(false)}
                     >
-                        <Icon 
-                            name='filter'
-                            SVGClassName='h-6 w-6 stroke-white fill-white'
+                        <FilterIcon 
+                            className='h-6 w-6 stroke-white fill-white'
                         />
                         <div className='text-white ktext-subtitle ml-3'>Filtres</div>
                     </div>

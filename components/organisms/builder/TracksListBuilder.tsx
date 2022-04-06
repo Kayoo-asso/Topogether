@@ -1,10 +1,11 @@
 import React, { useContext } from 'react';
-import { GradeCircle, Icon, ModalDelete} from 'components';
+import { GradeCircle, ModalDelete } from 'components';
 import { Boulder, gradeToLightGrade, Track } from 'types';
 import { Quark, SelectQuarkNullable, useSelectQuark, watchDependencies } from 'helpers/quarky';
 import { TrackForm } from '../form/TrackForm';
 import { createTrack, DeviceContext } from 'helpers';
 import { useSession } from "helpers/services";
+import DrawIcon from 'assets/icons/draw.svg';
 
 interface TracksListBuilderProps {
   boulder: Quark<Boulder>,
@@ -65,23 +66,23 @@ export const TracksListBuilder: React.FC<TracksListBuilderProps> = watchDependen
                   {track.isTraverse && <div className='ktext-subtext'>Traversée</div>}
                   {track.isSittingStart && <div className='ktext-subtext'>Départ assis</div>}
                 </div>
-                
+
                 {props.onDrawButtonClick &&
-                  <Icon 
-                    name='draw'
-                    SVGClassName='w-6 h-6 stroke-main'
-                    onClick={props.onDrawButtonClick}
-                  />
+                  <button onClick={props.onDrawButtonClick}>
+                    <DrawIcon
+                      className='w-6 h-6 stroke-main'
+                    />
+                  </button>
                 }
               </div>
               {selectedTrack?.id === track.id && device === 'mobile' &&
-                <TrackForm 
+                <TrackForm
                   track={trackQuark}
                   className='mt-8'
                   onDeleteTrack={() => trackToDelete.select(trackQuark)}
                 />
               }
-            </div>  
+            </div>
           );
         })}
 
@@ -101,11 +102,11 @@ export const TracksListBuilder: React.FC<TracksListBuilderProps> = watchDependen
 
       {trackToDelete() &&
         <ModalDelete
-            className='-top-[15vh]'
-            onClose={() => trackToDelete.select(undefined)}
-            onDelete={() => boulder.tracks.removeQuark(trackToDelete.quark()!)}
+          className='-top-[15vh]'
+          onClose={() => trackToDelete.select(undefined)}
+          onDelete={() => boulder.tracks.removeQuark(trackToDelete.quark()!)}
         >
-            Etes-vous sûr de vouloir supprimer la voie ?
+          Etes-vous sûr de vouloir supprimer la voie ?
         </ModalDelete>
       }
     </>

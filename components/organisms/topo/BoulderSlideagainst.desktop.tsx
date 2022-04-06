@@ -1,9 +1,10 @@
 import React, { Dispatch, SetStateAction, useState } from 'react';
-import { BoulderPreviewDesktop, Button, Flash, Icon, Modal, SlideagainstRightDesktop, TracksList } from 'components';
+import { BoulderPreviewDesktop, Button, Flash, Modal, SlideagainstRightDesktop, TracksList } from 'components';
 import { Quark, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
 import { Boulder, Image, Track, UUID } from 'types';
 import { LoginForm } from '..';
 import { useSession } from "helpers/services";
+import Rock from 'assets/icons/rock.svg';
 
 interface BoulderSlideagainstDesktopProps {
     boulder: Quark<Boulder>,
@@ -39,9 +40,7 @@ export const BoulderSlideagainstDesktop: React.FC<BoulderSlideagainstDesktopProp
                 <>
                     <div className='px-5'>
                         <div className='flex flex-row items-end mb-2'>
-                            <Icon 
-                                name='rock'
-                            />
+                            <Rock /> 
                             <span className='ktext-big-title ml-3'>{boulder.name}</span>
                         </div>
                         <div 

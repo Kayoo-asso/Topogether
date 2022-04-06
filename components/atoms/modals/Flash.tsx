@@ -1,5 +1,4 @@
 import React, { ReactNode, useCallback, useEffect, useState } from 'react';
-import { Icon } from '..';
 
 interface FlashProps {
     open: boolean,

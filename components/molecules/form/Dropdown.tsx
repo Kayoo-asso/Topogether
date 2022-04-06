@@ -1,5 +1,4 @@
-import React, { CSSProperties, useEffect, useRef, useState } from 'react';
-import { Icon } from '../../atoms';
+import React, { useEffect, useRef, useState } from 'react';
 import equal from 'fast-deep-equal/es6';
 
 export interface DropdownOption {
@@ -7,7 +6,7 @@ export interface DropdownOption {
     label?: string;
     isSection?: boolean;
     action?: () => void;
-    icon?: string;
+    icon?: SVG;
     disabled?: boolean;
 }
 
@@ -67,9 +66,8 @@ export const Dropdown: React.FC<DropdownProps> = React.memo(({
                         tabIndex={0}
                     >
                         {opt.icon && (
-                            <Icon
-                                name={opt.icon}
-                                SVGClassName={`${opt.disabled ? 'stroke-grey-medium' : 'stroke-black'} h-5 w-5 mr-5`}
+                            <opt.icon
+                                className={`${opt.disabled ? 'stroke-grey-medium' : 'stroke-black'} h-5 w-5 mr-5`}
                             />
                         )}
                         {opt.label || opt.value}

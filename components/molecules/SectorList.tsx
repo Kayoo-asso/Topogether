@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { Icon } from 'components';
 import { BoulderItemLeftbar } from 'components/layouts';
 import { splitArray } from 'helpers';
 import { Quark, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
 import { Boulder, Topo, Track, UUID } from 'types';
+import ArrowSimple from 'assets/icons/arrow-simple.svg';
 
 interface SectorListProps {
     topoQuark: Quark<Topo>,
@@ -32,17 +32,18 @@ export const SectorList:React.FC<SectorListProps> = watchDependencies((props: Se
                     <div className='flex flex-col mb-10' key={sector.id}>
                         <div className="ktext-label text-grey-medium">Secteur {sectorIndex + 1}</div>
                         <div className="ktext-section-title text-main cursor-pointer mb-2 flex flex-row items-center">
-                            <Icon
-                                name='arrow-simple'
-                                wrapperClassName='pr-3'
-                                SVGClassName={'w-3 h-3 stroke-main stroke-2 ' + (displayedSectors.includes(sector.id) ? '-rotate-90' : 'rotate-180')}
-                                onClick={() => {
-                                    const newDS = [...displayedSectors];
-                                    if (newDS.includes(sector.id)) newDS.splice(newDS.indexOf(sector.id), 1)
-                                    else newDS.push(sector.id);
-                                    setDisplayedSectors(newDS);
-                                }}
-                            />
+                            <div className="pr-3">
+                                <ArrowSimple
+                                    className={'w-3 h-3 cursor-pointer stroke-main stroke-2 ' + (displayedSectors.includes(sector.id) ? '-rotate-90' : 'rotate-180')}
+                                    onClick={() => {
+                                        const newDS = [...displayedSectors];
+                                        if (newDS.includes(sector.id)) newDS.splice(newDS.indexOf(sector.id), 1)
+                                        else newDS.push(sector.id);
+                                        setDisplayedSectors(newDS);
+                                    }}
+                                />
+
+                            </div>
                             <div
                                 onClick={() => {
                                     const newDS = [...displayedSectors];

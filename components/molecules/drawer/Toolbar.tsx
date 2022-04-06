@@ -1,8 +1,17 @@
 import React from 'react';
-import { Icon } from 'components';
-import { ToolselectorMobile } from './Toolselector.mobile';
-import { Gradeselector } from './Gradeselector';
+import { ToolSelectorMobile } from './ToolSelectorMobile';
+import { GradeSelector } from './GradeSelector';
 import { DrawerToolEnum, Grade, gradeToLightGrade } from 'types';
+import Clear from 'assets/icons/clear.svg';
+import Rewind from 'assets/icons/rewind.svg';
+import Eraser from 'assets/icons/eraser.svg';
+import ManyTracks from 'assets/icons/many-tracks.svg';
+import Topo from 'assets/icons/topo.svg';
+import Hand from 'assets/icons/hand.svg';
+import ClimbingShoe from 'assets/icons/climbing-shoe.svg';
+import ForbiddenArea from 'assets/icons/forbidden-area.svg';
+import Checked from 'assets/icons/checked.svg';
+
 
 interface ToolbarProps {
     selectedTool: DrawerToolEnum,
@@ -48,80 +57,62 @@ export const Toolbar: React.FC<ToolbarProps> = ({
         <div className='bg-dark w-full h-[7vh] flex flex-row items-center justify-center z-200'>
 
             <span className='flex flex-row items-center justify-around w-2/5 md:w-3/12'>
-                <Icon 
-                    name='clear'
-                    center
-                    SVGClassName='stroke-white w-8 h-8'
+                <Clear 
+                    className='stroke-white w-8 h-8 cursor-pointer'
                     onClick={props.onClear}
                 />
-                <Icon 
-                    name='rewind'
-                    center
-                    SVGClassName='stroke-white w-6 h-6'
+                <Rewind
+                    className='stroke-white w-6 h-6 cursor-pointer'
                     onClick={props.onRewind}
                 />
                 <div className='hidden md:block'>
-                    <Icon 
-                        name='eraser'
-                        center
-                        SVGClassName={'w-6 h-6 ' + (selectedTool === 'ERASER' ? 'stroke-main fill-main' : 'stroke-white fill-white')}
+                    <Eraser 
+                        className={'w-6 h-6 cursor-pointer ' + (selectedTool === 'ERASER' ? 'stroke-main fill-main' : 'stroke-white fill-white')}
                         onClick={() => props.onToolSelect('ERASER')}
                     />
                 </div>
-                <Icon 
-                    name='many-tracks'
-                    center
-                    SVGClassName={'w-6 h-6 ' + (props.displayOtherTracks ? 'stroke-main' : 'stroke-white')}
+                <ManyTracks
+                    className={'w-6 h-6 cursor-pointer ' + (props.displayOtherTracks ? 'stroke-main' : 'stroke-white')}
                     onClick={props.onOtherTracks}
                 />
             </span>
 
             <span className='1/5 pb-3 mx-3 self-end md:hidden'>
-                <ToolselectorMobile 
+                <ToolSelectorMobile 
                     selectedTool={selectedTool !== 'ERASER' ? selectedTool : 'LINE_DRAWER'}
                     onToolSelect={props.onToolSelect}
                 />
             </span>
 
             <span className='w-6/12 flex-row items-center justify-around px-[13%] hidden md:flex'>
-                <Icon 
-                    name='topo'
-                    center
-                    SVGClassName={'w-6 h-6 ' + (selectedTool === 'LINE_DRAWER' ? getStrokeColorClass(props.grade) : 'stroke-white')}
+                <Topo 
+                    className={'w-6 h-6 cursor-pointer ' + (selectedTool === 'LINE_DRAWER' ? getStrokeColorClass(props.grade) : 'stroke-white')}
                     onClick={() => props.onToolSelect('LINE_DRAWER')}
                 />
-                <Icon 
-                    name='hand'
-                    center
-                    SVGClassName={'w-6 h-6 ' + (selectedTool === 'HAND_DEPARTURE_DRAWER' ? getStrokeColorClass(props.grade)+' fill-white' : 'stroke-white')}
+                <Hand 
+                    className={'w-6 h-6 cursor-pointer ' + (selectedTool === 'HAND_DEPARTURE_DRAWER' ? getStrokeColorClass(props.grade)+' fill-white' : 'stroke-white')}
                     onClick={() => props.onToolSelect('HAND_DEPARTURE_DRAWER')}
                 />
-                <Icon 
-                    name='climbing-shoe'
-                    center
-                    SVGClassName={'w-7 h-7 ' + (selectedTool === 'FOOT_DEPARTURE_DRAWER' ? getStrokeColorClass(props.grade)+' fill-white' : 'stroke-white')}
+                <ClimbingShoe 
+                    className={'w-7 h-7 cursor-pointer ' + (selectedTool === 'FOOT_DEPARTURE_DRAWER' ? getStrokeColorClass(props.grade)+' fill-white' : 'stroke-white')}
                     onClick={() => props.onToolSelect('FOOT_DEPARTURE_DRAWER')}
                 />
-                <Icon 
-                    name='forbidden-area'
-                    center
-                    SVGClassName={'w-6 h-6 ' + (selectedTool === 'FORBIDDEN_AREA_DRAWER' ? 'stroke-second fill-white' : 'stroke-white')}
+                <ForbiddenArea 
+                    className={'w-6 h-6 cursor-pointer ' + (selectedTool === 'FORBIDDEN_AREA_DRAWER' ? 'stroke-second fill-white' : 'stroke-white')}
                     onClick={() => props.onToolSelect('FORBIDDEN_AREA_DRAWER')}
                 />
             </span>
             
             <span className='w-1/5 z-100 md:w-3/12 md:flex md:justify-center'>
-                <Gradeselector 
+                <GradeSelector 
                     grade={props.grade}
                     onGradeSelect={props.onGradeSelect}
                 />
             </span>
 
             <span className='w-1/5 md:hidden'>
-                <Icon
-                    name='checked'
-                    center
-                    SVGClassName='fill-main h-6 w-6'
+                <Checked
+                    className='fill-main h-6 w-6 cursor-pointer'
                     onClick={props.onValidate}
                 />
             </span>

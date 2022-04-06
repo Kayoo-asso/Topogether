@@ -1,6 +1,6 @@
 import React from 'react';
 import { LightTopo, Topo } from 'types';
-import { Icon } from '../Icon';
+import Download from 'assets/icons/download.svg';
 
 interface DownloadButtonProps {
     downloaded?: boolean,
@@ -13,13 +13,11 @@ export const DownloadButton: React.FC<DownloadButtonProps> = ({
     downloaded = false,
     ...props
 }: DownloadButtonProps) => {
-    
+
     return (
-        <Icon
-          name='download'
-          wrapperClassName={props.className}
-          SVGClassName={downloaded ? 'stroke-main h-6 w-6' : 'stroke-dark h-6 w-6'}
-          onClick={props.onClick}
+        <Download
+            className={'cursor-pointer ' + (downloaded ? 'stroke-main h-6 w-6' : 'stroke-dark h-6 w-6')}
+            onClick={props.onClick}
         />
     )
 };

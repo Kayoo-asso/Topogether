@@ -1,12 +1,17 @@
 import React, { ReactNode, useEffect, useState } from 'react';
 import NextImage from 'next/image';
-import { Icon, ProfilePicture } from 'components/atoms';
+import { ProfilePicture } from 'components/atoms';
 import { Dropdown, DropdownOption } from 'components/molecules/form';
 import Link from 'next/link';
 import { MapToolEnum } from 'types';
-import { useAuth, useSession } from 'helpers/services';
+import { useAuth } from 'helpers/services';
 import { useRouter } from 'next/router';
 import { watchDependencies } from 'helpers/quarky';
+import ArrowFull from 'assets/icons/arrow-full.svg';
+import Rock from 'assets/icons/rock.svg';
+import Sector from 'assets/icons/sector.svg';
+import Parking from 'assets/icons/parking.svg';
+import HelpRound from 'assets/icons/help-round.svg';
 
 interface HeaderDesktopProps {
   backLink: string,
@@ -62,19 +67,14 @@ export const HeaderDesktop: React.FC<HeaderDesktopProps> = watchDependencies(({
         </div>
       </Link>
 
-      <div className="flex-1 flex flex-row items-center text-white ktext-title whitespace-nowrap">
-        <span
-          className="cursor-pointer"
-          onClick={() => setMenuOpen(!menuOpen)}
-        >
-          {props.title}
-        </span>
+      <div
+        className="flex-1 flex flex-row items-center text-white ktext-title whitespace-nowrap cursor-pointer"
+        onClick={() => setMenuOpen(!menuOpen)}
+      >
+        {props.title}
         {props.menuOptions && (
-          <Icon
-            name="arrow-full"
-            center
-            SVGClassName="fill-white w-4 h-4 rotate-90 ml-[20px]"
-            onClick={() => setMenuOpen(!menuOpen)}
+          <ArrowFull
+            className="fill-white w-4 h-4 rotate-90 ml-[20px]"
           />
         )}
         {props.menuOptions && menuOpen && (
@@ -90,24 +90,20 @@ export const HeaderDesktop: React.FC<HeaderDesktopProps> = watchDependencies(({
       </div>
       {displayMapTools && (
         <div className="flex flex-row gap-8 mr-[40%]">
-          <Icon
-            name="rock"
-            SVGClassName={`h-7 w-7 ${!props.MapToolsActivated ? 'stroke-grey-medium' : props.currentTool === 'ROCK' ? 'stroke-main' : 'stroke-white'}`}
+          <Rock
+            className={`h-7 w-7 cursor-pointer ${!props.MapToolsActivated ? 'stroke-grey-medium' : props.currentTool === 'ROCK' ? 'stroke-main' : 'stroke-white'}`}
             onClick={props.MapToolsActivated ? props.onRockClick : undefined}
           />
-          <Icon
-            name="sector"
-            SVGClassName={`h-7 w-7 ${!props.MapToolsActivated ? 'stroke-grey-medium fill-grey-medium' : props.currentTool === 'SECTOR' ? 'stroke-main fill-main' : 'stroke-white fill-white'}`}
+          <Sector
+            className={`h-7 w-7 cursor-pointer ${!props.MapToolsActivated ? 'stroke-grey-medium fill-grey-medium' : props.currentTool === 'SECTOR' ? 'stroke-main fill-main' : 'stroke-white fill-white'}`}
             onClick={props.MapToolsActivated ? props.onSectorClick : undefined}
           />
-          <Icon
-            name="parking"
-            SVGClassName={`h-6 w-6 ${!props.MapToolsActivated ? 'fill-grey-medium' : props.currentTool === 'PARKING' ? 'fill-second' : 'fill-white'}`}
+          <Parking
+            className={`h-6 w-6 cursor-pointer ${!props.MapToolsActivated ? 'fill-grey-medium' : props.currentTool === 'PARKING' ? 'fill-second' : 'fill-white'}`}
             onClick={props.MapToolsActivated ? props.onParkingClick : undefined}
           />
-          <Icon
-            name="help-round"
-            SVGClassName={`h-6 w-6 ${!props.MapToolsActivated ? 'fill-grey-medium stroke-grey-medium' : props.currentTool === 'WAYPOINT' ? 'fill-third stroke-third' : 'fill-white stroke-white'}`}
+          <HelpRound
+            className={`h-6 w-6 cursor-pointer ${!props.MapToolsActivated ? 'fill-grey-medium stroke-grey-medium' : props.currentTool === 'WAYPOINT' ? 'fill-third stroke-third' : 'fill-white stroke-white'}`}
             onClick={props.MapToolsActivated ? props.onWaypointClick : undefined}
           />
         </div>

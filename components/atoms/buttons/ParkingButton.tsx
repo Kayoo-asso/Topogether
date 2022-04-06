@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Icon } from '..';
+import React from 'react';
+import Parking from 'assets/icons/parking.svg';
 
 interface ParkingButtonProps {
     onClick?: () => void,
@@ -15,10 +15,8 @@ export const ParkingButton: React.FC<ParkingButtonProps> = ({
             onClick={props.onClick}
         >
             Itinéraire vers le parking
-            <Icon 
-                name='parking'
-                wrapperClassName='ml-3'
-                SVGClassName='fill-main h-5 w-5'
+            <Parking
+                className='fill-main h-5 w-5 ml-3'
             />
             </div>
     )

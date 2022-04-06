@@ -1,8 +1,8 @@
 import React, {
     useRef, useState,
 } from 'react';
-import { Icon } from 'components';
 import { TextInput } from './TextInput';
+import ArrowSimple from 'assets/icons/arrow-simple.svg';
 
 interface SelectProps {
     id: string;
@@ -43,10 +43,8 @@ export const Select: React.FC<SelectProps> = ({
                 readOnly
                 pointer
             />
-            <Icon
-                name="arrow-simple"
-                wrapperClassName={`absolute right-0 ${isOpen ? 'top-[14px]' : 'top-[8px]'}`}
-                SVGClassName={`${isOpen ? 'rotate-90' : '-rotate-90'} ${white ? 'fill-white' : 'fill-dark'} w-4 h-4 left-22`}
+            <ArrowSimple
+                className={`w-4 h-4 absolute right-0 ${isOpen ? 'top-[14px]' : 'top-[8px]'} ${isOpen ? 'rotate-90' : '-rotate-90'} ${white ? 'fill-white' : 'fill-dark'}`}
                 onClick={() => {
                     ref.current?.focus();
                 }}

@@ -1,5 +1,5 @@
-import { Icon } from 'components';
 import React from 'react';
+import Spinner from 'assets/icons/spinner.svg';
 
 interface LoadingProps {
     SVGClassName?: string
@@ -11,11 +11,9 @@ export const Loading: React.FC<LoadingProps> = ({
     bgWhite = true,
 }) => {
     return (
-        <div className={'flex flex-col w-full h-full items-center justify-center'+(bgWhite ? ' bg-white' : '')}>
-            <Icon
-                name="spinner"
-                SVGClassName={"stroke-main animate-spin m-2 "+SVGClassName}
-                center
+        <div className={'flex w-full h-full items-center justify-center' + (bgWhite ? ' bg-white' : '')}>
+            <Spinner
+                className={"stroke-main animate-spin m-2 " + SVGClassName}
             />
         </div>
     )

@@ -24,7 +24,26 @@ module.exports = withPWA({
     config.module.rules.push({
       test: /\.svg$/i,
       issuer: /\.[jt]sx?$/,
-      use: ['@svgr/webpack'],
+      use: [{
+        loader: '@svgr/webpack',
+        options: {
+          // was causing problems with the design of some of the SVGs
+          // svgo: false,
+          // svgoConfig: {
+          //   plugins: [
+          //     {
+          //       name: 'preset-default',
+          //       params: {
+          //         overrides: {
+          //           removeUselessStrokeAndFill: false,
+          //         }
+          //       }
+          //     }
+          //   ]
+          // }
+        }
+      }],
+
     })
 
     return config

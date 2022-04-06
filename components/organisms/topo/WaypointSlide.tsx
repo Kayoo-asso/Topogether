@@ -1,9 +1,10 @@
 import React, { useContext, useState } from 'react';
-import { Flash, Icon, SlideagainstRightDesktop, SlideoverMobile } from 'components';
+import { Flash, SlideagainstRightDesktop, SlideoverMobile } from 'components';
 import { Quark, watchDependencies } from 'helpers/quarky';
 import { Waypoint } from 'types';
 import { DeviceContext } from 'helpers';
 import { CFImage } from 'components/atoms/CFImage';
+import HelpRound from 'assets/icons/help-round.svg';
 
 interface WaypointSlideProps {
     open: boolean,
@@ -25,11 +26,11 @@ export const WaypointSlide: React.FC<WaypointSlideProps> = watchDependencies(({
             <div className='flex flex-col h-[90%] md:h-[85%] pt-10 md:pt-0 gap-6'>
                 <div className='flex flex-col items-center md:items-start px-6'>
                     <div className='ktext-big-title flex flex-row gap-3 items-center'>
-                        <Icon 
-                            name='help-round'
-                            SVGClassName='h-6 w-6 stroke-third fill-third'
-                            center
-                        />
+                        <div className='h-full flex items-center justify-center'>
+                            <HelpRound 
+                                className='h-6 w-6 stroke-third fill-third'
+                            />
+                        </div>
                         {waypoint.name}
                     </div>
                     <div 

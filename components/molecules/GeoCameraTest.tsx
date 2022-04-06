@@ -1,6 +1,5 @@
 import React, { useRef, useState } from 'react';
 import { distanceLatLng, LivenessRef, useAsyncEffect, useUserMedia } from 'helpers';
-import { Icon } from 'components';
 
 interface GeoCameraProps {
     open?: boolean,
@@ -154,10 +153,10 @@ export const GeoCamera: React.FC<GeoCameraProps> = ({
                     className='absolute z-100 top-4 right-4'
                     onClick={props.onClose}
                 >
-                    <Icon 
+                    {/* <Icon 
                         name='clear'
-                        SVGClassName='stroke-white h-8 w-8'
-                    />
+                        className='stroke-white h-8 w-8'
+                    /> */}
                 </div>
             </div>
     )

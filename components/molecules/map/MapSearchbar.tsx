@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Trigram from "trigram-search";
 import {
- RoundButton, TextInput, MapSearchresults,
+    RoundButton, TextInput, MapSearchResults,
 } from 'components';
 import { googleAutocomplete, useIsMounted } from '../../../helpers';
 import { api } from 'helpers/services';
 import { useRouter } from 'next/router';
 import { Boulder, LightTopo } from 'types';
 import { TrigramOutput } from 'trigram-search/build/main/lib/ITrigram';
+import SearchIcon from 'assets/icons/search.svg';
 
 export interface MapSearchbarProps {
     initialOpen?: boolean,
@@ -44,7 +45,7 @@ export const MapSearchbar: React.FC<MapSearchbarProps> = ({
     const [topoApiResults, setTopoApiResults] = useState<LightTopo[]>([]);
     const [googleApiResults, setGoogleApiResults] = useState<google.maps.places.AutocompletePrediction[]>([]);
     const [boulderResults, setBoulderResults] = useState<Boulder[]>([]);
-    const boulderSearcher = new Trigram(props.boulders, {idField: 'id', searchField: 'name', count: 5});
+    const boulderSearcher = new Trigram(props.boulders, { idField: 'id', searchField: 'name', count: 5 });
 
     const getPredictions = async () => {
         if (findTopos) {
@@ -72,7 +73,7 @@ export const MapSearchbar: React.FC<MapSearchbarProps> = ({
     const selectTopo = (topo: LightTopo) => {
         setResultsOpen(false);
         setValue(topo.name);
-        router.push('/topo/'+topo.id);
+        router.push('/topo/' + topo.id);
     }
     const selectPlace = (place: google.maps.places.AutocompletePrediction) => {
         setResultsOpen(false);
@@ -109,15 +110,15 @@ export const MapSearchbar: React.FC<MapSearchbarProps> = ({
         <>
             <div className="relative">
                 <RoundButton
-                    iconName="search"
                     className='z-200'
                     white={!barOpen}
-                    iconClass={barOpen ? 'stroke-white' : 'stroke-main'}
                     onClick={() => {
                         if (props.onButtonClick) props.onButtonClick(barOpen);
                         setBarOpen(!barOpen);
                     }}
-                />
+                >
+                    <SearchIcon className={'h-6 w-6 ' + (barOpen ? 'stroke-white' : 'stroke-main')} />
+                </RoundButton>
 
                 {barOpen && (
                     <div className="absolute rounded-full top-0 pl-[80px] h-[60px] w-[201%] z-100 shadow bg-white">
@@ -144,7 +145,7 @@ export const MapSearchbar: React.FC<MapSearchbarProps> = ({
             </div>
 
             {barOpen && resultsOpen &&
-                <MapSearchresults 
+                <MapSearchResults
                     topoApiResults={topoApiResults}
                     googleApiResults={googleApiResults}
                     boulderResults={boulderResults}

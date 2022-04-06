@@ -1,10 +1,9 @@
 import React, { useCallback, useState } from 'react';
-import { Icon } from 'components';
 import { BaseColor } from 'types';
 
 export type TabOption = {
     label?: string,
-    iconName?: string,
+    icon?: SVG,
     iconFill?: boolean,
     iconStroke?: boolean,
     color: BaseColor,
@@ -81,29 +80,24 @@ export const Tabs: React.FC<TabsProps> = (props: TabsProps) => {
     }, []);
 
     return (
-      <div className={`flex flex-row w-full justify-around ${props.className ? props.className : ''}`}>
+        <div className={`flex flex-row w-full justify-around ${props.className ? props.className : ''}`}>
 
-        {props.tabs.map((tab, index) => {
+            {props.tabs.map((tab, index) => {
                 const selected = selectedTab === index;
                 return (
-                  <div
-                    key={tab.iconName}
-                    className={`cursor-pointer w-full flex justify-center border-b-2 pb-2${getBorderClassName(tab, selected)}`}
-                    onClick={() => selectTabHandler(tab, index)}
-                    role="tab"
-                    tabIndex={index === 0 ? 0 : -1}
-                  >
-                    {tab.iconName && (
-                    <Icon
-                      name={tab.iconName}
-                      SVGClassName={`h-8 w-8 ${getIconClassName(tab, selected)}`}
-                    />
-                    )}
-                    {tab.label && <div className={`ktext-label ${getLabelClassName(tab, selected)}`}>{tab.label}</div>}
-                  </div>
+                    <div
+                        key={index}
+                        className={`cursor-pointer w-full flex justify-center border-b-2 pb-2${getBorderClassName(tab, selected)}`}
+                        onClick={() => selectTabHandler(tab, index)}
+                        role="tab"
+                        tabIndex={index === 0 ? 0 : -1}
+                    >
+                        {tab.icon && <tab.icon className={`h-8 w-8 ${getIconClassName(tab, selected)}`} />}
+                        {tab.label && <div className={`ktext-label ${getLabelClassName(tab, selected)}`}>{tab.label}</div>}
+                    </div>
                 );
             })}
 
-      </div>
+        </div>
     );
 };

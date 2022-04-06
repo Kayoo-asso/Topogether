@@ -1,13 +1,16 @@
 import React, { Dispatch, SetStateAction, useState } from 'react';
 import {
-  GradeScale, RoundButton, SlideoverMobile, TracksImage, Icon
+  GradeScale, RoundButton, SlideoverMobile
 } from 'components';
 import { Boulder, Image, Track } from 'types';
-import { buildBoulderGradeHistogram, staticUrl } from 'helpers';
+import { buildBoulderGradeHistogram } from 'helpers';
 import { Quark, watchDependencies, SelectQuarkNullable } from 'helpers/quarky';
 import { TracksListBuilder } from '.';
 import { BoulderForm } from '..';
 import { CFImage } from 'components/atoms/CFImage';
+import ArrowFull from 'assets/icons/arrow-full.svg';
+import ManyTracks from 'assets/icons/many-tracks.svg';
+import Camera from 'assets/icons/camera.svg';
 
 interface BoulderBuilderSlideoverMobileProps {
   boulder: Quark<Boulder>,
@@ -40,16 +43,15 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
       {full && (
         <div className="w-full bg-dark rounded-t-lg relative">
           {imageToDisplayIndex > 0 && !selectedTrack &&
-            <Icon 
-              name="arrow-full"
-              center
-              SVGClassName="w-3 h-3 stroke-main fill-main rotate-180"
-              wrapperClassName='absolute left-4 z-100'
+            <button
+              className='absolute left-4 z-100'
               onClick={() => {
                 props.setCurrentImage(boulder.images[imageToDisplayIndex - 1]);
                 setImageToDisplayIndex(idx => idx - 1)
               }}
-            />
+            >
+              <ArrowFull className="w-3 h-3 stroke-main fill-main rotate-180" />
+            </button>
           }
           {/* <TracksImage
             image={props.currentImage}
@@ -60,11 +62,8 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
             containerClassName={props.currentImage.width/props.currentImage.height > 1 ? 'overflow-hidden rounded-t-lg' : 'h-[300px]'}
           /> */}
           {imageToDisplayIndex < boulder.images.length - 1 && !selectedTrack &&
-            <Icon 
-              name="arrow-full"
-              center
-              SVGClassName="w-3 h-3 stroke-main fill-main"
-              wrapperClassName='absolute right-4 z-100'
+            <ArrowFull
+              className="absolute right-4 w-3 h-3 stroke-main fill-main z-100 cursor-pointer"
               onClick={() => {
                 props.setCurrentImage(boulder.images[imageToDisplayIndex + 1]);
                 setImageToDisplayIndex(idx => idx + 1)
@@ -93,18 +92,21 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
 
         <div className="flex flex-row items-center gap-6 justify-end col-span-2">
           {selectedTrack && boulder.tracks.filter(track => track.lines.toArray().some(line => line.imageId === props.currentImage?.id)).toArray().length > 1 &&
-            <Icon 
-              name='many-tracks'
-              SVGClassName={'w-6 h-6 ' + (displayPhantomTracks ? 'stroke-main' : 'stroke-grey-medium')}
+            <button
               onClick={() => setDisplayPhantomTracks(!displayPhantomTracks)}
-            />
+            >
+              <ManyTracks
+                className={'w-6 h-6 ' + (displayPhantomTracks ? 'stroke-main' : 'stroke-grey-medium')}
+              />
+            </button>
           }
           {full && (
             <RoundButton
-              iconName="camera"
               buttonSize={45}
               onClick={props.onPhotoButtonClick}
-            />
+            >
+              <Camera className='h-6 w-6 stroke-main' />
+            </RoundButton>
           )}
 
           {!full && (
@@ -124,8 +126,8 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
       {/* TODO : show once good pattern */}
       {/* TABS */}
       <div className="flex flex-row px-5 ktext-label font-bold my-2">
-          <span className={`w-1/4 ${trackTab ? 'text-main' : 'text-grey-medium'}`} onClick={() => setTrackTab(true)}>Voies</span>
-          <span className={`w-3/4 ${!trackTab ? 'text-main' : 'text-grey-medium'}`} onClick={() => setTrackTab(false)}>Infos du bloc</span>
+        <span className={`w-1/4 ${trackTab ? 'text-main' : 'text-grey-medium'}`} onClick={() => setTrackTab(true)}>Voies</span>
+        <span className={`w-3/4 ${!trackTab ? 'text-main' : 'text-grey-medium'}`} onClick={() => setTrackTab(false)}>Infos du bloc</span>
       </div>
 
 
@@ -155,8 +157,8 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
       {/* BOULDER FORM */}
       {!trackTab && full && (
         <div className='border-t border-grey-light px-6 py-10 overflow-auto'>
-          <BoulderForm 
-            boulder={props.boulder} 
+          <BoulderForm
+            boulder={props.boulder}
           />
         </div>
       )}

@@ -24,7 +24,7 @@ export const ManagementSlideover: React.FC<ManagementSlideoverProps> = ({
     const getTabOptions = (): TabOption[] => {
         const tabs: TabOption[] = [];
         props.managers.toArray().map((manager, index: number) => {
-            tabs.push({ label: 'marche '+index, color: 'main', action: () => setManagerTab(index)})
+            tabs.push({ label: 'marche ' + index, color: 'main', action: () => setManagerTab(index) })
         })
         return tabs;
     }
@@ -42,20 +42,20 @@ export const ManagementSlideover: React.FC<ManagementSlideoverProps> = ({
         else return (
             <div className='flex flex-col h-full pt-5 md:pt-0'>
                 <div className='flex flex-col px-6 md:px-0 pt-5 md:pt-0'>
-                    <div className='ktext-big-title text-center w-full mt-4 mb-6 md:hidden'>{"Gestionnaire"+(props.managers.length > 1 ? "s" : "")+" du spot"}</div>
+                    <div className='ktext-big-title text-center w-full mt-4 mb-6 md:hidden'>{"Gestionnaire" + (props.managers.length > 1 ? "s" : "") + " du spot"}</div>
 
                     {props.managers.length > 1 &&
-                        <Tabs 
+                        <Tabs
                             tabs={getTabOptions()}
                             className='pt-4 pb-6'
                         />
                     }
                     <div className='flex flex-row justify-end gap-6 items-center pb-6 md:pt-8'>
-                        {manager.image && 
+                        {manager.image &&
                             <div className="w-1/2 relative mt-2 min-h-[100px]">
                                 <CFImage
                                     image={manager.image}
-                                    alt={"Logo gestionnaire "+managerTab}
+                                    alt={"Logo gestionnaire " + managerTab}
                                     sizeHint='30vw'
                                     className="object-contain"
                                 />
@@ -75,14 +75,14 @@ export const ManagementSlideover: React.FC<ManagementSlideoverProps> = ({
                             <div className='ktext-subtitle'>Coordonnées</div>
                             <div className='ktext-base-little'>{manager.contactName}</div>
                             {manager.contactPhone && <div className='ktext-base-little'>{manager.contactPhone}</div>}
-                            {manager.contactMail && 
-                                <div 
+                            {manager.contactMail &&
+                                <div
                                     className='ktext-base-little overflow-hidden cursor-pointer text-main'
                                     onClick={() => {
                                         const data = [new ClipboardItem({ "text/plain": new Blob([manager.contactMail!], { type: "text/plain" }) })];
-                                        navigator.clipboard.write(data).then(function() {
+                                        navigator.clipboard.write(data).then(function () {
                                             setFlashMessage("Email copiées dans le presse papier.");
-                                        }, function() {
+                                        }, function () {
                                             setFlashMessage("Impossible de copier l'email.");
                                         });
                                     }}
@@ -106,9 +106,9 @@ export const ManagementSlideover: React.FC<ManagementSlideoverProps> = ({
                     {managementContent()}
                 </SlideoverMobile>
             }
-            {device !== 'mobile' && 
-                <SlideoverLeftDesktop 
-                    title={"Gestionnaire"+(props.managers.length > 1 ? "s" : "")+" du spot"} 
+            {device !== 'mobile' &&
+                <SlideoverLeftDesktop
+                    title={"Gestionnaire" + (props.managers.length > 1 ? "s" : "") + " du spot"}
                     open={open}
                     onClose={props.onClose}
                     className={props.className}
@@ -117,12 +117,12 @@ export const ManagementSlideover: React.FC<ManagementSlideoverProps> = ({
                 </SlideoverLeftDesktop>
             }
 
-            <Flash 
+            <Flash
                 open={!!flashMessage}
                 onClose={() => setFlashMessage(undefined)}
             >
                 {flashMessage}
             </Flash>
-        </> 
+        </>
     )
 }

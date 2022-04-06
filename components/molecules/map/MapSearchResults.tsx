@@ -1,10 +1,12 @@
-import { Icon } from 'components/atoms';
 import { encodeUUID } from 'helpers';
 import Link from 'next/link';
 import React from 'react';
 import { Boulder, LightTopo } from 'types';
+import Rock from 'assets/icons/rock.svg';
+import Flag from 'assets/icons/flag.svg';
+import WaypointIcon from 'assets/icons/waypoint.svg';
 
-interface MapSearchresultsProps {
+interface MapSearchResultsProps {
     topoApiResults: LightTopo[],
     googleApiResults: google.maps.places.AutocompletePrediction[],
     boulderResults: Boulder[],
@@ -13,7 +15,7 @@ interface MapSearchresultsProps {
     onClose: () => void,
 }
 
-export const MapSearchresults: React.FC<MapSearchresultsProps> = (props: MapSearchresultsProps) => {
+export const MapSearchResults: React.FC<MapSearchResultsProps> = (props: MapSearchResultsProps) => {
 
     return (
         <div className='absolute h-full w-full bg-white px-7 left-0 top-0 pt-[85px] z-50'>
@@ -25,9 +27,7 @@ export const MapSearchresults: React.FC<MapSearchresultsProps> = (props: MapSear
                 props.topoApiResults.map((topo) =>
                     <Link href={'/topo/' + encodeUUID(topo.id)} passHref key={topo.id}>
                         <div className='flex flex-row gap-4 items-center py-3 text-dark cursor-pointer ktext-base'>
-                            <div>
-                                <Icon name='waypoint' SVGClassName='w-5 h-5 fill-main' />
-                            </div>
+                            <WaypointIcon className='w-5 h-5 fill-main' />
                             <div>{topo.name}</div>
                         </div>
                     </Link>
@@ -41,9 +41,7 @@ export const MapSearchresults: React.FC<MapSearchresultsProps> = (props: MapSear
                         className='flex flex-row gap-4 items-center py-3 text-dark cursor-pointer ktext-base'
                         onClick={() => props.onBoulderSelect(boulder)}
                     >
-                        <div>
-                            <Icon name='rock' SVGClassName='w-5 h-5 stroke-main' />
-                        </div>
+                        <Rock className='w-5 h-5 stroke-main' />
                         <div>{boulder.name}</div>
                     </div>
                 )
@@ -58,9 +56,7 @@ export const MapSearchresults: React.FC<MapSearchresultsProps> = (props: MapSear
                             className='flex flex-row gap-4 items-center py-3 text-dark cursor-pointer ktext-base'
                             onClick={() => props.onPlaceSelect(res)}
                         >
-                            <div>
-                                <Icon name='flag' SVGClassName='w-5 h-5 stroke-dark' />
-                            </div>
+                            <Flag className='w-5 h-5 stroke-dark' />
                             <div>{res.description}</div>
                         </div>
                     )}

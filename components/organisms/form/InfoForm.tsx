@@ -25,6 +25,7 @@ export const InfoForm: React.FC<InfoFormProps> = watchDependencies((props: InfoF
     }, []);
 
     const handleAmenities = useCallback((amenity) => () => {
+      console.log("Adding amenity flag " + amenity);
         props.topo.set((t) => ({
         ...t,
         amenities: toggleFlag(t.amenities, amenity),

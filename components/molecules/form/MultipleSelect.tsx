@@ -2,8 +2,8 @@ import { Checkbox } from 'components';
 import React, {
   useRef, useState,
 } from 'react';
-import { Icon } from '../../atoms/Icon';
 import { TextInput } from './TextInput';
+import ArrowSimple from 'assets/icons/arrow-simple.svg';
 
 type MultipleSelectProps<T> = {
   id: string;
@@ -34,15 +34,16 @@ export const MultipleSelect = <T extends number | string>(props: MultipleSelectP
         readOnly
         onClick={() => setIsOpen(!isOpen)}
       />
-      <Icon
-        name="arrow-simple"
-        wrapperClassName={`absolute right-0 ${isOpen ? 'top-[14px]' : 'top-[8px]'}`}
-        SVGClassName={`${isOpen ? 'rotate-90' : '-rotate-90'} fill-dark w-4 h-4 left-22`}
+      <button
         onClick={() => {
           setIsOpen(!isOpen);
           if (!isOpen) ref.current?.focus();
         }}
-      />
+      >
+        <ArrowSimple
+          className={`w-4 h-4 fill-dark absolute right-0 ${isOpen ? 'top-[14px] rotate-90' : 'top-[8px] -rotate-90'}`}
+        />
+      </button>
 
       {isOpen && <div className='pl-4 py-2 bg-white rounded-b h-[200px] absolute overflow-y-auto overflow-x-none z-100 w-full right-0 shadow'>
         {props.options.map(({ value, label }) => (

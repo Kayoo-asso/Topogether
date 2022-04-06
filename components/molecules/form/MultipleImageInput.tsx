@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Icon, ImageThumb } from 'components';
+import { ImageThumb } from 'components';
 import { Boulder, Image, UUID } from 'types';
 import { ImageInput } from '.';
-import { QuarkArray } from 'helpers/quarky';
+import ArrowFull from 'assets/icons/arrow-full.svg';
 
 interface MultipleImageInputProps {
   images: Image[],
@@ -40,19 +40,20 @@ export const MultipleImageInput: React.FC<MultipleImageInputProps> = ({
   const sliceEnd = sliceStart + nbVisible;
   const toDisplay = props.images.slice(sliceStart, sliceEnd);
 
-  
+
   return (
     <div className='flex flex-row gap-1.5 w-full'>
       {displayLeftArrow && (
-        <Icon
-          name="arrow-full"
-          center
-          SVGClassName="w-3 h-3 stroke-main fill-main rotate-180"
+        <button
           onClick={() => setPage((p) => p - 1)}
-        />
+        >
+          <ArrowFull
+            className="w-3 h-3 stroke-main fill-main rotate-180"
+          />
+        </button>
       )}
 
-      {[ ...Array(nbVisible).keys()].map((i, index) => {
+      {[...Array(nbVisible).keys()].map((i, index) => {
         if (toDisplay[index])
           return (
             <ImageThumb
@@ -65,7 +66,7 @@ export const MultipleImageInput: React.FC<MultipleImageInputProps> = ({
             />
           )
         else return <div className='w-full' key={index}></div>
-      })} 
+      })}
 
       {allowUpload && (
         <ImageInput
@@ -76,12 +77,13 @@ export const MultipleImageInput: React.FC<MultipleImageInputProps> = ({
       )}
 
       {displayRightArrow && (
-        <Icon
-          name="arrow-full"
-          center
-          SVGClassName="w-3 h-3 stroke-main fill-main"
+        <button
           onClick={() => setPage((p) => p + 1)}
-        />
+        >
+          <ArrowFull
+            className="w-3 h-3 stroke-main fill-main"
+          />
+        </button>
       )}
     </div>
   );

@@ -1,12 +1,16 @@
 import {
-    Header, LeftbarDesktop, Tabs, TopoCard,
+    TopoCard,
 } from 'components';
+import { Header, LeftbarDesktop, Tabs } from 'components/layouts';
 import React, { useCallback, useRef, useState } from 'react';
 import { LightTopo, TopoStatus } from 'types';
 import { AdminActionDropdown } from 'components/molecules/cards/AdminActionDropdown';
 import { useContextMenu } from 'helpers/hooks/useContextMenu';
 import { ModalDeleteTopo, ModalRejectTopo, ModalValidateTopo } from 'components/organisms';
 import { api } from 'helpers/services';
+import Edit from 'assets/icons/edit.svg';
+import Recent from 'assets/icons/recent.svg';
+import Checked from 'assets/icons/checked.svg';
 
 interface RootAdminProps {
     lightTopos: LightTopo[],
@@ -54,19 +58,19 @@ export const RootAdmin: React.FC<RootAdminProps> = (props: RootAdminProps) => {
                 <div className="w-full h-[10%] mt-[10%]">
                     <Tabs
                         tabs={[{
-                            iconName: 'edit',
+                            icon: Edit,
                             iconStroke: true,
                             color: 'second',
                             action: () => setSelectedStatus(TopoStatus.Draft),
                         },
                         {
-                            iconName: 'recent',
+                            icon: Recent,
                             iconStroke: true,
                             color: 'third',
                             action: () => setSelectedStatus(TopoStatus.Submitted),
                         },
                         {
-                            iconName: 'checked',
+                            icon: Checked,
                             iconFill: true,
                             color: 'main',
                             action: () => setSelectedStatus(TopoStatus.Validated),
