@@ -8,6 +8,7 @@ interface UserActionDropdownProps {
     topo: LightTopo;
     position: { x: number, y: number };
     onSendToValidationClick: () => void,
+    onSendToDraftClick: () => void,
     onDeleteClick: () => void;
 }
 
@@ -26,9 +27,14 @@ export const UserActionDropdown: React.FC<UserActionDropdownProps> = React.memo(
                 ...(props.topo.status !== TopoStatus.Submitted
                     ? [{ value: 'Ouvrir', action: openTopo }]
                     : []),
-                { value: 'Télécharger', action: downloadTopo },
+                ...(props.topo.status === TopoStatus.Validated
+                    ? [{ value: 'Télécharger', action: downloadTopo }]
+                    : []),
                 ...(props.topo.status === TopoStatus.Draft
                     ? [{ value: 'Envoyer en validation', action: props.onSendToValidationClick }]
+                    : []),
+                ...(props.topo.status === TopoStatus.Submitted
+                    ? [{ value: 'Retourner en brouillon', action: props.onSendToDraftClick }]
                     : []),
                 { value: 'Supprimer', action: props.onDeleteClick },
             ]}

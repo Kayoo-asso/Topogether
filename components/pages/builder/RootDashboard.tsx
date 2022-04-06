@@ -4,9 +4,8 @@ import { HeaderDesktop, LeftbarDesktop } from 'components/layouts';
 import { useContextMenu } from 'helpers';
 import { LightTopo, TopoStatus } from 'types';
 import { UserActionDropdown } from 'components/molecules/cards/UserActionDropdown';
-import { ModalDeleteTopo, ModalSubmitTopo } from 'components/organisms';
+import { ModalDeleteTopo, ModalSubmitTopo, ModalUnsubmitTopo } from 'components/organisms';
 import { api } from 'helpers/services';
-import { watchDependencies } from 'helpers/quarky';
 
 interface RootDashboardProps {
     lightTopos: LightTopo[],
@@ -14,7 +13,6 @@ interface RootDashboardProps {
 
 export const RootDashboard: React.FC<RootDashboardProps> = (props: RootDashboardProps) => {
     const [lightTopos, setLightTopos] = useState(props.lightTopos);
-    console.log(lightTopos);
     const draftLightTopos = lightTopos.filter((topo) => topo.status === TopoStatus.Draft);
     const submittedLightTopos = lightTopos.filter((topo) => topo.status === TopoStatus.Submitted);
     const validatedLightTopos = lightTopos.filter((topo) => topo.status === TopoStatus.Validated);
@@ -23,8 +21,9 @@ export const RootDashboard: React.FC<RootDashboardProps> = (props: RootDashboard
     const [dropdownDisplayed, setDropdownDisplayed] = useState(false);
     const [topoDropdown, setTopoDropddown] = useState<LightTopo>();
     const [dropdownPosition, setDropdownPosition] = useState<{ x: number, y: number }>();
-
+  
     const [displayModalSubmit, setDisplayModalSubmit] = useState(false);
+    const [displayModalUnsubmit, setDisplayModalUnsubmit] = useState(false);
     const [displayModalDelete, setDisplayModalDelete] = useState(false);
 
     const sendTopoToValidation = useCallback(async () => {
@@ -33,6 +32,16 @@ export const RootDashboard: React.FC<RootDashboardProps> = (props: RootDashboard
         const submittedTopo = lightTopos.find(lt => lt.id === topoDropdown.id)!;
         submittedTopo.submitted = new Date().toISOString();
         submittedTopo.status = TopoStatus.Submitted;
+        setLightTopos(lightTopos.slice());
+      }
+    }, [topoDropdown, lightTopos]);
+
+    const sendTopoToDraft = useCallback(async () => {
+      if (topoDropdown) {
+        await api.setTopoStatus(topoDropdown!.id, TopoStatus.Draft);
+        const toDraftTopo = lightTopos.find(lt => lt.id === topoDropdown.id)!;
+        toDraftTopo.submitted = undefined;
+        toDraftTopo.status = TopoStatus.Draft;
         setLightTopos(lightTopos.slice());
       }
     }, [topoDropdown, lightTopos]);
@@ -116,6 +125,7 @@ export const RootDashboard: React.FC<RootDashboardProps> = (props: RootDashboard
           <UserActionDropdown 
             position={dropdownPosition} 
             topo={topoDropdown}
+            onSendToDraftClick={() => setDisplayModalUnsubmit(true)}
             onSendToValidationClick={() => setDisplayModalSubmit(true)}
             onDeleteClick={() => setDisplayModalDelete(true)}
           />
@@ -125,6 +135,12 @@ export const RootDashboard: React.FC<RootDashboardProps> = (props: RootDashboard
                 onSubmit={sendTopoToValidation} 
                 onClose={() => setDisplayModalSubmit(false)}    
             />
+        }
+        {displayModalUnsubmit &&
+          <ModalUnsubmitTopo 
+            onUnsubmit={sendTopoToDraft} 
+            onClose={() => setDisplayModalUnsubmit(false)}   
+          />
         }
         {displayModalDelete &&
             <ModalDeleteTopo 
