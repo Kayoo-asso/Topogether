@@ -13,7 +13,7 @@ interface RootDashboardProps {
 }
 
 export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies((props: RootDashboardProps) => {
-    const lightTopos = props.lightTopos;
+    const [lightTopos, setLightTopos] = useState(props.lightTopos);
     const draftLightTopos = lightTopos.filter((topo) => topo.status === TopoStatus.Draft);
     const submittedLightTopos = lightTopos.filter((topo) => topo.status === TopoStatus.Submitted);
     const validatedLightTopos = lightTopos.filter((topo) => topo.status === TopoStatus.Validated);
@@ -26,7 +26,11 @@ export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies((pr
     const [displayModalSubmit, setDisplayModalSubmit] = useState(false);
     const [displayModalDelete, setDisplayModalDelete] = useState(false);
     const sendTopoToValidation = useCallback(async () => await api.setTopoStatus(topoDropdown!.id, TopoStatus.Submitted), [topoDropdown]);
-    const deleteTopo = useCallback(() => api.deleteTopo(topoDropdown!), [topoDropdown]);
+    const deleteTopo = useCallback(() => {
+      const newLightTopos = lightTopos.filter(lt => lt.id !== topoDropdown?.id);
+      api.deleteTopo(topoDropdown!);
+      setLightTopos(newLightTopos);
+    }, [topoDropdown, lightTopos]);
   
     useContextMenu(() => setDropdownDisplayed(false), ref.current);
   

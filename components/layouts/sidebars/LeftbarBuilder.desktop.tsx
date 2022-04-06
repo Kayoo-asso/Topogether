@@ -31,6 +31,7 @@ export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = watch
                     content='Valider le topo'
                     activated={props.activateSubmission}
                     onClick={props.onSubmit}
+                    fullWidth
                 />
             </div>
         </div>
