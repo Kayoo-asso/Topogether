@@ -5,13 +5,17 @@ import defaultProfilePicture from 'public/assets/img/Default_profile_picture.png
 
 interface ProfilePictureProps {
   image?: Image,
+  loading?: boolean,
   onClick?: () => void,
 }
 
-export const ProfilePicture: React.FC<ProfilePictureProps> = (props: ProfilePictureProps) => {
+export const ProfilePicture: React.FC<ProfilePictureProps> = ({
+  loading = false,
+  ...props
+}: ProfilePictureProps) => {
   return (
     <div
-      className={`shadow relative rounded-full border border-main z-20 h-full w-full${props.onClick ? ' cursor-pointer' : ''}`}
+      className={`shadow relative rounded-full border border-main overflow-hidden z-20 h-full w-full${props.onClick ? ' cursor-pointer' : ''}`}
       onClick={() => {
         props.onClick && props.onClick();
       }}
@@ -21,6 +25,7 @@ export const ProfilePicture: React.FC<ProfilePictureProps> = (props: ProfilePict
         className="rounded-full object-fit"
         alt="Photo de profil"
         sizeHint='25vw'
+        isLoading={loading}
         defaultImage={defaultProfilePicture}
       />
     </div>

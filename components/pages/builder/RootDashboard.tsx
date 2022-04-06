@@ -1,10 +1,9 @@
 import React, { useCallback, useRef, useState } from 'react';
-import { AddTopoCard, TopoCardList, Button } from 'components';
+import { AddTopoCard, TopoCardList, Button, ModalUnsubmitTopo, ModalDeleteTopo, ModalSubmitTopo } from 'components';
 import { HeaderDesktop, LeftbarDesktop } from 'components/layouts';
 import { useContextMenu } from 'helpers';
 import { LightTopo, TopoStatus } from 'types';
 import { UserActionDropdown } from 'components/molecules/cards/UserActionDropdown';
-import { ModalDeleteTopo, ModalSubmitTopo, ModalUnsubmitTopo } from 'components/organisms';
 import { api } from 'helpers/services';
 
 interface RootDashboardProps {

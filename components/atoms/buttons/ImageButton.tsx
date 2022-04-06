@@ -37,12 +37,11 @@ export const ImageButton: React.FC<ImageButtonProps> = ({
       height: containerWidth,
     }}
   >
-    {loading
-      && (
+    {loading && (
         <Spinner
           className="stroke-main w-10 h-10 animate-spin m-2"
         />
-      )}
+    )}
     {!loading && props.image &&
       <>
         {props.onDelete &&

@@ -6,7 +6,6 @@ export interface ForProps<T> {
     children: (item: T) => JSX.Element,
 }
 
-// TODO: test to see if users can put keys directly on the result of their function
 function ForComponent<T>(props: ForProps<T>) {
     const list = props.each();
     if (list.length === 0 && props.fallback) return props.fallback;

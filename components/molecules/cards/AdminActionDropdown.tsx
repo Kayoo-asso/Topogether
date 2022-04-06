@@ -19,7 +19,10 @@ export const AdminActionDropdown: React.FC<AdminActionDropdownProps> = React.mem
     const openTopo = useCallback(() => router.push(`/topo/${props.topo.id}`), [router, props.topo.id]);
     const editTopo = useCallback(() => router.push(`/builder/${props.topo.id}`), [router, props.topo.id]);
     //TODO
-    const contactCreator = useCallback(() => console.log('Contacting the creator...'), []);
+    const contactCreator = useCallback(() => {
+        alert("à venir");
+        console.log('Contacting the creator...')
+    }, []);
     
     const actions = useMemo<DropdownOption[]>(() => [
         { value: 'Ouvrir', action: openTopo },

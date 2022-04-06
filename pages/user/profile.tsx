@@ -100,20 +100,15 @@ const ProfilePage: NextPage<ProfileProps> = watchDependencies(({ user }) => {
         <div className='flex flex-col w-full h-full justify-center md:px-12'>
           <div className='flex flex-row justify-center md:justify-start rounded-lg px-6 pb-10 pt-12 md:pt-[16px]'>
             <div className='h-[100px] w-[100px] relative cursor-pointer'>
-              <ProfilePicture
-                image={image}
-                onClick={() => {
-                  if (imageInputRef.current) imageInputRef.current.click();
+              <ImageInput 
+                ref={imageInputRef}
+                profileImageButton
+                value={image}
+                onChange={(images) => {
+                  console.log(images);
+                  setImage(images[0]);
                 }}
               />
-              <div className='hidden'>
-                <ImageInput 
-                  ref={imageInputRef}
-                  onChange={(images) => {
-                    setImage(images[0]);
-                  }}
-                />
-              </div>
             </div>
             
             <div className='hidden md:flex flex-col ml-6 w-1/2'>

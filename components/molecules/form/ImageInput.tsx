@@ -1,6 +1,6 @@
 import React, { useRef, useState, forwardRef } from 'react';
 // eslint-disable-next-line import/no-cycle
-import { ImageButton } from '../../atoms';
+import { ImageButton, ProfilePicture } from '../../atoms';
 import { api, ImageUploadErrorReason } from 'helpers/services';
 import { Image } from 'types';
 
@@ -8,6 +8,7 @@ interface ImageInputProps {
   label?: string,
   multiple?: boolean,
   value?: Image,
+  profileImageButton?: boolean,
   onChange: (images: Image[]) => void,
   onDelete?: () => void,
 }
@@ -55,15 +56,26 @@ export const ImageInput = forwardRef<HTMLInputElement, ImageInputProps>(({
           if (e?.target?.files) { handleFileInput(e.target.files); }
         }}
       />
-      <ImageButton
-        text={props.label}
-        image={props.value}
-        loading={loading}
-        onClick={() => {
-          if (!loading) fileInputRef.current?.click();
-        }}
-        onDelete={props.onDelete}
-      />
+      {props.profileImageButton &&
+        <ProfilePicture 
+          image={props.value}
+          loading={loading}
+          onClick={() => {
+            if (fileInputRef.current) fileInputRef.current.click();
+          }}
+        />
+      }
+      {!props.profileImageButton &&
+        <ImageButton
+          text={props.label}
+          image={props.value}
+          loading={loading}
+          onClick={() => {
+            if (!loading) fileInputRef.current?.click();
+          }}
+          onDelete={props.onDelete}
+        />
+      }
       <div className={`ktext-error text-error pt-1 w-22 h-22 ${(error && error.length > 0) ? '' : 'hidden'}`}>
         {error}
       </div>

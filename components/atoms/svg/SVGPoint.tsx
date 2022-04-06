@@ -17,10 +17,6 @@ interface SVGPointProps {
   onClick?: (e: React.MouseEvent<SVGImageElement, MouseEvent>) => void,
 }
 
-// TODO: fix drag
-// Basically need to convert event coordinates -> viewBox coordinates
-// (maybe pass a ref to the invisible viewBox rectangle?)
-
 export const SVGPoint: React.FC<SVGPointProps> = ({
   draggable = false,
   eraser = false,

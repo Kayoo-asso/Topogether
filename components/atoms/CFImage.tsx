@@ -1,7 +1,7 @@
 import { Image } from "types"
 import { SourceSize, VariantWidths } from "helpers/variants";
 import { cloudflareUrl } from "helpers/cloudflareUrl";
-import { ImgHTMLAttributes, LegacyRef, useEffect, useRef, useState } from "react";
+import { ImgHTMLAttributes, useEffect, useRef, useState } from "react";
 import defaultKayoo from 'public/assets/img/Kayoo_defaut_image.png';
 import type { StaticImageData } from 'next/image';
 import { useDevice } from "helpers/hooks/useDevice";
@@ -10,6 +10,7 @@ import { Loading } from "components/layouts";
 export type CFImageProps = RawImageAttributes & {
     alt: string,
     image?: Image,
+    isLoading?: boolean,
     sizeHint: SourceSize | { raw: string },
     defaultImage?: StaticImageData,
 };
@@ -62,7 +63,7 @@ export const CFImage: React.FC<CFImageProps> = ({
         
     return (
         <div className='w-full h-full relative'>
-            {loading &&
+            {(loading || props.isLoading) &&
                 <div className='bg-white absolute w-full h-full top-0 z-1000'>
                     <Loading 
                         bgWhite={false} 
