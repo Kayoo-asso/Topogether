@@ -49,7 +49,8 @@ export const BoulderPreviewDesktop: React.FC<BoulderPreviewDesktopProps> = watch
                         props.boulder.set(b => ({
                             ...b,
                             images: newImages,
-                        }))
+                        }));
+                        if (props.currentImage?.id === id) props.setCurrentImage(undefined);
                     }}
                 />
             </div>
