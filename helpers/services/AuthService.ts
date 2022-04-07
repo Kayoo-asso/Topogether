@@ -129,15 +129,15 @@ export class AuthService {
         return true;
     }
 
-    // async changeEmail(email: Email): Promise<boolean> {
-    //     const { user, error } = await this.client.auth.update({ email });
-    //     if (error) {
-    //         console.error("Error updating email:", error);
-    //         return false;
-    //     }
-    //     console.log("Updated email, received user:", user);
-    //     return true;
-    // }
+    async changeEmail(email: Email): Promise<boolean> {
+        const { user, error } = await this.client.auth.update({ email });
+        if (error) {
+            console.error("Error updating email:", error);
+            return false;
+        }
+        console.log("Updated email, received user:", user);
+        return true;
+    }
 
     // doesn't change the user as far as I know
     async changePassword(password: string): Promise<boolean> {

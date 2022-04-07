@@ -51,12 +51,11 @@ const ProfilePage: NextPage<ProfileProps> = watchDependencies((props) => {
     }
   }
 
-  const changeMail = () => {
+  const changeMail = async () => {
     if (!user.email || (user.email && !isEmail(user.email))) setEmailError("Email invalide");
     else {
       setLoadingChangeMail(true)
-      alert("à venir"); //TODO
-      console.log("change mail");
+      await auth.changeEmail(user.email);
       setLoadingChangeMail(false);
     }
   }
