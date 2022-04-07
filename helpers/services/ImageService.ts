@@ -91,7 +91,6 @@ export class ImageService {
       }
 
       else {
-        // rename file
         toUpload.push(file);
       }
     }

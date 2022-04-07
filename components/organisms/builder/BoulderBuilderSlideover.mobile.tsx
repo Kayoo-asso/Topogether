@@ -11,6 +11,7 @@ import { CFImage } from 'components/atoms/CFImage';
 import ArrowFull from 'assets/icons/arrow-full.svg';
 import ManyTracks from 'assets/icons/many-tracks.svg';
 import Camera from 'assets/icons/camera.svg';
+import { TracksImage } from 'components/molecules';
 
 interface BoulderBuilderSlideoverMobileProps {
   boulder: Quark<Boulder>,
@@ -41,7 +42,7 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
     >
       {/* BOULDER IMAGE */}
       {full && (
-        <div className="w-full bg-dark rounded-t-lg relative">
+        <div className="w-full bg-dark rounded-t-lg relative overflow-hidden max-h-[45%]">
           {imageToDisplayIndex > 0 && !selectedTrack &&
             <button
               className='absolute left-4 z-100'
@@ -53,14 +54,14 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
               <ArrowFull className="w-3 h-3 stroke-main fill-main rotate-180" />
             </button>
           }
-          {/* <TracksImage
+          <TracksImage
+            sizeHint='100vw'
             image={props.currentImage}
             tracks={boulder.tracks.quarks()}
             selectedTrack={props.selectedTrack}
             displayPhantomTracks={displayPhantomTracks}
             displayTracksDetails={!!selectedTrack?.id}
-            containerClassName={props.currentImage.width/props.currentImage.height > 1 ? 'overflow-hidden rounded-t-lg' : 'h-[300px]'}
-          /> */}
+          />
           {imageToDisplayIndex < boulder.images.length - 1 && !selectedTrack &&
             <ArrowFull
               className="absolute right-4 w-3 h-3 stroke-main fill-main z-100 cursor-pointer"
@@ -125,10 +126,12 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
 
       {/* TODO : show once good pattern */}
       {/* TABS */}
-      <div className="flex flex-row px-5 ktext-label font-bold my-2">
-        <span className={`w-1/4 ${trackTab ? 'text-main' : 'text-grey-medium'}`} onClick={() => setTrackTab(true)}>Voies</span>
-        <span className={`w-3/4 ${!trackTab ? 'text-main' : 'text-grey-medium'}`} onClick={() => setTrackTab(false)}>Infos du bloc</span>
-      </div>
+      {full &&
+        <div className="flex flex-row px-5 ktext-label font-bold my-2">
+          <span className={`w-1/4 ${trackTab ? 'text-main' : 'text-grey-medium'}`} onClick={() => setTrackTab(true)}>Voies</span>
+          <span className={`w-3/4 ${!trackTab ? 'text-main' : 'text-grey-medium'}`} onClick={() => setTrackTab(false)}>Infos du bloc</span>
+        </div>
+      }
 
 
       {/* TRACKSLIST */}

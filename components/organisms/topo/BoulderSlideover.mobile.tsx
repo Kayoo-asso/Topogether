@@ -130,19 +130,21 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = wat
 
       {/* TODO : show once good pattern */}
       {/* TABS */}
-      <div className="flex flex-row gap-8 w-full px-5 ktext-label font-bold my-2">
-        <span className={`${officialTrackTab ? 'text-main' : 'text-grey-medium'}`} onClick={() => setOfficialTrackTab(true)}>officielles</span>
-        <span className={`${!officialTrackTab ? 'text-main' : 'text-grey-medium'}`} onClick={() => setOfficialTrackTab(false)}>communautés</span>
-        <span className="flex w-full justify-end">
-          <button
-            onClick={() => console.log('create community track')} // TODO
-          >
-            <AddIcon
-              className="w-5 h-5 stroke-main"
-            />
-          </button>
-        </span>
-      </div>
+      {full &&
+        <div className="flex flex-row gap-8 w-full px-5 ktext-label font-bold my-2">
+          <span className={`${officialTrackTab ? 'text-main' : 'text-grey-medium'}`} onClick={() => setOfficialTrackTab(true)}>officielles</span>
+          <span className={`${!officialTrackTab ? 'text-main' : 'text-grey-medium'}`} onClick={() => setOfficialTrackTab(false)}>communautés</span>
+          <span className="flex w-full justify-end">
+            <button
+              onClick={() => console.log('create community track')} // TODO
+            >
+              <AddIcon
+                className="w-5 h-5 stroke-main"
+              />
+            </button>
+          </span>
+        </div>
+      }
 
       {/* TRACKSLIST */}
       <Show when={() => full}>

@@ -35,17 +35,18 @@ export const GradeScale: React.FC<GradeScaleProps> = ({
 
   return (
     <div className={`flex ${props.className}`}>
-      {lightGrades.map(grade =>
-        <GradeCircle
-          key={grade}
-          grade={grade}
-          size={circleSize}
-          selected={!!histogram[grade]}
-          className="mr-1"
-          onClick={props.onCircleClick}
-        />
-      )}
-      
+      {lightGrades.map(grade => {
+        if (grade !== 'None') return (
+          <GradeCircle
+            key={grade}
+            grade={grade}
+            size={circleSize}
+            selected={!!histogram[grade]}
+            className="mr-1"
+            onClick={props.onCircleClick}
+          />
+        )
+      })}
     </div>
   );
 };

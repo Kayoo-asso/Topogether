@@ -50,7 +50,7 @@ export const GradeSelector: React.FC<GradeselectorDrawerProps> = (props: Gradese
         </span>
 
         {open &&
-            <div className='absolute flex bottom-0 h-[520px] pt-8 flex-col gap-5 items-start bg-dark rounded-t-full mt-8 mb-[7vh] overflow-y-scroll overflow-x-hidden hide-scrollbar right-[17%] md:right-[5%]'>
+            <div className='absolute flex bottom-0 h-[95%] pt-8 flex-col gap-5 -mb-[25px] items-start bg-dark rounded-t-full overflow-y-scroll overflow-x-hidden hide-scrollbar right-[17%] md:right-[5%]'>
                 {[...grades].reverse().map(grade => (
                     <span
                         key={grade}

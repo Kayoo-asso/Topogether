@@ -4,12 +4,13 @@ import { GeoCoordinates, MapToolEnum } from 'types';
 import { useGeolocation } from 'helpers/hooks/useGeolocation';
 import ArrowFull from 'assets/icons/arrow-full.svg';
 import Clear from 'assets/icons/clear.svg';
+import Spinner from 'assets/icons/spinner.svg';
 
 interface GeoCameraProps {
     open?: boolean,
     currentTool: MapToolEnum,
     onChangeTool: (tool: MapToolEnum) => void,
-    onCapture?: (blob: Blob | null, coordinates: GeoCoordinates) => void,
+    onCapture?: (file: File, coordinates: GeoCoordinates) => void,
     onClose: () => void,
 }
 
@@ -29,6 +30,8 @@ export const GeoCamera: React.FC<GeoCameraProps> = ({
     const [distance, setDistance] = useState(0);
     const [isCalibrating, setIsCalibrating] = useState(true);
     const [displayToolbar, setDisplayToolbar] = useState(false);
+
+    const [loading, setLoading] = useState(false);
 
     const [displayItemSelectMenu, setDisplayItemSelectMenu] = useState(false);
     useGeolocation({
@@ -120,6 +123,13 @@ export const GeoCamera: React.FC<GeoCameraProps> = ({
     if (!open) return null;
     return (
         <div className='w-full h-full absolute overflow-hidden z-1000'>
+            {loading && 
+                <div className='flex justify-center items-center w-full h-full bg-dark bg-opacity-80 absolute z-1000'>
+                    <Spinner
+                        className="stroke-main w-10 h-10 animate-spin m-2"
+                    />
+                </div>
+            }
             <div className='absolute z-100 top-4 left-4'>
                 <div 
                     className={'flex flex-row items-center ' + (props.currentTool === 'PARKING' ? 'text-second' : props.currentTool === 'WAYPOINT' ? 'text-third' : 'text-main')}
@@ -192,11 +202,13 @@ export const GeoCamera: React.FC<GeoCameraProps> = ({
                         className='ktext-base-little cursor-pointer'
                         onClick={() => {
                             canvasRef.current?.toBlob(blob => {
-                                props.onCapture && props.onCapture(blob, fromLatLng(coords));
-
+                                if (blob) {
+                                    const file: File = new File([blob], "CameraPhoto", { type: "image/jpeg" });
+                                    props.onCapture && props.onCapture(file, fromLatLng(coords));
+                                }
                             }, "image/jpeg", 1);
                             removeCapture();
-                            props.onClose();
+                            setLoading(true);
                         }}
                     >Valider</div>
                 </div>

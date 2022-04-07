@@ -77,7 +77,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
                 />
             </span>
 
-            <span className='1/5 pb-3 mx-3 self-end md:hidden'>
+            <span className='flex 1/5 pb-3 mx-3 self-end md:hidden'>
                 <ToolSelectorMobile 
                     selectedTool={selectedTool !== 'ERASER' ? selectedTool : 'LINE_DRAWER'}
                     onToolSelect={props.onToolSelect}
@@ -110,7 +110,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
                 />
             </span>
 
-            <span className='w-1/5 md:hidden'>
+            <span className='w-1/5 flex justify-center md:hidden'>
                 <Checked
                     className='fill-main h-6 w-6 cursor-pointer'
                     onClick={props.onValidate}

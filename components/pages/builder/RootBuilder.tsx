@@ -252,32 +252,37 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
         return () => window.removeEventListener('keydown', handleKey);
     }, [creatingSector, currentTool]);
 
-    const handleGeoCameraCapture = useCallback(async (blob, coordinates) => {
-        if (blob) {
-            const img = await blobToImage(blob); //TODO CHANGE WITH UPLOADIMAGE
-            setCurrentImage(img);
-            if (currentTool === 'ROCK') {
-                if (selectedBoulder()) {
-                    const newImages = selectedBoulder()!.images;
-                    newImages.push(img);
-                    selectedBoulder.quark()!.set({
-                        ...selectedBoulder()!,
-                        images: newImages,
-                    });
-                    selectedTrack.select(createTrack(selectedBoulder()!, session.id));
+    const handleGeoCameraCapture = useCallback(async (file: File, coordinates: GeoCoordinates) => {
+        if (file) {
+            const res = await api.images.upload(file);
+            setDisplayGeoCamera(false)
+            if (res.type === 'error') return;
+            else {
+                const img = res.value;
+                setCurrentImage(img);
+                if (currentTool === 'ROCK') {
+                    if (selectedBoulder()) {
+                        const newImages = selectedBoulder()!.images;
+                        newImages.push(img);
+                        selectedBoulder.quark()!.set({
+                            ...selectedBoulder()!,
+                            images: newImages,
+                        });
+                        selectedTrack.select(createTrack(selectedBoulder()!, session.id));
+                    }
+                    else {
+                        const newBoulderQuark = createBoulder(props.topoQuark, coordinates, img);
+                        selectedTrack.select(createTrack(newBoulderQuark(), session.id));
+                        selectedBoulder.select(newBoulderQuark);
+                    }
+                    setDisplayDrawer(true);
                 }
-                else {
-                    const newBoulderQuark = createBoulder(props.topoQuark, coordinates, img);
-                    selectedTrack.select(createTrack(newBoulderQuark(), session.id));
-                    selectedBoulder.select(newBoulderQuark);
+                else if (currentTool === 'PARKING') {
+                    selectedParking.select(createParking(topo, coordinates, img));
                 }
-                setDisplayDrawer(true);
-            }
-            else if (currentTool === 'PARKING') {
-                selectedParking.select(createParking(topo, coordinates, img));
-            }
-            else if (currentTool === 'WAYPOINT') {
-                selectedWaypoint.select(createWaypoint(topo, coordinates, img));
+                else if (currentTool === 'WAYPOINT') {
+                    selectedWaypoint.select(createWaypoint(topo, coordinates, img));
+                }
             }
         }
     }, [topo, currentTool, selectedBoulder()]);
