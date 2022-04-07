@@ -70,7 +70,8 @@ export const MapControl: React.FC<MapControlProps> = ({
 
     const [userPosition, setUserPosition] = useState<google.maps.LatLngLiteral>();
     const [satelliteView, setSatelliteView] = useState(false);
-    const maxBoulders = props.topos ? Math.max(...props.topos.map(t => t.nbBoulders)) : 0;
+    const maxBoulders = (props.topos && props.topos.length > 0) ? Math.max(...props.topos.map(t => t.nbBoulders)) : 1;
+
     const defaultTopoFilterOptions: TopoFilterOptions = {
         types: [],
         boulderRange: [0, maxBoulders],
@@ -78,7 +79,7 @@ export const MapControl: React.FC<MapControlProps> = ({
         adaptedToChildren: false,
     };
     const [topoFilterOptions, setTopoFilterOptions] = useState<TopoFilterOptions>(defaultTopoFilterOptions);
-    const maxTracks = props.boulders ? Math.max(...props.boulders.map(b => b().tracks.length).toArray()) : 0;
+    const maxTracks = (props.boulders && props.boulders.toArray().length > 0) ? Math.max(...props.boulders.map(b => b().tracks.length).toArray()) : 1;
     const defaultBoulderFilterOptions: BoulderFilterOptions = {
         techniques: ClimbTechniques.None,
         tracksRange: [0, maxTracks],
