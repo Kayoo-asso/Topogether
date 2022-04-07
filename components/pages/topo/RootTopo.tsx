@@ -6,11 +6,13 @@ import {
   MapControl, ParkingSlide, WaypointSlide, TracksImage, LeftbarTopoDesktop
 } from 'components';
 import { DeviceContext, decodeUUID, encodeUUID, sortBoulders, toLatLng } from 'helpers';
-import { Boulder, Image, isUUID, Parking, Sector, Topo, Track, Waypoint } from 'types';
+import { Boulder, Image, isUUID, Parking, Sector, Topo, TopoStatus, Track, Waypoint } from 'types';
 import { Quark, QuarkIter, useCreateDerivation, useLazyQuarkyEffect, useQuarkyCallback, useSelectQuark, watchDependencies } from 'helpers/quarky';
 import { useRouter } from 'next/router';
 import { useFirstRender } from 'helpers/hooks/useFirstRender';
 import { Header } from 'components/layouts/header/Header';
+import { DropdownOption } from 'components/molecules';
+import { useSession } from 'helpers/services';
 
 
 interface RootTopoProps {
@@ -19,6 +21,7 @@ interface RootTopoProps {
 
 export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootTopoProps) => {
   const router = useRouter();
+  const session = useSession();
   const { b: bId } = router.query; // Get boulder id from url if selected 
   const firstRender = useFirstRender();
 
@@ -133,16 +136,23 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
     }
   }, [currentDisplay]);
 
+  const constructMenuOptions = () => {
+    const menuOptions: DropdownOption[] = [
+      { value: 'Infos du topo', action: () => setCurrentDisplay('INFO') },
+      { value: 'Marche d\'approche', action: () => setCurrentDisplay('APPROACH') },
+      { value: 'Gestionnaires du site', action: () => setCurrentDisplay('MANAGEMENT') }
+    ];
+    if (topo.status === TopoStatus.Draft && topo.creator?.id === session?.id) 
+      menuOptions.push({ value: 'Modifier', action: () => router.push(`/builder/${encodeUUID(topo.id)}`)})
+    return menuOptions;
+  }
+
   return (
     <>
       <Header
         title={topo.name}
         backLink='/'
-        menuOptions={[
-          { value: 'Infos du topo', action: () => setCurrentDisplay('INFO') },
-          { value: 'Marche d\'approche', action: () => setCurrentDisplay('APPROACH') },
-          { value: 'Gestionnaires du site', action: () => setCurrentDisplay('MANAGEMENT') },
-        ]}
+        menuOptions={constructMenuOptions()}
       />
 
       {/* overflow-clip instead of overflow-hidden, so that the Slideagainst can appear off-screen without 

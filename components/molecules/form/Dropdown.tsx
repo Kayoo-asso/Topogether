@@ -52,15 +52,19 @@ export const Dropdown: React.FC<DropdownProps> = React.memo(({
                     </div>
                 ) : (
                     <div
-                        className={`h-16 ${opt.disabled ? 'text-grey-medium' : 'text-dark cursor-pointer'} ktext-base flex flex-row items-center`}
+                        className={`h-16 ${opt.disabled ? 'text-grey-medium cursor-default' : 'text-dark'} ktext-base flex flex-row items-center`}
                         key={opt.value}
                         onKeyDown={() => {
-                            props.onSelect && props.onSelect(opt);
-                            opt.action && !opt.disabled && opt.action();
+                            if (!opt.disabled) {
+                                props.onSelect && props.onSelect(opt);
+                                opt.action && opt.action();
+                            }
                         }}
                         onMouseDown={() => {
-                            props.onSelect && props.onSelect(opt);
-                            opt.action && !opt.disabled && opt.action();
+                            if (!opt.disabled) {
+                                props.onSelect && props.onSelect(opt);
+                                opt.action && opt.action();
+                            }
                         }}
                         role="menuitem"
                         tabIndex={0}
