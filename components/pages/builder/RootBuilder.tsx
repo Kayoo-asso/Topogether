@@ -4,7 +4,7 @@ import {
     MapControl, Show,
     InfoFormSlideover, ManagementFormSlideover, TrackFormSlideagainstDesktop,
     BoulderMarkerDropdown, ParkingMarkerDropdown, WaypointMarkerDropdown,
-    ModalSubmitTopo, ModalDeleteTopo, GeoCamera, Drawer, BoulderBuilderSlideagainstDesktop, LeftbarBuilderDesktop,
+    ModalSubmitTopo, ModalDeleteTopo, GeoCamera, Drawer, BoulderBuilderSlideagainstDesktop,
     ParkingBuilderSlide, AccessFormSlideover, WaypointBuilderSlide, ModalRenameSector, ModalDelete, SectorAreaMarkerDropdown, BuilderProgressIndicator,
 } from 'components';
 import { blobToImage, sortBoulders, useContextMenu, createTrack, createBoulder, createParking, createWaypoint, createSector, deleteSector, deleteBoulder, deleteParking, deleteWaypoint, toLatLng, useDevice, computeBuilderProgress, encodeUUID, decodeUUID } from 'helpers';
@@ -15,6 +15,7 @@ import { api } from 'helpers/services';
 import { useFirstRender } from 'helpers/hooks/useFirstRender';
 import { useSession } from "helpers/services";
 import { Header } from 'components/layouts/header/Header';
+import { LeftbarBuilderDesktop } from 'components/layouts/sidebars/LeftbarBuilder.desktop';
 
 interface RootBuilderProps {
     topoQuark: Quark<Topo>,
