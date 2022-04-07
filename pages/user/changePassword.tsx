@@ -4,28 +4,30 @@ import { Button, Header, TextInput } from 'components';
 import { staticUrl } from 'helpers';
 import NextImage from 'next/image';
 import Link from 'next/link';
+import { useAuth } from 'helpers/services';
 
 const ChangePasswordPage: NextPage = () => {
-  const [oldPassword, setOldPassword] = useState<string>();
-  const [newPassword, setNewPassword] = useState<string>();
-  const [secondNewPassword, setSecondNewPassword] = useState<string>();
+  const auth = useAuth();
+  const [oldPassword, setOldPassword] = useState<string>('');
+  const [newPassword, setNewPassword] = useState<string>('');
+  const [secondNewPassword, setSecondNewPassword] = useState<string>('');
 
-  const [oldPasswordError, setOldPasswordError] = useState<string>();
-  const [newPasswordError, setNewPasswordError] = useState<string>();
-  const [secondNewPasswordError, setSecondNewPasswordError] = useState<string>();
+  const [oldPasswordError, setOldPasswordError] = useState<string>('');
+  const [newPasswordError, setNewPasswordError] = useState<string>('');
+  const [secondNewPasswordError, setSecondNewPasswordError] = useState<string>('');
 
   const checkErrors = () => {
-    if (!oldPassword) setOldPasswordError("Merci de rentrer votre ancien mot de passe");
-    if (!newPassword) setNewPasswordError("Mot de passe invalide");
-    if (!secondNewPassword) setSecondNewPasswordError("Mot de passe invalide");
+    if (oldPassword.length === 0) setOldPasswordError("Merci de rentrer votre ancien mot de passe");
+    if (newPassword.length === 0) setNewPasswordError("Mot de passe invalide");
+    if (secondNewPassword.length === 0) setSecondNewPasswordError("Mot de passe invalide");
     if (newPassword !== secondNewPassword) setSecondNewPasswordError("Les deux mots de passe ne correspondent pas");
 
     if (oldPassword && newPassword && secondNewPassword && newPassword === secondNewPassword) return true;
     else return false;
   }
-  const modifyPassword = () => {
+  const modifyPassword = async () => {
       if (checkErrors()) {
-          console.log("Change password"); //TODO
+        await auth.changePassword(newPassword);
       }
   }
 
