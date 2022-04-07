@@ -1,13 +1,26 @@
 import React, { useState } from 'react';
-import type { NextPage } from 'next';
-import { Button, Header, TextInput } from 'components';
+import type { GetServerSideProps, NextPage } from 'next';
+import { Button, TextInput } from 'components';
 import { staticUrl } from 'helpers';
 import NextImage from 'next/image';
 import Link from 'next/link';
 import { useAuth } from 'helpers/services';
+import { Header } from 'components/layouts/header/Header';
+import { User } from 'types';
+import { withAuth } from 'helpers/auth';
 
-const ChangePasswordPage: NextPage = () => {
+type ChangePasswordProps = {
+  user: User
+}
+
+export const getServerSideProps: GetServerSideProps<ChangePasswordProps> = withAuth(
+  async () => ({ props: {} }),
+  "/user/changePassword"
+);
+
+const ChangePasswordPage: NextPage = (props) => {
   const auth = useAuth();
+  console.log(props);
   const [oldPassword, setOldPassword] = useState<string>('');
   const [newPassword, setNewPassword] = useState<string>('');
   const [secondNewPassword, setSecondNewPassword] = useState<string>('');
@@ -15,6 +28,8 @@ const ChangePasswordPage: NextPage = () => {
   const [oldPasswordError, setOldPasswordError] = useState<string>('');
   const [newPasswordError, setNewPasswordError] = useState<string>('');
   const [secondNewPasswordError, setSecondNewPasswordError] = useState<string>('');
+
+  const [loading, setLoading] = useState(false);
 
   const checkErrors = () => {
     if (oldPassword.length === 0) setOldPasswordError("Merci de rentrer votre ancien mot de passe");
@@ -27,7 +42,10 @@ const ChangePasswordPage: NextPage = () => {
   }
   const modifyPassword = async () => {
       if (checkErrors()) {
-        await auth.changePassword(newPassword);
+        setLoading(true);
+        const res = await auth.changePassword(newPassword);
+        console.log(res);
+        setLoading(false);
       }
   }
 
@@ -74,14 +92,15 @@ const ChangePasswordPage: NextPage = () => {
               id='secondNewPassword'
               label='Retaper le nouveau mot de passe'
               error={secondNewPasswordError}
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
+              value={secondNewPassword}
+              onChange={(e) => setSecondNewPassword(e.target.value)}
             />
 
             <Button 
                 content="Changer le mot de passe"
                 fullWidth
                 onClick={modifyPassword}
+                loading={loading}
             />
 
             <Link href="/user/profile">

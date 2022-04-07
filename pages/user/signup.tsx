@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import type { NextPage } from 'next';
 import { Button, TextInput } from 'components';
 import { Header } from 'components/layouts/header/Header';
@@ -44,6 +44,16 @@ const SignupPage: NextPage = () => {
       setLoading(false);
     }
   }
+
+  const handleUserKeyPress = useCallback((e) => {
+    if (e.key === 'Enter') signup();
+  }, [pseudo, email, password]);
+  useEffect(() => {
+      window.addEventListener("keydown", handleUserKeyPress);
+      return () => {
+          window.removeEventListener("keydown", handleUserKeyPress);
+      };
+  }, [handleUserKeyPress]);
 
   return (
     <>

@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import React from 'react';
 import NextImage from 'next/image';
-import { Header } from 'components';
+import { Header } from 'components/layouts/header/Header';
 
 interface Error404Props {
     title: string,

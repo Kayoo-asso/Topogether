@@ -1,10 +1,10 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback } from 'react';
 import type { NextPage } from 'next';
 import { LoginForm } from 'components';
-import { HeaderDesktop } from 'components/layouts';
-import { NextRouter, useRouter } from 'next/router';
+import { useRouter } from 'next/router';
 import { AuthService, supabaseClient, useAuth } from 'helpers/services';
 import { useQuarkyEffect } from 'helpers/quarky';
+import { Header } from 'components/layouts/header/Header';
 
 
 async function ifLoggedIn(auth: AuthService, redirect: () => Promise<void>) {
@@ -37,7 +37,7 @@ const LoginPage: NextPage = () => {
   
   return (
     <>
-      <HeaderDesktop
+      <Header
           backLink="/"
           title="Connexion"
       />

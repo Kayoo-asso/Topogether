@@ -1,7 +1,7 @@
 import type { DropdownOption } from "components";
 import { ReactNode } from "react";
 import { MapToolEnum } from "types";
-import { HeaderDesktop, HeaderMobile } from "components/layouts/header";
+import { HeaderDesktop, HeaderMobile } from ".";
 
 interface HeaderProps {
     backLink: string,

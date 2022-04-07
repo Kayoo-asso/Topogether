@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import type { GetServerSideProps, NextPage } from 'next';
 import { Button, ImageInput, ModalDelete, TextInput } from 'components';
-import { HeaderDesktop, LeftbarDesktop, Tabs } from 'components/layouts';
+import { LeftbarDesktop, Tabs } from 'components/layouts';
 import Link from 'next/link';
 import { useCreateQuark, watchDependencies } from 'helpers/quarky';
 import { Email, isEmail, Name, StringBetween, User } from 'types';
 import { useAuth } from "helpers/services";
 import { withAuth } from 'helpers/auth';
+import { Header } from 'components/layouts/header/Header';
 
 type ProfileProps = {
   user: User
@@ -67,7 +68,7 @@ const ProfilePage: NextPage<ProfileProps> = watchDependencies((props) => {
 
   return (
     <>
-      <HeaderDesktop
+      <Header
           backLink="/"
           title="Profile"
       />

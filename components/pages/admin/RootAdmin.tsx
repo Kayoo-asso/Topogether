@@ -1,12 +1,9 @@
-import {
-    TopoCard,
-} from 'components';
-import { Header, LeftbarDesktop, Tabs } from 'components/layouts';
 import React, { useCallback, useRef, useState } from 'react';
+import { TopoCard, LeftbarDesktop, Tabs, ModalDeleteTopo, ModalRejectTopo, ModalValidateTopo } from 'components';
+import { Header } from 'components/layouts/header/Header';
 import { LightTopo, TopoStatus } from 'types';
 import { AdminActionDropdown } from 'components/molecules/cards/AdminActionDropdown';
 import { useContextMenu } from 'helpers/hooks/useContextMenu';
-import { ModalDeleteTopo, ModalRejectTopo, ModalValidateTopo } from 'components/organisms';
 import { api } from 'helpers/services';
 import Edit from 'assets/icons/edit.svg';
 import Recent from 'assets/icons/recent.svg';
