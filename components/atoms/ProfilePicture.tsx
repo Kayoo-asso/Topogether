@@ -22,7 +22,7 @@ export const ProfilePicture: React.FC<ProfilePictureProps> = ({
     >
       <CFImage
         image={props.image}
-        className="rounded-full object-fit h-full"
+        className="rounded-full object-cover h-full"
         alt="Photo de profil"
         sizeHint='25vw'
         forceLoading={loading}

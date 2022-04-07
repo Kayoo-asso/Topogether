@@ -17,8 +17,8 @@ export const ImageInput = forwardRef<HTMLInputElement, ImageInputProps>(({
   multiple = false,
   ...props
 }: ImageInputProps, ref) => {
-  //TODO : find a way to get back the ref to parent components
   const fileInputRef = useRef<HTMLInputElement>(null);
+console.log(props.value);
 
   const [error, setError] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);

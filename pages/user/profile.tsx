@@ -3,8 +3,8 @@ import type { GetServerSideProps, NextPage } from 'next';
 import { Button, ImageInput, ModalDelete, ProfilePicture, TextInput } from 'components';
 import { HeaderDesktop, LeftbarDesktop, Tabs } from 'components/layouts';
 import Link from 'next/link';
-import { watchDependencies } from 'helpers/quarky';
-import { Image, isEmail, Name, StringBetween, User } from 'types';
+import { useCreateQuark, watchDependencies } from 'helpers/quarky';
+import { Email, Image, isEmail, Name, StringBetween, User } from 'types';
 import { useAuth } from "helpers/services";
 import { withAuth } from 'helpers/auth';
 
@@ -17,25 +17,16 @@ export const getServerSideProps: GetServerSideProps<ProfileProps> = withAuth(
   "/user/profile"
 );
 
-const ProfilePage: NextPage<ProfileProps> = watchDependencies(({ user }) => {
+const ProfilePage: NextPage<ProfileProps> = watchDependencies((props) => {
   const auth = useAuth();
-  const imageInputRef = useRef<HTMLInputElement>(null);
+  const userQuark = useCreateQuark(props.user);
+  const user = userQuark();
 
   const [displayDeleteAccountModal, setDisplayDeleteAccountModal] = useState(false);
   
-  const [email, setEmail] = useState<string>(user.email);
   const [emailError, setEmailError] = useState<string>();
   const [successMessageChangeMail, setSuccessMessageChangeMail] = useState<string>();
   const [errorMessageChangeMail, setErrorMessageChangeMail] = useState<string>();
-  
-  const [userName, setUserName] = useState<string>(user.userName);
-  const [firstName, setFirstName] = useState<string | undefined>(user.firstName);
-  const [lastName, setLastName] = useState<string | undefined>(user.lastName);
-  const [image, setImage] = useState<Image | undefined>(user.image);
-  const [birthDate, setBirthDate] = useState<string | undefined>(user.birthDate); //TODO convert into Date
-  const [country, setCountry] = useState<string | undefined>(user.country);
-  const [city, setCity] = useState<string | undefined>(user.city);
-  const [phone, setPhone] = useState<string | undefined>(user.phone);
 
   const [userNameError, setUserNameError] = useState<string>();
   const [phoneError, setPhoneError] = useState<string>();
@@ -46,28 +37,14 @@ const ProfilePage: NextPage<ProfileProps> = watchDependencies(({ user }) => {
   const [loadingModify, setLoadingModify] = useState(false);
   const [loadingChangeMail, setLoadingChangeMail] = useState(false);
 
-  const sendModification = async () => {
-    console.log(image);
-    return await auth.updateUserInfo({
-      ...user,
-      userName: userName as Name,
-      firstName: firstName as Name,
-      lastName: lastName as Name,
-      image: image,
-      birthDate,
-      country: country as Name,
-      city: city as Name,
-      phone: phone as StringBetween<1, 30>
-    });
-  }
   const modifyProfile = async () => {
     let hasError = false;
-    if (!userName) { setUserNameError("Pseudo invalide"); hasError = true; }
-    if (phone && (!phone.match(/\d/g) || phone.length < 6 || phone.length > 30)) { setPhoneError("Numéro de téléphone invalide"); hasError = true; }
+    if (!user.userName) { setUserNameError("Pseudo invalide"); hasError = true; }
+    if (user.phone && (!user.phone.match(/\d/g) || user.phone.length < 6 || user.phone.length > 30)) { setPhoneError("Numéro de téléphone invalide"); hasError = true; }
 
     if (!hasError) {
       setLoadingModify(true);
-      const res = await sendModification();
+      const res = await auth.updateUserInfo(user);
       if (res) setSuccessMessageModify('Profil modifié');
       else setErrorMessageModify('Une erreur est survenue. Merci de réessayer.');
       setLoadingModify(false);
@@ -75,7 +52,7 @@ const ProfilePage: NextPage<ProfileProps> = watchDependencies(({ user }) => {
   }
 
   const changeMail = () => {
-    if (!email || (email && !isEmail(email))) setEmailError("Email invalide");
+    if (!user.email || (user.email && !isEmail(user.email))) setEmailError("Email invalide");
     else {
       setLoadingChangeMail(true)
       alert("à venir"); //TODO
@@ -105,27 +82,32 @@ const ProfilePage: NextPage<ProfileProps> = watchDependencies(({ user }) => {
           <div className='flex flex-row justify-center md:justify-start rounded-lg px-6 pb-10 pt-12 md:pt-[16px]'>
             <div className='h-[100px] w-[100px] relative cursor-pointer'>
               <ImageInput 
-                ref={imageInputRef}
                 profileImageButton
-                value={image}
+                value={userQuark().image}
                 onChange={async (images) => {
-                  setImage(images[0]);
-                  await sendModification();
+                  userQuark.set({
+                    ...userQuark(),
+                    image: images[0]
+                  })
+                  await auth.updateUserInfo(user);
                 }}
               />
             </div>
             
             <div className='hidden md:flex flex-col ml-6 w-1/2'>
               <div className='mb-6'>
-                <div className='ktext-subtitle'>{userName}</div>
+                <div className='ktext-subtitle'>{user.userName}</div>
                 {user.role === 'ADMIN' && <div className='text-main ktext-label'>Super-administrateur</div>}
               </div>
               <TextInput 
                   id='pseudo'
                   label='Pseudo'
                   error={userNameError}
-                  value={userName}
-                  onChange={(e) => setUserName(e.target.value)}
+                  value={user.userName}
+                  onChange={(e) => userQuark.set({
+                    ...user,
+                    userName: e.target.value as Name
+                  })}
               />
             </div>
 
@@ -152,8 +134,11 @@ const ProfilePage: NextPage<ProfileProps> = watchDependencies(({ user }) => {
                   id='email'
                   label='Email'
                   error={emailError}
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  value={user.email}
+                  onChange={(e) => userQuark.set({
+                    ...user,
+                    email: e.target.value as Email
+                  })}
               />
               <Button
                   content="Modifier l'email"
@@ -170,8 +155,11 @@ const ProfilePage: NextPage<ProfileProps> = watchDependencies(({ user }) => {
                   id='pseudo'
                   label='Pseudo'
                   error={userNameError}
-                  value={userName}
-                  onChange={(e) => setUserName(e.target.value)}
+                  value={user.userName}
+                  onChange={(e) => userQuark.set({
+                    ...user,
+                    userName: e.target.value as Name
+                  })}
               />
             </div>
 
@@ -179,14 +167,20 @@ const ProfilePage: NextPage<ProfileProps> = watchDependencies(({ user }) => {
               <TextInput 
                   id='firstName'
                   label='Prénom'
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
+                  value={user.firstName}
+                  onChange={(e) => userQuark.set({
+                    ...user,
+                    firstName: e.target.value as Name
+                  })}
               />
               <TextInput 
                   id='lastName'
                   label='Nom'
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
+                  value={user.lastName}
+                  onChange={(e) => userQuark.set({
+                    ...user,
+                    lastName: e.target.value as Name
+                  })}
               />
             </div>
 
@@ -195,8 +189,11 @@ const ProfilePage: NextPage<ProfileProps> = watchDependencies(({ user }) => {
                   id='phone'
                   label='Téléphone'
                   error={phoneError}
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
+                  value={user.phone}
+                  onChange={(e) => userQuark.set({
+                    ...user,
+                    phone: e.target.value as StringBetween<1, 30>
+                  })}
               />
             </div>
 
@@ -206,16 +203,22 @@ const ProfilePage: NextPage<ProfileProps> = watchDependencies(({ user }) => {
                     id='phone'
                     label='Téléphone'
                     error={phoneError}
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
+                    value={user.phone}
+                    onChange={(e) => userQuark.set({
+                      ...user,
+                      phone: e.target.value as StringBetween<1, 30>
+                    })}
                 />
               </div>
               <TextInput 
                   id='birthDate'
                   label='Date de naissance'
                   wrapperClassName='md:w-1/2'
-                  value={birthDate}
-                  onChange={(e) => setBirthDate(e.target.value)}
+                  value={user.birthDate}
+                  onChange={(e) => userQuark.set({
+                    ...user,
+                    birthDate: e.target.value
+                  })}
               />
             </div>
 
@@ -223,14 +226,20 @@ const ProfilePage: NextPage<ProfileProps> = watchDependencies(({ user }) => {
               <TextInput 
                   id='citizenship'
                   label='Pays'
-                  value={country}
-                  onChange={(e) => setCountry(e.target.value)}
+                  value={user.country}
+                  onChange={(e) => userQuark.set({
+                    ...user,
+                    country: e.target.value as Name
+                  })}
               />
               <TextInput 
                   id='city'
                   label='Ville'
-                  value={city}
-                  onChange={(e) => setCity(e.target.value)}
+                  value={user.city}
+                  onChange={(e) => userQuark.set({
+                    ...user,
+                    city: e.target.value as Name
+                  })}
               />
             </div>
 
