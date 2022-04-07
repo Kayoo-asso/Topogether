@@ -1,5 +1,6 @@
 import React, { useCallback, useRef, useState } from 'react';
-import { TopoCard, LeftbarDesktop, Tabs, ModalDeleteTopo, ModalRejectTopo, ModalValidateTopo } from 'components';
+import { TopoCard, ModalDeleteTopo, ModalRejectTopo, ModalValidateTopo, ModalUnvalidateTopo } from 'components';
+import { LeftbarDesktop, Tabs } from 'components/layouts';
 import { Header } from 'components/layouts/header/Header';
 import { LightTopo, TopoStatus } from 'types';
 import { AdminActionDropdown } from 'components/molecules/cards/AdminActionDropdown';
@@ -16,7 +17,7 @@ interface RootAdminProps {
 export const RootAdmin: React.FC<RootAdminProps> = (props: RootAdminProps) => {
     const [selectedStatus, setSelectedStatus] = useState<TopoStatus>(TopoStatus.Draft);
 
-    const lightTopos = props.lightTopos;
+    const [lightTopos, setLightTopos] = useState(props.lightTopos);
     const toposToDisplay = lightTopos.filter((topo) => topo.status === selectedStatus);
 
     const ref = useRef<HTMLDivElement>(null);
@@ -24,13 +25,45 @@ export const RootAdmin: React.FC<RootAdminProps> = (props: RootAdminProps) => {
     const [topoDropdown, setTopoDropddown] = useState<LightTopo>();
     const [dropdownPosition, setDropdownPosition] = useState<{ x: number, y: number }>();
     
-    const [displayModalValidate, setDisplayModalValidate] = useState<boolean>();
-    const [displayModalReject, setDisplayModalReject] = useState<boolean>();
-    const [displayModalDelete, setDisplayModalDelete] = useState<boolean>();
+    const [displayModalValidate, setDisplayModalValidate] = useState(false);
+    const [displayModalUnvalidate, setDisplayModalUnvalidate] = useState(false);
+    const [displayModalReject, setDisplayModalReject] = useState(false);
+    const [displayModalDelete, setDisplayModalDelete] = useState(false);
 
-    const validateTopo = useCallback(async() => await api.setTopoStatus(topoDropdown!.id, TopoStatus.Validated), [topoDropdown]);
-    const rejectTopo = useCallback(async () => await api.setTopoStatus(topoDropdown!.id, TopoStatus.Draft), [topoDropdown]);
-    const deleteTopo = useCallback(() => api.deleteTopo(topoDropdown!), [topoDropdown]);
+    const validateTopo = useCallback(async() => {
+        if (topoDropdown) {
+            await api.setTopoStatus(topoDropdown!.id, TopoStatus.Validated);
+            const validatedTopo = lightTopos.find(lt => lt.id === topoDropdown.id)!;
+            validatedTopo.validated = new Date().toISOString();
+            validatedTopo.status = TopoStatus.Validated;
+            setLightTopos(lightTopos.slice());
+          }
+    }, [topoDropdown]);
+    const unvalidateTopo = useCallback(async() => {
+        if (topoDropdown) {
+            await api.setTopoStatus(topoDropdown!.id, TopoStatus.Submitted);
+            const unvalidatedTopo = lightTopos.find(lt => lt.id === topoDropdown.id)!;
+            unvalidatedTopo.validated = undefined;
+            unvalidatedTopo.status = TopoStatus.Submitted;
+            setLightTopos(lightTopos.slice());
+          }
+    }, [topoDropdown]);
+    const rejectTopo = useCallback(async () => {
+        if (topoDropdown) {
+            await api.setTopoStatus(topoDropdown!.id, TopoStatus.Draft);
+            const rejectedTopo = lightTopos.find(lt => lt.id === topoDropdown.id)!;
+            rejectedTopo.submitted = undefined;
+            rejectedTopo.status = TopoStatus.Draft;
+            setLightTopos(lightTopos.slice());
+          }
+    }, [topoDropdown]);
+    const deleteTopo = useCallback(() => {
+        if (topoDropdown) {
+            api.deleteTopo(topoDropdown);
+            const newLightTopos = lightTopos.filter(lt => lt.id !== topoDropdown.id)!;
+            setLightTopos(newLightTopos);
+          }
+    }, [topoDropdown]);
   
     useContextMenu(() => setDropdownDisplayed(false), ref.current);
   
@@ -75,12 +108,13 @@ export const RootAdmin: React.FC<RootAdminProps> = (props: RootAdminProps) => {
                         ]}
                     />
                     <div className="overflow-y-scroll h-contentPlusHeader md:h-contentPlusShell hide-scrollbar">
-                        <div className="min-w-full flex flex-row flex-wrap justify-evenly">
+                        <div className="min-w-full flex flex-row flex-wrap px-4 md:px-8 py-6">
                             {toposToDisplay.map((topo) => (
                                 <TopoCard
                                     key={topo.id}
                                     topo={topo}
                                     onContextMenu={onContextMenu}
+                                    clickToBuilder={selectedStatus === TopoStatus.Validated ? false : true}
                                 />
                             ))}
                         </div>
@@ -92,20 +126,27 @@ export const RootAdmin: React.FC<RootAdminProps> = (props: RootAdminProps) => {
                     topo={topoDropdown} 
                     position={dropdownPosition}
                     onValidateClick={() => setDisplayModalValidate(true)}
+                    onUnvalidateClick={() => setDisplayModalUnvalidate(true)}
                     onRejectClick={() => setDisplayModalReject(true)}
                     onDeleteClick={() => setDisplayModalDelete(true)}
                 />
             )}
-            {displayModalReject &&
-                <ModalRejectTopo 
-                    onReject={rejectTopo}
-                    onClose={() => setDisplayModalReject(false)}
-                />
-            }
             {displayModalValidate &&
                 <ModalValidateTopo 
                     onValidate={validateTopo}
                     onClose={() => setDisplayModalValidate(false)}
+                />
+            }
+            {displayModalUnvalidate &&
+                <ModalUnvalidateTopo 
+                    onValidate={unvalidateTopo}
+                    onClose={() => setDisplayModalUnvalidate(false)}
+                />
+            }
+            {displayModalReject &&
+                <ModalRejectTopo 
+                    onReject={rejectTopo}
+                    onClose={() => setDisplayModalReject(false)}
                 />
             }
             {displayModalDelete &&

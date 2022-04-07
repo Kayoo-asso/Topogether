@@ -9,7 +9,7 @@ export const fakeAdmin: User & { password: string } = {
     id: uuid(), // will be changed anyways,
     userName: "SuperAdmin" as Name,
     email: "superadmin@kayoo.fr" as Email,
-    password: "lailailai",
+    password: "Kayoo1234",
     role: "ADMIN",
 }
 

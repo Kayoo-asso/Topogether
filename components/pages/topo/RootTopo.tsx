@@ -1,10 +1,11 @@
-import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import {
   AccessSlideover, InfoSlideover, ManagementSlideover,
   BoulderSlideagainstDesktop, BoulderSlideoverMobile, TrackSlideagainstDesktop, SectorSlideoverMobile,
   Show,
-  MapControl, ParkingSlide, WaypointSlide, TracksImage, LeftbarTopoDesktop
+  MapControl, ParkingSlide, WaypointSlide, TracksImage
 } from 'components';
+import { LeftbarTopoDesktop } from 'components/layouts';
 import { DeviceContext, decodeUUID, encodeUUID, sortBoulders, toLatLng } from 'helpers';
 import { Boulder, Image, isUUID, Parking, Sector, Topo, TopoStatus, Track, Waypoint } from 'types';
 import { Quark, QuarkIter, useCreateDerivation, useLazyQuarkyEffect, useQuarkyCallback, useSelectQuark, watchDependencies } from 'helpers/quarky';
@@ -142,7 +143,7 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
       { value: 'Marche d\'approche', action: () => setCurrentDisplay('APPROACH') },
       { value: 'Gestionnaires du site', action: () => setCurrentDisplay('MANAGEMENT') }
     ];
-    if (topo.status === TopoStatus.Draft && topo.creator?.id === session?.id) 
+    if (topo.status === TopoStatus.Draft && (topo.creator?.id === session?.id || session?.role === 'ADMIN')) 
       menuOptions.push({ value: 'Modifier', action: () => router.push(`/builder/${encodeUUID(topo.id)}`)})
     return menuOptions;
   }

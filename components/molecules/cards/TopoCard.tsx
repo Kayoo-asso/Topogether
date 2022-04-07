@@ -13,12 +13,17 @@ let timer: NodeJS.Timeout;
 interface TopoCardProps {
   topo: LightTopo;
   clickable?: boolean;
+  clickToBuilder?: boolean;
   onContextMenu: (topo: LightTopo, position: { x: number, y: number }) => void
 }
 
 const iconSize = 'h-4 w-4 md:h-6 md:w-6';
 
-export const TopoCard: React.FC<TopoCardProps> = React.memo((props: TopoCardProps) => {
+export const TopoCard: React.FC<TopoCardProps> = React.memo(({
+  clickable = true,
+  clickToBuilder = true,
+  ...props
+}: TopoCardProps) => {
   const topo = props.topo;
 
   let TopoIcon;
@@ -26,11 +31,11 @@ export const TopoCard: React.FC<TopoCardProps> = React.memo((props: TopoCardProp
 
   if (topo.status === TopoStatus.Validated) {
     TopoIcon = <Checked className={`stroke-main ${iconSize}`} />;
-    lastAction = `Validé le ${formatDate(topo.validated!)}`;
+    lastAction = topo.validated ? `Validé le ${formatDate(topo.validated)}` : ''; //TODO : be sure that a date is saved in db
   }
   else if (topo.status === TopoStatus.Submitted) {
     TopoIcon = <Recent className={`stroke-third ${iconSize}`} />;
-    lastAction = topo.submitted ? `Envoyé le ${formatDate(topo.submitted!)}` : 'null';
+    lastAction = topo.submitted ? `Envoyé le ${formatDate(topo.submitted)}` : ''; //TODO : be sure that a date is saved in db
   }
   else {
     TopoIcon = <Edit className={`stroke-second-light ${iconSize}`} />;
@@ -38,8 +43,8 @@ export const TopoCard: React.FC<TopoCardProps> = React.memo((props: TopoCardProp
   }
 
   const wrapLink = (elts: ReactElement<any, any>) => {
-    if (props.clickable) {
-      return(<Link href={`/builder/${encodeUUID(props.topo.id)}`}>
+    if (clickable) {
+      return(<Link href={(clickToBuilder ? `/builder/` : `/topo/`) + `${encodeUUID(props.topo.id)}`}>
         <a>{elts}</a>
       </Link>)
     }
@@ -59,7 +64,7 @@ export const TopoCard: React.FC<TopoCardProps> = React.memo((props: TopoCardProp
           if (timer) clearTimeout(timer);
         }}
       >
-        <Card className={"relative text-center text-grey-medium bg-white flex flex-col" + (props.clickable ? " cursor-pointer" : '')}>
+        <Card className={"relative text-center text-grey-medium bg-white flex flex-col" + (clickable ? " cursor-pointer" : '')}>
           <div className="w-full h-[50%] md:h-[75%] top-0 relative">
             <CFImage
               image={props.topo.image}
@@ -84,7 +89,7 @@ export const TopoCard: React.FC<TopoCardProps> = React.memo((props: TopoCardProp
                 </div>
               </div>
   
-              <div className="w-full border-t-[1px] text-xxs flex flex-row flex-wrap items-end justify-between py-1">
+              <div className="w-full border-t-[1px] text-xxs flex flex-col flex-wrap items-start justify-between py-1">
                 <span className="whitespace-nowrap">{`${props.topo.nbBoulders} blocs - ${props.topo.nbTracks} passages`}</span>
                 <span className="mr-1 whitespace-nowrap">
                   {lastAction}

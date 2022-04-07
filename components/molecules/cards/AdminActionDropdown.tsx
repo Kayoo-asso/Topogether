@@ -4,11 +4,13 @@ import equal from 'fast-deep-equal/es6';
 import { LightTopo, TopoStatus } from 'types';
 import { useRouter } from 'next/router';
 import { DropdownOption } from '..';
+import { encodeUUID } from 'helpers';
 
 interface AdminActionDropdownProps {
     topo: LightTopo;
     position: { x: number, y: number };
     onValidateClick: () => void,
+    onUnvalidateClick: () => void,
     onRejectClick: () => void,
     onDeleteClick: () => void;
 }
@@ -16,8 +18,8 @@ interface AdminActionDropdownProps {
 export const AdminActionDropdown: React.FC<AdminActionDropdownProps> = React.memo((props: AdminActionDropdownProps) => {
     const router = useRouter();
 
-    const openTopo = useCallback(() => router.push(`/topo/${props.topo.id}`), [router, props.topo.id]);
-    const editTopo = useCallback(() => router.push(`/builder/${props.topo.id}`), [router, props.topo.id]);
+    const openTopo = useCallback(() => router.push(`/topo/${encodeUUID(props.topo.id)}`), [router, props.topo.id]);
+    const editTopo = useCallback(() => router.push(`/builder/${encodeUUID(props.topo.id)}`), [router, props.topo.id]);
     //TODO
     const contactCreator = useCallback(() => {
         alert("à venir");
@@ -31,6 +33,10 @@ export const AdminActionDropdown: React.FC<AdminActionDropdownProps> = React.mem
             ? [
                 { value: 'Valider', action: props.onValidateClick },
                 { value: 'Refuser', action: props.onRejectClick }]
+            : []),
+        ...(props.topo.status === TopoStatus.Validated
+            ? [
+                { value: 'Annuler la validation', action: props.onUnvalidateClick }]
             : []),
         { value: 'Contacter le créateur', action: contactCreator },
         { value: 'Supprimer', action: props.onDeleteClick },

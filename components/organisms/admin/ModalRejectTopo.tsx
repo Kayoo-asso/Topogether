@@ -28,7 +28,10 @@ export const ModalRejectTopo: React.FC<ModalRejectTopoProps> = (props: ModalReje
                 <Button 
                     content='Rejeter'
                     fullWidth
-                    onClick={props.onReject}
+                    onClick={() => {
+                        props.onReject();
+                        props.onClose();
+                    }}
                 />
             </div>
         </Modal> 

@@ -13,7 +13,7 @@ interface TopoCardListProps {
   onContextMenu: (topo: LightTopo, position: {x: number, y: number}) => void
 }
 
-export const TopoCardList:React.FC<TopoCardListProps> = ({
+export const TopoCardList: React.FC<TopoCardListProps> = ({
   clickable = true,
   ...props
 }: TopoCardListProps) => (

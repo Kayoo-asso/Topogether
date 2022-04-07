@@ -28,7 +28,10 @@ export const ModalValidateTopo: React.FC<ModalValidateTopoProps> = (props: Modal
                 <Button 
                     content='Valider'
                     fullWidth
-                    onClick={props.onValidate}
+                    onClick={() => {
+                        props.onValidate();
+                        props.onClose();
+                    }}
                 />
             </div>
         </Modal> 

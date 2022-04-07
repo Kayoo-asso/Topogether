@@ -1,20 +1,14 @@
+import React from 'react';
 import { Button, Modal } from 'components';
 import { staticUrl } from 'helpers';
-import { api } from 'helpers/services';
 import NextImage from 'next/image';
-import React from 'react';
-import { LightTopo, TopoStatus } from 'types';
 
-interface ModalRejectTopoProps {
-    topo: LightTopo,
+interface ModalUnvalidateTopoProps {
+    onValidate: () => void,
     onClose: () => void,
 }
 
-export const ModalRejectTopo: React.FC<ModalRejectTopoProps> = (props: ModalRejectTopoProps) => {
-    const rejectTopo = async () => {
-        await api.setTopoStatus(props.topo.id, TopoStatus.Draft);
-        props.onClose();
-    }
+export const ModalUnvalidateTopo: React.FC<ModalUnvalidateTopoProps> = (props: ModalUnvalidateTopoProps) => {
 
     return (
         <Modal onClose={props.onClose} >
@@ -23,18 +17,21 @@ export const ModalRejectTopo: React.FC<ModalRejectTopoProps> = (props: ModalReje
                     <NextImage 
                         src={staticUrl.deleteWarning}
                         priority
-                        alt="Rejeter le topo"
+                        alt="Valider le topo"
                         layout="fill"
                         objectFit="contain"
                     />
                 </div>
                 <div className='mb-5'>
-                    Le topo retournera en brouillon. Etes-vous sûr de vouloir continuer ?
+                    Le topo retournera en attente de validation. Etes-vous sûr de vouloir continuer ?
                 </div>
                 <Button 
-                    content='Rejeter'
+                    content='Valider'
                     fullWidth
-                    onClick={rejectTopo}
+                    onClick={() => {
+                        props.onValidate();
+                        props.onClose();
+                    }}
                 />
             </div>
         </Modal> 
