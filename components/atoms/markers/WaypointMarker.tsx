@@ -3,7 +3,6 @@ import { markerSize, toLatLng, useMarker } from "helpers";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { MarkerEventHandlers, Waypoint } from "types";
 
-let timer: NodeJS.Timeout;
 interface WaypointMarkerProps {
     waypoint: Quark<Waypoint>,
     draggable?: boolean,
@@ -41,12 +40,7 @@ export const WaypointMarker: React.FC<WaypointMarkerProps> = watchDependencies((
             }
         }, [props.waypoint]),
         onContextMenu: useCallback((e) => props.onContextMenu && props.onContextMenu(e, props.waypoint), [props.waypoint, props.onContextMenu]),
-        onMouseDown: useCallback((e) => {
-            timer = setTimeout(() => {props.onContextMenu && props.onContextMenu(e, props.waypoint)}, 500)
-        }, [props.waypoint, props.onContextMenu]),
-        onMouseUp: useCallback(() => {
-            if(timer) clearTimeout(timer);
-        }, []) 
+        onMouseDown: useCallback((e) => props.onContextMenu && props.onContextMenu(e, props.waypoint), [props.waypoint, props.onContextMenu]),
     }
     useMarker(options, handlers);
 

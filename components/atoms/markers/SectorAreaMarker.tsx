@@ -3,7 +3,6 @@ import { sectorChanged, toLatLng, usePolygon } from "helpers";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { GeoCoordinates, PolygonEventHandlers, PolyMouseEvent, Sector, Topo, UUID } from "types";
 
-let timer: NodeJS.Timeout;
 interface SectorAreaMarkerProps {
     sector: Quark<Sector>,
     selected?: boolean,
@@ -66,12 +65,7 @@ export const SectorAreaMarker: React.FC<SectorAreaMarkerProps> = watchDependenci
             }
         }, [updatePath, props.topo, sector, props.boulderOrder]),
         onContextMenu: useCallback((e) => {props.onContextMenu && props.onContextMenu(e, props.sector)}, [props.sector, props.onContextMenu]),
-        onMouseDown: useCallback((e) => {
-            timer = setTimeout(() => {props.onContextMenu && props.onContextMenu(e, props.sector)}, 500)
-        }, [props.sector, props.onContextMenu]),
-        onMouseUp: useCallback(() => {
-            if(timer) clearTimeout(timer);
-        }, []) 
+        onMouseDown: useCallback((e) => props.onContextMenu && props.onContextMenu(e, props.sector), [props.sector, props.onContextMenu]),
     }
     polygon = usePolygon(options, handlers);
 

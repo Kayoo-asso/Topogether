@@ -3,7 +3,6 @@ import { markerSize, toLatLng, useMarker } from "helpers";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { Parking, MarkerEventHandlers } from "types";
 
-let timer: NodeJS.Timeout;
 interface ParkingMarkerProps {
     parking: Quark<Parking>,
     selected?: boolean,
@@ -41,12 +40,7 @@ export const ParkingMarker: React.FC<ParkingMarkerProps> = watchDependencies(({
             }
         }, [props.parking]),
         onContextMenu: useCallback((e) => props.onContextMenu && props.onContextMenu(e, props.parking), [props.parking, props.onContextMenu]),
-        onMouseDown: useCallback((e) => {
-            timer = setTimeout(() => {props.onContextMenu && props.onContextMenu(e, props.parking)}, 500)
-        }, [props.parking, props.onContextMenu]),
-        onMouseUp: useCallback(() => {
-            if(timer) clearTimeout(timer);
-        }, []) 
+        onMouseDown: useCallback((e) => props.onContextMenu && props.onContextMenu(e, props.parking), [props.parking, props.onContextMenu]),
     }
     useMarker(options, handlers);
 

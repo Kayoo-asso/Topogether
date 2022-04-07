@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { useAsyncEffect, useCircle, useMarker } from "helpers";
+import { useCircle, useMarker } from "helpers";
 import { MarkerEventHandlers } from "types";
 import { useGeolocation } from "helpers/hooks/useGeolocation";
 
