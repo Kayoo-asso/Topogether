@@ -3,6 +3,7 @@ import { Dropdown } from 'components';
 import equal from 'fast-deep-equal/es6';
 import { LightTopo, TopoStatus } from 'types';
 import { useRouter } from 'next/router';
+import { encodeUUID } from 'helpers';
 
 interface UserActionDropdownProps {
     topo: LightTopo;
@@ -15,7 +16,7 @@ interface UserActionDropdownProps {
 export const UserActionDropdown: React.FC<UserActionDropdownProps> = React.memo((props: UserActionDropdownProps) => {
     const router = useRouter();
 
-    const openTopo = useCallback(() => router.push(`/topo/${props.topo.id}`), [router, props.topo]);
+    const openTopo = useCallback(() => router.push(`/topo/${encodeUUID(props.topo.id)}`), [router, props.topo]);
     //TODO
     const downloadTopo = useCallback(() => console.log('Downloading the topo...'), []);
 
