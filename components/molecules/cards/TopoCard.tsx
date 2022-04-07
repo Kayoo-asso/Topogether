@@ -68,14 +68,14 @@ export const TopoCard: React.FC<TopoCardProps> = React.memo((props: TopoCardProp
               sizeHint={'25vw'}
             />
           </div>
-          <div className="h-[50%] md:h-[25%] md:px-5 flex flex-row md:items-center md:justify-center">
+
+          <div className="h-[50%] md:h-[25%] md:px-4 md:py-1 flex flex-row gap-2 md:items-center md:justify-center">
             <div className="hidden md:block">
               {TopoIcon}
             </div>
   
-            <div className="p-2 md:pr-6 w-full flex flex-col items-start">
-  
-              <div className='flex flex-row items-center mb-1 md:my-1'>
+            <div className="w-full flex flex-col items-start overflow-hidden">
+              <div className='flex flex-row items-center mb-1 md:my-1 '>
                 <div className="pr-2 md:hidden stroke-[1.5px]">
                   {TopoIcon}
                 </div>
@@ -84,7 +84,6 @@ export const TopoCard: React.FC<TopoCardProps> = React.memo((props: TopoCardProp
                 </div>
               </div>
   
-  
               <div className="w-full border-t-[1px] text-xxs flex flex-row flex-wrap items-end justify-between py-1">
                 <span className="whitespace-nowrap">{`${props.topo.nbBoulders} blocs - ${props.topo.nbTracks} passages`}</span>
                 <span className="mr-1 whitespace-nowrap">
@@ -92,8 +91,8 @@ export const TopoCard: React.FC<TopoCardProps> = React.memo((props: TopoCardProp
                 </span>
               </div>
             </div>
-  
           </div>
+
         </Card>
       </div>
     )

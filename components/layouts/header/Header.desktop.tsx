@@ -68,7 +68,7 @@ export const HeaderDesktop: React.FC<HeaderDesktopProps> = watchDependencies(({
       </Link>
 
       <div
-        className="flex-1 flex flex-row items-center text-white ktext-title whitespace-nowrap cursor-pointer"
+        className="flex-1 flex flex-row items-center text-white ktext-title whitespace-nowrap cursor-pointer mr-4"
         onClick={() => setMenuOpen(!menuOpen)}
       >
         {props.title}
@@ -85,11 +85,11 @@ export const HeaderDesktop: React.FC<HeaderDesktopProps> = watchDependencies(({
           />
         )}
       </div>
-      <div className="flex-1 flex flex-row items-center">
+      <div className="flex-auto flex flex-row items-center">
         {props.children}
       </div>
       {displayMapTools && (
-        <div className="flex flex-row gap-8 mr-[40%]">
+        <div className="flex-auto flex flex-row gap-8">
           <Rock
             className={`h-7 w-7 cursor-pointer ${!props.MapToolsActivated ? 'stroke-grey-medium' : props.currentTool === 'ROCK' ? 'stroke-main' : 'stroke-white'}`}
             onClick={props.MapToolsActivated ? props.onRockClick : undefined}
