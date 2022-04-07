@@ -1,7 +1,5 @@
 -- Spatial data
 create extension if not exists postgis with schema extensions;
--- Simple trigger to update a timestamp at each update of a table
-create extension if not exists moddatetime;
 -- Fuzzy text search
 create extension if not exists pg_trgm;
 
