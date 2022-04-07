@@ -185,8 +185,6 @@ export class AuthService {
                     setCookie(RefreshTokenCookie, session.refresh_token);
                 }
             }
-        } else {
-            console.log(`Skipping event ${event} and session:`, session);
         }
     }
 }
