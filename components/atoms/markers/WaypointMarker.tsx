@@ -1,7 +1,8 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import { markerSize, toLatLng, useMarker } from "helpers";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { MarkerEventHandlers, Waypoint } from "types";
+import { isMouseEvent, isPointerEvent, isTouchEvent } from "./BoulderMarker";
 
 interface WaypointMarkerProps {
     waypoint: Quark<Waypoint>,
@@ -29,9 +30,26 @@ export const WaypointMarker: React.FC<WaypointMarkerProps> = watchDependencies((
         position: toLatLng(waypoint.location)
     };
 
+    const [timer, setTimer] = useState<ReturnType<typeof setTimeout>>(setTimeout(() => {}, 0))
+    const [blockClick, setBlockClick] = useState(false);
+    const handleContextMenu= useCallback((e: google.maps.MapMouseEvent) => {
+        const evt = e.domEvent;
+        if (isMouseEvent(evt) && evt.button === 2 && props.onContextMenu) { //Right click
+            props.onContextMenu(evt, props.waypoint);
+        }
+        else if (isTouchEvent(evt) || isPointerEvent(evt)) {
+            setBlockClick(false);
+            setTimer(setTimeout(() => { 
+                props.onContextMenu!(evt, props.waypoint);
+                setBlockClick(true);
+            }, 800));
+        }
+    }, [props.waypoint, timer, blockClick, props.onContextMenu, props.onClick]);
+
     const handlers: MarkerEventHandlers = {
-        onClick: useCallback(() => props.onClick && props.onClick(props.waypoint), [props.waypoint, props.onClick]),
+        onDragStart: useCallback(() => setBlockClick(true), []),
         onDragEnd: useCallback((e: google.maps.MapMouseEvent) => {
+            setTimeout(() => setBlockClick(false), 5);
             if (e.latLng) {
                 props.waypoint.set({
                     ...waypoint,
@@ -39,8 +57,16 @@ export const WaypointMarker: React.FC<WaypointMarkerProps> = watchDependencies((
                 })
             }
         }, [props.waypoint]),
-        onContextMenu: useCallback((e) => props.onContextMenu && props.onContextMenu(e, props.waypoint), [props.waypoint, props.onContextMenu]),
-        onMouseDown: useCallback((e) => props.onContextMenu && props.onContextMenu(e, props.waypoint), [props.waypoint, props.onContextMenu]),
+        onContextMenu: handleContextMenu,
+        onMouseDown: handleContextMenu,
+        onMouseUp: useCallback((e: google.maps.MapMouseEvent) => {
+            clearTimeout(timer);
+            const evt = e.domEvent;   
+            if (!blockClick && props.onClick) {
+                if (isMouseEvent(evt) && evt.button !== 0) return;
+                props.onClick(props.waypoint); 
+            }
+        }, [timer, blockClick, props.waypoint, props.onClick]),
     }
     useMarker(options, handlers);
 

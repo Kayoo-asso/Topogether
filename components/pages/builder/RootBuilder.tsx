@@ -16,6 +16,7 @@ import { useFirstRender } from 'helpers/hooks/useFirstRender';
 import { useSession } from "helpers/services";
 import { Header } from 'components/layouts/header/Header';
 import { LeftbarBuilderDesktop } from 'components/layouts/sidebars/LeftbarBuilder.desktop';
+import { isMouseEvent, isPointerEvent, isTouchEvent } from 'components/atoms';
 
 interface RootBuilderProps {
     topoQuark: Quark<Topo>,
@@ -165,20 +166,24 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
         else router.push({ pathname: window.location.href.split('?')[0] }, undefined, { shallow: true })
     }, [selectedBoulder]);
 
-    const displayBoulderDropdown = useCallback((e: any, boulderQuark: Quark<Boulder>) => {
-        setDropdownPosition({ x: e.domEvent.pageX, y: e.domEvent.pageY });
+    const displayBoulderDropdown = (e: Event, boulderQuark: Quark<Boulder>) => {
+        if (isMouseEvent(e) || isPointerEvent(e)) setDropdownPosition({ x: e.pageX, y: e.pageY });
+        else if (isTouchEvent(e)) setDropdownPosition({ x: e.touches[0].pageX, y: e.touches[0].pageY });
         boulderRightClicked.select(boulderQuark);
-    }, []);
-    const displayWaypointDropdown = useCallback((e: any, waypointQuark: Quark<Waypoint>) => {
-        setDropdownPosition({ x: e.domEvent.pageX, y: e.domEvent.pageY });
+    }
+    const displayWaypointDropdown = useCallback((e: Event, waypointQuark: Quark<Waypoint>) => {
+        if (isMouseEvent(e) || isPointerEvent(e)) setDropdownPosition({ x: e.pageX, y: e.pageY });
+        else if (isTouchEvent(e)) setDropdownPosition({ x: e.touches[0].pageX, y: e.touches[0].pageY });
         waypointRightClicked.select(waypointQuark);
     }, []);
-    const displayParkingDropdown = useCallback((e: any, parkingQuark: Quark<Parking>) => {
-        setDropdownPosition({ x: e.domEvent.pageX, y: e.domEvent.pageY });
+    const displayParkingDropdown = useCallback((e: Event, parkingQuark: Quark<Parking>) => {
+        if (isMouseEvent(e) || isPointerEvent(e)) setDropdownPosition({ x: e.pageX, y: e.pageY });
+        else if (isTouchEvent(e)) setDropdownPosition({ x: e.touches[0].pageX, y: e.touches[0].pageY });
         parkingRightClicked.select(parkingQuark);
     }, []);
-    const displaySectorDropdown = useCallback((e: any, sectorQuark: Quark<Sector>) => {
-        setDropdownPosition({ x: e.domEvent.pageX, y: e.domEvent.pageY });
+    const displaySectorDropdown = useCallback((e: Event, sectorQuark: Quark<Sector>) => {
+        if (isMouseEvent(e) || isPointerEvent(e)) setDropdownPosition({ x: e.pageX, y: e.pageY });
+        else if (isTouchEvent(e)) setDropdownPosition({ x: e.touches[0].pageX, y: e.touches[0].pageY });
         sectorRightClicked.select(sectorQuark);
     }, []);
 

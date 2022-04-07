@@ -156,7 +156,7 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies((props: RootNew
                 <div className="h-[300px] md:h-[350px] w-full overflow-auto mb-10 md:mb-16">
                   <MapControl
                     displayPhotoButton={false}
-                    displayUserMarker={false}
+                    displayUserMarker={true}
                     zoom={10}
                     center={toLatLng(fontainebleauLocation)}
                     creatingTopo={topoQuark}

@@ -1,7 +1,8 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import { markerSize, toLatLng, useMarker } from "helpers";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { Parking, MarkerEventHandlers } from "types";
+import { isMouseEvent, isPointerEvent, isTouchEvent } from "./BoulderMarker";
 
 interface ParkingMarkerProps {
     parking: Quark<Parking>,
@@ -29,9 +30,26 @@ export const ParkingMarker: React.FC<ParkingMarkerProps> = watchDependencies(({
         position: toLatLng(parking.location)
     };
 
+    const [timer, setTimer] = useState<ReturnType<typeof setTimeout>>(setTimeout(() => {}, 0))
+    const [blockClick, setBlockClick] = useState(false);
+    const handleContextMenu= useCallback((e: google.maps.MapMouseEvent) => {
+        const evt = e.domEvent;
+        if (isMouseEvent(evt) && evt.button === 2 && props.onContextMenu) { //Right click
+            props.onContextMenu(evt, props.parking);
+        }
+        else if (isTouchEvent(evt) || isPointerEvent(evt)) {
+            setBlockClick(false);
+            setTimer(setTimeout(() => { 
+                props.onContextMenu!(evt, props.parking);
+                setBlockClick(true);
+            }, 800));
+        }
+    }, [props.parking, timer, blockClick, props.onContextMenu, props.onClick]);
+
     const handlers: MarkerEventHandlers = {
-        onClick: useCallback(() => props.onClick && props.onClick(props.parking), [props.parking, props.onClick]),
+        onDragStart: useCallback(() => setBlockClick(true), []),
         onDragEnd: useCallback((e: google.maps.MapMouseEvent) => {
+            setTimeout(() => setBlockClick(false), 5);
             if (e.latLng) {
                 props.parking.set({
                     ...parking,
@@ -39,8 +57,16 @@ export const ParkingMarker: React.FC<ParkingMarkerProps> = watchDependencies(({
                 })
             }
         }, [props.parking]),
-        onContextMenu: useCallback((e) => props.onContextMenu && props.onContextMenu(e, props.parking), [props.parking, props.onContextMenu]),
-        onMouseDown: useCallback((e) => props.onContextMenu && props.onContextMenu(e, props.parking), [props.parking, props.onContextMenu]),
+        onContextMenu: handleContextMenu,
+        onMouseDown: handleContextMenu,
+        onMouseUp: useCallback((e: google.maps.MapMouseEvent) => {
+            clearTimeout(timer);
+            const evt = e.domEvent;   
+            if (!blockClick && props.onClick) {
+                if (isMouseEvent(evt) && evt.button !== 0) return;
+                props.onClick(props.parking); 
+            }
+        }, [timer, blockClick, props.parking, props.onClick]),
     }
     useMarker(options, handlers);
 

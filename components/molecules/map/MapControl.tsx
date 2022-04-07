@@ -202,7 +202,7 @@ export const MapControl: React.FC<MapControlProps> = ({
                     </div>
 
                     <div className="flex justify-between">
-                        <div>
+                        <div className='flex items-center'>
                             {displaySectorButton &&
                                 <RoundButton
                                     className='md:hidden'
@@ -212,7 +212,7 @@ export const MapControl: React.FC<MapControlProps> = ({
                                 </RoundButton>
                             }
                         </div>
-                        <div>
+                        <div className='flex items-center'>
                             {displayPhotoButton &&
                                 <RoundButton
                                     className='z-10 md:hidden'
@@ -224,7 +224,7 @@ export const MapControl: React.FC<MapControlProps> = ({
                                 </RoundButton>
                             }
                         </div>
-                        <div>
+                        <div className='flex items-center'>
                             {displayUserMarker && userPosition && (
                                 <RoundButton
                                     onClick={() => {
