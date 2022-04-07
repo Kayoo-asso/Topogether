@@ -18,7 +18,6 @@ export const ImageInput = forwardRef<HTMLInputElement, ImageInputProps>(({
   ...props
 }: ImageInputProps, ref) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
-console.log(props.value);
 
   const [error, setError] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);

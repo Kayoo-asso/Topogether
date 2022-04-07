@@ -1,10 +1,10 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import type { GetServerSideProps, NextPage } from 'next';
-import { Button, ImageInput, ModalDelete, ProfilePicture, TextInput } from 'components';
+import { Button, ImageInput, ModalDelete, TextInput } from 'components';
 import { HeaderDesktop, LeftbarDesktop, Tabs } from 'components/layouts';
 import Link from 'next/link';
 import { useCreateQuark, watchDependencies } from 'helpers/quarky';
-import { Email, Image, isEmail, Name, StringBetween, User } from 'types';
+import { Email, isEmail, Name, StringBetween, User } from 'types';
 import { useAuth } from "helpers/services";
 import { withAuth } from 'helpers/auth';
 
@@ -88,8 +88,8 @@ const ProfilePage: NextPage<ProfileProps> = watchDependencies((props) => {
                   userQuark.set({
                     ...userQuark(),
                     image: images[0]
-                  })
-                  await auth.updateUserInfo(user);
+                  });
+                  await auth.updateUserInfo(userQuark());
                 }}
               />
             </div>
