@@ -215,7 +215,7 @@ export const MapControl: React.FC<MapControlProps> = ({
                         <div>
                             {displayPhotoButton &&
                                 <RoundButton
-                                    className='md:hidden'
+                                    className='z-10 md:hidden'
                                     white={false}
                                     buttonSize={80}
                                     onClick={props.onPhotoButtonClick}

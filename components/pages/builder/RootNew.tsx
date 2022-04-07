@@ -81,7 +81,7 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies((props: RootNew
         title="Nouveau topo"
       />
 
-      <div className='h-contentPlusHeader md:h-full w-full flex flex-row items-center bg-main'>
+      <div className='h-content md:h-full w-full flex flex-row items-center bg-main'>
           <div className='flex flex-col items-center justify-center w-full'>
             {step === 0 &&
               <div className='px-[10%] w-full'>
@@ -153,7 +153,7 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies((props: RootNew
 
             {step === 2 && (
               <>
-                <div className="h-[350px] w-full mb-10 md:mb-16">
+                <div className="h-[300px] md:h-[350px] w-full overflow-auto mb-10 md:mb-16">
                   <MapControl
                     displayPhotoButton={false}
                     displayUserMarker={false}
@@ -173,12 +173,11 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies((props: RootNew
                 </div>
 
                 <div className="px-[10%] w-full">
-                  <div className="md:flex md:flex-row md:gap-16">
+                  <div className="flex flex-row gap-4 md:gap-16">
                     <TextInput
                       id="topo-latitude"
                       label="Latitude"
                       error={latitudeError}
-                      big
                       white
                       wrapperClassName="w-full mb-10"
                       value={topo.location[1] || ''}
@@ -194,7 +193,6 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies((props: RootNew
                       id="topo-longitude"
                       label="Longitude"
                       error={longitudeError}
-                      big
                       white
                       wrapperClassName="w-full mb-10"
                       value={topo.location[0] || ''}

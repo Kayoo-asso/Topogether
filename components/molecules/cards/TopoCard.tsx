@@ -65,7 +65,7 @@ export const TopoCard: React.FC<TopoCardProps> = React.memo(({
         }}
       >
         <Card className={"relative text-center text-grey-medium bg-white flex flex-col" + (clickable ? " cursor-pointer" : '')}>
-          <div className="w-full h-[50%] md:h-[75%] top-0 relative">
+          <div className="w-full h-[55%] md:h-[75%] top-0 relative">
             <CFImage
               image={props.topo.image}
               className="rounded-t-lg h-full object-cover"
@@ -74,7 +74,7 @@ export const TopoCard: React.FC<TopoCardProps> = React.memo(({
             />
           </div>
 
-          <div className="h-[50%] md:h-[25%] md:px-4 md:py-1 flex flex-row gap-2 md:items-center md:justify-center">
+          <div className="h-[45%] md:h-[25%] px-3 md:px-4 py-1 flex flex-row gap-2 md:items-center md:justify-center">
             <div className="hidden md:block">
               {TopoIcon}
             </div>

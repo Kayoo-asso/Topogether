@@ -72,13 +72,13 @@ const ProfilePage: NextPage<ProfileProps> = watchDependencies((props) => {
           backLink="/"
           title="Profile"
       />
-      <div className='h-contentPlusHeader md:h-full w-full flex flex-row bg-white overflow-auto'>
+      <div className='h-content md:h-full w-full flex flex-row bg-white overflow-auto'>
 
         <LeftbarDesktop
           currentMenuItem="USER"
         />
         
-        <div className='flex flex-col w-full h-full justify-center md:px-12'>
+        <div className='flex flex-col relative w-full h-full justify-start md:justify-center md:px-12'>
           <div className='flex flex-row justify-center md:justify-start rounded-lg px-6 pb-10 pt-12 md:pt-[16px]'>
             <div className='h-[100px] w-[100px] relative cursor-pointer'>
               <ImageInput 
@@ -112,7 +112,7 @@ const ProfilePage: NextPage<ProfileProps> = watchDependencies((props) => {
             </div>
 
             {user.role === 'ADMIN' &&
-              <div className='absolute right-[5%]'>
+              <div className='absolute right-[5%] top-[5%]'>
                 <Button
                   content='Admin'
                   href='/admin'
