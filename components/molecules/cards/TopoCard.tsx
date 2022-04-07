@@ -59,7 +59,7 @@ export const TopoCard: React.FC<TopoCardProps> = React.memo((props: TopoCardProp
           if (timer) clearTimeout(timer);
         }}
       >
-        <Card className="relative text-center text-grey-medium bg-white flex flex-col cursor-pointer">
+        <Card className={"relative text-center text-grey-medium bg-white flex flex-col" + (props.clickable ? " cursor-pointer" : '')}>
           <div className="w-full h-[50%] md:h-[75%] top-0 relative">
             <CFImage
               image={props.topo.image}
