@@ -20,7 +20,7 @@ export const getServerSideProps: GetServerSideProps<ChangePasswordProps> = withA
 
 const ChangePasswordPage: NextPage = (props) => {
   const auth = useAuth();
-  console.log(props);
+  // console.log(props);
   const [oldPassword, setOldPassword] = useState<string>('');
   const [newPassword, setNewPassword] = useState<string>('');
   const [secondNewPassword, setSecondNewPassword] = useState<string>('');
