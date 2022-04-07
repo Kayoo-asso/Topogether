@@ -149,6 +149,25 @@ export class AuthService {
         return true;
     }
 
+    async resetPassword(email: Email, redirectTo?: string): Promise<boolean> {
+        try {
+            const res = await fetch('/auth/resetPassword', {
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    email,
+                    redirectTo
+                })
+            });
+            if (!res.ok) console.error("Error resetting password", await res.text());
+            return res.ok;
+        } catch (error) {
+            console.error("Error resetting password", error);
+            return false;
+        }
+    }
+
     private async _loadDetails(id: string | undefined): Promise<boolean> {
         if (!id) {
             this._session.set(null);
@@ -175,6 +194,7 @@ export class AuthService {
             this._session.set(null);
             deleteCookie(AccessTokenCookie);
             deleteCookie(RefreshTokenCookie);
+            this.client.auth.api.resetPasswordForEmail
         } else if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
             if (session) {
                 const expires = session.expires_at
