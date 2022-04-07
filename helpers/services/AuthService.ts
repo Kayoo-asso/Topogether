@@ -129,6 +129,10 @@ export class AuthService {
         return true;
     }
 
+    async changeEmail(email: Email) {
+        await this.client.auth.update({ email, })
+    }
+
     private async _loadDetails(id: string | undefined): Promise<boolean> {
         if (!id) {
             this._session.set(null);
@@ -162,10 +166,11 @@ export class AuthService {
                     : undefined;
                 setCookie(AccessTokenCookie, session.access_token, { expires });
                 if (session.refresh_token) {
-                    console.log("Saving refresh token:", session.refresh_token);
                     setCookie(RefreshTokenCookie, session.refresh_token);
                 }
             }
+        } else {
+            console.log(`Skipping event ${event} and session:`, session);
         }
     }
 }
