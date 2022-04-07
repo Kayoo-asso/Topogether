@@ -101,7 +101,7 @@ export class AuthService {
                 : SignUpRes.Error; // generic server error
         }
         // No confirmation required (probably dev environment)
-        if (user) {
+        if (session && user) {
             return await this._loadDetails(user.id) ? SignUpRes.LoggedIn : SignUpRes.Error;
         }
         // Regular scenario
@@ -190,6 +190,7 @@ export class AuthService {
     // Manually setting cookies w/ those options is as safe as localStorage,
     // which is where Supabase usually stores auth tokens
     private async _onAuthStateChange(event: AuthChangeEvent, session: SupabaseSession | null) {
+        console.log('[AuthStateChange] ' + event);
         if (event === "SIGNED_OUT") {
             this._session.set(null);
             deleteCookie(AccessTokenCookie);
