@@ -1,7 +1,7 @@
 import { Image } from "types"
 import { SourceSize, VariantWidths } from "helpers/variants";
 import { cloudflareUrl } from "helpers/cloudflareUrl";
-import { ImgHTMLAttributes, useEffect, useRef, useState } from "react";
+import { ImgHTMLAttributes, useEffect, useLayoutEffect, useRef, useState } from "react";
 import defaultKayoo from 'public/assets/img/Kayoo_defaut_image.png';
 import type { StaticImageData } from 'next/image';
 import { useDevice } from "helpers/hooks/useDevice";
@@ -30,12 +30,25 @@ export const CFImage: React.FC<CFImageProps> = ({
     const imgRef = useRef<HTMLImageElement>(null);
     const [loading, setLoading] = useState(true);
     const { forceLoading, ...imgProps } = props;
-
-    useEffect(() => {
+    
+    // useLayoutEffect to avoid a "flickering" loading indicator
+    useLayoutEffect(() => {
         //If the image is already in the page because it's in cache, onLoad does not trigger
         //So we verify if the image already exists through its naturalHeight
-        if (imgRef.current?.naturalHeight !== 0) setLoading(false);
+        if (imgRef.current?.naturalHeight !== 0) {
+            console.log("image from cache");
+            setLoading(false);
+        }
     }, [imgRef.current]);
+    
+    const currentImage = useRef(image?.id);
+    useEffect(() => {
+        // this check prevents setting `loading` to true in case the image loads too fast
+        if (currentImage.current !== image?.id) {
+            console.log("Got new image. Natural height:", imgRef.current?.naturalHeight);
+            setLoading(true);
+        }
+    }, [image?.id])
 
     let src = defaultImage.src;
     let width = defaultImage.width;
@@ -83,7 +96,9 @@ export const CFImage: React.FC<CFImageProps> = ({
                 loading={props.loading ?? 'lazy'}
                 decoding={props.decoding ?? 'async'}
                 onLoad={() => {
+                    console.log("Loaded image");
                     setLoading(false);
+                    currentImage.current = image?.id;
                 }}
             />
         </div>
