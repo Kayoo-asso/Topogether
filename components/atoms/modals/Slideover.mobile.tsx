@@ -28,7 +28,7 @@ export const SlideoverMobile: React.FC<SlideoverMobileProps> = ({
 
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
-  const handleToucheStart = (e: React.TouchEvent<HTMLDivElement>) => {
+  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
     setTransition(false);
     setTouchStart(e.touches[0].clientY);
   };
@@ -64,13 +64,18 @@ export const SlideoverMobile: React.FC<SlideoverMobileProps> = ({
     >
       <div
         className="absolute flex w-full h-[40px] justify-center z-100"
-        onTouchStart={handleToucheStart}
+        onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
         <div className="bg-grey-light rounded-full h-[6px] w-3/12 shadow mt-[8px]" />
       </div>
-      <div className="h-full flex flex-col">
+      <div 
+        className="h-full flex flex-col"
+        onTouchStart={(e) => { if (!full) handleTouchStart(e) }}
+        onTouchMove={(e) => { if (!full) handleTouchMove(e) }}
+        onTouchEnd={(e) => { if (!full) handleTouchEnd() }}
+      >
         {props.children}
       </div>
     </div>

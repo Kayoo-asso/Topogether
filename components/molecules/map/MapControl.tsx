@@ -205,7 +205,7 @@ export const MapControl: React.FC<MapControlProps> = ({
                         <div className='flex items-center'>
                             {displaySectorButton &&
                                 <RoundButton
-                                    className='md:hidden'
+                                    className='z-10 md:hidden'
                                     onClick={props.onSectorButtonClick}
                                 >
                                     <SectorIcon className='h-7 w-7 stroke-main fill-main' />

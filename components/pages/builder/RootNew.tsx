@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { StringBetween, TopoType, User } from 'types';
+import { Name, StringBetween, TopoType, User } from 'types';
 import { fontainebleauLocation, toLatLng, TopoCreate, createTopo, encodeUUID } from 'helpers';
 import { Button, MapControl, Select, TextInput } from 'components';
 import Link from 'next/link';

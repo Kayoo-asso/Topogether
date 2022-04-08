@@ -18,6 +18,7 @@ export const TextArea = ({
   ...props
 }: TextAreaProps) => {
   const ref = useRef<HTMLTextAreaElement>(null);
+  const value = props.value || '';
 
   const [height, setHeight] = useState<number>(0);
 
@@ -37,10 +38,10 @@ export const TextArea = ({
       <textarea
         ref={ref}
         {...props}
-        style={{ height: props.value ? `${height}px` : '40px' }}
+        style={{ height: value ? `${height}px` : '40px' }}
         placeholder={props.label}
         id={props.id}
-        value={props.value}
+        value={value}
         className={`peer border-dark ktext-base border-b-2 overflow-hidden ${displayLabel ? 'placeholder-transparent' : ''} focus:border-main focus:outline-none w-full ${pointer ? ' cursor-pointer' : ''}`}
         onKeyUp={adaptScrollHeight}
       />

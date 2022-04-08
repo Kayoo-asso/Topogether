@@ -1,9 +1,10 @@
 import React, { useContext } from 'react';
 import { SlideoverLeftDesktop, SlideoverMobile } from 'components';
-import { QuarkArray } from 'helpers/quarky';
+import { QuarkArray, watchDependencies } from 'helpers/quarky';
 import { TopoAccess } from 'types';
 import { DeviceContext } from 'helpers';
 import { AccessForm } from '..';
+import { v4 } from 'uuid';
 
 interface AccessFormSlideoverProps {
     accesses: QuarkArray<TopoAccess>,
@@ -12,7 +13,7 @@ interface AccessFormSlideoverProps {
     onClose: () => void,
 }
 
-export const AccessFormSlideover: React.FC<AccessFormSlideoverProps> = ({
+export const AccessFormSlideover: React.FC<AccessFormSlideoverProps> = watchDependencies(({
     open = true,
     ...props
 }: AccessFormSlideoverProps) => {
@@ -27,10 +28,15 @@ export const AccessFormSlideover: React.FC<AccessFormSlideoverProps> = ({
                     initialFull={true}
                     onClose={props.onClose}
                 >
-                    <div className='px-6 py-10 h-full'>
+                    <div className='px-6 mt-10 pb-10 h-full overflow-auto'>
                         <div className='ktext-title mb-6'>Marche d'approche</div>
                         <AccessForm 
                             access={props.accesses.quarkAt(0)}
+                            onCreateAccess={() => props.accesses.push({
+                                id: v4(),
+                                steps: []
+                            })}
+                            onDeleteAccess={(accessQuark) => props.accesses.removeQuark(accessQuark)}
                         />
                     </div>
                 </SlideoverMobile>
@@ -45,9 +51,14 @@ export const AccessFormSlideover: React.FC<AccessFormSlideoverProps> = ({
                     <AccessForm 
                         access={props.accesses?.quarkAt(0)}
                         className='mt-6'
+                        onCreateAccess={() => props.accesses.push({
+                            id: v4(),
+                            steps: []
+                        })}
+                        onDeleteAccess={(accessQuark) => props.accesses.removeQuark(accessQuark)}
                     />
                 </SlideoverLeftDesktop>
             }
         </> 
     )
-}
+});
