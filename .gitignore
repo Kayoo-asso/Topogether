@@ -5,6 +5,8 @@
 .cert
 .postgresql
 .vscode
+# auto-generated
+public/sw.js
 
 # dependencies
 /node_modules
