@@ -15,7 +15,7 @@ interface SectorAreaMarkerProps {
     onClick?: (e: PolyMouseEvent) => void,
     onDragStart?: (e: PolyMouseEvent) => void,
     onMouseMoveOnSector?: (e: any) => void,
-    onContextMenu?: (e: any, sector: Quark<Sector>) => void,
+    onContextMenu?: (e: Event, sector: Quark<Sector>) => void,
 }
 
 export const SectorAreaMarker: React.FC<SectorAreaMarkerProps> = watchDependencies(({

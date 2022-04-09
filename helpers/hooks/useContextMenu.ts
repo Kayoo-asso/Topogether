@@ -38,7 +38,7 @@ export function useContextMenu(close: () => void, container?: HTMLElement | null
         const onContextMenu = (e: MouseEvent) => {
             close();
             container?.addEventListener('wheel', onScroll);
-            if(process.env.NODE_ENV === "production") e.preventDefault();
+            if (process.env.NODE_ENV === "production") e.preventDefault();
         };
         document.addEventListener('mousedown', onMouseDown, { capture: false });
         document.addEventListener('contextmenu', onContextMenu, { capture: true });

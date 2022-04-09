@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react';
+import React, { MouseEvent, TouchEvent, ReactElement, useCallback, useState } from 'react';
 import Link from 'next/link';
 import { Card, CFImage } from 'components';
 import { formatDate, encodeUUID } from 'helpers';
@@ -9,7 +9,6 @@ import Recent from 'assets/icons/recent.svg';
 import Edit from 'assets/icons/edit.svg';
 
 
-let timer: NodeJS.Timeout;
 interface TopoCardProps {
   topo: LightTopo;
   clickable?: boolean;
@@ -51,18 +50,41 @@ export const TopoCard: React.FC<TopoCardProps> = React.memo(({
     else return elts;
   }
 
+  const [timer, setTimer] = useState<ReturnType<typeof setTimeout>>(setTimeout(() => {}, 0))
+  const [blockClick, setBlockClick] = useState(false);
+  const handleMouseContextMenu = useCallback((e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
+      console.log('ok')  
+    if (props.onContextMenu) {
+        e.preventDefault();
+        props.onContextMenu(props.topo, { x: e.pageX, y: e.pageY });
+      }
+    }, [props.topo, props.onContextMenu]);
+  const handleTouchContextMenu = useCallback((e: TouchEvent<HTMLDivElement>) => {
+    if (props.onContextMenu) {
+      setBlockClick(false);
+      setTimer(setTimeout(() => { 
+          props.onContextMenu!(props.topo, { x: e.touches[0].pageX, y: e.touches[0].pageY });
+          setBlockClick(true);
+      }, 800));
+    }
+  }, [props.topo, props.onContextMenu]);
+
   return (
     wrapLink(
-      <div onContextMenu={(e) => {
-        props.onContextMenu(props.topo, { x: e.pageX, y: e.pageY });
-        e.preventDefault()
-      }}
-        onTouchStart={(e) => {
-          timer = setTimeout(() => props.onContextMenu(props.topo, { x: e.touches[0].pageX, y: e.touches[0].pageY }), 500)
-        }}
-        onTouchEnd={() => {
-          if (timer) clearTimeout(timer);
-        }}
+      <div 
+        onContextMenu={handleMouseContextMenu}
+        // onTouchStart={handleTouchContextMenu}
+        // onTouchEnd={() => {
+        //   clearTimeout(timer);
+        // }}
+        // onMouseUp={useCallback((e) => {
+            
+        //     // const evt = e.domEvent;   
+        //     // if (!blockClick && props.onClick) {
+        //     //     if (isMouseEvent(evt) && evt.button !== 0) return;
+        //     //     props.onClick(e); 
+        //     // }
+        // }, [timer, blockClick, props.topo])}
       >
         <Card className={"relative text-center text-grey-medium bg-white flex flex-col" + (clickable ? " cursor-pointer" : '')}>
           <div className="w-full h-[55%] md:h-[75%] top-0 relative">

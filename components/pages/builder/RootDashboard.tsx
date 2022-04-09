@@ -53,7 +53,7 @@ export const RootDashboard: React.FC<RootDashboardProps> = (props: RootDashboard
   
     useContextMenu(() => setDropdownDisplayed(false), ref.current);
   
-    const onContextMenu = useCallback((topo: LightTopo, position: {x: number, y: number}) => {
+    const onContextMenu = useCallback((topo: LightTopo, position: { x: number, y: number }) => {
       setDropdownDisplayed(true);
       setTopoDropddown(topo);
       setDropdownPosition(position);

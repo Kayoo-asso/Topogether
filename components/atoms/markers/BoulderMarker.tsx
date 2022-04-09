@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { MouseEvent, useCallback, useState } from "react";
 import { boulderChanged, markerSize, toLatLng, useMarker } from "helpers";
 import { Quark, useQuarkyCallback, watchDependencies } from "helpers/quarky";
 import { Boulder, GeoCoordinates, MarkerEventHandlers, Topo, UUID } from "types";
@@ -13,9 +13,9 @@ interface BoulderMarkerProps {
     onContextMenu?: (e: Event, boulder: Quark<Boulder>) => void
 }
 
-export const isMouseEvent = (e: MouseEvent|TouchEvent|PointerEvent|KeyboardEvent|Event): e is MouseEvent => (e as MouseEvent).button !== undefined;
-export const isTouchEvent = (e: MouseEvent|TouchEvent|PointerEvent|KeyboardEvent|Event): e is TouchEvent => (e as TouchEvent).touches !== undefined;
-export const isPointerEvent = (e: MouseEvent|TouchEvent|PointerEvent|KeyboardEvent|Event): e is PointerEvent => (e as PointerEvent).pointerType !== undefined;
+export const isMouseEvent = (e: MouseEvent|TouchEvent|PointerEvent|KeyboardEvent|Event|MouseEvent<HTMLDivElement, MouseEvent>): e is MouseEvent => (e as MouseEvent).button !== undefined;
+export const isTouchEvent = (e: MouseEvent|TouchEvent|PointerEvent|KeyboardEvent|Event|MouseEvent<HTMLDivElement, MouseEvent>): e is TouchEvent => (e as TouchEvent).touches !== undefined;
+export const isPointerEvent = (e: MouseEvent|TouchEvent|PointerEvent|KeyboardEvent|Event|MouseEvent<HTMLDivElement, MouseEvent>): e is PointerEvent => (e as PointerEvent).pointerType !== undefined;
 
 export const BoulderMarker: React.FC<BoulderMarkerProps> = watchDependencies(({
     draggable = false,
