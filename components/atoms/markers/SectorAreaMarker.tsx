@@ -33,7 +33,7 @@ export const SectorAreaMarker: React.FC<SectorAreaMarkerProps> = watchDependenci
         editable,
         clickable,
         fillColor: '#04D98B',
-        fillOpacity: selected ? 0.4 : 0.2,
+        fillOpacity: selected ? 0.3 : 0.2,
         strokeColor: '#04D98B',
         strokeOpacity: selected ? 1 : 0.4,
         strokeWeight: 2,

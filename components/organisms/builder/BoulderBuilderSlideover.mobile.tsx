@@ -11,7 +11,7 @@ import { CFImage } from 'components/atoms/CFImage';
 import ArrowFull from 'assets/icons/arrow-full.svg';
 import ManyTracks from 'assets/icons/many-tracks.svg';
 import Camera from 'assets/icons/camera.svg';
-import { TracksImage } from 'components/molecules';
+import { ImageSlider, TracksImage } from 'components/molecules';
 
 interface BoulderBuilderSlideoverMobileProps {
   boulder: Quark<Boulder>,
@@ -42,35 +42,23 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
     >
       {/* BOULDER IMAGE */}
       {full && (
-        <div className="w-full bg-dark rounded-t-lg relative overflow-hidden max-h-[45%]">
-          {imageToDisplayIndex > 0 && !selectedTrack &&
-            <button
-              className='absolute left-4 z-100'
-              onClick={() => {
-                props.setCurrentImage(boulder.images[imageToDisplayIndex - 1]);
-                setImageToDisplayIndex(idx => idx - 1)
-              }}
-            >
-              <ArrowFull className="w-3 h-3 stroke-main fill-main rotate-180" />
-            </button>
-          }
-          <TracksImage
-            sizeHint='100vw'
+        <div className="w-full bg-dark rounded-t-lg relative overflow-hidden max-h-[40%]">
+          <ImageSlider 
+            displayLeftArrow={imageToDisplayIndex > 0 && !selectedTrack}
+            displayRightArrow={imageToDisplayIndex < boulder.images.length - 1 && !selectedTrack}
             image={props.currentImage}
             tracks={boulder.tracks.quarks()}
             selectedTrack={props.selectedTrack}
             displayPhantomTracks={displayPhantomTracks}
-            displayTracksDetails={!!selectedTrack?.id}
+            onLeftArrowClick={() => {
+              props.setCurrentImage(boulder.images[imageToDisplayIndex - 1]);
+              setImageToDisplayIndex(idx => idx - 1)
+            }}
+            onRightArrowClick={() => {
+              props.setCurrentImage(boulder.images[imageToDisplayIndex + 1]);
+              setImageToDisplayIndex(idx => idx + 1)
+            }}
           />
-          {imageToDisplayIndex < boulder.images.length - 1 && !selectedTrack &&
-            <ArrowFull
-              className="absolute right-4 w-3 h-3 stroke-main fill-main z-100 cursor-pointer"
-              onClick={() => {
-                props.setCurrentImage(boulder.images[imageToDisplayIndex + 1]);
-                setImageToDisplayIndex(idx => idx + 1)
-              }}
-            />
-          }
         </div>
       )}
 

@@ -8,6 +8,7 @@ import { CFImage } from 'components/atoms/CFImage';
 import ArrowFull from 'assets/icons/arrow-full.svg';
 import ManyTracks from 'assets/icons/many-tracks.svg';
 import AddIcon from 'assets/icons/add.svg';
+import { ImageSlider } from 'components/molecules';
 
 interface BoulderSlideoverMobileProps {
   boulder: Quark<Boulder>,
@@ -48,38 +49,22 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = wat
       {/* BOULDER IMAGE */}
       {full && (
         <div className="w-full bg-dark rounded-t-lg flex items-center justify-center">
-          {imageToDisplayIndex > 0 &&
-            <button
-              className='absolute left-4 z-100'
-              onClick={() => {
-                props.setCurrentImage(boulder.images[imageToDisplayIndex - 1]);
-                setImageToDisplayIndex(idx => idx - 1)
-              }}
-            >
-              <ArrowFull className="w-3 h-3 stroke-main fill-main rotate-180" />
-            </button>
-          }
-
-          {/* <TracksImage
+          <ImageSlider 
+            displayLeftArrow={imageToDisplayIndex > 0 && !selectedTrack}
+            displayRightArrow={imageToDisplayIndex < boulder.images.length - 1 && !selectedTrack}
             image={props.currentImage}
             tracks={boulder.tracks.quarks()}
             selectedTrack={props.selectedTrack}
             displayPhantomTracks={displayPhantomTracks}
-            displayTracksDetails={!!selectedTrack?.id}
-            containerClassName={props.currentImage.width / props.currentImage.height > 1 ? 'overflow-hidden rounded-t-lg h-full' : 'h-[35vh]'}
-          /> */}
-
-          {imageToDisplayIndex < boulder.images.length - 1 &&
-            <button
-              className="absolute right-4 z-100"
-              onClick={() => {
-                props.setCurrentImage(boulder.images[imageToDisplayIndex + 1]);
-                setImageToDisplayIndex(idx => idx + 1)
-              }}
-            >
-              <ArrowFull className="w-3 h-3 stroke-main fill-main" />
-            </button>
-          }
+            onLeftArrowClick={() => {
+              props.setCurrentImage(boulder.images[imageToDisplayIndex - 1]);
+              setImageToDisplayIndex(idx => idx - 1)
+            }}
+            onRightArrowClick={() => {
+              props.setCurrentImage(boulder.images[imageToDisplayIndex + 1]);
+              setImageToDisplayIndex(idx => idx + 1)
+            }}
+          />
         </div>
       )}
 

@@ -294,7 +294,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
         <>
             <Header
                 title={topo.name}
-                backLink="/"
+                backLink="/builder/dashboard"
                 menuOptions={[
                     { value: 'Infos du topo', action: () => setCurrentDisplay('INFO') },
                     { value: 'Marche d\'approche', action: () => setCurrentDisplay('APPROACH') },
