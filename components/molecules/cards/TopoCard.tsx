@@ -53,38 +53,32 @@ export const TopoCard: React.FC<TopoCardProps> = React.memo(({
   const [timer, setTimer] = useState<ReturnType<typeof setTimeout>>(setTimeout(() => {}, 0))
   const [blockClick, setBlockClick] = useState(false);
   const handleMouseContextMenu = useCallback((e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
-      console.log('ok')  
-    if (props.onContextMenu) {
+    if (e.button === 2 && props.onContextMenu) { //Right click
         e.preventDefault();
         props.onContextMenu(props.topo, { x: e.pageX, y: e.pageY });
       }
     }, [props.topo, props.onContextMenu]);
-  const handleTouchContextMenu = useCallback((e: TouchEvent<HTMLDivElement>) => {
+  const handleTouchStartContextMenu = useCallback((e: TouchEvent<HTMLDivElement>) => {
     if (props.onContextMenu) {
       setBlockClick(false);
       setTimer(setTimeout(() => { 
-          props.onContextMenu!(props.topo, { x: e.touches[0].pageX, y: e.touches[0].pageY });
-          setBlockClick(true);
+        props.onContextMenu!(props.topo, { x: e.touches[0].pageX, y: e.touches[0].pageY });
+        setBlockClick(true);
       }, 800));
     }
   }, [props.topo, props.onContextMenu]);
+  const handleTouchEndContextMenu = useCallback((e: TouchEvent<HTMLDivElement>) => {
+    clearTimeout(timer);
+    if (blockClick) e.preventDefault();
+  }, [timer, blockClick]);
 
   return (
     wrapLink(
       <div 
+        className='touch-none'
         onContextMenu={handleMouseContextMenu}
-        // onTouchStart={handleTouchContextMenu}
-        // onTouchEnd={() => {
-        //   clearTimeout(timer);
-        // }}
-        // onMouseUp={useCallback((e) => {
-            
-        //     // const evt = e.domEvent;   
-        //     // if (!blockClick && props.onClick) {
-        //     //     if (isMouseEvent(evt) && evt.button !== 0) return;
-        //     //     props.onClick(e); 
-        //     // }
-        // }, [timer, blockClick, props.topo])}
+        onTouchStart={handleTouchStartContextMenu}
+        onTouchEnd={handleTouchEndContextMenu}
       >
         <Card className={"relative text-center text-grey-medium bg-white flex flex-col" + (clickable ? " cursor-pointer" : '')}>
           <div className="w-full h-[55%] md:h-[75%] top-0 relative">

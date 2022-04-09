@@ -13,12 +13,12 @@ interface UserActionDropdownProps {
     onDeleteClick: () => void;
 }
 
-export const UserActionDropdown: React.FC<UserActionDropdownProps> = React.memo((props: UserActionDropdownProps) => {
+export const UserActionDropdown: React.FC<UserActionDropdownProps> = (props: UserActionDropdownProps) => {
     const router = useRouter();
 
     const openTopo = useCallback(() => router.push(`/topo/${encodeUUID(props.topo.id)}`), [router, props.topo]);
     //TODO
-    const downloadTopo = useCallback(() => console.log('Downloading the topo...'), []);
+    const downloadTopo = useCallback(() => { alert("à venir"); console.log('Downloading the topo...'); }, []);
 
     return (
         <Dropdown
@@ -41,6 +41,6 @@ export const UserActionDropdown: React.FC<UserActionDropdownProps> = React.memo(
             ]}
         />
     );
-}, equal);
+};
 
 UserActionDropdown.displayName = 'UserActionDropdown';

@@ -5,6 +5,7 @@ import { useContextMenu } from 'helpers';
 import { LightTopo, TopoStatus } from 'types';
 import { UserActionDropdown } from 'components/molecules/cards/UserActionDropdown';
 import { api } from 'helpers/services';
+import { useCreateQuark, watchDependencies } from 'helpers/quarky';
 
 interface RootDashboardProps {
     lightTopos: LightTopo[],
@@ -17,8 +18,7 @@ export const RootDashboard: React.FC<RootDashboardProps> = (props: RootDashboard
     const validatedLightTopos = lightTopos.filter((topo) => topo.status === TopoStatus.Validated);
 
     const ref = useRef<HTMLDivElement>(null);
-    const [dropdownDisplayed, setDropdownDisplayed] = useState(false);
-    const [topoDropdown, setTopoDropddown] = useState<LightTopo>();
+    const [topoDropdown, setTopoDropdown] = useState<LightTopo>();
     const [dropdownPosition, setDropdownPosition] = useState<{ x: number, y: number }>();
   
     const [displayModalSubmit, setDisplayModalSubmit] = useState(false);
@@ -51,11 +51,10 @@ export const RootDashboard: React.FC<RootDashboardProps> = (props: RootDashboard
       setLightTopos(newLightTopos);
     }, [topoDropdown, lightTopos]);
   
-    useContextMenu(() => setDropdownDisplayed(false), ref.current);
+    useContextMenu(() => setDropdownPosition(undefined), ref.current);
   
     const onContextMenu = useCallback((topo: LightTopo, position: { x: number, y: number }) => {
-      setDropdownDisplayed(true);
-      setTopoDropddown(topo);
+      setTopoDropdown(topo);
       setDropdownPosition(position);
     }, [ref]);
   
@@ -120,7 +119,7 @@ export const RootDashboard: React.FC<RootDashboardProps> = (props: RootDashboard
             />
           </div>
         </div>
-        {dropdownDisplayed && topoDropdown && dropdownPosition && (
+        {topoDropdown && dropdownPosition &&
           <UserActionDropdown 
             position={dropdownPosition} 
             topo={topoDropdown}
@@ -128,7 +127,7 @@ export const RootDashboard: React.FC<RootDashboardProps> = (props: RootDashboard
             onSendToValidationClick={() => setDisplayModalSubmit(true)}
             onDeleteClick={() => setDisplayModalDelete(true)}
           />
-        )}
+        }
         {displayModalSubmit &&
             <ModalSubmitTopo 
                 onSubmit={sendTopoToValidation} 
