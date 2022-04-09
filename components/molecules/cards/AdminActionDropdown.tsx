@@ -1,6 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
 import { Dropdown } from 'components';
-import equal from 'fast-deep-equal/es6';
 import { LightTopo, TopoStatus } from 'types';
 import { useRouter } from 'next/router';
 import { DropdownOption } from '..';
@@ -15,7 +14,7 @@ interface AdminActionDropdownProps {
     onDeleteClick: () => void;
 }
 
-export const AdminActionDropdown: React.FC<AdminActionDropdownProps> = React.memo((props: AdminActionDropdownProps) => {
+export const AdminActionDropdown: React.FC<AdminActionDropdownProps> = (props: AdminActionDropdownProps) => {
     const router = useRouter();
 
     const openTopo = useCallback(() => router.push(`/topo/${encodeUUID(props.topo.id)}`), [router, props.topo.id]);
@@ -48,6 +47,6 @@ export const AdminActionDropdown: React.FC<AdminActionDropdownProps> = React.mem
             options={actions}
         />
     );
-}, equal);
+};
 
 AdminActionDropdown.displayName = 'UserActionDropdown';

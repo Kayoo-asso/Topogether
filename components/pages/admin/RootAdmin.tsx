@@ -21,7 +21,6 @@ export const RootAdmin: React.FC<RootAdminProps> = (props: RootAdminProps) => {
     const toposToDisplay = lightTopos.filter((topo) => topo.status === selectedStatus);
 
     const ref = useRef<HTMLDivElement>(null);
-    const [dropdownDisplayed, setDropdownDisplayed] = useState(false);
     const [topoDropdown, setTopoDropddown] = useState<LightTopo>();
     const [dropdownPosition, setDropdownPosition] = useState<{ x: number, y: number }>();
     
@@ -65,10 +64,9 @@ export const RootAdmin: React.FC<RootAdminProps> = (props: RootAdminProps) => {
           }
     }, [topoDropdown]);
   
-    useContextMenu(() => setDropdownDisplayed(false), ref.current);
+    useContextMenu(() => setDropdownPosition(undefined), ref.current);
   
     const onContextMenu = useCallback((topo: LightTopo, position: {x: number, y: number}) => {
-        setDropdownDisplayed(true);
         setTopoDropddown(topo);
         setDropdownPosition(position);
     }, [ref]);
@@ -121,7 +119,7 @@ export const RootAdmin: React.FC<RootAdminProps> = (props: RootAdminProps) => {
                     </div>
                 </div>
             </div>
-            {dropdownDisplayed && topoDropdown && dropdownPosition && (
+            {topoDropdown && dropdownPosition &&
                 <AdminActionDropdown 
                     topo={topoDropdown} 
                     position={dropdownPosition}
@@ -130,7 +128,7 @@ export const RootAdmin: React.FC<RootAdminProps> = (props: RootAdminProps) => {
                     onRejectClick={() => setDisplayModalReject(true)}
                     onDeleteClick={() => setDisplayModalDelete(true)}
                 />
-            )}
+            }
             {displayModalValidate &&
                 <ModalValidateTopo 
                     onValidate={validateTopo}

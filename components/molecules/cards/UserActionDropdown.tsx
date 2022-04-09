@@ -1,6 +1,5 @@
 import React, { useCallback } from 'react';
 import { Dropdown } from 'components';
-import equal from 'fast-deep-equal/es6';
 import { LightTopo, TopoStatus } from 'types';
 import { useRouter } from 'next/router';
 import { encodeUUID } from 'helpers';
