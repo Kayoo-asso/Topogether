@@ -156,9 +156,8 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies((props: RootNew
                 <div className="h-[300px] md:h-[350px] w-full overflow-auto mb-10 md:mb-16">
                   <MapControl
                     displayPhotoButton={false}
-                    displayUserMarker={true}
                     zoom={10}
-                    center={toLatLng(fontainebleauLocation)}
+                    centerOnUser
                     creatingTopo={topoQuark}
                     draggableMarkers
                     onClick={(e) => {
@@ -169,6 +168,16 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies((props: RootNew
                         });
                       }
                     }}
+                    // onLoad={(map) => {
+                    //   const center = map.getCenter();
+                    //   if (center) {
+                    //     console.log([center.lng(), center.lat()])
+                    //     topoQuark.set({
+                    //       ...topo,
+                    //       location: [center.lng(), center.lat()]
+                    //     });
+                    //   }
+                    // }}
                   />
                 </div>
 

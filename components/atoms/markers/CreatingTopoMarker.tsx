@@ -24,6 +24,7 @@ export const CreatingTopoMarker: React.FC<CreatingTopoMarkerProps> = watchDepend
     const options: google.maps.MarkerOptions = {
         icon,
         draggable,
+        zIndex: 10,
         position: toLatLng(topo.location)
     };
 

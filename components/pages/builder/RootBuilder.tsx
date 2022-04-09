@@ -502,7 +502,10 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                 </Show>
                 <Show when={() => displayModalDeleteTopo}>
                     <ModalDeleteTopo
-                        onDelete={() => api.deleteTopo(topo)}
+                        onDelete={() => {
+                            api.deleteTopo(topo);
+                            router.push('/builder/dashboard');
+                        }}
                         onClose={() => setDisplayModalDeleteTopo(false)}
                     />
                 </Show>

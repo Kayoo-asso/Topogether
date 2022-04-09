@@ -4,8 +4,8 @@ import { BoulderMarker, CreatingSectorAreaMarker, For, Map, ParkingMarker, Round
 import { BoulderFilterOptions, BoulderFilters, MapSearchbarProps, TopoFilterOptions, TopoFilters } from '.';
 import { MapSearchbar } from '..';
 import { Amenities, Boulder, ClimbTechniques, GeoCoordinates, gradeToLightGrade, LightGrade, LightTopo, MapProps, Parking, PolyMouseEvent, Sector, Topo, UUID, Waypoint } from 'types';
-import { googleGetPlace, hasFlag, hasSomeFlags, mergeFlags, toLatLng, TopoCreate } from 'helpers';
-import { Quark, QuarkIter, reactKey, SelectQuarkNullable } from 'helpers/quarky';
+import { fromLatLngLiteralFn, googleGetPlace, hasFlag, hasSomeFlags, mergeFlags, toLatLng, TopoCreate } from 'helpers';
+import { Quark, QuarkIter, reactKey, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
 import SectorIcon from 'assets/icons/sector.svg';
 import CameraIcon from 'assets/icons/camera.svg';
 import CenterIcon from 'assets/icons/center.svg';
@@ -50,11 +50,12 @@ interface MapControlProps extends MapProps {
     onParkingClick?: (parking: Quark<Parking>) => void,
     onParkingContextMenu?: (e: Event, parking: Quark<Parking>) => void,
     draggableMarkers?: boolean,
+    centerOnUser?: boolean
     boundsTo?: GeoCoordinates[],
     onMapZoomChange?: (zoom: number | undefined) => void,
 }
 
-export const MapControl: React.FC<MapControlProps> = ({
+export const MapControl: React.FC<MapControlProps> = watchDependencies(({
     initialZoom = 8,
     displaySearchbar = true,
     displaySatelliteButton = true,
@@ -71,6 +72,15 @@ export const MapControl: React.FC<MapControlProps> = ({
     const [userPosition, setUserPosition] = useState<google.maps.LatLngLiteral>();
     const [satelliteView, setSatelliteView] = useState(false);
     const maxBoulders = (props.topos && props.topos.length > 0) ? Math.max(...props.topos.map(t => t.nbBoulders)) : 1;
+
+    useEffect(() => {
+        if (props.centerOnUser && props.creatingTopo && userPosition) {
+            props.creatingTopo.set({
+                ...props.creatingTopo(),
+                location: fromLatLngLiteralFn(userPosition),
+            })
+        }
+    }, [userPosition, props.centerOnUser]);
 
     const defaultTopoFilterOptions: TopoFilterOptions = {
         types: [],
@@ -249,6 +259,7 @@ export const MapControl: React.FC<MapControlProps> = ({
                             props.onMapZoomChange(mapRef.current.getZoom());
                         }
                     }}
+                    center={(props.centerOnUser && userPosition) ? userPosition : props.center}
                     {...props}
                 >
                     <Show when={() => props.creatingSector && props.creatingSector.length > 0}>
@@ -351,4 +362,4 @@ export const MapControl: React.FC<MapControlProps> = ({
             </Wrapper>
         </div>
     );
-};
+});
