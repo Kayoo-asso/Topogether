@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { markerSize, toLatLng, useMarker } from "helpers";
-import { Quark, watchDependencies } from "helpers/quarky";
+import { Quark, useCreateQuark, watchDependencies } from "helpers/quarky";
 import { MarkerEventHandlers, Waypoint } from "types";
 import { isMouseEvent, isPointerEvent, isTouchEvent } from "./BoulderMarker";
 
@@ -31,25 +31,28 @@ export const WaypointMarker: React.FC<WaypointMarkerProps> = watchDependencies((
     };
 
     const [timer, setTimer] = useState<ReturnType<typeof setTimeout>>(setTimeout(() => {}, 0))
-    const [blockClick, setBlockClick] = useState(false);
+    const isPressing = useCreateQuark(false);
+    const isDragging = useCreateQuark(false);
+
     const handleContextMenu= useCallback((e: google.maps.MapMouseEvent) => {
         const evt = e.domEvent;
         if (isMouseEvent(evt) && evt.button === 2 && props.onContextMenu) { //Right click
             props.onContextMenu(evt, props.waypoint);
         }
         else if (isTouchEvent(evt) || isPointerEvent(evt)) {
-            setBlockClick(false);
             setTimer(setTimeout(() => { 
-                props.onContextMenu!(evt, props.waypoint);
-                setBlockClick(true);
+                if (!isDragging()) {
+                    isPressing.set(true);
+                    props.onContextMenu!(evt, props.waypoint);
+                }
             }, 800));
         }
-    }, [props.waypoint, timer, blockClick, props.onContextMenu, props.onClick]);
+    }, [props.waypoint, timer, props.onContextMenu, props.onClick]);
 
     const handlers: MarkerEventHandlers = {
-        onDragStart: useCallback(() => setBlockClick(true), []),
+        onDragStart: useCallback(() => isDragging.set(true), []),
         onDragEnd: useCallback((e: google.maps.MapMouseEvent) => {
-            setTimeout(() => setBlockClick(false), 5);
+            setTimeout(() => isDragging.set(false), 5);
             if (e.latLng) {
                 props.waypoint.set({
                     ...waypoint,
@@ -62,11 +65,12 @@ export const WaypointMarker: React.FC<WaypointMarkerProps> = watchDependencies((
         onMouseUp: useCallback((e: google.maps.MapMouseEvent) => {
             clearTimeout(timer);
             const evt = e.domEvent;   
-            if (!blockClick && props.onClick) {
+            if (!isDragging() && !isPressing() && props.onClick) {
                 if (isMouseEvent(evt) && evt.button !== 0) return;
                 props.onClick(props.waypoint); 
             }
-        }, [timer, blockClick, props.waypoint, props.onClick]),
+            isPressing.set(false);
+        }, [timer, props.waypoint, props.onClick]),
     }
     useMarker(options, handlers);
 

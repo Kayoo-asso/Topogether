@@ -1,6 +1,6 @@
 import React, { MouseEvent, useCallback, useState } from "react";
 import { boulderChanged, markerSize, toLatLng, useMarker } from "helpers";
-import { Quark, useQuarkyCallback, watchDependencies } from "helpers/quarky";
+import { Quark, useCreateQuark, useQuarkyCallback, watchDependencies } from "helpers/quarky";
 import { Boulder, GeoCoordinates, MarkerEventHandlers, Topo, UUID } from "types";
 
 interface BoulderMarkerProps {
@@ -43,25 +43,28 @@ export const BoulderMarker: React.FC<BoulderMarkerProps> = watchDependencies(({
     };
 
     const [timer, setTimer] = useState<ReturnType<typeof setTimeout>>(setTimeout(() => {}, 0))
-    const [blockClick, setBlockClick] = useState(false);
+    const isPressing = useCreateQuark(false);
+    const isDragging = useCreateQuark(false);
+
     const handleContextMenu= useCallback((e: google.maps.MapMouseEvent) => {
         const evt = e.domEvent;
         if (isMouseEvent(evt) && evt.button === 2 && props.onContextMenu) { //Right click
             props.onContextMenu(evt, props.boulder);
         }
         else if (isTouchEvent(evt) || isPointerEvent(evt)) {
-            setBlockClick(false);
             setTimer(setTimeout(() => { 
-                props.onContextMenu!(evt, props.boulder);
-                setBlockClick(true);
+                if (!isDragging()) {
+                    isPressing.set(true);
+                    props.onContextMenu!(evt, props.boulder);
+                }
             }, 800));
         }
-    }, [props.boulder, timer, blockClick, props.onContextMenu, props.onClick]);
+    }, [props.boulder, timer, props.onContextMenu, props.onClick]);
 
     const handlers: MarkerEventHandlers = {
-        onDragStart: useCallback(() => setBlockClick(true), []),
+        onDragStart: useCallback(() => isDragging.set(true), []),
         onDragEnd: useQuarkyCallback((e: google.maps.MapMouseEvent) => {
-            setTimeout(() => setBlockClick(false), 5);
+            setTimeout(() => isDragging.set(false), 5);
             if (e.latLng) {
                 const loc: GeoCoordinates = [e.latLng.lng(), e.latLng.lat()];
                 props.boulder.set({
@@ -76,11 +79,12 @@ export const BoulderMarker: React.FC<BoulderMarkerProps> = watchDependencies(({
         onMouseUp: useCallback((e: google.maps.MapMouseEvent) => {
             clearTimeout(timer);
             const evt = e.domEvent;   
-            if (!blockClick && props.onClick) {
+            if (!isDragging() && !isPressing() && props.onClick) {
                 if (isMouseEvent(evt) && evt.button !== 0) return;
                 props.onClick(props.boulder); 
             }
-        }, [timer, blockClick, props.boulder, props.onClick]),
+            isPressing.set(false);
+        }, [timer, props.boulder, props.onClick]),
     }
     useMarker(options, handlers);
 

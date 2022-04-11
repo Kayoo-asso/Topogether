@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { sectorChanged, toLatLng, usePolygon } from "helpers";
-import { Quark, watchDependencies } from "helpers/quarky";
+import { Quark, useCreateQuark, watchDependencies } from "helpers/quarky";
 import { GeoCoordinates, PolygonEventHandlers, PolyMouseEvent, Sector, Topo, UUID } from "types";
 import { isMouseEvent, isPointerEvent, isTouchEvent } from "./BoulderMarker";
 
@@ -53,24 +53,25 @@ export const SectorAreaMarker: React.FC<SectorAreaMarkerProps> = watchDependenci
     }, [props.sector, dragging]);
 
     const [timer, setTimer] = useState<ReturnType<typeof setTimeout>>(setTimeout(() => {}, 0))
-    const [blockClick, setBlockClick] = useState(false);
+    const isPressing = useCreateQuark(false);
+
     const handleContextMenu= useCallback((e: google.maps.MapMouseEvent) => {
         const evt = e.domEvent;
         if (isMouseEvent(evt) && evt.button === 2 && props.onContextMenu) { //Right click
             props.onContextMenu(evt, props.sector);
         }
         else if (isTouchEvent(evt) || isPointerEvent(evt)) {
-            setBlockClick(false);
             setTimer(setTimeout(() => { 
-                props.onContextMenu!(evt, props.sector);
-                setBlockClick(true);
+                if (!dragging.current) {
+                    isPressing.set(true);
+                    props.onContextMenu!(evt, props.sector);
+                }
             }, 800));
         }
-    }, [props.sector, timer, blockClick, props.onContextMenu, props.onClick]);
+    }, [props.sector, timer, props.onContextMenu, props.onClick]);
 
     const handlers: PolygonEventHandlers = {
         onDragStart: useCallback((e) => {
-            setBlockClick(true);
             dragging.current = true; 
             if (props.onDragStart) props.onDragStart(e) 
         }, [updatePath]),
@@ -79,8 +80,7 @@ export const SectorAreaMarker: React.FC<SectorAreaMarkerProps> = watchDependenci
         // }, [props.sector, props.onClick]),
         onMouseMove: useCallback((e) => props.onMouseMoveOnSector && props.onMouseMoveOnSector(e), [props.sector, props.onMouseMoveOnSector]),
         onDragEnd: useCallback(() => { 
-            setTimeout(() => setBlockClick(false), 5);
-            dragging.current = false; 
+            dragging.current = false;
             updatePath(); 
             if (props.topo && props.boulderOrder) {
                 sectorChanged(props.topo, sector.id, props.boulderOrder);
@@ -91,11 +91,12 @@ export const SectorAreaMarker: React.FC<SectorAreaMarkerProps> = watchDependenci
         onMouseUp: useCallback((e: google.maps.MapMouseEvent) => {
             clearTimeout(timer);
             const evt = e.domEvent;   
-            if (!blockClick && props.onClick) {
+            if (!dragging.current && !isPressing() && props.onClick) {
                 if (isMouseEvent(evt) && evt.button !== 0) return;
                 props.onClick(e); 
             }
-        }, [timer, blockClick, props.sector, props.onClick]),
+            isPressing.set(false);
+        }, [timer, props.sector, props.onClick]),
     }
     polygon = usePolygon(options, handlers);
 
