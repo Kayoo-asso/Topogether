@@ -366,6 +366,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
 
                 <MapControl
                     initialZoom={16}
+                    initialCenter={topo.location}
                     displaySectorButton
                     onSectorButtonClick={() => setDisplaySectorSlideover(true)}
                     searchbarOptions={{
@@ -411,7 +412,6 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                     onClick={handleCreateNewMarker}
                     onMouseMove={handleFreePointCreatingSector}
                     onCreatingSectorPolylineClick={handleCreatingSectorPolylineClick}
-                    center={toLatLng(topo.location)}
                     boundsTo={boulders.toArray().map(b => b().location).concat(parkings.toArray().map(p => p().location))}
                 />
 

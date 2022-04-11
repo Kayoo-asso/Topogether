@@ -206,6 +206,7 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
 
 
         <MapControl
+          initialCenter={topo.location}
           initialZoom={16}
           displaySectorButton
           onSectorButtonClick={() => setDisplaySectorSlideover(true)}
@@ -228,7 +229,6 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
           parkings={parkings}
           selectedParking={selectedParking}
           onParkingClick={toggleParkingSelect}
-          center={toLatLng(topo.location)}
           boundsTo={boulders.toArray().map(b => b().location).concat(parkings.toArray().map(p => p().location))}
         />
 

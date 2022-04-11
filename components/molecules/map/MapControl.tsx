@@ -3,7 +3,7 @@ import { Wrapper } from '@googlemaps/react-wrapper';
 import { BoulderMarker, CreatingSectorAreaMarker, For, Map, ParkingMarker, RoundButton, SatelliteButton, SectorAreaMarker, Show, UserMarker, WaypointMarker, TopoMarker, CreatingTopoMarker } from 'components';
 import { BoulderFilterOptions, BoulderFilters, MapSearchbarProps, TopoFilterOptions, TopoFilters } from '.';
 import { MapSearchbar } from '..';
-import { Amenities, Boulder, ClimbTechniques, GeoCoordinates, gradeToLightGrade, LightGrade, LightTopo, MapProps, Parking, PolyMouseEvent, Sector, Topo, UUID, Waypoint } from 'types';
+import { Amenities, Boulder, ClimbTechniques, GeoCoordinates, gradeToLightGrade, LightGrade, LightTopo, MapProps, Parking, PolyMouseEvent, Position, Sector, Topo, UUID, Waypoint } from 'types';
 import { googleGetPlace, hasFlag, hasSomeFlags, mergeFlags, toLatLng, TopoCreate } from 'helpers';
 import { Quark, QuarkIter, reactKey, SelectQuarkNullable } from 'helpers/quarky';
 import SectorIcon from 'assets/icons/sector.svg';
@@ -12,6 +12,7 @@ import CenterIcon from 'assets/icons/center.svg';
 
 interface MapControlProps extends MapProps {
     className?: string,
+    initialCenter?: Position,
     initialZoom?: number,
     displaySatelliteButton?: boolean,
     displayUserMarker?: boolean,
@@ -154,6 +155,17 @@ export const MapControl: React.FC<MapControlProps> = ({
             }, 1)
         }
     }, []);
+    useEffect(() => {
+        if (mapRef.current && props.initialCenter && !props.center) {
+            console.log("Centering on initialCenter from useEffect");
+            mapRef.current.setCenter(toLatLng(props.initialCenter));
+        }
+    // this ensures the position is compared element by element
+    }, [...(props.initialCenter || [undefined, undefined])])
+
+    useEffect(() => {
+        if(mapRef.current && !props.zoom) mapRef.current.setZoom(initialZoom);
+    }, [initialZoom])
 
     return (
         <div className="relative w-full h-full">
@@ -241,13 +253,19 @@ export const MapControl: React.FC<MapControlProps> = ({
 
                 <Map
                     ref={mapRef}
-                    zoom={initialZoom}
                     mapTypeId={satelliteView ? 'satellite' : 'roadmap'}
                     className={props.className ? props.className : ''}
                     onZoomChange={() => {
                         if (mapRef.current && props.onMapZoomChange) {
                             props.onMapZoomChange(mapRef.current.getZoom());
                         }
+                    }}
+                    onLoad={(map) => {
+                        if (props.initialCenter && !props.center) {
+                            console.log("Centering on initialCenter from onLoad");
+                            map.setCenter(toLatLng(props.initialCenter))
+                        }
+                        if(!props.zoom) map.setZoom(initialZoom);
                     }}
                     {...props}
                 >

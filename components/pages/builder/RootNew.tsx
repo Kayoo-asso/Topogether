@@ -158,7 +158,7 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies((props: RootNew
                     displayPhotoButton={false}
                     displayUserMarker={true}
                     zoom={10}
-                    center={toLatLng(fontainebleauLocation)}
+                    initialCenter={fontainebleauLocation}
                     creatingTopo={topoQuark}
                     draggableMarkers
                     onClick={(e) => {
