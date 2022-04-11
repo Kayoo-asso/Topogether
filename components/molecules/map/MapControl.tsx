@@ -9,6 +9,7 @@ import { Quark, QuarkIter, reactKey, SelectQuarkNullable, watchDependencies } fr
 import SectorIcon from 'assets/icons/sector.svg';
 import CameraIcon from 'assets/icons/camera.svg';
 import CenterIcon from 'assets/icons/center.svg';
+import AddIcon from 'assets/icons/more.svg';
 
 interface MapControlProps extends MapProps {
     className?: string,
@@ -159,8 +160,9 @@ export const MapControl: React.FC<MapControlProps> = watchDependencies(({
     useEffect(() => {
         if (props.boundsTo && props.boundsTo.length > 1) {
             const bounds = props.boundsTo;
-            window.setTimeout(() => {
+            const boundTimer = window.setTimeout(() => {
                 getBoundsTo(bounds);
+                clearTimeout(boundTimer);
             }, 1)
         }
     }, []);
@@ -224,14 +226,21 @@ export const MapControl: React.FC<MapControlProps> = watchDependencies(({
                         </div>
                         <div className='flex items-center'>
                             {displayPhotoButton &&
-                                <RoundButton
-                                    className='z-10 md:hidden'
-                                    white={false}
-                                    buttonSize={80}
-                                    onClick={props.onPhotoButtonClick}
-                                >
-                                    <CameraIcon className='stroke-white h-7 w-7' />
-                                </RoundButton>
+                                <div className='w-full flex flex-row gap-2'>
+                                    <RoundButton
+                                        className='z-10 md:hidden'
+                                        onClick={props.onPhotoButtonClick}
+                                    >
+                                        <CameraIcon className='stroke-main h-7 w-7' />
+                                    </RoundButton>
+                                    <RoundButton
+                                        className='z-10 md:hidden'
+                                        onClick={() => console.log('ok')}
+                                    >
+                                        <AddIcon className='stroke-main h-5 w-5' />
+                                    </RoundButton>
+                                    
+                                </div>
                             }
                         </div>
                         <div className='flex items-center'>

@@ -126,7 +126,6 @@ export const Map = forwardRef<google.maps.Map, React.PropsWithChildren<MapProps>
   //     displayedMarkers.current = newMarkers;
   //   }
   // });
-
   return (
     <div
       id="map"
