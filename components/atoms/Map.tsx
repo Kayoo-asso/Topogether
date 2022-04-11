@@ -50,8 +50,6 @@ export const Map = forwardRef<google.maps.Map, React.PropsWithChildren<MapProps>
 
   options.styles = options.styles ? options.styles.concat(mapStyles) : mapStyles;
   options.disableDefaultUI = true;
-  options.center = props.center || toLatLng(fontainebleauLocation);
-
 
   const elementRef = useRef<HTMLDivElement>(null);
   const [map, setMap] = useState<google.maps.Map>();

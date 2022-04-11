@@ -4,7 +4,7 @@ import { BoulderMarker, CreatingSectorAreaMarker, For, Map, ParkingMarker, Round
 import { BoulderFilterOptions, BoulderFilters, MapSearchbarProps, TopoFilterOptions, TopoFilters } from '.';
 import { MapSearchbar } from '..';
 import { Amenities, Boulder, ClimbTechniques, GeoCoordinates, gradeToLightGrade, LightGrade, LightTopo, MapProps, Parking, PolyMouseEvent, Position, Sector, Topo, UUID, Waypoint } from 'types';
-import { fromLatLngLiteralFn, googleGetPlace, hasFlag, hasSomeFlags, mergeFlags, toLatLng, TopoCreate } from 'helpers';
+import { fontainebleauLocation, fromLatLngLiteralFn, googleGetPlace, hasFlag, hasSomeFlags, mergeFlags, toLatLng, TopoCreate } from 'helpers';
 import { Quark, QuarkIter, reactKey, SelectQuarkNullable } from 'helpers/quarky';
 import SectorIcon from 'assets/icons/sector.svg';
 import CameraIcon from 'assets/icons/camera.svg';
@@ -158,18 +158,17 @@ export const MapControl: React.FC<MapControlProps> = ({
             mapRef.current.fitBounds(newBounds);
         }
     }
-    useEffect(() => {
-        if (props.boundsTo && props.boundsTo.length > 1) {
-            const bounds = props.boundsTo;
-            const boundTimer = window.setTimeout(() => {
-                getBoundsTo(bounds);
-                clearTimeout(boundTimer);
-            }, 1)
-        }
-    }, []);
+    // useEffect(() => {
+    //     if (props.boundsTo && props.boundsTo.length > 1) {
+    //         const bounds = props.boundsTo;
+    //         const boundTimer = window.setTimeout(() => {
+    //             getBoundsTo(bounds);
+    //             clearTimeout(boundTimer);
+    //         }, 1)
+    //     }
+    // }, []);
     useEffect(() => {
         if (mapRef.current && props.initialCenter && !props.center) {
-            console.log("Centering on initialCenter from useEffect");
             mapRef.current.setCenter(toLatLng(props.initialCenter));
         }
     // this ensures the position is compared element by element
@@ -280,10 +279,18 @@ export const MapControl: React.FC<MapControlProps> = ({
                         }
                     }}
                     onLoad={(map) => {
-                        if (props.initialCenter && !props.center) {
-                            map.setCenter(toLatLng(props.initialCenter))
+                        if (props.boundsTo && props.boundsTo.length > 1) {
+                            const bounds = props.boundsTo;
+                            const boundTimer = window.setTimeout(() => {
+                                getBoundsTo(bounds);
+                                clearTimeout(boundTimer);
+                            }, 1);
                         }
-                        if(!props.zoom) map.setZoom(initialZoom);
+                        else if (!props.center) {
+                            const initialCenter = props.initialCenter || fontainebleauLocation;
+                            map.setCenter(toLatLng(initialCenter));
+                        }
+                        if (!props.zoom) map.setZoom(initialZoom);
                     }}
                     {...props}
                 >
