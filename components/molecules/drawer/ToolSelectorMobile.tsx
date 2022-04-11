@@ -10,7 +10,6 @@ interface ToolselectorMobileProps {
     onToolSelect: (tool: DrawerToolEnum) => void,
 }
 
-// TODO: verify that icons and ordering behave correctly
 export const ToolSelectorMobile: React.FC<ToolselectorMobileProps> = (props: ToolselectorMobileProps) => {
     const [open, setOpen] = useState(false);
 

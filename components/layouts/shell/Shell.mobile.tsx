@@ -3,14 +3,15 @@ import React, { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { watchDependencies } from 'helpers/quarky';
-import { useSession } from 'helpers/services';
+import { useAuth } from 'helpers/services';
 import TopoIcon from 'assets/icons/topo.svg';
 import UserIcon from 'assets/icons/user-mobile.svg';
 import WaypointIcon from 'assets/icons/waypoint.svg';
 
 export const ShellMobile: React.FC = watchDependencies(() => {
   const router = useRouter();
-  const session = useSession();
+  const auth = useAuth();
+  const session = auth.session();
 
   const initialActiveTab = useMemo(() => {
     if (router.pathname.includes('user')) {
@@ -21,7 +22,6 @@ export const ShellMobile: React.FC = watchDependencies(() => {
     }
     return 1;
   }, [router.pathname]);
-  const [displayModalLogin, setDisplayModalLogin] = useState(false);
   const [activeTab, setActiveTab] = useState<0 | 1 | 2>(initialActiveTab);
   const [topoUrl, setTopoUrl] = useState<string>('');
 
@@ -57,12 +57,12 @@ export const ShellMobile: React.FC = watchDependencies(() => {
           </a>
         </Link>
 
-        <Link href={session ? '/builder/dashboard' : '/user/login'}>
+        <Link href={'/builder/dashboard'}>
           <a
             className={`h-full flex-1 flex justify-center items-center ${activeTab === 2 ? 'border-t-main border-t-6' : ''}`}
             onClick={() => {
               if (session) changeTab(2);
-              else setDisplayModalLogin(true);
+              else changeTab(0);
             }}
           >
             <TopoIcon

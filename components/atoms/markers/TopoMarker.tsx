@@ -23,7 +23,7 @@ export const TopoMarker: React.FC<TopoMarkerProps> = ({
     const options: google.maps.MarkerOptions = {
         icon,
         draggable,
-        position: toLatLng(props.topo.location)
+        position: toLatLng(props.topo.location),
     };
 
     const handlers: MarkerEventHandlers = {

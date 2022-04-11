@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { Checkbox, TextInput } from 'components';
 import { Quark, watchDependencies } from 'helpers/quarky';
 import { Boulder, Name } from 'types';
+import { useDevice } from 'helpers';
 
 interface BoulderFormProps {
     boulder: Quark<Boulder>,
@@ -9,11 +10,12 @@ interface BoulderFormProps {
 }
 
 export const BoulderForm: React.FC<BoulderFormProps> = watchDependencies((props: BoulderFormProps) => {
+    const device = useDevice();
     const nameInputRef = useRef<HTMLInputElement>(null);
     const boulder = props.boulder();
 
     useEffect(() => {
-        if (nameInputRef.current) {
+        if (device === 'desktop' && nameInputRef.current) {
             nameInputRef.current.focus();
         }
     }, []);

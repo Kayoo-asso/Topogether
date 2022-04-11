@@ -4,11 +4,12 @@ import { BoulderMarker, CreatingSectorAreaMarker, For, Map, ParkingMarker, Round
 import { BoulderFilterOptions, BoulderFilters, MapSearchbarProps, TopoFilterOptions, TopoFilters } from '.';
 import { MapSearchbar } from '..';
 import { Amenities, Boulder, ClimbTechniques, GeoCoordinates, gradeToLightGrade, LightGrade, LightTopo, MapProps, Parking, PolyMouseEvent, Position, Sector, Topo, UUID, Waypoint } from 'types';
-import { googleGetPlace, hasFlag, hasSomeFlags, mergeFlags, toLatLng, TopoCreate } from 'helpers';
+import { fromLatLngLiteralFn, googleGetPlace, hasFlag, hasSomeFlags, mergeFlags, toLatLng, TopoCreate } from 'helpers';
 import { Quark, QuarkIter, reactKey, SelectQuarkNullable } from 'helpers/quarky';
 import SectorIcon from 'assets/icons/sector.svg';
 import CameraIcon from 'assets/icons/camera.svg';
 import CenterIcon from 'assets/icons/center.svg';
+import AddIcon from 'assets/icons/more.svg';
 
 interface MapControlProps extends MapProps {
     className?: string,
@@ -51,6 +52,7 @@ interface MapControlProps extends MapProps {
     onParkingClick?: (parking: Quark<Parking>) => void,
     onParkingContextMenu?: (e: Event, parking: Quark<Parking>) => void,
     draggableMarkers?: boolean,
+    centerOnUser?: boolean
     boundsTo?: GeoCoordinates[],
     onMapZoomChange?: (zoom: number | undefined) => void,
 }
@@ -72,6 +74,15 @@ export const MapControl: React.FC<MapControlProps> = ({
     const [userPosition, setUserPosition] = useState<google.maps.LatLngLiteral>();
     const [satelliteView, setSatelliteView] = useState(false);
     const maxBoulders = (props.topos && props.topos.length > 0) ? Math.max(...props.topos.map(t => t.nbBoulders)) : 1;
+
+    useEffect(() => {
+        if (props.centerOnUser && props.creatingTopo && userPosition) {
+            props.creatingTopo.set({
+                ...props.creatingTopo(),
+                location: fromLatLngLiteralFn(userPosition),
+            })
+        }
+    }, [userPosition, props.centerOnUser]);
 
     const defaultTopoFilterOptions: TopoFilterOptions = {
         types: [],
@@ -150,8 +161,9 @@ export const MapControl: React.FC<MapControlProps> = ({
     useEffect(() => {
         if (props.boundsTo && props.boundsTo.length > 1) {
             const bounds = props.boundsTo;
-            window.setTimeout(() => {
+            const boundTimer = window.setTimeout(() => {
                 getBoundsTo(bounds);
+                clearTimeout(boundTimer);
             }, 1)
         }
     }, []);
@@ -226,14 +238,21 @@ export const MapControl: React.FC<MapControlProps> = ({
                         </div>
                         <div className='flex items-center'>
                             {displayPhotoButton &&
-                                <RoundButton
-                                    className='z-10 md:hidden'
-                                    white={false}
-                                    buttonSize={80}
-                                    onClick={props.onPhotoButtonClick}
-                                >
-                                    <CameraIcon className='stroke-white h-7 w-7' />
-                                </RoundButton>
+                                <div className='w-full flex flex-row gap-2'>
+                                    <RoundButton
+                                        className='z-10 md:hidden'
+                                        onClick={props.onPhotoButtonClick}
+                                    >
+                                        <CameraIcon className='stroke-main h-7 w-7' />
+                                    </RoundButton>
+                                    <RoundButton
+                                        className='z-10 md:hidden'
+                                        onClick={() => console.log('ok')}
+                                    >
+                                        <AddIcon className='stroke-main h-5 w-5' />
+                                    </RoundButton>
+                                    
+                                </div>
                             }
                         </div>
                         <div className='flex items-center'>
@@ -262,7 +281,6 @@ export const MapControl: React.FC<MapControlProps> = ({
                     }}
                     onLoad={(map) => {
                         if (props.initialCenter && !props.center) {
-                            console.log("Centering on initialCenter from onLoad");
                             map.setCenter(toLatLng(props.initialCenter))
                         }
                         if(!props.zoom) map.setZoom(initialZoom);

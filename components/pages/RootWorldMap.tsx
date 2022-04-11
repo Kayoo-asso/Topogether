@@ -2,7 +2,6 @@ import React, { useCallback, useState } from 'react';
 import { MapControl, Show, TopoPreview } from 'components';
 import { HeaderDesktop, LeftbarDesktop } from 'components/layouts';
 import { LightTopo } from 'types';
-import { fontainebleauLocation, toLatLng } from 'helpers';
 import { useAuth } from 'helpers/services';
 import { watchDependencies } from 'helpers/quarky';
 
@@ -38,7 +37,6 @@ export const RootWorldMap: React.FC<RootWorldMapProps> = watchDependencies((prop
 
         <MapControl
           initialZoom={5}
-          initialCenter={fontainebleauLocation}
           topos={props.lightTopos}
           searchbarOptions={{
             findTopos: true,
@@ -46,7 +44,7 @@ export const RootWorldMap: React.FC<RootWorldMapProps> = watchDependencies((prop
           }}
           displayTopoFilter
           onTopoClick={toggleTopoSelect}
-          // center={toLatLng(fontainebleauLocation)}
+          centerOnUser
           boundsTo={props.lightTopos.map(t => t.location)}
         />
 

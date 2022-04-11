@@ -8,6 +8,7 @@ import { Email, isEmail, Name, StringBetween, User } from 'types';
 import { useAuth } from "helpers/services";
 import { withAuth } from 'helpers/auth';
 import { Header } from 'components/layouts/header/Header';
+import { useRouter } from 'next/router';
 
 type ProfileProps = {
   user: User
@@ -20,6 +21,7 @@ export const getServerSideProps: GetServerSideProps<ProfileProps> = withAuth(
 
 const ProfilePage: NextPage<ProfileProps> = watchDependencies((props) => {
   const auth = useAuth();
+  const router = useRouter();
   const userQuark = useCreateQuark(props.user);
   const user = userQuark();
 
@@ -129,7 +131,7 @@ const ProfilePage: NextPage<ProfileProps> = watchDependencies((props) => {
           </div>
 
           <div className='flex flex-col gap-6 px-6'>
-            <div className='flex flex-col gap-6 pb-8'>
+            <div className='flex flex-col gap-6 pb-8 items-center'>
               <TextInput 
                   id='email'
                   label='Email'
@@ -148,6 +150,10 @@ const ProfilePage: NextPage<ProfileProps> = watchDependencies((props) => {
               />
               {successMessageChangeMail && <div className='ktext-error text-main text-center'>{successMessageChangeMail}</div>}
               {errorMessageChangeMail && <div className='ktext-error text-error text-center'>{errorMessageChangeMail}</div>}
+            
+              <Link href="/user/changePassword">
+                  <a className="ktext-base-little text-main cursor-pointer">Modifier le mot de passe</a>
+              </Link>
             </div>
 
             <div className='md:hidden'>
@@ -253,9 +259,16 @@ const ProfilePage: NextPage<ProfileProps> = watchDependencies((props) => {
             {errorMessageModify && <div className='ktext-error text-error text-center'>{errorMessageModify}</div>}
 
             <div className='flex flex-col items-center gap-4 mb-10 md:mb-0 md:pt-10'>
-              <Link href="/user/changePassword">
-                  <a className="ktext-base-little text-main cursor-pointer">Modifier le mot de passe</a>
-              </Link>
+
+              <div 
+                className="ktext-base-little text-main cursor-pointer"
+                onClick={async () => {
+                  const success = await auth.signOut();
+                  if (success) await router.push('/user/login');
+                }}
+              >
+                Se déconnecter
+              </div>
 
               <div 
                 className="ktext-base-little text-main cursor-pointer"

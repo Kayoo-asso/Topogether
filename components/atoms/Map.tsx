@@ -1,7 +1,7 @@
 import React, {
   forwardRef, useEffect, useRef, useState,
 } from 'react';
-import { MapContext, useEffectWithDeepEqual } from 'helpers';
+import { fontainebleauLocation, MapContext, toLatLng, useEffectWithDeepEqual } from 'helpers';
 import mapStyles from 'styles/mapStyles';
 import { mapEvents, MapProps, MarkerProps } from 'types';
 
@@ -50,6 +50,7 @@ export const Map = forwardRef<google.maps.Map, React.PropsWithChildren<MapProps>
 
   options.styles = options.styles ? options.styles.concat(mapStyles) : mapStyles;
   options.disableDefaultUI = true;
+  options.center = props.center || toLatLng(fontainebleauLocation);
 
 
   const elementRef = useRef<HTMLDivElement>(null);
@@ -125,7 +126,6 @@ export const Map = forwardRef<google.maps.Map, React.PropsWithChildren<MapProps>
   //     displayedMarkers.current = newMarkers;
   //   }
   // });
-
   return (
     <div
       id="map"
