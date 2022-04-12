@@ -29,8 +29,13 @@ export const Dropdown: React.FC<DropdownProps> = React.memo(({
     const [position, setPosition] = useState(props.position);
 
     useEffect(() => {
-        if (ref.current && position && ref.current.clientHeight + position.y > document.documentElement.clientHeight) {
-            setPosition({ y: position.y - ref.current.clientHeight - 10, x: position.x });
+        if (ref.current && position) {
+            if (ref.current.clientHeight + position.y > document.documentElement.clientHeight) {
+                setPosition({ y: position.y - ref.current.clientHeight - 10, x: position.x });
+            }
+            if (ref.current.clientWidth + position.x > document.documentElement.clientWidth) {
+                setPosition({ y: position.y, x: position.x - ref.current.clientWidth - 50 });
+            }
         }
     }, [ref, position]);
 
@@ -74,6 +79,6 @@ export const Dropdown: React.FC<DropdownProps> = React.memo(({
                 )))}
         </div>
     )
-},
-    equal);
+}, equal);
+
 Dropdown.displayName = 'Dropdown';

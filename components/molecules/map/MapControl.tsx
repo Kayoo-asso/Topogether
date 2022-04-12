@@ -76,11 +76,13 @@ export const MapControl: React.FC<MapControlProps> = ({
     const maxBoulders = (props.topos && props.topos.length > 0) ? Math.max(...props.topos.map(t => t.nbBoulders)) : 1;
 
     useEffect(() => {
-        if (props.centerOnUser && props.creatingTopo && userPosition) {
-            props.creatingTopo.set({
-                ...props.creatingTopo(),
-                location: fromLatLngLiteralFn(userPosition),
-            })
+        if (props.centerOnUser && userPosition) {
+            if (mapRef.current) mapRef.current.setCenter(userPosition);
+            if (props.creatingTopo)
+                props.creatingTopo.set({
+                    ...props.creatingTopo(),
+                    location: fromLatLngLiteralFn(userPosition),
+                });
         }
     }, [userPosition, props.centerOnUser]);
 
@@ -158,15 +160,6 @@ export const MapControl: React.FC<MapControlProps> = ({
             mapRef.current.fitBounds(newBounds);
         }
     }
-    // useEffect(() => {
-    //     if (props.boundsTo && props.boundsTo.length > 1) {
-    //         const bounds = props.boundsTo;
-    //         const boundTimer = window.setTimeout(() => {
-    //             getBoundsTo(bounds);
-    //             clearTimeout(boundTimer);
-    //         }, 1)
-    //     }
-    // }, []);
     useEffect(() => {
         if (mapRef.current && props.initialCenter && !props.center) {
             mapRef.current.setCenter(toLatLng(props.initialCenter));
