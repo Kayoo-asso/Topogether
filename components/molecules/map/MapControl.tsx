@@ -5,7 +5,7 @@ import { BoulderFilterOptions, BoulderFilters, MapSearchbarProps, TopoFilterOpti
 import { MapSearchbar } from '..';
 import { Amenities, Boulder, ClimbTechniques, GeoCoordinates, gradeToLightGrade, LightGrade, LightTopo, MapProps, Parking, PolyMouseEvent, Position, Sector, Topo, UUID, Waypoint } from 'types';
 import { fontainebleauLocation, fromLatLngLiteralFn, googleGetPlace, hasFlag, hasSomeFlags, mergeFlags, toLatLng, TopoCreate } from 'helpers';
-import { Quark, QuarkIter, reactKey, SelectQuarkNullable } from 'helpers/quarky';
+import { Quark, QuarkIter, reactKey, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
 import SectorIcon from 'assets/icons/sector.svg';
 import CameraIcon from 'assets/icons/camera.svg';
 import CenterIcon from 'assets/icons/center.svg';
@@ -57,7 +57,7 @@ interface MapControlProps extends MapProps {
     onMapZoomChange?: (zoom: number | undefined) => void,
 }
 
-export const MapControl: React.FC<MapControlProps> = ({
+export const MapControl: React.FC<MapControlProps> = watchDependencies(({
     initialZoom = 8,
     displaySearchbar = true,
     displaySatelliteButton = true,
@@ -74,17 +74,20 @@ export const MapControl: React.FC<MapControlProps> = ({
     const [userPosition, setUserPosition] = useState<google.maps.LatLngLiteral>();
     const [satelliteView, setSatelliteView] = useState(false);
     const maxBoulders = (props.topos && props.topos.length > 0) ? Math.max(...props.topos.map(t => t.nbBoulders)) : 1;
-
     useEffect(() => {
-        if (props.centerOnUser && userPosition) {
-            if (mapRef.current) mapRef.current.setCenter(userPosition);
-            if (props.creatingTopo)
-                props.creatingTopo.set({
-                    ...props.creatingTopo(),
-                    location: fromLatLngLiteralFn(userPosition),
-                });
+        if (mapRef.current && userPosition && props.centerOnUser) mapRef.current.setCenter(userPosition);
+    }, [mapRef.current, props.centerOnUser]);
+
+    let creatingTopoAlreadyPositioned = false;
+    useEffect(() => {
+        if (props.centerOnUser && userPosition && props.creatingTopo && !creatingTopoAlreadyPositioned) {
+            props.creatingTopo.set({
+                ...props.creatingTopo(),
+                location: fromLatLngLiteralFn(userPosition),
+            });
+            creatingTopoAlreadyPositioned = true;
         }
-    }, [userPosition, props.centerOnUser]);
+    }, [userPosition, props.centerOnUser, creatingTopoAlreadyPositioned]);
 
     const defaultTopoFilterOptions: TopoFilterOptions = {
         types: [],
@@ -387,4 +390,4 @@ export const MapControl: React.FC<MapControlProps> = ({
             </Wrapper>
         </div>
     );
-};
+});
