@@ -4,7 +4,7 @@ import { MarkerEventHandlers } from "types";
 import { useGeolocation } from "helpers/hooks/useGeolocation";
 
 interface UserMarkerProps {
-    onClick?: () => void,
+    onClick?: (e: google.maps.MapMouseEvent) => void,
     onUserPosChange?: (pos: google.maps.LatLngLiteral) => void,
 }
 
@@ -50,7 +50,7 @@ export const UserMarker: React.FC<UserMarkerProps> = (props: UserMarkerProps) =>
         position: userPosition
     };
     const mainHandlers: MarkerEventHandlers = {
-        onClick: useCallback(() => props.onClick && props.onClick(), [props.onClick]),
+        onClick: useCallback((e) => props.onClick && props.onClick(e), [props.onClick]),
     }
     useMarker(mainOptions, mainHandlers);
 

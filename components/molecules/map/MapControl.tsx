@@ -54,6 +54,7 @@ interface MapControlProps extends MapProps {
     draggableMarkers?: boolean,
     centerOnUser?: boolean
     boundsTo?: GeoCoordinates[],
+    onUserMarkerClick?: (pos: google.maps.MapMouseEvent) => void,
     onMapZoomChange?: (zoom: number | undefined) => void,
 }
 
@@ -78,14 +79,14 @@ export const MapControl: React.FC<MapControlProps> = watchDependencies(({
         if (mapRef.current && userPosition && props.centerOnUser) mapRef.current.setCenter(userPosition);
     }, [mapRef.current, props.centerOnUser]);
 
-    let creatingTopoAlreadyPositioned = false;
+    const [creatingTopoAlreadyPositioned, setCreatingTopoAlreadyPositioned] = useState(false);
     useEffect(() => {
         if (props.centerOnUser && userPosition && props.creatingTopo && !creatingTopoAlreadyPositioned) {
             props.creatingTopo.set({
                 ...props.creatingTopo(),
                 location: fromLatLngLiteralFn(userPosition),
             });
-            creatingTopoAlreadyPositioned = true;
+            setCreatingTopoAlreadyPositioned(true);
         }
     }, [userPosition, props.centerOnUser, creatingTopoAlreadyPositioned]);
 
@@ -384,6 +385,7 @@ export const MapControl: React.FC<MapControlProps> = watchDependencies(({
                     <Show when={() => displayUserMarker}>
                         <UserMarker
                             onUserPosChange={setUserPosition}
+                            onClick={props.onUserMarkerClick}
                         />
                     </Show>
                 </Map>

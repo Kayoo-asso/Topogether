@@ -371,6 +371,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                     onSectorButtonClick={() => setDisplaySectorSlideover(true)}
                     searchbarOptions={{
                         findBoulders: true,
+                        focusOnOpen: true,
                     }}
                     onBoulderResultSelect={(boulder) => toggleBoulderSelect(boulders.find(b => b().id === boulder.id)()!)}
                     draggableCursor={currentTool === 'ROCK' ? 'url(/assets/icons/colored/_rock.svg) 16 32, auto'

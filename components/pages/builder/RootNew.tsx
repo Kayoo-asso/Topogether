@@ -160,7 +160,16 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies((props: RootNew
                     centerOnUser
                     creatingTopo={topoQuark}
                     draggableMarkers
+                    searchbarOptions={{ findPlaces: true }}
                     onClick={(e) => {
+                      if (e.latLng) {
+                        topoQuark.set({
+                          ...topo,
+                          location: [e.latLng.lng(), e.latLng.lat()]
+                        });
+                      }
+                    }}
+                    onUserMarkerClick={(e) => {
                       if (e.latLng) {
                         topoQuark.set({
                           ...topo,
