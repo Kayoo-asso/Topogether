@@ -11,7 +11,7 @@ interface RootDashboardProps {
     lightTopos: LightTopo[],
 }
 
-export const RootDashboard: React.FC<RootDashboardProps> = (props: RootDashboardProps) => {
+export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies((props: RootDashboardProps) => {
     const [lightTopos, setLightTopos] = useState(props.lightTopos);
     const draftLightTopos = lightTopos.filter((topo) => topo.status === TopoStatus.Draft);
     const submittedLightTopos = lightTopos.filter((topo) => topo.status === TopoStatus.Submitted);
@@ -148,4 +148,4 @@ export const RootDashboard: React.FC<RootDashboardProps> = (props: RootDashboard
         }
       </>
     );
-};
+});

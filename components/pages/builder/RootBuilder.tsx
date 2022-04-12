@@ -11,7 +11,7 @@ import { sortBoulders, useContextMenu, createTrack, createBoulder, createParking
 import { Boulder, GeoCoordinates, Image, MapToolEnum, Parking, Sector, Track, Waypoint, Topo, isUUID, TopoStatus } from 'types';
 import { Quark, QuarkIter, useCreateDerivation, useLazyQuarkyEffect, useQuarkyCallback, useSelectQuark, watchDependencies } from 'helpers/quarky';
 import { useRouter } from 'next/router';
-import { api } from 'helpers/services';
+import { api, sync } from 'helpers/services';
 import { useFirstRender } from 'helpers/hooks/useFirstRender';
 import { useSession } from "helpers/services";
 import { Header } from 'components/layouts/header/Header';
@@ -503,8 +503,9 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                 </Show>
                 <Show when={() => displayModalDeleteTopo}>
                     <ModalDeleteTopo
-                        onDelete={() => {
+                        onDelete={async () => {
                             api.deleteTopo(topo);
+                            await sync.attemptSync();
                             router.push('/builder/dashboard');
                         }}
                         onClose={() => setDisplayModalDeleteTopo(false)}
