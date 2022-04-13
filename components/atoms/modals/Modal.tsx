@@ -19,7 +19,7 @@ export const Modal: React.FC<ModalProps> = ({
             onClick={props.onClose}
         >
             <div 
-                className='bg-white z-200 rounded-lg shadow min-h-[25%] w-11/12 md:w-5/12 absolute top-[45%] md:top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]'
+                className='bg-white z-3000 rounded-lg shadow min-h-[25%] w-11/12 md:w-5/12 absolute top-[45%] md:top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]'
                 onClick={(e) => e.stopPropagation()} 
             >
                 {props.children}

@@ -22,7 +22,6 @@ export const SVGPoint: React.FC<SVGPointProps> = ({
   eraser = false,
   iconHref = '/assets/icons/colored/line-point/_line-point-grey.svg',
   className = 'fill-main',
-  size = 250,
   ...props
 }: SVGPointProps) => {
   // don't put x & y here, to avoid derived state
@@ -33,7 +32,8 @@ export const SVGPoint: React.FC<SVGPointProps> = ({
     offsetX: 0,
     offsetY: 0,
   });
-
+  
+  const size = props.size || (props.vbWidth ? 200*props.vbWidth/5000 : 200);
   const handlePointerDown: React.PointerEventHandler<SVGImageElement> = (e: React.PointerEvent) => {
     if (draggable && props.vb && props.vbWidth && props.vbHeight) {
       const el = e.currentTarget;
