@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14">
-  <path fill="none" d="M12.542 1h-11l4.5 6.5V13l2-1.5v-4l4.5-6.5z"/>
+  <path fill="rgba(0,0,0,0)" d="M12.542 1h-11l4.5 6.5V13l2-1.5v-4l4.5-6.5z"/>
   <mask id="filterm" fill="#fff">
     <path fill-rule="evenodd" d="M3.542 4l2.423 3.5V13l2-1.5v-4L10.388 4H3.542z" clip-rule="evenodd"/>
   </mask>

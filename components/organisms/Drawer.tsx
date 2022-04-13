@@ -34,7 +34,6 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies((props: DrawerPro
   const selectedTrack = props.selectedTrack()!;
 
   const addPointToLine = (pos: Position) => {
-    // CAREFUL: lines with less than 2 points are not allowed (the DB )
     let lineQuark = selectedTrack.lines.findQuark(l => l.imageId === props.image.id);
     if (!lineQuark) {
       selectedTrack.lines.push({
