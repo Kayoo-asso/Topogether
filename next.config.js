@@ -5,8 +5,8 @@ const withPWA = require('next-pwa')
 module.exports = withPWA({
   pwa: {
     // disable during local development (unless focusing on SW)
-    // disable: process.env.NODE_ENV !== "production",
-    disable: false,
+    disable: process.env.NODE_ENV !== "production",
+    // disable: false,
     dest: 'public',
     swSrc: 'worker/sw.ts',
     buildExcludes: [/.*sw\.js$/]

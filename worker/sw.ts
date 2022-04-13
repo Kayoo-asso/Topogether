@@ -5,7 +5,7 @@ import { registerRoute, Route } from 'workbox-routing';
 import { NetworkOnly, CacheFirst, StaleWhileRevalidate } from 'workbox-strategies';
 import { CacheExpiration, ExpirationPlugin } from 'workbox-expiration';
 
-// (self as any).__WB_DISABLE_DEV_LOGS = true;
+(self as any).__WB_DISABLE_DEV_LOGS = true;
 
 precacheAndRoute(self.__WB_MANIFEST);
 
@@ -54,7 +54,7 @@ const tiles = new Route(({ request, url }) => {
     cacheName: 'tiles'
 }));
 
-registerRoute(tiles);
+// registerRoute(tiles);
 registerRoute(images);
 registerRoute(scripts);
 registerRoute(styles);

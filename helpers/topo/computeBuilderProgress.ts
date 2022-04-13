@@ -37,7 +37,6 @@ export const computeBuilderProgress = (topo: Quark<Topo>): number => {
 }
 
 export const validateRule = (topo: Topo, rule: Rule): boolean => {
-  console.log(topo.accesses.toArray());
     switch (rule) {
         case 'INFOS_TOPO': 
           return validateRule(topo, 'TOPO_IMAGE') && validateRule(topo, 'DESCRIPTION') 
