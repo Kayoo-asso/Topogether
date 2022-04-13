@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Grade, grades } from 'types';
 import Circle from 'assets/icons/circle.svg';
 
@@ -51,7 +51,7 @@ export const GradeSelector: React.FC<GradeselectorDrawerProps> = (props: Gradese
         </span>
 
         {props.open &&
-            <div className='absolute flex bottom-0 h-[95%] pt-8 flex-col gap-5 -mb-[25px] md:mb-0 md:bottom-[7vh] items-start bg-dark rounded-t-full overflow-y-scroll overflow-x-hidden hide-scrollbar right-[17%] md:right-[5%]'>
+            <div className='absolute flex bottom-0 h-[95%] md:h-[82%] pt-8 flex-col gap-5 -mb-[25px] md:mb-0 md:bottom-[7vh] items-start bg-dark rounded-t-full overflow-y-scroll overflow-x-hidden hide-scrollbar right-[17%] md:right-[5%]'>
                 {[...grades].reverse().map(grade => (
                     <span
                         key={grade}

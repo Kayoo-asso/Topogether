@@ -28,7 +28,6 @@ export const SVGTrack: React.FC<SVGTrackProps> = watchDependencies(({
     ...props
 }: SVGTrackProps) => {
     const track = props.track();
-    const [SVGUseId, setSVGUseId] = useState<string>();
     const colorNumber = track.grade ? gradeToLightGrade(track.grade) : 'grey';
 
     const constructNodes = (quarkLine: Quark<Line>) => {
