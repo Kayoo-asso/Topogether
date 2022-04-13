@@ -105,7 +105,7 @@ export const RootAdmin: React.FC<RootAdminProps> = (props: RootAdminProps) => {
                         },
                         ]}
                     />
-                    <div className="overflow-y-scroll h-contentPlusHeader md:h-contentPlusShell hide-scrollbar">
+                    <div className="overflow-y-scroll h-contentPlusHeader md:h-contentPlusShell hide-scrollbar pb-40">
                         <div className="min-w-full flex flex-row flex-wrap px-4 md:px-8 py-6">
                             {toposToDisplay.map((topo) => (
                                 <TopoCard

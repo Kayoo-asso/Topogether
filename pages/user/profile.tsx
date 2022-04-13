@@ -259,7 +259,6 @@ const ProfilePage: NextPage<ProfileProps> = watchDependencies((props) => {
             {errorMessageModify && <div className='ktext-error text-error text-center'>{errorMessageModify}</div>}
 
             <div className='flex flex-col items-center gap-4 mb-10 md:mb-0 md:pt-10'>
-
               <div 
                 className="ktext-base-little text-main cursor-pointer"
                 onClick={async () => {

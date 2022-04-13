@@ -70,7 +70,7 @@ export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies((pr
             currentMenuItem="BUILDER"
           />
   
-          <div ref={ref} className="bg-white w-full overflow-y-auto h-contentPlusHeader md:h-contentPlusShell overflow-x-hidden pl-[1%]">
+          <div ref={ref} className="bg-white w-full overflow-y-auto h-contentPlusHeader md:h-contentPlusShell overflow-x-hidden pl-[1%] pb-16">
             <div className="px-4 md:px-8 py-6 flex flex-row-reverse justify-between items-center">
               <Button content="Créer un topo" href="/builder/new" />
               <div className="md:hidden ktext-section-title text-center">Mes topos</div>
