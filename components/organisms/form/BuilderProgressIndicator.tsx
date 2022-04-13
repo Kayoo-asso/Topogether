@@ -7,22 +7,25 @@ import Checked from 'assets/icons/checked.svg';
 
 interface BuilderProgressIndicatorProps {
     topo: Quark<Topo>,
-    progress: number
+    progress: number,
+    displayInfosTopo: () => void,
+    displayInfosApproach: () => void
 }
 
 const displayRule = (topo: Topo, key: Rule) => {
-    return (< div className='flex ml-7 items-center' >
-        {validateRule(topo, key)
-            ? <Checked className="h-3 w-3 m-2 stroke-main" />
-            : <Clear className="h-5 w-5 m-1 stroke-grey-medium" />}
+    return (< div className={'flex ml-7 items-center'}>
+        {
+            validateRule(topo, key)
+                ? < Checked className="h-3 w-3 m-2 stroke-main" />
+                : <Clear className="h-5 w-5 m-1 stroke-grey-medium" />}
         <div>{rulesText[key]}</div>
     </div >)
 }
 
 const displayMainRule = (topo: Topo, key: Rule | 'INFOS_TOPO' | 'INFOS_ACCESS') => {
-    return (< div className='flex items-center' >
+    return (< div className={'flex items-center'}>
         {validateRule(topo, key)
-            ? <Checked className="h-4 w-4 m-2 stroke-main"  />
+            ? <Checked className="h-4 w-4 m-2 stroke-main" />
             : <Clear className="h-6 w-6 m-1 stroke-grey-medium" />}
         <div>{rulesText[key]}</div>
     </div >)
@@ -53,7 +56,10 @@ export const BuilderProgressIndicator: React.FC<BuilderProgressIndicatorProps> =
                 </div>
                 {open &&
                     <div className={`w-[23%] -ml-5 shadow absolute flex flex-col w-full' p-5 bg-white rounded z-1000 top-[7%]`}>
-                        <div className='my-2'>
+                        <div className='my-2 cursor-pointer' onClick={() => {
+                            props.displayInfosTopo()
+                            setOpen(false)
+                        }}>
                             {displayMainRule(props.topo(), 'INFOS_TOPO')}
                             {displayRule(props.topo(), 'TOPO_IMAGE')}
                             {displayRule(props.topo(), 'DESCRIPTION')}
@@ -63,7 +69,10 @@ export const BuilderProgressIndicator: React.FC<BuilderProgressIndicatorProps> =
                         <div className='my-2'>
                             {displayMainRule(props.topo(), 'PARKINGS')}
                         </div>
-                        <div className='my-2'>
+                        <div className='my-2 cursor-pointer' onClick={() => {
+                            props.displayInfosApproach();
+                            setOpen(false)
+                        }}>
                             {displayMainRule(props.topo(), 'INFOS_ACCESS')}
                             {displayRule(props.topo(), 'ACCESS_DURATION')}
                             {displayRule(props.topo(), 'ACCESS_DIFFICULTY')}
@@ -77,7 +86,7 @@ export const BuilderProgressIndicator: React.FC<BuilderProgressIndicatorProps> =
                         </div>
                     </div>
                 }
-            </div>
+            </div >
         );
     });
 BuilderProgressIndicator.displayName = "BuilderProgressIndicator";

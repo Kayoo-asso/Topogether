@@ -310,7 +310,12 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                 onParkingClick={() => setCurrentTool(currentTool === 'PARKING' ? undefined : 'PARKING')}
                 onWaypointClick={() => setCurrentTool(currentTool === 'WAYPOINT' ? undefined : 'WAYPOINT')}
             >
-                <BuilderProgressIndicator topo={props.topoQuark} progress={progress()} />
+                <BuilderProgressIndicator
+                    topo={props.topoQuark}
+                    progress={progress()}
+                    displayInfosTopo={() => setCurrentDisplay('INFO')}
+                    displayInfosApproach={() => setCurrentDisplay('APPROACH')}
+                />
             </Header>
 
             {/* overflow-clip instead of overflow-hidden, so that the Slideagainst can appear off-screen without 
