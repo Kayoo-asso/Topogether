@@ -37,6 +37,7 @@ export const computeBuilderProgress = (topo: Quark<Topo>): number => {
 }
 
 export const validateRule = (topo: Topo, rule: Rule): boolean => {
+  console.log(topo.accesses.toArray());
     switch (rule) {
         case 'INFOS_TOPO': 
           return validateRule(topo, 'TOPO_IMAGE') && validateRule(topo, 'DESCRIPTION') 
@@ -54,11 +55,11 @@ export const validateRule = (topo: Topo, rule: Rule): boolean => {
           case 'INFOS_ACCESS':
             return validateRule(topo, 'ACCESS_DURATION') && validateRule(topo, 'ACCESS_DIFFICULTY') &&  validateRule(topo, 'ACCESS_STEP');
           case 'ACCESS_DURATION':
-            return topo.accesses.toArray().every(access => !!access.duration);
+            return topo.accesses.length > 0  && topo.accesses.toArray().every(access => !!access.duration);
           case 'ACCESS_DIFFICULTY':
-            return topo.accesses.toArray().every(access => !!access.difficulty);
+            return topo.accesses.length > 0  && topo.accesses.toArray().every(access => !!access.difficulty);
           case 'ACCESS_STEP':
-            return topo.accesses.toArray().every(access => access.steps && access.steps.length > 0);
+            return topo.accesses.length > 0  && topo.accesses.toArray().every(access => access.steps && access.steps.length > 0);
           case 'BOULDERS':
             return topo.boulders.length > 0;
           case 'TRACKS':
