@@ -17,8 +17,6 @@ type UploadUrlResult = {
     messages: any[]
 }
 
-
-
 const handler: NextApiHandler = async (req, res) => {
     if (req.method !== "POST") {
         res.status(400);
@@ -32,7 +30,7 @@ const handler: NextApiHandler = async (req, res) => {
         return;
     }
     const uploadCount: number = Number.parseInt(uploadCountHeader);
-    
+
     const promises: Promise<UploadUrlResult>[] = [];
     for (let i = 0; i < uploadCount; ++i) {
         const data = new FormData();
@@ -46,15 +44,17 @@ const handler: NextApiHandler = async (req, res) => {
             body: data as any
         }).then(x => x.json()));
     }
-    const results = await Promise.all(promises);
+    const results = await Promise.allSettled(promises);
 
     const uploads: UploadInfo[] = [];
     for (const uploadResult of results) {
-        if (!uploadResult.success) {
+        if (uploadResult.status === "rejected" || !uploadResult.value.success) {
+            console.error("Failed to get upload URL:", (uploadResult as any).reason || (uploadResult as any).value.errors);
             res.status(400);
-            res.json({ error: "Faile to retrieve all upload URLs from Cloudflare" });
+            res.json({ error: "Failed to retrieve all upload URLs from Cloudflare" });
+            return;
         }
-        uploads.push(uploadResult.result);
+        uploads.push(uploadResult.value.result);
     }
     res.status(200);
     res.json({ uploads });
