@@ -50,21 +50,7 @@ export const Select: React.FC<SelectProps> = ({
                 }}
             />
             {isOpen && (
-                <div className='pl-4 py-2 bg-white rounded-b h-[200px] absolute overflow-y-auto overflow-x-none z-100 w-full right-0 shadow'>
-                    <div
-                        className="py-4 text-grey-light ktext-base cursor-pointer flex flex-row items-center"
-                        key={undefined}
-                        onKeyDown={() => {
-                            props.onChange(undefined);
-                        }}
-                        onMouseDown={() => {
-                            props.onChange(undefined);
-                        }}
-                        role="menuitem"
-                        tabIndex={0}
-                    >
-                        {props.label}
-                    </div>
+                <div className='pl-4 py-2 bg-white rounded-b h-[320px] absolute overflow-y-auto overflow-x-none z-100 w-full right-0 shadow'>
                     {Object.entries(props.names).map(([value, label]) => (
                         <div
                             className="py-4 text-dark ktext-base cursor-pointer flex flex-row items-center"
