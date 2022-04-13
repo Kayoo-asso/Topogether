@@ -18,7 +18,7 @@ export const BoulderPreviewDesktop: React.FC<BoulderPreviewDesktopProps> = watch
     const boulder = props.boulder();
 
     return (
-        <div className="px-5">
+        <div className="px-5 mb-3">
             <div className='bg-dark'>
                 <TracksImage
                     sizeHint='300px'
@@ -28,7 +28,7 @@ export const BoulderPreviewDesktop: React.FC<BoulderPreviewDesktopProps> = watch
                 />
             </div>
 
-            <div className='flex flex-row w-full mt-3 min-h-max'>
+            <div className='flex flex-col w-full mt-3 min-h-max'>
                 <MultipleImageInput
                     images={boulder.images}
                     boulder={boulder}
@@ -42,7 +42,8 @@ export const BoulderPreviewDesktop: React.FC<BoulderPreviewDesktopProps> = watch
                         props.boulder.set(b => ({
                             ...b,
                             images: [...b.images, ...images],
-                        }))
+                        }));
+                        props.setCurrentImage(images[images.length - 1]);
                     }}
                     onImageDelete={(id) => {
                         const newImages = props.boulder().images.filter((img) => img.id !== id);

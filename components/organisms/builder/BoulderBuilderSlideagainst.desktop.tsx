@@ -30,6 +30,7 @@ export const BoulderBuilderSlideagainstDesktop: React.FC<BoulderBuilderSlideagai
                     boulder={props.boulder}
                     topo={props.topo}
                 />
+                
                 <BoulderPreviewDesktop
                     boulder={props.boulder}
                     selectedTrack={props.selectedTrack}

@@ -1,4 +1,4 @@
-import React, { useRef, useState, forwardRef } from 'react';
+import React, { useRef, useState, forwardRef, useEffect } from 'react';
 // eslint-disable-next-line import/no-cycle
 import { ImageButton, ProfilePicture } from '../../atoms';
 import { api, ImageUploadErrorReason } from 'helpers/services';
@@ -11,6 +11,7 @@ interface ImageInputProps {
   profileImageButton?: boolean,
   onChange: (images: Image[]) => void,
   onDelete?: () => void,
+  onError?: (err: string) => void,
 }
 
 export const ImageInput = forwardRef<HTMLInputElement, ImageInputProps>(({
@@ -38,11 +39,23 @@ export const ImageInput = forwardRef<HTMLInputElement, ImageInputProps>(({
     setLoading(false);
     props.onChange(images);
     let error = ''
-    if (errorcount[ImageUploadErrorReason.NonImage] > 0) error += errorcount[ImageUploadErrorReason.NonImage] + " fichiers ne sont pas des images valides.\n";
-    if (errorcount[ImageUploadErrorReason.CompressionError] > 0) error += errorcount[ImageUploadErrorReason.CompressionError] + " fichiers sont trop lourds.\n";
-    if (errorcount[ImageUploadErrorReason.UploadError] > 0) error += errorcount[ImageUploadErrorReason.UploadError] + " n'ont pas pu être uploadés.";
+    if (errorcount[ImageUploadErrorReason.NonImage] === 1) 
+      error += "Un des fichiers n'est pas une image valide.\n";
+    else if (errorcount[ImageUploadErrorReason.NonImage] > 1)
+      error += errorcount[ImageUploadErrorReason.NonImage] + " fichers ne sont pas des images valides.\n";
+    if (errorcount[ImageUploadErrorReason.CompressionError] === 1) 
+      error += "Un des fichiers est trop lourds.\n";
+    else if (errorcount[ImageUploadErrorReason.CompressionError] > 1) 
+      error += errorcount[ImageUploadErrorReason.CompressionError] + " fichiers sont trop lourds.\n";
+    if (errorcount[ImageUploadErrorReason.UploadError] === 1) 
+      error += "Un des fichiers n'a pas pu être uploadé.";
+    else if (errorcount[ImageUploadErrorReason.UploadError] > 1) 
+      error += errorcount[ImageUploadErrorReason.UploadError] + " fichiers n'ont pas pu être uploadés.";
     setError(error);
   };
+  useEffect(() => {
+     if (props.onError && error && error.length > 0) props.onError(error);
+  }, [error, props.onError]);
 
   return (
     <>
@@ -75,9 +88,11 @@ export const ImageInput = forwardRef<HTMLInputElement, ImageInputProps>(({
           onDelete={props.onDelete}
         />
       }
-      <div className={`ktext-error text-error pt-1 w-22 h-22 ${(error && error.length > 0) ? '' : 'hidden'}`}>
-        {error}
-      </div>
+      {!props.onError &&
+        <div className={`ktext-error text-error pt-1 w-22 h-22 ${(error && error.length > 0) ? '' : 'hidden'}`}>
+          {error}
+        </div>
+      }
     </>
   );
 });

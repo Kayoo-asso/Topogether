@@ -24,6 +24,7 @@ export const MultipleImageInput: React.FC<MultipleImageInputProps> = ({
   ...props
 }: MultipleImageInputProps) => {
   const [page, setPage] = useState<number>(0);
+  const [error, setError] = useState<string>();
 
   let nbVisible = rows * cols;
   if (allowUpload) {
@@ -42,6 +43,7 @@ export const MultipleImageInput: React.FC<MultipleImageInputProps> = ({
 
 
   return (
+    <>
     <div className='flex flex-row gap-1.5 w-full'>
       {displayLeftArrow && (
         <button
@@ -73,6 +75,7 @@ export const MultipleImageInput: React.FC<MultipleImageInputProps> = ({
           label={props.label}
           multiple
           onChange={props.onChange}
+          onError={(err) => setError(err)}
         />
       )}
 
@@ -86,5 +89,9 @@ export const MultipleImageInput: React.FC<MultipleImageInputProps> = ({
         </button>
       )}
     </div>
+    <div className={`ktext-error text-error pt-1 w-full mt-2 text-center ${(error && error.length > 0) ? '' : 'hidden'}`}>
+      {error}
+    </div>
+    </>
   );
 };
