@@ -112,7 +112,7 @@ export const Map = forwardRef<google.maps.Map, React.PropsWithChildren<MapProps>
       listeners.current = [];
     };
     // the map dependency is necessary to make sure event handlers are attached after map creation, or on map update
-  }, [map, onBoundsChange, onCenterChange, onClick, onContextMenu, onDoubleClick, onDrag, onDragEnd, onDragStart, onHeadingChange, onIdle, onMapTypeIdChange, onMouseMove, onMouseOut, onMouseOver, 
+  }, [map, onBoundsChange, onCenterChange, onClick, onContextMenu, onDoubleClick, onDrag, onDragEnd, onDragStart, onHeadingChange, onIdle, onMapTypeIdChange, onMouseMove, onMouseOut, onMouseOver,
     // onMouseDown, onMouseUp, 
     onProjectionChange, onTilesLoad, onTiltChange, onZoomChange]);
 

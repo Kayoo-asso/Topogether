@@ -101,7 +101,9 @@ export const SectorAreaMarker: React.FC<SectorAreaMarkerProps> = watchDependenci
     polygon = usePolygon(options, handlers);
 
     useEffect(() => {
+        console.log("Listener effect");
         if (polygon.current) {
+            console.log("Adding listeners");
             const l1 = google.maps.event.addListener(polygon.current.getPath(), 'insert_at', updatePath);
             const l2 = google.maps.event.addListener(polygon.current.getPath(), 'set_at', updatePath);
             const l3 = google.maps.event.addListener(polygon.current.getPath(), 'remove_at', updatePath);
