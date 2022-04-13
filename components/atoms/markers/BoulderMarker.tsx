@@ -13,9 +13,9 @@ interface BoulderMarkerProps {
     onContextMenu?: (e: Event, boulder: Quark<Boulder>) => void
 }
 
-export const isMouseEvent = (e: MouseEvent|TouchEvent|PointerEvent|KeyboardEvent|Event|MouseEvent<HTMLDivElement, MouseEvent>): e is MouseEvent => (e as MouseEvent).button !== undefined;
-export const isTouchEvent = (e: MouseEvent|TouchEvent|PointerEvent|KeyboardEvent|Event|MouseEvent<HTMLDivElement, MouseEvent>): e is TouchEvent => (e as TouchEvent).touches !== undefined;
-export const isPointerEvent = (e: MouseEvent|TouchEvent|PointerEvent|KeyboardEvent|Event|MouseEvent<HTMLDivElement, MouseEvent>): e is PointerEvent => (e as PointerEvent).pointerType !== undefined;
+export const isMouseEvent = (e: MouseEvent | TouchEvent | PointerEvent | KeyboardEvent | Event | MouseEvent<HTMLDivElement, MouseEvent>): e is MouseEvent => (e as MouseEvent).button !== undefined;
+export const isTouchEvent = (e: MouseEvent | TouchEvent | PointerEvent | KeyboardEvent | Event | MouseEvent<HTMLDivElement, MouseEvent>): e is TouchEvent => (e as TouchEvent).touches !== undefined;
+export const isPointerEvent = (e: MouseEvent | TouchEvent | PointerEvent | KeyboardEvent | Event | MouseEvent<HTMLDivElement, MouseEvent>): e is PointerEvent => (e as PointerEvent).pointerType !== undefined;
 
 export const BoulderMarker: React.FC<BoulderMarkerProps> = watchDependencies(({
     draggable = false,
@@ -35,14 +35,14 @@ export const BoulderMarker: React.FC<BoulderMarkerProps> = watchDependencies(({
         draggable,
         position: toLatLng(boulder.location),
         label: {
-            text: (props.boulderOrder.get(boulder.id)! + (process.env.NODE_ENV === 'development' ? '. '+boulder.name : '')).toString(),
+            text: (props.boulderOrder.get(boulder.id)! + (process.env.NODE_ENV === 'development' ? '. ' + boulder.name : '')).toString(),
             color: '#04D98B',
             fontFamily: 'Poppins',
             fontWeight: selected ? '700' : '500'
         }
     };
 
-    const [timer, setTimer] = useState<ReturnType<typeof setTimeout>>(setTimeout(() => {}, 0))
+    const [timer, setTimer] = useState<ReturnType<typeof setTimeout>>(setTimeout(() => { }, 0))
     const isPressing = useCreateQuark(false);
     const isDragging = useCreateQuark(false);
 
@@ -52,7 +52,7 @@ export const BoulderMarker: React.FC<BoulderMarkerProps> = watchDependencies(({
             props.onContextMenu(evt, props.boulder);
         }
         else if (isTouchEvent(evt) || isPointerEvent(evt)) {
-            setTimer(setTimeout(() => { 
+            setTimer(setTimeout(() => {
                 if (!isDragging()) {
                     isPressing.set(true);
                     props.onContextMenu!(evt, props.boulder);
@@ -78,10 +78,10 @@ export const BoulderMarker: React.FC<BoulderMarkerProps> = watchDependencies(({
         onMouseDown: handleContextMenu,
         onMouseUp: useCallback((e: google.maps.MapMouseEvent) => {
             clearTimeout(timer);
-            const evt = e.domEvent;   
+            const evt = e.domEvent;
             if (!isDragging() && !isPressing() && props.onClick) {
                 if (isMouseEvent(evt) && evt.button !== 0) return;
-                props.onClick(props.boulder); 
+                props.onClick(props.boulder);
             }
             isPressing.set(false);
         }, [timer, props.boulder, props.onClick]),

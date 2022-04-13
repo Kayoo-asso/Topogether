@@ -2,10 +2,10 @@ declare let self: ServiceWorkerGlobalScope;
 
 import { precacheAndRoute } from 'workbox-precaching';
 import { registerRoute, Route } from 'workbox-routing';
-import { NetworkOnly, CacheFirst } from 'workbox-strategies';
+import { NetworkOnly, CacheFirst, StaleWhileRevalidate } from 'workbox-strategies';
 import { CacheExpiration, ExpirationPlugin } from 'workbox-expiration';
 
-(self as any).__WB_DISABLE_DEV_LOGS = true;
+// (self as any).__WB_DISABLE_DEV_LOGS = true;
 
 precacheAndRoute(self.__WB_MANIFEST);
 
@@ -48,6 +48,13 @@ const styles = new Route(({ request }) => {
     ]
 }));
 
+const tiles = new Route(({ request, url }) => {
+    return url.hostname === 'map.googleapis.com' && url.pathname.startsWith('/maps') && !!url.searchParams.get('pb')
+}, new StaleWhileRevalidate({
+    cacheName: 'tiles'
+}));
+
+registerRoute(tiles);
 registerRoute(images);
 registerRoute(scripts);
 registerRoute(styles);
