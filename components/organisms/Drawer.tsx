@@ -15,6 +15,7 @@ interface DrawerProps {
 
 export const Drawer: React.FC<DrawerProps> = watchDependencies((props: DrawerProps) => {
   const [selectedTool, setSelectedTool] = useState<DrawerToolEnum>('LINE_DRAWER');
+  const [gradeSelectorOpen, setGradeSelectorOpen] = useState(false);
   const [displayOtherTracks, setDisplayOtherTracks] = useState(false);
   const [displayClearModal, setDisplayClearModal] = useState(false);
 
@@ -152,7 +153,10 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies((props: DrawerPro
             currentTool={selectedTool}
             editable
             displayTracksDetails
-            onImageClick={(pos) => addPointToLine(pos)}
+            onImageClick={(pos) => {
+              setGradeSelectorOpen(false);
+              addPointToLine(pos);
+            }}
             onPointClick={(pointType, index) => {
               if (selectedTool === 'ERASER') deletePointToLine(pointType, index);
             }}
@@ -163,6 +167,8 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies((props: DrawerPro
           selectedTool={selectedTool}
           displayOtherTracks={displayOtherTracks}
           grade={selectedTrack.grade}
+          gradeSelectorOpen={gradeSelectorOpen}
+          setGradeSelectorOpen={setGradeSelectorOpen}
           onToolSelect={(tool) => setSelectedTool(tool)}
           onGradeSelect={(grade) => {
             props.selectedTrack.quark()?.set({

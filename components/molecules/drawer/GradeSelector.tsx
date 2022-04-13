@@ -3,13 +3,14 @@ import { Grade, grades } from 'types';
 import Circle from 'assets/icons/circle.svg';
 
 interface GradeselectorDrawerProps {
+    open: boolean,
+    setOpen: React.Dispatch<React.SetStateAction<boolean>>,
     grade?: Grade,
     onGradeSelect: (grade: Grade) => void,
 }
 
 export const GradeSelector: React.FC<GradeselectorDrawerProps> = (props: GradeselectorDrawerProps) => {
     const selectorContainerRef = useRef<HTMLDivElement>(null);
-    const [open, setOpen] = useState(false);
 
     const getGradeColorClass = (grade: Grade) => {
         const lightGrade = parseInt(grade[0]);
@@ -35,13 +36,13 @@ export const GradeSelector: React.FC<GradeselectorDrawerProps> = (props: Gradese
         if (selectorContainerRef.current) {
             selectorContainerRef.current.scrollIntoView({ behavior: 'auto'});
         }
-    }, [selectorContainerRef, open])
+    }, [selectorContainerRef, props.open])
 
     return (
        <>
         <span
             className={'flex flex-row cursor-pointer items-center ' + (props.grade ? 'ktext-base text-white' : 'ktext-title text-grey-medium')}
-            onClick={() => setOpen(!open)}
+            onClick={() => props.setOpen(!props.open)}
         >
             <Circle 
                 className={'h-6 w-6 mr-2 ' + (props.grade ? getGradeColorClass(props.grade) : 'fill-grey-medium')}
@@ -49,15 +50,15 @@ export const GradeSelector: React.FC<GradeselectorDrawerProps> = (props: Gradese
             {props.grade ? props.grade : 'Diff'}
         </span>
 
-        {open &&
-            <div className='absolute flex bottom-0 h-[95%] pt-8 flex-col gap-5 -mb-[25px] items-start bg-dark rounded-t-full overflow-y-scroll overflow-x-hidden hide-scrollbar right-[17%] md:right-[5%]'>
+        {props.open &&
+            <div className='absolute flex bottom-0 h-[95%] pt-8 flex-col gap-5 -mb-[25px] md:mb-0 md:bottom-[7vh] items-start bg-dark rounded-t-full overflow-y-scroll overflow-x-hidden hide-scrollbar right-[17%] md:right-[5%]'>
                 {[...grades].reverse().map(grade => (
                     <span
                         key={grade}
                         className='flex flex-row items-center text-white ktext-base px-3 cursor-pointer'
                         onClick={() => {
                             props.onGradeSelect(grade);
-                            setOpen(false);
+                            props.setOpen(false);
                         }}
                     >
                         <Circle

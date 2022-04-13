@@ -17,6 +17,8 @@ interface ToolbarProps {
     selectedTool: DrawerToolEnum,
     displayOtherTracks: boolean,
     grade?: Grade,
+    gradeSelectorOpen: boolean,
+    setGradeSelectorOpen: React.Dispatch<React.SetStateAction<boolean>>,
     onToolSelect: (tool: DrawerToolEnum) => void,
     onGradeSelect: (grade: Grade) => void,
     onClear: () => void,
@@ -105,6 +107,8 @@ export const Toolbar: React.FC<ToolbarProps> = ({
             
             <span className='w-1/5 z-100 md:w-3/12 md:flex md:justify-center'>
                 <GradeSelector 
+                    open={props.gradeSelectorOpen}
+                    setOpen={props.setGradeSelectorOpen}
                     grade={props.grade}
                     onGradeSelect={props.onGradeSelect}
                 />
