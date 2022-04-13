@@ -180,7 +180,13 @@ export const SVGLine: React.FC<SVGLineProps> = watchDependencies(({
             cy={firstY}
             r={pointSize}
             className={`${getFillColorClass()} ${phantom ? 'z-20 opacity-50' : 'z-40'}${(!eraser && props.onClick) || phantom ? ' cursor-pointer' : ''}`}
-            onClick={props.onClick}
+            onClick={(e) => {
+              if (eraser) {
+                e.stopPropagation();
+                props.onPointClick && props.onPointClick(0);
+              }
+              else if (props.onClick) props.onClick()
+            }}
             onPointerDown={handlePointerDown}
             onPointerUp={handlePointerUp}
             onPointerMove={handlePointerMove}
@@ -188,13 +194,19 @@ export const SVGLine: React.FC<SVGLineProps> = watchDependencies(({
           <text
             x={firstX}
             y={firstY}
-            className={`select-none fill-white ${phantom ? 'z-20 opacity-50' : 'z-40'}${(!eraser && props.onClick) || phantom ? ' cursor-pointer' : ' cursor-default'}`}
+            className={`select-none fill-white ${phantom ? 'z-20 opacity-50' : 'z-40'}${(!eraser && props.onClick) || phantom ? ' cursor-pointer' : ''}`}
             textAnchor="middle"
             stroke="white"
             strokeWidth="8px"
             fontSize={pointSize+'px'}
             dy={(pointSize/3)+'px'}
-            onClick={props.onClick}
+            onClick={(e) => {
+              if (eraser) {
+                e.stopPropagation();
+                props.onPointClick && props.onPointClick(0);
+              }
+              else if (props.onClick) props.onClick()
+            }}
             onPointerDown={handlePointerDown}
             onPointerUp={handlePointerUp}
             onPointerMove={handlePointerMove}
