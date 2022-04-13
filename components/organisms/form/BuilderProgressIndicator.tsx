@@ -55,7 +55,7 @@ export const BuilderProgressIndicator: React.FC<BuilderProgressIndicatorProps> =
                     {props.progress}%
                 </div>
                 {open &&
-                    <div className={`w-[23%] -ml-5 shadow absolute flex flex-col w-full' p-5 bg-white rounded z-1000 top-[7%]`}>
+                    <div className={`min-w-[340px] w-[23%] -ml-5 shadow absolute flex flex-col w-full' p-5 bg-white rounded z-1000 top-[7%]`}>
                         <div className='my-2 cursor-pointer' onClick={() => {
                             props.displayInfosTopo()
                             setOpen(false)
