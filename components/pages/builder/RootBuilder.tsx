@@ -376,8 +376,8 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                     onBoulderResultSelect={(boulder) => toggleBoulderSelect(boulders.find(b => b().id === boulder.id)()!)}
                     draggableCursor={currentTool === 'ROCK' ? 'url(/assets/icons/colored/_rock.svg) 16 32, auto'
                         : currentTool === 'SECTOR' ? 'url(/assets/icons/colored/line-point/_line-point-grey.svg), auto'
-                            : currentTool === 'PARKING' ? 'url(/assets/icons/colored/_parking.svg), auto'
-                                : currentTool === 'WAYPOINT' ? 'url(/assets/icons/colored/_help-round.svg), auto'
+                            : currentTool === 'PARKING' ? 'url(/assets/icons/colored/_parking.svg) 16 30, auto'
+                                : currentTool === 'WAYPOINT' ? 'url(/assets/icons/colored/_help-round.svg) 16 30, auto'
                                     : ''}
                     draggableMarkers
                     topo={props.topoQuark}
@@ -435,6 +435,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                             return (
                                 <BoulderBuilderSlideoverMobile
                                     boulder={boulder}
+                                    topo={props.topoQuark}
                                     selectedTrack={selectedTrack}
                                     currentImage={currentImage}
                                     setCurrentImage={setCurrentImage}
@@ -450,7 +451,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                         return (
                             <BoulderBuilderSlideagainstDesktop
                                 boulder={boulder}
-                                topoCreatorId={topo.creator?.id}
+                                topo={props.topoQuark}
                                 selectedTrack={selectedTrack}
                                 setCurrentImage={setCurrentImage}
                                 currentImage={currentImage}

@@ -2,7 +2,7 @@ import React, { Dispatch, SetStateAction, useState } from 'react';
 import {
   GradeScale, RoundButton, SlideoverMobile, ImageSlider
 } from 'components';
-import { Boulder, Image, Track } from 'types';
+import { Boulder, Image, Topo, Track } from 'types';
 import { buildBoulderGradeHistogram } from 'helpers';
 import { Quark, watchDependencies, SelectQuarkNullable } from 'helpers/quarky';
 import { TracksListBuilder } from '.';
@@ -13,6 +13,7 @@ import Camera from 'assets/icons/camera.svg';
 
 interface BoulderBuilderSlideoverMobileProps {
   boulder: Quark<Boulder>,
+  topo: Quark<Topo>,
   selectedTrack: SelectQuarkNullable<Track>,
   currentImage?: Image,
   setCurrentImage: Dispatch<SetStateAction<Image | undefined>>,
@@ -149,6 +150,7 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
           <div className='border-t border-grey-light px-6 py-10 overflow-auto'>
             <BoulderForm
               boulder={props.boulder}
+              topo={props.topo}
             />
           </div>
         )}

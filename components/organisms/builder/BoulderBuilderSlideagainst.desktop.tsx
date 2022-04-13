@@ -1,13 +1,13 @@
 import React, { Dispatch, SetStateAction } from 'react';
 import { BoulderPreviewDesktop, SlideagainstRightDesktop, BoulderForm } from 'components';
 import { Quark, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
-import { Boulder, Image, Track, UUID } from 'types';
+import { Boulder, Image, Topo, Track, UUID } from 'types';
 import { TracksListBuilder } from '.';
 
 interface BoulderBuilderSlideagainstDesktopProps {
     boulder: Quark<Boulder>,
+    topo: Quark<Topo>,
     selectedTrack: SelectQuarkNullable<Track>,
-    topoCreatorId?: UUID,
     currentImage?: Image,
     setCurrentImage: Dispatch<SetStateAction<Image | undefined>>,
     onClose: () => void,
@@ -28,6 +28,7 @@ export const BoulderBuilderSlideagainstDesktop: React.FC<BoulderBuilderSlideagai
                 <BoulderForm
                     className='mt-3 mb-6 px-5'
                     boulder={props.boulder}
+                    topo={props.topo}
                 />
                 <BoulderPreviewDesktop
                     boulder={props.boulder}

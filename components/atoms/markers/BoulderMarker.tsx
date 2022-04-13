@@ -46,7 +46,7 @@ export const BoulderMarker: React.FC<BoulderMarkerProps> = watchDependencies(({
     const isPressing = useCreateQuark(false);
     const isDragging = useCreateQuark(false);
 
-    const handleContextMenu= useCallback((e: google.maps.MapMouseEvent) => {
+    const handleContextMenu = useCallback((e: google.maps.MapMouseEvent) => {
         const evt = e.domEvent;
         if (isMouseEvent(evt) && evt.button === 2 && props.onContextMenu) { //Right click
             props.onContextMenu(evt, props.boulder);

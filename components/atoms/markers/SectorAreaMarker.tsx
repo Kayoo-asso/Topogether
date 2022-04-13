@@ -43,7 +43,6 @@ export const SectorAreaMarker: React.FC<SectorAreaMarkerProps> = watchDependenci
 
     const updatePath = useCallback(() => {
         const newBounds: google.maps.LatLng[] | undefined = polygon.current?.getPath().getArray();
-        console.log(newBounds);
         if (newBounds && !dragging.current) {
             const newPath: GeoCoordinates[] = newBounds.map(b => ([b.lng(), b.lat()]));
             props.sector.set(s => ({

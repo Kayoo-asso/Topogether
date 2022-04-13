@@ -51,7 +51,7 @@ export const BoulderItemLeftbar: React.FC<BoulderItemLeftbarProps> = watchDepend
                 </div>
                 <div onClick={props.onNameClick}>
                     <span className={'mr-2' + (props.selected ? ' font-semibold' : '')}>{props.orderIndex}.</span>
-                    <span className={'ktext-base' + (props.selected ? ' font-semibold' : '')}>{boulder.name}</span>
+                    <span className={(boulder.name.length > 16 ? 'ktext-base-little' : 'ktext-base') + (props.selected ? ' font-semibold' : '')}>{boulder.name}</span>
                 </div>
             </div>
             
@@ -69,7 +69,7 @@ export const BoulderItemLeftbar: React.FC<BoulderItemLeftbarProps> = watchDepend
                                 {track.grade &&
                                     <div className={'mr-2 ktext-subtitle ' + getGradeColorClass(track.grade)}>{track.grade}</div>
                                 }
-                                <div className='text-grey-medium'>{track.name}</div>
+                                <div className={(track.name && track.name.length > 16 ? 'ktext-base-little' : 'ktext-base') + 'text-grey-medium'}>{track.name}</div>
                             </div>
                         )
                     })}

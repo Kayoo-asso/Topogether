@@ -28,6 +28,10 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(({
   <div className={`relative w-full ${wrapperClassName}`}>
     <input
       {...props}
+      onKeyDown={(e) => {
+        e.stopPropagation();
+        if (props.onKeyDown) props.onKeyDown(e);
+      }}
       ref={ref}
       placeholder={props.label}
       type={type}
