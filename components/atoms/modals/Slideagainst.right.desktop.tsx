@@ -37,7 +37,7 @@ export const SlideagainstRightDesktop: React.FC<SlideagainstRightDesktopProps> =
         <div
             className={
                 `absolute top-0 flex flex-col w-[300px] h-full border-l py-5 bg-white border-grey-medium
-                ${secondary ? 'z-40' : 'z-50'}
+                ${secondary ? 'z-200' : 'z-300'}
                 ${props.className ? props.className : ''}`
             }
             style={{

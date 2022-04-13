@@ -37,7 +37,7 @@ export const SlideoverLeftDesktop: React.FC<SlideoverLeftDesktopProps> = ({
                 >Terminé</span>
             </div>
 
-            <div className='flex-1 h-full'>
+            <div className='flex-1 h-full overflow-auto'>
                 {props.children}
             </div>
         </div>

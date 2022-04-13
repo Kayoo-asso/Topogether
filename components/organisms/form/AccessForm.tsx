@@ -47,7 +47,7 @@ export const AccessForm: React.FC<AccessFormProps> = watchDependencies((props: A
                     />
                     <TextInput 
                         id='access-duration'
-                        label='Durée'
+                        label='Durée (min)'
                         type='number'
                         step={1}
                         value={access.duration}
