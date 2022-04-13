@@ -203,12 +203,6 @@ export const SVGTrack: React.FC<SVGTrackProps> = watchDependencies(({
                 );
             }
         }
-
-        if (false) {
-            nodes.push(
-                <use xlinkHref={'#area0'} />
-            )
-        }
         return nodes;
     }
 

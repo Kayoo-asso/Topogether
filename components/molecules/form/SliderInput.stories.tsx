@@ -12,7 +12,7 @@ const Template: ComponentStory<typeof SliderInput> = (args) => <div className="w
 
 export const Simple = Template.bind({});
 Simple.args = {
-  onChange: (e) => { console.log(e); },
+  onChange: (e) => { },
   domain: [110, 168],
   values: [110, 168],
   step: 1,

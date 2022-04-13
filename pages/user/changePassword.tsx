@@ -43,8 +43,7 @@ const ChangePasswordPage: NextPage = (props) => {
   const modifyPassword = async () => {
       if (checkErrors()) {
         setLoading(true);
-        const res = await auth.changePassword(newPassword);
-        console.log(res);
+        const res = await auth.changePassword(newPassword); //TODO: test if it works
         setLoading(false);
       }
   }
