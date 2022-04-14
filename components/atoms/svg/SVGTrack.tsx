@@ -207,7 +207,7 @@ export const SVGTrack: React.FC<SVGTrackProps> = watchDependencies(({
     }
 
     return <>
-        {track.lines.quarks().map(constructNodes)}
+        {track.lines.quarks().map(constructNodes).toArray()}
     </>
 });
 

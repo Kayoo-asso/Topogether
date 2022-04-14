@@ -56,7 +56,7 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
 }: TracksImageProps) => {
   const selectedTrack = props.selectedTrack && props.selectedTrack();
   // ratio = width / height
-  // so the most accurate way to scale the SVG viewBox is to set a height of 1000
+  // so the most accurate way to scale the SVG viewBox is to set a height
   // and take width = ratio * height (multiplication is better than division)
   const ratio = props.image?.ratio ?? 1;
   const viewBoxRef = useRef<SVGRectElement>(null);
@@ -105,14 +105,6 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
   // An image and a SVG viewBox that always perfectly match, while respecting the dimensions of the parent container
   // & the provided object-fit. The viewBox has constant width and height for the same image, so everything drawn
   // on the image can be expressed in the coordinate space of the viewBox & resizes automatically
-  //
-  // Notes pour implémentation :
-  // - L'affichage est facile, on utilise directement les coordonnées stockées pour placer les élements SVG, pas de conversion
-  // - Lorsqu'il y a un clic, il faut déterminer les coordonnées de l'action dans la viewBox. ATTENTION ! L'élement SVG
-  //   lui-même n'a pas la même taille que la viewBox ! Il remplit entièrement son container (width 100%, height 100%).
-  //   Par contre, la viewBox matche forcément les bords de l'élement SVG, soit en largeur, soit en hauteur.
-  // Exercice : écrire une fonction prenant l'object-fit, le ratio de l'image, le BoundingRect de l'élement SVG &
-  // les coordonnées du clic, pour en déduire les coordonnées dans la viewBox :)
   return (
     <div className="relative w-full h-full">
       <CFImage
@@ -172,69 +164,12 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
                 onPointClick={props.onPointClick}
               />
             )
-        })}
+        }).toArray()}
         {props.image && props.children}
 
       </svg>
     </div>
   );
-
-  // return (
-  //   <div
-  //     ref={observe}
-  //     className={`relative w-full flex flex-row items-center justify-center ${containerClassName}`}
-  //     style={props.programmativeHeight ? {
-  //       height: props.programmativeHeight + 'px'
-  //     } : {}}
-  //   >
-  {/* <svg
-        style={{ 
-          cursor: editable ? `url(${getCursorUrl()}) ${props.currentTool === 'ERASER' ? '3 7': ''}, auto` : '',
-        }}
-        className={"svg-canvas absolute z-50 " + (props.canvasClassName ? props.canvasClassName : '')}
-        width={imgWidth}
-        height={imgHeight}
-        onMouseDown={(e) => {
-          if (e.button === 0 && props.onImageClick && editable && e.currentTarget.nodeName === 'svg') { // Left-click on the canvas only
-            const pos = getMousePosInside(e);
-            const rPos = [pos[0] / rx, pos[1] / rx] as Position;
-            props.onImageClick(rPos);
-          }
-        }}
-      >
-        {props.tracks.map(trackQuark => {
-          const highlighted = selectedTrack === undefined ||
-                trackQuark().id === selectedTrack.id;           
-          if (highlighted || displayPhantomTracks) 
-            return (
-              <SVGTrack 
-                key={trackQuark().id}
-                track={trackQuark}
-                r={rx}
-                currentTool={props.currentTool}
-                imageId={props.image.id}
-                editable={editable}
-                highlighted={highlighted}
-                displayTrackDetails={displayTracksDetails}
-                displayTrackOrderIndexes={displayTrackOrderIndexes}
-                trackWeight={tracksWeight}
-                onLineClick={props.selectedTrack ? () => props.selectedTrack!.select(trackQuark) : undefined}
-                onPointClick={props.onPointClick}
-              />
-            )
-        })}
-      </svg>
-
-      <NextImage
-        className={`${props.imageClassName ? props.imageClassName : ''}`}
-        src={props.image ? props.image.path : staticUrl.defaultKayoo}
-        alt="Rocher"
-        width={imgWidth}
-        height={imgHeight}
-        priority
-      /> */}
-  // </div>
-  // );
 });
 
 TracksImage.displayName = "TracksImage";

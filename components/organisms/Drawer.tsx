@@ -191,12 +191,7 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies((props: DrawerPro
           onClose={() => setDisplayClearModal(false)}
           onDelete={() => {
             setDisplayClearModal(false);
-            const newLines = selectedTrack.lines;
-            newLines.shift();
-            props.selectedTrack.quark()!.set({
-              ...selectedTrack,
-              lines: newLines
-            });
+            selectedTrack.lines.removeAll(x => x.imageId === props.image.id)
           }}
         >
           Vous êtes sur le point de supprimer l'ensemble du tracé. Voulez-vous continuer ?

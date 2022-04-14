@@ -17,7 +17,6 @@ export const BoulderBuilderSlideagainstDesktop: React.FC<BoulderBuilderSlideagai
     const boulder = props.boulder();
 
     const toggleSelectedTrack = useCallback((trackQuark) => {
-        console.log("toggle");
         const track = trackQuark();
         if (props.selectedTrack()?.id === track.id) props.selectedTrack.select(undefined);
         else {

@@ -7,7 +7,7 @@ import {
     ModalSubmitTopo, ModalDeleteTopo, GeoCamera, Drawer, BoulderBuilderSlideagainstDesktop,
     ParkingBuilderSlide, AccessFormSlideover, WaypointBuilderSlide, ModalRenameSector, ModalDelete, SectorAreaMarkerDropdown, BuilderProgressIndicator,
 } from 'components';
-import { sortBoulders, useContextMenu, createTrack, createBoulder, createParking, createWaypoint, createSector, deleteSector, deleteBoulder, deleteParking, deleteWaypoint, toLatLng, useDevice, computeBuilderProgress, encodeUUID, decodeUUID } from 'helpers';
+import { sortBoulders, useContextMenu, createTrack, createBoulder, createParking, createWaypoint, createSector, deleteSector, deleteBoulder, deleteParking, deleteWaypoint, toLatLng, useDevice, computeBuilderProgress, encodeUUID, decodeUUID, deleteTrack } from 'helpers';
 import { Boulder, GeoCoordinates, Image, MapToolEnum, Parking, Sector, Track, Waypoint, Topo, isUUID, TopoStatus } from 'types';
 import { Quark, QuarkIter, useCreateDerivation, useLazyQuarkyEffect, useQuarkyCallback, useSelectQuark, watchDependencies } from 'helpers/quarky';
 import { useRouter } from 'next/router';
@@ -294,12 +294,8 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
         }
     }, [topo, currentTool, selectedBoulder()]);
 
-    // The derivation doesnt work, it still recompute the progress at every render
-    const progress = useCreateDerivation<number>(() => computeBuilderProgress(props.topoQuark), [props.topoQuark], { name: "BuilderProgress" });
+    const progress = useCreateDerivation<number>(() => computeBuilderProgress(props.topoQuark), [props.topoQuark]);
     
-    useEffect(() => console.log(selectedTrack()), [selectedTrack()]);
-    // console.log(selectedTrack());
-    // console.log(selectedBoulder());
     return (
         <>
             <Header
@@ -439,8 +435,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                                 selectedTrack.select(undefined)
                             }}
                             onDeleteTrack={() => {
-                                selectedBoulder()!.tracks.removeQuark(track);
-                                selectedTrack.select(undefined);
+                                deleteTrack(selectedBoulder()!, track, selectedTrack);
                             }}
                         />
                     )}
