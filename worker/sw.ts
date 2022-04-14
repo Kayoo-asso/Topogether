@@ -1,12 +1,13 @@
 declare let self: ServiceWorkerGlobalScope;
 
-import { precacheAndRoute } from 'workbox-precaching';
+import { precacheAndRoute, cleanupOutdatedCaches } from 'workbox-precaching';
 import { registerRoute, Route } from 'workbox-routing';
 import { NetworkFirst, CacheFirst, StaleWhileRevalidate } from 'workbox-strategies';
-import { CacheExpiration, ExpirationPlugin } from 'workbox-expiration';
+import { ExpirationPlugin } from 'workbox-expiration';
 
 (self as any).__WB_DISABLE_DEV_LOGS = true;
 
+cleanupOutdatedCaches();
 precacheAndRoute(self.__WB_MANIFEST);
 
 // Should add some header information to requests
