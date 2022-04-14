@@ -297,8 +297,9 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
     // The derivation doesnt work, it still recompute the progress at every render
     const progress = useCreateDerivation<number>(() => computeBuilderProgress(props.topoQuark), [props.topoQuark], { name: "BuilderProgress" });
     
-    console.log(selectedTrack());
-    console.log(selectedBoulder());
+    useEffect(() => console.log(selectedTrack()), [selectedTrack()]);
+    // console.log(selectedTrack());
+    // console.log(selectedBoulder());
     return (
         <>
             <Header
@@ -434,7 +435,9 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                     {([, track]) => (
                         <TrackFormSlideagainstDesktop
                             track={track}
-                            onClose={() => selectedTrack.select(undefined)}
+                            onClose={() => {
+                                selectedTrack.select(undefined)
+                            }}
                             onDeleteTrack={() => {
                                 selectedBoulder()!.tracks.removeQuark(track);
                                 selectedTrack.select(undefined);
