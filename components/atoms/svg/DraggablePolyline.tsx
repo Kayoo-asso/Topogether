@@ -79,7 +79,7 @@ export const DraggablePolyline: React.FC<DraggablePolylineProps> = ({
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
-      onClick={props.onClick}
+      onMouseDownCapture={props.onClick}
     />
   );
 };

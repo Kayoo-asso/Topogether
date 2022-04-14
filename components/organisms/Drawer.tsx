@@ -109,6 +109,7 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies((props: DrawerPro
           }); break;
         case 'FORBIDDEN_AREA_POINT':
           if (line.forbidden) {
+            console.log(index);
             if (index === -1) line.forbidden.pop();
             newLine.set({
               ...line,

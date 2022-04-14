@@ -3,7 +3,7 @@ import { Image, Track, UUID } from 'types';
 // eslint-disable-next-line import/no-cycle
 import { DeleteButton, TracksImage } from 'components';
 import useDimensions from 'react-cool-dimensions';
-import { Quark, QuarkIter } from 'helpers/quarky';
+import { Quark, QuarkIter, watchDependencies } from 'helpers/quarky';
 import { CFImage } from './CFImage';
 
 interface ImageThumbProps {
@@ -14,7 +14,7 @@ interface ImageThumbProps {
   onClick?: (id: UUID) => void,
 }
 
-export const ImageThumb: React.FC<ImageThumbProps> = ({
+export const ImageThumb: React.FC<ImageThumbProps> = watchDependencies(({
   selected = false,
   ...props
 }: ImageThumbProps) => {
@@ -68,4 +68,4 @@ export const ImageThumb: React.FC<ImageThumbProps> = ({
       }
     </div>
   );
-};
+});
