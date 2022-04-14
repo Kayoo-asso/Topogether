@@ -54,6 +54,7 @@ export const TracksListBuilder: React.FC<TracksListBuilderProps> = watchDependen
                   grade={grade}
                   className="cursor-pointer"
                   content={(track.index + 1).toString()}
+                  onClick={() => props.onTrackClick(trackQuark)}
                 />
 
                 {track.grade && (

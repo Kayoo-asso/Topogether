@@ -17,10 +17,9 @@ export const BoulderBuilderSlideagainstDesktop: React.FC<BoulderBuilderSlideagai
     const boulder = props.boulder();
 
     const toggleSelectedTrack = useCallback((trackQuark) => {
-        // console.log(props.selectedTrack());
         const track = trackQuark();
         if (props.selectedTrack()?.id === track.id) props.selectedTrack.select(undefined);
-        else {                              
+        else {    
             if (track.lines.length > 0) {
                 const newImage = boulder.images.find(img => img.id === track.lines.at(0).imageId);
                 if (!newImage) throw new Error("Could not find the first image for the selected track!");
