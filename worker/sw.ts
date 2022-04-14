@@ -11,9 +11,8 @@ precacheAndRoute(self.__WB_MANIFEST);
 
 // Should add some header information to requests
 const images = new Route(({ request, sameOrigin, url }) => {
-    return request.destination === "image";
-    // return request.destination === "image" &&
-    //     (sameOrigin || url.hostname === "imagedelivery.net")
+    return request.destination === "image" &&
+        (sameOrigin || url.hostname === "imagedelivery.net" || url.hostname === "maps.gstatic.com")
 }, new CacheFirst({
     cacheName: 'images',
     plugins: [
@@ -60,9 +59,9 @@ const styles = new Route(({ request }) => {
     ]
 }));
 
-const tiles = new Route(({ request, url }) => {
-    return url.hostname === 'map.googleapis.com' && url.pathname.startsWith('/maps') && !!url.searchParams.get('pb')
-}, new StaleWhileRevalidate({
+const tiles = new Route(({ url }) => {
+    return url.hostname === 'maps.googleapis.com' && url.pathname === '/maps/vt' && !!url.searchParams.get('pb')
+}, new CacheFirst({
     cacheName: 'tiles',
     plugins: [
         new ExpirationPlugin({
@@ -100,10 +99,10 @@ const nextData = new Route(({ url }) => {
 }));
 
 
+registerRoute(tiles);
+registerRoute(nextData);
+registerRoute(documents);
+registerRoute(styles);
 registerRoute(images);
 registerRoute(scripts);
 registerRoute(extScripts);
-registerRoute(tiles);
-registerRoute(documents);
-registerRoute(styles);
-registerRoute(nextData);
