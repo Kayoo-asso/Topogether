@@ -31,9 +31,9 @@ export const SVGTrack: React.FC<SVGTrackProps> = watchDependencies(({
     const colorNumber = track.grade ? gradeToLightGrade(track.grade) : 'grey';
 
     const linePointSize = (props.vbWidth && props.vbHeight) ? Math.max(200*(Math.max(props.vbWidth, props.vbHeight))/9500, 150) : 200;
-    console.log(linePointSize);
-    const handPointSize = (props.vbWidth && props.vbHeight) ? Math.max(200*(Math.max(props.vbWidth, props.vbHeight))/6500, 300) : 200;
-    const footPointSize = (props.vbWidth && props.vbHeight) ? Math.max(200*(Math.max(props.vbWidth, props.vbHeight))/4500, 450) : 200;
+    const handPointSize = (props.vbWidth && props.vbHeight) ? Math.max(200*(Math.max(props.vbWidth, props.vbHeight))/6500, 200) : 200;
+    const footPointSize = (props.vbWidth && props.vbHeight) ? Math.max(200*(Math.max(props.vbWidth, props.vbHeight))/4500, 300) : 200;
+    // console.log(footPointSize);
 
     const constructNodes = (quarkLine: Quark<Line>) => {
         const line = quarkLine();
