@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Quark, watchDependencies } from 'helpers/quarky';
 import { DrawerToolEnum, gradeToLightGrade, Line, PointEnum, Track, UUID } from 'types';
 import { SVGArea, SVGLine, SVGPoint } from '.';
@@ -30,6 +30,11 @@ export const SVGTrack: React.FC<SVGTrackProps> = watchDependencies(({
     const track = props.track();
     const colorNumber = track.grade ? gradeToLightGrade(track.grade) : 'grey';
 
+    const linePointSize = (props.vbWidth && props.vbHeight) ? Math.max(200*(Math.max(props.vbWidth, props.vbHeight))/8500, 200) : 200;
+    const handPointSize = (props.vbWidth && props.vbHeight) ? Math.max(200*(Math.max(props.vbWidth, props.vbHeight))/6500, 300) : 200;
+    const footPointSize = (props.vbWidth && props.vbHeight) ? Math.max(200*(Math.max(props.vbWidth, props.vbHeight))/4500, 450) : 200;
+    console.log(handPointSize);
+
     const constructNodes = (quarkLine: Quark<Line>) => {
         const line = quarkLine();
         if (line.imageId !== props.imageId) return null;
@@ -44,6 +49,7 @@ export const SVGTrack: React.FC<SVGTrackProps> = watchDependencies(({
                 vb={props.vb}
                 vbWidth={props.vbWidth}
                 vbHeight={props.vbHeight}
+                linePointSize={linePointSize}
                 eraser={props.currentTool === 'ERASER'}
                 grade={track.grade}
                 phantom={!highlighted}
@@ -69,6 +75,7 @@ export const SVGTrack: React.FC<SVGTrackProps> = watchDependencies(({
                         vb={props.vb}
                         vbWidth={props.vbWidth}
                         vbHeight={props.vbHeight}
+                        size={handPointSize}
                         eraser={props.currentTool === 'ERASER'}
                         onDrag={(pos) => {
                             if (editable) {
@@ -94,6 +101,7 @@ export const SVGTrack: React.FC<SVGTrackProps> = watchDependencies(({
                         vb={props.vb}
                         vbWidth={props.vbWidth}
                         vbHeight={props.vbHeight}
+                        size={handPointSize}
                         eraser={props.currentTool === 'ERASER'}
                         onDrag={(pos) => {
                             if (editable) {
@@ -117,11 +125,11 @@ export const SVGTrack: React.FC<SVGTrackProps> = watchDependencies(({
                         iconHref={`/assets/icons/colored/climbing-shoe-full/_climbing-shoe-full-${colorNumber}.svg`}
                         x={footX}
                         y={footY}
-                        size={450}
                         draggable={editable}
                         vb={props.vb}
                         vbWidth={props.vbWidth}
                         vbHeight={props.vbHeight}
+                        size={footPointSize}
                         eraser={props.currentTool === 'ERASER'}
                         onDrag={(pos) => {
                             if (editable) {
@@ -143,11 +151,11 @@ export const SVGTrack: React.FC<SVGTrackProps> = watchDependencies(({
                         iconHref={`/assets/icons/colored/climbing-shoe-full/_climbing-shoe-full-${colorNumber}.svg`}
                         x={footX}
                         y={footY}
-                        size={450}
                         draggable={editable}
                         vb={props.vb}
                         vbWidth={props.vbWidth}
                         vbHeight={props.vbHeight}
+                        size={footPointSize}
                         eraser={props.currentTool === 'ERASER'}
                         onDrag={(pos) => {
                             if (editable) {

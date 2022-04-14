@@ -11,6 +11,7 @@ interface SVGLineProps {
   vb?: SVGRectElement | null,
   vbWidth?: number,
   vbHeight?: number,
+  linePointSize: number,
   eraser?: boolean,
   displayTrackOrderIndex?: boolean,
   trackWeight?: number,
@@ -31,7 +32,7 @@ export const SVGLine: React.FC<SVGLineProps> = watchDependencies(({
   const line = props.line();
   const points = line.points;
   const path = getPathFromPoints(points, 'CURVE');
-  const pointSize = props.vbWidth ? 200*props.vbWidth/6000 : 200;
+  const firstPointSize = props.linePointSize/1.2
   const firstX = points.length > 0 ? points[0][0] : null;
   const firstY = points.length > 0 ? points[0][1] : null;
 
@@ -146,9 +147,9 @@ export const SVGLine: React.FC<SVGLineProps> = watchDependencies(({
             <SVGPoint
               key={index}
               iconHref={`/assets/icons/colored/line-point/_line-point-${getColorNumber()}.svg`}
-              x={p[0] - pointSize / 2}
-              y={p[1] - pointSize / 2}
-              size={pointSize}
+              x={p[0] - props.linePointSize / 2}
+              y={p[1] - props.linePointSize / 2}
+              size={props.linePointSize}
               draggable={editable}
               vb={props.vb}
               vbWidth={props.vbWidth}
@@ -178,7 +179,7 @@ export const SVGLine: React.FC<SVGLineProps> = watchDependencies(({
           <circle
             cx={firstX}
             cy={firstY}
-            r={pointSize}
+            r={firstPointSize}
             className={`${getFillColorClass()} ${phantom ? 'z-20 opacity-50' : 'z-40'}${(!eraser && props.onClick) || phantom ? ' cursor-pointer' : ''}`}
             onClick={(e) => {
               if (eraser) {
@@ -198,8 +199,8 @@ export const SVGLine: React.FC<SVGLineProps> = watchDependencies(({
             textAnchor="middle"
             stroke="white"
             strokeWidth="8px"
-            fontSize={pointSize+'px'}
-            dy={(pointSize/3)+'px'}
+            fontSize={firstPointSize+'px'}
+            dy={(firstPointSize/3)+'px'}
             onClick={(e) => {
               if (eraser) {
                 e.stopPropagation();

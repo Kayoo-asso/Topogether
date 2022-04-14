@@ -33,7 +33,7 @@ export const SVGPoint: React.FC<SVGPointProps> = ({
     offsetY: 0,
   });
   
-  const size = props.size || (props.vbWidth ? 200*props.vbWidth/5000 : 200);
+  const size = props.size || (props.vbWidth ? 200*props.vbWidth/6000 : 200);
   const handlePointerDown: React.PointerEventHandler<SVGImageElement> = (e: React.PointerEvent) => {
     if (draggable && props.vb && props.vbWidth && props.vbHeight) {
       const el = e.currentTarget;
@@ -77,8 +77,8 @@ export const SVGPoint: React.FC<SVGPointProps> = ({
 
   return (
       <image
-        x={props.x}
-        y={props.y}
+        x={iconHref.includes('line-point') ? props.x : props.x - size/2}
+        y={iconHref.includes('line-point') ? props.y : props.y - size/2}
         className={`${className} ${(draggable && !eraser) ? 'cursor-pointer' : ''}${eraser ? ' hover:scale-150 origin-center' : ''}`}
         style={{
           transformBox: 'fill-box'
