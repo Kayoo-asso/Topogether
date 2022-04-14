@@ -147,7 +147,7 @@ let Scheduled = false;
 
 const PendingLeaves: Leaf<any>[] = [];
 const PendingUpdates: StateUpdate<any>[] = [];
-const PendingSubs: Leaf<any>[] = [];
+let PendingSubs: Leaf<any>[] = [];
 
 let ScheduledCleanups: Root[] = [];
 let ScheduledEffects: Root[] = [];
@@ -288,8 +288,8 @@ function explicitEffect(signals: any[], computation: (deps: any[]) => void, opti
     };
 }
 
-export function observerEffect(computation: () => void): ObserverEffect {
-    const node = buildEffect(computation, NodeStatus.Effect);
+export function observerEffect(computation: () => void, name?: string): ObserverEffect {
+    const node = buildEffect(computation, NodeStatus.Effect, name);
     return {
         watch<T>(computation: () => T): T {
             const scope: Scope = {
@@ -422,7 +422,9 @@ function processUpdates(start: number) {
                     ? u(node.value)
                     : u;
 
-                if (node.equal(prevValue, node.value)) continue;
+                if (node.equal(prevValue, node.value)) {
+                    continue;
+                }
 
                 node.lastChange = Epoch;
                 if (node.fn) PendingSubs.push(node);
@@ -451,7 +453,7 @@ function processUpdates(start: number) {
             }
 
             const subs = new Set(PendingSubs);
-            PendingSubs.length = 0;
+            PendingSubs = [];
             for (const node of subs) {
                 node.fn!(node.value);
             }
@@ -563,8 +565,6 @@ function runComputation(node: Observer): boolean {
         // the effect deleted itself
         if (node.status & NodeStatus.Inactive) {
             cleanupEffect(node as Root, true);
-            // TODO: clean up this control flow
-            // this prevents updating the deps of the effect below
             return true;
         }
         somethingChanged = true;
@@ -587,8 +587,6 @@ function runComputation(node: Observer): boolean {
 // since the same node may appear multiple times in before or after
 function diffDeps(node: Observer, before: Dependency[], after: Dependency[]) {
     if (depsAreEqual(before, after)) return;
-
-    // console.log("Diffing deps for " + node.name);
 
     // slow diff
     const toRemove = new Set(before);
@@ -625,18 +623,16 @@ function hook(node: Observer, dep: Dependency) {
 }
 
 function unhook(node: Observer, dep: Dependency) {
+    const idx = dep.obs.indexOf(node);
+    if (idx < 0) return;
+
     const lastObserver = dep.obs.pop()!;
-    // console.log(`Unhooking ${node.name} from ${dep.name}`);
+    // swap, except if the node was at the end of the array
+    if (lastObserver !== node) {
+        dep.obs[idx] = lastObserver;
+    }
     if (dep.deps && dep.obs.length === 0) {
         DeactivationCandidates.push(dep);
-    }
-    if (lastObserver !== node) {
-        for (let i = dep.obs.length - 1; i >= 0; --i) {
-            if (dep.obs[i] === node) {
-                dep.obs[i] = lastObserver;
-                break;
-            }
-        }
     }
 }
 
