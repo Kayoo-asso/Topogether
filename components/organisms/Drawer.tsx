@@ -31,10 +31,11 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies((props: DrawerPro
     return () => window.removeEventListener('keydown', handleKeydown);
   }, []);
 
-  const selectedTrack = props.selectedTrack()!;
+  const selectedTrack = props.selectedTrack();
+  if (!selectedTrack) return null;
 
   const addPointToLine = (pos: Position) => {
-    let lineQuark = selectedTrack.lines.findQuark(l => l.imageId === props.image.id);
+    let lineQuark = selectedTrack.lines.findQuark(l => l.imageId === props.image.id); 
     if (!lineQuark) {
       selectedTrack.lines.push({
         id: v4(),

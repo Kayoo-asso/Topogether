@@ -142,8 +142,15 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
         selectedBoulder.select(undefined);
         selectedParking.select(undefined);
         selectedWaypoint.select(undefined);
-        if (selectedTrack()?.id === trackQuark().id) { selectedTrack.select(undefined); } else {
+        const track = trackQuark();
+        if (selectedTrack()?.id === track.id) selectedTrack.select(undefined);
+        else {
             selectedBoulder.select(boulderQuark);
+            if (track.lines.length > 0) {
+                const newImage = boulderQuark().images.find(img => img.id === track.lines.at(0).imageId);
+                if (!newImage) throw new Error("Could not find the first image for the selected track!");
+                setCurrentImage(newImage);
+            }
             selectedTrack.select(trackQuark);
         }
     }, [selectedTrack]);
@@ -289,7 +296,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
 
     // The derivation doesnt work, it still recompute the progress at every render
     const progress = useCreateDerivation<number>(() => computeBuilderProgress(props.topoQuark), [props.topoQuark], { name: "BuilderProgress" });
-
+    
     return (
         <>
             <Header
