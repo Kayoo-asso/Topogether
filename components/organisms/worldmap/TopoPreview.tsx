@@ -55,10 +55,10 @@ export const TopoPreview: React.FC<TopoPreviewProps> = (props: TopoPreviewProps)
                     {parseFloat(topo.location[1].toFixed(12)) + ',' + parseFloat(topo.location[0].toFixed(12))}
                 </div>
 
-                <div className="mt-4 h-[160px] w-full overflow-hidden">
+                <div className="mt-4 h-[160px] w-full">
                     <CFImage
                         image={topo.image}
-                        className="w-full object-contain"
+                        className="flex object-cover"
                         alt="image principale du topo"
                         sizeHint='50vw'
                     />
