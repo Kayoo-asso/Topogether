@@ -168,9 +168,7 @@ function quarkifyBoulders(data: BoulderData[], topoId: UUID, seedData: boolean):
 
     return new QuarkArray(boulders, {
         quarkifier: (b) => quark(b, { onChange }),
-        onAdd: (b) => {
-
-        },
+        onAdd: onChange,
         onDelete: (boulder) => sync.boulderDelete(boulder)
     });
 }
