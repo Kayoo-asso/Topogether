@@ -74,7 +74,7 @@ export const CFImage: React.FC<CFImageProps> = ({
     }
         
     return (
-        <div className='w-full h-full relative'>
+        <div className={'w-full h-full relative ' + (props.className || '')}>
             {(loading || forceLoading) &&
                 <div className='bg-white absolute w-full h-full top-0 z-1000'>
                     <Loading 
