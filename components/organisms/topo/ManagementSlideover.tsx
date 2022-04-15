@@ -23,9 +23,13 @@ export const ManagementSlideover: React.FC<ManagementSlideoverProps> = ({
 
     const getTabOptions = (): TabOption[] => {
         const tabs: TabOption[] = [];
-        props.managers.toArray().map((manager, index: number) => {
-            tabs.push({ label: 'marche ' + index, color: 'main', action: () => setManagerTab(index) })
-        })
+        for (let idx = 0; idx < props.managers.length; idx++) {
+            tabs.push({
+                label: `manager ${idx}`,
+                color: 'main',
+                action: () => setManagerTab(idx)
+            })
+        }
         return tabs;
     }
 
@@ -34,7 +38,7 @@ export const ManagementSlideover: React.FC<ManagementSlideoverProps> = ({
             <div className='flex flex-col h-full pt-5 md:pt-0'>
                 <div className='flex flex-col px-6 md:px-0 pt-5 md:pt-0'>
                     <div className='ktext-big-title text-center w-full mt-4 mb-6 md:mb-3'>
-                        Aucun gestionnaire référencée pour ce spot
+                        Aucun gestionnaire référencé pour ce spot
                     </div>
                 </div>
             </div>
@@ -81,7 +85,7 @@ export const ManagementSlideover: React.FC<ManagementSlideoverProps> = ({
                                     onClick={() => {
                                         const data = [new ClipboardItem({ "text/plain": new Blob([manager.contactMail!], { type: "text/plain" }) })];
                                         navigator.clipboard.write(data).then(function () {
-                                            setFlashMessage("Email copiées dans le presse papier.");
+                                            setFlashMessage("Email copié dans le presse papier.");
                                         }, function () {
                                             setFlashMessage("Impossible de copier l'email.");
                                         });
