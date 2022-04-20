@@ -26,7 +26,7 @@ export const ItemSelectorMobile: React.FC<ItemSelectorMobileProps> = (props: Ite
                 <AddIcon className='stroke-main h-5 w-5' />
             </RoundButton>  */}
 
-            <div className='flex flex-row items-center gap-5 bg-white rounded-full h-[60px] px-4'>
+            <div className='flex flex-row items-center gap-5 bg-white rounded-full h-[60px] px-4 md:px-6'>
                 {device === 'desktop' && 
                     <Sector
                         className={'h-6 w-6 cursor-pointer ' + (props.currentTool === "SECTOR" ? 'stroke-main fill-main' : 'stroke-grey-light fill-grey-light')}
@@ -54,10 +54,12 @@ export const ItemSelectorMobile: React.FC<ItemSelectorMobileProps> = (props: Ite
                     }}
                 />
             </div>
-
-            <RoundButton onClick={props.onPhotoButtonClick}>
-                <CameraIcon className='stroke-main h-5 w-5' />
-            </RoundButton> 
+            
+            {device === 'mobile' && 
+                <RoundButton onClick={props.onPhotoButtonClick}>
+                    <CameraIcon className='stroke-main h-5 w-5' />
+                </RoundButton> 
+            }
 
         </div>
     )
