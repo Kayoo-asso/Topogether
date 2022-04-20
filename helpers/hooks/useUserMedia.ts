@@ -10,7 +10,7 @@ export function useUserMedia(requestedMedia: MediaStreamConstraints) {
         const track = stream.getVideoTracks()[0]
         console.log(track.getCapabilities());
         console.log(track.getSettings());
-        alert(JSON.stringify(track.getSettings()));
+        alert(JSON.stringify(track.getCapabilities()));
         setMediaStream(stream);
       } catch(err) {
         // Removed for brevity
