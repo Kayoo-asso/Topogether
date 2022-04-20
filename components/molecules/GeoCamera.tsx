@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { distanceLatLng, fromLatLng, useScreenOrientation, useUserMedia } from 'helpers';
 import { GeoCoordinates, MapToolEnum } from 'types';
 import { useGeolocation } from 'helpers/hooks/useGeolocation';
@@ -27,7 +27,7 @@ export const GeoCamera: React.FC<GeoCameraProps> = ({
     open = true,
     ...props
 }: GeoCameraProps) => {
-    const orientation = useScreenOrientation();
+    const orientation = 'portrait';//useScreenOrientation();
     const [coords, setCoords] = useState({
         lat: 0,
         lng: 0,
