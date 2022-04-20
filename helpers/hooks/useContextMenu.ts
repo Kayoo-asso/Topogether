@@ -1,4 +1,5 @@
 import { EffectCallback, useEffect, useRef } from 'react';
+import { useDevice } from './useDevice';
 
 let someoneExists = false;
 
@@ -26,8 +27,14 @@ export function useFirstEffect(effect: EffectCallback) {
     // }
 }
 export function useContextMenu(close: () => void, container?: HTMLElement | null) {
+    const device = useDevice();
+
     useEffect(() => {
-        const onScroll = (e: Event) => e.preventDefault()
+        if (device === 'mobile') window.navigator.vibrate(200);
+    }, []);
+    
+    useEffect(() => {
+        const onScroll = (e: Event) => e.preventDefault();
         const onMouseDown = (e: MouseEvent) => {
             close();
             container?.removeEventListener('wheel', onScroll);

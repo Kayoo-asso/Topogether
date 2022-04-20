@@ -56,7 +56,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
 }: ToolbarProps) => {
     
     return (
-        <div className='bg-dark w-full h-[7vh] flex flex-row items-center justify-center z-200'>
+        <div className='bg-dark w-full h-[9vh] flex flex-row items-center justify-center z-200'>
 
             <span className='flex flex-row items-center justify-around w-2/5 md:w-3/12'>
                 <Clear 
@@ -79,7 +79,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
                 />
             </span>
 
-            <span className='flex 1/5 pb-3 mx-3 self-end md:hidden'>
+            <span className='flex 1/5 pb-4 mx-3 self-end md:hidden'>
                 <ToolSelectorMobile 
                     selectedTool={selectedTool !== 'ERASER' ? selectedTool : 'LINE_DRAWER'}
                     onToolSelect={props.onToolSelect}

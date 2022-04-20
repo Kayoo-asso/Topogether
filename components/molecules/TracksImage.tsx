@@ -117,16 +117,26 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
         style={cursorStyle}
         viewBox={`0 0 ${viewBoxWidth} ${viewBoxHeight}`}
         preserveAspectRatio={`xMidYMid ${preserveAspectRatio[objectFit]}`}
-        onClick={(e: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
+        onClick={(e) => {
           const eltUnder = e.target as EventTarget & SVGSVGElement
-          if (e.buttons !== 1 ||  // Handle clicks that are 1) left-click,
+          if (e.buttons !== 0 ||  // Handle clicks that are 1) left-click,
             !props.onImageClick || // 2) in the viewBox and
-            e.currentTarget.nodeName !== "svg" || eltUnder.nodeName !== "svg" ||// 3) on the SVG canvas directly
+            eltUnder.nodeName !== "svg" || // 3) on the SVG canvas directly
             !viewBoxRef.current) 
             return;
-          const coords = getCoordsInViewbox(viewBoxRef.current, viewBoxWidth, viewBoxHeight, e.clientX, e.clientY);
-          if (coords) props.onImageClick(coords);
+            const coords = getCoordsInViewbox(viewBoxRef.current, viewBoxWidth, viewBoxHeight, e.clientX, e.clientY);
+            if (coords) props.onImageClick(coords);
         }}
+        // onMouseDown={(e: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
+        //   const eltUnder = e.target as EventTarget & SVGSVGElement
+        //   if (e.buttons !== 1 ||  // Handle clicks that are 1) left-click,
+        //     !props.onImageClick || // 2) in the viewBox and
+        //     e.currentTarget.nodeName !== "svg" || eltUnder.nodeName !== "svg" || // 3) on the SVG canvas directly
+        //     !viewBoxRef.current) 
+        //     return;
+        //   const coords = getCoordsInViewbox(viewBoxRef.current, viewBoxWidth, viewBoxHeight, e.clientX, e.clientY);
+        //   if (coords) props.onImageClick(coords);
+        // }}
       >
         {/* Invisible rectangle of the size of the viewBox, to get its on-screen dimensions easily
             (they could also be computed, but I'm lazy)

@@ -4,7 +4,6 @@ import Sector from 'assets/icons/sector.svg';
 import Rock from 'assets/icons/rock.svg';
 import Parking from 'assets/icons/parking.svg';
 import Waypoint from 'assets/icons/help-round.svg';
-// import AddIcon from 'assets/icons/more.svg';
 import CameraIcon from 'assets/icons/camera.svg';
 import { RoundButton } from 'components/atoms';
 import { useDevice } from 'helpers';
@@ -13,7 +12,6 @@ interface ItemSelectorMobileProps {
     currentTool?: MapToolEnum,
     onToolSelect: (tool: MapToolEnum) => void,
     onPhotoButtonClick: () => void,
-    // onAddButtonClick: () => void,
 }
 
 export const ItemSelectorMobile: React.FC<ItemSelectorMobileProps> = (props: ItemSelectorMobileProps) => {
@@ -21,10 +19,6 @@ export const ItemSelectorMobile: React.FC<ItemSelectorMobileProps> = (props: Ite
 
     return (
         <div className='flex flex-row bg-white shadow rounded-full z-20'>
-
-            {/* <RoundButton onClick={props.onAddButtonClick}>
-                <AddIcon className='stroke-main h-5 w-5' />
-            </RoundButton>  */}
 
             <div className='flex flex-row items-center gap-5 bg-white rounded-full h-[60px] px-4 md:px-6'>
                 {device === 'desktop' && 

@@ -23,7 +23,7 @@ export const ToolSelectorMobile: React.FC<ToolselectorMobileProps> = (props: Too
 
     return (
         <button
-            className={'shadow flex flex-col items-center justify-evenly bg-dark rounded-full cursor-pointer z-40 w-[80px] ' + (open ? 'h-[320px]' : 'h-[80px]')}
+            className={'shadow flex flex-col items-center justify-evenly bg-dark rounded-full cursor-pointer z-1000 w-[80px] ' + (open ? 'h-[280px]' : 'h-[80px]')}
             onClick={() => setOpen(!open)}
         >
             {open &&

@@ -146,7 +146,7 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies((props: DrawerPro
       <div className="absolute left-0 top-[7vh] h-content md:h-contentPlusShell w-full md:w-[calc(100%-600px)] z-[600]">
 
         {/* Same, we know absolute size, since both header + toolbar are 7vh each */}
-        <div className="h-[86vh] bg-black b-opacity-90">
+        <div className="h-[84vh] bg-black b-opacity-90">
           <TracksImage
             sizeHint='100vw'
             objectFit='contain'

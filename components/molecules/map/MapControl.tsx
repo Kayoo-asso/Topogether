@@ -18,7 +18,6 @@ interface MapControlProps extends MapProps {
     currentTool?: MapToolEnum,
     onToolSelect?: (tool: MapToolEnum) => void,
     onPhotoButtonClick?: () => void,
-    // onAddButtonClick?: () => void,
     displaySectorButton?: boolean,
     onSectorButtonClick?: () => void,
     displaySearchbar?: boolean,
@@ -233,12 +232,10 @@ export const MapControl: React.FC<MapControlProps> = watchDependencies(({
                         </div>
                         <div className='flex items-center'>
                             {props.onPhotoButtonClick &&
-                            // props.onAddButtonClick &&
                             props.onToolSelect &&
                                 <ItemSelectorMobile 
                                     currentTool={props.currentTool}
                                     onToolSelect={props.onToolSelect}
-                                    // onAddButtonClick={props.onAddButtonClick}
                                     onPhotoButtonClick={props.onPhotoButtonClick}
                                 />
                             }

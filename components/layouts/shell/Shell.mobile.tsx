@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { watchDependencies } from 'helpers/quarky';
@@ -31,6 +31,11 @@ export const ShellMobile: React.FC = watchDependencies(() => {
     }
     setActiveTab(id);
   };
+  useEffect(() => {
+    if (router.pathname.includes('builder')) setActiveTab(2);
+    else if (router.pathname.includes('user') || router.pathname.includes('admin')) setActiveTab(0);
+    else setActiveTab(1);
+  }, [router.pathname]);
 
   return (
     <>
