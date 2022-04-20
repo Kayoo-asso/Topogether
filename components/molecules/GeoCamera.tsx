@@ -27,7 +27,7 @@ export const GeoCamera: React.FC<GeoCameraProps> = ({
     open = true,
     ...props
 }: GeoCameraProps) => {
-    const orientation = 'portrait';//useScreenOrientation();
+    const orientation = useScreenOrientation();
     const [coords, setCoords] = useState({
         lat: 0,
         lng: 0,
@@ -174,7 +174,7 @@ export const GeoCamera: React.FC<GeoCameraProps> = ({
                 autoPlay 
                 playsInline 
                 muted
-                className={'absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] ' + (orientation.includes('portrait') ? 'h-full max-w-none' : 'max-h-none w-full')}
+                className={'absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] ' + (orientation?.includes('portrait') ? 'h-full max-w-none' : 'max-h-none w-full')}
             />
             <canvas
                 ref={canvasRef}

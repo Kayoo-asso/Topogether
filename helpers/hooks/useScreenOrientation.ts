@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 
-export const useScreenOrientation = () => {
-    const [orientation, setOrientation] = useState(window.screen.orientation.type);
+type OrientationType = "landscape-primary" | "landscape-secondary" | "portrait-primary" | "portrait-secondary"
+
+export const useScreenOrientation = (): OrientationType | undefined => {
+    const [orientation, setOrientation] = useState<OrientationType | undefined>(undefined);
     useEffect(() => {
         const handleOrientationChange= () => setOrientation(window.screen.orientation.type);
         window.addEventListener('orientationchange', handleOrientationChange);
