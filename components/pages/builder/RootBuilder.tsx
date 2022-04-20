@@ -267,28 +267,32 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
             else {
                 const img = res.value;
                 setCurrentImage(img);
-                if (currentTool === 'ROCK') {
-                    if (selectedBoulder()) {
-                        const newImages = selectedBoulder()!.images;
+                if (currentTool === 'PARKING') {
+                    selectedParking.select(createParking(topo, coordinates, img));
+                }
+                else if (currentTool === 'WAYPOINT') {
+                    selectedWaypoint.select(createWaypoint(topo, coordinates, img));
+                }
+                else {
+                    console.log('rock !');
+                    const sBoulder = selectedBoulder();
+                    if (sBoulder) {
+                        console.log("sboulder");
+                        const newImages = sBoulder.images;
                         newImages.push(img);
                         selectedBoulder.quark()!.set({
-                            ...selectedBoulder()!,
+                            ...sBoulder,
                             images: newImages,
                         });
-                        selectedTrack.select(createTrack(selectedBoulder()!, session.id));
+                        selectedTrack.select(createTrack(sBoulder, session.id));
                     }
                     else {
+                        console.log("new boulder");
                         const newBoulderQuark = createBoulder(props.topoQuark, coordinates, img);
                         selectedTrack.select(createTrack(newBoulderQuark(), session.id));
                         selectedBoulder.select(newBoulderQuark);
                     }
                     setDisplayDrawer(true);
-                }
-                else if (currentTool === 'PARKING') {
-                    selectedParking.select(createParking(topo, coordinates, img));
-                }
-                else if (currentTool === 'WAYPOINT') {
-                    selectedWaypoint.select(createWaypoint(topo, coordinates, img));
                 }
             }
         }

@@ -1,10 +1,11 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { distanceLatLng, fromLatLng, useScreenOrientation, useUserMedia } from 'helpers';
 import { GeoCoordinates, MapToolEnum } from 'types';
 import { useGeolocation } from 'helpers/hooks/useGeolocation';
 import ArrowFull from 'assets/icons/arrow-full.svg';
 import Clear from 'assets/icons/clear.svg';
 import Spinner from 'assets/icons/spinner.svg';
+import useDimensions from 'react-cool-dimensions';
 
 interface GeoCameraProps {
     open?: boolean,
@@ -19,7 +20,7 @@ const CAPTURE_OPTIONS = {
     video: { 
         width: { ideal: 4096 },
         height: { ideal: 2160 },
-        facingMode: "environment" 
+        facingMode: "environment",
     },
 };  
 
@@ -27,7 +28,14 @@ export const GeoCamera: React.FC<GeoCameraProps> = ({
     open = true,
     ...props
 }: GeoCameraProps) => {
-    const orientation = useScreenOrientation();
+    const { observe, unobserve, width: containerWidth, height: containerHeight, entry } = useDimensions({
+        onResize: ({ observe, unobserve, width, height, entry }) => {
+          // Triggered whenever the size of the target is changed...
+          unobserve(); // To stop observing the current target element
+          observe(); // To re-start observing the current target element
+        },
+    });
+
     const [coords, setCoords] = useState({
         lat: 0,
         lng: 0,
@@ -129,7 +137,7 @@ export const GeoCamera: React.FC<GeoCameraProps> = ({
 
     if (!open) return null;
     return (
-        <div className='w-full h-full absolute overflow-hidden z-1000'>
+        <div className='w-full h-full absolute overflow-hidden z-1000' ref={observe}>
             {loading && 
                 <div className='flex justify-center items-center w-full h-full bg-dark bg-opacity-80 absolute z-1000'>
                     <Spinner
@@ -174,14 +182,21 @@ export const GeoCamera: React.FC<GeoCameraProps> = ({
                 autoPlay 
                 playsInline 
                 muted
-                className={'absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] ' + (orientation?.includes('portrait') ? 'h-full max-w-none' : 'max-h-none w-full')}
+                className={'absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] ' + (containerWidth > containerHeight ? 'max-h-none w-full' : 'h-full max-w-none')}
             />
             <canvas
                 ref={canvasRef}
                 className='w-full h-full absolute top-0 left-0'
-                height={canvasRef.current?.clientHeight}
-                width={canvasRef.current?.clientWidth}
+                height={containerHeight}
+                width={containerWidth}
             />
+            {/* <div
+                className='absolute top-0 left-0 bg-main bg-opacity-20'
+                style={{
+                    height: containerHeight,
+                    width: containerWidth
+                }}
+            ></div> */}
 
             <div 
                 className='absolute shadow bg-white rounded-full h-[60px] w-[60px] bottom-[15vh] left-[50%] translate-x-[-50%] z-40 mb-2'

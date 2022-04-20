@@ -34,6 +34,7 @@ export const deleteSector = (topoQuark: Quark<Topo>, sector: Quark<SectorData>, 
 
 export const createBoulder = (topoQuark: Quark<Topo>, location: GeoCoordinates, image?: Image) => {
     const topo = topoQuark();
+    console.log("create boulder");
     const orderIndex = topo.boulders.length;
     // terrible hack around `liked` for now
     const newBoulder: Boulder = setupBoulder({
