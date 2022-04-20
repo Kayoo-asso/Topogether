@@ -117,7 +117,7 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
         style={cursorStyle}
         viewBox={`0 0 ${viewBoxWidth} ${viewBoxHeight}`}
         preserveAspectRatio={`xMidYMid ${preserveAspectRatio[objectFit]}`}
-        onMouseDown={(e: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
+        onClick={(e: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
           const eltUnder = e.target as EventTarget & SVGSVGElement
           if (e.buttons !== 1 ||  // Handle clicks that are 1) left-click,
             !props.onImageClick || // 2) in the viewBox and

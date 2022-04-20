@@ -3,5 +3,6 @@ export * from './MapSearchbar';
 export * from './TopoFilters';
 export * from './BoulderFilters';
 export * from './MapSearchResults';
+export * from './ItemSelectorMobile';
 
 export * from './dropdowns';

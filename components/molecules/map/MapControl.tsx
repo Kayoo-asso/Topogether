@@ -2,14 +2,12 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Wrapper } from '@googlemaps/react-wrapper';
 import { BoulderMarker, CreatingSectorAreaMarker, For, Map, ParkingMarker, RoundButton, SatelliteButton, SectorAreaMarker, Show, UserMarker, WaypointMarker, TopoMarker, CreatingTopoMarker } from 'components';
 import { BoulderFilterOptions, BoulderFilters, MapSearchbarProps, TopoFilterOptions, TopoFilters } from '.';
-import { MapSearchbar } from '..';
-import { Amenities, Boulder, ClimbTechniques, GeoCoordinates, gradeToLightGrade, LightGrade, LightTopo, MapProps, Parking, PolyMouseEvent, Position, Sector, Topo, UUID, Waypoint } from 'types';
+import { ItemSelectorMobile, MapSearchbar } from '..';
+import { Amenities, Boulder, ClimbTechniques, GeoCoordinates, gradeToLightGrade, LightGrade, LightTopo, MapProps, MapToolEnum, Parking, PolyMouseEvent, Position, Sector, Topo, UUID, Waypoint } from 'types';
 import { fontainebleauLocation, fromLatLngLiteralFn, googleGetPlace, hasFlag, hasSomeFlags, mergeFlags, toLatLng, TopoCreate } from 'helpers';
 import { Quark, QuarkIter, reactKey, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
 import SectorIcon from 'assets/icons/sector.svg';
-import CameraIcon from 'assets/icons/camera.svg';
 import CenterIcon from 'assets/icons/center.svg';
-import AddIcon from 'assets/icons/more.svg';
 
 interface MapControlProps extends MapProps {
     className?: string,
@@ -17,8 +15,10 @@ interface MapControlProps extends MapProps {
     initialZoom?: number,
     displaySatelliteButton?: boolean,
     displayUserMarker?: boolean,
-    displayPhotoButton?: boolean,
+    currentTool?: MapToolEnum,
+    onToolSelect?: (tool: MapToolEnum) => void,
     onPhotoButtonClick?: () => void,
+    // onAddButtonClick?: () => void,
     displaySectorButton?: boolean,
     onSectorButtonClick?: () => void,
     displaySearchbar?: boolean,
@@ -63,7 +63,6 @@ export const MapControl: React.FC<MapControlProps> = watchDependencies(({
     displaySearchbar = true,
     displaySatelliteButton = true,
     displayUserMarker = true,
-    displayPhotoButton = false,
     displaySectorButton = false,
     displayTopoFilter = false,
     displayBoulderFilter = false,
@@ -233,22 +232,15 @@ export const MapControl: React.FC<MapControlProps> = watchDependencies(({
                             }
                         </div>
                         <div className='flex items-center'>
-                            {displayPhotoButton &&
-                                <div className='w-full flex flex-row gap-2'>
-                                    <RoundButton
-                                        className='z-10 md:hidden'
-                                        onClick={props.onPhotoButtonClick}
-                                    >
-                                        <CameraIcon className='stroke-main h-7 w-7' />
-                                    </RoundButton>
-                                    <RoundButton
-                                        className='z-10 md:hidden'
-                                        onClick={() => console.log('ok')}
-                                    >
-                                        <AddIcon className='stroke-main h-5 w-5' />
-                                    </RoundButton>
-                                    
-                                </div>
+                            {props.onPhotoButtonClick &&
+                            // props.onAddButtonClick &&
+                            props.onToolSelect &&
+                                <ItemSelectorMobile 
+                                    currentTool={props.currentTool}
+                                    onToolSelect={props.onToolSelect}
+                                    // onAddButtonClick={props.onAddButtonClick}
+                                    onPhotoButtonClick={props.onPhotoButtonClick}
+                                />
                             }
                         </div>
                         <div className='flex items-center'>

@@ -137,7 +137,10 @@ export const GeoCamera: React.FC<GeoCameraProps> = ({
                 >
                     Créer un {itemType}
                     <ArrowFull
-                        className={'fill-main h-3 w-3 rotate-90 ml-3' + (displayItemSelectMenu ? ' -rotate-90' : '')}
+                        className={'h-3 w-3 rotate-90 ml-3' + 
+                            (displayItemSelectMenu ? ' -rotate-90' : '') +
+                            (props.currentTool === 'WAYPOINT' ? ' fill-third' : props.currentTool === 'PARKING' ? ' fill-second' : ' fill-main') 
+                        }
                     />
                 </div>
                 {displayItemSelectMenu &&

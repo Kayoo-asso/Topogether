@@ -7,7 +7,7 @@ import {
     ModalSubmitTopo, ModalDeleteTopo, GeoCamera, Drawer, BoulderBuilderSlideagainstDesktop,
     ParkingBuilderSlide, AccessFormSlideover, WaypointBuilderSlide, ModalRenameSector, ModalDelete, SectorAreaMarkerDropdown, BuilderProgressIndicator,
 } from 'components';
-import { sortBoulders, useContextMenu, createTrack, createBoulder, createParking, createWaypoint, createSector, deleteSector, deleteBoulder, deleteParking, deleteWaypoint, toLatLng, useDevice, computeBuilderProgress, encodeUUID, decodeUUID, deleteTrack } from 'helpers';
+import { sortBoulders, useContextMenu, createTrack, createBoulder, createParking, createWaypoint, createSector, deleteSector, deleteBoulder, deleteParking, deleteWaypoint, useDevice, computeBuilderProgress, encodeUUID, decodeUUID, deleteTrack } from 'helpers';
 import { Boulder, GeoCoordinates, Image, MapToolEnum, Parking, Sector, Track, Waypoint, Topo, isUUID, TopoStatus } from 'types';
 import { Quark, QuarkIter, useCreateDerivation, useLazyQuarkyEffect, useQuarkyCallback, useSelectQuark, watchDependencies } from 'helpers/quarky';
 import { useRouter } from 'next/router';
@@ -385,6 +385,10 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                         focusOnOpen: true,
                     }}
                     onBoulderResultSelect={(boulder) => toggleBoulderSelect(boulders.find(b => b().id === boulder.id)()!)}
+                    currentTool={currentTool}
+                    onToolSelect={(tool) => tool === currentTool ? setCurrentTool(undefined) : setCurrentTool(tool)}
+                    // onAddButtonClick={() => console.log("add")}
+                    onPhotoButtonClick={() => setDisplayGeoCamera(true)}
                     draggableCursor={currentTool === 'ROCK' ? 'url(/assets/icons/colored/_rock.svg) 16 32, auto'
                         : currentTool === 'SECTOR' ? 'url(/assets/icons/colored/line-point/_line-point-grey.svg), auto'
                             : currentTool === 'PARKING' ? 'url(/assets/icons/colored/_parking.svg) 16 30, auto'
@@ -415,11 +419,6 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                     selectedParking={selectedParking}
                     onParkingClick={toggleParkingSelect}
                     onParkingContextMenu={displayParkingDropdown}
-                    displayPhotoButton
-                    onPhotoButtonClick={() => {
-                        setCurrentTool('ROCK');
-                        setDisplayGeoCamera(true);
-                    }}
                     onMapZoomChange={closeDropdown}
                     onClick={handleCreateNewMarker}
                     onMouseMove={handleFreePointCreatingSector}
