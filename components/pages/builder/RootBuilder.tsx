@@ -274,10 +274,8 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                     selectedWaypoint.select(createWaypoint(topo, coordinates, img));
                 }
                 else {
-                    console.log('rock !');
                     const sBoulder = selectedBoulder();
                     if (sBoulder) {
-                        console.log("sboulder");
                         const newImages = sBoulder.images;
                         newImages.push(img);
                         selectedBoulder.quark()!.set({
@@ -287,7 +285,6 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                         selectedTrack.select(createTrack(sBoulder, session.id));
                     }
                     else {
-                        console.log("new boulder");
                         const newBoulderQuark = createBoulder(props.topoQuark, coordinates, img);
                         selectedTrack.select(createTrack(newBoulderQuark(), session.id));
                         selectedBoulder.select(newBoulderQuark);

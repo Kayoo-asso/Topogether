@@ -21,6 +21,7 @@ const CAPTURE_OPTIONS = {
         width: { ideal: 4096 },
         height: { ideal: 2160 },
         facingMode: "environment",
+        frameRate: { ideal: 30 },
     },
 };  
 
