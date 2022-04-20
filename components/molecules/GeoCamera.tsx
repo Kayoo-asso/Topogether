@@ -1,5 +1,5 @@
-import React, { useCallback, useRef, useState } from 'react';
-import { distanceLatLng, fromLatLng, useUserMedia } from 'helpers';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { distanceLatLng, fromLatLng, useScreenOrientation, useUserMedia } from 'helpers';
 import { GeoCoordinates, MapToolEnum } from 'types';
 import { useGeolocation } from 'helpers/hooks/useGeolocation';
 import ArrowFull from 'assets/icons/arrow-full.svg';
@@ -27,6 +27,7 @@ export const GeoCamera: React.FC<GeoCameraProps> = ({
     open = true,
     ...props
 }: GeoCameraProps) => {
+    const orientation = useScreenOrientation();
     const [coords, setCoords] = useState({
         lat: 0,
         lng: 0,
@@ -124,7 +125,7 @@ export const GeoCamera: React.FC<GeoCameraProps> = ({
         ? 'parking'
         : props.currentTool === 'WAYPOINT'
             ? 'point de repère'
-            : 'bloc';    
+            : 'bloc';
 
     if (!open) return null;
     return (
@@ -173,7 +174,7 @@ export const GeoCamera: React.FC<GeoCameraProps> = ({
                 autoPlay 
                 playsInline 
                 muted
-                className='h-full max-w-none absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]'
+                className={'absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] ' + (orientation.includes('portrait') ? 'h-full max-w-none' : 'max-h-none w-full')}
             />
             <canvas
                 ref={canvasRef}

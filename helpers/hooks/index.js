@@ -5,3 +5,4 @@ export * from './useUserMedia';
 export * from './useCancelableEffect';
 export * from './useContextMenu';
 export * from './useDevice';
+export * from './useScreenOrientation';
