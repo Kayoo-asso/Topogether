@@ -7,10 +7,10 @@ export function useUserMedia(requestedMedia: MediaStreamConstraints) {
     async function enableStream() {
       try {
         const stream = await navigator.mediaDevices.getUserMedia(requestedMedia);
-        const track = stream.getVideoTracks()[0]
-        console.log(track.getCapabilities());
-        console.log(track.getSettings());
-        alert(JSON.stringify(track.getCapabilities()));
+        // const track = stream.getVideoTracks()[0]
+        // console.log(track.getCapabilities());
+        // console.log(track.getSettings());
+        // alert(JSON.stringify(track.getCapabilities()));
         setMediaStream(stream);
       } catch(err) {
         // Removed for brevity
