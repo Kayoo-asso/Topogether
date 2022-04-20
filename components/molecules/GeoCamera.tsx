@@ -16,7 +16,11 @@ interface GeoCameraProps {
 
 const CAPTURE_OPTIONS = {
     audio: false,
-    video: { facingMode: "environment" },
+    video: { 
+        width: { ideal: 4096 },
+        height: { ideal: 2160 },
+        facingMode: "environment" 
+    },
 };  
 
 export const GeoCamera: React.FC<GeoCameraProps> = ({
@@ -27,7 +31,7 @@ export const GeoCamera: React.FC<GeoCameraProps> = ({
         lat: 0,
         lng: 0,
     });
-    const [distance, setDistance] = useState(0);
+    // const [distance, setDistance] = useState(0);
     const [isCalibrating, setIsCalibrating] = useState(true);
     const [displayToolbar, setDisplayToolbar] = useState(false);
 
@@ -36,10 +40,12 @@ export const GeoCamera: React.FC<GeoCameraProps> = ({
     const [displayItemSelectMenu, setDisplayItemSelectMenu] = useState(false);
     useGeolocation({
         onPosChange: (pos) => {
-            const dist = distanceLatLng(coords.lat, coords.lng, pos.coords.latitude, pos.coords.longitude);
-            setDistance(dist);
-            const calibrating = dist > 5 && process.env.NODE_ENV !== "development";
-            setIsCalibrating(calibrating);
+            if (isCalibrating) {
+                const dist = distanceLatLng(coords.lat, coords.lng, pos.coords.latitude, pos.coords.longitude);
+                // setDistance(dist);
+                const calibrating = dist > 5 && process.env.NODE_ENV !== "development";
+                setIsCalibrating(calibrating);
+            }
             setCoords({
                 lat: pos.coords.latitude,
                 lng: pos.coords.longitude
@@ -177,11 +183,11 @@ export const GeoCamera: React.FC<GeoCameraProps> = ({
             />
 
             <div 
-                className='absolute shadow bg-white rounded-full h-[60px] w-[60px] bottom-[15vh] left-[50%] translate-x-[-50%] z-40'
+                className='absolute shadow bg-white rounded-full h-[60px] w-[60px] bottom-[15vh] left-[50%] translate-x-[-50%] z-40 mb-2'
                 onClick={handleCapture}
             ></div>
             {!isCalibrating &&
-                <div className='text-white ktext-label absolute bottom-[10vh] left-[50%] translate-x-[-50%] z-40'>{coords.lat + ', ' + coords.lng}</div>
+                <div className='text-white ktext-label absolute bottom-[10vh] left-[50%] translate-x-[-50%] z-40'>{coords.lat.toFixed(8) + ', ' + coords.lng.toFixed(8)}</div>
             }
             {isCalibrating &&
                 <div className='h-full w-full absolute flex flex-col justify-center items-center z-50 text-white ktext-base bg-black bg-opacity-90'>
@@ -190,8 +196,8 @@ export const GeoCamera: React.FC<GeoCameraProps> = ({
                         Merci de patienter...
                     </div>
 
-                    <span>{coords.lat + ', ' + coords.lng}</span>
-                    <div>{distance + 'm'}</div>
+                    <span>{coords.lat.toFixed(8) + ', ' + coords.lng.toFixed(8)}</span>
+                    {/* <div>{distance + 'm'}</div> */}
                 </div>
             }
 
