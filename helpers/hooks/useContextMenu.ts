@@ -27,11 +27,11 @@ export function useFirstEffect(effect: EffectCallback) {
     // }
 }
 export function useContextMenu(close: () => void, container?: HTMLElement | null) {
-    const device = useDevice();
+    // const device = useDevice();
 
-    useEffect(() => {
-        if (device === 'mobile') window.navigator.vibrate(200);
-    }, []);
+    // useEffect(() => {
+    //     if (device === 'mobile') window.navigator.vibrate(200);
+    // }, []);
     
     useEffect(() => {
         const onScroll = (e: Event) => e.preventDefault();
