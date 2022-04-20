@@ -17,20 +17,12 @@ interface HeaderDesktopProps {
   backLink: string,
   title: string,
   menuOptions?: DropdownOption[],
-  displayMapTools?: boolean,
-  MapToolsActivated?: boolean,
-  onRockClick?: () => void,
-  onSectorClick?: () => void,
-  onParkingClick?: () => void,
-  onWaypointClick?: () => void,
-  currentTool?: MapToolEnum,
   displayLogin?: boolean,
   displayUser?: boolean,
   children?: ReactNode;
 }
 
 export const HeaderDesktop: React.FC<HeaderDesktopProps> = watchDependencies(({
-  displayMapTools = false,
   displayLogin = false,
   displayUser = true,
   ...props
@@ -68,13 +60,13 @@ export const HeaderDesktop: React.FC<HeaderDesktopProps> = watchDependencies(({
       </Link>
 
       <div
-        className="flex-1 flex flex-row items-center text-white ktext-title whitespace-nowrap cursor-pointer mr-4"
+        className="flex flex-row items-center text-white ktext-title whitespace-nowrap cursor-pointer mr-4"
         onClick={() => setMenuOpen(!menuOpen)}
       >
         {props.title}
         {props.menuOptions && (
           <ArrowFull
-            className="fill-white w-4 h-4 rotate-90 ml-[20px]"
+            className="fill-white w-4 h-4 rotate-90 ml-[20px] mr-10"
           />
         )}
         {props.menuOptions && menuOpen && (
@@ -85,29 +77,10 @@ export const HeaderDesktop: React.FC<HeaderDesktopProps> = watchDependencies(({
           />
         )}
       </div>
+
       <div className="flex-auto flex flex-row items-center">
         {props.children}
       </div>
-      {displayMapTools && (
-        <div className="flex-auto flex flex-row gap-8">
-          <Rock
-            className={`h-7 w-7 cursor-pointer ${!props.MapToolsActivated ? 'stroke-grey-medium' : props.currentTool === 'ROCK' ? 'stroke-main' : 'stroke-white'}`}
-            onClick={props.MapToolsActivated ? props.onRockClick : undefined}
-          />
-          <Sector
-            className={`h-7 w-7 cursor-pointer ${!props.MapToolsActivated ? 'stroke-grey-medium fill-grey-medium' : props.currentTool === 'SECTOR' ? 'stroke-main fill-main' : 'stroke-white fill-white'}`}
-            onClick={props.MapToolsActivated ? props.onSectorClick : undefined}
-          />
-          <Parking
-            className={`h-6 w-6 cursor-pointer ${!props.MapToolsActivated ? 'fill-grey-medium' : props.currentTool === 'PARKING' ? 'fill-second' : 'fill-white'}`}
-            onClick={props.MapToolsActivated ? props.onParkingClick : undefined}
-          />
-          <HelpRound
-            className={`h-6 w-6 cursor-pointer ${!props.MapToolsActivated ? 'fill-grey-medium stroke-grey-medium' : props.currentTool === 'WAYPOINT' ? 'fill-third stroke-third' : 'fill-white stroke-white'}`}
-            onClick={props.MapToolsActivated ? props.onWaypointClick : undefined}
-          />
-        </div>
-      )}
 
       {displayLogin && !user &&
         <Link href="/user/login">

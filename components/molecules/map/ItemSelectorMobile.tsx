@@ -1,11 +1,13 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { MapToolEnum } from 'types';
+import Sector from 'assets/icons/sector.svg';
 import Rock from 'assets/icons/rock.svg';
 import Parking from 'assets/icons/parking.svg';
 import Waypoint from 'assets/icons/help-round.svg';
 // import AddIcon from 'assets/icons/more.svg';
 import CameraIcon from 'assets/icons/camera.svg';
 import { RoundButton } from 'components/atoms';
+import { useDevice } from 'helpers';
 
 interface ItemSelectorMobileProps {
     currentTool?: MapToolEnum,
@@ -15,6 +17,7 @@ interface ItemSelectorMobileProps {
 }
 
 export const ItemSelectorMobile: React.FC<ItemSelectorMobileProps> = (props: ItemSelectorMobileProps) => {
+    const device = useDevice();
 
     return (
         <div className='flex flex-row bg-white shadow rounded-full z-20'>
@@ -24,6 +27,14 @@ export const ItemSelectorMobile: React.FC<ItemSelectorMobileProps> = (props: Ite
             </RoundButton>  */}
 
             <div className='flex flex-row items-center gap-5 bg-white rounded-full h-[60px] px-4'>
+                {device === 'desktop' && 
+                    <Sector
+                        className={'h-6 w-6 cursor-pointer ' + (props.currentTool === "SECTOR" ? 'stroke-main fill-main' : 'stroke-grey-light fill-grey-light')}
+                        onClick={() => {
+                            props.onToolSelect('SECTOR');
+                        }}
+                    />
+                }
                 <Rock
                     className={'h-6 w-6 cursor-pointer ' + (props.currentTool === "ROCK" ? 'stroke-main' : 'stroke-grey-light')}
                     onClick={() => {

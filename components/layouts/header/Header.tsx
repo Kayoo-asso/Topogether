@@ -1,19 +1,11 @@
 import type { DropdownOption } from "components";
 import { ReactNode } from "react";
-import { MapToolEnum } from "types";
 import { HeaderDesktop, HeaderMobile } from ".";
 
 interface HeaderProps {
     backLink: string,
     title: string,
     menuOptions?: DropdownOption[],
-    displayMapTools?: boolean,
-    MapToolsActivated?: boolean,
-    onRockClick?: () => void,
-    onSectorClick?: () => void,
-    onParkingClick?: () => void,
-    onWaypointClick?: () => void,
-    currentTool?: MapToolEnum,
     displayLogin?: boolean,
     children?: ReactNode;
 }

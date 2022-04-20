@@ -308,13 +308,6 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                     { value: 'Valider le topo', action: () => setDisplayModalSubmitTopo(!displayModalSubmitTopo), disabled: progress() !== 100 },
                     { value: 'Supprimer le topo', action: () => setDisplayModalDeleteTopo(!displayModalDeleteTopo) },
                 ]}
-                displayMapTools
-                MapToolsActivated={!selectedTrack()}
-                currentTool={currentTool}
-                onRockClick={() => setCurrentTool(currentTool === 'ROCK' ? undefined : 'ROCK')}
-                onSectorClick={() => setCurrentTool(currentTool === 'SECTOR' ? undefined : 'SECTOR')}
-                onParkingClick={() => setCurrentTool(currentTool === 'PARKING' ? undefined : 'PARKING')}
-                onWaypointClick={() => setCurrentTool(currentTool === 'WAYPOINT' ? undefined : 'WAYPOINT')}
             >
                 <BuilderProgressIndicator
                     topo={props.topoQuark}
