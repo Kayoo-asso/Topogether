@@ -36,14 +36,22 @@ export const GeoCamera: React.FC<GeoCameraProps> = ({
           observe(); // To re-start observing the current target element
         },
     });
+    // console.log("rerender camera");
 
     const [coords, setCoords] = useState({
         lat: 0,
         lng: 0,
     });
     // const [distance, setDistance] = useState(0);
-    const [isCalibrating, setIsCalibrating] = useState(true);
+    const [isCalibrating, setIsCalibrating] = useState(process.env.NODE_ENV !== "development");
     const [displayToolbar, setDisplayToolbar] = useState(false);
+
+    const [test, setTest] = useState<string>();
+    // useEffect(() => {
+    //     if (canvasRef.current)
+    //         console.log("change")
+    //         // canvasRef.current?.toBlob(blob => setTest(blob));
+    // }, [canvasRef.current, containerWidth]);
 
     const [loading, setLoading] = useState(false);
 
@@ -53,7 +61,7 @@ export const GeoCamera: React.FC<GeoCameraProps> = ({
             if (isCalibrating) {
                 const dist = distanceLatLng(coords.lat, coords.lng, pos.coords.latitude, pos.coords.longitude);
                 // setDistance(dist);
-                const calibrating = dist > 5 && process.env.NODE_ENV !== "development";
+                const calibrating = dist > 5;
                 setIsCalibrating(calibrating);
             }
             setCoords({
@@ -82,6 +90,7 @@ export const GeoCamera: React.FC<GeoCameraProps> = ({
         if (videoRef.current) videoRef.current.play();
     }
     const handleCapture = () => {
+        console.log("cature");
         if (canvasRef.current && videoRef.current) {
             const context = canvasRef.current.getContext("2d");
 
@@ -109,6 +118,22 @@ export const GeoCamera: React.FC<GeoCameraProps> = ({
                         canvasCW, // La largeur de l'image dessinée dans le contexte de la balise canvas
                         canvasCH // La hauteur de l'image dessinée dans le contexte de la balise canvas
                     );
+                    // console.log(context.canvas);
+                    // console.log(canvasRef.current);
+                    canvasRef.current?.toBlob(blob => {
+                        if (blob) {
+                            const reader = new FileReader();
+                            reader.readAsDataURL(blob); 
+                            reader.onloadend = function() {
+                                var base64data = reader.result;                
+                                console.log(base64data);
+                                if (base64data) {
+                                    const string64 = base64data as string;
+                                    setTest(string64);
+                                }
+                            }
+                        }
+                    })
                     setDisplayToolbar(true);
                 } catch (err) {
                     console.log(err);
@@ -117,6 +142,7 @@ export const GeoCamera: React.FC<GeoCameraProps> = ({
         }
     }
     const removeCapture = () => {
+        console.log("remove");
         if (canvasRef.current && videoRef.current) {
             const context = canvasRef.current.getContext("2d");
             if (context) {
@@ -187,9 +213,15 @@ export const GeoCamera: React.FC<GeoCameraProps> = ({
             />
             <canvas
                 ref={canvasRef}
-                className='w-full h-full absolute top-0 left-0'
+                className='w-full h-full absolute top-0 left-0 opacity-0'
                 height={containerHeight}
                 width={containerWidth}
+            />
+            <img 
+                src={test}
+                className='w-full h-full absolute top-0 left-0 object-contain'
+                // height={containerHeight}
+                // width={containerWidth}
             />
             <div
                 className='absolute top-0 left-0 bg-main bg-opacity-20'
@@ -198,12 +230,14 @@ export const GeoCamera: React.FC<GeoCameraProps> = ({
                     width: containerWidth
                 }}
             ></div>
-
-            <div 
-                className='absolute shadow bg-white rounded-full h-[60px] w-[60px] bottom-[15vh] left-[50%] translate-x-[-50%] z-40 mb-2'
-                onClick={handleCapture}
-            ></div>
-            {!isCalibrating &&
+            
+            {!displayToolbar &&
+                <div 
+                    className='absolute shadow bg-white rounded-full h-[60px] w-[60px] bottom-[15vh] left-[50%] translate-x-[-50%] z-40 mb-2'
+                    onClick={handleCapture}
+                ></div>
+            }
+            {!isCalibrating && !displayToolbar &&
                 <div className='text-white ktext-label absolute bottom-[10vh] left-[50%] translate-x-[-50%] z-40'>{coords.lat.toFixed(8) + ', ' + coords.lng.toFixed(8)}</div>
             }
             {isCalibrating &&
