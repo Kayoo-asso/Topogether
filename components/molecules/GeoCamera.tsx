@@ -209,7 +209,7 @@ export const GeoCamera: React.FC<GeoCameraProps> = ({
                 width={containerWidth}
             />
             <div
-                className={'absolute top-0 left-0 ' + (displayToolbar ? 'bg-dark' : 'bg-main bg-opacity-20')}
+                className={'absolute top-0 left-0 ' + (displayToolbar ? 'bg-dark' : 'hidden')}
                 style={{
                     height: containerHeight,
                     width: containerWidth

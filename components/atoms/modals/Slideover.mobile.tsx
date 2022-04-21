@@ -59,7 +59,7 @@ export const SlideoverMobile: React.FC<SlideoverMobileProps> = ({
 
   return (
     <div
-      className={`flex flex-col ${transition ? 'transition ease-in-out' : ''} absolute w-full bg-white rounded-t-lg h-[100%] pb-[10%] mb-[5%] z-500 shadow`}
+      className={`flex flex-col ${transition ? 'transition ease-in-out' : ''} absolute w-full bg-white rounded-t-lg h-[100%] pb-[7%] mb-[5%] z-500 shadow`}
       style={{ transform: `translateY(${translateY}%)` }}
     >
       <div
