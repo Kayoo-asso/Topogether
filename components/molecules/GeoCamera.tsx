@@ -137,12 +137,13 @@ export const GeoCamera: React.FC<GeoCameraProps> = ({
     const removeCapture = () => {
         console.log("remove");
         setImg(undefined);
+        setDisplayToolbar(false);
         if (canvasRef.current && videoRef.current) {
+            console.log('del canvas');
             const context = canvasRef.current.getContext("2d");
             if (context) {
                 try {
-                    context.clearRect(0, 0, context.canvas.width, context.canvas.height);
-                    setDisplayToolbar(false);
+                    context.clearRect(0, 0, context.canvas.width, context.canvas.height);              
                 } catch (err) {
                     console.log(err);
                 }
@@ -197,33 +198,31 @@ export const GeoCamera: React.FC<GeoCameraProps> = ({
                 />
             </div>
             
-            {!img &&
-                <video 
-                    ref={videoRef} 
-                    onCanPlay={handleCanPlay} 
-                    autoPlay 
-                    playsInline 
-                    muted
-                    className={'absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] ' + (containerWidth > containerHeight ? 'max-h-none w-full' : 'h-full max-w-none')}
-                />
-            }
+            <video 
+                ref={videoRef} 
+                onCanPlay={handleCanPlay} 
+                autoPlay 
+                playsInline 
+                muted
+                className={'absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] ' + (containerWidth > containerHeight ? 'max-h-none w-full' : 'h-full max-w-none')}
+            />
             <canvas
                 ref={canvasRef}
                 className='w-full h-full absolute top-0 left-0 opacity-0'
                 height={containerHeight}
                 width={containerWidth}
             />
-            <img 
-                src={img}
-                className='w-full h-full absolute top-0 left-0 object-contain'
-            />
             <div
-                className='absolute top-0 left-0 bg-main bg-opacity-20'
+                className={'absolute top-0 left-0 ' + (displayToolbar ? 'bg-dark' : 'bg-main bg-opacity-20')}
                 style={{
                     height: containerHeight,
                     width: containerWidth
                 }}
             ></div>
+            <img 
+                src={img}
+                className={'w-full h-full absolute top-0 left-0 object-contain' + (img ? '' : ' hidden')}
+            />
             
             {!displayToolbar &&
                 <div 
