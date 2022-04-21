@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { distanceLatLng, fromLatLng, useScreenOrientation, useUserMedia } from 'helpers';
+import React, { useCallback, useRef, useState } from 'react';
+import { distanceLatLng, fromLatLng, useUserMedia } from 'helpers';
 import { GeoCoordinates, MapToolEnum } from 'types';
 import { useGeolocation } from 'helpers/hooks/useGeolocation';
 import ArrowFull from 'assets/icons/arrow-full.svg';
@@ -36,7 +36,6 @@ export const GeoCamera: React.FC<GeoCameraProps> = ({
           observe(); // To re-start observing the current target element
         },
     });
-    // console.log("rerender camera");
 
     const [coords, setCoords] = useState({
         lat: 0,
@@ -46,6 +45,7 @@ export const GeoCamera: React.FC<GeoCameraProps> = ({
     const [isCalibrating, setIsCalibrating] = useState(process.env.NODE_ENV !== "development");
     const [displayToolbar, setDisplayToolbar] = useState(false);
     const [img, setImg] = useState<string>();
+    const [blobImg, setBlobImg] = useState<Blob>();
 
     const [loading, setLoading] = useState(false);
 
@@ -84,7 +84,6 @@ export const GeoCamera: React.FC<GeoCameraProps> = ({
         if (videoRef.current) videoRef.current.play();
     }
     const handleCapture = () => {
-        console.log("cature");
         if (canvasRef.current && videoRef.current) {
             const context = canvasRef.current.getContext("2d");
 
@@ -112,10 +111,9 @@ export const GeoCamera: React.FC<GeoCameraProps> = ({
                         canvasCW, // La largeur de l'image dessinée dans le contexte de la balise canvas
                         canvasCH // La hauteur de l'image dessinée dans le contexte de la balise canvas
                     );
-                    // console.log(context.canvas);
-                    // console.log(canvasRef.current);
                     canvasRef.current?.toBlob(blob => {
                         if (blob) {
+                            setBlobImg(blob);
                             const reader = new FileReader();
                             reader.readAsDataURL(blob); 
                             reader.onloadend = function() {
@@ -126,7 +124,7 @@ export const GeoCamera: React.FC<GeoCameraProps> = ({
                                 }
                             }
                         }
-                    })
+                    }, "image/jpeg", 1)
                     setDisplayToolbar(true);
                 } catch (err) {
                     console.log(err);
@@ -135,11 +133,9 @@ export const GeoCamera: React.FC<GeoCameraProps> = ({
         }
     }
     const removeCapture = () => {
-        console.log("remove");
         setImg(undefined);
         setDisplayToolbar(false);
         if (canvasRef.current && videoRef.current) {
-            console.log('del canvas');
             const context = canvasRef.current.getContext("2d");
             if (context) {
                 try {
@@ -254,13 +250,10 @@ export const GeoCamera: React.FC<GeoCameraProps> = ({
                     <div 
                         className='ktext-base-little cursor-pointer'
                         onClick={() => {
-                            canvasRef.current?.toBlob(blob => {
-                                if (blob) {
-                                    const file: File = new File([blob], "CameraPhoto", { type: "image/jpeg" });
-                                    props.onCapture && props.onCapture(file, fromLatLng(coords));
-                                }
-                            }, "image/jpeg", 1);
-                            removeCapture();
+                            if (blobImg) {
+                                const file: File = new File([blobImg], "CameraPhoto", { type: "image/jpeg" });
+                                props.onCapture && props.onCapture(file, fromLatLng(coords));
+                            }
                             setLoading(true);
                         }}
                     >Valider</div>

@@ -5,7 +5,8 @@ import { useContextMenu } from 'helpers';
 import { LightTopo, TopoStatus } from 'types';
 import { UserActionDropdown } from 'components/molecules/cards/UserActionDropdown';
 import { api } from 'helpers/services';
-import { useCreateQuark, watchDependencies } from 'helpers/quarky';
+import { watchDependencies } from 'helpers/quarky';
+import Spinner from 'assets/icons/spinner.svg';
 
 interface RootDashboardProps {
     lightTopos: LightTopo[],
@@ -16,6 +17,8 @@ export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies((pr
     const draftLightTopos = lightTopos.filter((topo) => topo.status === TopoStatus.Draft);
     const submittedLightTopos = lightTopos.filter((topo) => topo.status === TopoStatus.Submitted);
     const validatedLightTopos = lightTopos.filter((topo) => topo.status === TopoStatus.Validated);
+
+    const [loading, setLoading] = useState(false);
 
     const ref = useRef<HTMLDivElement>(null);
     const [topoDropdown, setTopoDropdown] = useState<LightTopo>();
@@ -79,9 +82,7 @@ export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies((pr
               topos={draftLightTopos}
               status={TopoStatus.Draft}
               title={(
-                <div
-                  className="text-second-light ktext-section-title px-4 md:px-8"
-                >
+                <div className="text-second-light ktext-section-title px-4 md:px-8">
                   Brouillons
                 </div>
               )}
@@ -89,6 +90,7 @@ export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies((pr
                 <AddTopoCard />
               }
               onContextMenu={onContextMenu}
+              onClick={(topo) => setLoading(true)}
             />
   
             <TopoCardList
@@ -119,6 +121,15 @@ export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies((pr
             />
           </div>
         </div>
+        
+        {loading && 
+          <div className='flex justify-center items-center w-full h-full bg-dark bg-opacity-80 absolute z-1000'>
+              <Spinner
+                  className="stroke-main w-10 h-10 animate-spin m-2"
+              />
+          </div>
+          }
+
         {topoDropdown && dropdownPosition &&
           <UserActionDropdown 
             position={dropdownPosition} 
