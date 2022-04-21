@@ -45,13 +45,7 @@ export const GeoCamera: React.FC<GeoCameraProps> = ({
     // const [distance, setDistance] = useState(0);
     const [isCalibrating, setIsCalibrating] = useState(process.env.NODE_ENV !== "development");
     const [displayToolbar, setDisplayToolbar] = useState(false);
-
-    const [test, setTest] = useState<string>();
-    // useEffect(() => {
-    //     if (canvasRef.current)
-    //         console.log("change")
-    //         // canvasRef.current?.toBlob(blob => setTest(blob));
-    // }, [canvasRef.current, containerWidth]);
+    const [img, setImg] = useState<string>();
 
     const [loading, setLoading] = useState(false);
 
@@ -126,10 +120,9 @@ export const GeoCamera: React.FC<GeoCameraProps> = ({
                             reader.readAsDataURL(blob); 
                             reader.onloadend = function() {
                                 var base64data = reader.result;                
-                                console.log(base64data);
                                 if (base64data) {
                                     const string64 = base64data as string;
-                                    setTest(string64);
+                                    setImg(string64);
                                 }
                             }
                         }
@@ -143,6 +136,7 @@ export const GeoCamera: React.FC<GeoCameraProps> = ({
     }
     const removeCapture = () => {
         console.log("remove");
+        setImg(undefined);
         if (canvasRef.current && videoRef.current) {
             const context = canvasRef.current.getContext("2d");
             if (context) {
@@ -202,15 +196,17 @@ export const GeoCamera: React.FC<GeoCameraProps> = ({
                     onClick={props.onClose}
                 />
             </div>
-
-            <video 
-                ref={videoRef} 
-                onCanPlay={handleCanPlay} 
-                autoPlay 
-                playsInline 
-                muted
-                className={'absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] ' + (containerWidth > containerHeight ? 'max-h-none w-full' : 'h-full max-w-none')}
-            />
+            
+            {!img &&
+                <video 
+                    ref={videoRef} 
+                    onCanPlay={handleCanPlay} 
+                    autoPlay 
+                    playsInline 
+                    muted
+                    className={'absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] ' + (containerWidth > containerHeight ? 'max-h-none w-full' : 'h-full max-w-none')}
+                />
+            }
             <canvas
                 ref={canvasRef}
                 className='w-full h-full absolute top-0 left-0 opacity-0'
@@ -218,10 +214,8 @@ export const GeoCamera: React.FC<GeoCameraProps> = ({
                 width={containerWidth}
             />
             <img 
-                src={test}
+                src={img}
                 className='w-full h-full absolute top-0 left-0 object-contain'
-                // height={containerHeight}
-                // width={containerWidth}
             />
             <div
                 className='absolute top-0 left-0 bg-main bg-opacity-20'
