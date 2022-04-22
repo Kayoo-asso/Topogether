@@ -2,6 +2,7 @@ import React from 'react';
 import { Quark, watchDependencies } from 'helpers/quarky';
 import { Boulder, Grade, Track } from 'types';
 import ArrowSimple from 'assets/icons/arrow-simple.svg';
+import CrossDelete from 'assets/icons/clear.svg';
 
 interface BoulderItemLeftbarProps {
     boulder: Quark<Boulder>,
@@ -10,6 +11,7 @@ interface BoulderItemLeftbarProps {
     displayed: boolean,
     onArrowClick: () => void,
     onNameClick: () => void,
+    onDeleteClick: () => void,
     onTrackClick: (trackQuark: Quark<Track>) => void,
     displayCreateTrack: boolean,
     onCreateTrack?: () => void,
@@ -49,9 +51,17 @@ export const BoulderItemLeftbar: React.FC<BoulderItemLeftbarProps> = watchDepend
                         onClick={props.onArrowClick}
                     />
                 </div>
-                <div onClick={props.onNameClick}>
+                <div onClick={props.onNameClick} className='flex-1'>
                     <span className={'mr-2' + (props.selected ? ' font-semibold' : '')}>{props.orderIndex}.</span>
                     <span className={(boulder.name.length > 16 ? 'ktext-base-little' : 'ktext-base') + (props.selected ? ' font-semibold' : '')}>{boulder.name}</span>
+                </div>
+                <div 
+                    className='cursor-pointer'
+                    onClick={() => {}}
+                >
+                    <CrossDelete
+                        className={'w-4 h-4 stroke-grey-medium hover:stroke-dark'}
+                    />
                 </div>
             </div>
             

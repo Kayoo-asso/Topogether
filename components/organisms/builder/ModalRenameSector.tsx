@@ -17,6 +17,10 @@ export const ModalRenameSector: React.FC<ModalRenameSectorProps> = (props: Modal
     useEffect(() => {
         if (inputRef.current) {
             inputRef.current.focus();
+            inputRef.current.addEventListener("keydown", handleUserKeyPress);
+            return () => {
+                if (inputRef.current) inputRef.current.removeEventListener("keydown", handleUserKeyPress);
+            };
         }
     }, [inputRef.current]);
 

@@ -329,6 +329,11 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                     onTrackSelect={toggleTrackSelect}
                     onSubmit={() => setDisplayModalSubmitTopo(true)}
                     activateSubmission={progress() === 100}
+                    onRenameSector={(sectorQuark) => {
+                        selectedSector.select(sectorQuark);
+                        setDisplayModalSectorRename(true);
+                    }}
+                    onDeleteBoulder={(boulderQuark) => toDeleteBoulder.select(boulderQuark)}
                 />
                 <Show when={() => [device === 'mobile', displaySectorSlideover] as const}>
                     {() => (

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, SectorListBuilder } from 'components';
 import { Quark, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
-import { Boulder, Topo, Track, UUID } from 'types';
+import { Boulder, Sector, Topo, Track, UUID } from 'types';
 
 interface LeftbarBuilderDesktopProps {
     topoQuark: Quark<Topo>,
@@ -11,6 +11,8 @@ interface LeftbarBuilderDesktopProps {
     onTrackSelect: (trackQuark: Quark<Track>, boulderQuark: Quark<Boulder>) => void,
     activateSubmission: boolean
     onSubmit: () => void,
+    onRenameSector: (sectorQuark: Quark<Sector>) => void,
+    onDeleteBoulder: (boulderQuark: Quark<Boulder>) => void,
 }
 
 export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = watchDependencies((props: LeftbarBuilderDesktopProps) => {
@@ -24,6 +26,8 @@ export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> = watch
                 selectedBoulder={props.selectedBoulder}
                 onBoulderSelect={props.onBoulderSelect}
                 onTrackSelect={props.onTrackSelect}
+                onRenameSector={props.onRenameSector}
+                onDeleteBoulder={props.onDeleteBoulder}
             />
 
             <div className='px-6 text-center'>

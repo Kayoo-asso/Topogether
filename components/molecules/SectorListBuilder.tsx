@@ -2,10 +2,11 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { BoulderItemLeftbar } from 'components/layouts';
 import { arrayMove, createTrack, splitArray } from 'helpers';
 import { Quark, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
-import { Boulder, Topo, Track, UUID } from 'types';
+import { Boulder, Sector, Topo, Track, UUID } from 'types';
 import { DragDropContext, Draggable, Droppable, DropResult } from 'react-beautiful-dnd';
 import { useSession } from 'helpers/services';
 import ArrowSimple from 'assets/icons/arrow-simple.svg';
+import Edit from 'assets/icons/edit.svg';
 
 export interface SectorListBuilderProps {
     topoQuark: Quark<Topo>,
@@ -13,6 +14,8 @@ export interface SectorListBuilderProps {
     selectedBoulder: SelectQuarkNullable<Boulder>,
     onBoulderSelect: (boulderQuark: Quark<Boulder>) => void,
     onTrackSelect: (trackQuark: Quark<Track>, boulderQuark: Quark<Boulder>) => void,
+    onRenameSector: (sectorQuark: Quark<Sector>) => void,
+    onDeleteBoulder: (boulderQuark: Quark<Boulder>) => void,
 }
 
 export const SectorListBuilder: React.FC<SectorListBuilderProps> = watchDependencies((props: SectorListBuilderProps) => {
@@ -82,8 +85,8 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> = watchDependen
                             {(provided) => (
                                 <div className='flex flex-col mb-6' {...provided.droppableProps} ref={provided.innerRef}>
                                     <div className="ktext-label text-grey-medium">Secteur {sectorIndex + 1}</div>
-                                    <div className="ktext-section-title text-main cursor-pointer mb-1 flex flex-row items-center">
-                                        <button className='pr-3'
+                                    <div className="ktext-section-title text-main mb-1 flex flex-row items-center">
+                                        <button className='pr-3 cursor-pointer'
                                             onClick={() => {
                                                 const newDS = [...displayedSectors];
                                                 if (newDS.includes(sector.id)) newDS.splice(newDS.indexOf(sector.id), 1)
@@ -91,12 +94,13 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> = watchDependen
                                                 setDisplayedSectors(newDS);
                                             }}
                                         >
-                                        <ArrowSimple
-                                            className={'w-3 h-3 stroke-main stroke-2 ' + (displayedSectors.includes(sector.id) ? '-rotate-90' : 'rotate-180')}
-                                        />
-
+                                            <ArrowSimple
+                                                className={'w-3 h-3 stroke-main stroke-2 ' + (displayedSectors.includes(sector.id) ? '-rotate-90' : 'rotate-180')}
+                                            />
                                         </button>
+
                                         <div
+                                            className='flex-1'
                                             onClick={() => {
                                                 const newDS = [...displayedSectors];
                                                 if (!newDS.includes(sector.id)) {
@@ -105,7 +109,16 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> = watchDependen
                                                 }
                                             }}
                                         >
-                                            {sector.name}
+                                            <span className='cursor-pointer'>{sector.name}</span>
+                                        </div>
+                                        
+                                        <div
+                                            className='pr-1 cursor-pointer'
+                                            onClick={() => props.onRenameSector(sectorQuark)}
+                                        >
+                                            <Edit
+                                                className={'w-5 h-5 stroke-main'}
+                                            />
                                         </div>
                                     </div>
                                     
@@ -142,6 +155,7 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> = watchDependen
                                                                             setDisplayedBoulders(newDB);
                                                                         }
                                                                     }}
+                                                                    onDeleteClick={() => props.onDeleteBoulder(boulderQuark)}
                                                                     onTrackClick={(trackQuark) => props.onTrackSelect(trackQuark, boulderQuark)}
                                                                     displayCreateTrack
                                                                     onCreateTrack={() => createTrack(boulder, session.id)}
@@ -193,6 +207,7 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> = watchDependen
                                                                     setDisplayedBoulders(newDB);
                                                                 }
                                                             }}
+                                                            onDeleteClick={() => props.onDeleteBoulder(boulderQuark)}
                                                             onTrackClick={(trackQuark) => props.onTrackSelect(trackQuark, boulderQuark)}
                                                             displayCreateTrack
                                                             onCreateTrack={() => createTrack(boulder, session.id)}
