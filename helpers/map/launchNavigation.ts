@@ -1,10 +1,8 @@
-import { DeviceContext } from "helpers/context";
-import { useContext } from "react";
+import { Device } from "helpers/context";
 import { GeoCoordinates } from "types";
 import { toLatLng } from ".";
 
-const launchNavigation = (location: GeoCoordinates, provider: 'apple' | 'google') => {
-  const device = useContext(DeviceContext);
+const launchNavigation = (location: GeoCoordinates, provider: 'apple' | 'google', device: Device) => {
   const { lat, lng } = toLatLng(location);
   if (provider === 'apple') {
     navigator.geolocation.getCurrentPosition((pos) => {

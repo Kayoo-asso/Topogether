@@ -1,4 +1,4 @@
-import { BoulderData, Line, Name, Image, TrackData, Description, Difficulty, ClimbTechniques, SectorData, TopoData, Amenities, TopoStatus, TopoType, RockTypes, TopoAccess, Topo, Parking, StringBetween, Manager, UUID, Reception, Waypoint, Email, User } from 'types';
+import { BoulderData, Name, Image, TrackData, Description, Difficulty, ClimbTechniques, SectorData, TopoData, Amenities, TopoStatus, TopoType, RockTypes, TopoAccess, Topo, Parking, StringBetween, Manager, UUID, Reception, Waypoint, Email, User } from 'types';
 import { v4 as uuid } from 'uuid';
 
 // Note: use UUIDs everywhere for proper testing with the DB
@@ -16,15 +16,15 @@ export const fakeAdmin: User & { password: string } = {
 
 export const images: Image[] = [
     {
-        id: "c242dce4-1c96-412f-30e4-4467f140a500" as UUID,
+        id: "08f005e1-d68d-439c-74c8-129393e10b00" as UUID,
         ratio: 4592/3064
     },
     {
-        id: "dd74e0bb-c9dc-4e0e-02bf-f46a7783c500" as UUID,
+        id: "10412040-08fd-4458-03d0-e05d5a841600" as UUID,
         ratio: 4592/3064
     },
     {
-        id: "4ccb4044-4b25-440d-576a-865dd78a3b00" as UUID,
+        id: "1197c296-0ba4-4274-f559-14978c338100" as UUID,
         ratio: 1334/2000
     },
 ]

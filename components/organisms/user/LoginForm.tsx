@@ -56,7 +56,7 @@ export const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
     return (
         <div className='flex flex-col gap-6 items-center w-full'>
             <div className="ktext-section-title self-start hidden md:block">Se connecter</div>
-            <div className="h-[150px] w-[150px] relative md:hidden">
+            <div className="h-[150px] w-[150px] relative mt-10 md:hidden">
                 <NextImage
                     src={staticUrl.logo_color}
                     priority
@@ -65,6 +65,10 @@ export const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
                     objectFit="contain"
                 />
             </div>
+
+            {router.query.redirectTo &&
+                <div className="ktext-error text-error">Vous devez vous connecter pour accéder à cette page.</div>
+            }
 
             <TextInput 
                 id='email'

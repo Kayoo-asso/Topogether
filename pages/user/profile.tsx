@@ -74,8 +74,8 @@ const ProfilePage: NextPage<ProfileProps> = watchDependencies((props) => {
           backLink="/"
           title="Profile"
       />
-      <div className='h-content md:h-full w-full flex flex-row bg-white overflow-auto'>
 
+      <div className='w-full h-content md:h-full flex flex-row bg-white overflow-auto'>
         <LeftbarDesktop
           currentMenuItem="USER"
         />

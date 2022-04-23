@@ -10,8 +10,8 @@ interface BoulderItemLeftbarProps {
     selected: boolean,
     displayed: boolean,
     onArrowClick: () => void,
-    onNameClick: () => void,
-    onDeleteClick: () => void,
+    onNameClick?: () => void,
+    onDeleteClick?: () => void,
     onTrackClick: (trackQuark: Quark<Track>) => void,
     displayCreateTrack: boolean,
     onCreateTrack?: () => void,
@@ -57,7 +57,7 @@ export const BoulderItemLeftbar: React.FC<BoulderItemLeftbarProps> = watchDepend
                 </div>
                 <div 
                     className='cursor-pointer'
-                    onClick={() => {}}
+                    onClick={props.onDeleteClick}
                 >
                     <CrossDelete
                         className={'w-4 h-4 stroke-grey-medium hover:stroke-dark'}

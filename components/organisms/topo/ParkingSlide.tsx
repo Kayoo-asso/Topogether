@@ -45,12 +45,12 @@ export const ParkingSlide: React.FC<ParkingSlideProps> = watchDependencies(({
                     >{parseFloat(parking.location[1].toFixed(12)) + ',' + parseFloat(parking.location[0].toFixed(12))}</div>
                 </div>
 
-                <div className='flex w-full relative max-h-[200px] h-[60%] md:h-[25%]'>
+                <div className='w-full relative max-h-[200px] h-[60%] md:h-[25%] overflow-hidden'>
                     <CFImage
                         image={parking.image}
                         alt="Parking"
                         sizeHint='50vw'
-                        className="object-contain"
+                        className="object-cover flex"
                     />
                 </div>
 

@@ -40,7 +40,7 @@ export const BoulderSlideagainstDesktop: React.FC<BoulderSlideagainstDesktopProp
                 <>
                     <div className='px-5'>
                         <div className='flex flex-row items-end mb-2'>
-                            <Rock /> 
+                            <Rock className='w-7 h-7 stroke-main' /> 
                             <span className='ktext-big-title ml-3'>{boulder.name}</span>
                         </div>
                         <div 

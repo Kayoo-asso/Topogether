@@ -51,7 +51,7 @@ export const WaypointSlide: React.FC<WaypointSlideProps> = watchDependencies(({
                         image={waypoint.image}
                         alt="Parking"
                         sizeHint='50vw'
-                        className="object-contain"
+                        className="object-cover flex"
                     />
                 </div>
 
