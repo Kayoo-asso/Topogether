@@ -344,6 +344,11 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                             onCreateSector={() => setCurrentTool('SECTOR')}
                             onBoulderSelect={toggleBoulderSelect}
                             onTrackSelect={toggleTrackSelect}
+                            onRenameSector={(sectorQuark) => {
+                                selectedSector.select(sectorQuark);
+                                setDisplayModalSectorRename(true);
+                            }}
+                            onDeleteBoulder={(boulderQuark) => toDeleteBoulder.select(boulderQuark)}
                             onClose={() => setDisplaySectorSlideover(false)}
                         />
                     )}
