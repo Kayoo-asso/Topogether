@@ -22,6 +22,7 @@ const CAPTURE_OPTIONS = {
         height: { ideal: 2160 },
         facingMode: "environment",
         frameRate: { ideal: 30 },
+        zoom: true,
     },
 };  
 
