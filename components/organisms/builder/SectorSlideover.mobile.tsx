@@ -21,7 +21,7 @@ export const SectorSlideoverMobile: React.FC<SectorSlideoverMobileProps> = watch
       initialFull={true}
       onClose={props.onClose}
     >
-      <div className='pt-10 px-3'>
+      <div className='mt-10 px-3 overflow-auto pb-5'>
         <SectorList 
           topoQuark={props.topoQuark}
           boulderOrder={props.boulderOrder}

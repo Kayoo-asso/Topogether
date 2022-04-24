@@ -24,7 +24,7 @@ export const SectorList:React.FC<SectorListProps> = watchDependencies((props: Se
     const [displayedBoulders, setDisplayedBoulders] = useState<Array<UUID>>([]);
 
     return (
-        <div className='h-[95%] overflow-y-auto mb-6 px-4'>
+        <div className='h-[95%] mb-6 px-4'>
             {sectors.quarks().map((sectorQuark, sectorIndex) => {
                 const sector = sectorQuark();
                 const boulderQuarks = sector.boulders.map(id => bouldersIn.find(b => b().id === id)!);

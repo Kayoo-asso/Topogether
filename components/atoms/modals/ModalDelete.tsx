@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button, Modal } from 'components';
 import { staticUrl } from 'helpers';
 import NextImage from 'next/image';
@@ -11,6 +11,17 @@ interface ModalDeleteProps {
 }
 
 export const ModalDelete: React.FC<ModalDeleteProps> = (props: ModalDeleteProps) => {
+
+    useEffect(() => {
+        const handleKeydown = (e: KeyboardEvent) => {
+          if (e.key === 'Enter') {
+            props.onDelete();
+            props.onClose();
+          }
+        }
+        window.addEventListener('keydown', handleKeydown);
+        return () => window.removeEventListener('keydown', handleKeydown);
+      }, []);
 
     return (
         <Modal

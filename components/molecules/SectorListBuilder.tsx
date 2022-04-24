@@ -75,7 +75,7 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> = watchDependen
     if (!session) return <></>;
 
     return (
-        <div className='h-[95%] overflow-y-auto mb-6 px-4'>
+        <div className='mb-6 px-4'>
             {sectors.quarks().map((sectorQuark, sectorIndex) => {
                 const sector = sectorQuark();
                 const boulderQuarks = sector.boulders.map(id => bouldersIn.find(b => b().id === id)!);
@@ -228,4 +228,4 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> = watchDependen
     )
 });
 
-SectorListBuilder.displayName = "Sector List Builder";
+SectorListBuilder.displayName = "SectorList Builder";

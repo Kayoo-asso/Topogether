@@ -112,7 +112,7 @@ export const RootAdmin: React.FC<RootAdminProps> = (props: RootAdminProps) => {
                                     key={topo.id}
                                     topo={topo}
                                     onContextMenu={onContextMenu}
-                                    clickToBuilder={selectedStatus === TopoStatus.Validated ? false : true}
+                                    clickable={selectedStatus === TopoStatus.Validated ? 'topo' : 'builder'}
                                 />
                             ))}
                         </div>

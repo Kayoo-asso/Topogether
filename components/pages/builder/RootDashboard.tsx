@@ -81,14 +81,13 @@ export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies((pr
             <TopoCardList
               topos={draftLightTopos}
               status={TopoStatus.Draft}
+              clickable='builder'
               title={(
                 <div className="text-second-light ktext-section-title px-4 md:px-8">
                   Brouillons
                 </div>
               )}
-              lastCard={
-                <AddTopoCard />
-              }
+              lastCard={<AddTopoCard />}
               onContextMenu={onContextMenu}
               onClick={(topo) => setLoading(true)}
             />
@@ -97,23 +96,19 @@ export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies((pr
               topos={submittedLightTopos}
               status={TopoStatus.Submitted}
               title={(
-                <div
-                  className="text-third-light ktext-section-title px-4 md:px-8"
-                >
+                <div className="text-third-light ktext-section-title px-4 md:px-8">
                   En attente de validation
                 </div>
               )}
-              clickable={false}
               onContextMenu={onContextMenu}
             />
   
             <TopoCardList
               topos={validatedLightTopos}
               status={TopoStatus.Validated}
+              clickable='topo'
               title={(
-                <div
-                  className="text-main ktext-section-title px-4 md:px-8"
-                >
+                <div className="text-main ktext-section-title px-4 md:px-8">
                   Validés
                 </div>
               )}

@@ -11,8 +11,7 @@ import Edit from 'assets/icons/edit.svg';
 
 interface TopoCardProps {
   topo: LightTopo;
-  clickable?: boolean;
-  clickToBuilder?: boolean;
+  clickable?: 'builder' | 'topo';
   onContextMenu: (topo: LightTopo, position: { x: number, y: number }) => void
   onClick?: () => void,
 }
@@ -20,8 +19,7 @@ interface TopoCardProps {
 const iconSize = 'h-4 w-4 md:h-6 md:w-6';
 
 export const TopoCard: React.FC<TopoCardProps> = React.memo(({
-  clickable = true,
-  clickToBuilder = true,
+  clickable = 'topo',
   ...props
 }: TopoCardProps) => {
   const topo = props.topo;
@@ -44,7 +42,7 @@ export const TopoCard: React.FC<TopoCardProps> = React.memo(({
 
   const wrapLink = (elts: ReactElement<any, any>) => {
     if (clickable) {
-      return(<Link href={(clickToBuilder ? `/builder/` : `/topo/`) + `${encodeUUID(props.topo.id)}`}>
+      return(<Link href={`/${clickable}/${encodeUUID(props.topo.id)}`}>
         <a onClick={props.onClick}>{elts}</a>
       </Link>)
     }

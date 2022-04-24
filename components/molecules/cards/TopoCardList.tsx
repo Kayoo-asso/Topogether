@@ -9,15 +9,12 @@ interface TopoCardListProps {
   status: TopoStatus;
   title?: ReactNode;
   lastCard?: ReactNode;
-  clickable?: boolean;
+  clickable?: 'topo' | 'builder';
   onContextMenu: (topo: LightTopo, position: {x: number, y: number}) => void
   onClick?: (topo: LightTopo) => void,
 }
 
-export const TopoCardList: React.FC<TopoCardListProps> = ({
-  clickable = true,
-  ...props
-}: TopoCardListProps) => (
+export const TopoCardList: React.FC<TopoCardListProps> = (props: TopoCardListProps) => (
   <div className="pt-4">
     {props.title}
     <div
@@ -26,17 +23,15 @@ export const TopoCardList: React.FC<TopoCardListProps> = ({
     >
       <div className="min-w-max md:min-w-full flex flex-row md:flex-wrap">
         <div className="md:hidden w-2 h-2" />
-        {props.topos.length === 0 
-        && (props.status === TopoStatus.Submitted
-        || props.status === TopoStatus.Validated)
-        && 
-          <NoTopoCard topoStatus={props.status} />
+        {props.topos.length === 0 && 
+          (props.status === TopoStatus.Submitted || props.status === TopoStatus.Validated) && 
+            <NoTopoCard topoStatus={props.status} />
         }
         {props.topos.map((topo) => (
           <TopoCard 
             key={topo.id}
             topo={topo}
-            clickable={clickable}
+            clickable={props.clickable}
             onContextMenu={props.onContextMenu}
             onClick={() => props.onClick && props.onClick(topo)}
           />
