@@ -113,6 +113,7 @@ export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies((pr
                 </div>
               )}
               onContextMenu={onContextMenu}
+              onClick={(topo) => setLoading(true)}
             />
           </div>
         </div>
@@ -123,7 +124,7 @@ export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies((pr
                   className="stroke-main w-10 h-10 animate-spin m-2"
               />
           </div>
-          }
+        }
 
         {topoDropdown && dropdownPosition &&
           <UserActionDropdown 

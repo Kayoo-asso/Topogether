@@ -7,6 +7,8 @@ export function useUserMedia(requestedMedia: MediaStreamConstraints) {
     async function enableStream() {
       try {
         const stream = await navigator.mediaDevices.getUserMedia(requestedMedia);
+        const devices = await navigator.mediaDevices.enumerateDevices()
+        alert(devices);
         // const track = stream.getVideoTracks()[0]
         // console.log(track.getCapabilities());
         // console.log(track.getSettings());

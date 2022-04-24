@@ -9,6 +9,7 @@ import { api } from 'helpers/services';
 import Edit from 'assets/icons/edit.svg';
 import Recent from 'assets/icons/recent.svg';
 import Checked from 'assets/icons/checked.svg';
+import Spinner from 'assets/icons/spinner.svg';
 
 interface RootAdminProps {
     lightTopos: LightTopo[],
@@ -19,6 +20,8 @@ export const RootAdmin: React.FC<RootAdminProps> = (props: RootAdminProps) => {
 
     const [lightTopos, setLightTopos] = useState(props.lightTopos);
     const toposToDisplay = lightTopos.filter((topo) => topo.status === selectedStatus);
+
+    const [loading, setLoading] = useState(false);
 
     const ref = useRef<HTMLDivElement>(null);
     const [topoDropdown, setTopoDropddown] = useState<LightTopo>();
@@ -113,12 +116,22 @@ export const RootAdmin: React.FC<RootAdminProps> = (props: RootAdminProps) => {
                                     topo={topo}
                                     onContextMenu={onContextMenu}
                                     clickable={selectedStatus === TopoStatus.Validated ? 'topo' : 'builder'}
+                                    onClick={() => setLoading(true)}
                                 />
                             ))}
                         </div>
                     </div>
                 </div>
             </div>
+
+            {loading && 
+                <div className='flex justify-center items-center w-full h-full bg-dark bg-opacity-80 absolute z-1000'>
+                    <Spinner
+                        className="stroke-main w-10 h-10 animate-spin m-2"
+                    />
+                </div>
+            }
+
             {topoDropdown && dropdownPosition &&
                 <AdminActionDropdown 
                     topo={topoDropdown} 
