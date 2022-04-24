@@ -329,7 +329,7 @@ export const MapControl: React.FC<MapControlProps> = watchDependencies(({
                                     draggable={draggableMarkers}
                                     boulder={boulder}
                                     boulderOrder={props.bouldersOrder!}
-                                    selected={props.selectedBoulder ? props.selectedBoulder()?.id === boulder().id : false}
+                                    selectedBoulder={props.selectedBoulder}
                                     topo={props.topo}
                                     onClick={props.onBoulderClick}
                                     onContextMenu={props.onBoulderContextMenu}

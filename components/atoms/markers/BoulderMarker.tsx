@@ -1,12 +1,12 @@
 import React, { MouseEvent, useCallback, useState } from "react";
 import { boulderChanged, markerSize, toLatLng, useMarker } from "helpers";
-import { Quark, useCreateQuark, useQuarkyCallback, watchDependencies } from "helpers/quarky";
+import { Quark, SelectQuarkNullable, useCreateQuark, useQuarkyCallback, watchDependencies } from "helpers/quarky";
 import { Boulder, GeoCoordinates, MarkerEventHandlers, Topo, UUID } from "types";
 
 interface BoulderMarkerProps {
     boulder: Quark<Boulder>,
     boulderOrder: Map<UUID, number>,
-    selected?: boolean,
+    selectedBoulder?: SelectQuarkNullable<Boulder>,
     topo?: Quark<Topo>,
     draggable?: boolean,
     onClick?: (boulder: Quark<Boulder>) => void,
@@ -19,10 +19,11 @@ export const isPointerEvent = (e: MouseEvent | TouchEvent | PointerEvent | Keybo
 
 export const BoulderMarker: React.FC<BoulderMarkerProps> = watchDependencies(({
     draggable = false,
-    selected = false,
     ...props
 }: BoulderMarkerProps) => {
     const boulder = props.boulder();
+    const selectedBoulder = props.selectedBoulder && props.selectedBoulder();
+    const selected = selectedBoulder?.id === boulder.id;
 
     const icon: google.maps.Icon = {
         url: selected ? '/assets/icons/colored/_rock_bold.svg' : '/assets/icons/colored/_rock.svg',
@@ -34,6 +35,7 @@ export const BoulderMarker: React.FC<BoulderMarkerProps> = watchDependencies(({
         icon,
         draggable,
         position: toLatLng(boulder.location),
+        opacity: selectedBoulder ? (selected ? 1 : 0.4) : 1,
         label: {
             text: (props.boulderOrder.get(boulder.id)! + (process.env.NODE_ENV === 'development' ? '. ' + boulder.name : '')).toString(),
             color: '#04D98B',
