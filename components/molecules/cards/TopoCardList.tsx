@@ -8,6 +8,7 @@ interface TopoCardListProps {
   topos: LightTopo[];
   status: TopoStatus;
   title?: ReactNode;
+  noTopoCardContent?: string,
   lastCard?: ReactNode;
   clickable?: 'topo' | 'builder';
   onContextMenu: (topo: LightTopo, position: {x: number, y: number}) => void
@@ -25,7 +26,10 @@ export const TopoCardList: React.FC<TopoCardListProps> = (props: TopoCardListPro
         <div className="md:hidden w-2 h-2" />
         {props.topos.length === 0 && 
           (props.status === TopoStatus.Submitted || props.status === TopoStatus.Validated) && 
-            <NoTopoCard topoStatus={props.status} />
+            <NoTopoCard 
+              topoStatus={props.status}
+              content={props.noTopoCardContent}
+            />
         }
         {props.topos.map((topo) => (
           <TopoCard 

@@ -155,7 +155,7 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies((props: RootNew
               <>
                 <div className="h-[300px] md:h-[350px] w-full overflow-auto mb-10 md:mb-16">
                   <MapControl
-                    zoom={10}
+                    initialZoom={10}
                     centerOnUser
                     creatingTopo={topoQuark}
                     draggableMarkers

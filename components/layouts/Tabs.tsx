@@ -6,6 +6,7 @@ export type TabOption = {
     icon?: SVG,
     iconFill?: boolean,
     iconStroke?: boolean,
+    iconClassName?: string,
     color: BaseColor,
     action: () => void,
 };
@@ -22,23 +23,25 @@ export const Tabs: React.FC<TabsProps> = (props: TabsProps) => {
 
     const getIconClassName = (tab: TabOption, selected: boolean) => {
         let classes = '';
+        if (tab.iconClassName) classes += tab.iconClassName;
+        else classes += 'w-8 h-8 ';
         if (!selected) {
-            if (tab.iconFill) classes += 'fill-grey-light ';
-            if (tab.iconStroke) classes += 'stroke-grey-light ';
+            if (tab.iconFill) classes += ' fill-grey-light ';
+            if (tab.iconStroke) classes += ' stroke-grey-light ';
             return classes;
         }
         switch (tab.color) {
             case 'main':
-                if (tab.iconFill) classes += 'fill-main ';
-                if (tab.iconStroke) classes += 'stroke-main ';
+                if (tab.iconFill) classes += ' fill-main ';
+                if (tab.iconStroke) classes += ' stroke-main ';
                 break;
             case 'second':
-                if (tab.iconFill) classes += 'fill-second ';
-                if (tab.iconStroke) classes += 'stroke-second ';
+                if (tab.iconFill) classes += ' fill-second ';
+                if (tab.iconStroke) classes += ' stroke-second ';
                 break;
             case 'third':
-                if (tab.iconFill) classes += 'fill-third ';
-                if (tab.iconStroke) classes += 'stroke-third ';
+                if (tab.iconFill) classes += ' fill-third ';
+                if (tab.iconStroke) classes += ' stroke-third ';
                 break;
             default:
         }
@@ -92,7 +95,7 @@ export const Tabs: React.FC<TabsProps> = (props: TabsProps) => {
                         role="tab"
                         tabIndex={index === 0 ? 0 : -1}
                     >
-                        {tab.icon && <tab.icon className={`h-8 w-8 ${getIconClassName(tab, selected)}`} />}
+                        {tab.icon && <tab.icon className={`${getIconClassName(tab, selected)}`} />}
                         {tab.label && <div className={`ktext-label ${getLabelClassName(tab, selected)}`}>{tab.label}</div>}
                     </div>
                 );

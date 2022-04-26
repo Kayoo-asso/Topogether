@@ -8,11 +8,10 @@ export function useUserMedia(requestedMedia: MediaStreamConstraints) {
       try {
         const stream = await navigator.mediaDevices.getUserMedia(requestedMedia);
         const track = stream.getVideoTracks()[0];
+        const capabilities = track.getCapabilities();
         const settings = track.getSettings();
-        alert(settings);
-        alert('zoom' in settings);
-        console.log(track.getCapabilities());
-
+        // alert(settings);
+        // alert('zoom' in settings);
         // alert(JSON.stringify(track.getCapabilities()));
         setMediaStream(stream);
       } catch(err) {

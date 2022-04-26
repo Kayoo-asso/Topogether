@@ -55,7 +55,6 @@ export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies((pr
     }, [topoDropdown, lightTopos]);
   
     useContextMenu(() => setDropdownPosition(undefined), ref.current);
-  
     const onContextMenu = useCallback((topo: LightTopo, position: { x: number, y: number }) => {
       setTopoDropdown(topo);
       setDropdownPosition(position);
