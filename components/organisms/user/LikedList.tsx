@@ -52,6 +52,7 @@ export const LikedList: React.FC<LikedListProps> = (props: LikedListProps) => {
             }
 
             {topoDropdown && dropdownPosition &&
+            //TODO : mauvaise position de la dropdown + action pour enlever le like + loading quand on ouvre le topo
                 <LikedActionDropdown 
                     topo={topoDropdown}
                     position={dropdownPosition}

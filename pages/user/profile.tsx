@@ -3,22 +3,36 @@ import type { GetServerSideProps, NextPage } from 'next';
 import { Button, ImageInput, ProfileForm, TextInput, ModalDelete, LikedList, DownloadedList } from 'components';
 import { LeftbarDesktop, Tabs } from 'components/layouts';
 import { useCreateQuark, watchDependencies } from 'helpers/quarky';
-import { Name, User } from 'types';
-import { useAuth } from "helpers/services";
-import { withAuth } from 'helpers/auth';
+import { DBLightTopo, Name, User } from 'types';
+import { api, useAuth } from "helpers/services";
+import { loginRedirect, withAuth } from 'helpers/auth';
 import { Header } from 'components/layouts/header/Header';
 import Profile from 'assets/icons/user-mobile.svg';
 import Heart from 'assets/icons/heart.svg';
 import Download from 'assets/icons/download.svg';
+import { quarkifyLightTopos } from 'helpers';
+import { getServerUser } from 'helpers/getServerUser';
 
 type ProfileProps = {
-  user: User
+  user: User,
+  likedTopos: DBLightTopo[],
 }
 
-export const getServerSideProps: GetServerSideProps<ProfileProps> = withAuth(
-  async () => ({ props: {} }),
-  "/user/profile"
-);
+// export const getServerSideProps: GetServerSideProps<ProfileProps> = withAuth(
+//   async () => {
+//     const likedTopos = await api.getLikedTopos();
+//     return ({ props: { likedTopos } })
+//   }, "/user/profile"
+// );
+
+export const getServerSideProps: GetServerSideProps<ProfileProps> = async ({ req }) => {
+  const session = await getServerUser(req.cookies);
+  if (!session) {
+    return loginRedirect("/user/profile");
+  }
+  const likedTopos = await api.getLikedTopos(session.id);
+  return { props: { likedTopos, user: session } }
+}
 
 const ProfilePage: NextPage<ProfileProps> = watchDependencies((props) => {
   const auth = useAuth();
@@ -130,7 +144,7 @@ const ProfilePage: NextPage<ProfileProps> = watchDependencies((props) => {
 
           {selectedTab === 'LIKED' &&
             <LikedList 
-              likedTopos={[]} //TODO
+              likedTopos={quarkifyLightTopos(props.likedTopos)}
             />
           }
 
