@@ -44,6 +44,16 @@ export class ApiService {
         return data;
     }
 
+    async getLikedTopos(userId: UUID): Promise<DBLightTopo[]> {
+        const { data, error } = await this.client
+            .rpc<DBLightTopo>("liked_topos_of_user", { _user_id: userId });
+        if (error || !data) {
+            console.error("Error getting liked topos:", error);
+            return [];
+        }
+        return data;
+    }
+
     // 0.3 is the default similarity threshold for pg_trgm
     async searchLightTopos(query: string, limit: number, similarity: number = 0.3): Promise<LightTopo[]> {
         const { error, data } = await this.client
