@@ -1,5 +1,0 @@
-- Adapt Supabase Auth setup for offline use (currently: disconnected after long period offline + infinite loops of token refreshes)
-- Wrap the remaining `fetch` calls with `try` / `catch` to handle network errors (example: ImageService)
-- ImageService fails in my Firefox due to CORS
-- Custom `signUp` endpoint that uses `client.auth.api.createUser()` to detect accounts with duplicate emails
-    -> could check for duplicate userNames at the same time

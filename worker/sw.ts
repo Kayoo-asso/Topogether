@@ -10,20 +10,6 @@ import { ExpirationPlugin } from 'workbox-expiration';
 cleanupOutdatedCaches();
 precacheAndRoute(self.__WB_MANIFEST);
 
-// Should add some header information to requests
-const images = new Route(({ request, sameOrigin, url }) => {
-    return request.destination === "image" &&
-        (sameOrigin || url.hostname === "imagedelivery.net" || url.hostname === "maps.gstatic.com")
-}, new CacheFirst({
-    cacheName: 'images',
-    plugins: [
-        new ExpirationPlugin({
-            maxEntries: 100,
-            purgeOnQuotaError: true
-        })
-    ]
-}));
-
 // Only cache scripts from the same origin for now
 const scripts = new Route(({ request, sameOrigin }) => {
     return request.destination === "script" && sameOrigin;
@@ -104,6 +90,38 @@ registerRoute(tiles);
 registerRoute(nextData);
 registerRoute(documents);
 registerRoute(styles);
-registerRoute(images);
 registerRoute(scripts);
 registerRoute(extScripts);
+
+
+const imageCache = new CacheFirst({
+    cacheName: 'images',
+    plugins: [
+        new ExpirationPlugin({
+            maxEntries: 100,
+            purgeOnQuotaError: true
+        })
+    ]
+});
+registerRoute(
+    async ({ request, url, sameOrigin }) => {
+    return request.destination === "image" &&
+        (sameOrigin || url.hostname === "imagedelivery.net" || url.hostname === "maps.gstatic.com")
+    },
+    async (options) => {
+        const { url } = options;
+        if (url.hostname === "imagedelivery.net") {
+            // Expected: ["", ACCOUNT_ID, IMAGE_ID, VARIANT]
+            const parts = url.pathname.split('/');
+            if (parts.length === 4) {
+                const id = parts[2];
+                const local = await caches.open('local_images');
+                const key = new Request(id);
+                const response = await local.match(key);
+                if (response) return response;
+            }
+        }
+
+        return imageCache.handle(options);
+    }
+)

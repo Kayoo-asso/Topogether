@@ -1,6 +1,6 @@
 export const a=null;
 
-//TODO put back this
+//TODO put back this, Jest & Webpack became one unhappy couple for some reason
 // import { Quark, derive, effect, quark, batch, untrack, Signal, selectSignal, selectQuark, Effect, onCleanup } from "helpers/quarky/"
 // import { getConsoleErrorSpy } from "test/utils";
 
