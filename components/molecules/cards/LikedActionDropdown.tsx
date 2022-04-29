@@ -31,4 +31,4 @@ export const LikedActionDropdown: React.FC<LikedActionDropdownProps> = (props: L
     );
 };
 
-LikedActionDropdown.displayName = 'UserActionDropdown';
+LikedActionDropdown.displayName = 'LikedActionDropdown';

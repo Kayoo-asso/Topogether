@@ -7,6 +7,7 @@ import { ModalUnlikeTopo } from '../builder';
 
 interface LikedListProps {
     likedTopos: LightTopo[],
+    onUnlikeTopo: (topo: LightTopo) => void,
 }
 
 export const LikedList: React.FC<LikedListProps> = (props: LikedListProps) => {
@@ -21,18 +22,15 @@ export const LikedList: React.FC<LikedListProps> = (props: LikedListProps) => {
 
     useContextMenu(() => setDropdownPosition(undefined), ref.current);
     const onContextMenu = useCallback((topo: LightTopo, position: { x: number, y: number }) => {
+        // What the fuck happend with position ?? Patch for the moment.
+        const patchedPosition = { x: position.x - 282, y: position.y - 58 }
         setTopoDropdown(topo);
-        setDropdownPosition(position);
+        setDropdownPosition(patchedPosition);
     }, [ref]);
-
-    const unlikeTopo = useCallback(() => {
-        //TODO
-        alert("à venir");
-    }, []);
 
     return (
         <>
-            <div className='flex flex-col gap-6 px-6'>
+            <div ref={ref} className='flex flex-col gap-6'>
                 <TopoCardList 
                     topos={props.likedTopos}
                     status={TopoStatus.Validated}
@@ -51,17 +49,24 @@ export const LikedList: React.FC<LikedListProps> = (props: LikedListProps) => {
                 </div>
             }
 
+            {loading && 
+                <div className='flex justify-center items-center w-full h-full bg-dark bg-opacity-80 absolute z-1000'>
+                    <Spinner
+                        className="stroke-main w-10 h-10 animate-spin m-2"
+                    />
+                </div>
+            }
+
             {topoDropdown && dropdownPosition &&
-            //TODO : mauvaise position de la dropdown + action pour enlever le like + loading quand on ouvre le topo
                 <LikedActionDropdown 
                     topo={topoDropdown}
                     position={dropdownPosition}
                     onUnlikeClick={() => setDisplayModalUnlike(true)}
                 />
             }
-            {displayModalUnlike &&
+            {displayModalUnlike && topoDropdown &&
                 <ModalUnlikeTopo 
-                    onUnlike={unlikeTopo} 
+                    onUnlike={() => props.onUnlikeTopo(topoDropdown)} 
                     onClose={() => setDisplayModalUnlike(false)}    
                 />
             }

@@ -32,7 +32,7 @@ export const DownloadedList: React.FC<DownloadedListProps> = (props: DownloadedL
 
     return (
         <>
-            <div className='flex flex-col gap-6 px-6'>
+            <div className='flex flex-col gap-6'>
                 <TopoCardList 
                     topos={props.downloadedTopos}
                     status={TopoStatus.Validated}

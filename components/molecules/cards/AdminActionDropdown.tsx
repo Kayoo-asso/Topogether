@@ -22,7 +22,6 @@ export const AdminActionDropdown: React.FC<AdminActionDropdownProps> = (props: A
     //TODO
     const contactCreator = useCallback(() => {
         alert("à venir");
-        console.log('Contacting the creator...')
     }, []);
     
     const actions = useMemo<DropdownOption[]>(() => [
@@ -49,4 +48,4 @@ export const AdminActionDropdown: React.FC<AdminActionDropdownProps> = (props: A
     );
 };
 
-AdminActionDropdown.displayName = 'UserActionDropdown';
+AdminActionDropdown.displayName = 'AdminActionDropdown';

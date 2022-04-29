@@ -53,10 +53,10 @@ export const TopoCard: React.FC<TopoCardProps> = React.memo(({
   const [blockClick, setBlockClick] = useState(false);
   const handleMouseContextMenu = useCallback((e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
     if (e.button === 2 && props.onContextMenu) { //Right click
-        e.preventDefault();
-        props.onContextMenu(props.topo, { x: e.pageX, y: e.pageY });
-      }
-    }, [props.topo, props.onContextMenu]);
+      e.preventDefault();
+      props.onContextMenu(props.topo, { x: e.pageX, y: e.pageY });
+    }
+  }, [props.topo, props.onContextMenu]);
   const handleTouchStartContextMenu = useCallback((e: TouchEvent<HTMLDivElement>) => {
     if (props.onContextMenu) {
       setBlockClick(false);

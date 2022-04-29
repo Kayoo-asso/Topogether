@@ -40,7 +40,7 @@ export const RootAdmin: React.FC<RootAdminProps> = (props: RootAdminProps) => {
             validatedTopo.status = TopoStatus.Validated;
             setLightTopos(lightTopos.slice());
           }
-    }, [topoDropdown]);
+    }, [topoDropdown, lightTopos]);
     const unvalidateTopo = useCallback(async() => {
         if (topoDropdown) {
             await api.setTopoStatus(topoDropdown!.id, TopoStatus.Submitted);
@@ -49,7 +49,7 @@ export const RootAdmin: React.FC<RootAdminProps> = (props: RootAdminProps) => {
             unvalidatedTopo.status = TopoStatus.Submitted;
             setLightTopos(lightTopos.slice());
           }
-    }, [topoDropdown]);
+    }, [topoDropdown, lightTopos]);
     const rejectTopo = useCallback(async () => {
         if (topoDropdown) {
             await api.setTopoStatus(topoDropdown!.id, TopoStatus.Draft);
@@ -58,17 +58,16 @@ export const RootAdmin: React.FC<RootAdminProps> = (props: RootAdminProps) => {
             rejectedTopo.status = TopoStatus.Draft;
             setLightTopos(lightTopos.slice());
           }
-    }, [topoDropdown]);
+    }, [topoDropdown, lightTopos]);
     const deleteTopo = useCallback(() => {
         if (topoDropdown) {
             api.deleteTopo(topoDropdown);
             const newLightTopos = lightTopos.filter(lt => lt.id !== topoDropdown.id)!;
             setLightTopos(newLightTopos);
           }
-    }, [topoDropdown]);
+    }, [topoDropdown, lightTopos]);
   
     useContextMenu(() => setDropdownPosition(undefined), ref.current);
-  
     const onContextMenu = useCallback((topo: LightTopo, position: {x: number, y: number}) => {
         setTopoDropddown(topo);
         setDropdownPosition(position);

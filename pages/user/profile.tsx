@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import type { GetServerSideProps, NextPage } from 'next';
 import { Button, ImageInput, ProfileForm, TextInput, ModalDelete, LikedList, DownloadedList } from 'components';
 import { LeftbarDesktop, Tabs } from 'components/layouts';
 import { useCreateQuark, watchDependencies } from 'helpers/quarky';
-import { DBLightTopo, Name, User } from 'types';
+import { DBLightTopo, LightTopo, Name, User } from 'types';
 import { api, useAuth } from "helpers/services";
 import { loginRedirect, withAuth } from 'helpers/auth';
 import { Header } from 'components/layouts/header/Header';
@@ -17,13 +17,6 @@ type ProfileProps = {
   user: User,
   likedTopos: DBLightTopo[],
 }
-
-// export const getServerSideProps: GetServerSideProps<ProfileProps> = withAuth(
-//   async () => {
-//     const likedTopos = await api.getLikedTopos();
-//     return ({ props: { likedTopos } })
-//   }, "/user/profile"
-// );
 
 export const getServerSideProps: GetServerSideProps<ProfileProps> = async ({ req }) => {
   const session = await getServerUser(req.cookies);
@@ -39,12 +32,20 @@ const ProfilePage: NextPage<ProfileProps> = watchDependencies((props) => {
   const userQuark = useCreateQuark(props.user);
   const user = userQuark();
 
-  const [selectedTab, setSelectedTab] = useState<'PROFILE' | 'LIKED' | 'DOWNLOADED'>('PROFILE')
+  const [selectedTab, setSelectedTab] = useState<'PROFILE' | 'LIKED' | 'DOWNLOADED'>('PROFILE');
+  const [likedTopos, setLikedTopos] = useState(props.likedTopos);
 
   const [userNameError, setUserNameError] = useState<string>();
 
+  const unlikeTopo = useCallback((topo: LightTopo) => {
+    if (topo) {
+      topo.liked.set(false);
+      const newLikedTopos = likedTopos.filter(t => t.id !== topo.id);
+      setLikedTopos(newLikedTopos);
+    }
+}, [likedTopos]);
+
   const [displayDeleteAccountModal, setDisplayDeleteAccountModal] = useState(false);
-  
   const deleteAccount = () => {
     alert("à venir"); //TODO
     console.log("delete account");
@@ -62,7 +63,7 @@ const ProfilePage: NextPage<ProfileProps> = watchDependencies((props) => {
           currentMenuItem="USER"
         />
         
-        <div className='flex flex-col relative w-full h-full justify-start md:px-12'>
+        <div className='flex flex-col relative w-full h-full justify-start overflow-x-hidden md:px-12'>
           
           <div className='flex flex-row justify-center md:justify-start rounded-lg px-6 pb-8 md:pb-12 pt-12 md:pt-[16px]'>
             <div className='h-[100px] w-[100px] relative cursor-pointer'>
@@ -107,7 +108,7 @@ const ProfilePage: NextPage<ProfileProps> = watchDependencies((props) => {
             }
           </div>
           
-          <div className='w-full mb-8 md:mb-12'>
+          <div className={'w-full ' + (selectedTab === 'PROFILE' ? 'mb-8 md:mb-12' : '')}>
             <Tabs 
               tabs={[{
                 icon: Profile,
@@ -144,7 +145,8 @@ const ProfilePage: NextPage<ProfileProps> = watchDependencies((props) => {
 
           {selectedTab === 'LIKED' &&
             <LikedList 
-              likedTopos={quarkifyLightTopos(props.likedTopos)}
+              likedTopos={quarkifyLightTopos(likedTopos)}
+              onUnlikeTopo={(topo) => unlikeTopo(topo)}
             />
           }
 
