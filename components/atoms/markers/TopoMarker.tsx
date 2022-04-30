@@ -4,13 +4,11 @@ import { MarkerEventHandlers, TopoType, LightTopo } from "types";
 
 interface TopoMarkerProps {
     topo: LightTopo,
-    draggable?: boolean,
     type?: TopoType,
     onClick?: (topo: LightTopo) => void,
 }
 
 export const TopoMarker: React.FC<TopoMarkerProps> = ({
-    draggable = false,
     type = TopoType.Boulder,
     ...props
 }: TopoMarkerProps) => {
@@ -22,7 +20,7 @@ export const TopoMarker: React.FC<TopoMarkerProps> = ({
 
     const options: google.maps.MarkerOptions = {
         icon,
-        draggable,
+        draggable: false,
         position: toLatLng(props.topo.location),
     };
 

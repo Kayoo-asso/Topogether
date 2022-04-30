@@ -1,9 +1,11 @@
 import React, { useCallback, useState } from 'react';
-import { MapControl, Show, TopoPreview } from 'components';
+import { MapControl, Show, TopoFilterOptions, TopoPreview } from 'components';
 import { HeaderDesktop, LeftbarDesktop } from 'components/layouts';
-import { LightTopo } from 'types';
+import { Amenities, LightTopo } from 'types';
 import { useAuth } from 'helpers/services';
-import { watchDependencies } from 'helpers/quarky';
+import { useCreateQuark, watchDependencies } from 'helpers/quarky';
+import { hasFlag } from 'helpers';
+import { TopoMarker } from 'components/atoms';
 
 interface RootWorldMapProps {
   lightTopos: LightTopo[],
@@ -19,6 +21,41 @@ export const RootWorldMap: React.FC<RootWorldMapProps> = watchDependencies((prop
       setSelectedTopo(undefined);
     } else setSelectedTopo(t);
   }, [selectedTopo]);
+
+  // TODO: Ideally we should have the TopoFilters component right here,
+  // but for now we pass a quark and the domain through MapControl
+  // That way, we can take the TopoMarkers out of MapControl and filter here
+  let maxBoulders = 0;
+  for (const topo of props.lightTopos) {
+    maxBoulders = Math.max(maxBoulders, topo.nbBoulders);
+  }
+  const topoFilterDomain: TopoFilterOptions = {
+    types: [],
+    boulderRange: [0, maxBoulders],
+    gradeRange: [3, 9],
+    adaptedToChildren: false,
+  };
+  const topoFilters = useCreateQuark(topoFilterDomain);
+
+  const filterFn = (topo: LightTopo) => {
+    const options = topoFilters();
+    if (options.types.length && !options.types.includes(topo.type!)) {
+      return false;
+    }
+    if (topo.nbBoulders < options.boulderRange[0] || topo.nbBoulders > options.boulderRange[1]) {
+      return false;
+    }
+    if (options.gradeRange[0] !== 3 || options.gradeRange[1] !== 9) {
+      const foundBouldersAtGrade = Object.entries(topo.grades || {}).some(([grade, count]) =>
+        Number(grade) >= options.gradeRange[0] && Number(grade) <= options.gradeRange[1] && count !== 0);
+  
+      if (!foundBouldersAtGrade) {
+        return false;
+      }
+    }
+    return options.adaptedToChildren ? hasFlag(topo.amenities, Amenities.AdaptedToChildren) : true;
+  }
+
 
   return (
     <>
@@ -42,11 +79,19 @@ export const RootWorldMap: React.FC<RootWorldMapProps> = watchDependencies((prop
             findTopos: true,
             findPlaces: true,
           }}
-          displayTopoFilter
-          onTopoClick={toggleTopoSelect}
+          topoFilters={topoFilters}
+          topoFiltersDomain={topoFilterDomain}
           centerOnUser
           boundsTo={props.lightTopos.map(t => t.location)}
-        />
+        >
+          {props.lightTopos.filter(filterFn).map(topo => 
+            <TopoMarker
+              key={topo.id}
+              topo={topo}
+              onClick={toggleTopoSelect}
+            />
+          )}
+        </MapControl>
 
         <Show when={() => selectedTopo}>
           {(topo) => (

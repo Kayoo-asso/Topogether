@@ -15,7 +15,7 @@ export interface TopoFilterOptions {
 
 interface TopoFiltersProps {
     initialOpen?: boolean,
-    options: TopoFilterOptions,
+    domain: TopoFilterOptions,
     values: TopoFilterOptions,
     onChange: (options: TopoFilterOptions) => void,
 }
@@ -59,7 +59,7 @@ export const TopoFilters: React.FC<TopoFiltersProps> = ({
             <div>
                 <div className='ktext-label text-grey-medium'>Nombre de blocs</div>
                 <SliderInput
-                    domain={props.options.boulderRange}
+                    domain={props.domain.boulderRange}
                     values={props.values.boulderRange}
                     onChange={value => updateTopoFilters('boulderRange', value)}
                 />
@@ -67,7 +67,7 @@ export const TopoFilters: React.FC<TopoFiltersProps> = ({
             <div>
                 <div className='ktext-label text-grey-medium'>Difficultés</div>
                 <GradeSliderInput
-                    values={props.options.gradeRange}
+                    values={props.domain.gradeRange}
                     onChange={range => updateTopoFilters('gradeRange', range)}
                 />
             </div>

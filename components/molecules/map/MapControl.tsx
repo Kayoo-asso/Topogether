@@ -26,8 +26,8 @@ type MapControlProps = React.PropsWithChildren<MapProps & {
     topo?: Quark<Topo>,
     creatingTopo?: Quark<TopoCreate>,
     topos?: LightTopo[],
-    displayTopoFilter?: boolean,
-    onTopoClick?: (topo: LightTopo) => void,
+    topoFilters?: Quark<TopoFilterOptions>,
+    topoFiltersDomain?: TopoFilterOptions,
     boulders?: QuarkIter<Quark<Boulder>>,
     bouldersOrder?: Map<UUID, number>,
     selectedBoulder?: SelectQuarkNullable<Boulder>,
@@ -51,7 +51,6 @@ export const MapControl: React.FC<MapControlProps> = watchDependencies(({
     displaySatelliteButton = true,
     displayUserMarker = true,
     displaySectorButton = false,
-    displayTopoFilter = false,
     displayBoulderFilter = false,
     draggableMarkers = false,
     ...props
@@ -60,7 +59,6 @@ export const MapControl: React.FC<MapControlProps> = watchDependencies(({
 
     const [userPosition, setUserPosition] = useState<google.maps.LatLngLiteral>();
     const [satelliteView, setSatelliteView] = useState(false);
-    const maxBoulders = (props.topos && props.topos.length > 0) ? Math.max(...props.topos.map(t => t.nbBoulders)) : 1;
     useEffect(() => {
         if (mapRef.current && userPosition && props.centerOnUser) mapRef.current.setCenter(userPosition);
     }, [mapRef.current, props.centerOnUser]);
@@ -76,13 +74,6 @@ export const MapControl: React.FC<MapControlProps> = watchDependencies(({
         }
     }, [userPosition, props.centerOnUser, creatingTopoAlreadyPositioned]);
 
-    const defaultTopoFilterOptions: TopoFilterOptions = {
-        types: [],
-        boulderRange: [0, maxBoulders],
-        gradeRange: [3, 9],
-        adaptedToChildren: false,
-    };
-    const [topoFilterOptions, setTopoFilterOptions] = useState<TopoFilterOptions>(defaultTopoFilterOptions);
     const maxTracks = (props.boulders && props.boulders.toArray().length > 0) ? Math.max(...props.boulders.map(b => b().tracks.length).toArray()) : 1;
     const defaultBoulderFilterOptions: BoulderFilterOptions = {
         techniques: ClimbTechniques.None,
@@ -112,24 +103,6 @@ export const MapControl: React.FC<MapControlProps> = watchDependencies(({
             }
         }
         return boulderFilterOptions.mustSee ? boulder.mustSee : true;
-    }
-
-    const topoFilter = (topo: LightTopo) => {
-        if (topoFilterOptions.types.length && !topoFilterOptions.types.includes(topo.type!)) {
-            return false;
-        }
-        if (topo.nbBoulders < topoFilterOptions.boulderRange[0] || topo.nbBoulders > topoFilterOptions.boulderRange[1]) {
-            return false;
-        }
-        if (topoFilterOptions.gradeRange[0] !== 3 || topoFilterOptions.gradeRange[1] !== 9) {
-            const foundBouldersAtGrade = Object.entries(topo.grades || {}).some(([grade, count]) =>
-                Number(grade) >= topoFilterOptions.gradeRange[0] && Number(grade) <= topoFilterOptions.gradeRange[1] && count !== 0);
-
-            if (!foundBouldersAtGrade) {
-                return false;
-            }
-        }
-        return topoFilterOptions.adaptedToChildren ? hasFlag(topo.amenities, Amenities.AdaptedToChildren) : true;
     }
 
     const getBoundsFromSearchbar = (geometry: google.maps.places.PlaceGeometry) => {
@@ -179,12 +152,12 @@ export const MapControl: React.FC<MapControlProps> = watchDependencies(({
                                     {...props.searchbarOptions}
                                 />
                             )}
-                            {displayTopoFilter &&
+                            {props.topoFilters && props.topoFiltersDomain &&
                                 <div className='mt-5'>
                                     <TopoFilters
-                                        options={defaultTopoFilterOptions}
-                                        values={topoFilterOptions}
-                                        onChange={setTopoFilterOptions}
+                                        domain={props.topoFiltersDomain}
+                                        values={props.topoFilters()}
+                                        onChange={props.topoFilters.set}
                                     />
                                 </div>
                             }
@@ -297,18 +270,6 @@ export const MapControl: React.FC<MapControlProps> = watchDependencies(({
                                     selected={props.selectedParking ? props.selectedParking()?.id === parking().id : false}
                                     onClick={props.onParkingClick}
                                     onContextMenu={props.onParkingContextMenu}
-                                />
-                            }
-                        </For>
-                    </Show>
-                    <Show when={() => props.topos}>
-                        <For each={() => props.topos!.filter(t => topoFilter(t))}>
-                            {(topo) =>
-                                <TopoMarker
-                                    key={topo.id}
-                                    draggable={draggableMarkers}
-                                    topo={topo}
-                                    onClick={props.onTopoClick}
                                 />
                             }
                         </For>
