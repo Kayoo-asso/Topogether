@@ -35,7 +35,7 @@ export const CreatingSectorAreaMarker: React.FC<CreatingSectorAreaMarkerProps> =
         }
     }, [setPath]);
 
-    const polyline = usePolyline({
+    usePolyline({
         ...polylineOptions,
         path: path
     }, { onClick });
@@ -88,7 +88,7 @@ export const CreatingSectorAreaMarker: React.FC<CreatingSectorAreaMarkerProps> =
         };
         // We do not need to get a dependency on `path`, which changed all the time
         // `startedDrawing` is sufficient
-    }, [polyline.current, setPath, startedDrawing]);
+    }, [setPath, startedDrawing]);
 
 
     if (path.length > 3)
