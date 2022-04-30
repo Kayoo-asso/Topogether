@@ -16,7 +16,7 @@ import { useFirstRender } from 'helpers/hooks/useFirstRender';
 import { useSession } from "helpers/services";
 import { Header } from 'components/layouts/header/Header';
 import { LeftbarBuilderDesktop } from 'components/layouts/sidebars/LeftbarBuilder.desktop';
-import { isMouseEvent, isPointerEvent, isTouchEvent } from 'components/atoms';
+import { CreatingSectorAreaMarker, isMouseEvent, isPointerEvent, isTouchEvent } from 'components/atoms';
 
 interface RootBuilderProps {
     topoQuark: Quark<Topo>,
@@ -194,50 +194,23 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
         sectorRightClicked.select(sectorQuark);
     }, []);
 
-    const [creatingSector, setCreatingSector] = useState<GeoCoordinates[]>([]);
-    const [freePointCreatingSector, setFreePointCreatingSector] = useState<GeoCoordinates>();
-    const handleCreatingSector = useCallback((location: GeoCoordinates) => {
-        setCreatingSector(creatingSector => [...creatingSector, location]);
-    }, [creatingSector]);
-    const handleFreePointCreatingSector = useCallback((e) => {
-        if (creatingSector && creatingSector.length > 0 && e.latLng) {
-            const loc: GeoCoordinates = [e.latLng.lng(), e.latLng.lat()]
-            setFreePointCreatingSector(loc);
-        }
-    }, [creatingSector]);
-    const handleCreatingSectorPolylineClick = useCallback(() => {
-        if (freePointCreatingSector) handleCreatingSector(freePointCreatingSector);
-    }, [freePointCreatingSector]);
-    const handleCreatingSectorOriginClick = useCallback(() => {
-        if (creatingSector.length > 2) {
-            const newSectorQuark = createSector(props.topoQuark, creatingSector, boulderOrder());
-            selectedSector.select(newSectorQuark);
-            emptyCreatingSector();
-            setDisplayModalSectorRename(true);
-        }
-    }, [creatingSector, props.topoQuark]);
-    const emptyCreatingSector = () => {
-        setCreatingSector([]);
-        setFreePointCreatingSector(undefined);
-    }
     const handleCreateNewMarker = useCallback((e) => {
         if (e.latLng) {
             const loc: GeoCoordinates = [e.latLng.lng(), e.latLng.lat()];
             switch (currentTool) {
                 case 'ROCK': createBoulder(props.topoQuark, loc); break;
-                case 'SECTOR': handleCreatingSector(loc); break;
                 case 'PARKING': createParking(topo, loc); break;
                 case 'WAYPOINT': createWaypoint(topo, loc); break;
                 default: break;
             }
         }
-    }, [topo, currentTool, createBoulder, createParking, createWaypoint, handleCreatingSector]);
+    }, [topo, currentTool, createBoulder, createParking, createWaypoint]);
 
     useEffect(() => {
         const handleKey = (e: KeyboardEvent) => {
-            if (e.code === 'Enter') handleCreatingSectorOriginClick();
-            else if (e.code === 'Escape') {
-                if (creatingSector.length > 0) emptyCreatingSector();
+            if (e.code === 'Escape') {
+                // TODO: change this, we first wish to cancel any ongoing action,
+                // then set the current tool to undefined
                 if (currentTool) setCurrentTool(undefined);
                 else if ((device !== 'mobile' || displayDrawer) && selectedBoulder() && selectedTrack()) return; //If the Drawer is open, Escape should only deactivate Drawer tools
                 else {
@@ -257,7 +230,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
         }
         window.addEventListener('keydown', handleKey);
         return () => window.removeEventListener('keydown', handleKey);
-    }, [creatingSector, currentTool]);
+    }, [currentTool]);
 
     const handleGeoCameraCapture = useCallback(async (file: File, coordinates: GeoCoordinates) => {
         if (file) {
@@ -296,7 +269,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
     }, [topo, currentTool, selectedBoulder()]);
 
     const progress = useCreateDerivation<number>(() => computeBuilderProgress(props.topoQuark), [props.topoQuark]);
-    
+
     return (
         <>
             <Header
@@ -399,8 +372,6 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                                     : ''}
                     draggableMarkers
                     topo={props.topoQuark}
-                    creatingSector={freePointCreatingSector ? creatingSector.concat([freePointCreatingSector]) : creatingSector}
-                    onCreatingSectorOriginClick={handleCreatingSectorOriginClick}
                     sectors={sectors}
                     selectedSector={selectedSector}
                     onSectorClick={(e, sectorQuark) => {
@@ -424,10 +395,18 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                     onParkingContextMenu={displayParkingDropdown}
                     onMapZoomChange={closeDropdown}
                     onClick={handleCreateNewMarker}
-                    onMouseMove={handleFreePointCreatingSector}
-                    onCreatingSectorPolylineClick={handleCreatingSectorPolylineClick}
                     boundsTo={boulders.toArray().map(b => b().location).concat(parkings.toArray().map(p => p().location))}
-                />
+                >
+                    {currentTool === "SECTOR" &&
+                        <CreatingSectorAreaMarker
+                            onComplete={(path) => {
+                                const sector = createSector(props.topoQuark, path, boulderOrder());
+                                selectedSector.select(sector);
+                                setDisplayModalSectorRename(true);
+                            }}
+                        />
+                    }
+                </MapControl>
 
                 <Show when={() => [device !== 'mobile', selectedTrack.quark()] as const}>
                     {([, track]) => (

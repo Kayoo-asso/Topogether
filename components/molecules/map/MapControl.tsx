@@ -9,7 +9,7 @@ import { Quark, QuarkIter, reactKey, SelectQuarkNullable, watchDependencies } fr
 import SectorIcon from 'assets/icons/sector.svg';
 import CenterIcon from 'assets/icons/center.svg';
 
-interface MapControlProps extends MapProps {
+type MapControlProps = React.PropsWithChildren<MapProps & {
     className?: string,
     initialCenter?: Position,
     initialZoom?: number,
@@ -28,9 +28,6 @@ interface MapControlProps extends MapProps {
     topos?: LightTopo[],
     displayTopoFilter?: boolean,
     onTopoClick?: (topo: LightTopo) => void,
-    creatingSector?: GeoCoordinates[],
-    onCreatingSectorOriginClick?: () => void,
-    onCreatingSectorPolylineClick?: () => void,
     sectors?: QuarkIter<Quark<Sector>>,
     selectedSector?: SelectQuarkNullable<Sector>,
     onSectorClick?: (e: PolyMouseEvent, sector: Quark<Sector>) => void,
@@ -55,7 +52,7 @@ interface MapControlProps extends MapProps {
     boundsTo?: GeoCoordinates[],
     onUserMarkerClick?: (pos: google.maps.MapMouseEvent) => void,
     onMapZoomChange?: (zoom: number | undefined) => void,
-}
+}>
 
 export const MapControl: React.FC<MapControlProps> = watchDependencies(({
     initialZoom = 8,
@@ -280,13 +277,9 @@ export const MapControl: React.FC<MapControlProps> = watchDependencies(({
                     }}
                     {...props}
                 >
-                    <Show when={() => props.creatingSector && props.creatingSector.length > 0}>
-                        <CreatingSectorAreaMarker
-                            path={props.creatingSector!}
-                            onPolylineClick={props.onCreatingSectorPolylineClick}
-                            onOriginClick={props.onCreatingSectorOriginClick}
-                        />
-                    </Show>
+                    {props.children}
+
+                    {/* BELOW: all the stuff we need to delete */}
                     <Show when={() => props.sectors}>
                         <For each={() => props.sectors!.toArray()}>
                             {(sector) =>

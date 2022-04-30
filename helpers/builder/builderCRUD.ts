@@ -7,20 +7,18 @@ import { v4 } from "uuid";
 
 export const createSector = (topoQuark: Quark<Topo>, creatingSector: GeoCoordinates[], boulderOrder: Map<UUID, number>) => {
     const topo = topoQuark();
-    if (creatingSector.length > 2) {
-        const newSector: SectorData = {
-            id: v4(),
-            index: topo.sectors.length,
-            name: 'Nouveau secteur' as Name,
-            path: [...creatingSector],
-            boulders: []
-        };
-        topo.sectors.push(newSector);
-        sectorChanged(topoQuark, newSector.id, boulderOrder);
+    const newSector: SectorData = {
+        id: v4(),
+        index: topo.sectors.length,
+        name: 'Nouveau secteur' as Name,
+        path: [...creatingSector],
+        boulders: []
+    };
+    topo.sectors.push(newSector);
+    sectorChanged(topoQuark, newSector.id, boulderOrder);
 
-        const newSectorQuark = topo.sectors.quarkAt(-1);
-        return newSectorQuark;
-    }
+    const newSectorQuark = topo.sectors.quarkAt(-1);
+    return newSectorQuark;
 }
 export const deleteSector = (topoQuark: Quark<Topo>, sector: Quark<SectorData>, selectedSector: SelectQuarkNullable<SectorData>) => {
     const topo = topoQuark();
