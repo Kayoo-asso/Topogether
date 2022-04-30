@@ -16,7 +16,7 @@ import { useFirstRender } from 'helpers/hooks/useFirstRender';
 import { useSession } from "helpers/services";
 import { Header } from 'components/layouts/header/Header';
 import { LeftbarBuilderDesktop } from 'components/layouts/sidebars/LeftbarBuilder.desktop';
-import { CreatingSectorAreaMarker, For, isMouseEvent, isPointerEvent, isTouchEvent, SectorAreaMarker } from 'components/atoms';
+import { CreatingSectorAreaMarker, For, isMouseEvent, isPointerEvent, isTouchEvent, SectorAreaMarker, WaypointMarker } from 'components/atoms';
 
 interface RootBuilderProps {
     topoQuark: Quark<Topo>,
@@ -372,16 +372,11 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                                     : ''}
                     draggableMarkers
                     topo={props.topoQuark}
-                    selectedSector={selectedSector}
                     boulders={boulders}
                     bouldersOrder={boulderOrder()}
                     selectedBoulder={selectedBoulder}
                     onBoulderClick={toggleBoulderSelect}
                     onBoulderContextMenu={displayBoulderDropdown}
-                    waypoints={waypoints}
-                    selectedWaypoint={selectedWaypoint}
-                    onWaypointClick={toggleWaypointSelect}
-                    onWaypointContextMenu={displayWaypointDropdown}
                     parkings={parkings}
                     selectedParking={selectedParking}
                     onParkingClick={toggleParkingSelect}
@@ -404,7 +399,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                             <SectorAreaMarker
                                 key={sector().id}
                                 sector={sector}
-                                selected={selectedSector() === sector()}
+                                selected={selectedSector.quark() === sector}
                                 // TODO: improve the callbacks
                                 // TODO: how to avoid problems with the mousemove event not reaching the map while creating a sector?
                                 onClick={() => selectedSector.select(sector)}
@@ -414,9 +409,18 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                             />
                         }
                     </For>
-                    {sectors.map(s => {
-
-                    })}
+                    <For each={() => waypoints.toArray()}>
+                        {waypoint =>
+                            <WaypointMarker
+                                key={waypoint().id}
+                                waypoint={waypoint}
+                                selected={selectedWaypoint.quark() === waypoint}
+                                onClick={toggleWaypointSelect}
+                                onContextMenu={displayWaypointDropdown}
+                                draggable
+                            />
+                        }
+                    </For>
                 </MapControl>
 
                 <Show when={() => [device !== 'mobile', selectedTrack.quark()] as const}>

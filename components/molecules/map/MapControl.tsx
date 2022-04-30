@@ -28,17 +28,12 @@ type MapControlProps = React.PropsWithChildren<MapProps & {
     topos?: LightTopo[],
     displayTopoFilter?: boolean,
     onTopoClick?: (topo: LightTopo) => void,
-    selectedSector?: SelectQuarkNullable<Sector>,
     boulders?: QuarkIter<Quark<Boulder>>,
     bouldersOrder?: Map<UUID, number>,
     selectedBoulder?: SelectQuarkNullable<Boulder>,
     onBoulderClick?: (boulder: Quark<Boulder>) => void,
     onBoulderContextMenu?: (e: Event, boulder: Quark<Boulder>) => void,
     displayBoulderFilter?: boolean,
-    waypoints?: QuarkIter<Quark<Waypoint>>,
-    selectedWaypoint?: SelectQuarkNullable<Waypoint>,
-    onWaypointClick?: (waypoint: Quark<Waypoint>) => void,
-    onWaypointContextMenu?: (e: Event, waypoint: Quark<Waypoint>) => void,
     parkings?: QuarkIter<Quark<Parking>>,
     selectedParking?: SelectQuarkNullable<Parking>,
     onParkingClick?: (parking: Quark<Parking>) => void,
@@ -276,20 +271,6 @@ export const MapControl: React.FC<MapControlProps> = watchDependencies(({
                     {props.children}
 
                     {/* BELOW: all the stuff we need to delete */}
-                    <Show when={() => props.waypoints}>
-                        <For each={() => props.waypoints!.toArray()}>
-                            {(waypoint) =>
-                                <WaypointMarker
-                                    key={reactKey(waypoint)}
-                                    draggable={draggableMarkers}
-                                    waypoint={waypoint}
-                                    selected={props.selectedWaypoint ? props.selectedWaypoint()?.id === waypoint().id : false}
-                                    onClick={props.onWaypointClick}
-                                    onContextMenu={props.onWaypointContextMenu}
-                                />
-                            }
-                        </For>
-                    </Show>
                     <Show when={() => [props.boulders, props.bouldersOrder] as const}>
                         <For each={() => displayBoulderFilter ? props.boulders!.filter(b => boulderFilter(b())).toArray() : props.boulders!.toArray()}>
                             {(boulder) =>

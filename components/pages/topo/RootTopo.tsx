@@ -14,6 +14,7 @@ import { useFirstRender } from 'helpers/hooks/useFirstRender';
 import { Header } from 'components/layouts/header/Header';
 import { DropdownOption } from 'components/molecules';
 import { useSession } from 'helpers/services';
+import { For, SectorAreaMarker, WaypointMarker } from 'components/atoms';
 
 
 interface RootTopoProps {
@@ -42,7 +43,7 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
   const selectedParking = useSelectQuark<Parking>();
   const selectedWaypoint = useSelectQuark<Waypoint>();
 
-  const toggleSectorSelect = useCallback((e, sectorQuark: Quark<Sector>) => {
+  const toggleSectorSelect = useCallback((sectorQuark: Quark<Sector>) => {
     if (selectedSector()?.id === sectorQuark().id)
       selectedSector.select(undefined);
     else selectedSector.select(sectorQuark);
@@ -215,22 +216,38 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
           }}
           onBoulderResultSelect={(boulder) => toggleBoulderSelect(boulders.find(b => b().id === boulder.id)()!)}
           topo={props.topoQuark}
-          sectors={sectors}
-          selectedSector={selectedSector}
-          onSectorClick={toggleSectorSelect}
           boulders={boulders}
           selectedBoulder={selectedBoulder}
           bouldersOrder={boulderOrder()}
           displayBoulderFilter
-          waypoints={waypoints}
-          selectedWaypoint={selectedWaypoint}
-          onWaypointClick={toggleWaypointSelect}
           onBoulderClick={toggleBoulderSelect}
           parkings={parkings}
           selectedParking={selectedParking}
           onParkingClick={toggleParkingSelect}
           boundsTo={boulders.toArray().map(b => b().location).concat(parkings.toArray().map(p => p().location))}
-        />
+        >
+          {/* TODO: improve the callbacks */}
+          <For each={() => sectors.toArray()}>
+            {sector => 
+              <SectorAreaMarker
+                key={sector().id}
+                sector={sector}
+                selected={selectedSector.quark() === sector}
+                onClick={() => toggleSectorSelect(sector)}
+              />
+            }
+          </For>
+          <For each={() => waypoints.toArray()}>
+            {waypoint => 
+              <WaypointMarker
+                key={waypoint().id}
+                waypoint={waypoint}
+                selected={selectedWaypoint.quark() === waypoint}
+                onClick={() => toggleWaypointSelect(waypoint)}
+              />
+            }
+          </For>
+        </MapControl>
 
         <Show when={() => [device !== 'mobile', selectedTrack.quark()] as const}>
           {([, track]) =>
