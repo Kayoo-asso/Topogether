@@ -1,37 +1,30 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { sectorChanged, toLatLng, usePolygon } from "helpers";
+import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
+import { MapContext, toLatLng, usePolygon } from "helpers";
 import { Quark, useCreateQuark, watchDependencies } from "helpers/quarky";
-import { GeoCoordinates, PolygonEventHandlers, PolyMouseEvent, Sector, Topo, UUID } from "types";
+import { GeoCoordinates, PolygonEventHandlers, PolyMouseEvent, Sector } from "types";
 import { isMouseEvent, isPointerEvent, isTouchEvent } from "./BoulderMarker";
 
 interface SectorAreaMarkerProps {
     sector: Quark<Sector>,
     selected?: boolean,
-    topo?: Quark<Topo>
-    boulderOrder?: Map<UUID, number>,
-    draggable?: boolean,
-    editable?: boolean,
-    clickable?: boolean
     onClick?: (e: PolyMouseEvent) => void,
     onDragStart?: (e: PolyMouseEvent) => void,
-    onMouseMoveOnSector?: (e: any) => void,
+    onDragEnd?: () => void,
     onContextMenu?: (e: Event, sector: Quark<Sector>) => void,
 }
 
 export const SectorAreaMarker: React.FC<SectorAreaMarkerProps> = watchDependencies(({
-    draggable = false,
-    editable = false,
     selected = false,
-    clickable = false,
     ...props
 }: SectorAreaMarkerProps) => {
     const sector = props.sector();
+    const map = useContext(MapContext);
 
     const options: google.maps.PolygonOptions = {
         paths: sector.path.map(p => toLatLng(p)),
-        draggable,
-        editable,
-        clickable,
+        draggable: !!props.onDragEnd,
+        editable: !!props.onDragEnd,
+        clickable: !!props.onClick,
         fillColor: '#04D98B',
         fillOpacity: selected ? 0.3 : 0.2,
         strokeColor: '#04D98B',
@@ -70,22 +63,28 @@ export const SectorAreaMarker: React.FC<SectorAreaMarkerProps> = watchDependenci
         }
     }, [props.sector, timer, props.onContextMenu, props.onClick]);
 
+
     const handlers: PolygonEventHandlers = {
         onDragStart: useCallback((e) => {
             dragging.current = true; 
             if (props.onDragStart) props.onDragStart(e) 
         }, [updatePath]),
+
+        // Hack around Google Maps' weird behavior of not propagating the mouse move to the map
+        onMouseMove: useCallback((e: google.maps.PolyMouseEvent) => {
+            if (!map) return;
+            google.maps.event.trigger(map, 'mousemove', e);
+        }, [map]),
+
         // onClick: useCallback((e: PolyMouseEvent) => {
         //     props.onClick && props.onClick(e)
         // }, [props.sector, props.onClick]),
-        onMouseMove: useCallback((e) => props.onMouseMoveOnSector && props.onMouseMoveOnSector(e), [props.sector, props.onMouseMoveOnSector]),
+        // onMouseMove: useCallback((e: google.maps.PolyMouseEvent) => props.onMouseMoveOnSector && props.onMouseMoveOnSector(e), [props.sector, props.onMouseMoveOnSector]),
         onDragEnd: useCallback(() => { 
             dragging.current = false;
             updatePath(); 
-            if (props.topo && props.boulderOrder) {
-                sectorChanged(props.topo, sector.id, props.boulderOrder);
-            }
-        }, [updatePath, props.topo, sector, props.boulderOrder]),
+            props.onDragEnd && props.onDragEnd();
+        }, [updatePath, sector]),
         onContextMenu: handleContextMenu,
         onMouseDown: handleContextMenu,
         onMouseUp: useCallback((e: google.maps.MapMouseEvent) => {

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Wrapper } from '@googlemaps/react-wrapper';
-import { BoulderMarker, CreatingSectorAreaMarker, For, Map, ParkingMarker, RoundButton, SatelliteButton, SectorAreaMarker, Show, UserMarker, WaypointMarker, TopoMarker, CreatingTopoMarker } from 'components';
+import { BoulderMarker, For, Map, ParkingMarker, RoundButton, SatelliteButton, Show, UserMarker, WaypointMarker, TopoMarker, CreatingTopoMarker } from 'components';
 import { BoulderFilterOptions, BoulderFilters, MapSearchbarProps, TopoFilterOptions, TopoFilters } from '.';
 import { ItemSelectorMobile, MapSearchbar } from '..';
 import { Amenities, Boulder, ClimbTechniques, GeoCoordinates, gradeToLightGrade, LightGrade, LightTopo, MapProps, MapToolEnum, Parking, PolyMouseEvent, Position, Sector, Topo, UUID, Waypoint } from 'types';
@@ -28,11 +28,7 @@ type MapControlProps = React.PropsWithChildren<MapProps & {
     topos?: LightTopo[],
     displayTopoFilter?: boolean,
     onTopoClick?: (topo: LightTopo) => void,
-    sectors?: QuarkIter<Quark<Sector>>,
     selectedSector?: SelectQuarkNullable<Sector>,
-    onSectorClick?: (e: PolyMouseEvent, sector: Quark<Sector>) => void,
-    onSectorDragStart?: (e: PolyMouseEvent, sector: Quark<Sector>) => void,
-    onSectorContextMenu?: (e: Event, boulder: Quark<Sector>) => void,
     boulders?: QuarkIter<Quark<Boulder>>,
     bouldersOrder?: Map<UUID, number>,
     selectedBoulder?: SelectQuarkNullable<Boulder>,
@@ -280,26 +276,6 @@ export const MapControl: React.FC<MapControlProps> = watchDependencies(({
                     {props.children}
 
                     {/* BELOW: all the stuff we need to delete */}
-                    <Show when={() => props.sectors}>
-                        <For each={() => props.sectors!.toArray()}>
-                            {(sector) =>
-                                <SectorAreaMarker
-                                    key={reactKey(sector)}
-                                    sector={sector}
-                                    selected={props.selectedSector ? props.selectedSector()?.id === sector().id : false}
-                                    clickable={!props.draggableCursor}
-                                    topo={props.topo}
-                                    boulderOrder={props.bouldersOrder}
-                                    draggable={draggableMarkers}
-                                    editable={draggableMarkers}
-                                    onClick={(e) => props.onSectorClick && props.onSectorClick(e, sector)}
-                                    onDragStart={(e) => props.onSectorDragStart && props.onSectorDragStart(e, sector)}
-                                    onMouseMoveOnSector={props.onMouseMove}
-                                    onContextMenu={props.onSectorContextMenu}
-                                />
-                            }
-                        </For>
-                    </Show>
                     <Show when={() => props.waypoints}>
                         <For each={() => props.waypoints!.toArray()}>
                             {(waypoint) =>

@@ -7,7 +7,7 @@ import {
     ModalSubmitTopo, ModalDeleteTopo, GeoCamera, Drawer, BoulderBuilderSlideagainstDesktop,
     ParkingBuilderSlide, AccessFormSlideover, WaypointBuilderSlide, ModalRenameSector, ModalDelete, SectorAreaMarkerDropdown, BuilderProgressIndicator,
 } from 'components';
-import { sortBoulders, useContextMenu, createTrack, createBoulder, createParking, createWaypoint, createSector, deleteSector, deleteBoulder, deleteParking, deleteWaypoint, useDevice, computeBuilderProgress, encodeUUID, decodeUUID, deleteTrack } from 'helpers';
+import { sortBoulders, useContextMenu, createTrack, createBoulder, createParking, createWaypoint, createSector, deleteSector, deleteBoulder, deleteParking, deleteWaypoint, useDevice, computeBuilderProgress, encodeUUID, decodeUUID, deleteTrack, sectorChanged } from 'helpers';
 import { Boulder, GeoCoordinates, Image, MapToolEnum, Parking, Sector, Track, Waypoint, Topo, isUUID, TopoStatus } from 'types';
 import { Quark, QuarkIter, useCreateDerivation, useLazyQuarkyEffect, useQuarkyCallback, useSelectQuark, watchDependencies } from 'helpers/quarky';
 import { useRouter } from 'next/router';
@@ -16,7 +16,7 @@ import { useFirstRender } from 'helpers/hooks/useFirstRender';
 import { useSession } from "helpers/services";
 import { Header } from 'components/layouts/header/Header';
 import { LeftbarBuilderDesktop } from 'components/layouts/sidebars/LeftbarBuilder.desktop';
-import { CreatingSectorAreaMarker, isMouseEvent, isPointerEvent, isTouchEvent } from 'components/atoms';
+import { CreatingSectorAreaMarker, For, isMouseEvent, isPointerEvent, isTouchEvent, SectorAreaMarker } from 'components/atoms';
 
 interface RootBuilderProps {
     topoQuark: Quark<Topo>,
@@ -372,14 +372,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                                     : ''}
                     draggableMarkers
                     topo={props.topoQuark}
-                    sectors={sectors}
                     selectedSector={selectedSector}
-                    onSectorClick={(e, sectorQuark) => {
-                        if (currentTool) handleCreateNewMarker(e);
-                        else toggleSectorSelect(sectorQuark);
-                    }}
-                    onSectorContextMenu={displaySectorDropdown}
-                    onSectorDragStart={(e, sectorQuark) => selectedSector.select(sectorQuark)}
                     boulders={boulders}
                     bouldersOrder={boulderOrder()}
                     selectedBoulder={selectedBoulder}
@@ -406,6 +399,24 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                             }}
                         />
                     }
+                    <For each={() => sectors.toArray()}>
+                        {sector =>
+                            <SectorAreaMarker
+                                key={sector().id}
+                                sector={sector}
+                                selected={selectedSector() === sector()}
+                                // TODO: improve the callbacks
+                                // TODO: how to avoid problems with the mousemove event not reaching the map while creating a sector?
+                                onClick={() => selectedSector.select(sector)}
+                                onContextMenu={displaySectorDropdown}
+                                onDragStart={() => selectedSector.select(sector)}
+                                onDragEnd={() => sectorChanged(props.topoQuark, sector().id, boulderOrder())}
+                            />
+                        }
+                    </For>
+                    {sectors.map(s => {
+
+                    })}
                 </MapControl>
 
                 <Show when={() => [device !== 'mobile', selectedTrack.quark()] as const}>
