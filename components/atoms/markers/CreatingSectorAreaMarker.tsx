@@ -53,20 +53,18 @@ export const CreatingSectorAreaMarker: React.FC<CreatingSectorAreaMarkerProps> =
         }
         const clickListener = map.addListener('click', clickHandler);
 
-        let moveListener: google.maps.MapsEventListener;
-        if (startedDrawing) {
-            // Use MapEventHandlers for the type, to avoid mistakes
-            const moveHandler: MapEventHandlers['onMouseMove'] = (e) => {
-                setPath(current => {
-                    const newPath = current.slice();
-
-                    newPath.pop();
-                    if (e.latLng) newPath.push(e.latLng);
-                    return newPath;
-                });
-            }
-            moveListener = map.addListener('mousemove', moveHandler);
+        // Use MapEventHandlers for the type, to avoid mistakes
+        const moveHandler: MapEventHandlers['onMouseMove'] = (e) => {
+            if (!startedDrawing || !e.latLng) return;
+            const latlng = e.latLng;
+            // Replace the last point with the current mouse position
+            setPath(current => {
+                const newPath = current.slice();
+                newPath[newPath.length] = latlng;
+                return newPath;
+            });
         }
+        const moveListener = map.addListener('mousemove', moveHandler);
 
         let keyHandler = (e: KeyboardEvent) => {
             if (e.code === 'Escape') setPath([]);
@@ -83,10 +81,10 @@ export const CreatingSectorAreaMarker: React.FC<CreatingSectorAreaMarkerProps> =
 
         return () => {
             clickListener.remove();
-            if (moveListener) moveListener.remove();
+            moveListener.remove();
             window.removeEventListener('keydown', keyHandler);
         };
-        // We do not need to get a dependency on `path`, which changed all the time
+        // We do not need to get a dependency on `path`, which changes all the time
         // `startedDrawing` is sufficient
     }, [setPath, startedDrawing]);
 
