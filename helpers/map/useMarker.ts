@@ -7,7 +7,6 @@ export function useMarker(options: google.maps.MarkerOptions, handlers: MarkerEv
     // const [marker, setMarker] = useState<google.maps.Marker>();
     const marker = useRef<google.maps.Marker>();
     const map = useContext(MapContext);
-    const listeners = useRef<google.maps.MapsEventListener[]>([]);
 
     useEffect(() => {
         if (!marker.current) {
@@ -34,22 +33,20 @@ export function useMarker(options: google.maps.MarkerOptions, handlers: MarkerEv
     }, [marker.current, options])
 
     useEffect(() => {
+        const listeners: google.maps.MapsEventListener[] = [];
         if (marker.current) {
-            const l = [];
             for (const [eventName, handlerName] of markerEvents) {
                 const handler = handlers[handlerName];
                 if (handler) {
                     const listener = marker.current.addListener(eventName, handler);
-                    l.push(listener) 
+                    listeners.push(listener) 
                 }
             }
-            listeners.current = l;
         }
         return () => {
-            for (const listener of listeners.current) {
+            for (const listener of listeners) {
                 listener.remove();
             }
-            listeners.current = [];
         }
     }, [marker.current, handlers.onAnimationChange, handlers.onClick, handlers.onClickableChange, handlers.onContextMenu, handlers.onCursorChange, handlers.onDoubleClick, handlers.onDrag, handlers.onDragEnd, handlers.onDraggableChange, handlers.onDragStart, handlers.onFlatChange, handlers.onIconChange, handlers.onMouseDown, handlers.onMouseOut, handlers.onMouseOver, handlers.onMouseUp, handlers.onPositionChange, handlers.onShapeChange, handlers.onTitleChange, handlers.onVisibleChange, handlers.onZIndexChange])
 }

@@ -55,12 +55,13 @@ export const CreatingSectorAreaMarker: React.FC<CreatingSectorAreaMarkerProps> =
 
         // Use MapEventHandlers for the type, to avoid mistakes
         const moveHandler: MapEventHandlers['onMouseMove'] = (e) => {
+            console.log("Map mouse move");
             if (!startedDrawing || !e.latLng) return;
             const latlng = e.latLng;
             // Replace the last point with the current mouse position
             setPath(current => {
                 const newPath = current.slice();
-                newPath[newPath.length] = latlng;
+                newPath[newPath.length - 1] = latlng;
                 return newPath;
             });
         }
