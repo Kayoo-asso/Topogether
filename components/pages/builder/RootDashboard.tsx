@@ -146,12 +146,11 @@ export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies((pr
             onClose={() => setDisplayModalUnsubmit(false)}   
           />
         }
-        {displayModalDelete &&
             <ModalDeleteTopo 
                 onDelete={deleteTopo}
-                onClose={() => setDisplayModalDelete(false)}
+                // onClose={() => setDisplayModalDelete(false)}
             />
-        }
+        
       </>
     );
 });

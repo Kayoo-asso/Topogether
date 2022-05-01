@@ -7,7 +7,7 @@ import useModal from 'helpers/hooks/useModal';
 interface ModalDeleteProps {
     children: React.ReactNode,
     className?: string,
-    onClose: () => void,
+    // onClose: () => void,
     onDelete: () => void,
 }
 
