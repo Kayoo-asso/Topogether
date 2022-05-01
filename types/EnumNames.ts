@@ -1,4 +1,7 @@
+import { SelectOption } from "components";
 import { Reception, Difficulty, TopoType, Orientation } from "./Enums";
+
+export type Enum = Difficulty | Orientation | Reception | TopoType;
 
 export const DifficultyName: {[key in Difficulty]: string} = {
   [Difficulty.Good]: 'Facile',
@@ -31,4 +34,11 @@ export const OrientationName: {[key in Orientation]: string} = {
     [Orientation.SW]: 'SW',
     [Orientation.W]: 'W',
     [Orientation.NW]: 'NW',
+}
+
+
+export function selectOptions<T extends Enum>(names: Record<T, string>): [T, string][] {
+  // We're going to handle enum values as raw numbers here, so TypeScript won't be happy.
+  // Basically we convert all numeric keys back to number (since Object.entries only gives us strings)
+  return Object.entries(names).map(([key, value]) => [isNaN(+key) ? key : +key, value] as any);
 }

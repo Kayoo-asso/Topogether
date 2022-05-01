@@ -13,6 +13,7 @@ import { useFirstRender } from 'helpers/hooks/useFirstRender';
 import { resetServerContext } from 'react-beautiful-dnd';
 import { AuthProvider } from 'components/AuthProvider';
 import { parse } from 'cookie';
+import { UserPositionProvider } from 'components/molecules/map/UserPositionProvider';
 
 type CustomProps = {
   session: User | null,
@@ -64,17 +65,19 @@ const CustomApp = ({ Component, pageProps, session, initialDevice }: Props) => {
       </Head>
 
       <AuthProvider initial={session}>
-        <DeviceContext.Provider value={device}>
-          <div ref={observe} className="w-screen h-screen flex items-end flex-col">
-            <div id="content" className="flex-1 w-screen absolute bg-grey-light flex flex-col h-full md:h-screen overflow-hidden">
-              <Component {...pageProps} />
-            </div>
+        <UserPositionProvider>
+          <DeviceContext.Provider value={device}>
+            <div ref={observe} className="w-screen h-screen flex items-end flex-col">
+              <div id="content" className="flex-1 w-screen absolute bg-grey-light flex flex-col h-full md:h-screen overflow-hidden">
+                <Component {...pageProps} />
+              </div>
 
-            <div id="footer" className="bg-dark z-500 absolute bottom-0 h-shell md:hidden">
-              <ShellMobile />
+              <div id="footer" className="bg-dark z-500 absolute bottom-0 h-shell md:hidden">
+                <ShellMobile />
+              </div>
             </div>
-          </div>
-        </DeviceContext.Provider>
+          </DeviceContext.Provider>
+        </UserPositionProvider>
       </AuthProvider>
     </>
   );

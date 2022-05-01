@@ -1,38 +1,15 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useContext } from "react";
 import { useCircle, useMarker } from "helpers";
 import { MarkerEventHandlers } from "types";
-import { useGeolocation } from "helpers/hooks/useGeolocation";
+import { UserPositionContext } from "components/molecules/map/UserPositionProvider";
 
 interface UserMarkerProps {
     onClick?: (e: google.maps.MapMouseEvent) => void,
-    onUserPosChange?: (pos: google.maps.LatLngLiteral) => void,
 }
 
 export const UserMarker: React.FC<UserMarkerProps> = (props: UserMarkerProps) => {
-    const [userPosition, setUserPosition] = useState<google.maps.LatLngLiteral>();
-    const [userPositionAccuracy, setUserPositionAccuracy] = useState<number>();
-    const [userHeading, setUserHeading] = useState<number | null>(null);
-
-    useGeolocation({
-        onPosChange: useCallback((pos) => {
-            const coords = {
-                lat: pos.coords.latitude,
-                lng: pos.coords.longitude
-            };
-            setUserPosition(coords);
-            if (props.onUserPosChange) props.onUserPosChange(coords);
-            setUserPositionAccuracy(pos.coords.accuracy);
-            setUserHeading(pos.coords.heading);
-        }, [props.onUserPosChange]),
-        onError: useCallback((err) => {
-            if (err.code === 3) {
-                console.log('Geolocation timed out!');
-            }
-            else {
-                console.log('Geolocation error:', err);
-            }
-        }, [])
-    });
+    const { position, accuracy, heading } = useContext(UserPositionContext);
+    const center = { lng: position[0], lat: position[1] };
 
     // Main blue dot
     const mainIcon: google.maps.Symbol = {
@@ -47,7 +24,8 @@ export const UserMarker: React.FC<UserMarkerProps> = (props: UserMarkerProps) =>
         icon: mainIcon,
         zIndex: 5,
         cursor: 'inherit',
-        position: userPosition
+        clickable: !!props.onClick,
+        position: center
     };
     const mainHandlers: MarkerEventHandlers = {
         onClick: useCallback((e) => props.onClick && props.onClick(e), [props.onClick]),
@@ -55,13 +33,13 @@ export const UserMarker: React.FC<UserMarkerProps> = (props: UserMarkerProps) =>
     useMarker(mainOptions, mainHandlers);
 
 
-    const circleOptions = {
-        center: userPosition,
-        radius: userPositionAccuracy,
+    const circleOptions: google.maps.CircleOptions = {
+        center,
+        radius: accuracy,
         strokeWeight: 0,
         fillColor: "#4EABFF",
         fillOpacity: 0.3,
-        cursor: 'grab',
+        clickable: !!props.onClick,
         zIndex: 2,
     };
     useCircle(circleOptions);
@@ -69,9 +47,9 @@ export const UserMarker: React.FC<UserMarkerProps> = (props: UserMarkerProps) =>
     // Heading
     const headingIcon: google.maps.Symbol = {
         path: window.google.maps.SymbolPath.BACKWARD_OPEN_ARROW,
-        rotation: userHeading || 0,
-        scale: userHeading ? 12 : 0, 
-        fillOpacity: userHeading ? 0.4 : 0,
+        rotation: heading || 0,
+        scale: heading ? 12 : 0, 
+        fillOpacity: heading ? 0.4 : 0,
         fillColor: '#4EABFF',
         strokeWeight: 0,
     };
@@ -79,7 +57,7 @@ export const UserMarker: React.FC<UserMarkerProps> = (props: UserMarkerProps) =>
         icon: headingIcon,
         zIndex: 3,
         cursor: 'inherit',
-        position: userPosition
+        position: center
     };
     const headingHandlers: MarkerEventHandlers = {}
     useMarker(headingOptions, headingHandlers);

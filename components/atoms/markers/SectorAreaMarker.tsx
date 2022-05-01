@@ -7,7 +7,7 @@ import { isMouseEvent, isPointerEvent, isTouchEvent } from "./BoulderMarker";
 interface SectorAreaMarkerProps {
     sector: Quark<Sector>,
     selected?: boolean,
-    onClick?: (e: PolyMouseEvent) => void,
+    onClick?: (sector: Quark<Sector>) => void,
     onDragStart?: (e: PolyMouseEvent) => void,
     onDragEnd?: () => void,
     onContextMenu?: (e: Event, sector: Quark<Sector>) => void,
@@ -22,7 +22,8 @@ export const SectorAreaMarker: React.FC<SectorAreaMarkerProps> = watchDependenci
 
     const options: google.maps.PolygonOptions = {
         paths: sector.path.map(p => toLatLng(p)),
-        draggable: !!props.onDragEnd,
+        draggable: false,
+        // draggable: !!props.onDragEnd,
         editable: !!props.onDragEnd,
         clickable: !!props.onClick,
         fillColor: '#04D98B',
@@ -73,7 +74,7 @@ export const SectorAreaMarker: React.FC<SectorAreaMarkerProps> = watchDependenci
         // Hack around Google Maps' weird behavior of not propagating the mouse move to the map
         onMouseMove: useCallback((e: google.maps.PolyMouseEvent) => {
             if (!map) return;
-            google.maps.event.trigger(map, 'mousemove', e);
+            // google.maps.event.trigger(map, 'mousemove', e);
         }, [map]),
 
         // onClick: useCallback((e: PolyMouseEvent) => {
@@ -92,7 +93,7 @@ export const SectorAreaMarker: React.FC<SectorAreaMarkerProps> = watchDependenci
             const evt = e.domEvent;   
             if (!dragging.current && !isPressing() && props.onClick) {
                 if (isMouseEvent(evt) && evt.button !== 0) return;
-                props.onClick(e); 
+                props.onClick(props.sector); 
             }
             isPressing.set(false);
         }, [timer, props.sector, props.onClick]),

@@ -16,7 +16,7 @@ import { useFirstRender } from 'helpers/hooks/useFirstRender';
 import { useSession } from "helpers/services";
 import { Header } from 'components/layouts/header/Header';
 import { LeftbarBuilderDesktop } from 'components/layouts/sidebars/LeftbarBuilder.desktop';
-import { CreatingSectorAreaMarker, For, isMouseEvent, isPointerEvent, isTouchEvent, SectorAreaMarker, WaypointMarker } from 'components/atoms';
+import { CreatingSectorAreaMarker, For, isMouseEvent, isPointerEvent, isTouchEvent, ParkingMarker, SectorAreaMarker, WaypointMarker } from 'components/atoms';
 
 interface RootBuilderProps {
     topoQuark: Quark<Topo>,
@@ -377,10 +377,6 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                     selectedBoulder={selectedBoulder}
                     onBoulderClick={toggleBoulderSelect}
                     onBoulderContextMenu={displayBoulderDropdown}
-                    parkings={parkings}
-                    selectedParking={selectedParking}
-                    onParkingClick={toggleParkingSelect}
-                    onParkingContextMenu={displayParkingDropdown}
                     onMapZoomChange={closeDropdown}
                     onClick={handleCreateNewMarker}
                     boundsTo={boulders.toArray().map(b => b().location).concat(parkings.toArray().map(p => p().location))}
@@ -402,7 +398,9 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                                 selected={selectedSector.quark() === sector}
                                 // TODO: improve the callbacks
                                 // TODO: how to avoid problems with the mousemove event not reaching the map while creating a sector?
-                                onClick={() => selectedSector.select(sector)}
+
+                                // Avoid the sector area intercepting clicks if another tool is selected
+                                onClick={currentTool ? undefined : selectedSector.select}
                                 onContextMenu={displaySectorDropdown}
                                 onDragStart={() => selectedSector.select(sector)}
                                 onDragEnd={() => sectorChanged(props.topoQuark, sector().id, boulderOrder())}
@@ -417,6 +415,18 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                                 selected={selectedWaypoint.quark() === waypoint}
                                 onClick={toggleWaypointSelect}
                                 onContextMenu={displayWaypointDropdown}
+                                draggable
+                            />
+                        }
+                    </For>
+                    <For each={() => parkings.toArray()}>
+                        {parking => 
+                            <ParkingMarker
+                                key={parking().id}
+                                parking={parking}
+                                selected={selectedParking.quark() === parking}
+                                onClick={toggleParkingSelect}
+                                onContextMenu={displayParkingDropdown}
                                 draggable
                             />
                         }

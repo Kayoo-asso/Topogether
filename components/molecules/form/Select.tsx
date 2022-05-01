@@ -4,27 +4,31 @@ import React, {
 import { TextInput } from './TextInput';
 import ArrowSimple from 'assets/icons/arrow-simple.svg';
 
-interface SelectProps {
+export type SelectOption<T> = [value: T, label: string];
+export type SelectValue = number | string | symbol;
+export type SelectLabels<V extends SelectValue> = Record<V, string>;
+
+interface SelectProps<T> {
     id: string;
     label: string;
     wrapperClassname?: string;
-    names: { [key in string]: string }
+    options: SelectOption<T>[],
     big?: boolean,
     white?: boolean,
-    value?: any;
+    value?: T;
     error?: string,
-    onChange: (value: any) => void;
+    onChange: (value: T) => void;
 }
 
-export const Select: React.FC<SelectProps> = ({
+export function Select<T>({
     big = false,
     white = false,
     ...props
-}: SelectProps) => {
+}: SelectProps<T>) {
     const ref = useRef<HTMLInputElement>(null);
     const [isOpen, setIsOpen] = useState(false);
+    const selected = props.options.find(x => x[0] === props.value);
 
-    const selectedOption = props.names[props.value];
     return (
         <div
             id={props.id}
@@ -38,7 +42,7 @@ export const Select: React.FC<SelectProps> = ({
                 id={`${props.id}-input`}
                 big={big}
                 white={white}
-                value={selectedOption || ''}
+                value={selected ? selected[1] : ''}
                 error={props.error}
                 readOnly
                 pointer
@@ -51,10 +55,10 @@ export const Select: React.FC<SelectProps> = ({
             />
             {isOpen && (
                 <div className='pl-4 py-2 bg-white rounded-b h-[320px] absolute overflow-y-auto overflow-x-none z-100 w-full right-0 shadow'>
-                    {Object.entries(props.names).map(([value, label]) => (
+                    {props.options.map(([value, label]) => (
                         <div
                             className="py-4 text-dark ktext-base cursor-pointer flex flex-row items-center"
-                            key={value}
+                            key={label}
                             onKeyDown={() => {
                                 props.onChange(value);
                             }}

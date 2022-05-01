@@ -3,7 +3,7 @@ import { Button, Checkbox, Select, TextArea, TextInput } from 'components';
 import { Quark, watchDependencies } from 'helpers/quarky';
 import { ClimbTechniques, Description, Name, Track } from 'types';
 import { ClimbTechniquesName, toggleFlag, useDevice } from 'helpers';
-import { ReceptionName } from 'types/EnumNames';
+import { ReceptionName, selectOptions } from 'types/EnumNames';
 import { BitflagMultipleSelect } from 'components/molecules/form/BitflagMultipleSelect';
 
 interface TrackFormProps {
@@ -83,7 +83,7 @@ export const TrackForm: React.FC<TrackFormProps> = watchDependencies((props: Tra
                 id='track-receptions'
                 label='Réception'
                 //TODO FINISH
-                names={ReceptionName}
+                options={selectOptions(ReceptionName)}
                 value={track.reception}
                 onChange={(value) => props.track.set({
                     ...track,

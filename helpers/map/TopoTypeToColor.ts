@@ -7,6 +7,6 @@ export const TopoTypeToColor = (type: TopoType | undefined) => {
         case TopoType.DeepWater: return 'fill-grade-5';
         case TopoType.Multipitch: return 'fill-third-light';
         case TopoType.Artificial: return 'fill-dark';
-        default: return 'grey-light';
+        default: return 'fill-grey-light';
     }
 }

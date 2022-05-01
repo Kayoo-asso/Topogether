@@ -74,14 +74,12 @@ export const RootWorldMap: React.FC<RootWorldMapProps> = watchDependencies((prop
 
         <MapControl
           initialZoom={5}
-          topos={props.lightTopos}
           searchbarOptions={{
             findTopos: true,
             findPlaces: true,
           }}
           topoFilters={topoFilters}
           topoFiltersDomain={topoFilterDomain}
-          centerOnUser
           boundsTo={props.lightTopos.map(t => t.location)}
         >
           {props.lightTopos.filter(filterFn).map(topo => 

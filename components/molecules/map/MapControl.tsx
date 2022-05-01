@@ -1,15 +1,16 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Wrapper } from '@googlemaps/react-wrapper';
-import { BoulderMarker, For, Map, ParkingMarker, RoundButton, SatelliteButton, Show, UserMarker, WaypointMarker, TopoMarker, CreatingTopoMarker } from 'components';
+import { BoulderMarker, For, Map, RoundButton, SatelliteButton, Show, UserMarker } from 'components';
 import { BoulderFilterOptions, BoulderFilters, MapSearchbarProps, TopoFilterOptions, TopoFilters } from '.';
 import { ItemSelectorMobile, MapSearchbar } from '..';
-import { Amenities, Boulder, ClimbTechniques, GeoCoordinates, gradeToLightGrade, LightGrade, LightTopo, MapProps, MapToolEnum, Parking, PolyMouseEvent, Position, Sector, Topo, UUID, Waypoint } from 'types';
-import { fontainebleauLocation, fromLatLngLiteralFn, googleGetPlace, hasFlag, hasSomeFlags, mergeFlags, toLatLng, TopoCreate } from 'helpers';
+import { Boulder, ClimbTechniques, GeoCoordinates, gradeToLightGrade, LightGrade, MapProps, MapToolEnum, Position, Topo, UUID } from 'types';
+import { googleGetPlace, hasSomeFlags, mergeFlags, toLatLng } from 'helpers';
 import { Quark, QuarkIter, reactKey, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
 import SectorIcon from 'assets/icons/sector.svg';
 import CenterIcon from 'assets/icons/center.svg';
+import { UserPositionContext } from './UserPositionProvider';
 
-type MapControlProps = React.PropsWithChildren<MapProps & {
+type MapControlProps = React.PropsWithChildren<Omit<MapProps, 'center' | 'zoom'> & {
     className?: string,
     initialCenter?: Position,
     initialZoom?: number,
@@ -24,8 +25,6 @@ type MapControlProps = React.PropsWithChildren<MapProps & {
     searchbarOptions?: MapSearchbarProps,
     onBoulderResultSelect?: (boulder: Boulder) => void,
     topo?: Quark<Topo>,
-    creatingTopo?: Quark<TopoCreate>,
-    topos?: LightTopo[],
     topoFilters?: Quark<TopoFilterOptions>,
     topoFiltersDomain?: TopoFilterOptions,
     boulders?: QuarkIter<Quark<Boulder>>,
@@ -34,12 +33,7 @@ type MapControlProps = React.PropsWithChildren<MapProps & {
     onBoulderClick?: (boulder: Quark<Boulder>) => void,
     onBoulderContextMenu?: (e: Event, boulder: Quark<Boulder>) => void,
     displayBoulderFilter?: boolean,
-    parkings?: QuarkIter<Quark<Parking>>,
-    selectedParking?: SelectQuarkNullable<Parking>,
-    onParkingClick?: (parking: Quark<Parking>) => void,
-    onParkingContextMenu?: (e: Event, parking: Quark<Parking>) => void,
     draggableMarkers?: boolean,
-    centerOnUser?: boolean
     boundsTo?: GeoCoordinates[],
     onUserMarkerClick?: (pos: google.maps.MapMouseEvent) => void,
     onMapZoomChange?: (zoom: number | undefined) => void,
@@ -56,23 +50,9 @@ export const MapControl: React.FC<MapControlProps> = watchDependencies(({
     ...props
 }: MapControlProps) => {
     const mapRef = useRef<google.maps.Map>(null);
+    const { position } = useContext(UserPositionContext);
 
-    const [userPosition, setUserPosition] = useState<google.maps.LatLngLiteral>();
     const [satelliteView, setSatelliteView] = useState(false);
-    useEffect(() => {
-        if (mapRef.current && userPosition && props.centerOnUser) mapRef.current.setCenter(userPosition);
-    }, [mapRef.current, props.centerOnUser]);
-
-    const [creatingTopoAlreadyPositioned, setCreatingTopoAlreadyPositioned] = useState(false);
-    useEffect(() => {
-        if (props.centerOnUser && userPosition && props.creatingTopo && !creatingTopoAlreadyPositioned) {
-            props.creatingTopo.set({
-                ...props.creatingTopo(),
-                location: fromLatLngLiteralFn(userPosition),
-            });
-            setCreatingTopoAlreadyPositioned(true);
-        }
-    }, [userPosition, props.centerOnUser, creatingTopoAlreadyPositioned]);
 
     const maxTracks = (props.boulders && props.boulders.toArray().length > 0) ? Math.max(...props.boulders.map(b => b().tracks.length).toArray()) : 1;
     const defaultBoulderFilterOptions: BoulderFilterOptions = {
@@ -124,14 +104,15 @@ export const MapControl: React.FC<MapControlProps> = watchDependencies(({
         }
     }
     useEffect(() => {
-        if (mapRef.current && props.initialCenter && !props.center) {
-            mapRef.current.setCenter(toLatLng(props.initialCenter));
+        const initialCenter = props.initialCenter || position;
+        if (mapRef.current) {
+            mapRef.current.setCenter(toLatLng(initialCenter));
         }
     // this ensures the position is compared element by element
     }, [...(props.initialCenter || [undefined, undefined])])
 
     useEffect(() => {
-        if(mapRef.current && !props.zoom) mapRef.current.setZoom(initialZoom);
+        if(mapRef.current) mapRef.current.setZoom(initialZoom);
     }, [initialZoom])
 
     return (
@@ -202,10 +183,10 @@ export const MapControl: React.FC<MapControlProps> = watchDependencies(({
                             }
                         </div>
                         <div className='flex items-center'>
-                            {displayUserMarker && userPosition && (
+                            {displayUserMarker && (
                                 <RoundButton
                                     onClick={() => {
-                                        mapRef.current?.panTo(userPosition);
+                                        mapRef.current?.panTo(toLatLng(position));
                                     }}
                                 >
                                     <CenterIcon className='h-7 w-7 stroke-main fill-main' />
@@ -233,11 +214,11 @@ export const MapControl: React.FC<MapControlProps> = watchDependencies(({
                                 clearTimeout(boundTimer);
                             }, 1);
                         }
-                        else if (!props.center) {
-                            const initialCenter = props.initialCenter || fontainebleauLocation;
+                        else {
+                            const initialCenter = props.initialCenter || position;
                             map.setCenter(toLatLng(initialCenter));
                         }
-                        if (!props.zoom) map.setZoom(initialZoom);
+                        map.setZoom(initialZoom);
                     }}
                     {...props}
                 >
@@ -260,31 +241,8 @@ export const MapControl: React.FC<MapControlProps> = watchDependencies(({
                             }
                         </For>
                     </Show>
-                    <Show when={() => props.parkings}>
-                        <For each={() => props.parkings!.toArray()}>
-                            {(parking) =>
-                                <ParkingMarker
-                                    key={reactKey(parking)}
-                                    draggable={draggableMarkers}
-                                    parking={parking}
-                                    selected={props.selectedParking ? props.selectedParking()?.id === parking().id : false}
-                                    onClick={props.onParkingClick}
-                                    onContextMenu={props.onParkingContextMenu}
-                                />
-                            }
-                        </For>
-                    </Show>
-                    <Show when={() => props.creatingTopo}>
-                        {(creatingTopo) =>
-                            <CreatingTopoMarker
-                                draggable={draggableMarkers}
-                                topo={creatingTopo}
-                            />
-                        }
-                    </Show>
                     <Show when={() => displayUserMarker}>
                         <UserMarker
-                            onUserPosChange={setUserPosition}
                             onClick={props.onUserMarkerClick}
                         />
                     </Show>

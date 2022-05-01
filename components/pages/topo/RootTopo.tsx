@@ -14,7 +14,7 @@ import { useFirstRender } from 'helpers/hooks/useFirstRender';
 import { Header } from 'components/layouts/header/Header';
 import { DropdownOption } from 'components/molecules';
 import { useSession } from 'helpers/services';
-import { For, SectorAreaMarker, WaypointMarker } from 'components/atoms';
+import { For, ParkingMarker, SectorAreaMarker, WaypointMarker } from 'components/atoms';
 
 
 interface RootTopoProps {
@@ -221,9 +221,6 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
           bouldersOrder={boulderOrder()}
           displayBoulderFilter
           onBoulderClick={toggleBoulderSelect}
-          parkings={parkings}
-          selectedParking={selectedParking}
-          onParkingClick={toggleParkingSelect}
           boundsTo={boulders.toArray().map(b => b().location).concat(parkings.toArray().map(p => p().location))}
         >
           {/* TODO: improve the callbacks */}
@@ -233,7 +230,7 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
                 key={sector().id}
                 sector={sector}
                 selected={selectedSector.quark() === sector}
-                onClick={() => toggleSectorSelect(sector)}
+                onClick={toggleSectorSelect}
               />
             }
           </For>
@@ -243,7 +240,17 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
                 key={waypoint().id}
                 waypoint={waypoint}
                 selected={selectedWaypoint.quark() === waypoint}
-                onClick={() => toggleWaypointSelect(waypoint)}
+                onClick={toggleWaypointSelect}
+              />
+            }
+          </For>
+          <For each={() => parkings.toArray()}>
+            {parking => 
+              <ParkingMarker
+                key={parking().id}
+                parking={parking}
+                selected={selectedParking.quark() === parking}
+                onClick={toggleParkingSelect}
               />
             }
           </For>

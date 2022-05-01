@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Name, StringBetween, TopoType, User } from 'types';
 import { fontainebleauLocation, toLatLng, TopoCreate, createTopo, encodeUUID } from 'helpers';
 import { Button, MapControl, Select, TextInput } from 'components';
@@ -6,8 +6,10 @@ import Link from 'next/link';
 import { v4 } from 'uuid';
 import { useRouter } from 'next/router';
 import { useCreateQuark, watchDependencies } from 'helpers/quarky';
-import { TopoTypeName } from 'types/EnumNames';
+import { selectOptions, TopoTypeName } from 'types/EnumNames';
 import { Header } from 'components/layouts/header/Header';
+import { CreatingTopoMarker } from 'components/atoms';
+import { UserPositionContext } from 'components/molecules/map/UserPositionProvider';
 
 interface RootNewProps {
     user: User,
@@ -15,6 +17,7 @@ interface RootNewProps {
 
 export const RootNew: React.FC<RootNewProps> = watchDependencies((props: RootNewProps) => {
   const router = useRouter();
+  const { position } = useContext(UserPositionContext)
 
   const [step, setStep] = useState(0);
 
@@ -25,7 +28,7 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies((props: RootNew
     status: 0,
     type: undefined,
     forbidden: false,
-    location: fontainebleauLocation,
+    location: position, // set initial position to user's location
     modified: new Date().toISOString(),
   };
 
@@ -120,13 +123,13 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies((props: RootNew
                 <Select
                   id="topo-type"
                   label="Type de spot"
-                  names={TopoTypeName}
+                  options={selectOptions(TopoTypeName)}
                   big
                   white
                   wrapperClassname="w-full mb-10"
                   value={topo.type}
                   error={typeError}
-                  onChange={(val: TopoType | undefined) => {
+                  onChange={(val: TopoType) => {
                         setTypeError(undefined);
                         topoQuark.set({
                           ...topo,
@@ -156,8 +159,6 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies((props: RootNew
                 <div className="h-[300px] md:h-[350px] w-full overflow-auto mb-10 md:mb-16">
                   <MapControl
                     initialZoom={10}
-                    centerOnUser
-                    creatingTopo={topoQuark}
                     draggableMarkers
                     searchbarOptions={{ findPlaces: true }}
                     onClick={(e) => {
@@ -176,7 +177,12 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies((props: RootNew
                         });
                       }
                     }}
+                >
+                  <CreatingTopoMarker
+                    topo={topoQuark}
+                    draggable
                   />
+                </MapControl>
                 </div>
 
                 <div className="px-[10%] w-full">
