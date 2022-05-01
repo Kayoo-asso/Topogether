@@ -25,6 +25,7 @@ export const BoulderPreviewDesktop: React.FC<BoulderPreviewDesktopProps> = watch
                     image={props.currentImage}
                     tracks={boulder.tracks.quarks()}
                     selectedTrack={props.selectedTrack}
+                    modalable
                 />
             </div>
 

@@ -1,41 +1,19 @@
 import React from 'react';
-import { Button, Modal } from 'components';
-import { staticUrl } from 'helpers';
-import { Quark } from 'helpers/quarky';
-import NextImage from 'next/image';
-import { Topo } from 'types';
+import { ModalDelete } from 'components/atoms';
 
 interface ModalDeleteTopoProps {
     onDelete: () => void,
-    onClose: () => void,
+    // onClose: () => void,
 }
 
 export const ModalDeleteTopo: React.FC<ModalDeleteTopoProps> = (props: ModalDeleteTopoProps) => {
 
     return (
-        <Modal onClose={props.onClose}>
-            <div className='p-6 pt-10'>
-                <div className='w-full h-[100px] relative mb-5'>
-                    <NextImage 
-                        src={staticUrl.deleteWarning}
-                        priority
-                        alt="Supprimer le topo"
-                        layout="fill"
-                        objectFit="contain"
-                    />
-                </div>
-                <div className='mb-5'>
-                    Le topo sera entièrement supprimé. Etes-vous sûr de vouloir continuer ?
-                </div>
-                <Button 
-                    content='Supprimer'
-                    fullWidth
-                    onClick={() => {
-                        props.onDelete();
-                        props.onClose();
-                    }}
-                />
-            </div>
-        </Modal> 
+        <ModalDelete 
+            // onClose={props.onClose}
+            onDelete={props.onDelete}
+        >
+            Le topo sera entièrement supprimé. Etes-vous sûr de vouloir continuer ?
+        </ModalDelete> 
     )
 }
