@@ -7,7 +7,7 @@ const useModal = (options = {}) => {
   const { Portal, hide, ...rest } = usePortal({
     ...options,
     defaultShow: false,
-    internalShowHide: false
+    // internalShowHide: false,
   });
 
   const handleClickBackdrop = useCallback(
@@ -28,12 +28,12 @@ const useModal = (options = {}) => {
           onClick={handleClickBackdrop}
           tabIndex={-1}
         >
-          <div 
+          {/* <div 
             className='bg-white z-3000 rounded-lg shadow min-h-[25%] w-11/12 md:w-5/12 absolute top-[45%] md:top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]'
-            onClick={(e) => e.stopPropagation()} 
-          >
+            // onClick={(e) => e.stopPropagation()} 
+          > */}
             {children}
-            <div 
+            {/* <div 
               className='absolute top-3 right-3 cursor-pointer'
               onClick={handleClickBackdrop}
             >
@@ -41,7 +41,7 @@ const useModal = (options = {}) => {
                 className='stroke-dark h-8 w-8'
               />
             </div>
-          </div>
+          </div> */}
         </div>
       </Portal>
     ),

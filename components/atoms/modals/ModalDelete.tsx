@@ -6,6 +6,7 @@ import useModal from 'helpers/hooks/useModal';
 
 interface ModalDeleteProps {
     children: React.ReactNode,
+    open: boolean,
     className?: string,
     // onClose: () => void,
     onDelete: () => void,
@@ -13,6 +14,11 @@ interface ModalDeleteProps {
 
 export const ModalDelete: React.FC<ModalDeleteProps> = (props: ModalDeleteProps) => {
     const { Modal, show, hide, isShow } = useModal();
+    
+    useEffect(() => {
+        console.log(props.open)
+        if (props.open) show();
+    }, [props.open]);
 
     useEffect(() => {
         const handleKeydown = (e: KeyboardEvent) => {

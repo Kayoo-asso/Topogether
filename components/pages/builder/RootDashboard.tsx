@@ -147,7 +147,8 @@ export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies((pr
           />
         }
             <ModalDeleteTopo 
-                onDelete={deleteTopo}
+              open={displayModalDelete}
+              onDelete={deleteTopo}
                 // onClose={() => setDisplayModalDelete(false)}
             />
         
