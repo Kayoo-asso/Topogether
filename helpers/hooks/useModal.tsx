@@ -15,7 +15,7 @@ type Toggles = {
 }
 
 // Returns the Modal and show / hide in an array, to make renaming easier, in case of multiple Modals in the same component
-export const useModal = () => {
+export const useModal = (): [React.FC<ModalProps>, () => void, () => void] => {
   const { Portal } = usePortal({
     containerId: 'modal',
     internalShowHide: false,
@@ -69,7 +69,7 @@ export const useModal = () => {
       if (toggles.current?.onClose) toggles.current.onClose();
       toggles.current?.setOpen(false)
     }, [])
-  ] as const;
+  ];
 }
 
   // const Modal = useCallback(

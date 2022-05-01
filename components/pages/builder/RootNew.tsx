@@ -46,8 +46,6 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies((props: RootNew
     if (nameInputRef.current) nameInputRef.current.focus();
   }, [nameInputRef]);
 
-  const [TestModal, showTestModal] = useModal();
-
   const goStep1 = () => {
     // TODO : check if the name already exists
     if (!topo.name) setNameError("Merci d'indiquer un nom valide");
@@ -57,7 +55,7 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies((props: RootNew
     if (topo.type && isNaN(topo.type)) setTypeError("Merci d'indiquer un type de spot");
     else setStep(2);
   }
-
+  
   const create = async () => {
     setLoading(true);
     const newTopo = await createTopo(topo);
@@ -67,7 +65,7 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies((props: RootNew
       console.error("TODO");
     }
   };
-
+  
   useEffect(() => {
     document.addEventListener("keyup", (e) => {
       if (e.key === 'Enter') {
@@ -78,9 +76,12 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies((props: RootNew
       }
     });
   });
+
+  const [TestModal, showTestModal, hideTestModal] = useModal();
   
   return (
     <>
+
       <TestModal
         text='Ceci est un test!'
         confirmText='Confirmer'
