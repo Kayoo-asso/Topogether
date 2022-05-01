@@ -1,4 +1,4 @@
-import { Image } from "types"
+import { Image } from "types";
 import { SourceSize, VariantWidths } from "helpers/variants";
 import { cloudflareUrl } from "helpers/cloudflareUrl";
 import { ImgHTMLAttributes, useEffect, useRef, useState } from "react";

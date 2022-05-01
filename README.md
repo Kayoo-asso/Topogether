@@ -18,8 +18,9 @@ Currently only available in French, sorry!
 - Add topos, both by ourselves & by bringing in more contributors on the platform.
 - Get more users to go climbing outdoors with the app (especially when topo downloads become available).
 - Work on the offline UI, so it's clear about what is possible or not, based on online / offline status
-- Add track ratings and comments.
 - Enable the creation of "community tracks" on published boulders.
+- Add up/down-voting for grading tracks.
+- Add track ratings and comments.
 
 ### Infrastructure
 - **Moving from Quarky**, our awesome handmade reactive system, to [`react-easy-state`](https://github.com/RisingStack/react-easy-state) for state management. Quarky will be rewritten using proxies when we start implementing offline collaboration.
