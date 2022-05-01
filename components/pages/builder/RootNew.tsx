@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Name, StringBetween, TopoType, User } from 'types';
-import { fontainebleauLocation, toLatLng, TopoCreate, createTopo, encodeUUID } from 'helpers';
+import { fontainebleauLocation, toLatLng, TopoCreate, createTopo, encodeUUID, useModal } from 'helpers';
 import { Button, MapControl, Select, TextInput } from 'components';
 import Link from 'next/link';
 import { v4 } from 'uuid';
@@ -46,6 +46,8 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies((props: RootNew
     if (nameInputRef.current) nameInputRef.current.focus();
   }, [nameInputRef]);
 
+  const [TestModal, showTestModal] = useModal();
+
   const goStep1 = () => {
     // TODO : check if the name already exists
     if (!topo.name) setNameError("Merci d'indiquer un nom valide");
@@ -79,6 +81,13 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies((props: RootNew
   
   return (
     <>
+      <TestModal
+        text='Ceci est un test!'
+        confirmText='Confirmer'
+        onConfirm={() => console.log("Confirmed!")}
+        onClose={() => console.log("On close!")}
+        />
+
       <Header
         backLink="/builder/dashboard"
         title="Nouveau topo"
@@ -112,7 +121,8 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies((props: RootNew
                   <Button
                     content="Suivant"
                     white
-                    onClick={goStep1}
+                    // onClick={goStep1}
+                    onClick={showTestModal}
                   />
                 </div>
               </div>
