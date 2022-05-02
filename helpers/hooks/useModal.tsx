@@ -1,6 +1,7 @@
-import React, { useCallback, useRef, useState } from "react";
-import usePortal from "react-cool-portal";
+import React, { forwardRef, useCallback, useRef, useState } from "react";
 import Clear from 'assets/icons/clear.svg';
+import ReactDOM from "react-dom";
+import { useEffect } from "@storybook/addons";
 
 export type ModalProps = {
   text: string,
@@ -14,14 +15,28 @@ type Toggles = {
   onClose?: () => void,
 }
 
+export type PortalProps = React.PropsWithChildren<{
+  id: string,
+  open: boolean,
+  key?: string
+}>
+
+export const Portal: React.FC<PortalProps> = ({ id, open, key, children }: PortalProps) => {
+  if (typeof window === 'undefined') return null;
+  let container = document.getElementById(id);
+  if (!container) {
+    container = document.createElement('div');
+    container.id = id
+    document.body.append(container);
+  }
+  // TODO: remove container after last child is removed?
+
+  return open ? ReactDOM.createPortal(children, container, key) : null;
+};
+
+
 // Returns the Modal and show / hide in an array, to make renaming easier, in case of multiple Modals in the same component
 export const useModal = (): [React.FC<ModalProps>, () => void, () => void] => {
-  const { Portal } = usePortal({
-    containerId: 'modal',
-    internalShowHide: false,
-    defaultShow: false,
-  });
-
   const toggles = useRef<Toggles>();
 
   const Modal = useCallback(({ onConfirm, onClose, text, confirmText }: ModalProps) => {
@@ -36,9 +51,8 @@ export const useModal = (): [React.FC<ModalProps>, () => void, () => void] => {
 
     // TODO: window event listeners for ESCAPE and ENTER
 
-    return <Portal>
-
-      <div className={`${open ? '' : 'hidden '}absolute top-0 left-0 w-screen h-screen z-[9998]`} onClick={close} tabIndex={-1}>
+    return <Portal id='modal' open={open}>
+      <div className={`absolute top-0 left-0 w-screen h-screen z-[9998]`} onClick={close} tabIndex={-1}>
         <div
           className='bg-white z-[9999] rounded-lg shadow min-h-[25%] w-11/12 md:w-5/12 absolute top-[45%] md:top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]'
         >
