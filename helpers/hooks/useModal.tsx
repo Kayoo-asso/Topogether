@@ -1,11 +1,14 @@
-import React, { forwardRef, useCallback, useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import Clear from 'assets/icons/clear.svg';
 import ReactDOM from "react-dom";
-import { useEffect } from "@storybook/addons";
+import NextImage from 'next/image';
+import { Button } from "components";
+import usePortal from "react-cool-portal";
 
 export type ModalProps = {
-  text: string,
-  confirmText: string,
+  children: React.ReactNode,
+  buttonText: string,
+  imgUrl?: string,
   onConfirm: () => void,
   onClose?: () => void,
 }
@@ -39,41 +42,67 @@ export const Portal: React.FC<PortalProps> = ({ id, open, key, children }: Porta
 export const useModal = (): [React.FC<ModalProps>, () => void, () => void] => {
   const toggles = useRef<Toggles>();
 
-  const Modal = useCallback(({ onConfirm, onClose, text, confirmText }: ModalProps) => {
+  const Modal = useCallback(({ onConfirm, onClose, children, buttonText, imgUrl }: ModalProps) => {
     const [open, setOpen] = useState(false);
 
     toggles.current = { setOpen, onClose };
   
     const close = () => {
-      if(onClose) onClose();
+      if (onClose) onClose();
       setOpen(false);
     }
 
     // TODO: window event listeners for ESCAPE and ENTER
 
-    return <Portal id='modal' open={open}>
-      <div className={`absolute top-0 left-0 w-screen h-screen z-[9998]`} onClick={close} tabIndex={-1}>
-        <div
-          className='bg-white z-[9999] rounded-lg shadow min-h-[25%] w-11/12 md:w-5/12 absolute top-[45%] md:top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]'
-        >
+    return (
+      <Portal id='modal' open={open}>
+        <div className={`absolute top-0 left-0 w-screen h-screen z-[9998]`} onClick={close} tabIndex={-1}>
           <div
-            className='absolute top-3 right-3 cursor-pointer'
-            onClick={close}
+            className='bg-white z-[9999] rounded-lg shadow min-h-[25%] w-11/12 md:w-5/12 absolute top-[45%] md:top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]'
           >
-            <Clear
-              className='stroke-dark h-8 w-8'
-            />
-          </div>
-          <div className='mx-auto'>
-            {text}
-          </div>
-          <button onClick={() => { onConfirm(); setOpen(false);  }}>
-            {confirmText}
-          </button>
-        </div>
-      </div>
 
-    </Portal>
+        {/* <div className={`${open ? 'bg-black bg-opacity-80 ' : 'hidden '}absolute top-0 left-0 w-screen h-screen z-[9998]`} onClick={close} tabIndex={-1}>
+          <div className='bg-white z-[9999] rounded-lg shadow min-h-[25%] w-11/12 md:w-5/12 absolute top-[45%] md:top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]'> */}
+            
+            <div className='p-6 pt-10'>
+              {imgUrl &&
+                <div className='w-full h-[100px] relative mb-5'>
+                    <NextImage
+                        src={imgUrl}
+                        priority
+                        alt={buttonText}
+                        layout="fill"
+                        objectFit="contain"
+                    />
+                </div>
+              }
+
+              <div className='mb-5'>
+                  {children}
+              </div>
+
+              <Button
+                  content={buttonText}
+                  fullWidth
+                  onClick={() => {
+                      onConfirm();
+                      setOpen(false);
+                  }}
+              />
+            </div>
+
+            <div
+              className='absolute top-3 right-3 cursor-pointer'
+              onClick={close}
+            >
+              <Clear className='stroke-dark h-8 w-8' />
+            </div>
+
+          </div>
+        </div>
+
+      </Portal>
+    )
   }, []);
 
   return [

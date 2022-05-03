@@ -77,18 +77,8 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies((props: RootNew
     });
   });
 
-  const [TestModal, showTestModal, hideTestModal] = useModal();
-  
   return (
     <>
-
-      <TestModal
-        text='Ceci est un test!'
-        confirmText='Confirmer'
-        onConfirm={() => console.log("Confirmed!")}
-        onClose={() => console.log("On close!")}
-        />
-
       <Header
         backLink="/builder/dashboard"
         title="Nouveau topo"
@@ -122,8 +112,6 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies((props: RootNew
                   <Button
                     content="Suivant"
                     white
-                    // onClick={goStep1}
-                    onClick={showTestModal}
                   />
                 </div>
               </div>

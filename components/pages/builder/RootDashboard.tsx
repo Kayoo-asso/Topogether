@@ -1,13 +1,12 @@
 import React, { useCallback, useRef, useState } from 'react';
 import { AddTopoCard, TopoCardList, Button, ModalUnsubmitTopo, ModalDeleteTopo, ModalSubmitTopo } from 'components';
 import { HeaderDesktop, LeftbarDesktop } from 'components/layouts';
-import { staticUrl, useContextMenu } from 'helpers';
+import { staticUrl, useContextMenu, useModal } from 'helpers';
 import { LightTopo, TopoStatus } from 'types';
 import { UserActionDropdown } from 'components/molecules/cards/UserActionDropdown';
 import { api } from 'helpers/services';
 import { watchDependencies } from 'helpers/quarky';
 import Spinner from 'assets/icons/spinner.svg';
-import useModal from 'helpers/hooks/useModal';
 
 interface RootDashboardProps {
     lightTopos: LightTopo[],
@@ -25,7 +24,7 @@ export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies((pr
     const [topoDropdown, setTopoDropdown] = useState<LightTopo>();
     const [dropdownPosition, setDropdownPosition] = useState<{ x: number, y: number }>();
 
-    const { Modal, show, hide, isShow } = useModal();
+    const [ModalDelete, showDeleteModal, hideDeleteModal] = useModal();
     const [displayModalSubmit, setDisplayModalSubmit] = useState(false);
     const [displayModalUnsubmit, setDisplayModalUnsubmit] = useState(false);
     const [displayModalDelete, setDisplayModalDelete] = useState(false);
@@ -134,9 +133,8 @@ export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies((pr
             onSendToDraftClick={() => setDisplayModalUnsubmit(true)}
             onSendToValidationClick={() => setDisplayModalSubmit(true)}
             onDeleteClick={() => {
-              console.log('show');
-              setDisplayModalDelete(true);
-              show();
+              // setDisplayModalDelete(true);
+              showDeleteModal();
             }}
           />
         }
@@ -152,14 +150,13 @@ export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies((pr
             onClose={() => setDisplayModalUnsubmit(false)}   
           />
         }
-        <Modal
-          isShow={displayModalDelete}
-          buttonContent="Supprimer"
+        <ModalDelete
+          buttonText="Supprimer"
           imgUrl={staticUrl.deleteWarning}
-          onClick={deleteTopo}
+          onConfirm={deleteTopo}
         >
           Etes-vous sûr ?
-        </Modal>
+        </ModalDelete>
             {/* <ModalDeleteTopo 
               open={displayModalDelete}
               onDelete={deleteTopo}
