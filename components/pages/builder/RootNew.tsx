@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { Name, StringBetween, TopoType, User } from 'types';
-import { fontainebleauLocation, toLatLng, TopoCreate, createTopo, encodeUUID, useModal } from 'helpers';
+import { StringBetween, TopoType, User } from 'types';
+import { TopoCreate, createTopo, encodeUUID } from 'helpers';
 import { Button, MapControl, Select, TextInput } from 'components';
 import Link from 'next/link';
 import { v4 } from 'uuid';
@@ -112,6 +112,7 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies((props: RootNew
                   <Button
                     content="Suivant"
                     white
+                    onClick={goStep1}
                   />
                 </div>
               </div>
