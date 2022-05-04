@@ -87,7 +87,7 @@ export function useModal<T>(): [React.FC<ModalProps<T>>, (item: T) => void, () =
                 </div>
               }
 
-              <div className='mb-5 text-center'>
+              <div className='mb-6 mt-6 text-center'>
                   {children}
               </div>
 
