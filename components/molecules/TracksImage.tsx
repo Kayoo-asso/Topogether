@@ -6,8 +6,7 @@ import { Quark, QuarkIter, SelectQuarkNullable, watchDependencies } from 'helper
 import { CFImage } from 'components/atoms/CFImage';
 import { SourceSize } from 'helpers/variants';
 import { SVGTrack } from 'components/atoms';
-import { getCoordsInViewbox } from 'helpers';
-import usePortal from 'react-cool-portal';
+import { getCoordsInViewbox, Portal } from 'helpers';
 
 type TracksImageProps = React.PropsWithChildren<{
   image?: Image,
@@ -28,12 +27,6 @@ type TracksImageProps = React.PropsWithChildren<{
   onPointClick?: (pointType: PointEnum, index: number) => void,
   onImageLoad?: (width: number, height: number) => void,
 }>
-
-const objectFitClass = {
-  contain: 'object-contain',
-  cover: 'object-cover',
-  // fill: 'object-fill'
-}
 
 // see: https://www.sarasoueidan.com/blog/svg-object-fit/
 const preserveAspectRatio = {
@@ -92,22 +85,19 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
     cursor: editable ? `url(${getCursorUrl()}) ${props.currentTool === 'ERASER' ? '3 7' : ''}, auto` : '',
   }
 
-  const { Portal, isShow, show, hide } = usePortal({
-      defaultShow: false,
-  });
+  const [portalOpen, setPortalOpen] = useState(false);
   const wrapPortal = (elts: ReactElement<any, any>) => {
     if (props.modalable) {
-      return(
+      return (
         <>
           {elts}
-          <Portal>
-            <div className="relative flex justify-center items-center w-full h-full" onClick={hide}>
+          <Portal open={portalOpen}>
+            <div className="absolute top-0 left-0 flex z-full w-screen h-screen bg-black bg-opacity-80" onClick={() => setPortalOpen(false)}>
               {elts}
             </div>
           </Portal>
         </>
-      )
-    }
+    )}
     else return elts;
   }
   
@@ -127,12 +117,13 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
   // on the image can be expressed in the coordinate space of the viewBox & resizes automatically
   return (
     wrapPortal(
-      <div className={"relative" + (props.modalable ? " cursor-pointer" : "")}>
+      <div className={"relative h-full" + (props.modalable ? " cursor-pointer" : "")}>
         <CFImage
-          className={objectFitClass[objectFit]}
-          sizeHint={isShow ? '100vw' : props.sizeHint}
+          objectFit={objectFit}
+          sizeHint={portalOpen ? '100vw' : props.sizeHint}
           image={props.image}
           alt={"Rocher avec tracé de voies"}
+          className="flex"
         />
         <svg
           className='absolute top-0 left-0 h-full w-full z-50'
@@ -140,7 +131,7 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
           viewBox={`0 0 ${viewBoxWidth} ${viewBoxHeight}`}
           preserveAspectRatio={`xMidYMid ${preserveAspectRatio[objectFit]}`}
           onClick={(e) => {
-            if (props.modalable) show();
+            if (props.modalable) setPortalOpen(true);
             else {
               const eltUnder = e.target as EventTarget & SVGSVGElement
               if (e.buttons !== 0 ||  // Handle clicks that are 1) left-click, 2) in the viewBox and 3) on the SVG canvas directly

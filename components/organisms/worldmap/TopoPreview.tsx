@@ -59,7 +59,8 @@ export const TopoPreview: React.FC<TopoPreviewProps> = (props: TopoPreviewProps)
                 <div className="mt-4 h-[160px] w-full">
                     <CFImage
                         image={topo.image}
-                        className="flex object-cover"
+                        objectFit='cover'
+                        className="flex"
                         alt="image principale du topo"
                         sizeHint='50vw'
                         modalable

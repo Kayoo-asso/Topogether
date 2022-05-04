@@ -61,7 +61,7 @@ export const ManagementSlideover: React.FC<ManagementSlideoverProps> = ({
                                     image={manager.image}
                                     alt={"Logo gestionnaire " + managerTab}
                                     sizeHint='30vw'
-                                    className="object-contain"
+                                    objectFit='contain'
                                 />
                             </div>
                         }

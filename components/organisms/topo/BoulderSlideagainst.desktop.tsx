@@ -27,9 +27,7 @@ export const BoulderSlideagainstDesktop: React.FC<BoulderSlideagainstDesktopProp
         .quarks()
         .filter((track) => ((track().creatorId) === props.topoCreatorId) === officialTrackTab);
 
-    //TO CHANGE ??
-    const [ModalLogin, showModalLogin] = useModal();
-    const [displayModalLoginRedirect, setDisplayModalLoginRedirect] = useState(false);
+    const [ModalLogin, showModalLogin, hideModalLogin] = useModal();
 
     return (
         <>
@@ -116,20 +114,10 @@ export const BoulderSlideagainstDesktop: React.FC<BoulderSlideagainstDesktopProp
                 {flashMessage}
             </Flash>
 
-            {/* {displayModalLoginRedirect &&
-                <Modal 
-                    onClose={() => setDisplayModalLoginRedirect(false)}
-                >
-                    <div className='p-8 mt-4'>
-                        <div className='text-center mb-8'>Pour ajouter une voie "Communauté", vous devez être connecté.</div>
-                        <LoginForm onLogin={() => setDisplayModalLoginRedirect(false)} />
-                    </div>
-                </Modal>
-            } */}
             <ModalLogin>
                 <div className='p-8 mt-4'>
                     <div className='text-center mb-8'>Pour ajouter une voie "Communauté", vous devez être connecté.</div>
-                    <LoginForm onLogin={() => setDisplayModalLoginRedirect(false)} />
+                    <LoginForm onLogin={() => hideModalLogin()} />
                 </div>
             </ModalLogin>
         </>

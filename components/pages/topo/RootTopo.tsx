@@ -284,8 +284,7 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
                 onClose={() => selectedTrack.select(undefined)}
               />
               <div className="absolute top-0 bg-black bg-opacity-90 h-full flex flex-col z-1000 w-full md:w-[calc(100%-600px)]">
-                <div className="flex-1 flex items-center relative">
-                  {/* TODO: CHANGE SIZING */}
+                <div className="flex-1 flex items-center relative h-full">
                   <TracksImage
                     sizeHint='100vw'
                     image={currentImage}

@@ -49,9 +49,11 @@ export const WaypointSlide: React.FC<WaypointSlideProps> = watchDependencies(({
                 <div className='w-full relative max-h-[200px] h-[60%] md:h-[25%]'>
                     <CFImage 
                         image={waypoint.image}
-                        alt="Parking"
+                        alt="Point de repère"
+                        objectFit='cover'
                         sizeHint='50vw'
-                        className="object-cover flex"
+                        className="flex"
+                        modalable
                     />
                 </div>
 

@@ -76,6 +76,7 @@ export const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
                 error={emailError}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                onKeyDown={handleUserKeyPress}
             />
 
             <TextInput 
@@ -85,6 +86,7 @@ export const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
                 value={password}
                 type="password"
                 onChange={(e) => setPassword(e.target.value)}
+                onKeyDown={handleUserKeyPress}
             />
 
             <div className='flex flex-col w-full md:flex-row justify-start md:justify-between items-center md:mb-6'>

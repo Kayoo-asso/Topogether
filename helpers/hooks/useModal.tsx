@@ -18,12 +18,12 @@ type Toggles<T> = {
 }
 
 export type PortalProps = React.PropsWithChildren<{
-  id: string,
+  id?: string,
   open: boolean,
   key?: string
 }>
 
-export const Portal: React.FC<PortalProps> = ({ id, open, key, children }: PortalProps) => {
+export const Portal: React.FC<PortalProps> = ({ id = "modal", open, key, children }: PortalProps) => {
   if (typeof window === 'undefined') return null;
   let container = document.getElementById(id);
   if (!container) {

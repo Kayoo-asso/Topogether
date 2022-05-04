@@ -67,9 +67,11 @@ export const AccessSlideover: React.FC<AccessSlideoverProps> = ({
                                 <div className="w-auto relative mt-2 h-[200px]">
                                     <CFImage
                                         image={step.image}
-                                        className="rounded-lg object-contain"
+                                        objectFit='contain'
+                                        className="rounded-lg"
                                         alt={"Marche d'approche étape "+index}
                                         sizeHint="90vw"
+                                        modalable
                                     />
                                 </div>
                             }

@@ -57,7 +57,8 @@ export const ImageButton: React.FC<ImageButtonProps> = ({
         <CFImage
           image={props.image}
           alt="user generated image"
-          className='object-contain h-full'
+          className='h-full'
+          objectFit='contain'
           sizeHint={`${containerWidth}px`}
         />
       </>

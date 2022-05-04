@@ -50,7 +50,9 @@ export const ParkingSlide: React.FC<ParkingSlideProps> = watchDependencies(({
                         image={parking.image}
                         alt="Parking"
                         sizeHint='50vw'
-                        className="object-cover flex"
+                        objectFit='cover'
+                        className="flex"
+                        modalable
                     />
                 </div>
 
