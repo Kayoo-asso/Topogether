@@ -80,7 +80,6 @@ export const RootWorldMap: React.FC<RootWorldMapProps> = watchDependencies((prop
           }}
           topoFilters={topoFilters}
           topoFiltersDomain={topoFilterDomain}
-          boundsTo={props.lightTopos.map(t => t.location)}
         >
           {props.lightTopos.filter(filterFn).map(topo => 
             <TopoMarker

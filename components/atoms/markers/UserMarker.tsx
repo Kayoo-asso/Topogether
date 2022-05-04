@@ -9,7 +9,7 @@ interface UserMarkerProps {
 
 export const UserMarker: React.FC<UserMarkerProps> = (props: UserMarkerProps) => {
     const { position, accuracy, heading } = useContext(UserPositionContext);
-    const center = { lng: position[0], lat: position[1] };
+    const center = position ? { lng: position[0], lat: position[1] } : { lng: 0, lat: 0};
 
     // Main blue dot
     const mainIcon: google.maps.Symbol = {

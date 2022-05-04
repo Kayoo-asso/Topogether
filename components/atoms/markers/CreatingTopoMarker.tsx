@@ -1,9 +1,7 @@
-import React, { useCallback, useContext, useEffect } from "react";
+import React, { useCallback } from "react";
 import { markerSize, toLatLng, TopoCreate, TopoTypeToColor, useMarker } from "helpers";
 import { Quark, watchDependencies } from "helpers/quarky";
-import { MarkerEventHandlers, TopoType } from "types";
-import { UserPositionContext } from "components/molecules/map/UserPositionProvider";
-import { useFirstRender } from "helpers/hooks/useFirstRender";
+import { MarkerEventHandlers } from "types";
 
 interface CreatingTopoMarkerProps {
     topo: Quark<TopoCreate>,

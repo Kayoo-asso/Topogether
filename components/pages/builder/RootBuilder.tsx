@@ -391,7 +391,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                     boulderFiltersDomain={defaultBoulderFilterOptions}
                     onMapZoomChange={closeDropdown}
                     onClick={handleCreateNewMarker}
-                    boundsTo={boulders.map(b => b.location).concat(parkings.map(p => p.location))}
+                    boundsTo={boulders.map(b => b.location).concat(parkings.map(p => p.location)).toArray()}
                 >
                     {currentTool === "SECTOR" &&
                         <CreatingSectorAreaMarker

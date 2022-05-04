@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { StringBetween, TopoType, User } from 'types';
-import { TopoCreate, createTopo, encodeUUID } from 'helpers';
+import { TopoCreate, createTopo, encodeUUID, fontainebleauLocation } from 'helpers';
 import { Button, MapControl, Select, TextInput } from 'components';
 import Link from 'next/link';
 import { v4 } from 'uuid';
@@ -28,7 +28,7 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies((props: RootNew
     status: 0,
     type: undefined,
     forbidden: false,
-    location: position, // set initial position to user's location
+    location: position || fontainebleauLocation, // set initial position to user's location
     modified: new Date().toISOString(),
   };
 

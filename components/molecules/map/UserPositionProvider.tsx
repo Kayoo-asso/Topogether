@@ -2,21 +2,21 @@ import React, { createContext, useState, useEffect } from "react"
 import { GeoCoordinates } from "types"
 
 export type UserPosition = {
-    position: GeoCoordinates,
-    accuracy: number,
+    position: GeoCoordinates | null,
+    accuracy: number | null,
     heading: number | null
 }
 
 const defaultPosition: UserPosition = {
-    position: [0, 0],
-    accuracy: 0,
+    position: null,
+    accuracy: null,
     heading: null
 }
 
 export const UserPositionContext = createContext<UserPosition>(defaultPosition);
 
 export const UserPositionProvider = ({ children }: React.PropsWithChildren<{}>) => {
-    const [position, setPosition] = useState(defaultPosition);
+    const [position, setPosition] = useState<UserPosition>(defaultPosition);
 
     useEffect(() => {
         const options: PositionOptions = {

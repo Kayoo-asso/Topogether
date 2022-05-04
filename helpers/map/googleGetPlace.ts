@@ -1,5 +1,5 @@
 export const googleGetPlace = async (placeId: string) =>
-  new Promise((resolve, reject) => {
+  new Promise<google.maps.places.PlaceResult | null>((resolve, reject) => {
     if (!placeId) {
       return reject("Need valid place id input")
     }

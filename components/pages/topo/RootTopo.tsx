@@ -229,7 +229,7 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
           topo={props.topoQuark}
           boulderFilters={boulderFilters}
           boulderFiltersDomain={defaultBoulderFilterOptions}
-          boundsTo={boulders.map(b => b.location).concat(parkings.map(p => p.location))}
+          boundsTo={boulders.map(b => b.location).concat(parkings.map(p => p.location)).toArray()}
         >
           {/* TODO: improve the callbacks */}
           <For each={() => filterBoulders(boulders.quarks(), boulderFilters())}>

@@ -1,11 +1,11 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Wrapper } from '@googlemaps/react-wrapper';
-import { BoulderMarker, For, Map, RoundButton, SatelliteButton, Show, UserMarker } from 'components';
+import { Map, RoundButton, SatelliteButton, UserMarker } from 'components';
 import { BoulderFilterOptions, BoulderFilters, MapSearchbarProps, TopoFilterOptions, TopoFilters } from '.';
 import { ItemSelectorMobile, MapSearchbar } from '..';
-import { Boulder, ClimbTechniques, GeoCoordinates, gradeToLightGrade, LightGrade, MapProps, MapToolEnum, Position, Topo, UUID } from 'types';
-import { googleGetPlace, hasSomeFlags, mergeFlags, toLatLng } from 'helpers';
-import { Quark, QuarkIter, reactKey, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
+import { Boulder, GeoCoordinates, MapProps, MapToolEnum, Position, Topo } from 'types';
+import { fontainebleauLocation, googleGetPlace, toLatLng } from 'helpers';
+import { Quark, watchDependencies } from 'helpers/quarky';
 import SectorIcon from 'assets/icons/sector.svg';
 import CenterIcon from 'assets/icons/center.svg';
 import { UserPositionContext } from './UserPositionProvider';
@@ -29,7 +29,7 @@ type MapControlProps = React.PropsWithChildren<Omit<MapProps, 'center' | 'zoom'>
     topoFiltersDomain?: TopoFilterOptions,
     boulderFilters?: Quark<BoulderFilterOptions>
     boulderFiltersDomain?: BoulderFilterOptions,
-    boundsTo?: Iterable<GeoCoordinates>,
+    boundsTo?: GeoCoordinates[],
     onUserMarkerClick?: (pos: google.maps.MapMouseEvent) => void,
     onMapZoomChange?: (zoom: number | undefined) => void,
 }>
@@ -56,26 +56,6 @@ export const MapControl: React.FC<MapControlProps> = watchDependencies(({
             mapRef.current.fitBounds(newBounds);
         }
     }
-    const getBoundsTo = (locations: Iterable<GeoCoordinates>) => {
-        if (mapRef.current) {
-            const newBounds = new google.maps.LatLngBounds();
-            for (const loc of locations) {
-                newBounds.extend(toLatLng(loc));
-            }
-            mapRef.current.fitBounds(newBounds);
-        }
-    }
-    useEffect(() => {
-        const initialCenter = props.initialCenter || position;
-        if (mapRef.current) {
-            mapRef.current.setCenter(toLatLng(initialCenter));
-        }
-        // this ensures the position is compared element by element
-    }, [...(props.initialCenter || [undefined, undefined])])
-
-    useEffect(() => {
-        if (mapRef.current) mapRef.current.setZoom(initialZoom);
-    }, [initialZoom])
 
     return (
         <div className="relative w-full h-full">
@@ -88,8 +68,8 @@ export const MapControl: React.FC<MapControlProps> = watchDependencies(({
                             <MapSearchbar
                                 boulders={props.topo ? props.topo().boulders.toArray() : undefined}
                                 onGoogleResultSelect={async (res) => {
-                                    const placeDetails = await googleGetPlace(res.place_id) as google.maps.places.PlaceResult;
-                                    if (placeDetails.geometry) getBoundsFromSearchbar(placeDetails.geometry);
+                                    const placeDetails = await googleGetPlace(res.place_id);
+                                    if (placeDetails?.geometry) getBoundsFromSearchbar(placeDetails.geometry);
                                 }}
                                 onBoulderResultSelect={props.onBoulderResultSelect}
                                 {...props.searchbarOptions}
@@ -147,7 +127,9 @@ export const MapControl: React.FC<MapControlProps> = watchDependencies(({
                         {displayUserMarker && (
                             <RoundButton
                                 onClick={() => {
-                                    mapRef.current?.panTo(toLatLng(position));
+                                    if (position) {
+                                        mapRef.current?.panTo(toLatLng(position));
+                                    }
                                 }}
                             >
                                 <CenterIcon className='h-7 w-7 stroke-main fill-main' />
@@ -167,22 +149,22 @@ export const MapControl: React.FC<MapControlProps> = watchDependencies(({
                         }
                     }}
                     onLoad={(map) => {
-                        let bounds;
-                        if (props.boundsTo) {
-                            const locations = props.boundsTo;
-                            bounds = new google.maps.LatLngBounds();
-                            for (const loc of locations) {
+                        map.setZoom(initialZoom);
+                        const locs = props.boundsTo;
+                        const initialCenter = props.initialCenter || position;
+                        if (initialCenter) {
+                            map.setCenter(toLatLng(initialCenter));
+                        }
+                        else if (locs && locs.length > 1) {
+                            const bounds = new google.maps.LatLngBounds();
+                            for (const loc of locs) {
                                 bounds.extend(toLatLng(loc));
                             }
-                        }
-                        if (bounds && !bounds.isEmpty()) {
                             map.fitBounds(bounds);
                         }
                         else {
-                            const initialCenter = props.initialCenter || position;
-                            map.setCenter(toLatLng(initialCenter));
+                            map.setCenter(toLatLng(fontainebleauLocation));
                         }
-                        map.setZoom(initialZoom);
                     }}
                     {...props}
                 >
