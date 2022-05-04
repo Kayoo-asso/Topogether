@@ -1,11 +1,11 @@
 import React, { useCallback, useState } from 'react';
 import type { GetServerSideProps, NextPage } from 'next';
-import { Button, ImageInput, ProfileForm, TextInput, ModalDelete, LikedList, DownloadedList } from 'components';
+import { Button, ImageInput, ProfileForm, TextInput, LikedList, DownloadedList } from 'components';
 import { LeftbarDesktop, Tabs } from 'components/layouts';
 import { useCreateQuark, watchDependencies } from 'helpers/quarky';
 import { DBLightTopo, LightTopo, Name, User } from 'types';
 import { api, useAuth } from "helpers/services";
-import { loginRedirect, withAuth } from 'helpers/auth';
+import { loginRedirect } from 'helpers/auth';
 import { Header } from 'components/layouts/header/Header';
 import Profile from 'assets/icons/user-mobile.svg';
 import Heart from 'assets/icons/heart.svg';
