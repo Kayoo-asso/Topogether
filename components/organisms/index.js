@@ -3,6 +3,5 @@ export * from './topo';
 export * from './user';
 export * from './worldmap';
 export * from './form';
-export * from './admin';
 
 export * from './Drawer';

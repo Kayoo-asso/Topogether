@@ -25,7 +25,6 @@ export const Dropdown: React.FC<DropdownProps> = React.memo(({
     ...props
 }: DropdownProps) => {
     const ref = useRef<HTMLDivElement>(null);
-
     const [position, setPosition] = useState(props.position);
 
     useEffect(() => {

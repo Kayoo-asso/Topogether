@@ -1,9 +1,9 @@
-import React, { useContext } from 'react';
-import { GradeCircle, ModalDelete } from 'components';
+import React, { useContext, useEffect } from 'react';
+import { GradeCircle } from 'components';
 import { Boulder, gradeToLightGrade, Track } from 'types';
 import { Quark, SelectQuarkNullable, useSelectQuark, watchDependencies } from 'helpers/quarky';
 import { TrackForm } from '../form/TrackForm';
-import { createTrack, DeviceContext } from 'helpers';
+import { createTrack, DeviceContext, staticUrl, useModal } from 'helpers';
 import { useSession } from "helpers/services";
 import DrawIcon from 'assets/icons/draw.svg';
 
@@ -27,8 +27,13 @@ const gradeColors = {
 
 export const TracksListBuilder: React.FC<TracksListBuilderProps> = watchDependencies((props: TracksListBuilderProps) => {
   const session = useSession();
+  const [ModalDelete, showModalDelete] = useModal();
 
-  const trackToDelete = useSelectQuark<Track>();;
+  const trackToDelete = useSelectQuark<Track>();
+  useEffect(() => {
+    if (trackToDelete()) showModalDelete();
+  }, [trackToDelete()])
+
   const device = useContext(DeviceContext);
 
   const boulder = props.boulder();
@@ -101,15 +106,15 @@ export const TracksListBuilder: React.FC<TracksListBuilderProps> = watchDependen
 
       </div>
 
-      {trackToDelete() &&
-        <ModalDelete
-          className='-top-[15vh]'
-          onClose={() => trackToDelete.select(undefined)}
-          onDelete={() => boulder.tracks.removeQuark(trackToDelete.quark()!)}
-        >
-          Etes-vous sûr de vouloir supprimer la voie ?
-        </ModalDelete>
-      }
+      <ModalDelete
+        buttonText="Confirmer"
+        imgUrl={staticUrl.deleteWarning}
+        onConfirm={() => boulder.tracks.removeQuark(trackToDelete.quark()!)} 
+        // className='-top-[15vh]'  TODO : check if necessary
+        onClose={() => trackToDelete.select(undefined)}
+      >
+        Etes-vous sûr de vouloir supprimer la voie ?
+      </ModalDelete>
     </>
   );
 });

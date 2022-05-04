@@ -2,8 +2,7 @@ import { LikedActionDropdown, TopoCardList } from 'components/molecules';
 import React, { useCallback, useRef, useState } from 'react';
 import { LightTopo, TopoStatus } from 'types';
 import Spinner from 'assets/icons/spinner.svg';
-import { useContextMenu } from 'helpers';
-import { ModalUnlikeTopo } from '../builder';
+import { staticUrl, useContextMenu, useModal } from 'helpers';
 
 interface LikedListProps {
     likedTopos: LightTopo[],
@@ -13,8 +12,7 @@ interface LikedListProps {
 export const LikedList: React.FC<LikedListProps> = (props: LikedListProps) => {
 
     const [loading, setLoading] = useState(false);
-
-    const [displayModalUnlike, setDisplayModalUnlike] = useState(false);
+    const [ModalUnlike, showModalUnlike] = useModal();
 
     const ref = useRef<HTMLDivElement>(null);
     const [topoDropdown, setTopoDropdown] = useState<LightTopo>();
@@ -61,15 +59,18 @@ export const LikedList: React.FC<LikedListProps> = (props: LikedListProps) => {
                 <LikedActionDropdown 
                     topo={topoDropdown}
                     position={dropdownPosition}
-                    onUnlikeClick={() => setDisplayModalUnlike(true)}
+                    onUnlikeClick={showModalUnlike}
+                    onSelect={() => setDropdownPosition(undefined)}
                 />
             }
-            {displayModalUnlike && topoDropdown &&
-                <ModalUnlikeTopo 
-                    onUnlike={() => props.onUnlikeTopo(topoDropdown)} 
-                    onClose={() => setDisplayModalUnlike(false)}    
-                />
-            }
+            <ModalUnlike 
+                buttonText="Confirmer"
+                imgUrl={staticUrl.deleteWarning}
+                onConfirm={useCallback(() => {
+                    if (topoDropdown) props.onUnlikeTopo(topoDropdown);
+                }, [topoDropdown])}   
+            >Le topo sera retiré de la liste de vos topos likés. Voulez-vous continuer ?</ModalUnlike>
+
         </>
     )
 }

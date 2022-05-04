@@ -10,6 +10,7 @@ interface UserActionDropdownProps {
     onSendToValidationClick: () => void,
     onSendToDraftClick: () => void,
     onDeleteClick: () => void;
+    onSelect?: () => void,
 }
 
 export const UserActionDropdown: React.FC<UserActionDropdownProps> = (props: UserActionDropdownProps) => {
@@ -38,6 +39,7 @@ export const UserActionDropdown: React.FC<UserActionDropdownProps> = (props: Use
                     : []),
                 { value: 'Supprimer', action: props.onDeleteClick },
             ]}
+            onSelect={props.onSelect}
         />
     );
 };

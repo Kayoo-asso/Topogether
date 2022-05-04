@@ -1,9 +1,8 @@
-import { DownloadedActionDropdown, LikedActionDropdown, TopoCardList } from 'components/molecules';
+import { DownloadedActionDropdown, TopoCardList } from 'components/molecules';
 import React, { useCallback, useRef, useState } from 'react';
 import { LightTopo, TopoStatus } from 'types';
 import Spinner from 'assets/icons/spinner.svg';
-import { useContextMenu } from 'helpers';
-import { ModalUnlikeTopo, ModalUnsaveTopo } from '../builder';
+import { staticUrl, useContextMenu, useModal } from 'helpers';
 
 interface DownloadedListProps {
     downloadedTopos: LightTopo[],
@@ -13,7 +12,7 @@ export const DownloadedList: React.FC<DownloadedListProps> = (props: DownloadedL
 
     const [loading, setLoading] = useState(false);
 
-    const [displayModalUnsave, setDisplayModalUnsave] = useState(false);
+    const [ModalUnsave, showModalUnsave] = useModal();
 
     const ref = useRef<HTMLDivElement>(null);
     const [topoDropdown, setTopoDropdown] = useState<LightTopo>();
@@ -55,15 +54,15 @@ export const DownloadedList: React.FC<DownloadedListProps> = (props: DownloadedL
                 <DownloadedActionDropdown 
                     topo={topoDropdown}
                     position={dropdownPosition}
-                    onUnsaveClick={() => setDisplayModalUnsave(true)}
+                    onUnsaveClick={showModalUnsave}
+                    onSelect={() => setDropdownPosition(undefined)}
                 />
             }
-            {displayModalUnsave &&
-                <ModalUnsaveTopo 
-                    onUnsave={unsaveTopo} 
-                    onClose={() => setDisplayModalUnsave(false)}    
-                />
-            }
+            <ModalUnsave 
+                buttonText="Confirmer"
+                imgUrl={staticUrl.deleteWarning}
+                onConfirm={unsaveTopo}   
+            >Le topo ne sera plus accessible hors ligne. Voulez-vous continuer ?</ModalUnsave>
         </>
     )
 }

@@ -38,6 +38,7 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
                 selectedTrack={props.selectedTrack}
                 displayPhantomTracks={displayPhantomTracks}
                 displayTracksDetails={props.selectedTrack && !!props.selectedTrack()?.id}
+                modalable
             />
 
             {props.displayRightArrow &&

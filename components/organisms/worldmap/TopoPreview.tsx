@@ -61,6 +61,7 @@ export const TopoPreview: React.FC<TopoPreviewProps> = (props: TopoPreviewProps)
                         className="flex object-cover"
                         alt="image principale du topo"
                         sizeHint='50vw'
+                        modalable
                     />
                 </div>
 
@@ -118,7 +119,8 @@ export const TopoPreview: React.FC<TopoPreviewProps> = (props: TopoPreviewProps)
 
     return (
         <>
-            <div className='md:hidden'>
+            <div className='md:hidden'> 
+            {/* //TO CHANGE ?? */}
                 <Modal
                     withBackground={false}
                     onClose={props.onClose}

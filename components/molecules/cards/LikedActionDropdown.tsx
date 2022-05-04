@@ -8,6 +8,7 @@ interface LikedActionDropdownProps {
     topo: LightTopo;
     position: { x: number, y: number };
     onUnlikeClick: () => void;
+    onSelect?: () => void,
 }
 
 export const LikedActionDropdown: React.FC<LikedActionDropdownProps> = (props: LikedActionDropdownProps) => {
@@ -27,6 +28,7 @@ export const LikedActionDropdown: React.FC<LikedActionDropdownProps> = (props: L
                     ? [{ value: 'Ne plus aimer', action: props.onUnlikeClick }]
                     : []),
             ]}
+            onSelect={props.onSelect}
         />
     );
 };

@@ -12,6 +12,7 @@ interface AdminActionDropdownProps {
     onUnvalidateClick: () => void,
     onRejectClick: () => void,
     onDeleteClick: () => void;
+    onSelect?: () => void,
 }
 
 export const AdminActionDropdown: React.FC<AdminActionDropdownProps> = (props: AdminActionDropdownProps) => {
@@ -44,6 +45,7 @@ export const AdminActionDropdown: React.FC<AdminActionDropdownProps> = (props: A
         <Dropdown
             position={props.position}
             options={actions}
+            onSelect={props.onSelect}
         />
     );
 };

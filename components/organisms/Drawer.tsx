@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   DrawerToolEnum, Image, LinearRing, PointEnum, Position, Track,
 } from 'types';
-import { ModalDelete, Toolbar, TracksImage } from 'components';
+import { Toolbar, TracksImage } from 'components';
 import { QuarkArray, QuarkIter, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
 import { v4 } from 'uuid';
+import { staticUrl, useModal } from 'helpers';
 
 interface DrawerProps {
   image: Image,
@@ -17,7 +18,7 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies((props: DrawerPro
   const [selectedTool, setSelectedTool] = useState<DrawerToolEnum>('LINE_DRAWER');
   const [gradeSelectorOpen, setGradeSelectorOpen] = useState(false);
   const [displayOtherTracks, setDisplayOtherTracks] = useState(false);
-  const [displayClearModal, setDisplayClearModal] = useState(false);
+  const [ModalClear, showModalClear] = useModal();
 
   useEffect(() => {
     const handleKeydown = (e: KeyboardEvent) => {
@@ -179,7 +180,7 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies((props: DrawerPro
               grade: grade,
             })
           }}
-          onClear={() => setDisplayClearModal(true)}
+          onClear={showModalClear}
           onRewind={rewind}
           onOtherTracks={() => setDisplayOtherTracks(!displayOtherTracks)}
           onValidate={props.onValidate}
@@ -187,17 +188,15 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies((props: DrawerPro
 
       </div>
 
-      {displayClearModal &&
-        <ModalDelete
-          onClose={() => setDisplayClearModal(false)}
-          onDelete={() => {
-            setDisplayClearModal(false);
-            selectedTrack.lines.removeAll(x => x.imageId === props.image.id)
-          }}
-        >
-          Vous êtes sur le point de supprimer l'ensemble du tracé. Voulez-vous continuer ?
-        </ModalDelete>
-      }
+      <ModalClear
+        buttonText="Confirmer"
+        imgUrl={staticUrl.deleteWarning}
+        onConfirm={useCallback(() => {
+          selectedTrack.lines.removeAll(x => x.imageId === props.image.id);
+        }, [selectedTrack, selectedTrack.lines])}
+      >
+        Vous êtes sur le point de supprimer l'ensemble du tracé. Voulez-vous continuer ?
+      </ModalClear>
     </>
   );
 });

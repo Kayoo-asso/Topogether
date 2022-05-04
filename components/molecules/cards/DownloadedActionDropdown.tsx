@@ -8,6 +8,7 @@ interface DownloadedActionDropdownProps {
     topo: LightTopo;
     position: { x: number, y: number };
     onUnsaveClick: () => void;
+    onSelect?: () => void,
 }
 
 export const DownloadedActionDropdown: React.FC<DownloadedActionDropdownProps> = (props: DownloadedActionDropdownProps) => {
@@ -27,6 +28,7 @@ export const DownloadedActionDropdown: React.FC<DownloadedActionDropdownProps> =
                     ? [{ value: 'Retirer', action: props.onUnsaveClick }]
                     : []),
             ]}
+            onSelect={props.onSelect}
         />
     );
 };

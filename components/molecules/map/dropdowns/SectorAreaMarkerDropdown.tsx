@@ -9,6 +9,7 @@ interface SectorAreaMarkerDropdownProps {
     position?: { x: number, y: number };
     deleteSector: (sector: Quark<Sector>) => void;
     renameSector: (sector: Quark<Sector>) => void;
+    onSelect?: () => void,
 }
 
 export const SectorAreaMarkerDropdown: React.FC<SectorAreaMarkerDropdownProps> = watchDependencies((props: SectorAreaMarkerDropdownProps) => {
@@ -26,6 +27,7 @@ export const SectorAreaMarkerDropdown: React.FC<SectorAreaMarkerDropdownProps> =
                 { value: 'Renommer', action: renameSector },
                 { value: 'Supprimer', action: deleteSector },
             ]}
+            onSelect={props.onSelect}
         />
     );
 });

@@ -10,7 +10,7 @@ import { Header } from 'components/layouts/header/Header';
 import Profile from 'assets/icons/user-mobile.svg';
 import Heart from 'assets/icons/heart.svg';
 import Download from 'assets/icons/download.svg';
-import { quarkifyLightTopos } from 'helpers';
+import { quarkifyLightTopos, staticUrl, useModal } from 'helpers';
 import { getServerUser } from 'helpers/getServerUser';
 
 type ProfileProps = {
@@ -45,7 +45,7 @@ const ProfilePage: NextPage<ProfileProps> = watchDependencies((props) => {
     }
 }, [likedTopos]);
 
-  const [displayDeleteAccountModal, setDisplayDeleteAccountModal] = useState(false);
+const [ModalDelete, showModalDelete] = useModal();
   const deleteAccount = () => {
     alert("à venir"); //TODO
     console.log("delete account");
@@ -139,7 +139,7 @@ const ProfilePage: NextPage<ProfileProps> = watchDependencies((props) => {
           {selectedTab === 'PROFILE' &&
             <ProfileForm 
               user={props.user}
-              onDeleteAccountClick={() => setDisplayDeleteAccountModal(true)}
+              onDeleteAccountClick={showModalDelete}
             />
           }
 
@@ -160,14 +160,13 @@ const ProfilePage: NextPage<ProfileProps> = watchDependencies((props) => {
 
       </div>
 
-      {displayDeleteAccountModal &&
-          <ModalDelete 
-              onClose={() => setDisplayDeleteAccountModal(false)}
-              onDelete={deleteAccount}
-          >
-              Toutes les données du compte seront définitivement supprimées. Êtes-vous sûr.e de vouloir continuer ?
-          </ModalDelete>
-      }
+        <ModalDelete 
+            buttonText="Confirmer"
+            imgUrl={staticUrl.deleteWarning}
+            onConfirm={deleteAccount} 
+        >
+            Toutes les données du compte seront définitivement supprimées. Êtes-vous sûr.e de vouloir continuer ?
+        </ModalDelete>
     </>
   );
 });

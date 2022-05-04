@@ -13,6 +13,7 @@ export type CFImageProps = RawImageAttributes & {
     forceLoading?: boolean,
     sizeHint: SourceSize | { raw: string },
     defaultImage?: StaticImageData,
+    modalable?: boolean,
 };
 
 type RawImageAttributes = Omit<

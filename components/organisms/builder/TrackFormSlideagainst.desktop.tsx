@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
-import { ModalDelete, SlideagainstRightDesktop } from 'components';
+import React from 'react';
+import { SlideagainstRightDesktop } from 'components';
 import { Quark, watchDependencies } from 'helpers/quarky';
 import { Track } from 'types';
 import { TrackForm } from '../form/TrackForm';
+import { staticUrl, useModal } from 'helpers';
 
 interface TrackFormSlideagainstDesktopProps {
     track: Quark<Track>,
@@ -11,7 +12,7 @@ interface TrackFormSlideagainstDesktopProps {
 }
 
 export const TrackFormSlideagainstDesktop: React.FC<TrackFormSlideagainstDesktopProps> = watchDependencies((props: TrackFormSlideagainstDesktopProps) => {
-    const [displayDeleteModal, setDisplayDeleteModal] = useState(false);
+    const [ModalDelete, showModalDelete] = useModal();
 
     return (
         <>
@@ -24,19 +25,18 @@ export const TrackFormSlideagainstDesktop: React.FC<TrackFormSlideagainstDesktop
                 <div className='px-5 py-3 h-full'>
                     <TrackForm 
                         track={props.track}
-                        onDeleteTrack={() => setDisplayDeleteModal(true)}
+                        onDeleteTrack={showModalDelete}
                     />
                 </div>
             </SlideagainstRightDesktop>
 
-            {displayDeleteModal &&
-                <ModalDelete
-                    onClose={() => setDisplayDeleteModal(false)}
-                    onDelete={() => props.onDeleteTrack()}
-                >
-                    Etes-vous sûr de vouloir supprimer la voie ?
-                </ModalDelete>
-            }
+            <ModalDelete
+                buttonText="Confirmer"
+                imgUrl={staticUrl.deleteWarning}
+                onConfirm={props.onDeleteTrack}
+            >
+                Etes-vous sûr de vouloir supprimer la voie ?
+            </ModalDelete>
         </>
     )
 });

@@ -1,5 +1,5 @@
 import React, { useCallback, useRef, useState } from 'react';
-import { TopoCard, ModalDeleteTopo, ModalRejectTopo, ModalValidateTopo, ModalUnvalidateTopo } from 'components';
+import { TopoCard } from 'components';
 import { LeftbarDesktop, Tabs } from 'components/layouts';
 import { Header } from 'components/layouts/header/Header';
 import { LightTopo, TopoStatus } from 'types';
@@ -10,6 +10,7 @@ import Edit from 'assets/icons/edit.svg';
 import Recent from 'assets/icons/recent.svg';
 import Checked from 'assets/icons/checked.svg';
 import Spinner from 'assets/icons/spinner.svg';
+import { staticUrl, useModal } from 'helpers';
 
 interface RootAdminProps {
     lightTopos: LightTopo[],
@@ -27,10 +28,10 @@ export const RootAdmin: React.FC<RootAdminProps> = (props: RootAdminProps) => {
     const [topoDropdown, setTopoDropddown] = useState<LightTopo>();
     const [dropdownPosition, setDropdownPosition] = useState<{ x: number, y: number }>();
     
-    const [displayModalValidate, setDisplayModalValidate] = useState(false);
-    const [displayModalUnvalidate, setDisplayModalUnvalidate] = useState(false);
-    const [displayModalReject, setDisplayModalReject] = useState(false);
-    const [displayModalDelete, setDisplayModalDelete] = useState(false);
+    const [ModalValidate, showModalValidate] = useModal();
+    const [ModalUnvalidate, showModalUnvalidate] = useModal();
+    const [ModalReject, showModalReject] = useModal();
+    const [ModalDelete, showModalDelete] = useModal();
 
     const validateTopo = useCallback(async() => {
         if (topoDropdown) {
@@ -135,36 +136,33 @@ export const RootAdmin: React.FC<RootAdminProps> = (props: RootAdminProps) => {
                 <AdminActionDropdown 
                     topo={topoDropdown} 
                     position={dropdownPosition}
-                    onValidateClick={() => setDisplayModalValidate(true)}
-                    onUnvalidateClick={() => setDisplayModalUnvalidate(true)}
-                    onRejectClick={() => setDisplayModalReject(true)}
-                    onDeleteClick={() => setDisplayModalDelete(true)}
+                    onValidateClick={showModalValidate}
+                    onUnvalidateClick={showModalUnvalidate}
+                    onRejectClick={showModalReject}
+                    onDeleteClick={showModalDelete}
+                    onSelect={() => setDropdownPosition(undefined)}
                 />
             }
-            {displayModalValidate &&
-                <ModalValidateTopo 
-                    onValidate={validateTopo}
-                    onClose={() => setDisplayModalValidate(false)}
-                />
-            }
-            {displayModalUnvalidate &&
-                <ModalUnvalidateTopo 
-                    onValidate={unvalidateTopo}
-                    onClose={() => setDisplayModalUnvalidate(false)}
-                />
-            }
-            {displayModalReject &&
-                <ModalRejectTopo 
-                    onReject={rejectTopo}
-                    onClose={() => setDisplayModalReject(false)}
-                />
-            }
-            {displayModalDelete &&
-                <ModalDeleteTopo 
-                    onDelete={deleteTopo}
-                    onClose={() => setDisplayModalDelete(false)}
-                />
-            }
+            <ModalValidate 
+                buttonText="Confirmer"
+                imgUrl={staticUrl.deleteWarning}
+                onConfirm={validateTopo} 
+            >Une fois validé, le topo sera accessible par tous les utilisateurs. Etes-vous sûr de vouloir continuer ?</ModalValidate>
+            <ModalUnvalidate
+                buttonText="Confirmer"
+                imgUrl={staticUrl.defaultProfilePicture}
+                onConfirm={unvalidateTopo} 
+            >Le topo retournera en attente de validation. Etes-vous sûr de vouloir continuer ?</ModalUnvalidate>
+            <ModalReject
+                buttonText="Confirmer"
+                imgUrl={staticUrl.defaultProfilePicture}
+                onConfirm={rejectTopo} 
+            >Le topo retournera en brouillon. Etes-vous sûr de vouloir continuer ?</ModalReject>
+            <ModalDelete
+                buttonText="Confirmer"
+                imgUrl={staticUrl.deleteWarning}
+                onConfirm={deleteTopo} 
+            >Le topo sera entièrement supprimé. Etes-vous sûr de vouloir continuer ?</ModalDelete>
         </>
     );
 };

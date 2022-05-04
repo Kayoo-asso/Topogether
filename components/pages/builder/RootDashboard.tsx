@@ -1,5 +1,5 @@
 import React, { useCallback, useRef, useState } from 'react';
-import { AddTopoCard, TopoCardList, Button, ModalUnsubmitTopo, ModalDeleteTopo, ModalSubmitTopo } from 'components';
+import { AddTopoCard, TopoCardList, Button } from 'components';
 import { HeaderDesktop, LeftbarDesktop } from 'components/layouts';
 import { staticUrl, useContextMenu, useModal } from 'helpers';
 import { LightTopo, TopoStatus } from 'types';
@@ -24,10 +24,9 @@ export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies((pr
     const [topoDropdown, setTopoDropdown] = useState<LightTopo>();
     const [dropdownPosition, setDropdownPosition] = useState<{ x: number, y: number }>();
 
-    const [ModalDelete, showDeleteModal, hideDeleteModal] = useModal();
-    const [displayModalSubmit, setDisplayModalSubmit] = useState(false);
-    const [displayModalUnsubmit, setDisplayModalUnsubmit] = useState(false);
-    const [displayModalDelete, setDisplayModalDelete] = useState(false);
+    const [ModalDelete, showModalDelete] = useModal();
+    const [ModalSubmit, showModalSubmit] = useModal();
+    const [ModalUnsubmit, showModalUnsubmit] = useModal();
 
     const sendTopoToValidation = useCallback(async () => {
       if (topoDropdown) {
@@ -130,39 +129,27 @@ export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies((pr
           <UserActionDropdown 
             position={dropdownPosition} 
             topo={topoDropdown}
-            onSendToDraftClick={() => setDisplayModalUnsubmit(true)}
-            onSendToValidationClick={() => setDisplayModalSubmit(true)}
-            onDeleteClick={() => {
-              // setDisplayModalDelete(true);
-              showDeleteModal();
-            }}
+            onSendToDraftClick={showModalUnsubmit}
+            onSendToValidationClick={showModalSubmit}
+            onDeleteClick={showModalDelete}
+            onSelect={() => setDropdownPosition(undefined)}
           />
         }
-        {displayModalSubmit &&
-            <ModalSubmitTopo 
-                onSubmit={sendTopoToValidation} 
-                onClose={() => setDisplayModalSubmit(false)}    
-            />
-        }
-        {displayModalUnsubmit &&
-          <ModalUnsubmitTopo 
-            onUnsubmit={sendTopoToDraft} 
-            onClose={() => setDisplayModalUnsubmit(false)}   
-          />
-        }
+        <ModalSubmit 
+          buttonText="Confirmer"
+          imgUrl={staticUrl.defaultProfilePicture}
+          onConfirm={sendTopoToValidation}  
+        >Le topo sera envoyé en validation. Etes-vous sûr de vouloir continuer ?</ModalSubmit>
+        <ModalUnsubmit 
+          buttonText="Confirmer"
+          imgUrl={staticUrl.defaultProfilePicture}
+          onConfirm={sendTopoToDraft}   
+        >Le topo retournera en brouillon. Etes-vous sûr de vouloir continuer ?</ModalUnsubmit>
         <ModalDelete
           buttonText="Supprimer"
           imgUrl={staticUrl.deleteWarning}
           onConfirm={deleteTopo}
-        >
-          Etes-vous sûr ?
-        </ModalDelete>
-            {/* <ModalDeleteTopo 
-              open={displayModalDelete}
-              onDelete={deleteTopo}
-                // onClose={() => setDisplayModalDelete(false)}
-            /> */}
-        
+        >Le topo sera entièrement supprimé. Etes-vous sûr de vouloir continuer ?</ModalDelete>     
       </>
     );
 });

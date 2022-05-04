@@ -8,6 +8,7 @@ interface ParkingMarkerDropdownProps {
     parking: Quark<Parking>;
     position?: { x: number, y: number };
     deleteParking: (parking: Quark<Parking>) => void;
+    onSelect?: () => void,
 }
 
 export const ParkingMarkerDropdown: React.FC<ParkingMarkerDropdownProps> = watchDependencies((props: ParkingMarkerDropdownProps) => {
@@ -22,6 +23,7 @@ export const ParkingMarkerDropdown: React.FC<ParkingMarkerDropdownProps> = watch
             options={[
                 { value: 'Supprimer', action: deleteParking },
             ]}
+            onSelect={props.onSelect}
         />
     );
 });
