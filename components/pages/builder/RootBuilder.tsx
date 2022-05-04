@@ -5,7 +5,7 @@ import {
     InfoFormSlideover, ManagementFormSlideover, TrackFormSlideagainstDesktop,
     BoulderMarkerDropdown, ParkingMarkerDropdown, WaypointMarkerDropdown,
     GeoCamera, Drawer, BoulderBuilderSlideagainstDesktop,
-    ParkingBuilderSlide, AccessFormSlideover, WaypointBuilderSlide, ModalRenameSector, SectorAreaMarkerDropdown, BuilderProgressIndicator,
+    ParkingBuilderSlide, AccessFormSlideover, WaypointBuilderSlide, SectorAreaMarkerDropdown, BuilderProgressIndicator,
 } from 'components';
 import { sortBoulders, useContextMenu, createTrack, createBoulder, createParking, createWaypoint, createSector, useDevice, computeBuilderProgress, encodeUUID, decodeUUID, deleteTrack, sectorChanged, useModal, staticUrl } from 'helpers';
 import { Boulder, GeoCoordinates, Image, MapToolEnum, Parking, Sector, Track, Waypoint, Topo, isUUID, TopoStatus } from 'types';
@@ -17,6 +17,7 @@ import { useSession } from "helpers/services";
 import { Header } from 'components/layouts/header/Header';
 import { LeftbarBuilderDesktop } from 'components/layouts/sidebars/LeftbarBuilder.desktop';
 import { CreatingSectorAreaMarker, For, isMouseEvent, isPointerEvent, isTouchEvent, ParkingMarker, SectorAreaMarker, WaypointMarker } from 'components/atoms';
+import { ModalRenameSector } from 'components/organisms/builder/ModalRenameSector';
 
 interface RootBuilderProps {
     topoQuark: Quark<Topo>,
@@ -601,7 +602,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                 )}
             </Show>
 
-            <Show when={() => [displayModalSectorRename, selectedSector()] as const}>
+             <Show when={() => [displayModalSectorRename, selectedSector()] as const}>
                 {([, sSector]) => {
                     return (
                         <ModalRenameSector

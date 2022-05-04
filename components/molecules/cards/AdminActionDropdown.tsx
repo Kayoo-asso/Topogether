@@ -38,7 +38,9 @@ export const AdminActionDropdown: React.FC<AdminActionDropdownProps> = (props: A
                 { value: 'Annuler la validation', action: props.onUnvalidateClick }]
             : []),
         { value: 'Contacter le créateur', action: contactCreator },
-        { value: 'Supprimer', action: props.onDeleteClick },
+        ...(props.topo.status !== TopoStatus.Validated
+            ? [{ value: 'Supprimer', action: props.onDeleteClick }]
+            : []),
     ], [props.topo.status, openTopo, editTopo, props.onValidateClick, props.onRejectClick, contactCreator, props.onDeleteClick]);
 
     return (

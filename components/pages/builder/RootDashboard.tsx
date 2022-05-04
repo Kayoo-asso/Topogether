@@ -30,7 +30,7 @@ export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies((pr
 
     const sendTopoToValidation = useCallback(async () => {
       if (topoDropdown) {
-        await api.setTopoStatus(topoDropdown!.id, TopoStatus.Submitted);
+        await api.setTopoStatus(topoDropdown.id, TopoStatus.Submitted);
         const submittedTopo = lightTopos.find(lt => lt.id === topoDropdown.id)!;
         submittedTopo.submitted = new Date().toISOString();
         submittedTopo.status = TopoStatus.Submitted;
@@ -40,7 +40,7 @@ export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies((pr
 
     const sendTopoToDraft = useCallback(async () => {
       if (topoDropdown) {
-        await api.setTopoStatus(topoDropdown!.id, TopoStatus.Draft);
+        await api.setTopoStatus(topoDropdown.id, TopoStatus.Draft);
         const toDraftTopo = lightTopos.find(lt => lt.id === topoDropdown.id)!;
         toDraftTopo.submitted = undefined;
         toDraftTopo.status = TopoStatus.Draft;

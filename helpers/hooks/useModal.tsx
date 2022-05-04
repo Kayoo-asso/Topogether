@@ -61,8 +61,10 @@ export function useModal<T>(): [React.FC<ModalProps<T>>, (item: T) => void, () =
 
     useEffect(() => {
       const handleKeydown = (e: KeyboardEvent) => {
-        if (e.key === 'Escape') close();
-        if (e.key === 'Enter') confirm();
+        if (open) {
+          if (e.key === 'Escape') close();
+          if (e.key === 'Enter') confirm();
+        }
       }
       window.addEventListener('keydown', handleKeydown);
       return () => window.removeEventListener('keydown', handleKeydown);
@@ -95,7 +97,7 @@ export function useModal<T>(): [React.FC<ModalProps<T>>, (item: T) => void, () =
                 </div>
               }
 
-              <div className='mb-5'>
+              <div className='mb-5 text-center'>
                   {children}
               </div>
 

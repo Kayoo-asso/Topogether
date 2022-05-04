@@ -6,4 +6,6 @@ export * from './useCancelableEffect';
 export * from './useContextMenu';
 export * from './useDevice';
 export * from './useScreenOrientation';
+
 export * from './useModal';
+export * from './useModalRenameSector';
