@@ -12,7 +12,7 @@ interface LikedListProps {
 export const LikedList: React.FC<LikedListProps> = (props: LikedListProps) => {
 
     const [loading, setLoading] = useState(false);
-    const [ModalUnlike, showModalUnlike] = useModal();
+    const [ModalUnlike, showModalUnlike] = useModal<LightTopo>();
 
     const ref = useRef<HTMLDivElement>(null);
     const [topoDropdown, setTopoDropdown] = useState<LightTopo>();
@@ -66,9 +66,9 @@ export const LikedList: React.FC<LikedListProps> = (props: LikedListProps) => {
             <ModalUnlike 
                 buttonText="Confirmer"
                 imgUrl={staticUrl.deleteWarning}
-                onConfirm={useCallback(() => {
-                    if (topoDropdown) props.onUnlikeTopo(topoDropdown);
-                }, [topoDropdown])}   
+                onConfirm={(topo) => {
+                    props.onUnlikeTopo(topo);
+                }}   
             >Le topo sera retiré de la liste de vos topos likés. Voulez-vous continuer ?</ModalUnlike>
 
         </>

@@ -7,14 +7,14 @@ import {
 } from 'components';
 import { LeftbarTopoDesktop } from 'components/layouts';
 import { DeviceContext, decodeUUID, encodeUUID, sortBoulders, toLatLng } from 'helpers';
-import { Boulder, Image, isUUID, Parking, Sector, Topo, TopoStatus, Track, Waypoint } from 'types';
-import { Quark, QuarkIter, useCreateDerivation, useLazyQuarkyEffect, useQuarkyCallback, useSelectQuark, watchDependencies } from 'helpers/quarky';
+import { Boulder, ClimbTechniques, Image, isUUID, Parking, Sector, Topo, TopoStatus, Track, Waypoint } from 'types';
+import { Quark, QuarkIter, useCreateDerivation, useCreateQuark, useLazyQuarkyEffect, useQuarkyCallback, useSelectQuark, watchDependencies } from 'helpers/quarky';
 import { useRouter } from 'next/router';
 import { useFirstRender } from 'helpers/hooks/useFirstRender';
 import { Header } from 'components/layouts/header/Header';
-import { DropdownOption } from 'components/molecules';
+import { BoulderFilterOptions, DropdownOption, filterBoulders } from 'components/molecules';
 import { useSession } from 'helpers/services';
-import { For, ParkingMarker, SectorAreaMarker, WaypointMarker } from 'components/atoms';
+import { BoulderMarker, For, ParkingMarker, SectorAreaMarker, WaypointMarker } from 'components/atoms';
 
 
 interface RootTopoProps {
@@ -26,14 +26,13 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
   const session = useSession();
   const { b: bId } = router.query; // Get boulder id from url if selected 
   const firstRender = useFirstRender();
-
   const device = useContext(DeviceContext);
-  const topo = props.topoQuark();
 
-  const sectors = useMemo(() => topo.sectors?.quarks(), [topo.sectors]) || new QuarkIter<Quark<Parking>>([]);
-  const boulders = useMemo(() => topo.boulders?.quarks(), [topo.boulders]) || new QuarkIter<Quark<Boulder>>([])
-  const parkings = useMemo(() => topo.parkings?.quarks(), [topo.parkings]) || new QuarkIter<Quark<Parking>>([]);
-  const waypoints = useMemo(() => topo.waypoints?.quarks(), [topo.waypoints]) || new QuarkIter<Quark<Waypoint>>([]);
+  const topo = props.topoQuark();
+  const sectors = topo.sectors;
+  const boulders = topo.boulders;
+  const parkings = topo.parkings;
+  const waypoints = topo.waypoints;
   const boulderOrder = useCreateDerivation(() => sortBoulders(topo.sectors, topo.lonelyBoulders));
 
   const [currentImage, setCurrentImage] = useState<Image>();
@@ -66,7 +65,7 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
     if (typeof bId === "string") {
       const expanded = decodeUUID(bId);
       if (isUUID(expanded)) {
-        const boulder = boulders.find((b) => b().id === expanded)();
+        const boulder = boulders.findQuark(b => b.id === expanded);
         if (boulder) toggleBoulderSelect(boulder);
       }
     }
@@ -144,10 +143,22 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
       { value: 'Marche d\'approche', action: () => setCurrentDisplay('APPROACH') },
       { value: 'Gestionnaires du site', action: () => setCurrentDisplay('MANAGEMENT') }
     ];
-    if (topo.status === TopoStatus.Draft && (topo.creator?.id === session?.id || session?.role === 'ADMIN')) 
-      menuOptions.push({ value: 'Modifier', action: () => router.push(`/builder/${encodeUUID(topo.id)}`)})
+    if (topo.status === TopoStatus.Draft && (topo.creator?.id === session?.id || session?.role === 'ADMIN'))
+      menuOptions.push({ value: 'Modifier', action: () => router.push(`/builder/${encodeUUID(topo.id)}`) })
     return menuOptions;
   }
+
+  let maxTracks = 0;
+  for (const boulder of boulders) {
+    maxTracks = Math.max(maxTracks, boulder.tracks.length);
+  }
+  const defaultBoulderFilterOptions: BoulderFilterOptions = {
+    techniques: ClimbTechniques.None,
+    tracksRange: [0, maxTracks],
+    gradeRange: [3, 9],
+    mustSee: false
+  }
+  const boulderFilters = useCreateQuark<BoulderFilterOptions>(defaultBoulderFilterOptions);
 
   return (
     <>
@@ -214,18 +225,27 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
           searchbarOptions={{
             findBoulders: true,
           }}
-          onBoulderResultSelect={(boulder) => toggleBoulderSelect(boulders.find(b => b().id === boulder.id)()!)}
+          onBoulderResultSelect={(boulder) => toggleBoulderSelect(boulders.findQuark(b => b.id === boulder.id)!)}
           topo={props.topoQuark}
-          boulders={boulders}
-          selectedBoulder={selectedBoulder}
-          bouldersOrder={boulderOrder()}
-          displayBoulderFilter
-          onBoulderClick={toggleBoulderSelect}
-          boundsTo={boulders.toArray().map(b => b().location).concat(parkings.toArray().map(p => p().location))}
+          boulderFilters={boulderFilters}
+          boulderFiltersDomain={defaultBoulderFilterOptions}
+          boundsTo={boulders.map(b => b.location).concat(parkings.map(p => p.location))}
         >
           {/* TODO: improve the callbacks */}
-          <For each={() => sectors.toArray()}>
-            {sector => 
+          <For each={() => filterBoulders(boulders.quarks(), boulderFilters())}>
+            {boulder =>
+              <BoulderMarker
+                key={boulder().id}
+                boulder={boulder}
+                boulderOrder={boulderOrder()}
+                selectedBoulder={selectedBoulder}
+                topo={props.topoQuark}
+                onClick={toggleBoulderSelect}
+              />
+            }
+          </For>
+          <For each={() => sectors.quarks().toArray()}>
+            {sector =>
               <SectorAreaMarker
                 key={sector().id}
                 sector={sector}
@@ -234,8 +254,8 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
               />
             }
           </For>
-          <For each={() => waypoints.toArray()}>
-            {waypoint => 
+          <For each={() => waypoints.quarks().toArray()}>
+            {waypoint =>
               <WaypointMarker
                 key={waypoint().id}
                 waypoint={waypoint}
@@ -244,8 +264,8 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
               />
             }
           </For>
-          <For each={() => parkings.toArray()}>
-            {parking => 
+          <For each={() => parkings.quarks().toArray()}>
+            {parking =>
               <ParkingMarker
                 key={parking().id}
                 parking={parking}

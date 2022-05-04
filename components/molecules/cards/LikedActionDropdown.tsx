@@ -7,7 +7,7 @@ import { encodeUUID } from 'helpers';
 interface LikedActionDropdownProps {
     topo: LightTopo;
     position: { x: number, y: number };
-    onUnlikeClick: () => void;
+    onUnlikeClick: (topo: LightTopo) => void;
     onSelect?: () => void,
 }
 
@@ -25,7 +25,7 @@ export const LikedActionDropdown: React.FC<LikedActionDropdownProps> = (props: L
                     ? [{ value: 'Ouvrir', action: openTopo }]
                     : []),
                 ...(props.topo.status === TopoStatus.Validated
-                    ? [{ value: 'Ne plus aimer', action: props.onUnlikeClick }]
+                    ? [{ value: 'Ne plus aimer', action: () => props.onUnlikeClick(props.topo) }]
                     : []),
             ]}
             onSelect={props.onSelect}

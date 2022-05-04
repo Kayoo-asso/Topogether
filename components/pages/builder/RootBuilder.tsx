@@ -5,19 +5,19 @@ import {
     InfoFormSlideover, ManagementFormSlideover, TrackFormSlideagainstDesktop,
     BoulderMarkerDropdown, ParkingMarkerDropdown, WaypointMarkerDropdown,
     GeoCamera, Drawer, BoulderBuilderSlideagainstDesktop,
-    ParkingBuilderSlide, AccessFormSlideover, WaypointBuilderSlide, SectorAreaMarkerDropdown, BuilderProgressIndicator,
+    ParkingBuilderSlide, AccessFormSlideover, WaypointBuilderSlide, ModalRenameSector, SectorAreaMarkerDropdown, BuilderProgressIndicator, BoulderFilterOptions,
 } from 'components';
 import { sortBoulders, useContextMenu, createTrack, createBoulder, createParking, createWaypoint, createSector, useDevice, computeBuilderProgress, encodeUUID, decodeUUID, deleteTrack, sectorChanged, useModal, staticUrl } from 'helpers';
-import { Boulder, GeoCoordinates, Image, MapToolEnum, Parking, Sector, Track, Waypoint, Topo, isUUID, TopoStatus } from 'types';
-import { Quark, QuarkIter, useCreateDerivation, useLazyQuarkyEffect, useQuarkyCallback, useSelectQuark, watchDependencies } from 'helpers/quarky';
+import { Boulder, GeoCoordinates, Image, MapToolEnum, Parking, Sector, Track, Waypoint, Topo, isUUID, TopoStatus, ClimbTechniques } from 'types';
+import { Quark, QuarkIter, useCreateDerivation, useCreateQuark, useLazyQuarkyEffect, useQuarkyCallback, useSelectQuark, watchDependencies } from 'helpers/quarky';
 import { useRouter } from 'next/router';
 import { api, sync } from 'helpers/services';
 import { useFirstRender } from 'helpers/hooks/useFirstRender';
 import { useSession } from "helpers/services";
 import { Header } from 'components/layouts/header/Header';
 import { LeftbarBuilderDesktop } from 'components/layouts/sidebars/LeftbarBuilder.desktop';
-import { CreatingSectorAreaMarker, For, isMouseEvent, isPointerEvent, isTouchEvent, ParkingMarker, SectorAreaMarker, WaypointMarker } from 'components/atoms';
-import { ModalRenameSector } from 'components/organisms/builder/ModalRenameSector';
+import { BoulderMarker, CreatingSectorAreaMarker, For, isMouseEvent, isPointerEvent, isTouchEvent, ParkingMarker, SectorAreaMarker, WaypointMarker } from 'components/atoms';
+import { filterBoulders } from 'components/molecules';
 
 interface RootBuilderProps {
     topoQuark: Quark<Topo>,
@@ -31,10 +31,10 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
     const device = useDevice();
 
     const topo = props.topoQuark();
-    const sectors = useMemo(() => topo.sectors?.quarks(), [topo.sectors]) || new QuarkIter<Quark<Parking>>([]);
-    const boulders = useMemo(() => topo.boulders?.quarks(), [topo.boulders]) || new QuarkIter<Quark<Boulder>>([])
-    const parkings = useMemo(() => topo.parkings?.quarks(), [topo.parkings]) || new QuarkIter<Quark<Parking>>([]);
-    const waypoints = useMemo(() => topo.waypoints?.quarks(), [topo.waypoints]) || new QuarkIter<Quark<Waypoint>>([]);
+    const sectors = topo.sectors;
+    const boulders = topo.boulders;
+    const parkings = topo.parkings;
+    const waypoints = topo.waypoints;
     const boulderOrder = useCreateDerivation(() => sortBoulders(topo.sectors, topo.lonelyBoulders));
 
     const [currentTool, setCurrentTool] = useState<MapToolEnum>();
@@ -42,6 +42,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
 
     const selectedSector = useSelectQuark<Sector>();
     const sectorRightClicked = useSelectQuark<Sector>();
+
     const [ModalDeleteSector, showModalDeleteSector] = useModal<Quark<Sector>>();
 
     const selectedBoulder = useSelectQuark<Boulder>();
@@ -134,7 +135,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
         if (typeof bId === "string") {
             const expanded = decodeUUID(bId);
             if (isUUID(expanded)) {
-                const boulder = boulders.find((b) => b().id === expanded)();
+                const boulder = boulders.findQuark(b => b.id === expanded);
                 if (boulder) toggleBoulderSelect(boulder);
             }
         }
@@ -273,6 +274,18 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
 
     const progress = useCreateDerivation<number>(() => computeBuilderProgress(props.topoQuark), [props.topoQuark]);
 
+    let maxTracks = 0;
+    for (const boulder of boulders) {
+        maxTracks = Math.max(maxTracks, boulder.tracks.length);
+    }
+    const defaultBoulderFilterOptions: BoulderFilterOptions = {
+        techniques: ClimbTechniques.None,
+        tracksRange: [0, maxTracks],
+        gradeRange: [3, 9],
+        mustSee: false
+    }
+    const boulderFilters = useCreateQuark<BoulderFilterOptions>(defaultBoulderFilterOptions);
+
     return (
         <>
             <Header
@@ -364,7 +377,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                         findBoulders: true,
                         focusOnOpen: true,
                     }}
-                    onBoulderResultSelect={(boulder) => toggleBoulderSelect(boulders.find(b => b().id === boulder.id)()!)}
+                    onBoulderResultSelect={(boulder) => toggleBoulderSelect(boulders.findQuark(b => b.id === boulder.id)!)}
                     currentTool={currentTool}
                     onToolSelect={(tool) => tool === currentTool ? setCurrentTool(undefined) : setCurrentTool(tool)}
                     onPhotoButtonClick={() => setDisplayGeoCamera(true)}
@@ -373,16 +386,12 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                             : currentTool === 'PARKING' ? 'url(/assets/icons/colored/_parking.svg) 16 30, auto'
                                 : currentTool === 'WAYPOINT' ? 'url(/assets/icons/colored/_help-round.svg) 16 30, auto'
                                     : ''}
-                    draggableMarkers
                     topo={props.topoQuark}
-                    boulders={boulders}
-                    bouldersOrder={boulderOrder()}
-                    selectedBoulder={selectedBoulder}
-                    onBoulderClick={toggleBoulderSelect}
-                    onBoulderContextMenu={displayBoulderDropdown}
+                    boulderFilters={boulderFilters}
+                    boulderFiltersDomain={defaultBoulderFilterOptions}
                     onMapZoomChange={closeDropdown}
                     onClick={handleCreateNewMarker}
-                    boundsTo={boulders.toArray().map(b => b().location).concat(parkings.toArray().map(p => p().location))}
+                    boundsTo={boulders.map(b => b.location).concat(parkings.map(p => p.location))}
                 >
                     {currentTool === "SECTOR" &&
                         <CreatingSectorAreaMarker
@@ -393,7 +402,21 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                             }}
                         />
                     }
-                    <For each={() => sectors.toArray()}>
+                    <For each={() => filterBoulders(boulders.quarks(), boulderFilters())}>
+                        {boulder =>
+                            <BoulderMarker
+                                key={boulder().id}
+                                boulder={boulder}
+                                boulderOrder={boulderOrder()}
+                                selectedBoulder={selectedBoulder}
+                                topo={props.topoQuark}
+                                onClick={toggleBoulderSelect}
+                                onContextMenu={displayBoulderDropdown}
+                                draggable
+                            />
+                        }
+                    </For>
+                    <For each={() => sectors.quarks().toArray()}>
                         {sector =>
                             <SectorAreaMarker
                                 key={sector().id}
@@ -410,7 +433,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                             />
                         }
                     </For>
-                    <For each={() => waypoints.toArray()}>
+                    <For each={() => waypoints.quarks().toArray()}>
                         {waypoint =>
                             <WaypointMarker
                                 key={waypoint().id}
@@ -422,8 +445,8 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                             />
                         }
                     </For>
-                    <For each={() => parkings.toArray()}>
-                        {parking => 
+                    <For each={() => parkings.quarks().toArray()}>
+                        {parking =>
                             <ParkingMarker
                                 key={parking().id}
                                 parking={parking}
@@ -606,7 +629,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                 {([, sSector]) => {
                     return (
                         <ModalRenameSector
-                            sector={sectors.toArray().find(s => s().id === sSector.id)!}
+                            sector={sectors.findQuark(s => s.id === sSector.id)!}
                             onClose={() => setDisplayModalSectorRename(false)}
                         />
                     )
@@ -618,8 +641,8 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                 imgUrl={staticUrl.deleteWarning}
                 onConfirm={(sector) => {
                     topo.sectors.removeQuark(sector);
-                    if(selectedSector.quark() === sector) selectedSector.select(undefined);
-                }} 
+                    if (selectedSector.quark() === sector) selectedSector.select(undefined);
+                }}
             >Êtes-vous sûr de vouloir supprimer le secteur ?</ModalDeleteSector>
             <ModalDeleteBoulder
                 buttonText="Confirmer"

@@ -1,9 +1,10 @@
 import React, { useState, useCallback } from 'react';
 import { Checkbox, RoundButton } from 'components';
-import { ClimbTechniques, LightGrade } from 'types';
+import { Boulder, ClimbTechniques, gradeToLightGrade, LightGrade } from 'types';
 import { GradeSliderInput, BitflagMultipleSelect, SliderInput } from '..';
-import { ClimbTechniquesName, toggleFlag } from 'helpers';
+import { ClimbTechniquesName, hasSomeFlags, toggleFlag } from 'helpers';
 import FilterIcon from 'assets/icons/filter.svg';
+import { Quark } from 'helpers/quarky';
 
 export interface BoulderFilterOptions {
     techniques: ClimbTechniques,
@@ -14,9 +15,40 @@ export interface BoulderFilterOptions {
 
 interface BoulderFiltersProps {
     initialOpen?: boolean,
-    options: BoulderFilterOptions,
+    domain: BoulderFilterOptions,
     values: BoulderFilterOptions,
     onChange: (options: BoulderFilterOptions) => void,
+}
+
+export function filterBoulders(boulders: Iterable<Quark<Boulder>>, options: BoulderFilterOptions): Quark<Boulder>[] {
+    const result: Quark<Boulder>[] = [];
+    for (const boulderQ of boulders) {
+        const boulder = boulderQ();
+        // First apply the general filters
+        if (boulder.tracks.length < options.tracksRange[0] || boulder.tracks.length > options.tracksRange[1]) {
+            continue;
+        }
+        if (options.mustSee && !boulder.mustSee) continue;
+
+        // Then check out the tracks
+        const minGrade = options.gradeRange[0];
+        const maxGrade = options.gradeRange[1];
+        // Skip the iteration in the common case where the options are the default ones
+        // - options.techniques === ClimbTechniques.None means the user does not want to filter based on techniques
+        // - `maxGrade - minGrade` is 6 only if the range goes from grade 3 to grade 9, which always matches all tracks
+        let hasGrade = maxGrade - minGrade === 6;
+        let hasTechniques = options.techniques === ClimbTechniques.None;
+        if (!hasGrade || !hasTechniques) {
+            for (const track of boulder.tracks) {
+                hasTechniques = hasTechniques || hasSomeFlags(track.techniques, options.techniques);
+                const lightGrade = gradeToLightGrade(track.grade);
+                hasGrade = hasGrade || (lightGrade >= minGrade && lightGrade <= maxGrade);
+            }
+            if (!hasGrade || !hasTechniques) continue;
+        }
+        result.push(boulderQ);
+    } 
+    return result;
 }
 
 export const BoulderFilters: React.FC<BoulderFiltersProps> = ({
@@ -50,7 +82,7 @@ export const BoulderFilters: React.FC<BoulderFiltersProps> = ({
             <div>
                 <div className='ktext-label text-grey-medium'>Nombre de voies</div>
                 <SliderInput 
-                    domain={props.options.tracksRange}
+                    domain={props.domain.tracksRange}
                     values={props.values.tracksRange}
                     onChange={value => updateBoulderFilters('tracksRange', value)}
                 />
@@ -58,7 +90,7 @@ export const BoulderFilters: React.FC<BoulderFiltersProps> = ({
             <div>
                 <div className='ktext-label text-grey-medium'>Difficultés</div>
                 <GradeSliderInput 
-                    values={props.options.gradeRange}
+                    values={props.domain.gradeRange}
                     onChange={value => updateBoulderFilters('gradeRange', value)}
                 />
             </div>
