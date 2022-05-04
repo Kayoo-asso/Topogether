@@ -2,12 +2,12 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import Clear from 'assets/icons/clear.svg';
 import ReactDOM from "react-dom";
 import NextImage from 'next/image';
-import { Button } from "components";
+import { Button, ModalBG } from "components";
 
 export type ModalProps<T = undefined> = React.PropsWithChildren<{
-  buttonText: string,
+  buttonText?: string,
   imgUrl?: string,
-  onConfirm: (item: T) => void,
+  onConfirm?: (item: T) => void,
   onClose?: (item: T) => void,
 }>
 
@@ -53,7 +53,7 @@ export function useModal<T>(): [React.FC<ModalProps<T>>, (item: T) => void, () =
       setOpen(false);
     }
     const confirm = () => {
-      onConfirm(item!);
+      if (onConfirm) onConfirm(item!);
       setOpen(false);
     }
 
@@ -72,17 +72,7 @@ export function useModal<T>(): [React.FC<ModalProps<T>>, (item: T) => void, () =
 
     return (
       <Portal id='modal' open={open}>
-        <div 
-          className={`absolute bg-black bg-opacity-80 top-0 left-0 w-screen h-screen`}
-          style={{ zIndex: 9999 }} //No tailwind for this - bug with zIndex
-          onClick={close} 
-          tabIndex={-1}
-        >
-          <div
-            className='bg-white rounded-lg shadow min-h-[25%] w-11/12 md:w-5/12 absolute top-[45%] md:top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]'
-            // Avoid closing the modal when we click here (otherwise propagates to the backdrop)
-            onClick={(event) => event.stopPropagation()}
-          >
+        <ModalBG onBgClick={close}>
 
             <div className='p-6 pt-10'>
               {imgUrl &&
@@ -101,11 +91,13 @@ export function useModal<T>(): [React.FC<ModalProps<T>>, (item: T) => void, () =
                   {children}
               </div>
 
-              <Button
-                  content={buttonText}
-                  fullWidth
-                  onClick={confirm}
-              />
+              {buttonText && onConfirm &&
+                <Button
+                    content={buttonText}
+                    fullWidth
+                    onClick={confirm}
+                />
+              }
             </div>
 
             <div
@@ -115,9 +107,7 @@ export function useModal<T>(): [React.FC<ModalProps<T>>, (item: T) => void, () =
               <Clear className='stroke-dark h-8 w-8' />
             </div>
 
-          </div>
-        </div>
-
+        </ModalBG>
       </Portal>
     )
   }, []);

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {
-    Button, DownloadButton, Flash, LikeButton, Modal, GradeHistogram, ParkingButton, ParkingModal, SlideagainstRightDesktop
+    Button, DownloadButton, Flash, LikeButton, GradeHistogram, ParkingButton, ParkingModal, SlideagainstRightDesktop
 } from 'components';
 import { LightTopo } from 'types';
 import { encodeUUID, TopoTypeToColor } from 'helpers';
@@ -8,6 +8,7 @@ import { CFImage } from 'components/atoms/CFImage';
 import Rock from 'assets/icons/rock.svg'
 import ManyTracks from 'assets/icons/many-tracks.svg';
 import Waypoint from 'assets/icons/waypoint.svg';
+import { ModalBG } from 'components/atoms';
 
 interface TopoPreviewProps {
     topo: LightTopo,
@@ -118,15 +119,11 @@ export const TopoPreview: React.FC<TopoPreviewProps> = (props: TopoPreviewProps)
     )
 
     return (
-        <>
-            <div className='md:hidden'> 
-            {/* //TO CHANGE ?? */}
-                <Modal
-                    withBackground={false}
-                    onClose={props.onClose}
-                >
+        <>  
+            <div className='md:hidden'>       
+                <ModalBG onBgClick={props.onClose}>
                     {topoPreviewContent()}
-                </Modal>
+                </ModalBG>
             </div>
             <div className="hidden md:block">
                 <SlideagainstRightDesktop

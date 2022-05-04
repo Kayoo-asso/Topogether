@@ -1,10 +1,11 @@
 import React, { Dispatch, SetStateAction, useState } from 'react';
-import { BoulderPreviewDesktop, Button, Flash, Modal, SlideagainstRightDesktop, TracksList } from 'components';
+import { BoulderPreviewDesktop, Button, Flash, SlideagainstRightDesktop, TracksList } from 'components';
 import { Quark, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
 import { Boulder, Image, Track, UUID } from 'types';
 import { LoginForm } from '..';
 import { useSession } from "helpers/services";
 import Rock from 'assets/icons/rock.svg';
+import { useModal } from 'helpers';
 
 interface BoulderSlideagainstDesktopProps {
     boulder: Quark<Boulder>,
@@ -27,6 +28,7 @@ export const BoulderSlideagainstDesktop: React.FC<BoulderSlideagainstDesktopProp
         .filter((track) => ((track().creatorId) === props.topoCreatorId) === officialTrackTab);
 
     //TO CHANGE ??
+    const [ModalLogin, showModalLogin] = useModal();
     const [displayModalLoginRedirect, setDisplayModalLoginRedirect] = useState(false);
 
     return (
@@ -99,7 +101,7 @@ export const BoulderSlideagainstDesktop: React.FC<BoulderSlideagainstDesktopProp
                                 fullWidth
                                 onClick={() => {
                                     if (session) alert("à venir"); //TODO
-                                    else setDisplayModalLoginRedirect(true);
+                                    else showModalLogin();
                                 }}
                             />
                         </div>
@@ -114,7 +116,7 @@ export const BoulderSlideagainstDesktop: React.FC<BoulderSlideagainstDesktopProp
                 {flashMessage}
             </Flash>
 
-            {displayModalLoginRedirect &&
+            {/* {displayModalLoginRedirect &&
                 <Modal 
                     onClose={() => setDisplayModalLoginRedirect(false)}
                 >
@@ -123,7 +125,13 @@ export const BoulderSlideagainstDesktop: React.FC<BoulderSlideagainstDesktopProp
                         <LoginForm onLogin={() => setDisplayModalLoginRedirect(false)} />
                     </div>
                 </Modal>
-            }
+            } */}
+            <ModalLogin>
+                <div className='p-8 mt-4'>
+                    <div className='text-center mb-8'>Pour ajouter une voie "Communauté", vous devez être connecté.</div>
+                    <LoginForm onLogin={() => setDisplayModalLoginRedirect(false)} />
+                </div>
+            </ModalLogin>
         </>
     )
 });
