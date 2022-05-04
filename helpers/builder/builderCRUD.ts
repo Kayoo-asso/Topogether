@@ -20,14 +20,6 @@ export const createSector = (topoQuark: Quark<Topo>, creatingSector: GeoCoordina
     const newSectorQuark = topo.sectors.quarkAt(-1);
     return newSectorQuark;
 }
-export const deleteSector = (topoQuark: Quark<Topo>, toDeleteSector: SelectQuarkNullable<SectorData>, selectedSector: SelectQuarkNullable<SectorData>) => {
-    const sectorQuark = toDeleteSector.quark();
-    if (sectorQuark) {
-        topoQuark().sectors.removeQuark(sectorQuark);
-        toDeleteSector.select(undefined);
-        if (selectedSector.quark() === sectorQuark) selectedSector.select(undefined);
-    }
-}
 
 export const createBoulder = (topoQuark: Quark<Topo>, location: GeoCoordinates, image?: Image) => {
     const topo = topoQuark();
@@ -51,14 +43,6 @@ export const createBoulder = (topoQuark: Quark<Topo>, location: GeoCoordinates, 
     const newBoulderQuark = topo.boulders.quarkAt(-1);
     return newBoulderQuark;
 }
-export const deleteBoulder = (topoQuark: Quark<Topo>, toDeleteBoulder: SelectQuarkNullable<Boulder>, selectedBoulder: SelectQuarkNullable<Boulder>) => {
-    const boulderQuark = toDeleteBoulder.quark();
-    if (boulderQuark) {
-        topoQuark().boulders.removeQuark(boulderQuark);
-        toDeleteBoulder.select(undefined);
-        if (selectedBoulder.quark() === boulderQuark) selectedBoulder.select(undefined);
-    }
-}
 
 export const createParking = (topo: Topo, location: GeoCoordinates, image?: Image) => {
     const newParking: Parking = {
@@ -72,14 +56,6 @@ export const createParking = (topo: Topo, location: GeoCoordinates, image?: Imag
     const newParkingQuark = topo.parkings.quarkAt(-1);
     return newParkingQuark;
 }
-export const deleteParking = (topo: Topo, toDeleteParking: SelectQuarkNullable<Parking>, selectedParking: SelectQuarkNullable<Parking>) => {
-    const parkingQuark = toDeleteParking.quark();
-    if (parkingQuark) {
-        topo.parkings.removeQuark(parkingQuark);
-        toDeleteParking.select(undefined);
-        if (selectedParking.quark() === parkingQuark) selectedParking.select(undefined);
-    }
-}
 
 export const createWaypoint = (topo: Topo, location: GeoCoordinates, image?: Image) => {
     const newWaypoint: Waypoint = {
@@ -91,14 +67,6 @@ export const createWaypoint = (topo: Topo, location: GeoCoordinates, image?: Ima
     topo.waypoints.push(newWaypoint);
     const newWaypointQuark = topo.waypoints.quarkAt(-1);
     return newWaypointQuark;
-}
-export const deleteWaypoint = (topo: Topo, toDeleteWaypoint: SelectQuarkNullable<Waypoint>, selectedWaypoint: SelectQuarkNullable<Waypoint>) => {
-    const waypointQuark = toDeleteWaypoint.quark();
-    if (waypointQuark) {
-        topo.waypoints.removeQuark(waypointQuark);
-        toDeleteWaypoint.select(undefined);
-        if (selectedWaypoint.quark() === waypointQuark) selectedWaypoint.select(undefined);
-    }
 }
 
 export const createTrack = (boulder: Boulder, creatorId: UUID) => {

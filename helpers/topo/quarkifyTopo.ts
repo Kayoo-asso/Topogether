@@ -43,15 +43,16 @@ function onBoulderDelete(boulder: Boulder, topoQuark: Quark<Topo>) {
     if (aloneIdx >= 0) {
         topo.lonelyBoulders.splice(aloneIdx, 1);
         topoQuark.set({ ...topo }); // force update
-        return;
     }
-    for (const sectorQuark of topo.sectors.quarks()) {
-        const sector = sectorQuark();
-        const idx = sector.boulders.indexOf(boulder.id);
-        if (idx >= 0) {
-            sector.boulders.splice(idx, 1);
-            sectorQuark.set({ ...sector }); // force update
-            break;
+    else {
+        for (const sectorQuark of topo.sectors.quarks()) {
+            const sector = sectorQuark();
+            const idx = sector.boulders.indexOf(boulder.id);
+            if (idx >= 0) {
+                sector.boulders.splice(idx, 1);
+                sectorQuark.set({ ...sector }); // force update
+                break;
+            }
         }
     }
     sync.boulderDelete(boulder);

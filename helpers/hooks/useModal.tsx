@@ -4,17 +4,17 @@ import ReactDOM from "react-dom";
 import NextImage from 'next/image';
 import { Button } from "components";
 
-export type ModalProps = {
-  children: React.ReactNode,
+export type ModalProps<T = undefined> = React.PropsWithChildren<{
   buttonText: string,
   imgUrl?: string,
-  onConfirm: () => void,
-  onClose?: () => void,
-}
+  onConfirm: (item: T) => void,
+  onClose?: (item: T) => void,
+}>
 
-type Toggles = {
+type Toggles<T> = {
   setOpen: (open: boolean) => void,
-  onClose?: () => void,
+  setItem: React.Dispatch<React.SetStateAction<T>>,
+  close?: () => void,
 }
 
 export type PortalProps = React.PropsWithChildren<{
@@ -39,22 +39,25 @@ export const Portal: React.FC<PortalProps> = ({ id, open, key, children }: Porta
 
 
 // Returns the Modal and show / hide in an array, to make renaming easier, in case of multiple Modals in the same component
-export const useModal = (): [React.FC<ModalProps>, () => void, () => void] => {
-  const toggles = useRef<Toggles>();
+export function useModal(): [React.FC<ModalProps<undefined>>, () => void, () => void];
+export function useModal<T>(): [React.FC<ModalProps<T>>, (item: T) => void, () => void];
+export function useModal<T>(): [React.FC<ModalProps<T>>, (item: T) => void, () => void] {
+  const toggles = useRef<Toggles<T>>();
 
-  const Modal = useCallback(({ onConfirm, onClose, children, buttonText, imgUrl }: ModalProps) => {
+  const Modal = useCallback(({ onConfirm, onClose, children, buttonText, imgUrl }: ModalProps<T>) => {
     const [open, setOpen] = useState(false);
+    const [item, setItem] = useState<T | undefined>();
 
-    toggles.current = { setOpen, onClose };
-  
     const close = () => {
-      if (onClose) onClose();
+      if (onClose) onClose(item!);
       setOpen(false);
     }
     const confirm = () => {
-      onConfirm();
+      onConfirm(item!);
       setOpen(false);
     }
+
+    toggles.current = { setOpen, setItem: (setItem as any), close };
 
     useEffect(() => {
       const handleKeydown = (e: KeyboardEvent) => {
@@ -75,6 +78,8 @@ export const useModal = (): [React.FC<ModalProps>, () => void, () => void] => {
         >
           <div
             className='bg-white rounded-lg shadow min-h-[25%] w-11/12 md:w-5/12 absolute top-[45%] md:top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]'
+            // Avoid closing the modal when we click here (otherwise propagates to the backdrop)
+            onClick={(event) => event.stopPropagation()}
           >
 
             <div className='p-6 pt-10'>
@@ -117,10 +122,13 @@ export const useModal = (): [React.FC<ModalProps>, () => void, () => void] => {
 
   return [
     Modal,
-    useCallback(() => toggles.current?.setOpen(true), []),
+    useCallback((item: T) => {
+      // need to wrap functions before putting them into React state
+      toggles.current?.setItem(typeof item === "function" ? () => item : item);
+      toggles.current?.setOpen(true);
+    }, []),
     useCallback(() => {
-      if (toggles.current?.onClose) toggles.current.onClose();
-      toggles.current?.setOpen(false)
+      if (toggles.current?.close) toggles.current.close();
     }, [])
   ];
 }

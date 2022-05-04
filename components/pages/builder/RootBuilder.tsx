@@ -5,9 +5,9 @@ import {
     InfoFormSlideover, ManagementFormSlideover, TrackFormSlideagainstDesktop,
     BoulderMarkerDropdown, ParkingMarkerDropdown, WaypointMarkerDropdown,
     GeoCamera, Drawer, BoulderBuilderSlideagainstDesktop,
-    ParkingBuilderSlide, AccessFormSlideover, WaypointBuilderSlide, ModalRenameSector, ModalDelete, SectorAreaMarkerDropdown, BuilderProgressIndicator,
+    ParkingBuilderSlide, AccessFormSlideover, WaypointBuilderSlide, ModalRenameSector, SectorAreaMarkerDropdown, BuilderProgressIndicator,
 } from 'components';
-import { sortBoulders, useContextMenu, createTrack, createBoulder, createParking, createWaypoint, createSector, deleteSector, deleteBoulder, deleteParking, deleteWaypoint, useDevice, computeBuilderProgress, encodeUUID, decodeUUID, deleteTrack, sectorChanged, useModal, staticUrl } from 'helpers';
+import { sortBoulders, useContextMenu, createTrack, createBoulder, createParking, createWaypoint, createSector, useDevice, computeBuilderProgress, encodeUUID, decodeUUID, deleteTrack, sectorChanged, useModal, staticUrl } from 'helpers';
 import { Boulder, GeoCoordinates, Image, MapToolEnum, Parking, Sector, Track, Waypoint, Topo, isUUID, TopoStatus } from 'types';
 import { Quark, QuarkIter, useCreateDerivation, useLazyQuarkyEffect, useQuarkyCallback, useSelectQuark, watchDependencies } from 'helpers/quarky';
 import { useRouter } from 'next/router';
@@ -40,28 +40,20 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
     const [currentImage, setCurrentImage] = useState<Image>();
 
     const selectedSector = useSelectQuark<Sector>();
-    const toDeleteSector = useSelectQuark<Sector>();
     const sectorRightClicked = useSelectQuark<Sector>();
-    const [ModalDeleteSector, showModalDeleteSector] = useModal();
-    useEffect(() => toDeleteSector() && showModalDeleteSector(), [toDeleteSector, toDeleteSector()]);
+    const [ModalDeleteSector, showModalDeleteSector] = useModal<Quark<Sector>>();
 
     const selectedBoulder = useSelectQuark<Boulder>();
-    const toDeleteBoulder = useSelectQuark<Boulder>();
     const boulderRightClicked = useSelectQuark<Boulder>();
-    const [ModalDeleteBoulder, showModalDeleteBoulder] = useModal();
-    useEffect(() => toDeleteBoulder() && showModalDeleteBoulder(), [toDeleteBoulder, toDeleteBoulder()]);
+    const [ModalDeleteBoulder, showModalDeleteBoulder] = useModal<Quark<Boulder>>();
 
     const selectedParking = useSelectQuark<Parking>();
-    const toDeleteParking = useSelectQuark<Parking>();
     const parkingRightClicked = useSelectQuark<Parking>();
-    const [ModalDeleteParking, showModalDeleteParking] = useModal();
-    useEffect(() => toDeleteParking() && showModalDeleteParking(), [toDeleteParking, toDeleteParking()]);
+    const [ModalDeleteParking, showModalDeleteParking] = useModal<Quark<Parking>>();
 
     const selectedWaypoint = useSelectQuark<Waypoint>();
     const waypointRightClicked = useSelectQuark<Waypoint>();
-    const toDeleteWaypoint = useSelectQuark<Waypoint>();
-    const [ModalDeleteWaypoint, showModalDeleteWaypoint] = useModal();
-    useEffect(() => toDeleteWaypoint() && showModalDeleteWaypoint(), [toDeleteWaypoint, toDeleteWaypoint()]);
+    const [ModalDeleteWaypoint, showModalDeleteWaypoint] = useModal<Quark<Waypoint>>();
 
     const selectedTrack = useSelectQuark<Track>();
 
@@ -119,7 +111,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
 
     const [displayModalSectorRename, setDisplayModalSectorRename] = useState(false);
     const toggleSectorSelect = useQuarkyCallback((sectorQuark: Quark<Sector>) => {
-        if (selectedSector()?.id === sectorQuark().id)
+        if (selectedSector.quark() === sectorQuark)
             selectedSector.select(undefined);
         else selectedSector.select(sectorQuark);
     }, [selectedSector, selectedBoulder]);
@@ -210,6 +202,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                 case 'ROCK': createBoulder(props.topoQuark, loc); break;
                 case 'PARKING': createParking(topo, loc); break;
                 case 'WAYPOINT': createWaypoint(topo, loc); break;
+                // case 'SECTOR' is handled by inserting a CreatingSectorAreaMarker component
                 default: break;
             }
         }
@@ -231,10 +224,10 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                 }
             }
             else if (e.code === 'Delete') {
-                if (selectedSector()) toDeleteSector.select(selectedSector.quark());
-                else if (selectedBoulder()) toDeleteBoulder.select(selectedBoulder.quark());
-                else if (selectedParking()) toDeleteParking.select(selectedParking.quark());
-                else if (selectedWaypoint()) toDeleteWaypoint.select(selectedWaypoint.quark());
+                if (selectedSector()) showModalDeleteSector(selectedSector.quark()!);
+                else if (selectedBoulder()) showModalDeleteBoulder(selectedBoulder.quark()!);
+                else if (selectedParking()) showModalDeleteParking(selectedParking.quark()!);
+                else if (selectedWaypoint()) showModalDeleteWaypoint(selectedWaypoint.quark()!);
             }
         }
         window.addEventListener('keydown', handleKey);
@@ -315,7 +308,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                         selectedSector.select(sectorQuark);
                         setDisplayModalSectorRename(true);
                     }}
-                    onDeleteBoulder={(boulderQuark) => toDeleteBoulder.select(boulderQuark)}
+                    onDeleteBoulder={showModalDeleteBoulder}
                 />
                 <Show when={() => [device === 'mobile', displaySectorSlideover] as const}>
                     {() => (
@@ -330,7 +323,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                                 selectedSector.select(sectorQuark);
                                 setDisplayModalSectorRename(true);
                             }}
-                            onDeleteBoulder={(boulderQuark) => toDeleteBoulder.select(boulderQuark)}
+                            onDeleteBoulder={showModalDeleteBoulder}
                             onClose={() => setDisplaySectorSlideover(false)}
                         />
                     )}
@@ -554,7 +547,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                         position={dropdownPosition}
                         toggleTrackSelect={toggleTrackSelect}
                         boulder={quarkBoulder}
-                        deleteBoulder={() => toDeleteBoulder.select(quarkBoulder)}
+                        deleteBoulder={showModalDeleteBoulder}
                         onSelect={() => boulderRightClicked.select(undefined)}
                     />
                 }
@@ -565,7 +558,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                     <SectorAreaMarkerDropdown
                         position={dropdownPosition}
                         sector={quarkSector}
-                        deleteSector={() => toDeleteSector.select(quarkSector)}
+                        deleteSector={showModalDeleteSector}
                         renameSector={() => {
                             selectedSector.select(quarkSector);
                             setDisplayModalSectorRename(true);
@@ -580,7 +573,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                     <WaypointMarkerDropdown
                         position={dropdownPosition}
                         waypoint={quarkWaypoint}
-                        deleteWaypoint={() => toDeleteWaypoint.select(quarkWaypoint)}
+                        deleteWaypoint={showModalDeleteWaypoint}
                         onSelect={() => waypointRightClicked.select(undefined)}
                     />
                 }
@@ -591,7 +584,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                     <ParkingMarkerDropdown
                         position={dropdownPosition}
                         parking={quarkParking}
-                        deleteParking={() => toDeleteParking.select(quarkParking)}
+                        deleteParking={showModalDeleteParking}
                         onSelect={() => parkingRightClicked.select(undefined)}
                     />
                 }
@@ -622,26 +615,34 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
             <ModalDeleteSector
                 buttonText="Confirmer"
                 imgUrl={staticUrl.deleteWarning}
-                onConfirm={useCallback(() => deleteSector(props.topoQuark, toDeleteSector, selectedSector), [props.topoQuark, toDeleteSector, selectedSector])} 
-                onClose={() => toDeleteSector.select(undefined)}
+                onConfirm={(sector) => {
+                    topo.sectors.removeQuark(sector);
+                    if(selectedSector.quark() === sector) selectedSector.select(undefined);
+                }} 
             >Êtes-vous sûr de vouloir supprimer le secteur ?</ModalDeleteSector>
             <ModalDeleteBoulder
                 buttonText="Confirmer"
                 imgUrl={staticUrl.deleteWarning}
-                onConfirm={() => deleteBoulder(props.topoQuark, toDeleteBoulder, selectedBoulder)}
-                onClose={() => toDeleteBoulder.select(undefined)}
+                onConfirm={(boulder) => {
+                    topo.boulders.removeQuark(boulder);
+                    if (selectedBoulder.quark() === boulder) selectedBoulder.select(undefined);
+                }}
             >Êtes-vous sûr de vouloir supprimer le bloc et toutes les voies associées ?</ModalDeleteBoulder>
             <ModalDeleteParking
                 buttonText="Confirmer"
                 imgUrl={staticUrl.deleteWarning}
-                onConfirm={() => deleteParking(topo, toDeleteParking, selectedParking)}
-                onClose={() => toDeleteParking.select(undefined)}
+                onConfirm={(parking) => {
+                    topo.parkings.removeQuark(parking);
+                    if (selectedParking.quark() === parking) selectedParking.select(undefined);
+                }}
             >Êtes-vous sûr de vouloir supprimer le parking ?</ModalDeleteParking>
             <ModalDeleteWaypoint
                 buttonText="Confirmer"
                 imgUrl={staticUrl.deleteWarning}
-                onConfirm={() => deleteWaypoint(topo, toDeleteWaypoint, selectedWaypoint)}
-                onClose={() => toDeleteWaypoint.select(undefined)}
+                onConfirm={(waypoint) => {
+                    topo.waypoints.removeQuark(waypoint);
+                    if (selectedWaypoint.quark() === waypoint) selectedWaypoint.select(undefined);
+                }}
             >Êtes-vous sûr de vouloir supprimer le point de repère ?</ModalDeleteWaypoint>
 
         </>
