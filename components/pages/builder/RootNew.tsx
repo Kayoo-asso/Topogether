@@ -112,6 +112,7 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies((props: RootNew
                   <Button
                     content="Suivant"
                     white
+                    onClick={goStep1}
                   />
                 </div>
               </div>
