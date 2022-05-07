@@ -39,10 +39,10 @@ export function Select<T>({
         <div
             id={props.id}
             className={`relative cursor-pointer ${props.wrapperClassname}`}
-            onClick={useCallback(() => {
-                if (isOpen) setIsOpen(false);
-                else setIsOpen(true);
-            }, [isOpen])}
+            onClick={() => {
+                setIsOpen(x => !x);
+                if (!isOpen) ref.current?.focus();
+            }}
         >
             <TextInput
                 ref={ref}

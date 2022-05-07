@@ -1,8 +1,6 @@
+import React, { useRef, useState } from 'react';
 import { Checkbox } from 'components';
 import { hasFlag, listFlags } from 'helpers';
-import React, {
-  useRef, useState,
-} from 'react';
 import { Bitflag } from 'types';
 import { TextInput } from './TextInput';
 import ArrowSimple from 'assets/icons/arrow-simple.svg';
@@ -26,10 +24,6 @@ export const BitflagMultipleSelect = <T extends Bitflag>(props: BitflagMultipleS
     <div
       id={props.id}
       className={`relative cursor-pointer ${props.className}`}
-      onClick={() => {
-        setIsOpen(x => !x);
-        if (!isOpen) ref.current?.focus();
-      }}
     >
       <TextInput
         ref={ref}
@@ -38,6 +32,10 @@ export const BitflagMultipleSelect = <T extends Bitflag>(props: BitflagMultipleS
         value={textValue}
         pointer
         readOnly
+        onClick={() => {
+          setIsOpen(x => !x);
+          if (!isOpen) ref.current?.focus();
+        }}
       />
 
       <ArrowSimple
@@ -50,15 +48,15 @@ export const BitflagMultipleSelect = <T extends Bitflag>(props: BitflagMultipleS
             <div
               className="py-4 text-dark ktext-base cursor-pointer flex flex-row items-center"
               key={name}
-              onKeyDown={() => { props.onChange(flag); }}
-              onMouseDown={() => { props.onChange(flag); }}
+              onKeyDown={() => props.onChange(flag) }
+              onMouseDown={() => props.onChange(flag) }
               role="menuitem"
               tabIndex={0}
             >
               <Checkbox
                 className="mr-2"
                 checked={props.value && hasFlag(props.value, flag)}
-                onClick={() => { props.onChange(flag); }}
+                onClick={() => {}} // No function here! Managed by the event listeners on the div element
               />
               {name}
             </div>

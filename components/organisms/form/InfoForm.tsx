@@ -82,11 +82,11 @@ export const InfoForm: React.FC<InfoFormProps> = watchDependencies((props: InfoF
         label="Type de roche"
         bitflagNames={rockNames}
         value={topo.rockTypes}
-        onChange={(value) => 
+        onChange={(value) => {
           props.topo.set((t) => ({
           ...t,
           rockTypes: toggleFlag(topo.rockTypes, value),
-        }))}
+        }))}}
       />
 
       <TextInput
