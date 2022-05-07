@@ -77,7 +77,7 @@ export const SlideagainstRightDesktop: React.FC<SlideagainstRightDesktopProps> =
                 >Terminé</span>
             </div>
 
-            <div className='flex-1 relative'>
+            <div className='flex-1 relative overflow-auto'>
                 {props.children}
             </div>
         </div>

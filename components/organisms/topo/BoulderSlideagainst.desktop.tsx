@@ -33,7 +33,6 @@ export const BoulderSlideagainstDesktop: React.FC<BoulderSlideagainstDesktopProp
         <>
             <SlideagainstRightDesktop 
                 open
-                className='overflow-scroll'
                 displayLikeButton
                 item={props.boulder()}
                 onClose={props.onClose}

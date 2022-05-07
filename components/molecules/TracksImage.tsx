@@ -58,7 +58,7 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
   useEffect(() => {
     setVb(viewBoxRef.current);
   }, [viewBoxRef.current]);
-
+  
   const viewBoxWidth = ratio * viewBoxHeight;
 
   const getCursorUrl = () => {
@@ -87,7 +87,7 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
 
   const [portalOpen, setPortalOpen] = useState(false);
   const wrapPortal = (elts: ReactElement<any, any>) => {
-    if (props.modalable) {
+    if (props.modalable && props.image) {
       return (
         <>
           {elts}

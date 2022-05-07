@@ -65,7 +65,17 @@ export const AccessForm: React.FC<AccessFormProps> = watchDependencies((props: A
                         const newSteps = access.steps!; 
                         return (
                             <div className='flex flex-col gap-2' key={index}>
-                                <div className='flex flex-row gap-6 items-end'>
+                                <div 
+                                    className='ktext-base-little text-main cursor-pointer mt-3'
+                                    onClick={() => {
+                                        newSteps.splice(index, 1);
+                                        props.access.set({
+                                            ...access,
+                                            steps: newSteps,
+                                        })
+                                    }}
+                                >Supprimer l'étape</div>
+                                <div className='flex flex-row gap-6 items-start'>
                                     <div className='w-32'>
                                         <ImageInput 
                                             value={step.image}
@@ -91,16 +101,6 @@ export const AccessForm: React.FC<AccessFormProps> = watchDependencies((props: A
                                         }}
                                     />
                                 </div>
-                                <div 
-                                    className='ktext-base-little text-main cursor-pointer'
-                                    onClick={() => {
-                                        newSteps.splice(index, 1);
-                                        props.access.set({
-                                            ...access,
-                                            steps: newSteps,
-                                        })
-                                    }}
-                                >Supprimer</div>
                             </div>
                         )
                     })}

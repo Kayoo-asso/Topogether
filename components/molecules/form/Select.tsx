@@ -1,4 +1,6 @@
 import React, {
+    useCallback,
+    useEffect,
     useRef, useState,
 } from 'react';
 import { TextInput } from './TextInput';
@@ -29,12 +31,18 @@ export function Select<T>({
     const [isOpen, setIsOpen] = useState(false);
     const selected = props.options.find(x => x[0] === props.value);
 
+    useEffect(() => {
+        console.log(isOpen);
+    }, [isOpen])
+
     return (
         <div
             id={props.id}
-            onFocus={() => setIsOpen(true)}
-            onBlur={() => setIsOpen(false)}
             className={`relative cursor-pointer ${props.wrapperClassname}`}
+            onClick={useCallback(() => {
+                if (isOpen) setIsOpen(false);
+                else setIsOpen(true);
+            }, [isOpen])}
         >
             <TextInput
                 ref={ref}
@@ -49,12 +57,9 @@ export function Select<T>({
             />
             <ArrowSimple
                 className={`w-4 h-4 absolute right-0 ${isOpen ? 'top-[14px]' : 'top-[8px]'} ${isOpen ? 'rotate-90' : '-rotate-90'} ${white ? 'fill-white' : 'fill-dark'}`}
-                onClick={() => {
-                    ref.current?.focus();
-                }}
             />
             {isOpen && (
-                <div className='pl-4 py-2 bg-white rounded-b h-[320px] absolute overflow-y-auto overflow-x-none z-100 w-full right-0 shadow'>
+                <div className='pl-4 py-2 bg-white rounded-b max-h-[320px] absolute overflow-y-auto overflow-x-none z-100 w-full right-0 shadow'>
                     {props.options.map(([value, label]) => (
                         <div
                             className="py-4 text-dark ktext-base cursor-pointer flex flex-row items-center"
