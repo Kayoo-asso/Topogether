@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@googlemaps/react-wrapper": "^1.1.19",
+    "@risingstack/react-easy-state": "^6.3.0",
     "@supabase/supabase-js": "^1.33.3",
     "compressorjs": "^1.0.7",
     "cookie": "^0.4.2",
@@ -30,9 +31,7 @@
     "react-beautiful-dnd": "^13.1.0",
     "react-compound-slider": "^3.3.1",
     "react-cool-dimensions": "^2.0.7",
-    "react-cool-portal": "^1.2.0",
     "react-dom": "17.0.2",
-    "react-merge-refs": "^1.1.0",
     "trigram-search": "^1.0.2",
     "uuid": "^8.3.2"
   },

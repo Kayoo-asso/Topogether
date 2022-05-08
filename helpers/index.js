@@ -13,6 +13,7 @@ export * from './bitflagHelpers';
 export * from './formatDate';
 export * from './blobToImage';
 export * from './encodeUUID';
+export * from './setReactRef';
 
 export * from './splitArray';
 export * from './arrayMove';

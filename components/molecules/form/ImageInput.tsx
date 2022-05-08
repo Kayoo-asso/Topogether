@@ -3,7 +3,7 @@ import React, { useRef, useState, forwardRef, useEffect } from 'react';
 import { ImageButton, ProfilePicture } from '../../atoms';
 import { api, ImageUploadErrorReason } from 'helpers/services';
 import { Image } from 'types';
-import mergeRefs from "react-merge-refs";
+import { setReactRef } from 'helpers';
 
 interface ImageInputProps {
   label?: string,
@@ -18,8 +18,8 @@ interface ImageInputProps {
 export const ImageInput = forwardRef<HTMLInputElement, ImageInputProps>(({
   multiple = false,
   ...props
-}: ImageInputProps, ref) => {
-  const fileInputRef = useRef<HTMLInputElement>(null);
+}: ImageInputProps, parentRef) => {
+  const fileInputRef = useRef<HTMLInputElement>();
 
   const [error, setError] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
@@ -64,7 +64,10 @@ export const ImageInput = forwardRef<HTMLInputElement, ImageInputProps>(({
         type="file"
         className="hidden"
         multiple={multiple}
-        ref={mergeRefs([fileInputRef, ref])}
+        ref={ref => {
+          setReactRef(fileInputRef, ref);
+          setReactRef(parentRef, ref);
+        }}
         onChange={(e) => {
           if (e?.target?.files) { handleFileInput(e.target.files); }
         }}

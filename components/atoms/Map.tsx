@@ -1,7 +1,7 @@
 import React, {
   forwardRef, useEffect, useRef, useState,
 } from 'react';
-import { fontainebleauLocation, MapContext, toLatLng, useEffectWithDeepEqual } from 'helpers';
+import { fontainebleauLocation, MapContext, setReactRef, toLatLng, useEffectWithDeepEqual } from 'helpers';
 import mapStyles from 'styles/mapStyles';
 import { mapEvents, MapProps, MarkerProps } from 'types';
 
@@ -62,12 +62,7 @@ export const Map = forwardRef<google.maps.Map, React.PropsWithChildren<MapProps>
     if (elementRef.current && !map) {
       const newMap = new google.maps.Map(elementRef.current, options);
 
-      if (typeof mapRef === "function") {
-        mapRef(newMap);
-      } else if (mapRef) {
-        mapRef.current = newMap;
-      }
-
+      setReactRef(mapRef, newMap);
       setMap(newMap);
 
       if (onLoad) {

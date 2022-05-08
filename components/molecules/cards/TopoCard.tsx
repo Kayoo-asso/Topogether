@@ -1,4 +1,4 @@
-import React, { MouseEvent, TouchEvent, ReactElement, useCallback, useState } from 'react';
+import React, { MouseEvent, TouchEvent, ReactElement, useCallback, useState, useRef } from 'react';
 import Link from 'next/link';
 import { Card, CFImage } from 'components';
 import { formatDate, encodeUUID } from 'helpers';
@@ -49,8 +49,8 @@ export const TopoCard: React.FC<TopoCardProps> = React.memo(({
     else return elts;
   }
 
-  const [timer, setTimer] = useState<ReturnType<typeof setTimeout>>(setTimeout(() => {}, 0))
-  const [blockClick, setBlockClick] = useState(false);
+  const timer = useRef<number>(0);
+  const blockClick = useRef<boolean>(false);
   const handleMouseContextMenu = useCallback((e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
     if (e.button === 2 && props.onContextMenu) { //Right click
       e.preventDefault();
@@ -59,17 +59,22 @@ export const TopoCard: React.FC<TopoCardProps> = React.memo(({
   }, [props.topo, props.onContextMenu]);
   const handleTouchStartContextMenu = useCallback((e: TouchEvent<HTMLDivElement>) => {
     if (props.onContextMenu) {
-      setBlockClick(false);
-      setTimer(setTimeout(() => { 
+      // `setTimeout` returns an integer when called in the browser,
+      // but TypeScript gives us the type for `setTimeout` on Node.js
+      // -> need `as any`
+      timer.current = setTimeout(() => { 
+        blockClick.current = true;
         props.onContextMenu!(props.topo, { x: e.touches[0].pageX, y: e.touches[0].pageY });
-        setBlockClick(true);
-      }, 800));
+      }, 800) as any;
     }
   }, [props.topo, props.onContextMenu]);
   const handleTouchEndContextMenu = useCallback((e: TouchEvent<HTMLDivElement>) => {
-    clearTimeout(timer);
-    if (blockClick) e.preventDefault();
-  }, [timer, blockClick]);
+    clearTimeout(timer.current);
+    if (blockClick.current) {
+      e.preventDefault();
+      blockClick.current = false;
+    }
+  }, []);
 
   return (
     wrapLink(

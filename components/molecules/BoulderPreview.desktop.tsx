@@ -31,7 +31,7 @@ export const BoulderPreviewDesktop: React.FC<BoulderPreviewDesktopProps> = watch
                         if (!props.currentImage && multipleImageInputRef.current) {
                             multipleImageInputRef.current.click();
                         }
-                    }, [multipleImageInputRef.current])}
+                    }, [props.currentImage])}
                 />
             </div>
 
