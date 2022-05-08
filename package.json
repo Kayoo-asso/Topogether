@@ -32,6 +32,7 @@
     "react-cool-dimensions": "^2.0.7",
     "react-cool-portal": "^1.2.0",
     "react-dom": "17.0.2",
+    "react-merge-refs": "^1.1.0",
     "trigram-search": "^1.0.2",
     "uuid": "^8.3.2"
   },

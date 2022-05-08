@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { forwardRef, useEffect, useRef, useState } from 'react';
 import { ImageThumb } from 'components';
 import { Boulder, Image, UUID } from 'types';
 import { ImageInput } from '.';
@@ -17,12 +17,12 @@ interface MultipleImageInputProps {
   onChange: (images: Image[]) => void,
 }
 
-export const MultipleImageInput: React.FC<MultipleImageInputProps> = ({
+export const MultipleImageInput = forwardRef<HTMLInputElement, MultipleImageInputProps>(({
   rows = 2,
   cols = 3,
   allowUpload = true,
   ...props
-}: MultipleImageInputProps) => {
+}: MultipleImageInputProps, ref) => {
   const [page, setPage] = useState<number>(0);
   const [error, setError] = useState<string>();
 
@@ -72,6 +72,7 @@ export const MultipleImageInput: React.FC<MultipleImageInputProps> = ({
 
       {allowUpload && (
         <ImageInput
+          ref={ref}
           label={props.label}
           multiple
           onChange={props.onChange}
@@ -94,4 +95,4 @@ export const MultipleImageInput: React.FC<MultipleImageInputProps> = ({
     </div>
     </>
   );
-};
+});

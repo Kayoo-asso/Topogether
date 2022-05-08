@@ -31,10 +31,6 @@ export function Select<T>({
     const [isOpen, setIsOpen] = useState(false);
     const selected = props.options.find(x => x[0] === props.value);
 
-    useEffect(() => {
-        console.log(isOpen);
-    }, [isOpen])
-
     return (
         <div
             id={props.id}
@@ -60,7 +56,7 @@ export function Select<T>({
             />
             {isOpen && (
                 <div className='pl-4 py-2 bg-white rounded-b max-h-[320px] absolute overflow-y-auto overflow-x-none z-100 w-full right-0 shadow'>
-                    {props.options.map(([value, label]) => (
+                    {props.options.sort().map(([value, label]) => (
                         <div
                             className="py-4 text-dark ktext-base cursor-pointer flex flex-row items-center"
                             key={label}

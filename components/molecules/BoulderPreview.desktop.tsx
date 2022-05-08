@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction } from 'react';
+import React, { Dispatch, SetStateAction, useCallback, useRef } from 'react';
 import { Quark, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
 import { Boulder, Image, Track } from 'types';
 import { MultipleImageInput, TracksImage } from '.';
@@ -16,6 +16,7 @@ export const BoulderPreviewDesktop: React.FC<BoulderPreviewDesktopProps> = watch
     ...props
 }: BoulderPreviewDesktopProps) => {
     const boulder = props.boulder();
+    const multipleImageInputRef = useRef<HTMLInputElement>(null);
 
     return (
         <div className="px-5 mb-3">
@@ -25,12 +26,18 @@ export const BoulderPreviewDesktop: React.FC<BoulderPreviewDesktopProps> = watch
                     image={props.currentImage}
                     tracks={boulder.tracks.quarks()}
                     selectedTrack={props.selectedTrack}
-                    modalable
+                    modalable={!!props.currentImage}
+                    onImageClick={useCallback(() => {
+                        if (!props.currentImage && multipleImageInputRef.current) {
+                            multipleImageInputRef.current.click();
+                        }
+                    }, [multipleImageInputRef.current])}
                 />
             </div>
 
             <div className='flex flex-col w-full mt-3 min-h-max'>
                 <MultipleImageInput
+                    ref={multipleImageInputRef}
                     images={boulder.images}
                     boulder={boulder}
                     selected={props.currentImage?.id}

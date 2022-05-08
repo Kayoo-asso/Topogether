@@ -44,7 +44,10 @@ export const BitflagMultipleSelect = <T extends Bitflag>(props: BitflagMultipleS
 
       {isOpen && (<div className='pl-4 py-2 bg-white rounded-b h-[200px] absolute overflow-y-auto overflow-x-none z-100 w-full right-0 shadow'>
         {
-          props.bitflagNames.map(([flag, name]) => (
+          props.bitflagNames.sort((a, b) => {
+            if (a[1] < b[1]) return -1;
+            else return 1;
+          }).map(([flag, name]) => (
             <div
               className="py-4 text-dark ktext-base cursor-pointer flex flex-row items-center"
               key={name}

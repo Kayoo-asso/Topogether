@@ -117,7 +117,7 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
   // on the image can be expressed in the coordinate space of the viewBox & resizes automatically
   return (
     wrapPortal(
-      <div className={"relative h-full" + (props.modalable ? " cursor-pointer" : "")}>
+      <div className={"relative h-full" + ((props.modalable && props.image || props.onImageClick) ? " cursor-pointer" : "")}>
         <CFImage
           objectFit={objectFit}
           sizeHint={portalOpen ? '100vw' : props.sizeHint}
@@ -133,12 +133,12 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
           onClick={(e) => {
             if (props.modalable) setPortalOpen(true);
             else {
-              const eltUnder = e.target as EventTarget & SVGSVGElement
+              const eltUnder = e.target as EventTarget & SVGSVGElement;
               if (e.buttons !== 0 ||  // Handle clicks that are 1) left-click, 2) in the viewBox and 3) on the SVG canvas directly
                 !props.onImageClick ||
                 eltUnder.nodeName !== "svg" ||
                 !viewBoxRef.current) 
-                return;
+                return; 
                 const coords = getCoordsInViewbox(viewBoxRef.current, viewBoxWidth, viewBoxHeight, e.clientX, e.clientY);
                 if (coords) props.onImageClick(coords);
             }

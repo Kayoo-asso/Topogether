@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
     BoulderBuilderSlideoverMobile, SectorBuilderSlideoverMobile,
     MapControl, Show,
@@ -9,7 +9,7 @@ import {
 } from 'components';
 import { sortBoulders, useContextMenu, createTrack, createBoulder, createParking, createWaypoint, createSector, useDevice, computeBuilderProgress, encodeUUID, decodeUUID, deleteTrack, sectorChanged, useModal, staticUrl } from 'helpers';
 import { Boulder, GeoCoordinates, Image, MapToolEnum, Parking, Sector, Track, Waypoint, Topo, isUUID, TopoStatus, ClimbTechniques } from 'types';
-import { Quark, QuarkIter, useCreateDerivation, useCreateQuark, useLazyQuarkyEffect, useQuarkyCallback, useSelectQuark, watchDependencies } from 'helpers/quarky';
+import { Quark, useCreateDerivation, useCreateQuark, useLazyQuarkyEffect, useQuarkyCallback, useSelectQuark, watchDependencies } from 'helpers/quarky';
 import { useRouter } from 'next/router';
 import { api, sync } from 'helpers/services';
 import { useFirstRender } from 'helpers/hooks/useFirstRender';
@@ -39,6 +39,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
     const boulderOrder = useCreateDerivation(() => sortBoulders(topo.sectors, topo.lonelyBoulders));
 
     const [currentTool, setCurrentTool] = useState<MapToolEnum>();
+    const [tempCurrentTool, setTempCurrentTool] = useState<MapToolEnum>();
     const [currentImage, setCurrentImage] = useState<Image>();
 
     const selectedSector = useSelectQuark<Sector>();
@@ -212,7 +213,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
     }, [topo, currentTool, createBoulder, createParking, createWaypoint]);
 
     useEffect(() => {
-        const handleKey = (e: KeyboardEvent) => {
+        const handleKeyDown = (e: KeyboardEvent) => {
             if (e.code === 'Escape') {
                 // TODO: change this, we first wish to cancel any ongoing action,
                 // then set the current tool to undefined
@@ -232,10 +233,24 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                 else if (selectedParking()) showModalDeleteParking(selectedParking.quark()!);
                 else if (selectedWaypoint()) showModalDeleteWaypoint(selectedWaypoint.quark()!);
             }
+            else if (e.code === "Space" && currentTool) {
+                setTempCurrentTool(currentTool);
+                setCurrentTool(undefined);
+            }
         }
-        window.addEventListener('keydown', handleKey);
-        return () => window.removeEventListener('keydown', handleKey);
-    }, [currentTool]);
+        const handleKeyUp = (e: KeyboardEvent) => {
+            if (e.code === "Space" && tempCurrentTool) {
+                setCurrentTool(tempCurrentTool);
+                setTempCurrentTool(undefined); 
+            }
+        }
+        window.addEventListener('keydown', handleKeyDown);
+        window.addEventListener('keyup', handleKeyUp);
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+            window.removeEventListener('keyup', handleKeyUp);
+        };
+    }, [currentTool, tempCurrentTool]);
 
     const handleGeoCameraCapture = useCallback(async (file: File, coordinates: GeoCoordinates) => {
         if (file) {
