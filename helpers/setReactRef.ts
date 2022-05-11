@@ -1,9 +1,11 @@
-import React from "react";
-
-export function setReactRef<T>(ref: React.MutableRefObject<T> | React.LegacyRef<T>, value: T) {
+export function setReactRef<T>(
+    // React types for refs are a mess, using manual ones is easier
+    ref: { current: T } | ((value: T) => void) | null,
+    value: T
+) {
     if (typeof ref === "function") {
         ref(value);
-    } else {
-        (ref as React.MutableRefObject<T>).current = value;
+    } else if (ref) {
+        ref.current = value;
     }
 }

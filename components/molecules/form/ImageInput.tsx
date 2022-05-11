@@ -53,6 +53,8 @@ export const ImageInput = forwardRef<HTMLInputElement, ImageInputProps>(({
     else if (errorcount[ImageUploadErrorReason.UploadError] > 1) 
       error += errorcount[ImageUploadErrorReason.UploadError] + " fichiers n'ont pas pu être uploadés.";
     setError(error);
+    
+    if(props.onError && error.length > 0) props.onError(error);
   };
   useEffect(() => {
      if (props.onError && error && error.length > 0) props.onError(error);
@@ -65,6 +67,8 @@ export const ImageInput = forwardRef<HTMLInputElement, ImageInputProps>(({
         className="hidden"
         multiple={multiple}
         ref={ref => {
+          console.log("fileInputRef: ", fileInputRef);
+          console.log('parentRef', parentRef);
           setReactRef(fileInputRef, ref);
           setReactRef(parentRef, ref);
         }}
