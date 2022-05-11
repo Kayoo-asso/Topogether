@@ -86,9 +86,6 @@ export const AccessSlideover: React.FC<AccessSlideoverProps> = ({
         <>
             {device === 'mobile' &&
                 <SlideoverMobile
-                    open
-                    initialFull={true}
-                    onlyFull
                     onClose={props.onClose}
                 >
                     {approachContent()}

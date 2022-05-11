@@ -39,8 +39,7 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = wat
 
   return (
     <SlideoverMobile
-      open
-      initialFull={false}
+      persistent
       onSizeChange={(f) => setFull(f)}
       onClose={props.onClose}
     >

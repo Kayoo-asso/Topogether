@@ -102,9 +102,6 @@ export const ManagementSlideover: React.FC<ManagementSlideoverProps> = ({
         <>
             {device === 'mobile' &&
                 <SlideoverMobile
-                    open
-                    initialFull={true}
-                    onlyFull
                     onClose={props.onClose}
                 >
                     {managementContent()}

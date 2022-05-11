@@ -69,9 +69,6 @@ export const WaypointSlide: React.FC<WaypointSlideProps> = watchDependencies(({
         <>
             {device === 'mobile' &&
                 <SlideoverMobile
-                    open
-                    initialFull={true}
-                    onlyFull
                     onClose={props.onClose}
                 >
                     {waypointContent()}

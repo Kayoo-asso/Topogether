@@ -19,9 +19,6 @@ export const SectorBuilderSlideoverMobile: React.FC<SectorBuilderSlideoverMobile
 
   return (
     <SlideoverMobile
-      open
-      onlyFull
-      initialFull={true}
       onClose={props.onClose}
     >
       <div className='flex flex-col mt-10 px-3 overflow-auto pb-5'>

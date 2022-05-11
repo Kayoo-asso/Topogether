@@ -34,9 +34,8 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
 
   return (
     <SlideoverMobile
-      open
-      initialFull={full}
-      onSizeChange={(f) => setFull(f)}
+      persistent
+      onSizeChange={setFull}
       onClose={props.onClose}
     >
       {/* BOULDER IMAGE */}

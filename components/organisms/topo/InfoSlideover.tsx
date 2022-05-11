@@ -162,9 +162,6 @@ export const InfoSlideover: React.FC<InfoSlideoverProps> = ({
         <>
             {device === 'mobile' &&
                 <SlideoverMobile
-                    open
-                    initialFull={true}
-                    onlyFull
                     onClose={props.onClose}
                 >
                     {infosContent()}

@@ -22,9 +22,6 @@ export const InfoFormSlideover: React.FC<InfoFormSlideoverProps> = ({
         <>
             {device === 'mobile' &&
                 <SlideoverMobile
-                    open
-                    initialFull
-                    onlyFull
                     onClose={props.onClose}
                 >
                     <div className='px-6 py-10 h-full'>

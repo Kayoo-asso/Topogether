@@ -23,9 +23,6 @@ export const ParkingBuilderSlide: React.FC<ParkingBuilderSlideProps> = watchDepe
         <>
             {device === 'mobile' &&
                 <SlideoverMobile
-                    open
-                    initialFull={true}
-                    onlyFull
                     onClose={props.onClose}
                 >
                     <div className='px-6 py-14 h-full'>

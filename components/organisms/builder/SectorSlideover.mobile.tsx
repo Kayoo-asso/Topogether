@@ -16,9 +16,6 @@ export const SectorSlideoverMobile: React.FC<SectorSlideoverMobileProps> = watch
 
   return (
     <SlideoverMobile
-      open
-      onlyFull
-      initialFull={true}
       onClose={props.onClose}
     >
       <div className='mt-10 px-3 overflow-auto pb-5'>

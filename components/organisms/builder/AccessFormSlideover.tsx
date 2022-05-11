@@ -23,9 +23,6 @@ export const AccessFormSlideover: React.FC<AccessFormSlideoverProps> = watchDepe
         <>
             {device === 'mobile' &&
                 <SlideoverMobile
-                    open
-                    onlyFull
-                    initialFull={true}
                     onClose={props.onClose}
                 >
                     <div className='px-6 mt-10 pb-10 h-full overflow-auto'>

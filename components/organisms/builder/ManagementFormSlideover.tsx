@@ -23,9 +23,6 @@ export const ManagementFormSlideover: React.FC<ManagementFormSlideoverProps> = w
         <>
             {device === 'mobile' &&
                 <SlideoverMobile
-                    open
-                    onlyFull
-                    initialFull
                     onClose={props.onClose}
                 >
                     <div className='px-6 mt-10 pb-10 h-full overflow-auto'>

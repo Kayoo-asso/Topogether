@@ -73,9 +73,6 @@ export const ParkingSlide: React.FC<ParkingSlideProps> = watchDependencies(({
         <>
             {device === 'mobile' &&
                 <SlideoverMobile
-                    open
-                    initialFull={true}
-                    onlyFull
                     onClose={props.onClose}
                 >
                     {parkingContent()}
