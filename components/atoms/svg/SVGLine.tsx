@@ -9,8 +9,6 @@ interface SVGLineProps {
   grade: Grade | undefined,
   editable?: boolean,
   vb: React.RefObject<SVGRectElement | null>,
-  vbWidth: number,
-  vbHeight: number,
   linePointSize: number,
   eraser?: boolean,
   displayTrackOrderIndex?: boolean,
@@ -46,7 +44,7 @@ export const SVGLine: React.FC<SVGLineProps> = watchDependencies(({
     if (editable && props.vb.current && firstX !== null && firstY !== null) {
       const el = e.currentTarget;
       el.setPointerCapture(e.pointerId);
-      const coords = getCoordsInViewbox(props.vb.current, props.vbWidth, props.vbHeight, e.clientX, e.clientY);
+      const coords = getCoordsInViewbox(props.vb.current, e.clientX, e.clientY);
       if (coords) {
         setOriginPosition({
           ...originPosition,
@@ -60,7 +58,7 @@ export const SVGLine: React.FC<SVGLineProps> = watchDependencies(({
   const handlePointerMove: React.PointerEventHandler<SVGCircleElement | SVGTextElement> = (e: React.PointerEvent) => {
     const vb = props.vb.current;
     if (originPosition.active && props.vb.current && editable) {
-      const coords = getCoordsInViewbox(props.vb.current, props.vbWidth, props.vbHeight, e.clientX, e.clientY);
+      const coords = getCoordsInViewbox(props.vb.current, e.clientX, e.clientY);
       if (coords) {
         const newX = coords[0] - originPosition.offsetX;
         const newY = coords[1] - originPosition.offsetY;
@@ -153,8 +151,6 @@ export const SVGLine: React.FC<SVGLineProps> = watchDependencies(({
               size={props.linePointSize}
               draggable={editable}
               vb={props.vb}
-              vbWidth={props.vbWidth}
-              vbHeight={props.vbHeight}
               eraser={eraser}
               onDrag={(pos) => {
                 if (editable) {

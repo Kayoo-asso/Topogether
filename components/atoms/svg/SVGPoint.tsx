@@ -7,11 +7,9 @@ interface SVGPointProps {
   y: number,
   draggable?: boolean,
   vb: React.RefObject<SVGRectElement | null>,
-  vbWidth: number,
-  vbHeight: number
   eraser?: boolean,
   iconHref?: string,
-  size?: number,
+  size: number,
   className?: string,
   onDrag?: (coord: Position) => void,
   onClick?: (e: React.MouseEvent<SVGImageElement, MouseEvent>) => void,
@@ -33,12 +31,11 @@ export const SVGPoint: React.FC<SVGPointProps> = ({
     offsetY: 0,
   });
   
-  const size = props.size || (props.vbWidth ? 200*props.vbWidth/6000 : 200);
   const handlePointerDown: React.PointerEventHandler<SVGImageElement> = (e: React.PointerEvent) => {
     if (draggable && props.vb.current) {
       const el = e.currentTarget;
       el.setPointerCapture(e.pointerId);
-      const coords = getCoordsInViewbox(props.vb.current, props.vbWidth, props.vbHeight, e.clientX, e.clientY);
+      const coords = getCoordsInViewbox(props.vb.current, e.clientX, e.clientY);
       if (coords) {
         setPosition({
           ...position,
@@ -51,7 +48,7 @@ export const SVGPoint: React.FC<SVGPointProps> = ({
   };
   const handlePointerMove: React.PointerEventHandler<SVGImageElement> = (e: React.PointerEvent) => {
     if (position.active && props.vb.current && props.onDrag) {
-      const coords = getCoordsInViewbox(props.vb.current, props.vbWidth, props.vbHeight, e.clientX, e.clientY);
+      const coords = getCoordsInViewbox(props.vb.current, e.clientX, e.clientY);
       if (coords) {
         const newX = coords[0] - position.offsetX;
         const newY = coords[1] - position.offsetY;
@@ -61,7 +58,7 @@ export const SVGPoint: React.FC<SVGPointProps> = ({
   };
   const handlePointerUp: React.PointerEventHandler<SVGImageElement> = (e: React.PointerEvent) => {
     if (position.active && props.vb.current && props.onDrag) {
-      const coords = getCoordsInViewbox(props.vb.current, props.vbWidth, props.vbHeight, e.clientX, e.clientY);
+      const coords = getCoordsInViewbox(props.vb.current, e.clientX, e.clientY);
       if (coords) {
         const newX = coords[0] - position.offsetX;
         const newY = coords[1] - position.offsetY;
@@ -77,14 +74,14 @@ export const SVGPoint: React.FC<SVGPointProps> = ({
 
   return (
       <image
-        x={iconHref.includes('line-point') ? props.x : props.x - size/2}
-        y={iconHref.includes('line-point') ? props.y : props.y - size/2}
+        x={iconHref.includes('line-point') ? props.x : props.x - props.size/2}
+        y={iconHref.includes('line-point') ? props.y : props.y - props.size/2}
         className={`${className} ${(draggable && !eraser) ? 'cursor-pointer' : ''}${eraser ? ' hover:scale-150 origin-center' : ''}`}
         style={{
           transformBox: 'fill-box'
         }}
         href={iconHref}
-        width={size}
+        width={props.size}
         onPointerDown={handlePointerDown}
         onPointerUp={handlePointerUp}
         onPointerMove={handlePointerMove}

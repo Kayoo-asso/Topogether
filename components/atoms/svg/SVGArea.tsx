@@ -11,8 +11,6 @@ interface SVGAreaProps {
   id?: string,
   editable?: boolean,
   vb: React.RefObject<SVGRectElement | null>,
-  vbWidth: number,
-  vbHeight: number,
   eraser?: boolean,
   pointSize?: number,
   className?: string,
@@ -63,8 +61,6 @@ export const SVGArea: React.FC<SVGAreaProps> = ({
           points={extendPoints}
           pointer={!eraser}
           vb={props.vb}
-          vbWidth={props.vbWidth}
-          vbHeight={props.vbHeight}
           onDragStart={props.onDragStart}
           onDrag={(diffX, diffY) => {
             dragAllPoints(diffX, diffY);
@@ -92,8 +88,6 @@ export const SVGArea: React.FC<SVGAreaProps> = ({
           iconHref='/assets/icons/colored/line-point/_line-point-second.svg'
           draggable={editable}
           vb={props.vb}
-          vbWidth={props.vbWidth}
-          vbHeight={props.vbHeight}
           size={pointSize}
           className="fill-second"
           onDrag={(pos) => {

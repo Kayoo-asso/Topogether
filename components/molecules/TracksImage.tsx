@@ -130,10 +130,9 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
             const eltUnder = e.target as EventTarget & SVGSVGElement;         
             if (eltUnder.nodeName === "svg" && props.modalable) setPortalOpen(true);
             else {
-              console.log(viewBoxRef.current);
               // Handle clicks that are 1) left-click, 2) in the viewBox and 3) on the SVG canvas directly
               if (e.buttons !== 0 || !props.onImageClick || !viewBoxRef.current) return;
-              const coords = getCoordsInViewbox(viewBoxRef.current, viewBoxWidth, viewBoxHeight, e.clientX, e.clientY);
+              const coords = getCoordsInViewbox(viewBoxRef.current, e.clientX, e.clientY);
               if (coords) props.onImageClick(coords);
             }
           }, [props.onImageClick, props.modalable])}
@@ -165,8 +164,6 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
                   imageId={props.image!.id}
                   editable={editable}
                   vb={viewBoxRef}
-                  vbWidth={viewBoxWidth}
-                  vbHeight={viewBoxHeight}
                   highlighted={highlighted}
                   displayTrackDetails={displayTracksDetails}
                   displayTrackOrderIndexes={displayTrackOrderIndexes}
