@@ -23,14 +23,22 @@ export const MultipleImageInput = forwardRef<HTMLInputElement, MultipleImageInpu
   allowUpload = true,
   ...props
 }: MultipleImageInputProps, ref) => {
-  const [page, setPage] = useState<number>(0);
   const [error, setError] = useState<string>();
 
   let nbVisible = rows * cols;
   if (allowUpload) {
     nbVisible -= 1;
   }
+
   const nbPages = Math.ceil(props.images.length / nbVisible);
+  const [page, setPage] = useState<number>(0);
+  useEffect(() => {
+    if (props.selected) {
+      const aa = props.images.map(img => img.id).indexOf(props.selected);
+      const pageToDisplay = Math.trunc(aa / nbVisible);
+      setPage(pageToDisplay);
+    }
+  }, [props.selected])
 
   const displayLeftArrow = page > 0;
   const displayRightArrow = page < nbPages - 1;

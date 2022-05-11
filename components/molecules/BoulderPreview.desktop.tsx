@@ -46,7 +46,6 @@ export const BoulderPreviewDesktop: React.FC<BoulderPreviewDesktopProps> = watch
                         selectedTrack={props.selectedTrack}
                         modalable={!!props.currentImage}
                         onImageClick={useCallback(() => {
-                            console.log("ok")
                             if (!props.currentImage && multipleImageInputRef.current) {
                                 multipleImageInputRef.current.click();
                             }
@@ -70,7 +69,7 @@ export const BoulderPreviewDesktop: React.FC<BoulderPreviewDesktopProps> = watch
                                 ...b,
                                 images: [...b.images, ...images],
                             }));
-                            props.setCurrentImage(images[images.length - 1]);
+                            props.setCurrentImage(images[0]);
                         }}
                         onImageDelete={useCallback((id) => {
                             const tracksOnTheImage = boulder.tracks.quarks().filter(t => !!t().lines?.find(l => l.imageId === id)).toArray();
