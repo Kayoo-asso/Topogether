@@ -54,12 +54,8 @@ export const MultipleImageInput = forwardRef<HTMLInputElement, MultipleImageInpu
     <>
     <div className='flex flex-row gap-1.5 w-full'>
       {displayLeftArrow && (
-        <button
-          onClick={() => setPage((p) => p - 1)}
-        >
-          <ArrowFull
-            className="w-3 h-3 stroke-main fill-main rotate-180"
-          />
+        <button onClick={() => setPage((p) => p - 1)}>
+          <ArrowFull className="w-3 h-3 stroke-main fill-main rotate-180" />
         </button>
       )}
 
@@ -89,12 +85,8 @@ export const MultipleImageInput = forwardRef<HTMLInputElement, MultipleImageInpu
       )}
 
       {displayRightArrow && (
-        <button
-          onClick={() => setPage((p) => p + 1)}
-        >
-          <ArrowFull
-            className="w-3 h-3 stroke-main fill-main"
-          />
+        <button onClick={() => setPage((p) => p + 1)}>
+          <ArrowFull className="w-3 h-3 stroke-main fill-main" />
         </button>
       )}
     </div>

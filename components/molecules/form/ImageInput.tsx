@@ -1,4 +1,4 @@
-import React, { useRef, useState, forwardRef, useEffect } from 'react';
+import React, { useRef, useState, forwardRef, useEffect, useCallback } from 'react';
 // eslint-disable-next-line import/no-cycle
 import { ImageButton, ProfilePicture } from '../../atoms';
 import { api, ImageUploadErrorReason } from 'helpers/services';
@@ -67,8 +67,6 @@ export const ImageInput = forwardRef<HTMLInputElement, ImageInputProps>(({
         className="hidden"
         multiple={multiple}
         ref={ref => {
-          console.log("fileInputRef: ", fileInputRef);
-          console.log('parentRef', parentRef);
           setReactRef(fileInputRef, ref);
           setReactRef(parentRef, ref);
         }}
@@ -90,9 +88,9 @@ export const ImageInput = forwardRef<HTMLInputElement, ImageInputProps>(({
           text={props.label}
           image={props.value}
           loading={loading}
-          onClick={() => {
+          onClick={useCallback(() => {
             if (!loading) fileInputRef.current?.click();
-          }}
+          }, [loading])}
           onDelete={props.onDelete}
         />
       }

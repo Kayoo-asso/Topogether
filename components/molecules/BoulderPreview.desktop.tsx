@@ -60,17 +60,17 @@ export const BoulderPreviewDesktop: React.FC<BoulderPreviewDesktopProps> = watch
                         boulder={boulder}
                         selected={props.currentImage?.id}
                         rows={1}
-                        onImageClick={(id) => {
+                        onImageClick={useCallback((id) => {
                             props.setCurrentImage(boulder.images.find(img => img.id === id)!)
-                        }}
+                        }, [boulder])}
                         allowUpload={displayAddButton}
-                        onChange={(images) => {
+                        onChange={useCallback((images) => {
                             props.boulder.set(b => ({
                                 ...b,
                                 images: [...b.images, ...images],
                             }));
                             props.setCurrentImage(images[0]);
-                        }}
+                        }, [boulder])}
                         onImageDelete={useCallback((id) => {
                             const tracksOnTheImage = boulder.tracks.quarks().filter(t => !!t().lines?.find(l => l.imageId === id)).toArray();
                             if (tracksOnTheImage.length > 0) showModalDeleteImage([tracksOnTheImage, id]);
