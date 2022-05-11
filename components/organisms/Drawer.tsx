@@ -20,18 +20,6 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies((props: DrawerPro
   const [displayOtherTracks, setDisplayOtherTracks] = useState(false);
   const [ModalClear, showModalClear] = useModal();
 
-  useEffect(() => {
-    const handleKeydown = (e: KeyboardEvent) => {
-      if (e.ctrlKey && e.key === 'z') rewind();
-      else if (e.code === 'Escape') {
-        setSelectedTool('LINE_DRAWER');
-        e.stopPropagation();
-      }
-    }
-    window.addEventListener('keydown', handleKeydown);
-    return () => window.removeEventListener('keydown', handleKeydown);
-  }, []);
-
   const selectedTrack = props.selectedTrack();
   if (!selectedTrack) return null;
 
@@ -83,7 +71,7 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies((props: DrawerPro
     }
   }
 
-  const deletePointToLine = (pointType: PointEnum, index: number) => {
+  const deletePointToLine = useCallback((pointType: PointEnum, index: number) => {
     const newLine = selectedTrack.lines.quarkAt(0); //TODO : change the quarkAt when it will be possible to have multiple lines for a track
     if (newLine) {
       const line = newLine();
@@ -110,7 +98,6 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies((props: DrawerPro
           }); break;
         case 'FORBIDDEN_AREA_POINT':
           if (line.forbidden) {
-            console.log(index);
             if (index === -1) line.forbidden.pop();
             newLine.set({
               ...line,
@@ -119,7 +106,7 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies((props: DrawerPro
           } break;
       }
     }
-  }
+  }, [selectedTrack]);
   const rewind = () => {
     const pointType: PointEnum | undefined = selectedTool === 'LINE_DRAWER' ? 'LINE_POINT' :
       selectedTool === 'FOOT_DEPARTURE_DRAWER' ? 'FOOT_DEPARTURE_POINT' :
@@ -138,6 +125,18 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies((props: DrawerPro
       [pos[0] + size, pos[1] - size],
     ]
   }
+
+  useEffect(() => {
+    const handleKeydown = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.key === 'z') rewind();
+      else if (e.code === 'Escape') {
+        setSelectedTool('LINE_DRAWER');
+        e.stopPropagation();
+      }
+    }
+    window.addEventListener('keydown', handleKeydown);
+    return () => window.removeEventListener('keydown', handleKeydown);
+  }, [selectedTrack]);
 
   return (
     <>
