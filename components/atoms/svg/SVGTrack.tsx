@@ -6,9 +6,9 @@ import { SVGArea, SVGLine, SVGPoint } from '.';
 interface SVGTrackProps {
     track: Quark<Track>,
     editable?: boolean,
-    vb?: SVGRectElement | null,
-    vbWidth?: number,
-    vbHeight?: number,
+    vb: React.RefObject<SVGRectElement | null>,
+    vbWidth: number,
+    vbHeight: number,
     highlighted?: boolean,
     currentTool?: DrawerToolEnum,
     imageId: UUID,
@@ -30,9 +30,9 @@ export const SVGTrack: React.FC<SVGTrackProps> = watchDependencies(({
     const track = props.track();
     const colorNumber = track.grade ? gradeToLightGrade(track.grade) : 'grey';
 
-    const linePointSize = (props.vbWidth && props.vbHeight) ? Math.max(200*(Math.max(props.vbWidth, props.vbHeight))/9500, 150) : 200;
-    const handPointSize = (props.vbWidth && props.vbHeight) ? Math.max(200*(Math.max(props.vbWidth, props.vbHeight))/6500, 200) : 200;
-    const footPointSize = (props.vbWidth && props.vbHeight) ? Math.max(200*(Math.max(props.vbWidth, props.vbHeight))/4500, 300) : 200;
+    const linePointSize = Math.max(200*(Math.max(props.vbWidth, props.vbHeight))/9500, 150);
+    const handPointSize = Math.max(200*(Math.max(props.vbWidth, props.vbHeight))/6500, 200);
+    const footPointSize = Math.max(200*(Math.max(props.vbWidth, props.vbHeight))/4500, 300);
     // console.log(footPointSize);
 
     const constructNodes = (quarkLine: Quark<Line>) => {

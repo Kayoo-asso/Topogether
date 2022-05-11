@@ -6,9 +6,9 @@ interface SVGPointProps {
   x: number,
   y: number,
   draggable?: boolean,
-  vb?: SVGRectElement | null,
-  vbWidth?: number,
-  vbHeight?: number
+  vb: React.RefObject<SVGRectElement | null>,
+  vbWidth: number,
+  vbHeight: number
   eraser?: boolean,
   iconHref?: string,
   size?: number,
@@ -35,10 +35,10 @@ export const SVGPoint: React.FC<SVGPointProps> = ({
   
   const size = props.size || (props.vbWidth ? 200*props.vbWidth/6000 : 200);
   const handlePointerDown: React.PointerEventHandler<SVGImageElement> = (e: React.PointerEvent) => {
-    if (draggable && props.vb && props.vbWidth && props.vbHeight) {
+    if (draggable && props.vb.current) {
       const el = e.currentTarget;
       el.setPointerCapture(e.pointerId);
-      const coords = getCoordsInViewbox(props.vb, props.vbWidth, props.vbHeight, e.clientX, e.clientY);
+      const coords = getCoordsInViewbox(props.vb.current, props.vbWidth, props.vbHeight, e.clientX, e.clientY);
       if (coords) {
         setPosition({
           ...position,
@@ -50,8 +50,8 @@ export const SVGPoint: React.FC<SVGPointProps> = ({
     }
   };
   const handlePointerMove: React.PointerEventHandler<SVGImageElement> = (e: React.PointerEvent) => {
-    if (position.active && props.vb && props.vbWidth && props.vbHeight && props.onDrag) {
-      const coords = getCoordsInViewbox(props.vb, props.vbWidth, props.vbHeight, e.clientX, e.clientY);
+    if (position.active && props.vb.current && props.onDrag) {
+      const coords = getCoordsInViewbox(props.vb.current, props.vbWidth, props.vbHeight, e.clientX, e.clientY);
       if (coords) {
         const newX = coords[0] - position.offsetX;
         const newY = coords[1] - position.offsetY;
@@ -60,8 +60,8 @@ export const SVGPoint: React.FC<SVGPointProps> = ({
     }
   };
   const handlePointerUp: React.PointerEventHandler<SVGImageElement> = (e: React.PointerEvent) => {
-    if (position.active && props.vb && props.vbWidth && props.vbHeight && props.onDrag) {
-      const coords = getCoordsInViewbox(props.vb, props.vbWidth, props.vbHeight, e.clientX, e.clientY);
+    if (position.active && props.vb.current && props.onDrag) {
+      const coords = getCoordsInViewbox(props.vb.current, props.vbWidth, props.vbHeight, e.clientX, e.clientY);
       if (coords) {
         const newX = coords[0] - position.offsetX;
         const newY = coords[1] - position.offsetY;

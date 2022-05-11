@@ -53,13 +53,7 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
   // so the most accurate way to scale the SVG viewBox is to set a height
   // and take width = ratio * height (multiplication is better than division)
   const ratio = props.image?.ratio ?? 1;
-  const viewBoxRef = useRef<SVGRectElement>(null);
-  const [vb, setVb] = useState<SVGRectElement | null>();
-  useEffect(() => {
-    console.log('effect');
-    console.log(viewBoxRef.current)
-    setVb(viewBoxRef.current);
-  }, [viewBoxRef.current]);
+  const viewBoxRef = useRef<SVGRectElement | null>(null);
   
   const viewBoxWidth = ratio * viewBoxHeight;
 
@@ -139,7 +133,6 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
               console.log(viewBoxRef.current);
               // Handle clicks that are 1) left-click, 2) in the viewBox and 3) on the SVG canvas directly
               if (e.buttons !== 0 || !props.onImageClick || !viewBoxRef.current) return;
-              console.log('2');
               const coords = getCoordsInViewbox(viewBoxRef.current, viewBoxWidth, viewBoxHeight, e.clientX, e.clientY);
               if (coords) props.onImageClick(coords);
             }
@@ -150,7 +143,9 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
               Another dev: I'm lazy too. Leave the rectangle.
           */}
           <rect 
-            ref={viewBoxRef} 
+            ref={(ref) => {
+              if (!viewBoxRef.current) viewBoxRef.current = ref;
+            }}
             x={0} 
             y={0} 
             width={viewBoxWidth} 
@@ -169,7 +164,7 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
                   currentTool={props.currentTool}
                   imageId={props.image!.id}
                   editable={editable}
-                  vb={vb}
+                  vb={viewBoxRef}
                   vbWidth={viewBoxWidth}
                   vbHeight={viewBoxHeight}
                   highlighted={highlighted}

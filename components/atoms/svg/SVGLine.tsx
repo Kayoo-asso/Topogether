@@ -8,9 +8,9 @@ interface SVGLineProps {
   line: Quark<Line>,
   grade: Grade | undefined,
   editable?: boolean,
-  vb?: SVGRectElement | null,
-  vbWidth?: number,
-  vbHeight?: number,
+  vb: React.RefObject<SVGRectElement | null>,
+  vbWidth: number,
+  vbHeight: number,
   linePointSize: number,
   eraser?: boolean,
   displayTrackOrderIndex?: boolean,
@@ -43,10 +43,10 @@ export const SVGLine: React.FC<SVGLineProps> = watchDependencies(({
   });
 
   const handlePointerDown: React.PointerEventHandler<SVGCircleElement | SVGTextElement> = (e: React.PointerEvent) => {
-    if (editable && props.vb && props.vbWidth && props.vbHeight && firstX !== null && firstY !== null) {
+    if (editable && props.vb.current && firstX !== null && firstY !== null) {
       const el = e.currentTarget;
       el.setPointerCapture(e.pointerId);
-      const coords = getCoordsInViewbox(props.vb, props.vbWidth, props.vbHeight, e.clientX, e.clientY);
+      const coords = getCoordsInViewbox(props.vb.current, props.vbWidth, props.vbHeight, e.clientX, e.clientY);
       if (coords) {
         setOriginPosition({
           ...originPosition,
@@ -58,8 +58,9 @@ export const SVGLine: React.FC<SVGLineProps> = watchDependencies(({
     }
   };
   const handlePointerMove: React.PointerEventHandler<SVGCircleElement | SVGTextElement> = (e: React.PointerEvent) => {
-    if (originPosition.active && props.vb && props.vbWidth && props.vbHeight && editable) {
-      const coords = getCoordsInViewbox(props.vb, props.vbWidth, props.vbHeight, e.clientX, e.clientY);
+    const vb = props.vb.current;
+    if (originPosition.active && props.vb.current && editable) {
+      const coords = getCoordsInViewbox(props.vb.current, props.vbWidth, props.vbHeight, e.clientX, e.clientY);
       if (coords) {
         const newX = coords[0] - originPosition.offsetX;
         const newY = coords[1] - originPosition.offsetY;

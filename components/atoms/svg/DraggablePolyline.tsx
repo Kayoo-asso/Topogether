@@ -8,9 +8,9 @@ interface DraggablePolylineProps {
   className?: string,
   strokeWidth?: number,
   pointer?: boolean,
-  vb?: SVGRectElement | null,
-  vbWidth?: number,
-  vbHeight?: number,
+  vb: React.RefObject<SVGRectElement | null>,
+  vbWidth: number,
+  vbHeight: number,
   onDragStart?: () => void,
   onDrag?: (diffX: number, diffY: number) => void
   onClick?: () => void,
@@ -29,8 +29,8 @@ export const DraggablePolyline: React.FC<DraggablePolylineProps> = ({
   });
 
   const handleMouseDown: React.PointerEventHandler<SVGPolylineElement> = (e: React.PointerEvent) => {
-    if (props.vb && props.vbWidth && props.vbHeight) {
-      const coords = getCoordsInViewbox(props.vb, props.vbWidth, props.vbHeight, e.clientX, e.clientY)
+    if (props.vb.current) {
+      const coords = getCoordsInViewbox(props.vb.current, props.vbWidth, props.vbHeight, e.clientX, e.clientY)
       if (coords) {
         setCursorPosition({
           x: coords[0],
@@ -45,8 +45,8 @@ export const DraggablePolyline: React.FC<DraggablePolylineProps> = ({
     }
   };
   const handleMouseMove: React.PointerEventHandler<SVGPolylineElement> = (e: React.PointerEvent) => {
-    if (props.vb && props.vbWidth && props.vbHeight && props.onDrag && cursorPosition.active) {
-      const coords = getCoordsInViewbox(props.vb, props.vbWidth, props.vbHeight, e.clientX, e.clientY);
+    if (props.vb.current && props.onDrag && cursorPosition.active) {
+      const coords = getCoordsInViewbox(props.vb.current, props.vbWidth, props.vbHeight, e.clientX, e.clientY);
 
       if (coords) {
         const diffX = coords[0] - cursorPosition.x;
