@@ -1,6 +1,6 @@
+import React, { ReactNode, useState } from 'react';
 import { Dropdown, DropdownOption } from 'components';
 import Link from 'next/link';
-import React, { useState } from 'react';
 import ArrowSimple from 'assets/icons/arrow-simple.svg';
 import MenuIcon from 'assets/icons/menu.svg';
 
@@ -8,6 +8,7 @@ interface HeaderMobileProps {
   title: string,
   menuOptions?: DropdownOption[],
   backLink: string,
+  children?: ReactNode;
 }
 
 export const HeaderMobile: React.FC<HeaderMobileProps> = (props: HeaderMobileProps) => {
@@ -28,13 +29,17 @@ export const HeaderMobile: React.FC<HeaderMobileProps> = (props: HeaderMobilePro
       </div>
 
       <div
-        className="flex-1 text-white ktext-title whitespace-nowrap"
+        className="w-3/6 text-white ktext-title whitespace-nowrap overflow-hidden"
         aria-label={displayTitleTooltip ? props.title : undefined}
         data-microtip-position="bottom"
         role="tooltip"
         onClick={() => setDisplayTitleTooltip(!displayTitleTooltip)}
       >
         {props.title}
+      </div>
+
+      <div className="w-1/6 pl-5 flex flex-row items-center">
+        {props.children}
       </div>
 
       {props.menuOptions && (

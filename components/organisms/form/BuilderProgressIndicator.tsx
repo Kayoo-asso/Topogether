@@ -34,7 +34,6 @@ const displayMainRule = (topo: Topo, key: Rule | 'INFOS_TOPO' | 'INFOS_ACCESS') 
 export const BuilderProgressIndicator: React.FC<BuilderProgressIndicatorProps> = watchDependencies(
     (props: BuilderProgressIndicatorProps) => {
         const [open, setOpen] = useState(false);
-
         const ref = useRef<HTMLDivElement>(null);
 
         useEffect(() => {
@@ -55,7 +54,7 @@ export const BuilderProgressIndicator: React.FC<BuilderProgressIndicatorProps> =
                     {props.progress}%
                 </div>
                 {open &&
-                    <div className={`min-w-[340px] w-[23%] -ml-5 shadow absolute flex flex-col w-full' p-5 bg-white rounded z-1000 top-[7%]`}>
+                    <div className={`md:min-w-[340px] w-[90%] md:w-[23%] right-5 md:right-auto md:-ml-5 shadow absolute flex flex-col p-5 bg-white rounded z-1000 top-[7%]`}>
                         <div className='my-2 cursor-pointer' onClick={() => {
                             props.displayInfosTopo()
                             setOpen(false)

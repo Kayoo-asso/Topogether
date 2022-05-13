@@ -52,7 +52,7 @@ export const WaypointSlide: React.FC<WaypointSlideProps> = watchDependencies(({
                         alt="Point de repère"
                         objectFit='cover'
                         sizeHint='50vw'
-                        className="flex"
+                        className="flex items-center"
                         modalable
                     />
                 </div>

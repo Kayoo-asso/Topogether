@@ -3,15 +3,10 @@ import NextImage from 'next/image';
 import { ProfilePicture } from 'components/atoms';
 import { Dropdown, DropdownOption } from 'components/molecules/form';
 import Link from 'next/link';
-import { MapToolEnum } from 'types';
 import { useAuth } from 'helpers/services';
 import { useRouter } from 'next/router';
 import { watchDependencies } from 'helpers/quarky';
 import ArrowFull from 'assets/icons/arrow-full.svg';
-import Rock from 'assets/icons/rock.svg';
-import Sector from 'assets/icons/sector.svg';
-import Parking from 'assets/icons/parking.svg';
-import HelpRound from 'assets/icons/help-round.svg';
 
 interface HeaderDesktopProps {
   backLink: string,
