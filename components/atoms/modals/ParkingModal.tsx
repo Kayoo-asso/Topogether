@@ -1,10 +1,11 @@
-import { useDevice } from 'helpers';
+import { Portal, useDevice } from 'helpers';
 import launchNavigation from 'helpers/map/launchNavigation';
 import React, { useState } from 'react';
 import { GeoCoordinates } from 'types';
 import { Flash } from '.';
 
 interface ParkingModalProps {
+    open: boolean,
     parkingLocation: GeoCoordinates,
     onClose: () => void,
 }
@@ -14,9 +15,9 @@ export const ParkingModal: React.FC<ParkingModalProps> = (props: ParkingModalPro
     const [flashMessage, setFlashMessage] = useState<string>();
 
     return (
-        <>
+        <Portal open={props.open}>
             <div 
-                className='h-full w-full bg-black bg-opacity-80 fixed z-1000'
+                className='absolute top-0 left-0 flex z-full w-screen h-screen bg-black bg-opacity-80'
                 onClick={props.onClose}
             >
                 <div className='w-11/12 shadow absolute left-[50%] translate-x-[-50%] bottom-[80px]'>
@@ -61,6 +62,6 @@ export const ParkingModal: React.FC<ParkingModalProps> = (props: ParkingModalPro
             >
                 {flashMessage}
             </Flash>
-        </>
+        </Portal>
     )
 }

@@ -1,4 +1,4 @@
-import React, { CSSProperties, ReactElement, useCallback, useEffect, useRef, useState } from 'react';
+import React, { CSSProperties, ReactElement, useCallback, useRef, useState } from 'react';
 import {
   Image, PointEnum, DrawerToolEnum, Position, Track
 } from 'types';

@@ -9,6 +9,7 @@ import Rock from 'assets/icons/rock.svg'
 import ManyTracks from 'assets/icons/many-tracks.svg';
 import Waypoint from 'assets/icons/waypoint.svg';
 import { ModalBG } from 'components/atoms';
+import Copy from '/assets/icons/copy.svg';
 
 interface TopoPreviewProps {
     topo: LightTopo,
@@ -21,9 +22,25 @@ export const TopoPreview: React.FC<TopoPreviewProps> = (props: TopoPreviewProps)
     const [flashMessage, setFlashMessage] = useState<string>();
     const topo = props.topo;
 
+    const coordinateItem = () => (
+        <div
+            className='ktext-label text-grey-medium cursor-pointer'
+            onClick={() => {
+                const data = [new ClipboardItem({ "text/plain": new Blob([topo.location[1] + ',' + topo.location[0]], { type: "text/plain" }) })];
+                navigator.clipboard.write(data).then(function () {
+                    setFlashMessage("Coordonnées copiées dans le presse papier.");
+                }, function () {
+                    setFlashMessage("Impossible de copier les coordonées.");
+                });
+            }}
+        >
+            {parseFloat(topo.location[1].toFixed(12)) + ',' + parseFloat(topo.location[0].toFixed(12))}
+        </div>
+    )
+
     const topoPreviewContent = () => (
         <>
-            <div className="flex flex-row gap-5 px-6 pt-4 md:hidden">
+            <div className="absolute top-2 right-2 bg-white rounded-full z-100 px-4 py-2 flex flex-row justify-center gap-5 md:hidden">
                 <LikeButton
                     liked={props.topo.liked}
                 />
@@ -32,31 +49,14 @@ export const TopoPreview: React.FC<TopoPreviewProps> = (props: TopoPreviewProps)
                 />
             </div>
 
-            <div className="flex flex-col md:mt-4">
-                <div className="px-4 ktext-section-title justify-center md:justify-start flex flex-row items-center">
-                    <Waypoint
-                        className={'h-6 w-6 ' + TopoTypeToColor(topo.type)}
-                    />
-                    <div className='ml-2'>{topo.name}</div>
-                </div>
+            <div className="md:hidden absolute top-2 left-2 flex flex-row gap-2 bg-white rounded-full z-100 px-4 py-2">
+                <Copy className='w-5 h-5 stroke-main' />
+                {coordinateItem()}
+            </div>
 
-                {(topo.closestCity && topo.closestCity !== topo.name) &&
-                    <div className='px-4 ktext-label text-center md:text-left text-grey-medium'>{topo.closestCity}</div>}
-                <div
-                    className='px-4 ktext-label text-center md:text-left text-grey-medium cursor-pointer'
-                    onClick={() => {
-                        const data = [new ClipboardItem({ "text/plain": new Blob([topo.location[1] + ',' + topo.location[0]], { type: "text/plain" }) })];
-                        navigator.clipboard.write(data).then(function () {
-                            setFlashMessage("Coordonnées copiées dans le presse papier.");
-                        }, function () {
-                            setFlashMessage("Impossible de copier les coordonées.");
-                        });
-                    }}
-                >
-                    {parseFloat(topo.location[1].toFixed(12)) + ',' + parseFloat(topo.location[0].toFixed(12))}
-                </div>
 
-                <div className="mt-4 h-[160px] w-full">
+            <div className="flex flex-col">
+                <div className="h-[200px] w-full">
                     <CFImage
                         image={topo.image}
                         objectFit='cover'
@@ -67,7 +67,18 @@ export const TopoPreview: React.FC<TopoPreviewProps> = (props: TopoPreviewProps)
                     />
                 </div>
 
-                <div className="ktext-base-little mt-4 px-4 hide-after-three-lines overflow-hidden">
+                <div className="px-4 mt-4 ktext-section-title flex flex-row items-center">
+                    <Waypoint
+                        className={'h-6 w-6 ' + TopoTypeToColor(topo.type)}
+                    />
+                    <div className='ml-2'>{topo.name}</div>
+                </div>
+                {(topo.closestCity && topo.closestCity !== topo.name) &&
+                    <div className='px-4 ktext-label md:text-left text-grey-medium'>{topo.closestCity}</div>
+                }
+                <div className="px-4 hidden md:block">{coordinateItem()}</div>
+
+                <div className="ktext-base-little px-4 hide-after-three-lines overflow-hidden">
                     {topo.description}
                 </div>
 
@@ -138,8 +149,9 @@ export const TopoPreview: React.FC<TopoPreviewProps> = (props: TopoPreviewProps)
                 </SlideagainstRightDesktop>
             </div>
 
-            {modalParkingOpen && topo.parkingLocation &&
+            {topo.parkingLocation &&
                 <ParkingModal
+                    open={modalParkingOpen}
                     parkingLocation={topo.parkingLocation}
                     onClose={() => setModalParkingOpen(false)}
                 />
