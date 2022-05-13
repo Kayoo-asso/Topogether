@@ -19,7 +19,7 @@ export const DownloadButton: React.FC<DownloadButtonProps> = ({
 
     return (
         <Download
-            className={'cursor-pointer ' + (downloaded ? 'stroke-main h-5 w-5' : 'stroke-dark h-5 w-5')}
+            className={'cursor-pointer ' + (downloaded ? 'stroke-main h-5 w-5' : 'stroke-dark h-5 w-5') + (props.className ? ' '+props.className : '')}
             onClick={toggle}
         />
     )
