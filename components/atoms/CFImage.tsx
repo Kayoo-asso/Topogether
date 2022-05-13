@@ -123,7 +123,7 @@ export const CFImage: React.FC<CFImageProps> = ({
                     srcSet={srcSet}
                     sizes={sizes}
                     {...imgProps}
-                    className={props.className + ' ' + objectFitClass}
+                    className={props.className + ' object-center ' + objectFitClass}
                     loading={props.loading ?? 'lazy'}
                     decoding={props.decoding ?? 'async'}
                     onLoad={() => {
