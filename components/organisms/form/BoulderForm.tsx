@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { Checkbox, TextInput } from 'components';
+import { Button, Checkbox, TextInput } from 'components';
 import { Quark, watchDependencies } from 'helpers/quarky';
 import { Boulder, GeoCoordinates, Name, Topo } from 'types';
 import { boulderChanged, useDevice } from 'helpers';

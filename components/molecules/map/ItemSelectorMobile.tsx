@@ -4,8 +4,6 @@ import Sector from 'assets/icons/sector.svg';
 import Rock from 'assets/icons/rock.svg';
 import Parking from 'assets/icons/parking.svg';
 import Waypoint from 'assets/icons/help-round.svg';
-import Camera from 'assets/icons/camera.svg';
-import { RoundButton } from 'components/atoms';
 import { useDevice } from 'helpers';
 import { ImageInput } from '../form';
 
@@ -60,9 +58,6 @@ export const ItemSelectorMobile: React.FC<ItemSelectorMobileProps> = (props: Ite
                     activated={props.photoActivated}
                     onChange={(files) => props.onNewPhoto(files[0])}
                 />
-                // <RoundButton onClick={props.onPhotoButtonClick}>
-                //     <Camera className='stroke-main h-5 w-5' />
-                // </RoundButton> 
             }
 
         </div>

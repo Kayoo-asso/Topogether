@@ -9,8 +9,8 @@ import { TracksListBuilder } from '.';
 import { BoulderForm } from '..';
 import { CFImage } from 'components/atoms/CFImage';
 import ManyTracks from 'assets/icons/many-tracks.svg';
-import Camera from 'assets/icons/camera.svg';
 import { ImageInput } from 'components/molecules';
+import { Button } from 'components/atoms';
 
 interface BoulderBuilderSlideoverMobileProps {
   boulder: Quark<Boulder>,
@@ -20,6 +20,7 @@ interface BoulderBuilderSlideoverMobileProps {
   setCurrentImage: Dispatch<SetStateAction<Image | undefined>>,
   // onPhotoButtonClick?: () => void,
   onDrawButtonClick: () => void,
+  onBoulderDelete: (boulder: Quark<Boulder>) => void,
   onClose: () => void,
 }
 
@@ -156,6 +157,12 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
             <BoulderForm
               boulder={props.boulder}
               topo={props.topo}
+            />
+            <Button 
+              content='Supprimer le bloc'
+              className='mt-10'
+              fullWidth
+              onClick={() => props.onBoulderDelete(props.boulder)}
             />
           </div>
         )}

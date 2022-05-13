@@ -116,9 +116,7 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> = watchDependen
                                             className='pr-1 cursor-pointer'
                                             onClick={() => props.onRenameSector(sectorQuark)}
                                         >
-                                            <Edit
-                                                className={'w-5 h-5 stroke-main'}
-                                            />
+                                            <Edit className={'w-5 h-5 stroke-main'} />
                                         </div>
                                     </div>
                                     

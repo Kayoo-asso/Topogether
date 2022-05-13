@@ -4,7 +4,7 @@ import {
     MapControl, Show,
     InfoFormSlideover, ManagementFormSlideover, TrackFormSlideagainstDesktop,
     BoulderMarkerDropdown, ParkingMarkerDropdown, WaypointMarkerDropdown,
-    GeoCamera, Drawer, BoulderBuilderSlideagainstDesktop,
+    Drawer, BoulderBuilderSlideagainstDesktop,
     ParkingBuilderSlide, AccessFormSlideover, WaypointBuilderSlide, SectorAreaMarkerDropdown, BuilderProgressIndicator, BoulderFilterOptions,
 } from 'components';
 import { sortBoulders, useContextMenu, createTrack, createBoulder, createParking, createWaypoint, createSector, useDevice, computeBuilderProgress, encodeUUID, decodeUUID, deleteTrack, sectorChanged, useModal, staticUrl } from 'helpers';
@@ -19,7 +19,6 @@ import { LeftbarBuilderDesktop } from 'components/layouts/sidebars/LeftbarBuilde
 import { BoulderMarker, CreatingSectorAreaMarker, For, isMouseEvent, isPointerEvent, isTouchEvent, ParkingMarker, SectorAreaMarker, WaypointMarker } from 'components/atoms';
 import { filterBoulders } from 'components/molecules';
 import { ModalRenameSector } from 'components/organisms/builder/ModalRenameSector';
-import { useGeolocation } from 'helpers/hooks/useGeolocation';
 
 interface RootBuilderProps {
     topoQuark: Quark<Topo>,
@@ -72,7 +71,6 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
     useContextMenu(closeDropdown);
 
     const [displaySectorSlideover, setDisplaySectorSlideover] = useState<boolean>(false);
-    // const [displayGeoCamera, setDisplayGeoCamera] = useState<boolean>(false);
     const [displayDrawer, setDisplayDrawer] = useState<boolean>(false);
     const [displayInfo, setDisplayInfo] = useState<boolean>(false);
     const [displayApproach, setDisplayApproach] = useState<boolean>(false);
@@ -254,8 +252,6 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
     }, [currentTool, tempCurrentTool]);
 
     const handleNewPhoto = useCallback((img: Image, coords: GeoCoordinates) => {
-        console.log(img);
-        console.log(coords);
         if (!coords) { console.log("no coords"); return; }
         if (img) {
             setCurrentImage(img);
@@ -285,41 +281,6 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
             }
         }
     }, [topo, selectedParking(), selectedWaypoint(), selectedBoulder()]);
-    // const handleGeoCameraCapture = useCallback(async (file: File, coordinates: GeoCoordinates) => {
-    //     if (file) {
-    //         const res = await api.images.upload(file);
-    //         setDisplayGeoCamera(false)
-    //         if (res.type === 'error') return;
-    //         else {
-    //             const img = res.value;
-    //             setCurrentImage(img);
-    //             if (currentTool === 'PARKING') {
-    //                 selectedParking.select(createParking(topo, coordinates, img));
-    //             }
-    //             else if (currentTool === 'WAYPOINT') {
-    //                 selectedWaypoint.select(createWaypoint(topo, coordinates, img));
-    //             }
-    //             else {
-    //                 const sBoulder = selectedBoulder();
-    //                 if (sBoulder) {
-    //                     const newImages = sBoulder.images;
-    //                     newImages.push(img);
-    //                     selectedBoulder.quark()!.set({
-    //                         ...sBoulder,
-    //                         images: newImages,
-    //                     });
-    //                     selectedTrack.select(createTrack(sBoulder, session.id));
-    //                 }
-    //                 else {
-    //                     const newBoulderQuark = createBoulder(props.topoQuark, coordinates, img);
-    //                     selectedTrack.select(createTrack(newBoulderQuark(), session.id));
-    //                     selectedBoulder.select(newBoulderQuark);
-    //                 }
-    //                 setDisplayDrawer(true);
-    //             }
-    //         }
-    //     }
-    // }, [topo, currentTool, selectedBoulder()]);
 
     const progress = useCreateDerivation<number>(() => computeBuilderProgress(props.topoQuark), [props.topoQuark]);
 
@@ -533,8 +494,8 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                                     selectedTrack={selectedTrack}
                                     currentImage={currentImage}
                                     setCurrentImage={setCurrentImage}
-                                    // onPhotoButtonClick={() => setDisplayGeoCamera(true)}
                                     onDrawButtonClick={() => setDisplayDrawer(true)}
+                                    onBoulderDelete={showModalDeleteBoulder}
                                     onClose={() => {
                                         selectedTrack.select(undefined);
                                         selectedBoulder.select(undefined);
