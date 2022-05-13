@@ -254,6 +254,8 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
     }, [currentTool, tempCurrentTool]);
 
     const handleNewPhoto = useCallback((img: Image, coords: GeoCoordinates) => {
+        console.log(img);
+        console.log(coords);
         if (!coords) { console.log("no coords"); return; }
         if (img) {
             setCurrentImage(img);
@@ -427,7 +429,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                     onBoulderResultSelect={(boulder) => toggleBoulderSelect(boulders.findQuark(b => b.id === boulder.id)!)}
                     currentTool={currentTool}
                     onToolSelect={(tool) => tool === currentTool ? setCurrentTool(undefined) : setCurrentTool(tool)}
-                    onNewPhoto={(img, coords) => handleNewPhoto(img, coords)}
+                    onNewPhoto={handleNewPhoto}
                     // onPhotoButtonClick={() => setDisplayGeoCamera(true)}
                     draggableCursor={currentTool === 'ROCK' ? 'url(/assets/icons/colored/_rock.svg) 16 32, auto'
                         : currentTool === 'SECTOR' ? 'url(/assets/icons/colored/line-point/_line-point-grey.svg), auto'

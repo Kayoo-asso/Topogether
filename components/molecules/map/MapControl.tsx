@@ -123,7 +123,7 @@ export const MapControl: React.FC<MapControlProps> = watchDependencies(({
 
                     {/* Bottom center */}
                     <div className='absolute bottom-0 w-full flex justify-center my-3'>
-                        {props.onNewPhoto && props.onToolSelect &&
+                        {props.onNewPhoto && props.onToolSelect && coords && 
                             <ItemSelectorMobile
                                 currentTool={props.currentTool}
                                 photoActivated={!!coords}
