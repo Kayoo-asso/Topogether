@@ -55,10 +55,12 @@
   scrollbar-width: none;  /* Firefox */
 }
 
+body {
+  overflow: hidden;
+}
 
 @media only screen and (max-width : 1024px) {
   body {
-    overflow: hidden;
     position: fixed;
     top: 0;
     left: 0;

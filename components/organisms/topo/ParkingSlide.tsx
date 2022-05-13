@@ -94,8 +94,9 @@ export const ParkingSlide: React.FC<ParkingSlideProps> = watchDependencies(({
                 {flashMessage}
             </Flash>
 
-            {modalParkingOpen &&
+            {parking.location &&
                 <ParkingModal
+                    open={modalParkingOpen}
                     parkingLocation={parking.location}
                     onClose={() => setModalParkingOpen(false)}
                 />

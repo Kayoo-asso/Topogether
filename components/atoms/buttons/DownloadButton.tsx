@@ -6,7 +6,6 @@ interface DownloadButtonProps {
     downloaded?: boolean,
     className?: string,
     topo: Topo | LightTopo,
-    onClick?: () => void,
 }
 
 export const DownloadButton: React.FC<DownloadButtonProps> = ({
@@ -14,10 +13,14 @@ export const DownloadButton: React.FC<DownloadButtonProps> = ({
     ...props
 }: DownloadButtonProps) => {
 
+    const toggle = () => {
+        alert("Fonctionnalité à venir");
+    }
+
     return (
         <Download
             className={'cursor-pointer ' + (downloaded ? 'stroke-main h-5 w-5' : 'stroke-dark h-5 w-5')}
-            onClick={props.onClick}
+            onClick={toggle}
         />
     )
 };
