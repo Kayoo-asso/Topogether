@@ -10,6 +10,7 @@ import { BoulderForm } from '..';
 import { CFImage } from 'components/atoms/CFImage';
 import ManyTracks from 'assets/icons/many-tracks.svg';
 import Camera from 'assets/icons/camera.svg';
+import { ImageInput } from 'components/molecules';
 
 interface BoulderBuilderSlideoverMobileProps {
   boulder: Quark<Boulder>,
@@ -17,7 +18,7 @@ interface BoulderBuilderSlideoverMobileProps {
   selectedTrack: SelectQuarkNullable<Track>,
   currentImage?: Image,
   setCurrentImage: Dispatch<SetStateAction<Image | undefined>>,
-  onPhotoButtonClick?: () => void,
+  // onPhotoButtonClick?: () => void,
   onDrawButtonClick: () => void,
   onClose: () => void,
 }
@@ -89,12 +90,16 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
               </button>
             }
             {full && (
-              <RoundButton
-                buttonSize={45}
-                onClick={props.onPhotoButtonClick}
-              >
-                <Camera className='h-6 w-6 stroke-main' />
-              </RoundButton>
+              <ImageInput 
+                button='builder'
+                onChange={(imgs) => {
+                  props.boulder.set(b => ({
+                    ...b,
+                    images: [...boulder.images].concat(imgs)
+                  }));
+                  props.setCurrentImage(imgs[0]);
+                }}
+              />
             )}
 
             {!full && (

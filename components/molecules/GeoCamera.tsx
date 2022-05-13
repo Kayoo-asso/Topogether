@@ -168,7 +168,6 @@ export const GeoCamera: React.FC<GeoCameraProps> = ({
 
             {changeableTool &&
                 <div className='absolute z-100 top-4 left-4'>
-                    <input type="file"></input>
                     <div 
                         className={'flex flex-row items-center ' + (props.currentTool === 'PARKING' ? 'text-second' : props.currentTool === 'WAYPOINT' ? 'text-third' : 'text-main')}
                         onClick={() => setDisplayItemSelectMenu(d => !d)}

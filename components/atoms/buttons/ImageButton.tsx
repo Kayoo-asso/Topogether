@@ -10,6 +10,7 @@ interface ImageButtonProps {
   text?: string,
   image?: Image,
   loading?: boolean,
+  activated?: boolean,
   onClick: () => void,
   onDelete?: () => void,
 }
@@ -17,6 +18,7 @@ interface ImageButtonProps {
 export const ImageButton: React.FC<ImageButtonProps> = ({
   text = 'Ajouter une image',
   loading = false,
+  activated = true,
   ...props
 }) => {
   const { observe, unobserve, width: containerWidth, height: containerHeight, entry } = useDimensions({
@@ -31,7 +33,7 @@ export const ImageButton: React.FC<ImageButtonProps> = ({
   // eslint-disable-next-line jsx-a11y/click-events-have-key-events
   <div
     ref={observe}
-    className="ktext-subtext relative text-center shadow text-main border-main border-2 w-full flex flex-col justify-center items-center group cursor-pointer"
+    className={(activated ? 'text-main border-main' : 'text-grey-medium border-grey-medium') + "ktext-subtext relative text-center shadow border-2 w-full flex flex-col justify-center items-center group cursor-pointer"}
     onClick={props.onClick}
     style={{
       height: containerWidth,

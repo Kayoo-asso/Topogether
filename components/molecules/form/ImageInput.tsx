@@ -1,15 +1,19 @@
 import React, { useRef, useState, forwardRef, useEffect, useCallback } from 'react';
 // eslint-disable-next-line import/no-cycle
-import { ImageButton, ProfilePicture } from '../../atoms';
+import { ImageButton, ProfilePicture, RoundButton } from '../../atoms';
 import { api, ImageUploadErrorReason } from 'helpers/services';
 import { Image } from 'types';
 import { setReactRef } from 'helpers';
+import Spinner from 'assets/icons/spinner.svg';
+import Camera from 'assets/icons/camera.svg';
 
 interface ImageInputProps {
   label?: string,
   multiple?: boolean,
   value?: Image,
-  profileImageButton?: boolean,
+  button?: 'square' | 'profile' | 'builder';
+  size?: 'little' | 'big';
+  activated?: boolean,
   onChange: (images: Image[]) => void,
   onDelete?: () => void,
   onError?: (err: string) => void,
@@ -17,6 +21,9 @@ interface ImageInputProps {
 
 export const ImageInput = forwardRef<HTMLInputElement, ImageInputProps>(({
   multiple = false,
+  button = 'square',
+  size = 'little',
+  activated = true,
   ...props
 }: ImageInputProps, parentRef) => {
   const fileInputRef = useRef<HTMLInputElement>();
@@ -64,6 +71,7 @@ export const ImageInput = forwardRef<HTMLInputElement, ImageInputProps>(({
     <>
       <input
         type="file"
+        accept='image/png, image/jpg, image/jpeg, image/webp'
         className="hidden"
         multiple={multiple}
         ref={ref => {
@@ -74,22 +82,34 @@ export const ImageInput = forwardRef<HTMLInputElement, ImageInputProps>(({
           if (e?.target?.files) { handleFileInput(e.target.files); }
         }}
       />
-      {props.profileImageButton &&
+      {button === 'profile' &&
         <ProfilePicture 
           image={props.value}
           loading={loading}
-          onClick={() => {
-            if (fileInputRef.current) fileInputRef.current.click();
-          }}
+          onClick={useCallback(() => {
+            if (!loading && fileInputRef.current) fileInputRef.current.click();
+          }, [loading])}
         />
       }
-      {!props.profileImageButton &&
+      {button === 'builder' &&
+        <RoundButton
+          buttonSize={size === 'little' ? 45 : 60}
+          onClick={useCallback(() => {
+            if (!loading && activated && fileInputRef.current) fileInputRef.current.click();
+          }, [loading])}
+        >
+          {!loading && <Camera className={'h-6 w-6 ' + (activated ? 'stroke-main' : 'stroke-grey-medium')} />}
+          {loading && <Spinner className="h-6 w-6 stroke-main animate-spin m-2" />}
+        </RoundButton>
+      }
+      {button === 'square' &&
         <ImageButton
           text={props.label}
           image={props.value}
           loading={loading}
+          activated={activated}
           onClick={useCallback(() => {
-            if (!loading) fileInputRef.current?.click();
+            if (!loading && fileInputRef.current) fileInputRef.current.click();
           }, [loading])}
           onDelete={props.onDelete}
         />

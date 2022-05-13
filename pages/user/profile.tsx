@@ -68,7 +68,7 @@ const [ModalDelete, showModalDelete] = useModal();
           <div className='flex flex-row justify-center md:justify-start rounded-lg px-6 pb-8 md:pb-12 pt-12 md:pt-[16px]'>
             <div className='h-[100px] w-[100px] relative cursor-pointer'>
               <ImageInput 
-                profileImageButton
+                button='profile'
                 value={userQuark().image}
                 onChange={async (images) => {
                   userQuark.set({

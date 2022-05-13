@@ -38,7 +38,7 @@ export function isImage(file: File): boolean {
   if (!type.startsWith("image/")) return false;
 
   let extension = type.substring(6);
-  return extension === "png" || extension === "jpg" || extension === "jpeg" || extension === "png" || extension === "webp"
+  return extension === "png" || extension === "jpg" || extension === "jpeg" || extension === "webp"
 }
 
 const CLOUDFLARE_MAX_SIZE = 10e6;

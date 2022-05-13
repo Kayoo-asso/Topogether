@@ -29,7 +29,7 @@ export const HeaderMobile: React.FC<HeaderMobileProps> = (props: HeaderMobilePro
       </div>
 
       <div
-        className="w-3/6 text-white ktext-title whitespace-nowrap overflow-hidden"
+        className={(props.children ? 'w-3/6' : 'w-4/6') + " text-white ktext-title whitespace-nowrap overflow-hidden"}
         aria-label={displayTitleTooltip ? props.title : undefined}
         data-microtip-position="bottom"
         role="tooltip"
@@ -38,9 +38,11 @@ export const HeaderMobile: React.FC<HeaderMobileProps> = (props: HeaderMobilePro
         {props.title}
       </div>
 
-      <div className="w-1/6 pl-5 flex flex-row items-center">
-        {props.children}
-      </div>
+      {props.children &&
+        <div className="w-1/6 pl-5 flex flex-row items-center">
+          {props.children}
+        </div>
+      }
 
       {props.menuOptions && (
         <button className="w-1/6 flex justify-center" onClick={() => setMenuOpen(x => !x)}>
