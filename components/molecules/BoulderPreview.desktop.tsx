@@ -38,7 +38,7 @@ export const BoulderPreviewDesktop: React.FC<BoulderPreviewDesktopProps> = watch
     return (
         <>
             <div className="px-5 mb-3">
-                <div className='bg-dark'>
+                <div className='bg-dark max-w-[255px]'> {/* max-width is very important here to avoid a bug with scrolling and image resizing when creating a first track with sitting start */}
                     <TracksImage
                         sizeHint='300px'
                         image={props.currentImage}

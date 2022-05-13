@@ -14,7 +14,7 @@ export const ModalBG: React.FC<ModalBGProps> = (props: ModalBGProps) => {
           tabIndex={-1}
         >
           <div
-            className='bg-white rounded-lg shadow min-h-[25%] w-11/12 md:w-5/12 absolute top-[45%] md:top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]'
+            className='bg-white rounded-lg shadow min-h-[25%] w-11/12 md:w-5/12 absolute top-[45%] md:top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] overflow-hidden'
             // Avoid closing the modal when we click here (otherwise propagates to the backdrop)
             onClick={(event) => event.stopPropagation()}
           >

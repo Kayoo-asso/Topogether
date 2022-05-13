@@ -32,7 +32,6 @@ export const BoulderBuilderSlideagainstDesktop: React.FC<BoulderBuilderSlideagai
     return (
         <SlideagainstRightDesktop
             open
-            className='overflow-scroll'
             displayLikeButton
             item={props.boulder()}
             onClose={props.onClose}

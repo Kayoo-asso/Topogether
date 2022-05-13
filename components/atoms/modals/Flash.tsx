@@ -1,4 +1,5 @@
-import React, { ReactNode, useCallback, useEffect, useState } from 'react';
+import { Portal } from 'helpers';
+import React, { ReactNode, useEffect, useState } from 'react';
 
 interface FlashProps {
     open: boolean,
@@ -31,11 +32,13 @@ export const Flash: React.FC<FlashProps> = (props: FlashProps) => {
     }, [display])
 
     return (
-        <div 
-            className={'bg-white transition-[bottom] ease-in-out w-[90%] md:w-auto text-center ' + (display ? 'bottom-[5%] md:bottom-[8%]' : '-bottom-[20%] md:-bottom-[10%]') + ' rounded-lg shadow px-6 py-4 z-1000 absolute left-[50%] translate-x-[-50%] cursor-pointer'}
-            onClick={() => setDisplay(false)}
-        >
-            {props.children}
-        </div>
+        <Portal open>
+            <div 
+                className={'bg-white transition-[bottom] ease-in-out w-[90%] md:w-auto text-center z-full ' + (display ? 'bottom-[5%] md:bottom-[8%]' : '-bottom-[20%] md:-bottom-[10%]') + ' rounded-lg shadow px-6 py-4 absolute left-[50%] translate-x-[-50%] cursor-pointer'}
+                onClick={() => setDisplay(false)}
+            >
+                {props.children}
+            </div>
+        </Portal>
     )
 }

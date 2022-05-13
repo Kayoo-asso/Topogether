@@ -1,4 +1,4 @@
-import React, { CSSProperties, ReactElement, useCallback, useEffect, useRef, useState } from 'react';
+import React, { CSSProperties, ReactElement, useCallback, useRef, useState } from 'react';
 import {
   Image, PointEnum, DrawerToolEnum, Position, Track
 } from 'types';
@@ -131,7 +131,7 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
             if (eltUnder.nodeName === "svg" && props.modalable) setPortalOpen(true);
             else {
               // Handle clicks that are 1) left-click, 2) in the viewBox and 3) on the SVG canvas directly
-              if (e.buttons !== 0 || !props.onImageClick || !viewBoxRef.current) return;
+              if (e.buttons !== 0 || !props.onImageClick || !viewBoxRef.current || eltUnder.nodeName !== "svg") return;
               const coords = getCoordsInViewbox(viewBoxRef.current, e.clientX, e.clientY);
               if (coords) props.onImageClick(coords);
             }
