@@ -10,6 +10,7 @@ import useDimensions from 'react-cool-dimensions';
 interface GeoCameraProps {
     open?: boolean,
     currentTool: MapToolEnum,
+    changeableTool?: boolean,
     onChangeTool: (tool: MapToolEnum) => void,
     onCapture?: (file: File, coordinates: GeoCoordinates) => void,
     onClose: () => void,
@@ -28,6 +29,7 @@ const CAPTURE_OPTIONS = {
 
 export const GeoCamera: React.FC<GeoCameraProps> = ({
     open = true,
+    changeableTool = true,
     ...props
 }: GeoCameraProps) => {
     const { observe, unobserve, width: containerWidth, height: containerHeight, entry } = useDimensions({
@@ -42,7 +44,6 @@ export const GeoCamera: React.FC<GeoCameraProps> = ({
         lat: 0,
         lng: 0,
     });
-    // const [distance, setDistance] = useState(0);
     const [isCalibrating, setIsCalibrating] = useState(process.env.NODE_ENV !== "development");
     const [displayToolbar, setDisplayToolbar] = useState(false);
     const [img, setImg] = useState<string>();
@@ -164,27 +165,32 @@ export const GeoCamera: React.FC<GeoCameraProps> = ({
                     />
                 </div>
             }
-            <div className='absolute z-100 top-4 left-4'>
-                <div 
-                    className={'flex flex-row items-center ' + (props.currentTool === 'PARKING' ? 'text-second' : props.currentTool === 'WAYPOINT' ? 'text-third' : 'text-main')}
-                    onClick={() => setDisplayItemSelectMenu(d => !d)}
-                >
-                    Créer un {itemType}
-                    <ArrowFull
-                        className={'h-3 w-3 rotate-90 ml-3' + 
-                            (displayItemSelectMenu ? ' -rotate-90' : '') +
-                            (props.currentTool === 'WAYPOINT' ? ' fill-third' : props.currentTool === 'PARKING' ? ' fill-second' : ' fill-main') 
-                        }
-                    />
-                </div>
-                {displayItemSelectMenu &&
-                    <div className='text-white' onClick={() => setDisplayItemSelectMenu(false)}>
-                        {props.currentTool !== 'ROCK' && <div className='mt-1 text-main' onClick={() => props.onChangeTool('ROCK')}>Créer un bloc</div>}
-                        {props.currentTool !== 'PARKING' && <div className='mt-1 text-second' onClick={() => props.onChangeTool('PARKING')}>Créer un parking</div>}
-                        {props.currentTool !== 'WAYPOINT' && <div className='mt-1 text-third' onClick={() => props.onChangeTool('WAYPOINT')}>Créer un point de repère</div>}
+
+            {changeableTool &&
+                <div className='absolute z-100 top-4 left-4'>
+                    <input type="file"></input>
+                    <div 
+                        className={'flex flex-row items-center ' + (props.currentTool === 'PARKING' ? 'text-second' : props.currentTool === 'WAYPOINT' ? 'text-third' : 'text-main')}
+                        onClick={() => setDisplayItemSelectMenu(d => !d)}
+                    >
+                        Créer un {itemType}
+                        <ArrowFull
+                            className={'h-3 w-3 rotate-90 ml-3' + 
+                                (displayItemSelectMenu ? ' -rotate-90' : '') +
+                                (props.currentTool === 'WAYPOINT' ? ' fill-third' : props.currentTool === 'PARKING' ? ' fill-second' : ' fill-main') 
+                            }
+                        />
                     </div>
-                }
-            </div>
+                    {displayItemSelectMenu &&
+                        <div className='text-white' onClick={() => setDisplayItemSelectMenu(false)}>
+                            {props.currentTool !== 'ROCK' && <div className='mt-1 text-main' onClick={() => props.onChangeTool('ROCK')}>Créer un bloc</div>}
+                            {props.currentTool !== 'PARKING' && <div className='mt-1 text-second' onClick={() => props.onChangeTool('PARKING')}>Créer un parking</div>}
+                            {props.currentTool !== 'WAYPOINT' && <div className='mt-1 text-third' onClick={() => props.onChangeTool('WAYPOINT')}>Créer un point de repère</div>}
+                        </div>
+                    }
+                </div>
+            }
+
             <div 
                 className='absolute z-100 top-4 right-4'
                 onClick={props.onClose}

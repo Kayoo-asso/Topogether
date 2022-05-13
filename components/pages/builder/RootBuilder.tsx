@@ -575,6 +575,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
             <Show when={() => displayGeoCamera}>
                 <GeoCamera
                     currentTool={currentTool || 'ROCK'}
+                    changeableTool={!selectedBoulder()}
                     onChangeTool={(tool) => setCurrentTool(tool)}
                     onCapture={handleGeoCameraCapture}
                     onClose={() => setDisplayGeoCamera(false)}
