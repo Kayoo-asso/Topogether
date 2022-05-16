@@ -27,9 +27,9 @@ export const SectorAreaMarker: React.FC<SectorAreaMarkerProps> = watchDependenci
         editable: !!props.onDragEnd,
         clickable: !!props.onClick,
         fillColor: '#04D98B',
-        fillOpacity: selected ? 0.3 : 0.2,
+        fillOpacity: selected ? 0.3 : 0,
         strokeColor: '#04D98B',
-        strokeOpacity: selected ? 1 : 0.4,
+        strokeOpacity: selected ? 0.6 : 0.3,
         strokeWeight: 2,
     };
     let polygon: React.MutableRefObject<google.maps.Polygon | undefined>;

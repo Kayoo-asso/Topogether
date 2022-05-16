@@ -114,12 +114,15 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
 
     const [displayModalSectorRename, setDisplayModalSectorRename] = useState(false);
     const toggleSectorSelect = useQuarkyCallback((sectorQuark: Quark<Sector>) => {
-        if (selectedSector.quark() === sectorQuark)
-            selectedSector.select(undefined);
-        else selectedSector.select(sectorQuark);
+        if (currentTool) return
+        const sSector = selectedSector();
+        (sSector && sSector.id === sectorQuark().id) ? // if the sector is already selected
+            selectedSector.select(undefined) : // we unselect it
+            selectedSector.select(sectorQuark); // if not, we select it
     }, [selectedSector, selectedBoulder]);
     const toggleBoulderSelect = useQuarkyCallback((boulderQuark: Quark<Boulder>) => {
         setDisplaySectorSlideover(false);
+        selectedSector.select(undefined);
         selectedTrack.select(undefined);
         selectedParking.select(undefined);
         selectedWaypoint.select(undefined);
@@ -143,6 +146,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
     }
     const toggleTrackSelect = useQuarkyCallback((trackQuark: Quark<Track>, boulderQuark: Quark<Boulder>) => {
         setDisplaySectorSlideover(false);
+        selectedSector.select(undefined);
         selectedBoulder.select(undefined);
         selectedParking.select(undefined);
         selectedWaypoint.select(undefined);
@@ -160,6 +164,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
     }, [selectedTrack]);
     const toggleParkingSelect = useQuarkyCallback((parkingQuark: Quark<Parking>) => {
         setDisplaySectorSlideover(false);
+        selectedSector.select(undefined);
         selectedBoulder.select(undefined);
         selectedTrack.select(undefined);
         selectedWaypoint.select(undefined);
@@ -167,6 +172,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
     }, [selectedParking]);
     const toggleWaypointSelect = useQuarkyCallback((waypointQuark: Quark<Waypoint>) => {
         setDisplaySectorSlideover(false);
+        selectedSector.select(undefined);
         selectedBoulder.select(undefined);
         selectedTrack.select(undefined);
         selectedParking.select(undefined);
@@ -226,12 +232,12 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                     selectedWaypoint.select(undefined);
                 }
             }
-            else if (e.code === 'Delete') {
-                if (selectedSector()) showModalDeleteSector(selectedSector.quark()!);
-                else if (selectedBoulder()) showModalDeleteBoulder(selectedBoulder.quark()!);
-                else if (selectedParking()) showModalDeleteParking(selectedParking.quark()!);
-                else if (selectedWaypoint()) showModalDeleteWaypoint(selectedWaypoint.quark()!);
-            }
+            // else if (e.code === 'Delete') {
+            //     if (selectedSector()) showModalDeleteSector(selectedSector.quark()!);
+            //     else if (selectedBoulder()) showModalDeleteBoulder(selectedBoulder.quark()!);
+            //     else if (selectedParking()) showModalDeleteParking(selectedParking.quark()!);
+            //     else if (selectedWaypoint()) showModalDeleteWaypoint(selectedWaypoint.quark()!);
+            // }
             else if (e.code === "Space" && currentTool) {
                 setTempCurrentTool(currentTool);
                 setCurrentTool(undefined);
@@ -437,7 +443,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                                 // TODO: how to avoid problems with the mousemove event not reaching the map while creating a sector?
 
                                 // Avoid the sector area intercepting clicks if another tool is selected
-                                onClick={currentTool ? undefined : selectedSector.select}
+                                onClick={toggleSectorSelect}
                                 onContextMenu={displaySectorDropdown}
                                 onDragStart={() => selectedSector.select(sector)}
                                 onDragEnd={() => sectorChanged(props.topoQuark, sector().id, boulderOrder())}
