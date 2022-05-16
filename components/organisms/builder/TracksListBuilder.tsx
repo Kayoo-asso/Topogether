@@ -12,6 +12,7 @@ interface TracksListBuilderProps {
   selectedTrack: SelectQuarkNullable<Track>,
   onTrackClick: (trackQuark: Quark<Track>) => void,
   onDrawButtonClick?: () => void,
+  onCreateTrack?: () => void,
 }
 
 const gradeColors = {
@@ -92,6 +93,7 @@ export const TracksListBuilder: React.FC<TracksListBuilderProps> = watchDependen
           onClick={() => {
             const newQuarkTrack = createTrack(boulder, session!.id);
             props.selectedTrack.select(newQuarkTrack);
+            if (props.onCreateTrack) props.onCreateTrack();
           }}
         >
           <span className="ml-2 mr-5 text-xl">+</span>

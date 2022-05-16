@@ -18,8 +18,8 @@ interface BoulderBuilderSlideoverMobileProps {
   selectedTrack: SelectQuarkNullable<Track>,
   currentImage?: Image,
   setCurrentImage: Dispatch<SetStateAction<Image | undefined>>,
-  // onPhotoButtonClick?: () => void,
   onDrawButtonClick: () => void,
+  onCreateTrack: () => void,
   onBoulderDelete: (boulder: Quark<Boulder>) => void,
   onClose: () => void,
 }
@@ -146,6 +146,7 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
                   props.selectedTrack.select(trackQuark);
                 }
               }}
+              onCreateTrack={props.onCreateTrack}
             />
           </div>
         )}
