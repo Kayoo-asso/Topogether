@@ -70,7 +70,11 @@ export const TracksListBuilder: React.FC<TracksListBuilderProps> = watchDependen
                 </div>
 
                 {props.onDrawButtonClick &&
-                  <button onClick={props.onDrawButtonClick}>
+                  <button onClick={(e) => {
+                    e.stopPropagation();
+                    props.selectedTrack.select(trackQuark);
+                    props.onDrawButtonClick!();
+                  }}>
                     <DrawIcon
                       className='w-6 h-6 stroke-main'
                     />
