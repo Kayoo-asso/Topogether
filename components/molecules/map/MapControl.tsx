@@ -73,7 +73,7 @@ export const MapControl: React.FC<MapControlProps> = watchDependencies(({
 
                 <div className="absolute h-full w-full">
                     {/* Top left */}
-                    <div className='absolute left-0 top-0 m-3 space-y-5'>
+                    <div className='absolute left-0 top-0 m-3 space-y-5 w-full'>
                         {displaySearchbar && (
                             <MapSearchbar
                                 boulders={props.topo ? props.topo().boulders.toArray() : undefined}
