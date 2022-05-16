@@ -18,7 +18,7 @@ interface MapSearchResultsProps {
 export const MapSearchResults: React.FC<MapSearchResultsProps> = (props: MapSearchResultsProps) => {
 
     return (
-        <div className='absolute h-full w-full bg-white px-7 left-0 top-0 pt-[85px] z-50'>
+        <div className='absolute w-[94%] md:w-[97%] shadow rounded-lg bg-white px-7 left-0 top-0 pt-[55px] pb-3 z-50'>
 
             {/* TODO: Add closing button */}
             {/* TODO: Add "Résultats récents" */}
