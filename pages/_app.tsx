@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import 'styles/globals.css';
 import App, { AppInitialProps } from 'next/app';
 import type { AppProps, AppContext } from 'next/app';
@@ -48,6 +48,7 @@ const CustomApp = ({ Component, pageProps, session, initialDevice }: Props) => {
       console.log(nav.standalone);
     }
     console.log("navigator standalone : " + isInstalled2);
+    alert("matches standalone : " + isInstalled1 + " || navigator standalone : " + isInstalled2)
   }, [])
   
 
@@ -86,7 +87,7 @@ const CustomApp = ({ Component, pageProps, session, initialDevice }: Props) => {
               </div>
 
               <div id="footer" className="bg-dark z-500 absolute bottom-0 h-shell md:hidden"
-                onClick={() => alert("matches standalone : " + isInstalled1 + " || navigator standalone : " + isInstalled2)}
+                onClick={useCallback(() => alert("matches standalone : " + isInstalled1 + " || navigator standalone : " + isInstalled2), [isInstalled1, isInstalled2])}
               >
                 <ShellMobile />
               </div>
