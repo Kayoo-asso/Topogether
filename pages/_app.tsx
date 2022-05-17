@@ -14,7 +14,7 @@ import { resetServerContext } from 'react-beautiful-dnd';
 import { AuthProvider } from 'components/AuthProvider';
 import { parse } from 'cookie';
 import { UserPositionProvider } from 'components/molecules/map/UserPositionProvider';
-import { NoStandalone } from './NoStandalone';
+import NoStandalone from './NoStandalone';
 
 type CustomProps = {
   session: User | null,

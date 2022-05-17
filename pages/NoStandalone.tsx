@@ -3,7 +3,7 @@ import NextImage from 'next/image';
 import { staticUrl } from 'helpers';
 import Share from 'assets/icons/share.svg';
 
-export const NoStandalone: React.FC = () => {
+const NoStandalone: React.FC = () => {
     let isIos = false; 
     useEffect(() => {
         isIos = [
@@ -52,3 +52,5 @@ export const NoStandalone: React.FC = () => {
         </div>
     )
 }
+
+export default NoStandalone;
