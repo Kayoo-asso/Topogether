@@ -37,6 +37,10 @@ const CustomApp = ({ Component, pageProps, session, initialDevice }: Props) => {
   const firstRender = useFirstRender();
   const device = firstRender ? initialDevice : currentBreakpoint as Device;
 
+  const isInstalled1 = window.matchMedia('(display-mode: standalone)').matches;
+  console.log("matches standalone : " + isInstalled1);
+  const isInstalled2 = ('standalone' in window.navigator) && (window.navigator.standalone === true);
+  console.log("navigator standalone : " + isInstalled2);
 
   return (
     <>
@@ -72,7 +76,9 @@ const CustomApp = ({ Component, pageProps, session, initialDevice }: Props) => {
                 <Component {...pageProps} />
               </div>
 
-              <div id="footer" className="bg-dark z-500 absolute bottom-0 h-shell md:hidden">
+              <div id="footer" className="bg-dark z-500 absolute bottom-0 h-shell md:hidden"
+                onClick={() => alert("matches standalone : " + isInstalled1 + " || navigator standalone : " + isInstalled2)}
+              >
                 <ShellMobile />
               </div>
             </div>
