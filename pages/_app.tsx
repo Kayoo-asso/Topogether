@@ -37,15 +37,19 @@ const CustomApp = ({ Component, pageProps, session, initialDevice }: Props) => {
   const firstRender = useFirstRender();
   const device = firstRender ? initialDevice : currentBreakpoint as Device;
 
-  const isInstalled1 = window.matchMedia('(display-mode: standalone)').matches;
-  console.log("matches standalone : " + isInstalled1);
+  let isInstalled1 = false;
   let isInstalled2 = false;
-  if ('standalone' in window.navigator) {
-    const nav = window.navigator as any;
-    isInstalled2 = nav.standalone === true;
-    console.log(nav.standalone);
-  }
-  console.log("navigator standalone : " + isInstalled2);
+  useEffect(() => {
+    isInstalled1 = window.matchMedia('(display-mode: standalone)').matches;
+    console.log("matches standalone : " + isInstalled1);
+    if ('standalone' in window.navigator) {
+      const nav = window.navigator as any;
+      isInstalled2 = nav.standalone === true;
+      console.log(nav.standalone);
+    }
+    console.log("navigator standalone : " + isInstalled2);
+  }, [])
+  
 
   return (
     <>
