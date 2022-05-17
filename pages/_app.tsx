@@ -39,7 +39,12 @@ const CustomApp = ({ Component, pageProps, session, initialDevice }: Props) => {
 
   const isInstalled1 = window.matchMedia('(display-mode: standalone)').matches;
   console.log("matches standalone : " + isInstalled1);
-  const isInstalled2 = ('standalone' in window.navigator) && (window.navigator.standalone === true);
+  let isInstalled2 = false;
+  if ('standalone' in window.navigator) {
+    const nav = window.navigator as any;
+    isInstalled2 = nav.standalone === true;
+    console.log(nav.standalone);
+  }
   console.log("navigator standalone : " + isInstalled2);
 
   return (
