@@ -38,13 +38,14 @@ const CustomApp = ({ Component, pageProps, session, initialDevice }: Props) => {
   const firstRender = useFirstRender();
   const device = firstRender ? initialDevice : currentBreakpoint as Device;
 
-  let isStandalone = false;
+  let displayNoStandalone = false;
   useEffect(() => {
-    isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+    let isStandalone = window.matchMedia('(display-mode: standalone)').matches;
     if ('standalone' in window.navigator) {
       const nav = window.navigator as any;
       isStandalone = nav.standalone === true;
     }
+    displayNoStandalone = !isStandalone && device !== 'mobile' && process.env.NODE_ENV !== 'development';
   }, []);
 
   return (
@@ -77,7 +78,7 @@ const CustomApp = ({ Component, pageProps, session, initialDevice }: Props) => {
         <UserPositionProvider>
           <DeviceContext.Provider value={device}>
             <div ref={observe} className="w-screen h-screen flex items-end flex-col">
-              {(isStandalone || device === 'desktop') &&
+              {!displayNoStandalone &&
                 <>
                   <div id="content" className="flex-1 w-screen absolute bg-grey-light flex flex-col h-full md:h-screen overflow-hidden">
                     <Component {...pageProps} />
@@ -88,7 +89,7 @@ const CustomApp = ({ Component, pageProps, session, initialDevice }: Props) => {
                   </div>
                 </>
               }
-              {!isStandalone && <NoStandalone />}
+              {displayNoStandalone && <NoStandalone />}
             </div>
           </DeviceContext.Provider>
         </UserPositionProvider>

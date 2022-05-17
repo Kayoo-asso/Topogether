@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useRef, useState } from 'react';
+import React, { forwardRef, useEffect, useState } from 'react';
 import { ImageThumb } from 'components';
 import { Boulder, Image, UUID } from 'types';
 import { ImageInput } from '.';
@@ -34,8 +34,8 @@ export const MultipleImageInput = forwardRef<HTMLInputElement, MultipleImageInpu
   const [page, setPage] = useState<number>(0);
   useEffect(() => {
     if (props.selected) {
-      const aa = props.images.map(img => img.id).indexOf(props.selected);
-      const pageToDisplay = Math.trunc(aa / nbVisible);
+      const indexOfTheImage = props.images.map(img => img.id).indexOf(props.selected);
+      const pageToDisplay = Math.trunc(indexOfTheImage / nbVisible);
       setPage(pageToDisplay);
     }
   }, [props.selected])
@@ -49,50 +49,49 @@ export const MultipleImageInput = forwardRef<HTMLInputElement, MultipleImageInpu
   const sliceEnd = sliceStart + nbVisible;
   const toDisplay = props.images.slice(sliceStart, sliceEnd);
 
-
   return (
     <>
-    <div className='flex flex-row gap-1.5 w-full'>
-      {displayLeftArrow && (
-        <button onClick={() => setPage((p) => p - 1)}>
-          <ArrowFull className="w-3 h-3 stroke-main fill-main rotate-180" />
-        </button>
-      )}
+      <div className='flex flex-row gap-1.5 w-full'>
+        {displayLeftArrow && (
+          <button onClick={() => setPage((p) => p - 1)}>
+            <ArrowFull className="w-3 h-3 stroke-main fill-main rotate-180" />
+          </button>
+        )}
 
-      {[...Array(nbVisible).keys()].map((i, index) => {
-        if (toDisplay[index])
-          return (
-            <ImageThumb
-              key={toDisplay[index].id}
-              image={toDisplay[index]}
-              tracks={props.boulder?.tracks.quarks().filter(track => track().lines.find(line => line.imageId === toDisplay[index].id) !== undefined)}
-              selected={toDisplay[index].id === props.selected}
-              onClick={props.onImageClick}
-              onDelete={props.onImageDelete}
-            />
-          )
-        else return <div className='w-full' key={index}></div>
-      })}
+        {[...Array(nbVisible).keys()].map((i, index) => {
+          if (toDisplay[index])
+            return (
+              <ImageThumb
+                key={toDisplay[index].id}
+                image={toDisplay[index]}
+                tracks={props.boulder?.tracks.quarks().filter(track => track().lines.find(line => line.imageId === toDisplay[index].id) !== undefined)}
+                selected={toDisplay[index].id === props.selected}
+                onClick={props.onImageClick}
+                onDelete={props.onImageDelete}
+              />
+            )
+          else return <div className='w-full' key={index}></div>
+        })}
 
-      {allowUpload && (
-        <ImageInput
-          ref={ref}
-          label={props.label}
-          multiple
-          onChange={props.onChange}
-          onError={(err) => setError(err)}
-        />
-      )}
+        {allowUpload && (
+          <ImageInput
+            ref={ref}
+            label={props.label}
+            multiple
+            onChange={props.onChange}
+            onError={(err) => setError(err)}
+          />
+        )}
 
-      {displayRightArrow && (
-        <button onClick={() => setPage((p) => p + 1)}>
-          <ArrowFull className="w-3 h-3 stroke-main fill-main" />
-        </button>
-      )}
-    </div>
-    <div className={`ktext-error text-error pt-1 w-full mt-2 text-center ${(error && error.length > 0) ? '' : 'hidden'}`}>
-      {error}
-    </div>
+        {displayRightArrow && (
+          <button onClick={() => setPage((p) => p + 1)}>
+            <ArrowFull className="w-3 h-3 stroke-main fill-main" />
+          </button>
+        )}
+      </div>
+      <div className={`ktext-error text-error pt-1 w-full mt-2 text-center ${(error && error.length > 0) ? '' : 'hidden'}`}>
+        {error}
+      </div>
     </>
   );
 });

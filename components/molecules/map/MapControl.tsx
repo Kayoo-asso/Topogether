@@ -1,10 +1,10 @@
-import React, { useCallback, useContext, useRef, useState } from 'react';
+import React, { forwardRef, useCallback, useContext, useRef, useState } from 'react';
 import { Wrapper } from '@googlemaps/react-wrapper';
 import { Map, RoundButton, SatelliteButton, UserMarker } from 'components';
 import { BoulderFilterOptions, BoulderFilters, MapSearchbarProps, TopoFilterOptions, TopoFilters } from '.';
 import { ItemSelectorMobile, MapSearchbar } from '..';
 import { Boulder, GeoCoordinates, Image, MapProps, MapToolEnum, Position, Topo } from 'types';
-import { fontainebleauLocation, googleGetPlace, toLatLng } from 'helpers';
+import { fontainebleauLocation, googleGetPlace, setReactRef, toLatLng } from 'helpers';
 import { Quark, watchDependencies } from 'helpers/quarky';
 import SectorIcon from 'assets/icons/sector.svg';
 import CenterIcon from 'assets/icons/center.svg';
@@ -36,6 +36,8 @@ type MapControlProps = React.PropsWithChildren<Omit<MapProps, 'center' | 'zoom'>
     onMapZoomChange?: (zoom: number | undefined) => void,
 }>
 
+// TODO : add watchDependencies when it will be possible with forwardRef
+// export const MapControl = watchDependencies(forwardRef<google.maps.Map, MapControlProps>(({
 export const MapControl: React.FC<MapControlProps> = watchDependencies(({
     initialZoom = 8,
     displaySearchbar = true,
@@ -43,7 +45,7 @@ export const MapControl: React.FC<MapControlProps> = watchDependencies(({
     displayUserMarker = true,
     displaySectorButton = false,
     ...props
-}: MapControlProps) => {
+}: MapControlProps, parentRef) => {
     const mapRef = useRef<google.maps.Map>(null);
     const { position } = useContext(UserPositionContext);
 
@@ -150,7 +152,10 @@ export const MapControl: React.FC<MapControlProps> = watchDependencies(({
 
 
                 <Map
-                    ref={mapRef}
+                    ref={ref => {
+                        setReactRef(mapRef, ref)
+                        setReactRef(parentRef, ref);
+                    }}
                     mapTypeId={satelliteView ? 'satellite' : 'roadmap'}
                     className={props.className ? props.className : ''}
                     onZoomChange={() => {

@@ -1,13 +1,13 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
     BoulderBuilderSlideoverMobile, SectorBuilderSlideoverMobile,
-    MapControl, Show,
+    Show,
     InfoFormSlideover, ManagementFormSlideover, TrackFormSlideagainstDesktop,
     BoulderMarkerDropdown, ParkingMarkerDropdown, WaypointMarkerDropdown,
     Drawer, BoulderBuilderSlideagainstDesktop,
     ParkingBuilderSlide, AccessFormSlideover, WaypointBuilderSlide, SectorAreaMarkerDropdown, BuilderProgressIndicator, BoulderFilterOptions,
 } from 'components';
-import { sortBoulders, useContextMenu, createTrack, createBoulder, createParking, createWaypoint, createSector, useDevice, computeBuilderProgress, encodeUUID, decodeUUID, deleteTrack, sectorChanged, useModal, staticUrl } from 'helpers';
+import { sortBoulders, useContextMenu, createTrack, createBoulder, createParking, createWaypoint, createSector, useDevice, computeBuilderProgress, encodeUUID, decodeUUID, deleteTrack, sectorChanged, useModal, staticUrl, toLatLng } from 'helpers';
 import { Boulder, GeoCoordinates, Image, MapToolEnum, Parking, Sector, Track, Waypoint, Topo, isUUID, TopoStatus, ClimbTechniques } from 'types';
 import { Quark, useCreateDerivation, useCreateQuark, useLazyQuarkyEffect, useQuarkyCallback, useSelectQuark, watchDependencies } from 'helpers/quarky';
 import { useRouter } from 'next/router';
@@ -17,8 +17,9 @@ import { useSession } from "helpers/services";
 import { Header } from 'components/layouts/header/Header';
 import { LeftbarBuilderDesktop } from 'components/layouts/sidebars/LeftbarBuilder.desktop';
 import { BoulderMarker, CreatingSectorAreaMarker, For, isMouseEvent, isPointerEvent, isTouchEvent, ParkingMarker, SectorAreaMarker, WaypointMarker } from 'components/atoms';
-import { filterBoulders } from 'components/molecules';
+import { filterBoulders, MapControl } from 'components/molecules';
 import { ModalRenameSector } from 'components/organisms/builder/ModalRenameSector';
+// import MapControl from 'components/molecules/map/MapControl';
 
 interface RootBuilderProps {
     topoQuark: Quark<Topo>,
@@ -38,6 +39,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
     const waypoints = topo.waypoints;
     const boulderOrder = useCreateDerivation(() => sortBoulders(topo.sectors, topo.lonelyBoulders));
 
+    const mapRef = useRef<google.maps.Map>(null);
     const [currentTool, setCurrentTool] = useState<MapToolEnum>();
     const [tempCurrentTool, setTempCurrentTool] = useState<MapToolEnum>();
     const [currentImage, setCurrentImage] = useState<Image>();
@@ -330,7 +332,10 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                     topoQuark={props.topoQuark}
                     boulderOrder={boulderOrder()}
                     selectedBoulder={selectedBoulder}
-                    onBoulderSelect={toggleBoulderSelect}
+                    onBoulderSelect={(boulderQuark) => {
+                        toggleBoulderSelect(boulderQuark);
+                        mapRef.current?.setCenter(toLatLng(boulderQuark().location));
+                    }}
                     onTrackSelect={toggleTrackSelect}
                     onSubmit={showModalSubmitTopo}
                     activateSubmission={progress() === 100}
@@ -385,6 +390,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                 </Show>
 
                 <MapControl
+                    // ref={mapRef} //TODO : uncomment when forwardRef is added to MapControl
                     initialZoom={16}
                     initialCenter={topo.location}
                     displaySectorButton
@@ -397,7 +403,6 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                     currentTool={currentTool}
                     onToolSelect={(tool) => tool === currentTool ? setCurrentTool(undefined) : setCurrentTool(tool)}
                     onNewPhoto={handleNewPhoto}
-                    // onPhotoButtonClick={() => setDisplayGeoCamera(true)}
                     draggableCursor={currentTool === 'ROCK' ? 'url(/assets/icons/colored/_rock.svg) 16 32, auto'
                         : currentTool === 'SECTOR' ? 'url(/assets/icons/colored/line-point/_line-point-grey.svg), auto'
                             : currentTool === 'PARKING' ? 'url(/assets/icons/colored/_parking.svg) 16 30, auto'
