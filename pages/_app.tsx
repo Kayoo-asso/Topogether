@@ -14,6 +14,7 @@ import { resetServerContext } from 'react-beautiful-dnd';
 import { AuthProvider } from 'components/AuthProvider';
 import { parse } from 'cookie';
 import { UserPositionProvider } from 'components/molecules/map/UserPositionProvider';
+import { NoStandalone } from './NoStandalone';
 
 type CustomProps = {
   session: User | null,
@@ -37,20 +38,14 @@ const CustomApp = ({ Component, pageProps, session, initialDevice }: Props) => {
   const firstRender = useFirstRender();
   const device = firstRender ? initialDevice : currentBreakpoint as Device;
 
-  let isInstalled1 = false;
-  let isInstalled2 = false;
+  let isStandalone = false;
   useEffect(() => {
-    isInstalled1 = window.matchMedia('(display-mode: standalone)').matches;
-    console.log("matches standalone : " + isInstalled1);
+    isStandalone = window.matchMedia('(display-mode: standalone)').matches;
     if ('standalone' in window.navigator) {
       const nav = window.navigator as any;
-      isInstalled2 = nav.standalone === true;
-      console.log(nav.standalone);
+      isStandalone = nav.standalone === true;
     }
-    console.log("navigator standalone : " + isInstalled2);
-    alert("matches standalone : " + isInstalled1 + " || navigator standalone : " + isInstalled2)
-  }, [])
-  
+  }, []);
 
   return (
     <>
@@ -82,15 +77,18 @@ const CustomApp = ({ Component, pageProps, session, initialDevice }: Props) => {
         <UserPositionProvider>
           <DeviceContext.Provider value={device}>
             <div ref={observe} className="w-screen h-screen flex items-end flex-col">
-              <div id="content" className="flex-1 w-screen absolute bg-grey-light flex flex-col h-full md:h-screen overflow-hidden">
-                <Component {...pageProps} />
-              </div>
+              {(isStandalone || device === 'desktop') &&
+                <>
+                  <div id="content" className="flex-1 w-screen absolute bg-grey-light flex flex-col h-full md:h-screen overflow-hidden">
+                    <Component {...pageProps} />
+                  </div>
 
-              <div id="footer" className="bg-dark z-500 absolute bottom-0 h-shell md:hidden"
-                onClick={useCallback(() => alert("matches standalone : " + isInstalled1 + " || navigator standalone : " + isInstalled2), [isInstalled1, isInstalled2])}
-              >
-                <ShellMobile />
-              </div>
+                  <div id="footer" className="bg-dark z-500 absolute bottom-0 h-shell md:hidden">
+                    <ShellMobile />
+                  </div>
+                </>
+              }
+              {!isStandalone && <NoStandalone />}
             </div>
           </DeviceContext.Provider>
         </UserPositionProvider>
