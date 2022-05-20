@@ -37,14 +37,14 @@ type MapControlProps = React.PropsWithChildren<Omit<MapProps, 'center' | 'zoom'>
 }>
 
 
-export const MapControl: React.FC<MapControlProps> = watchDependencies(({
+export const MapControl = watchDependencies<google.maps.Map, MapControlProps>(({
     initialZoom = 8,
     displaySearchbar = true,
     displaySatelliteButton = true,
     displayUserMarker = true,
     displaySectorButton = false,
     ...props
-}: MapControlProps, parentRef: React.ForwardedRef<google.maps.Map>) => {
+}, parentRef) => {
     const mapRef = useRef<google.maps.Map>(null);
     const { position } = useContext(UserPositionContext);
 
