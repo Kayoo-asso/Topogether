@@ -390,7 +390,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                 </Show>
 
                 <MapControl
-                    // ref={mapRef} //TODO : uncomment when forwardRef is added to MapControl
+                    ref={mapRef}
                     initialZoom={16}
                     initialCenter={topo.location}
                     displaySectorButton

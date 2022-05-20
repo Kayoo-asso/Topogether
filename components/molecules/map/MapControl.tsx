@@ -1,4 +1,4 @@
-import React, { forwardRef, useCallback, useContext, useRef, useState } from 'react';
+import React, { useCallback, useContext, useRef, useState } from 'react';
 import { Wrapper } from '@googlemaps/react-wrapper';
 import { Map, RoundButton, SatelliteButton, UserMarker } from 'components';
 import { BoulderFilterOptions, BoulderFilters, MapSearchbarProps, TopoFilterOptions, TopoFilters } from '.';
@@ -36,8 +36,7 @@ type MapControlProps = React.PropsWithChildren<Omit<MapProps, 'center' | 'zoom'>
     onMapZoomChange?: (zoom: number | undefined) => void,
 }>
 
-// TODO : add watchDependencies when it will be possible with forwardRef
-// export const MapControl = watchDependencies(forwardRef<google.maps.Map, MapControlProps>(({
+
 export const MapControl: React.FC<MapControlProps> = watchDependencies(({
     initialZoom = 8,
     displaySearchbar = true,
@@ -45,7 +44,7 @@ export const MapControl: React.FC<MapControlProps> = watchDependencies(({
     displayUserMarker = true,
     displaySectorButton = false,
     ...props
-}: MapControlProps, parentRef) => {
+}: MapControlProps, parentRef: React.ForwardedRef<google.maps.Map>) => {
     const mapRef = useRef<google.maps.Map>(null);
     const { position } = useContext(UserPositionContext);
 
