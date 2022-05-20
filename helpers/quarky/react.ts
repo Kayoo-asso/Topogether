@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, useCallback, useRef, EffectCallback } from "react";
+import React, { useState, useMemo, useEffect, useCallback, useRef, EffectCallback, forwardRef, Ref, ForwardRefExoticComponent, PropsWithoutRef, RefAttributes, ForwardRefRenderFunction, ForwardedRef, NamedExoticComponent } from "react";
 import ReactDOM from "react-dom";
 import { batch, ObserverEffect, observerEffect, selectQuark, SelectQuark, selectSignal, SelectSignal, SelectSignalNullable, setBatchingBehavior } from ".";
 import { Quark, derive, quark, QuarkOptions, untrack, Signal, SelectQuarkNullable, effect, EvaluatedDeps } from "./quarky";
@@ -9,8 +9,22 @@ export interface WatchDependenciesOptions<T> {
   memo?: boolean | ((prevProps: Readonly<React.PropsWithChildren<T>>, nextProps: Readonly<React.PropsWithChildren<T>>) => boolean),
 }
 
-export function watchDependencies<T>(component: React.FunctionComponent<T>, options?: WatchDependenciesOptions<T>) {
-  const wrapped = (props: T, context?: any) => {
+type FunctionComponent<P extends object> = (props: P) => React.ReactElement<any, any> | null;
+type ForwardRefComponent<R, P extends object> = (props: P, ref: ForwardedRef<R>) => React.ReactElement<any, any> | null;
+
+// Here we don't use React's types for function components or forwardRef components,
+// because we want to be able to cleanly distinguish between the regular and the forwardRef cases
+// by just checking the number of arguments.
+// It also avoids implicitly accepting a `children` argument (included by default in all React's internal component types),
+// which can cause unexpected bugs.
+export function watchDependencies<P extends object>(component: FunctionComponent<P>, options?: WatchDependenciesOptions<P>): NamedExoticComponent<P>
+export function watchDependencies<R, P extends object>(component: ForwardRefComponent<R, P>, options?: WatchDependenciesOptions<P>): NamedExoticComponent<P & RefAttributes<R>>
+// Don't even try doing proper internal types for the component function
+export function watchDependencies<P extends object, R = undefined>(
+  component: Function,
+  options?: WatchDependenciesOptions<P>
+) {
+  const wrapped = (props: P, ref: ForwardedRef<R>) => {
     // symbols are always unique
     const [, forceRender] = useState(Symbol());
     // the forceRender will be invoked by the state management lib on update
@@ -19,15 +33,19 @@ export function watchDependencies<T>(component: React.FunctionComponent<T>, opti
       , [forceRender]);
     useEffect(() => observer.dispose, [observer]);
 
+
     // this produces the React nodes, while registering dependencies with the state management lib
-    const nodes = observer.watch(() => component(props, context));
-    // ... log the React nodes
+    // the second argument gets ignored by regular components
+    const nodes = observer.watch(() => component(props, ref));
     return nodes;
   }
+  const fn = component.length > 1
+    ? forwardRef(wrapped)
+    : wrapped as (props: P) => React.ReactElement<any, any> | null;
 
-  if (!options || options.memo === true) return React.memo(wrapped);
+  if (!options || options.memo === true) return React.memo(fn);
   // here options.memo is necessarily a function
-  if (options.memo) return React.memo(wrapped, options.memo);
+  if (options.memo) return React.memo(fn as any, options.memo);
   return wrapped;
 }
 
