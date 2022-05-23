@@ -70,6 +70,12 @@ body {
   } 
 }
 
+@media all and (display-mode: standalone) {
+  #no-standalone { display: none; }
+}
+@media all and (display-mode: browser), all and (display-mode: fullscreen) {
+  #no-standalone { display: none; }
+}
 
 /* MAP */
 #map a[href^="http://maps.google.com/maps"],

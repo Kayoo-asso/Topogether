@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import 'styles/globals.css';
 import App, { AppInitialProps } from 'next/app';
 import type { AppProps, AppContext } from 'next/app';
@@ -38,9 +38,13 @@ const CustomApp = ({ Component, pageProps, session, initialDevice }: Props) => {
   const firstRender = useFirstRender();
   const device = firstRender ? initialDevice : currentBreakpoint as Device;
 
+  // if CSS technique does not work, use this for conditional rendering of NoStandalone component
   let displayNoStandalone = false;
   useEffect(() => {
     let isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+    alert('browser' + window.matchMedia('(display-mode: browser)').matches);
+    console.log('standalone' + window.matchMedia('(display-mode: standalone)').matches);
+    console.log('fullscreen' + window.matchMedia('(display-mode: fullscreen)').matches);
     if ('standalone' in window.navigator) {
       const nav = window.navigator as any;
       isStandalone = nav.standalone === true;
@@ -78,18 +82,18 @@ const CustomApp = ({ Component, pageProps, session, initialDevice }: Props) => {
         <UserPositionProvider>
           <DeviceContext.Provider value={device}>
             <div ref={observe} className="w-screen h-screen flex items-end flex-col">
-              {!displayNoStandalone &&
-                <>
-                  <div id="content" className="flex-1 w-screen absolute bg-grey-light flex flex-col h-full md:h-screen overflow-hidden">
-                    <Component {...pageProps} />
-                  </div>
+              <div id="standalone" className='w-full h-full'>
+                <div id="content" className="flex-1 w-screen absolute bg-grey-light flex flex-col h-full md:h-screen overflow-hidden">
+                  <Component {...pageProps} />
+                </div>
+                <div id="footer" className="bg-dark z-500 absolute bottom-0 h-shell md:hidden">
+                  <ShellMobile />
+                </div>
+              </div>
 
-                  <div id="footer" className="bg-dark z-500 absolute bottom-0 h-shell md:hidden">
-                    <ShellMobile />
-                  </div>
-                </>
+              {initialDevice === 'mobile' && process.env.NODE_ENV !== 'development' &&
+                <div id="no-standalone" className='z-full'><NoStandalone /></div>
               }
-              {displayNoStandalone && <NoStandalone />}
             </div>
           </DeviceContext.Provider>
         </UserPositionProvider>
