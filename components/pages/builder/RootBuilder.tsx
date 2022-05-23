@@ -19,7 +19,7 @@ import { LeftbarBuilderDesktop } from 'components/layouts/sidebars/LeftbarBuilde
 import { BoulderMarker, CreatingSectorAreaMarker, For, isMouseEvent, isPointerEvent, isTouchEvent, ParkingMarker, SectorAreaMarker, WaypointMarker } from 'components/atoms';
 import { filterBoulders, MapControl } from 'components/molecules';
 import { ModalRenameSector } from 'components/organisms/builder/ModalRenameSector';
-// import MapControl from 'components/molecules/map/MapControl';
+import Spinner from 'assets/icons/spinner.svg';
 
 interface RootBuilderProps {
     topoQuark: Quark<Topo>,
@@ -31,6 +31,8 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
     const { b: bId } = router.query; // Get boulder id from url if selected 
     const firstRender = useFirstRender();
     const device = useDevice();
+
+    const [loading, setLoading] = useState(false);
 
     const topo = props.topoQuark();
     const sectors = topo.sectors;
@@ -563,11 +565,13 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                 <ModalSubmitTopo
                     buttonText="Confirmer"
                     imgUrl={staticUrl.defaultProfilePicture}
-                    onConfirm={() => {
+                    onConfirm={async () => {
+                        setLoading(true);
                         props.topoQuark.set({
                             ...topo,
                             status: TopoStatus.Submitted
                         });
+                        await sync.attemptSync();
                         router.push('/builder/dashboard');
                     }}
                 >Le topo sera envoyé en validation. Etes-vous sûr de vouloir continuer ?</ModalSubmitTopo>
@@ -575,6 +579,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                     buttonText="Confirmer"
                     imgUrl={staticUrl.deleteWarning}
                     onConfirm={async () => {
+                        setLoading(true);
                         api.deleteTopo(topo);
                         await sync.attemptSync();
                         router.push('/builder/dashboard');
@@ -695,6 +700,14 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                     if (selectedWaypoint.quark() === waypoint) selectedWaypoint.select(undefined);
                 }}
             >Êtes-vous sûr de vouloir supprimer le point de repère ?</ModalDeleteWaypoint>
+
+            {loading && 
+                <div className='flex justify-center items-center w-full h-full bg-dark bg-opacity-80 absolute z-1000'>
+                    <Spinner
+                        className="stroke-main w-10 h-10 animate-spin m-2"
+                    />
+                </div>
+            }
 
         </>
     );

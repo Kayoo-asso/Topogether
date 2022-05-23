@@ -39,7 +39,8 @@ const NoStandalone: React.FC = () => {
                 <div className='flex flex-col gap-2 justify-start'>
                     <div className="flex flex-row items-center gap-2">1. Cliquer sur le bouton <strong>Partager</strong><Share className='w-6 h-6 stroke-white' /></div>    
                     <div>2. Choisir <strong>Sur l'écran d'accueil +</strong></div>
-                    <div>3. L'application est installée !</div>
+                    <div>3. Cliquer sur <strong>Ajouter</strong></div>
+                    <div>4. L'application est installée !</div>
                 </div>
             }
             {!isIos &&
