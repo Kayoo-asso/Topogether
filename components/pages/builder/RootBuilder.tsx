@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useRouter } from 'next/router';
 import {
     BoulderBuilderSlideoverMobile, SectorBuilderSlideoverMobile,
     Show,
@@ -7,10 +8,9 @@ import {
     Drawer, BoulderBuilderSlideagainstDesktop,
     ParkingBuilderSlide, AccessFormSlideover, WaypointBuilderSlide, SectorAreaMarkerDropdown, BuilderProgressIndicator, BoulderFilterOptions,
 } from 'components';
-import { sortBoulders, useContextMenu, createTrack, createBoulder, createParking, createWaypoint, createSector, useDevice, computeBuilderProgress, encodeUUID, decodeUUID, deleteTrack, sectorChanged, useModal, staticUrl, toLatLng } from 'helpers';
+import { sortBoulders, useContextMenu, createTrack, createBoulder, createParking, createWaypoint, createSector, useDevice, computeBuilderProgress, encodeUUID, decodeUUID, deleteTrack, sectorChanged, useModal, staticUrl, toLatLng, useLoader } from 'helpers';
 import { Boulder, GeoCoordinates, Image, MapToolEnum, Parking, Sector, Track, Waypoint, Topo, isUUID, TopoStatus, ClimbTechniques } from 'types';
 import { Quark, useCreateDerivation, useCreateQuark, useLazyQuarkyEffect, useQuarkyCallback, useSelectQuark, watchDependencies } from 'helpers/quarky';
-import { useRouter } from 'next/router';
 import { api, sync } from 'helpers/services';
 import { useFirstRender } from 'helpers/hooks/useFirstRender';
 import { useSession } from "helpers/services";
@@ -19,7 +19,6 @@ import { LeftbarBuilderDesktop } from 'components/layouts/sidebars/LeftbarBuilde
 import { BoulderMarker, CreatingSectorAreaMarker, For, isMouseEvent, isPointerEvent, isTouchEvent, ParkingMarker, SectorAreaMarker, WaypointMarker } from 'components/atoms';
 import { filterBoulders, MapControl } from 'components/molecules';
 import { ModalRenameSector } from 'components/organisms/builder/ModalRenameSector';
-import Spinner from 'assets/icons/spinner.svg';
 
 interface RootBuilderProps {
     topoQuark: Quark<Topo>,
@@ -32,7 +31,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
     const firstRender = useFirstRender();
     const device = useDevice();
 
-    const [loading, setLoading] = useState(false);
+    const [Loader, showLoader] = useLoader();
 
     const topo = props.topoQuark();
     const sectors = topo.sectors;
@@ -236,6 +235,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                     selectedWaypoint.select(undefined);
                 }
             }
+            // Add a check to know if we are on the map and not in an input or textarea in a form, to avoid deleting items when we just want to delete characters
             // else if (e.code === 'Delete') {
             //     if (selectedSector()) showModalDeleteSector(selectedSector.quark()!);
             //     else if (selectedBoulder()) showModalDeleteBoulder(selectedBoulder.quark()!);
@@ -566,7 +566,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                     buttonText="Confirmer"
                     imgUrl={staticUrl.defaultProfilePicture}
                     onConfirm={async () => {
-                        setLoading(true);
+                        showLoader();
                         props.topoQuark.set({
                             ...topo,
                             status: TopoStatus.Submitted
@@ -579,7 +579,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                     buttonText="Confirmer"
                     imgUrl={staticUrl.deleteWarning}
                     onConfirm={async () => {
-                        setLoading(true);
+                        showLoader();
                         api.deleteTopo(topo);
                         await sync.attemptSync();
                         router.push('/builder/dashboard');
@@ -700,15 +700,8 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                     if (selectedWaypoint.quark() === waypoint) selectedWaypoint.select(undefined);
                 }}
             >Êtes-vous sûr de vouloir supprimer le point de repère ?</ModalDeleteWaypoint>
-
-            {loading && 
-                <div className='flex justify-center items-center w-full h-full bg-dark bg-opacity-80 absolute z-1000'>
-                    <Spinner
-                        className="stroke-main w-10 h-10 animate-spin m-2"
-                    />
-                </div>
-            }
-
+            
+            <Loader />
         </>
     );
 });

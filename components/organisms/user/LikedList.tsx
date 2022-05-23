@@ -1,8 +1,7 @@
 import { LikedActionDropdown, TopoCardList } from 'components/molecules';
 import React, { useCallback, useRef, useState } from 'react';
 import { LightTopo, TopoStatus } from 'types';
-import Spinner from 'assets/icons/spinner.svg';
-import { staticUrl, useContextMenu, useModal } from 'helpers';
+import { staticUrl, useContextMenu, useLoader, useModal } from 'helpers';
 
 interface LikedListProps {
     likedTopos: LightTopo[],
@@ -10,8 +9,8 @@ interface LikedListProps {
 }
 
 export const LikedList: React.FC<LikedListProps> = (props: LikedListProps) => {
+    const [Loader, showLoader] = useLoader();
 
-    const [loading, setLoading] = useState(false);
     const [ModalUnlike, showModalUnlike] = useModal<LightTopo>();
 
     const ref = useRef<HTMLDivElement>(null);
@@ -35,25 +34,9 @@ export const LikedList: React.FC<LikedListProps> = (props: LikedListProps) => {
                     clickable='topo'
                     noTopoCardContent='Aucun topo liké'
                     onContextMenu={onContextMenu}
-                    onClick={(topo) => setLoading(true)}
+                    onClick={(topo) => showLoader()}
                 />
             </div>
-
-            {loading && 
-                <div className='flex justify-center items-center w-full h-full bg-dark bg-opacity-80 absolute z-1000'>
-                    <Spinner
-                        className="stroke-main w-10 h-10 animate-spin m-2"
-                    />
-                </div>
-            }
-
-            {loading && 
-                <div className='flex justify-center items-center w-full h-full bg-dark bg-opacity-80 absolute z-1000'>
-                    <Spinner
-                        className="stroke-main w-10 h-10 animate-spin m-2"
-                    />
-                </div>
-            }
 
             {topoDropdown && dropdownPosition &&
                 <LikedActionDropdown 
@@ -71,6 +54,7 @@ export const LikedList: React.FC<LikedListProps> = (props: LikedListProps) => {
                 }}   
             >Le topo sera retiré de la liste de vos topos likés. Voulez-vous continuer ?</ModalUnlike>
 
+            <Loader />
         </>
     )
 }

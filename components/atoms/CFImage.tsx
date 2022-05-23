@@ -105,7 +105,7 @@ export const CFImage: React.FC<CFImageProps> = ({
                     + objectFitClass
                     + (props.className || '')         
                 }
-                onClick={() => (!loading && !forceLoading) && setPortalOpen(true)}
+                onClick={() => (modalable && !loading && !forceLoading) && setPortalOpen(true)}
             >
                 {(loading || forceLoading) &&
                     <div className='bg-white absolute w-full h-full top-0 z-1000'>

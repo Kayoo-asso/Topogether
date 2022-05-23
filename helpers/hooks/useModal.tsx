@@ -32,7 +32,6 @@ export const Portal: React.FC<PortalProps> = ({ id = "modal", open, key, childre
     container.className = 'bg-dark bg-opacity-80';
     document.body.append(container);
   }
-  // TODO: remove container after last child is removed?
 
   return open ? ReactDOM.createPortal(children, container, key) : null;
 };

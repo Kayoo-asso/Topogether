@@ -1,24 +1,22 @@
 import React, { useCallback, useRef, useState } from 'react';
 import { AddTopoCard, TopoCardList, Button } from 'components';
 import { HeaderDesktop, LeftbarDesktop } from 'components/layouts';
-import { staticUrl, useContextMenu, useModal } from 'helpers';
+import { staticUrl, useContextMenu, useLoader, useModal } from 'helpers';
 import { LightTopo, TopoStatus } from 'types';
 import { UserActionDropdown } from 'components/molecules/cards/UserActionDropdown';
 import { api } from 'helpers/services';
 import { watchDependencies } from 'helpers/quarky';
-import Spinner from 'assets/icons/spinner.svg';
 
 interface RootDashboardProps {
     lightTopos: LightTopo[],
 }
 
 export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies((props: RootDashboardProps) => {
-    const [lightTopos, setLightTopos] = useState(props.lightTopos);
+  const [Loader, showLoader] = useLoader();  
+  const [lightTopos, setLightTopos] = useState(props.lightTopos);
     const draftLightTopos = lightTopos.filter((topo) => topo.status === TopoStatus.Draft);
     const submittedLightTopos = lightTopos.filter((topo) => topo.status === TopoStatus.Submitted);
     const validatedLightTopos = lightTopos.filter((topo) => topo.status === TopoStatus.Validated);
-
-    const [loading, setLoading] = useState(false);
 
     const ref = useRef<HTMLDivElement>(null);
     const [topoDropdown, setTopoDropdown] = useState<LightTopo>();
@@ -88,7 +86,7 @@ export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies((pr
               )}
               lastCard={<AddTopoCard />}
               onContextMenu={onContextMenu}
-              onClick={(topo) => setLoading(true)}
+              onClick={(topo) => showLoader()}
             />
   
             <TopoCardList
@@ -112,18 +110,10 @@ export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies((pr
                 </div>
               )}
               onContextMenu={onContextMenu}
-              onClick={(topo) => setLoading(true)}
+              onClick={(topo) => showLoader()}
             />
           </div>
         </div>
-        
-        {loading && 
-          <div className='flex justify-center items-center w-full h-full bg-dark bg-opacity-80 absolute z-1000'>
-              <Spinner
-                  className="stroke-main w-10 h-10 animate-spin m-2"
-              />
-          </div>
-        }
 
         {topoDropdown && dropdownPosition &&
           <UserActionDropdown 
@@ -149,7 +139,9 @@ export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies((pr
           buttonText="Supprimer"
           imgUrl={staticUrl.deleteWarning}
           onConfirm={deleteTopo}
-        >Le topo sera entièrement supprimé. Etes-vous sûr de vouloir continuer ?</ModalDelete>     
+        >Le topo sera entièrement supprimé. Etes-vous sûr de vouloir continuer ?</ModalDelete>
+
+        <Loader />     
       </>
     );
 });

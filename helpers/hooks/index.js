@@ -8,3 +8,4 @@ export * from './useDevice';
 export * from './useScreenOrientation';
 
 export * from './useModal';
+export * from './useLoader';
