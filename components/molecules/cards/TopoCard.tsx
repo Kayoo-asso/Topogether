@@ -79,9 +79,9 @@ export const TopoCard: React.FC<TopoCardProps> = React.memo(({
   return (
     wrapLink(
       <div 
-        className='touch-none'
         onContextMenu={handleMouseContextMenu}
         onTouchStart={handleTouchStartContextMenu}
+        onTouchMove={handleTouchEndContextMenu} // If we move the finer (for example for horizontal scrolling) we don't want to display the context menu
         onTouchEnd={handleTouchEndContextMenu}
       >
         <Card className={"relative text-center text-grey-medium bg-white flex flex-col" + (clickable ? " cursor-pointer" : '')}>

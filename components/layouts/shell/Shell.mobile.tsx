@@ -7,8 +7,10 @@ import { useAuth } from 'helpers/services';
 import TopoIcon from 'assets/icons/topo.svg';
 import UserIcon from 'assets/icons/user-mobile.svg';
 import WaypointIcon from 'assets/icons/waypoint.svg';
+import { useLoader } from 'helpers';
 
 export const ShellMobile: React.FC = watchDependencies(() => {
+  const [Loader, showLoader, hideLoader] = useLoader();
   const router = useRouter();
   const auth = useAuth();
   const session = auth.session();
@@ -32,6 +34,7 @@ export const ShellMobile: React.FC = watchDependencies(() => {
     setActiveTab(id);
   };
   useEffect(() => {
+    hideLoader();
     if (router.pathname.includes('builder')) setActiveTab(2);
     else if (router.pathname.includes('user') || router.pathname.includes('admin')) setActiveTab(0);
     else setActiveTab(1);
@@ -43,7 +46,10 @@ export const ShellMobile: React.FC = watchDependencies(() => {
         <Link href={session ? '/user/profile' : '/user/login'}>
           <a
             className={`h-full flex-1 flex justify-center items-center ${activeTab === 0 ? 'border-t-main border-t-6' : ''}`}
-            onClick={() => changeTab(0)}
+            onClick={() => {
+              showLoader();
+              changeTab(0);
+            }}
           >
             <UserIcon
               className={`h-5 w-5 ${activeTab === 0 ? 'fill-main' : 'fill-white'} `}
@@ -54,7 +60,10 @@ export const ShellMobile: React.FC = watchDependencies(() => {
         <Link href={topoUrl || '/'}>
           <a
             className={`h-full flex-1 flex justify-center items-center ${activeTab === 1 ? 'border-t-main border-t-6' : ''}`}
-            onClick={() => changeTab(1)}
+            onClick={() => {
+              showLoader();
+              changeTab(1);
+            }}
           >
             <WaypointIcon
               className={`h-5 w-5 stroke-1 ${activeTab === 1 ? 'fill-main' : 'fill-white'} `}
@@ -66,6 +75,7 @@ export const ShellMobile: React.FC = watchDependencies(() => {
           <a
             className={`h-full flex-1 flex justify-center items-center ${activeTab === 2 ? 'border-t-main border-t-6' : ''}`}
             onClick={() => {
+              showLoader();
               if (session) changeTab(2);
               else changeTab(0);
             }}
@@ -76,6 +86,8 @@ export const ShellMobile: React.FC = watchDependencies(() => {
           </a>
         </Link>
       </div>
+
+      <Loader />
     </>
   );
 });

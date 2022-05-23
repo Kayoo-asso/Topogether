@@ -26,7 +26,7 @@ export const Portal: React.FC<PortalProps> = ({ id = "portal", open, key, childr
 };
 
 
-export function useLoader(): [React.FC, () => void] {
+export function useLoader(): [React.FC, () => void, () => void] {
   const toggles = useRef<Toggles>();
   
   const Loader = useCallback(() => {
@@ -48,6 +48,9 @@ export function useLoader(): [React.FC, () => void] {
       Loader, 
       useCallback(() => {
         toggles.current?.setOpen(true);
+      }, []),
+      useCallback(() => {
+        toggles.current?.setOpen(false);
       }, []),
   ];
 }
