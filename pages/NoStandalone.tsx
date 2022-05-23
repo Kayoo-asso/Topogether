@@ -1,12 +1,12 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import NextImage from 'next/image';
 import { staticUrl } from 'helpers';
 import Share from 'assets/icons/share.svg';
 
 const NoStandalone: React.FC = () => {
-    let isIos = false; 
+    const [isIos, setIsIos] = useState(false); 
     useEffect(() => {
-        isIos = [
+        setIsIos([
             'iPad Simulator',
             'iPhone Simulator',
             'iPod Simulator',
@@ -15,7 +15,7 @@ const NoStandalone: React.FC = () => {
             'iPod'
           ].includes(navigator.platform)
           // iPad on iOS 13 detection
-          || (navigator.userAgent.includes("Mac") && "ontouchend" in document);
+          || (navigator.userAgent.includes("Mac") && "ontouchend" in document));        
     }, []);
 
     return (

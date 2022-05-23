@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import 'styles/globals.css';
 import App, { AppInitialProps } from 'next/app';
 import type { AppProps, AppContext } from 'next/app';
@@ -37,20 +37,6 @@ const CustomApp = ({ Component, pageProps, session, initialDevice }: Props) => {
 
   const firstRender = useFirstRender();
   const device = firstRender ? initialDevice : currentBreakpoint as Device;
-
-  // if CSS technique does not work, use this for conditional rendering of NoStandalone component
-  let displayNoStandalone = false;
-  useEffect(() => {
-    let isStandalone = window.matchMedia('(display-mode: standalone)').matches;
-    alert('browser ' + window.matchMedia('(display-mode: browser)').matches);
-    alert('standalone ' + window.matchMedia('(display-mode: standalone)').matches);
-    alert('fullscreen ' + window.matchMedia('(display-mode: fullscreen)').matches);
-    if ('standalone' in window.navigator) {
-      const nav = window.navigator as any;
-      isStandalone = nav.standalone === true;
-    }
-    displayNoStandalone = !isStandalone && device !== 'mobile' && process.env.NODE_ENV !== 'development';
-  }, []);
 
   return (
     <>
