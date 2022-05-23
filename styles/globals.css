@@ -74,7 +74,7 @@ body {
   #no-standalone { display: none; }
 }
 @media all and (display-mode: browser), all and (display-mode: fullscreen) {
-  #no-standalone { display: none; }
+  #standalone { display: none; }
 }
 
 /* MAP */

@@ -42,9 +42,9 @@ const CustomApp = ({ Component, pageProps, session, initialDevice }: Props) => {
   let displayNoStandalone = false;
   useEffect(() => {
     let isStandalone = window.matchMedia('(display-mode: standalone)').matches;
-    // alert('browser ' + window.matchMedia('(display-mode: browser)').matches);
-    // alert('standalone ' + window.matchMedia('(display-mode: standalone)').matches);
-    // alert('fullscreen ' + window.matchMedia('(display-mode: fullscreen)').matches);
+    alert('browser ' + window.matchMedia('(display-mode: browser)').matches);
+    alert('standalone ' + window.matchMedia('(display-mode: standalone)').matches);
+    alert('fullscreen ' + window.matchMedia('(display-mode: fullscreen)').matches);
     if ('standalone' in window.navigator) {
       const nav = window.navigator as any;
       isStandalone = nav.standalone === true;
@@ -82,7 +82,7 @@ const CustomApp = ({ Component, pageProps, session, initialDevice }: Props) => {
         <UserPositionProvider>
           <DeviceContext.Provider value={device}>
             <div ref={observe} className="w-screen h-screen flex items-end flex-col">
-              <div id={(device !== 'mobile' && process.env.NODE_ENV !== 'development') ? "standalone" : ''} className='w-full h-full'>
+              <div id={(device === 'mobile' && process.env.NODE_ENV !== 'development') ? "standalone" : ''} className='w-full h-full'>
                 <div id="content" className="flex-1 w-screen absolute bg-grey-light flex flex-col h-full md:h-screen overflow-hidden">
                   <Component {...pageProps} />
                 </div>
