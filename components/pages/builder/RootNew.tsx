@@ -156,7 +156,7 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies((props: RootNew
 
             {step === 2 && (
               <>
-                <div className="h-[300px] md:h-[350px] w-full overflow-auto mb-10 md:mb-16">
+                <div className="h-[300px] md:h-[350px] w-full mb-10 md:mb-16">
                   <MapControl
                     initialZoom={10}
                     searchbarOptions={{ findPlaces: true }}
