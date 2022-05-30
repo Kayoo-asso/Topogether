@@ -16,7 +16,7 @@ const displayRule = (topo: Topo, key: Rule) => {
     return (< div className={'flex ml-7 items-center'}>
         {
             validateRule(topo, key)
-                ? < Checked className="h-3 w-3 m-2 stroke-main" />
+                ? <Checked className="h-3 w-3 m-2 stroke-main" />
                 : <Clear className="h-5 w-5 m-1 stroke-grey-medium" />}
         <div>{rulesText[key]}</div>
     </div >)

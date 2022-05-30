@@ -40,10 +40,12 @@ export const AccessForm: React.FC<AccessFormProps> = watchDependencies((props: A
                         label='Difficulté'
                         options={selectOptions(DifficultyName)}
                         value={access.difficulty}
-                        onChange={(value) => props.access.set({
-                            ...access,
-                            difficulty: value,
-                        })}
+                        onChange={(value) => {
+                            props.access.set({
+                                ...access,
+                                difficulty: value,
+                            })
+                        }}
                     />
                     <TextInput 
                         id='access-duration'

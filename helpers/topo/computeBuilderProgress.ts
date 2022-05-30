@@ -46,17 +46,17 @@ export const validateRule = (topo: Topo, rule: Rule): boolean => {
           case 'DESCRIPTION':
             return !!topo.description;
           case 'ROCK_TYPE':
-            return !!topo.rockTypes; 
+            return topo.rockTypes !== undefined; 
           case 'ALTITUDE':
-            return !!topo.altitude ||topo.altitude === 0 ; 
+            return topo.altitude !== undefined; 
           case 'PARKINGS':
             return topo.parkings.length > 0;
           case 'INFOS_ACCESS':
             return validateRule(topo, 'ACCESS_DURATION') && validateRule(topo, 'ACCESS_DIFFICULTY') &&  validateRule(topo, 'ACCESS_STEP');
           case 'ACCESS_DURATION':
-            return topo.accesses.length > 0  && topo.accesses.toArray().every(access => !!access.duration);
+            return topo.accesses.length > 0  && topo.accesses.toArray().every(access => access.duration !== undefined);
           case 'ACCESS_DIFFICULTY':
-            return topo.accesses.length > 0  && topo.accesses.toArray().every(access => !!access.difficulty);
+            return topo.accesses.length > 0  && topo.accesses.toArray().every(access => access.difficulty !== undefined);
           case 'ACCESS_STEP':
             return topo.accesses.length > 0  && topo.accesses.toArray().every(access => access.steps && access.steps.length > 0);
           case 'BOULDERS':
