@@ -45,22 +45,22 @@ export const UserMarker: React.FC<UserMarkerProps> = (props: UserMarkerProps) =>
     useCircle(circleOptions);
 
     // Heading
-    const headingIcon: google.maps.Symbol = {
-        path: window.google.maps.SymbolPath.BACKWARD_OPEN_ARROW,
-        rotation: heading || 0,
-        scale: heading ? 12 : 0, 
-        fillOpacity: heading ? 0.4 : 0,
-        fillColor: '#4EABFF',
-        strokeWeight: 0,
-    };
-    const headingOptions: google.maps.MarkerOptions = {
-        icon: headingIcon,
-        zIndex: 3,
-        cursor: 'inherit',
-        position: center
-    };
-    const headingHandlers: MarkerEventHandlers = {}
-    useMarker(headingOptions, headingHandlers);
+    // const headingIcon: google.maps.Symbol = {
+    //     path: window.google.maps.SymbolPath.BACKWARD_OPEN_ARROW,
+    //     rotation: heading || 0,
+    //     scale: heading ? 12 : 0, 
+    //     fillOpacity: heading ? 0.4 : 0,
+    //     fillColor: '#4EABFF',
+    //     strokeWeight: 0,
+    // };
+    // const headingOptions: google.maps.MarkerOptions = {
+    //     icon: headingIcon,
+    //     zIndex: 3,
+    //     cursor: 'inherit',
+    //     position: center
+    // };
+    // const headingHandlers: MarkerEventHandlers = {}
+    // useMarker(headingOptions, headingHandlers);
 
     return null;
 };

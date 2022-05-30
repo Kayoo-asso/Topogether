@@ -60,9 +60,6 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> = watchDependen
         }
     }, [topo, sectors]);
 
-    // TODO @Flavien: vérifie que ma version marche correctement
-    // Si je comprends bien, le but c'est qu'à la création d'un nouveau secteur, celui-ci soit "ouvert",
-    // en partant du principe que l'utilisateur va vouloir travailler dessus
     useEffect(() => {
         if (topo.sectors.length > 0) {
             const lastSector = topo.sectors.at(topo.sectors.length - 1);

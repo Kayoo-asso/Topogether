@@ -106,7 +106,7 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies((props: DrawerPro
           } break;
       }
     }
-  }, [selectedTrack]);
+  }, [selectedTrack, selectedTrack.lines]);
   const rewind = () => {
     const pointType: PointEnum | undefined = selectedTool === 'LINE_DRAWER' ? 'LINE_POINT' :
       selectedTool === 'FOOT_DEPARTURE_DRAWER' ? 'FOOT_DEPARTURE_POINT' :

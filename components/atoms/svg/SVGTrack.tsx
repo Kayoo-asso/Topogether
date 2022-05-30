@@ -62,7 +62,7 @@ export const SVGTrack: React.FC<SVGTrackProps> = watchDependencies(({
                 const [handX, handY] = line.hand1;
                 nodes.push(
                     <SVGPoint
-                        key={'hand1'}
+                        key='hand1'
                         iconHref={`/assets/icons/colored/hand-full/_hand-full-${colorNumber}.svg`}
                         x={handX}
                         y={handY}
@@ -78,7 +78,7 @@ export const SVGTrack: React.FC<SVGTrackProps> = watchDependencies(({
                                 });
                             }
                         }}
-                        onClick={() => props.onPointClick && props.onPointClick('HAND_DEPARTURE_POINT', -1)}
+                        onClick={() => props.onPointClick && props.onPointClick('HAND_DEPARTURE_POINT', 0)}
                     />
                 );
             }
@@ -86,7 +86,7 @@ export const SVGTrack: React.FC<SVGTrackProps> = watchDependencies(({
                 const [handX, handY] = line.hand2;
                 nodes.push(
                     <SVGPoint
-                        key={'hand2'}
+                        key='hand2'
                         iconHref={`/assets/icons/colored/hand-full/_hand-full-${colorNumber}.svg`}
                         x={handX}
                         y={handY}
@@ -102,7 +102,7 @@ export const SVGTrack: React.FC<SVGTrackProps> = watchDependencies(({
                                 })
                             }
                         }}
-                        onClick={() => props.onPointClick && props.onPointClick('HAND_DEPARTURE_POINT', 0)}
+                        onClick={() => props.onPointClick && props.onPointClick('HAND_DEPARTURE_POINT', -1)}
                     />
                 );
             }
@@ -112,7 +112,7 @@ export const SVGTrack: React.FC<SVGTrackProps> = watchDependencies(({
                 const [footX, footY] = line.foot1;
                 nodes.push(
                     <SVGPoint
-                        key={'foot1'}
+                        key='foot1'
                         iconHref={`/assets/icons/colored/climbing-shoe-full/_climbing-shoe-full-${colorNumber}.svg`}
                         x={footX}
                         y={footY}
@@ -136,7 +136,7 @@ export const SVGTrack: React.FC<SVGTrackProps> = watchDependencies(({
                 const [footX, footY] = line.foot2;
                 nodes.push(
                     <SVGPoint
-                        key={'foot2'}
+                        key='foot2'
                         iconHref={`/assets/icons/colored/climbing-shoe-full/_climbing-shoe-full-${colorNumber}.svg`}
                         x={footX}
                         y={footY}

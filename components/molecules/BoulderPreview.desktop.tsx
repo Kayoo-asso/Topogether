@@ -2,7 +2,7 @@ import React, { Dispatch, SetStateAction, useCallback, useRef } from 'react';
 import { Quark, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
 import { Boulder, Image, Track, UUID } from 'types';
 import { MultipleImageInput, TracksImage } from '.';
-import { staticUrl, useModal } from 'helpers';
+import { setReactRef, staticUrl, useModal } from 'helpers';
 
 interface BoulderPreviewDesktopProps {
     boulder: Quark<Boulder>,
@@ -12,10 +12,10 @@ interface BoulderPreviewDesktopProps {
     setCurrentImage: Dispatch<SetStateAction<Image | undefined>>,
 }
 
-export const BoulderPreviewDesktop: React.FC<BoulderPreviewDesktopProps> = watchDependencies(({
+export const BoulderPreviewDesktop = watchDependencies<HTMLInputElement, BoulderPreviewDesktopProps>(({
     displayAddButton = false,
     ...props
-}: BoulderPreviewDesktopProps) => {
+}: BoulderPreviewDesktopProps, parentRef) => {
     const boulder = props.boulder();
     const multipleImageInputRef = useRef<HTMLInputElement>(null);
     const [ModalDeleteImage, showModalDeleteImage] = useModal<[Quark<Track>[], UUID]>();
@@ -55,7 +55,10 @@ export const BoulderPreviewDesktop: React.FC<BoulderPreviewDesktopProps> = watch
 
                 <div className='flex flex-col w-full mt-3 min-h-max'>
                     <MultipleImageInput
-                        ref={multipleImageInputRef}
+                        ref={ref => {
+                            setReactRef(multipleImageInputRef, ref);
+                            setReactRef(parentRef, ref);
+                        }}
                         images={boulder.images}
                         boulder={boulder}
                         selected={props.currentImage?.id}

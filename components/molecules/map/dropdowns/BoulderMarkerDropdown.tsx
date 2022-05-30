@@ -8,9 +8,11 @@ import { useSession } from 'helpers/services';
 interface BoulderMarkerDropdownProps {
     boulder: Quark<Boulder>;
     position?: { x: number, y: number };
+    multipleImageInputRef: React.RefObject<HTMLInputElement>,
     toggleTrackSelect: (track: Quark<Track>, boulderQuark: Quark<Boulder>) => void;
     deleteBoulder: (boulder: Quark<Boulder>) => void;
     onSelect?: () => void,
+    onAddImageClick?: () => void,
 }
 
 export const BoulderMarkerDropdown: React.FC<BoulderMarkerDropdownProps> = watchDependencies((props: BoulderMarkerDropdownProps) => {
@@ -22,11 +24,6 @@ export const BoulderMarkerDropdown: React.FC<BoulderMarkerDropdownProps> = watch
             props.toggleTrackSelect(trackQuark, props.boulder);
         }
     }, [props.boulder, props.boulder(), session, props.toggleTrackSelect]);
-    //TODO
-    const addImage = useCallback(() => {
-        alert("à venir");
-        console.log('Adding image...');
-    }, []);
 
     const deleteBoulder = useCallback(() => props.deleteBoulder(props.boulder), [props.boulder, props.deleteBoulder]);
 
@@ -36,7 +33,7 @@ export const BoulderMarkerDropdown: React.FC<BoulderMarkerDropdownProps> = watch
             position={props.position}
             options={[
                 { value: 'Ajouter un passage', action: addTrack },
-                { value: 'Ajouter une image', disabled: true, action: addImage },
+                { value: 'Ajouter une image', action: props.onAddImageClick },
                 { value: 'Supprimer', action: deleteBoulder },
             ]}
             onSelect={props.onSelect}

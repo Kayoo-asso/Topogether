@@ -29,11 +29,11 @@ export const TopoCard: React.FC<TopoCardProps> = React.memo(({
 
   if (topo.status === TopoStatus.Validated) {
     TopoIcon = <Checked className={`stroke-main ${iconSize}`} />;
-    lastAction = topo.validated ? `Validé le ${formatDate(topo.validated)}` : ''; //TODO : be sure that a date is saved in db
+    lastAction = topo.validated ? `Validé le ${formatDate(topo.validated)}` : '';
   }
   else if (topo.status === TopoStatus.Submitted) {
     TopoIcon = <Recent className={`stroke-third ${iconSize}`} />;
-    lastAction = topo.submitted ? `Envoyé le ${formatDate(topo.submitted)}` : ''; //TODO : be sure that a date is saved in db
+    lastAction = topo.submitted ? `Envoyé le ${formatDate(topo.submitted)}` : '';
   }
   else {
     TopoIcon = <Edit className={`stroke-second-light ${iconSize}`} />;

@@ -41,6 +41,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
     const boulderOrder = useCreateDerivation(() => sortBoulders(topo.sectors, topo.lonelyBoulders));
 
     const mapRef = useRef<google.maps.Map>(null);
+    const multipleImageInputRef = useRef<HTMLInputElement>(null);
     const [currentTool, setCurrentTool] = useState<MapToolEnum>();
     const [tempCurrentTool, setTempCurrentTool] = useState<MapToolEnum>();
     const [currentImage, setCurrentImage] = useState<Image>();
@@ -522,6 +523,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                         }
                         return (
                             <BoulderBuilderSlideagainstDesktop
+                                ref={multipleImageInputRef}
                                 boulder={boulder}
                                 topo={props.topoQuark}
                                 selectedTrack={selectedTrack}
@@ -603,8 +605,15 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                         position={dropdownPosition}
                         toggleTrackSelect={toggleTrackSelect}
                         boulder={quarkBoulder}
+                        multipleImageInputRef={multipleImageInputRef}
                         deleteBoulder={showModalDeleteBoulder}
                         onSelect={() => boulderRightClicked.select(undefined)}
+                        onAddImageClick={() => {
+                            if (!selectedBoulder() || selectedBoulder()?.id !== quarkBoulder().id) toggleBoulderSelect(quarkBoulder);
+                            setTimeout(() => {
+                                if (multipleImageInputRef?.current) multipleImageInputRef.current.click();
+                            }, 5);
+                        }}
                     />
                 }
             </Show>

@@ -13,7 +13,8 @@ interface BoulderBuilderSlideagainstDesktopProps {
     onClose: () => void,
 }
 
-export const BoulderBuilderSlideagainstDesktop: React.FC<BoulderBuilderSlideagainstDesktopProps> = watchDependencies((props: BoulderBuilderSlideagainstDesktopProps) => {
+export const BoulderBuilderSlideagainstDesktop = watchDependencies<HTMLInputElement, BoulderBuilderSlideagainstDesktopProps>((
+    props: BoulderBuilderSlideagainstDesktopProps, parentRef) => {
     const boulder = props.boulder();
 
     const toggleSelectedTrack = useCallback((trackQuark) => {
@@ -44,6 +45,7 @@ export const BoulderBuilderSlideagainstDesktop: React.FC<BoulderBuilderSlideagai
                 />
                 
                 <BoulderPreviewDesktop
+                    ref={parentRef}
                     boulder={props.boulder}
                     selectedTrack={props.selectedTrack}
                     currentImage={props.currentImage}

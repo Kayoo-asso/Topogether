@@ -40,9 +40,6 @@ export const GradeHistogram: React.FC<GradeHistogramProps> = ({
   const maxNbOfTracks = Math.max(...Object.values(grades));
   const ratio = total / maxNbOfTracks;
 
-  // TODO: I removed the special case for grade categories whose count == 0,
-  // since it did not show the category properly.
-  // The goal should be to have an empty column, with the grade below it, right?
   return (
     <div className="flex h-full">
 
