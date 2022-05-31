@@ -95,10 +95,8 @@ export const ImageInput = forwardRef<HTMLInputElement, ImageInputProps>(({
         <RoundButton
           buttonSize={size === 'little' ? 45 : 60}
           onClick={useCallback(() => {
-            alert("click");
-            alert(activated);
             if (!loading && activated && fileInputRef.current) fileInputRef.current.click();
-          }, [loading])}
+          }, [loading, activated])}
         >
           {!loading && <Camera className={'h-6 w-6 ' + (activated ? 'stroke-main' : 'stroke-grey-light')} />}
           {loading && <Spinner className="h-6 w-6 stroke-main animate-spin m-2" />}
