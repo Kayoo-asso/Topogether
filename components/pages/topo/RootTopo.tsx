@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import {
   AccessSlideover, InfoSlideover, ManagementSlideover,
   BoulderSlideagainstDesktop, BoulderSlideoverMobile, TrackSlideagainstDesktop, SectorSlideoverMobile,
@@ -145,7 +145,9 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
     ];
     if (topo.status === TopoStatus.Draft && (topo.creator?.id === session?.id || session?.role === 'ADMIN'))
       menuOptions.push({ value: 'Modifier', action: () => router.push(`/builder/${encodeUUID(topo.id)}`) })
-    return menuOptions;
+    // TODO : add topo.creator.mail as the first option of the OR (after mailto)
+    else menuOptions.push({ value: 'Signaler une erreur', action: () => window.open('mailto:' + (topo.managers.toArray()[0]?.contactMail || 'contact@kayoo-asso.fr') + '?subject=Signaler une erreur | Topo : '+ topo.name) })
+      return menuOptions;
   }
 
   let maxTracks = 0;

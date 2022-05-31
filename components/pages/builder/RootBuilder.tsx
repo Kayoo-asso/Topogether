@@ -236,7 +236,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                     selectedWaypoint.select(undefined);
                 }
             }
-            // Add a check to know if we are on the map and not in an input or textarea in a form, to avoid deleting items when we just want to delete characters
+            // TODO : Add a check to know if we are on the map and not in an input or textarea in a form, to avoid deleting items when we just want to delete characters
             // else if (e.code === 'Delete') {
             //     if (selectedSector()) showModalDeleteSector(selectedSector.quark()!);
             //     else if (selectedBoulder()) showModalDeleteBoulder(selectedBoulder.quark()!);
@@ -316,7 +316,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                     { value: 'Infos du topo', action: () => setCurrentDisplay('INFO') },
                     { value: 'Marche d\'approche', action: () => setCurrentDisplay('APPROACH') },
                     { value: 'Gestionnaires du spot', action: () => setCurrentDisplay('MANAGEMENT') },
-                    { value: 'Valider le topo', action: () => showModalSubmitTopo(), disabled: progress() !== 100 },
+                    { value: 'Valider le topo', action: () => showModalSubmitTopo() },
                     { value: 'Supprimer le topo', action: () => showModalDeleteTopo() },
                 ]}
             >
