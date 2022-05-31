@@ -96,6 +96,7 @@ export const ImageInput = forwardRef<HTMLInputElement, ImageInputProps>(({
           buttonSize={size === 'little' ? 45 : 60}
           onClick={useCallback(() => {
             alert("click");
+            alert(activated);
             if (!loading && activated && fileInputRef.current) fileInputRef.current.click();
           }, [loading])}
         >
