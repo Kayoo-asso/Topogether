@@ -85,10 +85,7 @@ export const SVGPoint: React.FC<SVGPointProps> = ({
         onPointerDown={handlePointerDown}
         onPointerUp={handlePointerUp}
         onPointerMove={handlePointerMove}
-        onClick={(e) => {
-          alert(e);
-          props.onClick && props.onClick(e);
-        }}
+        onClick={props.onClick}
       />
   );
 };

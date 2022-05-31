@@ -1,4 +1,4 @@
-import { encodeUUID } from 'helpers';
+import { encodeUUID, useLoader } from 'helpers';
 import Link from 'next/link';
 import React from 'react';
 import { Boulder, LightTopo } from 'types';
@@ -16,6 +16,7 @@ interface MapSearchResultsProps {
 }
 
 export const MapSearchResults: React.FC<MapSearchResultsProps> = (props: MapSearchResultsProps) => {
+    const [Loader, showLoader] = useLoader();
 
     return (
         <div className='absolute w-[94%] md:w-[97%] shadow rounded-lg bg-white px-7 left-0 top-0 pt-[55px] pb-3 z-50'>
@@ -26,7 +27,7 @@ export const MapSearchResults: React.FC<MapSearchResultsProps> = (props: MapSear
             {props.topoApiResults.length > 0 &&
                 props.topoApiResults.map((topo) =>
                     <Link href={'/topo/' + encodeUUID(topo.id)} key={topo.id}>
-                        <a className='flex flex-row gap-4 items-center py-3 text-dark cursor-pointer ktext-base'>
+                        <a className='flex flex-row gap-4 items-center py-3 text-dark cursor-pointer ktext-base' onClick={showLoader}>
                             <WaypointIcon className='w-5 h-5 fill-main' />
                             <div>{topo.name}</div>
                         </a>
@@ -62,7 +63,7 @@ export const MapSearchResults: React.FC<MapSearchResultsProps> = (props: MapSear
                     )}
                 </>
             }
-
+            <Loader />
         </div>
     )
 }

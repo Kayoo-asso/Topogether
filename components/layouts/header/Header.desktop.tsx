@@ -7,6 +7,7 @@ import { useAuth } from 'helpers/services';
 import { useRouter } from 'next/router';
 import { watchDependencies } from 'helpers/quarky';
 import ArrowFull from 'assets/icons/arrow-full.svg';
+import { useLoader } from 'helpers';
 
 interface HeaderDesktopProps {
   backLink: string,
@@ -26,6 +27,8 @@ export const HeaderDesktop: React.FC<HeaderDesktopProps> = watchDependencies(({
   const user = auth.session();
   const router = useRouter();
 
+  const [Loader, showLoader] = useLoader();
+
   const [menuOpen, setMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
 
@@ -43,7 +46,7 @@ export const HeaderDesktop: React.FC<HeaderDesktopProps> = watchDependencies(({
   return (
     <div className="bg-dark items-center h-header hidden md:flex">
       <Link href={props.backLink}>
-        <a className="w-1/12 relative h-[70%] cursor-pointer">
+        <a className="w-1/12 relative h-[70%] cursor-pointer" onClick={showLoader}>
           <NextImage
             src="/assets/img/Logo_white_topogether.png"
             priority
@@ -109,6 +112,7 @@ export const HeaderDesktop: React.FC<HeaderDesktopProps> = watchDependencies(({
           }
         </div>
       }
+      <Loader />
     </div>
   );
 });

@@ -3,6 +3,7 @@ import { Dropdown, DropdownOption } from 'components';
 import Link from 'next/link';
 import ArrowSimple from 'assets/icons/arrow-simple.svg';
 import MenuIcon from 'assets/icons/menu.svg';
+import { useLoader } from 'helpers';
 
 interface HeaderMobileProps {
   title: string,
@@ -15,16 +16,14 @@ export const HeaderMobile: React.FC<HeaderMobileProps> = (props: HeaderMobilePro
   const [menuOpen, setMenuOpen] = useState(false);
   const [displayTitleTooltip, setDisplayTitleTooltip] = useState(false);
 
+  const [Loader, showLoader] = useLoader();
+
   return (
     <div className="bg-dark flex items-center h-header">
 
       <div className='w-1/6 flex justify-center'>
         <Link href={props.backLink}>
-          <a>
-            <ArrowSimple
-              className="stroke-white stroke-1 w-4 h-4"
-            />
-          </a>
+          <a onClick={showLoader}><ArrowSimple className="stroke-white stroke-1 w-4 h-4" /></a>
         </Link>
       </div>
 
@@ -59,6 +58,7 @@ export const HeaderMobile: React.FC<HeaderMobileProps> = (props: HeaderMobilePro
             onSelect={() => setMenuOpen(false)}
           />
       )}
+      <Loader />
     </div>
   );
 };

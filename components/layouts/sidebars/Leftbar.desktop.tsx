@@ -7,6 +7,7 @@ import TopoIcon from 'assets/icons/topo.svg';
 import WaypointIcon from 'assets/icons/waypoint.svg';
 import UserIcon from 'assets/icons/user.svg';
 import KeyIcon from 'assets/icons/key.svg';
+import { useLoader } from 'helpers';
 
 interface LeftbarDesktopProps {
   currentMenuItem?: 'BUILDER' | 'MAP' | 'USER' | 'ADMIN',
@@ -16,6 +17,7 @@ export const LeftbarDesktop: React.FC<LeftbarDesktopProps> = watchDependencies((
   currentMenuItem = 'MAP',
 }: LeftbarDesktopProps) => {
   const user = useSession();
+  const [Loader, showLoader] = useLoader();
 
   return (
     <div className="hidden md:flex flex-col bg-white border-r border-grey-medium min-w-[280px] w-[280px] h-full px-8 py-10 z-200">
@@ -27,7 +29,7 @@ export const LeftbarDesktop: React.FC<LeftbarDesktopProps> = watchDependencies((
 
       <div className="flex-1 flex flex-col gap-10">
         <Link href="/builder/dashboard">
-          <a className="flex flex-row">
+          <a className="flex flex-row" onClick={showLoader}>
             <TopoIcon
               className={`h-6 w-6 mr-4 ${currentMenuItem === 'BUILDER' ? 'stroke-main' : 'stroke-dark'}`}
             />
@@ -35,7 +37,7 @@ export const LeftbarDesktop: React.FC<LeftbarDesktopProps> = watchDependencies((
           </a>
         </Link>
         <Link href="/">
-          <a className="flex flex-row">
+          <a className="flex flex-row" onClick={showLoader}>
             <WaypointIcon
               className={`h-6 w-6 mr-4 ${currentMenuItem === 'MAP' ? 'fill-main' : 'fill-dark'}`}
             />
@@ -43,7 +45,7 @@ export const LeftbarDesktop: React.FC<LeftbarDesktopProps> = watchDependencies((
           </a>
         </Link>
         <Link href="/user/profile">
-          <a className="flex flex-row">
+          <a className="flex flex-row" onClick={showLoader}>
             <UserIcon
               className={`h-6 w-6 mr-4 ${currentMenuItem === 'USER' ? 'fill-main' : 'fill-dark'}`}
             />
@@ -52,7 +54,7 @@ export const LeftbarDesktop: React.FC<LeftbarDesktopProps> = watchDependencies((
         </Link>
         {user?.role === 'ADMIN' && (
           <Link href="/admin">
-            <a className="flex flex-row">
+            <a className="flex flex-row" onClick={showLoader}>
               <KeyIcon
                 className={`h-6 w-6 mr-4 ${currentMenuItem === 'ADMIN' ? 'stroke-main' : 'stroke-dark'}`}
               />
@@ -67,6 +69,7 @@ export const LeftbarDesktop: React.FC<LeftbarDesktopProps> = watchDependencies((
         href="/builder/new"
         fullWidth
       />
+      <Loader />
     </div>
   );
 });
