@@ -55,7 +55,7 @@ export const ItemSelectorMobile: React.FC<ItemSelectorMobileProps> = (props: Ite
                     button='builder'
                     size='big'
                     multiple={false}
-                    activated={props.photoActivated}
+                    activated={props.photoActivated || process.env.NODE_ENV === 'development'}
                     onChange={(files) => props.onNewPhoto(files[0])}
                 />
             }

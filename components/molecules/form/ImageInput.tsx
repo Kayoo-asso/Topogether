@@ -95,6 +95,7 @@ export const ImageInput = forwardRef<HTMLInputElement, ImageInputProps>(({
         <RoundButton
           buttonSize={size === 'little' ? 45 : 60}
           onClick={useCallback(() => {
+            alert("click");
             if (!loading && activated && fileInputRef.current) fileInputRef.current.click();
           }, [loading])}
         >
