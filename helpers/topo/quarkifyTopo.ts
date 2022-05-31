@@ -25,7 +25,7 @@ export async function createTopo(create: TopoCreate): Promise<TopoData | null> {
         .from<DBTopo>("topos")
         .insert(dto, { returning: "minimal" });
     if (error) {
-        console.error("Error creating new topo:", error);
+        console.error("Error creating new topo: ", error);
         return null;
     }
     return {

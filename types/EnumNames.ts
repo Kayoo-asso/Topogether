@@ -20,8 +20,8 @@ export const ReceptionName: {[key in Reception]: string} = {
 export const TopoTypeName: {[key in TopoType]: string} = {
   [TopoType.Artificial]: 'Artificiel',
   [TopoType.Boulder]: 'Bloc',
-  [TopoType.Cliff]: "Falaise",
-  [TopoType.DeepWater]: 'Deep water',
+  [TopoType.Cliff]: 'Falaise',
+  [TopoType.DeepWater]: 'Deepwater / Psicobloc',
   [TopoType.Multipitch]: 'Grande voie'
 };
 

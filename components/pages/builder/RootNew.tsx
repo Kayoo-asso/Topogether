@@ -40,6 +40,7 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies((props: RootNew
   const [typeError, setTypeError] = useState<string>();
   const [latitudeError, setLatitudeError] = useState<string>();
   const [longitudeError, setLongitudeError] = useState<string>();
+  const [creationError, setCreationError] = useState<string>();
 
   const nameInputRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
@@ -62,7 +63,7 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies((props: RootNew
     if (newTopo) {
       await router.push('/builder/'+encodeUUID(newTopo.id));
     } else {
-      console.error("TODO");
+      setCreationError("Une erreur est survenue. Merci de réessayer.")
     }
   };
   
@@ -234,6 +235,9 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies((props: RootNew
                             if (!isNaN(topo.location[1]) && !isNaN(topo.location[0])) create();
                         }}
                     />
+                    {creationError &&
+                      <div className="ktext-error">{creationError}</div>
+                    }
                   </div>
                 </div>
               </>
