@@ -102,7 +102,6 @@ export const CFImage: React.FC<CFImageProps> = ({
             <div 
                 className={'w-full h-full relative ' 
                     + ((modalable && !loading && !forceLoading) ? 'cursor-pointer ' : '')
-                    + objectFitClass
                     + (props.className || '')         
                 }
                 onClick={() => (modalable && !loading && !forceLoading) && setPortalOpen(true)}

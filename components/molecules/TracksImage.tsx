@@ -96,8 +96,6 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
     )}
     else return elts;
   }
-
-  alert(objectFit);
   
   // Explanation of how this works:
   // - width=100%, height=100% on everything, to let the consumer decide how to size the image
@@ -121,7 +119,7 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
           sizeHint={portalOpen ? '100vw' : props.sizeHint}
           image={props.image}
           alt={"Rocher avec tracé de voies"}
-          className="flex"
+          className="flex justify-center"
         />
         <svg
           className='absolute top-0 left-0 h-full w-full z-50'
