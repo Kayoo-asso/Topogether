@@ -100,7 +100,7 @@ export const CFImage: React.FC<CFImageProps> = ({
     return (
         wrapPortal(
             <div 
-                className={'w-full h-full relative ' 
+                className={'w-full h-full relative overflow-hidden ' 
                     + ((modalable && !loading && !forceLoading) ? 'cursor-pointer ' : '')
                     + (props.className || '')         
                 }
@@ -122,7 +122,7 @@ export const CFImage: React.FC<CFImageProps> = ({
                     srcSet={srcSet}
                     sizes={sizes}
                     {...imgProps}
-                    className={props.className + ' ' + objectFitClass}
+                    className={props.className + ' h-full ' + objectFitClass}
                     loading={props.loading ?? 'lazy'}
                     decoding={props.decoding ?? 'async'}
                     onLoad={() => {
