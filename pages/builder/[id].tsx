@@ -4,7 +4,6 @@ import { api } from 'helpers/services';
 import { isUUID, TopoData } from 'types';
 import { RootBuilder } from 'components/pages';
 import { editTopo, decodeUUID } from 'helpers';
-import { fakeTopov2 } from 'helpers/fakeData/fakeTopoV2';
 
 type BuilderProps = {
   topo: TopoData,
@@ -26,13 +25,10 @@ export const getServerSideProps: GetServerSideProps<BuilderProps> = async ({ req
   const expanded = decodeUUID(id);
   if (!isUUID(expanded)) return redirect("/");
 
-  // const [topo, canEdit] = await Promise.all([
-  //   api.getTopo(expanded),
-  //   api.client.rpc<boolean>("can_edit_topo", { _topo_id: expanded }).single()
-  // ]);
-
-  const canEdit = { data: true };
-  const topo = fakeTopov2;
+  const [topo, canEdit] = await Promise.all([
+    api.getTopo(expanded),
+    api.client.rpc<boolean>("can_edit_topo", { _topo_id: expanded }).single()
+  ]);
 
   if (topo && canEdit.data === true) {
     return { props: { topo } };
