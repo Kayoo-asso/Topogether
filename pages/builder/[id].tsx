@@ -38,7 +38,7 @@ export const getServerSideProps: GetServerSideProps<BuilderProps> = async ({ req
 
 const BuilderMapPage: NextPage<BuilderProps> = ({ topo }) => {
   const quark = useMemo(() => editTopo(topo), []);
-  // return <RootBuilder topoQuark={quark} />
+  return <RootBuilder topoQuark={quark} />
   return <></>
 };
 
