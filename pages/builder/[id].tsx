@@ -18,23 +18,23 @@ const redirect = (destination: string) => ({
 
 // TODO: check the user is a contributor of the topo
 
-// export const getServerSideProps: GetServerSideProps<BuilderProps> = async ({ req, query, res }) => {
-//   const { id } = query;
-//   if (typeof id !== "string") return redirect("/");
+export const getServerSideProps: GetServerSideProps<BuilderProps> = async ({ req, query, res }) => {
+  const { id } = query;
+  if (typeof id !== "string") return redirect("/");
 
-//   const expanded = decodeUUID(id);
-//   if (!isUUID(expanded)) return redirect("/");
+  const expanded = decodeUUID(id);
+  if (!isUUID(expanded)) return redirect("/");
 
-//   const [topo, canEdit] = await Promise.all([
-//     api.getTopo(expanded),
-//     api.client.rpc<boolean>("can_edit_topo", { _topo_id: expanded }).single()
-//   ]);
+  const [topo, canEdit] = await Promise.all([
+    api.getTopo(expanded),
+    api.client.rpc<boolean>("can_edit_topo", { _topo_id: expanded }).single()
+  ]);
 
-//   if (topo && canEdit.data === true) {
-//     return { props: { topo } };
-//   }
-//   return { notFound: true };
-// }
+  if (topo && canEdit.data === true) {
+    return { props: { topo } };
+  }
+  return { notFound: true };
+}
 
 const BuilderMapPage: NextPage<BuilderProps> = () => {
   // const quark = useMemo(() => editTopo(topo), []);
