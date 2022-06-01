@@ -126,9 +126,7 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
           style={cursorStyle}
           viewBox={`0 0 ${viewBoxWidth} ${viewBoxHeight}`}
           preserveAspectRatio={`xMidYMid ${preserveAspectRatio[objectFit]}`}
-          onTouchEnd={(e) => console.log(e)}
           onClick={useCallback((e) => {
-            alert(e.target.nodeName);
             const eltUnder = e.target as EventTarget & SVGSVGElement;         
             if (eltUnder.nodeName === "svg" && props.modalable) setPortalOpen(true);
             else {

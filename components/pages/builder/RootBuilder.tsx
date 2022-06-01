@@ -508,10 +508,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                                     selectedTrack={selectedTrack}
                                     currentImage={currentImage}
                                     setCurrentImage={setCurrentImage}
-                                    onDrawButtonClick={() => {
-                                        console.log(displayDrawer);
-                                        setDisplayDrawer(true);
-                                    }}
+                                    onDrawButtonClick={() => setDisplayDrawer(true)}
                                     onCreateTrack={() => setDisplayDrawer(true)}
                                     onBoulderDelete={showModalDeleteBoulder}
                                     onClose={() => {
