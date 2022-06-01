@@ -40,7 +40,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
     const waypoints = topo.waypoints;
     const boulderOrder = useCreateDerivation(() => sortBoulders(topo.sectors, topo.lonelyBoulders));
 
-    const mapRef = useRef<google.maps.Map>(null);
+    // const mapRef = useRef<google.maps.Map>(null);
     const multipleImageInputRef = useRef<HTMLInputElement>(null);
     const [currentTool, setCurrentTool] = useState<MapToolEnum>();
     const [tempCurrentTool, setTempCurrentTool] = useState<MapToolEnum>();
