@@ -76,7 +76,7 @@ export const SVGPoint: React.FC<SVGPointProps> = ({
       <image
         x={iconHref.includes('line-point') ? props.x : props.x - props.size/2}
         y={iconHref.includes('line-point') ? props.y : props.y - props.size/2}
-        className={`${className} ${(draggable && !eraser) ? 'cursor-pointer' : ''}${eraser ? ' hover:scale-150 origin-center' : ''}`}
+        className={`touch-none ${className} ${(draggable && !eraser) ? 'cursor-pointer' : ''}${eraser ? ' hover:scale-150 origin-center' : ''}`}
         style={{
           transformBox: 'fill-box'
         }}
