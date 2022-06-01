@@ -32,7 +32,7 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
   const [trackTab, setTrackTab] = useState(true);
 
   const [imageToDisplayIndex, setImageToDisplayIndex] = useState(0);
-  const [displayPhantomTracks, setDisplayPhantomTracks] = useState(false);
+  // const [displayPhantomTracks, setDisplayPhantomTracks] = useState(false);
 
   return (
     <SlideoverMobile
@@ -49,7 +49,7 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
             image={props.currentImage}
             tracks={boulder.tracks.quarks()}
             selectedTrack={props.selectedTrack}
-            displayPhantomTracks={displayPhantomTracks}
+            // displayPhantomTracks={displayPhantomTracks}
             onLeftArrowClick={() => {
               props.setCurrentImage(boulder.images[imageToDisplayIndex - 1]);
               setImageToDisplayIndex(idx => idx - 1)
@@ -81,7 +81,7 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
           </div>
 
           <div className="flex flex-row items-center gap-6 justify-end col-span-2">
-            {selectedTrack && boulder.tracks.filter(track => track.lines.toArray().some(line => line.imageId === props.currentImage?.id)).toArray().length > 1 &&
+            {/* {selectedTrack && boulder.tracks.filter(track => track.lines.toArray().some(line => line.imageId === props.currentImage?.id)).toArray().length > 1 &&
               <button
                 onClick={() => setDisplayPhantomTracks(!displayPhantomTracks)}
               >
@@ -89,7 +89,7 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
                   className={'w-6 h-6 ' + (displayPhantomTracks ? 'stroke-main' : 'stroke-grey-medium')}
                 />
               </button>
-            }
+            } */}
             {full && (
               <ImageInput 
                 button='builder'
