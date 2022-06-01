@@ -38,7 +38,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
     const boulders = topo.boulders;
     const parkings = topo.parkings;
     const waypoints = topo.waypoints;
-    const boulderOrder = useCreateDerivation(() => sortBoulders(topo.sectors, topo.lonelyBoulders));
+    // const boulderOrder = useCreateDerivation(() => sortBoulders(topo.sectors, topo.lonelyBoulders));
 
     const mapRef = useRef<google.maps.Map>(null);
     const multipleImageInputRef = useRef<HTMLInputElement>(null);
@@ -148,78 +148,78 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
             }
         }
     }
-    // const toggleTrackSelect = useQuarkyCallback((trackQuark: Quark<Track>, boulderQuark: Quark<Boulder>) => {
-    //     setDisplaySectorSlideover(false);
-    //     selectedSector.select(undefined);
-    //     selectedBoulder.select(undefined);
-    //     selectedParking.select(undefined);
-    //     selectedWaypoint.select(undefined);
-    //     const track = trackQuark();
-    //     if (selectedTrack()?.id === track.id) selectedTrack.select(undefined);
-    //     else {
-    //         selectedBoulder.select(boulderQuark);
-    //         if (track.lines.length > 0) {
-    //             const newImage = boulderQuark().images.find(img => img.id === track.lines.at(0).imageId);
-    //             if (!newImage) throw new Error("Could not find the first image for the selected track!");
-    //             setCurrentImage(newImage);
-    //         }
-    //         selectedTrack.select(trackQuark);
-    //     }
-    // }, [selectedTrack]);
-    // const toggleParkingSelect = useQuarkyCallback((parkingQuark: Quark<Parking>) => {
-    //     setDisplaySectorSlideover(false);
-    //     selectedSector.select(undefined);
-    //     selectedBoulder.select(undefined);
-    //     selectedTrack.select(undefined);
-    //     selectedWaypoint.select(undefined);
-    //     if (selectedParking()?.id === parkingQuark().id) { selectedParking.select(undefined); } else selectedParking.select(parkingQuark);
-    // }, [selectedParking]);
-    // const toggleWaypointSelect = useQuarkyCallback((waypointQuark: Quark<Waypoint>) => {
-    //     setDisplaySectorSlideover(false);
-    //     selectedSector.select(undefined);
-    //     selectedBoulder.select(undefined);
-    //     selectedTrack.select(undefined);
-    //     selectedParking.select(undefined);
-    //     if (selectedWaypoint()?.id === waypointQuark().id) { selectedWaypoint.select(undefined); } else selectedWaypoint.select(waypointQuark);
-    // }, [selectedWaypoint]);
-    // useLazyQuarkyEffect(([selectedB]) => {
-    //     if (selectedB) router.push({ pathname: window.location.href.split('?')[0], query: { b: encodeUUID(selectedB.id) } }, undefined, { shallow: true });
-    //     else router.push({ pathname: window.location.href.split('?')[0] }, undefined, { shallow: true })
-    // }, [selectedBoulder]);
+    const toggleTrackSelect = useQuarkyCallback((trackQuark: Quark<Track>, boulderQuark: Quark<Boulder>) => {
+        setDisplaySectorSlideover(false);
+        selectedSector.select(undefined);
+        selectedBoulder.select(undefined);
+        selectedParking.select(undefined);
+        selectedWaypoint.select(undefined);
+        const track = trackQuark();
+        if (selectedTrack()?.id === track.id) selectedTrack.select(undefined);
+        else {
+            selectedBoulder.select(boulderQuark);
+            if (track.lines.length > 0) {
+                const newImage = boulderQuark().images.find(img => img.id === track.lines.at(0).imageId);
+                if (!newImage) throw new Error("Could not find the first image for the selected track!");
+                setCurrentImage(newImage);
+            }
+            selectedTrack.select(trackQuark);
+        }
+    }, [selectedTrack]);
+    const toggleParkingSelect = useQuarkyCallback((parkingQuark: Quark<Parking>) => {
+        setDisplaySectorSlideover(false);
+        selectedSector.select(undefined);
+        selectedBoulder.select(undefined);
+        selectedTrack.select(undefined);
+        selectedWaypoint.select(undefined);
+        if (selectedParking()?.id === parkingQuark().id) { selectedParking.select(undefined); } else selectedParking.select(parkingQuark);
+    }, [selectedParking]);
+    const toggleWaypointSelect = useQuarkyCallback((waypointQuark: Quark<Waypoint>) => {
+        setDisplaySectorSlideover(false);
+        selectedSector.select(undefined);
+        selectedBoulder.select(undefined);
+        selectedTrack.select(undefined);
+        selectedParking.select(undefined);
+        if (selectedWaypoint()?.id === waypointQuark().id) { selectedWaypoint.select(undefined); } else selectedWaypoint.select(waypointQuark);
+    }, [selectedWaypoint]);
+    useLazyQuarkyEffect(([selectedB]) => {
+        if (selectedB) router.push({ pathname: window.location.href.split('?')[0], query: { b: encodeUUID(selectedB.id) } }, undefined, { shallow: true });
+        else router.push({ pathname: window.location.href.split('?')[0] }, undefined, { shallow: true })
+    }, [selectedBoulder]);
 
-    // const displayBoulderDropdown = (e: Event, boulderQuark: Quark<Boulder>) => {
-    //     if (isMouseEvent(e) || isPointerEvent(e)) setDropdownPosition({ x: e.pageX, y: e.pageY });
-    //     else if (isTouchEvent(e)) setDropdownPosition({ x: e.touches[0].pageX, y: e.touches[0].pageY });
-    //     boulderRightClicked.select(boulderQuark);
-    // }
-    // const displayWaypointDropdown = useCallback((e: Event, waypointQuark: Quark<Waypoint>) => {
-    //     if (isMouseEvent(e) || isPointerEvent(e)) setDropdownPosition({ x: e.pageX, y: e.pageY });
-    //     else if (isTouchEvent(e)) setDropdownPosition({ x: e.touches[0].pageX, y: e.touches[0].pageY });
-    //     waypointRightClicked.select(waypointQuark);
-    // }, []);
-    // const displayParkingDropdown = useCallback((e: Event, parkingQuark: Quark<Parking>) => {
-    //     if (isMouseEvent(e) || isPointerEvent(e)) setDropdownPosition({ x: e.pageX, y: e.pageY });
-    //     else if (isTouchEvent(e)) setDropdownPosition({ x: e.touches[0].pageX, y: e.touches[0].pageY });
-    //     parkingRightClicked.select(parkingQuark);
-    // }, []);
-    // const displaySectorDropdown = useCallback((e: Event, sectorQuark: Quark<Sector>) => {
-    //     if (isMouseEvent(e) || isPointerEvent(e)) setDropdownPosition({ x: e.pageX, y: e.pageY });
-    //     else if (isTouchEvent(e)) setDropdownPosition({ x: e.touches[0].pageX, y: e.touches[0].pageY });
-    //     sectorRightClicked.select(sectorQuark);
-    // }, []);
+    const displayBoulderDropdown = (e: Event, boulderQuark: Quark<Boulder>) => {
+        if (isMouseEvent(e) || isPointerEvent(e)) setDropdownPosition({ x: e.pageX, y: e.pageY });
+        else if (isTouchEvent(e)) setDropdownPosition({ x: e.touches[0].pageX, y: e.touches[0].pageY });
+        boulderRightClicked.select(boulderQuark);
+    }
+    const displayWaypointDropdown = useCallback((e: Event, waypointQuark: Quark<Waypoint>) => {
+        if (isMouseEvent(e) || isPointerEvent(e)) setDropdownPosition({ x: e.pageX, y: e.pageY });
+        else if (isTouchEvent(e)) setDropdownPosition({ x: e.touches[0].pageX, y: e.touches[0].pageY });
+        waypointRightClicked.select(waypointQuark);
+    }, []);
+    const displayParkingDropdown = useCallback((e: Event, parkingQuark: Quark<Parking>) => {
+        if (isMouseEvent(e) || isPointerEvent(e)) setDropdownPosition({ x: e.pageX, y: e.pageY });
+        else if (isTouchEvent(e)) setDropdownPosition({ x: e.touches[0].pageX, y: e.touches[0].pageY });
+        parkingRightClicked.select(parkingQuark);
+    }, []);
+    const displaySectorDropdown = useCallback((e: Event, sectorQuark: Quark<Sector>) => {
+        if (isMouseEvent(e) || isPointerEvent(e)) setDropdownPosition({ x: e.pageX, y: e.pageY });
+        else if (isTouchEvent(e)) setDropdownPosition({ x: e.touches[0].pageX, y: e.touches[0].pageY });
+        sectorRightClicked.select(sectorQuark);
+    }, []);
 
-    // const handleCreateNewMarker = useCallback((e) => {
-    //     if (e.latLng) {
-    //         const loc: GeoCoordinates = [e.latLng.lng(), e.latLng.lat()];
-    //         switch (currentTool) {
-    //             case 'ROCK': createBoulder(props.topoQuark, loc); break;
-    //             case 'PARKING': createParking(topo, loc); break;
-    //             case 'WAYPOINT': createWaypoint(topo, loc); break;
-    //             // case 'SECTOR' is handled by inserting a CreatingSectorAreaMarker component
-    //             default: break;
-    //         }
-    //     }
-    // }, [topo, currentTool, createBoulder, createParking, createWaypoint]);
+    const handleCreateNewMarker = useCallback((e) => {
+        if (e.latLng) {
+            const loc: GeoCoordinates = [e.latLng.lng(), e.latLng.lat()];
+            switch (currentTool) {
+                case 'ROCK': createBoulder(props.topoQuark, loc); break;
+                case 'PARKING': createParking(topo, loc); break;
+                case 'WAYPOINT': createWaypoint(topo, loc); break;
+                // case 'SECTOR' is handled by inserting a CreatingSectorAreaMarker component
+                default: break;
+            }
+        }
+    }, [topo, currentTool, createBoulder, createParking, createWaypoint]);
 
     // useEffect(() => {
     //     const handleKeyDown = (e: KeyboardEvent) => {
