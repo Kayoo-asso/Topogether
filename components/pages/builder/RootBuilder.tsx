@@ -25,11 +25,11 @@ interface RootBuilderProps {
 }
 
 export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props: RootBuilderProps) => {
-    const router = useRouter();
-    const session = useSession()!;
-    const { b: bId } = router.query; // Get boulder id from url if selected 
-    const firstRender = useFirstRender();
-    const device = useDevice();
+    // const router = useRouter();
+    // const session = useSession()!;
+    // const { b: bId } = router.query; // Get boulder id from url if selected 
+    // const firstRender = useFirstRender();
+    // const device = useDevice();
 
     // const [Loader, showLoader] = useLoader();
 
