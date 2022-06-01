@@ -49,8 +49,8 @@ export const TopoPreview: React.FC<TopoPreviewProps> = (props: TopoPreviewProps)
                 />
             </div>
 
-            <div className="md:hidden absolute top-2 left-2 flex flex-row gap-2 bg-white rounded-full z-100 px-4 py-2">
-                <Copy className='w-5 h-5 stroke-main' />
+            <div className="md:hidden absolute top-2 left-2 max-w-[60%] overflow-hidden flex flex-row gap-2 bg-white rounded-full z-100 px-4 py-2">
+                <div><Copy className='w-5 h-5 stroke-main' /></div>
                 {coordinateItem()}
             </div>
 
