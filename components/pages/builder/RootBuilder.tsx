@@ -25,12 +25,14 @@ interface RootBuilderProps {
 }
 
 export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props: RootBuilderProps) => {
+    console.log("0");
     const router = useRouter();
     const session = useSession()!;
     const { b: bId } = router.query; // Get boulder id from url if selected 
     const firstRender = useFirstRender();
     const device = useDevice();
 
+    console.log("1")
     const [Loader, showLoader] = useLoader();
 
     const topo = props.topoQuark();
@@ -40,16 +42,18 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
     const waypoints = topo.waypoints;
     const boulderOrder = useCreateDerivation(() => sortBoulders(topo.sectors, topo.lonelyBoulders));
 
-    // const mapRef = useRef<google.maps.Map>(null);
-    // const multipleImageInputRef = useRef<HTMLInputElement>(null);
-    // const [currentTool, setCurrentTool] = useState<MapToolEnum>();
-    // const [tempCurrentTool, setTempCurrentTool] = useState<MapToolEnum>();
-    // const [currentImage, setCurrentImage] = useState<Image>();
+    console.log("2")
+    const mapRef = useRef<google.maps.Map>(null);
+    const multipleImageInputRef = useRef<HTMLInputElement>(null);
+    const [currentTool, setCurrentTool] = useState<MapToolEnum>();
+    const [tempCurrentTool, setTempCurrentTool] = useState<MapToolEnum>();
+    const [currentImage, setCurrentImage] = useState<Image>();
 
-    // const selectedSector = useSelectQuark<Sector>();
-    // const sectorRightClicked = useSelectQuark<Sector>();
+    const selectedSector = useSelectQuark<Sector>();
+    const sectorRightClicked = useSelectQuark<Sector>();
 
-    // const [ModalDeleteSector, showModalDeleteSector] = useModal<Quark<Sector>>();
+    const [ModalDeleteSector, showModalDeleteSector] = useModal<Quark<Sector>>();
+    console.log("3")
 
     // const selectedBoulder = useSelectQuark<Boulder>();
     // const boulderRightClicked = useSelectQuark<Boulder>();
