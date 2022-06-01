@@ -33,7 +33,7 @@ export const getServerSideProps: GetServerSideProps<BuilderProps> = async ({ req
   if (topo && canEdit.data === true) {
     return { props: { topo } };
   }
-
+  console.log("3");
   return { notFound: true };
 }
 

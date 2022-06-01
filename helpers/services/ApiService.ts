@@ -89,6 +89,7 @@ export class ApiService {
     }
 
     async getTopo(id: UUID): Promise<TopoData | null> {
+        console.log("0");
         // Notes on this query:
         //
         // 1. If multiple tables reference a parent with the same name for the foreign key,
@@ -170,6 +171,8 @@ export class ApiService {
             console.error("Error getting topo data: ", error);
             return null;
         }
+        if (error) console.log('error');
+        console.log("1");
         return data;
     }
 }
