@@ -38,7 +38,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
     const boulders = topo.boulders;
     const parkings = topo.parkings;
     const waypoints = topo.waypoints;
-    // const boulderOrder = useCreateDerivation(() => sortBoulders(topo.sectors, topo.lonelyBoulders));
+    const boulderOrder = useCreateDerivation(() => sortBoulders(topo.sectors, topo.lonelyBoulders));
 
     const mapRef = useRef<google.maps.Map>(null);
     const multipleImageInputRef = useRef<HTMLInputElement>(null);
@@ -221,77 +221,77 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
         }
     }, [topo, currentTool, createBoulder, createParking, createWaypoint]);
 
-    // useEffect(() => {
-    //     const handleKeyDown = (e: KeyboardEvent) => {
-    //         if (e.code === 'Escape') {
-    //             // TODO: change this, we first wish to cancel any ongoing action,
-    //             // then set the current tool to undefined
-    //             if (currentTool) setCurrentTool(undefined);
-    //             else if ((device !== 'mobile' || displayDrawer) && selectedBoulder() && selectedTrack()) return; //If the Drawer is open, Escape should only deactivate Drawer tools
-    //             else {
-    //                 selectedSector.select(undefined);
-    //                 selectedBoulder.select(undefined);
-    //                 selectedTrack.select(undefined);
-    //                 selectedParking.select(undefined);
-    //                 selectedWaypoint.select(undefined);
-    //             }
-    //         }
-    //         // TODO : Add a check to know if we are on the map and not in an input or textarea in a form, to avoid deleting items when we just want to delete characters
-    //         // else if (e.code === 'Delete') {
-    //         //     if (selectedSector()) showModalDeleteSector(selectedSector.quark()!);
-    //         //     else if (selectedBoulder()) showModalDeleteBoulder(selectedBoulder.quark()!);
-    //         //     else if (selectedParking()) showModalDeleteParking(selectedParking.quark()!);
-    //         //     else if (selectedWaypoint()) showModalDeleteWaypoint(selectedWaypoint.quark()!);
-    //         // }
-    //         else if (e.code === "Space" && currentTool) {
-    //             setTempCurrentTool(currentTool);
-    //             setCurrentTool(undefined);
-    //         }
-    //     }
-    //     const handleKeyUp = (e: KeyboardEvent) => {
-    //         if (e.code === "Space" && tempCurrentTool) {
-    //             setCurrentTool(tempCurrentTool);
-    //             setTempCurrentTool(undefined); 
-    //         }
-    //     }
-    //     window.addEventListener('keydown', handleKeyDown);
-    //     window.addEventListener('keyup', handleKeyUp);
-    //     return () => {
-    //         window.removeEventListener('keydown', handleKeyDown);
-    //         window.removeEventListener('keyup', handleKeyUp);
-    //     };
-    // }, [currentTool, tempCurrentTool]);
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.code === 'Escape') {
+                // TODO: change this, we first wish to cancel any ongoing action,
+                // then set the current tool to undefined
+                if (currentTool) setCurrentTool(undefined);
+                else if ((device !== 'mobile' || displayDrawer) && selectedBoulder() && selectedTrack()) return; //If the Drawer is open, Escape should only deactivate Drawer tools
+                else {
+                    selectedSector.select(undefined);
+                    selectedBoulder.select(undefined);
+                    selectedTrack.select(undefined);
+                    selectedParking.select(undefined);
+                    selectedWaypoint.select(undefined);
+                }
+            }
+            // TODO : Add a check to know if we are on the map and not in an input or textarea in a form, to avoid deleting items when we just want to delete characters
+            // else if (e.code === 'Delete') {
+            //     if (selectedSector()) showModalDeleteSector(selectedSector.quark()!);
+            //     else if (selectedBoulder()) showModalDeleteBoulder(selectedBoulder.quark()!);
+            //     else if (selectedParking()) showModalDeleteParking(selectedParking.quark()!);
+            //     else if (selectedWaypoint()) showModalDeleteWaypoint(selectedWaypoint.quark()!);
+            // }
+            else if (e.code === "Space" && currentTool) {
+                setTempCurrentTool(currentTool);
+                setCurrentTool(undefined);
+            }
+        }
+        const handleKeyUp = (e: KeyboardEvent) => {
+            if (e.code === "Space" && tempCurrentTool) {
+                setCurrentTool(tempCurrentTool);
+                setTempCurrentTool(undefined); 
+            }
+        }
+        window.addEventListener('keydown', handleKeyDown);
+        window.addEventListener('keyup', handleKeyUp);
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+            window.removeEventListener('keyup', handleKeyUp);
+        };
+    }, [currentTool, tempCurrentTool]);
 
-    // const handleNewPhoto = useCallback((img: Image, coords: GeoCoordinates) => {
-    //     if (!coords) { console.log("no coords"); return; }
-    //     if (img) {
-    //         setCurrentImage(img);
-    //         if (currentTool === 'PARKING') {
-    //             selectedParking.select(createParking(topo, coords, img));
-    //         }
-    //         else if (currentTool === 'WAYPOINT') {
-    //             selectedWaypoint.select(createWaypoint(topo, coords, img));
-    //         }
-    //         else {
-    //             const sBoulder = selectedBoulder();
-    //             if (sBoulder) {
-    //                 const newImages = sBoulder.images;
-    //                 newImages.push(img);
-    //                 selectedBoulder.quark()!.set(b => ({
-    //                     ...b,
-    //                     images: newImages,
-    //                 }));
-    //                 selectedTrack.select(createTrack(sBoulder, session.id));
-    //             }
-    //             else {
-    //                 const newBoulderQuark = createBoulder(props.topoQuark, coords, img);
-    //                 selectedTrack.select(createTrack(newBoulderQuark(), session.id));
-    //                 selectedBoulder.select(newBoulderQuark);
-    //             }
-    //             setDisplayDrawer(true);
-    //         }
-    //     }
-    // }, [topo, selectedParking(), selectedWaypoint(), selectedBoulder()]);
+    const handleNewPhoto = useCallback((img: Image, coords: GeoCoordinates) => {
+        if (!coords) { console.log("no coords"); return; }
+        if (img) {
+            setCurrentImage(img);
+            if (currentTool === 'PARKING') {
+                selectedParking.select(createParking(topo, coords, img));
+            }
+            else if (currentTool === 'WAYPOINT') {
+                selectedWaypoint.select(createWaypoint(topo, coords, img));
+            }
+            else {
+                const sBoulder = selectedBoulder();
+                if (sBoulder) {
+                    const newImages = sBoulder.images;
+                    newImages.push(img);
+                    selectedBoulder.quark()!.set(b => ({
+                        ...b,
+                        images: newImages,
+                    }));
+                    selectedTrack.select(createTrack(sBoulder, session.id));
+                }
+                else {
+                    const newBoulderQuark = createBoulder(props.topoQuark, coords, img);
+                    selectedTrack.select(createTrack(newBoulderQuark(), session.id));
+                    selectedBoulder.select(newBoulderQuark);
+                }
+                setDisplayDrawer(true);
+            }
+        }
+    }, [topo, selectedParking(), selectedWaypoint(), selectedBoulder()]);
 
     // const progress = useCreateDerivation<number>(() => computeBuilderProgress(props.topoQuark), [props.topoQuark]);
 
