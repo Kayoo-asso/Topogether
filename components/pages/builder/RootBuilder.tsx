@@ -26,12 +26,12 @@ interface RootBuilderProps {
 
 export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props: RootBuilderProps) => {
     const router = useRouter();
-    const session = useSession()!;
-    const { b: bId } = router.query; // Get boulder id from url if selected 
-    const firstRender = useFirstRender();
-    const device = useDevice();
+    // const session = useSession()!;
+    // const { b: bId } = router.query; // Get boulder id from url if selected 
+    // const firstRender = useFirstRender();
+    // const device = useDevice();
 
-    const [Loader, showLoader] = useLoader();
+    // const [Loader, showLoader] = useLoader();
 
     const topo = props.topoQuark();
     const sectors = topo.sectors;
@@ -46,33 +46,33 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
     const [tempCurrentTool, setTempCurrentTool] = useState<MapToolEnum>();
     const [currentImage, setCurrentImage] = useState<Image>();
 
-    // const selectedSector = useSelectQuark<Sector>();
-    // const sectorRightClicked = useSelectQuark<Sector>();
+    const selectedSector = useSelectQuark<Sector>();
+    const sectorRightClicked = useSelectQuark<Sector>();
 
-    // const [ModalDeleteSector, showModalDeleteSector] = useModal<Quark<Sector>>();
+    const [ModalDeleteSector, showModalDeleteSector] = useModal<Quark<Sector>>();
 
-    // const selectedBoulder = useSelectQuark<Boulder>();
-    // const boulderRightClicked = useSelectQuark<Boulder>();
-    // const [ModalDeleteBoulder, showModalDeleteBoulder] = useModal<Quark<Boulder>>();
+    const selectedBoulder = useSelectQuark<Boulder>();
+    const boulderRightClicked = useSelectQuark<Boulder>();
+    const [ModalDeleteBoulder, showModalDeleteBoulder] = useModal<Quark<Boulder>>();
 
-    // const selectedParking = useSelectQuark<Parking>();
-    // const parkingRightClicked = useSelectQuark<Parking>();
-    // const [ModalDeleteParking, showModalDeleteParking] = useModal<Quark<Parking>>();
+    const selectedParking = useSelectQuark<Parking>();
+    const parkingRightClicked = useSelectQuark<Parking>();
+    const [ModalDeleteParking, showModalDeleteParking] = useModal<Quark<Parking>>();
 
-    // const selectedWaypoint = useSelectQuark<Waypoint>();
-    // const waypointRightClicked = useSelectQuark<Waypoint>();
-    // const [ModalDeleteWaypoint, showModalDeleteWaypoint] = useModal<Quark<Waypoint>>();
+    const selectedWaypoint = useSelectQuark<Waypoint>();
+    const waypointRightClicked = useSelectQuark<Waypoint>();
+    const [ModalDeleteWaypoint, showModalDeleteWaypoint] = useModal<Quark<Waypoint>>();
 
-    // const selectedTrack = useSelectQuark<Track>();
+    const selectedTrack = useSelectQuark<Track>();
 
-    // const [dropdownPosition, setDropdownPosition] = useState<{ x: number, y: number }>();
-    // const closeDropdown = useCallback(() => {
-    //     boulderRightClicked.select(undefined);
-    //     waypointRightClicked.select(undefined);
-    //     parkingRightClicked.select(undefined);
-    //     sectorRightClicked.select(undefined);
-    // }, []);
-    // useContextMenu(closeDropdown);
+    const [dropdownPosition, setDropdownPosition] = useState<{ x: number, y: number }>();
+    const closeDropdown = useCallback(() => {
+        boulderRightClicked.select(undefined);
+        waypointRightClicked.select(undefined);
+        parkingRightClicked.select(undefined);
+        sectorRightClicked.select(undefined);
+    }, []);
+    useContextMenu(closeDropdown);
 
     // const [displaySectorSlideover, setDisplaySectorSlideover] = useState<boolean>(false);
     // const [displayDrawer, setDisplayDrawer] = useState<boolean>(false);
