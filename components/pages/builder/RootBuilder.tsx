@@ -293,426 +293,425 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
         }
     }, [topo, selectedParking(), selectedWaypoint(), selectedBoulder()]);
 
-    // const progress = useCreateDerivation<number>(() => computeBuilderProgress(props.topoQuark), [props.topoQuark]);
+    const progress = useCreateDerivation<number>(() => computeBuilderProgress(props.topoQuark), [props.topoQuark]);
 
-    // let maxTracks = 0;
-    // for (const boulder of boulders) {
-    //     maxTracks = Math.max(maxTracks, boulder.tracks.length);
-    // }
-    // const defaultBoulderFilterOptions: BoulderFilterOptions = {
-    //     techniques: ClimbTechniques.None,
-    //     tracksRange: [0, maxTracks],
-    //     gradeRange: [3, 9],
-    //     mustSee: false
-    // }
-    // const boulderFilters = useCreateQuark<BoulderFilterOptions>(defaultBoulderFilterOptions);
+    let maxTracks = 0;
+    for (const boulder of boulders) {
+        maxTracks = Math.max(maxTracks, boulder.tracks.length);
+    }
+    const defaultBoulderFilterOptions: BoulderFilterOptions = {
+        techniques: ClimbTechniques.None,
+        tracksRange: [0, maxTracks],
+        gradeRange: [3, 9],
+        mustSee: false
+    }
+    const boulderFilters = useCreateQuark<BoulderFilterOptions>(defaultBoulderFilterOptions);
 
     return (
-        <></>
-        // <>
-        //     <Header
-        //         title={topo.name}
-        //         backLink="/builder/dashboard"
-        //         menuOptions={[
-        //             { value: 'Infos du topo', action: () => setCurrentDisplay('INFO') },
-        //             { value: 'Marche d\'approche', action: () => setCurrentDisplay('APPROACH') },
-        //             { value: 'Gestionnaires du spot', action: () => setCurrentDisplay('MANAGEMENT') },
-        //             { value: 'Valider le topo', action: () => showModalSubmitTopo() },
-        //             { value: 'Supprimer le topo', action: () => showModalDeleteTopo() },
-        //         ]}
-        //     >
-        //         <BuilderProgressIndicator
-        //             topo={props.topoQuark}
-        //             progress={progress()}
-        //             displayInfosTopo={() => setCurrentDisplay('INFO')}
-        //             displayInfosApproach={() => setCurrentDisplay('APPROACH')}
-        //         />
-        //     </Header>
+        <>
+            <Header
+                title={topo.name}
+                backLink="/builder/dashboard"
+                menuOptions={[
+                    { value: 'Infos du topo', action: () => setCurrentDisplay('INFO') },
+                    { value: 'Marche d\'approche', action: () => setCurrentDisplay('APPROACH') },
+                    { value: 'Gestionnaires du spot', action: () => setCurrentDisplay('MANAGEMENT') },
+                    { value: 'Valider le topo', action: () => showModalSubmitTopo() },
+                    { value: 'Supprimer le topo', action: () => showModalDeleteTopo() },
+                ]}
+            >
+                <BuilderProgressIndicator
+                    topo={props.topoQuark}
+                    progress={progress()}
+                    displayInfosTopo={() => setCurrentDisplay('INFO')}
+                    displayInfosApproach={() => setCurrentDisplay('APPROACH')}
+                />
+            </Header>
 
-        //     {/* overflow-clip instead of overflow-hidden, so that the Slideagainst can appear off-screen without 
-        //         triggering a shift of content in this div */}
-        //     <div className="h-content md:h-contentPlusShell relative flex flex-row md:overflow-clip">
-        //         <LeftbarBuilderDesktop
-        //             topoQuark={props.topoQuark}
-        //             boulderOrder={boulderOrder()}
-        //             selectedBoulder={selectedBoulder}
-        //             onBoulderSelect={(boulderQuark) => {
-        //                 toggleBoulderSelect(boulderQuark);
-        //                 mapRef.current?.setCenter(toLatLng(boulderQuark().location));
-        //             }}
-        //             onTrackSelect={toggleTrackSelect}
-        //             onSubmit={showModalSubmitTopo}
-        //             activateSubmission={progress() === 100}
-        //             onRenameSector={(sectorQuark) => {
-        //                 selectedSector.select(sectorQuark);
-        //                 setDisplayModalSectorRename(true);
-        //             }}
-        //             onDeleteBoulder={showModalDeleteBoulder}
-        //         />
-        //         <Show when={() => [device === 'mobile', displaySectorSlideover] as const}>
-        //             {() => (
-        //                 <SectorBuilderSlideoverMobile
-        //                     topoQuark={props.topoQuark}
-        //                     boulderOrder={boulderOrder()}
-        //                     selectedBoulder={selectedBoulder}
-        //                     onCreateSector={() => setCurrentTool('SECTOR')}
-        //                     onBoulderSelect={toggleBoulderSelect}
-        //                     onTrackSelect={toggleTrackSelect}
-        //                     onRenameSector={(sectorQuark) => {
-        //                         selectedSector.select(sectorQuark);
-        //                         setDisplayModalSectorRename(true);
-        //                     }}
-        //                     onDeleteBoulder={showModalDeleteBoulder}
-        //                     onClose={() => setDisplaySectorSlideover(false)}
-        //                 />
-        //             )}
-        //         </Show>
+            {/* overflow-clip instead of overflow-hidden, so that the Slideagainst can appear off-screen without 
+                triggering a shift of content in this div */}
+            <div className="h-content md:h-contentPlusShell relative flex flex-row md:overflow-clip">
+                <LeftbarBuilderDesktop
+                    topoQuark={props.topoQuark}
+                    boulderOrder={boulderOrder()}
+                    selectedBoulder={selectedBoulder}
+                    onBoulderSelect={(boulderQuark) => {
+                        toggleBoulderSelect(boulderQuark);
+                        mapRef.current?.setCenter(toLatLng(boulderQuark().location));
+                    }}
+                    onTrackSelect={toggleTrackSelect}
+                    onSubmit={showModalSubmitTopo}
+                    activateSubmission={progress() === 100}
+                    onRenameSector={(sectorQuark) => {
+                        selectedSector.select(sectorQuark);
+                        setDisplayModalSectorRename(true);
+                    }}
+                    onDeleteBoulder={showModalDeleteBoulder}
+                />
+                <Show when={() => [device === 'mobile', displaySectorSlideover] as const}>
+                    {() => (
+                        <SectorBuilderSlideoverMobile
+                            topoQuark={props.topoQuark}
+                            boulderOrder={boulderOrder()}
+                            selectedBoulder={selectedBoulder}
+                            onCreateSector={() => setCurrentTool('SECTOR')}
+                            onBoulderSelect={toggleBoulderSelect}
+                            onTrackSelect={toggleTrackSelect}
+                            onRenameSector={(sectorQuark) => {
+                                selectedSector.select(sectorQuark);
+                                setDisplayModalSectorRename(true);
+                            }}
+                            onDeleteBoulder={showModalDeleteBoulder}
+                            onClose={() => setDisplaySectorSlideover(false)}
+                        />
+                    )}
+                </Show>
 
-        //         <Show when={() => displayInfo}>
-        //             <InfoFormSlideover
-        //                 topo={props.topoQuark}
-        //                 open
-        //                 onClose={() => setCurrentDisplay('none')}
-        //                 className={currentDisplay === 'INFO' ? 'z-300' : ''}
-        //             />
-        //         </Show>
-        //         <Show when={() => displayApproach}>
-        //             <AccessFormSlideover
-        //                 accesses={topo.accesses}
-        //                 open={displayApproach}
-        //                 onClose={() => setCurrentDisplay('none')}
-        //                 className={currentDisplay === 'APPROACH' ? 'z-300' : ''}
-        //             />
-        //         </Show>
-        //         <Show when={() => displayManagement}>
-        //             <ManagementFormSlideover
-        //                 managers={topo.managers}
-        //                 open={displayManagement}
-        //                 onClose={() => setCurrentDisplay('none')}
-        //                 className={currentDisplay === 'MANAGEMENT' ? 'z-300' : ''}
-        //             />
-        //         </Show>
+                <Show when={() => displayInfo}>
+                    <InfoFormSlideover
+                        topo={props.topoQuark}
+                        open
+                        onClose={() => setCurrentDisplay('none')}
+                        className={currentDisplay === 'INFO' ? 'z-300' : ''}
+                    />
+                </Show>
+                <Show when={() => displayApproach}>
+                    <AccessFormSlideover
+                        accesses={topo.accesses}
+                        open={displayApproach}
+                        onClose={() => setCurrentDisplay('none')}
+                        className={currentDisplay === 'APPROACH' ? 'z-300' : ''}
+                    />
+                </Show>
+                <Show when={() => displayManagement}>
+                    <ManagementFormSlideover
+                        managers={topo.managers}
+                        open={displayManagement}
+                        onClose={() => setCurrentDisplay('none')}
+                        className={currentDisplay === 'MANAGEMENT' ? 'z-300' : ''}
+                    />
+                </Show>
 
-        //         <MapControl
-        //             ref={mapRef}
-        //             initialZoom={16}
-        //             initialCenter={topo.location}
-        //             displaySectorButton
-        //             onSectorButtonClick={() => setDisplaySectorSlideover(true)}
-        //             searchbarOptions={{
-        //                 findBoulders: true,
-        //                 focusOnOpen: true,
-        //             }}
-        //             onBoulderResultSelect={(boulder) => toggleBoulderSelect(boulders.findQuark(b => b.id === boulder.id)!)}
-        //             currentTool={currentTool}
-        //             onToolSelect={(tool) => tool === currentTool ? setCurrentTool(undefined) : setCurrentTool(tool)}
-        //             onNewPhoto={handleNewPhoto}
-        //             draggableCursor={currentTool === 'ROCK' ? 'url(/assets/icons/colored/_rock.svg) 16 32, auto'
-        //                 : currentTool === 'SECTOR' ? 'url(/assets/icons/colored/line-point/_line-point-grey.svg), auto'
-        //                     : currentTool === 'PARKING' ? 'url(/assets/icons/colored/_parking.svg) 16 30, auto'
-        //                         : currentTool === 'WAYPOINT' ? 'url(/assets/icons/colored/_help-round.svg) 16 30, auto'
-        //                             : ''}
-        //             topo={props.topoQuark}
-        //             boulderFilters={boulderFilters}
-        //             boulderFiltersDomain={defaultBoulderFilterOptions}
-        //             onMapZoomChange={closeDropdown}
-        //             onClick={handleCreateNewMarker}
-        //             boundsTo={boulders.map(b => b.location).concat(parkings.map(p => p.location)).toArray()}
-        //         >
-        //             {currentTool === "SECTOR" &&
-        //                 <CreatingSectorAreaMarker
-        //                     onComplete={(path) => {
-        //                         const sector = createSector(props.topoQuark, path, boulderOrder());
-        //                         selectedSector.select(sector);
-        //                         setDisplayModalSectorRename(true);
-        //                     }}
-        //                 />
-        //             }
-        //             <For each={() => filterBoulders(boulders.quarks(), boulderFilters())}>
-        //                 {boulder =>
-        //                     <BoulderMarker
-        //                         key={boulder().id}
-        //                         boulder={boulder}
-        //                         boulderOrder={boulderOrder()}
-        //                         selectedBoulder={selectedBoulder}
-        //                         topo={props.topoQuark}
-        //                         onClick={toggleBoulderSelect}
-        //                         onContextMenu={displayBoulderDropdown}
-        //                         draggable
-        //                     />
-        //                 }
-        //             </For>
-        //             <For each={() => sectors.quarks().toArray()}>
-        //                 {sector =>
-        //                     <SectorAreaMarker
-        //                         key={sector().id}
-        //                         sector={sector}
-        //                         selected={selectedSector.quark() === sector}
-        //                         // TODO: improve the callbacks
-        //                         // TODO: how to avoid problems with the mousemove event not reaching the map while creating a sector?
+                <MapControl
+                    ref={mapRef}
+                    initialZoom={16}
+                    initialCenter={topo.location}
+                    displaySectorButton
+                    onSectorButtonClick={() => setDisplaySectorSlideover(true)}
+                    searchbarOptions={{
+                        findBoulders: true,
+                        focusOnOpen: true,
+                    }}
+                    onBoulderResultSelect={(boulder) => toggleBoulderSelect(boulders.findQuark(b => b.id === boulder.id)!)}
+                    currentTool={currentTool}
+                    onToolSelect={(tool) => tool === currentTool ? setCurrentTool(undefined) : setCurrentTool(tool)}
+                    onNewPhoto={handleNewPhoto}
+                    draggableCursor={currentTool === 'ROCK' ? 'url(/assets/icons/colored/_rock.svg) 16 32, auto'
+                        : currentTool === 'SECTOR' ? 'url(/assets/icons/colored/line-point/_line-point-grey.svg), auto'
+                            : currentTool === 'PARKING' ? 'url(/assets/icons/colored/_parking.svg) 16 30, auto'
+                                : currentTool === 'WAYPOINT' ? 'url(/assets/icons/colored/_help-round.svg) 16 30, auto'
+                                    : ''}
+                    topo={props.topoQuark}
+                    boulderFilters={boulderFilters}
+                    boulderFiltersDomain={defaultBoulderFilterOptions}
+                    onMapZoomChange={closeDropdown}
+                    onClick={handleCreateNewMarker}
+                    boundsTo={boulders.map(b => b.location).concat(parkings.map(p => p.location)).toArray()}
+                >
+                    {currentTool === "SECTOR" &&
+                        <CreatingSectorAreaMarker
+                            onComplete={(path) => {
+                                const sector = createSector(props.topoQuark, path, boulderOrder());
+                                selectedSector.select(sector);
+                                setDisplayModalSectorRename(true);
+                            }}
+                        />
+                    }
+                    <For each={() => filterBoulders(boulders.quarks(), boulderFilters())}>
+                        {boulder =>
+                            <BoulderMarker
+                                key={boulder().id}
+                                boulder={boulder}
+                                boulderOrder={boulderOrder()}
+                                selectedBoulder={selectedBoulder}
+                                topo={props.topoQuark}
+                                onClick={toggleBoulderSelect}
+                                onContextMenu={displayBoulderDropdown}
+                                draggable
+                            />
+                        }
+                    </For>
+                    <For each={() => sectors.quarks().toArray()}>
+                        {sector =>
+                            <SectorAreaMarker
+                                key={sector().id}
+                                sector={sector}
+                                selected={selectedSector.quark() === sector}
+                                // TODO: improve the callbacks
+                                // TODO: how to avoid problems with the mousemove event not reaching the map while creating a sector?
 
-        //                         // Avoid the sector area intercepting clicks if another tool is selected
-        //                         onClick={toggleSectorSelect}
-        //                         onContextMenu={displaySectorDropdown}
-        //                         onDragStart={() => selectedSector.select(sector)}
-        //                         onDragEnd={() => sectorChanged(props.topoQuark, sector().id, boulderOrder())}
-        //                     />
-        //                 }
-        //             </For>
-        //             <For each={() => waypoints.quarks().toArray()}>
-        //                 {waypoint =>
-        //                     <WaypointMarker
-        //                         key={waypoint().id}
-        //                         waypoint={waypoint}
-        //                         selected={selectedWaypoint.quark() === waypoint}
-        //                         onClick={toggleWaypointSelect}
-        //                         onContextMenu={displayWaypointDropdown}
-        //                         draggable
-        //                     />
-        //                 }
-        //             </For>
-        //             <For each={() => parkings.quarks().toArray()}>
-        //                 {parking =>
-        //                     <ParkingMarker
-        //                         key={parking().id}
-        //                         parking={parking}
-        //                         selected={selectedParking.quark() === parking}
-        //                         onClick={toggleParkingSelect}
-        //                         onContextMenu={displayParkingDropdown}
-        //                         draggable
-        //                     />
-        //                 }
-        //             </For>
-        //         </MapControl>
+                                // Avoid the sector area intercepting clicks if another tool is selected
+                                onClick={toggleSectorSelect}
+                                onContextMenu={displaySectorDropdown}
+                                onDragStart={() => selectedSector.select(sector)}
+                                onDragEnd={() => sectorChanged(props.topoQuark, sector().id, boulderOrder())}
+                            />
+                        }
+                    </For>
+                    <For each={() => waypoints.quarks().toArray()}>
+                        {waypoint =>
+                            <WaypointMarker
+                                key={waypoint().id}
+                                waypoint={waypoint}
+                                selected={selectedWaypoint.quark() === waypoint}
+                                onClick={toggleWaypointSelect}
+                                onContextMenu={displayWaypointDropdown}
+                                draggable
+                            />
+                        }
+                    </For>
+                    <For each={() => parkings.quarks().toArray()}>
+                        {parking =>
+                            <ParkingMarker
+                                key={parking().id}
+                                parking={parking}
+                                selected={selectedParking.quark() === parking}
+                                onClick={toggleParkingSelect}
+                                onContextMenu={displayParkingDropdown}
+                                draggable
+                            />
+                        }
+                    </For>
+                </MapControl>
 
-        //         <Show when={() => [device !== 'mobile', selectedTrack.quark()] as const}>
-        //             {([, track]) => (
-        //                 <TrackFormSlideagainstDesktop
-        //                     track={track}
-        //                     onClose={() => {
-        //                         selectedTrack.select(undefined)
-        //                     }}
-        //                     onDeleteTrack={() => {
-        //                         deleteTrack(selectedBoulder()!, track, selectedTrack);
-        //                     }}
-        //                 />
-        //             )}
-        //         </Show>
+                <Show when={() => [device !== 'mobile', selectedTrack.quark()] as const}>
+                    {([, track]) => (
+                        <TrackFormSlideagainstDesktop
+                            track={track}
+                            onClose={() => {
+                                selectedTrack.select(undefined)
+                            }}
+                            onDeleteTrack={() => {
+                                deleteTrack(selectedBoulder()!, track, selectedTrack);
+                            }}
+                        />
+                    )}
+                </Show>
 
-        //         <Show when={() => selectedBoulder.quark()}>
-        //             {(boulder) => {
-        //                 if (device === 'mobile') {
-        //                     return (
-        //                         <BoulderBuilderSlideoverMobile
-        //                             boulder={boulder}
-        //                             topo={props.topoQuark}
-        //                             selectedTrack={selectedTrack}
-        //                             currentImage={currentImage}
-        //                             setCurrentImage={setCurrentImage}
-        //                             onDrawButtonClick={() => {
-        //                                 console.log(displayDrawer);
-        //                                 setDisplayDrawer(true);
-        //                             }}
-        //                             onCreateTrack={() => setDisplayDrawer(true)}
-        //                             onBoulderDelete={showModalDeleteBoulder}
-        //                             onClose={() => {
-        //                                 selectedTrack.select(undefined);
-        //                                 selectedBoulder.select(undefined);
-        //                             }}
-        //                         />
-        //                     );
-        //                 }
-        //                 return (
-        //                     <BoulderBuilderSlideagainstDesktop
-        //                         ref={multipleImageInputRef}
-        //                         boulder={boulder}
-        //                         topo={props.topoQuark}
-        //                         selectedTrack={selectedTrack}
-        //                         setCurrentImage={setCurrentImage}
-        //                         currentImage={currentImage}
-        //                         onClose={() => {
-        //                             selectedTrack.select(undefined);
-        //                             selectedBoulder.select(undefined);
-        //                         }}
-        //                     />
-        //                 );
-        //             }}
-        //         </Show>
-        //         <Show when={selectedParking.quark}>
-        //             {(parking) => (
-        //                 <ParkingBuilderSlide
-        //                     open
-        //                     parking={parking}
-        //                     onDeleteParking={() => {
-        //                         topo.parkings.removeQuark(parking);
-        //                         selectedParking.select(undefined);
-        //                     }}
-        //                     onClose={() => selectedParking.select(undefined)}
-        //                 />
-        //             )}
-        //         </Show>
-        //         <Show when={selectedWaypoint.quark}>
-        //             {(waypoint) => (
-        //                 <WaypointBuilderSlide
-        //                     open
-        //                     waypoint={waypoint}
-        //                     onDeleteWaypoint={() => {
-        //                         topo.waypoints.removeQuark(waypoint);
-        //                         selectedWaypoint.select(undefined);
-        //                     }}
-        //                     onClose={() => selectedWaypoint.select(undefined)}
-        //                 />
-        //             )}
-        //         </Show>
+                <Show when={() => selectedBoulder.quark()}>
+                    {(boulder) => {
+                        if (device === 'mobile') {
+                            return (
+                                <BoulderBuilderSlideoverMobile
+                                    boulder={boulder}
+                                    topo={props.topoQuark}
+                                    selectedTrack={selectedTrack}
+                                    currentImage={currentImage}
+                                    setCurrentImage={setCurrentImage}
+                                    onDrawButtonClick={() => {
+                                        console.log(displayDrawer);
+                                        setDisplayDrawer(true);
+                                    }}
+                                    onCreateTrack={() => setDisplayDrawer(true)}
+                                    onBoulderDelete={showModalDeleteBoulder}
+                                    onClose={() => {
+                                        selectedTrack.select(undefined);
+                                        selectedBoulder.select(undefined);
+                                    }}
+                                />
+                            );
+                        }
+                        return (
+                            <BoulderBuilderSlideagainstDesktop
+                                ref={multipleImageInputRef}
+                                boulder={boulder}
+                                topo={props.topoQuark}
+                                selectedTrack={selectedTrack}
+                                setCurrentImage={setCurrentImage}
+                                currentImage={currentImage}
+                                onClose={() => {
+                                    selectedTrack.select(undefined);
+                                    selectedBoulder.select(undefined);
+                                }}
+                            />
+                        );
+                    }}
+                </Show>
+                <Show when={selectedParking.quark}>
+                    {(parking) => (
+                        <ParkingBuilderSlide
+                            open
+                            parking={parking}
+                            onDeleteParking={() => {
+                                topo.parkings.removeQuark(parking);
+                                selectedParking.select(undefined);
+                            }}
+                            onClose={() => selectedParking.select(undefined)}
+                        />
+                    )}
+                </Show>
+                <Show when={selectedWaypoint.quark}>
+                    {(waypoint) => (
+                        <WaypointBuilderSlide
+                            open
+                            waypoint={waypoint}
+                            onDeleteWaypoint={() => {
+                                topo.waypoints.removeQuark(waypoint);
+                                selectedWaypoint.select(undefined);
+                            }}
+                            onClose={() => selectedWaypoint.select(undefined)}
+                        />
+                    )}
+                </Show>
 
-        //         <ModalSubmitTopo
-        //             buttonText="Confirmer"
-        //             imgUrl={staticUrl.defaultProfilePicture}
-        //             onConfirm={async () => {
-        //                 showLoader();
-        //                 props.topoQuark.set({
-        //                     ...topo,
-        //                     status: TopoStatus.Submitted
-        //                 });
-        //                 await sync.attemptSync();
-        //                 router.push('/builder/dashboard');
-        //             }}
-        //         >Le topo sera envoyé en validation. Etes-vous sûr de vouloir continuer ?</ModalSubmitTopo>
-        //         <ModalDeleteTopo
-        //             buttonText="Confirmer"
-        //             imgUrl={staticUrl.deleteWarning}
-        //             onConfirm={async () => {
-        //                 showLoader();
-        //                 api.deleteTopo(topo);
-        //                 await sync.attemptSync();
-        //                 router.push('/builder/dashboard');
-        //             }}
-        //         >Le topo sera entièrement supprimé. Etes-vous sûr de vouloir continuer ?</ModalDeleteTopo>
-        //     </div>
+                <ModalSubmitTopo
+                    buttonText="Confirmer"
+                    imgUrl={staticUrl.defaultProfilePicture}
+                    onConfirm={async () => {
+                        showLoader();
+                        props.topoQuark.set({
+                            ...topo,
+                            status: TopoStatus.Submitted
+                        });
+                        await sync.attemptSync();
+                        router.push('/builder/dashboard');
+                    }}
+                >Le topo sera envoyé en validation. Etes-vous sûr de vouloir continuer ?</ModalSubmitTopo>
+                <ModalDeleteTopo
+                    buttonText="Confirmer"
+                    imgUrl={staticUrl.deleteWarning}
+                    onConfirm={async () => {
+                        showLoader();
+                        api.deleteTopo(topo);
+                        await sync.attemptSync();
+                        router.push('/builder/dashboard');
+                    }}
+                >Le topo sera entièrement supprimé. Etes-vous sûr de vouloir continuer ?</ModalDeleteTopo>
+            </div>
 
-        //     {/* <Show when={() => displayGeoCamera}>
-        //         <GeoCamera
-        //             currentTool={currentTool || 'ROCK'}
-        //             changeableTool={!selectedBoulder()}
-        //             onChangeTool={(tool) => setCurrentTool(tool)}
-        //             onCapture={handleGeoCameraCapture}
-        //             onClose={() => setDisplayGeoCamera(false)}
-        //         />
-        //     </Show> */}
+            {/* <Show when={() => displayGeoCamera}>
+                <GeoCamera
+                    currentTool={currentTool || 'ROCK'}
+                    changeableTool={!selectedBoulder()}
+                    onChangeTool={(tool) => setCurrentTool(tool)}
+                    onCapture={handleGeoCameraCapture}
+                    onClose={() => setDisplayGeoCamera(false)}
+                />
+            </Show> */}
 
-        //     <Show when={() => boulderRightClicked.quark()}>
-        //         {(quarkBoulder) =>
-        //             <BoulderMarkerDropdown
-        //                 position={dropdownPosition}
-        //                 toggleTrackSelect={toggleTrackSelect}
-        //                 boulder={quarkBoulder}
-        //                 multipleImageInputRef={multipleImageInputRef}
-        //                 deleteBoulder={showModalDeleteBoulder}
-        //                 onSelect={() => boulderRightClicked.select(undefined)}
-        //                 onAddImageClick={() => {
-        //                     if (!selectedBoulder() || selectedBoulder()?.id !== quarkBoulder().id) toggleBoulderSelect(quarkBoulder);
-        //                     setTimeout(() => {
-        //                         if (multipleImageInputRef?.current) multipleImageInputRef.current.click();
-        //                     }, 5);
-        //                 }}
-        //             />
-        //         }
-        //     </Show>
+            <Show when={() => boulderRightClicked.quark()}>
+                {(quarkBoulder) =>
+                    <BoulderMarkerDropdown
+                        position={dropdownPosition}
+                        toggleTrackSelect={toggleTrackSelect}
+                        boulder={quarkBoulder}
+                        multipleImageInputRef={multipleImageInputRef}
+                        deleteBoulder={showModalDeleteBoulder}
+                        onSelect={() => boulderRightClicked.select(undefined)}
+                        onAddImageClick={() => {
+                            if (!selectedBoulder() || selectedBoulder()?.id !== quarkBoulder().id) toggleBoulderSelect(quarkBoulder);
+                            setTimeout(() => {
+                                if (multipleImageInputRef?.current) multipleImageInputRef.current.click();
+                            }, 5);
+                        }}
+                    />
+                }
+            </Show>
 
-        //     <Show when={() => sectorRightClicked.quark()}>
-        //         {(quarkSector) =>
-        //             <SectorAreaMarkerDropdown
-        //                 position={dropdownPosition}
-        //                 sector={quarkSector}
-        //                 deleteSector={showModalDeleteSector}
-        //                 renameSector={() => {
-        //                     selectedSector.select(quarkSector);
-        //                     setDisplayModalSectorRename(true);
-        //                 }}
-        //                 onSelect={() => sectorRightClicked.select(undefined)}
-        //             />
-        //         }
-        //     </Show>
+            <Show when={() => sectorRightClicked.quark()}>
+                {(quarkSector) =>
+                    <SectorAreaMarkerDropdown
+                        position={dropdownPosition}
+                        sector={quarkSector}
+                        deleteSector={showModalDeleteSector}
+                        renameSector={() => {
+                            selectedSector.select(quarkSector);
+                            setDisplayModalSectorRename(true);
+                        }}
+                        onSelect={() => sectorRightClicked.select(undefined)}
+                    />
+                }
+            </Show>
 
-        //     <Show when={() => waypointRightClicked.quark()}>
-        //         {(quarkWaypoint) =>
-        //             <WaypointMarkerDropdown
-        //                 position={dropdownPosition}
-        //                 waypoint={quarkWaypoint}
-        //                 deleteWaypoint={showModalDeleteWaypoint}
-        //                 onSelect={() => waypointRightClicked.select(undefined)}
-        //             />
-        //         }
-        //     </Show>
+            <Show when={() => waypointRightClicked.quark()}>
+                {(quarkWaypoint) =>
+                    <WaypointMarkerDropdown
+                        position={dropdownPosition}
+                        waypoint={quarkWaypoint}
+                        deleteWaypoint={showModalDeleteWaypoint}
+                        onSelect={() => waypointRightClicked.select(undefined)}
+                    />
+                }
+            </Show>
 
-        //     <Show when={() => parkingRightClicked.quark()}>
-        //         {(quarkParking) =>
-        //             <ParkingMarkerDropdown
-        //                 position={dropdownPosition}
-        //                 parking={quarkParking}
-        //                 deleteParking={showModalDeleteParking}
-        //                 onSelect={() => parkingRightClicked.select(undefined)}
-        //             />
-        //         }
-        //     </Show>
+            <Show when={() => parkingRightClicked.quark()}>
+                {(quarkParking) =>
+                    <ParkingMarkerDropdown
+                        position={dropdownPosition}
+                        parking={quarkParking}
+                        deleteParking={showModalDeleteParking}
+                        onSelect={() => parkingRightClicked.select(undefined)}
+                    />
+                }
+            </Show>
 
-        //     <Show when={() => [(device !== 'mobile' || displayDrawer), selectedBoulder(), selectedTrack()] as const}>
-        //         {([, sBoulder, sTrack]) => (
-        //             <Drawer
-        //                 image={sBoulder.images.find((img) => img.id === sTrack.lines.lazy().toArray()[0]?.imageId) || currentImage!}
-        //                 tracks={sBoulder.tracks}
-        //                 selectedTrack={selectedTrack}
-        //                 onValidate={() => setDisplayDrawer(false)}
-        //             />
-        //         )}
-        //     </Show>
+            <Show when={() => [(device !== 'mobile' || displayDrawer), selectedBoulder(), selectedTrack()] as const}>
+                {([, sBoulder, sTrack]) => (
+                    <Drawer
+                        image={sBoulder.images.find((img) => img.id === sTrack.lines.lazy().toArray()[0]?.imageId) || currentImage!}
+                        tracks={sBoulder.tracks}
+                        selectedTrack={selectedTrack}
+                        onValidate={() => setDisplayDrawer(false)}
+                    />
+                )}
+            </Show>
 
-        //      <Show when={() => [displayModalSectorRename, selectedSector()] as const}>
-        //         {([, sSector]) => {
-        //             return (
-        //                 <ModalRenameSector
-        //                     sector={sectors.findQuark(s => s.id === sSector.id)!}
-        //                     onClose={() => setDisplayModalSectorRename(false)}
-        //                 />
-        //             )
-        //         }}
-        //     </Show>
+             <Show when={() => [displayModalSectorRename, selectedSector()] as const}>
+                {([, sSector]) => {
+                    return (
+                        <ModalRenameSector
+                            sector={sectors.findQuark(s => s.id === sSector.id)!}
+                            onClose={() => setDisplayModalSectorRename(false)}
+                        />
+                    )
+                }}
+            </Show>
 
-        //     <ModalDeleteSector
-        //         buttonText="Confirmer"
-        //         imgUrl={staticUrl.deleteWarning}
-        //         onConfirm={(sector) => {
-        //             topo.sectors.removeQuark(sector);
-        //             if (selectedSector.quark() === sector) selectedSector.select(undefined);
-        //         }}
-        //     >Êtes-vous sûr de vouloir supprimer le secteur ?</ModalDeleteSector>
-        //     <ModalDeleteBoulder
-        //         buttonText="Confirmer"
-        //         imgUrl={staticUrl.deleteWarning}
-        //         onConfirm={(boulder) => {
-        //             topo.boulders.removeQuark(boulder);
-        //             if (selectedBoulder.quark() === boulder) selectedBoulder.select(undefined);
-        //         }}
-        //     >Êtes-vous sûr de vouloir supprimer le bloc et toutes les voies associées ?</ModalDeleteBoulder>
-        //     <ModalDeleteParking
-        //         buttonText="Confirmer"
-        //         imgUrl={staticUrl.deleteWarning}
-        //         onConfirm={(parking) => {
-        //             topo.parkings.removeQuark(parking);
-        //             if (selectedParking.quark() === parking) selectedParking.select(undefined);
-        //         }}
-        //     >Êtes-vous sûr de vouloir supprimer le parking ?</ModalDeleteParking>
-        //     <ModalDeleteWaypoint
-        //         buttonText="Confirmer"
-        //         imgUrl={staticUrl.deleteWarning}
-        //         onConfirm={(waypoint) => {
-        //             topo.waypoints.removeQuark(waypoint);
-        //             if (selectedWaypoint.quark() === waypoint) selectedWaypoint.select(undefined);
-        //         }}
-        //     >Êtes-vous sûr de vouloir supprimer le point de repère ?</ModalDeleteWaypoint>
+            <ModalDeleteSector
+                buttonText="Confirmer"
+                imgUrl={staticUrl.deleteWarning}
+                onConfirm={(sector) => {
+                    topo.sectors.removeQuark(sector);
+                    if (selectedSector.quark() === sector) selectedSector.select(undefined);
+                }}
+            >Êtes-vous sûr de vouloir supprimer le secteur ?</ModalDeleteSector>
+            <ModalDeleteBoulder
+                buttonText="Confirmer"
+                imgUrl={staticUrl.deleteWarning}
+                onConfirm={(boulder) => {
+                    topo.boulders.removeQuark(boulder);
+                    if (selectedBoulder.quark() === boulder) selectedBoulder.select(undefined);
+                }}
+            >Êtes-vous sûr de vouloir supprimer le bloc et toutes les voies associées ?</ModalDeleteBoulder>
+            <ModalDeleteParking
+                buttonText="Confirmer"
+                imgUrl={staticUrl.deleteWarning}
+                onConfirm={(parking) => {
+                    topo.parkings.removeQuark(parking);
+                    if (selectedParking.quark() === parking) selectedParking.select(undefined);
+                }}
+            >Êtes-vous sûr de vouloir supprimer le parking ?</ModalDeleteParking>
+            <ModalDeleteWaypoint
+                buttonText="Confirmer"
+                imgUrl={staticUrl.deleteWarning}
+                onConfirm={(waypoint) => {
+                    topo.waypoints.removeQuark(waypoint);
+                    if (selectedWaypoint.quark() === waypoint) selectedWaypoint.select(undefined);
+                }}
+            >Êtes-vous sûr de vouloir supprimer le point de repère ?</ModalDeleteWaypoint>
             
-        //     <Loader />
-        // </>
+            <Loader />
+        </>
     );
 });
 
