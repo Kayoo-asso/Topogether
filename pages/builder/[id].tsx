@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import type { GetServerSideProps, NextPage } from 'next';
 import { api } from 'helpers/services';
 import { isUUID, TopoData } from 'types';
-import { RootBuilder } from 'components/pages';
+import { RootBuilder } from 'components';
 import { editTopo, decodeUUID } from 'helpers';
 
 type BuilderProps = {
@@ -36,9 +36,9 @@ export const getServerSideProps: GetServerSideProps<BuilderProps> = async ({ req
   return { notFound: true };
 }
 
-const BuilderMapPage: NextPage<BuilderProps> = ({ topo }) => {
-  const quark = useMemo(() => editTopo(topo), []);
-  return <RootBuilder topoQuark={quark} />
+const Builder: NextPage<BuilderProps> = ({ topo }) => {
+  const topoQuark = editTopo(topo);
+  return <RootBuilder topoQuark={topoQuark} />
 };
 
-export default BuilderMapPage;
+export default Builder;

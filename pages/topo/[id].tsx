@@ -36,9 +36,7 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
 const Topo: NextPage<TopoProps> = ({ topo }) => {
   // TODO: how to encode the fact that this topo cannot be edited?
   const topoQuark = editTopo(topo);
-  return (
-    <RootTopo topoQuark={topoQuark} />
-  );
+  return <RootTopo topoQuark={topoQuark} />
 };
 
 Topo.displayName = "TopoPage";
