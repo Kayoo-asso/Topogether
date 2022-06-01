@@ -131,6 +131,7 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
             if (eltUnder.nodeName === "svg" && props.modalable) setPortalOpen(true);
             else {
               // Handle clicks that are 1) left-click, 2) in the viewBox and 3) on the SVG canvas directly
+              console.log(eltUnder.nodeName);
               if (e.buttons !== 0 || !props.onImageClick || !viewBoxRef.current || eltUnder.nodeName !== "svg") return;
               const coords = getCoordsInViewbox(viewBoxRef.current, e.clientX, e.clientY);
               if (coords) props.onImageClick(coords);
