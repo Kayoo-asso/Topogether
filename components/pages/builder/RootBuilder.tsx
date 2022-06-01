@@ -330,7 +330,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
 
             {/* overflow-clip instead of overflow-hidden, so that the Slideagainst can appear off-screen without 
                 triggering a shift of content in this div */}
-            {/* <div className="h-content md:h-contentPlusShell relative flex flex-row md:overflow-clip">
+            <div className="h-content md:h-contentPlusShell relative flex flex-row md:overflow-clip">
                 <LeftbarBuilderDesktop
                     topoQuark={props.topoQuark}
                     boulderOrder={boulderOrder()}
@@ -587,7 +587,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                         router.push('/builder/dashboard');
                     }}
                 >Le topo sera entièrement supprimé. Etes-vous sûr de vouloir continuer ?</ModalDeleteTopo>
-            </div> */}
+            </div>
 
             {/* <Show when={() => displayGeoCamera}>
                 <GeoCamera
