@@ -1,30 +1,10 @@
 import React, { useCallback, useRef, useState } from "react";
-import ReactDOM from "react-dom";
 import Spinner from 'assets/icons/spinner.svg';
-
-export type PortalProps = React.PropsWithChildren<{
-  id?: string,
-  open: boolean,
-  key?: string
-}>
+import { Portal } from "./useModal";
 
 type Toggles = {
   setOpen: (open: boolean) => void,
 }
-
-export const Portal: React.FC<PortalProps> = ({ id = "portal", open, key, children }: PortalProps) => {
-  if (typeof window === 'undefined') return null;
-  let container = document.getElementById(id);
-  if (!container) {
-    container = document.createElement('div');
-    container.id = id;
-    container.className = 'bg-dark bg-opacity-80';
-    document.body.append(container);
-  }
-
-  return open ? ReactDOM.createPortal(children, container, key) : null;
-};
-
 
 export function useLoader(): [React.FC, () => void, () => void] {
   const toggles = useRef<Toggles>();
