@@ -41,12 +41,12 @@ export const InfoForm: React.FC<InfoFormProps> = watchDependencies((props: InfoF
         <div className="w-32 md:mt-4">
           <ImageInput
             value={topo.image}
-            onChange={(images) => {
+            onChange={useCallback((images) => {
               props.topo.set({
-                  ...topo,
+                  ...props.topo(),
                   image: images[0],
               });
-            }}
+            }, [props.topo])}
             onDelete={() => {
               props.topo.set({
                   ...topo,
