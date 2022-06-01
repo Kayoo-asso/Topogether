@@ -115,6 +115,7 @@ export const TopoPreview: React.FC<TopoPreviewProps> = (props: TopoPreviewProps)
                         <Button
                             content="Entrer"
                             fullWidth
+                            useLoaderOnClick
                             href={'/topo/' + encodeUUID(topo.id)}
                         />
                     </div>

@@ -102,6 +102,7 @@ const [ModalDelete, showModalDelete] = useModal();
                 <Button
                   content='Admin'
                   href='/admin'
+                  useLoaderOnClick
                   white
                 />
               </div>

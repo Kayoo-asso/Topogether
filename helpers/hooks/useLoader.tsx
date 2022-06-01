@@ -35,7 +35,8 @@ export function useLoader(): [React.FC, () => void, () => void] {
 
     return (
       <Portal id='loader' open={open}>
-        <div className='bg-black bg-opacity-80 absolute w-screen h-screen top-0 left-0 flex justify-center items-center z-1000'>
+        {/* Leave zIndex into "style" (tailwind bug) */}
+        <div className='bg-black bg-opacity-80 absolute w-screen h-screen top-0 left-0 flex justify-center items-center' style={{ zIndex: 10000 }}>
             <Spinner
                 className="stroke-main w-10 h-10 animate-spin m-2"
             />
