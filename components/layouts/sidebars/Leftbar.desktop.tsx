@@ -67,6 +67,7 @@ export const LeftbarDesktop: React.FC<LeftbarDesktopProps> = watchDependencies((
       <Button
         content="Nouveau topo"
         href="/builder/new"
+        useLoaderOnClick
         fullWidth
       />
       <Loader />

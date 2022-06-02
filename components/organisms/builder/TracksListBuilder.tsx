@@ -3,7 +3,7 @@ import { GradeCircle } from 'components';
 import { Boulder, gradeToLightGrade, Track } from 'types';
 import { Quark, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
 import { TrackForm } from '../form/TrackForm';
-import { createTrack, DeviceContext, staticUrl, useModal } from 'helpers';
+import { createTrack, deleteTrack, DeviceContext, staticUrl, useModal } from 'helpers';
 import { useSession } from "helpers/services";
 import DrawIcon from 'assets/icons/draw.svg';
 
@@ -110,8 +110,7 @@ export const TracksListBuilder: React.FC<TracksListBuilderProps> = watchDependen
       <ModalDelete
         buttonText="Confirmer"
         imgUrl={staticUrl.deleteWarning}
-        onConfirm={(track) => boulder.tracks.removeQuark(track)} 
-        // className='-top-[15vh]'  TODO : check if necessary
+        onConfirm={(track) => deleteTrack(boulder, track, props.selectedTrack)} 
       >
         Etes-vous sûr de vouloir supprimer la voie ?
       </ModalDelete>

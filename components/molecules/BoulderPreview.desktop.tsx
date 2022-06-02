@@ -2,7 +2,7 @@ import React, { Dispatch, SetStateAction, useCallback, useRef } from 'react';
 import { Quark, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
 import { Boulder, Image, Track, UUID } from 'types';
 import { MultipleImageInput, TracksImage } from '.';
-import { setReactRef, staticUrl, useModal } from 'helpers';
+import { deleteTrack, setReactRef, staticUrl, useModal } from 'helpers';
 
 interface BoulderPreviewDesktopProps {
     boulder: Quark<Boulder>,
@@ -29,11 +29,8 @@ export const BoulderPreviewDesktop = watchDependencies<HTMLInputElement, Boulder
         if (props.currentImage?.id === id) props.setCurrentImage(undefined);
     }, [props.boulder(), props.currentImage]);
     const deleteTracks = useCallback((tracksQuark: Quark<Track>[]) => {
-        tracksQuark.forEach(tQ => {
-            if (props.selectedTrack()?.id === tQ().id) props.selectedTrack.select(undefined);
-            boulder.tracks.removeQuark(tQ);
-    });
-    }, [boulder]);
+        tracksQuark.forEach(tQ => deleteTrack(boulder, tQ, props.selectedTrack));
+    }, [boulder, props.selectedTrack]);
 
     return (
         <>
@@ -86,9 +83,9 @@ export const BoulderPreviewDesktop = watchDependencies<HTMLInputElement, Boulder
             <ModalDeleteImage
                 buttonText="Confirmer"
                 imgUrl={staticUrl.deleteWarning}
-                onConfirm={(data) => {
-                    deleteTracks(data[0]);
-                    deleteImage(data[1]);
+                onConfirm={([trackQuarks, uuid]) => {
+                    deleteTracks(trackQuarks);
+                    deleteImage(uuid);
                 }}
             >
                 Tous les passages dessinés sur cette image seront supprimés. Etes-vous sûr de vouloir continuer ?

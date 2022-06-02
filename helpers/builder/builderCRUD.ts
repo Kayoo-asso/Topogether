@@ -88,5 +88,13 @@ export const createTrack = (boulder: Boulder, creatorId: UUID) => {
 }
 export const deleteTrack = (boulder: Boulder, track: Quark<Track>, selectedTrack: SelectQuarkNullable<Track>) => {
     boulder.tracks.removeQuark(track);
+    let i = 0;
+    for (const track of boulder.tracks.quarks()) {
+        track.set(t => ({
+            ...t,
+            index: i,
+        }));
+        i++;
+    }
     if (selectedTrack.quark() === track) selectedTrack.select(undefined);
 }

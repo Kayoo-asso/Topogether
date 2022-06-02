@@ -491,9 +491,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                             onClose={() => {
                                 selectedTrack.select(undefined)
                             }}
-                            onDeleteTrack={() => {
-                                deleteTrack(selectedBoulder()!, track, selectedTrack);
-                            }}
+                            onDeleteTrack={() => deleteTrack(selectedBoulder()!, track, selectedTrack)}
                         />
                     )}
                 </Show>
