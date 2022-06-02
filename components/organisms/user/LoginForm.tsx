@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Button, TextInput } from 'components';
 import Link from 'next/link';
 import NextImage from 'next/image';
-import { staticUrl } from 'helpers';
+import { staticUrl, useLoader } from 'helpers';
 import { SignInRes, useAuth } from 'helpers/services';
 import { Email } from 'types';
 import { useRouter } from 'next/router';
@@ -14,6 +14,8 @@ interface LoginFormProps {
 export const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
     const router = useRouter();
     const auth = useAuth();
+
+    const [Loader, showLoader] = useLoader();
 
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
@@ -104,10 +106,14 @@ export const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
             <div className='flex flex-col gap-16 w-full'>
                 <div className='flex flex-row w-full justify-center md:justify-between items-center'>
                     <Link href="/user/signup">
-                        <a className="ktext-base-little text-main cursor-pointer hidden md:block">Créer un compte</a>
+                        <a className="ktext-base-little text-main cursor-pointer hidden md:block" onClick={showLoader}>
+                            Créer un compte
+                        </a>
                     </Link>
                     <Link href="/user/forgotPassword">
-                        <a className="ktext-base-little text-main cursor-pointer">Mot de passe oublié ?</a>
+                        <a className="ktext-base-little text-main cursor-pointer" onClick={showLoader}>
+                            Mot de passe oublié ?
+                        </a>
                     </Link>
                 </div>
 
@@ -119,7 +125,7 @@ export const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
                     />
                 </div>
             </div>
-
+            <Loader />
         </div>
     )
 }

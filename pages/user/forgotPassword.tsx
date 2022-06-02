@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import type { NextPage } from 'next';
 import { Button, TextInput } from 'components';
-import { staticUrl } from 'helpers';
+import { staticUrl, useLoader } from 'helpers';
 import NextImage from 'next/image';
 import Link from 'next/link';
 import { Header } from 'components/layouts/header/Header';
@@ -10,9 +10,10 @@ const ForgotPasswordPage: NextPage = () => {
   const [email, setEmail] = useState<string>();
   const [emailError, setEmailError] = useState<string>();
 
+  const [Loader, showLoader] = useLoader();
+
   const checkErrors = () => {
     if (!email) setEmailError("Email invalide");
-
     if (email) return true;
     else return false;
   }
@@ -60,11 +61,14 @@ const ForgotPasswordPage: NextPage = () => {
             />
 
             <Link href="/user/login">
-                <a className="ktext-base-little text-main cursor-pointer hidden md:block">Retour</a>
+                <a className="ktext-base-little text-main cursor-pointer hidden md:block" onClick={showLoader}>
+                  Retour
+                </a>
             </Link>
           </div>
 
         </div>
+        <Loader />
       </div>
     </>
   )

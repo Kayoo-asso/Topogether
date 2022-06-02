@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import type { GetServerSideProps, NextPage } from 'next';
 import { Button, TextInput } from 'components';
-import { staticUrl } from 'helpers';
+import { staticUrl, useLoader } from 'helpers';
 import NextImage from 'next/image';
 import Link from 'next/link';
 import { useAuth } from 'helpers/services';
@@ -20,7 +20,9 @@ export const getServerSideProps: GetServerSideProps<ChangePasswordProps> = withA
 
 const ChangePasswordPage: NextPage = (props) => {
   const auth = useAuth();
-  // console.log(props);
+
+  const [Loader, showLoader] = useLoader();
+
   const [oldPassword, setOldPassword] = useState<string>('');
   const [newPassword, setNewPassword] = useState<string>('');
   const [secondNewPassword, setSecondNewPassword] = useState<string>('');
@@ -102,12 +104,13 @@ const ChangePasswordPage: NextPage = (props) => {
                 loading={loading}
             />
 
-            <Link href="/user/profile">
+            <Link href="/user/profile" onClick={showLoader}>
                 <a className="ktext-base-little text-main cursor-pointer hidden md:flex md:w-full">Retour</a>
             </Link>
           </div>
 
         </div>
+        <Loader />
       </div>
     </>
   )
