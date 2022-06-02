@@ -70,7 +70,10 @@ export const HeaderDesktop: React.FC<HeaderDesktopProps> = watchDependencies(({
         {props.menuOptions && menuOpen && (
           <Dropdown
             options={props.menuOptions}
-            onSelect={() => setMenuOpen(false)}
+            onSelect={() => {
+              showLoader();
+              setMenuOpen(false);
+            }}
             className="top-[7%]"
           />
         )}
@@ -82,7 +85,7 @@ export const HeaderDesktop: React.FC<HeaderDesktopProps> = watchDependencies(({
 
       {displayLogin && !user &&
         <Link href="/user/login">
-          <a className="ktext-base text-white cursor-pointer mr-[3%]">
+          <a className="ktext-base text-white cursor-pointer mr-[3%]" onClick={showLoader}>
             Se connecter
           </a>
         </Link>
@@ -107,6 +110,7 @@ export const HeaderDesktop: React.FC<HeaderDesktopProps> = watchDependencies(({
                   }
                 }
               ]}
+              onSelect={showLoader}
               className='w-[200px] -ml-[180px] mt-[180px]'
             />
           }
