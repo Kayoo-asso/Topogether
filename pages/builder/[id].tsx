@@ -1,10 +1,9 @@
 import React, { useMemo } from 'react';
 import type { GetServerSideProps, NextPage } from 'next';
 import { api } from 'helpers/services';
-import { isUUID, Topo, TopoData } from 'types';
+import { isUUID, TopoData } from 'types';
 import { RootBuilder } from 'components';
 import { editTopo, decodeUUID } from 'helpers';
-import { Quark } from 'helpers/quarky';
 
 type BuilderProps = {
   topo: TopoData,
@@ -38,7 +37,6 @@ export const getServerSideProps: GetServerSideProps<BuilderProps> = async ({ req
 }
 
 const Builder: NextPage<BuilderProps> = ({ topo }) => {
-  // const quark = editTopo(topo);
   const topoQuark = useMemo(() => editTopo(topo), [topo]);
   return <RootBuilder topoQuark={topoQuark} />
 };
