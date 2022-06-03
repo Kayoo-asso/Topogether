@@ -70,10 +70,7 @@ export const HeaderDesktop: React.FC<HeaderDesktopProps> = watchDependencies(({
         {props.menuOptions && menuOpen && (
           <Dropdown
             options={props.menuOptions}
-            onSelect={() => {
-              showLoader();
-              setMenuOpen(false);
-            }}
+            onSelect={() => setMenuOpen(false)}
             className="top-[7%]"
           />
         )}
