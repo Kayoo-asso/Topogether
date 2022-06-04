@@ -102,7 +102,9 @@ export const SectorList:React.FC<SectorListProps> = watchDependencies((props: Se
                     
             {/* BOULDERS WITHOUT SECTOR       */}
             <div className='flex flex-col mb-10'>
-                <div className="ktext-label text-grey-medium mb-2">Sans secteur</div>
+                {sectors.length > 0 && bouldersOutSorted.length > 0 &&
+                    <div className="ktext-label text-grey-medium mb-2">Sans secteur</div>
+                }
                 <div className='flex flex-col gap-1 ml-3'>
                     {bouldersOutSorted.map((boulderQuark) => {
                         const boulder = boulderQuark();

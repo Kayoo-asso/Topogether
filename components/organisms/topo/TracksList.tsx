@@ -29,7 +29,7 @@ export const TracksList: React.FC<TracksListProps> = watchDependencies((props: T
   return (
     <div className="w-full border-t h-full border-grey-light">
 
-      {tracks.map((trackQuark) => {
+      {tracks.sort((t1, t2) => t1().index - t2().index).map((trackQuark) => {
         const track = trackQuark();
         const grade = gradeToLightGrade(track.grade);
         return (

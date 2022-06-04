@@ -33,7 +33,7 @@ export const TracksListBuilder: React.FC<TracksListBuilderProps> = watchDependen
   const device = useContext(DeviceContext);
 
   const boulder = props.boulder();
-  const tracks = boulder.tracks.quarks();
+  const tracks = boulder.tracks.quarks().toArray().sort((t1, t2) => t1().index - t2().index);
   const selectedTrack = props.selectedTrack();
 
   if (!session) return null;

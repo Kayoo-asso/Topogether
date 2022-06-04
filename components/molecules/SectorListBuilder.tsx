@@ -169,13 +169,15 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> = watchDependen
                     </DragDropContext>
                 )
             })}
-  
+
             <DragDropContext onDragEnd={handleDragEnd} onDragStart={handleDragStart}>
                 <Droppable droppableId='no-sector'>
                     {(provided) => {
                         return (
                             <div className='flex flex-col' {...provided.droppableProps} ref={provided.innerRef}>
-                                <div className="ktext-label text-grey-medium mb-1">Sans secteur</div>
+                                {sectors.length > 0 && bouldersOutSorted.length > 0 &&
+                                    <div className="ktext-label text-grey-medium mb-1">Sans secteur</div>
+                                }
                                 <div className={'flex flex-col gap-1 ml-1 p-2 rounded-sm ' + (draggingSectorId === 'no-sector' ? 'bg-grey-superlight' : '')}>
                                     {bouldersOutSorted.map((boulderQuark, index) => {
                                         const boulder = boulderQuark();
