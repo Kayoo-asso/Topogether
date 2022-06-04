@@ -85,8 +85,8 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies((props: RootNew
         title="Nouveau topo"
       />
 
-      <div className='h-content md:h-full w-full flex flex-row items-center bg-main'>
-          <div className='flex flex-col items-center justify-center w-full'>
+      <div className={'h-content md:h-full w-full flex flex-row bg-main pb-5 overflow-x-hidden overflow-y-auto ' + (step === 2 ? 'items-start' : 'justify-center')}>
+          <div className={'flex flex-col w-full items-center justify-center'}>
             {step === 0 &&
               <div className='px-[10%] w-full'>
                 <TextInput 
@@ -157,7 +157,7 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies((props: RootNew
 
             {step === 2 && (
               <>
-                <div className="h-[300px] md:h-[350px] w-full mb-10 md:mb-16">
+                <div className="h-[55vh] md:h-[65vh] w-full mb-10 md:mb-16">
                   <MapControl
                     initialZoom={10}
                     searchbarOptions={{ findPlaces: true }}
