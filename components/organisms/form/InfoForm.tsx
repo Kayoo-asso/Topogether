@@ -148,7 +148,7 @@ export const InfoForm: React.FC<InfoFormProps> = watchDependencies((props: InfoF
         checked={!!topo.otherAmenities}
         onClick={() => props.topo.set({
           ...topo,
-          otherAmenities: topo.otherAmenities || ' ' as Description,
+          otherAmenities: (topo.otherAmenities === ' ' ? '' : (topo.otherAmenities && topo.otherAmenities.length > 0) ? topo.otherAmenities : ' ') as Description,
         })}
       />
       <Show when={() => topo.otherAmenities}>
@@ -157,9 +157,9 @@ export const InfoForm: React.FC<InfoFormProps> = watchDependencies((props: InfoF
           label="Autres équipements"
           value={topo.otherAmenities}
           onChange={(e) => props.topo.set({
-                    ...topo,
-                    otherAmenities: e.target.value as Description,
-                })}
+              ...topo,
+              otherAmenities: e.target.value as Description,
+          })}
         />
       </Show>
 

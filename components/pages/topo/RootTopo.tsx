@@ -167,6 +167,10 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
       <Header
         title={topo.name}
         backLink='/'
+        onBackClick={selectedBoulder() ? () => { selectedTrack.select(undefined); selectedBoulder.select(undefined); } :
+          selectedParking() ? () => selectedParking.select(undefined) :
+          selectedWaypoint() ? () => selectedWaypoint.select(undefined) : undefined
+        }
         menuOptions={constructMenuOptions()}
       />
 

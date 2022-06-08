@@ -1,4 +1,4 @@
-import React, { ReactNode, useState } from 'react';
+import React, { ReactElement, ReactNode, useState } from 'react';
 import { Dropdown, DropdownOption } from 'components';
 import Link from 'next/link';
 import ArrowSimple from 'assets/icons/arrow-simple.svg';
@@ -9,6 +9,7 @@ interface HeaderMobileProps {
   title: string,
   menuOptions?: DropdownOption[],
   backLink: string,
+  onBackClick?: () => void,
   children?: ReactNode;
 }
 
@@ -18,13 +19,20 @@ export const HeaderMobile: React.FC<HeaderMobileProps> = (props: HeaderMobilePro
 
   const [Loader, showLoader] = useLoader();
 
+  const wrapLink = (elts: ReactElement<any, any>) => {
+    if (props.onBackClick) return <a onClick={props.onBackClick}>{elts}</a>;
+    else return (
+      <Link href={props.backLink}>
+        <a onClick={showLoader}>{elts}</a>
+      </Link>
+    )
+  }
+
   return (
     <div className="bg-dark flex items-center h-header">
 
       <div className='w-1/6 flex justify-center'>
-        <Link href={props.backLink}>
-          <a onClick={showLoader}><ArrowSimple className="stroke-white stroke-1 w-4 h-4" /></a>
-        </Link>
+        {wrapLink(<ArrowSimple className="stroke-white stroke-1 w-4 h-4" />)}
       </div>
 
       <div

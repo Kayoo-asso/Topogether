@@ -78,7 +78,10 @@ export const MultipleImageInput = forwardRef<HTMLInputElement, MultipleImageInpu
             ref={ref}
             label={props.label}
             multiple
-            onChange={props.onChange}
+            onChange={(images) => {
+              if (error) setError(undefined);
+              props.onChange(images);
+            }}
             onError={(err) => setError(err)}
           />
         )}

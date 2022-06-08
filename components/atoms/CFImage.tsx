@@ -101,7 +101,6 @@ export const CFImage: React.FC<CFImageProps> = ({
         wrapPortal(
             <div 
                 className={'w-full h-full relative overflow-hidden ' 
-                    + ((modalable && !loading && !forceLoading) ? 'cursor-pointer ' : '')
                     + (props.className || '')         
                 }
                 onClick={() => (modalable && !loading && !forceLoading) && setPortalOpen(true)}

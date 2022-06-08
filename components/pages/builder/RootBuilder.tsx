@@ -27,7 +27,7 @@ interface RootBuilderProps {
 export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props: RootBuilderProps) => {
     const router = useRouter();
     const session = useSession()!;
-    const { b: bId } = router.query; // Get boulder id from url if selected 
+    const { b: bId } = router.query; // Get boulder id from url if selected
     const firstRender = useFirstRender();
     const device = useDevice();
 
@@ -312,6 +312,11 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
             <Header
                 title={topo.name}
                 backLink="/builder/dashboard"
+                onBackClick={displayDrawer ? () => setDisplayDrawer(false) :
+                    selectedBoulder() ? () => { selectedTrack.select(undefined); selectedBoulder.select(undefined); } :
+                    selectedParking() ? () => selectedParking.select(undefined) :
+                    selectedWaypoint() ? () => selectedWaypoint.select(undefined) : undefined
+                }
                 menuOptions={[
                     { value: 'Infos du topo', action: () => setCurrentDisplay('INFO') },
                     { value: 'Marche d\'approche', action: () => setCurrentDisplay('APPROACH') },
