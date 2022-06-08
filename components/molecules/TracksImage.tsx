@@ -55,8 +55,23 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
   // and take width = ratio * height (multiplication is better than division)
   const ratio = props.image?.ratio ?? 1;
   const viewBoxRef = useRef<SVGRectElement | null>(null);
-  
   const viewBoxWidth = ratio * viewBoxHeight;
+
+  const [portalOpen, setPortalOpen] = useState(false);
+  const wrapPortal = (elts: ReactElement<any, any>) => {
+    if (props.modalable && props.image) {
+      return (
+        <>
+          {elts}
+          <Portal open={portalOpen}>
+            <div className="absolute top-0 left-0 flex z-full w-screen h-screen bg-black bg-opacity-80" onClick={() => setPortalOpen(false)}>
+              {elts}
+            </div>
+          </Portal>
+        </>
+    )}
+    else return elts;
+  }
 
   const getCursorUrl = () => {
     let cursorColor = 'grey';
@@ -77,27 +92,9 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
     }
     return cursorUrl;
   };
-
   const cursorStyle: CSSProperties = {
     cursor: editable ? `url(${getCursorUrl()}) ${props.currentTool === 'ERASER' ? '3 7' : ''}, auto` : '',
   }
-
-  const [portalOpen, setPortalOpen] = useState(false);
-  const wrapPortal = (elts: ReactElement<any, any>) => {
-    if (props.modalable && props.image) {
-      return (
-        <>
-          {elts}
-          <Portal open={portalOpen}>
-            <div className="absolute top-0 left-0 flex z-full w-screen h-screen bg-black bg-opacity-80" onClick={() => setPortalOpen(false)}>
-              {elts}
-            </div>
-          </Portal>
-        </>
-    )}
-    else return elts;
-  }
-
   const cssCursor = (props.modalable && props.image) ? 
     (portalOpen ? " cursor-zoom-out" : " cursor-zoom-in") :
     (props.onImageClick ? " cursor-pointer" : "");
@@ -117,16 +114,19 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
   // & the provided object-fit. The viewBox has constant width and height for the same image, so everything drawn
   // on the image can be expressed in the coordinate space of the viewBox & resizes automatically
   const imgRef = useRef<HTMLImageElement>(null);
+  const testRef = useRef<HTMLDivElement>(null);
   const onPinchZoom = useCallback(({ x, y, scale }) => {
-    if (imgRef.current) {
+    if (testRef.current) {
+      console.log(scale);
       const value = make3dTransformValue({ x, y, scale });
-      imgRef.current.style.setProperty("transform", value);
+      testRef.current.style.setProperty("transform", value);
     }
-  }, [imgRef.current]);
+  }, [testRef.current]);
   
   return (
     wrapPortal(
-      <div className={"relative h-full" + cssCursor}>
+      <QuickPinchZoom onUpdate={onPinchZoom}>
+      <div ref={testRef} className={"relative h-full" + cssCursor}>
         <CFImage
           ref={imgRef}
           objectFit={objectFit}
@@ -134,8 +134,7 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
           image={props.image}
           alt={"Rocher avec tracé de voies"}
           className="flex justify-center"
-        />
-        <QuickPinchZoom onUpdate={onPinchZoom}>
+        />    
         <svg
           className='absolute top-0 left-0 h-full w-full z-50'
           style={cursorStyle}
@@ -191,8 +190,9 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
           {props.image && props.children}
 
         </svg>
-        </QuickPinchZoom>
+        
       </div>
+      </QuickPinchZoom>
     )
   );
 });

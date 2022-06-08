@@ -58,6 +58,7 @@ export const CFImage = forwardRef<HTMLImageElement, CFImageProps>(({
     const onPinchZoom = useCallback(({ x, y, scale }) => {
         if (imgRef.current) {
             const value = make3dTransformValue({ x, y, scale });
+            console.log(value);
             imgRef.current.style.setProperty("transform", value);
         }
     }, [imgRef.current]);
