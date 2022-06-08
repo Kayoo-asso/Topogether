@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { GradeCircle } from 'components';
 import { Boulder, gradeToLightGrade, Track } from 'types';
 import { Quark, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
@@ -13,6 +13,7 @@ interface TracksListBuilderProps {
   onTrackClick: (trackQuark: Quark<Track>) => void,
   onDrawButtonClick?: () => void,
   onCreateTrack?: () => void,
+  onAddImage?: () => void,
 }
 
 const gradeColors = {
@@ -29,6 +30,7 @@ const gradeColors = {
 export const TracksListBuilder: React.FC<TracksListBuilderProps> = watchDependencies((props: TracksListBuilderProps) => {
   const session = useSession();
   const [ModalDelete, showModalDelete] = useModal<Quark<Track>>();
+  const [ModalAddImage, showModalAddImage] = useModal();
 
   const device = useContext(DeviceContext);
 
@@ -93,16 +95,19 @@ export const TracksListBuilder: React.FC<TracksListBuilderProps> = watchDependen
         })}
 
         <div
-          className="ktext-subtitle text-grey-medium px-5 py-5 md:py-3 cursor-pointer border-b border-grey-light hover:bg-grey-superlight"
+          className={"px-5 py-5 md:py-3 border-b border-grey-light " + (boulder.images.length > 0 ? "hover:bg-grey-superlight cursor-pointer text-grey-medium" : "cursor-default text-grey-light")}
           onClick={() => {
-            const newQuarkTrack = createTrack(boulder, session!.id);
-            props.selectedTrack.select(newQuarkTrack);
-            if (props.onCreateTrack) props.onCreateTrack();
+            if (boulder.images.length > 0) {
+              const newQuarkTrack = createTrack(boulder, session!.id);
+              props.selectedTrack.select(newQuarkTrack);
+              if (props.onCreateTrack) props.onCreateTrack();
+            }
+            else showModalAddImage();
           }}
         >
-          <span className="ml-2 mr-5 text-xl">+</span>
+          <span className="ktext-subtitle ml-2 mr-5 text-xl">+</span>
           {' '}
-          <span>Nouveau passage</span>
+          <span className="ktext-subtitle">Nouveau passage</span>
         </div>
 
       </div>
@@ -114,6 +119,14 @@ export const TracksListBuilder: React.FC<TracksListBuilderProps> = watchDependen
       >
         Etes-vous sûr de vouloir supprimer la voie ?
       </ModalDelete>
+
+      <ModalAddImage
+        buttonText="Ajouter une image"
+        imgUrl={staticUrl.defaultProfilePicture}
+        onConfirm={props.onAddImage}
+      >
+        Vous devez ajouter une première image pour créer une voie.
+      </ModalAddImage>
     </>
   );
 });

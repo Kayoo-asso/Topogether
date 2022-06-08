@@ -17,6 +17,8 @@ interface ImageInputProps {
   onChange: (images: Image[]) => void,
   onDelete?: () => void,
   onError?: (err: string) => void,
+  onLoadStart?: () => void,
+  onLoadEnd?: () => void,
 }
 
 export const ImageInput = forwardRef<HTMLInputElement, ImageInputProps>(({
@@ -37,6 +39,7 @@ export const ImageInput = forwardRef<HTMLInputElement, ImageInputProps>(({
       [ImageUploadErrorReason.CompressionError]: 0,
       [ImageUploadErrorReason.UploadError]: 0,
     };
+    if (props.onLoadStart) props.onLoadStart();
     setLoading(true);
 
     const { images, errors } = await api.images.uploadMany(files);
@@ -45,6 +48,7 @@ export const ImageInput = forwardRef<HTMLInputElement, ImageInputProps>(({
     }
 
     setLoading(false);
+    if (props.onLoadEnd) props.onLoadEnd();
     props.onChange(images);
     let error = ''
     if (errorcount[ImageUploadErrorReason.NonImage] === 1) 

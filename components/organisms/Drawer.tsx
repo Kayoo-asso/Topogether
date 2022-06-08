@@ -1,7 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import {
-  DrawerToolEnum, Image, LinearRing, PointEnum, Position, Track,
-} from 'types';
+import { DrawerToolEnum, Image, LinearRing, PointEnum, Position, Track } from 'types';
 import { Toolbar, TracksImage } from 'components';
 import { QuarkArray, QuarkIter, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
 import { v4 } from 'uuid';
@@ -146,7 +144,7 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies((props: DrawerPro
       <div className="absolute left-0 top-[7vh] h-content md:h-contentPlusShell w-full md:w-[calc(100%-600px)] z-[600]">
 
         {/* Same, we know absolute size, since both header + toolbar are 7vh each */}
-        <div className="h-[84vh] bg-black b-opacity-90">
+        <div className="h-[84vh] flex bg-black b-opacity-90">
           <TracksImage
             sizeHint='100vw'
             objectFit='contain'

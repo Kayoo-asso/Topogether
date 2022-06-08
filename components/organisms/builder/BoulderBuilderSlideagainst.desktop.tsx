@@ -1,8 +1,9 @@
-import React, { Dispatch, SetStateAction, useCallback } from 'react';
+import React, { Dispatch, SetStateAction, useCallback, useRef } from 'react';
 import { BoulderPreviewDesktop, SlideagainstRightDesktop, BoulderForm } from 'components';
 import { Quark, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
 import { Boulder, Image, Topo, Track } from 'types';
 import { TracksListBuilder } from '.';
+import { setReactRef } from 'helpers';
 
 interface BoulderBuilderSlideagainstDesktopProps {
     boulder: Quark<Boulder>,
@@ -16,6 +17,8 @@ interface BoulderBuilderSlideagainstDesktopProps {
 export const BoulderBuilderSlideagainstDesktop = watchDependencies<HTMLInputElement, BoulderBuilderSlideagainstDesktopProps>((
     props: BoulderBuilderSlideagainstDesktopProps, parentRef) => {
     const boulder = props.boulder();
+
+    const imageInputRef = useRef<HTMLInputElement>(null);
 
     const toggleSelectedTrack = useCallback((trackQuark) => {
         const track = trackQuark();
@@ -45,7 +48,10 @@ export const BoulderBuilderSlideagainstDesktop = watchDependencies<HTMLInputElem
                 />
                 
                 <BoulderPreviewDesktop
-                    ref={parentRef}
+                    ref={ref => {
+                        setReactRef(imageInputRef, ref);
+                        setReactRef(parentRef, ref);
+                    }}
                     boulder={props.boulder}
                     selectedTrack={props.selectedTrack}
                     currentImage={props.currentImage}
@@ -57,6 +63,7 @@ export const BoulderBuilderSlideagainstDesktop = watchDependencies<HTMLInputElem
                     boulder={props.boulder}
                     selectedTrack={props.selectedTrack}
                     onTrackClick={toggleSelectedTrack}
+                    onAddImage={useCallback(() => imageInputRef.current && imageInputRef.current.click(), [])}
                 />
             </div>
         </SlideagainstRightDesktop>

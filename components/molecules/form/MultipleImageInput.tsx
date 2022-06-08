@@ -15,6 +15,8 @@ interface MultipleImageInputProps {
   onImageClick?: (id: UUID) => void,
   onImageDelete?: (id: UUID) => void,
   onChange: (images: Image[]) => void,
+  onLoadStart?: () => void,
+  onLoadEnd?: () => void,
 }
 
 export const MultipleImageInput = forwardRef<HTMLInputElement, MultipleImageInputProps>(({
@@ -83,6 +85,8 @@ export const MultipleImageInput = forwardRef<HTMLInputElement, MultipleImageInpu
               props.onChange(images);
             }}
             onError={(err) => setError(err)}
+            onLoadStart={props.onLoadStart}
+            onLoadEnd={props.onLoadEnd}
           />
         )}
 

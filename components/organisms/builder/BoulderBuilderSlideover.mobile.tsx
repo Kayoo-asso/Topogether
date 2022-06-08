@@ -1,6 +1,6 @@
 import React, { Dispatch, SetStateAction, useState } from 'react';
 import {
-  GradeScale, RoundButton, SlideoverMobile, ImageSlider
+  GradeScale, SlideoverMobile, ImageSlider
 } from 'components';
 import { Boulder, Image, Topo, Track } from 'types';
 import { buildBoulderGradeHistogram } from 'helpers';
@@ -8,7 +8,6 @@ import { Quark, watchDependencies, SelectQuarkNullable } from 'helpers/quarky';
 import { TracksListBuilder } from '.';
 import { BoulderForm } from '..';
 import { CFImage } from 'components/atoms/CFImage';
-import ManyTracks from 'assets/icons/many-tracks.svg';
 import { ImageInput } from 'components/molecules';
 import { Button } from 'components/atoms';
 
