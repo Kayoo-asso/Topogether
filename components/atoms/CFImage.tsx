@@ -1,12 +1,12 @@
 import { Image } from "types";
 import { SourceSize, VariantWidths } from "helpers/variants";
 import { cloudflareUrl } from "helpers/cloudflareUrl";
-import { ImgHTMLAttributes, ReactElement, useCallback, useEffect, useRef, useState } from "react";
+import { forwardRef, ImgHTMLAttributes, ReactElement, useCallback, useEffect, useRef, useState } from "react";
 import defaultKayoo from 'public/assets/img/Kayoo_defaut_image.png';
 import type { StaticImageData } from 'next/image';
 import { useDevice } from "helpers/hooks/useDevice";
 import { Loading } from "components/layouts";
-import { Portal } from "helpers";
+import { Portal, setReactRef } from "helpers";
 import QuickPinchZoom, { make3dTransformValue } from "react-quick-pinch-zoom";
 
 export type CFImageProps = RawImageAttributes & {
@@ -25,14 +25,14 @@ type RawImageAttributes = Omit<
 >
 
 // TODO: implement priority using a <link> tag + next/head (as next/image does)
-export const CFImage: React.FC<CFImageProps> = ({ 
+export const CFImage = forwardRef<HTMLImageElement, CFImageProps>(({ 
     image, 
     sizeHint,
     modalable,
     objectFit = 'contain',
     defaultImage = defaultKayoo,
     ...props 
-}: CFImageProps) => {
+}: CFImageProps, parentRef) => {
     const device = useDevice();
     const imgRef = useRef<HTMLImageElement>(null);
     const [loading, setLoading] = useState(true);
@@ -54,6 +54,13 @@ export const CFImage: React.FC<CFImageProps> = ({
             setLoading(true);
         }
     }, [image?.id]);
+
+    const onPinchZoom = useCallback(({ x, y, scale }) => {
+        if (imgRef.current) {
+            const value = make3dTransformValue({ x, y, scale });
+            imgRef.current.style.setProperty("transform", value);
+        }
+    }, [imgRef.current]);
 
     const [portalOpen, setPortalOpen] = useState(false);
     const wrapPortal = (elts: ReactElement<any, any>) => {
@@ -97,14 +104,6 @@ export const CFImage: React.FC<CFImageProps> = ({
         // no placeholder
         placeholder = undefined;
     }
-
-    const onPinchZoom = useCallback(({ x, y, scale }) => {
-        if (imgRef.current) {
-            console.log(scale);
-            const value = make3dTransformValue({ x, y, scale });
-            imgRef.current.style.setProperty("transform", value);
-        }
-    }, [imgRef.current]);
         
     return (
         wrapPortal(
@@ -123,24 +122,27 @@ export const CFImage: React.FC<CFImageProps> = ({
                     </div>
                 }
                 <QuickPinchZoom onUpdate={onPinchZoom}>
-                <img
-                    ref={imgRef}
-                    src={src}
-                    width={width}
-                    height={height}
-                    srcSet={srcSet}
-                    sizes={sizes}
-                    {...imgProps}
-                    className={props.className + ' h-full ' + objectFitClass}
-                    loading={props.loading ?? 'lazy'}
-                    decoding={props.decoding ?? 'async'}
-                    onLoad={() => {
-                        setLoading(false);
-                        currentImage.current = image?.id;
-                    }}
-                />
+                    <img
+                        ref={ref => {
+                            setReactRef(imgRef, ref);
+                            setReactRef(parentRef, ref);
+                          }}
+                        src={src}
+                        width={width}
+                        height={height}
+                        srcSet={srcSet}
+                        sizes={sizes}
+                        {...imgProps}
+                        className={props.className + ' h-full ' + objectFitClass}
+                        loading={props.loading ?? 'lazy'}
+                        decoding={props.decoding ?? 'async'}
+                        onLoad={() => {
+                            setLoading(false);
+                            currentImage.current = image?.id;
+                        }}
+                    />
                 </QuickPinchZoom>
             </div>
         )
     )
-}
+})

@@ -7,6 +7,7 @@ import { CFImage } from 'components/atoms/CFImage';
 import { SourceSize } from 'helpers/variants';
 import { SVGTrack } from 'components/atoms';
 import { getCoordsInViewbox, Portal } from 'helpers';
+import QuickPinchZoom, { make3dTransformValue } from "react-quick-pinch-zoom";
 
 type TracksImageProps = React.PropsWithChildren<{
   image?: Image,
@@ -115,16 +116,26 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
   // An image and a SVG viewBox that always perfectly match, while respecting the dimensions of the parent container
   // & the provided object-fit. The viewBox has constant width and height for the same image, so everything drawn
   // on the image can be expressed in the coordinate space of the viewBox & resizes automatically
+  const imgRef = useRef<HTMLImageElement>(null);
+  const onPinchZoom = useCallback(({ x, y, scale }) => {
+    if (imgRef.current) {
+      const value = make3dTransformValue({ x, y, scale });
+      imgRef.current.style.setProperty("transform", value);
+    }
+  }, []);
+  
   return (
     wrapPortal(
       <div className={"relative h-full" + cssCursor}>
         <CFImage
+          ref={imgRef}
           objectFit={objectFit}
           sizeHint={portalOpen ? '100vw' : props.sizeHint}
           image={props.image}
           alt={"Rocher avec tracé de voies"}
           className="flex justify-center"
         />
+        <QuickPinchZoom onUpdate={onPinchZoom}>
         <svg
           className='absolute top-0 left-0 h-full w-full z-50'
           style={cursorStyle}
@@ -180,6 +191,7 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
           {props.image && props.children}
 
         </svg>
+        </QuickPinchZoom>
       </div>
     )
   );
