@@ -122,7 +122,7 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
       const value = make3dTransformValue({ x, y, scale });
       imgRef.current.style.setProperty("transform", value);
     }
-  }, []);
+  }, [imgRef.current]);
   
   return (
     wrapPortal(
