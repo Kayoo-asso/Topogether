@@ -113,22 +113,19 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
   // An image and a SVG viewBox that always perfectly match, while respecting the dimensions of the parent container
   // & the provided object-fit. The viewBox has constant width and height for the same image, so everything drawn
   // on the image can be expressed in the coordinate space of the viewBox & resizes automatically
-  const imgRef = useRef<HTMLImageElement>(null);
-  const testRef = useRef<HTMLDivElement>(null);
+  const imgRef = useRef<HTMLDivElement>(null);
   const onPinchZoom = useCallback(({ x, y, scale }) => {
-    if (testRef.current) {
-      console.log(scale);
+    if (imgRef.current) {
       const value = make3dTransformValue({ x, y, scale });
-      testRef.current.style.setProperty("transform", value);
+      imgRef.current.style.setProperty("transform", value);
     }
-  }, [testRef.current]);
+  }, [imgRef.current]);
   
   return (
     wrapPortal(
       <QuickPinchZoom onUpdate={onPinchZoom}>
-      <div ref={testRef} className={"relative h-full" + cssCursor}>
+      <div ref={imgRef} className={"relative h-full" + cssCursor}>
         <CFImage
-          ref={imgRef}
           objectFit={objectFit}
           sizeHint={portalOpen ? '100vw' : props.sizeHint}
           image={props.image}
