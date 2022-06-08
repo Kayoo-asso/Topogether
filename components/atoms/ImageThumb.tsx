@@ -56,15 +56,17 @@ export const ImageThumb: React.FC<ImageThumbProps> = watchDependencies(({
           objectFit='contain'
           sizeHint={`${containerWidth}px`}
           tracksWeight={60}
+          zoomable={false}
         />
       }
       {(!props.tracks || props.tracks.toArray().length < 1) && 
         <CFImage
           image={props.image}
           alt="user generated image"
-          className='h-full'
+          className='flex'
           objectFit='contain'
           sizeHint={`${containerWidth}px`}
+          zoomable={false}
         />
       }
     </div>

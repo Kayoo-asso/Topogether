@@ -17,6 +17,7 @@ export type CFImageProps = RawImageAttributes & {
     sizeHint: SourceSize | { raw: string },
     defaultImage?: StaticImageData,
     modalable?: boolean,
+    zoomable?: boolean,
 };
 
 type RawImageAttributes = Omit<
@@ -29,6 +30,7 @@ export const CFImage = forwardRef<HTMLImageElement, CFImageProps>(({
     image, 
     sizeHint,
     modalable,
+    zoomable = true,
     objectFit = 'contain',
     defaultImage = defaultKayoo,
     ...props 
@@ -56,7 +58,7 @@ export const CFImage = forwardRef<HTMLImageElement, CFImageProps>(({
     }, [image?.id]);
 
     const onPinchZoom = useCallback(({ x, y, scale }) => {
-        if (imgRef.current) {
+        if (imgRef.current && zoomable) {
             const value = make3dTransformValue({ x, y, scale });
             imgRef.current.style.setProperty("transform", value);
         }

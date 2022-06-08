@@ -58,16 +58,18 @@ export function useModal<T>(): [React.FC<ModalProps<T>>, (item: T) => void, () =
 
     toggles.current = { setOpen, setItem: (setItem as any), close };
 
-    useEffect(() => {
-      const handleKeydown = (e: KeyboardEvent) => {
-        if (open) {
-          if (e.key === 'Escape') close();
-          if (e.key === 'Enter') confirm();
-        }
+    const handleKeydown = (e: KeyboardEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (open) {
+        if (e.key === 'Escape') close();
+        if (e.key === 'Enter') confirm();
       }
+    }
+    useEffect(() => {
       window.addEventListener('keydown', handleKeydown);
       return () => window.removeEventListener('keydown', handleKeydown);
-    }, []);
+    }, [handleKeydown]);
 
     return (
       <Portal id='modal' open={open}>

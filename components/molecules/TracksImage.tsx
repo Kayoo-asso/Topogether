@@ -23,6 +23,7 @@ type TracksImageProps = React.PropsWithChildren<{
   tracksWeight?: number,
   editable?: boolean,
   modalable?: boolean,
+  zoomable?: boolean,
   currentTool?: DrawerToolEnum,
   onImageClick?: (pos: Position) => void,
   onPointClick?: (pointType: PointEnum, index: number) => void,
@@ -47,6 +48,7 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
   tracksWeight = defaultTracksWeight,
   objectFit = 'contain',
   editable = false,
+  zoomable = true,
   ...props
 }: TracksImageProps) => {
   const selectedTrack = props.selectedTrack && props.selectedTrack();
@@ -115,7 +117,7 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
   // on the image can be expressed in the coordinate space of the viewBox & resizes automatically
   const imgRef = useRef<HTMLDivElement>(null);
   const onPinchZoom = useCallback(({ x, y, scale }) => {
-    if (imgRef.current) {
+    if (imgRef.current && zoomable) {
       const value = make3dTransformValue({ x, y, scale });
       imgRef.current.style.setProperty("transform", value);
     }
@@ -124,71 +126,72 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
   return (
     wrapPortal(
       <QuickPinchZoom onUpdate={onPinchZoom}>
-      <div ref={imgRef} className={"relative h-full" + cssCursor}>
-        <CFImage
-          objectFit={objectFit}
-          sizeHint={portalOpen ? '100vw' : props.sizeHint}
-          image={props.image}
-          alt={"Rocher avec tracé de voies"}
-          className="flex justify-center"
-        />    
-        <svg
-          className='absolute top-0 left-0 h-full w-full z-50'
-          style={cursorStyle}
-          viewBox={`0 0 ${viewBoxWidth} ${viewBoxHeight}`}
-          preserveAspectRatio={`xMidYMid ${preserveAspectRatio[objectFit]}`}
-          onClick={useCallback((e) => {
-            const eltUnder = e.target as EventTarget & SVGSVGElement;         
-            if (eltUnder.nodeName === "svg" && props.modalable) setPortalOpen(true);
-            else {
-              // Handle clicks that are 1) left-click, 2) in the viewBox and 3) on the SVG canvas directly
-              if (e.buttons !== 0 || !props.onImageClick || !viewBoxRef.current || eltUnder.nodeName !== "svg") return;
-              const coords = getCoordsInViewbox(viewBoxRef.current, e.clientX, e.clientY);
-              if (coords) props.onImageClick(coords);
-            }
-          }, [props.onImageClick, props.modalable])}
-        >
-          {/* Invisible rectangle of the size of the viewBox, to get its on-screen dimensions easily
-              (they could also be computed, but I'm lazy)
-              Another dev: I'm lazy too. Leave the rectangle.
-          */}
-          <rect 
-            ref={(ref) => {
-              if (!viewBoxRef.current) viewBoxRef.current = ref;
-            }}
-            x={0} 
-            y={0} 
-            width={viewBoxWidth} 
-            height={viewBoxHeight} 
-            visibility='hidden' 
-          />
+        <div ref={imgRef} className={"relative h-full" + cssCursor}>
+          <CFImage
+            objectFit={objectFit}
+            sizeHint={portalOpen ? '100vw' : props.sizeHint}
+            image={props.image}
+            alt={"Rocher avec tracé de voies"}
+            className="flex justify-center"
+            zoomable={zoomable}
+          />    
+          <svg
+            className='absolute top-0 left-0 h-full w-full z-50'
+            style={cursorStyle}
+            viewBox={`0 0 ${viewBoxWidth} ${viewBoxHeight}`}
+            preserveAspectRatio={`xMidYMid ${preserveAspectRatio[objectFit]}`}
+            onClick={useCallback((e) => {
+              const eltUnder = e.target as EventTarget & SVGSVGElement;         
+              if (eltUnder.nodeName === "svg" && props.modalable) setPortalOpen(true);
+              else {
+                // Handle clicks that are 1) left-click, 2) in the viewBox and 3) on the SVG canvas directly
+                if (e.buttons !== 0 || !props.onImageClick || !viewBoxRef.current || eltUnder.nodeName !== "svg") return;
+                const coords = getCoordsInViewbox(viewBoxRef.current, e.clientX, e.clientY);
+                if (coords) props.onImageClick(coords);
+              }
+            }, [props.onImageClick, props.modalable])}
+          >
+            {/* Invisible rectangle of the size of the viewBox, to get its on-screen dimensions easily
+                (they could also be computed, but I'm lazy)
+                Another dev: I'm lazy too. Leave the rectangle.
+            */}
+            <rect 
+              ref={(ref) => {
+                if (!viewBoxRef.current) viewBoxRef.current = ref;
+              }}
+              x={0} 
+              y={0} 
+              width={viewBoxWidth} 
+              height={viewBoxHeight} 
+              visibility='hidden' 
+            />
 
-          {props.image && props.tracks.map(trackQuark => {
-            const highlighted = selectedTrack === undefined ||
-              trackQuark().id === selectedTrack.id;
-            if (highlighted || displayPhantomTracks)
-              return (
-                <SVGTrack
-                  key={trackQuark().id}
-                  track={trackQuark}
-                  currentTool={props.currentTool}
-                  imageId={props.image!.id}
-                  editable={editable}
-                  vb={viewBoxRef}
-                  highlighted={highlighted}
-                  displayTrackDetails={displayTracksDetails}
-                  displayTrackOrderIndexes={displayTrackOrderIndexes}
-                  trackWeight={tracksWeight}
-                  onLineClick={props.selectedTrack ? () => props.selectedTrack!.select(trackQuark) : undefined}
-                  onPointClick={props.onPointClick}
-                />
-              )
-          }).toArray()}
-          {props.image && props.children}
+            {props.image && props.tracks.map(trackQuark => {
+              const highlighted = selectedTrack === undefined ||
+                trackQuark().id === selectedTrack.id;
+              if (highlighted || displayPhantomTracks)
+                return (
+                  <SVGTrack
+                    key={trackQuark().id}
+                    track={trackQuark}
+                    currentTool={props.currentTool}
+                    imageId={props.image!.id}
+                    editable={editable}
+                    vb={viewBoxRef}
+                    highlighted={highlighted}
+                    displayTrackDetails={displayTracksDetails}
+                    displayTrackOrderIndexes={displayTrackOrderIndexes}
+                    trackWeight={tracksWeight}
+                    onLineClick={props.selectedTrack ? () => props.selectedTrack!.select(trackQuark) : undefined}
+                    onPointClick={props.onPointClick}
+                  />
+                )
+            }).toArray()}
+            {props.image && props.children}
 
-        </svg>
-        
-      </div>
+          </svg>
+          
+        </div>
       </QuickPinchZoom>
     )
   );

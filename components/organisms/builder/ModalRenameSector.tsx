@@ -26,8 +26,11 @@ export const ModalRenameSector: React.FC<ModalRenameSectorProps> = (props: Modal
         }
     }, [inputRef.current]);
 
-    const handleUserKeyPress = useCallback((e) => {
+    const handleUserKeyPress = useCallback((e: KeyboardEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
         if (e.key === 'Enter') props.onClose();
+        if (e.key === 'Escape') props.onClose();
     }, []);
     useEffect(() => {
         window.addEventListener("keydown", handleUserKeyPress);
@@ -47,7 +50,7 @@ export const ModalRenameSector: React.FC<ModalRenameSectorProps> = (props: Modal
                 <div
                     className='bg-white rounded-lg shadow min-h-[25%] w-11/12 md:w-5/12 absolute top-[45%] md:top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]'
                     // Avoid closing the modal when we click here (otherwise propagates to the backdrop)
-                    onClick={(event) => event.stopPropagation()}
+                    onClick={(e) => e.stopPropagation()}
                 >
 
                     <div className='flex flex-col gap-6 p-6 pt-10'>
@@ -76,7 +79,7 @@ export const ModalRenameSector: React.FC<ModalRenameSectorProps> = (props: Modal
 
                     <div
                         className='absolute top-3 right-3 cursor-pointer'
-                        onClick={close}
+                        onClick={props.onClose}
                     >
                         <Clear className='stroke-dark h-8 w-8' />
                     </div>
