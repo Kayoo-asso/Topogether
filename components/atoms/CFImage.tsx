@@ -1,12 +1,13 @@
 import { Image } from "types";
 import { SourceSize, VariantWidths } from "helpers/variants";
 import { cloudflareUrl } from "helpers/cloudflareUrl";
-import { ImgHTMLAttributes, ReactElement, useEffect, useRef, useState } from "react";
+import { ImgHTMLAttributes, ReactElement, useCallback, useEffect, useRef, useState } from "react";
 import defaultKayoo from 'public/assets/img/Kayoo_defaut_image.png';
 import type { StaticImageData } from 'next/image';
 import { useDevice } from "helpers/hooks/useDevice";
 import { Loading } from "components/layouts";
 import { Portal } from "helpers";
+import QuickPinchZoom, { make3dTransformValue } from "react-quick-pinch-zoom";
 
 export type CFImageProps = RawImageAttributes & {
     alt: string,
@@ -96,6 +97,14 @@ export const CFImage: React.FC<CFImageProps> = ({
         // no placeholder
         placeholder = undefined;
     }
+
+    const onPinchZoom = useCallback(({ x, y, scale }) => {
+        if (imgRef.current) {
+            console.log(scale);
+            const value = make3dTransformValue({ x, y, scale });
+            imgRef.current.style.setProperty("transform", value);
+        }
+    }, [imgRef.current]);
         
     return (
         wrapPortal(
@@ -113,6 +122,7 @@ export const CFImage: React.FC<CFImageProps> = ({
                         />
                     </div>
                 }
+                <QuickPinchZoom onUpdate={onPinchZoom}>
                 <img
                     ref={imgRef}
                     src={src}
@@ -129,6 +139,7 @@ export const CFImage: React.FC<CFImageProps> = ({
                         currentImage.current = image?.id;
                     }}
                 />
+                </QuickPinchZoom>
             </div>
         )
     )
