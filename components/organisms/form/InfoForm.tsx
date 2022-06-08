@@ -67,10 +67,13 @@ export const InfoForm: React.FC<InfoFormProps> = watchDependencies((props: InfoF
         id="topo-description"
         label="Description"
         value={topo.description}
-        onChange={(e) => props.topo.set({
+        onChange={(e) => {
+          console.log(e.target.value);
+          props.topo.set({
             ...topo,
             description: e.target.value as Description,
-        })}
+        })
+        }}
       />
 
       <BitflagMultipleSelect<RockTypes>

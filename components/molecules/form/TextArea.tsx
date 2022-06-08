@@ -44,6 +44,7 @@ export const TextArea = ({
         value={value}
         className={`peer border-dark ktext-base border-b-2 overflow-hidden ${displayLabel ? 'placeholder-transparent' : ''} focus:border-main focus:outline-none w-full ${pointer ? ' cursor-pointer' : ''}`}
         onKeyUp={adaptScrollHeight}
+        // onKeyDown={(e) => props.onChange(e)}
       />
 
       {displayLabel && (
@@ -55,8 +56,7 @@ export const TextArea = ({
       </label>
     )}
 
-      {props.error
-      && <div className="ktext-error text-error">{props.error}</div>}
+      {props.error && <div className="ktext-error text-error">{props.error}</div>}
     </div>
 );
 };

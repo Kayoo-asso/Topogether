@@ -59,9 +59,9 @@ export function useModal<T>(): [React.FC<ModalProps<T>>, (item: T) => void, () =
     toggles.current = { setOpen, setItem: (setItem as any), close };
 
     const handleKeydown = (e: KeyboardEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
       if (open) {
+        e.preventDefault();
+        e.stopPropagation();
         if (e.key === 'Escape') close();
         if (e.key === 'Enter') confirm();
       }
