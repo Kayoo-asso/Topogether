@@ -1,11 +1,7 @@
 import React, { useCallback, useEffect, useRef } from 'react';
-import {
- Checkbox, ImageInput, Show, TextArea, TextInput,
-} from 'components';
+import { Checkbox, ImageInput, Show, TextArea, TextInput } from 'components';
 import { Quark, watchDependencies } from 'helpers/quarky';
-import {
- Amenities, Description, Name, RockTypes, Topo,
-} from 'types';
+import { Amenities, Description, Name, RockTypes, Topo } from 'types';
 import { hasFlag, rockNames, toggleFlag, useDevice } from 'helpers';
 import { BitflagMultipleSelect } from 'components/molecules/form/BitflagMultipleSelect';
 
