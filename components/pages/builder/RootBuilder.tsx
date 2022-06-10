@@ -308,7 +308,6 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
     useEffect(() => {
         const max = maxTracks();
         if (max !== boulderFilters().tracksRange[1]) {
-            console.log(max);
             boulderFilters.set(opts => ({
                 ...opts,
                 tracksRange: [opts.tracksRange[0], max]
