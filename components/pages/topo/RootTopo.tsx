@@ -6,7 +6,7 @@ import {
   MapControl, ParkingSlide, WaypointSlide, TracksImage
 } from 'components';
 import { LeftbarTopoDesktop } from 'components/layouts';
-import { DeviceContext, decodeUUID, encodeUUID, sortBoulders, toLatLng } from 'helpers';
+import { DeviceContext, decodeUUID, encodeUUID, sortBoulders } from 'helpers';
 import { Boulder, ClimbTechniques, Image, isUUID, Parking, Sector, Topo, TopoStatus, Track, Waypoint } from 'types';
 import { Quark, QuarkIter, useCreateDerivation, useCreateQuark, useLazyQuarkyEffect, useQuarkyCallback, useSelectQuark, watchDependencies } from 'helpers/quarky';
 import { useRouter } from 'next/router';
@@ -14,7 +14,7 @@ import { useFirstRender } from 'helpers/hooks/useFirstRender';
 import { Header } from 'components/layouts/header/Header';
 import { BoulderFilterOptions, DropdownOption, filterBoulders } from 'components/molecules';
 import { useSession } from 'helpers/services';
-import { BoulderMarker, For, ParkingMarker, SectorAreaMarker, WaypointMarker } from 'components/atoms';
+import { BoulderClusterMarker, BoulderMarker, For, ParkingMarker, SectorAreaMarker, WaypointMarker } from 'components/atoms';
 
 
 interface RootTopoProps {
@@ -27,6 +27,7 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
   const { b: bId } = router.query; // Get boulder id from url if selected 
   const firstRender = useFirstRender();
   const device = useContext(DeviceContext);
+  const [mapZoom, setMapZoom] = useState<number>(0);
 
   const topo = props.topoQuark();
   const sectors = topo.sectors;
@@ -222,7 +223,6 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
           />
         </Show>
 
-
         <MapControl
           initialCenter={topo.location}
           initialZoom={16}
@@ -236,20 +236,28 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
           boulderFilters={boulderFilters}
           boulderFiltersDomain={defaultBoulderFilterOptions}
           boundsTo={boulders.map(b => b.location).concat(parkings.map(p => p.location)).toArray()}
+          onMapZoomChange={(zoom) => setMapZoom(zoom || 0)}
         >
           {/* TODO: improve the callbacks */}
-          <For each={() => filterBoulders(boulders.quarks(), boulderFilters())}>
-            {boulder =>
-              <BoulderMarker
-                key={boulder().id}
-                boulder={boulder}
-                boulderOrder={boulderOrder()}
-                selectedBoulder={selectedBoulder}
-                topo={props.topoQuark}
-                onClick={toggleBoulderSelect}
-              />
-            }
-          </For>
+          {/* {mapZoom >= 20 && */}
+            <For each={() => filterBoulders(boulders.quarks(), boulderFilters())}>
+              {boulder =>
+                <BoulderMarker
+                  key={boulder().id}
+                  boulder={boulder}
+                  boulderOrder={boulderOrder()}
+                  selectedBoulder={selectedBoulder}
+                  topo={props.topoQuark}
+                  onClick={toggleBoulderSelect}
+                />
+              }
+            </For>
+          {/* } */}
+          {/* {mapZoom < 20 &&
+            <BoulderClusterMarker 
+              boulders={boulders.toArray()}
+            />
+          } */}
           <For each={() => sectors.quarks().toArray()}>
             {sector =>
               <SectorAreaMarker

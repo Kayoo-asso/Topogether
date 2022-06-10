@@ -185,9 +185,7 @@ export const MapControl = watchDependencies<google.maps.Map, MapControlProps>(({
                     {props.children}
 
                     {displayUserMarker &&
-                        <UserMarker
-                            onClick={props.onUserMarkerClick}
-                        />
+                        <UserMarker onClick={props.onUserMarkerClick} />
                     }
                 </Map>
             </Wrapper >

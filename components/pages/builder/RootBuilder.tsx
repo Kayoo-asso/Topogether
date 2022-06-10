@@ -295,17 +295,26 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
 
     const progress = useCreateDerivation<number>(() => computeBuilderProgress(props.topoQuark), [props.topoQuark]);
 
-    let maxTracks = 0;
-    for (const boulder of boulders) {
-        maxTracks = Math.max(maxTracks, boulder.tracks.length);
-    }
+    const maxTracks = useCreateDerivation<number>(() => {
+        return boulders.toArray().map(b => b.tracks.length).reduce((a, b) => a + b, 0);
+    }, [boulders]);
     const defaultBoulderFilterOptions: BoulderFilterOptions = {
         techniques: ClimbTechniques.None,
-        tracksRange: [0, maxTracks],
+        tracksRange: [0, maxTracks()],
         gradeRange: [3, 9],
         mustSee: false
     }
     const boulderFilters = useCreateQuark<BoulderFilterOptions>(defaultBoulderFilterOptions);
+    useEffect(() => {
+        const max = maxTracks();
+        if (max !== boulderFilters().tracksRange[1]) {
+            console.log(max);
+            boulderFilters.set(opts => ({
+                ...opts,
+                tracksRange: [opts.tracksRange[0], max]
+            }));
+        }
+    }, [maxTracks()]);
 
     return (
         <>

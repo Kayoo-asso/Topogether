@@ -17,7 +17,7 @@ export const isMouseEvent = (e: MouseEvent | TouchEvent | PointerEvent | Keyboar
 export const isTouchEvent = (e: MouseEvent | TouchEvent | PointerEvent | KeyboardEvent | Event | MouseEvent<HTMLDivElement, MouseEvent>): e is TouchEvent => (e as TouchEvent).touches !== undefined;
 export const isPointerEvent = (e: MouseEvent | TouchEvent | PointerEvent | KeyboardEvent | Event | MouseEvent<HTMLDivElement, MouseEvent>): e is PointerEvent => (e as PointerEvent).pointerType !== undefined;
 
-export const BoulderMarker: React.FC<BoulderMarkerProps> = watchDependencies(({
+export const BoulderMarker = watchDependencies(({
     draggable = false,
     ...props
 }: BoulderMarkerProps) => {
@@ -90,7 +90,7 @@ export const BoulderMarker: React.FC<BoulderMarkerProps> = watchDependencies(({
             isPressing.set(false);
         }, [timer, props.boulder, props.onClick]),
     }
-    useMarker(options, handlers);
+    const marker = useMarker(options, handlers);
 
     return null;
 });

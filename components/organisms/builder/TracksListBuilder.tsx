@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 import { GradeCircle } from 'components';
 import { Boulder, gradeToLightGrade, Track } from 'types';
 import { Quark, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
