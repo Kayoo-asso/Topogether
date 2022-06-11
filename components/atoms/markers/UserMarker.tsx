@@ -1,5 +1,5 @@
 import React, { useCallback, useContext } from "react";
-import { useCircle, useDevice, useMarker } from "helpers";
+import { useCircle, useDevice, useDeviceOrientation, useMarker } from "helpers";
 import { MarkerEventHandlers } from "types";
 import { UserPositionContext } from "components/molecules/map/UserPositionProvider";
 
@@ -12,6 +12,10 @@ export const UserMarker: React.FC<UserMarkerProps> = (props: UserMarkerProps) =>
     const { position, accuracy } = useContext(UserPositionContext);
     const center = position ? { lng: position[0], lat: position[1] } : { lng: 0, lat: 0};
     const device = useDevice();
+
+    const { orientation, requestAccess, revokeAccess, error } = useDeviceOrientation();
+    console.log(orientation);
+    console.log(props.orientation)
 
     // Main blue dot
     const mainIcon: google.maps.Symbol = {

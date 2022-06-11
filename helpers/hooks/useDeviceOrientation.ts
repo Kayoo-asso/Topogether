@@ -31,12 +31,10 @@ export const useDeviceOrientation = (): UseDeviceOrientationData => {
   };
 
   const requestAccess = async (): Promise<boolean> => {
-    console.log("0");
     if (!DeviceOrientationEvent) {
       setError(new Error('Device orientation event is not supported by your browser'));
       return false;
     }
-    console.log("1");
     if (typeof (DeviceMotionEvent as any).requestPermission === 'function') {
       let permission: PermissionState;
       try {
@@ -45,13 +43,11 @@ export const useDeviceOrientation = (): UseDeviceOrientationData => {
         setError(err);
         return false;
       }
-      console.log("2");
       if (permission !== 'granted') {
         setError(new Error('Request to access the device orientation was rejected'));
         return false;
       }
     }
-    console.log("3");
     window.addEventListener('deviceorientation', onDeviceOrientation);
 
     return true;
