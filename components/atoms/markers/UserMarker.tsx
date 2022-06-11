@@ -12,6 +12,9 @@ export const UserMarker: React.FC<UserMarkerProps> = (props: UserMarkerProps) =>
     const center = position ? { lng: position[0], lat: position[1] } : { lng: 0, lat: 0};
     const device = useDevice();
 
+    const { orientation, requestAccess, revokeAccess, error } = useDeviceOrientation();
+    requestAccess();
+
     // Main blue dot
     const mainIcon: google.maps.Symbol = {
         path: window.google.maps.SymbolPath.CIRCLE,
@@ -48,9 +51,7 @@ export const UserMarker: React.FC<UserMarkerProps> = (props: UserMarkerProps) =>
 
 
     // Heading
-    const { orientation, requestAccess, revokeAccess, error } = useDeviceOrientation();
     if (device === 'mobile') {
-        requestAccess();
         const headingIcon: google.maps.Symbol = {
             path: window.google.maps.SymbolPath.FORWARD_OPEN_ARROW,
             rotation: orientation?.alpha ? (- orientation.alpha) : 0,
