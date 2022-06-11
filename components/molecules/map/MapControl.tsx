@@ -47,7 +47,7 @@ export const MapControl = watchDependencies<google.maps.Map, MapControlProps>(({
     const mapRef = useRef<google.maps.Map>(null);
     const { position } = useContext(UserPositionContext);
 
-    const { orientation, requestAccess, revokeAccess, error } = useDeviceOrientation();
+    // const { orientation, requestAccess, revokeAccess, error } = useDeviceOrientation();
 
     const [coords, setCoords] = useState<GeoCoordinates>();
     useGeolocation({
@@ -163,7 +163,7 @@ export const MapControl = watchDependencies<google.maps.Map, MapControlProps>(({
                             props.onMapZoomChange(mapRef.current.getZoom());
                         }
                     }}
-                    onClick={(e) => requestAccess()}
+                    // onClick={(e) => requestAccess()}
                     onLoad={(map) => {
                         map.setZoom(initialZoom);
                         const locs = props.boundsTo;
@@ -189,7 +189,7 @@ export const MapControl = watchDependencies<google.maps.Map, MapControlProps>(({
                     {displayUserMarker &&
                         <UserMarker 
                             onClick={props.onUserMarkerClick}
-                            orientation={orientation}
+                            // orientation={orientation}
                         />
                     }
                 </Map>
