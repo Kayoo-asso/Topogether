@@ -4,7 +4,7 @@ import { Map, RoundButton, SatelliteButton, UserMarker } from 'components';
 import { BoulderFilterOptions, BoulderFilters, MapSearchbarProps, TopoFilterOptions, TopoFilters } from '.';
 import { ItemSelectorMobile, MapSearchbar } from '..';
 import { Boulder, GeoCoordinates, Image, MapProps, MapToolEnum, Position, Topo } from 'types';
-import { fontainebleauLocation, googleGetPlace, setReactRef, toLatLng, useDeviceOrientation } from 'helpers';
+import { fontainebleauLocation, googleGetPlace, setReactRef, toLatLng } from 'helpers';
 import { Quark, watchDependencies } from 'helpers/quarky';
 import SectorIcon from 'assets/icons/sector.svg';
 import CenterIcon from 'assets/icons/center.svg';
@@ -46,8 +46,6 @@ export const MapControl = watchDependencies<google.maps.Map, MapControlProps>(({
 }, parentRef) => {
     const mapRef = useRef<google.maps.Map>(null);
     const { position } = useContext(UserPositionContext);
-
-    // const { orientation, requestAccess, revokeAccess, error } = useDeviceOrientation();
 
     const [coords, setCoords] = useState<GeoCoordinates>();
     useGeolocation({
@@ -163,7 +161,6 @@ export const MapControl = watchDependencies<google.maps.Map, MapControlProps>(({
                             props.onMapZoomChange(mapRef.current.getZoom());
                         }
                     }}
-                    // onClick={(e) => requestAccess()}
                     onLoad={(map) => {
                         map.setZoom(initialZoom);
                         const locs = props.boundsTo;
@@ -187,10 +184,7 @@ export const MapControl = watchDependencies<google.maps.Map, MapControlProps>(({
                     {props.children}
 
                     {displayUserMarker &&
-                        <UserMarker 
-                            onClick={props.onUserMarkerClick}
-                            // orientation={orientation}
-                        />
+                        <UserMarker onClick={props.onUserMarkerClick} />
                     }
                 </Map>
             </Wrapper >
