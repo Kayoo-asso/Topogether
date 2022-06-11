@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
-import { useCircle, useDeviceOrientation, useMarker } from "helpers";
+import { useCircle, useDevice, useDeviceOrientation, useMarker } from "helpers";
 import { MarkerEventHandlers } from "types";
 import { UserPositionContext } from "components/molecules/map/UserPositionProvider";
 
@@ -10,10 +10,9 @@ interface UserMarkerProps {
 export const UserMarker: React.FC<UserMarkerProps> = (props: UserMarkerProps) => {
     const { position, accuracy } = useContext(UserPositionContext);
     const center = position ? { lng: position[0], lat: position[1] } : { lng: 0, lat: 0};
-    // const device = useDevice();
+    const device = useDevice();
 
     const { orientation, requestAccess, revokeAccess, error } = useDeviceOrientation();
-    console.log(orientation);
     const [alpha, setAlpha] = useState(0);
 
     useEffect(() => {
@@ -68,7 +67,7 @@ export const UserMarker: React.FC<UserMarkerProps> = (props: UserMarkerProps) =>
         path: window.google.maps.SymbolPath.FORWARD_OPEN_ARROW,
         rotation: alpha ? (360 - alpha) : 0,
         scale: alpha ? 6 : 0, 
-        fillOpacity: alpha ? 0.4 : 0,
+        fillOpacity: (alpha && device === "mobile") ? 0.4 : 0,
         fillColor: '#4EABFF',
         strokeWeight: 0,
     };
