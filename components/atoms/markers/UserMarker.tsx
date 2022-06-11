@@ -17,7 +17,7 @@ export const UserMarker: React.FC<UserMarkerProps> = (props: UserMarkerProps) =>
     // requestAccess();
     useEffect(() => {
         console.log(buttonRef.current);
-        if (buttonRef.current) buttonRef.current.click();
+        if (buttonRef.current) setTimeout(() => buttonRef.current!.click(), 100);
     }, [buttonRef.current])
 
     // Main blue dot
