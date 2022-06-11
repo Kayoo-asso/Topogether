@@ -19,9 +19,9 @@ export const useDeviceOrientation = (): UseDeviceOrientationData => {
 
   const onDeviceOrientation = (event: DeviceOrientationEvent): void => {
     setOrientation({
-      alpha: event.alpha,
-      beta: event.beta,
-      gamma: event.gamma,
+      alpha: event.alpha || orientation?.alpha || null,
+      beta: event.beta || orientation?.beta || null,
+      gamma: event.gamma || orientation?.gamma || null,
     });
   };
 

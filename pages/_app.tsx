@@ -38,14 +38,14 @@ const CustomApp = ({ Component, pageProps, session, initialDevice }: Props) => {
   const firstRender = useFirstRender();
   const device = firstRender ? initialDevice : currentBreakpoint as Device;
 
-  // const { orientation, requestAccess, revokeAccess, error } = useDeviceOrientation();
-  // useEffect(() => {
-  //   const handleClick = () => {
-  //     if (!orientation) requestAccess();
-  //   }
-  //   window.addEventListener('click', handleClick);
-  //   return () => window.removeEventListener('click', handleClick);
-  // }, []);
+  const { orientation, requestAccess, revokeAccess, error } = useDeviceOrientation();
+  useEffect(() => {
+    const handleClick = () => {
+      if (!orientation) requestAccess();
+    }
+    window.addEventListener('click', handleClick);
+    return () => window.removeEventListener('click', handleClick);
+  }, []);
 
   return (
     <>
@@ -76,7 +76,7 @@ const CustomApp = ({ Component, pageProps, session, initialDevice }: Props) => {
       <AuthProvider initial={session}>
         <UserPositionProvider>
           <DeviceContext.Provider value={device}>
-            {/* <OrientationContext.Provider value={orientation}> */}
+            <OrientationContext.Provider value={orientation}>
               <div ref={observe} className="w-screen h-screen flex items-end flex-col">
                 <div id={(device === 'mobile' && process.env.NODE_ENV !== 'development') ? "standalone" : ''} className='w-full h-full'>
                   <div id="content" className="flex-1 w-screen absolute bg-grey-light flex flex-col h-full md:h-screen overflow-hidden">
@@ -91,7 +91,7 @@ const CustomApp = ({ Component, pageProps, session, initialDevice }: Props) => {
                   <div id="no-standalone" className='z-full'><NoStandalone /></div>
                 }
               </div>
-            {/* </OrientationContext.Provider> */}
+            </OrientationContext.Provider>
           </DeviceContext.Provider>
         </UserPositionProvider>
       </AuthProvider>
