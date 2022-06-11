@@ -1,40 +1,28 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
-import { useCircle, useDevice, useDeviceOrientation, useMarker } from "helpers";
+import { useCircle, useDeviceOrientation, useMarker } from "helpers";
 import { MarkerEventHandlers } from "types";
 import { UserPositionContext } from "components/molecules/map/UserPositionProvider";
 
 interface UserMarkerProps {
     onClick?: (e: google.maps.MapMouseEvent) => void,
-    // orientation: any,
 }
 
 export const UserMarker: React.FC<UserMarkerProps> = (props: UserMarkerProps) => {
     const { position, accuracy } = useContext(UserPositionContext);
     const center = position ? { lng: position[0], lat: position[1] } : { lng: 0, lat: 0};
-    const device = useDevice();
-
-    // const [isIos, setIsIos] = useState(false); 
-    // useEffect(() => {
-    //     setIsIos([
-    //         'iPad Simulator',
-    //         'iPhone Simulator',
-    //         'iPod Simulator',
-    //         'iPad',
-    //         'iPhone',
-    //         'iPod'
-    //       ].includes(navigator.platform)
-    //       // iPad on iOS 13 detection
-    //       || (navigator.userAgent.includes("Mac") && "ontouchend" in document));        
-    // }, []);
+    // const device = useDevice();
 
     const { orientation, requestAccess, revokeAccess, error } = useDeviceOrientation();
     console.log(orientation);
-    // const [requested, setRequested] = useState(!isIos);
+    const [alpha, setAlpha] = useState(0);
+
+    useEffect(() => {
+        if (orientation?.alpha) setAlpha(orientation.alpha);
+    }, [orientation])
 
     useEffect(() => {
         const handleClick = () => {
-          const result = requestAccess();
-        //   setRequested(true);
+          requestAccess();
         }
         window.addEventListener('click', handleClick);
         return () => window.removeEventListener('click', handleClick);
@@ -78,9 +66,9 @@ export const UserMarker: React.FC<UserMarkerProps> = (props: UserMarkerProps) =>
     // Heading
     const headingIcon: google.maps.Symbol = {
         path: window.google.maps.SymbolPath.FORWARD_OPEN_ARROW,
-        rotation: orientation?.alpha ? (360 - orientation.alpha) : 0,
-        scale: orientation ? 6 : 0, 
-        fillOpacity: orientation ? 0.4 : 0,
+        rotation: alpha ? (360 - alpha) : 0,
+        scale: alpha ? 6 : 0, 
+        fillOpacity: alpha ? 0.4 : 0,
         fillColor: '#4EABFF',
         strokeWeight: 0,
     };
