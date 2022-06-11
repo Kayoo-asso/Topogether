@@ -45,7 +45,7 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = wat
     >
       {/* BOULDER IMAGE */}
       {full && (
-        <div className="w-full bg-dark rounded-t-lg relative overflow-hidden max-h-[40%]">
+        <div className="flex w-full bg-dark rounded-t-lg relative overflow-hidden max-h-[40%]">
           <ImageSlider 
             displayLeftArrow={imageToDisplayIndex > 0 && !selectedTrack}
             displayRightArrow={imageToDisplayIndex < boulder.images.length - 1 && !selectedTrack}
