@@ -43,6 +43,7 @@ export function useMarker(options: google.maps.MarkerOptions, handlers: MarkerEv
                 }
             }
         }
+        
         return () => {
             for (const listener of listeners) {
                 listener.remove();
