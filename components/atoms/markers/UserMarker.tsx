@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { useCircle, useDevice, useDeviceOrientation, useMarker } from "helpers";
 import { MarkerEventHandlers } from "types";
 import { UserPositionContext } from "components/molecules/map/UserPositionProvider";
@@ -13,12 +13,27 @@ export const UserMarker: React.FC<UserMarkerProps> = (props: UserMarkerProps) =>
     const center = position ? { lng: position[0], lat: position[1] } : { lng: 0, lat: 0};
     const device = useDevice();
 
+    const [isIos, setIsIos] = useState(false); 
+    useEffect(() => {
+        setIsIos([
+            'iPad Simulator',
+            'iPhone Simulator',
+            'iPod Simulator',
+            'iPad',
+            'iPhone',
+            'iPod'
+          ].includes(navigator.platform)
+          // iPad on iOS 13 detection
+          || (navigator.userAgent.includes("Mac") && "ontouchend" in document));        
+    }, []);
+
     const { orientation, requestAccess, revokeAccess, error } = useDeviceOrientation();
-    console.log(orientation);
+    const [requested, setRequested] = useState(!isIos);
+
     useEffect(() => {
         const handleClick = () => {
-            console.log("request");
-          requestAccess();
+          const result = requestAccess();
+          setRequested(true);
         }
         window.addEventListener('click', handleClick);
         return () => window.removeEventListener('click', handleClick);
@@ -63,8 +78,8 @@ export const UserMarker: React.FC<UserMarkerProps> = (props: UserMarkerProps) =>
     const headingIcon: google.maps.Symbol = {
         path: window.google.maps.SymbolPath.FORWARD_OPEN_ARROW,
         rotation: orientation?.alpha ? (- orientation.alpha) : 0,
-        scale: orientation ? 6 : 0, 
-        fillOpacity: (orientation && device === 'mobile') ? 0.4 : 0,
+        scale: requested ? 6 : 0, 
+        fillOpacity: (requested && device === 'mobile') ? 0.4 : 0,
         fillColor: '#4EABFF',
         strokeWeight: 0,
     };
