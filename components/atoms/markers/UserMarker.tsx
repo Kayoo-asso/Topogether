@@ -1,18 +1,17 @@
 import React, { useCallback, useContext } from "react";
-import { MapContext, useCircle, useDevice, useDeviceOrientation, useMarker } from "helpers";
+import { useCircle, useDevice, useMarker } from "helpers";
 import { MarkerEventHandlers } from "types";
 import { UserPositionContext } from "components/molecules/map/UserPositionProvider";
 
 interface UserMarkerProps {
     onClick?: (e: google.maps.MapMouseEvent) => void,
+    orientation: any,
 }
 
 export const UserMarker: React.FC<UserMarkerProps> = (props: UserMarkerProps) => {
     const { position, accuracy } = useContext(UserPositionContext);
     const center = position ? { lng: position[0], lat: position[1] } : { lng: 0, lat: 0};
     const device = useDevice();
-
-    const { orientation, requestAccess, revokeAccess, error } = useDeviceOrientation();
 
     // Main blue dot
     const mainIcon: google.maps.Symbol = {
@@ -31,10 +30,7 @@ export const UserMarker: React.FC<UserMarkerProps> = (props: UserMarkerProps) =>
         position: center
     };
     const mainHandlers: MarkerEventHandlers = {
-        onClick: useCallback((e) => {
-            requestAccess();
-            props.onClick && props.onClick(e)
-        }, [props.onClick]),
+        onClick: useCallback((e) => props.onClick && props.onClick(e), [props.onClick]),
     }
     useMarker(mainOptions, mainHandlers);
 
@@ -56,9 +52,9 @@ export const UserMarker: React.FC<UserMarkerProps> = (props: UserMarkerProps) =>
     if (device === 'mobile') {
         const headingIcon: google.maps.Symbol = {
             path: window.google.maps.SymbolPath.FORWARD_OPEN_ARROW,
-            rotation: orientation?.alpha ? (- orientation.alpha) : 0,
-            scale: orientation ? 6 : 0, 
-            fillOpacity: orientation ? 0.4 : 0,
+            rotation: props.orientation?.alpha ? (- props.orientation.alpha) : 0,
+            scale: props.orientation ? 6 : 0, 
+            fillOpacity: props.orientation ? 0.4 : 0,
             fillColor: '#4EABFF',
             strokeWeight: 0,
         };
