@@ -28,7 +28,7 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = wat
   const boulder = props.boulder();
   const selectedTrack = props.selectedTrack();
 
-  const [imageToDisplayIndex, setImageToDisplayIndex] = useState(0);
+  const [imageToDisplayIdx, setImageToDisplayIdx] = useState(0);
 
   const [displayPhantomTracks, setDisplayPhantomTracks] = useState(false);
   const displayedTracks = useMemo(() => boulder.tracks
@@ -37,19 +37,19 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = wat
     [boulder.tracks, props.topoCreatorId, officialTrackTab],
   );
 
-  const sortBoulderImages = (boulder: Boulder) => {
-    console.log(boulder.images);
-    const buff: { img: Image, idx: number }[] = [];
-    for (const img of boulder.images) {
-      buff.push({
-        img,
-        idx: boulder.tracks.find(t => !!t.lines?.find(l => l.imageId === img.id))?.index || boulder.images.length + 1
-      })
-    }
-    const newImgs = buff.sort((b1, b2) => (b2.idx - b1.idx)).map(b => b.img);
-    console.log(newImgs);
-  }
-  sortBoulderImages(boulder);
+  // const sortBoulderImages = (boulder: Boulder) => {
+  //   console.log(boulder.images);
+  //   const buff: { img: Image, idx: number }[] = [];
+  //   for (const img of boulder.images) {
+  //     buff.push({
+  //       img,
+  //       idx: boulder.tracks.find(t => !!t.lines?.find(l => l.imageId === img.id))?.index || boulder.images.length + 1
+  //     })
+  //   }
+  //   const newImgs = buff.sort((b1, b2) => (b2.idx - b1.idx)).map(b => b.img);
+  //   console.log(newImgs);
+  // }
+  // sortBoulderImages(boulder);
 
   return (
     <SlideoverMobile
@@ -62,10 +62,14 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = wat
         <div className="flex w-full bg-dark rounded-t-lg relative overflow-hidden max-h-[40%]">
           <ImageSlider 
             images={boulder.images}
+            imageToDisplayIdx={imageToDisplayIdx}
             tracks={boulder.tracks.quarks()}
             selectedTrack={props.selectedTrack}
             displayPhantomTracks={displayPhantomTracks}
-            onChange={(idx) => props.setCurrentImage(boulder.images[idx])}
+            onChange={(idx) => {
+              setImageToDisplayIdx(idx);
+              props.setCurrentImage(boulder.images[idx]);
+            }}
           />
         </div>
       )}
@@ -148,7 +152,7 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = wat
                   const newImageIndex = boulder.images.findIndex(img => img.id === trackQuark().lines?.at(0).imageId);
                   if (newImageIndex > -1) {
                     props.setCurrentImage(boulder.images[newImageIndex]);
-                    setImageToDisplayIndex(newImageIndex);
+                    setImageToDisplayIdx(newImageIndex);
                   }
                   props.selectedTrack.select(trackQuark);
                 }

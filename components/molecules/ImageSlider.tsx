@@ -1,31 +1,58 @@
 import { Quark, QuarkIter, SelectQuarkNullable } from 'helpers/quarky';
-import React from 'react';
+import React, { ReactElement, useState } from 'react';
 import { Image, Track } from 'types';
 import { TracksImage } from './TracksImage';
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 import { Carousel } from 'react-responsive-carousel';
+import { Portal } from 'helpers';
 
 interface ImageSliderProps {
-    images?: Image[],
+    images: Image[],
+    imageToDisplayIdx: number
     tracks: QuarkIter<Quark<Track>>,
     selectedTrack?: SelectQuarkNullable<Track>;
     displayPhantomTracks?: boolean,
+    modalable?: boolean
     onChange?: (idx: number, item: React.ReactNode) => void,
 }
 
 export const ImageSlider: React.FC<ImageSliderProps> = ({
     displayPhantomTracks = false,
+    modalable = true,
     ...props
 }: ImageSliderProps) => {
 
-    return (
-        <>
-            {/* Force to hardcode some css (in carouselStyle.css) */}
-            <Carousel
+    const [portalOpen, setPortalOpen] = useState(false);
+    const wrapPortal = (elts: ReactElement<any, any>) => {
+        if (modalable && props.images) {
+            return (
+                <>
+                    {elts}
+                    <Portal open={portalOpen}>
+                        <div 
+                            className="absolute top-0 left-0 flex z-full w-screen h-screen bg-black bg-opacity-80" 
+                            onClick={(e) => {
+                                const eltUnder = e.target as EventTarget & SVGSVGElement;
+                                if (eltUnder.nodeName === 'svg') setPortalOpen(false);
+                            }}
+                        >
+                            {elts}
+                        </div>
+                    </Portal>
+                </>
+            )}
+        else return elts;
+    }
+
+    return (   
+        wrapPortal(      
+            <Carousel /* Force to hardcode some css (in carouselStyle.css) */
                 infiniteLoop
                 showStatus={false}
                 showThumbs={false}
                 showIndicators={!!(props.images && props.images.length > 1)}
+                useKeyboardArrows
+                selectedItem={props.imageToDisplayIdx}
                 onChange={props.onChange}
             >
                 {props.images?.map(img => {
@@ -36,14 +63,13 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
                             image={img}
                             tracks={props.tracks}
                             selectedTrack={props.selectedTrack}
-                            displayPhantomTracks
+                            displayPhantomTracks={displayPhantomTracks}
                             displayTracksDetails={props.selectedTrack && !!props.selectedTrack()?.id}
-                            modalable
+                            onImageClick={() => setPortalOpen(true)}
                         />
                     )
-                })}
-                
+                })}            
             </Carousel>
-        </>
+        )
     )
 }
