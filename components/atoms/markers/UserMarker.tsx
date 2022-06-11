@@ -31,14 +31,14 @@ export const UserMarker: React.FC<UserMarkerProps> = (props: UserMarkerProps) =>
     console.log(orientation);
     // const [requested, setRequested] = useState(!isIos);
 
-    // useEffect(() => {
-    //     const handleClick = () => {
-    //       const result = requestAccess();
-    //     //   setRequested(true);
-    //     }
-    //     window.addEventListener('click', handleClick);
-    //     return () => window.removeEventListener('click', handleClick);
-    //   }, []);
+    useEffect(() => {
+        const handleClick = () => {
+          const result = requestAccess();
+        //   setRequested(true);
+        }
+        window.addEventListener('click', handleClick);
+        return () => window.removeEventListener('click', handleClick);
+      }, []);
 
     // Main blue dot
     const mainIcon: google.maps.Symbol = {
