@@ -36,7 +36,6 @@ type MapControlProps = React.PropsWithChildren<Omit<MapProps, 'center' | 'zoom'>
     onMapZoomChange?: (zoom: number | undefined) => void,
 }>
 
-
 export const MapControl = watchDependencies<google.maps.Map, MapControlProps>(({
     initialZoom = 8,
     displaySearchbar = true,
@@ -49,7 +48,6 @@ export const MapControl = watchDependencies<google.maps.Map, MapControlProps>(({
     const { position } = useContext(UserPositionContext);
 
     const { orientation, requestAccess, revokeAccess, error } = useDeviceOrientation();
-    requestAccess();
 
     const [coords, setCoords] = useState<GeoCoordinates>();
     useGeolocation({
@@ -165,6 +163,7 @@ export const MapControl = watchDependencies<google.maps.Map, MapControlProps>(({
                             props.onMapZoomChange(mapRef.current.getZoom());
                         }
                     }}
+                    onClick={(e) => requestAccess()}
                     onLoad={(map) => {
                         map.setZoom(initialZoom);
                         const locs = props.boundsTo;
