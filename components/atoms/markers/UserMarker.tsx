@@ -10,8 +10,9 @@ interface UserMarkerProps {
 export const UserMarker: React.FC<UserMarkerProps> = (props: UserMarkerProps) => {
     const { position, accuracy } = useContext(UserPositionContext);
     const center = position ? { lng: position[0], lat: position[1] } : { lng: 0, lat: 0};
-    const device = useDevice();
+    // const device = useDevice();
 
+    console.log("user marker");
     const { orientation, requestAccess, revokeAccess, error } = useDeviceOrientation();
     requestAccess();
 
@@ -51,7 +52,7 @@ export const UserMarker: React.FC<UserMarkerProps> = (props: UserMarkerProps) =>
 
 
     // Heading
-    if (device === 'mobile') {
+    // if (device === 'mobile') {
         const headingIcon: google.maps.Symbol = {
             path: window.google.maps.SymbolPath.FORWARD_OPEN_ARROW,
             rotation: orientation?.alpha ? (- orientation.alpha) : 0,
@@ -69,7 +70,7 @@ export const UserMarker: React.FC<UserMarkerProps> = (props: UserMarkerProps) =>
         };
         const headingHandlers: MarkerEventHandlers = {}
         useMarker(headingOptions, headingHandlers);
-    }
+    // }
 
     return null;
 };
