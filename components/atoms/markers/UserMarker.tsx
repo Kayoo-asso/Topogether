@@ -11,12 +11,12 @@ export const UserMarker: React.FC<UserMarkerProps> = (props: UserMarkerProps) =>
     const { position, accuracy } = useContext(UserPositionContext);
     const center = position ? { lng: position[0], lat: position[1] } : { lng: 0, lat: 0};
     const device = useDevice();
-    const orientation = useContext(OrientationContext);
+    // const orientation = useContext(OrientationContext);
 
-    const [alpha, setAlpha] = useState(orientation?.alpha || 0);
-    useEffect(() => {
-        if (orientation?.alpha) setAlpha(orientation.alpha);
-    }, [orientation]);
+    // const [alpha, setAlpha] = useState(orientation?.alpha || 0);
+    // useEffect(() => {
+    //     if (orientation?.alpha) setAlpha(orientation.alpha);
+    // }, [orientation]);
 
     // Main blue dot
     const mainIcon: google.maps.Symbol = {
@@ -54,23 +54,23 @@ export const UserMarker: React.FC<UserMarkerProps> = (props: UserMarkerProps) =>
 
 
     // Heading
-    const headingIcon: google.maps.Symbol = {
-        path: window.google.maps.SymbolPath.FORWARD_OPEN_ARROW,
-        rotation: alpha ? (360 - alpha) : 0,
-        scale: alpha ? 6 : 0, 
-        fillOpacity: (alpha && device === "mobile") ? 0.4 : 0,
-        fillColor: '#4EABFF',
-        strokeWeight: 0,
-    };
-    const headingOptions: google.maps.MarkerOptions = {
-        icon: headingIcon,
-        zIndex: 3,
-        cursor: 'inherit',
-        label: '',
-        position: center
-    };
-    const headingHandlers: MarkerEventHandlers = {}
-    useMarker(headingOptions, headingHandlers);
+    // const headingIcon: google.maps.Symbol = {
+    //     path: window.google.maps.SymbolPath.FORWARD_OPEN_ARROW,
+    //     rotation: alpha ? (360 - alpha) : 0,
+    //     scale: alpha ? 6 : 0, 
+    //     fillOpacity: (alpha && device === "mobile") ? 0.4 : 0,
+    //     fillColor: '#4EABFF',
+    //     strokeWeight: 0,
+    // };
+    // const headingOptions: google.maps.MarkerOptions = {
+    //     icon: headingIcon,
+    //     zIndex: 3,
+    //     cursor: 'inherit',
+    //     label: '',
+    //     position: center
+    // };
+    // const headingHandlers: MarkerEventHandlers = {}
+    // useMarker(headingOptions, headingHandlers);
 
     return null;
 };
