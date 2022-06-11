@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
-import { useCircle, useDevice, useDeviceOrientation, useMarker } from "helpers";
+import { OrientationContext, useCircle, useDevice, useDeviceOrientation, useMarker } from "helpers";
 import { MarkerEventHandlers } from "types";
 import { UserPositionContext } from "components/molecules/map/UserPositionProvider";
 
@@ -11,21 +11,23 @@ export const UserMarker: React.FC<UserMarkerProps> = (props: UserMarkerProps) =>
     const { position, accuracy } = useContext(UserPositionContext);
     const center = position ? { lng: position[0], lat: position[1] } : { lng: 0, lat: 0};
     const device = useDevice();
+    const alpha = useContext(OrientationContext);
+    console.log(alpha);
 
-    const { orientation, requestAccess, revokeAccess, error } = useDeviceOrientation();
-    const [alpha, setAlpha] = useState(0);
+    // const { orientation, requestAccess, revokeAccess, error } = useDeviceOrientation();
+    // const [alpha, setAlpha] = useState(0);
 
-    useEffect(() => {
-        if (orientation?.alpha) setAlpha(orientation.alpha);
-    }, [orientation])
+    // useEffect(() => {
+    //     if (orientation?.alpha) setAlpha(orientation.alpha);
+    // }, [orientation])
 
-    useEffect(() => {
-        const handleClick = () => {
-          requestAccess();
-        }
-        window.addEventListener('click', handleClick);
-        return () => window.removeEventListener('click', handleClick);
-      }, []);
+    // useEffect(() => {
+    //     const handleClick = () => {
+    //       if (!alpha) requestAccess();
+    //     }
+    //     window.addEventListener('click', handleClick);
+    //     return () => window.removeEventListener('click', handleClick);
+    //   }, []);
 
     // Main blue dot
     const mainIcon: google.maps.Symbol = {

@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import 'styles/globals.css';
 import App, { AppInitialProps } from 'next/app';
 import type { AppProps, AppContext } from 'next/app';
 import Head from 'next/head';
-import { DeviceContext, Device } from 'helpers';
+import { DeviceContext, Device, useDeviceOrientation, OrientationContext } from 'helpers';
 import { ShellMobile } from 'components/layouts';
 import useDimensions from 'react-cool-dimensions';
 import { getServerUser } from 'helpers/getServerUser';
@@ -38,6 +38,15 @@ const CustomApp = ({ Component, pageProps, session, initialDevice }: Props) => {
   const firstRender = useFirstRender();
   const device = firstRender ? initialDevice : currentBreakpoint as Device;
 
+  const { orientation, requestAccess, revokeAccess, error } = useDeviceOrientation();
+  useEffect(() => {
+    const handleClick = () => {
+      if (!orientation) requestAccess();
+    }
+    window.addEventListener('click', handleClick);
+    return () => window.removeEventListener('click', handleClick);
+  }, []);
+
   return (
     <>
       <Head>
@@ -67,20 +76,22 @@ const CustomApp = ({ Component, pageProps, session, initialDevice }: Props) => {
       <AuthProvider initial={session}>
         <UserPositionProvider>
           <DeviceContext.Provider value={device}>
-            <div ref={observe} className="w-screen h-screen flex items-end flex-col">
-              <div id={(device === 'mobile' && process.env.NODE_ENV !== 'development') ? "standalone" : ''} className='w-full h-full'>
-                <div id="content" className="flex-1 w-screen absolute bg-grey-light flex flex-col h-full md:h-screen overflow-hidden">
-                  <Component {...pageProps} />
+            <OrientationContext.Provider value={orientation?.alpha || null}>
+              <div ref={observe} className="w-screen h-screen flex items-end flex-col">
+                <div id={(device === 'mobile' && process.env.NODE_ENV !== 'development') ? "standalone" : ''} className='w-full h-full'>
+                  <div id="content" className="flex-1 w-screen absolute bg-grey-light flex flex-col h-full md:h-screen overflow-hidden">
+                    <Component {...pageProps} />
+                  </div>
+                  <div id="footer" className="bg-dark z-500 absolute bottom-0 h-shell md:hidden">
+                    <ShellMobile />
+                  </div>
                 </div>
-                <div id="footer" className="bg-dark z-500 absolute bottom-0 h-shell md:hidden">
-                  <ShellMobile />
-                </div>
-              </div>
 
-              {device === 'mobile' && process.env.NODE_ENV !== 'development' &&
-                <div id="no-standalone" className='z-full'><NoStandalone /></div>
-              }
-            </div>
+                {device === 'mobile' && process.env.NODE_ENV !== 'development' &&
+                  <div id="no-standalone" className='z-full'><NoStandalone /></div>
+                }
+              </div>
+            </OrientationContext.Provider>
           </DeviceContext.Provider>
         </UserPositionProvider>
       </AuthProvider>
