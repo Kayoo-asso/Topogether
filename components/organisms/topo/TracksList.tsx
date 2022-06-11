@@ -35,7 +35,7 @@ export const TracksList: React.FC<TracksListProps> = watchDependencies((props: T
         return (
           <div
             key={track.id}
-            className="px-5 py-5 md:py-3 flex flex-col border-b border-grey-light cursor-pointer md:hover:bg-grey-superlight"
+            className={"px-5 py-5 md:py-3 flex flex-col border-b border-grey-light cursor-pointer md:hover:bg-grey-superlight" + (props.selectedTrack() ? (props.selectedTrack()!.id !== track.id ? " opacity-40" : "") : "")}
             onClick={() => props.onTrackClick(trackQuark)}
           >
             <div className='flex flex-row w-full items-center'>
@@ -65,23 +65,31 @@ export const TracksList: React.FC<TracksListProps> = watchDependencies((props: T
 
             {props.selectedTrack()?.id === track.id && device === 'mobile' &&
               <>
-                <div className='mt-4'>
-                  {track.description}
-                </div>
-                <div className='flex flex-row gap-2 justify-between mt-4'>
-                  <div className="flex flex-col w-1/3">
-                    <div className="ktext-subtitle">Techniques</div>
-                     {listFlags(track.techniques!, ClimbTechniquesName).join(', ')}
+                {track.description &&
+                  <div className='mt-4'>
+                    {track.description}
                   </div>
+                }
+                {(track.techniques || track.reception || track.orientation) &&
+                  <div className='flex flex-row gap-2 justify-between mt-4'>
+                    <div className="flex flex-col w-1/3">
+                      {track.techniques &&
+                        <>
+                          <div className="ktext-subtitle">Techniques</div>
+                          {listFlags(track.techniques!, ClimbTechniquesName).join(', ')}
+                        </>
+                      }
+                    </div>
 
-                  <div className="flex flex-col w-1/3">
-                    <div><span className="ktext-subtitle">Réception : </span>{ReceptionName[track.reception!]}</div>
-                  </div>
+                    <div className="flex flex-col w-1/3">
+                      {track.reception && <div><span className="ktext-subtitle">Réception : </span>{ReceptionName[track.reception!]}</div>}
+                    </div>
 
-                  <div className="flex flex-col w-1/3">
-                    <div><span className="ktext-subtitle">Orientation :</span>{OrientationName[track.orientation!]}</div>
+                    <div className="flex flex-col w-1/3">
+                      {track.orientation && <div><span className="ktext-subtitle">Orientation :</span>{OrientationName[track.orientation!]}</div>}
+                    </div>
                   </div>
-                </div>
+                }
               </>
             }
           </div>  

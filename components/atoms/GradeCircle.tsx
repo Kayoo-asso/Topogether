@@ -57,7 +57,11 @@ export const GradeCircle: React.FC<GradeCircleProps> = ({
     <div
       className={`relative box-border flex items-center text-center justify-center rounded-full \
       ${colorStyles} ${sizeStyles} ${props.className ? props.className : ''}${props.onClick ? ' cursor-pointer' : ' cursor-default'}`}
-      onClick={() => props.onClick && props.onClick(props.grade) }
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        props.onClick && props.onClick(props.grade);
+      }}
       onKeyUp={() => props.onClick && props.onClick(props.grade) }
       role={props.onClick ? "button" : "contentinfo"}
       tabIndex={0}

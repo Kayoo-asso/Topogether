@@ -42,21 +42,11 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
       {/* BOULDER IMAGE */}
       {full && (
         <div className="flex w-full bg-dark rounded-t-lg relative overflow-hidden max-h-[40%]">
-          <ImageSlider 
-            displayLeftArrow={imageToDisplayIndex > 0 && !selectedTrack}
-            displayRightArrow={imageToDisplayIndex < boulder.images.length - 1 && !selectedTrack}
-            image={props.currentImage}
+          <ImageSlider
+            images={boulder.images}
             tracks={boulder.tracks.quarks()}
             selectedTrack={props.selectedTrack}
-            // displayPhantomTracks={displayPhantomTracks}
-            onLeftArrowClick={() => {
-              props.setCurrentImage(boulder.images[imageToDisplayIndex - 1]);
-              setImageToDisplayIndex(idx => idx - 1)
-            }}
-            onRightArrowClick={() => {
-              props.setCurrentImage(boulder.images[imageToDisplayIndex + 1]);
-              setImageToDisplayIndex(idx => idx + 1)
-            }}
+            onChange={(idx) => props.setCurrentImage(boulder.images[idx])}
           />
         </div>
       )}

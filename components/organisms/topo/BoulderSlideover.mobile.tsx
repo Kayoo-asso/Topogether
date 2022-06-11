@@ -1,5 +1,5 @@
 import React, { Dispatch, SetStateAction, useMemo, useState } from 'react';
-import { GradeScale, LikeButton, SlideoverMobile, Show, ImageSlider, ImageSlider2 } from 'components';
+import { GradeScale, LikeButton, SlideoverMobile, Show, ImageSlider } from 'components';
 import { Boulder, Image, Track, UUID } from 'types';
 import { buildBoulderGradeHistogram } from 'helpers';
 import { Quark, watchDependencies, SelectQuarkNullable } from 'helpers/quarky';
@@ -37,6 +37,20 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = wat
     [boulder.tracks, props.topoCreatorId, officialTrackTab],
   );
 
+  const sortBoulderImages = (boulder: Boulder) => {
+    console.log(boulder.images);
+    const buff: { img: Image, idx: number }[] = [];
+    for (const img of boulder.images) {
+      buff.push({
+        img,
+        idx: boulder.tracks.find(t => !!t.lines?.find(l => l.imageId === img.id))?.index || boulder.images.length + 1
+      })
+    }
+    const newImgs = buff.sort((b1, b2) => (b2.idx - b1.idx)).map(b => b.img);
+    console.log(newImgs);
+  }
+  sortBoulderImages(boulder);
+
   return (
     <SlideoverMobile
       persistent
@@ -46,33 +60,13 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = wat
       {/* BOULDER IMAGE */}
       {full && (
         <div className="flex w-full bg-dark rounded-t-lg relative overflow-hidden max-h-[40%]">
-          {false && <ImageSlider 
-            displayLeftArrow={imageToDisplayIndex > 0 && !selectedTrack}
-            displayRightArrow={imageToDisplayIndex < boulder.images.length - 1 && !selectedTrack}
-            image={props.currentImage}
-            tracks={boulder.tracks.quarks()}
-            selectedTrack={props.selectedTrack}
-            displayPhantomTracks={displayPhantomTracks}
-            onLeftArrowClick={() => {
-              props.setCurrentImage(boulder.images[imageToDisplayIndex - 1]);
-              setImageToDisplayIndex(idx => idx - 1)
-            }}
-            onRightArrowClick={() => {
-              props.setCurrentImage(boulder.images[imageToDisplayIndex + 1]);
-              setImageToDisplayIndex(idx => idx + 1)
-            }}
-          />}
-          {true &&
-          <ImageSlider2 
+          <ImageSlider 
             images={boulder.images}
             tracks={boulder.tracks.quarks()}
             selectedTrack={props.selectedTrack}
             displayPhantomTracks={displayPhantomTracks}
-            onChange={(idx) => {
-              console.log(boulder.images[idx]);
-              props.setCurrentImage(boulder.images[idx])}}
+            onChange={(idx) => props.setCurrentImage(boulder.images[idx])}
           />
-          }
         </div>
       )}
 

@@ -49,7 +49,7 @@ export const TracksListBuilder: React.FC<TracksListBuilderProps> = watchDependen
           return (
             <div
               key={track.id}
-              className="px-5 py-5 md:py-3 flex flex-col border-b border-grey-light cursor-pointer md:hover:bg-grey-superlight"
+              className={"px-5 py-5 md:py-3 flex flex-col border-b border-grey-light cursor-pointer md:hover:bg-grey-superlight" + (props.selectedTrack() ? (props.selectedTrack()!.id !== track.id ? " opacity-40" : "") : "")}
               onClick={() => props.onTrackClick(trackQuark)}
             >
               <div className='flex flex-row w-full items-center'>
