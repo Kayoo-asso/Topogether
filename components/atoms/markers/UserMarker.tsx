@@ -50,13 +50,12 @@ export const UserMarker: React.FC<UserMarkerProps> = (props: UserMarkerProps) =>
 
     // Heading
     const headingIcon: google.maps.Symbol = {
-        path: window.google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+        path: window.google.maps.SymbolPath.FORWARD_OPEN_ARROW,
         rotation: props.orientation?.alpha ? (270 - props.orientation.alpha) : 0,
         scale: props.orientation ? 6 : 0, 
         fillOpacity: props.orientation ? 0.4 : 0,
         fillColor: '#4EABFF',
         strokeWeight: 0,
-        anchor: new google.maps.Point(0, 49)
     };
     const headingOptions: google.maps.MarkerOptions = {
         icon: headingIcon,
