@@ -11,14 +11,12 @@ export const UserMarker: React.FC<UserMarkerProps> = (props: UserMarkerProps) =>
     const { position, accuracy } = useContext(UserPositionContext);
     const center = position ? { lng: position[0], lat: position[1] } : { lng: 0, lat: 0};
     const device = useDevice();
-    const orientation = useContext(OrientationContext); 
-    console.log(orientation);
-    
-    const [alpha, setAlpha] = useState(orientation?.alpha || 0);
+    const orientation = useContext(OrientationContext);
 
+    const [alpha, setAlpha] = useState(orientation?.alpha || 0);
     useEffect(() => {
         if (orientation?.alpha) setAlpha(orientation.alpha);
-    }, [orientation])
+    }, [orientation]);
 
     // Main blue dot
     const mainIcon: google.maps.Symbol = {
