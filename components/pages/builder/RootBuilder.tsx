@@ -19,6 +19,7 @@ import { LeftbarBuilderDesktop } from 'components/layouts/sidebars/LeftbarBuilde
 import { BoulderMarker, CreatingSectorAreaMarker, For, isMouseEvent, isPointerEvent, isTouchEvent, ParkingMarker, SectorAreaMarker, WaypointMarker } from 'components/atoms';
 import { filterBoulders, MapControl } from 'components/molecules';
 import { ModalRenameSector } from 'components/organisms/builder/ModalRenameSector';
+import { downloadTopoMap } from 'helpers/map/downloadMap';
 
 interface RootBuilderProps {
     topoQuark: Quark<Topo>,
@@ -39,6 +40,11 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
     const parkings = topo.parkings;
     const waypoints = topo.waypoints;
     const boulderOrder = useCreateDerivation(() => sortBoulders(topo.sectors, topo.lonelyBoulders));
+
+    // TODO: Remove
+    useEffect(() => {
+        downloadTopoMap(topo);
+    }, []);
 
     const mapRef = useRef<google.maps.Map>(null);
     const multipleImageInputRef = useRef<HTMLInputElement>(null);
@@ -251,7 +257,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
         const handleKeyUp = (e: KeyboardEvent) => {
             if (e.code === "Space" && tempCurrentTool) {
                 setCurrentTool(tempCurrentTool);
-                setTempCurrentTool(undefined); 
+                setTempCurrentTool(undefined);
             }
         }
         window.addEventListener('keydown', handleKeyDown);
@@ -322,8 +328,8 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                 backLink="/builder/dashboard"
                 onBackClick={displayDrawer ? () => setDisplayDrawer(false) :
                     selectedBoulder() ? () => { selectedTrack.select(undefined); selectedBoulder.select(undefined); } :
-                    selectedParking() ? () => selectedParking.select(undefined) :
-                    selectedWaypoint() ? () => selectedWaypoint.select(undefined) : undefined
+                        selectedParking() ? () => selectedParking.select(undefined) :
+                            selectedWaypoint() ? () => selectedWaypoint.select(undefined) : undefined
                 }
                 menuOptions={[
                     { value: 'Infos du topo', action: () => setCurrentDisplay('INFO') },
@@ -678,7 +684,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                 )}
             </Show>
 
-             <Show when={() => [displayModalSectorRename, selectedSector()] as const}>
+            <Show when={() => [displayModalSectorRename, selectedSector()] as const}>
                 {([, sSector]) => {
                     return (
                         <ModalRenameSector
@@ -721,7 +727,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                     if (selectedWaypoint.quark() === waypoint) selectedWaypoint.select(undefined);
                 }}
             >Êtes-vous sûr de vouloir supprimer le point de repère ?</ModalDeleteWaypoint>
-            
+
             <Loader />
         </>
     );
