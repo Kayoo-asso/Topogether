@@ -49,7 +49,7 @@ export const MapControl = watchDependencies<google.maps.Map, MapControlProps>(({
     const { position } = useContext(UserPositionContext);
 
     const { orientation, requestAccess, revokeAccess, error } = useDeviceOrientation();
-    requestAccess();
+    // requestAccess();
 
     const [coords, setCoords] = useState<GeoCoordinates>();
     useGeolocation({
