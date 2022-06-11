@@ -14,7 +14,7 @@ export const UserMarker: React.FC<UserMarkerProps> = (props: UserMarkerProps) =>
     const { orientation, requestAccess, revokeAccess, error } = useDeviceOrientation();
     useEffect(() => {
         requestAccess();
-    }, []);
+    }, [position]);
 
     // Main blue dot
     const mainIcon: google.maps.Symbol = {
