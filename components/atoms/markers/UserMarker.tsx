@@ -16,16 +16,12 @@ export const UserMarker: React.FC<UserMarkerProps> = (props: UserMarkerProps) =>
     const { orientation, requestAccess, revokeAccess, error } = useDeviceOrientation();
     
     useEffect(() => {
-        const handleKeydown = () => {
-          console.log('ok');
+        const handleClick = () => {
           requestAccess();
         }
-        window.addEventListener('click', handleKeydown);
-        return () => window.removeEventListener('click', handleKeydown);
+        window.addEventListener('click', handleClick);
+        return () => window.removeEventListener('click', handleClick);
       }, []);
-    // window.onclick = requestAccess;
-    // const orientation = props.orientation;
-    // console.log(props.orientation);
 
     // Main blue dot
     const mainIcon: google.maps.Symbol = {
@@ -63,25 +59,23 @@ export const UserMarker: React.FC<UserMarkerProps> = (props: UserMarkerProps) =>
 
 
     // Heading
-    if (device === 'mobile') {
-        const headingIcon: google.maps.Symbol = {
-            path: window.google.maps.SymbolPath.FORWARD_OPEN_ARROW,
-            rotation: orientation?.alpha ? (- orientation.alpha) : 0,
-            scale: orientation ? 6 : 0, 
-            fillOpacity: orientation ? 0.4 : 0,
-            fillColor: '#4EABFF',
-            strokeWeight: 0,
-        };
-        const headingOptions: google.maps.MarkerOptions = {
-            icon: headingIcon,
-            zIndex: 3,
-            cursor: 'inherit',
-            label: '',
-            position: center
-        };
-        const headingHandlers: MarkerEventHandlers = {}
-        useMarker(headingOptions, headingHandlers);
-    }
+    const headingIcon: google.maps.Symbol = {
+        path: window.google.maps.SymbolPath.FORWARD_OPEN_ARROW,
+        rotation: orientation?.alpha ? (- orientation.alpha) : 0,
+        scale: orientation ? 6 : 0, 
+        fillOpacity: (orientation && device === 'mobile') ? 0.4 : 0,
+        fillColor: '#4EABFF',
+        strokeWeight: 0,
+    };
+    const headingOptions: google.maps.MarkerOptions = {
+        icon: headingIcon,
+        zIndex: 3,
+        cursor: 'inherit',
+        label: '',
+        position: center
+    };
+    const headingHandlers: MarkerEventHandlers = {}
+    useMarker(headingOptions, headingHandlers);
 
     return null;
 };
