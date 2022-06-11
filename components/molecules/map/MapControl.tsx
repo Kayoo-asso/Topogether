@@ -49,6 +49,7 @@ export const MapControl = watchDependencies<google.maps.Map, MapControlProps>(({
     const { position } = useContext(UserPositionContext);
 
     const { orientation, requestAccess, revokeAccess, error } = useDeviceOrientation();
+    requestAccess();
 
     const [coords, setCoords] = useState<GeoCoordinates>();
     useGeolocation({
@@ -181,7 +182,6 @@ export const MapControl = watchDependencies<google.maps.Map, MapControlProps>(({
                         else {
                             map.setCenter(toLatLng(fontainebleauLocation));
                         }
-                        requestAccess();
                     }}
                     {...props}
                 >
@@ -189,7 +189,10 @@ export const MapControl = watchDependencies<google.maps.Map, MapControlProps>(({
 
                     {displayUserMarker &&
                         <UserMarker 
-                            onClick={props.onUserMarkerClick}
+                            onClick={() => {
+                                requestAccess();
+                                props.onUserMarkerClick
+                            }}
                             orientation={orientation}
                         />
                     }
