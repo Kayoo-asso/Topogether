@@ -11,15 +11,16 @@ export const UserMarker: React.FC<UserMarkerProps> = (props: UserMarkerProps) =>
     const { position, accuracy } = useContext(UserPositionContext);
     const center = position ? { lng: position[0], lat: position[1] } : { lng: 0, lat: 0};
     const device = useDevice();
-    const alpha = useContext(OrientationContext);
-    console.log(alpha);
+    const orientation = useContext(OrientationContext);
 
     // const { orientation, requestAccess, revokeAccess, error } = useDeviceOrientation();
-    // const [alpha, setAlpha] = useState(0);
+    const [alpha, setAlpha] = useState(0);
 
-    // useEffect(() => {
-    //     if (orientation?.alpha) setAlpha(orientation.alpha);
-    // }, [orientation])
+    useEffect(() => {
+        if (orientation) setAlpha(orientation);
+    }, [orientation]);
+
+    console.log(alpha);
 
     // useEffect(() => {
     //     const handleClick = () => {
