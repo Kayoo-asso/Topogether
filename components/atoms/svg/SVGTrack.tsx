@@ -30,9 +30,9 @@ export const SVGTrack: React.FC<SVGTrackProps> = watchDependencies(({
     const track = props.track();
     const colorNumber = track.grade ? gradeToLightGrade(track.grade) : 'grey';
 
-    const linePointSize = device === 'desktop' ? 120 : 180;
-    const handPointSize = device === 'desktop' ? 200 : 280;
-    const footPointSize = device === 'desktop' ? 300 : 420;
+    const linePointSize = device === 'desktop' ? 100 : 180;
+    const handPointSize = device === 'desktop' ? 110 : 280;
+    const footPointSize = device === 'desktop' ? 180 : 420;
 
     const constructNodes = (quarkLine: Quark<Line>) => {
         const line = quarkLine();
