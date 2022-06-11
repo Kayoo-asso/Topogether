@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
-import { OrientationContext, useCircle, useDevice, useDeviceOrientation, useMarker } from "helpers";
+import { OrientationContext, useCircle, useDevice, useMarker } from "helpers";
 import { MarkerEventHandlers } from "types";
 import { UserPositionContext } from "components/molecules/map/UserPositionProvider";
 
@@ -13,21 +13,11 @@ export const UserMarker: React.FC<UserMarkerProps> = (props: UserMarkerProps) =>
     const device = useDevice();
     const orientation = useContext(OrientationContext); 
 
-    // const { orientation, requestAccess, revokeAccess, error } = useDeviceOrientation();
-    const [alpha, setAlpha] = useState(0);
-    console.log(alpha);
+    const [alpha, setAlpha] = useState(orientation?.alpha || 0);
 
     useEffect(() => {
         if (orientation?.alpha) setAlpha(orientation.alpha);
     }, [orientation])
-
-    // useEffect(() => {
-    //     const handleClick = () => {
-    //       if (!alpha) requestAccess();
-    //     }
-    //     window.addEventListener('click', handleClick);
-    //     return () => window.removeEventListener('click', handleClick);
-    //   }, []);
 
     // Main blue dot
     const mainIcon: google.maps.Symbol = {
