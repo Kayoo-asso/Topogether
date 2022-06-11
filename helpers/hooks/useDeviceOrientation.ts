@@ -37,15 +37,14 @@ export const useDeviceOrientation = (): UseDeviceOrientationData => {
       return false;
     }
 
-    console.log(DeviceOrientationEvent);
     if (
-      DeviceOrientationEvent.requestPermission
-      && typeof DeviceMotionEvent.requestPermission === 'function'
+      DeviceOrientationEvent
+      && typeof (DeviceMotionEvent as any).requestPermission === 'function'
     ) {
       console.log("2")
       let permission: PermissionState;
       try {
-        permission = await DeviceOrientationEvent.requestPermission();
+        permission = await (DeviceOrientationEvent as any).requestPermission();
       } catch (err: any) {
         setError(err);
         return false;
