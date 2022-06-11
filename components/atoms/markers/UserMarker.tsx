@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useRef } from "react";
+import React, { useCallback, useContext } from "react";
 import { useCircle, useDevice, useDeviceOrientation, useMarker } from "helpers";
 import { MarkerEventHandlers } from "types";
 import { UserPositionContext } from "components/molecules/map/UserPositionProvider";
@@ -11,13 +11,6 @@ export const UserMarker: React.FC<UserMarkerProps> = (props: UserMarkerProps) =>
     const { position, accuracy } = useContext(UserPositionContext);
     const center = position ? { lng: position[0], lat: position[1] } : { lng: 0, lat: 0};
     const device = useDevice();
-
-    const buttonRef = useRef<HTMLButtonElement>(null);
-    
-    // useEffect(() => {
-    //     console.log(buttonRef.current);
-    //     if (buttonRef.current) setTimeout(() => buttonRef.current!.click(), 100);
-    // }, [buttonRef.current])
 
     // Main blue dot
     const mainIcon: google.maps.Symbol = {
@@ -77,9 +70,7 @@ export const UserMarker: React.FC<UserMarkerProps> = (props: UserMarkerProps) =>
         useMarker(headingOptions, headingHandlers);
     }
 
-    return (
-        <button className="hidden" onClick={requestAccess} ref={buttonRef} />
-    );
+    return null;
 };
 
 UserMarker.displayName = "UserMarker";
