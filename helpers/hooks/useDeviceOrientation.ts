@@ -18,11 +18,11 @@ export const useDeviceOrientation = (): UseDeviceOrientationData => {
   const [orientation, setOrientation] = useState<DeviceOrientation | null>(null);
 
   const onDeviceOrientation = (event: DeviceOrientationEvent): void => {
-    setOrientation({
-      alpha: event.alpha || orientation?.alpha || null,
-      beta: event.beta || orientation?.beta || null,
-      gamma: event.gamma || orientation?.gamma || null,
-    });
+    setOrientation(o => ({
+      alpha: event.alpha || o?.alpha || null,
+      beta: event.beta || o?.beta || null,
+      gamma: event.gamma || o?.gamma || null,
+    }));
   };
 
   const revokeAccess = async (): Promise<void> => {
