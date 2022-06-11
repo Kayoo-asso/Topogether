@@ -13,31 +13,33 @@ export const UserMarker: React.FC<UserMarkerProps> = (props: UserMarkerProps) =>
     const center = position ? { lng: position[0], lat: position[1] } : { lng: 0, lat: 0};
     const device = useDevice();
 
-    const [isIos, setIsIos] = useState(false); 
-    useEffect(() => {
-        setIsIos([
-            'iPad Simulator',
-            'iPhone Simulator',
-            'iPod Simulator',
-            'iPad',
-            'iPhone',
-            'iPod'
-          ].includes(navigator.platform)
-          // iPad on iOS 13 detection
-          || (navigator.userAgent.includes("Mac") && "ontouchend" in document));        
-    }, []);
+    // const [isIos, setIsIos] = useState(false); 
+    // useEffect(() => {
+    //     setIsIos([
+    //         'iPad Simulator',
+    //         'iPhone Simulator',
+    //         'iPod Simulator',
+    //         'iPad',
+    //         'iPhone',
+    //         'iPod'
+    //       ].includes(navigator.platform)
+    //       // iPad on iOS 13 detection
+    //       || (navigator.userAgent.includes("Mac") && "ontouchend" in document));        
+    // }, []);
 
     const { orientation, requestAccess, revokeAccess, error } = useDeviceOrientation();
-    const [requested, setRequested] = useState(!isIos);
+    console.log(orientation);
+    requestAccess();
+    // const [requested, setRequested] = useState(!isIos);
 
-    useEffect(() => {
-        const handleClick = () => {
-          const result = requestAccess();
-          setRequested(true);
-        }
-        window.addEventListener('click', handleClick);
-        return () => window.removeEventListener('click', handleClick);
-      }, []);
+    // useEffect(() => {
+    //     const handleClick = () => {
+    //       const result = requestAccess();
+    //     //   setRequested(true);
+    //     }
+    //     window.addEventListener('click', handleClick);
+    //     return () => window.removeEventListener('click', handleClick);
+    //   }, []);
 
     // Main blue dot
     const mainIcon: google.maps.Symbol = {
@@ -78,8 +80,8 @@ export const UserMarker: React.FC<UserMarkerProps> = (props: UserMarkerProps) =>
     const headingIcon: google.maps.Symbol = {
         path: window.google.maps.SymbolPath.FORWARD_OPEN_ARROW,
         rotation: orientation?.alpha ? (- orientation.alpha) : 0,
-        scale: requested ? 6 : 0, 
-        fillOpacity: (requested && device === 'mobile') ? 0.4 : 0,
+        scale: orientation ? 6 : 0, 
+        fillOpacity: orientation ? 0.4 : 0,
         fillColor: '#4EABFF',
         strokeWeight: 0,
     };
