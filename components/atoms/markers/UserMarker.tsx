@@ -1,4 +1,4 @@
-import React, { useCallback, useContext } from "react";
+import React, { useCallback, useContext, useEffect } from "react";
 import { useCircle, useDeviceOrientation, useMarker } from "helpers";
 import { MarkerEventHandlers } from "types";
 import { UserPositionContext } from "components/molecules/map/UserPositionProvider";
@@ -12,7 +12,12 @@ export const UserMarker: React.FC<UserMarkerProps> = (props: UserMarkerProps) =>
     const center = position ? { lng: position[0], lat: position[1] } : { lng: 0, lat: 0};
 
     const { orientation, requestAccess, revokeAccess, error } = useDeviceOrientation();
-    const result = requestAccess();
+    useEffect(() => {
+        const getAccess = async () => {
+            await requestAccess();
+        }
+        getAccess().catch(console.error);
+    }, []);
 
     // Main blue dot
     const mainIcon: google.maps.Symbol = {
@@ -49,7 +54,7 @@ export const UserMarker: React.FC<UserMarkerProps> = (props: UserMarkerProps) =>
 
     // Heading
     const headingIcon: google.maps.Symbol = {
-        path: window.google.maps.SymbolPath.BACKWARD_CLOSED_ARROW,
+        path: window.google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
         rotation: orientation?.alpha ? (360 - orientation.alpha) : 0,
         scale: orientation ? 6 : 0, 
         fillOpacity: orientation ? 0.4 : 0,
@@ -60,6 +65,7 @@ export const UserMarker: React.FC<UserMarkerProps> = (props: UserMarkerProps) =>
         icon: headingIcon,
         zIndex: 3,
         cursor: 'inherit',
+        label: '',
         position: center
     };
     const headingHandlers: MarkerEventHandlers = {}
