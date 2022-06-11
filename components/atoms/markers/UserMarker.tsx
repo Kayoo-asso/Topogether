@@ -13,12 +13,11 @@ export const UserMarker: React.FC<UserMarkerProps> = (props: UserMarkerProps) =>
     const device = useDevice();
 
     const buttonRef = useRef<HTMLButtonElement>(null);
-    const { orientation, requestAccess, revokeAccess, error } = useDeviceOrientation();
-    // requestAccess();
-    useEffect(() => {
-        console.log(buttonRef.current);
-        if (buttonRef.current) setTimeout(() => buttonRef.current!.click(), 100);
-    }, [buttonRef.current])
+    
+    // useEffect(() => {
+    //     console.log(buttonRef.current);
+    //     if (buttonRef.current) setTimeout(() => buttonRef.current!.click(), 100);
+    // }, [buttonRef.current])
 
     // Main blue dot
     const mainIcon: google.maps.Symbol = {
@@ -56,7 +55,9 @@ export const UserMarker: React.FC<UserMarkerProps> = (props: UserMarkerProps) =>
 
 
     // Heading
+    const { orientation, requestAccess, revokeAccess, error } = useDeviceOrientation();
     if (device === 'mobile') {
+        requestAccess();
         const headingIcon: google.maps.Symbol = {
             path: window.google.maps.SymbolPath.FORWARD_OPEN_ARROW,
             rotation: orientation?.alpha ? (- orientation.alpha) : 0,
