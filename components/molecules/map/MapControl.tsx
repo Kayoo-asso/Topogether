@@ -4,7 +4,7 @@ import { Map, RoundButton, SatelliteButton, UserMarker } from 'components';
 import { BoulderFilterOptions, BoulderFilters, MapSearchbarProps, TopoFilterOptions, TopoFilters } from '.';
 import { ItemSelectorMobile, MapSearchbar } from '..';
 import { Boulder, GeoCoordinates, Image, MapProps, MapToolEnum, Position, Topo } from 'types';
-import { fontainebleauLocation, googleGetPlace, setReactRef, toLatLng } from 'helpers';
+import { fontainebleauLocation, googleGetPlace, setReactRef, toLatLng, useDeviceOrientation } from 'helpers';
 import { Quark, watchDependencies } from 'helpers/quarky';
 import SectorIcon from 'assets/icons/sector.svg';
 import CenterIcon from 'assets/icons/center.svg';
@@ -47,6 +47,8 @@ export const MapControl = watchDependencies<google.maps.Map, MapControlProps>(({
 }, parentRef) => {
     const mapRef = useRef<google.maps.Map>(null);
     const { position } = useContext(UserPositionContext);
+
+    const { orientation, requestAccess, revokeAccess, error } = useDeviceOrientation();
 
     const [coords, setCoords] = useState<GeoCoordinates>();
     useGeolocation({
@@ -179,13 +181,17 @@ export const MapControl = watchDependencies<google.maps.Map, MapControlProps>(({
                         else {
                             map.setCenter(toLatLng(fontainebleauLocation));
                         }
+                        requestAccess();
                     }}
                     {...props}
                 >
                     {props.children}
 
                     {displayUserMarker &&
-                        <UserMarker onClick={props.onUserMarkerClick} />
+                        <UserMarker 
+                            onClick={props.onUserMarkerClick}
+                            orientation={orientation}
+                        />
                     }
                 </Map>
             </Wrapper >
