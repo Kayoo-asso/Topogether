@@ -5,15 +5,14 @@ import { UserPositionContext } from "components/molecules/map/UserPositionProvid
 
 interface UserMarkerProps {
     onClick?: (e: google.maps.MapMouseEvent) => void,
-    orientation: any,
 }
 
 export const UserMarker: React.FC<UserMarkerProps> = (props: UserMarkerProps) => {
     const { position, accuracy } = useContext(UserPositionContext);
     const center = position ? { lng: position[0], lat: position[1] } : { lng: 0, lat: 0};
 
-    // const { orientation, requestAccess, revokeAccess, error } = useDeviceOrientation();
-    // setTimeout(() => requestAccess(), 10);
+    const { orientation, requestAccess, revokeAccess, error } = useDeviceOrientation();
+    setTimeout(() => requestAccess(), 100);
 
     // Main blue dot
     const mainIcon: google.maps.Symbol = {
@@ -33,6 +32,7 @@ export const UserMarker: React.FC<UserMarkerProps> = (props: UserMarkerProps) =>
     };
     const mainHandlers: MarkerEventHandlers = {
         onClick: useCallback((e) => props.onClick && props.onClick(e), [props.onClick]),
+        // onDoubleClick: useCallback((e) => requestAccess(), [])
     }
     useMarker(mainOptions, mainHandlers);
 
@@ -51,9 +51,9 @@ export const UserMarker: React.FC<UserMarkerProps> = (props: UserMarkerProps) =>
     // Heading
     const headingIcon: google.maps.Symbol = {
         path: window.google.maps.SymbolPath.FORWARD_OPEN_ARROW,
-        rotation: props.orientation?.alpha ? (270 - props.orientation.alpha) : 0,
-        scale: props.orientation ? 6 : 0, 
-        fillOpacity: props.orientation ? 0.4 : 0,
+        rotation: orientation?.alpha ? (90 - orientation.alpha) : 0,
+        scale: orientation ? 6 : 0, 
+        fillOpacity: orientation ? 0.4 : 0,
         fillColor: '#4EABFF',
         strokeWeight: 0,
     };
