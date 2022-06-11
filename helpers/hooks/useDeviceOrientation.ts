@@ -37,7 +37,7 @@ export const useDeviceOrientation = (): UseDeviceOrientationData => {
       return false;
     }
     console.log("1");
-    if ((DeviceOrientationEvent as any).requestPermission && typeof (DeviceMotionEvent as any).requestPermission === 'function') {
+    if (typeof (DeviceMotionEvent as any).requestPermission === 'function') {
       let permission: PermissionState;
       try {
         permission = await (DeviceOrientationEvent as any).requestPermission();

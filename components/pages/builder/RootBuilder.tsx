@@ -19,7 +19,7 @@ import { LeftbarBuilderDesktop } from 'components/layouts/sidebars/LeftbarBuilde
 import { BoulderMarker, CreatingSectorAreaMarker, For, isMouseEvent, isPointerEvent, isTouchEvent, ParkingMarker, SectorAreaMarker, WaypointMarker } from 'components/atoms';
 import { filterBoulders, MapControl } from 'components/molecules';
 import { ModalRenameSector } from 'components/organisms/builder/ModalRenameSector';
-import { downloadTopoMap } from 'helpers/map/downloadMap';
+import { downloadTopoMap } from 'helpers/map/downloadTopoMap';
 
 interface RootBuilderProps {
     topoQuark: Quark<Topo>,
@@ -42,9 +42,9 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
     const boulderOrder = useCreateDerivation(() => sortBoulders(topo.sectors, topo.lonelyBoulders));
 
     // TODO: Remove
-    useEffect(() => {
-        downloadTopoMap(topo);
-    }, []);
+    // useEffect(() => {
+    //     downloadTopoMap(topo);
+    // }, []);
 
     const mapRef = useRef<google.maps.Map>(null);
     const multipleImageInputRef = useRef<HTMLInputElement>(null);
