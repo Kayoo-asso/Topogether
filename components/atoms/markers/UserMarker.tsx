@@ -12,7 +12,7 @@ export const UserMarker: React.FC<UserMarkerProps> = (props: UserMarkerProps) =>
     const center = position ? { lng: position[0], lat: position[1] } : { lng: 0, lat: 0};
 
     const { orientation, requestAccess, revokeAccess, error } = useDeviceOrientation();
-    setTimeout(() => requestAccess(), 100);
+    // requestAccess()
 
     // Main blue dot
     const mainIcon: google.maps.Symbol = {
@@ -32,7 +32,7 @@ export const UserMarker: React.FC<UserMarkerProps> = (props: UserMarkerProps) =>
     };
     const mainHandlers: MarkerEventHandlers = {
         onClick: useCallback((e) => props.onClick && props.onClick(e), [props.onClick]),
-        // onDoubleClick: useCallback((e) => requestAccess(), [])
+        onDoubleClick: useCallback((e) => requestAccess(), [])
     }
     useMarker(mainOptions, mainHandlers);
 
