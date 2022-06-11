@@ -1,5 +1,5 @@
-import React, { useCallback, useContext, useEffect } from "react";
-import { useCircle, useDeviceOrientation, useMarker } from "helpers";
+import React, { useCallback, useContext, useEffect, useRef } from "react";
+import { useCircle, useDevice, useDeviceOrientation, useMarker } from "helpers";
 import { MarkerEventHandlers } from "types";
 import { UserPositionContext } from "components/molecules/map/UserPositionProvider";
 
@@ -10,10 +10,15 @@ interface UserMarkerProps {
 export const UserMarker: React.FC<UserMarkerProps> = (props: UserMarkerProps) => {
     const { position, accuracy } = useContext(UserPositionContext);
     const center = position ? { lng: position[0], lat: position[1] } : { lng: 0, lat: 0};
+    const device = useDevice();
 
+    const buttonRef = useRef<HTMLButtonElement>(null);
     const { orientation, requestAccess, revokeAccess, error } = useDeviceOrientation();
-    requestAccess();
-
+    // requestAccess();
+    useEffect(() => {
+        console.log(buttonRef.current);
+        if (buttonRef.current) buttonRef.current.click();
+    }, [buttonRef.current])
 
     // Main blue dot
     const mainIcon: google.maps.Symbol = {
@@ -37,6 +42,7 @@ export const UserMarker: React.FC<UserMarkerProps> = (props: UserMarkerProps) =>
     useMarker(mainOptions, mainHandlers);
 
 
+    //Precision circle
     const circleOptions: google.maps.CircleOptions = {
         center,
         radius: accuracy,
@@ -48,26 +54,31 @@ export const UserMarker: React.FC<UserMarkerProps> = (props: UserMarkerProps) =>
     };
     useCircle(circleOptions);
 
-    // Heading
-    const headingIcon: google.maps.Symbol = {
-        path: window.google.maps.SymbolPath.FORWARD_OPEN_ARROW,
-        rotation: orientation?.alpha ? (- orientation.alpha) : 0,
-        scale: orientation ? 6 : 0, 
-        fillOpacity: orientation ? 0.4 : 0,
-        fillColor: '#4EABFF',
-        strokeWeight: 0,
-    };
-    const headingOptions: google.maps.MarkerOptions = {
-        icon: headingIcon,
-        zIndex: 3,
-        cursor: 'inherit',
-        label: '',
-        position: center
-    };
-    const headingHandlers: MarkerEventHandlers = {}
-    useMarker(headingOptions, headingHandlers);
 
-    return null;
+    // Heading
+    if (device === 'mobile') {
+        const headingIcon: google.maps.Symbol = {
+            path: window.google.maps.SymbolPath.FORWARD_OPEN_ARROW,
+            rotation: orientation?.alpha ? (- orientation.alpha) : 0,
+            scale: orientation ? 6 : 0, 
+            fillOpacity: orientation ? 0.4 : 0,
+            fillColor: '#4EABFF',
+            strokeWeight: 0,
+        };
+        const headingOptions: google.maps.MarkerOptions = {
+            icon: headingIcon,
+            zIndex: 3,
+            cursor: 'inherit',
+            label: '',
+            position: center
+        };
+        const headingHandlers: MarkerEventHandlers = {}
+        useMarker(headingOptions, headingHandlers);
+    }
+
+    return (
+        <button className="hidden" onClick={requestAccess} ref={buttonRef} />
+    );
 };
 
 UserMarker.displayName = "UserMarker";
