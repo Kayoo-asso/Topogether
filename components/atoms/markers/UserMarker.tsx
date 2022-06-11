@@ -1,5 +1,5 @@
 import React, { useCallback, useContext } from "react";
-import { useCircle, useMarker } from "helpers";
+import { useCircle, useDeviceOrientation, useMarker } from "helpers";
 import { MarkerEventHandlers } from "types";
 import { UserPositionContext } from "components/molecules/map/UserPositionProvider";
 
@@ -8,8 +8,11 @@ interface UserMarkerProps {
 }
 
 export const UserMarker: React.FC<UserMarkerProps> = (props: UserMarkerProps) => {
-    const { position, accuracy, heading } = useContext(UserPositionContext);
+    const { position, accuracy } = useContext(UserPositionContext);
     const center = position ? { lng: position[0], lat: position[1] } : { lng: 0, lat: 0};
+
+    const { orientation, requestAccess, revokeAccess, error } = useDeviceOrientation();
+    requestAccess();
 
     // Main blue dot
     const mainIcon: google.maps.Symbol = {
@@ -45,22 +48,22 @@ export const UserMarker: React.FC<UserMarkerProps> = (props: UserMarkerProps) =>
     useCircle(circleOptions);
 
     // Heading
-    // const headingIcon: google.maps.Symbol = {
-    //     path: window.google.maps.SymbolPath.BACKWARD_OPEN_ARROW,
-    //     rotation: heading || 0,
-    //     scale: heading ? 12 : 0, 
-    //     fillOpacity: heading ? 0.4 : 0,
-    //     fillColor: '#4EABFF',
-    //     strokeWeight: 0,
-    // };
-    // const headingOptions: google.maps.MarkerOptions = {
-    //     icon: headingIcon,
-    //     zIndex: 3,
-    //     cursor: 'inherit',
-    //     position: center
-    // };
-    // const headingHandlers: MarkerEventHandlers = {}
-    // useMarker(headingOptions, headingHandlers);
+    const headingIcon: google.maps.Symbol = {
+        path: window.google.maps.SymbolPath.FORWARD_OPEN_ARROW,
+        rotation: orientation?.alpha || 0,
+        scale: orientation ? 12 : 0, 
+        fillOpacity: orientation ? 0.4 : 0,
+        fillColor: '#4EABFF',
+        strokeWeight: 0,
+    };
+    const headingOptions: google.maps.MarkerOptions = {
+        icon: headingIcon,
+        zIndex: 3,
+        cursor: 'inherit',
+        position: center
+    };
+    const headingHandlers: MarkerEventHandlers = {}
+    useMarker(headingOptions, headingHandlers);
 
     return null;
 };

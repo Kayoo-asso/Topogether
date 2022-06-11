@@ -7,7 +7,6 @@ import { TracksList } from '..';
 import { CFImage } from 'components/atoms/CFImage';
 import ManyTracks from 'assets/icons/many-tracks.svg';
 import AddIcon from 'assets/icons/add.svg';
-import { useDeviceOrientation } from 'helpers';
 
 interface BoulderSlideoverMobileProps {
   boulder: Quark<Boulder>,
@@ -52,9 +51,6 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = wat
   // }
   // sortBoulderImages(boulder);
 
-  const { orientation, requestAccess, revokeAccess, error } = useDeviceOrientation();
-  requestAccess();
-
   return (
     <SlideoverMobile
       persistent
@@ -84,7 +80,6 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = wat
         <div className={`grid grid-cols-8 p-5 items-center ${full ? '' : ' mt-3'}`}>
           <div className="col-span-6">
             <div className="ktext-section-title">{boulder.name}</div>
-            <div className="ktext-section-title">Coucou : {orientation?.alpha}</div>
             {boulder.isHighball && full && <div className="ktext-base-little">High Ball</div>}
             {boulder.dangerousDescent && full && <div className="ktext-base-little">Descente dangereuse !</div>}
             {!full && (
