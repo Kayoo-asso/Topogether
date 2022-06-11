@@ -4,6 +4,7 @@ export * from './cards';
 export * from './drawer';
 
 export * from './ImageSlider';
+export * from './ImageSlider2';
 export * from './TracksImage';
 export * from './GradeScale';
 export * from './GradeHistogram';

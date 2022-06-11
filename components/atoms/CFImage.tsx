@@ -123,7 +123,7 @@ export const CFImage = forwardRef<HTMLImageElement, CFImageProps>(({
                         />
                     </div>
                 }
-                <QuickPinchZoom onUpdate={onPinchZoom}>
+                <QuickPinchZoom onUpdate={onPinchZoom} draggableUnZoomed={false}>
                     <img
                         ref={ref => {
                             setReactRef(imgRef, ref);
