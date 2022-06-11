@@ -14,9 +14,10 @@ export const UserMarker: React.FC<UserMarkerProps> = (props: UserMarkerProps) =>
     const device = useDevice();
 
     const { orientation, requestAccess, revokeAccess, error } = useDeviceOrientation();
-    
+    console.log(orientation);
     useEffect(() => {
         const handleClick = () => {
+            console.log("request");
           requestAccess();
         }
         window.addEventListener('click', handleClick);
