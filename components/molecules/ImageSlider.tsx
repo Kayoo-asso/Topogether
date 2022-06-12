@@ -5,6 +5,7 @@ import { TracksImage } from './TracksImage';
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 import { Carousel } from 'react-responsive-carousel';
 import { Portal } from 'helpers';
+import { CFImage } from 'components/atoms';
 
 interface ImageSliderProps {
     images: Image[],
@@ -44,7 +45,7 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
         else return elts;
     }
 
-    return (   
+    if (props.images.length > 0) return (   
         wrapPortal(      
             <Carousel /* Force to hardcode some css (in carouselStyle.css) */
                 infiniteLoop
@@ -71,5 +72,13 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
                 })}            
             </Carousel>
         )
+    )
+    else return (
+        <CFImage 
+            alt='default boulder'
+            sizeHint='100vw'
+            modalable={false}
+            zoomable={false}
+        />
     )
 }
