@@ -27,6 +27,7 @@ const NoStandalone: React.FC = () => {
     const [installPromptEvent, setInstallPromptEvent] = useState<BeforeInstallPromptEvent>();
     useEffect(() => {
         window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
             setInstallPromptEvent(e as BeforeInstallPromptEvent);
         });
     }, []);
