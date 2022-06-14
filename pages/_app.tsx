@@ -1,21 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import 'styles/globals.css';
-import App, { AppInitialProps } from 'next/app';
-import type { AppProps, AppContext } from 'next/app';
+import App from 'next/app';
+import type { AppProps, AppContext, AppInitialProps } from 'next/app';
 import Head from 'next/head';
-import { DeviceContext, Device, Portal } from 'helpers';
+import { Device, DeviceManager } from 'helpers';
 import { ShellMobile } from 'components/layouts';
-import useDimensions from 'react-cool-dimensions';
 import { getServerUser } from 'helpers/getServerUser';
 import { User } from 'types';
 import isMobile from 'ismobilejs';
-import { useFirstRender } from 'helpers/hooks/useFirstRender';
 import { resetServerContext } from 'react-beautiful-dnd';
 import { AuthProvider } from 'components/AuthProvider';
 import { parse } from 'cookie';
-import { UserPositionProvider } from 'components/molecules/map/UserPositionProvider';
-import NoStandalone from './NoStandalone';
-import { Button } from 'components';
+import { UserPositionProvider } from 'helpers/context/UserPositionProvider';
+import { ReactQueryProvider } from 'helpers/context/ReactQueryProvider';
 
 type CustomProps = {
   session: User | null,
@@ -25,20 +22,7 @@ type CustomProps = {
 type InitialProps = AppInitialProps & CustomProps;
 type Props = AppProps & CustomProps;
 
-const breakpoints: Record<Device, number> = {
-  mobile: 0,
-  desktop: 768
-};
-
 const CustomApp = ({ Component, pageProps, session, initialDevice }: Props) => {
-  const { observe, currentBreakpoint } = useDimensions({
-    breakpoints,
-    updateOnBreakpointChange: true
-  });
-
-  const firstRender = useFirstRender();
-  const device = firstRender ? initialDevice : currentBreakpoint as Device;
-
   return (
     <>
       <Head>
@@ -66,26 +50,20 @@ const CustomApp = ({ Component, pageProps, session, initialDevice }: Props) => {
 
       </Head>
 
-      <AuthProvider initial={session}>
-        <UserPositionProvider>
-          <DeviceContext.Provider value={device}>
-              <div ref={observe} className="w-screen h-screen flex items-end flex-col">
-                <div id={(device === 'mobile' && process.env.NODE_ENV !== 'development') ? "standalone" : ''} className='w-full h-full'>
-                  <div id="content" className="flex-1 w-screen absolute bg-grey-light flex flex-col h-full md:h-screen overflow-hidden">
-                    <Component {...pageProps} />
-                  </div>
-                  <div id="footer" className="bg-dark z-500 absolute bottom-0 h-shell md:hidden">
-                    <ShellMobile />
-                  </div>
-                </div>
-
-                {device === 'mobile' && process.env.NODE_ENV !== 'development' &&
-                  <div id="no-standalone" className='z-full'><NoStandalone /></div>
-                }
+      <ReactQueryProvider pageProps={pageProps}>
+        <AuthProvider initial={session}>
+          <UserPositionProvider>
+            <DeviceManager initialDevice={initialDevice}>
+              <div id="content" className="flex-1 w-screen absolute bg-grey-light flex flex-col h-full md:h-screen overflow-hidden">
+                <Component {...pageProps} />
               </div>
-          </DeviceContext.Provider>
-        </UserPositionProvider>
-      </AuthProvider>
+              <div id="footer" className="bg-dark z-500 absolute bottom-0 h-shell md:hidden">
+                <ShellMobile />
+              </div>
+            </DeviceManager>
+          </UserPositionProvider>
+        </AuthProvider>
+      </ReactQueryProvider>
     </>
   );
 };

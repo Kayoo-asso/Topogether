@@ -1,2 +1,2 @@
-export * from './DeviceContext';
+export * from './DeviceManager';
 export { MapContext } from './MapContext';

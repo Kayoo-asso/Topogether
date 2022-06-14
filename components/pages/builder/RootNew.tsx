@@ -9,7 +9,7 @@ import { useCreateQuark, watchDependencies } from 'helpers/quarky';
 import { selectOptions, TopoTypeName } from 'types/EnumNames';
 import { Header } from 'components/layouts/header/Header';
 import { CreatingTopoMarker } from 'components/atoms';
-import { UserPositionContext } from 'components/molecules/map/UserPositionProvider';
+import { UserPositionContext } from 'helpers/context/UserPositionProvider';
 
 interface RootNewProps {
     user: User,

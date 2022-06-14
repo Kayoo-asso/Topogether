@@ -34,6 +34,11 @@ Currently only available in French, sorry!
 - **Implement single-player offline mode**, with topo downloads and offline work. This will be done by hand, just storing full topos in IndexedDB, alongside a "diff tree" to extract exactly the entities that have been created / update / deleted when syncing.
 - Start working on [**offline + collaborative** using conflict-free replicated data types](https://erwinkn.com/getting-crdts-to-production/).
 
+### Steps to migrate out of Supabase client
+- Setup auth endpoints that set the Supabase JWT into a cookie and then give it back to the DB
+- Convert all Supabase client DB queries into plain SQL (especially getTopo), using postgres-js or Zapatos
+
+
 ## Future plans
 - Internationalization
 - React Native / Electron versions?
