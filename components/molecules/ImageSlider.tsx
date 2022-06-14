@@ -53,6 +53,7 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
                 showThumbs={false}
                 showIndicators={!!(props.images && props.images.length > 1)}
                 useKeyboardArrows
+                
                 selectedItem={props.imageToDisplayIdx}
                 onChange={props.onChange}
             >

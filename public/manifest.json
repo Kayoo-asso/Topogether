@@ -6,7 +6,7 @@
   "start_url": "/",
   "name": "Topogether",
   "short_name": "Topogether",
-  "description": "Des topos complets et collaboratifs",
+  "description": "Des topos gratuits, complets et collaboratifs",
   "icons": [
       {
           "src": "/assets/touch/icon-192x192.png",
@@ -27,6 +27,12 @@
           "src": "/assets/touch/icon-512x512.png",
           "sizes": "512x512",
           "type": "image/png"
-      }
+      },
+      {
+        "src": "/assets/touch/maskable_icon.png",
+        "sizes": "512x512",
+        "type": "image/png",
+        "purpose": "any maskable"
+    }
   ]
 }

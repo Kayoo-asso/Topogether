@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import NextImage from 'next/image';
 import { staticUrl } from 'helpers';
 import Share from 'assets/icons/share.svg';
+import { Button } from 'components';
 
 const NoStandalone: React.FC = () => {
     const [isIos, setIsIos] = useState(false); 
@@ -16,6 +17,16 @@ const NoStandalone: React.FC = () => {
           ].includes(navigator.platform)
           // iPad on iOS 13 detection
           || (navigator.userAgent.includes("Mac") && "ontouchend" in document));        
+    }, []);
+
+    const [installPromptOpen, setInstallPromptOpen] = useState(true);
+    let deferredPrompt: any;
+    useEffect(() => {
+        window.addEventListener('beforeinstallprompt', (e) => {
+            setInstallPromptOpen(true);
+            console.log("prompt");
+            deferredPrompt = e;
+        });
     }, []);
 
     return (
@@ -43,9 +54,24 @@ const NoStandalone: React.FC = () => {
                     <div>4. L'application est installée !</div>
                 </div>
             }
-            {!isIos &&
+            {!isIos && installPromptOpen &&
                 <>
-                    <div className="flex flex-row gap-2">1. Cliquer sur <strong>Installer </strong></div>    
+                    <div className="flex flex-row gap-2">1. Cliquer sur <strong>Installer </strong></div>
+                    <div>
+                        <Button
+                            content="Installer" 
+                            className="absolute z-1000"
+                            onClick={async () => {
+                                if (deferredPrompt) {
+                                    deferredPrompt.prompt();
+                                    const { outcome } = await deferredPrompt.userChoice;
+                                    if (outcome === 'accepted') {
+                                        deferredPrompt = null;
+                                    }
+                                }
+                            }}
+                        />
+                    </div>  
                     <div>2. Suivez les instructions</div>
                     <div>3. L'application est installée !</div>
                 </>

@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import 'styles/globals.css';
 import App, { AppInitialProps } from 'next/app';
 import type { AppProps, AppContext } from 'next/app';
 import Head from 'next/head';
-import { DeviceContext, Device } from 'helpers';
+import { DeviceContext, Device, Portal } from 'helpers';
 import { ShellMobile } from 'components/layouts';
 import useDimensions from 'react-cool-dimensions';
 import { getServerUser } from 'helpers/getServerUser';
@@ -15,6 +15,7 @@ import { AuthProvider } from 'components/AuthProvider';
 import { parse } from 'cookie';
 import { UserPositionProvider } from 'components/molecules/map/UserPositionProvider';
 import NoStandalone from './NoStandalone';
+import { Button } from 'components';
 
 type CustomProps = {
   session: User | null,
