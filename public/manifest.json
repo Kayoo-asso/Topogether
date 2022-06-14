@@ -29,7 +29,7 @@
           "type": "image/png"
       },
       {
-        "src": "/assets/touch/maskable_icon.png",
+        "src": "/assets/touch/maskable_icon512.png",
         "sizes": "512x512",
         "type": "image/png",
         "purpose": "any maskable"
