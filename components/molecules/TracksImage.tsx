@@ -4,7 +4,7 @@ import {
 } from 'types';
 import { Quark, QuarkIter, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
 import { CFImage } from 'components/atoms/CFImage';
-import { SourceSize } from 'helpers/variants';
+import { SourceSize } from 'helpers/images';
 import { SVGTrack } from 'components/atoms';
 import { getCoordsInViewbox, Portal } from 'helpers';
 import QuickPinchZoom, { make3dTransformValue } from "react-quick-pinch-zoom";

@@ -1,6 +1,5 @@
 import { Image } from "types";
-import { SourceSize, VariantWidths } from "helpers/variants";
-import { cloudflareUrl } from "helpers/cloudflareUrl";
+import { SourceSize, VariantWidths, cloudflareUrl } from "helpers/images";
 import { forwardRef, ImgHTMLAttributes, ReactElement, useCallback, useEffect, useRef, useState } from "react";
 import defaultKayoo from 'public/assets/img/Kayoo_defaut_image.png';
 import type { StaticImageData } from 'next/image';
@@ -92,13 +91,13 @@ export const CFImage = forwardRef<HTMLImageElement, CFImageProps>(({
         const defaultVariant = device === "mobile"
             ? 640
             : 1920; //TODO: optimize by checking size
-        const sources = VariantWidths.map(w => `${cloudflareUrl(image, w)} ${w}w`)
+        const sources = VariantWidths.map(w => `${cloudflareUrl(image.id, w)} ${w}w`)
         // note: check that width and height are not actual constraints,
         // only aspect ratio information
         width = defaultVariant;
         height = width / image.ratio;
         srcSet = sources.join();
-        src = cloudflareUrl(image, defaultVariant);
+        src = cloudflareUrl(image.id, defaultVariant);
         sizes = portalOpen ? '100vw'
         : typeof sizeHint === "string"
             ? sizeHint
