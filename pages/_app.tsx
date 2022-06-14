@@ -79,9 +79,9 @@ const CustomApp = ({ Component, pageProps, session, initialDevice }: Props) => {
                   </div>
                 </div>
 
-                {/* {device === 'mobile' && process.env.NODE_ENV !== 'development' &&
+                {device === 'mobile' && process.env.NODE_ENV !== 'development' &&
                   <div id="no-standalone" className='z-full'><NoStandalone /></div>
-                } */}
+                }
               </div>
           </DeviceContext.Provider>
         </UserPositionProvider>
