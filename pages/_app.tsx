@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import 'styles/globals.css';
 import App, { AppInitialProps } from 'next/app';
 import type { AppProps, AppContext } from 'next/app';
 import Head from 'next/head';
-import { DeviceContext, Device } from 'helpers';
+import { DeviceContext, Device, Portal } from 'helpers';
 import { ShellMobile } from 'components/layouts';
 import useDimensions from 'react-cool-dimensions';
 import { getServerUser } from 'helpers/getServerUser';
@@ -15,6 +15,7 @@ import { AuthProvider } from 'components/AuthProvider';
 import { parse } from 'cookie';
 import { UserPositionProvider } from 'components/molecules/map/UserPositionProvider';
 import NoStandalone from './NoStandalone';
+import { Button } from 'components';
 
 type CustomProps = {
   session: User | null,
@@ -47,7 +48,8 @@ const CustomApp = ({ Component, pageProps, session, initialDevice }: Props) => {
           name="viewport"
           content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no"
         />
-        <meta name="description" content="Des topos complets et collaboratifs" />
+        <meta name="description" content="Des topos gratuits, complets et collaboratifs" />
+        <meta name="theme-color" content="#04D98B" />
         <meta name="keywords" content="Escalade Climbing Topo Topographie Grimpe Cartographie" />
 
         <title>Topogether</title>

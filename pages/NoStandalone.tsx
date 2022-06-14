@@ -2,6 +2,12 @@ import React, { useEffect, useState } from 'react';
 import NextImage from 'next/image';
 import { staticUrl } from 'helpers';
 import Share from 'assets/icons/share.svg';
+import { Button } from 'components';
+
+type BeforeInstallPromptEvent = Event & {
+    prompt(): Promise<void>,
+    readonly userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>
+}
 
 const NoStandalone: React.FC = () => {
     const [isIos, setIsIos] = useState(false); 
@@ -16,6 +22,14 @@ const NoStandalone: React.FC = () => {
           ].includes(navigator.platform)
           // iPad on iOS 13 detection
           || (navigator.userAgent.includes("Mac") && "ontouchend" in document));        
+    }, []);
+
+    const [installPromptEvent, setInstallPromptEvent] = useState<BeforeInstallPromptEvent>();
+    useEffect(() => {
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            setInstallPromptEvent(e as BeforeInstallPromptEvent);
+        });
     }, []);
 
     return (
@@ -45,7 +59,23 @@ const NoStandalone: React.FC = () => {
             }
             {!isIos &&
                 <>
-                    <div className="flex flex-row gap-2">1. Cliquer sur <strong>Installer </strong></div>    
+                    <div className="flex flex-row gap-2">1. Cliquer sur <strong>Installer </strong></div>
+                    {installPromptEvent && 
+                        <div>
+                            <Button
+                                content="Installer"
+                                white
+                                onClick={async () => {
+                                    installPromptEvent.prompt();
+                                    // TODO: do something with installPromptEvent.userChoice;
+                                    // const { outcome } = await installPromptEvent.userChoice;
+
+                                    // can only use the installPromptEvent once
+                                    setInstallPromptEvent(undefined);
+                                }}
+                            />
+                        </div>
+                    }
                     <div>2. Suivez les instructions</div>
                     <div>3. L'application est installée !</div>
                 </>
