@@ -4,6 +4,11 @@ import { staticUrl } from 'helpers';
 import Share from 'assets/icons/share.svg';
 import { Button } from 'components';
 
+type BeforeInstallPromptEvent = Event & {
+    prompt(): Promise<void>,
+    readonly userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>
+}
+
 const NoStandalone: React.FC = () => {
     const [isIos, setIsIos] = useState(false); 
     useEffect(() => {
@@ -19,12 +24,10 @@ const NoStandalone: React.FC = () => {
           || (navigator.userAgent.includes("Mac") && "ontouchend" in document));        
     }, []);
 
-    const [installPromptOpen, setInstallPromptOpen] = useState(false);
-    let deferredPrompt: any;
+    const [installPromptEvent, setInstallPromptEvent] = useState<BeforeInstallPromptEvent>();
     useEffect(() => {
         window.addEventListener('beforeinstallprompt', (e) => {
-            setInstallPromptOpen(true);
-            deferredPrompt = e;
+            setInstallPromptEvent(e as BeforeInstallPromptEvent);
         });
     }, []);
 
@@ -56,19 +59,18 @@ const NoStandalone: React.FC = () => {
             {!isIos &&
                 <>
                     <div className="flex flex-row gap-2">1. Cliquer sur <strong>Installer </strong></div>
-                    {installPromptOpen && 
+                    {installPromptEvent && 
                         <div>
                             <Button
                                 content="Installer"
                                 white
                                 onClick={async () => {
-                                    if (deferredPrompt) {
-                                        deferredPrompt.prompt();
-                                        const { outcome } = await deferredPrompt.userChoice;
-                                        if (outcome === 'accepted') {
-                                            deferredPrompt = null;
-                                        }
-                                    }
+                                    installPromptEvent.prompt();
+                                    // TODO: do something with installPromptEvent.userChoice;
+                                    // const { outcome } = await installPromptEvent.userChoice;
+
+                                    // can only use the installPromptEvent once
+                                    setInstallPromptEvent(undefined);
                                 }}
                             />
                         </div>
