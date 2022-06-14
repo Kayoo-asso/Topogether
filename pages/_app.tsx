@@ -48,7 +48,8 @@ const CustomApp = ({ Component, pageProps, session, initialDevice }: Props) => {
           name="viewport"
           content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no"
         />
-        <meta name="description" content="Des topos complets et collaboratifs" />
+        <meta name="description" content="Des topos gratuits, complets et collaboratifs" />
+        <meta name="theme-color" content="#04D98B" />
         <meta name="keywords" content="Escalade Climbing Topo Topographie Grimpe Cartographie" />
 
         <title>Topogether</title>
@@ -69,18 +70,18 @@ const CustomApp = ({ Component, pageProps, session, initialDevice }: Props) => {
         <UserPositionProvider>
           <DeviceContext.Provider value={device}>
               <div ref={observe} className="w-screen h-screen flex items-end flex-col">
-                {/* <div id={(device === 'mobile' && process.env.NODE_ENV !== 'development') ? "standalone" : ''} className='w-full h-full'>
+                <div id={(device === 'mobile' && process.env.NODE_ENV !== 'development') ? "standalone" : ''} className='w-full h-full'>
                   <div id="content" className="flex-1 w-screen absolute bg-grey-light flex flex-col h-full md:h-screen overflow-hidden">
                     <Component {...pageProps} />
                   </div>
                   <div id="footer" className="bg-dark z-500 absolute bottom-0 h-shell md:hidden">
                     <ShellMobile />
                   </div>
-                </div> */}
+                </div>
 
-                {device === 'mobile' && process.env.NODE_ENV !== 'development' &&
+                {/* {device === 'mobile' && process.env.NODE_ENV !== 'development' &&
                   <div id="no-standalone" className='z-full'><NoStandalone /></div>
-                }
+                } */}
               </div>
           </DeviceContext.Provider>
         </UserPositionProvider>
