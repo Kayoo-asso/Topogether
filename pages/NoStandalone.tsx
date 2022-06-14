@@ -57,10 +57,9 @@ const NoStandalone: React.FC = () => {
                     <div>4. L'application est installée !</div>
                 </div>
             }
-            {!isIos &&
+            {!isIos && installPromptEvent &&
                 <>
                     <div className="flex flex-row gap-2">1. Cliquer sur <strong>Installer </strong></div>
-                    {installPromptEvent && 
                         <div>
                             <Button
                                 content="Installer"
@@ -71,13 +70,20 @@ const NoStandalone: React.FC = () => {
                                     // const { outcome } = await installPromptEvent.userChoice;
 
                                     // can only use the installPromptEvent once
-                                    setInstallPromptEvent(undefined);
+                                    // setInstallPromptEvent(null);
                                 }}
                             />
                         </div>
-                    }
                     <div>2. Suivez les instructions</div>
                     <div>3. L'application est installée !</div>
+                </>
+            }
+            {!isIos && !installPromptEvent &&
+                <>
+                    <div>1. Ouvrir les paramètres de la page</div>
+                    <div className="flex flex-row gap-2">2. Cliquer sur <strong>Installer l'application</strong></div>
+                    <div>3. Suivez les instructions</div>
+                    <div>4. L'application est installée !</div>
                 </>
             }
         </div>
