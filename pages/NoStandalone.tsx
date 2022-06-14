@@ -19,12 +19,11 @@ const NoStandalone: React.FC = () => {
           || (navigator.userAgent.includes("Mac") && "ontouchend" in document));        
     }, []);
 
-    const [installPromptOpen, setInstallPromptOpen] = useState(true);
+    const [installPromptOpen, setInstallPromptOpen] = useState(false);
     let deferredPrompt: any;
     useEffect(() => {
         window.addEventListener('beforeinstallprompt', (e) => {
             setInstallPromptOpen(true);
-            console.log("prompt");
             deferredPrompt = e;
         });
     }, []);
@@ -54,24 +53,26 @@ const NoStandalone: React.FC = () => {
                     <div>4. L'application est installée !</div>
                 </div>
             }
-            {!isIos && installPromptOpen &&
+            {!isIos &&
                 <>
                     <div className="flex flex-row gap-2">1. Cliquer sur <strong>Installer </strong></div>
-                    <div>
-                        <Button
-                            content="Installer" 
-                            className="absolute z-1000"
-                            onClick={async () => {
-                                if (deferredPrompt) {
-                                    deferredPrompt.prompt();
-                                    const { outcome } = await deferredPrompt.userChoice;
-                                    if (outcome === 'accepted') {
-                                        deferredPrompt = null;
+                    {installPromptOpen && 
+                        <div>
+                            <Button
+                                content="Installer"
+                                white
+                                onClick={async () => {
+                                    if (deferredPrompt) {
+                                        deferredPrompt.prompt();
+                                        const { outcome } = await deferredPrompt.userChoice;
+                                        if (outcome === 'accepted') {
+                                            deferredPrompt = null;
+                                        }
                                     }
-                                }
-                            }}
-                        />
-                    </div>  
+                                }}
+                            />
+                        </div>
+                    }
                     <div>2. Suivez les instructions</div>
                     <div>3. L'application est installée !</div>
                 </>
