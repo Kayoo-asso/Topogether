@@ -49,7 +49,8 @@ const handler: NextApiHandler = async (req, res) => {
     const uploads: UploadInfo[] = [];
     for (const uploadResult of results) {
         if (uploadResult.status === "rejected" || !uploadResult.value.success) {
-            console.error("Failed to get upload URL:", (uploadResult as any).reason || (uploadResult as any).value.errors);
+            // console.error("Failed to get upload URL:", (uploadResult as any).reason || (uploadResult as any).value.errors);
+            console.error("FAILURE:", uploadResult)
             res.status(400);
             res.json({ error: "Failed to retrieve all upload URLs from Cloudflare" });
             return;

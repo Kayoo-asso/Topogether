@@ -28,7 +28,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx"
-  ],
+, "plaiceholder.mjs"  ],
   "exclude": [
     "node_modules"
   ]

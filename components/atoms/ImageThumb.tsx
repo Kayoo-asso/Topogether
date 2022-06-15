@@ -4,7 +4,6 @@ import { Image, Track, UUID } from 'types';
 import { DeleteButton, TracksImage } from 'components';
 import useDimensions from 'react-cool-dimensions';
 import { Quark, QuarkIter, watchDependencies } from 'helpers/quarky';
-import { CFImage } from './CFImage';
 
 interface ImageThumbProps {
   image: Image,
@@ -47,19 +46,18 @@ export const ImageThumb: React.FC<ImageThumbProps> = watchDependencies(({
           />
         </div>
       }
-      {(props.tracks && props.tracks.toArray().length > 0) && 
+      {props.tracks && 
         <TracksImage 
           image={props.image}
           tracks={props.tracks}
           displayTracks
           displayTrackOrderIndexes={true}
           objectFit='contain'
-          sizeHint={`${containerWidth}px`}
           tracksWeight={60}
           zoomable={false}
         />
       }
-      {(!props.tracks || props.tracks.toArray().length < 1) && 
+      {/* {(!props.tracks || props.tracks.toArray().length < 1) && 
         <CFImage
           image={props.image}
           alt="user generated image"
@@ -68,7 +66,7 @@ export const ImageThumb: React.FC<ImageThumbProps> = watchDependencies(({
           sizeHint={`${containerWidth}px`}
           zoomable={false}
         />
-      }
+      } */}
     </div>
   );
 });

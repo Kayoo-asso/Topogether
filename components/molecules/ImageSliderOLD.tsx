@@ -32,7 +32,6 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
             }
 
             <TracksImage
-                sizeHint='100vw'
                 image={props.image}
                 tracks={props.tracks}
                 selectedTrack={props.selectedTrack}

@@ -26,7 +26,6 @@ export const ProfilePicture: React.FC<ProfilePictureProps> = ({
         objectFit='cover'
         alt="Photo de profil"
         sizeHint='25vw'
-        forceLoading={loading}
         defaultImage={defaultProfilePicture}
       />
     </div>

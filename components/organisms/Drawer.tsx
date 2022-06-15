@@ -146,7 +146,6 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies((props: DrawerPro
         {/* Same, we know absolute size, since both header + toolbar are 7vh each */}
         <div className="h-[84vh] flex bg-black b-opacity-90">
           <TracksImage
-            sizeHint='100vw'
             objectFit='contain'
             image={props.image}
             tracks={displayOtherTracks ? props.tracks.quarks() : new QuarkIter([props.selectedTrack.quark()!])}

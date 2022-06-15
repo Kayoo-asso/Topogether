@@ -1,13 +1,14 @@
 import { quark, Quark } from 'helpers/quarky';
 import { sync } from 'helpers/services';
-import { Name, Image, Description, Amenities, TopoStatus, TopoType, RockTypes, LightTopo } from 'types';
+import { Name, Image, Description, Amenities, TopoStatus, TopoType, RockTypes, LightTopo, UUID } from 'types';
 import { v4 as uuid } from 'uuid';
 
 export const images: Image[] = [
     // Topo image
     {
-        id: uuid(),
-        ratio: 16/9,
+        id: "08f005e1-d68d-439c-74c8-129393e10b00" as UUID,
+        ratio: 4592/3064,
+        placeholder: "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAALABADASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAABQYH/8QAJRAAAgEDAwMFAQAAAAAAAAAAAQMCBAURAAYSIVFhIiUxMkFx/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAL/xAAYEQEAAwEAAAAAAAAAAAAAAAABAAIRYf/aAAwDAQACEQMRAD8Ae3Jv1lRTKtAeyiDeTZvWzrL8/owcHznxqRVuaotgTG5zhc4ojN6JNl6pDEeWJdhkSGe2kV2i31m1qusfSJNWqhaxbox4TjKP1IIxjGsl2z7tNL7kTUtlFkJFhyCCBnp8ags5uxULh2f/2Q=="
     },
 ]
 

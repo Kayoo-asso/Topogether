@@ -62,7 +62,7 @@ export const TopoPreview: React.FC<TopoPreviewProps> = (props: TopoPreviewProps)
                         objectFit='cover'
                         className="flex"
                         alt="image principale du topo"
-                        sizeHint='70vw'
+                        sizeHint='100vw'
                         modalable
                     />
                 </div>

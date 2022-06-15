@@ -210,11 +210,17 @@ async function upload(
     method: "POST",
     body: data,
   });
+  const placeholderUrlRequest = fetch('/api/images/getPlaceholder', {
+    body: file
+  });
   const dimensionsRequest = imgDimensions(file);
-  const [upload, { width, height }] = await Promise.all([
+  const [upload, { width, height }, placeholderResponse] = await Promise.all([
     uploadRequest,
     dimensionsRequest,
+    placeholderUrlRequest
   ]);
+
+  console.log("Received getPlaceholder response:", await placeholderResponse.text())
   if (!upload.ok) {
     const error = {
       filename: file.name,

@@ -15,7 +15,6 @@ type TracksImageProps = React.PropsWithChildren<{
   selectedTrack?: SelectQuarkNullable<Track>,
   // 'fill' could be possible, but it distorts the aspect ratio
   objectFit?: 'contain' | 'cover',
-  sizeHint: SourceSize,
   displayTracks?: boolean,
   displayPhantomTracks?: boolean,
   displayTracksDetails?: boolean,
@@ -135,7 +134,8 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
         <div ref={imgRef} className={"relative h-full" + cssCursor}>
           <CFImage
             objectFit={objectFit}
-            sizeHint={portalOpen ? '100vw' : props.sizeHint}
+            // Only fetch a large image so that it's ready when the user clicks on it
+            sizeHint={'100vw'}
             image={props.image}
             alt={"Rocher avec tracé de voies"}
             className="flex justify-center"
