@@ -6,6 +6,9 @@ import { LightTopo, TopoStatus } from 'types';
 import { UserActionDropdown } from 'components/molecules/cards/UserActionDropdown';
 import { api } from 'helpers/services';
 import { watchDependencies } from 'helpers/quarky';
+import AddIcon from 'assets/icons/add.svg';
+import NextImage from 'next/image';
+import Link from 'next/link';
 
 interface RootDashboardProps {
     lightTopos: LightTopo[],
@@ -71,51 +74,71 @@ export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies((pr
           />
   
           <div ref={ref} className="bg-white w-full overflow-y-auto h-contentPlusHeader md:h-contentPlusShell overflow-x-hidden pl-[1%] pb-16">
-            <div className="px-4 md:px-8 py-6 flex flex-row-reverse justify-between items-center">
-              <Button 
-                content="Créer un topo" 
-                href="/builder/new"
-                useLoaderOnClick
-              />
+            <div className="px-4 md:px-8 py-6 flex justify-between items-center">
               <div className="md:hidden ktext-section-title text-center">Mes topos</div>
+              {lightTopos.length > 0 &&
+                <Button 
+                  content="Créer un topo" 
+                  href="/builder/new"
+                  useLoaderOnClick
+                />
+              } 
             </div>
-            <TopoCardList
-              topos={draftLightTopos}
-              status={TopoStatus.Draft}
-              clickable='builder'
-              title={(
-                <div className="text-second-light ktext-section-title px-4 md:px-8">
-                  Brouillons
+            {lightTopos.length > 0 &&
+              <>
+                <TopoCardList
+                  topos={draftLightTopos}
+                  status={TopoStatus.Draft}
+                  clickable='builder'
+                  title={(
+                    <div className="text-second-light ktext-section-title px-4 md:px-8">
+                      Brouillons
+                    </div>
+                  )}
+                  lastCard={<AddTopoCard />}
+                  onContextMenu={onContextMenu}
+                  onClick={showLoader}
+                />
+      
+                <TopoCardList
+                  topos={submittedLightTopos}
+                  status={TopoStatus.Submitted}
+                  title={(
+                    <div className="text-third-light ktext-section-title px-4 md:px-8">
+                      En attente de validation
+                    </div>
+                  )}
+                  onContextMenu={onContextMenu}
+                />
+      
+                <TopoCardList
+                  topos={validatedLightTopos}
+                  status={TopoStatus.Validated}
+                  clickable='topo'
+                  title={(
+                    <div className="text-main ktext-section-title px-4 md:px-8">
+                      Validés
+                    </div>
+                  )}
+                  onContextMenu={onContextMenu}
+                  onClick={showLoader}
+                />
+              </>
+            }
+            {lightTopos.length === 0 &&
+              <div className='flex justify-center relative w-full h-[70vh]'>
+                <div className='w-[90%] h-full flex items-center relative rounded overflow-hidden bg-grey-superlight'>
+                  <Link href="/builder/new">
+                    <a className="w-full flex flex-col items-center" onClick={showLoader}>
+                      <AddIcon
+                        className='stroke-grey-medium fill-white h-16 w-16 stroke-[0.25px]'
+                      />
+                      <span>Créer un topo</span>
+                    </a>
+                  </Link>
                 </div>
-              )}
-              lastCard={<AddTopoCard />}
-              onContextMenu={onContextMenu}
-              onClick={(topo) => showLoader()}
-            />
-  
-            <TopoCardList
-              topos={submittedLightTopos}
-              status={TopoStatus.Submitted}
-              title={(
-                <div className="text-third-light ktext-section-title px-4 md:px-8">
-                  En attente de validation
-                </div>
-              )}
-              onContextMenu={onContextMenu}
-            />
-  
-            <TopoCardList
-              topos={validatedLightTopos}
-              status={TopoStatus.Validated}
-              clickable='topo'
-              title={(
-                <div className="text-main ktext-section-title px-4 md:px-8">
-                  Validés
-                </div>
-              )}
-              onContextMenu={onContextMenu}
-              onClick={(topo) => showLoader()}
-            />
+              </div>
+            }
           </div>
         </div>
 

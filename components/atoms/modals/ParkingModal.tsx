@@ -1,4 +1,4 @@
-import { Portal, useDevice } from 'helpers';
+import { Portal, useDevice, useIsIos } from 'helpers';
 import launchNavigation from 'helpers/map/launchNavigation';
 import React, { useState } from 'react';
 import { GeoCoordinates } from 'types';
@@ -12,6 +12,7 @@ interface ParkingModalProps {
 
 export const ParkingModal: React.FC<ParkingModalProps> = (props: ParkingModalProps) => {
     const device = useDevice();
+    const isIos = useIsIos();
     const [flashMessage, setFlashMessage] = useState<string>();
 
     return (
@@ -30,14 +31,16 @@ export const ParkingModal: React.FC<ParkingModalProps> = (props: ParkingModalPro
                                 props.onClose();
                             }}
                         >Google Maps</div>
-                        <div 
-                            className='py-5 border-b border-grey-light' 
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                launchNavigation(props.parkingLocation, 'apple', device)
-                                props.onClose();
-                            }}
-                        >Apple Maps</div>
+                        {isIos && 
+                            <div 
+                                className='py-5 border-b border-grey-light' 
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    launchNavigation(props.parkingLocation, 'apple', device)
+                                    props.onClose();
+                                }}
+                            >Apple Maps</div>
+                        }
                         <div 
                             className='py-5' 
                             onClick={(e) => {
