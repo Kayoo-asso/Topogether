@@ -14,7 +14,7 @@ interface LeftbarTopoDesktopProps {
 export const LeftbarTopoDesktop: React.FC<LeftbarTopoDesktopProps> = watchDependencies((props: LeftbarTopoDesktopProps) => {
 
     return (
-        <div className='bg-white border-r border-grey-medium min-w-[280px] w-[280px] h-full hidden md:flex flex-col px-2 py-10 z-500'>
+        <div className='bg-white border-r border-grey-medium min-w-[280px] w-[280px] h-full hidden md:flex flex-col px-2 py-10 z-500 overflow-auto'>
             <SectorList 
                 topoQuark={props.topoQuark}
                 boulderOrder={props.boulderOrder}

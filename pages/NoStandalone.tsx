@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import NextImage from 'next/image';
-import { staticUrl } from 'helpers';
+import { staticUrl, useIsIos } from 'helpers';
 import Share from 'assets/icons/share.svg';
 import { Button } from 'components';
 
@@ -10,19 +10,7 @@ type BeforeInstallPromptEvent = Event & {
 }
 
 const NoStandalone: React.FC = () => {
-    const [isIos, setIsIos] = useState(false); 
-    useEffect(() => {
-        setIsIos([
-            'iPad Simulator',
-            'iPhone Simulator',
-            'iPod Simulator',
-            'iPad',
-            'iPhone',
-            'iPod'
-          ].includes(navigator.platform)
-          // iPad on iOS 13 detection
-          || (navigator.userAgent.includes("Mac") && "ontouchend" in document));        
-    }, []);
+    const isIos = useIsIos();
 
     const [installPromptEvent, setInstallPromptEvent] = useState<BeforeInstallPromptEvent>();
     useEffect(() => {
@@ -57,11 +45,10 @@ const NoStandalone: React.FC = () => {
                     <div>4. L'application est installée !</div>
                 </div>
             }
-            {!isIos &&
+            {!isIos && installPromptEvent &&
                 <>
                     <div className="flex flex-row gap-2">1. Cliquer sur <strong>Installer </strong></div>
-                    {installPromptEvent && 
-                        <div>
+                        <div className='py-3'>
                             <Button
                                 content="Installer"
                                 white
@@ -71,13 +58,20 @@ const NoStandalone: React.FC = () => {
                                     // const { outcome } = await installPromptEvent.userChoice;
 
                                     // can only use the installPromptEvent once
-                                    setInstallPromptEvent(undefined);
+                                    // setInstallPromptEvent(null);
                                 }}
                             />
                         </div>
-                    }
                     <div>2. Suivez les instructions</div>
                     <div>3. L'application est installée !</div>
+                </>
+            }
+            {!isIos && !installPromptEvent &&
+                <>
+                    <div>1. Ouvrir les paramètres de la page</div>
+                    <div className="flex flex-row gap-2">2. Cliquer sur <strong>Installer l'application</strong></div>
+                    <div>3. Suivez les instructions</div>
+                    <div>4. L'application est installée !</div>
                 </>
             }
         </div>

@@ -1,6 +1,7 @@
-import { Portal, useDevice } from 'helpers';
+import { UserPositionContext } from 'components/molecules/map/UserPositionProvider';
+import { Portal, useDevice, useIsIos } from 'helpers';
 import launchNavigation from 'helpers/map/launchNavigation';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { GeoCoordinates } from 'types';
 import { Flash } from '.';
 
@@ -12,6 +13,8 @@ interface ParkingModalProps {
 
 export const ParkingModal: React.FC<ParkingModalProps> = (props: ParkingModalProps) => {
     const device = useDevice();
+    const isIos = useIsIos();
+    const { position } = useContext(UserPositionContext);
     const [flashMessage, setFlashMessage] = useState<string>();
 
     return (
@@ -26,18 +29,20 @@ export const ParkingModal: React.FC<ParkingModalProps> = (props: ParkingModalPro
                             className='py-5 border-b border-grey-light' 
                             onClick={(e) => {
                                 e.stopPropagation();
-                                launchNavigation(props.parkingLocation, 'google', device);
+                                launchNavigation(props.parkingLocation, position, 'google', device, isIos);
                                 props.onClose();
                             }}
                         >Google Maps</div>
-                        <div 
-                            className='py-5 border-b border-grey-light' 
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                launchNavigation(props.parkingLocation, 'apple', device)
-                                props.onClose();
-                            }}
-                        >Apple Maps</div>
+                        {isIos  && 
+                            <div 
+                                className='py-5 border-b border-grey-light' 
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    launchNavigation(props.parkingLocation, position, 'apple', device, isIos)
+                                    props.onClose();
+                                }}
+                            >Apple Maps</div>
+                        }
                         <div 
                             className='py-5' 
                             onClick={(e) => {

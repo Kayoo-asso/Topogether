@@ -80,7 +80,7 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> = watchDependen
                     <DragDropContext onDragEnd={handleDragEnd} onDragStart={handleDragStart} key={sector.id}>  
                         <Droppable droppableId={sector.id} key={sector.id}>
                             {(provided) => (
-                                <div className='flex flex-col mb-6' {...provided.droppableProps} ref={provided.innerRef}>
+                                <div className='flex flex-col mb-10 pb-6' {...provided.droppableProps} ref={provided.innerRef}>
                                     <div className="ktext-label text-grey-medium">Secteur {sectorIndex + 1}</div>
                                     <div className="ktext-section-title text-main mb-1 flex flex-row items-center">
                                         <button className='pr-3 cursor-pointer'
