@@ -13,10 +13,11 @@ const launchNavigation = (location: GeoCoordinates, provider: 'apple' | 'google'
     });
   }
   else {
-    device === 'desktop' ?
-      window.open("https://www.google.com/maps/dir/?api=1&travelmode=driving&layer=traffic&destination=" + lat + "," + lng) :
-      window.location.href = 'geo:40.765819,-73.975866'
-      // window.open("https://maps.google.com/maps/dir/?api=1&travelmode=driving&layer=traffic&destination=" + lat + "," + lng);
+    navigator.geolocation.getCurrentPosition((pos) => {
+      device === 'desktop' ?
+        window.open("https://www.google.com/maps/dir/?api=1&travelmode=driving&layer=traffic&destination=" + lat + "," + lng) :
+        window.open("https://maps.google.com/maps/dir/?api=1&travelmode=driving&layer=traffic&origin=" + pos.coords.latitude + "," + pos.coords.longitude + "&destination=" + lat + "," + lng);
+    }
   }
 }
 

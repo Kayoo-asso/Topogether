@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import NextImage from 'next/image';
-import { staticUrl } from 'helpers';
+import { staticUrl, useIsIos } from 'helpers';
 import Share from 'assets/icons/share.svg';
 import { Button } from 'components';
 
@@ -10,19 +10,7 @@ type BeforeInstallPromptEvent = Event & {
 }
 
 const NoStandalone: React.FC = () => {
-    const [isIos, setIsIos] = useState(false); 
-    useEffect(() => {
-        setIsIos([
-            'iPad Simulator',
-            'iPhone Simulator',
-            'iPod Simulator',
-            'iPad',
-            'iPhone',
-            'iPod'
-          ].includes(navigator.platform)
-          // iPad on iOS 13 detection
-          || (navigator.userAgent.includes("Mac") && "ontouchend" in document));        
-    }, []);
+    const isIos = useIsIos();
 
     const [installPromptEvent, setInstallPromptEvent] = useState<BeforeInstallPromptEvent>();
     useEffect(() => {
@@ -60,7 +48,7 @@ const NoStandalone: React.FC = () => {
             {!isIos && installPromptEvent &&
                 <>
                     <div className="flex flex-row gap-2">1. Cliquer sur <strong>Installer </strong></div>
-                        <div>
+                        <div className='py-3'>
                             <Button
                                 content="Installer"
                                 white

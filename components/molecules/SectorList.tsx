@@ -29,7 +29,7 @@ export const SectorList:React.FC<SectorListProps> = watchDependencies((props: Se
                 const sector = sectorQuark();
                 const boulderQuarks = sector.boulders.map(id => bouldersIn.find(b => b().id === id)!);
                 return (
-                    <div className='flex flex-col mb-10' key={sector.id}>
+                    <div className='flex flex-col mb-10 pb-6' key={sector.id}>
                         <div className="ktext-label text-grey-medium">Secteur {sectorIndex + 1}</div>
                         <div className="ktext-section-title text-main cursor-pointer mb-2 flex flex-row items-center">
                             <div className="pr-3">
