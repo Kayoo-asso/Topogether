@@ -16,7 +16,7 @@ const launchNavigation = (location: GeoCoordinates, provider: 'apple' | 'google'
     navigator.geolocation.getCurrentPosition((pos) => {
       device === 'desktop' ?
         window.open("https://www.google.com/maps/dir/?api=1&travelmode=driving&layer=traffic&destination=" + lat + "," + lng) :
-        window.open("https://maps.google.com/maps/dir/?api=1&travelmode=driving&layer=traffic&origin=" + pos.coords.latitude + "," + pos.coords.longitude + "&destination=" + lat + "," + lng);
+        window.open("https://www.google.com/maps/dir/?api=1&origin=" + pos.coords.latitude + "," + pos.coords.longitude + "&destination=" + lat + "," + lng + "&travelmode=driving&layer=traffic");
     });
   }
 }
