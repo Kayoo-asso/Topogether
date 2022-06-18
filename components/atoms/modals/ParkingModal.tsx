@@ -29,16 +29,16 @@ export const ParkingModal: React.FC<ParkingModalProps> = (props: ParkingModalPro
                             className='py-5 border-b border-grey-light' 
                             onClick={(e) => {
                                 e.stopPropagation();
-                                launchNavigation(props.parkingLocation, position, 'google', device);
+                                launchNavigation(props.parkingLocation, position, 'google', device, isIos);
                                 props.onClose();
                             }}
                         >Google Maps</div>
-                        {(isIos || true)  && 
+                        {isIos  && 
                             <div 
                                 className='py-5 border-b border-grey-light' 
                                 onClick={(e) => {
                                     e.stopPropagation();
-                                    launchNavigation(props.parkingLocation, position, 'apple', device)
+                                    launchNavigation(props.parkingLocation, position, 'apple', device, isIos)
                                     props.onClose();
                                 }}
                             >Apple Maps</div>
