@@ -17,7 +17,6 @@ export const ParkingModal: React.FC<ParkingModalProps> = (props: ParkingModalPro
     const { position } = useContext(UserPositionContext);
     const [flashMessage, setFlashMessage] = useState<string>();
 
-
     return (
         <Portal open={props.open}>
             <div 
@@ -34,7 +33,7 @@ export const ParkingModal: React.FC<ParkingModalProps> = (props: ParkingModalPro
                                 props.onClose();
                             }}
                         >Google Maps</div>
-                        {isIos ||true  && 
+                        {(isIos || true)  && 
                             <div 
                                 className='py-5 border-b border-grey-light' 
                                 onClick={(e) => {

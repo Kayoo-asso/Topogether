@@ -1,9 +1,11 @@
 import { Device } from "helpers/context";
+import { useIsIos } from "helpers/hooks";
 import { GeoCoordinates } from "types";
 import { toLatLng } from ".";
 
 const launchNavigation = (destination: GeoCoordinates, origin: GeoCoordinates | null, provider: 'apple' | 'google', device: Device) => {
   const d = toLatLng(destination);
+  const isIos = useIsIos();
 
   // We have the user position so we can propose the itinerary
   if (origin) {
@@ -17,7 +19,8 @@ const launchNavigation = (destination: GeoCoordinates, origin: GeoCoordinates | 
     else { // OPEN ON GOOGLE MAP
       device === 'desktop' ?
         window.open("https://www.google.com/maps/dir/?api=1&travelmode=driving&layer=traffic&destination=" + d.lat + "," + d.lng) :
-        window.open("https://maps.google.com/maps/dir/?api=1&travelmode=driving&layer=traffic&destination=" + d.lat + "," + d.lng);
+        isIos ? window.open("https://maps.google.com/maps/dir/?api=1&travelmode=driving&layer=traffic&destination=" + d.lat + "," + d.lng) :
+        window.open("https://www.google.com/maps/dir/?api=1&origin=" + o.lat + "," + o.lng + "&destination=" + d.lat + "," + d.lng + "&travelmode=driving&layer=traffic");
     }
   }
 
