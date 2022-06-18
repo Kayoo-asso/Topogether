@@ -20,7 +20,7 @@ export const UserMarker: React.FC<UserMarkerProps> = (props: UserMarkerProps) =>
 
     useEffect(() => {
         const handleClick = () => {
-        if (!alpha) requestAccess();
+            if (!alpha && position) requestAccess();
         }
         window.addEventListener('click', handleClick);
         return () => window.removeEventListener('click', handleClick);
