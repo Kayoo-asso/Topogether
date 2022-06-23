@@ -35,20 +35,9 @@ type ImageDimensions = {
   height: number;
 };
 
-enum ImageHolder {
-  Topo,
-  Boulder,
-  Waypoint,
-  Parking,
-  Manager,
-  TopoAccess,
-}
 
-type ImageToUpload = {
-  id: UUID;
-  holder: ImageHolder;
-  topoId: UUID;
-};
+export type ImageHolder = 'user' | 'topo' | 'boulder' | 'parking' | 'waypoint' | 'manager' | 'topo_access';
+
 
 export function isImage(file: File): boolean {
   const type = file.type;
@@ -103,9 +92,8 @@ export class ImageService {
     }
   }
 
-  async uploadMany(iter: Iterable<File>): Promise<ImageUploadResult> {
+  async uploadMany(files: Iterable<File>): Promise<ImageUploadResult> {
     const errors: ImageUploadError[] = [];
-    const files = Array.from(iter);
     const compressing: Promise<unknown>[] = [];
     const toUpload: File[] = [];
     for (const file of files) {
@@ -210,17 +198,20 @@ async function upload(
     method: "POST",
     body: data,
   });
-  const placeholderUrlRequest = fetch('/api/images/getPlaceholder', {
-    body: file
+  const placeholderUrlRequest = fetch("/api/images/getPlaceholder", {
+    body: file,
   });
   const dimensionsRequest = imgDimensions(file);
   const [upload, { width, height }, placeholderResponse] = await Promise.all([
     uploadRequest,
     dimensionsRequest,
-    placeholderUrlRequest
+    placeholderUrlRequest,
   ]);
 
-  console.log("Received getPlaceholder response:", await placeholderResponse.text())
+  console.log(
+    "Received getPlaceholder response:",
+    await placeholderResponse.text()
+  );
   if (!upload.ok) {
     const error = {
       filename: file.name,

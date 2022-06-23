@@ -102,6 +102,15 @@ export const CFImage = forwardRef<HTMLImageElement, CFImageProps>(
         : sizeHint.raw;
     }
 
+    useEffect(() => {
+      fetch("/api/images/generatePlaceholder", {
+        method: "POST",
+        body: JSON.stringify({
+          src
+        })
+      });
+    }, []);
+
     return wrapPortal(
       <div
         className="w-full h-full relative overflow-hidden"
