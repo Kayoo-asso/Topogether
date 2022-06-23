@@ -33,6 +33,8 @@ export const SVGPoint: React.FC<SVGPointProps> = ({
   
   const handlePointerDown: React.PointerEventHandler<SVGImageElement> = (e: React.PointerEvent) => {
     if (draggable && props.vb.current) {
+      e.preventDefault();
+      e.stopPropagation();
       const el = e.currentTarget;
       el.setPointerCapture(e.pointerId);
       const coords = getCoordsInViewbox(props.vb.current, e.clientX, e.clientY);
@@ -48,6 +50,8 @@ export const SVGPoint: React.FC<SVGPointProps> = ({
   };
   const handlePointerMove: React.PointerEventHandler<SVGImageElement> = (e: React.PointerEvent) => {
     if (position.active && props.vb.current && props.onDrag) {
+      e.preventDefault();
+      e.stopPropagation();
       const coords = getCoordsInViewbox(props.vb.current, e.clientX, e.clientY);
       if (coords) {
         const newX = coords[0] - position.offsetX;
@@ -58,6 +62,8 @@ export const SVGPoint: React.FC<SVGPointProps> = ({
   };
   const handlePointerUp: React.PointerEventHandler<SVGImageElement> = (e: React.PointerEvent) => {
     if (position.active && props.vb.current && props.onDrag) {
+      e.preventDefault();
+      e.stopPropagation();
       const coords = getCoordsInViewbox(props.vb.current, e.clientX, e.clientY);
       if (coords) {
         const newX = coords[0] - position.offsetX;

@@ -42,6 +42,8 @@ export const SVGLine: React.FC<SVGLineProps> = watchDependencies(({
 
   const handlePointerDown: React.PointerEventHandler<SVGCircleElement | SVGTextElement> = (e: React.PointerEvent) => {
     if (editable && props.vb.current && firstX !== null && firstY !== null) {
+      e.preventDefault();
+      e.stopPropagation();
       const el = e.currentTarget;
       el.setPointerCapture(e.pointerId);
       const coords = getCoordsInViewbox(props.vb.current, e.clientX, e.clientY);
@@ -56,8 +58,9 @@ export const SVGLine: React.FC<SVGLineProps> = watchDependencies(({
     }
   };
   const handlePointerMove: React.PointerEventHandler<SVGCircleElement | SVGTextElement> = (e: React.PointerEvent) => {
-    const vb = props.vb.current;
     if (originPosition.active && props.vb.current && editable) {
+      e.preventDefault();
+      e.stopPropagation();
       const coords = getCoordsInViewbox(props.vb.current, e.clientX, e.clientY);
       if (coords) {
         const newX = coords[0] - originPosition.offsetX;
@@ -73,6 +76,8 @@ export const SVGLine: React.FC<SVGLineProps> = watchDependencies(({
   };
   const handlePointerUp: React.PointerEventHandler<SVGCircleElement | SVGTextElement> = (e: React.PointerEvent) => {
     if (originPosition.active) {
+      e.preventDefault();
+      e.stopPropagation();
       setOriginPosition({
         offsetX: 0,
         offsetY: 0,

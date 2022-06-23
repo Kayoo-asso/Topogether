@@ -48,12 +48,10 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
     if (props.images.length > 0) return (   
         wrapPortal(      
             <Carousel /* Force to hardcode some css (in carouselStyle.css) */
-                infiniteLoop
                 showStatus={false}
                 showThumbs={false}
                 showIndicators={!!(props.images && props.images.length > 1)}
                 useKeyboardArrows
-                
                 selectedItem={props.imageToDisplayIdx}
                 onChange={props.onChange}
             >
