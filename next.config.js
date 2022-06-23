@@ -1,18 +1,19 @@
 /** @type {import('next').NextConfig} */
 
-const withPWA = require('next-pwa')
+const withPWA = require("next-pwa");
 
 module.exports = withPWA({
   pwa: {
     // disable during local development (unless focusing on SW)
     disable: process.env.NODE_ENV !== "production",
-    dest: 'public',
-    swSrc: 'worker/sw.ts',
-    buildExcludes: [/.*sw\.js$/]
+    // disable: false,
+    dest: "public",
+    swSrc: "worker/sw.ts",
+    buildExcludes: [/.*sw\.js$/],
   },
   reactStrictMode: false,
   images: {
-    domains: ['builder.topogether.com', 'imagedelivery.net'],
+    domains: ["builder.topogether.com", "imagedelivery.net"],
   },
   eslint: {
     // Warning: This allows production builds to successfully complete even if
@@ -24,8 +25,8 @@ module.exports = withPWA({
     config.module.rules.push({
       test: /\.svg$/i,
       issuer: /\.[jt]sx?$/,
-      use: '@svgr/webpack',
-    })
-    return config
+      use: "@svgr/webpack",
+    });
+    return config;
   },
 });

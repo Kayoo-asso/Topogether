@@ -1,7 +1,7 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import { useCircle, useDevice, useDeviceOrientation, useMarker } from "helpers";
 import { MarkerEventHandlers } from "types";
-import { UserPositionContext } from "components/molecules/map/UserPositionProvider";
+import { UserPositionContext } from "helpers/context/UserPositionProvider";
 
 interface UserMarkerProps {
     onClick?: (e: google.maps.MapMouseEvent) => void,

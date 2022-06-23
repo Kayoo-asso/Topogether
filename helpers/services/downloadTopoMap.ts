@@ -1,4 +1,4 @@
-import { GeoCoordinates, Topo, UUID } from "types";
+import { GeoCoordinates, Topo, TopoData, UUID } from "types";
 
 // TODO:
 // - Add error handling for network failures
@@ -82,7 +82,7 @@ const MIN = -MAX;
 // Note: maybe max zoom of 21 is fine, which significantly reduces the nb of downloaded tiles
 const MAX_ZOOM = 21;
 
-export async function downloadTopoMap(topo: Topo) {
+export async function downloadTopoMap(topo: TopoData) {
     const start = Date.now();
 
     // xmin, ymin, xmax, ymax

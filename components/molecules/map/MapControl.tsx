@@ -8,7 +8,7 @@ import { fontainebleauLocation, googleGetPlace, setReactRef, toLatLng } from 'he
 import { Quark, watchDependencies } from 'helpers/quarky';
 import SectorIcon from 'assets/icons/sector.svg';
 import CenterIcon from 'assets/icons/center.svg';
-import { UserPositionContext } from './UserPositionProvider';
+import { UserPositionContext } from '../../../helpers/context/UserPositionProvider';
 import { useGeolocation } from 'helpers/hooks/useGeolocation';
 
 type MapControlProps = React.PropsWithChildren<Omit<MapProps, 'center' | 'zoom'> & {

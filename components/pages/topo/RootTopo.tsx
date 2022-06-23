@@ -13,7 +13,7 @@ import { useRouter } from 'next/router';
 import { useFirstRender } from 'helpers/hooks/useFirstRender';
 import { Header } from 'components/layouts/header/Header';
 import { BoulderFilterOptions, DropdownOption, filterBoulders } from 'components/molecules';
-import { useSession } from 'helpers/services';
+import { api, useSession } from 'helpers/services';
 import { BoulderClusterMarker, BoulderMarker, For, ParkingMarker, SectorAreaMarker, WaypointMarker } from 'components/atoms';
 
 
@@ -29,7 +29,12 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
   const device = useContext(DeviceContext);
   const [mapZoom, setMapZoom] = useState<number>(0);
 
+  
   const topo = props.topoQuark();
+  useEffect(() => {
+    api.downloadTopo(topo!.id);
+  }, []);
+
   const sectors = topo.sectors;
   const boulders = topo.boulders;
   const parkings = topo.parkings;

@@ -6,6 +6,7 @@ import {
   NetworkFirst,
   CacheFirst,
   StaleWhileRevalidate,
+  NetworkOnly
 } from "workbox-strategies";
 import { ExpirationPlugin } from "workbox-expiration";
 
@@ -102,11 +103,14 @@ const imageCache = new CacheFirst({
   cacheName: "images",
   plugins: [
     new ExpirationPlugin({
-      maxEntries: 100,
+      maxEntries: 5,
       purgeOnQuotaError: true,
     }),
   ],
 });
+
+const networkOnly = new NetworkOnly();
+
 registerRoute(
   ({ request, url, sameOrigin }) => {
     return (
@@ -129,10 +133,14 @@ registerRoute(
         // Without the "/" here, the path would be relative to the current URL
         const key = new Request("/" + id);
         const response = await cache.match(key);
-        if (response) return response;
+        if (response) {
+          console.log("Serving image " + id + " from cache");
+          return response;
+          }
       }
     }
-    return imageCache.handle(options);
+    // don't cache images to avoid bloating the cache
+    return networkOnly.handle(options);
   }
 );
 
