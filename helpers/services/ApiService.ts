@@ -3,6 +3,9 @@ import { quark } from "helpers/quarky";
 import { TopoData, UUID, LightTopo, TopoStatus, DBTopo, Topo, DBLightTopo } from 'types';
 import { sync } from ".";
 import { ImageService } from "./ImageService";
+import { get, set } from 'idb-keyval';
+import { ProgressBar } from "helpers/hooks/useProgressBar";
+import { downloadTopoMap } from "helpers/services/downloadTopoMap";
 
 export type LightTopoFilters = {
     userId?: UUID,
@@ -89,6 +92,21 @@ export class ApiService {
     }
 
     async getTopo(id: UUID): Promise<TopoData | null> {
+        // Hack to avoid trying to get from IDB on the server
+        const local = typeof window === 'undefined'
+            ? undefined
+            : await get(id);
+        if (local) {
+            // revalidate cache
+            this.fetchTopo(id).then(topo => topo && set(topo.id, topo));
+            console.log("Returning local topo:", local);
+            return local;
+        } else {
+            return await this.fetchTopo(id);
+        }
+    }
+
+    private async fetchTopo(id: UUID): Promise<TopoData | null> {
         // Notes on this query:
         //
         // 1. If multiple tables reference a parent with the same name for the foreign key,
@@ -171,6 +189,29 @@ export class ApiService {
             return null;
         }
         return data;
+    }
+
+    async downloadTopo(id: UUID, progressBar?: ProgressBar): Promise<boolean> {
+        // TODO: improve this to revalidate the cached topo
+        if (await get(id)) {
+            console.log("--- Found cached topo, skipping download ---");
+            return true;
+        }
+
+        console.log(`--- Downloading topo... ---`);
+        const start = Date.now();
+        const topo = await this.fetchTopo(id);
+        if (!topo) return false;
+
+        await Promise.all([
+            set(topo.id, topo),
+            downloadTopoMap(topo),
+            this.images.downloadTopoImages(topo)
+        ]);
+
+        const end = Date.now();
+        console.log(`Finished downloading topo in ${end - start}ms`);
+        return true;
     }
 }
 
