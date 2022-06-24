@@ -90,7 +90,7 @@ export const BoulderMarker = watchDependencies(({
             isPressing.set(false);
         }, [timer, props.boulder, props.onClick]),
     }
-    const marker = useMarker(options, handlers);
+    useMarker(options, handlers);
 
     return null;
 });

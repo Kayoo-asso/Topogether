@@ -8,10 +8,10 @@ interface BoulderClusterMarkerProps {
 
 export const BoulderClusterMarker: React.FC<BoulderClusterMarkerProps> = (props: BoulderClusterMarkerProps) => {
     const boulders = props.boulders;
-    const map = useContext(MapContext);
+    // const map = useContext(MapContext);
 
     const icon: google.maps.Icon = {
-        url: '/assets/icons/colored/_rock_bold.svg',
+        url: '/assets/icons/colored/_rock.svg',
         scaledSize: markerSize(30),
         labelOrigin: new google.maps.Point(15, 34)
     }
@@ -31,10 +31,9 @@ export const BoulderClusterMarker: React.FC<BoulderClusterMarkerProps> = (props:
         const handlers: MarkerEventHandlers = {
             onClick: useCallback(() => alert("ok"), []),
         }     
-        let marker = useMarker(options, handlers);
-        if (!marker) marker = new google.maps.Marker({
-            position: toLatLng(boulder.location),
-            map
+        let marker = new google.maps.Marker({
+            ...options,
+            ...handlers
         })
         return marker 
     })

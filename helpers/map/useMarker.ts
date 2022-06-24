@@ -3,8 +3,7 @@ import { MapContext } from "helpers/context";
 import { useContext, useEffect, useRef } from "react";
 import { MarkerEventHandlers, markerEvents } from "types";
 
-export function useMarker(options: google.maps.MarkerOptions, handlers: MarkerEventHandlers) {
-    // const [marker, setMarker] = useState<google.maps.Marker>();
+export function useMarker(options: google.maps.MarkerOptions, handlers: MarkerEventHandlers) { 
     const marker = useRef<google.maps.Marker>();
     const map = useContext(MapContext);
 

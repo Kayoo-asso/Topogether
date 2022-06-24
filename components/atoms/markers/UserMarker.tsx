@@ -29,7 +29,7 @@ export const UserMarker: React.FC<UserMarkerProps> = (
     if (!window.DeviceOrientationEvent) return;
 
     const onDeviceOrientation = (event: DeviceOrientationEvent): void => {
-      console.log("deviceorientation event:", event);
+      // console.log("deviceorientation event:", event);
       setOrientation({
         alpha: event.alpha,
         beta: event.beta,
