@@ -1,8 +1,8 @@
 .carousel, .slider-wrapper, .slider, .slide, .kvfysmfp {
     height: 100%;
 }
-/* .kvfysmfp {
+.kvfysmfp {
     overflow: hidden;
     border-top-left-radius: 1.5rem;
     border-top-right-radius: 1.5rem;
-} */
+}

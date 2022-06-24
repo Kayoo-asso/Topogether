@@ -132,7 +132,7 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
   return (
     wrapPortal(
       <QuickPinchZoom onUpdate={onPinchZoom} draggableUnZoomed={false} >
-        <div ref={imgRef} className={"relative h-full overflow-hidden" + cssCursor}>
+        <div ref={imgRef} className={"relative h-full" + cssCursor}>
           <CFImage
             objectFit={objectFit}
             sizeHint={portalOpen ? '100vw' : props.sizeHint}
