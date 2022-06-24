@@ -1,5 +1,4 @@
 import { Device } from "helpers/context";
-import { useIsIos } from "helpers/hooks";
 import { GeoCoordinates } from "types";
 import { toLatLng } from ".";
 

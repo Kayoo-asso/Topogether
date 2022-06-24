@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import NextImage from 'next/image';
-import { staticUrl, useIsIos } from 'helpers';
+import { staticUrl, isIos } from 'helpers';
 import Share from 'assets/icons/share.svg';
 import { Button } from 'components';
 
@@ -10,14 +10,17 @@ type BeforeInstallPromptEvent = Event & {
 }
 
 const NoStandalone: React.FC = () => {
-    const isIos = useIsIos();
+    const iOS = isIos();
 
     const [installPromptEvent, setInstallPromptEvent] = useState<BeforeInstallPromptEvent>();
     useEffect(() => {
-        window.addEventListener('beforeinstallprompt', (e) => {
+        const onInstallPrompt = (e: Event) => {
             e.preventDefault();
             setInstallPromptEvent(e as BeforeInstallPromptEvent);
-        });
+
+        }
+        window.addEventListener('beforeinstallprompt', onInstallPrompt);
+        return () => window.removeEventListener('beforeinstallprompt', onInstallPrompt);
     }, []);
 
     return (
@@ -37,7 +40,7 @@ const NoStandalone: React.FC = () => {
                 <strong>Pour installer l'application :</strong>
             </div>
 
-            {isIos &&
+            {iOS &&
                 <div className='flex flex-col gap-2 justify-start'>
                     <div className="flex flex-row items-center gap-2">1. Cliquer sur le bouton <strong>Partager</strong><Share className='w-6 h-6 stroke-white' /></div>    
                     <div>2. Choisir <strong>Sur l'écran d'accueil +</strong></div>
@@ -45,7 +48,7 @@ const NoStandalone: React.FC = () => {
                     <div>4. L'application est installée !</div>
                 </div>
             }
-            {!isIos && installPromptEvent &&
+            {!iOS && installPromptEvent &&
                 <>
                     <div className="flex flex-row gap-2">1. Cliquer sur <strong>Installer </strong></div>
                         <div className='py-3'>
@@ -66,7 +69,7 @@ const NoStandalone: React.FC = () => {
                     <div>3. L'application est installée !</div>
                 </>
             }
-            {!isIos && !installPromptEvent &&
+            {!iOS && !installPromptEvent &&
                 <>
                     <div>1. Ouvrir les paramètres de la page</div>
                     <div className="flex flex-row gap-2">2. Cliquer sur <strong>Installer l'application</strong></div>

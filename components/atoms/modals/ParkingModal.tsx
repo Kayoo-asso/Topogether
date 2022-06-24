@@ -1,5 +1,5 @@
-import { UserPositionContext } from 'components/molecules/map/UserPositionProvider';
-import { Portal, useDevice, useIsIos } from 'helpers';
+import { UserPositionContext } from 'helpers/context/UserPositionProvider';
+import { Portal, useDevice, isIos} from 'helpers';
 import launchNavigation from 'helpers/map/launchNavigation';
 import React, { useContext, useState } from 'react';
 import { GeoCoordinates } from 'types';
@@ -13,9 +13,9 @@ interface ParkingModalProps {
 
 export const ParkingModal: React.FC<ParkingModalProps> = (props: ParkingModalProps) => {
     const device = useDevice();
-    const isIos = useIsIos();
     const { position } = useContext(UserPositionContext);
     const [flashMessage, setFlashMessage] = useState<string>();
+    const iOS = isIos();
 
     return (
         <Portal open={props.open}>
@@ -29,16 +29,16 @@ export const ParkingModal: React.FC<ParkingModalProps> = (props: ParkingModalPro
                             className='py-5 border-b border-grey-light' 
                             onClick={(e) => {
                                 e.stopPropagation();
-                                launchNavigation(props.parkingLocation, position, 'google', device, isIos);
+                                launchNavigation(props.parkingLocation, position, 'google', device, iOS);
                                 props.onClose();
                             }}
                         >Google Maps</div>
-                        {isIos  && 
+                        {iOS  && 
                             <div 
                                 className='py-5 border-b border-grey-light' 
                                 onClick={(e) => {
                                     e.stopPropagation();
-                                    launchNavigation(props.parkingLocation, position, 'apple', device, isIos)
+                                    launchNavigation(props.parkingLocation, position, 'apple', device, iOS)
                                     props.onClose();
                                 }}
                             >Apple Maps</div>

@@ -5,6 +5,7 @@ export * from './context';
 export * from './map';
 export * from './globals';
 export * from './builder';
+export * from './isIos';
 
 export * from './readFileAsync';
 export * from './distanceBetween';

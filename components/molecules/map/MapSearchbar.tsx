@@ -3,7 +3,7 @@ import Trigram from "trigram-search";
 import {
     RoundButton, TextInput, MapSearchResults,
 } from 'components';
-import { googleAutocomplete, useIsMounted } from '../../../helpers';
+import { googleAutocomplete, useIsMounted } from 'helpers';
 import { api } from 'helpers/services';
 import { useRouter } from 'next/router';
 import { Boulder, LightTopo } from 'types';

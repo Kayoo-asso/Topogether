@@ -19,7 +19,6 @@ import { LeftbarBuilderDesktop } from 'components/layouts/sidebars/LeftbarBuilde
 import { BoulderMarker, CreatingSectorAreaMarker, For, isMouseEvent, isPointerEvent, isTouchEvent, ParkingMarker, SectorAreaMarker, WaypointMarker } from 'components/atoms';
 import { filterBoulders, MapControl } from 'components/molecules';
 import { ModalRenameSector } from 'components/organisms/builder/ModalRenameSector';
-import { downloadTopoMap } from 'helpers/map/downloadTopoMap';
 
 interface RootBuilderProps {
     topoQuark: Quark<Topo>,

@@ -25,10 +25,11 @@ export const useDeviceOrientation = (): UseDeviceOrientationData => {
     }));
   };
 
-  const revokeAccess = async (): Promise<void> => {
+  const revokeAccess = useCallback(async () => {
+    console.log("Revoking access");
     window.removeEventListener('deviceorientation', onDeviceOrientation);
     setOrientation(null);
-  };
+  }, []);
 
   const requestAccess = async (): Promise<boolean> => {
     if (!DeviceOrientationEvent) {
