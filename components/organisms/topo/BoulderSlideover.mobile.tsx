@@ -93,7 +93,7 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = wat
           </div>
 
           <div className="flex flex-row gap-5 justify-end col-span-2">
-            {selectedTrack &&
+            {selectedTrack && boulder.tracks.length > 1 &&
               <button
                 onClick={() => setDisplayPhantomTracks(!displayPhantomTracks)}
               >
