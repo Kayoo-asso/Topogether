@@ -8,6 +8,7 @@ interface BoulderPreviewDesktopProps {
     boulder: Quark<Boulder>,
     selectedTrack: SelectQuarkNullable<Track>,
     displayAddButton?: boolean,
+    allowDelete?: boolean
     currentImage?: Image,
     setCurrentImage: Dispatch<SetStateAction<Image | undefined>>,
 }
@@ -76,11 +77,11 @@ export const BoulderPreviewDesktop = watchDependencies<HTMLInputElement, Boulder
                             }));
                             props.setCurrentImage(images[0]);
                         }, [boulder])}
-                        onImageDelete={useCallback((id) => {
+                        onImageDelete={props.allowDelete ? useCallback((id) => {
                             const tracksOnTheImage = boulder.tracks.quarks().filter(t => !!t().lines?.find(l => l.imageId === id)).toArray();
                             if (tracksOnTheImage.length > 0) showModalDeleteImage([tracksOnTheImage, id]);
                             else deleteImage(id);                    
-                        }, [boulder.tracks])}
+                        }, [boulder.tracks]) : undefined}
                         onLoadStart={() => setLoading(true)}
                         onLoadEnd={() => setLoading(false)}
                     />

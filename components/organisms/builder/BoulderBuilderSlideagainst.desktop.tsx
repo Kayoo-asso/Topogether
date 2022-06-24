@@ -56,6 +56,7 @@ export const BoulderBuilderSlideagainstDesktop = watchDependencies<HTMLInputElem
                     selectedTrack={props.selectedTrack}
                     currentImage={props.currentImage}
                     displayAddButton
+                    allowDelete
                     setCurrentImage={props.setCurrentImage}
                 />
 
