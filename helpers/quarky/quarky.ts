@@ -163,6 +163,11 @@ export function setBatchingBehavior(batcher: (work: () => void) => void) {
 const defaultEqual = <T>(a: T, b: T) => a === b;
 
 export function quark<T>(initial: T, options?: QuarkOptions<T>): Quark<T> {
+  if (isServer) {
+    const read = () => initial;
+    read.set = () => { throw new Error("Setting a quark during server rendering is illegal") };
+    return read;
+  }
   // initialize in the order given in the Node interface, to ensure consistency with others
   const q: Leaf<T> = {
     value: initial,
@@ -188,6 +193,10 @@ export function derive<T>(
   fn: () => T,
   options?: DerivationOptions<T>
 ): Signal<T> {
+  if (isServer) {
+    return fn;
+  }
+
   const d: Derived<T> = {
     // will be computed upon first read
     value: undefined!,
