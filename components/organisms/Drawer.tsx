@@ -3,12 +3,13 @@ import { DrawerToolEnum, Image, LinearRing, PointEnum, Position, Track } from 't
 import { Toolbar, TracksImage } from 'components';
 import { QuarkArray, QuarkIter, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
 import { v4 } from 'uuid';
-import { staticUrl, useModal } from 'helpers';
+import { Portal, staticUrl, useModal } from 'helpers';
 
 interface DrawerProps {
   image: Image,
   tracks: QuarkArray<Track>,
   selectedTrack: SelectQuarkNullable<Track>,
+  open: boolean,
   onValidate: () => void,
 }
 
@@ -141,6 +142,7 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies((props: DrawerPro
       {/* Here we position absolutely, using hardcoded 7vh for the header
           TODO: encode the size of header / toolbar / etc... as units Tailwind config?
       */}
+      <Portal open={props.open}>
       <div className="absolute left-0 top-[7vh] h-content md:h-contentPlusShell w-full md:w-[calc(100%-600px)] z-[600]">
 
         {/* Same, we know absolute size, since both header + toolbar are 7vh each */}
@@ -184,6 +186,7 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies((props: DrawerPro
         />
 
       </div>
+      </Portal>
 
       <ModalClear
         buttonText="Confirmer"

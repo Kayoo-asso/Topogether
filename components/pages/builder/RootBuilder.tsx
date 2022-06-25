@@ -443,6 +443,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                                 const sector = createSector(props.topoQuark, path, boulderOrder());
                                 selectedSector.select(sector);
                                 setDisplayModalSectorRename(true);
+                                setCurrentTool(undefined);
                             }}
                         />
                     }
@@ -529,7 +530,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                                         setDisplayDrawer(true);
                                     }}
                                     onCreateTrack={() => {
-                                        setDisplayDrawer(true)
+                                        setDisplayDrawer(true);
                                     }}
                                     onBoulderDelete={showModalDeleteBoulder}
                                     onClose={() => {
@@ -679,6 +680,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                         image={sBoulder.images.find((img) => img.id === sTrack.lines.lazy().toArray()[0]?.imageId) || currentImage!}
                         tracks={sBoulder.tracks}
                         selectedTrack={selectedTrack}
+                        open
                         onValidate={() => setDisplayDrawer(false)}
                     />
                 )}
