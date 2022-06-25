@@ -12,6 +12,8 @@ export interface WatchDependenciesOptions<T> {
 type FunctionComponent<P extends object> = (props: P) => React.ReactElement<any, any> | null;
 type ForwardRefComponent<R, P extends object> = (props: P, ref: ForwardedRef<R>) => React.ReactElement<any, any> | null;
 
+const isServer = typeof window === "undefined";
+
 // Here we don't use React's types for function components or forwardRef components,
 // because we want to be able to cleanly distinguish between the regular and the forwardRef cases
 // by just checking the number of arguments.
@@ -24,7 +26,11 @@ export function watchDependencies<P extends object, R = undefined>(
   component: Function,
   options?: WatchDependenciesOptions<P>
 ) {
+  // Go faster on the server
+  if (isServer) return component;
+
   const wrapped = (props: P, ref: ForwardedRef<R>) => {
+
     // symbols are always unique
     const [, forceRender] = useState(Symbol());
     // the forceRender will be invoked by the state management lib on update
