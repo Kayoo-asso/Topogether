@@ -7,8 +7,6 @@ export function useMarker(options: google.maps.MarkerOptions, handlers: MarkerEv
     const marker = useRef<google.maps.Marker>();
     const map = useContext(MapContext);
     const cluster = useCluster();
-    // console.log(map);
-    // console.log(cluster);
 
     useEffect(() => {     
         if (!marker.current) {

@@ -29,9 +29,9 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
   const device = useContext(DeviceContext);
   
   const topo = props.topoQuark();
-  useEffect(() => {
-    api.downloadTopo(topo!.id);
-  }, []);
+  // useEffect(() => {
+  //   api.downloadTopo(topo!.id);
+  // }, []);
 
   const sectors = topo.sectors;
   const boulders = topo.boulders;
