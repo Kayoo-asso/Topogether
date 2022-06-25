@@ -244,7 +244,7 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
           onMapZoomChange={(zoom) => setMapZoom(zoom || 0)}
         >
           {/* TODO: improve the callbacks */}
-          {/* <For each={() => filterBoulders(boulders.quarks(), boulderFilters())}>
+          <For each={() => filterBoulders(boulders.quarks(), boulderFilters())}>
             {boulder =>
               <BoulderMarker
                 key={boulder().id}
@@ -255,10 +255,10 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
                 onClick={toggleBoulderSelect}
               />
             }
-          </For> */}
-          <BoulderClusterMarker 
+          </For>
+          {/* <BoulderClusterMarker 
             boulders={boulders.toArray()}
-          />
+          /> */}
           <For each={() => sectors.quarks().toArray()}>
             {sector =>
               <SectorAreaMarker

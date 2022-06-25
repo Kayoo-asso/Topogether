@@ -24,6 +24,7 @@ type TracksImageProps = React.PropsWithChildren<{
   editable?: boolean,
   modalable?: boolean,
   zoomable?: boolean,
+  allowDoubleTapZoom?: boolean,
   currentTool?: DrawerToolEnum,
   onImageClick?: (pos: Position) => void,
   onPointClick?: (pointType: PointEnum, index: number) => void,
@@ -49,6 +50,7 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
   objectFit = 'contain',
   editable = false,
   zoomable = true,
+  allowDoubleTapZoom = true,
   ...props
 }: TracksImageProps) => {
   const selectedTrack = props.selectedTrack && props.selectedTrack();
@@ -131,10 +133,7 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(({
   
   return (
     wrapPortal(
-      <QuickPinchZoom 
-        onUpdate={onPinchZoom} 
-        draggableUnZoomed={false}
-      >
+      <QuickPinchZoom onUpdate={onPinchZoom} draggableUnZoomed={false} tapZoomFactor={allowDoubleTapZoom ? 1 : 0}>
         <div ref={imgRef} className={"relative h-full" + cssCursor}>
           <CFImage
             objectFit={objectFit}

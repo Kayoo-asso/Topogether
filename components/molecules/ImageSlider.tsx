@@ -45,7 +45,7 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
         else return elts;
     }
 
-    if (props.images.length > 0) return (   
+    if (props.images.length > 1) return (   
         wrapPortal(      
             <Carousel /* Force to hardcode some css (in carouselStyle.css) */
                 showStatus={false}
@@ -70,6 +70,20 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
                     )
                 })}            
             </Carousel>
+        )
+    )
+    else if (props.images.length === 1) return ( 
+        wrapPortal(   
+            <TracksImage
+                key={props.images[0].id}
+                sizeHint='100vw'
+                image={props.images[0]}
+                tracks={props.tracks}
+                selectedTrack={props.selectedTrack}
+                displayPhantomTracks={displayPhantomTracks}
+                displayTracksDetails={props.selectedTrack && !!props.selectedTrack()?.id}
+                onImageClick={() => setPortalOpen(true)}
+            />
         )
     )
     else return (

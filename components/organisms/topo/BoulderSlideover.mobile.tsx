@@ -54,7 +54,7 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = wat
   return (
     <SlideoverMobile
       persistent
-      onSizeChange={(f) => setFull(f)}
+      onSizeChange={setFull}
       onClose={props.onClose}
     >
       {/* BOULDER IMAGE */}
@@ -93,7 +93,7 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = wat
           </div>
 
           <div className="flex flex-row gap-5 justify-end col-span-2">
-            {selectedTrack &&
+            {selectedTrack && boulder.tracks.length > 1 &&
               <button
                 onClick={() => setDisplayPhantomTracks(!displayPhantomTracks)}
               >
