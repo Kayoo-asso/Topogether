@@ -4,3 +4,5 @@ export * from './functional';
 export * from './admin';
 
 export * from './RootWorldMap';
+
+export * from './NoStandalone';

@@ -1,5 +1,5 @@
+import NoStandalone from "components/pages/NoStandalone";
 import { useFirstRender } from "helpers/hooks/useFirstRender";
-import NoStandalone from "pages/NoStandalone";
 import React from "react";
 import useDimensions from "react-cool-dimensions";
 

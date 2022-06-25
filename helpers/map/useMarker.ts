@@ -7,10 +7,11 @@ export function useMarker(options: google.maps.MarkerOptions, handlers: MarkerEv
     const marker = useRef<google.maps.Marker>();
     const map = useContext(MapContext);
     const cluster = useCluster();
+    // console.log(map);
+    // console.log(cluster);
 
-    useEffect(() => {
+    useEffect(() => {     
         if (!marker.current) {
-            
             const m = new google.maps.Marker({
                 ...options,
             });
@@ -28,13 +29,12 @@ export function useMarker(options: google.maps.MarkerOptions, handlers: MarkerEv
             }
         }
     // do not include marker as a dependency here
-    }, [map]);
+    }, [map, cluster]);
 
     useEffectWithDeepEqual(() => {
         if (marker.current) {
             marker.current.setOptions({
                 ...options,
-                map,
             })
         }
     }, [marker.current, options])

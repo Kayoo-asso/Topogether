@@ -14,7 +14,7 @@ import { useFirstRender } from 'helpers/hooks/useFirstRender';
 import { Header } from 'components/layouts/header/Header';
 import { BoulderFilterOptions, DropdownOption, filterBoulders } from 'components/molecules';
 import { api, useSession } from 'helpers/services';
-import { BoulderClusterMarker, BoulderMarker, For, ParkingMarker, SectorAreaMarker, WaypointMarker } from 'components/atoms';
+import { BoulderMarker, For, ParkingMarker, SectorAreaMarker, WaypointMarker } from 'components/atoms';
 
 
 interface RootTopoProps {
@@ -27,8 +27,6 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
   const { b: bId } = router.query; // Get boulder id from url if selected 
   const firstRender = useFirstRender();
   const device = useContext(DeviceContext);
-  const [mapZoom, setMapZoom] = useState<number>(0);
-
   
   const topo = props.topoQuark();
   useEffect(() => {
@@ -241,7 +239,6 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
           boulderFilters={boulderFilters}
           boulderFiltersDomain={defaultBoulderFilterOptions}
           boundsTo={boulders.map(b => b.location).concat(parkings.map(p => p.location)).toArray()}
-          onMapZoomChange={(zoom) => setMapZoom(zoom || 0)}
         >
           {/* TODO: improve the callbacks */}
           <ClusterProvider>
@@ -258,9 +255,6 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
               }
             </For>
           </ClusterProvider>
-          {/* <BoulderClusterMarker 
-            boulders={boulders.toArray()}
-          /> */}
           <For each={() => sectors.quarks().toArray()}>
             {sector =>
               <SectorAreaMarker

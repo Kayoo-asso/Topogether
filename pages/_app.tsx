@@ -52,16 +52,16 @@ const CustomApp = ({ Component, pageProps, session, initialDevice }: Props) => {
 
       <ReactQueryProvider pageProps={pageProps}>
         <AuthProvider initial={session}>
-          <UserPositionProvider>
             <DeviceManager initialDevice={initialDevice}>
+              <UserPositionProvider>
               <div id="content" className="flex-1 w-screen absolute bg-grey-light flex flex-col h-full md:h-screen overflow-hidden">
                 <Component {...pageProps} />
               </div>
               <div id="footer" className="bg-dark z-500 absolute bottom-0 h-shell md:hidden">
                 <ShellMobile />
               </div>
+              </UserPositionProvider>
             </DeviceManager>
-          </UserPositionProvider>
         </AuthProvider>
       </ReactQueryProvider>
     </>
