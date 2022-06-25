@@ -142,51 +142,52 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies((props: DrawerPro
       {/* Here we position absolutely, using hardcoded 7vh for the header
           TODO: encode the size of header / toolbar / etc... as units Tailwind config?
       */}
-      <Portal open={props.open}>
-      <div className="absolute left-0 top-[7vh] h-content md:h-contentPlusShell w-full md:w-[calc(100%-600px)] z-[600]">
+        <Portal open={props.open}>
+        <div className="absolute left-0 top-[7vh] h-content md:h-contentPlusShell w-full md:w-[calc(100%-600px)] z-[600]">
 
-        {/* Same, we know absolute size, since both header + toolbar are 7vh each */}
-        <div className="h-[84vh] flex bg-black b-opacity-90">
-          <TracksImage
-            sizeHint='100vw'
-            objectFit='contain'
-            image={props.image}
-            tracks={displayOtherTracks ? props.tracks.quarks() : new QuarkIter([props.selectedTrack.quark()!])}
-            selectedTrack={props.selectedTrack}
-            currentTool={selectedTool}
-            editable
-            displayTracksDetails
-            onImageClick={(pos) => {
-              setGradeSelectorOpen(false);
-              addPointToLine(pos);
+          {/* Same, we know absolute size, since both header + toolbar are 7vh each */}
+          <div className="h-[84vh] flex bg-black b-opacity-90">
+            <TracksImage
+              sizeHint='100vw'
+              objectFit='contain'
+              image={props.image}
+              tracks={displayOtherTracks ? props.tracks.quarks() : new QuarkIter([props.selectedTrack.quark()!])}
+              selectedTrack={props.selectedTrack}
+              currentTool={selectedTool}
+              editable
+              allowDoubleTapZoom={false}
+              displayTracksDetails
+              onImageClick={(pos) => {
+                setGradeSelectorOpen(false);
+                addPointToLine(pos);
+              }}
+              onPointClick={(pointType, index) => {
+                if (selectedTool === 'ERASER') deletePointToLine(pointType, index);
+              }}
+            />
+          </div>
+
+          <Toolbar
+            selectedTool={selectedTool}
+            displayOtherTracks={displayOtherTracks}
+            grade={selectedTrack.grade}
+            gradeSelectorOpen={gradeSelectorOpen}
+            setGradeSelectorOpen={setGradeSelectorOpen}
+            onToolSelect={(tool) => setSelectedTool(tool)}
+            onGradeSelect={(grade) => {
+              props.selectedTrack.quark()?.set({
+                ...selectedTrack,
+                grade: grade,
+              })
             }}
-            onPointClick={(pointType, index) => {
-              if (selectedTool === 'ERASER') deletePointToLine(pointType, index);
-            }}
+            onClear={showModalClear}
+            onRewind={rewind}
+            onOtherTracks={() => setDisplayOtherTracks(!displayOtherTracks)}
+            onValidate={props.onValidate}
           />
+
         </div>
-
-        <Toolbar
-          selectedTool={selectedTool}
-          displayOtherTracks={displayOtherTracks}
-          grade={selectedTrack.grade}
-          gradeSelectorOpen={gradeSelectorOpen}
-          setGradeSelectorOpen={setGradeSelectorOpen}
-          onToolSelect={(tool) => setSelectedTool(tool)}
-          onGradeSelect={(grade) => {
-            props.selectedTrack.quark()?.set({
-              ...selectedTrack,
-              grade: grade,
-            })
-          }}
-          onClear={showModalClear}
-          onRewind={rewind}
-          onOtherTracks={() => setDisplayOtherTracks(!displayOtherTracks)}
-          onValidate={props.onValidate}
-        />
-
-      </div>
-      </Portal>
+        </Portal>
 
       <ModalClear
         buttonText="Confirmer"
