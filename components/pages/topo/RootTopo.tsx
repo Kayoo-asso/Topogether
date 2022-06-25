@@ -6,7 +6,7 @@ import {
   MapControl, ParkingSlide, WaypointSlide, TracksImage
 } from 'components';
 import { LeftbarTopoDesktop } from 'components/layouts';
-import { DeviceContext, decodeUUID, encodeUUID, sortBoulders } from 'helpers';
+import { DeviceContext, decodeUUID, encodeUUID, sortBoulders, ClusterProvider } from 'helpers';
 import { Boulder, ClimbTechniques, Image, isUUID, Parking, Sector, Topo, TopoStatus, Track, Waypoint } from 'types';
 import { Quark, QuarkIter, useCreateDerivation, useCreateQuark, useLazyQuarkyEffect, useQuarkyCallback, useSelectQuark, watchDependencies } from 'helpers/quarky';
 import { useRouter } from 'next/router';
@@ -244,18 +244,20 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
           onMapZoomChange={(zoom) => setMapZoom(zoom || 0)}
         >
           {/* TODO: improve the callbacks */}
-          <For each={() => filterBoulders(boulders.quarks(), boulderFilters())}>
-            {boulder =>
-              <BoulderMarker
-                key={boulder().id}
-                boulder={boulder}
-                boulderOrder={boulderOrder()}
-                selectedBoulder={selectedBoulder}
-                topo={props.topoQuark}
-                onClick={toggleBoulderSelect}
-              />
-            }
-          </For>
+          <ClusterProvider>
+            <For each={() => filterBoulders(boulders.quarks(), boulderFilters())}>
+              {boulder =>
+                <BoulderMarker
+                  key={boulder().id}
+                  boulder={boulder}
+                  boulderOrder={boulderOrder()}
+                  selectedBoulder={selectedBoulder}
+                  topo={props.topoQuark}
+                  onClick={toggleBoulderSelect}
+                />
+              }
+            </For>
+          </ClusterProvider>
           {/* <BoulderClusterMarker 
             boulders={boulders.toArray()}
           /> */}

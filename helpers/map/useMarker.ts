@@ -1,4 +1,4 @@
-import { useEffectWithDeepEqual } from "helpers";
+import { useCluster, useEffectWithDeepEqual } from "helpers";
 import { MapContext } from "helpers/context";
 import { useContext, useEffect, useRef } from "react";
 import { MarkerEventHandlers, markerEvents } from "types";
@@ -6,13 +6,21 @@ import { MarkerEventHandlers, markerEvents } from "types";
 export function useMarker(options: google.maps.MarkerOptions, handlers: MarkerEventHandlers) { 
     const marker = useRef<google.maps.Marker>();
     const map = useContext(MapContext);
+    const cluster = useCluster();
 
     useEffect(() => {
         if (!marker.current) {
-            marker.current = new google.maps.Marker({
+            
+            const m = new google.maps.Marker({
                 ...options,
-                map
             });
+            marker.current = m;
+
+            if (cluster) {
+                cluster.addMarker(m);
+            } else {
+                m.setMap(map);
+            }
         }
         return () => {
             if (marker.current) {
