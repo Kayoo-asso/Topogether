@@ -1,6 +1,7 @@
 import { MapContext } from "helpers/context";
-import React, { createContext, useContext, useMemo } from "react";
-import { Cluster, MarkerClusterer } from "@googlemaps/markerclusterer";
+import React, { createContext, useContext, useEffect, useMemo } from "react";
+import { Algorithm, Cluster, MarkerClusterer, SuperClusterAlgorithm } from "@googlemaps/markerclusterer";
+import Supercluster from 'supercluster';
 
 const ClusterContext = createContext<MarkerClusterer | undefined>(undefined);
 
@@ -47,6 +48,9 @@ export function ClusterProvider({ children }: ClusterProviderProps) {
 
     return new MarkerClusterer({ map, markers: [], renderer: renderer });
   }, []);
+
+  // Clean up on unmount;
+  useEffect(() => () => cluster.setMap(null), []);
 
   return (
     <ClusterContext.Provider value={cluster}>
