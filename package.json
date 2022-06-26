@@ -36,6 +36,7 @@
     "react-quick-pinch-zoom": "^4.4.1",
     "react-responsive-carousel": "^3.2.23",
     "slick-carousel": "^1.8.1",
+    "supercluster": "^7.1.5",
     "trigram-search": "^1.0.2",
     "uuid": "^8.3.2"
   },
@@ -56,6 +57,7 @@
     "@types/react": "^17.0.40",
     "@types/react-beautiful-dnd": "^13.1.2",
     "@types/react-dom": "^17.0.13",
+    "@types/supercluster": "^7.1.0",
     "@typescript-eslint/eslint-plugin": "^5.9.0",
     "@typescript-eslint/parser": "^5.9.0",
     "autoprefixer": "^10.4.2",

@@ -1,6 +1,7 @@
 import { MapContext } from "helpers/context";
 import React, { createContext, useContext, useEffect, useMemo } from "react";
-import { Cluster, MarkerClusterer } from "@googlemaps/markerclusterer";
+import { Algorithm, Cluster, MarkerClusterer, SuperClusterAlgorithm } from "@googlemaps/markerclusterer";
+import Supercluster from 'supercluster';
 
 const ClusterContext = createContext<MarkerClusterer | undefined>(undefined);
 
