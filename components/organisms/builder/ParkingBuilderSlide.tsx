@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { SlideagainstRightDesktop, SlideoverMobile } from 'components';
 import { Quark, watchDependencies } from 'helpers/quarky';
 import { Parking } from 'types';
-import { DeviceContext, staticUrl, useModal } from 'helpers';
+import { BreakpointContext, staticUrl, useModal } from 'helpers';
 import { ParkingForm } from '..';
 
 interface ParkingBuilderSlideProps {
@@ -17,7 +17,7 @@ export const ParkingBuilderSlide: React.FC<ParkingBuilderSlideProps> = watchDepe
     ...props
   }: ParkingBuilderSlideProps) => {
     const [ModalDelete, showModalDelete] = useModal();
-    const device = useContext(DeviceContext);
+    const device = useContext(BreakpointContext);
 
     return (
         <>

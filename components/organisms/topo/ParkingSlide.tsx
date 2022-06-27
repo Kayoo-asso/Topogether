@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react';
 import { Flash, ParkingButton, ParkingModal, SlideagainstRightDesktop, SlideoverMobile } from 'components';
 import { Quark, watchDependencies } from 'helpers/quarky';
 import { Parking } from 'types';
-import { DeviceContext } from 'helpers';
+import { BreakpointContext } from 'helpers';
 import { CFImage } from 'components/atoms/CFImage';
 import ParkingIcon from 'assets/icons/parking.svg'
 
@@ -16,7 +16,7 @@ export const ParkingSlide: React.FC<ParkingSlideProps> = watchDependencies(({
     open = true,
     ...props
 }: ParkingSlideProps) => {
-    const device = useContext(DeviceContext);
+    const device = useContext(BreakpointContext);
 
     const [flashMessage, setFlashMessage] = useState<string>();
     const [modalParkingOpen, setModalParkingOpen] = useState(false);

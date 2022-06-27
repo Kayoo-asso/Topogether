@@ -8,7 +8,7 @@ import {
     Drawer, BoulderBuilderSlideagainstDesktop,
     ParkingBuilderSlide, AccessFormSlideover, WaypointBuilderSlide, SectorAreaMarkerDropdown, BuilderProgressIndicator, BoulderFilterOptions,
 } from 'components';
-import { sortBoulders, useContextMenu, createTrack, createBoulder, createParking, createWaypoint, createSector, useDevice, computeBuilderProgress, encodeUUID, decodeUUID, deleteTrack, sectorChanged, useModal, staticUrl, toLatLng, useLoader } from 'helpers';
+import { sortBoulders, useContextMenu, createTrack, createBoulder, createParking, createWaypoint, createSector, useBreakpoint, computeBuilderProgress, encodeUUID, decodeUUID, deleteTrack, sectorChanged, useModal, staticUrl, toLatLng, useLoader } from 'helpers';
 import { Boulder, GeoCoordinates, Image, MapToolEnum, Parking, Sector, Track, Waypoint, Topo, isUUID, TopoStatus, ClimbTechniques } from 'types';
 import { Quark, useCreateDerivation, useCreateQuark, useLazyQuarkyEffect, useQuarkyCallback, useSelectQuark, watchDependencies } from 'helpers/quarky';
 import { api, sync } from 'helpers/services';
@@ -29,7 +29,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
     const session = useSession()!;
     const { b: bId } = router.query; // Get boulder id from url if selected
     const firstRender = useFirstRender();
-    const device = useDevice();
+    const breakpoint = useBreakpoint();
 
     const [Loader, showLoader] = useLoader();
 
@@ -232,7 +232,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                 // TODO: change this, we first wish to cancel any ongoing action,
                 // then set the current tool to undefined
                 if (currentTool) setCurrentTool(undefined);
-                else if ((device !== 'mobile' || displayDrawer) && selectedBoulder() && selectedTrack()) return; //If the Drawer is open, Escape should only deactivate Drawer tools
+                else if ((breakpoint !== 'mobile' || displayDrawer) && selectedBoulder() && selectedTrack()) return; //If the Drawer is open, Escape should only deactivate Drawer tools
                 else {
                     selectedSector.select(undefined);
                     selectedBoulder.select(undefined);
@@ -366,7 +366,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                     }}
                     onDeleteBoulder={showModalDeleteBoulder}
                 />
-                <Show when={() => [device === 'mobile', displaySectorSlideover] as const}>
+                <Show when={() => [breakpoint === 'mobile', displaySectorSlideover] as const}>
                     {() => (
                         <SectorBuilderSlideoverMobile
                             topoQuark={props.topoQuark}
@@ -503,7 +503,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                     </For>
                 </MapControl>
 
-                <Show when={() => [device !== 'mobile', selectedTrack.quark()] as const}>
+                <Show when={() => [breakpoint !== 'mobile', selectedTrack.quark()] as const}>
                     {([, track]) => (
                         <TrackFormSlideagainstDesktop
                             track={track}
@@ -517,7 +517,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
 
                 <Show when={() => selectedBoulder.quark()}>
                     {(boulder) => {
-                        if (device === 'mobile') {
+                        if (breakpoint === 'mobile') {
                             return (
                                 <BoulderBuilderSlideoverMobile
                                     boulder={boulder}
@@ -673,7 +673,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies((props:
                 }
             </Show>
 
-            <Show when={() => [(device !== 'mobile' || displayDrawer), selectedBoulder(), selectedTrack()] as const}>
+            <Show when={() => [(breakpoint !== 'mobile' || displayDrawer), selectedBoulder(), selectedTrack()] as const}>
                 {([, sBoulder, sTrack]) => (
                     <Drawer
                         image={sBoulder.images.find((img) => img.id === sTrack.lines.lazy().toArray()[0]?.imageId) || currentImage!}

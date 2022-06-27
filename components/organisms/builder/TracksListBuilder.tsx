@@ -3,7 +3,7 @@ import { GradeCircle } from 'components';
 import { Boulder, gradeToLightGrade, Track } from 'types';
 import { Quark, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
 import { TrackForm } from '../form/TrackForm';
-import { createTrack, deleteTrack, DeviceContext, staticUrl, useModal } from 'helpers';
+import { createTrack, deleteTrack, BreakpointContext, staticUrl, useModal } from 'helpers';
 import { useSession } from "helpers/services";
 import DrawIcon from 'assets/icons/draw.svg';
 
@@ -32,7 +32,7 @@ export const TracksListBuilder: React.FC<TracksListBuilderProps> = watchDependen
   const [ModalDelete, showModalDelete] = useModal<Quark<Track>>();
   const [ModalAddImage, showModalAddImage] = useModal();
 
-  const device = useContext(DeviceContext);
+  const device = useContext(BreakpointContext);
 
   const boulder = props.boulder();
   const tracks = boulder.tracks.quarks().toArray().sort((t1, t2) => t1().index - t2().index);

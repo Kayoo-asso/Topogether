@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { SlideoverLeftDesktop, SlideoverMobile } from 'components';
 import { QuarkArray, watchDependencies } from 'helpers/quarky';
 import { Manager, Name } from 'types';
-import { DeviceContext } from 'helpers';
+import { BreakpointContext } from 'helpers';
 import { ManagementForm } from '..';
 import { v4 } from 'uuid';
 
@@ -17,7 +17,7 @@ export const ManagementFormSlideover: React.FC<ManagementFormSlideoverProps> = w
     open = true,
     ...props
 }: ManagementFormSlideoverProps) => {
-    const device = useContext(DeviceContext);
+    const device = useContext(BreakpointContext);
 
     return (
         <>

@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { SlideoverLeftDesktop, SlideoverMobile } from 'components';
 import { QuarkArray, watchDependencies } from 'helpers/quarky';
 import { TopoAccess } from 'types';
-import { DeviceContext } from 'helpers';
+import { BreakpointContext } from 'helpers';
 import { AccessForm } from '..';
 import { v4 } from 'uuid';
 
@@ -17,7 +17,7 @@ export const AccessFormSlideover: React.FC<AccessFormSlideoverProps> = watchDepe
     open = true,
     ...props
 }: AccessFormSlideoverProps) => {
-    const device = useContext(DeviceContext);
+    const device = useContext(BreakpointContext);
 
     return (
         <>

@@ -6,7 +6,7 @@ import {
   MapControl, ParkingSlide, WaypointSlide, TracksImage
 } from 'components';
 import { LeftbarTopoDesktop } from 'components/layouts';
-import { DeviceContext, decodeUUID, encodeUUID, sortBoulders, ClusterProvider } from 'helpers';
+import { BreakpointContext, decodeUUID, encodeUUID, sortBoulders, ClusterProvider } from 'helpers';
 import { Boulder, ClimbTechniques, Image, isUUID, Parking, Sector, Topo, TopoStatus, Track, Waypoint } from 'types';
 import { Quark, QuarkIter, useCreateDerivation, useCreateQuark, useLazyQuarkyEffect, useQuarkyCallback, useSelectQuark, watchDependencies } from 'helpers/quarky';
 import { useRouter } from 'next/router';
@@ -26,7 +26,7 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
   const session = useSession();
   const { b: bId } = router.query; // Get boulder id from url if selected 
   const firstRender = useFirstRender();
-  const device = useContext(DeviceContext);
+  const device = useContext(BreakpointContext);
   
   const topo = props.topoQuark();
   useEffect(() => {

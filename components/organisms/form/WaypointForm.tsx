@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { Button, ImageInput, TextArea, TextInput } from 'components';
 import { Quark, watchDependencies } from 'helpers/quarky';
 import { Description, Name, Waypoint } from 'types';
-import { useDevice } from 'helpers';
+import { useBreakpoint } from 'helpers';
 
 interface WaypointFormProps {
     waypoint: Quark<Waypoint>,
@@ -11,12 +11,12 @@ interface WaypointFormProps {
 }
 
 export const WaypointForm: React.FC<WaypointFormProps> = watchDependencies((props: WaypointFormProps) => {
-    const device = useDevice();
+    const breakpoint = useBreakpoint();
     const nameInputRef = useRef<HTMLInputElement>(null);
     const waypoint = props.waypoint();
 
     useEffect(() => {
-        if (device === 'desktop' && nameInputRef.current) {
+        if (breakpoint === 'desktop' && nameInputRef.current) {
             nameInputRef.current.focus();
         }
     }, []);

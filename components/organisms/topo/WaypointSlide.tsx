@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react';
 import { Flash, SlideagainstRightDesktop, SlideoverMobile } from 'components';
 import { Quark, watchDependencies } from 'helpers/quarky';
 import { Waypoint } from 'types';
-import { DeviceContext } from 'helpers';
+import { BreakpointContext } from 'helpers';
 import { CFImage } from 'components/atoms/CFImage';
 import HelpRound from 'assets/icons/help-round.svg';
 
@@ -16,7 +16,7 @@ export const WaypointSlide: React.FC<WaypointSlideProps> = watchDependencies(({
     open = true,
     ...props
   }: WaypointSlideProps) => {
-    const device = useContext(DeviceContext);
+    const device = useContext(BreakpointContext);
 
     const [flashMessage, setFlashMessage] = useState<string>();
     const waypoint = props.waypoint();

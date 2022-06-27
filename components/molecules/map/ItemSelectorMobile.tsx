@@ -4,7 +4,7 @@ import Sector from 'assets/icons/sector.svg';
 import Rock from 'assets/icons/rock.svg';
 import Parking from 'assets/icons/parking.svg';
 import Waypoint from 'assets/icons/help-round.svg';
-import { useDevice } from 'helpers';
+import { useBreakpoint } from 'helpers';
 import { ImageInput } from '../form';
 
 interface ItemSelectorMobileProps {
@@ -16,13 +16,13 @@ interface ItemSelectorMobileProps {
 }
 
 export const ItemSelectorMobile: React.FC<ItemSelectorMobileProps> = (props: ItemSelectorMobileProps) => {
-    const device = useDevice();
+    const breakpoint = useBreakpoint();
 
     return (
         <div className='flex flex-row bg-white shadow rounded-full z-20'>
 
             <div className='flex flex-row items-center gap-5 bg-white rounded-full h-[60px] px-4 md:px-6'>
-                {device === 'desktop' && 
+                {breakpoint === 'desktop' && 
                     <Sector
                         className={'h-6 w-6 cursor-pointer ' + (props.currentTool === "SECTOR" ? 'stroke-main fill-main' : 'stroke-grey-light fill-grey-light')}
                         onClick={() => {
@@ -50,7 +50,7 @@ export const ItemSelectorMobile: React.FC<ItemSelectorMobileProps> = (props: Ite
                 />
             </div>
             
-            {device === 'mobile' && 
+            {breakpoint === 'mobile' && 
                 <ImageInput 
                     button='builder'
                     size='big'

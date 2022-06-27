@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react';
 import { DownloadButton, Flash, GradeHistogram, LikeButton, SlideoverLeftDesktop, SlideoverMobile } from 'components';
 import { Signal } from 'helpers/quarky';
 import { Amenities, Topo } from 'types';
-import { DeviceContext, hasFlag, listRockTypes, TopoTypeToColor } from 'helpers';
+import { BreakpointContext, hasFlag, listRockTypes, TopoTypeToColor } from 'helpers';
 import WaypointIcon from 'assets/icons/waypoint.svg';
 import Rock from 'assets/icons/rock.svg'
 import ManyTracks from 'assets/icons/many-tracks.svg';
@@ -23,7 +23,7 @@ export const InfoSlideover: React.FC<InfoSlideoverProps> = ({
     open = true,
     ...props
 }: InfoSlideoverProps) => {
-    const device = useContext(DeviceContext);
+    const device = useContext(BreakpointContext);
     const [flashMessage, setFlashMessage] = useState<string>();
     const topo = props.topo();
 

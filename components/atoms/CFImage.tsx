@@ -3,7 +3,7 @@ import { SourceSize, VariantWidths, cloudflareUrl } from "helpers/images";
 import { forwardRef, ImgHTMLAttributes, ReactElement, useCallback, useEffect, useRef, useState } from "react";
 import defaultKayoo from 'public/assets/img/Kayoo_defaut_image.png';
 import type { StaticImageData } from 'next/image';
-import { useDevice } from "helpers/hooks/useDevice";
+import { useBreakpoint } from "helpers";
 import { Loading } from "components/layouts";
 import { Portal, setReactRef } from "helpers";
 import QuickPinchZoom, { make3dTransformValue } from "react-quick-pinch-zoom";
@@ -34,7 +34,7 @@ export const CFImage = forwardRef<HTMLImageElement, CFImageProps>(({
     defaultImage = defaultKayoo,
     ...props 
 }: CFImageProps, parentRef) => {
-    const device = useDevice();
+    const device = useBreakpoint();
     const imgRef = useRef<HTMLImageElement>(null);
     const [loading, setLoading] = useState(true);
     const { forceLoading, ...imgProps } = props;
