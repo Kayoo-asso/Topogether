@@ -28,28 +28,44 @@ export interface SectorListBuilderProps {
 // Note: some cleanup happened here
 export const SectorListBuilder: React.FC<SectorListBuilderProps> =
   watchDependencies((props: SectorListBuilderProps) => {
-    const session = useSession();
+    const session = useSession()!;
 
     const selectedBoulder = props.selectedBoulder();
     const topo = props.topoQuark();
     const sectors = topo.sectors;
-    const [bouldersIn, bouldersOut] = splitArray(
-      topo.boulders.quarks().toArray(),
-      (b) =>
-        sectors
-          .toArray()
-          .map((s) => s.boulders)
-          .flat()
-          .includes(b().id)
-    );
-    const bouldersOutSorted = topo.lonelyBoulders.map(
-      (id) => bouldersOut.find((b) => b().id === id)!
+
+    const boulderQuarksMap = new Map<UUID, Quark<Boulder>>();
+    for (const bq of topo.boulders.quarks()) {
+      const b = bq();
+      boulderQuarksMap.set(b.id, bq);
+    }
+    const lonelyQuarks: Quark<Boulder>[] = [];
+    for (const id of topo.lonelyBoulders) {
+      lonelyQuarks.push(boulderQuarksMap.get(id)!);
+    }
+
+    // By default, all sectors are shown
+    // Thus, it's cheaper and easier to track the sectors we hide
+    const [hiddenSectors, setHiddenSectors] = useState<Set<UUID>>(new Set());
+    // The reverse is true for boulders
+    const [displayedBoulders, setDisplayedBoulders] = useState<Set<UUID>>(
+      new Set()
     );
 
-    const [displayedSectors, setDisplayedSectors] = useState<Array<UUID>>(
-      sectors.map((sector) => sector.id).toArray()
-    );
-    const [displayedBoulders, setDisplayedBoulders] = useState<Array<UUID>>([]);
+    const toggleSector = (sector: Sector) => {
+      const hs = new Set(hiddenSectors);
+      if (!hs.delete(sector.id)) {
+        hs.add(sector.id);
+      }
+      setHiddenSectors(hs);
+    };
+    const toggleBoulder = (boulder: Boulder) => {
+      const db = new Set(displayedBoulders);
+      if (!db.delete(boulder.id)) {
+        db.add(boulder.id);
+      }
+      setDisplayedBoulders(db);
+    };
 
     const [draggingSectorId, setDraggingSectorId] = useState();
     const handleDragStart = useCallback((res) => {
@@ -93,24 +109,14 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> =
       [topo, sectors]
     );
 
-    useEffect(() => {
-      if (topo.sectors.length > 0) {
-        const lastSector = topo.sectors.at(topo.sectors.length - 1);
-        if (!displayedSectors.includes(lastSector.id)) {
-          setDisplayedSectors([...displayedSectors, lastSector.id]);
-        }
-      }
-    }, [topo.sectors.length]);
-
-    if (!session) return <></>;
-
     return (
       <div className="mb-6 px-4">
         {sectors.quarks().map((sectorQuark, sectorIndex) => {
           const sector = sectorQuark();
-          const boulderQuarks = sector.boulders.map(
-            (id) => bouldersIn.find((b) => b().id === id)!
-          );
+          const quarks: Quark<Boulder>[] = [];
+          for (const id of sector.boulders) {
+            quarks.push(boulderQuarksMap.get(id)!);
+          }
           return (
             <DragDropContext
               onDragEnd={handleDragEnd}
@@ -130,33 +136,21 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> =
                     <div className="ktext-section-title text-main mb-1 flex flex-row items-center">
                       <button
                         className="pr-3 cursor-pointer"
-                        onClick={() => {
-                          const newDS = [...displayedSectors];
-                          if (newDS.includes(sector.id))
-                            newDS.splice(newDS.indexOf(sector.id), 1);
-                          else newDS.push(sector.id);
-                          setDisplayedSectors(newDS);
-                        }}
+                        onClick={() => toggleSector(sector)}
                       >
                         <ArrowSimple
                           className={
                             "w-3 h-3 stroke-main stroke-2 " +
-                            (displayedSectors.includes(sector.id)
-                              ? "-rotate-90"
-                              : "rotate-180")
+                            (hiddenSectors.has(sector.id)
+                              ? "rotate-180"
+                              : "-rotate-90")
                           }
                         />
                       </button>
 
                       <div
                         className="flex-1"
-                        onClick={() => {
-                          const newDS = [...displayedSectors];
-                          if (!newDS.includes(sector.id)) {
-                            newDS.push(sector.id);
-                            setDisplayedSectors(newDS);
-                          }
-                        }}
+                        onClick={() => toggleSector(sector)}
                       >
                         <span className="cursor-pointer">{sector.name}</span>
                       </div>
@@ -169,7 +163,7 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> =
                       </div>
                     </div>
 
-                    {displayedSectors.includes(sector.id) && (
+                    {!hiddenSectors.has(sector.id) && (
                       // BOULDERS
                       <div
                         className={
@@ -179,10 +173,10 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> =
                             : "")
                         }
                       >
-                        {boulderQuarks.length === 0 && (
+                        {quarks.length === 0 && (
                           <div className="">Aucun rocher référencé</div>
                         )}
-                        {boulderQuarks.map((boulderQuark, index) => {
+                        {quarks.map((boulderQuark, index) => {
                           const boulder = boulderQuark();
                           return (
                             <Draggable
@@ -204,26 +198,13 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> =
                                     selected={
                                       selectedBoulder?.id === boulder.id
                                     }
-                                    displayed={displayedBoulders.includes(
+                                    displayed={displayedBoulders.has(
                                       boulder.id
                                     )}
-                                    onArrowClick={() => {
-                                      const newDB = [...displayedBoulders];
-                                      if (newDB.includes(boulder.id))
-                                        newDB.splice(
-                                          newDB.indexOf(boulder.id),
-                                          1
-                                        );
-                                      else newDB.push(boulder.id);
-                                      setDisplayedBoulders(newDB);
-                                    }}
+                                    onArrowClick={() => toggleBoulder(boulder)}
                                     onNameClick={() => {
                                       props.onBoulderSelect(boulderQuark);
-                                      const newDB = [...displayedBoulders];
-                                      if (!newDB.includes(boulder.id)) {
-                                        newDB.push(boulder.id);
-                                        setDisplayedBoulders(newDB);
-                                      }
+                                      toggleBoulder(boulder);
                                     }}
                                     onDeleteClick={() =>
                                       props.onDeleteBoulder(boulderQuark)
@@ -266,7 +247,7 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> =
                   {...provided.droppableProps}
                   ref={provided.innerRef}
                 >
-                  {sectors.length > 0 && bouldersOutSorted.length > 0 && (
+                  {sectors.length > 0 && lonelyQuarks.length > 0 && (
                     <div className="ktext-label text-grey-medium mb-1">
                       Sans secteur
                     </div>
@@ -279,7 +260,7 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> =
                         : "")
                     }
                   >
-                    {bouldersOutSorted.map((boulderQuark, index) => {
+                    {lonelyQuarks.map((boulderQuark, index) => {
                       const boulder = boulderQuark();
                       return (
                         <Draggable
@@ -297,23 +278,11 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> =
                                 boulder={boulderQuark}
                                 orderIndex={props.boulderOrder.get(boulder.id)!}
                                 selected={selectedBoulder?.id === boulder.id}
-                                displayed={displayedBoulders.includes(
-                                  boulder.id
-                                )}
-                                onArrowClick={() => {
-                                  const newDB = [...displayedBoulders];
-                                  if (newDB.includes(boulder.id))
-                                    newDB.splice(newDB.indexOf(boulder.id), 1);
-                                  else newDB.push(boulder.id);
-                                  setDisplayedBoulders(newDB);
-                                }}
+                                displayed={displayedBoulders.has(boulder.id)}
+                                onArrowClick={() => toggleBoulder(boulder)}
                                 onNameClick={() => {
                                   props.onBoulderSelect(boulderQuark);
-                                  const newDB = [...displayedBoulders];
-                                  if (!newDB.includes(boulder.id)) {
-                                    newDB.push(boulder.id);
-                                    setDisplayedBoulders(newDB);
-                                  }
+                                  toggleBoulder(boulder);
                                 }}
                                 onDeleteClick={() =>
                                   props.onDeleteBoulder(boulderQuark)
