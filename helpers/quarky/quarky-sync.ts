@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-export {};
-=======
 export {}
->>>>>>> dev
 // import { batch, registerPostUpdateHook } from ".";
 // // import { getBroadcaster } from "./Broadcaster";
 // import { quark, Quark, isSSR } from "./quarky";
