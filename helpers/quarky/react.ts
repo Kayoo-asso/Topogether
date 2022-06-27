@@ -55,7 +55,7 @@ export function watchDependencies<P extends object, R = undefined>(
   // here options.memo is necessarily a function
   // if (options.memo) return React.memo(fn as any, options.memo);
   
-  return wrapped;
+  return fn;
 }
 
 // useCreateQuark and useCreateDerivation have to be 2 separate hooks,
