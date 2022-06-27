@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { Button, Checkbox, TextInput } from 'components';
 import { Quark, watchDependencies } from 'helpers/quarky';
 import { Boulder, GeoCoordinates, Name, Topo } from 'types';
-import { boulderChanged, useDevice } from 'helpers';
+import { boulderChanged, useBreakpoint } from 'helpers';
 
 interface BoulderFormProps {
     boulder: Quark<Boulder>,
@@ -11,12 +11,12 @@ interface BoulderFormProps {
 }
 
 export const BoulderForm: React.FC<BoulderFormProps> = watchDependencies((props: BoulderFormProps) => {
-    const device = useDevice();
+    const breakpoint = useBreakpoint();
     const nameInputRef = useRef<HTMLInputElement>(null);
     const boulder = props.boulder();
 
     useEffect(() => {
-        if (device === 'desktop' && nameInputRef.current) {
+        if (breakpoint === 'desktop' && nameInputRef.current) {
             nameInputRef.current.focus();
         }
     }, []);

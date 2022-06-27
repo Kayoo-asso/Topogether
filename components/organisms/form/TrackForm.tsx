@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { Button, Checkbox, Select, TextArea, TextInput } from 'components';
 import { Quark, watchDependencies } from 'helpers/quarky';
 import { ClimbTechniques, Description, Name, Track } from 'types';
-import { ClimbTechniquesName, toggleFlag, useDevice } from 'helpers';
+import { ClimbTechniquesName, toggleFlag, useBreakpoint } from 'helpers';
 import { ReceptionName, selectOptions } from 'types/EnumNames';
 import { BitflagMultipleSelect } from 'components/molecules/form/BitflagMultipleSelect';
 
@@ -13,12 +13,12 @@ interface TrackFormProps {
 }
 
 export const TrackForm: React.FC<TrackFormProps> = watchDependencies((props: TrackFormProps) => {
-    const device = useDevice();
+    const breakpoint = useBreakpoint();
     const nameInputRef = useRef<HTMLInputElement>(null);
     const track = props.track();
 
     useEffect(() => {
-        if (device === 'desktop' && nameInputRef.current) {
+        if (breakpoint === 'desktop' && nameInputRef.current) {
             nameInputRef.current.focus();
         }
     }, []);

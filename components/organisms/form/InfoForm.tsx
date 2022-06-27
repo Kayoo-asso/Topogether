@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef } from 'react';
 import { Checkbox, ImageInput, Show, TextArea, TextInput } from 'components';
 import { Quark, watchDependencies } from 'helpers/quarky';
 import { Amenities, Description, Name, RockTypes, Topo } from 'types';
-import { hasFlag, rockNames, toggleFlag, useDevice } from 'helpers';
+import { hasFlag, rockNames, toggleFlag, useBreakpoint } from 'helpers';
 import { BitflagMultipleSelect } from 'components/molecules/form/BitflagMultipleSelect';
 
 interface InfoFormProps {
@@ -11,7 +11,7 @@ interface InfoFormProps {
 }
 
 export const InfoForm: React.FC<InfoFormProps> = watchDependencies((props: InfoFormProps) => {
-  const device = useDevice();  
+  const device = useBreakpoint();  
   const nameInputRef = useRef<HTMLInputElement>(null);
   const topo = props.topo();
 

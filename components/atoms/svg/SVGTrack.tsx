@@ -2,7 +2,7 @@ import React from 'react';
 import { Quark, watchDependencies } from 'helpers/quarky';
 import { DrawerToolEnum, gradeToLightGrade, Line, PointEnum, Track, UUID } from 'types';
 import { SVGArea, SVGLine, SVGPoint } from '.';
-import { useDevice } from 'helpers';
+import { useBreakpoint } from 'helpers';
 
 interface SVGTrackProps {
     track: Quark<Track>,
@@ -26,13 +26,13 @@ export const SVGTrack: React.FC<SVGTrackProps> = watchDependencies(({
     trackWeight = 2,
     ...props
 }: SVGTrackProps) => {
-    const device = useDevice();
+    const breakpoint = useBreakpoint();
     const track = props.track();
     const colorNumber = track.grade ? gradeToLightGrade(track.grade) : 'grey';
 
-    const linePointSize = device === 'desktop' ? 100 : 180;
-    const handPointSize = device === 'desktop' ? 110 : 280;
-    const footPointSize = device === 'desktop' ? 180 : 420;
+    const linePointSize = breakpoint === 'desktop' ? 100 : 180;
+    const handPointSize = breakpoint === 'desktop' ? 110 : 280;
+    const footPointSize = breakpoint === 'desktop' ? 180 : 420;
 
     const constructNodes = (quarkLine: Quark<Line>) => {
         const line = quarkLine();

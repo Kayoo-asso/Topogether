@@ -10,6 +10,11 @@ import {
 } from "workbox-strategies";
 import { ExpirationPlugin } from "workbox-expiration";
 
+// TODO:
+// - Redirect to home page if page is not cached
+// - Cache pages on navigation, to avoid problems with offline refreshes
+//   https://github.com/shadowwalker/next-pwa/blob/master/examples/cache-on-front-end-nav/worker/index.js
+
 (self as any).__WB_DISABLE_DEV_LOGS = true;
 
 cleanupOutdatedCaches();
@@ -36,7 +41,7 @@ const extScripts = new Route(
     return request.destination === "script" && !sameOrigin;
   },
   new StaleWhileRevalidate({
-    cacheName: "scripts",
+    cacheName: "ext-scripts",
     plugins: [
       // this should clear old entries over time
       new ExpirationPlugin({

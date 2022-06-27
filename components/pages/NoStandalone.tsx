@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import NextImage from 'next/image';
-import { staticUrl, isIos } from 'helpers';
+import { staticUrl, useIsIos } from 'helpers';
 import Share from 'assets/icons/share.svg';
 import { Button } from 'components';
 
@@ -10,7 +10,7 @@ type BeforeInstallPromptEvent = Event & {
 }
 
 const NoStandalone: React.FC = () => {
-    const iOS = isIos();
+    const iOS = useIsIos();
 
     const [installPromptEvent, setInstallPromptEvent] = useState<BeforeInstallPromptEvent>();
     useEffect(() => {

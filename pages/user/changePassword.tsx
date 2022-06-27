@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import type { GetServerSideProps, NextPage } from 'next';
+import type { NextPage } from 'next';
 import { Button, TextInput } from 'components';
 import { staticUrl, useLoader } from 'helpers';
 import NextImage from 'next/image';
@@ -7,18 +7,12 @@ import Link from 'next/link';
 import { useAuth } from 'helpers/services';
 import { Header } from 'components/layouts/header/Header';
 import { User } from 'types';
-import { withAuth } from 'helpers/auth';
 
 type ChangePasswordProps = {
   user: User
 }
 
-export const getServerSideProps: GetServerSideProps<ChangePasswordProps> = withAuth(
-  async () => ({ props: {} }),
-  "/user/changePassword"
-);
-
-const ChangePasswordPage: NextPage = (props) => {
+const ChangePasswordPage: NextPage<ChangePasswordProps> = () => {
   const auth = useAuth();
 
   const [Loader, showLoader] = useLoader();

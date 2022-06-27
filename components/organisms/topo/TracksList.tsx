@@ -1,8 +1,8 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { AverageNote, GradeCircle } from 'components';
 import { gradeToLightGrade, Track } from 'types';
 import { Quark, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
-import { ClimbTechniquesName, DeviceContext, listFlags } from 'helpers';
+import { ClimbTechniquesName, listFlags, useBreakpoint } from 'helpers';
 import { OrientationName, ReceptionName } from 'types/EnumNames';
 
 interface TracksListProps {
@@ -23,7 +23,7 @@ const gradeColors = {
 };
 
 export const TracksList: React.FC<TracksListProps> = watchDependencies((props: TracksListProps) => {
-  const device = useContext(DeviceContext);
+  const breakpoint = useBreakpoint();
   const tracks = Array.from(props.tracks);
 
   return (
@@ -63,7 +63,7 @@ export const TracksList: React.FC<TracksListProps> = watchDependencies((props: T
               />
             </div>
 
-            {props.selectedTrack()?.id === track.id && device === 'mobile' &&
+            {props.selectedTrack()?.id === track.id && breakpoint === 'mobile' &&
               <>
                 {track.description &&
                   <div className='mt-4'>

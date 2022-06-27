@@ -1,8 +1,8 @@
-import { Device } from "helpers/context";
+import { Breakpoint } from "helpers/context";
 import { GeoCoordinates } from "types";
 import { toLatLng } from ".";
 
-const launchNavigation = (destination: GeoCoordinates, origin: GeoCoordinates | null, provider: 'apple' | 'google', device: Device, isIos: boolean) => {
+const launchNavigation = (destination: GeoCoordinates, origin: GeoCoordinates | null, provider: 'apple' | 'google', device: Breakpoint, isIos: boolean) => {
   const d = toLatLng(destination);
 
   // We have the user position so we can propose the itinerary

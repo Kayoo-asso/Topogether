@@ -3,7 +3,7 @@ import { ImageInput, TextArea, TextInput } from 'components';
 import { Quark, watchDependencies } from 'helpers/quarky';
 import { Description, Email, Manager, Name, UUID } from 'types';
 import { Button } from 'components/atoms';
-import { useDevice } from 'helpers';
+import { useBreakpoint } from 'helpers';
 
 interface ManagementFormProps {
     manager: Quark<Manager>,
@@ -13,11 +13,11 @@ interface ManagementFormProps {
 }
 
 export const ManagementForm: React.FC<ManagementFormProps> = watchDependencies((props: ManagementFormProps) => {
-    const device = useDevice();
+    const breakpoint = useBreakpoint();
     const nameInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
-        if (device === 'desktop' && nameInputRef.current) {
+        if (breakpoint === 'desktop' && nameInputRef.current) {
           nameInputRef.current.focus();
         }
       }, []);

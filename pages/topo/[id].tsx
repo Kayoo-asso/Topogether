@@ -1,86 +1,54 @@
-import React, { useEffect } from 'react';
-import type { GetServerSideProps, NextPage } from 'next';
+import type { NextPage } from 'next';
 import { RootTopo } from 'components';
 import { editTopo, decodeUUID, useLoader } from 'helpers';
 import { isUUID, TopoData } from 'types';
 import { api } from 'helpers/services';
-import { useRouter } from 'next/router';
-import { useQuery } from 'react-query';
+import { useRouter,  } from 'next/router';
+import { ServerResponse } from 'http';
 
-// type TopoProps = {
-//   topo: TopoData,
-// }
+type TopoProps = {
+  topo?: TopoData,
+}
 
-// const redirect = (destination: string) => ({
-//   redirect: {
-//     destination,
-//     permanent: false
-//   }
-// });
+const redirect = (destination: string, res: ServerResponse | undefined) => {
+  if (res) {
+    res.writeHead(307, { Location: destination })
+    res.end();
+  }
+  return { topo: undefined };
+}
 
-// export const getServerSideProps: GetServerSideProps = async ({ query }) => {
-//   const { id } = query;
-//   if (typeof id !== "string") return redirect("/");
 
-//   const expanded = decodeUUID(id);
-
-//   if (!isUUID(expanded)) return redirect("/");
-
-//   const topo = await api.getTopo(expanded);
-  
-//   if (!topo) {
-//     return { notFound: true };
-//   }
-
-//   return { props: { topo } };
-// }
-
-const Topo: NextPage = ({ }) => {
+const Topo: NextPage<TopoProps> = ({ topo }) => {
+  // Hack to redirect on client-side, in case we can't do it from the server
   const router = useRouter();
-  const [Loader, showLoader] = useLoader();
-  let loader = false;
-
-  const { id } = router.query;
-
-  if (typeof id !== "string") {
-    router.push("/404");
-    showLoader();
-    return <Loader />;
-  }
-
-  const uuid = decodeUUID(id);
-
-  if (!isUUID(uuid)) {
-    router.push("/404");
-    showLoader();
-    return <Loader />;
-  }
-
-  const { data: topo, isError, isLoading } = useQuery(['topo', uuid], () => {
-    return api.getTopo(uuid)
-  }, {
-    refetchOnWindowFocus: false,
-    refetchOnMount: false,
-    refetchOnReconnect: false,
-  });
-
-  if (isError) {
+  if (!topo) {
     router.push("/");
-    showLoader();
-    return <Loader />;
+    return null;
   }
-
-  if (isError || isLoading) {
-    loader = true;
-    showLoader();
-    return <Loader />;
-  }
-
 
   // TODO: how to encode the fact that this topo cannot be edited?
-  const topoQuark = editTopo(topo!);
+  const topoQuark = editTopo(topo);
   return <RootTopo topoQuark={topoQuark} />
 };
+
+Topo.getInitialProps = async ({ query, res  }) => {
+  const { id } = query;
+  if (typeof id !== "string") return { notFound: true };
+
+  const expanded = decodeUUID(id);
+
+  if (!isUUID(expanded)) return { notFound: true };
+
+  const topo = await api.getTopo(expanded);
+  
+  // Try to redirect on server
+  if (!topo) {
+    return redirect("/", res);
+  }
+
+  return { topo };
+}
 
 Topo.displayName = "TopoPage";
 

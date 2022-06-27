@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { Button, ImageInput, TextArea, TextInput } from 'components';
 import { Quark, watchDependencies } from 'helpers/quarky';
 import { Description, Name, Parking } from 'types';
-import { useDevice } from 'helpers';
+import { useBreakpoint } from 'helpers';
 
 interface ParkingFormProps {
     parking: Quark<Parking>,
@@ -11,12 +11,12 @@ interface ParkingFormProps {
 }
 
 export const ParkingForm: React.FC<ParkingFormProps> = watchDependencies((props: ParkingFormProps) => {
-    const device = useDevice();
+    const breakpoint = useBreakpoint();
     const nameInputRef = useRef<HTMLInputElement>(null);
     const parking = props.parking();
 
     useEffect(() => {
-        if (device === 'desktop' && nameInputRef.current) {
+        if (breakpoint === 'desktop' && nameInputRef.current) {
             nameInputRef.current.focus();
         }
     }, []);

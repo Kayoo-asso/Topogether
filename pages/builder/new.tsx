@@ -1,20 +1,23 @@
-import React from 'react';
-import type { GetServerSideProps, NextPage } from 'next';
-import { RootNew } from 'components';
-import { User } from 'types';
-import { withAuth } from 'helpers/auth';
+import { RootNew } from "components";
+import { User } from "types";
+import {
+  getUserInitialProps,
+  loginRedirect,
+  withRouting,
+} from "helpers/server";
 
 type BuilderNewProps = {
-  user: User
-}
-
-export const getServerSideProps: GetServerSideProps<BuilderNewProps> = withAuth(
-  async () => ({ props: {} }),
-  "/builder/new"
-);
-
-const NewPage: NextPage<BuilderNewProps> = ({ user }) => {
-  return <RootNew user={user} />
+  user: User;
 };
 
-export default NewPage;
+export default withRouting<BuilderNewProps>({
+  async getInitialProps(ctx) {
+    const user = await getUserInitialProps(ctx);
+    if (!user) return loginRedirect("/builder/new");
+    return { props: { user } };
+  },
+
+  render({ user }) {
+    return <RootNew user={user} />;
+  },
+});
