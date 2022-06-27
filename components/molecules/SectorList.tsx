@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { BoulderItemLeftbar } from 'components/layouts';
-import { splitArray } from 'helpers';
 import { Quark, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
 import { Boulder, Topo, Track, UUID } from 'types';
 import ArrowSimple from 'assets/icons/arrow-simple.svg';
+import { BoulderItemLeftbar } from 'components/layouts/BoulderItemLeftbar';
+import { splitArray } from 'helpers/utils';
 
 interface SectorListProps {
     topoQuark: Quark<Topo>,

@@ -4,7 +4,7 @@ import { Image, Track } from 'types';
 import { TracksImage } from './TracksImage';
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 import { Carousel } from 'react-responsive-carousel';
-import { Portal } from 'helpers';
+import { Portal } from 'helpers/hooks';
 import { CFImage } from 'components/atoms';
 
 interface ImageSliderProps {

@@ -2,7 +2,7 @@ import React from 'react';
 import { Card } from 'components';
 import Link from 'next/link';
 import AddIcon from 'assets/icons/add.svg';
-import { useLoader } from 'helpers';
+import { useLoader } from 'helpers/hooks';
 
 // corriger l'icone
 export const AddTopoCard: React.FC = () => {

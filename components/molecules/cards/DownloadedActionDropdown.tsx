@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { Dropdown } from 'components';
 import { LightTopo, TopoStatus } from 'types';
 import { useRouter } from 'next/router';
-import { encodeUUID } from 'helpers';
+import { encodeUUID } from 'helpers/utils';
 
 interface DownloadedActionDropdownProps {
     topo: LightTopo;

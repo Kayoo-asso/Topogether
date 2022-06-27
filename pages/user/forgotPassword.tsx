@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import type { NextPage } from 'next';
 import { Button, TextInput } from 'components';
-import { staticUrl, useLoader } from 'helpers';
 import NextImage from 'next/image';
 import Link from 'next/link';
-import { Header } from 'components/layouts/header/Header';
+import { Header } from 'components/layouts/Header';
+import { staticUrl } from 'helpers/constants';
+import { useLoader } from 'helpers/hooks';
 
 const ForgotPasswordPage: NextPage = () => {
   const [email, setEmail] = useState<string>();

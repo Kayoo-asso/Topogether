@@ -1,7 +1,12 @@
 
 import { GeoCoordinates, GeomCoordinates, GeometryType } from "types"
 
-// Only dealing with forward geocoding
+// NOT USED FOR NOW
+// DEAD CODE
+// DON'T PUT INTO `mapUtils.ts`
+// it works though
+
+// Only deals with forward geocoding
 
 export type GeocodingOptions = {
   // those have full coverage on Mapbox

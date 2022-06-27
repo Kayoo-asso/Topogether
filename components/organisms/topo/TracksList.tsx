@@ -2,8 +2,9 @@ import React from 'react';
 import { AverageNote, GradeCircle } from 'components';
 import { gradeToLightGrade, Track } from 'types';
 import { Quark, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
-import { ClimbTechniquesName, listFlags, useBreakpoint } from 'helpers';
+import { ClimbTechniquesName, listFlags } from 'helpers/bitflags';
 import { OrientationName, ReceptionName } from 'types/EnumNames';
+import { useBreakpoint } from 'helpers/hooks';
 
 interface TracksListProps {
   tracks: Iterable<Quark<Track>>,

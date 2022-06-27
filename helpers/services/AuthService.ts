@@ -3,7 +3,7 @@ import { quark, Quark } from "helpers/quarky";
 import { DBUserUpdate, Email, Name, Role, User } from "types";
 import { createContext, useContext } from "react";
 import { DBConvert } from "./DBConvert";
-import { AccessTokenCookie, RefreshTokenCookie } from "helpers/server";
+import { AccessTokenCookie, RefreshTokenCookie } from "helpers/serverStuff";
 
 export enum SignUpRes {
     LoggedIn,

@@ -1,5 +1,5 @@
 import Compressor from "compressorjs";
-import { cloudflareUrl } from "helpers/images";
+import { cloudflareUrl } from "helpers/utils";
 import { Image, UUID, Result, TopoData } from "types";
 import { v4 as uuid } from "uuid";
 

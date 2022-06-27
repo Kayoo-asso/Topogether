@@ -2,7 +2,7 @@ import React from 'react';
 import { SlideoverLeftDesktop, SlideoverMobile } from 'components';
 import { Quark } from 'helpers/quarky';
 import { Topo } from 'types';
-import { useBreakpoint } from 'helpers';
+import { useBreakpoint } from 'helpers/hooks';
 import { InfoForm } from '..';
 
 interface InfoFormSlideoverProps {

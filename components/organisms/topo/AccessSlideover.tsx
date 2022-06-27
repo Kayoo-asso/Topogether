@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { SlideoverLeftDesktop, SlideoverMobile, TabOption, Tabs } from 'components';
 import { QuarkArray } from 'helpers/quarky';
 import { TopoAccess } from 'types';
-import { useBreakpoint } from 'helpers';
 import { DifficultyName } from 'types/EnumNames';
 import { CFImage } from 'components/atoms/CFImage';
+import { SlideoverMobile, SlideoverLeftDesktop } from 'components/atoms';
+import { TabOption, Tabs } from 'components/layouts/Tabs';
+import { useBreakpoint } from 'helpers/hooks';
 
 interface AccessSlideoverProps {
     accesses: QuarkArray<TopoAccess>,

@@ -2,8 +2,8 @@ import React from 'react';
 import { GradeCircle, SlideagainstRightDesktop } from 'components';
 import { Signal } from 'helpers/quarky';
 import { gradeToLightGrade, Orientation, Track } from 'types';
-import { ClimbTechniquesName, listFlags } from 'helpers';
 import { OrientationName, ReceptionName } from 'types/EnumNames';
+import { listFlags, ClimbTechniquesName } from 'helpers/bitflags';
 
 interface TrackSlideagainstDesktopProps {
     track: Signal<Track>,

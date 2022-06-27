@@ -1,10 +1,10 @@
-import { RootDashboard } from "components";
-import { quarkifyLightTopos } from "helpers";
+import { RootDashboard } from "components/pages/RootDashboard";
+import { quarkifyLightTopos } from "helpers/quarkifyTopo";
 import {
   loginRedirect,
   getSessionId,
   withRouting,
-} from "helpers/server";
+} from "helpers/serverStuff";
 import { api } from "helpers/services";
 import { DBLightTopo } from "types";
 

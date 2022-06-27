@@ -1,13 +1,14 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import type { NextPage } from 'next';
 import { Button, TextInput } from 'components';
-import { Header } from 'components/layouts/header/Header';
 import Link from 'next/link';
 import NextImage from 'next/image';
-import { staticUrl, useLoader } from 'helpers';
 import { SignUpRes, useAuth } from 'helpers/services';
 import { Email, isEmail, isName, Name } from 'types';
 import { useRouter } from 'next/router';
+import { Header } from 'components/layouts/Header';
+import { staticUrl } from 'helpers/constants';
+import { useLoader } from 'helpers/hooks';
 
 
 const SignupPage: NextPage = () => {

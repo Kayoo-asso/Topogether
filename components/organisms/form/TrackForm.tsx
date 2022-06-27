@@ -2,9 +2,10 @@ import React, { useEffect, useRef } from 'react';
 import { Button, Checkbox, Select, TextArea, TextInput } from 'components';
 import { Quark, watchDependencies } from 'helpers/quarky';
 import { ClimbTechniques, Description, Name, Track } from 'types';
-import { ClimbTechniquesName, toggleFlag, useBreakpoint } from 'helpers';
 import { ReceptionName, selectOptions } from 'types/EnumNames';
 import { BitflagMultipleSelect } from 'components/molecules/form/BitflagMultipleSelect';
+import { ClimbTechniquesName, toggleFlag } from 'helpers/bitflags';
+import { useBreakpoint } from 'helpers/hooks';
 
 interface TrackFormProps {
     track: Quark<Track>,

@@ -2,7 +2,10 @@ import React, { Dispatch, SetStateAction, useCallback, useRef, useState } from '
 import { Quark, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
 import { Boulder, Image, Track, UUID } from 'types';
 import { MultipleImageInput, TracksImage } from '.';
-import { deleteTrack, setReactRef, staticUrl, useModal } from 'helpers';
+import { deleteTrack } from 'helpers/builder';
+import { staticUrl } from 'helpers/constants';
+import { useModal } from 'helpers/hooks/useModal';
+import { setReactRef } from 'helpers/utils';
 
 interface BoulderPreviewDesktopProps {
     boulder: Quark<Boulder>,

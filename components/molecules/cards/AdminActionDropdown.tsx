@@ -3,7 +3,7 @@ import { Dropdown } from 'components';
 import { LightTopo, TopoStatus } from 'types';
 import { useRouter } from 'next/router';
 import { DropdownOption } from '..';
-import { encodeUUID } from 'helpers';
+import { encodeUUID } from 'helpers/utils';
 
 interface AdminActionDropdownProps {
     topo: LightTopo;

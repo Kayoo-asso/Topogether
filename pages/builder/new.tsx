@@ -1,10 +1,10 @@
-import { RootNew } from "components";
+import { RootNew } from "components/pages/RootNew";
 import { User } from "types";
 import {
   getUserInitialProps,
   loginRedirect,
   withRouting,
-} from "helpers/server";
+} from "helpers/serverStuff";
 
 type BuilderNewProps = {
   user: User;

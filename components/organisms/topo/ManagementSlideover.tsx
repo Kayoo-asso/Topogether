@@ -1,9 +1,10 @@
 import React, { useContext, useState } from 'react';
-import { Flash, SlideoverLeftDesktop, SlideoverMobile, TabOption, Tabs } from 'components';
 import { QuarkArray } from 'helpers/quarky';
 import { Manager } from 'types';
-import { useBreakpoint } from 'helpers';
 import { CFImage } from 'components/atoms/CFImage';
+import { SlideoverMobile, SlideoverLeftDesktop, Flash } from 'components/atoms';
+import { TabOption, Tabs } from 'components/layouts/Tabs';
+import { useBreakpoint } from 'helpers/hooks';
 
 interface ManagementSlideoverProps {
     managers: QuarkArray<Manager>,

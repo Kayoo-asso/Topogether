@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import type { NextPage } from 'next';
 import { Button, TextInput } from 'components';
-import { staticUrl, useLoader } from 'helpers';
 import NextImage from 'next/image';
 import Link from 'next/link';
 import { useAuth } from 'helpers/services';
-import { Header } from 'components/layouts/header/Header';
 import { User } from 'types';
+import { Header } from 'components/layouts/Header';
+import { staticUrl } from 'helpers/constants';
+import { useLoader } from 'helpers/hooks';
 
 type ChangePasswordProps = {
   user: User

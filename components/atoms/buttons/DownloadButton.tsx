@@ -2,7 +2,8 @@ import React from 'react';
 import { LightTopo, Topo } from 'types';
 import Download from 'assets/icons/download.svg';
 import { api } from 'helpers/services';
-import { staticUrl, useModal } from 'helpers';
+import { staticUrl } from 'helpers/constants';
+import { useModal } from 'helpers/hooks/useModal';
 
 interface DownloadButtonProps {
     downloaded?: boolean,

@@ -1,5 +1,0 @@
-- Async quarks + React Suspense
-- Proxy quarks, that wrap their content in a proxy and manage very fine-grained subscriptions (property by property)
-- createDeferred from `solid-js`
-- Timer-based effects?
-- Async effects (implemented in userland). Examples: https://github.com/solidjs/solid/issues/670

@@ -1,12 +1,12 @@
 import React, { ReactNode } from 'react';
 import {
-  Slider, Handles, Rail, Tracks, SliderItem, GetHandleProps,
+  Slider, Handles, Rail, Tracks, SliderItem, GetHandleProps, GetTrackProps,
 } from 'react-compound-slider';
 
 interface TrackProps {
   source: { percent: number },
   target: { percent: number },
-  getTrackProps: () => void
+  getTrackProps: GetTrackProps
 }
 
 const Track = ({ source, target, getTrackProps }:TrackProps) => (

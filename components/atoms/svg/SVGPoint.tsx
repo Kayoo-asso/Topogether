@@ -1,4 +1,4 @@
-import { getCoordsInViewbox } from 'helpers';
+import { getCoordsInViewbox } from 'helpers/svg';
 import React, { useState } from 'react';
 import { Position } from 'types';
 

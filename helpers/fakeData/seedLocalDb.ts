@@ -1,5 +1,5 @@
+import { editTopo, createTopo, quarkifyTopo } from "helpers/quarkifyTopo";
 import { api, AuthService, sync } from "helpers/services";
-import { createTopo, editTopo, quarkifyTopo } from "helpers/topo";
 import { fakeAdmin, fakeTopov2 } from "./fakeTopoV2";
 
 export async function seedLocalDb(auth: AuthService) {

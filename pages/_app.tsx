@@ -2,14 +2,13 @@ import "styles/globals.css";
 import App from "next/app";
 import type { AppProps, AppContext, AppInitialProps } from "next/app";
 import Head from "next/head";
-import { DeviceManager } from "helpers";
-import { ShellMobile } from "components/layouts";
-import { getUserInitialProps, initSupabaseSession } from "helpers/server";
-import { User } from "types";
-import { resetServerContext } from "react-beautiful-dnd";
-import { AuthProvider } from "components/AuthProvider";
-import { UserPositionProvider } from "helpers/context/UserPositionProvider";
 import { supabaseClient } from "helpers/services";
+import { AuthProvider } from "components/AuthProvider";
+import { ShellMobile } from "components/layouts/ShellMobile";
+import { DeviceManager, UserPositionProvider } from "helpers/hooks";
+import { initSupabaseSession, getUserInitialProps } from "helpers/serverStuff";
+import { resetServerContext } from "react-beautiful-dnd";
+import { User } from "types";
 
 type CustomProps = {
   session: User | null;
@@ -112,20 +111,19 @@ CustomApp.getInitialProps = async (
 ): Promise<InitialProps> => {
   const req = context.ctx.req;
 
-  const userAgent = isServer
-    ? req?.headers['user-agent']
-    : navigator.userAgent;
+  const userAgent = isServer ? req?.headers["user-agent"] : navigator.userAgent;
 
   const sessionId = isServer
     ? await initSupabaseSession(req)
     : supabaseClient.auth.user()?.id;
 
-  // Hack to pass the sessionId to any page-level getInitialProps function 
+  // Hack to pass the sessionId to any page-level getInitialProps function
   (context.ctx as any).sessionId = sessionId;
 
   const [appProps, session] = await Promise.all([
+
     App.getInitialProps(context),
-    getUserInitialProps(context.ctx)
+    getUserInitialProps(context.ctx),
   ]);
 
   // Make React DnD happy

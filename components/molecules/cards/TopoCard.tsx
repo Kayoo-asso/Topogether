@@ -1,7 +1,7 @@
 import React, { MouseEvent, TouchEvent, ReactElement, useCallback, useState, useRef } from 'react';
 import Link from 'next/link';
 import { Card, CFImage } from 'components';
-import { formatDate, encodeUUID } from 'helpers';
+import { formatDate, encodeUUID } from 'helpers/utils';
 import equal from 'fast-deep-equal/es6';
 import { LightTopo, TopoStatus } from 'types';
 import Checked from 'assets/icons/checked.svg';

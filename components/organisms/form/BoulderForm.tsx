@@ -2,7 +2,8 @@ import React, { useEffect, useRef } from 'react';
 import { Button, Checkbox, TextInput } from 'components';
 import { Quark, watchDependencies } from 'helpers/quarky';
 import { Boulder, GeoCoordinates, Name, Topo } from 'types';
-import { boulderChanged, useBreakpoint } from 'helpers';
+import { boulderChanged } from 'helpers/builder';
+import { useBreakpoint } from 'helpers/hooks';
 
 interface BoulderFormProps {
     boulder: Quark<Boulder>,

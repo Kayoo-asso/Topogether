@@ -1,12 +1,12 @@
 import React from 'react';
 import { GradeCircle } from 'components';
-import { SliderItem } from 'react-compound-slider';
+import { GetHandleProps, SliderItem } from 'react-compound-slider';
 import { BaseSliderInput } from './BaseSliderInput';
 import { LightGrade } from 'types';
 
 interface HandleProps {
   handle: SliderItem,
-  getHandleProps: (id: string) => void
+  getHandleProps: GetHandleProps
 }
 
 const Handle = (props: HandleProps) => (

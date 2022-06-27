@@ -1,7 +1,7 @@
 import { batch } from ".";
 import { Flattened, CloneInitIterator } from "./iterators";
 import { QuarkIter } from "./QuarkIter";
-import { derive, quark, Quark, Signal, untrack, ValueOrWrappedFunction } from "./quarky";
+import { derive, quark, Quark, Signal, untrack, ValueOrWrappedFunction } from "./core";
 
 const alwaysFalse = () => false;
 

@@ -2,10 +2,11 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Button, TextInput } from 'components';
 import Link from 'next/link';
 import NextImage from 'next/image';
-import { staticUrl, useLoader } from 'helpers';
 import { SignInRes, useAuth } from 'helpers/services';
 import { Email } from 'types';
 import { useRouter } from 'next/router';
+import { staticUrl } from 'helpers/constants';
+import { useLoader } from 'helpers/hooks';
 
 interface LoginFormProps {
     onLogin?: () => void,

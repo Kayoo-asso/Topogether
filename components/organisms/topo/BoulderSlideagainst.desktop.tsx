@@ -4,8 +4,9 @@ import { Quark, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
 import { Boulder, Image, Track, UUID } from 'types';
 import { LoginForm } from '..';
 import { useSession } from "helpers/services";
+import { useModal } from 'helpers/hooks';
+
 import Rock from 'assets/icons/rock.svg';
-import { useModal } from 'helpers';
 
 interface BoulderSlideagainstDesktopProps {
     boulder: Quark<Boulder>,

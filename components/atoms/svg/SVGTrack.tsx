@@ -2,7 +2,7 @@ import React from 'react';
 import { Quark, watchDependencies } from 'helpers/quarky';
 import { DrawerToolEnum, gradeToLightGrade, Line, PointEnum, Track, UUID } from 'types';
 import { SVGArea, SVGLine, SVGPoint } from '.';
-import { useBreakpoint } from 'helpers';
+import { useBreakpoint } from 'helpers/hooks';
 
 interface SVGTrackProps {
     track: Quark<Track>,

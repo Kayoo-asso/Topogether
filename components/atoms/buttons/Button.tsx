@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
-import { Loading } from 'components/layouts';
-import { useLoader } from 'helpers';
+import { useLoader } from 'helpers/hooks/useLoader';
+import { Loading } from './Loading';
 
 interface ButtonProps {
     content: string,

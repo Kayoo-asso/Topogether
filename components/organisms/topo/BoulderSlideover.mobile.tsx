@@ -1,7 +1,6 @@
 import React, { Dispatch, SetStateAction, useMemo, useState } from 'react';
 import { GradeScale, LikeButton, SlideoverMobile, Show, ImageSlider } from 'components';
 import { Boulder, Image, Track, UUID } from 'types';
-import { buildBoulderGradeHistogram } from 'helpers';
 import { Quark, watchDependencies, SelectQuarkNullable } from 'helpers/quarky';
 import { TracksList } from '..';
 import { CFImage } from 'components/atoms/CFImage';
@@ -85,7 +84,7 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> = wat
             {!full && (
               <div className="flex items-center mt-2">
                 <GradeScale
-                  histogram={buildBoulderGradeHistogram(boulder)}
+                  boulder={boulder}
                   circleSize="little"
                 />
               </div>
