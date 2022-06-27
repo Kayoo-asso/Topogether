@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { LightTopo, Topo } from 'types';
 import Download from 'assets/icons/download.svg';
 import { api } from 'helpers/services';
 import { staticUrl, useModal } from 'helpers';
+import { Loading } from 'components/layouts';
 
 interface DownloadButtonProps {
     downloaded?: boolean,
@@ -15,18 +16,28 @@ export const DownloadButton: React.FC<DownloadButtonProps> = ({
     ...props
 }: DownloadButtonProps) => {
     const [ModalUndownload, showModalUndownload] = useModal();
+    const [loading, setLoading] = useState<boolean>(false);
 
-    const toggle = () => {
+    const toggle = async () => {
         if (downloaded) showModalUndownload();
-        else api.downloadTopo(props.topo.id);
+        else {
+            setLoading(true); 
+            await api.downloadTopo(props.topo.id);
+            setLoading(false);
+        }
     }
 
     return (
         <>
-            <Download
-                className={'cursor-pointer ' + (downloaded ? 'stroke-main h-5 w-5' : 'stroke-dark h-5 w-5') + (props.className ? ' '+props.className : '')}
-                onClick={toggle}
-            />
+            {loading &&
+                <Loading SVGClassName='h-5 w-5' />
+            }
+            {!loading && 
+                <Download
+                    className={'cursor-pointer ' + (downloaded ? 'stroke-main h-5 w-5' : 'stroke-dark h-5 w-5') + (props.className ? ' '+props.className : '')}
+                    onClick={toggle}
+                />
+            }
 
             <ModalUndownload
                 buttonText="Confirmer"
