@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react';
 import { Flash, SlideoverLeftDesktop, SlideoverMobile, TabOption, Tabs } from 'components';
 import { QuarkArray } from 'helpers/quarky';
 import { Manager } from 'types';
-import { BreakpointContext } from 'helpers';
+import { useBreakpoint } from 'helpers';
 import { CFImage } from 'components/atoms/CFImage';
 
 interface ManagementSlideoverProps {
@@ -16,7 +16,7 @@ export const ManagementSlideover: React.FC<ManagementSlideoverProps> = ({
     open = true,
     ...props
 }: ManagementSlideoverProps) => {
-    const device = useContext(BreakpointContext);
+    const breakpoint = useBreakpoint();
     const [flashMessage, setFlashMessage] = useState<string>();
     const [managerTab, setManagerTab] = useState(0);
     const manager = props.managers ? props.managers.toArray()[managerTab] : undefined;
@@ -100,14 +100,14 @@ export const ManagementSlideover: React.FC<ManagementSlideoverProps> = ({
 
     return (
         <>
-            {device === 'mobile' &&
+            {breakpoint === 'mobile' &&
                 <SlideoverMobile
                     onClose={props.onClose}
                 >
                     {managementContent()}
                 </SlideoverMobile>
             }
-            {device !== 'mobile' &&
+            {breakpoint !== 'mobile' &&
                 <SlideoverLeftDesktop
                     title={"Gestionnaire" + (props.managers.length > 1 ? "s" : "") + " du spot"}
                     open={open}

@@ -1,25 +1,20 @@
-import React from 'react';
-import type { GetServerSideProps, NextPage } from 'next';
-import { RootWorldMap } from 'components';
-import { api } from 'helpers/services';
-import { DBLightTopo, TopoStatus } from 'types';
-import { quarkifyLightTopos } from 'helpers';
+import type { NextPage } from "next";
+import { RootWorldMap } from "components";
+import { api } from "helpers/services";
+import { DBLightTopo, TopoStatus } from "types";
+import { quarkifyLightTopos } from "helpers";
 
 type WorldMapProps = {
   topos: DBLightTopo[];
-}
-
-export const getServerSideProps: GetServerSideProps<WorldMapProps> = async ({ req }) => {
-  const topos = await api.getLightTopos( { status: TopoStatus.Validated } );
-  return { props: { topos } }
-}
+};
 
 const WorldMapPage: NextPage<WorldMapProps> = ({ topos }) => {
-  return (
-    <RootWorldMap
-      lightTopos={quarkifyLightTopos(topos)}
-    />
-  );
+  return <RootWorldMap lightTopos={quarkifyLightTopos(topos)} />;
+};
+
+WorldMapPage.getInitialProps = async (ctx) => {
+  const topos = await api.getLightTopos({ status: TopoStatus.Validated });
+  return { topos };
 };
 
 export default WorldMapPage;

@@ -1,8 +1,8 @@
-import React, { useContext, useState } from 'react';
+import React, {  } from 'react';
 import { SlideagainstRightDesktop, SlideoverMobile } from 'components';
 import { Quark, watchDependencies } from 'helpers/quarky';
 import { Waypoint } from 'types';
-import { BreakpointContext, staticUrl, useModal } from 'helpers';
+import { staticUrl, useBreakpoint, useModal } from 'helpers';
 import { WaypointForm } from '..';
 
 interface WaypointBuilderSlideProps {
@@ -17,11 +17,11 @@ export const WaypointBuilderSlide: React.FC<WaypointBuilderSlideProps> = watchDe
     ...props
   }: WaypointBuilderSlideProps) => {
     const [ModalDelete, showModalDelete] = useModal();
-    const device = useContext(BreakpointContext);
+    const breakpoint = useBreakpoint();
 
     return (
         <>
-            {device === 'mobile' &&
+            {breakpoint === 'mobile' &&
                 <SlideoverMobile
                     onClose={props.onClose}
                 >
@@ -33,7 +33,7 @@ export const WaypointBuilderSlide: React.FC<WaypointBuilderSlideProps> = watchDe
                     </div>
                 </SlideoverMobile>
             }
-            {device !== 'mobile' && 
+            {breakpoint !== 'mobile' && 
                 <SlideagainstRightDesktop
                     open
                     onClose={props.onClose}

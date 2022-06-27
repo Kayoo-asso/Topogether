@@ -3,7 +3,7 @@ import { quark, Quark } from "helpers/quarky";
 import { DBUserUpdate, Email, Name, Role, User } from "types";
 import { createContext, useContext } from "react";
 import { DBConvert } from "./DBConvert";
-import { AccessTokenCookie, RefreshTokenCookie } from "helpers/auth";
+import { AccessTokenCookie, RefreshTokenCookie } from "helpers/server";
 
 export enum SignUpRes {
     LoggedIn,
@@ -33,6 +33,9 @@ export function useSession() {
     return useContext(AuthContext).session();
 }
 
+// Somewhat hacky
+export let auth: AuthService | undefined;
+
 // Model for testing sessions from URL:
 // http://localhost:3000/#access_token=&expires_in=3600&refresh_token=&token_type=bearer&type=signup
 export class AuthService {
@@ -59,6 +62,8 @@ export class AuthService {
                 return this._loadDetails(data.user.id);
             }
         });
+
+        auth = this;
     }
 
     session(): User | null {

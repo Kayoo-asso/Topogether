@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { SlideoverLeftDesktop, SlideoverMobile } from 'components';
 import { QuarkArray, watchDependencies } from 'helpers/quarky';
 import { Manager, Name } from 'types';
-import { BreakpointContext } from 'helpers';
+import { useBreakpoint } from 'helpers';
 import { ManagementForm } from '..';
 import { v4 } from 'uuid';
 
@@ -17,11 +17,11 @@ export const ManagementFormSlideover: React.FC<ManagementFormSlideoverProps> = w
     open = true,
     ...props
 }: ManagementFormSlideoverProps) => {
-    const device = useContext(BreakpointContext);
+    const breakpoint = useBreakpoint();
 
     return (
         <>
-            {device === 'mobile' &&
+            {breakpoint === 'mobile' &&
                 <SlideoverMobile
                     onClose={props.onClose}
                 >
@@ -39,7 +39,7 @@ export const ManagementFormSlideover: React.FC<ManagementFormSlideoverProps> = w
                     </div>
                 </SlideoverMobile>
             }
-            {device !== 'mobile' && 
+            {breakpoint !== 'mobile' && 
                 <SlideoverLeftDesktop 
                     title="Gestionnaires du spot" 
                     className={props.className} 

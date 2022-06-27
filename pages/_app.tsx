@@ -4,17 +4,19 @@ import type { AppProps, AppContext, AppInitialProps } from "next/app";
 import Head from "next/head";
 import { DeviceManager } from "helpers";
 import { ShellMobile } from "components/layouts";
-import { getServerUser } from "helpers/getServerUser";
+import { getUserInitialProps, initSupabaseSession } from "helpers/server";
 import { User } from "types";
 import { resetServerContext } from "react-beautiful-dnd";
 import { AuthProvider } from "components/AuthProvider";
-import { parse } from "cookie";
 import { UserPositionProvider } from "helpers/context/UserPositionProvider";
+import { supabaseClient } from "helpers/services";
 
 type CustomProps = {
   session: User | null;
   userAgent?: string;
 };
+
+const isServer = typeof window === "undefined";
 
 type InitialProps = AppInitialProps & CustomProps;
 type Props = AppProps & CustomProps;
@@ -110,17 +112,26 @@ CustomApp.getInitialProps = async (
 ): Promise<InitialProps> => {
   const req = context.ctx.req;
 
+  const userAgent = isServer
+    ? req?.headers['user-agent']
+    : navigator.userAgent;
+
+  const sessionId = isServer
+    ? await initSupabaseSession(req)
+    : supabaseClient.auth.user()?.id;
+
+  // Hack to pass the sessionId to any page-level getInitialProps function 
+  (context.ctx as any).sessionId = sessionId;
+
   const [appProps, session] = await Promise.all([
     App.getInitialProps(context),
-    req && req.headers["cookie"]
-      ? getServerUser(parse(req.headers["cookie"]))
-      : Promise.resolve(null),
+    getUserInitialProps(context.ctx)
   ]);
 
   // Make React DnD happy
   resetServerContext();
 
-  return { ...appProps, session, userAgent: req?.headers["user-agent"] };
+  return { ...appProps, session, userAgent };
 };
 
 export default CustomApp;

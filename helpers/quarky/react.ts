@@ -21,6 +21,8 @@ const isServer = typeof window === "undefined";
 // which can cause unexpected bugs.
 export function watchDependencies<P extends object>(component: FunctionComponent<P>, options?: WatchDependenciesOptions<P>): NamedExoticComponent<P>
 export function watchDependencies<R, P extends object>(component: ForwardRefComponent<R, P>, options?: WatchDependenciesOptions<P>): NamedExoticComponent<P & RefAttributes<R>>
+export function watchDependencies<P extends object>(component: FunctionComponent<P>, options: { memo: false}): React.FC<P>
+export function watchDependencies<R, P extends object>(component: ForwardRefComponent<R, P>, options: { memo: false}): React.FC<P & RefAttributes<R>>
 // Don't even try doing proper internal types for the component function
 export function watchDependencies<P extends object, R = undefined>(
   component: Function,

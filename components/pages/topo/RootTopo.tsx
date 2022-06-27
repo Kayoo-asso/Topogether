@@ -6,7 +6,7 @@ import {
   MapControl, ParkingSlide, WaypointSlide, TracksImage
 } from 'components';
 import { LeftbarTopoDesktop } from 'components/layouts';
-import { BreakpointContext, decodeUUID, encodeUUID, sortBoulders, ClusterProvider } from 'helpers';
+import { decodeUUID, encodeUUID, sortBoulders, ClusterProvider, useBreakpoint } from 'helpers';
 import { Boulder, ClimbTechniques, Image, isUUID, Parking, Sector, Topo, TopoStatus, Track, Waypoint } from 'types';
 import { Quark, QuarkIter, useCreateDerivation, useCreateQuark, useLazyQuarkyEffect, useQuarkyCallback, useSelectQuark, watchDependencies } from 'helpers/quarky';
 import { useRouter } from 'next/router';
@@ -26,12 +26,9 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
   const session = useSession();
   const { b: bId } = router.query; // Get boulder id from url if selected 
   const firstRender = useFirstRender();
-  const device = useContext(BreakpointContext);
+  const breakpoint = useBreakpoint();
   
   const topo = props.topoQuark();
-  useEffect(() => {
-    api.downloadTopo(topo!.id);
-  }, []);
 
   const sectors = topo.sectors;
   const boulders = topo.boulders;
@@ -188,7 +185,7 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
           onBoulderSelect={toggleBoulderSelect}
           onTrackSelect={toggleTrackSelect}
         />
-        <Show when={() => [device === 'mobile', displaySectorSlideover] as const}>
+        <Show when={() => [breakpoint === 'mobile', displaySectorSlideover] as const}>
           {() => (
             <SectorSlideoverMobile
               topoQuark={props.topoQuark}
@@ -287,7 +284,7 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
           </For>
         </MapControl>
 
-        <Show when={() => [device !== 'mobile', selectedTrack.quark()] as const}>
+        <Show when={() => [breakpoint !== 'mobile', selectedTrack.quark()] as const}>
           {([, track]) =>
             <>
               <TrackSlideagainstDesktop
@@ -312,7 +309,7 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies((props: RootT
 
         <Show when={selectedBoulder.quark}>
           {(boulder) => {
-            if (device === 'mobile') {
+            if (breakpoint === 'mobile') {
               return (
                 <BoulderSlideoverMobile
                   open

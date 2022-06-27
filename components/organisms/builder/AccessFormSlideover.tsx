@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { SlideoverLeftDesktop, SlideoverMobile } from 'components';
 import { QuarkArray, watchDependencies } from 'helpers/quarky';
 import { TopoAccess } from 'types';
-import { BreakpointContext } from 'helpers';
+import { useBreakpoint } from 'helpers';
 import { AccessForm } from '..';
 import { v4 } from 'uuid';
 
@@ -17,11 +17,11 @@ export const AccessFormSlideover: React.FC<AccessFormSlideoverProps> = watchDepe
     open = true,
     ...props
 }: AccessFormSlideoverProps) => {
-    const device = useContext(BreakpointContext);
+    const breakpoint = useBreakpoint();
 
     return (
         <>
-            {device === 'mobile' &&
+            {breakpoint === 'mobile' &&
                 <SlideoverMobile
                     onClose={props.onClose}
                 >
@@ -38,7 +38,7 @@ export const AccessFormSlideover: React.FC<AccessFormSlideoverProps> = watchDepe
                     </div>
                 </SlideoverMobile>
             }
-            {device !== 'mobile' && 
+            {breakpoint !== 'mobile' && 
                 <SlideoverLeftDesktop 
                     title="Marche d'approche"  
                     open={open}

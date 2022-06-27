@@ -1,8 +1,8 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { SlideoverLeftDesktop, SlideoverMobile } from 'components';
 import { Quark } from 'helpers/quarky';
 import { Topo } from 'types';
-import { BreakpointContext } from 'helpers';
+import { useBreakpoint } from 'helpers';
 import { InfoForm } from '..';
 
 interface InfoFormSlideoverProps {
@@ -16,11 +16,11 @@ export const InfoFormSlideover: React.FC<InfoFormSlideoverProps> = ({
     open = true,
     ...props
 }: InfoFormSlideoverProps) => {
-    const device = useContext(BreakpointContext);
+    const breakpoint = useBreakpoint();
 
     return (
         <>
-            {device === 'mobile' &&
+            {breakpoint === 'mobile' &&
                 <SlideoverMobile
                     onClose={props.onClose}
                 >
@@ -32,7 +32,7 @@ export const InfoFormSlideover: React.FC<InfoFormSlideoverProps> = ({
                     </div>
                 </SlideoverMobile>
             }
-            {device !== 'mobile' && 
+            {breakpoint !== 'mobile' && 
                 <SlideoverLeftDesktop 
                     title="Infos du spot"  
                     className={props.className}

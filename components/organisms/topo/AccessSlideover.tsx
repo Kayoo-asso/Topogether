@@ -1,8 +1,8 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import { SlideoverLeftDesktop, SlideoverMobile, TabOption, Tabs } from 'components';
 import { QuarkArray } from 'helpers/quarky';
 import { TopoAccess } from 'types';
-import { BreakpointContext } from 'helpers';
+import { useBreakpoint } from 'helpers';
 import { DifficultyName } from 'types/EnumNames';
 import { CFImage } from 'components/atoms/CFImage';
 
@@ -17,7 +17,7 @@ export const AccessSlideover: React.FC<AccessSlideoverProps> = ({
     open = true,
     ...props
 }: AccessSlideoverProps) => {
-    const device = useContext(BreakpointContext);
+    const breakpoint = useBreakpoint();
     const [accessTab, setAccessTab] = useState(0);
     const access = props.accesses ? props.accesses.toArray()[accessTab] : undefined;
 
@@ -84,14 +84,14 @@ export const AccessSlideover: React.FC<AccessSlideoverProps> = ({
 
     return (
         <>
-            {device === 'mobile' &&
+            {breakpoint === 'mobile' &&
                 <SlideoverMobile
                     onClose={props.onClose}
                 >
                     {approachContent()}
                 </SlideoverMobile>
             }
-            {device !== 'mobile' && 
+            {breakpoint !== 'mobile' && 
                 <SlideoverLeftDesktop 
                     title={"Marche"+(props.accesses.length > 1 ? "s" : "")+" d'approche"}
                     open={open}
