@@ -51,9 +51,9 @@ export function watchDependencies<P extends object, R = undefined>(
     ? forwardRef(wrapped)
     : wrapped as (props: P) => React.ReactElement<any, any> | null;
 
-  if (!options || options.memo === true) return React.memo(fn);
+  // if (!options || options.memo === true) return React.memo(fn);
   // here options.memo is necessarily a function
-  if (options.memo) return React.memo(fn as any, options.memo);
+  // if (options.memo) return React.memo(fn as any, options.memo);
   
   return wrapped;
 }
