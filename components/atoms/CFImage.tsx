@@ -1,12 +1,12 @@
-import { Image } from "types";
-import { SourceSize, VariantWidths, cloudflareUrl } from "helpers/images";
-import { forwardRef, ImgHTMLAttributes, ReactElement, useCallback, useEffect, useRef, useState } from "react";
-import defaultKayoo from 'public/assets/img/Kayoo_defaut_image.png';
-import type { StaticImageData } from 'next/image';
-import { useBreakpoint } from "helpers";
-import { Loading } from "components/layouts";
-import { Portal, setReactRef } from "helpers";
+import { SourceSize, VariantWidths, cloudflareUrl, setReactRef } from "helpers/utils";
+import { StaticImageData } from "next/image";
+import { ImgHTMLAttributes, forwardRef, useRef, useState, useEffect, useCallback, ReactElement } from "react";
 import QuickPinchZoom, { make3dTransformValue } from "react-quick-pinch-zoom";
+import { Loading } from "./buttons/Loading";
+import { useBreakpoint, Portal } from "helpers/hooks";
+import type { Image } from "types";
+
+import defaultKayoo from 'public/assets/img/Kayoo_defaut_image.png';
 
 export type CFImageProps = RawImageAttributes & {
     alt: string,

@@ -4,7 +4,7 @@ import { LoginForm } from 'components';
 import { useRouter } from 'next/router';
 import { AuthService, supabaseClient, useAuth } from 'helpers/services';
 import { useQuarkyEffect } from 'helpers/quarky';
-import { Header } from 'components/layouts/header/Header';
+import { Header } from 'components/layouts/Header';
 
 
 async function ifLoggedIn(auth: AuthService, redirect: () => Promise<void>) {

@@ -3,7 +3,8 @@ import { DrawerToolEnum, Image, LinearRing, PointEnum, Position, Track } from 't
 import { Toolbar, TracksImage } from 'components';
 import { QuarkArray, QuarkIter, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
 import { v4 } from 'uuid';
-import { Portal, staticUrl, useModal } from 'helpers';
+import { staticUrl } from 'helpers/constants';
+import { useModal, Portal } from 'helpers/hooks';
 
 interface DrawerProps {
   image: Image,

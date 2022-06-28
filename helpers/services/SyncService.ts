@@ -1,4 +1,4 @@
-import { quark, Quark } from "helpers/quarky/quarky";
+import { quark, Quark } from "helpers/quarky";
 import { Boulder, BoulderData, DBBoulder, DBLightTopo, DBLine, DBManager, DBParking, DBSector, DBTopo, DBTopoAccess, DBTrack, DBUserUpdate, DBWaypoint, LightTopo, Line, Manager, Parking, Sector, Topo, TopoAccess, TopoData, Track, User, UUID, Waypoint } from "types";
 import { DBConvert } from "./DBConvert";
 import { supabaseClient } from "./SupabaseClient";

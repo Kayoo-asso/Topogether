@@ -1,12 +1,12 @@
 import React from 'react';
-import { SliderItem } from 'react-compound-slider';
+import { GetHandleProps, SliderItem } from 'react-compound-slider';
 import { Color } from '../../../types';
 import { BaseSliderInput } from './BaseSliderInput';
 
 interface HandleProps {
   color: Color,
   handle: SliderItem,
-  getHandleProps: (id: string) => void
+  getHandleProps: GetHandleProps
 }
 
 const Handle = (props: HandleProps) => (

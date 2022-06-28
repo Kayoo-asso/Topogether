@@ -1,9 +1,10 @@
 import { useMemo } from "react";
 import { api } from "helpers/services";
 import { isUUID, TopoData } from "types";
-import { RootBuilder } from "components";
-import { editTopo, decodeUUID } from "helpers";
-import { withRouting } from "helpers/server";
+import { RootBuilder } from "components/builder";
+import { editTopo } from "helpers/quarkifyTopo";
+import { withRouting } from "helpers/serverStuff";
+import { decodeUUID } from "helpers/utils";
 
 type BuilderProps = {
   topo: TopoData;
@@ -38,7 +39,7 @@ export default withRouting<BuilderProps>({
   },
 
   render({ topo }) {
-    const topoQuark = useMemo(() => editTopo(topo), [topo]);
+    const topoQuark = editTopo(topo);
     return <RootBuilder topoQuark={topoQuark} />;
   },
 });

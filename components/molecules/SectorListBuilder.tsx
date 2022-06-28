@@ -1,6 +1,4 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { BoulderItemLeftbar } from 'components/layouts';
-import { arrayMove, createTrack, splitArray } from 'helpers';
 import { Quark, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
 import { Boulder, Sector, SectorData, Topo, Track, UUID } from 'types';
 import { DragDropContext, Draggable, Droppable, DropResult } from 'react-beautiful-dnd';
@@ -8,6 +6,7 @@ import { useSession } from 'helpers/services';
 import ArrowSimple from 'assets/icons/arrow-simple.svg';
 import Edit from 'assets/icons/edit.svg';
 import { DraggableList } from 'components/atoms/DraggableList';
+import { splitArray } from 'helpers/utils';
 
 export interface SectorListBuilderProps {
     topoQuark: Quark<Topo>,

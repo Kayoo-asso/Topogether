@@ -5,7 +5,7 @@ import { useCreateQuark, watchDependencies } from 'helpers/quarky';
 import { Email, isEmail, Name, StringBetween, User } from 'types';
 import { useAuth } from "helpers/services";
 import { useRouter } from 'next/router';
-import { useLoader } from 'helpers';
+import { useLoader } from 'helpers/hooks';
 
 interface ProfileFormProps {
   user: User,

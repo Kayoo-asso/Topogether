@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { getCoordsInViewbox, getPathFromPoints } from 'helpers';
+import { getCoordsInViewbox, getPathFromPoints } from 'helpers/svg';
 import { Quark, watchDependencies } from 'helpers/quarky';
 import { Grade, gradeToLightGrade, Line } from 'types';
 import { SVGPoint } from '.';

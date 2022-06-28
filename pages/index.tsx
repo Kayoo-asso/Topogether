@@ -1,8 +1,8 @@
 import type { NextPage } from "next";
-import { RootWorldMap } from "components";
 import { api } from "helpers/services";
 import { DBLightTopo, TopoStatus } from "types";
-import { quarkifyLightTopos } from "helpers";
+import { quarkifyLightTopos } from "helpers/quarkifyTopo";
+import { RootWorldMap } from "components/map";
 
 type WorldMapProps = {
   topos: DBLightTopo[];

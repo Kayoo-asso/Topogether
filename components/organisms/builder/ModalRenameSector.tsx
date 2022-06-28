@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Button, TextInput } from 'components';
 import { Quark } from 'helpers/quarky';
 import { Name, Sector } from 'types';
-import { Portal } from 'helpers';
+import { Portal } from 'helpers/hooks';
 import Clear from 'assets/icons/clear.svg';
 
 interface ModalRenameSectorProps {

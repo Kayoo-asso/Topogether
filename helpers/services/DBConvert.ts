@@ -1,4 +1,3 @@
-import { TopoCreate } from "helpers/topo";
 import { Amenities, Boulder, BoulderData, Image, DBBoulder, DBLine, DBManager, DBParking, DBSector, DBTopo, DBTopoAccess, DBTrack, DBUserUpdate, DBWaypoint, LightTopo, Line, LinearRing, LineCoords, LineString, Manager, MultiLineString, Parking, Point, PolygonCoords, Position, RockTypes, Sector, SectorData, Topo, TopoAccess, TopoData, TopoType, Track, TrackData, User, UUID, Waypoint, ClimbTechniques } from "types";
 
 // IMPORTANT: perform all conversions by explicitly assigning all properties.

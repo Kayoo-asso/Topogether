@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { Button, ImageInput, TextArea, TextInput } from 'components';
 import { Quark, watchDependencies } from 'helpers/quarky';
 import { Description, Name, Parking } from 'types';
-import { useBreakpoint } from 'helpers';
+import { useBreakpoint } from 'helpers/hooks';
 
 interface ParkingFormProps {
     parking: Quark<Parking>,

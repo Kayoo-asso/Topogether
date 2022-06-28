@@ -1,4 +1,4 @@
-import { getCoordsInViewbox, pointsToPolylineStr } from 'helpers';
+import { getCoordsInViewbox, pointsToPolylineStr } from 'helpers/svg';
 import React, { useState } from 'react';
 import { Position } from 'types';
 

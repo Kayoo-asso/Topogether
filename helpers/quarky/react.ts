@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect, useCallback, useRef, EffectCallback, forwardRef, Ref, ForwardRefExoticComponent, PropsWithoutRef, RefAttributes, ForwardRefRenderFunction, ForwardedRef, NamedExoticComponent } from "react";
 import ReactDOM from "react-dom";
 import { batch, ObserverEffect, observerEffect, selectQuark, SelectQuark, selectSignal, SelectSignal, SelectSignalNullable, setBatchingBehavior } from ".";
-import { Quark, derive, quark, QuarkOptions, untrack, Signal, SelectQuarkNullable, effect, EvaluatedDeps } from "./quarky";
+import { Quark, derive, quark, QuarkOptions, untrack, Signal, SelectQuarkNullable, effect, EvaluatedDeps } from "./core";
 
 setBatchingBehavior(ReactDOM.unstable_batchedUpdates);
 
@@ -51,10 +51,11 @@ export function watchDependencies<P extends object, R = undefined>(
     ? forwardRef(wrapped)
     : wrapped as (props: P) => React.ReactElement<any, any> | null;
 
-  if (!options || options.memo === true) return React.memo(fn);
+  // if (!options || options.memo === true) return React.memo(fn);
   // here options.memo is necessarily a function
-  if (options.memo) return React.memo(fn as any, options.memo);
-  return wrapped;
+  // if (options.memo) return React.memo(fn as any, options.memo);
+  
+  return fn;
 }
 
 // useCreateQuark and useCreateDerivation have to be 2 separate hooks,

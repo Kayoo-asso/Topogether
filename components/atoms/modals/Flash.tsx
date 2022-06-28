@@ -1,4 +1,4 @@
-import { Portal } from 'helpers';
+import { Portal } from 'helpers/hooks';
 import React, { ReactNode, useEffect, useState } from 'react';
 
 interface FlashProps {

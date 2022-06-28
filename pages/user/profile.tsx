@@ -1,14 +1,18 @@
 import { useCallback, useState } from 'react';
 import { Button, ImageInput, ProfileForm, TextInput, LikedList, DownloadedList } from 'components';
-import { LeftbarDesktop, Tabs } from 'components/layouts';
 import { DBLightTopo, LightTopo, Name, User } from 'types';
 import { api, useAuth } from "helpers/services";
-import { getSessionId, getUserInitialProps, loginRedirect, withRouting } from 'helpers/server';
-import { Header } from 'components/layouts/header/Header';
+import { Header } from 'components/layouts/Header';
+import { LeftbarDesktop } from 'components/layouts/Leftbar.desktop';
+import { Tabs } from 'components/layouts/Tabs';
+import { staticUrl } from 'helpers/constants';
+import { useModal } from 'helpers/hooks';
+import { quarkifyLightTopos } from 'helpers/quarkifyTopo';
+import { withRouting, getSessionId, loginRedirect, getUserInitialProps } from 'helpers/serverStuff';
+
 import Profile from 'assets/icons/user-mobile.svg';
 import Heart from 'assets/icons/heart.svg';
 import Download from 'assets/icons/download.svg';
-import { quarkifyLightTopos, staticUrl, useModal } from 'helpers';
 
 type ProfileProps = {
   user: User,

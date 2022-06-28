@@ -1,7 +1,6 @@
 import React from 'react';
-import { lightGrades, LightTopo, Topo } from 'types';
-import { buildGradeHistogram } from 'helpers/topo/buildGradeHistogram';
-import { defaultGradeHistogram } from 'helpers/topo/buildBoulderGradeHistogram';
+import { lightGrades, LightTopo, Topo, GradeHistogram as GradeHistogramType, gradeToLightGrade } from 'types';
+
 
 interface GradeHistogramProps {
   topo: Topo | LightTopo,
@@ -19,15 +18,38 @@ const bgStyles = {
   None: 'bg-grey-light',
 };
 
+const defaultGradeHistogram = (): GradeHistogramType => ({
+    3: 0,
+    4: 0,
+    5: 0,
+    6: 0,
+    7: 0,
+    8: 0,
+    9: 0,
+    None: 0,
+})
+
 const isLight = (topo: LightTopo | Topo): topo is LightTopo => (topo as LightTopo).grades !== undefined;
 
 export const GradeHistogram: React.FC<GradeHistogramProps> = ({
+  topo,
   size = 'normal',
   ...props
 }: GradeHistogramProps) => {
-  const histogram = isLight(props.topo)
-    ? { ...defaultGradeHistogram(), ...(props.topo.grades || {}) }
-    : buildGradeHistogram(props.topo);
+  let histogram = defaultGradeHistogram();
+  if (isLight(topo)) {
+    histogram = {
+      ...histogram,
+      ...topo.grades
+    };
+  } else {
+    for (const boulder of topo.boulders) {
+      for (const track of boulder.tracks) {
+        const lg = gradeToLightGrade(track.grade);
+        histogram[lg] += 1;
+      }
+    }
+  }
   const total = histogram[3]
     + histogram[4]
     + histogram[5]

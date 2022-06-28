@@ -2,8 +2,9 @@ import React, { useCallback, useEffect, useRef } from 'react';
 import { Checkbox, ImageInput, Show, TextArea, TextInput } from 'components';
 import { Quark, watchDependencies } from 'helpers/quarky';
 import { Amenities, Description, Name, RockTypes, Topo } from 'types';
-import { hasFlag, rockNames, toggleFlag, useBreakpoint } from 'helpers';
 import { BitflagMultipleSelect } from 'components/molecules/form/BitflagMultipleSelect';
+import { toggleFlag, rockNames, hasFlag } from 'helpers/bitflags';
+import { useBreakpoint } from 'helpers/hooks';
 
 interface InfoFormProps {
     topo: Quark<Topo>,

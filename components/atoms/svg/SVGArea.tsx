@@ -2,7 +2,7 @@ import React from 'react';
 import { defaultTracksWeight } from 'components/molecules';
 import { LinearRing, Position } from 'types';
 import { DraggablePolyline } from '.';
-import { pointsToPolylineStr } from '../../../helpers';
+import { pointsToPolylineStr } from 'helpers/svg';
 import { SVGPoint } from './SVGPoint';
 
 interface SVGAreaProps {

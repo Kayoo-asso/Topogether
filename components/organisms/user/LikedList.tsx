@@ -1,7 +1,8 @@
 import { LikedActionDropdown, TopoCardList } from 'components/molecules';
 import React, { useCallback, useRef, useState } from 'react';
 import { LightTopo, TopoStatus } from 'types';
-import { staticUrl, useContextMenu, useLoader, useModal } from 'helpers';
+import { useContextMenu, useLoader, useModal } from 'helpers/hooks';
+import { staticUrl } from 'helpers/constants';
 
 interface LikedListProps {
     likedTopos: LightTopo[],

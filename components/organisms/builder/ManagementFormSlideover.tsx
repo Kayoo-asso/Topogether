@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { SlideoverLeftDesktop, SlideoverMobile } from 'components';
 import { QuarkArray, watchDependencies } from 'helpers/quarky';
 import { Manager, Name } from 'types';
-import { useBreakpoint } from 'helpers';
+import { useBreakpoint } from 'helpers/hooks';
 import { ManagementForm } from '..';
 import { v4 } from 'uuid';
 

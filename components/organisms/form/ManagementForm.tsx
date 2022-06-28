@@ -3,7 +3,7 @@ import { ImageInput, TextArea, TextInput } from 'components';
 import { Quark, watchDependencies } from 'helpers/quarky';
 import { Description, Email, Manager, Name, UUID } from 'types';
 import { Button } from 'components/atoms';
-import { useBreakpoint } from 'helpers';
+import { useBreakpoint } from 'helpers/hooks';
 
 interface ManagementFormProps {
     manager: Quark<Manager>,

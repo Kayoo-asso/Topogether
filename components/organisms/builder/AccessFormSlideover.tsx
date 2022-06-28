@@ -2,9 +2,9 @@ import React, { useContext } from 'react';
 import { SlideoverLeftDesktop, SlideoverMobile } from 'components';
 import { QuarkArray, watchDependencies } from 'helpers/quarky';
 import { TopoAccess } from 'types';
-import { useBreakpoint } from 'helpers';
 import { AccessForm } from '..';
 import { v4 } from 'uuid';
+import { useBreakpoint } from 'helpers/hooks';
 
 interface AccessFormSlideoverProps {
     accesses: QuarkArray<TopoAccess>,

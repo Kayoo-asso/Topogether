@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import NextImage from 'next/image';
-import { staticUrl, useIsIos } from 'helpers';
+import { staticUrl } from 'helpers/constants';
 import Share from 'assets/icons/share.svg';
 import { Button } from 'components';
+import { useDevice } from 'helpers/hooks';
 
 type BeforeInstallPromptEvent = Event & {
     prompt(): Promise<void>,
@@ -10,7 +11,8 @@ type BeforeInstallPromptEvent = Event & {
 }
 
 const NoStandalone: React.FC = () => {
-    const iOS = useIsIos();
+    const device = useDevice();
+    const isIos = device.apple.device;
 
     const [installPromptEvent, setInstallPromptEvent] = useState<BeforeInstallPromptEvent>();
     useEffect(() => {
@@ -40,7 +42,7 @@ const NoStandalone: React.FC = () => {
                 <strong>Pour installer l'application :</strong>
             </div>
 
-            {iOS &&
+            {isIos &&
                 <div className='flex flex-col gap-2 justify-start'>
                     <div className="flex flex-row items-center gap-2">1. Cliquer sur le bouton <strong>Partager</strong><Share className='w-6 h-6 stroke-white' /></div>    
                     <div>2. Choisir <strong>Sur l'écran d'accueil +</strong></div>
@@ -48,7 +50,7 @@ const NoStandalone: React.FC = () => {
                     <div>4. L'application est installée !</div>
                 </div>
             }
-            {!iOS && installPromptEvent &&
+            {!isIos && installPromptEvent &&
                 <>
                     <div className="flex flex-row gap-2">1. Cliquer sur <strong>Installer </strong></div>
                         <div className='py-3'>
@@ -69,7 +71,7 @@ const NoStandalone: React.FC = () => {
                     <div>3. L'application est installée !</div>
                 </>
             }
-            {!iOS && !installPromptEvent &&
+            {!isIos && !installPromptEvent &&
                 <>
                     <div>1. Ouvrir les paramètres de la page</div>
                     <div className="flex flex-row gap-2">2. Cliquer sur <strong>Installer l'application</strong></div>

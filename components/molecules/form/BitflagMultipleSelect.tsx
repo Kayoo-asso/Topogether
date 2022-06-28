@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { Checkbox } from 'components';
-import { hasFlag, listFlags } from 'helpers';
+import { hasFlag, listFlags } from 'helpers/bitflags';
 import { Bitflag } from 'types';
 import { TextInput } from './TextInput';
 import ArrowSimple from 'assets/icons/arrow-simple.svg';

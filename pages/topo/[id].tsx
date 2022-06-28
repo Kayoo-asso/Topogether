@@ -1,10 +1,11 @@
 import type { NextPage } from 'next';
-import { RootTopo } from 'components';
-import { editTopo, decodeUUID, useLoader } from 'helpers';
+import { RootTopo } from 'components/pages/RootTopo';
 import { isUUID, TopoData } from 'types';
 import { api } from 'helpers/services';
 import { useRouter,  } from 'next/router';
 import { ServerResponse } from 'http';
+import { editTopo } from 'helpers/quarkifyTopo';
+import { decodeUUID } from 'helpers/utils';
 
 type TopoProps = {
   topo?: TopoData,

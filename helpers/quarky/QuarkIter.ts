@@ -1,6 +1,6 @@
 import { QuarkArrayIteratorRaw } from ".";
 import { isIterable, ConcatIterator, FilterIterator, Flattened, FlattenIterator, MapIterator, ZipIterator, CloneInitIterator, CloneResetIterableIterator} from "./iterators";
-import { derive, Signal } from "./quarky";
+import { derive, Signal } from "./core";
 
 // should initially be created from a Quark<Array<Quark<T>>>
 // init should be the init function of QuarkArrayIterator

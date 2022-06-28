@@ -2,7 +2,10 @@ import React, { useState } from 'react';
 import { DownloadButton, Flash, GradeHistogram, LikeButton, SlideoverLeftDesktop, SlideoverMobile } from 'components';
 import { Signal } from 'helpers/quarky';
 import { Amenities, Topo } from 'types';
-import { hasFlag, listRockTypes, TopoTypeToColor, useBreakpoint } from 'helpers';
+import { listRockTypes, hasFlag } from 'helpers/bitflags';
+import { useBreakpoint } from 'helpers/hooks';
+import { TopoTypeToColor } from 'helpers/topo';
+
 import WaypointIcon from 'assets/icons/waypoint.svg';
 import Rock from 'assets/icons/rock.svg'
 import ManyTracks from 'assets/icons/many-tracks.svg';
