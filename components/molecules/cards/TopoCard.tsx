@@ -59,7 +59,8 @@ export const TopoCard: React.FC<TopoCardProps> = React.memo(({
   }, [props.topo, props.onContextMenu]);
   const handleTouchStartContextMenu = useCallback((e: TouchEvent<HTMLDivElement>) => {
     if (props.onContextMenu) {
-      e.preventDefault();
+      // e.preventDefault();
+      // e.stopPropagation();
       // `setTimeout` returns an integer when called in the browser,
       // but TypeScript gives us the type for `setTimeout` on Node.js
       // -> need `as any`
@@ -72,7 +73,7 @@ export const TopoCard: React.FC<TopoCardProps> = React.memo(({
   const handleTouchEndContextMenu = useCallback((e: TouchEvent<HTMLDivElement>) => {
     clearTimeout(timer.current);
     if (blockClick.current) {
-      e.preventDefault();
+      // e.preventDefault();
       blockClick.current = false;
     }
   }, []);
@@ -80,16 +81,17 @@ export const TopoCard: React.FC<TopoCardProps> = React.memo(({
   return (
     wrapLink(
       <div 
+        className='touch-none'
         onContextMenu={handleMouseContextMenu}
         onTouchStart={handleTouchStartContextMenu}
-        onTouchMove={handleTouchEndContextMenu} // If we move the finer (for example for horizontal scrolling) we don't want to display the context menu
+        onTouchMove={handleTouchEndContextMenu} // If we move the finger (for example for horizontal scrolling) we don't want to display the context menu
         onTouchEnd={handleTouchEndContextMenu}
       >
         <Card className={"relative text-center text-grey-medium bg-white flex flex-col" + (clickable ? " cursor-pointer" : '')}>
           <div className="w-full h-[55%] md:h-[75%] top-0 relative">
             <CFImage
               image={props.topo.image}
-              className="rounded-t-lg h-full"
+              className="rounded-t-lg h-full touch-none"
               modalable={false}
               objectFit='cover'
               alt="topo-image"
@@ -97,12 +99,12 @@ export const TopoCard: React.FC<TopoCardProps> = React.memo(({
             />
           </div>
 
-          <div className="h-[45%] md:h-[25%] px-3 md:px-4 py-1 flex flex-row gap-2 md:items-center md:justify-center">
+          <div className="h-[45%] md:h-[25%] px-3 md:px-4 py-1 flex flex-row gap-2 md:items-center md:justify-center touch-none">
             <div className="hidden md:block">
               {TopoIcon}
             </div>
   
-            <div className="w-full flex flex-col items-start overflow-hidden">
+            <div className="w-full flex flex-col items-start overflow-hidden touch-none">
               <div className='flex flex-row items-center mb-1 md:my-1 '>
                 <div className="pr-2 md:hidden stroke-[1.5px]">
                   {TopoIcon}
