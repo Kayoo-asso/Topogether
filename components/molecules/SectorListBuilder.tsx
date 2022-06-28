@@ -2,11 +2,12 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { BoulderItemLeftbar } from 'components/layouts';
 import { arrayMove, createTrack, splitArray } from 'helpers';
 import { Quark, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
-import { Boulder, Sector, Topo, Track, UUID } from 'types';
+import { Boulder, Sector, SectorData, Topo, Track, UUID } from 'types';
 import { DragDropContext, Draggable, Droppable, DropResult } from 'react-beautiful-dnd';
 import { useSession } from 'helpers/services';
 import ArrowSimple from 'assets/icons/arrow-simple.svg';
 import Edit from 'assets/icons/edit.svg';
+import { DraggableList } from 'components/atoms/DraggableList';
 
 export interface SectorListBuilderProps {
     topoQuark: Quark<Topo>,
@@ -29,36 +30,6 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> = watchDependen
     
     const [displayedSectors, setDisplayedSectors] = useState<Array<UUID>>(sectors.map(sector => sector.id).toArray());
     const [displayedBoulders, setDisplayedBoulders] = useState<Array<UUID>>([]);
-    
-    const [draggingSectorId, setDraggingSectorId] = useState();
-    const handleDragStart = useCallback((res) => {
-        setDraggingSectorId(res.source.droppableId);
-    }, []);
-
-    const handleDragEnd = useCallback((res: DropResult) => {
-        setDraggingSectorId(undefined);
-        if (res.destination) {
-            if (res.source.droppableId === 'no-sector') {
-                let newLonelyBoulders = [...topo.lonelyBoulders];
-                newLonelyBoulders = arrayMove(newLonelyBoulders, res.source.index, res.destination.index);
-                props.topoQuark.set(t => ({
-                    ...t,
-                    lonelyBoulders: newLonelyBoulders
-                }))
-            }
-            else {
-                const sector = sectors.findQuark(s => s.id === res.source.droppableId);
-                if (sector) {
-                    let newSectorBoulders = [...sector().boulders];
-                    newSectorBoulders = arrayMove(newSectorBoulders, res.source.index, res.destination.index);
-                    sector.set(s => ({
-                        ...s,
-                        boulders: newSectorBoulders
-                    }))
-                }
-            }
-        }
-    }, [topo, sectors]);
 
     useEffect(() => {
         if (topo.sectors.length > 0) {
@@ -71,106 +42,200 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> = watchDependen
 
     if (!session) return <></>;
 
+    const sectorItem = (sectorQuark: Quark<SectorData>, sectorIndex: number) => {
+        const sector = sectorQuark();
+        const boulderQuarks = sector.boulders.map(id => bouldersIn.find(b => b().id === id)!);
+        return (
+            <div className='flex flex-col mb-10 pb-6'>
+                <div className="ktext-label text-grey-medium">Secteur {sectorIndex + 1}</div>
+                <div className="ktext-section-title text-main mb-1 flex flex-row items-center">
+                    <button className='pr-3 cursor-pointer'
+                        onClick={() => {
+                            const newDS = [...displayedSectors];
+                            if (newDS.includes(sector.id)) newDS.splice(newDS.indexOf(sector.id), 1)
+                            else newDS.push(sector.id);
+                            setDisplayedSectors(newDS);
+                        }}
+                    >
+                        <ArrowSimple
+                            className={'w-3 h-3 stroke-main stroke-2 ' + (displayedSectors.includes(sector.id) ? '-rotate-90' : 'rotate-180')}
+                        />
+                    </button>
+
+                    <div
+                        className='flex-1'
+                        onClick={() => {
+                            const newDS = [...displayedSectors];
+                            if (!newDS.includes(sector.id)) {
+                                newDS.push(sector.id);
+                                setDisplayedSectors(newDS);
+                            }
+                        }}
+                    >
+                        <span className='cursor-pointer'>{sector.name}</span>
+                    </div>
+                    
+                    <div
+                        className='pr-1 cursor-pointer'
+                        onClick={() => props.onRenameSector(sectorQuark)}
+                    >
+                        <Edit className={'w-5 h-5 stroke-main'} />
+                    </div>
+                </div>
+                
+                {displayedSectors.includes(sector.id) &&
+                    // BOULDERS
+                    // <div className={'flex flex-col gap-1 ml-1 p-2 rounded-sm ' + (draggingSectorId === sector.id ? 'bg-grey-superlight' : '')}>
+                    <div className={'flex flex-col gap-1 ml-1 p-2 rounded-sm'}>
+                        {boulderQuarks.length === 0 &&
+                            <div className=''>
+                                Aucun rocher référencé
+                            </div>
+                        }
+                        <DraggableList items={boulderQuarks.map((boulderQuark, index) => {
+                            const boulder = boulderQuark();
+                            return (<>Ok !</>)
+                        })} />
+                        {/* {
+                            return (
+                                <Draggable key={boulder.id} draggableId={boulder.id} index={index}>
+                                    {(provided) => (
+                                        <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
+                                            <BoulderItemLeftbar 
+                                                boulder={boulderQuark}
+                                                orderIndex={props.boulderOrder.get(boulder.id)!}
+                                                selected={selectedBoulder?.id === boulder.id}
+                                                displayed={displayedBoulders.includes(boulder.id)}
+                                                onArrowClick={() => {
+                                                    const newDB = [...displayedBoulders];
+                                                    if (newDB.includes(boulder.id)) newDB.splice(newDB.indexOf(boulder.id), 1)
+                                                    else newDB.push(boulder.id);
+                                                    setDisplayedBoulders(newDB);
+                                                }}
+                                                onNameClick={() => {
+                                                    props.onBoulderSelect(boulderQuark);
+                                                    const newDB = [...displayedBoulders];
+                                                    if (!newDB.includes(boulder.id)) {
+                                                        newDB.push(boulder.id);
+                                                        setDisplayedBoulders(newDB);
+                                                    }
+                                                }}
+                                                onDeleteClick={() => props.onDeleteBoulder(boulderQuark)}
+                                                onTrackClick={(trackQuark) => props.onTrackSelect(trackQuark, boulderQuark)}
+                                                displayCreateTrack
+                                                onCreateTrack={() => createTrack(boulder, session.id)}
+                                            />
+                                        </div>
+                                    )}
+                                </Draggable>
+                            )
+                        } */}
+                    </div>
+                }   
+            </div>
+        )
+    }
+
     return (
-        <div className='mb-6 px-4'>
-            {sectors.quarks().map((sectorQuark, sectorIndex) => {
+        <div className='mb-6 px-4 h-full'>
+
+            <DraggableList 
+                items={sectors.quarks().map((sectorQuark, sectorIndex) => {
+                    return sectorItem(sectorQuark, sectorIndex);
+                }).toArray()} 
+            />
+            {/* {sectors.quarks().map((sectorQuark, sectorIndex) => {
                 const sector = sectorQuark();
                 const boulderQuarks = sector.boulders.map(id => bouldersIn.find(b => b().id === id)!);
                 return (
-                    <DragDropContext onDragEnd={handleDragEnd} onDragStart={handleDragStart} key={sector.id}>  
-                        <Droppable droppableId={sector.id} key={sector.id}>
-                            {(provided) => (
-                                <div className='flex flex-col mb-10 pb-6' {...provided.droppableProps} ref={provided.innerRef}>
-                                    <div className="ktext-label text-grey-medium">Secteur {sectorIndex + 1}</div>
-                                    <div className="ktext-section-title text-main mb-1 flex flex-row items-center">
-                                        <button className='pr-3 cursor-pointer'
-                                            onClick={() => {
-                                                const newDS = [...displayedSectors];
-                                                if (newDS.includes(sector.id)) newDS.splice(newDS.indexOf(sector.id), 1)
-                                                else newDS.push(sector.id);
-                                                setDisplayedSectors(newDS);
-                                            }}
-                                        >
-                                            <ArrowSimple
-                                                className={'w-3 h-3 stroke-main stroke-2 ' + (displayedSectors.includes(sector.id) ? '-rotate-90' : 'rotate-180')}
-                                            />
-                                        </button>
+                    <div className='flex flex-col mb-10 pb-6'>
+                        <div className="ktext-label text-grey-medium">Secteur {sectorIndex + 1}</div>
+                        <div className="ktext-section-title text-main mb-1 flex flex-row items-center">
+                            <button className='pr-3 cursor-pointer'
+                                onClick={() => {
+                                    const newDS = [...displayedSectors];
+                                    if (newDS.includes(sector.id)) newDS.splice(newDS.indexOf(sector.id), 1)
+                                    else newDS.push(sector.id);
+                                    setDisplayedSectors(newDS);
+                                }}
+                            >
+                                <ArrowSimple
+                                    className={'w-3 h-3 stroke-main stroke-2 ' + (displayedSectors.includes(sector.id) ? '-rotate-90' : 'rotate-180')}
+                                />
+                            </button>
 
-                                        <div
-                                            className='flex-1'
-                                            onClick={() => {
-                                                const newDS = [...displayedSectors];
-                                                if (!newDS.includes(sector.id)) {
-                                                    newDS.push(sector.id);
-                                                    setDisplayedSectors(newDS);
-                                                }
-                                            }}
-                                        >
-                                            <span className='cursor-pointer'>{sector.name}</span>
-                                        </div>
-                                        
-                                        <div
-                                            className='pr-1 cursor-pointer'
-                                            onClick={() => props.onRenameSector(sectorQuark)}
-                                        >
-                                            <Edit className={'w-5 h-5 stroke-main'} />
-                                        </div>
+                            <div
+                                className='flex-1'
+                                onClick={() => {
+                                    const newDS = [...displayedSectors];
+                                    if (!newDS.includes(sector.id)) {
+                                        newDS.push(sector.id);
+                                        setDisplayedSectors(newDS);
+                                    }
+                                }}
+                            >
+                                <span className='cursor-pointer'>{sector.name}</span>
+                            </div>
+                            
+                            <div
+                                className='pr-1 cursor-pointer'
+                                onClick={() => props.onRenameSector(sectorQuark)}
+                            >
+                                <Edit className={'w-5 h-5 stroke-main'} />
+                            </div>
+                        </div>
+                        
+                        {displayedSectors.includes(sector.id) &&
+                            // BOULDERS
+                            <div className={'flex flex-col gap-1 ml-1 p-2 rounded-sm ' + (draggingSectorId === sector.id ? 'bg-grey-superlight' : '')}>
+                                {boulderQuarks.length === 0 &&
+                                    <div className=''>
+                                        Aucun rocher référencé
                                     </div>
-                                    
-                                    {displayedSectors.includes(sector.id) &&
-                                        // BOULDERS
-                                        <div className={'flex flex-col gap-1 ml-1 p-2 rounded-sm ' + (draggingSectorId === sector.id ? 'bg-grey-superlight' : '')}>
-                                            {boulderQuarks.length === 0 &&
-                                                <div className=''>
-                                                    Aucun rocher référencé
+                                }
+                                {boulderQuarks.map((boulderQuark, index) => {
+                                    const boulder = boulderQuark();
+                                    return (
+                                        <Draggable key={boulder.id} draggableId={boulder.id} index={index}>
+                                            {(provided) => (
+                                                <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
+                                                    <BoulderItemLeftbar 
+                                                        boulder={boulderQuark}
+                                                        orderIndex={props.boulderOrder.get(boulder.id)!}
+                                                        selected={selectedBoulder?.id === boulder.id}
+                                                        displayed={displayedBoulders.includes(boulder.id)}
+                                                        onArrowClick={() => {
+                                                            const newDB = [...displayedBoulders];
+                                                            if (newDB.includes(boulder.id)) newDB.splice(newDB.indexOf(boulder.id), 1)
+                                                            else newDB.push(boulder.id);
+                                                            setDisplayedBoulders(newDB);
+                                                        }}
+                                                        onNameClick={() => {
+                                                            props.onBoulderSelect(boulderQuark);
+                                                            const newDB = [...displayedBoulders];
+                                                            if (!newDB.includes(boulder.id)) {
+                                                                newDB.push(boulder.id);
+                                                                setDisplayedBoulders(newDB);
+                                                            }
+                                                        }}
+                                                        onDeleteClick={() => props.onDeleteBoulder(boulderQuark)}
+                                                        onTrackClick={(trackQuark) => props.onTrackSelect(trackQuark, boulderQuark)}
+                                                        displayCreateTrack
+                                                        onCreateTrack={() => createTrack(boulder, session.id)}
+                                                    />
                                                 </div>
-                                            }
-                                            {boulderQuarks.map((boulderQuark, index) => {
-                                                const boulder = boulderQuark();
-                                                return (
-                                                    <Draggable key={boulder.id} draggableId={boulder.id} index={index}>
-                                                        {(provided) => (
-                                                            <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
-                                                                <BoulderItemLeftbar 
-                                                                    boulder={boulderQuark}
-                                                                    orderIndex={props.boulderOrder.get(boulder.id)!}
-                                                                    selected={selectedBoulder?.id === boulder.id}
-                                                                    displayed={displayedBoulders.includes(boulder.id)}
-                                                                    onArrowClick={() => {
-                                                                        const newDB = [...displayedBoulders];
-                                                                        if (newDB.includes(boulder.id)) newDB.splice(newDB.indexOf(boulder.id), 1)
-                                                                        else newDB.push(boulder.id);
-                                                                        setDisplayedBoulders(newDB);
-                                                                    }}
-                                                                    onNameClick={() => {
-                                                                        props.onBoulderSelect(boulderQuark);
-                                                                        const newDB = [...displayedBoulders];
-                                                                        if (!newDB.includes(boulder.id)) {
-                                                                            newDB.push(boulder.id);
-                                                                            setDisplayedBoulders(newDB);
-                                                                        }
-                                                                    }}
-                                                                    onDeleteClick={() => props.onDeleteBoulder(boulderQuark)}
-                                                                    onTrackClick={(trackQuark) => props.onTrackSelect(trackQuark, boulderQuark)}
-                                                                    displayCreateTrack
-                                                                    onCreateTrack={() => createTrack(boulder, session.id)}
-                                                                />
-                                                            </div>
-                                                        )}
-                                                    </Draggable>
-                                                )
-                                            })}
-                                            {provided.placeholder}
-                                        </div>
-                                    }   
-                                </div>    
-                            )}
-                        </Droppable>
-                    </DragDropContext>
+                                            )}
+                                        </Draggable>
+                                    )
+                                })}
+                                {provided.placeholder}
+                            </div>
+                        }   
+                    </div>    
                 )
-            })}
+            })} */}
 
-            <DragDropContext onDragEnd={handleDragEnd} onDragStart={handleDragStart}>
+            {/* <DragDropContext onDragEnd={handleDragEnd} onDragStart={handleDragStart}>
                 <Droppable droppableId='no-sector'>
                     {(provided) => {
                         return (
@@ -220,7 +285,7 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> = watchDependen
                         )
                     }}
                 </Droppable>
-            </DragDropContext>
+            </DragDropContext> */}
         </div>
     )
 });

@@ -17,7 +17,9 @@
   "dependencies": {
     "@googlemaps/markerclusterer": "^2.0.7",
     "@googlemaps/react-wrapper": "^1.1.19",
+    "@react-spring/web": "^9.4.5",
     "@supabase/supabase-js": "^1.33.3",
+    "@use-gesture/react": "^10.2.16",
     "compressorjs": "^1.0.7",
     "cookie": "^0.4.2",
     "esbuild": "^0.14.10",
