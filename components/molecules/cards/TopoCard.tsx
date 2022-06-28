@@ -7,6 +7,7 @@ import { LightTopo, TopoStatus } from 'types';
 import Checked from 'assets/icons/checked.svg';
 import Recent from 'assets/icons/recent.svg';
 import Edit from 'assets/icons/edit.svg';
+import MenuIcon from 'assets/icons/menu.svg';
 
 
 interface TopoCardProps {
@@ -59,8 +60,8 @@ export const TopoCard: React.FC<TopoCardProps> = React.memo(({
   }, [props.topo, props.onContextMenu]);
   const handleTouchStartContextMenu = useCallback((e: TouchEvent<HTMLDivElement>) => {
     if (props.onContextMenu) {
-      // e.preventDefault();
-      // e.stopPropagation();
+      e.preventDefault();
+      e.stopPropagation();
       // `setTimeout` returns an integer when called in the browser,
       // but TypeScript gives us the type for `setTimeout` on Node.js
       // -> need `as any`
@@ -73,7 +74,7 @@ export const TopoCard: React.FC<TopoCardProps> = React.memo(({
   const handleTouchEndContextMenu = useCallback((e: TouchEvent<HTMLDivElement>) => {
     clearTimeout(timer.current);
     if (blockClick.current) {
-      // e.preventDefault();
+      e.preventDefault();
       blockClick.current = false;
     }
   }, []);
@@ -88,6 +89,16 @@ export const TopoCard: React.FC<TopoCardProps> = React.memo(({
         onTouchEnd={handleTouchEndContextMenu}
       >
         <Card className={"relative text-center text-grey-medium bg-white flex flex-col" + (clickable ? " cursor-pointer" : '')}>
+          {/* <div className="absolute z-500 right-3 top-2">
+            <MenuIcon
+              className='fill-white h-5 w-5'
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
+            />
+          </div> */}
+
           <div className="w-full h-[55%] md:h-[75%] top-0 relative">
             <CFImage
               image={props.topo.image}
