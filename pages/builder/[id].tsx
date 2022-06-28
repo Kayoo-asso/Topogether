@@ -39,7 +39,7 @@ export default withRouting<BuilderProps>({
   },
 
   render({ topo }) {
-    const topoQuark = useMemo(() => editTopo(topo), [topo]);
+    const topoQuark = editTopo(topo);
     return <RootBuilder topoQuark={topoQuark} />;
   },
 });

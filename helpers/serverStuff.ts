@@ -4,7 +4,7 @@ import { Redirect, NextPageContext, NextPage } from "next";
 import { useRouter } from "next/router";
 import React from "react";
 import { UUID, Role, User } from "types";
-import { api, auth, supabaseClient } from "./services";
+import { auth, supabaseClient } from "./services";
 
 export const AccessTokenCookie = "topogether-access";
 export const RefreshTokenCookie = "topogether-refresh";
@@ -30,16 +30,16 @@ export const loginRedirect = (source: string) => {
 export const jwtDecoder = (jwt: string): AccessJWT =>
   JSON.parse(Buffer.from(jwt.split(".")[1], "base64").toString("utf8"));
 
-const isNotFound = <P>(
+function isNotFound<P>(
   props: GetServerSidePropsResult<P>
-): props is { notFound: true } => {
+): props is { notFound: true } {
   return (props as any).notFound === true;
-};
-const isRedirect = <P>(
+}
+function isRedirect<P>(
   props: GetServerSidePropsResult<P>
-): props is { redirect: Redirect } => {
+): props is { redirect: Redirect } {
   return (props as any).redirect !== undefined;
-};
+}
 
 type RedirectWithStatusCode = {
   statusCode: 301 | 302 | 303 | 307 | 308;
@@ -95,6 +95,10 @@ export function withRouting<Props>({
   ): Promise<GetServerSidePropsResult<Props>> => {
     const result = await getInitialProps(ctx);
     if (isNotFound(result)) {
+      if (ctx.res) {
+        ctx.res.writeHead(404);
+        ctx.res.end();
+      }
       return result;
     }
     if (isRedirect(result)) {
@@ -142,7 +146,6 @@ export async function getUserInitialProps(
   }
   const ongoing = ongoingFetches.get(userId);
   if (ongoing !== undefined) {
-    console.log("Found ongoing fetch for user " + userId);
     return await ongoing;
   }
 
