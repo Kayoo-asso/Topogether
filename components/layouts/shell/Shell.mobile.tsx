@@ -16,12 +16,8 @@ export const ShellMobile: React.FC = watchDependencies(() => {
   const session = auth.session();
 
   const initialActiveTab = useMemo(() => {
-    if (router.pathname.includes('user')) {
-      return 0;
-    }
-    if (router.pathname.includes('builder')) {
-      return 2;
-    }
+    if (router.pathname.includes('user')) return 0;
+    if (router.pathname.includes('builder')) return 2;
     return 1;
   }, [router.pathname]);
   const [activeTab, setActiveTab] = useState<0 | 1 | 2>(initialActiveTab);
@@ -47,6 +43,8 @@ export const ShellMobile: React.FC = watchDependencies(() => {
           <a
             className={`h-full flex-1 flex justify-center items-center ${activeTab === 0 ? 'border-t-main border-t-6' : ''}`}
             onClick={() => {
+              if (session && router.pathname === '/user/profile') return;
+              if (!session && router.pathname === '/user/login') return;
               showLoader();
               changeTab(0);
             }}
@@ -61,6 +59,8 @@ export const ShellMobile: React.FC = watchDependencies(() => {
           <a
             className={`h-full flex-1 flex justify-center items-center ${activeTab === 1 ? 'border-t-main border-t-6' : ''}`}
             onClick={() => {
+              if (topoUrl && router.pathname === topoUrl) return;
+              if (!topoUrl && router.pathname === '/') return;
               showLoader();
               changeTab(1);
             }}
@@ -75,6 +75,7 @@ export const ShellMobile: React.FC = watchDependencies(() => {
           <a
             className={`h-full flex-1 flex justify-center items-center ${activeTab === 2 ? 'border-t-main border-t-6' : ''}`}
             onClick={() => {
+              if (router.pathname === '/builder/dashboard') return;
               showLoader();
               if (session) changeTab(2);
               else changeTab(0);

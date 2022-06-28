@@ -59,6 +59,7 @@ export const TopoCard: React.FC<TopoCardProps> = React.memo(({
   }, [props.topo, props.onContextMenu]);
   const handleTouchStartContextMenu = useCallback((e: TouchEvent<HTMLDivElement>) => {
     if (props.onContextMenu) {
+      e.preventDefault();
       // `setTimeout` returns an integer when called in the browser,
       // but TypeScript gives us the type for `setTimeout` on Node.js
       // -> need `as any`
