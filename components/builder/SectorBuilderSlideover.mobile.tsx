@@ -1,7 +1,8 @@
 import React from 'react';
-import { Button, SectorListBuilder, SlideoverMobile } from 'components';
+import { Button, SlideoverMobile } from 'components';
 import { Boulder, Sector, Topo, Track, UUID } from 'types';
 import { Quark, watchDependencies, SelectQuarkNullable } from 'helpers/quarky';
+import { SectorListBuilder } from './SectorListBuilder';
 
 interface SectorBuilderSlideoverMobileProps {
     topoQuark: Quark<Topo>,

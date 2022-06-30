@@ -9,4 +9,3 @@ export * from './GradeHistogram';
 export * from './BoulderPreview.desktop';
 
 export * from './SectorList';
-export * from '../builder/SectorListBuilder';

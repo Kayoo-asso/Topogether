@@ -77,7 +77,6 @@ export const DraggableList = ({ items }: { items: JSX.Element[] }) => {
           key={i}
           style={{
             zIndex,
-            boxShadow: shadow.to(s => `rgba(0, 0, 0, 0.15) 0px ${s}px ${2 * s}px 0px`),
             y,
             scale,
           }}

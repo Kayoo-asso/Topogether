@@ -1,7 +1,8 @@
 import React from 'react';
-import { Button, SectorListBuilder } from 'components';
+import { Button } from 'components';
 import { Quark, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
 import { Boulder, Sector, Topo, Track, UUID } from 'types';
+import { SectorListBuilder } from 'components/builder';
 
 interface LeftbarBuilderDesktopProps {
     topoQuark: Quark<Topo>,
