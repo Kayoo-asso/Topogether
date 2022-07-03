@@ -9,14 +9,13 @@ import Link from 'next/link';
 import { HeaderDesktop } from 'components/layouts/HeaderDesktop';
 import { LeftbarDesktop } from 'components/layouts/Leftbar.desktop';
 import { staticUrl } from 'helpers/constants';
-import { useLoader, useModal, useContextMenu } from 'helpers/hooks';
+import { useModal, useContextMenu } from 'helpers/hooks';
 
 interface RootDashboardProps {
     lightTopos: LightTopo[],
 }
 
 export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies((props: RootDashboardProps) => {
-  const [Loader, showLoader] = useLoader();  
   const [lightTopos, setLightTopos] = useState(props.lightTopos);
     const draftLightTopos = lightTopos.filter((topo) => topo.status === TopoStatus.Draft);
     const submittedLightTopos = lightTopos.filter((topo) => topo.status === TopoStatus.Submitted);
@@ -81,7 +80,6 @@ export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies((pr
                 <Button 
                   content="Créer un topo" 
                   href="/builder/new"
-                  useLoaderOnClick
                 />
               } 
             </div>
@@ -98,7 +96,6 @@ export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies((pr
                   )}
                   lastCard={<AddTopoCard />}
                   onContextMenu={onContextMenu}
-                  onClick={showLoader}
                 />
       
                 <TopoCardList
@@ -122,7 +119,6 @@ export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies((pr
                     </div>
                   )}
                   onContextMenu={onContextMenu}
-                  onClick={showLoader}
                 />
               </>
             }
@@ -130,7 +126,7 @@ export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies((pr
               <div className='flex justify-center relative w-full h-[70vh]'>
                 <div className='w-[90%] h-full flex items-center relative rounded overflow-hidden bg-grey-superlight'>
                   <Link href="/builder/new">
-                    <a className="w-full flex flex-col items-center" onClick={showLoader}>
+                    <a className="w-full flex flex-col items-center">
                       <AddIcon
                         className='stroke-grey-medium fill-white h-16 w-16 stroke-[0.25px]'
                       />
@@ -168,8 +164,6 @@ export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies((pr
           imgUrl={staticUrl.deleteWarning}
           onConfirm={deleteTopo}
         >Le topo sera entièrement supprimé. Etes-vous sûr de vouloir continuer ?</ModalDelete>
-
-        <Loader />     
       </>
     );
 });

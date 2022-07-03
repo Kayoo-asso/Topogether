@@ -6,7 +6,6 @@ import { SignInRes, useAuth } from 'helpers/services';
 import { Email } from 'types';
 import { useRouter } from 'next/router';
 import { staticUrl } from 'helpers/constants';
-import { useLoader } from 'helpers/hooks';
 
 interface LoginFormProps {
     onLogin?: () => void,
@@ -15,8 +14,6 @@ interface LoginFormProps {
 export const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
     const router = useRouter();
     const auth = useAuth();
-
-    const [Loader, showLoader] = useLoader();
 
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
@@ -107,12 +104,12 @@ export const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
             <div className='flex flex-col gap-16 w-full'>
                 <div className='flex flex-row w-full justify-center md:justify-between items-center'>
                     <Link href="/user/signup">
-                        <a className="ktext-base-little text-main cursor-pointer hidden md:block" onClick={showLoader}>
+                        <a className="ktext-base-little text-main cursor-pointer hidden md:block" >
                             Créer un compte
                         </a>
                     </Link>
                     <Link href="/user/forgotPassword">
-                        <a className="ktext-base-little text-main cursor-pointer" onClick={showLoader}>
+                        <a className="ktext-base-little text-main cursor-pointer">
                             Mot de passe oublié ?
                         </a>
                     </Link>
@@ -126,7 +123,6 @@ export const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
                     />
                 </div>
             </div>
-            <Loader />
         </div>
     )
 }

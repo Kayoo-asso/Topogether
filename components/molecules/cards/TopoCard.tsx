@@ -13,7 +13,6 @@ interface TopoCardProps {
   topo: LightTopo;
   clickable?: 'builder' | 'topo';
   onContextMenu: (topo: LightTopo, position: { x: number, y: number }) => void
-  onClick?: () => void,
 }
 
 const iconSize = 'h-4 w-4 md:h-6 md:w-6';
@@ -43,7 +42,7 @@ export const TopoCard: React.FC<TopoCardProps> = React.memo(({
   const wrapLink = (elts: ReactElement<any, any>) => {
     if (clickable) {
       return(<Link href={`/${clickable}/${encodeUUID(props.topo.id)}`}>
-        <a onClick={props.onClick}>{elts}</a>
+        <a>{elts}</a>
       </Link>)
     }
     else return elts;

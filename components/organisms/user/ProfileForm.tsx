@@ -18,7 +18,7 @@ export const ProfileForm: React.FC<ProfileFormProps> = watchDependencies((props:
   const userQuark = useCreateQuark(props.user);
   const user = userQuark();
 
-  const [Loader, showLoader, hideLoader] = useLoader();
+const showLoader = useLoader();
   
   const [emailError, setEmailError] = useState<string>();
   const [successMessageChangeMail, setSuccessMessageChangeMail] = useState<string>();
@@ -81,7 +81,7 @@ export const ProfileForm: React.FC<ProfileFormProps> = watchDependencies((props:
             {errorMessageChangeMail && <div className='ktext-error text-error text-center'>{errorMessageChangeMail}</div>}
         
             <Link href="/user/changePassword">
-                <a className="ktext-base-little text-main cursor-pointer" onClick={showLoader}>
+                <a className="ktext-base-little text-main cursor-pointer">
                     Modifier le mot de passe
                 </a>
             </Link>
@@ -193,12 +193,12 @@ export const ProfileForm: React.FC<ProfileFormProps> = watchDependencies((props:
             <div 
                 className="ktext-base-little text-main cursor-pointer"
                 onClick={async () => {
-                    showLoader();
+                    showLoader(true);
                     const success = await auth.signOut();
                     if (success) await router.push('/user/login');
                     else {
                         setErrorMessageSignout("Une erreur est survenue. Merci de réessayer.");
-                        hideLoader();
+                        showLoader(false);
                     }
                 }}
             >
@@ -215,8 +215,6 @@ export const ProfileForm: React.FC<ProfileFormProps> = watchDependencies((props:
                 Supprimer le compte
             </div>
         </div>
-        
-        <Loader />
     </div>
   );
 });

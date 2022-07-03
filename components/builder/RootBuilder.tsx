@@ -94,7 +94,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
     const firstRender = useFirstRender();
     const breakpoint = useBreakpoint();
 
-    const [Loader, showLoader] = useLoader();
+    const showLoader = useLoader();
 
     const topo = props.topoQuark();
     const sectors = topo.sectors;
@@ -798,7 +798,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
             buttonText="Confirmer"
             imgUrl={staticUrl.defaultProfilePicture}
             onConfirm={async () => {
-              showLoader();
+              showLoader(true);
               props.topoQuark.set({
                 ...topo,
                 status: TopoStatus.Submitted,
@@ -814,7 +814,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
             buttonText="Confirmer"
             imgUrl={staticUrl.deleteWarning}
             onConfirm={async () => {
-              showLoader();
+              showLoader(true);
               api.deleteTopo(topo);
               await sync.attemptSync();
               router.push("/builder/dashboard");
@@ -978,8 +978,6 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
         >
           Êtes-vous sûr de vouloir supprimer le point de repère ?
         </ModalDeleteWaypoint>
-
-        <Loader />
       </>
     );
   }

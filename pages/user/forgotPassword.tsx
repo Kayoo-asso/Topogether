@@ -5,13 +5,10 @@ import NextImage from 'next/image';
 import Link from 'next/link';
 import { Header } from 'components/layouts/Header';
 import { staticUrl } from 'helpers/constants';
-import { useLoader } from 'helpers/hooks';
 
 const ForgotPasswordPage: NextPage = () => {
   const [email, setEmail] = useState<string>();
   const [emailError, setEmailError] = useState<string>();
-
-  const [Loader, showLoader] = useLoader();
 
   const checkErrors = () => {
     if (!email) setEmailError("Email invalide");
@@ -62,14 +59,13 @@ const ForgotPasswordPage: NextPage = () => {
             />
 
             <Link href="/user/login">
-                <a className="ktext-base-little text-main cursor-pointer hidden md:block" onClick={showLoader}>
+                <a className="ktext-base-little text-main cursor-pointer hidden md:block">
                   Retour
                 </a>
             </Link>
           </div>
 
         </div>
-        <Loader />
       </div>
     </>
   )

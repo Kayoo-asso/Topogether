@@ -8,14 +8,11 @@ import { Email, isEmail, isName, Name } from 'types';
 import { useRouter } from 'next/router';
 import { Header } from 'components/layouts/Header';
 import { staticUrl } from 'helpers/constants';
-import { useLoader } from 'helpers/hooks';
 
 
 const SignupPage: NextPage = () => {
   const router = useRouter();
   const auth = useAuth();
-
-  const [Loader, showLoader] = useLoader();
 
   const [pseudo, setPseudo] = useState<string>();
   const [email, setEmail] = useState<string>();
@@ -116,14 +113,13 @@ const SignupPage: NextPage = () => {
             {validateEmailMessage && <div className='ktext-error text-main'>{validateEmailMessage}</div>}
 
             <Link href="/user/login">
-                <a className="ktext-base-little text-main cursor-pointer hidden md:block" onClick={showLoader}>
+                <a className="ktext-base-little text-main cursor-pointer hidden md:block">
                   Retour
                 </a>
             </Link>
           </div>
 
         </div>
-        <Loader />
       </div>
     </>
   )

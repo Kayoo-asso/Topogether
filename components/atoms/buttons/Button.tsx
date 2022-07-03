@@ -1,6 +1,5 @@
 import React from 'react';
 import Link from 'next/link';
-import { useLoader } from 'helpers/hooks/useLoader';
 import { Loading } from './Loading';
 
 interface ButtonProps {
@@ -9,7 +8,6 @@ interface ButtonProps {
     white?: boolean,
     activated?: boolean,
     loading?: boolean,
-    useLoaderOnClick?: boolean,
     fullWidth?: boolean,
     href?: string,
     onClick?: () => void,
@@ -23,8 +21,6 @@ export const Button: React.FC<ButtonProps> = ({
     className = '',
     ...props
 }: ButtonProps) => {
-    const [Loader, showLoader] = useLoader();
-
     const getUIClasses = () => {
         if (activated && !loading) {
             if (white) return 'text-main bg-white border-2 border-main hover:text-main-light hover:border-main-light';
@@ -37,7 +33,6 @@ export const Button: React.FC<ButtonProps> = ({
             className={`ktext-subtitle flex flex-row items-center justify-center gap-5 shadow rounded-full px-4 py-3 lg:px-8 h-[45px] lg:h-[50px] ${getUIClasses()} ${fullWidth ? 'w-full ' : ''} ${className}`}
             onClick={() => {
                 if (!loading && activated && props.onClick && !props.href) props.onClick();
-                if (props.useLoaderOnClick) showLoader();
             }}
         >
             <div>{props.content}</div>
@@ -60,7 +55,6 @@ export const Button: React.FC<ButtonProps> = ({
                     </Link>
                 </> : <>{button}</>
             }
-            <Loader />
         </>
         );
 }

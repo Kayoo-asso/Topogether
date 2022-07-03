@@ -12,7 +12,6 @@ interface TopoCardListProps {
   lastCard?: ReactNode;
   clickable?: 'topo' | 'builder';
   onContextMenu: (topo: LightTopo, position: {x: number, y: number}) => void
-  onClick?: (topo: LightTopo) => void,
 }
 
 export const TopoCardList: React.FC<TopoCardListProps> = (props: TopoCardListProps) => (
@@ -37,7 +36,6 @@ export const TopoCardList: React.FC<TopoCardListProps> = (props: TopoCardListPro
             topo={topo}
             clickable={props.clickable}
             onContextMenu={props.onContextMenu}
-            onClick={() => props.onClick && props.onClick(topo)}
           />
         ))}
         {props.lastCard}

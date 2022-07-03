@@ -3,7 +3,6 @@ import { Dropdown, DropdownOption } from 'components';
 import Link from 'next/link';
 import ArrowSimple from 'assets/icons/arrow-simple.svg';
 import MenuIcon from 'assets/icons/menu.svg';
-import { useLoader } from 'helpers/hooks/useLoader';
 
 interface HeaderMobileProps {
   title: string,
@@ -17,13 +16,11 @@ export const HeaderMobile: React.FC<HeaderMobileProps> = (props: HeaderMobilePro
   const [menuOpen, setMenuOpen] = useState(false);
   const [displayTitleTooltip, setDisplayTitleTooltip] = useState(false);
 
-  const [Loader, showLoader] = useLoader();
-
   const wrapLink = (elts: ReactElement<any, any>) => {
     if (props.onBackClick) return <a onClick={props.onBackClick}>{elts}</a>;
     else return (
       <Link href={props.backLink}>
-        <a onClick={showLoader}>{elts}</a>
+        <a>{elts}</a>
       </Link>
     )
   }
@@ -66,7 +63,6 @@ export const HeaderMobile: React.FC<HeaderMobileProps> = (props: HeaderMobilePro
             onSelect={() => setMenuOpen(false)}
           />
       )}
-      <Loader />
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import { DownloadedActionDropdown, TopoCardList } from 'components/molecules';
 import { staticUrl } from 'helpers/constants';
-import { useLoader, useModal, useContextMenu } from 'helpers/hooks';
+import { useModal, useContextMenu } from 'helpers/hooks';
 import React, { useCallback, useRef, useState } from 'react';
 import { LightTopo, TopoStatus } from 'types';
 
@@ -9,7 +9,6 @@ interface DownloadedListProps {
 }
 
 export const DownloadedList: React.FC<DownloadedListProps> = (props: DownloadedListProps) => {
-    const [Loader, showLoader] = useLoader();
 
     const [ModalUnsave, showModalUnsave] = useModal();
 
@@ -37,7 +36,6 @@ export const DownloadedList: React.FC<DownloadedListProps> = (props: DownloadedL
                     clickable='topo'
                     noTopoCardContent='Aucun topo téléchargé'
                     onContextMenu={onContextMenu}
-                    onClick={(topo) => showLoader()}
                 />
             </div>
 
@@ -54,8 +52,6 @@ export const DownloadedList: React.FC<DownloadedListProps> = (props: DownloadedL
                 imgUrl={staticUrl.deleteWarning}
                 onConfirm={unsaveTopo}   
             >Le topo ne sera plus accessible hors ligne. Voulez-vous continuer ?</ModalUnsave>
-
-            <Loader />
         </>
     )
 }

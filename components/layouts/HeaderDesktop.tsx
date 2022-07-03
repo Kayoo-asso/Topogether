@@ -7,7 +7,6 @@ import { useAuth } from 'helpers/services';
 import { useRouter } from 'next/router';
 import { watchDependencies } from 'helpers/quarky';
 import ArrowFull from 'assets/icons/arrow-full.svg';
-import { useLoader } from 'helpers/hooks/useLoader';
 
 interface HeaderDesktopProps {
   backLink: string,
@@ -18,6 +17,7 @@ interface HeaderDesktopProps {
   children?: ReactNode;
 }
 
+// TODO: start showing a loader as soon as a sign out happens?
 export const HeaderDesktop: React.FC<HeaderDesktopProps> = watchDependencies(({
   displayLogin = false,
   displayUser = true,
@@ -26,8 +26,6 @@ export const HeaderDesktop: React.FC<HeaderDesktopProps> = watchDependencies(({
   const auth = useAuth();
   const user = auth.session();
   const router = useRouter();
-
-  const [Loader, showLoader] = useLoader();
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
@@ -46,7 +44,7 @@ export const HeaderDesktop: React.FC<HeaderDesktopProps> = watchDependencies(({
   return (
     <div className="bg-dark items-center h-header hidden md:flex">
       <Link href={props.backLink}>
-        <a className="w-1/12 relative h-[70%] cursor-pointer" onClick={showLoader}>
+        <a className="w-1/12 relative h-[70%] cursor-pointer">
           <NextImage
             src="/assets/img/Logo_white_topogether.png"
             priority
@@ -82,7 +80,7 @@ export const HeaderDesktop: React.FC<HeaderDesktopProps> = watchDependencies(({
 
       {displayLogin && !user &&
         <Link href="/user/login">
-          <a className="ktext-base text-white cursor-pointer mr-[3%]" onClick={showLoader}>
+          <a className="ktext-base text-white cursor-pointer mr-[3%]">
             Se connecter
           </a>
         </Link>
@@ -107,13 +105,11 @@ export const HeaderDesktop: React.FC<HeaderDesktopProps> = watchDependencies(({
                   }
                 }
               ]}
-              onSelect={showLoader}
               className='w-[200px] -ml-[180px] mt-[180px]'
             />
           }
         </div>
       }
-      <Loader />
     </div>
   );
 });

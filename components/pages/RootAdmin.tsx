@@ -8,7 +8,7 @@ import { Header } from 'components/layouts/Header';
 import { LeftbarDesktop } from 'components/layouts/Leftbar.desktop';
 import { Tabs } from 'components/layouts/Tabs';
 import { staticUrl } from 'helpers/constants';
-import { useLoader, useModal } from 'helpers/hooks';
+import { useModal } from 'helpers/hooks';
 
 import Edit from 'assets/icons/edit.svg';
 import Recent from 'assets/icons/recent.svg';
@@ -19,7 +19,6 @@ interface RootAdminProps {
 }
 
 export const RootAdmin: React.FC<RootAdminProps> = (props: RootAdminProps) => {
-    const [Loader, showLoader] = useLoader();
     const [selectedStatus, setSelectedStatus] = useState<TopoStatus>(TopoStatus.Draft);
 
     const [lightTopos, setLightTopos] = useState(props.lightTopos);
@@ -117,7 +116,6 @@ export const RootAdmin: React.FC<RootAdminProps> = (props: RootAdminProps) => {
                                     topo={topo}
                                     onContextMenu={onContextMenu}
                                     clickable={selectedStatus === TopoStatus.Validated ? 'topo' : 'builder'}
-                                    onClick={() => showLoader()}
                                 />
                             ))}
                         </div>
@@ -156,8 +154,6 @@ export const RootAdmin: React.FC<RootAdminProps> = (props: RootAdminProps) => {
                 imgUrl={staticUrl.deleteWarning}
                 onConfirm={deleteTopo} 
             >Le topo sera entièrement supprimé. Etes-vous sûr de vouloir continuer ?</ModalDelete>
-
-            <Loader />
         </>
     );
 };

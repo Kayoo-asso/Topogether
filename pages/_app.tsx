@@ -9,6 +9,7 @@ import { DeviceManager, UserPositionProvider } from "helpers/hooks";
 import { initSupabaseSession, getUserInitialProps } from "helpers/serverStuff";
 import { resetServerContext } from "react-beautiful-dnd";
 import { User } from "types";
+import { NavigationLoader } from "components/layouts/NavigationLoader";
 
 type CustomProps = {
   session: User | null;
@@ -83,6 +84,8 @@ const CustomApp = ({ Component, pageProps, session, userAgent }: Props) => {
           media="(min-device-width: 1024px) and (max-device-width: 1024px) and (-webkit-min-device-pixel-ratio: 2) and (orientation: portrait)"
         ></link>
       </Head>
+
+      <NavigationLoader />
 
       <AuthProvider initial={session}>
         <DeviceManager userAgent={userAgent}>

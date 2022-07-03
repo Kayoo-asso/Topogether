@@ -116,7 +116,6 @@ const ProfilePage = withRouting<ProfileProps>({
                   <Button
                     content='Admin'
                     href='/admin'
-                    useLoaderOnClick
                     white
                   />
                 </div>

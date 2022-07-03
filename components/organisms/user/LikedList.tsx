@@ -1,7 +1,7 @@
 import { LikedActionDropdown, TopoCardList } from 'components/molecules';
 import React, { useCallback, useRef, useState } from 'react';
 import { LightTopo, TopoStatus } from 'types';
-import { useContextMenu, useLoader, useModal } from 'helpers/hooks';
+import { useContextMenu, useModal } from 'helpers/hooks';
 import { staticUrl } from 'helpers/constants';
 
 interface LikedListProps {
@@ -10,8 +10,6 @@ interface LikedListProps {
 }
 
 export const LikedList: React.FC<LikedListProps> = (props: LikedListProps) => {
-    const [Loader, showLoader] = useLoader();
-
     const [ModalUnlike, showModalUnlike] = useModal<LightTopo>();
 
     const ref = useRef<HTMLDivElement>(null);
@@ -35,7 +33,6 @@ export const LikedList: React.FC<LikedListProps> = (props: LikedListProps) => {
                     clickable='topo'
                     noTopoCardContent='Aucun topo liké'
                     onContextMenu={onContextMenu}
-                    onClick={(topo) => showLoader()}
                 />
             </div>
 
@@ -54,8 +51,6 @@ export const LikedList: React.FC<LikedListProps> = (props: LikedListProps) => {
                     props.onUnlikeTopo(topo);
                 }}   
             >Le topo sera retiré de la liste de vos topos likés. Voulez-vous continuer ?</ModalUnlike>
-
-            <Loader />
         </>
     )
 }

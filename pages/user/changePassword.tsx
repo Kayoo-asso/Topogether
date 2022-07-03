@@ -7,7 +7,6 @@ import { useAuth } from 'helpers/services';
 import { User } from 'types';
 import { Header } from 'components/layouts/Header';
 import { staticUrl } from 'helpers/constants';
-import { useLoader } from 'helpers/hooks';
 
 type ChangePasswordProps = {
   user: User
@@ -15,8 +14,6 @@ type ChangePasswordProps = {
 
 const ChangePasswordPage: NextPage<ChangePasswordProps> = () => {
   const auth = useAuth();
-
-  const [Loader, showLoader] = useLoader();
 
   const [oldPassword, setOldPassword] = useState<string>('');
   const [newPassword, setNewPassword] = useState<string>('');
@@ -99,13 +96,12 @@ const ChangePasswordPage: NextPage<ChangePasswordProps> = () => {
                 loading={loading}
             />
 
-            <Link href="/user/profile" onClick={showLoader}>
+            <Link href="/user/profile">
                 <a className="ktext-base-little text-main cursor-pointer hidden md:flex md:w-full">Retour</a>
             </Link>
           </div>
 
         </div>
-        <Loader />
       </div>
     </>
   )
