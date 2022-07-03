@@ -1,24 +1,52 @@
-@import 'microtip.css';
-@import 'carouselStyle.css';
+@import "microtip.css";
+@import "carouselStyle.css";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
- @layer components {
-  .ktext-big-title { @apply font-sans font-semibold text-2xl }
-  .ktext-title { @apply font-sans font-medium text-lg uppercase }
-  .ktext-section-title { @apply font-sans font-semibold text-xl }
-  .ktext-subtitle { @apply font-sans font-bold text-sm uppercase }
-  .ktext-base { @apply font-sans font-normal text-lg }
-  .ktext-base-little { @apply font-sans font-normal text-sm }
-  .ktext-base-big { @apply font-sans font-normal text-xl }
-  .ktext-base-superbig { @apply font-sans font-semibold text-4xl }
-  .ktext-label { @apply font-sans font-medium text-sm uppercase }
-  input::placeholder { @apply font-sans font-normal text-base }
-  .ktext-label-superbig { @apply font-sans font-semibold text-3xl uppercase }
-  .ktext-error { @apply font-sans font-normal text-xs italic }
-  .ktext-subtext { @apply font-sans font-normal text-xs }
-  .ktext-light { @apply font-sans font-light text-xs }
+@layer components {
+  .ktext-big-title {
+    @apply font-sans font-semibold text-2xl;
+  }
+  .ktext-title {
+    @apply font-sans font-medium text-lg uppercase;
+  }
+  .ktext-section-title {
+    @apply font-sans font-semibold text-xl;
+  }
+  .ktext-subtitle {
+    @apply font-sans font-bold text-sm uppercase;
+  }
+  .ktext-base {
+    @apply font-sans font-normal text-lg;
+  }
+  .ktext-base-little {
+    @apply font-sans font-normal text-sm;
+  }
+  .ktext-base-big {
+    @apply font-sans font-normal text-xl;
+  }
+  .ktext-base-superbig {
+    @apply font-sans font-semibold text-4xl;
+  }
+  .ktext-label {
+    @apply font-sans font-medium text-sm uppercase;
+  }
+  input::placeholder {
+    @apply font-sans font-normal text-base;
+  }
+  .ktext-label-superbig {
+    @apply font-sans font-semibold text-3xl uppercase;
+  }
+  .ktext-error {
+    @apply font-sans font-normal text-xs italic;
+  }
+  .ktext-subtext {
+    @apply font-sans font-normal text-xs;
+  }
+  .ktext-light {
+    @apply font-sans font-light text-xs;
+  }
 }
 
 .hide-after-two-lines {
@@ -38,9 +66,9 @@
 
 ::-webkit-scrollbar-track {
   background-color: transparent;
-} 
+}
 ::-webkit-scrollbar-thumb {
-  background-color: #D5D7E2;
+  background-color: #d5d7e2;
   border-radius: 30px;
   border: 6px solid transparent;
   background-clip: content-box;
@@ -52,111 +80,118 @@
   display: none;
 }
 .hide-scrollbar {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }
 
 body {
   overflow: hidden;
 }
 
-@media only screen and (max-width : 1024px) {
+@media only screen and (max-width: 1024px) {
   body {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    touch-action:none;
-  } 
+    touch-action: none;
+  }
 }
 
 @media all and (display-mode: standalone) {
-  #no-standalone { display: none; }
+  #no-standalone {
+    display: none;
+  }
 }
 @media all and (display-mode: browser), all and (display-mode: fullscreen) {
-  #standalone { display: none; }
+  #standalone {
+    display: none;
+  }
 }
 
 /* MAP */
 #map a[href^="http://maps.google.com/maps"],
 #map a[href^="https://maps.google.com/maps"],
-#map a[href^="https://www.google.com/maps"] {
+#map a[href^="https://www.google.com/maps"]
+{
   display: none !important;
 }
-#map .gmnoprint a, #map .gmnoprint span, #map .gm-style-cc {
-    display:none;
+#map .gmnoprint a,
+#map .gmnoprint span,
+#map .gm-style-cc {
+  display: none;
 }
 #map .gmnoprint div {
-    background:none !important;
+  background: none !important;
 }
 #map img[src*="phantom"] {
   opacity: 0.4;
 }
 #map.cursor-rock div {
-  cursor: url('/assets/icons/colored/_rock.svg'), auto
+  cursor: url("/assets/icons/colored/_rock.svg"), auto;
 }
 #map.cursor-parking div {
-  cursor: url('/assets/icons/colored/_parking.svg'), auto
+  cursor: url("/assets/icons/colored/_parking.svg"), auto;
 }
 #map.cursor-waypoint div {
-  cursor: url('/assets/icons/colored/_help-round.svg'), auto
+  cursor: url("/assets/icons/colored/_help-round.svg"), auto;
 }
 
 /* FONT */
 @font-face {
-  font-family: 'Poppins';
+  font-family: "Poppins";
   font-style: normal;
   font-weight: 400;
-  src: local('Poppins-Regular'), local('Poppins-Regular'),
-       url('/assets/fonts/Poppins/Poppins-Regular.ttf') format('truetype');
+  src: local("Poppins-Regular"), local("Poppins-Regular"),
+    url("/assets/fonts/Poppins/Poppins-Regular.ttf") format("truetype");
 }
 @font-face {
-  font-family: 'Poppins';
+  font-family: "Poppins";
   font-style: italic;
   font-weight: 400;
-  src: local('Poppins-Italic'), local('Poppins-Italic'),
-       url('/assets/fonts/Poppins/Poppins-Italic.ttf') format('truetype');
+  src: local("Poppins-Italic"), local("Poppins-Italic"),
+    url("/assets/fonts/Poppins/Poppins-Italic.ttf") format("truetype");
 }
 @font-face {
-  font-family: 'Poppins';
+  font-family: "Poppins";
   font-style: normal;
   font-weight: 500;
-  src: local('Poppins-Medium'), local('Poppins-Medium'),
-       url('/assets/fonts/Poppins/Poppins-Medium.ttf') format('truetype');
+  src: local("Poppins-Medium"), local("Poppins-Medium"),
+    url("/assets/fonts/Poppins/Poppins-Medium.ttf") format("truetype");
 }
 @font-face {
-  font-family: 'Poppins';
+  font-family: "Poppins";
   font-style: italic;
   font-weight: 500;
-  src: local('Poppins-MediumItalic'), local('Poppins-MediumItalic'),
-       url('/assets/fonts/Poppins/Poppins-MediumItalic.ttf') format('truetype');
+  src: local("Poppins-MediumItalic"), local("Poppins-MediumItalic"),
+    url("/assets/fonts/Poppins/Poppins-MediumItalic.ttf") format("truetype");
 }
 @font-face {
-  font-family: 'Poppins';
+  font-family: "Poppins";
   font-style: normal;
   font-weight: 600;
-  src: local('Poppins-SemiBold'), local('Poppins-SemiBold'),
-       url('/assets/fonts/Poppins/Poppins-SemiBold.ttf') format('truetype');
+  src: local("Poppins-SemiBold"), local("Poppins-SemiBold"),
+    url("/assets/fonts/Poppins/Poppins-SemiBold.ttf") format("truetype");
 }
 @font-face {
-  font-family: 'Poppins';
+  font-family: "Poppins";
   font-style: italic;
   font-weight: 600;
-  src: local('Poppins-SemiBoldItalic'), local('Poppins-SemiBoldItalic'),
-       url('/assets/fonts/Poppins/Poppins-SemiBoldItalic.ttf') format('truetype');
+  src: local("Poppins-SemiBoldItalic"), local("Poppins-SemiBoldItalic"),
+    url("/assets/fonts/Poppins/Poppins-SemiBoldItalic.ttf") format("truetype");
 }
 @font-face {
-  font-family: 'Poppins';
+  font-family: "Poppins";
   font-style: normal;
   font-weight: 700;
-  src: local('Poppins-Bold'), local('Poppins-Bold'),
-       url('/assets/fonts/Poppins/Poppins-Bold.ttf') format('truetype');
+  src: local("Poppins-Bold"), local("Poppins-Bold"),
+    url("/assets/fonts/Poppins/Poppins-Bold.ttf") format("truetype");
 }
 @font-face {
-  font-family: 'Poppins';
+  font-family: "Poppins";
   font-style: italic;
   font-weight: 700;
-  src: local('Poppins-BoldItalic'), local('Poppins-BoldItalic'),
-       url('/assets/fonts/Poppins/Poppins-BoldItalic.ttf') format('truetype');
+  src: local("Poppins-BoldItalic"), local("Poppins-BoldItalic"),
+    url("/assets/fonts/Poppins/Poppins-BoldItalic.ttf") format("truetype");
 }

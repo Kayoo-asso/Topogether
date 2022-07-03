@@ -1,4 +1,4 @@
-export const a=null;
+export const a = null;
 
 //TODO put back this, Jest & Webpack became one unhappy couple for some reason
 // import { Quark, derive, effect, quark, batch, untrack, Signal, selectSignal, selectQuark, Effect, onCleanup } from "helpers/quarky/"
@@ -743,7 +743,6 @@ export const a=null;
 //     expect(quarkObserverRuns).toBe(2);
 // });
 
-
 // test("Effect observing multiple modified quarks only runs once on update", () => {
 //     const Q1 = quark(1);
 //     const Q2 = quark(1);
@@ -871,7 +870,6 @@ export const a=null;
 //     });
 //     expect(q()).toBe(quadruple!);
 // });
-
 
 // test("Effect disposing itself during cleanup runs all cleanups exactly once", () => {
 //     let firstCleanupCount = 0;
