@@ -76,20 +76,20 @@ const CustomApp = ({ Component, pageProps, session, userAgent }: Props) => {
 				></link>
 			</Head>
 
-			<NavigationLoader />
-
 			<AuthProvider initial={session}>
 				<DeviceManager userAgent={userAgent}>
 					<UserPositionProvider>
-						<div
-							id="content"
-							className="flex-1 w-screen absolute bg-grey-light flex flex-col h-full md:h-screen overflow-hidden"
-						>
-							<Component {...pageProps} />
-						</div>
-						<div id="footer" className="bg-dark z-500 absolute bottom-0 h-shell md:hidden">
-							<ShellMobile />
-						</div>
+						<NavigationLoader>
+							<div
+								id="content"
+								className="flex-1 w-screen absolute bg-grey-light flex flex-col h-full md:h-screen overflow-hidden"
+							>
+								<Component {...pageProps} />
+							</div>
+							<div id="footer" className="bg-dark z-500 absolute bottom-0 h-shell md:hidden">
+								<ShellMobile />
+							</div>
+						</NavigationLoader>
 					</UserPositionProvider>
 				</DeviceManager>
 			</AuthProvider>
