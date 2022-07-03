@@ -33,7 +33,10 @@ export const BoulderSlideagainstDesktop: React.FC<BoulderSlideagainstDesktopProp
 
 		const displayedTracks = boulder.tracks
 			.quarks()
-			.filter((track) => (track().creatorId === props.topoCreatorId) === officialTrackTab);
+			.filter(
+				(track) =>
+					(track().creatorId === props.topoCreatorId) === officialTrackTab
+			);
 
 		const [ModalLogin, showModalLogin, hideModalLogin] = useModal();
 
@@ -56,14 +59,19 @@ export const BoulderSlideagainstDesktop: React.FC<BoulderSlideagainstDesktopProp
 								onClick={() => {
 									const data = [
 										new ClipboardItem({
-											"text/plain": new Blob([boulder.location[1] + "," + boulder.location[0]], {
-												type: "text/plain",
-											}),
+											"text/plain": new Blob(
+												[boulder.location[1] + "," + boulder.location[0]],
+												{
+													type: "text/plain",
+												}
+											),
 										}),
 									];
 									navigator.clipboard.write(data).then(
 										function () {
-											setFlashMessage("Coordonnées copiées dans le presse papier.");
+											setFlashMessage(
+												"Coordonnées copiées dans le presse papier."
+											);
 										},
 										function () {
 											setFlashMessage("Impossible de copier les coordonées.");
@@ -75,9 +83,13 @@ export const BoulderSlideagainstDesktop: React.FC<BoulderSlideagainstDesktopProp
 									"," +
 									parseFloat(boulder.location[0].toFixed(12))}
 							</div>
-							{boulder.isHighball && <div className="ktext-label text-grey-medium">High Ball</div>}
+							{boulder.isHighball && (
+								<div className="ktext-label text-grey-medium">High Ball</div>
+							)}
 							{boulder.mustSee && (
-								<div className="ktext-label text-grey-medium mb-15">Incontournable !</div>
+								<div className="ktext-label text-grey-medium mb-15">
+									Incontournable !
+								</div>
 							)}
 						</div>
 						<div className="mt-3">
@@ -91,13 +103,17 @@ export const BoulderSlideagainstDesktop: React.FC<BoulderSlideagainstDesktopProp
 
 						<div className="flex flex-row px-5 mt-10 ktext-label font-bold my-2 justify-between">
 							<span
-								className={`cursor-pointer ${officialTrackTab ? "text-main" : "text-grey-medium"}`}
+								className={`cursor-pointer ${
+									officialTrackTab ? "text-main" : "text-grey-medium"
+								}`}
 								onClick={() => setOfficialTrackTab(true)}
 							>
 								officielles
 							</span>
 							<span
-								className={`cursor-pointer ${!officialTrackTab ? "text-main" : "text-grey-medium"}`}
+								className={`cursor-pointer ${
+									!officialTrackTab ? "text-main" : "text-grey-medium"
+								}`}
 								onClick={() => setOfficialTrackTab(false)}
 							>
 								communautés
@@ -118,7 +134,9 @@ export const BoulderSlideagainstDesktop: React.FC<BoulderSlideagainstDesktopProp
 												(img) => img.id === trackQuark().lines.at(0).imageId
 											);
 											if (!newImage)
-												throw new Error("Could not find the first image for the selected track!");
+												throw new Error(
+													"Could not find the first image for the selected track!"
+												);
 											props.setCurrentImage(newImage);
 										}
 										props.selectedTrack.select(trackQuark);

@@ -29,7 +29,9 @@ export const WaypointMarker: React.FC<WaypointMarkerProps> = watchDependencies(
 			position: toLatLng(waypoint.location),
 		};
 
-		const [timer, setTimer] = useState<ReturnType<typeof setTimeout>>(setTimeout(() => {}, 0));
+		const [timer, setTimer] = useState<ReturnType<typeof setTimeout>>(
+			setTimeout(() => {}, 0)
+		);
 		const isPressing = useCreateQuark(false);
 		const isDragging = useCreateQuark(false);
 

@@ -12,7 +12,15 @@ import {
 	TopoFilters,
 	UserMarker,
 } from "./";
-import { Boulder, GeoCoordinates, Image, MapProps, MapToolEnum, Position, Topo } from "types";
+import {
+	Boulder,
+	GeoCoordinates,
+	Image,
+	MapProps,
+	MapToolEnum,
+	Position,
+	Topo,
+} from "types";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { fontainebleauLocation } from "helpers/constants";
 import { googleGetPlace, toLatLng } from "helpers/map";
@@ -65,7 +73,9 @@ export const MapControl = watchDependencies<google.maps.Map, MapControlProps>(
 		const { position } = usePosition();
 
 		const [satelliteView, setSatelliteView] = useState(false);
-		const getBoundsFromSearchbar = (geometry: google.maps.places.PlaceGeometry) => {
+		const getBoundsFromSearchbar = (
+			geometry: google.maps.places.PlaceGeometry
+		) => {
 			if (mapRef.current) {
 				const newBounds = new google.maps.LatLngBounds();
 				if (geometry.viewport) newBounds.union(geometry.viewport);
@@ -77,16 +87,22 @@ export const MapControl = watchDependencies<google.maps.Map, MapControlProps>(
 
 		return (
 			<div className="relative w-full h-full">
-				<Wrapper apiKey={process.env.NEXT_PUBLIC_GOOGLE_API_KEY || ""} libraries={["places"]}>
+				<Wrapper
+					apiKey={process.env.NEXT_PUBLIC_GOOGLE_API_KEY || ""}
+					libraries={["places"]}
+				>
 					<div className="absolute h-full w-full">
 						{/* Top left */}
 						<div className="absolute left-0 top-0 m-3 space-y-5 w-full">
 							{displaySearchbar && (
 								<MapSearchbar
-									boulders={props.topo ? props.topo().boulders.toArray() : undefined}
+									boulders={
+										props.topo ? props.topo().boulders.toArray() : undefined
+									}
 									onGoogleResultSelect={async (res) => {
 										const placeDetails = await googleGetPlace(res.place_id);
-										if (placeDetails?.geometry) getBoundsFromSearchbar(placeDetails.geometry);
+										if (placeDetails?.geometry)
+											getBoundsFromSearchbar(placeDetails.geometry);
 									}}
 									onBoulderResultSelect={props.onBoulderResultSelect}
 									{...props.searchbarOptions}
@@ -111,7 +127,9 @@ export const MapControl = watchDependencies<google.maps.Map, MapControlProps>(
 						<div className="absolute right-0 top-0 m-3">
 							{displaySatelliteButton && (
 								<SatelliteButton
-									onClick={(displaySatellite) => setSatelliteView(displaySatellite)}
+									onClick={(displaySatellite) =>
+										setSatelliteView(displaySatellite)
+									}
 								/>
 							)}
 						</div>
@@ -119,7 +137,10 @@ export const MapControl = watchDependencies<google.maps.Map, MapControlProps>(
 						{/* Bottom left */}
 						<div className="absolute bottom-0 left-0 m-3">
 							{displaySectorButton && (
-								<RoundButton className="z-10 md:hidden" onClick={props.onSectorButtonClick}>
+								<RoundButton
+									className="z-10 md:hidden"
+									onClick={props.onSectorButtonClick}
+								>
 									<SectorIcon className="h-7 w-7 stroke-main fill-main" />
 								</RoundButton>
 							)}
@@ -132,7 +153,9 @@ export const MapControl = watchDependencies<google.maps.Map, MapControlProps>(
 									currentTool={props.currentTool}
 									photoActivated={!!position}
 									onToolSelect={props.onToolSelect}
-									onNewPhoto={(img) => position && props.onNewPhoto!(img, position)}
+									onNewPhoto={(img) =>
+										position && props.onNewPhoto!(img, position)
+									}
 								/>
 							)}
 						</div>
@@ -184,7 +207,9 @@ export const MapControl = watchDependencies<google.maps.Map, MapControlProps>(
 					>
 						{props.children}
 
-						{displayUserMarker && <UserMarker onClick={props.onUserMarkerClick} />}
+						{displayUserMarker && (
+							<UserMarker onClick={props.onUserMarkerClick} />
+						)}
 					</Map>
 				</Wrapper>
 			</div>

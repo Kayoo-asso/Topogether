@@ -74,12 +74,18 @@ const SignupPage: NextPage = () => {
 
 	return (
 		<>
-			<Header backLink="/user/login" title="Création de compte" displayLogin={true} />
+			<Header
+				backLink="/user/login"
+				title="Création de compte"
+				displayLogin={true}
+			/>
 
 			<div className="w-full h-full flex flex-col items-center justify-center bg-bottom bg-white md:bg-[url('/assets/img/login_background.png')] md:bg-cover">
 				<div className="p-10 w-full bg-white md:w-[500px] md:shadow md:rounded-lg -mt-16 md:mt-0">
 					<div className="flex flex-col gap-6 items-center w-full">
-						<div className="ktext-section-title self-start hidden md:block">Créer un compte</div>
+						<div className="ktext-section-title self-start hidden md:block">
+							Créer un compte
+						</div>
 
 						<div className="h-[150px] w-[150px] relative md:hidden">
 							<NextImage
@@ -121,13 +127,19 @@ const SignupPage: NextPage = () => {
 							activated={!validateEmailMessage}
 							loading={loading}
 						/>
-						{errorMessage && <div className="ktext-error text-error">{errorMessage}</div>}
+						{errorMessage && (
+							<div className="ktext-error text-error">{errorMessage}</div>
+						)}
 						{validateEmailMessage && (
-							<div className="ktext-error text-main">{validateEmailMessage}</div>
+							<div className="ktext-error text-main">
+								{validateEmailMessage}
+							</div>
 						)}
 
 						<Link href="/user/login">
-							<a className="ktext-base-little text-main cursor-pointer hidden md:block">Retour</a>
+							<a className="ktext-base-little text-main cursor-pointer hidden md:block">
+								Retour
+							</a>
 						</Link>
 					</div>
 				</div>

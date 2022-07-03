@@ -25,7 +25,13 @@ import type { Image } from "./Image";
 
 export type Topo = Omit<
 	TopoData,
-	"liked" | "sectors" | "boulders" | "waypoints" | "parkings" | "accesses" | "managers"
+	| "liked"
+	| "sectors"
+	| "boulders"
+	| "waypoints"
+	| "parkings"
+	| "accesses"
+	| "managers"
 > & {
 	liked: Quark<boolean>;
 	sectors: QuarkArray<Sector>;

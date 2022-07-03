@@ -66,7 +66,9 @@ export const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
 
 	return (
 		<div className="flex flex-col gap-6 items-center w-full">
-			<div className="ktext-section-title self-start hidden md:block">Se connecter</div>
+			<div className="ktext-section-title self-start hidden md:block">
+				Se connecter
+			</div>
 			<div className="h-[150px] w-[150px] relative mt-10 md:hidden">
 				<NextImage
 					src={staticUrl.logo_color}
@@ -104,7 +106,12 @@ export const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
 
 			<div className="flex flex-col w-full md:flex-row justify-start md:justify-between items-center md:mb-6">
 				<div className="w-full">
-					<Button content="Se connecter" fullWidth onClick={login} loading={loading} />
+					<Button
+						content="Se connecter"
+						fullWidth
+						onClick={login}
+						loading={loading}
+					/>
 					<div className="ktext-error text-error mt-3">{errorMessage}</div>
 				</div>
 			</div>
@@ -117,7 +124,9 @@ export const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
 						</a>
 					</Link>
 					<Link href="/user/forgotPassword">
-						<a className="ktext-base-little text-main cursor-pointer">Mot de passe oublié ?</a>
+						<a className="ktext-base-little text-main cursor-pointer">
+							Mot de passe oublié ?
+						</a>
 					</Link>
 				</div>
 

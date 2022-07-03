@@ -5,7 +5,8 @@ export const Payre = {
 	creatorName: "Flavien C",
 	name: "Blocs de la Payre",
 	mainImageId: 30,
-	mainImageUrl: "/public/uploads/topo/main-image/eaaa972f82e87a7fed703a16c47c5a7610b5c24c.jpeg",
+	mainImageUrl:
+		"/public/uploads/topo/main-image/eaaa972f82e87a7fed703a16c47c5a7610b5c24c.jpeg",
 	description:
 		"Les blocs de la Payre reposent paisiblement dans le magnifique lit de la rivière qui leur donne leur nom, formant un chaos impressionnant hors du monde. La roche est agréable pour les doigts mais assez lisse dans l'ensemble, ce qui demande un petit temps d'adaptation pour trouver ses repères. Les techniques à travailler sont très variées et le niveau hétérogène. Bref, personne ne s'y ennuie !",
 	rockTypeLabel: "Calcaire",
@@ -9303,7 +9304,8 @@ const PayreNew = {
 	status: "validated",
 	type: 0,
 	forbidden: false,
-	modified: "Mon Mar 21 2022 15:13:13 GMT+0100 (heure normale d’Europe centrale)",
+	modified:
+		"Mon Mar 21 2022 15:13:13 GMT+0100 (heure normale d’Europe centrale)",
 	submitted: "",
 	validated: "",
 	cleaned: "",

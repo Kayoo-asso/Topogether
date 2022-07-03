@@ -25,7 +25,10 @@ const displayRule = (topo: Topo, key: Rule) => {
 	);
 };
 
-const displayMainRule = (topo: Topo, key: Rule | "INFOS_TOPO" | "INFOS_ACCESS") => {
+const displayMainRule = (
+	topo: Topo,
+	key: Rule | "INFOS_TOPO" | "INFOS_ACCESS"
+) => {
 	return (
 		<div className={"flex items-center"}>
 			{validateRule(topo, key) ? (
@@ -38,8 +41,8 @@ const displayMainRule = (topo: Topo, key: Rule | "INFOS_TOPO" | "INFOS_ACCESS") 
 	);
 };
 
-export const BuilderProgressIndicator: React.FC<BuilderProgressIndicatorProps> = watchDependencies(
-	(props: BuilderProgressIndicatorProps) => {
+export const BuilderProgressIndicator: React.FC<BuilderProgressIndicatorProps> =
+	watchDependencies((props: BuilderProgressIndicatorProps) => {
 		const [open, setOpen] = useState(false);
 		const ref = useRef<HTMLDivElement>(null);
 
@@ -81,7 +84,9 @@ export const BuilderProgressIndicator: React.FC<BuilderProgressIndicatorProps> =
 							{displayRule(props.topo(), "ROCK_TYPE")}
 							{displayRule(props.topo(), "ALTITUDE")}
 						</div>
-						<div className="my-2">{displayMainRule(props.topo(), "PARKINGS")}</div>
+						<div className="my-2">
+							{displayMainRule(props.topo(), "PARKINGS")}
+						</div>
 						<div
 							className="my-2 cursor-pointer"
 							onClick={() => {
@@ -94,12 +99,15 @@ export const BuilderProgressIndicator: React.FC<BuilderProgressIndicatorProps> =
 							{displayRule(props.topo(), "ACCESS_DIFFICULTY")}
 							{displayRule(props.topo(), "ACCESS_STEP")}
 						</div>
-						<div className="my-2">{displayMainRule(props.topo(), "BOULDERS")}</div>
-						<div className="my-2">{displayMainRule(props.topo(), "TRACKS")}</div>
+						<div className="my-2">
+							{displayMainRule(props.topo(), "BOULDERS")}
+						</div>
+						<div className="my-2">
+							{displayMainRule(props.topo(), "TRACKS")}
+						</div>
 					</div>
 				)}
 			</div>
 		);
-	}
-);
+	});
 BuilderProgressIndicator.displayName = "BuilderProgressIndicator";

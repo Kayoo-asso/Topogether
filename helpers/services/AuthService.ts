@@ -1,4 +1,8 @@
-import { AuthChangeEvent, Session as SupabaseSession, SupabaseClient } from "@supabase/supabase-js";
+import {
+	AuthChangeEvent,
+	Session as SupabaseSession,
+	SupabaseClient,
+} from "@supabase/supabase-js";
 import { quark, Quark } from "helpers/quarky";
 import { DBUserUpdate, Email, Name, Role, User } from "types";
 import { createContext, useContext } from "react";
@@ -76,7 +80,10 @@ export class AuthService {
 			throw new Error("Action requires user to be logged in!");
 		}
 		const dto = DBConvert.user(user);
-		const { error } = await this.client.from<DBUserUpdate>("users").update(dto).eq("id", dto.id);
+		const { error } = await this.client
+			.from<DBUserUpdate>("users")
+			.update(dto)
+			.eq("id", dto.id);
 		if (error) {
 			console.error("Error updating user info:", error);
 			return false;
@@ -86,7 +93,11 @@ export class AuthService {
 		return true;
 	}
 
-	async signUp(email: Email, password: string, pseudo: Name): Promise<SignUpRes> {
+	async signUp(
+		email: Email,
+		password: string,
+		pseudo: Name
+	): Promise<SignUpRes> {
 		const role: Role = "USER";
 		const { user, session, error } = await this.client.auth.signUp(
 			{
@@ -106,7 +117,9 @@ export class AuthService {
 		}
 		// No confirmation required (probably dev environment)
 		if (session && user) {
-			return (await this._loadDetails(user.id)) ? SignUpRes.LoggedIn : SignUpRes.Error;
+			return (await this._loadDetails(user.id))
+				? SignUpRes.LoggedIn
+				: SignUpRes.Error;
 		}
 		// Regular scenario
 		return SignUpRes.ConfirmationRequired;
@@ -193,7 +206,10 @@ export class AuthService {
 
 	// Manually setting cookies w/ those options is as safe as localStorage,
 	// which is where Supabase usually stores auth tokens
-	private async _onAuthStateChange(event: AuthChangeEvent, session: SupabaseSession | null) {
+	private async _onAuthStateChange(
+		event: AuthChangeEvent,
+		session: SupabaseSession | null
+	) {
 		console.log("[AuthStateChange] " + event);
 		if (event === "SIGNED_OUT") {
 			this._session.set(null);
@@ -202,7 +218,9 @@ export class AuthService {
 			this.client.auth.api.resetPasswordForEmail;
 		} else if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
 			if (session) {
-				const expires = session.expires_at ? new Date(1000 * session.expires_at) : undefined;
+				const expires = session.expires_at
+					? new Date(1000 * session.expires_at)
+					: undefined;
 				setCookie(AccessTokenCookie, session.access_token, { expires });
 				if (session.refresh_token) {
 					setCookie(RefreshTokenCookie, session.refresh_token);
@@ -238,7 +256,8 @@ function setCookie(
 		(options as any).expires = options.expires.toUTCString();
 	}
 
-	let updatedCookie = encodeURIComponent(name) + "=" + encodeURIComponent(value);
+	let updatedCookie =
+		encodeURIComponent(name) + "=" + encodeURIComponent(value);
 
 	for (let optionKey in options) {
 		updatedCookie += "; " + optionKey;
@@ -251,4 +270,5 @@ function setCookie(
 	document.cookie = updatedCookie;
 }
 
-const deleteCookie = (name: string) => setCookie(name, "", { expires: new Date(0) });
+const deleteCookie = (name: string) =>
+	setCookie(name, "", { expires: new Date(0) });

@@ -40,14 +40,19 @@ export const ParkingSlide: React.FC<ParkingSlideProps> = watchDependencies(
 							onClick={() => {
 								const data = [
 									new ClipboardItem({
-										"text/plain": new Blob([parking.location[1] + "," + parking.location[0]], {
-											type: "text/plain",
-										}),
+										"text/plain": new Blob(
+											[parking.location[1] + "," + parking.location[0]],
+											{
+												type: "text/plain",
+											}
+										),
 									}),
 								];
 								navigator.clipboard.write(data).then(
 									function () {
-										setFlashMessage("Coordonnées copiées dans le presse papier.");
+										setFlashMessage(
+											"Coordonnées copiées dans le presse papier."
+										);
 									},
 									function () {
 										setFlashMessage("Impossible de copier les coordonées.");
@@ -89,7 +94,9 @@ export const ParkingSlide: React.FC<ParkingSlideProps> = watchDependencies(
 		return (
 			<>
 				{breakpoint === "mobile" && (
-					<SlideoverMobile onClose={props.onClose}>{parkingContent()}</SlideoverMobile>
+					<SlideoverMobile onClose={props.onClose}>
+						{parkingContent()}
+					</SlideoverMobile>
 				)}
 				{breakpoint !== "mobile" && (
 					<SlideagainstRightDesktop open onClose={props.onClose}>

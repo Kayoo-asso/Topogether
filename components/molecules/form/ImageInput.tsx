@@ -65,12 +65,14 @@ export const ImageInput = forwardRef<HTMLInputElement, ImageInputProps>(
 				error += "Un des fichiers est trop lourds.\n";
 			else if (errorcount[ImageUploadErrorReason.CompressionError] > 1)
 				error +=
-					errorcount[ImageUploadErrorReason.CompressionError] + " fichiers sont trop lourds.\n";
+					errorcount[ImageUploadErrorReason.CompressionError] +
+					" fichiers sont trop lourds.\n";
 			if (errorcount[ImageUploadErrorReason.UploadError] === 1)
 				error += "Un des fichiers n'a pas pu être uploadé.";
 			else if (errorcount[ImageUploadErrorReason.UploadError] > 1)
 				error +=
-					errorcount[ImageUploadErrorReason.UploadError] + " fichiers n'ont pas pu être uploadés.";
+					errorcount[ImageUploadErrorReason.UploadError] +
+					" fichiers n'ont pas pu être uploadés.";
 			setError(error);
 
 			if (props.onError && error.length > 0) props.onError(error);
@@ -101,7 +103,8 @@ export const ImageInput = forwardRef<HTMLInputElement, ImageInputProps>(
 						image={props.value}
 						loading={loading}
 						onClick={useCallback(() => {
-							if (!loading && fileInputRef.current) fileInputRef.current.click();
+							if (!loading && fileInputRef.current)
+								fileInputRef.current.click();
 						}, [loading])}
 					/>
 				)}
@@ -109,13 +112,20 @@ export const ImageInput = forwardRef<HTMLInputElement, ImageInputProps>(
 					<RoundButton
 						buttonSize={size === "little" ? 45 : 60}
 						onClick={useCallback(() => {
-							if (!loading && activated && fileInputRef.current) fileInputRef.current.click();
+							if (!loading && activated && fileInputRef.current)
+								fileInputRef.current.click();
 						}, [loading, activated])}
 					>
 						{!loading && (
-							<Camera className={"h-6 w-6 " + (activated ? "stroke-main" : "stroke-grey-light")} />
+							<Camera
+								className={
+									"h-6 w-6 " + (activated ? "stroke-main" : "stroke-grey-light")
+								}
+							/>
 						)}
-						{loading && <Spinner className="h-6 w-6 stroke-main animate-spin m-2" />}
+						{loading && (
+							<Spinner className="h-6 w-6 stroke-main animate-spin m-2" />
+						)}
 					</RoundButton>
 				)}
 				{button === "square" && (
@@ -125,7 +135,8 @@ export const ImageInput = forwardRef<HTMLInputElement, ImageInputProps>(
 						loading={loading}
 						activated={activated}
 						onClick={useCallback(() => {
-							if (!loading && fileInputRef.current) fileInputRef.current.click();
+							if (!loading && fileInputRef.current)
+								fileInputRef.current.click();
 						}, [loading])}
 						onDelete={props.onDelete}
 					/>

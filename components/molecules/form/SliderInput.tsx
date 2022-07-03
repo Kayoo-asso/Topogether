@@ -17,7 +17,9 @@ const Handle = (props: HandleProps) => (
 		}}
 		{...props.getHandleProps(props.handle.id)}
 	>
-		<div className="text-white w-full ktext-base text-xs font-bold">{props.handle.value}</div>
+		<div className="text-white w-full ktext-base text-xs font-bold">
+			{props.handle.value}
+		</div>
 	</div>
 );
 
@@ -40,7 +42,12 @@ export const SliderInput: React.FC<SliderInputProps> = ({
 		domain={props.domain}
 		connectTracks={connectTracks}
 		handleCreator={(handle, getHandleProps) => (
-			<Handle color="main" handle={handle} getHandleProps={getHandleProps} key={handle.id} />
+			<Handle
+				color="main"
+				handle={handle}
+				getHandleProps={getHandleProps}
+				key={handle.id}
+			/>
 		)}
 	/>
 );

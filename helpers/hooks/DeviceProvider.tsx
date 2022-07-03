@@ -16,7 +16,9 @@ export function useBreakpoint(): Breakpoint {
 	return device;
 }
 
-const DeviceContext = React.createContext<ReturnType<typeof isMobile>>(undefined!);
+const DeviceContext = React.createContext<ReturnType<typeof isMobile>>(
+	undefined!
+);
 
 export function useDevice() {
 	return useContext(DeviceContext);
@@ -41,14 +43,23 @@ export function DeviceManager({ userAgent, children }: DeviceManagerProps) {
 	const initialBreakpoint = deviceInfo.any ? "mobile" : "desktop";
 
 	const firstRender = useFirstRender();
-	const bp = firstRender ? initialBreakpoint : (currentBreakpoint as Breakpoint);
+	const bp = firstRender
+		? initialBreakpoint
+		: (currentBreakpoint as Breakpoint);
 
 	return (
 		<DeviceContext.Provider value={deviceInfo}>
 			<BreakpointContext.Provider value={bp}>
-				<div ref={observe} className="w-screen h-screen flex items-end flex-col">
+				<div
+					ref={observe}
+					className="w-screen h-screen flex items-end flex-col"
+				>
 					<div
-						id={bp === "mobile" && process.env.NODE_ENV !== "development" ? "standalone" : ""}
+						id={
+							bp === "mobile" && process.env.NODE_ENV !== "development"
+								? "standalone"
+								: ""
+						}
 						className="w-full h-full"
 					>
 						{/* Here goes the Component + ShellMobile part */}

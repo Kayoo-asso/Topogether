@@ -25,7 +25,9 @@ interface TopoPreviewProps {
 	onClose: () => void;
 }
 
-export const TopoPreview: React.FC<TopoPreviewProps> = (props: TopoPreviewProps) => {
+export const TopoPreview: React.FC<TopoPreviewProps> = (
+	props: TopoPreviewProps
+) => {
 	const [modalParkingOpen, setModalParkingOpen] = useState(false);
 	const [flashMessage, setFlashMessage] = useState<string>();
 	const topo = props.topo;
@@ -36,9 +38,12 @@ export const TopoPreview: React.FC<TopoPreviewProps> = (props: TopoPreviewProps)
 			onClick={() => {
 				const data = [
 					new ClipboardItem({
-						"text/plain": new Blob([topo.location[1] + "," + topo.location[0]], {
-							type: "text/plain",
-						}),
+						"text/plain": new Blob(
+							[topo.location[1] + "," + topo.location[0]],
+							{
+								type: "text/plain",
+							}
+						),
 					}),
 				];
 				navigator.clipboard.write(data).then(
@@ -51,7 +56,9 @@ export const TopoPreview: React.FC<TopoPreviewProps> = (props: TopoPreviewProps)
 				);
 			}}
 		>
-			{parseFloat(topo.location[1].toFixed(12)) + "," + parseFloat(topo.location[0].toFixed(12))}
+			{parseFloat(topo.location[1].toFixed(12)) +
+				"," +
+				parseFloat(topo.location[0].toFixed(12))}
 		</div>
 	);
 
@@ -86,7 +93,9 @@ export const TopoPreview: React.FC<TopoPreviewProps> = (props: TopoPreviewProps)
 					<div className="ml-2">{topo.name}</div>
 				</div>
 				{topo.closestCity && topo.closestCity !== topo.name && (
-					<div className="px-4 ktext-label md:text-left text-grey-medium">{topo.closestCity}</div>
+					<div className="px-4 ktext-label md:text-left text-grey-medium">
+						{topo.closestCity}
+					</div>
 				)}
 				<div className="px-4 hidden md:block">{coordinateItem()}</div>
 
@@ -113,7 +122,11 @@ export const TopoPreview: React.FC<TopoPreviewProps> = (props: TopoPreviewProps)
 
 				<div className="flex flex-col w-full md:absolute md:bottom-0">
 					<div className="w-full p-4 mt-4">
-						<Button content="Entrer" fullWidth href={"/topo/" + encodeUUID(topo.id)} />
+						<Button
+							content="Entrer"
+							fullWidth
+							href={"/topo/" + encodeUUID(topo.id)}
+						/>
 					</div>
 					{topo.parkingLocation && (
 						<div className="pb-4">

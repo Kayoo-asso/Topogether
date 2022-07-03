@@ -87,7 +87,9 @@ export const Tabs: React.FC<TabsProps> = (props: TabsProps) => {
 
 	return (
 		<div
-			className={`flex flex-row w-full justify-around ${props.className ? props.className : ""}`}
+			className={`flex flex-row w-full justify-around ${
+				props.className ? props.className : ""
+			}`}
 		>
 			{props.tabs.map((tab, index) => {
 				const selected = selectedTab === index;
@@ -102,9 +104,15 @@ export const Tabs: React.FC<TabsProps> = (props: TabsProps) => {
 						role="tab"
 						tabIndex={index === 0 ? 0 : -1}
 					>
-						{tab.icon && <tab.icon className={`${getIconClassName(tab, selected)}`} />}
+						{tab.icon && (
+							<tab.icon className={`${getIconClassName(tab, selected)}`} />
+						)}
 						{tab.label && (
-							<div className={`ktext-label ${getLabelClassName(tab, selected)}`}>{tab.label}</div>
+							<div
+								className={`ktext-label ${getLabelClassName(tab, selected)}`}
+							>
+								{tab.label}
+							</div>
 						)}
 					</div>
 				);

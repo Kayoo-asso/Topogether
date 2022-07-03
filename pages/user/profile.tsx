@@ -1,5 +1,12 @@
 import { useCallback, useState } from "react";
-import { Button, ImageInput, ProfileForm, TextInput, LikedList, DownloadedList } from "components";
+import {
+	Button,
+	ImageInput,
+	ProfileForm,
+	TextInput,
+	LikedList,
+	DownloadedList,
+} from "components";
 import { DBLightTopo, LightTopo, Name, User } from "types";
 import { api, useAuth } from "helpers/services";
 import { Header } from "components/layouts/Header";
@@ -8,7 +15,12 @@ import { Tabs } from "components/layouts/Tabs";
 import { staticUrl } from "helpers/constants";
 import { useModal } from "helpers/hooks";
 import { quarkifyLightTopos } from "helpers/quarkifyTopo";
-import { withRouting, getSessionId, loginRedirect, getUserInitialProps } from "helpers/serverStuff";
+import {
+	withRouting,
+	getSessionId,
+	loginRedirect,
+	getUserInitialProps,
+} from "helpers/serverStuff";
 
 import Profile from "assets/icons/user-mobile.svg";
 import Heart from "assets/icons/heart.svg";
@@ -45,7 +57,9 @@ const ProfilePage = withRouting<ProfileProps>({
 		const auth = useAuth();
 		const [user, setUser] = useState(props.user);
 
-		const [selectedTab, setSelectedTab] = useState<"PROFILE" | "LIKED" | "DOWNLOADED">("PROFILE");
+		const [selectedTab, setSelectedTab] = useState<
+			"PROFILE" | "LIKED" | "DOWNLOADED"
+		>("PROFILE");
 		const [likedTopos, setLikedTopos] = useState(props.likedTopos);
 
 		const [userNameError, setUserNameError] = useState<string>();
@@ -95,7 +109,9 @@ const ProfilePage = withRouting<ProfileProps>({
 								<div className="mb-6">
 									<div className="ktext-subtitle">{user.userName}</div>
 									{user.role === "ADMIN" && (
-										<div className="text-main ktext-label">Super-administrateur</div>
+										<div className="text-main ktext-label">
+											Super-administrateur
+										</div>
 									)}
 								</div>
 								<TextInput
@@ -119,7 +135,11 @@ const ProfilePage = withRouting<ProfileProps>({
 							)}
 						</div>
 
-						<div className={"w-full " + (selectedTab === "PROFILE" ? "mb-8 md:mb-12" : "")}>
+						<div
+							className={
+								"w-full " + (selectedTab === "PROFILE" ? "mb-8 md:mb-12" : "")
+							}
+						>
 							<Tabs
 								tabs={[
 									{
@@ -149,7 +169,10 @@ const ProfilePage = withRouting<ProfileProps>({
 						</div>
 
 						{selectedTab === "PROFILE" && (
-							<ProfileForm user={props.user} onDeleteAccountClick={showModalDelete} />
+							<ProfileForm
+								user={props.user}
+								onDeleteAccountClick={showModalDelete}
+							/>
 						)}
 
 						{selectedTab === "LIKED" && (
@@ -172,8 +195,8 @@ const ProfilePage = withRouting<ProfileProps>({
 					imgUrl={staticUrl.deleteWarning}
 					onConfirm={deleteAccount}
 				>
-					Toutes les données du compte seront définitivement supprimées. Êtes-vous sûr.e de vouloir
-					continuer ?
+					Toutes les données du compte seront définitivement supprimées.
+					Êtes-vous sûr.e de vouloir continuer ?
 				</ModalDelete>
 			</>
 		);

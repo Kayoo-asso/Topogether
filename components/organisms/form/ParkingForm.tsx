@@ -24,7 +24,10 @@ export const ParkingForm: React.FC<ParkingFormProps> = watchDependencies(
 
 		return (
 			<div
-				className={"flex flex-col gap-6 h-full " + (props.className ? props.className : "")}
+				className={
+					"flex flex-col gap-6 h-full " +
+					(props.className ? props.className : "")
+				}
 				onClick={(e) => e.stopPropagation()}
 			>
 				<div className="flex flex-row gap-6 items-end">
@@ -115,7 +118,11 @@ export const ParkingForm: React.FC<ParkingFormProps> = watchDependencies(
 				/>
 
 				<div className="w-full flex grow items-end">
-					<Button content="Supprimer" onClick={() => props.onDeleteParking()} fullWidth />
+					<Button
+						content="Supprimer"
+						onClick={() => props.onDeleteParking()}
+						fullWidth
+					/>
 				</div>
 			</div>
 		);

@@ -17,7 +17,9 @@ interface SlideagainstRightDesktopProps {
 const isTopo = (item: Boulder | Topo | LightTopo): item is Topo =>
 	(item as Topo).rockTypes !== undefined;
 
-export const SlideagainstRightDesktop: React.FC<SlideagainstRightDesktopProps> = ({
+export const SlideagainstRightDesktop: React.FC<
+	SlideagainstRightDesktopProps
+> = ({
 	open = false,
 	secondary = false,
 	...props
@@ -53,7 +55,9 @@ export const SlideagainstRightDesktop: React.FC<SlideagainstRightDesktopProps> =
 						{(item) => (
 							<>
 								{props.displayLikeButton && <LikeButton liked={item.liked} />}
-								{props.displayDlButton && isTopo(item) && <DownloadButton topo={item} />}
+								{props.displayDlButton && isTopo(item) && (
+									<DownloadButton topo={item} />
+								)}
 							</>
 						)}
 					</Show>

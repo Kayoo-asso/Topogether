@@ -17,8 +17,8 @@ interface BoulderItemLeftbarProps {
 	onCreateTrack?: () => void;
 }
 
-export const BoulderItemLeftbar: React.FC<BoulderItemLeftbarProps> = watchDependencies(
-	(props: BoulderItemLeftbarProps) => {
+export const BoulderItemLeftbar: React.FC<BoulderItemLeftbarProps> =
+	watchDependencies((props: BoulderItemLeftbarProps) => {
 		const boulder = props.boulder();
 		const tracksIter = boulder.tracks.quarks();
 		const trackQuarks = Array.from(tracksIter);
@@ -62,15 +62,18 @@ export const BoulderItemLeftbar: React.FC<BoulderItemLeftbarProps> = watchDepend
 						</span>
 						<span
 							className={
-								(boulder.name.length > 16 ? "ktext-base-little" : "ktext-base") +
-								(props.selected ? " font-semibold" : "")
+								(boulder.name.length > 16
+									? "ktext-base-little"
+									: "ktext-base") + (props.selected ? " font-semibold" : "")
 							}
 						>
 							{boulder.name}
 						</span>
 					</div>
 					<div className="cursor-pointer" onClick={props.onDeleteClick}>
-						<CrossDelete className={"w-4 h-4 stroke-grey-medium hover:stroke-dark"} />
+						<CrossDelete
+							className={"w-4 h-4 stroke-grey-medium hover:stroke-dark"}
+						/>
 					</div>
 				</div>
 
@@ -86,14 +89,19 @@ export const BoulderItemLeftbar: React.FC<BoulderItemLeftbarProps> = watchDepend
 									onClick={() => props.onTrackClick(trackQuark)}
 								>
 									{track.grade && (
-										<div className={"mr-2 ktext-subtitle " + getGradeColorClass(track.grade)}>
+										<div
+											className={
+												"mr-2 ktext-subtitle " + getGradeColorClass(track.grade)
+											}
+										>
 											{track.grade}
 										</div>
 									)}
 									<div
 										className={
-											(track.name && track.name.length > 16 ? "ktext-base-little" : "ktext-base") +
-											"text-grey-medium"
+											(track.name && track.name.length > 16
+												? "ktext-base-little"
+												: "ktext-base") + "text-grey-medium"
 										}
 									>
 										{track.name}
@@ -102,7 +110,10 @@ export const BoulderItemLeftbar: React.FC<BoulderItemLeftbarProps> = watchDepend
 							);
 						})}
 						{props.displayCreateTrack && (
-							<div className="text-grey-medium cursor-pointer mt-2" onClick={props.onCreateTrack}>
+							<div
+								className="text-grey-medium cursor-pointer mt-2"
+								onClick={props.onCreateTrack}
+							>
 								+ Nouveau passage
 							</div>
 						)}
@@ -110,7 +121,6 @@ export const BoulderItemLeftbar: React.FC<BoulderItemLeftbarProps> = watchDepend
 				)}
 			</>
 		);
-	}
-);
+	});
 
 BoulderItemLeftbar.displayName = "Boulder Item Leftbar";

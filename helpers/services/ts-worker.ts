@@ -23,7 +23,8 @@ function example() {
 		.run(tsJob)
 		.then((ev: TsWorkerEvent) => {
 			// finished
-			const secondsLeft = (ev.statistics!.ended - ev.statistics!.started) / 1000;
+			const secondsLeft =
+				(ev.statistics!.ended - ev.statistics!.started) / 1000;
 			console.log(`the result is ${ev.result}`);
 			console.log(`time left for calculation: ${secondsLeft}`);
 		})

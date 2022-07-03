@@ -20,7 +20,9 @@ export const ManagementSlideover: React.FC<ManagementSlideoverProps> = ({
 	const breakpoint = useBreakpoint();
 	const [flashMessage, setFlashMessage] = useState<string>();
 	const [managerTab, setManagerTab] = useState(0);
-	const manager = props.managers ? props.managers.toArray()[managerTab] : undefined;
+	const manager = props.managers
+		? props.managers.toArray()[managerTab]
+		: undefined;
 
 	const getTabOptions = (): TabOption[] => {
 		const tabs: TabOption[] = [];
@@ -50,10 +52,14 @@ export const ManagementSlideover: React.FC<ManagementSlideoverProps> = ({
 				<div className="flex flex-col h-full pt-5 md:pt-0">
 					<div className="flex flex-col px-6 md:px-0 pt-5 md:pt-0">
 						<div className="ktext-big-title text-center w-full mt-4 mb-6 md:hidden">
-							{"Gestionnaire" + (props.managers.length > 1 ? "s" : "") + " du spot"}
+							{"Gestionnaire" +
+								(props.managers.length > 1 ? "s" : "") +
+								" du spot"}
 						</div>
 
-						{props.managers.length > 1 && <Tabs tabs={getTabOptions()} className="pt-4 pb-6" />}
+						{props.managers.length > 1 && (
+							<Tabs tabs={getTabOptions()} className="pt-4 pb-6" />
+						)}
 						<div className="flex flex-row justify-end gap-6 items-center pb-6 md:pt-8">
 							{manager.image && (
 								<div className="w-1/2 relative mt-2 min-h-[100px]">
@@ -85,7 +91,9 @@ export const ManagementSlideover: React.FC<ManagementSlideoverProps> = ({
 								<div className="ktext-subtitle">Coordonnées</div>
 								<div className="ktext-base-little">{manager.contactName}</div>
 								{manager.contactPhone && (
-									<div className="ktext-base-little">{manager.contactPhone}</div>
+									<div className="ktext-base-little">
+										{manager.contactPhone}
+									</div>
 								)}
 								{manager.contactMail && (
 									<div
@@ -121,11 +129,15 @@ export const ManagementSlideover: React.FC<ManagementSlideoverProps> = ({
 	return (
 		<>
 			{breakpoint === "mobile" && (
-				<SlideoverMobile onClose={props.onClose}>{managementContent()}</SlideoverMobile>
+				<SlideoverMobile onClose={props.onClose}>
+					{managementContent()}
+				</SlideoverMobile>
 			)}
 			{breakpoint !== "mobile" && (
 				<SlideoverLeftDesktop
-					title={"Gestionnaire" + (props.managers.length > 1 ? "s" : "") + " du spot"}
+					title={
+						"Gestionnaire" + (props.managers.length > 1 ? "s" : "") + " du spot"
+					}
 					open={open}
 					onClose={props.onClose}
 					className={props.className}

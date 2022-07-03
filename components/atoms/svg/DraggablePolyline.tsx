@@ -62,7 +62,9 @@ export const DraggablePolyline: React.FC<DraggablePolylineProps> = ({
 			}
 		}
 	};
-	const handleMouseUp: React.PointerEventHandler<SVGPolylineElement> = (e: React.PointerEvent) => {
+	const handleMouseUp: React.PointerEventHandler<SVGPolylineElement> = (
+		e: React.PointerEvent
+	) => {
 		if (cursorPosition.active) {
 			e.preventDefault();
 			e.stopPropagation();

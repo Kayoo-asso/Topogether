@@ -35,7 +35,11 @@ export const createSector = (
 	return newSectorQuark;
 };
 
-export const createBoulder = (topoQuark: Quark<Topo>, location: GeoCoordinates, image?: Image) => {
+export const createBoulder = (
+	topoQuark: Quark<Topo>,
+	location: GeoCoordinates,
+	image?: Image
+) => {
 	const topo = topoQuark();
 	const orderIndex = topo.boulders.length;
 	// terrible hack around `liked` for now
@@ -60,7 +64,11 @@ export const createBoulder = (topoQuark: Quark<Topo>, location: GeoCoordinates, 
 	return newBoulderQuark;
 };
 
-export const createParking = (topo: Topo, location: GeoCoordinates, image?: Image) => {
+export const createParking = (
+	topo: Topo,
+	location: GeoCoordinates,
+	image?: Image
+) => {
 	const newParking: Parking = {
 		id: v4(),
 		spaces: 0,
@@ -73,10 +81,16 @@ export const createParking = (topo: Topo, location: GeoCoordinates, image?: Imag
 	return newParkingQuark;
 };
 
-export const createWaypoint = (topo: Topo, location: GeoCoordinates, image?: Image) => {
+export const createWaypoint = (
+	topo: Topo,
+	location: GeoCoordinates,
+	image?: Image
+) => {
 	const newWaypoint: Waypoint = {
 		id: v4(),
-		name: `point de repère ${topo.waypoints ? topo.waypoints.length + 1 : "1"}` as Name,
+		name: `point de repère ${
+			topo.waypoints ? topo.waypoints.length + 1 : "1"
+		}` as Name,
 		image: image,
 		location,
 	};
@@ -157,7 +171,9 @@ export const boulderChanged = (
 					if (!inSector) {
 						topoQuark.set((t) => ({
 							...t,
-							lonelyBoulders: topo.lonelyBoulders.filter((id) => id !== boulderId),
+							lonelyBoulders: topo.lonelyBoulders.filter(
+								(id) => id !== boulderId
+							),
 						}));
 					}
 					break; // important
@@ -205,7 +221,9 @@ export const sectorChanged = (
 		// Add new boulders to this sector & remove them from other sectors
 		if (toAdd.length > 0) {
 			// Sort them according to their ordering numbers
-			toAdd.sort((id1, id2) => compareNbs(boulderOrder.get(id1)!, boulderOrder.get(id2)!));
+			toAdd.sort((id1, id2) =>
+				compareNbs(boulderOrder.get(id1)!, boulderOrder.get(id2)!)
+			);
 
 			// faster lookup while iterating over the sectors
 			const addedSet = new Set(toAdd);
@@ -259,7 +277,10 @@ export const sectorChanged = (
 // Returns 1 if a > b
 const compareNbs = (a: number, b: number) => (a < b ? -1 : a > b ? 1 : 0);
 
-function polygonContains(polygon: GeoCoordinates[], point: GeoCoordinates): boolean {
+function polygonContains(
+	polygon: GeoCoordinates[],
+	point: GeoCoordinates
+): boolean {
 	if (polygon.length < 3) {
 		throw new Error("Polygons should contain at least 3 points");
 	}
@@ -279,7 +300,12 @@ function polygonContains(polygon: GeoCoordinates[], point: GeoCoordinates): bool
 		// intersectCount += true <=> intersectCount += 1
 		// intersectCount += false <=> intersectCount += 0
 		// this avoids an `if` statement
-		intersectCount += rayIntersects(point[0], point[1], polygon[i], polygon[i + 1]) as any;
+		intersectCount += rayIntersects(
+			point[0],
+			point[1],
+			polygon[i],
+			polygon[i + 1]
+		) as any;
 	}
 	// check the last edge
 	intersectCount += rayIntersects(
@@ -292,7 +318,12 @@ function polygonContains(polygon: GeoCoordinates[], point: GeoCoordinates): bool
 	return intersectCount % 2 === 1;
 }
 
-function rayIntersects(x: number, y: number, p0: GeoCoordinates, p1: GeoCoordinates): boolean {
+function rayIntersects(
+	x: number,
+	y: number,
+	p0: GeoCoordinates,
+	p1: GeoCoordinates
+): boolean {
 	const [x0, y0] = p0;
 	const [x1, y1] = p1;
 	const minX = Math.min(x0, x1);

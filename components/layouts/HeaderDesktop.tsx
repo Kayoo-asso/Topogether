@@ -19,7 +19,11 @@ interface HeaderDesktopProps {
 
 // TODO: start showing a loader as soon as a sign out happens?
 export const HeaderDesktop: React.FC<HeaderDesktopProps> = watchDependencies(
-	({ displayLogin = false, displayUser = true, ...props }: HeaderDesktopProps) => {
+	({
+		displayLogin = false,
+		displayUser = true,
+		...props
+	}: HeaderDesktopProps) => {
 		const auth = useAuth();
 		const user = auth.session();
 		const router = useRouter();
@@ -69,18 +73,25 @@ export const HeaderDesktop: React.FC<HeaderDesktopProps> = watchDependencies(
 					)}
 				</div>
 
-				<div className="flex-auto flex flex-row items-center">{props.children}</div>
+				<div className="flex-auto flex flex-row items-center">
+					{props.children}
+				</div>
 
 				{displayLogin && !user && (
 					<Link href="/user/login">
-						<a className="ktext-base text-white cursor-pointer mr-[3%]">Se connecter</a>
+						<a className="ktext-base text-white cursor-pointer mr-[3%]">
+							Se connecter
+						</a>
 					</Link>
 				)}
 
 				{displayUser && user && (
 					<div className="w-1/12 flex justify-center items-center">
 						<div className="h-[45px] w-[45px] relative">
-							<ProfilePicture image={user?.image} onClick={() => setUserMenuOpen((m) => !m)} />
+							<ProfilePicture
+								image={user?.image}
+								onClick={() => setUserMenuOpen((m) => !m)}
+							/>
 						</div>
 						{userMenuOpen && (
 							<Dropdown

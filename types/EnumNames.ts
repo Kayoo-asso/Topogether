@@ -36,8 +36,12 @@ export const OrientationName: { [key in Orientation]: string } = {
 	[Orientation.NW]: "NW",
 };
 
-export function selectOptions<T extends Enum>(names: Record<T, string>): [T, string][] {
+export function selectOptions<T extends Enum>(
+	names: Record<T, string>
+): [T, string][] {
 	// We're going to handle enum values as raw numbers here, so TypeScript won't be happy.
 	// Basically we convert all numeric keys back to number (since Object.entries only gives us strings)
-	return Object.entries(names).map(([key, value]) => [isNaN(+key) ? key : +key, value] as any);
+	return Object.entries(names).map(
+		([key, value]) => [isNaN(+key) ? key : +key, value] as any
+	);
 }

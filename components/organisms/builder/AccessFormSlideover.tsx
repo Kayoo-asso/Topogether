@@ -13,8 +13,8 @@ interface AccessFormSlideoverProps {
 	onClose: () => void;
 }
 
-export const AccessFormSlideover: React.FC<AccessFormSlideoverProps> = watchDependencies(
-	({ open = true, ...props }: AccessFormSlideoverProps) => {
+export const AccessFormSlideover: React.FC<AccessFormSlideoverProps> =
+	watchDependencies(({ open = true, ...props }: AccessFormSlideoverProps) => {
 		const breakpoint = useBreakpoint();
 
 		return (
@@ -31,7 +31,9 @@ export const AccessFormSlideover: React.FC<AccessFormSlideoverProps> = watchDepe
 										steps: [],
 									})
 								}
-								onDeleteAccess={(accessQuark) => props.accesses.removeQuark(accessQuark)}
+								onDeleteAccess={(accessQuark) =>
+									props.accesses.removeQuark(accessQuark)
+								}
 							/>
 						</div>
 					</SlideoverMobile>
@@ -52,11 +54,12 @@ export const AccessFormSlideover: React.FC<AccessFormSlideoverProps> = watchDepe
 									steps: [],
 								})
 							}
-							onDeleteAccess={(accessQuark) => props.accesses.removeQuark(accessQuark)}
+							onDeleteAccess={(accessQuark) =>
+								props.accesses.removeQuark(accessQuark)
+							}
 						/>
 					</SlideoverLeftDesktop>
 				)}
 			</>
 		);
-	}
-);
+	});

@@ -11,11 +11,14 @@ interface ParkingMarkerDropdownProps {
 	onSelect?: () => void;
 }
 
-export const ParkingMarkerDropdown: React.FC<ParkingMarkerDropdownProps> = watchDependencies(
-	(props: ParkingMarkerDropdownProps) => {
+export const ParkingMarkerDropdown: React.FC<ParkingMarkerDropdownProps> =
+	watchDependencies((props: ParkingMarkerDropdownProps) => {
 		const session = useSession();
 
-		const deleteParking = useCallback(() => props.deleteParking(props.parking), [props.parking]);
+		const deleteParking = useCallback(
+			() => props.deleteParking(props.parking),
+			[props.parking]
+		);
 
 		if (!session) return null;
 		return (
@@ -25,7 +28,6 @@ export const ParkingMarkerDropdown: React.FC<ParkingMarkerDropdownProps> = watch
 				onSelect={props.onSelect}
 			/>
 		);
-	}
-);
+	});
 
 ParkingMarkerDropdown.displayName = "Parking Marker Dropdown";

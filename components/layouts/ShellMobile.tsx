@@ -30,7 +30,11 @@ export const ShellMobile: React.FC = watchDependencies(() => {
 							activeTab === 0 ? "border-t-main border-t-6" : ""
 						}`}
 					>
-						<UserIcon className={`h-5 w-5 ${activeTab === 0 ? "fill-main" : "fill-white"} `} />
+						<UserIcon
+							className={`h-5 w-5 ${
+								activeTab === 0 ? "fill-main" : "fill-white"
+							} `}
+						/>
 					</a>
 				</Link>
 
@@ -42,7 +46,9 @@ export const ShellMobile: React.FC = watchDependencies(() => {
 						}`}
 					>
 						<WaypointIcon
-							className={`h-5 w-5 stroke-1 ${activeTab === 1 ? "fill-main" : "fill-white"} `}
+							className={`h-5 w-5 stroke-1 ${
+								activeTab === 1 ? "fill-main" : "fill-white"
+							} `}
 						/>
 					</a>
 				</Link>

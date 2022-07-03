@@ -1,4 +1,10 @@
-import React, { InputHTMLAttributes, useEffect, useRef, useState, useCallback } from "react";
+import React, {
+	InputHTMLAttributes,
+	useEffect,
+	useRef,
+	useState,
+	useCallback,
+} from "react";
 
 interface TextAreaProps extends InputHTMLAttributes<HTMLTextAreaElement> {
 	id: string;
@@ -42,7 +48,9 @@ export const TextArea = ({
 				value={value}
 				className={`peer border-dark ktext-base border-b-2 overflow-hidden ${
 					displayLabel ? "placeholder-transparent" : ""
-				} focus:border-main focus:outline-none w-full ${pointer ? " cursor-pointer" : ""}`}
+				} focus:border-main focus:outline-none w-full ${
+					pointer ? " cursor-pointer" : ""
+				}`}
 				onKeyUp={adaptScrollHeight}
 				// onKeyDown={(e) => props.onChange(e)}
 			/>
@@ -58,7 +66,9 @@ export const TextArea = ({
 				</label>
 			)}
 
-			{props.error && <div className="ktext-error text-error">{props.error}</div>}
+			{props.error && (
+				<div className="ktext-error text-error">{props.error}</div>
+			)}
 		</div>
 	);
 };

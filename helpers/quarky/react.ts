@@ -49,7 +49,9 @@ export interface WatchDependenciesOptions<T> {
 		  ) => boolean);
 }
 
-type FunctionComponent<P extends object> = (props: P) => React.ReactElement<any, any> | null;
+type FunctionComponent<P extends object> = (
+	props: P
+) => React.ReactElement<any, any> | null;
 type ForwardRefComponent<R, P extends object> = (
 	props: P,
 	ref: ForwardedRef<R>
@@ -90,7 +92,10 @@ export function watchDependencies<P extends object, R = undefined>(
 		// symbols are always unique
 		const [, forceRender] = useState(Symbol());
 		// the forceRender will be invoked by the state management lib on update
-		const observer = useMemo(() => observerEffect(() => forceRender(Symbol())), [forceRender]);
+		const observer = useMemo(
+			() => observerEffect(() => forceRender(Symbol())),
+			[forceRender]
+		);
 		useEffect(() => observer.dispose, [observer]);
 
 		// this produces the React nodes, while registering dependencies with the state management lib
@@ -112,7 +117,10 @@ export function watchDependencies<P extends object, R = undefined>(
 
 // useCreateQuark and useCreateDerivation have to be 2 separate hooks,
 // to allow the creation of quarks that store functions
-export function useCreateQuark<T>(value: T, options?: QuarkOptions<T>): Quark<T> {
+export function useCreateQuark<T>(
+	value: T,
+	options?: QuarkOptions<T>
+): Quark<T> {
 	return useMemo(() => quark(value, options), []);
 }
 
@@ -128,13 +136,17 @@ export function useCreateDerivation<T>(
 
 export function useSelectSignal<T>(): SelectSignalNullable<T>;
 export function useSelectSignal<T>(initial: Signal<T>): SelectSignal<T>;
-export function useSelectSignal<T>(initial?: Signal<T>): SelectSignal<T> | SelectSignalNullable<T> {
+export function useSelectSignal<T>(
+	initial?: Signal<T>
+): SelectSignal<T> | SelectSignalNullable<T> {
 	return useMemo(() => selectSignal<T>(initial as any), []);
 }
 
 export function useSelectQuark<T>(): SelectQuarkNullable<T>;
 export function useSelectQuark<T>(initial: Quark<T>): SelectQuark<T>;
-export function useSelectQuark<T>(initial?: Quark<T>): SelectQuark<T> | SelectQuarkNullable<T> {
+export function useSelectQuark<T>(
+	initial?: Quark<T>
+): SelectQuark<T> | SelectQuarkNullable<T> {
 	return useMemo(() => selectQuark<T>(initial as any), []);
 }
 
@@ -143,10 +155,16 @@ export function useQuarkyCallback<T extends (...args: any[]) => any>(
 	deps: React.DependencyList
 ): T {
 	// Have to force TypeScript's hand here
-	return useCallback((...args: any[]) => batch(() => callback(...args)), deps) as T;
+	return useCallback(
+		(...args: any[]) => batch(() => callback(...args)),
+		deps
+	) as T;
 }
 
-export function useQuarkyEffect(cb: EffectCallback, deps?: React.DependencyList) {
+export function useQuarkyEffect(
+	cb: EffectCallback,
+	deps?: React.DependencyList
+) {
 	useEffect(() => {
 		const e = effect(cb);
 		return e.dispose;
@@ -167,9 +185,15 @@ const quarkKeys: WeakMap<Signal<any>, number> = new WeakMap();
 let keyCount = 0;
 
 export function reactKey<T>(quark: Signal<T>): string | number;
-export function reactKey<T, K extends keyof T>(quark: Signal<T>, keyProperty: K): string | number;
+export function reactKey<T, K extends keyof T>(
+	quark: Signal<T>,
+	keyProperty: K
+): string | number;
 
-export function reactKey<T>(quark: Signal<T>, keyProperty?: string): string | number {
+export function reactKey<T>(
+	quark: Signal<T>,
+	keyProperty?: string
+): string | number {
 	keyProperty = keyProperty ?? "id";
 	const obj = untrack(() => quark()) as any;
 	const keyType = typeof obj[keyProperty];

@@ -17,7 +17,10 @@ export const LikeButton: React.FC<LikeButtonProps> = watchDependencies(
 		const color = liked() ? "fill-main" : "stroke-dark";
 
 		return (
-			<Heart className={`h-5 w-5 cursor-pointer ${color} ${props.className}`} onClick={toggle} />
+			<Heart
+				className={`h-5 w-5 cursor-pointer ${color} ${props.className}`}
+				onClick={toggle}
+			/>
 		);
 	}
 );

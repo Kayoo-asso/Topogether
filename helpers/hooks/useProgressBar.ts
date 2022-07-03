@@ -34,10 +34,14 @@ export class ProgressBar {
 	}
 }
 
-export function useProgressBar(options?: ProgressBarOptions): [number, ProgressBar] {
+export function useProgressBar(
+	options?: ProgressBarOptions
+): [number, ProgressBar] {
 	const [progress, setProgress] = useState(0);
 	// Hack taken from React Query, when you need a better useMemo that is only called once
-	const [bar] = useState(() => new ProgressBar(options?.notifyThreshold || 0.01, setProgress));
+	const [bar] = useState(
+		() => new ProgressBar(options?.notifyThreshold || 0.01, setProgress)
+	);
 
 	return [progress, bar];
 }

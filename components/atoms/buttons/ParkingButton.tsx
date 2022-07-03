@@ -5,7 +5,9 @@ interface ParkingButtonProps {
 	onClick?: () => void;
 }
 
-export const ParkingButton: React.FC<ParkingButtonProps> = ({ ...props }: ParkingButtonProps) => {
+export const ParkingButton: React.FC<ParkingButtonProps> = ({
+	...props
+}: ParkingButtonProps) => {
 	return (
 		<div
 			className="ktext-base text-main flex flex-row items-center justify-center cursor-pointer"

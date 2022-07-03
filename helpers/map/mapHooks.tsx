@@ -11,7 +11,10 @@ import {
 import { useCluster } from "components/map/markers/ClusterProvider";
 import { useMap } from "components/map";
 
-export function useMarker(options: google.maps.MarkerOptions, handlers: MarkerEventHandlers) {
+export function useMarker(
+	options: google.maps.MarkerOptions,
+	handlers: MarkerEventHandlers
+) {
 	const marker = useRef<google.maps.Marker>();
 	const map = useMap();
 	const cluster = useCluster();
@@ -121,7 +124,10 @@ export function useCircle(options: google.maps.CircleOptions) {
 	}, [circle.current, options]);
 }
 
-export function usePolygon(options: google.maps.PolygonOptions, handlers: PolygonEventHandlers) {
+export function usePolygon(
+	options: google.maps.PolygonOptions,
+	handlers: PolygonEventHandlers
+) {
 	const polygon = useRef<google.maps.Polygon>();
 	const map = useMap();
 
@@ -183,7 +189,10 @@ export function usePolygon(options: google.maps.PolygonOptions, handlers: Polygo
 	return polygon;
 }
 
-export function usePolyline(options: google.maps.PolylineOptions, handlers: PolylineEventHandlers) {
+export function usePolyline(
+	options: google.maps.PolylineOptions,
+	handlers: PolylineEventHandlers
+) {
 	const polyline = useRef<google.maps.Polyline>();
 	const map = useMap();
 
@@ -245,7 +254,10 @@ export function usePolyline(options: google.maps.PolylineOptions, handlers: Poly
 	return polyline;
 }
 
-export function useEffectWithDeepEqual(callback: React.EffectCallback, deps: React.DependencyList) {
+export function useEffectWithDeepEqual(
+	callback: React.EffectCallback,
+	deps: React.DependencyList
+) {
 	useEffect(callback, deps.map(useDeepMemo));
 }
 

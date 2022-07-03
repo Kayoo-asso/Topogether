@@ -22,8 +22,10 @@ export const ProfileForm: React.FC<ProfileFormProps> = watchDependencies(
 		const showLoader = useLoader();
 
 		const [emailError, setEmailError] = useState<string>();
-		const [successMessageChangeMail, setSuccessMessageChangeMail] = useState<string>();
-		const [errorMessageChangeMail, setErrorMessageChangeMail] = useState<string>();
+		const [successMessageChangeMail, setSuccessMessageChangeMail] =
+			useState<string>();
+		const [errorMessageChangeMail, setErrorMessageChangeMail] =
+			useState<string>();
 
 		const [userNameError, setUserNameError] = useState<string>();
 		const [phoneError, setPhoneError] = useState<string>();
@@ -44,7 +46,9 @@ export const ProfileForm: React.FC<ProfileFormProps> = watchDependencies(
 			}
 			if (
 				user.phone &&
-				(!user.phone.match(/\d/g) || user.phone.length < 6 || user.phone.length > 30)
+				(!user.phone.match(/\d/g) ||
+					user.phone.length < 6 ||
+					user.phone.length > 30)
 			) {
 				setPhoneError("Numéro de téléphone invalide");
 				hasError = true;
@@ -54,13 +58,15 @@ export const ProfileForm: React.FC<ProfileFormProps> = watchDependencies(
 				setLoadingModify(true);
 				const res = await auth.updateUserInfo(user);
 				if (res) setSuccessMessageModify("Profil modifié");
-				else setErrorMessageModify("Une erreur est survenue. Merci de réessayer.");
+				else
+					setErrorMessageModify("Une erreur est survenue. Merci de réessayer.");
 				setLoadingModify(false);
 			}
 		};
 
 		const changeMail = async () => {
-			if (!user.email || (user.email && !isEmail(user.email))) setEmailError("Email invalide");
+			if (!user.email || (user.email && !isEmail(user.email)))
+				setEmailError("Email invalide");
 			else {
 				setLoadingChangeMail(true);
 				await auth.changeEmail(user.email);
@@ -90,14 +96,20 @@ export const ProfileForm: React.FC<ProfileFormProps> = watchDependencies(
 						loading={loadingChangeMail}
 					/>
 					{successMessageChangeMail && (
-						<div className="ktext-error text-main text-center">{successMessageChangeMail}</div>
+						<div className="ktext-error text-main text-center">
+							{successMessageChangeMail}
+						</div>
 					)}
 					{errorMessageChangeMail && (
-						<div className="ktext-error text-error text-center">{errorMessageChangeMail}</div>
+						<div className="ktext-error text-error text-center">
+							{errorMessageChangeMail}
+						</div>
 					)}
 
 					<Link href="/user/changePassword">
-						<a className="ktext-base-little text-main cursor-pointer">Modifier le mot de passe</a>
+						<a className="ktext-base-little text-main cursor-pointer">
+							Modifier le mot de passe
+						</a>
 					</Link>
 				</div>
 
@@ -217,10 +229,14 @@ export const ProfileForm: React.FC<ProfileFormProps> = watchDependencies(
 					loading={loadingModify}
 				/>
 				{successMessageModify && (
-					<div className="ktext-error text-main text-center">{successMessageModify}</div>
+					<div className="ktext-error text-main text-center">
+						{successMessageModify}
+					</div>
 				)}
 				{errorMessageModify && (
-					<div className="ktext-error text-error text-center">{errorMessageModify}</div>
+					<div className="ktext-error text-error text-center">
+						{errorMessageModify}
+					</div>
 				)}
 
 				<div className="flex flex-col items-center gap-4 mb-10 md:mb-4 md:pt-4">
@@ -231,13 +247,17 @@ export const ProfileForm: React.FC<ProfileFormProps> = watchDependencies(
 							const success = await auth.signOut();
 							if (success) await router.push("/user/login");
 							else {
-								setErrorMessageSignout("Une erreur est survenue. Merci de réessayer.");
+								setErrorMessageSignout(
+									"Une erreur est survenue. Merci de réessayer."
+								);
 								showLoader(false);
 							}
 						}}
 					>
 						Se déconnecter
-						{errorMessageSignout && <div className="ktext-error">{errorMessageSignout}</div>}
+						{errorMessageSignout && (
+							<div className="ktext-error">{errorMessageSignout}</div>
+						)}
 					</div>
 
 					<div

@@ -79,7 +79,9 @@ export const GradeHistogram: React.FC<GradeHistogramProps> = ({
 				return (
 					<div className="flex flex-col justify-end h-full mr-1" key={grade}>
 						<div
-							className={`text-center ${size === "normal" ? "ktext-base" : "ktext-base-little"}`}
+							className={`text-center ${
+								size === "normal" ? "ktext-base" : "ktext-base-little"
+							}`}
 						>
 							{count}
 						</div>
@@ -87,7 +89,9 @@ export const GradeHistogram: React.FC<GradeHistogramProps> = ({
 							style={{ height, minHeight: "22px" }}
 							className={`ktext-subtitle ${
 								size === "normal" ? "w-6" : "w-[22px]"
-							} flex flex-col justify-end items-center rounded-full text-white ${bgStyles[grade]}`}
+							} flex flex-col justify-end items-center rounded-full text-white ${
+								bgStyles[grade]
+							}`}
 						>
 							<div>{grade}</div>
 						</div>

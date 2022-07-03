@@ -1,6 +1,12 @@
 import React from "react";
 import { GradeCircle } from "components";
-import { Boulder, GradeHistogram, gradeToLightGrade, LightGrade, lightGrades } from "types";
+import {
+	Boulder,
+	GradeHistogram,
+	gradeToLightGrade,
+	LightGrade,
+	lightGrades,
+} from "types";
 
 type GradeScaleProps = {
 	boulder: Boulder;

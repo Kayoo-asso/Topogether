@@ -44,7 +44,10 @@ export interface SyncService {
 
 	attemptSync(): Promise<boolean>;
 
-	likeTopo(topo: Topo | TopoData | LightTopo | DBLightTopo, value: boolean): void;
+	likeTopo(
+		topo: Topo | TopoData | LightTopo | DBLightTopo,
+		value: boolean
+	): void;
 	likeBoulder(boulder: Boulder | BoulderData, value: boolean): void;
 
 	topoCreate(topo: DBTopo): void;
@@ -114,7 +117,9 @@ export class InMemorySync implements SyncService {
 		}
 	}
 
-	private readonly _status: Quark<SyncStatus> = quark<SyncStatus>(SyncStatus.UpToDate);
+	private readonly _status: Quark<SyncStatus> = quark<SyncStatus>(
+		SyncStatus.UpToDate
+	);
 	// careful to handle SSR, where `window` is undefined
 	private readonly _isOnline: Quark<boolean>;
 
@@ -371,7 +376,11 @@ export class InMemorySync implements SyncService {
 	}
 
 	// assumes `updates` have been swapped with a new Map for the property on the object
-	private upsert<K extends UpdateKey>(this: InMemorySync, table: string, key: K) {
+	private upsert<K extends UpdateKey>(
+		this: InMemorySync,
+		table: string,
+		key: K
+	) {
 		const updates = this[key] as Map<UUID, UpdateValue<K>>;
 		if (updates.size === 0) return Promise.resolve(true);
 		const values = updates.values();
@@ -480,7 +489,9 @@ type DeleteKey = {
 		: never;
 }[keyof InMemorySync];
 
-type MapValue<T extends Map<unknown, unknown>> = T extends Map<infer _, infer V> ? V : never;
+type MapValue<T extends Map<unknown, unknown>> = T extends Map<infer _, infer V>
+	? V
+	: never;
 
 type LikeKey = {
 	[K in keyof InMemorySync]: InMemorySync[K] extends Set<UUID>

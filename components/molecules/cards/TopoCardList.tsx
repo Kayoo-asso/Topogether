@@ -14,7 +14,9 @@ interface TopoCardListProps {
 	onContextMenu: (topo: LightTopo, position: { x: number; y: number }) => void;
 }
 
-export const TopoCardList: React.FC<TopoCardListProps> = (props: TopoCardListProps) => (
+export const TopoCardList: React.FC<TopoCardListProps> = (
+	props: TopoCardListProps
+) => (
 	<div className="pt-4">
 		{props.title}
 		<div
@@ -24,8 +26,12 @@ export const TopoCardList: React.FC<TopoCardListProps> = (props: TopoCardListPro
 			<div className="min-w-max md:min-w-full flex flex-row md:flex-wrap">
 				<div className="md:hidden w-2 h-2"></div>
 				{props.topos.length === 0 &&
-					(props.status === TopoStatus.Submitted || props.status === TopoStatus.Validated) && (
-						<NoTopoCard topoStatus={props.status} content={props.noTopoCardContent} />
+					(props.status === TopoStatus.Submitted ||
+						props.status === TopoStatus.Validated) && (
+						<NoTopoCard
+							topoStatus={props.status}
+							content={props.noTopoCardContent}
+						/>
 					)}
 				{props.topos.map((topo) => (
 					<TopoCard

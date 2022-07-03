@@ -8,12 +8,15 @@ interface SectorSlideoverMobileProps {
 	boulderOrder: Map<UUID, number>;
 	selectedBoulder: SelectQuarkNullable<Boulder>;
 	onBoulderSelect: (boulderQuark: Quark<Boulder>) => void;
-	onTrackSelect: (trackQuark: Quark<Track>, boulderQuark: Quark<Boulder>) => void;
+	onTrackSelect: (
+		trackQuark: Quark<Track>,
+		boulderQuark: Quark<Boulder>
+	) => void;
 	onClose: () => void;
 }
 
-export const SectorSlideoverMobile: React.FC<SectorSlideoverMobileProps> = watchDependencies(
-	(props: SectorSlideoverMobileProps) => {
+export const SectorSlideoverMobile: React.FC<SectorSlideoverMobileProps> =
+	watchDependencies((props: SectorSlideoverMobileProps) => {
 		return (
 			<SlideoverMobile onClose={props.onClose}>
 				<div className="mt-10 px-3 overflow-auto pb-5">
@@ -27,7 +30,6 @@ export const SectorSlideoverMobile: React.FC<SectorSlideoverMobileProps> = watch
 				</div>
 			</SlideoverMobile>
 		);
-	}
-);
+	});
 
 SectorSlideoverMobile.displayName = "SectorSlideoverMobile";

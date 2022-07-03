@@ -10,7 +10,9 @@ interface ParkingModalProps {
 	onClose: () => void;
 }
 
-export const ParkingModal: React.FC<ParkingModalProps> = (props: ParkingModalProps) => {
+export const ParkingModal: React.FC<ParkingModalProps> = (
+	props: ParkingModalProps
+) => {
 	const breakpoint = useBreakpoint();
 	const { position } = usePosition();
 	const [flashMessage, setFlashMessage] = useState<string>();
@@ -29,7 +31,13 @@ export const ParkingModal: React.FC<ParkingModalProps> = (props: ParkingModalPro
 							className="py-5 border-b border-grey-light"
 							onClick={(e) => {
 								e.stopPropagation();
-								launchNavigation(props.parkingLocation, position, "google", breakpoint, isIos);
+								launchNavigation(
+									props.parkingLocation,
+									position,
+									"google",
+									breakpoint,
+									isIos
+								);
 								props.onClose();
 							}}
 						>
@@ -40,7 +48,13 @@ export const ParkingModal: React.FC<ParkingModalProps> = (props: ParkingModalPro
 								className="py-5 border-b border-grey-light"
 								onClick={(e) => {
 									e.stopPropagation();
-									launchNavigation(props.parkingLocation, position, "apple", breakpoint, isIos);
+									launchNavigation(
+										props.parkingLocation,
+										position,
+										"apple",
+										breakpoint,
+										isIos
+									);
 									props.onClose();
 								}}
 							>
@@ -54,7 +68,11 @@ export const ParkingModal: React.FC<ParkingModalProps> = (props: ParkingModalPro
 								const data = [
 									new ClipboardItem({
 										"text/plain": new Blob(
-											[props.parkingLocation[1] + "," + props.parkingLocation[0]],
+											[
+												props.parkingLocation[1] +
+													"," +
+													props.parkingLocation[0],
+											],
 											{
 												type: "text/plain",
 											}
@@ -63,7 +81,9 @@ export const ParkingModal: React.FC<ParkingModalProps> = (props: ParkingModalPro
 								];
 								navigator.clipboard.write(data).then(
 									function () {
-										setFlashMessage("Coordonnées copiées dans le presse papier.");
+										setFlashMessage(
+											"Coordonnées copiées dans le presse papier."
+										);
 									},
 									function () {
 										setFlashMessage("Impossible de copier les coordonées.");

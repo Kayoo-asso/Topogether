@@ -11,9 +11,9 @@ interface DownloadedActionDropdownProps {
 	onSelect?: () => void;
 }
 
-export const DownloadedActionDropdown: React.FC<DownloadedActionDropdownProps> = (
-	props: DownloadedActionDropdownProps
-) => {
+export const DownloadedActionDropdown: React.FC<
+	DownloadedActionDropdownProps
+> = (props: DownloadedActionDropdownProps) => {
 	const router = useRouter();
 
 	const openTopo = useCallback(

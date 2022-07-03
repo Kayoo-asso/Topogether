@@ -8,7 +8,9 @@ interface AverageNoteProps {
 	wrapperClassName?: string;
 }
 
-export const AverageNote: React.FC<AverageNoteProps> = (props: AverageNoteProps) => {
+export const AverageNote: React.FC<AverageNoteProps> = (
+	props: AverageNoteProps
+) => {
 	const ratings = props.ratings;
 
 	let total = 0;
@@ -22,7 +24,11 @@ export const AverageNote: React.FC<AverageNoteProps> = (props: AverageNoteProps)
 	if (length >= 1) {
 		return (
 			<div className={props.wrapperClassName ? props.wrapperClassName : ""}>
-				<div className={`flex flex-row items-end ${props.className ? props.className : ""}`}>
+				<div
+					className={`flex flex-row items-end ${
+						props.className ? props.className : ""
+					}`}
+				>
 					<Star className="fill-main w-6 h-6" />
 					<span className="ktext-subtitle text-main mb-[-4px]">{avgNote}</span>
 				</div>

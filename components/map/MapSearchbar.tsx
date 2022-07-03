@@ -20,7 +20,9 @@ export interface MapSearchbarProps {
 	topoIdToRestrict?: number;
 	onButtonClick?: (barOpen: boolean) => void;
 	onOpenResults?: () => void;
-	onGoogleResultSelect?: (place: google.maps.places.AutocompletePrediction) => void;
+	onGoogleResultSelect?: (
+		place: google.maps.places.AutocompletePrediction
+	) => void;
 	onBoulderResultSelect?: (boulder: Boulder) => void;
 	// onAddTopoSelect?: () => void,
 }
@@ -108,7 +110,8 @@ export const MapSearchbar: React.FC<MapSearchbarProps> = ({
 		} else if (e.code === "Escape") setValue("");
 	};
 	useEffect(() => {
-		if (inputRef.current) inputRef.current.addEventListener("keyup", handleKeyboardShortcuts);
+		if (inputRef.current)
+			inputRef.current.addEventListener("keyup", handleKeyboardShortcuts);
 	}, [inputRef.current]);
 
 	return (
@@ -122,7 +125,9 @@ export const MapSearchbar: React.FC<MapSearchbarProps> = ({
 						setBarOpen(!barOpen);
 					}}
 				>
-					<SearchIcon className={"h-6 w-6 " + (barOpen ? "stroke-white" : "stroke-main")} />
+					<SearchIcon
+						className={"h-6 w-6 " + (barOpen ? "stroke-white" : "stroke-main")}
+					/>
 				</RoundButton>
 
 				{barOpen && (

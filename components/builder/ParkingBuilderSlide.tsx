@@ -13,8 +13,8 @@ interface ParkingBuilderSlideProps {
 	onClose?: () => void;
 }
 
-export const ParkingBuilderSlide: React.FC<ParkingBuilderSlideProps> = watchDependencies(
-	({ open = true, ...props }: ParkingBuilderSlideProps) => {
+export const ParkingBuilderSlide: React.FC<ParkingBuilderSlideProps> =
+	watchDependencies(({ open = true, ...props }: ParkingBuilderSlideProps) => {
 		const [ModalDelete, showModalDelete] = useModal();
 		const breakpoint = useBreakpoint();
 
@@ -23,14 +23,20 @@ export const ParkingBuilderSlide: React.FC<ParkingBuilderSlideProps> = watchDepe
 				{breakpoint === "mobile" && (
 					<SlideoverMobile onClose={props.onClose}>
 						<div className="px-6 py-14 h-full">
-							<ParkingForm parking={props.parking} onDeleteParking={showModalDelete} />
+							<ParkingForm
+								parking={props.parking}
+								onDeleteParking={showModalDelete}
+							/>
 						</div>
 					</SlideoverMobile>
 				)}
 				{breakpoint !== "mobile" && (
 					<SlideagainstRightDesktop open onClose={props.onClose}>
 						<div className="px-5 py-3 h-full">
-							<ParkingForm parking={props.parking} onDeleteParking={showModalDelete} />
+							<ParkingForm
+								parking={props.parking}
+								onDeleteParking={showModalDelete}
+							/>
 						</div>
 					</SlideagainstRightDesktop>
 				)}
@@ -44,7 +50,6 @@ export const ParkingBuilderSlide: React.FC<ParkingBuilderSlideProps> = watchDepe
 				</ModalDelete>
 			</>
 		);
-	}
-);
+	});
 
 ParkingBuilderSlide.displayName = "ParkingBuilderSlide";

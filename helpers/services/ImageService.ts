@@ -55,7 +55,12 @@ export function isImage(file: File): boolean {
 	if (!type.startsWith("image/")) return false;
 
 	let extension = type.substring(6);
-	return extension === "png" || extension === "jpg" || extension === "jpeg" || extension === "webp";
+	return (
+		extension === "png" ||
+		extension === "jpg" ||
+		extension === "jpeg" ||
+		extension === "webp"
+	);
 }
 
 function imageKey(id: UUID): Request {
@@ -232,14 +237,19 @@ async function upload(
 ): Promise<[Image, true] | [ImageUploadError, false]> {
 	const data = new FormData();
 	const filename =
-		process.env.NODE_ENV !== "production" ? "dev_topogether_" + file.name : file.name;
+		process.env.NODE_ENV !== "production"
+			? "dev_topogether_" + file.name
+			: file.name;
 	data.append("file", file, filename);
 	const uploadRequest = fetch(info.uploadURL, {
 		method: "POST",
 		body: data,
 	});
 	const dimensionsRequest = imgDimensions(file);
-	const [upload, { width, height }] = await Promise.all([uploadRequest, dimensionsRequest]);
+	const [upload, { width, height }] = await Promise.all([
+		uploadRequest,
+		dimensionsRequest,
+	]);
 	if (!upload.ok) {
 		const error = {
 			filename: file.name,

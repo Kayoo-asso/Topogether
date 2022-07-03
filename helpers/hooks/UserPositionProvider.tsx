@@ -19,7 +19,9 @@ export function usePosition() {
 	return useContext(UserPositionContext);
 }
 
-export const UserPositionProvider = ({ children }: React.PropsWithChildren<{}>) => {
+export const UserPositionProvider = ({
+	children,
+}: React.PropsWithChildren<{}>) => {
 	const [position, setPosition] = useState<UserPosition>(defaultPosition);
 
 	useEffect(() => {
@@ -44,10 +46,18 @@ export const UserPositionProvider = ({ children }: React.PropsWithChildren<{}>) 
 			}
 		};
 
-		const watcher = navigator.geolocation.watchPosition(onPosChange, onError, options);
+		const watcher = navigator.geolocation.watchPosition(
+			onPosChange,
+			onError,
+			options
+		);
 
 		return () => navigator.geolocation.clearWatch(watcher);
 	}, []);
 
-	return <UserPositionContext.Provider value={position}>{children}</UserPositionContext.Provider>;
+	return (
+		<UserPositionContext.Provider value={position}>
+			{children}
+		</UserPositionContext.Provider>
+	);
 };

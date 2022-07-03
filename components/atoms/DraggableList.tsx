@@ -36,7 +36,8 @@ export default function move(array: any[], moveIndex: number, toIndex: number) {
 	return array;
 }
 
-const clamp = (num: number, min: number, max: number) => Math.min(Math.max(num, min), max);
+const clamp = (num: number, min: number, max: number) =>
+	Math.min(Math.max(num, min), max);
 
 const fn =
 	(order: number[], active = false, originalIndex = 0, curIndex = 0, y = 0) =>
@@ -48,7 +49,8 @@ const fn =
 					zIndex: 1,
 					shadow: 15,
 					immediate: (key: string) => key === "zIndex",
-					config: (key: string) => (key === "y" ? config.stiff : config.default),
+					config: (key: string) =>
+						key === "y" ? config.stiff : config.default,
 			  }
 			: {
 					y: order.indexOf(index) * 100,
@@ -63,7 +65,11 @@ export const DraggableList = ({ items }: { items: JSX.Element[] }) => {
 	const [springs, api] = useSprings(items.length, fn(order.current)); // Create springs, each corresponds to an item, controlling its transform, scale, etc.
 	const bind = useDrag(({ args: [originalIndex], active, movement: [, y] }) => {
 		const curIndex = order.current.indexOf(originalIndex);
-		const curRow = clamp(Math.round((curIndex * 100 + y) / 100), 0, items.length - 1);
+		const curRow = clamp(
+			Math.round((curIndex * 100 + y) / 100),
+			0,
+			items.length - 1
+		);
 		const newOrder = move(order.current, curIndex, curRow);
 		api.start(fn(newOrder, active, originalIndex, curIndex, y)); // Feed springs new style data, they'll animate the view without causing a single render
 		if (!active) order.current = newOrder;

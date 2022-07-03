@@ -26,14 +26,21 @@ export const ManagementForm: React.FC<ManagementFormProps> = watchDependencies(
 		if (!props.manager) {
 			return (
 				<div className="w-full pt-[10%]" onClick={(e) => e.stopPropagation()}>
-					<Button content="Ajouter un gestionnaire" fullWidth onClick={props.onCreateManager} />
+					<Button
+						content="Ajouter un gestionnaire"
+						fullWidth
+						onClick={props.onCreateManager}
+					/>
 				</div>
 			);
 		} else {
 			const manager = props.manager();
 			return (
 				<div
-					className={"flex flex-col gap-6 h-full " + (props.className ? props.className : "")}
+					className={
+						"flex flex-col gap-6 h-full " +
+						(props.className ? props.className : "")
+					}
 					onClick={(e) => e.stopPropagation()}
 				>
 					<div className="flex flex-row gap-6 items-end">
@@ -153,7 +160,10 @@ export const ManagementForm: React.FC<ManagementFormProps> = watchDependencies(
 						}
 					/>
 
-					<Button content="Supprimer" onClick={() => props.onDeleteManager(props.manager)} />
+					<Button
+						content="Supprimer"
+						onClick={() => props.onDeleteManager(props.manager)}
+					/>
 				</div>
 			);
 		}

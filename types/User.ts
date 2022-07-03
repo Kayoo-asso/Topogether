@@ -1,6 +1,13 @@
 import { Rating } from "types";
 import { Image } from "./Image";
-import { Description, Email, Name, NullableOptional, StringBetween, UUID } from "./Utils";
+import {
+	Description,
+	Email,
+	Name,
+	NullableOptional,
+	StringBetween,
+	UUID,
+} from "./Utils";
 
 // NOTE: the email has to be updated through the authentication service
 
@@ -24,7 +31,9 @@ export type User = {
 	image?: Image;
 };
 
-export type DBUserUpdate = NullableOptional<Omit<User, "created" | "role" | "email">>;
+export type DBUserUpdate = NullableOptional<
+	Omit<User, "created" | "role" | "email">
+>;
 
 export interface Profile {
 	id: UUID;

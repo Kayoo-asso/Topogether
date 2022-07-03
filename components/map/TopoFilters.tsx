@@ -25,7 +25,10 @@ export const TopoFilters: React.FC<TopoFiltersProps> = ({
 	const [open, setOpen] = useState(initialOpen);
 
 	const updateTopoFilters = useCallback(
-		<K extends keyof TopoFilterOptions>(option: K, value: TopoFilterOptions[K]) => {
+		<K extends keyof TopoFilterOptions>(
+			option: K,
+			value: TopoFilterOptions[K]
+		) => {
 			props.onChange({
 				...props.values,
 				[option]: value,
@@ -81,7 +84,9 @@ export const TopoFilters: React.FC<TopoFiltersProps> = ({
 			<Checkbox
 				label="Adapté aux enfants"
 				checked={props.values.adaptedToChildren}
-				onClick={(isChecked) => updateTopoFilters("adaptedToChildren", isChecked)}
+				onClick={(isChecked) =>
+					updateTopoFilters("adaptedToChildren", isChecked)
+				}
 			/>
 		</React.Fragment>
 	);
@@ -105,7 +110,9 @@ export const TopoFilters: React.FC<TopoFiltersProps> = ({
 						<div className="text-white ktext-subtitle ml-3">Filtres</div>
 					</div>
 
-					<div className="flex flex-col gap-6 min-h-[100px] p-5 pb-8">{renderFilters()}</div>
+					<div className="flex flex-col gap-6 min-h-[100px] p-5 pb-8">
+						{renderFilters()}
+					</div>
 				</div>
 			)}
 		</>

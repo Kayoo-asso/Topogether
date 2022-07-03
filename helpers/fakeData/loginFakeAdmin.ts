@@ -1,4 +1,9 @@
-import { AuthService, SignInRes, SignUpRes, supabaseClient } from "helpers/services";
+import {
+	AuthService,
+	SignInRes,
+	SignUpRes,
+	supabaseClient,
+} from "helpers/services";
 import { fakeAdmin } from "./fakeTopoV2";
 
 export async function loginFakeAdmin(auth: AuthService): Promise<void> {
@@ -13,7 +18,11 @@ export async function loginFakeAdmin(auth: AuthService): Promise<void> {
 	const signinRes = await auth.signIn(fakeAdmin.email, fakeAdmin.password);
 	user = auth.session();
 	if (signinRes !== SignInRes.Ok || user === null) {
-		const signupRes = await auth.signUp(fakeAdmin.email, fakeAdmin.password, fakeAdmin.userName);
+		const signupRes = await auth.signUp(
+			fakeAdmin.email,
+			fakeAdmin.password,
+			fakeAdmin.userName
+		);
 		user = auth.session();
 		if (signupRes !== SignUpRes.LoggedIn || user === null) {
 			throw new Error("Failed to sign up as fake admin");

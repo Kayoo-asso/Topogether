@@ -50,7 +50,8 @@ export const GradeCircle: React.FC<GradeCircleProps> = ({
 			? "p-1 w-5 h-5 border-2"
 			: "p-2 w-6 h-6 border-2";
 
-	const content = props.content || (props.grade === "None" ? "n/a" : props.grade);
+	const content =
+		props.content || (props.grade === "None" ? "n/a" : props.grade);
 
 	return (
 		<div

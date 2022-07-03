@@ -112,7 +112,8 @@ export const tracks: TrackData[] = [
 		id: uuid(),
 		index: 1,
 		name: "Passage 2" as Name,
-		description: "Le départ assis est sévère mais le reste de la voie est trivial" as Description,
+		description:
+			"Le départ assis est sévère mais le reste de la voie est trivial" as Description,
 		height: 2,
 		grade: "6a",
 		reception: Reception.OK,
@@ -294,7 +295,8 @@ export const fakeTopov2: TopoData = {
 	location: [4.607264, 45.701356],
 
 	forbidden: false,
-	amenities: Amenities.AdaptedToChildren | Amenities.Waterspot | Amenities.PicnicArea,
+	amenities:
+		Amenities.AdaptedToChildren | Amenities.Waterspot | Amenities.PicnicArea,
 	// the real topo doesn't have composite rock, but this allows us to test the bitflag
 	rockTypes: RockTypes.Gneiss | RockTypes.Composite,
 

@@ -11,8 +11,8 @@ interface WaypointMarkerDropdownProps {
 	onSelect?: () => void;
 }
 
-export const WaypointMarkerDropdown: React.FC<WaypointMarkerDropdownProps> = watchDependencies(
-	(props: WaypointMarkerDropdownProps) => {
+export const WaypointMarkerDropdown: React.FC<WaypointMarkerDropdownProps> =
+	watchDependencies((props: WaypointMarkerDropdownProps) => {
 		const session = useSession();
 
 		const deleteWaypoint = useCallback(
@@ -28,7 +28,6 @@ export const WaypointMarkerDropdown: React.FC<WaypointMarkerDropdownProps> = wat
 				onSelect={props.onSelect}
 			/>
 		);
-	}
-);
+	});
 
 WaypointMarkerDropdown.displayName = "WaypointMarkerDropdown";

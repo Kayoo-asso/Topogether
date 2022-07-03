@@ -21,7 +21,8 @@ export const LeftbarDesktop: React.FC<LeftbarDesktopProps> = watchDependencies(
 			<div className="hidden md:flex flex-col bg-white border-r border-grey-medium min-w-[280px] w-[280px] h-full px-8 py-10 z-200">
 				<div className="mb-20 mt-2">
 					<div>
-						Bonjour <span className="ktext-subtitle text-main">{user?.userName}</span> !
+						Bonjour{" "}
+						<span className="ktext-subtitle text-main">{user?.userName}</span> !
 					</div>
 				</div>
 
@@ -45,10 +46,14 @@ export const LeftbarDesktop: React.FC<LeftbarDesktopProps> = watchDependencies(
 					<Link href="/">
 						<a className="flex flex-row">
 							<WaypointIcon
-								className={`h-6 w-6 mr-4 ${currentMenuItem === "MAP" ? "fill-main" : "fill-dark"}`}
+								className={`h-6 w-6 mr-4 ${
+									currentMenuItem === "MAP" ? "fill-main" : "fill-dark"
+								}`}
 							/>
 							<span
-								className={`ktext-title ${currentMenuItem === "MAP" ? "text-main" : "text-dark"}`}
+								className={`ktext-title ${
+									currentMenuItem === "MAP" ? "text-main" : "text-dark"
+								}`}
 							>
 								Carte
 							</span>
@@ -57,10 +62,14 @@ export const LeftbarDesktop: React.FC<LeftbarDesktopProps> = watchDependencies(
 					<Link href="/user/profile">
 						<a className="flex flex-row">
 							<UserIcon
-								className={`h-6 w-6 mr-4 ${currentMenuItem === "USER" ? "fill-main" : "fill-dark"}`}
+								className={`h-6 w-6 mr-4 ${
+									currentMenuItem === "USER" ? "fill-main" : "fill-dark"
+								}`}
 							/>
 							<span
-								className={`ktext-title ${currentMenuItem === "USER" ? "text-main" : "text-dark"}`}
+								className={`ktext-title ${
+									currentMenuItem === "USER" ? "text-main" : "text-dark"
+								}`}
 							>
 								Profile
 							</span>

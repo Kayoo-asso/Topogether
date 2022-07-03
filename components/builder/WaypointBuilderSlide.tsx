@@ -13,8 +13,8 @@ interface WaypointBuilderSlideProps {
 	onClose?: () => void;
 }
 
-export const WaypointBuilderSlide: React.FC<WaypointBuilderSlideProps> = watchDependencies(
-	({ open = true, ...props }: WaypointBuilderSlideProps) => {
+export const WaypointBuilderSlide: React.FC<WaypointBuilderSlideProps> =
+	watchDependencies(({ open = true, ...props }: WaypointBuilderSlideProps) => {
 		const [ModalDelete, showModalDelete] = useModal();
 		const breakpoint = useBreakpoint();
 
@@ -23,14 +23,20 @@ export const WaypointBuilderSlide: React.FC<WaypointBuilderSlideProps> = watchDe
 				{breakpoint === "mobile" && (
 					<SlideoverMobile onClose={props.onClose}>
 						<div className="px-6 py-14 h-full">
-							<WaypointForm waypoint={props.waypoint} onDeleteWaypoint={showModalDelete} />
+							<WaypointForm
+								waypoint={props.waypoint}
+								onDeleteWaypoint={showModalDelete}
+							/>
 						</div>
 					</SlideoverMobile>
 				)}
 				{breakpoint !== "mobile" && (
 					<SlideagainstRightDesktop open onClose={props.onClose}>
 						<div className="px-5 py-3 h-full">
-							<WaypointForm waypoint={props.waypoint} onDeleteWaypoint={showModalDelete} />
+							<WaypointForm
+								waypoint={props.waypoint}
+								onDeleteWaypoint={showModalDelete}
+							/>
 						</div>
 					</SlideagainstRightDesktop>
 				)}
@@ -44,7 +50,6 @@ export const WaypointBuilderSlide: React.FC<WaypointBuilderSlideProps> = watchDe
 				</ModalDelete>
 			</>
 		);
-	}
-);
+	});
 
 WaypointBuilderSlide.displayName = "WaypointBuilderSlide";

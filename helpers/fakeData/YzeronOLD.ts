@@ -5,7 +5,8 @@ export const Yzeron = {
 	creatorName: "Flavien C",
 	name: "Yzéron",
 	mainImageId: 4,
-	mainImageUrl: "/public/uploads/topo/main-image/dad449499de38f1bdee5872de1a354d52fff6183.jpeg",
+	mainImageUrl:
+		"/public/uploads/topo/main-image/dad449499de38f1bdee5872de1a354d52fff6183.jpeg",
 	description:
 		"Le site d’Yzéron est situé sur le massif de Py froid à environ 800m d’altitude. Il est le plus grand site de bloc de la région Lyonnaise avec une grande diversité de profil (dévers, dalle, réta...). L’esplanade sépare la plus grande partie du site en amont, et une falaise idéale pour l’initiation, située en contrebas. La forêt protège une bonne partie du site contre les aléas météorologiques ce qui, combiné à l’altitude, permet la pratique de la grimpe toute l’année.",
 	rockTypeLabel: "Gneiss",
@@ -132,7 +133,8 @@ export const Yzeron = {
 							hasAnchorPoint: false,
 							hasMantle: false,
 							difficultyId: 15,
-							description: "Le départ assis est sévère mais le reste de la voie est trivial",
+							description:
+								"Le départ assis est sévère mais le reste de la voie est trivial",
 							receptionIds: [1],
 							techniqueIds: [1],
 							height: 2,
@@ -11673,7 +11675,8 @@ const YzeronNew = {
 	status: "validated",
 	type: 0,
 	forbidden: false,
-	modified: "Mon Mar 21 2022 15:11:43 GMT+0100 (heure normale d’Europe centrale)",
+	modified:
+		"Mon Mar 21 2022 15:11:43 GMT+0100 (heure normale d’Europe centrale)",
 	submitted: "",
 	validated: "",
 	cleaned: "",

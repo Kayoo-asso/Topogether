@@ -57,12 +57,17 @@ export const InfoSlideover: React.FC<InfoSlideoverProps> = ({
 			<div className="flex flex-col items-center md:items-start px-6 md:px-0 pt-5 md:pt-0">
 				{topo.creator?.userName && (
 					<div className="ktext-label text-center md:hidden">
-						Topo créé par <span className="text-main cursor-pointer">{topo.creator.userName}</span>
+						Topo créé par{" "}
+						<span className="text-main cursor-pointer">
+							{topo.creator.userName}
+						</span>
 					</div>
 				)}
 
 				{topo.forbidden && (
-					<div className="text-error ktext-section-title w-full text-center">Site interdit !</div>
+					<div className="text-error ktext-section-title w-full text-center">
+						Site interdit !
+					</div>
 				)}
 
 				<div className="ktext-big-title text-center mt-4 flex flex-row items-center">
@@ -82,14 +87,19 @@ export const InfoSlideover: React.FC<InfoSlideoverProps> = ({
 							onClick={() => {
 								const data = [
 									new ClipboardItem({
-										"text/plain": new Blob([topo.location[1] + "," + topo.location[0]], {
-											type: "text/plain",
-										}),
+										"text/plain": new Blob(
+											[topo.location[1] + "," + topo.location[0]],
+											{
+												type: "text/plain",
+											}
+										),
 									}),
 								];
 								navigator.clipboard.write(data).then(
 									function () {
-										setFlashMessage("Coordonnées copiées dans le presse papier.");
+										setFlashMessage(
+											"Coordonnées copiées dans le presse papier."
+										);
 									},
 									function () {
 										setFlashMessage("Impossible de copier les coordonées.");
@@ -104,7 +114,9 @@ export const InfoSlideover: React.FC<InfoSlideoverProps> = ({
 						{topo.creator?.userName && (
 							<div className="hidden md:block">
 								Topo créé par{" "}
-								<span className="text-main cursor-pointer">{topo.creator.userName}</span>
+								<span className="text-main cursor-pointer">
+									{topo.creator.userName}
+								</span>
 							</div>
 						)}
 					</div>
@@ -139,7 +151,9 @@ export const InfoSlideover: React.FC<InfoSlideoverProps> = ({
 					)}
 					{topo.altitude && (
 						<div>
-							<span className="font-semibold">Altitude au pieds des voies : </span>
+							<span className="font-semibold">
+								Altitude au pieds des voies :{" "}
+							</span>
 							{topo.altitude}m
 						</div>
 					)}
@@ -181,10 +195,16 @@ export const InfoSlideover: React.FC<InfoSlideoverProps> = ({
 	return (
 		<>
 			{breakpoint === "mobile" && (
-				<SlideoverMobile onClose={props.onClose}>{infosContent()}</SlideoverMobile>
+				<SlideoverMobile onClose={props.onClose}>
+					{infosContent()}
+				</SlideoverMobile>
 			)}
 			{breakpoint !== "mobile" && (
-				<SlideoverLeftDesktop open={open} onClose={props.onClose} className={props.className}>
+				<SlideoverLeftDesktop
+					open={open}
+					onClose={props.onClose}
+					className={props.className}
+				>
 					{infosContent()}
 				</SlideoverLeftDesktop>
 			)}

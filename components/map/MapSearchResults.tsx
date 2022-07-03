@@ -16,7 +16,9 @@ interface MapSearchResultsProps {
 	onClose: () => void;
 }
 
-export const MapSearchResults: React.FC<MapSearchResultsProps> = (props: MapSearchResultsProps) => {
+export const MapSearchResults: React.FC<MapSearchResultsProps> = (
+	props: MapSearchResultsProps
+) => {
 	return (
 		<div className="absolute w-[94%] md:w-[97%] shadow rounded-lg bg-white px-7 left-0 top-0 pt-[55px] pb-3 z-50">
 			{/* TODO: Add closing button */}
@@ -46,7 +48,9 @@ export const MapSearchResults: React.FC<MapSearchResultsProps> = (props: MapSear
 
 			{props.googleApiResults.length > 0 && (
 				<>
-					<div className="text-grey-medium ktext-label uppercase mt-5 mb-2">Lieux</div>
+					<div className="text-grey-medium ktext-label uppercase mt-5 mb-2">
+						Lieux
+					</div>
 					{props.googleApiResults.map((res) => (
 						<div
 							key={res.place_id}

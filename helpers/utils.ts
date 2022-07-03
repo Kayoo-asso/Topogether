@@ -14,7 +14,10 @@ export function arrayMove<T>(array: T[], from: number, to: number) {
 	return array;
 }
 
-export const splitArray = function <T>(arr: T[], predicate: (arg: T) => boolean) {
+export const splitArray = function <T>(
+	arr: T[],
+	predicate: (arg: T) => boolean
+) {
 	const matches = [];
 	const notMatches = [];
 	for (const elt of arr) {
@@ -36,7 +39,12 @@ export function setReactRef<T>(
 	}
 }
 
-export const distanceBetween = (x1: number, y1: number, x2: number, y2: number) => {
+export const distanceBetween = (
+	x1: number,
+	y1: number,
+	x2: number,
+	y2: number
+) => {
 	return Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
 };
 
@@ -67,7 +75,8 @@ export const cloudflareUrl = (imageId: UUID, width: VariantWidth): string =>
 
 // --- Encode UUID ---
 
-const readHexByte = (uuid: UUID, start: number) => parseInt(uuid.substring(start, start + 2), 16);
+const readHexByte = (uuid: UUID, start: number) =>
+	parseInt(uuid.substring(start, start + 2), 16);
 
 // trusts the input to be a correct UUID
 // UUID v4 follows a 8-4-4-4-12 format
@@ -98,12 +107,34 @@ export function encodeUUID(uuid: UUID): string {
 }
 
 // can't use .toString(16), since it does not encode the hexadecimal '0' for numbers < 16
-var hexChar = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f"];
+var hexChar = [
+	"0",
+	"1",
+	"2",
+	"3",
+	"4",
+	"5",
+	"6",
+	"7",
+	"8",
+	"9",
+	"a",
+	"b",
+	"c",
+	"d",
+	"e",
+	"f",
+];
 function byteToHex(b: number) {
 	return hexChar[(b >> 4) & 0x0f] + hexChar[b & 0x0f];
 }
 
-function pushBytes(output: string, bytes: Uint8Array, start: number, length: number): string {
+function pushBytes(
+	output: string,
+	bytes: Uint8Array,
+	start: number,
+	length: number
+): string {
 	let result = output;
 	for (let i = start; i < start + length; ++i) {
 		result += byteToHex(bytes[i]);

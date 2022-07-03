@@ -31,7 +31,9 @@ export async function seedLocalDb(auth: AuthService) {
 	let iters = 0;
 	while (!res) {
 		if (iters >= 10) {
-			throw new Error("Synchronisation fails while seeding local DB (too many iterations)");
+			throw new Error(
+				"Synchronisation fails while seeding local DB (too many iterations)"
+			);
 		}
 		res = await sync.attemptSync();
 		iters += 1;

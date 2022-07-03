@@ -61,7 +61,9 @@ export const ItemSelectorMobile: React.FC<ItemSelectorMobileProps> = (
 				<Parking
 					className={
 						"h-6 w-6 cursor-pointer " +
-						(props.currentTool === "PARKING" ? "fill-second" : "fill-grey-light")
+						(props.currentTool === "PARKING"
+							? "fill-second"
+							: "fill-grey-light")
 					}
 					onClick={() => {
 						props.onToolSelect("PARKING");
@@ -74,7 +76,9 @@ export const ItemSelectorMobile: React.FC<ItemSelectorMobileProps> = (
 					button="builder"
 					size="big"
 					multiple={false}
-					activated={props.photoActivated || process.env.NODE_ENV === "development"}
+					activated={
+						props.photoActivated || process.env.NODE_ENV === "development"
+					}
 					onChange={(files) => props.onNewPhoto(files[0])}
 				/>
 			)}

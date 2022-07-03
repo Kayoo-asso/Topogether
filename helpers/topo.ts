@@ -38,7 +38,10 @@ export type BoulderOrder = {
 	index: number;
 };
 
-export function sortBoulders(sectors: Iterable<Sector>, lonelyBoulders: UUID[]): Map<UUID, number> {
+export function sortBoulders(
+	sectors: Iterable<Sector>,
+	lonelyBoulders: UUID[]
+): Map<UUID, number> {
 	let idx = 1;
 	let map: Map<UUID, number> = new Map();
 	for (const sector of sectors) {
@@ -87,7 +90,8 @@ export type Rule = typeof rules[number] | "INFOS_TOPO" | "INFOS_ACCESS";
 
 export const computeBuilderProgress = (topo: Quark<Topo>): number => {
 	return Math.round(
-		(rules.filter((rule) => validateRule(topo(), rule)).length / rules.length) * 100
+		(rules.filter((rule) => validateRule(topo(), rule)).length / rules.length) *
+			100
 	);
 };
 
@@ -124,12 +128,16 @@ export const validateRule = (topo: Topo, rule: Rule): boolean => {
 		case "ACCESS_DIFFICULTY":
 			return (
 				topo.accesses.length > 0 &&
-				topo.accesses.toArray().every((access) => access.difficulty !== undefined)
+				topo.accesses
+					.toArray()
+					.every((access) => access.difficulty !== undefined)
 			);
 		case "ACCESS_STEP":
 			return (
 				topo.accesses.length > 0 &&
-				topo.accesses.toArray().every((access) => access.steps && access.steps.length > 0)
+				topo.accesses
+					.toArray()
+					.every((access) => access.steps && access.steps.length > 0)
 			);
 		case "BOULDERS":
 			return topo.boulders.length > 0;

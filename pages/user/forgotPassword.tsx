@@ -28,7 +28,9 @@ const ForgotPasswordPage: NextPage = () => {
 			<div className="w-full h-full flex flex-col items-center justify-center bg-white bg-bottom md:bg-[url('/assets/img/login_background.png')] md:bg-cover">
 				<div className="p-10 w-full bg-white mb-10 md:w-[500px] md:shadow md:rounded-lg -mt-16 md:mt-0">
 					<div className="flex flex-col gap-8 items-center w-full">
-						<div className="ktext-section-title self-start hidden md:block">Se connecter</div>
+						<div className="ktext-section-title self-start hidden md:block">
+							Se connecter
+						</div>
 						<div className="h-[150px] w-[150px] relative md:hidden">
 							<NextImage
 								src={staticUrl.logo_color}
@@ -47,10 +49,16 @@ const ForgotPasswordPage: NextPage = () => {
 							onChange={(e) => setEmail(e.target.value)}
 						/>
 
-						<Button content="Réinitialiser le mot de passe" fullWidth onClick={send} />
+						<Button
+							content="Réinitialiser le mot de passe"
+							fullWidth
+							onClick={send}
+						/>
 
 						<Link href="/user/login">
-							<a className="ktext-base-little text-main cursor-pointer hidden md:block">Retour</a>
+							<a className="ktext-base-little text-main cursor-pointer hidden md:block">
+								Retour
+							</a>
 						</Link>
 					</div>
 				</div>

@@ -20,7 +20,9 @@ export const AccessSlideover: React.FC<AccessSlideoverProps> = ({
 }: AccessSlideoverProps) => {
 	const breakpoint = useBreakpoint();
 	const [accessTab, setAccessTab] = useState(0);
-	const access = props.accesses ? props.accesses.toArray()[accessTab] : undefined;
+	const access = props.accesses
+		? props.accesses.toArray()[accessTab]
+		: undefined;
 
 	const getTabOptions = (): TabOption[] => {
 		const tabs: TabOption[] = [];
@@ -50,7 +52,9 @@ export const AccessSlideover: React.FC<AccessSlideoverProps> = ({
 				<div className="flex flex-col h-full pt-5 md:pt-0">
 					<div className="flex flex-col px-6 md:px-0 pt-5 md:pt-0">
 						<div className="ktext-big-title text-center w-full mt-4 mb-6 md:hidden">
-							{"Marche" + (props.accesses.length > 1 ? "s" : "") + " d'approche"}
+							{"Marche" +
+								(props.accesses.length > 1 ? "s" : "") +
+								" d'approche"}
 						</div>
 
 						{props.accesses.length > 1 && (
@@ -101,11 +105,15 @@ export const AccessSlideover: React.FC<AccessSlideoverProps> = ({
 	return (
 		<>
 			{breakpoint === "mobile" && (
-				<SlideoverMobile onClose={props.onClose}>{approachContent()}</SlideoverMobile>
+				<SlideoverMobile onClose={props.onClose}>
+					{approachContent()}
+				</SlideoverMobile>
 			)}
 			{breakpoint !== "mobile" && (
 				<SlideoverLeftDesktop
-					title={"Marche" + (props.accesses.length > 1 ? "s" : "") + " d'approche"}
+					title={
+						"Marche" + (props.accesses.length > 1 ? "s" : "") + " d'approche"
+					}
 					open={open}
 					onClose={props.onClose}
 					className={props.className}

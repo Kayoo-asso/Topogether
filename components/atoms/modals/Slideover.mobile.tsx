@@ -55,7 +55,10 @@ export const SlideoverMobile: React.FC<SlideoverMobileProps> = ({
 		};
 		// setTouchEnd(e.touches[0].clientY);
 		const swipePercent = (e.touches[0].clientY / window.screen.height) * 100;
-		const adjustedNewSlideoverSize = Math.min(Math.max(swipePercent, OPEN), 100);
+		const adjustedNewSlideoverSize = Math.min(
+			Math.max(swipePercent, OPEN),
+			100
+		);
 		setTranslateY(adjustedNewSlideoverSize);
 	}
 	function handleTouchEnd(e: React.TouchEvent<HTMLDivElement>) {

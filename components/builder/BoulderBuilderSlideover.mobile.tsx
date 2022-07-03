@@ -31,7 +31,11 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
 		const [imageToDisplayIdx, setImageToDisplayIdx] = useState(0);
 
 		return (
-			<SlideoverMobile persistent onSizeChange={setFull} onClose={props.onClose}>
+			<SlideoverMobile
+				persistent
+				onSizeChange={setFull}
+				onClose={props.onClose}
+			>
 				{/* BOULDER IMAGE */}
 				{full && (
 					<div className="flex w-full bg-dark rounded-t-lg relative overflow-hidden max-h-[40%]">
@@ -50,10 +54,16 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
 
 				<div className="flex flex-col h-[60%]">
 					{/* BOULDER INFOS */}
-					<div className={`grid grid-cols-8 p-5 items-center ${full ? "" : " mt-3"}`}>
+					<div
+						className={`grid grid-cols-8 p-5 items-center ${
+							full ? "" : " mt-3"
+						}`}
+					>
 						<div className="col-span-6">
 							<div className="ktext-section-title">{boulder.name}</div>
-							{boulder.isHighball && full && <div className="ktext-base-little">High Ball</div>}
+							{boulder.isHighball && full && (
+								<div className="ktext-base-little">High Ball</div>
+							)}
 							{boulder.dangerousDescent && full && (
 								<div className="ktext-base-little">Descente dangereuse !</div>
 							)}
@@ -106,13 +116,17 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
 					{full && (
 						<div className="flex flex-row px-5 ktext-label font-bold my-2">
 							<span
-								className={`w-1/4 ${trackTab ? "text-main" : "text-grey-medium"}`}
+								className={`w-1/4 ${
+									trackTab ? "text-main" : "text-grey-medium"
+								}`}
 								onClick={() => setTrackTab(true)}
 							>
 								Voies
 							</span>
 							<span
-								className={`w-3/4 ${!trackTab ? "text-main" : "text-grey-medium"}`}
+								className={`w-3/4 ${
+									!trackTab ? "text-main" : "text-grey-medium"
+								}`}
 								onClick={() => setTrackTab(false)}
 							>
 								Infos du bloc

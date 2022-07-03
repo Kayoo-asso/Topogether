@@ -71,18 +71,28 @@ export function isUUID(s: string): s is UUID {
 	return uuidRegex.test(s);
 }
 
-export type RequireAtLeastOne<T, Keys extends keyof T = keyof T> = Pick<T, Exclude<keyof T, Keys>> &
+export type RequireAtLeastOne<T, Keys extends keyof T = keyof T> = Pick<
+	T,
+	Exclude<keyof T, Keys>
+> &
 	{
 		[K in Keys]-?: Required<Pick<T, K>> & Partial<Pick<T, Exclude<Keys, K>>>;
 	}[Keys];
 
-export type RequireKeys<T, Keys extends keyof T> = Pick<T, Exclude<keyof T, Keys>> & {
+export type RequireKeys<T, Keys extends keyof T> = Pick<
+	T,
+	Exclude<keyof T, Keys>
+> & {
 	[K in Keys]-?: T[K];
 };
 
-export type RequireOnlyOne<T, Keys extends keyof T = keyof T> = Pick<T, Exclude<keyof T, Keys>> &
+export type RequireOnlyOne<T, Keys extends keyof T = keyof T> = Pick<
+	T,
+	Exclude<keyof T, Keys>
+> &
 	{
-		[K in Keys]-?: Required<Pick<T, K>> & Partial<Record<Exclude<Keys, K>, undefined>>;
+		[K in Keys]-?: Required<Pick<T, K>> &
+			Partial<Record<Exclude<Keys, K>, undefined>>;
 	}[Keys];
 
 type RequiredKeys<T> = {

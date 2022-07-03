@@ -34,7 +34,9 @@ export function NavigationLoader({ children }: React.PropsWithChildren<{}>) {
 					<Spinner className="stroke-main w-10 h-10 animate-spin m-2" />
 				</div>
 			</Portal>
-			<LoaderContext.Provider value={setActive}>{children}</LoaderContext.Provider>
+			<LoaderContext.Provider value={setActive}>
+				{children}
+			</LoaderContext.Provider>
 		</>
 	);
 }

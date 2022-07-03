@@ -9,14 +9,17 @@ interface BoulderMarkerDropdownProps {
 	boulder: Quark<Boulder>;
 	position?: { x: number; y: number };
 	multipleImageInputRef: React.RefObject<HTMLInputElement>;
-	toggleTrackSelect: (track: Quark<Track>, boulderQuark: Quark<Boulder>) => void;
+	toggleTrackSelect: (
+		track: Quark<Track>,
+		boulderQuark: Quark<Boulder>
+	) => void;
 	deleteBoulder: (boulder: Quark<Boulder>) => void;
 	onSelect?: () => void;
 	onAddImageClick?: () => void;
 }
 
-export const BoulderMarkerDropdown: React.FC<BoulderMarkerDropdownProps> = watchDependencies(
-	(props: BoulderMarkerDropdownProps) => {
+export const BoulderMarkerDropdown: React.FC<BoulderMarkerDropdownProps> =
+	watchDependencies((props: BoulderMarkerDropdownProps) => {
 		const session = useSession();
 
 		const addTrack = useCallback(() => {
@@ -43,7 +46,6 @@ export const BoulderMarkerDropdown: React.FC<BoulderMarkerDropdownProps> = watch
 				onSelect={props.onSelect}
 			/>
 		);
-	}
-);
+	});
 
 BoulderMarkerDropdown.displayName = "Boulder Marker Dropdown";

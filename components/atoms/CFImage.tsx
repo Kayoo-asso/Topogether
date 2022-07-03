@@ -1,4 +1,9 @@
-import { SourceSize, VariantWidths, cloudflareUrl, setReactRef } from "helpers/utils";
+import {
+	SourceSize,
+	VariantWidths,
+	cloudflareUrl,
+	setReactRef,
+} from "helpers/utils";
 import { StaticImageData } from "next/image";
 import {
 	ImgHTMLAttributes,
@@ -104,26 +109,38 @@ export const CFImage = forwardRef<HTMLImageElement, CFImageProps>(
 		let srcSet = undefined;
 		let sizes = undefined;
 		const objectFitClass =
-			portalOpen || objectFit === "contain" ? " object-contain " : " object-cover ";
+			portalOpen || objectFit === "contain"
+				? " object-contain "
+				: " object-cover ";
 
 		if (image) {
 			const defaultVariant = device === "mobile" ? 640 : 1920; //TODO: optimize by checking size
-			const sources = VariantWidths.map((w) => `${cloudflareUrl(image.id, w)} ${w}w`);
+			const sources = VariantWidths.map(
+				(w) => `${cloudflareUrl(image.id, w)} ${w}w`
+			);
 			// note: check that width and height are not actual constraints,
 			// only aspect ratio information
 			width = defaultVariant;
 			height = width / image.ratio;
 			srcSet = sources.join();
 			src = cloudflareUrl(image.id, defaultVariant);
-			sizes = portalOpen ? "100vw" : typeof sizeHint === "string" ? sizeHint : sizeHint.raw;
+			sizes = portalOpen
+				? "100vw"
+				: typeof sizeHint === "string"
+				? sizeHint
+				: sizeHint.raw;
 			// no placeholder
 			placeholder = undefined;
 		}
 
 		return wrapPortal(
 			<div
-				className={"w-full h-full relative overflow-hidden " + (props.className || "")}
-				onClick={() => modalable && !loading && !forceLoading && setPortalOpen(true)}
+				className={
+					"w-full h-full relative overflow-hidden " + (props.className || "")
+				}
+				onClick={() =>
+					modalable && !loading && !forceLoading && setPortalOpen(true)
+				}
 			>
 				{(loading || forceLoading) && (
 					<div className="bg-white absolute w-full h-full top-0 z-1000">

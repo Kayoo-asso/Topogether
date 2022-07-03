@@ -8,7 +8,10 @@ type AuthProviderProps = React.PropsWithChildren<{
 	initial: User | null;
 }>;
 
-export const AuthProvider: React.FC<AuthProviderProps> = ({ initial, children }) => {
+export const AuthProvider: React.FC<AuthProviderProps> = ({
+	initial,
+	children,
+}) => {
 	const auth = useMemo(() => new AuthService(supabaseClient, initial), []);
 
 	if (process.env.NODE_ENV === "development") {

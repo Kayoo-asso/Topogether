@@ -62,7 +62,11 @@ function worldCoords(lng: number, lat: number): [number, number] {
 	];
 }
 
-function findTileXY(lng: number, lat: number, zoom: number): [x: number, y: number] {
+function findTileXY(
+	lng: number,
+	lat: number,
+	zoom: number
+): [x: number, y: number] {
 	const [worldx, worldy] = worldCoords(lng, lat);
 
 	const scale = 1 << zoom;
@@ -106,7 +110,9 @@ export async function downloadTopoMap(topo: TopoData) {
 		// The y-axis is flipped, the origin for (x,y) tiles coordinates is top-left
 		let [xmin, ymax] = findTileXY(bounds[0], bounds[1], z);
 		let [xmax, ymin] = findTileXY(bounds[2], bounds[3], z);
-		console.log(`Corner tiles zoom ${z}: [${xmin}, ${ymax}], [${xmax}, ${ymin}]`);
+		console.log(
+			`Corner tiles zoom ${z}: [${xmin}, ${ymax}], [${xmax}, ${ymin}]`
+		);
 
 		let i = 0;
 		for (let x = xmin; x <= xmax; x++) {
@@ -120,9 +126,9 @@ export async function downloadTopoMap(topo: TopoData) {
 	await Promise.all(promises);
 	const end = Date.now();
 	console.log(
-		`--- Finished downloading ${LOCK.released} tiles (/${total}) in ${end - start}ms for topo ${
-			topo.name
-		} ---`
+		`--- Finished downloading ${LOCK.released} tiles (/${total}) in ${
+			end - start
+		}ms for topo ${topo.name} ---`
 	);
 	LOCK.clear();
 }

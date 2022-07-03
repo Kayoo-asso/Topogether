@@ -1,6 +1,17 @@
-import React, { CSSProperties, ReactElement, useCallback, useRef, useState } from "react";
+import React, {
+	CSSProperties,
+	ReactElement,
+	useCallback,
+	useRef,
+	useState,
+} from "react";
 import { Image, PointEnum, DrawerToolEnum, Position, Track } from "types";
-import { Quark, QuarkIter, SelectQuarkNullable, watchDependencies } from "helpers/quarky";
+import {
+	Quark,
+	QuarkIter,
+	SelectQuarkNullable,
+	watchDependencies,
+} from "helpers/quarky";
 import { CFImage } from "components/atoms/CFImage";
 import { SVGTrack } from "components/atoms";
 import QuickPinchZoom, { make3dTransformValue } from "react-quick-pinch-zoom";
@@ -109,7 +120,9 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(
 		};
 		const cursorStyle: CSSProperties = {
 			cursor: editable
-				? `url(${getCursorUrl()}) ${props.currentTool === "ERASER" ? "3 7" : ""}, auto`
+				? `url(${getCursorUrl()}) ${
+						props.currentTool === "ERASER" ? "3 7" : ""
+				  }, auto`
 				: "",
 		};
 		const cssCursor =
@@ -169,7 +182,8 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(
 						onClick={useCallback(
 							(e) => {
 								const eltUnder = e.target as EventTarget & SVGSVGElement;
-								if (eltUnder.nodeName === "svg" && props.modalable) setPortalOpen(true);
+								if (eltUnder.nodeName === "svg" && props.modalable)
+									setPortalOpen(true);
 								else {
 									// Handle clicks that are 1) left-click, 2) in the viewBox and 3) on the SVG canvas directly
 									if (
@@ -179,7 +193,11 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(
 										eltUnder.nodeName !== "svg"
 									)
 										return;
-									const coords = getCoordsInViewbox(viewBoxRef.current, e.clientX, e.clientY);
+									const coords = getCoordsInViewbox(
+										viewBoxRef.current,
+										e.clientX,
+										e.clientY
+									);
 									if (coords) props.onImageClick(coords);
 								}
 							},
@@ -205,7 +223,8 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(
 							props.tracks
 								.map((trackQuark) => {
 									const highlighted =
-										selectedTrack === undefined || trackQuark().id === selectedTrack.id;
+										selectedTrack === undefined ||
+										trackQuark().id === selectedTrack.id;
 									if (highlighted || displayPhantomTracks)
 										return (
 											<SVGTrack

@@ -12,7 +12,9 @@ type MultipleSelectProps<T> = {
 	className?: string;
 };
 
-export const MultipleSelect = <T extends number | string>(props: MultipleSelectProps<T>) => {
+export const MultipleSelect = <T extends number | string>(
+	props: MultipleSelectProps<T>
+) => {
 	const ref = useRef<HTMLInputElement>(null);
 	const [isOpen, setIsOpen] = useState(false);
 

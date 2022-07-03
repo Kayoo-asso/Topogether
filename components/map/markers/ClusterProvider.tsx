@@ -51,5 +51,9 @@ export function ClusterProvider({ children }: ClusterProviderProps) {
 	// Clean up on unmount;
 	useEffect(() => () => cluster.setMap(null), []);
 
-	return <ClusterContext.Provider value={cluster}>{children}</ClusterContext.Provider>;
+	return (
+		<ClusterContext.Provider value={cluster}>
+			{children}
+		</ClusterContext.Provider>
+	);
 }

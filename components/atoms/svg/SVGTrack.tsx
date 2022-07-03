@@ -1,6 +1,13 @@
 import React from "react";
 import { Quark, watchDependencies } from "helpers/quarky";
-import { DrawerToolEnum, gradeToLightGrade, Line, PointEnum, Track, UUID } from "types";
+import {
+	DrawerToolEnum,
+	gradeToLightGrade,
+	Line,
+	PointEnum,
+	Track,
+	UUID,
+} from "types";
 import { SVGArea, SVGLine, SVGPoint } from ".";
 import { useBreakpoint } from "helpers/hooks";
 
@@ -55,7 +62,9 @@ export const SVGTrack: React.FC<SVGTrackProps> = watchDependencies(
 					trackWeight={trackWeight}
 					displayTrackOrderIndex={displayTrackOrderIndexes}
 					onClick={props.onLineClick}
-					onPointClick={(index) => props.onPointClick && props.onPointClick("LINE_POINT", index)}
+					onPointClick={(index) =>
+						props.onPointClick && props.onPointClick("LINE_POINT", index)
+					}
 				/>
 			);
 
@@ -81,7 +90,10 @@ export const SVGTrack: React.FC<SVGTrackProps> = watchDependencies(
 									});
 								}
 							}}
-							onClick={() => props.onPointClick && props.onPointClick("HAND_DEPARTURE_POINT", 0)}
+							onClick={() =>
+								props.onPointClick &&
+								props.onPointClick("HAND_DEPARTURE_POINT", 0)
+							}
 						/>
 					);
 				}
@@ -105,7 +117,10 @@ export const SVGTrack: React.FC<SVGTrackProps> = watchDependencies(
 									});
 								}
 							}}
-							onClick={() => props.onPointClick && props.onPointClick("HAND_DEPARTURE_POINT", -1)}
+							onClick={() =>
+								props.onPointClick &&
+								props.onPointClick("HAND_DEPARTURE_POINT", -1)
+							}
 						/>
 					);
 				}
@@ -131,7 +146,10 @@ export const SVGTrack: React.FC<SVGTrackProps> = watchDependencies(
 									});
 								}
 							}}
-							onClick={() => props.onPointClick && props.onPointClick("FOOT_DEPARTURE_POINT", 0)}
+							onClick={() =>
+								props.onPointClick &&
+								props.onPointClick("FOOT_DEPARTURE_POINT", 0)
+							}
 						/>
 					);
 				}
@@ -155,7 +173,10 @@ export const SVGTrack: React.FC<SVGTrackProps> = watchDependencies(
 									});
 								}
 							}}
-							onClick={() => props.onPointClick && props.onPointClick("FOOT_DEPARTURE_POINT", -1)}
+							onClick={() =>
+								props.onPointClick &&
+								props.onPointClick("FOOT_DEPARTURE_POINT", -1)
+							}
 						/>
 					);
 				}
@@ -194,7 +215,10 @@ export const SVGTrack: React.FC<SVGTrackProps> = watchDependencies(
 									});
 								}
 							}}
-							onClick={() => props.onPointClick && props.onPointClick("FORBIDDEN_AREA_POINT", i)}
+							onClick={() =>
+								props.onPointClick &&
+								props.onPointClick("FORBIDDEN_AREA_POINT", i)
+							}
 						/>
 					);
 				}

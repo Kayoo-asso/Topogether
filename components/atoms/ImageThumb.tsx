@@ -48,7 +48,9 @@ export const ImageThumb: React.FC<ImageThumbProps> = watchDependencies(
 						className="absolute z-10 -top-[15px] -right-[8px] hidden md:group-hover:block"
 						onClick={(e) => e.stopPropagation()}
 					>
-						<DeleteButton onClick={() => props.onDelete && props.onDelete(props.image.id)} />
+						<DeleteButton
+							onClick={() => props.onDelete && props.onDelete(props.image.id)}
+						/>
 					</div>
 				)}
 				{props.tracks && props.tracks.toArray().length > 0 && (

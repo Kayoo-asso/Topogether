@@ -14,14 +14,16 @@ const NoStandalone: React.FC = () => {
 	const device = useDevice();
 	const isIos = device.apple.device;
 
-	const [installPromptEvent, setInstallPromptEvent] = useState<BeforeInstallPromptEvent>();
+	const [installPromptEvent, setInstallPromptEvent] =
+		useState<BeforeInstallPromptEvent>();
 	useEffect(() => {
 		const onInstallPrompt = (e: Event) => {
 			e.preventDefault();
 			setInstallPromptEvent(e as BeforeInstallPromptEvent);
 		};
 		window.addEventListener("beforeinstallprompt", onInstallPrompt);
-		return () => window.removeEventListener("beforeinstallprompt", onInstallPrompt);
+		return () =>
+			window.removeEventListener("beforeinstallprompt", onInstallPrompt);
 	}, []);
 
 	return (

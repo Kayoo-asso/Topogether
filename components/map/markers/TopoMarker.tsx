@@ -9,9 +9,14 @@ interface TopoMarkerProps {
 	onClick?: (topo: LightTopo) => void;
 }
 
-export const TopoMarker: React.FC<TopoMarkerProps> = (props: TopoMarkerProps) => {
+export const TopoMarker: React.FC<TopoMarkerProps> = (
+	props: TopoMarkerProps
+) => {
 	const icon: google.maps.Icon = {
-		url: "/assets/icons/colored/waypoint/_" + TopoTypeToColor(props.topo.type) + ".svg",
+		url:
+			"/assets/icons/colored/waypoint/_" +
+			TopoTypeToColor(props.topo.type) +
+			".svg",
 		scaledSize: markerSize(30),
 	};
 

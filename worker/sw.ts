@@ -2,7 +2,12 @@ declare let self: ServiceWorkerGlobalScope;
 
 import { precacheAndRoute, cleanupOutdatedCaches } from "workbox-precaching";
 import { registerRoute, Route } from "workbox-routing";
-import { NetworkFirst, CacheFirst, StaleWhileRevalidate, NetworkOnly } from "workbox-strategies";
+import {
+	NetworkFirst,
+	CacheFirst,
+	StaleWhileRevalidate,
+	NetworkOnly,
+} from "workbox-strategies";
 import { ExpirationPlugin } from "workbox-expiration";
 
 // TODO:
@@ -115,7 +120,9 @@ registerRoute(
 	({ request, url, sameOrigin }) => {
 		return (
 			request.destination === "image" &&
-			(sameOrigin || url.hostname === "imagedelivery.net" || url.hostname === "maps.gstatic.com")
+			(sameOrigin ||
+				url.hostname === "imagedelivery.net" ||
+				url.hostname === "maps.gstatic.com")
 		);
 	},
 	async (options) => {

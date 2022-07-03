@@ -11,10 +11,9 @@ interface TrackSlideagainstDesktopProps {
 	onClose: () => void;
 }
 
-export const TrackSlideagainstDesktop: React.FC<TrackSlideagainstDesktopProps> = ({
-	open = true,
-	...props
-}: TrackSlideagainstDesktopProps) => {
+export const TrackSlideagainstDesktop: React.FC<
+	TrackSlideagainstDesktopProps
+> = ({ open = true, ...props }: TrackSlideagainstDesktopProps) => {
 	const track = props.track();
 
 	return (
@@ -30,9 +29,15 @@ export const TrackSlideagainstDesktop: React.FC<TrackSlideagainstDesktopProps> =
 					<div className="ktext-big-title ml-3">{track.name}</div>
 				</div>
 
-				{track.isTraverse && <div className="ktext-label text-grey-medium">Traversée</div>}
-				{track.isSittingStart && <div className="ktext-label text-grey-medium">Départ assis</div>}
-				{track.mustSee && <div className="ktext-label text-grey-medium">Incontournable !</div>}
+				{track.isTraverse && (
+					<div className="ktext-label text-grey-medium">Traversée</div>
+				)}
+				{track.isSittingStart && (
+					<div className="ktext-label text-grey-medium">Départ assis</div>
+				)}
+				{track.mustSee && (
+					<div className="ktext-label text-grey-medium">Incontournable !</div>
+				)}
 
 				<div className="mt-4 ktext-base-little">{track.description}</div>
 

@@ -42,9 +42,21 @@ export const Portal: React.FC<PortalProps> = ({
 };
 
 // Returns the Modal and show / hide in an array, to make renaming easier, in case of multiple Modals in the same component
-export function useModal(): [React.FC<ModalProps<undefined>>, () => void, () => void];
-export function useModal<T>(): [React.FC<ModalProps<T>>, (item: T) => void, () => void];
-export function useModal<T>(): [React.FC<ModalProps<T>>, (item: T) => void, () => void] {
+export function useModal(): [
+	React.FC<ModalProps<undefined>>,
+	() => void,
+	() => void
+];
+export function useModal<T>(): [
+	React.FC<ModalProps<T>>,
+	(item: T) => void,
+	() => void
+];
+export function useModal<T>(): [
+	React.FC<ModalProps<T>>,
+	(item: T) => void,
+	() => void
+] {
 	const toggles = useRef<Toggles<T>>();
 
 	const Modal = useCallback(
@@ -99,7 +111,10 @@ export function useModal<T>(): [React.FC<ModalProps<T>>, (item: T) => void, () =
 							)}
 						</div>
 
-						<div className="absolute top-3 right-3 cursor-pointer" onClick={close}>
+						<div
+							className="absolute top-3 right-3 cursor-pointer"
+							onClick={close}
+						>
 							<Clear className="stroke-dark h-8 w-8" />
 						</div>
 					</ModalBG>

@@ -21,18 +21,26 @@ const ChangePasswordPage: NextPage<ChangePasswordProps> = () => {
 
 	const [oldPasswordError, setOldPasswordError] = useState<string>("");
 	const [newPasswordError, setNewPasswordError] = useState<string>("");
-	const [secondNewPasswordError, setSecondNewPasswordError] = useState<string>("");
+	const [secondNewPasswordError, setSecondNewPasswordError] =
+		useState<string>("");
 
 	const [loading, setLoading] = useState(false);
 
 	const checkErrors = () => {
-		if (oldPassword.length === 0) setOldPasswordError("Merci de rentrer votre ancien mot de passe");
+		if (oldPassword.length === 0)
+			setOldPasswordError("Merci de rentrer votre ancien mot de passe");
 		if (newPassword.length === 0) setNewPasswordError("Mot de passe invalide");
-		if (secondNewPassword.length === 0) setSecondNewPasswordError("Mot de passe invalide");
+		if (secondNewPassword.length === 0)
+			setSecondNewPasswordError("Mot de passe invalide");
 		if (newPassword !== secondNewPassword)
 			setSecondNewPasswordError("Les deux mots de passe ne correspondent pas");
 
-		if (oldPassword && newPassword && secondNewPassword && newPassword === secondNewPassword)
+		if (
+			oldPassword &&
+			newPassword &&
+			secondNewPassword &&
+			newPassword === secondNewPassword
+		)
 			return true;
 		else return false;
 	};
@@ -46,7 +54,11 @@ const ChangePasswordPage: NextPage<ChangePasswordProps> = () => {
 
 	return (
 		<>
-			<Header backLink="/user/profile" title="Modification de mot de passe" displayLogin />
+			<Header
+				backLink="/user/profile"
+				title="Modification de mot de passe"
+				displayLogin
+			/>
 
 			<div className="w-full h-full flex flex-col items-center justify-center bg-white bg-bottom md:bg-[url('/assets/img/login_background.png')] md:bg-cover">
 				<div className="p-10 w-full bg-white mb-10 md:w-[500px] md:shadow md:rounded-lg -mt-16 md:mt-0">

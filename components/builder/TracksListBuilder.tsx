@@ -29,8 +29,8 @@ const gradeColors = {
 	None: "border-grey-light bg-grey-light text-white",
 };
 
-export const TracksListBuilder: React.FC<TracksListBuilderProps> = watchDependencies(
-	(props: TracksListBuilderProps) => {
+export const TracksListBuilder: React.FC<TracksListBuilderProps> =
+	watchDependencies((props: TracksListBuilderProps) => {
 		const session = useSession();
 		const [ModalDelete, showModalDelete] = useModal<Quark<Track>>();
 		const [ModalAddImage, showModalAddImage] = useModal();
@@ -73,14 +73,20 @@ export const TracksListBuilder: React.FC<TracksListBuilderProps> = watchDependen
 									/>
 
 									{track.grade && (
-										<div className={`ktext-subtitle ml-3 text-right ${gradeColors[grade]}`}>
+										<div
+											className={`ktext-subtitle ml-3 text-right ${gradeColors[grade]}`}
+										>
 											{track.grade}
 										</div>
 									)}
 									<div className="ml-4 w-3/4 flex flex-col">
 										<span className="ktext-base">{track.name}</span>
-										{track.isTraverse && <div className="ktext-subtext">Traversée</div>}
-										{track.isSittingStart && <div className="ktext-subtext">Départ assis</div>}
+										{track.isTraverse && (
+											<div className="ktext-subtext">Traversée</div>
+										)}
+										{track.isSittingStart && (
+											<div className="ktext-subtext">Départ assis</div>
+										)}
 									</div>
 
 									{props.onDrawButtonClick && (
@@ -129,7 +135,9 @@ export const TracksListBuilder: React.FC<TracksListBuilderProps> = watchDependen
 				<ModalDelete
 					buttonText="Confirmer"
 					imgUrl={staticUrl.deleteWarning}
-					onConfirm={(track) => deleteTrack(boulder, track, props.selectedTrack)}
+					onConfirm={(track) =>
+						deleteTrack(boulder, track, props.selectedTrack)
+					}
 				>
 					Etes-vous sûr de vouloir supprimer la voie ?
 				</ModalDelete>
@@ -143,7 +151,6 @@ export const TracksListBuilder: React.FC<TracksListBuilderProps> = watchDependen
 				</ModalAddImage>
 			</>
 		);
-	}
-);
+	});
 
 TracksListBuilder.displayName = "TracksListBuilder";

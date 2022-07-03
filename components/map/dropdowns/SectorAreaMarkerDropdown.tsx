@@ -12,13 +12,19 @@ interface SectorAreaMarkerDropdownProps {
 	onSelect?: () => void;
 }
 
-export const SectorAreaMarkerDropdown: React.FC<SectorAreaMarkerDropdownProps> = watchDependencies(
-	(props: SectorAreaMarkerDropdownProps) => {
+export const SectorAreaMarkerDropdown: React.FC<SectorAreaMarkerDropdownProps> =
+	watchDependencies((props: SectorAreaMarkerDropdownProps) => {
 		const session = useSession();
 
 		// surement que ces useCallback ne sont pas nécessaire si les props le sont
-		const deleteSector = useCallback(() => props.deleteSector(props.sector), [props.sector]);
-		const renameSector = useCallback(() => props.renameSector(props.sector), [props.sector]);
+		const deleteSector = useCallback(
+			() => props.deleteSector(props.sector),
+			[props.sector]
+		);
+		const renameSector = useCallback(
+			() => props.renameSector(props.sector),
+			[props.sector]
+		);
 
 		if (!session) return null;
 		return (
@@ -31,7 +37,6 @@ export const SectorAreaMarkerDropdown: React.FC<SectorAreaMarkerDropdownProps> =
 				onSelect={props.onSelect}
 			/>
 		);
-	}
-);
+	});
 
 SectorAreaMarkerDropdown.displayName = "SectorAreaMarkerDropdown";

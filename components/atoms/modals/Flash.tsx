@@ -36,7 +36,9 @@ export const Flash: React.FC<FlashProps> = (props: FlashProps) => {
 			<div
 				className={
 					"bg-white transition-[bottom] ease-in-out w-[90%] md:w-auto text-center z-full " +
-					(display ? "bottom-[5%] md:bottom-[8%]" : "-bottom-[20%] md:-bottom-[10%]") +
+					(display
+						? "bottom-[5%] md:bottom-[8%]"
+						: "-bottom-[20%] md:-bottom-[10%]") +
 					" rounded-lg shadow px-6 py-4 absolute left-[50%] translate-x-[-50%] cursor-pointer"
 				}
 				onClick={() => setDisplay(false)}

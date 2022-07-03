@@ -63,7 +63,9 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 							tracks={props.tracks}
 							selectedTrack={props.selectedTrack}
 							displayPhantomTracks={displayPhantomTracks}
-							displayTracksDetails={props.selectedTrack && !!props.selectedTrack()?.id}
+							displayTracksDetails={
+								props.selectedTrack && !!props.selectedTrack()?.id
+							}
 							onImageClick={() => setPortalOpen(true)}
 						/>
 					);
@@ -79,9 +81,19 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 				tracks={props.tracks}
 				selectedTrack={props.selectedTrack}
 				displayPhantomTracks={displayPhantomTracks}
-				displayTracksDetails={props.selectedTrack && !!props.selectedTrack()?.id}
+				displayTracksDetails={
+					props.selectedTrack && !!props.selectedTrack()?.id
+				}
 				onImageClick={() => setPortalOpen(true)}
 			/>
 		);
-	else return <CFImage alt="default boulder" sizeHint="100vw" modalable={false} zoomable={false} />;
+	else
+		return (
+			<CFImage
+				alt="default boulder"
+				sizeHint="100vw"
+				modalable={false}
+				zoomable={false}
+			/>
+		);
 };

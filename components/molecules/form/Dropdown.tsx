@@ -26,13 +26,19 @@ export const Dropdown: React.FC<DropdownProps> = React.memo(
 
 		useEffect(() => {
 			if (ref.current && position) {
-				if (ref.current.clientHeight + position.y > document.documentElement.clientHeight) {
+				if (
+					ref.current.clientHeight + position.y >
+					document.documentElement.clientHeight
+				) {
 					setPosition({
 						y: position.y - ref.current.clientHeight - 10,
 						x: position.x,
 					});
 				}
-				if (ref.current.clientWidth + position.x > document.documentElement.clientWidth) {
+				if (
+					ref.current.clientWidth + position.x >
+					document.documentElement.clientWidth
+				) {
 					setPosition({
 						y: position.y,
 						x: position.x - ref.current.clientWidth - 50,
@@ -52,7 +58,9 @@ export const Dropdown: React.FC<DropdownProps> = React.memo(
 				{props.options.map((opt, i) =>
 					opt.isSection ? (
 						<div
-							className={`text-grey-medium ktext-label uppercase ${i > 0 && "mt-5"}`}
+							className={`text-grey-medium ktext-label uppercase ${
+								i > 0 && "mt-5"
+							}`}
 							key={opt.value}
 							role="menuitem"
 							tabIndex={0}
@@ -62,7 +70,9 @@ export const Dropdown: React.FC<DropdownProps> = React.memo(
 					) : (
 						<div
 							className={`h-16 ${
-								opt.disabled ? "text-grey-medium cursor-default" : "text-dark cursor-pointer"
+								opt.disabled
+									? "text-grey-medium cursor-default"
+									: "text-dark cursor-pointer"
 							} ktext-base flex flex-row items-center`}
 							key={opt.value}
 							onPointerDown={(e) => {
@@ -77,7 +87,9 @@ export const Dropdown: React.FC<DropdownProps> = React.memo(
 						>
 							{opt.icon && (
 								<opt.icon
-									className={`${opt.disabled ? "stroke-grey-medium" : "stroke-black"} h-5 w-5 mr-5`}
+									className={`${
+										opt.disabled ? "stroke-grey-medium" : "stroke-black"
+									} h-5 w-5 mr-5`}
 								/>
 							)}
 							{opt.label || opt.value}

@@ -23,7 +23,8 @@ export const ModalRenameSector: React.FC<ModalRenameSectorProps> = (
 			inputRef.current.focus();
 			inputRef.current.addEventListener("keydown", handleUserKeyPress);
 			return () => {
-				if (inputRef.current) inputRef.current.removeEventListener("keydown", handleUserKeyPress);
+				if (inputRef.current)
+					inputRef.current.removeEventListener("keydown", handleUserKeyPress);
 			};
 		}
 	}, [inputRef.current]);
@@ -67,7 +68,8 @@ export const ModalRenameSector: React.FC<ModalRenameSectorProps> = (
 									name: e.target.value as Name,
 								}));
 								if (e.target.value.length > 2) setSectorNameError(undefined);
-								else setSectorNameError("Le nom doit avoir plus de 2 caractères");
+								else
+									setSectorNameError("Le nom doit avoir plus de 2 caractères");
 							}}
 						/>
 						<Button
@@ -78,7 +80,10 @@ export const ModalRenameSector: React.FC<ModalRenameSectorProps> = (
 						/>
 					</div>
 
-					<div className="absolute top-3 right-3 cursor-pointer" onClick={props.onClose}>
+					<div
+						className="absolute top-3 right-3 cursor-pointer"
+						onClick={props.onClose}
+					>
 						<Clear className="stroke-dark h-8 w-8" />
 					</div>
 				</div>

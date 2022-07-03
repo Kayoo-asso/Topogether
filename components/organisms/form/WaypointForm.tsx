@@ -24,7 +24,10 @@ export const WaypointForm: React.FC<WaypointFormProps> = watchDependencies(
 
 		return (
 			<div
-				className={"flex flex-col gap-6 h-full " + (props.className ? props.className : "")}
+				className={
+					"flex flex-col gap-6 h-full " +
+					(props.className ? props.className : "")
+				}
 				onClick={(e) => e.stopPropagation()}
 			>
 				<div className="flex flex-row gap-6 items-end">
@@ -102,7 +105,11 @@ export const WaypointForm: React.FC<WaypointFormProps> = watchDependencies(
 				/>
 
 				<div className="w-full flex grow items-end">
-					<Button content="Supprimer" onClick={() => props.onDeleteWaypoint()} fullWidth />
+					<Button
+						content="Supprimer"
+						onClick={() => props.onDeleteWaypoint()}
+						fullWidth
+					/>
 				</div>
 			</div>
 		);

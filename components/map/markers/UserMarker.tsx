@@ -13,10 +13,14 @@ type DeviceOrientation = {
 	gamma: number | null;
 };
 
-export const UserMarker: React.FC<UserMarkerProps> = (props: UserMarkerProps) => {
+export const UserMarker: React.FC<UserMarkerProps> = (
+	props: UserMarkerProps
+) => {
 	const breakpoint = useBreakpoint();
 	const { position, accuracy } = usePosition();
-	const center = position ? { lng: position[0], lat: position[1] } : { lng: 0, lat: 0 };
+	const center = position
+		? { lng: position[0], lat: position[1] }
+		: { lng: 0, lat: 0 };
 	const [orientation, setOrientation] = useState<DeviceOrientation>();
 	const alpha = orientation?.alpha;
 
@@ -33,7 +37,8 @@ export const UserMarker: React.FC<UserMarkerProps> = (props: UserMarkerProps) =>
 			});
 		};
 		window.addEventListener("deviceorientation", onDeviceOrientation);
-		return () => window.removeEventListener("deviceorientation", onDeviceOrientation);
+		return () =>
+			window.removeEventListener("deviceorientation", onDeviceOrientation);
 	}, []);
 
 	useEffect(() => {
@@ -72,7 +77,10 @@ export const UserMarker: React.FC<UserMarkerProps> = (props: UserMarkerProps) =>
 		position: center,
 	};
 	const mainHandlers: MarkerEventHandlers = {
-		onClick: useCallback((e) => props.onClick && props.onClick(e), [props.onClick]),
+		onClick: useCallback(
+			(e) => props.onClick && props.onClick(e),
+			[props.onClick]
+		),
 	};
 	useMarker(mainOptions, mainHandlers);
 

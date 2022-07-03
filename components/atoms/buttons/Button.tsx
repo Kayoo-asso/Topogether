@@ -34,7 +34,8 @@ export const Button: React.FC<ButtonProps> = ({
 				fullWidth ? "w-full " : ""
 			} ${className}`}
 			onClick={() => {
-				if (!loading && activated && props.onClick && !props.href) props.onClick();
+				if (!loading && activated && props.onClick && !props.href)
+					props.onClick();
 			}}
 		>
 			<div>{props.content}</div>

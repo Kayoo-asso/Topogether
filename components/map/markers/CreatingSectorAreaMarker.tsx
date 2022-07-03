@@ -13,7 +13,10 @@ const polylineOptions: google.maps.PolylineOptions = {
 	strokeWeight: 2,
 };
 
-function addPoint(path: google.maps.LatLng[], point: google.maps.LatLng): google.maps.LatLng[] {
+function addPoint(
+	path: google.maps.LatLng[],
+	point: google.maps.LatLng
+): google.maps.LatLng[] {
 	// add the point twice, the last point of the path is there to follow the map cursor
 	if (path.length === 0) return [point, point];
 	return [...path, point];
@@ -24,9 +27,9 @@ function addPoint(path: google.maps.LatLng[], point: google.maps.LatLng): google
 // - map.click: add point to path
 // - polyline.click: add point to path (edge case, due to following mouse pointer)
 // - map.move: last point in path follows mouse cursor
-export const CreatingSectorAreaMarker: React.FC<CreatingSectorAreaMarkerProps> = (
-	props: CreatingSectorAreaMarkerProps
-) => {
+export const CreatingSectorAreaMarker: React.FC<
+	CreatingSectorAreaMarkerProps
+> = (props: CreatingSectorAreaMarkerProps) => {
 	// NOTE: the last point of the path follows the mouse cursor, after we started drawing
 	const [path, setPath] = useState<google.maps.LatLng[]>([]);
 
@@ -104,7 +107,10 @@ export const CreatingSectorAreaMarker: React.FC<CreatingSectorAreaMarkerProps> =
 				onClick={() => {
 					// Remove the mouse cursor and close nicely
 					path[path.length - 1] = path[0];
-					const coords: GeoCoordinates[] = path.map((latlng) => [latlng.lng(), latlng.lat()]);
+					const coords: GeoCoordinates[] = path.map((latlng) => [
+						latlng.lng(),
+						latlng.lat(),
+					]);
 					props.onComplete(coords);
 					setPath([]);
 				}}

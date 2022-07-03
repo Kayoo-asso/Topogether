@@ -12,7 +12,9 @@ interface HeaderMobileProps {
 	children?: ReactNode;
 }
 
-export const HeaderMobile: React.FC<HeaderMobileProps> = (props: HeaderMobileProps) => {
+export const HeaderMobile: React.FC<HeaderMobileProps> = (
+	props: HeaderMobileProps
+) => {
 	const [menuOpen, setMenuOpen] = useState(false);
 	const [displayTitleTooltip, setDisplayTitleTooltip] = useState(false);
 
@@ -46,12 +48,19 @@ export const HeaderMobile: React.FC<HeaderMobileProps> = (props: HeaderMobilePro
 			</div>
 
 			{props.children && (
-				<div className="w-1/6 pl-5 flex flex-row items-center">{props.children}</div>
+				<div className="w-1/6 pl-5 flex flex-row items-center">
+					{props.children}
+				</div>
 			)}
 
 			{props.menuOptions && (
-				<button className="w-1/6 flex justify-center" onClick={() => setMenuOpen((x) => !x)}>
-					<MenuIcon className={`h-4 w-4 fill-white ${menuOpen ? "rotate-90" : ""}`} />
+				<button
+					className="w-1/6 flex justify-center"
+					onClick={() => setMenuOpen((x) => !x)}
+				>
+					<MenuIcon
+						className={`h-4 w-4 fill-white ${menuOpen ? "rotate-90" : ""}`}
+					/>
 				</button>
 			)}
 			{menuOpen && props.menuOptions && (

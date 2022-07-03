@@ -1,8 +1,16 @@
 import React, { useState, useCallback } from "react";
 import { Checkbox, RoundButton } from "components";
 import { Boulder, ClimbTechniques, gradeToLightGrade, LightGrade } from "types";
-import { GradeSliderInput, BitflagMultipleSelect, SliderInput } from "../molecules";
-import { ClimbTechniquesName, hasSomeFlags, toggleFlag } from "helpers/bitflags";
+import {
+	GradeSliderInput,
+	BitflagMultipleSelect,
+	SliderInput,
+} from "../molecules";
+import {
+	ClimbTechniquesName,
+	hasSomeFlags,
+	toggleFlag,
+} from "helpers/bitflags";
 import FilterIcon from "assets/icons/filter.svg";
 import { Quark } from "helpers/quarky";
 
@@ -46,9 +54,11 @@ export function filterBoulders(
 		let hasTechniques = options.techniques === ClimbTechniques.None;
 		if (!hasGrade || !hasTechniques) {
 			for (const track of boulder.tracks) {
-				hasTechniques = hasTechniques || hasSomeFlags(track.techniques, options.techniques);
+				hasTechniques =
+					hasTechniques || hasSomeFlags(track.techniques, options.techniques);
 				const lightGrade = gradeToLightGrade(track.grade);
-				hasGrade = hasGrade || (lightGrade >= minGrade && lightGrade <= maxGrade);
+				hasGrade =
+					hasGrade || (lightGrade >= minGrade && lightGrade <= maxGrade);
 			}
 			if (!hasGrade || !hasTechniques) continue;
 		}
@@ -64,7 +74,10 @@ export const BoulderFilters: React.FC<BoulderFiltersProps> = ({
 	const [open, setOpen] = useState(initialOpen);
 
 	const updateBoulderFilters = useCallback(
-		<K extends keyof BoulderFilterOptions>(option: K, value: BoulderFilterOptions[K]) => {
+		<K extends keyof BoulderFilterOptions>(
+			option: K,
+			value: BoulderFilterOptions[K]
+		) => {
 			props.onChange({
 				...props.values,
 				[option]: value,
@@ -132,7 +145,9 @@ export const BoulderFilters: React.FC<BoulderFiltersProps> = ({
 						<div className="text-white ktext-subtitle ml-3">Filtres</div>
 					</div>
 
-					<div className="flex flex-col gap-6 min-h-[100px] p-5 pb-8">{renderFilters()}</div>
+					<div className="flex flex-col gap-6 min-h-[100px] p-5 pb-8">
+						{renderFilters()}
+					</div>
 				</div>
 			)}
 		</>

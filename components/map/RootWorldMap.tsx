@@ -48,7 +48,10 @@ export const RootWorldMap: React.FC<RootWorldMapProps> = watchDependencies(
 			if (options.types.length && !options.types.includes(topo.type!)) {
 				return false;
 			}
-			if (topo.nbBoulders < options.boulderRange[0] || topo.nbBoulders > options.boulderRange[1]) {
+			if (
+				topo.nbBoulders < options.boulderRange[0] ||
+				topo.nbBoulders > options.boulderRange[1]
+			) {
 				return false;
 			}
 			if (options.gradeRange[0] !== 3 || options.gradeRange[1] !== 9) {
@@ -70,7 +73,11 @@ export const RootWorldMap: React.FC<RootWorldMapProps> = watchDependencies(
 
 		return (
 			<>
-				<HeaderDesktop backLink="#" title="Carte des topo" displayLogin={user ? false : true} />
+				<HeaderDesktop
+					backLink="#"
+					title="Carte des topo"
+					displayLogin={user ? false : true}
+				/>
 
 				<div className="flex flex-row relative h-contentPlusHeader md:h-full">
 					{user && <LeftbarDesktop currentMenuItem="MAP" />}
@@ -85,12 +92,21 @@ export const RootWorldMap: React.FC<RootWorldMapProps> = watchDependencies(
 						topoFiltersDomain={topoFilterDomain}
 					>
 						{props.lightTopos.filter(filterFn).map((topo) => (
-							<TopoMarker key={topo.id} topo={topo} onClick={toggleTopoSelect} />
+							<TopoMarker
+								key={topo.id}
+								topo={topo}
+								onClick={toggleTopoSelect}
+							/>
 						))}
 					</MapControl>
 
 					<Show when={() => selectedTopo}>
-						{(topo) => <TopoPreview topo={topo} onClose={() => setSelectedTopo(undefined)} />}
+						{(topo) => (
+							<TopoPreview
+								topo={topo}
+								onClose={() => setSelectedTopo(undefined)}
+							/>
+						)}
 					</Show>
 				</div>
 			</>

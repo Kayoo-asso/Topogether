@@ -62,7 +62,13 @@ export const AdminActionDropdown: React.FC<AdminActionDropdownProps> = (
 		]
 	);
 
-	return <Dropdown position={props.position} options={actions} onSelect={props.onSelect} />;
+	return (
+		<Dropdown
+			position={props.position}
+			options={actions}
+			onSelect={props.onSelect}
+		/>
+	);
 };
 
 AdminActionDropdown.displayName = "AdminActionDropdown";

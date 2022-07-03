@@ -19,7 +19,9 @@ export class QuarkIter<T> implements Iterable<T> {
 	private result: Signal<T[]> | null;
 
 	constructor(source: CloneInitIterator<T> | Iterable<T>) {
-		this.iterator = isIterable(source) ? new CloneResetIterableIterator(source) : source;
+		this.iterator = isIterable(source)
+			? new CloneResetIterableIterator(source)
+			: source;
 		this.result = null;
 	}
 

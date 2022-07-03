@@ -35,14 +35,19 @@ export const WaypointSlide: React.FC<WaypointSlideProps> = watchDependencies(
 							onClick={() => {
 								const data = [
 									new ClipboardItem({
-										"text/plain": new Blob([waypoint.location[1] + "," + waypoint.location[0]], {
-											type: "text/plain",
-										}),
+										"text/plain": new Blob(
+											[waypoint.location[1] + "," + waypoint.location[0]],
+											{
+												type: "text/plain",
+											}
+										),
 									}),
 								];
 								navigator.clipboard.write(data).then(
 									function () {
-										setFlashMessage("Coordonnées copiées dans le presse papier.");
+										setFlashMessage(
+											"Coordonnées copiées dans le presse papier."
+										);
 									},
 									function () {
 										setFlashMessage("Impossible de copier les coordonées.");
@@ -75,7 +80,9 @@ export const WaypointSlide: React.FC<WaypointSlideProps> = watchDependencies(
 		return (
 			<>
 				{breakpoint === "mobile" && (
-					<SlideoverMobile onClose={props.onClose}>{waypointContent()}</SlideoverMobile>
+					<SlideoverMobile onClose={props.onClose}>
+						{waypointContent()}
+					</SlideoverMobile>
 				)}
 				{breakpoint !== "mobile" && (
 					<SlideagainstRightDesktop open onClose={props.onClose}>

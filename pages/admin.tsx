@@ -2,7 +2,12 @@ import { api } from "helpers/services";
 import { RootAdmin } from "components/pages/RootAdmin";
 import type { DBLightTopo, User } from "types";
 import { quarkifyLightTopos } from "helpers/quarkifyTopo";
-import { withRouting, getSessionId, loginRedirect, getUserInitialProps } from "helpers/serverStuff";
+import {
+	withRouting,
+	getSessionId,
+	loginRedirect,
+	getUserInitialProps,
+} from "helpers/serverStuff";
 
 type AdminProps = {
 	user: User & { role: "ADMIN" };

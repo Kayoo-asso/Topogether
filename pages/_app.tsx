@@ -31,14 +31,23 @@ const CustomApp = ({ Component, pageProps, session, userAgent }: Props) => {
 					name="viewport"
 					content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no"
 				/>
-				<meta name="description" content="Des topos gratuits, complets et collaboratifs" />
+				<meta
+					name="description"
+					content="Des topos gratuits, complets et collaboratifs"
+				/>
 				<meta name="theme-color" content="#04D98B" />
-				<meta name="keywords" content="Escalade Climbing Topo Topographie Grimpe Cartographie" />
+				<meta
+					name="keywords"
+					content="Escalade Climbing Topo Topographie Grimpe Cartographie"
+				/>
 
 				<title>Topogether</title>
 				<link rel="manifest" href="/manifest.json" />
 
-				<link rel="apple-touch-icon" href="/assets/touch/icon-512x512.png"></link>
+				<link
+					rel="apple-touch-icon"
+					href="/assets/touch/icon-512x512.png"
+				></link>
 				<link
 					rel="apple-touch-startup-image"
 					href="/assets/splash/splashscreen640.png"
@@ -86,7 +95,10 @@ const CustomApp = ({ Component, pageProps, session, userAgent }: Props) => {
 							>
 								<Component {...pageProps} />
 							</div>
-							<div id="footer" className="bg-dark z-500 absolute bottom-0 h-shell md:hidden">
+							<div
+								id="footer"
+								className="bg-dark z-500 absolute bottom-0 h-shell md:hidden"
+							>
 								<ShellMobile />
 							</div>
 						</NavigationLoader>
@@ -97,12 +109,16 @@ const CustomApp = ({ Component, pageProps, session, userAgent }: Props) => {
 	);
 };
 
-CustomApp.getInitialProps = async (context: AppContext): Promise<InitialProps> => {
+CustomApp.getInitialProps = async (
+	context: AppContext
+): Promise<InitialProps> => {
 	const req = context.ctx.req;
 
 	const userAgent = isServer ? req?.headers["user-agent"] : navigator.userAgent;
 
-	const sessionId = isServer ? await initSupabaseSession(req) : supabaseClient.auth.user()?.id;
+	const sessionId = isServer
+		? await initSupabaseSession(req)
+		: supabaseClient.auth.user()?.id;
 
 	// Hack to pass the sessionId to any page-level getInitialProps function
 	(context.ctx as any).sessionId = sessionId;

@@ -40,7 +40,9 @@ export const ImageButton: React.FC<ImageButtonProps> = ({
 		<div
 			ref={observe}
 			className={
-				(activated ? "text-main border-main" : "text-grey-medium border-grey-medium") +
+				(activated
+					? "text-main border-main"
+					: "text-grey-medium border-grey-medium") +
 				"ktext-subtext relative text-center shadow border-2 w-full flex flex-col justify-center items-center group cursor-pointer"
 			}
 			onClick={props.onClick}
@@ -48,7 +50,9 @@ export const ImageButton: React.FC<ImageButtonProps> = ({
 				height: containerWidth,
 			}}
 		>
-			{loading && <Spinner className="stroke-main w-10 h-10 animate-spin m-2" />}
+			{loading && (
+				<Spinner className="stroke-main w-10 h-10 animate-spin m-2" />
+			)}
 			{!loading && props.image && (
 				<>
 					{props.onDelete && (

@@ -19,8 +19,19 @@ interface MultipleImageInputProps {
 	onLoadEnd?: () => void;
 }
 
-export const MultipleImageInput = forwardRef<HTMLInputElement, MultipleImageInputProps>(
-	({ rows = 2, cols = 3, allowUpload = true, ...props }: MultipleImageInputProps, ref) => {
+export const MultipleImageInput = forwardRef<
+	HTMLInputElement,
+	MultipleImageInputProps
+>(
+	(
+		{
+			rows = 2,
+			cols = 3,
+			allowUpload = true,
+			...props
+		}: MultipleImageInputProps,
+		ref
+	) => {
 		const [error, setError] = useState<string>();
 
 		let nbVisible = rows * cols;
@@ -32,7 +43,9 @@ export const MultipleImageInput = forwardRef<HTMLInputElement, MultipleImageInpu
 		const [page, setPage] = useState<number>(0);
 		useEffect(() => {
 			if (props.selected) {
-				const indexOfTheImage = props.images.map((img) => img.id).indexOf(props.selected);
+				const indexOfTheImage = props.images
+					.map((img) => img.id)
+					.indexOf(props.selected);
 				const pageToDisplay = Math.trunc(indexOfTheImage / nbVisible);
 				setPage(pageToDisplay);
 			}
@@ -66,8 +79,9 @@ export const MultipleImageInput = forwardRef<HTMLInputElement, MultipleImageInpu
 										.quarks()
 										.filter(
 											(track) =>
-												track().lines.find((line) => line.imageId === toDisplay[index].id) !==
-												undefined
+												track().lines.find(
+													(line) => line.imageId === toDisplay[index].id
+												) !== undefined
 										)}
 									selected={toDisplay[index].id === props.selected}
 									onClick={props.onImageClick}

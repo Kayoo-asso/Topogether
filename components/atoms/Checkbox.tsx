@@ -9,7 +9,10 @@ interface CheckboxProps {
 	onClick: (checked: boolean) => void;
 }
 
-export const Checkbox: React.FC<CheckboxProps> = ({ checked = false, ...props }: CheckboxProps) => {
+export const Checkbox: React.FC<CheckboxProps> = ({
+	checked = false,
+	...props
+}: CheckboxProps) => {
 	const handleClick = useCallback(() => {
 		props.onClick(!checked);
 	}, [props]);
@@ -35,9 +38,14 @@ export const Checkbox: React.FC<CheckboxProps> = ({ checked = false, ...props }:
 					className={`absolute h-5 w-5 stroke-dark rounded-[0.2rem] 
           border-2 border-dark ${containerOpacity} ${rotation} transition-all`}
 				/>
-				<Checked className={`absolute h-5 w-5 stroke-main transition-opacity ${iconOpacity}`} />
+				<Checked
+					className={`absolute h-5 w-5 stroke-main transition-opacity ${iconOpacity}`}
+				/>
 			</div>
-			<label htmlFor="1" className="ktext-base main inline-block ml-2 cursor-pointer leading-6">
+			<label
+				htmlFor="1"
+				className="ktext-base main inline-block ml-2 cursor-pointer leading-6"
+			>
 				{props.label}
 			</label>
 		</div>

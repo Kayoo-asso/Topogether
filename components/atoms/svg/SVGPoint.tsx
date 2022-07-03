@@ -31,7 +31,9 @@ export const SVGPoint: React.FC<SVGPointProps> = ({
 		offsetY: 0,
 	});
 
-	const handlePointerDown: React.PointerEventHandler<SVGImageElement> = (e: React.PointerEvent) => {
+	const handlePointerDown: React.PointerEventHandler<SVGImageElement> = (
+		e: React.PointerEvent
+	) => {
 		if (draggable && props.vb.current) {
 			e.preventDefault();
 			e.stopPropagation();
@@ -48,7 +50,9 @@ export const SVGPoint: React.FC<SVGPointProps> = ({
 			}
 		}
 	};
-	const handlePointerMove: React.PointerEventHandler<SVGImageElement> = (e: React.PointerEvent) => {
+	const handlePointerMove: React.PointerEventHandler<SVGImageElement> = (
+		e: React.PointerEvent
+	) => {
 		if (position.active && props.vb.current && props.onDrag) {
 			e.preventDefault();
 			e.stopPropagation();
@@ -60,7 +64,9 @@ export const SVGPoint: React.FC<SVGPointProps> = ({
 			}
 		}
 	};
-	const handlePointerUp: React.PointerEventHandler<SVGImageElement> = (e: React.PointerEvent) => {
+	const handlePointerUp: React.PointerEventHandler<SVGImageElement> = (
+		e: React.PointerEvent
+	) => {
 		if (position.active && props.vb.current && props.onDrag) {
 			e.preventDefault();
 			e.stopPropagation();
@@ -82,9 +88,9 @@ export const SVGPoint: React.FC<SVGPointProps> = ({
 		<image
 			x={iconHref.includes("line-point") ? props.x : props.x - props.size / 2}
 			y={iconHref.includes("line-point") ? props.y : props.y - props.size / 2}
-			className={`touch-none ${className} ${draggable && !eraser ? "cursor-pointer" : ""}${
-				eraser ? " hover:scale-150 origin-center" : ""
-			}`}
+			className={`touch-none ${className} ${
+				draggable && !eraser ? "cursor-pointer" : ""
+			}${eraser ? " hover:scale-150 origin-center" : ""}`}
 			style={{
 				transformBox: "fill-box",
 			}}

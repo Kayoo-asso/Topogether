@@ -64,7 +64,9 @@ const toMultiLineString = (l?: Position[][]): MultiLineString | null => {
 	if (!l) return null;
 	l.forEach((x) => {
 		if (x.length < 2) {
-			throw new Error("Error: found a line within a MultiLineString with less than 2 points");
+			throw new Error(
+				"Error: found a line within a MultiLineString with less than 2 points"
+			);
 		}
 	});
 	return {
@@ -111,7 +113,11 @@ export class DBConvert {
 		return result;
 	}
 
-	static track(track: Track | TrackData, topoId: UUID, boulderId: UUID): DBTrack {
+	static track(
+		track: Track | TrackData,
+		topoId: UUID,
+		boulderId: UUID
+	): DBTrack {
 		return {
 			id: track.id,
 			index: track.index,

@@ -1,6 +1,17 @@
-import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
+import React, {
+	useCallback,
+	useContext,
+	useEffect,
+	useRef,
+	useState,
+} from "react";
 import { Quark, useCreateQuark, watchDependencies } from "helpers/quarky";
-import { GeoCoordinates, PolygonEventHandlers, PolyMouseEvent, Sector } from "types";
+import {
+	GeoCoordinates,
+	PolygonEventHandlers,
+	PolyMouseEvent,
+	Sector,
+} from "types";
 import { isMouseEvent, isPointerEvent, isTouchEvent } from "./BoulderMarker";
 import { toLatLng, usePolygon } from "helpers/map";
 import { useMap } from "..";
@@ -14,8 +25,8 @@ interface SectorAreaMarkerProps {
 	onContextMenu?: (e: Event, sector: Quark<Sector>) => void;
 }
 
-export const SectorAreaMarker: React.FC<SectorAreaMarkerProps> = watchDependencies(
-	({ selected = false, ...props }: SectorAreaMarkerProps) => {
+export const SectorAreaMarker: React.FC<SectorAreaMarkerProps> =
+	watchDependencies(({ selected = false, ...props }: SectorAreaMarkerProps) => {
 		const sector = props.sector();
 		const map = useMap();
 
@@ -35,9 +46,14 @@ export const SectorAreaMarker: React.FC<SectorAreaMarkerProps> = watchDependenci
 		let dragging = useRef(false);
 
 		const updatePath = useCallback(() => {
-			const newBounds: google.maps.LatLng[] | undefined = polygon.current?.getPath().getArray();
+			const newBounds: google.maps.LatLng[] | undefined = polygon.current
+				?.getPath()
+				.getArray();
 			if (newBounds && !dragging.current) {
-				const newPath: GeoCoordinates[] = newBounds.map((b) => [b.lng(), b.lat()]);
+				const newPath: GeoCoordinates[] = newBounds.map((b) => [
+					b.lng(),
+					b.lat(),
+				]);
 				props.sector.set((s) => ({
 					...s,
 					path: newPath,
@@ -45,7 +61,9 @@ export const SectorAreaMarker: React.FC<SectorAreaMarkerProps> = watchDependenci
 			}
 		}, [props.sector, dragging]);
 
-		const [timer, setTimer] = useState<ReturnType<typeof setTimeout>>(setTimeout(() => {}, 0));
+		const [timer, setTimer] = useState<ReturnType<typeof setTimeout>>(
+			setTimeout(() => {}, 0)
+		);
 		const isPressing = useCreateQuark(false);
 
 		const handleContextMenu = useCallback(
@@ -119,7 +137,11 @@ export const SectorAreaMarker: React.FC<SectorAreaMarkerProps> = watchDependenci
 					"insert_at",
 					updatePath
 				);
-				const l2 = google.maps.event.addListener(polygon.current.getPath(), "set_at", updatePath);
+				const l2 = google.maps.event.addListener(
+					polygon.current.getPath(),
+					"set_at",
+					updatePath
+				);
 				const l3 = google.maps.event.addListener(
 					polygon.current.getPath(),
 					"remove_at",
@@ -134,7 +156,6 @@ export const SectorAreaMarker: React.FC<SectorAreaMarkerProps> = watchDependenci
 		}, [polygon.current?.getPath(), updatePath, props.sector]);
 
 		return null;
-	}
-);
+	});
 
 SectorAreaMarker.displayName = "Sector Area Marker";

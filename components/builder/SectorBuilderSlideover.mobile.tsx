@@ -10,7 +10,10 @@ interface SectorBuilderSlideoverMobileProps {
 	selectedBoulder: SelectQuarkNullable<Boulder>;
 	onCreateSector: () => void;
 	onBoulderSelect: (boulderQuark: Quark<Boulder>) => void;
-	onTrackSelect: (trackQuark: Quark<Track>, boulderQuark: Quark<Boulder>) => void;
+	onTrackSelect: (
+		trackQuark: Quark<Track>,
+		boulderQuark: Quark<Boulder>
+	) => void;
 	onRenameSector: (sectorQuark: Quark<Sector>) => void;
 	onDeleteBoulder: (boulderQuark: Quark<Boulder>) => void;
 	onClose: () => void;

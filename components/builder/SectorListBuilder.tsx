@@ -4,7 +4,12 @@ import { arrayMove, splitArray } from "helpers/utils";
 import { createTrack } from "helpers/builder";
 import { Quark, SelectQuarkNullable, watchDependencies } from "helpers/quarky";
 import { Boulder, Sector, Topo, Track, UUID } from "types";
-import { DragDropContext, Draggable, Droppable, DropResult } from "react-beautiful-dnd";
+import {
+	DragDropContext,
+	Draggable,
+	Droppable,
+	DropResult,
+} from "react-beautiful-dnd";
 import { useSession } from "helpers/services";
 
 import ArrowSimple from "assets/icons/arrow-simple.svg";
@@ -22,8 +27,8 @@ export interface SectorListBuilderProps {
 }
 
 // Note: some cleanup happened here
-export const SectorListBuilder: React.FC<SectorListBuilderProps> = watchDependencies(
-	(props: SectorListBuilderProps) => {
+export const SectorListBuilder: React.FC<SectorListBuilderProps> =
+	watchDependencies((props: SectorListBuilderProps) => {
 		const session = useSession()!;
 
 		const selectedBoulder = props.selectedBoulder();
@@ -44,7 +49,9 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> = watchDependen
 		// Thus, it's cheaper and easier to track the sectors we hide
 		const [hiddenSectors, setHiddenSectors] = useState<Set<UUID>>(new Set());
 		// The reverse is true for boulders
-		const [displayedBoulders, setDisplayedBoulders] = useState<Set<UUID>>(new Set());
+		const [displayedBoulders, setDisplayedBoulders] = useState<Set<UUID>>(
+			new Set()
+		);
 
 		const toggleSector = (sector: Sector) => {
 			const hs = new Set(hiddenSectors);
@@ -82,7 +89,9 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> = watchDependen
 							lonelyBoulders: newLonelyBoulders,
 						}));
 					} else {
-						const sector = sectors.findQuark((s) => s.id === res.source.droppableId);
+						const sector = sectors.findQuark(
+							(s) => s.id === res.source.droppableId
+						);
 						if (sector) {
 							let newSectorBoulders = [...sector().boulders];
 							newSectorBoulders = arrayMove(
@@ -111,13 +120,20 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> = watchDependen
 					}
 					return (
 						<div className="flex flex-col mb-10 pb-6">
-							<div className="ktext-label text-grey-medium">Secteur {sectorIndex + 1}</div>
+							<div className="ktext-label text-grey-medium">
+								Secteur {sectorIndex + 1}
+							</div>
 							<div className="ktext-section-title text-main mb-1 flex flex-row items-center">
-								<button className="pr-3 cursor-pointer" onClick={() => toggleSector(sector)}>
+								<button
+									className="pr-3 cursor-pointer"
+									onClick={() => toggleSector(sector)}
+								>
 									<ArrowSimple
 										className={
 											"w-3 h-3 stroke-main stroke-2 " +
-											(hiddenSectors.has(sector.id) ? "rotate-180" : "-rotate-90")
+											(hiddenSectors.has(sector.id)
+												? "rotate-180"
+												: "-rotate-90")
 										}
 									/>
 								</button>
@@ -142,7 +158,9 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> = watchDependen
 										(draggingSectorId === sector.id ? "bg-grey-superlight" : "")
 									}
 								>
-									{quarks.length === 0 && <div className="">Aucun rocher référencé</div>}
+									{quarks.length === 0 && (
+										<div className="">Aucun rocher référencé</div>
+									)}
 									<DraggableList
 										items={quarks.map((boulderQuark, index) => {
 											const boulder = boulderQuark();
@@ -158,12 +176,16 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> = watchDependen
 															props.onBoulderSelect(boulderQuark);
 															toggleBoulder(boulder);
 														}}
-														onDeleteClick={() => props.onDeleteBoulder(boulderQuark)}
+														onDeleteClick={() =>
+															props.onDeleteBoulder(boulderQuark)
+														}
 														onTrackClick={(trackQuark) =>
 															props.onTrackSelect(trackQuark, boulderQuark)
 														}
 														displayCreateTrack
-														onCreateTrack={() => createTrack(boulder, session.id)}
+														onCreateTrack={() =>
+															createTrack(boulder, session.id)
+														}
 													/>
 												</div>
 											);
@@ -249,7 +271,6 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> = watchDependen
         </DragDropContext> */}
 			</div>
 		);
-	}
-);
+	});
 
 SectorListBuilder.displayName = "SectorList Builder";

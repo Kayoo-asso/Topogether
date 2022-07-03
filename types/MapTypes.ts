@@ -139,7 +139,9 @@ type EventHandlerName = Events[number][1];
 // in the`mapEvents` array and the `MapEventHandlers` type.
 // (this is an isomorphism proof)
 // These two functions are the proof.
-function _handlersIsomorphismForward(handler: EventHandlerName): keyof MapEventHandlers {
+function _handlersIsomorphismForward(
+	handler: EventHandlerName
+): keyof MapEventHandlers {
 	return handler;
 }
 

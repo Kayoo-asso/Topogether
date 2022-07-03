@@ -6,7 +6,13 @@ import {
 	useQuarkyCallback,
 	watchDependencies,
 } from "helpers/quarky";
-import { Boulder, GeoCoordinates, MarkerEventHandlers, Topo, UUID } from "types";
+import {
+	Boulder,
+	GeoCoordinates,
+	MarkerEventHandlers,
+	Topo,
+	UUID,
+} from "types";
 import { boulderChanged } from "helpers/builder";
 import { toLatLng, useMarker, markerSize } from "helpers/map";
 
@@ -55,7 +61,9 @@ export const BoulderMarker = watchDependencies(
 		const selected = selectedBoulder?.id === boulder.id;
 
 		const icon: google.maps.Icon = {
-			url: selected ? "/assets/icons/colored/_rock_bold.svg" : "/assets/icons/colored/_rock.svg",
+			url: selected
+				? "/assets/icons/colored/_rock_bold.svg"
+				: "/assets/icons/colored/_rock.svg",
 			scaledSize: markerSize(30),
 			labelOrigin: new google.maps.Point(15, 34),
 		};
@@ -76,7 +84,9 @@ export const BoulderMarker = watchDependencies(
 			},
 		};
 
-		const [timer, setTimer] = useState<ReturnType<typeof setTimeout>>(setTimeout(() => {}, 0));
+		const [timer, setTimer] = useState<ReturnType<typeof setTimeout>>(
+			setTimeout(() => {}, 0)
+		);
 		const isPressing = useCreateQuark(false);
 		const isDragging = useCreateQuark(false);
 

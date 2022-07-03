@@ -1,6 +1,9 @@
 import { useEffect } from "react";
 
-export function useContextMenu(close: () => void, container?: HTMLElement | null) {
+export function useContextMenu(
+	close: () => void,
+	container?: HTMLElement | null
+) {
 	useEffect(() => {
 		const onScroll = (e: Event) => e.preventDefault();
 		const onMouseDown = (e: MouseEvent) => {

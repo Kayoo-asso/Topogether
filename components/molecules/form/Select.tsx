@@ -18,7 +18,11 @@ interface SelectProps<T> {
 	onChange: (value: T) => void;
 }
 
-export function Select<T>({ big = false, white = false, ...props }: SelectProps<T>) {
+export function Select<T>({
+	big = false,
+	white = false,
+	...props
+}: SelectProps<T>) {
 	const ref = useRef<HTMLInputElement>(null);
 	const [isOpen, setIsOpen] = useState(false);
 	const selected = props.options.find((x) => x[0] === props.value);
@@ -44,9 +48,11 @@ export function Select<T>({ big = false, white = false, ...props }: SelectProps<
 				pointer
 			/>
 			<ArrowSimple
-				className={`w-4 h-4 absolute right-0 ${isOpen ? "top-[14px]" : "top-[8px]"} ${
-					isOpen ? "rotate-90" : "-rotate-90"
-				} ${white ? "fill-white" : "fill-dark"}`}
+				className={`w-4 h-4 absolute right-0 ${
+					isOpen ? "top-[14px]" : "top-[8px]"
+				} ${isOpen ? "rotate-90" : "-rotate-90"} ${
+					white ? "fill-white" : "fill-dark"
+				}`}
 			/>
 			{isOpen && (
 				<div className="pl-4 py-2 bg-white rounded-b max-h-[320px] absolute overflow-y-auto overflow-x-none z-100 w-full right-0 shadow">

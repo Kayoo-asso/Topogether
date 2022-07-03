@@ -57,7 +57,8 @@ export const LikedList: React.FC<LikedListProps> = (props: LikedListProps) => {
 					props.onUnlikeTopo(topo);
 				}}
 			>
-				Le topo sera retiré de la liste de vos topos likés. Voulez-vous continuer ?
+				Le topo sera retiré de la liste de vos topos likés. Voulez-vous
+				continuer ?
 			</ModalUnlike>
 		</>
 	);

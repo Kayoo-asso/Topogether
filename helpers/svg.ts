@@ -41,7 +41,12 @@ const opposedLine = (pointA: Position, pointB: Position) => {
 		angle: Math.atan2(lengthY, lengthX),
 	};
 };
-const controlPoint = (current: Position, previous: Position, next: Position, reverse?: boolean) => {
+const controlPoint = (
+	current: Position,
+	previous: Position,
+	next: Position,
+	reverse?: boolean
+) => {
 	// When 'current' is the first or last point of the array
 	// 'previous' or 'next' don't exist.
 	// Replace with 'current'
@@ -73,7 +78,10 @@ const bezierCommand = (point: Position, i: number, a: Position[]) => {
 };
 
 type PathEnum = "LINE" | "CURVE";
-export const getPathFromPoints = (points: Position[], type: PathEnum = "LINE") => {
+export const getPathFromPoints = (
+	points: Position[],
+	type: PathEnum = "LINE"
+) => {
 	let command: (point: Position, i: number, a: Position[]) => string;
 	if (type === "LINE") command = lineCommand;
 	if (type === "CURVE") command = bezierCommand;

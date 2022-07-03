@@ -45,13 +45,16 @@ export const GradeSelector: React.FC<GradeselectorDrawerProps> = (
 			<span
 				className={
 					"flex flex-row cursor-pointer items-center " +
-					(props.grade ? "ktext-base text-white" : "ktext-title text-grey-medium")
+					(props.grade
+						? "ktext-base text-white"
+						: "ktext-title text-grey-medium")
 				}
 				onClick={() => props.setOpen(!props.open)}
 			>
 				<Circle
 					className={
-						"h-6 w-6 mr-2 " + (props.grade ? getGradeColorClass(props.grade) : "fill-grey-medium")
+						"h-6 w-6 mr-2 " +
+						(props.grade ? getGradeColorClass(props.grade) : "fill-grey-medium")
 					}
 				/>
 				{props.grade ? props.grade : "Diff"}

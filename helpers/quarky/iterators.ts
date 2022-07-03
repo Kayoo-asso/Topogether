@@ -25,7 +25,9 @@ export class CloneResetIterableIterator<T> implements CloneInitIterator<T> {
 	}
 }
 
-export class FilterIterator<T, U extends T = T> implements CloneInitIterator<T> {
+export class FilterIterator<T, U extends T = T>
+	implements CloneInitIterator<T>
+{
 	constructor(
 		private source: CloneInitIterator<T>,
 		private predicate: ((item: T) => item is U) | ((item: T) => boolean)
@@ -51,7 +53,10 @@ export class FilterIterator<T, U extends T = T> implements CloneInitIterator<T> 
 export class MapIterator<T, U> implements CloneInitIterator<U> {
 	private count: number = 0;
 
-	constructor(private source: CloneInitIterator<T>, private fn: (item: T, index: number) => U) {}
+	constructor(
+		private source: CloneInitIterator<T>,
+		private fn: (item: T, index: number) => U
+	) {}
 
 	next(): IteratorResult<U> {
 		const res = this.source.next();
@@ -108,7 +113,10 @@ export class FlattenIterator<T> implements CloneInitIterator<Flattened<T>> {
 }
 
 export class ConcatIterator<T> implements CloneInitIterator<T> {
-	constructor(private first: CloneInitIterator<T>, private second: CloneInitIterator<T>) {}
+	constructor(
+		private first: CloneInitIterator<T>,
+		private second: CloneInitIterator<T>
+	) {}
 
 	next(): IteratorResult<T> {
 		const res = this.first.next();
@@ -127,7 +135,10 @@ export class ConcatIterator<T> implements CloneInitIterator<T> {
 }
 
 export class ZipIterator<T> implements CloneInitIterator<[T, T]> {
-	constructor(private first: CloneInitIterator<T>, private second: CloneInitIterator<T>) {}
+	constructor(
+		private first: CloneInitIterator<T>,
+		private second: CloneInitIterator<T>
+	) {}
 
 	next(): IteratorResult<[T, T]> {
 		const left = this.first.next();

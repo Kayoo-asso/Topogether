@@ -23,10 +23,14 @@ const Handle = (props: HandleProps) => (
 
 interface GradeSliderInputProps {
 	values: [Exclude<LightGrade, "None">, Exclude<LightGrade, "None">];
-	onChange: (range: [Exclude<LightGrade, "None">, Exclude<LightGrade, "None">]) => void;
+	onChange: (
+		range: [Exclude<LightGrade, "None">, Exclude<LightGrade, "None">]
+	) => void;
 }
 
-export const GradeSliderInput: React.FC<GradeSliderInputProps> = (props: GradeSliderInputProps) => (
+export const GradeSliderInput: React.FC<GradeSliderInputProps> = (
+	props: GradeSliderInputProps
+) => (
 	<BaseSliderInput
 		values={props.values}
 		domain={[3, 9]}

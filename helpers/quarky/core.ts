@@ -69,7 +69,9 @@ export interface ExplicitEffectOptions {
 }
 
 export type SignalValue<T> = T extends Signal<infer U> ? U : never;
-export type EvaluatedDeps<T extends Array<Signal<any>> | ReadonlyArray<Signal<any>>> = {
+export type EvaluatedDeps<
+	T extends Array<Signal<any>> | ReadonlyArray<Signal<any>>
+> = {
 	[K in keyof T]: SignalValue<T[K]>;
 };
 
@@ -189,7 +191,10 @@ export function quark<T>(initial: T, options?: QuarkOptions<T>): Quark<T> {
 	return read;
 }
 
-export function derive<T>(fn: () => T, options?: DerivationOptions<T>): Signal<T> {
+export function derive<T>(
+	fn: () => T,
+	options?: DerivationOptions<T>
+): Signal<T> {
 	if (isServer) {
 		return fn;
 	}
@@ -216,7 +221,10 @@ export function effect<T extends Signal<any>[] | readonly Signal<any>[]>(
 	computation: (deps: EvaluatedDeps<T>, onCleanup: CleanupHelper) => void,
 	options?: ExplicitEffectOptions
 ): Effect;
-export function effect(computation: () => void, options?: EffectOptions): Effect;
+export function effect(
+	computation: () => void,
+	options?: EffectOptions
+): Effect;
 export function effect(arg1: any, arg2?: any, arg3?: any): Effect {
 	// Effects don't run on server
 	if (isServer) {
@@ -254,7 +262,11 @@ function registerEffect(dispose: () => void, persistent: boolean | undefined) {
 }
 
 function simpleEffect(fn: () => void, options?: EffectOptions): Effect {
-	const e = buildEffect(fn, NodeStatus.Effect | NodeStatus.Tracking, options?.name);
+	const e = buildEffect(
+		fn,
+		NodeStatus.Effect | NodeStatus.Tracking,
+		options?.name
+	);
 	const dispose = () => {
 		cleanupEffect(e, true);
 		scheduleUpdates();
@@ -279,7 +291,11 @@ function explicitEffect(
 		}
 		computation(input);
 	};
-	const e = buildEffect(fn, NodeStatus.Effect | NodeStatus.Tracking, options?.name);
+	const e = buildEffect(
+		fn,
+		NodeStatus.Effect | NodeStatus.Tracking,
+		options?.name
+	);
 	const dispose = () => {
 		cleanupEffect(e, true);
 		scheduleUpdates();
@@ -308,7 +324,10 @@ function explicitEffect(
 	};
 }
 
-export function observerEffect(computation: () => void, name?: string): ObserverEffect {
+export function observerEffect(
+	computation: () => void,
+	name?: string
+): ObserverEffect {
 	if (isServer) {
 		return {
 			dispose() {},
@@ -342,7 +361,9 @@ export function observerEffect(computation: () => void, name?: string): Observer
 
 export function selectSignal<T>(): SelectSignalNullable<T>;
 export function selectSignal<T>(initial: Signal<T>): SelectSignal<T>;
-export function selectSignal<T>(initial?: Signal<T>): SelectSignal<T> | SelectSignalNullable<T> {
+export function selectSignal<T>(
+	initial?: Signal<T>
+): SelectSignal<T> | SelectSignalNullable<T> {
 	const inner = quark<Signal<T> | undefined>(initial);
 	const outer = () => {
 		const selected = inner();
@@ -357,9 +378,13 @@ export function selectSignal<T>(initial?: Signal<T>): SelectSignal<T> | SelectSi
 
 export function selectQuark<T>(): SelectQuarkNullable<T>;
 export function selectQuark<T>(initial: Quark<T>): SelectQuark<T>;
-export function selectQuark<T>(initial?: Quark<T>): SelectQuark<T> | SelectQuarkNullable<T> {
+export function selectQuark<T>(
+	initial?: Quark<T>
+): SelectQuark<T> | SelectQuarkNullable<T> {
 	// TypeScript just struggles here, but selectSignal also works for SelectQuark
-	return selectSignal(initial as any) as SelectQuark<T> | SelectQuarkNullable<T>;
+	return selectSignal(initial as any) as
+		| SelectQuark<T>
+		| SelectQuarkNullable<T>;
 }
 
 export function batch<T>(work: () => T): T {
@@ -407,7 +432,10 @@ function readNode<T>(node: Derived<T>): T {
 		Scope.accessed.push(node);
 	}
 	// Active derivations keep the Tracking flag
-	if ((node.status & ~NodeStatus.Tracking) !== NodeStatus.Clean && node.lastVerified < Epoch) {
+	if (
+		(node.status & ~NodeStatus.Tracking) !== NodeStatus.Clean &&
+		node.lastVerified < Epoch
+	) {
 		if (node.status & NodeStatus.OnStack) {
 			handleError("Quarky detected a cycle!");
 		}
@@ -536,7 +564,8 @@ function checkComputation(node: Observer): boolean {
 		somethingChanged =
 			d.lastChange === Epoch ||
 			// type conversion because a bitwise AND returns a number and not a boolean
-			(((d.status & NodeStatus.Dirty) as unknown as boolean) && checkComputation(d as Observer));
+			(((d.status & NodeStatus.Dirty) as unknown as boolean) &&
+				checkComputation(d as Observer));
 		i += 1;
 	}
 	// if (!(node.status & NodeStatus.Dirty)) throw new Error("Should not be checking clean computations");
@@ -585,7 +614,9 @@ function runComputation(node: Observer): boolean {
 		node.lastVerified = Epoch;
 		if (somethingChanged) node.lastChange = Epoch;
 	} else {
-		(node as Root).equal = scope.effectHooks ? hooksRunner(scope.effectHooks) : null;
+		(node as Root).equal = scope.effectHooks
+			? hooksRunner(scope.effectHooks)
+			: null;
 		// the effect deleted itself
 		if (node.status & NodeStatus.Inactive) {
 			cleanupEffect(node as Root, true);
@@ -659,7 +690,9 @@ function unhook(node: Observer, dep: Dependency) {
 	}
 }
 
-function hooksRunner(hooks: ((deleted: boolean) => void)[]): (deleted: boolean) => void {
+function hooksRunner(
+	hooks: ((deleted: boolean) => void)[]
+): (deleted: boolean) => void {
 	return (deleted: boolean) => {
 		// run them in order here
 		for (let i = 0; i < hooks.length; ++i) {

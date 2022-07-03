@@ -42,7 +42,8 @@ export const lightTopo: LightTopo = {
 	location: [4.607264, 45.701356],
 
 	forbidden: false,
-	amenities: Amenities.AdaptedToChildren | Amenities.Waterspot | Amenities.PicnicArea,
+	amenities:
+		Amenities.AdaptedToChildren | Amenities.Waterspot | Amenities.PicnicArea,
 	// the real topo doesn't have composite rock, but this allows us to test the bitflag
 	rockTypes: RockTypes.Gneiss | RockTypes.Composite,
 

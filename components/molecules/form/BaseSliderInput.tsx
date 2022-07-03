@@ -32,7 +32,10 @@ interface BaseSliderInputProps {
 	step?: number;
 	connectTracks?: boolean;
 	onChange: (range: [number, number]) => void;
-	handleCreator: (handle: SliderItem, getHandlerProps: GetHandleProps) => ReactNode;
+	handleCreator: (
+		handle: SliderItem,
+		getHandlerProps: GetHandleProps
+	) => ReactNode;
 }
 
 export const BaseSliderInput: React.FC<BaseSliderInputProps> = ({
@@ -68,7 +71,11 @@ export const BaseSliderInput: React.FC<BaseSliderInputProps> = ({
 				</Rail>
 				<Handles>
 					{({ handles, getHandleProps }) => (
-						<div>{handles.map((handle) => props.handleCreator(handle, getHandleProps))}</div>
+						<div>
+							{handles.map((handle) =>
+								props.handleCreator(handle, getHandleProps)
+							)}
+						</div>
 					)}
 				</Handles>
 				{connectTracks && (
@@ -76,7 +83,12 @@ export const BaseSliderInput: React.FC<BaseSliderInputProps> = ({
 						{({ tracks, getTrackProps }) => (
 							<div>
 								{tracks.map(({ id, source, target }) => (
-									<Track key={id} source={source} target={target} getTrackProps={getTrackProps} />
+									<Track
+										key={id}
+										source={source}
+										target={target}
+										getTrackProps={getTrackProps}
+									/>
 								))}
 							</div>
 						)}

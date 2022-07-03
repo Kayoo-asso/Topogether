@@ -8,7 +8,9 @@ interface DownloadedListProps {
 	downloadedTopos: LightTopo[];
 }
 
-export const DownloadedList: React.FC<DownloadedListProps> = (props: DownloadedListProps) => {
+export const DownloadedList: React.FC<DownloadedListProps> = (
+	props: DownloadedListProps
+) => {
 	const [ModalUnsave, showModalUnsave] = useModal();
 
 	const ref = useRef<HTMLDivElement>(null);
@@ -52,7 +54,11 @@ export const DownloadedList: React.FC<DownloadedListProps> = (props: DownloadedL
 					onSelect={() => setDropdownPosition(undefined)}
 				/>
 			)}
-			<ModalUnsave buttonText="Confirmer" imgUrl={staticUrl.deleteWarning} onConfirm={unsaveTopo}>
+			<ModalUnsave
+				buttonText="Confirmer"
+				imgUrl={staticUrl.deleteWarning}
+				onConfirm={unsaveTopo}
+			>
 				Le topo ne sera plus accessible hors ligne. Voulez-vous continuer ?
 			</ModalUnsave>
 		</>

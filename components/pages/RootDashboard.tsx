@@ -18,9 +18,15 @@ interface RootDashboardProps {
 export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies(
 	(props: RootDashboardProps) => {
 		const [lightTopos, setLightTopos] = useState(props.lightTopos);
-		const draftLightTopos = lightTopos.filter((topo) => topo.status === TopoStatus.Draft);
-		const submittedLightTopos = lightTopos.filter((topo) => topo.status === TopoStatus.Submitted);
-		const validatedLightTopos = lightTopos.filter((topo) => topo.status === TopoStatus.Validated);
+		const draftLightTopos = lightTopos.filter(
+			(topo) => topo.status === TopoStatus.Draft
+		);
+		const submittedLightTopos = lightTopos.filter(
+			(topo) => topo.status === TopoStatus.Submitted
+		);
+		const validatedLightTopos = lightTopos.filter(
+			(topo) => topo.status === TopoStatus.Validated
+		);
 
 		const ref = useRef<HTMLDivElement>(null);
 		const [topoDropdown, setTopoDropdown] = useState<LightTopo>();
@@ -36,7 +42,9 @@ export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies(
 		const sendTopoToValidation = useCallback(async () => {
 			if (topoDropdown) {
 				await api.setTopoStatus(topoDropdown.id, TopoStatus.Submitted);
-				const submittedTopo = lightTopos.find((lt) => lt.id === topoDropdown.id)!;
+				const submittedTopo = lightTopos.find(
+					(lt) => lt.id === topoDropdown.id
+				)!;
 				submittedTopo.submitted = new Date().toISOString();
 				submittedTopo.status = TopoStatus.Submitted;
 				setLightTopos(lightTopos.slice());
@@ -54,7 +62,9 @@ export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies(
 		}, [topoDropdown, lightTopos]);
 
 		const deleteTopo = useCallback(() => {
-			const newLightTopos = lightTopos.filter((lt) => lt.id !== topoDropdown?.id);
+			const newLightTopos = lightTopos.filter(
+				(lt) => lt.id !== topoDropdown?.id
+			);
 			api.deleteTopo(topoDropdown!);
 			setLightTopos(newLightTopos);
 		}, [topoDropdown, lightTopos]);
@@ -80,8 +90,12 @@ export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies(
 						className="bg-white w-full overflow-y-auto h-contentPlusHeader md:h-contentPlusShell overflow-x-hidden pl-[1%] pb-16"
 					>
 						<div className="px-4 md:px-8 py-6 flex justify-between items-center">
-							<div className="md:hidden ktext-section-title text-center">Mes topos</div>
-							{lightTopos.length > 0 && <Button content="Créer un topo" href="/builder/new" />}
+							<div className="md:hidden ktext-section-title text-center">
+								Mes topos
+							</div>
+							{lightTopos.length > 0 && (
+								<Button content="Créer un topo" href="/builder/new" />
+							)}
 						</div>
 						{lightTopos.length > 0 && (
 							<>
@@ -113,7 +127,11 @@ export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies(
 									topos={validatedLightTopos}
 									status={TopoStatus.Validated}
 									clickable="topo"
-									title={<div className="text-main ktext-section-title px-4 md:px-8">Validés</div>}
+									title={
+										<div className="text-main ktext-section-title px-4 md:px-8">
+											Validés
+										</div>
+									}
 									onContextMenu={onContextMenu}
 								/>
 							</>
@@ -148,7 +166,8 @@ export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies(
 					imgUrl={staticUrl.defaultProfilePicture}
 					onConfirm={sendTopoToValidation}
 				>
-					Le topo sera envoyé en validation. Etes-vous sûr de vouloir continuer ?
+					Le topo sera envoyé en validation. Etes-vous sûr de vouloir continuer
+					?
 				</ModalSubmit>
 				<ModalUnsubmit
 					buttonText="Confirmer"
@@ -157,8 +176,13 @@ export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies(
 				>
 					Le topo retournera en brouillon. Etes-vous sûr de vouloir continuer ?
 				</ModalUnsubmit>
-				<ModalDelete buttonText="Supprimer" imgUrl={staticUrl.deleteWarning} onConfirm={deleteTopo}>
-					Le topo sera entièrement supprimé. Etes-vous sûr de vouloir continuer ?
+				<ModalDelete
+					buttonText="Supprimer"
+					imgUrl={staticUrl.deleteWarning}
+					onConfirm={deleteTopo}
+				>
+					Le topo sera entièrement supprimé. Etes-vous sûr de vouloir continuer
+					?
 				</ModalDelete>
 			</>
 		);

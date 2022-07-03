@@ -40,7 +40,9 @@ export async function findPlace(
 	options?: GeocodingOptions
 ): Promise<GeocodingFeature[] | null> {
 	query = encodeURIComponent(query);
-	const url = new URL(`https://api.mapbox.com/geocoding/v5/mapbox.places/${query}.json`);
+	const url = new URL(
+		`https://api.mapbox.com/geocoding/v5/mapbox.places/${query}.json`
+	);
 	url.searchParams.set("access_token", process.env.NEXT_PUBLIC_MAPBOX_TOKEN!);
 	if (options) {
 		for (const key in Object.keys(options)) {

@@ -19,10 +19,14 @@ interface RootAdminProps {
 }
 
 export const RootAdmin: React.FC<RootAdminProps> = (props: RootAdminProps) => {
-	const [selectedStatus, setSelectedStatus] = useState<TopoStatus>(TopoStatus.Draft);
+	const [selectedStatus, setSelectedStatus] = useState<TopoStatus>(
+		TopoStatus.Draft
+	);
 
 	const [lightTopos, setLightTopos] = useState(props.lightTopos);
-	const toposToDisplay = lightTopos.filter((topo) => topo.status === selectedStatus);
+	const toposToDisplay = lightTopos.filter(
+		(topo) => topo.status === selectedStatus
+	);
 
 	const ref = useRef<HTMLDivElement>(null);
 	const [topoDropdown, setTopoDropddown] = useState<LightTopo>();
@@ -48,7 +52,9 @@ export const RootAdmin: React.FC<RootAdminProps> = (props: RootAdminProps) => {
 	const unvalidateTopo = useCallback(async () => {
 		if (topoDropdown) {
 			await api.setTopoStatus(topoDropdown!.id, TopoStatus.Submitted);
-			const unvalidatedTopo = lightTopos.find((lt) => lt.id === topoDropdown.id)!;
+			const unvalidatedTopo = lightTopos.find(
+				(lt) => lt.id === topoDropdown.id
+			)!;
 			unvalidatedTopo.validated = undefined;
 			unvalidatedTopo.status = TopoStatus.Submitted;
 			setLightTopos(lightTopos.slice());
@@ -66,7 +72,9 @@ export const RootAdmin: React.FC<RootAdminProps> = (props: RootAdminProps) => {
 	const deleteTopo = useCallback(() => {
 		if (topoDropdown) {
 			api.deleteTopo(topoDropdown);
-			const newLightTopos = lightTopos.filter((lt) => lt.id !== topoDropdown.id)!;
+			const newLightTopos = lightTopos.filter(
+				(lt) => lt.id !== topoDropdown.id
+			)!;
 			setLightTopos(newLightTopos);
 		}
 	}, [topoDropdown, lightTopos]);
@@ -117,7 +125,9 @@ export const RootAdmin: React.FC<RootAdminProps> = (props: RootAdminProps) => {
 									key={topo.id}
 									topo={topo}
 									onContextMenu={onContextMenu}
-									clickable={selectedStatus === TopoStatus.Validated ? "topo" : "builder"}
+									clickable={
+										selectedStatus === TopoStatus.Validated ? "topo" : "builder"
+									}
 								/>
 							))}
 						</div>
@@ -141,15 +151,16 @@ export const RootAdmin: React.FC<RootAdminProps> = (props: RootAdminProps) => {
 				imgUrl={staticUrl.deleteWarning}
 				onConfirm={validateTopo}
 			>
-				Une fois validé, le topo sera accessible par tous les utilisateurs. Etes-vous sûr de vouloir
-				continuer ?
+				Une fois validé, le topo sera accessible par tous les utilisateurs.
+				Etes-vous sûr de vouloir continuer ?
 			</ModalValidate>
 			<ModalUnvalidate
 				buttonText="Confirmer"
 				imgUrl={staticUrl.defaultProfilePicture}
 				onConfirm={unvalidateTopo}
 			>
-				Le topo retournera en attente de validation. Etes-vous sûr de vouloir continuer ?
+				Le topo retournera en attente de validation. Etes-vous sûr de vouloir
+				continuer ?
 			</ModalUnvalidate>
 			<ModalReject
 				buttonText="Confirmer"
@@ -158,7 +169,11 @@ export const RootAdmin: React.FC<RootAdminProps> = (props: RootAdminProps) => {
 			>
 				Le topo retournera en brouillon. Etes-vous sûr de vouloir continuer ?
 			</ModalReject>
-			<ModalDelete buttonText="Confirmer" imgUrl={staticUrl.deleteWarning} onConfirm={deleteTopo}>
+			<ModalDelete
+				buttonText="Confirmer"
+				imgUrl={staticUrl.deleteWarning}
+				onConfirm={deleteTopo}
+			>
 				Le topo sera entièrement supprimé. Etes-vous sûr de vouloir continuer ?
 			</ModalDelete>
 		</>

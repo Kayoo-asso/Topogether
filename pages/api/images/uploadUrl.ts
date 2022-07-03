@@ -36,14 +36,17 @@ const handler: NextApiHandler = async (req, res) => {
 		const data = new FormData();
 		data.append("requireSignedURLs", "false");
 		promises.push(
-			fetch(`https://api.cloudflare.com/client/v4/accounts/${ACCOUNT_ID}/images/v2/direct_upload`, {
-				method: "POST",
-				headers: {
-					...data.getHeaders(),
-					authorization: "Bearer " + API_TOKEN,
-				},
-				body: data as any,
-			}).then((x) => x.json())
+			fetch(
+				`https://api.cloudflare.com/client/v4/accounts/${ACCOUNT_ID}/images/v2/direct_upload`,
+				{
+					method: "POST",
+					headers: {
+						...data.getHeaders(),
+						authorization: "Bearer " + API_TOKEN,
+					},
+					body: data as any,
+				}
+			).then((x) => x.json())
 		);
 	}
 	const results = await Promise.allSettled(promises);

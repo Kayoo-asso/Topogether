@@ -1,4 +1,11 @@
-import React, { MouseEvent, TouchEvent, ReactElement, useCallback, useState, useRef } from "react";
+import React, {
+	MouseEvent,
+	TouchEvent,
+	ReactElement,
+	useCallback,
+	useState,
+	useRef,
+} from "react";
 import Link from "next/link";
 import { Card, CFImage } from "components";
 import { formatDate, encodeUUID } from "helpers/utils";
@@ -25,10 +32,14 @@ export const TopoCard: React.FC<TopoCardProps> = React.memo(
 
 		if (topo.status === TopoStatus.Validated) {
 			TopoIcon = <Checked className={`stroke-main ${iconSize}`} />;
-			lastAction = topo.validated ? `Validé le ${formatDate(topo.validated)}` : "";
+			lastAction = topo.validated
+				? `Validé le ${formatDate(topo.validated)}`
+				: "";
 		} else if (topo.status === TopoStatus.Submitted) {
 			TopoIcon = <Recent className={`stroke-third ${iconSize}`} />;
-			lastAction = topo.submitted ? `Envoyé le ${formatDate(topo.submitted)}` : "";
+			lastAction = topo.submitted
+				? `Envoyé le ${formatDate(topo.submitted)}`
+				: "";
 		} else {
 			TopoIcon = <Edit className={`stroke-second-light ${iconSize}`} />;
 			lastAction = `Modifié le ${formatDate(props.topo.modified)}`;
@@ -73,13 +84,16 @@ export const TopoCard: React.FC<TopoCardProps> = React.memo(
 			},
 			[props.topo, props.onContextMenu]
 		);
-		const handleTouchEndContextMenu = useCallback((e: TouchEvent<HTMLDivElement>) => {
-			clearTimeout(timer.current);
-			if (blockClick.current) {
-				e.preventDefault();
-				blockClick.current = false;
-			}
-		}, []);
+		const handleTouchEndContextMenu = useCallback(
+			(e: TouchEvent<HTMLDivElement>) => {
+				clearTimeout(timer.current);
+				if (blockClick.current) {
+					e.preventDefault();
+					blockClick.current = false;
+				}
+			},
+			[]
+		);
 
 		return wrapLink(
 			<div

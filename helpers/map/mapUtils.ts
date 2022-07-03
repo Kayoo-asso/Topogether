@@ -16,7 +16,9 @@ export function fromLatLng(latLng: { lat: number; lng: number }): Position {
 export function fromLatLngFn(latLng: google.maps.LatLng): Position {
 	return [latLng.lng(), latLng.lat()];
 }
-export function fromLatLngLiteralFn(latLng: google.maps.LatLngLiteral): Position {
+export function fromLatLngLiteralFn(
+	latLng: google.maps.LatLngLiteral
+): Position {
 	return [latLng.lng, latLng.lat];
 }
 
@@ -32,7 +34,11 @@ export const markerSize = (w: number, h?: number): Size => {
 		width: w,
 		height: h || w,
 		equals: function (other) {
-			return other !== null && this.width === other.width && this.height === other.height;
+			return (
+				other !== null &&
+				this.width === other.width &&
+				this.height === other.height
+			);
 		},
 	};
 };
@@ -66,7 +72,15 @@ export const launchNavigation = (
 				  )
 				: // TODO : fix Apple plan opening
 				  window.open(
-						"maps://?saddr=" + o.lat + "," + o.lng + "&daddr=" + d.lat + "," + d.lng + "&dirflg=d"
+						"maps://?saddr=" +
+							o.lat +
+							"," +
+							o.lng +
+							"&daddr=" +
+							d.lat +
+							"," +
+							d.lng +
+							"&dirflg=d"
 				  );
 		} else {
 			// OPEN ON GOOGLE MAP
@@ -100,7 +114,9 @@ export const launchNavigation = (
 		if (provider === "apple") {
 			// OPEN ON PLAN
 			device === "desktop"
-				? window.open("https://maps.apple.com/?daddr=" + d.lat + "," + d.lng + "&dirflg=d")
+				? window.open(
+						"https://maps.apple.com/?daddr=" + d.lat + "," + d.lng + "&dirflg=d"
+				  )
 				: // TODO : fix Apple plan opening
 				  window.open("maps://?daddr=" + d.lat + "," + d.lng + "&dirflg=d");
 		} else {
@@ -141,7 +157,10 @@ export const googleGetPlace = async (placeId: string) =>
 
 		try {
 			const elt = document.createElement("div");
-			new google.maps.places.PlacesService(elt).getDetails(placeDetailsRequest, resolve);
+			new google.maps.places.PlacesService(elt).getDetails(
+				placeDetailsRequest,
+				resolve
+			);
 			elt.remove();
 		} catch (e) {
 			reject(e);

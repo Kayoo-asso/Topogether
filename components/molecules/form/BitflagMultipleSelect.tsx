@@ -14,11 +14,14 @@ interface BitflagMultipleSelectProps<T extends Bitflag> {
 	className?: string;
 }
 
-export const BitflagMultipleSelect = <T extends Bitflag>(props: BitflagMultipleSelectProps<T>) => {
+export const BitflagMultipleSelect = <T extends Bitflag>(
+	props: BitflagMultipleSelectProps<T>
+) => {
 	const ref = useRef<HTMLInputElement>(null);
 	const [isOpen, setIsOpen] = useState(false);
 
-	const textValue = props.value && listFlags(props.value, props.bitflagNames).join(", ");
+	const textValue =
+		props.value && listFlags(props.value, props.bitflagNames).join(", ");
 
 	return (
 		<div id={props.id} className={`relative cursor-pointer ${props.className}`}>

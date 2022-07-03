@@ -1,7 +1,12 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Quark, SelectQuarkNullable, watchDependencies } from "helpers/quarky";
 import { Boulder, Sector, SectorData, Topo, Track, UUID } from "types";
-import { DragDropContext, Draggable, Droppable, DropResult } from "react-beautiful-dnd";
+import {
+	DragDropContext,
+	Draggable,
+	Droppable,
+	DropResult,
+} from "react-beautiful-dnd";
 import { useSession } from "helpers/services";
 import ArrowSimple from "assets/icons/arrow-simple.svg";
 import Edit from "assets/icons/edit.svg";
@@ -13,24 +18,29 @@ export interface SectorListBuilderProps {
 	boulderOrder: Map<UUID, number>;
 	selectedBoulder: SelectQuarkNullable<Boulder>;
 	onBoulderSelect: (boulderQuark: Quark<Boulder>) => void;
-	onTrackSelect: (trackQuark: Quark<Track>, boulderQuark: Quark<Boulder>) => void;
+	onTrackSelect: (
+		trackQuark: Quark<Track>,
+		boulderQuark: Quark<Boulder>
+	) => void;
 	onRenameSector: (sectorQuark: Quark<Sector>) => void;
 	onDeleteBoulder: (boulderQuark: Quark<Boulder>) => void;
 }
 
-export const SectorListBuilder: React.FC<SectorListBuilderProps> = watchDependencies(
-	(props: SectorListBuilderProps) => {
+export const SectorListBuilder: React.FC<SectorListBuilderProps> =
+	watchDependencies((props: SectorListBuilderProps) => {
 		const session = useSession();
 
 		const selectedBoulder = props.selectedBoulder();
 		const topo = props.topoQuark();
 		const sectors = topo.sectors;
-		const [bouldersIn, bouldersOut] = splitArray(topo.boulders.quarks().toArray(), (b) =>
-			sectors
-				.toArray()
-				.map((s) => s.boulders)
-				.flat()
-				.includes(b().id)
+		const [bouldersIn, bouldersOut] = splitArray(
+			topo.boulders.quarks().toArray(),
+			(b) =>
+				sectors
+					.toArray()
+					.map((s) => s.boulders)
+					.flat()
+					.includes(b().id)
 		);
 		const bouldersOutSorted = topo.lonelyBoulders.map(
 			(id) => bouldersOut.find((b) => b().id === id)!
@@ -52,18 +62,26 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> = watchDependen
 
 		if (!session) return <></>;
 
-		const sectorItem = (sectorQuark: Quark<SectorData>, sectorIndex: number) => {
+		const sectorItem = (
+			sectorQuark: Quark<SectorData>,
+			sectorIndex: number
+		) => {
 			const sector = sectorQuark();
-			const boulderQuarks = sector.boulders.map((id) => bouldersIn.find((b) => b().id === id)!);
+			const boulderQuarks = sector.boulders.map(
+				(id) => bouldersIn.find((b) => b().id === id)!
+			);
 			return (
 				<div className="flex flex-col mb-10 pb-6">
-					<div className="ktext-label text-grey-medium">Secteur {sectorIndex + 1}</div>
+					<div className="ktext-label text-grey-medium">
+						Secteur {sectorIndex + 1}
+					</div>
 					<div className="ktext-section-title text-main mb-1 flex flex-row items-center">
 						<button
 							className="pr-3 cursor-pointer"
 							onClick={() => {
 								const newDS = [...displayedSectors];
-								if (newDS.includes(sector.id)) newDS.splice(newDS.indexOf(sector.id), 1);
+								if (newDS.includes(sector.id))
+									newDS.splice(newDS.indexOf(sector.id), 1);
 								else newDS.push(sector.id);
 								setDisplayedSectors(newDS);
 							}}
@@ -71,7 +89,9 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> = watchDependen
 							<ArrowSimple
 								className={
 									"w-3 h-3 stroke-main stroke-2 " +
-									(displayedSectors.includes(sector.id) ? "-rotate-90" : "rotate-180")
+									(displayedSectors.includes(sector.id)
+										? "-rotate-90"
+										: "rotate-180")
 								}
 							/>
 						</button>
@@ -89,7 +109,10 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> = watchDependen
 							<span className="cursor-pointer">{sector.name}</span>
 						</div>
 
-						<div className="pr-1 cursor-pointer" onClick={() => props.onRenameSector(sectorQuark)}>
+						<div
+							className="pr-1 cursor-pointer"
+							onClick={() => props.onRenameSector(sectorQuark)}
+						>
 							<Edit className={"w-5 h-5 stroke-main"} />
 						</div>
 					</div>
@@ -98,7 +121,9 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> = watchDependen
 						// BOULDERS
 						// <div className={'flex flex-col gap-1 ml-1 p-2 rounded-sm ' + (draggingSectorId === sector.id ? 'bg-grey-superlight' : '')}>
 						<div className={"flex flex-col gap-1 ml-1 p-2 rounded-sm"}>
-							{boulderQuarks.length === 0 && <div className="">Aucun rocher référencé</div>}
+							{boulderQuarks.length === 0 && (
+								<div className="">Aucun rocher référencé</div>
+							)}
 							<DraggableList
 								items={boulderQuarks.map((boulderQuark, index) => {
 									const boulder = boulderQuark();
@@ -299,7 +324,6 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> = watchDependen
             </DragDropContext> */}
 			</div>
 		);
-	}
-);
+	});
 
 SectorListBuilder.displayName = "SectorList Builder";

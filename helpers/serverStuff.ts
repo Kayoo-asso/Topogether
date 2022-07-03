@@ -30,10 +30,14 @@ export const loginRedirect = (source: string) => {
 export const jwtDecoder = (jwt: string): AccessJWT =>
 	JSON.parse(Buffer.from(jwt.split(".")[1], "base64").toString("utf8"));
 
-function isNotFound<P>(props: GetServerSidePropsResult<P>): props is { notFound: true } {
+function isNotFound<P>(
+	props: GetServerSidePropsResult<P>
+): props is { notFound: true } {
 	return (props as any).notFound === true;
 }
-function isRedirect<P>(props: GetServerSidePropsResult<P>): props is { redirect: Redirect } {
+function isRedirect<P>(
+	props: GetServerSidePropsResult<P>
+): props is { redirect: Redirect } {
 	return (props as any).redirect !== undefined;
 }
 
@@ -54,13 +58,19 @@ type WithRoutingOptions<Props> = {
 	render(props: Props): React.ReactElement<any, any>;
 };
 
-type GetServerSidePropsResult<P> = { props: P } | { redirect: Redirect } | { notFound: true };
+type GetServerSidePropsResult<P> =
+	| { props: P }
+	| { redirect: Redirect }
+	| { notFound: true };
 
 export function withRouting<Props>({
 	render,
 	getInitialProps,
 }: WithRoutingOptions<Props>): NextPage<GetServerSidePropsResult<Props>> {
-	const page: NextPage<GetServerSidePropsResult<Props>> = ({ children, ...props }) => {
+	const page: NextPage<GetServerSidePropsResult<Props>> = ({
+		children,
+		...props
+	}) => {
 		const router = useRouter();
 		// Those two conditions should never be hit on the server,
 		// since we send directly 404 or redirect responses in those cases
@@ -80,7 +90,9 @@ export function withRouting<Props>({
 		});
 	};
 
-	page.getInitialProps = async (ctx: NextPageContext): Promise<GetServerSidePropsResult<Props>> => {
+	page.getInitialProps = async (
+		ctx: NextPageContext
+	): Promise<GetServerSidePropsResult<Props>> => {
 		const result = await getInitialProps(ctx);
 		if (isNotFound(result)) {
 			if (ctx.res) {
@@ -121,7 +133,9 @@ export function getSessionId(ctx: NextPageContext): UUID | undefined {
 	return (ctx as any).sessionId;
 }
 
-export async function getUserInitialProps(ctx: NextPageContext): Promise<User | null> {
+export async function getUserInitialProps(
+	ctx: NextPageContext
+): Promise<User | null> {
 	if (auth) {
 		return auth.session();
 	}
@@ -169,8 +183,13 @@ export async function initSupabaseSession(req: IncomingMessage | undefined) {
 	const cookies = parse(req.headers["cookie"]);
 	let accessToken: string | undefined = cookies[AccessTokenCookie];
 	const refreshToken: string | undefined = cookies[RefreshTokenCookie];
-	if ((!accessToken || jwtDecoder(accessToken).exp * 1000 < Date.now()) && refreshToken) {
-		const { session, error } = await supabaseClient.auth.setSession(refreshToken);
+	if (
+		(!accessToken || jwtDecoder(accessToken).exp * 1000 < Date.now()) &&
+		refreshToken
+	) {
+		const { session, error } = await supabaseClient.auth.setSession(
+			refreshToken
+		);
 		if (error) console.error("Error refreshing access token:", error);
 		accessToken = session?.access_token;
 	} else if (accessToken) {

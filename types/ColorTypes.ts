@@ -1,5 +1,10 @@
 export type BaseColor = "main" | "second" | "third";
-export type StructureColor = "dark" | "grey-medium" | "grey-light" | "grey-superlight" | "error";
+export type StructureColor =
+	| "dark"
+	| "grey-medium"
+	| "grey-light"
+	| "grey-superlight"
+	| "error";
 export type GradeColor =
 	| "grade-3"
 	| "grade-2"

@@ -25,7 +25,9 @@ export const BoulderForm: React.FC<BoulderFormProps> = watchDependencies(
 
 		return (
 			<div
-				className={"flex flex-col gap-6 " + (props.className ? props.className : "")}
+				className={
+					"flex flex-col gap-6 " + (props.className ? props.className : "")
+				}
 				onClick={(e) => e.stopPropagation()}
 			>
 				<TextInput
@@ -48,7 +50,10 @@ export const BoulderForm: React.FC<BoulderFormProps> = watchDependencies(
 						type="number"
 						value={boulder.location[1]}
 						onChange={(e) => {
-							const loc: GeoCoordinates = [boulder.location[0], parseFloat(e.target.value)];
+							const loc: GeoCoordinates = [
+								boulder.location[0],
+								parseFloat(e.target.value),
+							];
 							props.boulder.set({
 								...boulder,
 								location: loc,
@@ -62,7 +67,10 @@ export const BoulderForm: React.FC<BoulderFormProps> = watchDependencies(
 						type="number"
 						value={boulder.location[0]}
 						onChange={(e) => {
-							const loc: GeoCoordinates = [parseFloat(e.target.value), boulder.location[1]];
+							const loc: GeoCoordinates = [
+								parseFloat(e.target.value),
+								boulder.location[1],
+							];
 							props.boulder.set({
 								...boulder,
 								location: loc,
