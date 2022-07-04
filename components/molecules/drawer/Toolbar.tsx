@@ -54,37 +54,37 @@ export const Toolbar: React.FC<ToolbarProps> = ({
 	...props
 }: ToolbarProps) => {
 	return (
-		<div className="bg-dark w-full h-[9vh] flex flex-row items-center justify-center z-200">
-			<span className="flex flex-row items-center justify-around w-2/5 md:w-3/12">
+		<div className="z-200 flex h-[9vh] w-full flex-row items-center justify-center bg-dark">
+			<span className="flex w-2/5 flex-row items-center justify-around md:w-3/12">
 				<Clear
-					className="stroke-white w-8 h-8 cursor-pointer"
+					className="h-8 w-8 cursor-pointer stroke-white"
 					onClick={props.onClear}
 				/>
 				<Rewind
-					className="stroke-white w-6 h-6 cursor-pointer"
+					className="h-6 w-6 cursor-pointer stroke-white"
 					onClick={props.onRewind}
 				/>
 				<div className="hidden md:block">
 					<Eraser
 						className={
-							"w-6 h-6 cursor-pointer " +
+							"h-6 w-6 cursor-pointer " +
 							(selectedTool === "ERASER"
-								? "stroke-main fill-main"
-								: "stroke-white fill-white")
+								? "fill-main stroke-main"
+								: "fill-white stroke-white")
 						}
 						onClick={() => props.onToolSelect("ERASER")}
 					/>
 				</div>
 				<ManyTracks
 					className={
-						"w-6 h-6 cursor-pointer " +
+						"h-6 w-6 cursor-pointer " +
 						(props.displayOtherTracks ? "stroke-main" : "stroke-white")
 					}
 					onClick={props.onOtherTracks}
 				/>
 			</span>
 
-			<span className="flex 1/5 pb-4 mx-3 self-end md:hidden">
+			<span className="1/5 mx-3 flex self-end pb-4 md:hidden">
 				<ToolSelectorMobile
 					selectedTool={
 						selectedTool !== "ERASER" ? selectedTool : "LINE_DRAWER"
@@ -93,10 +93,10 @@ export const Toolbar: React.FC<ToolbarProps> = ({
 				/>
 			</span>
 
-			<span className="w-6/12 flex-row items-center justify-around px-[13%] hidden md:flex">
+			<span className="hidden w-6/12 flex-row items-center justify-around px-[13%] md:flex">
 				<Topo
 					className={
-						"w-6 h-6 cursor-pointer " +
+						"h-6 w-6 cursor-pointer " +
 						(selectedTool === "LINE_DRAWER"
 							? getStrokeColorClass(props.grade)
 							: "stroke-white")
@@ -105,7 +105,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
 				/>
 				<Hand
 					className={
-						"w-6 h-6 cursor-pointer " +
+						"h-6 w-6 cursor-pointer " +
 						(selectedTool === "HAND_DEPARTURE_DRAWER"
 							? getStrokeColorClass(props.grade) + " fill-white"
 							: "stroke-white")
@@ -114,7 +114,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
 				/>
 				<ClimbingShoe
 					className={
-						"w-7 h-7 cursor-pointer " +
+						"h-7 w-7 cursor-pointer " +
 						(selectedTool === "FOOT_DEPARTURE_DRAWER"
 							? getStrokeColorClass(props.grade) + " fill-white"
 							: "stroke-white")
@@ -123,16 +123,16 @@ export const Toolbar: React.FC<ToolbarProps> = ({
 				/>
 				<ForbiddenArea
 					className={
-						"w-6 h-6 cursor-pointer " +
+						"h-6 w-6 cursor-pointer " +
 						(selectedTool === "FORBIDDEN_AREA_DRAWER"
-							? "stroke-second fill-white"
+							? "fill-white stroke-second"
 							: "stroke-white")
 					}
 					onClick={() => props.onToolSelect("FORBIDDEN_AREA_DRAWER")}
 				/>
 			</span>
 
-			<span className="w-1/5 z-100 md:w-3/12 md:flex md:justify-center">
+			<span className="z-100 w-1/5 md:flex md:w-3/12 md:justify-center">
 				<GradeSelector
 					open={props.gradeSelectorOpen}
 					setOpen={props.setGradeSelectorOpen}
@@ -141,9 +141,9 @@ export const Toolbar: React.FC<ToolbarProps> = ({
 				/>
 			</span>
 
-			<span className="w-1/5 flex justify-center md:hidden">
+			<span className="flex w-1/5 justify-center md:hidden">
 				<Checked
-					className="fill-main h-6 w-6 cursor-pointer"
+					className="h-6 w-6 cursor-pointer fill-main"
 					onClick={props.onValidate}
 				/>
 			</span>

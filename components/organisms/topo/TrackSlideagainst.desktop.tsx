@@ -23,8 +23,8 @@ export const TrackSlideagainstDesktop: React.FC<
 			secondary
 			onClose={props.onClose}
 		>
-			<div className="flex flex-col px-6 mb-10">
-				<div className="flex flex-row items-center mb-2">
+			<div className="mb-10 flex flex-col px-6">
+				<div className="mb-2 flex flex-row items-center">
 					<GradeCircle grade={gradeToLightGrade(track.grade)} />
 					<div className="ktext-big-title ml-3">{track.name}</div>
 				</div>
@@ -39,9 +39,9 @@ export const TrackSlideagainstDesktop: React.FC<
 					<div className="ktext-label text-grey-medium">Incontournable !</div>
 				)}
 
-				<div className="mt-4 ktext-base-little">{track.description}</div>
+				<div className="ktext-base-little mt-4">{track.description}</div>
 
-				<div className="flex flex-col gap-3 mt-4">
+				<div className="mt-4 flex flex-col gap-3">
 					<div>
 						<span className="ktext-subtitle">Techniques : </span>
 						{listFlags(track.techniques!, ClimbTechniquesName).join(", ")}

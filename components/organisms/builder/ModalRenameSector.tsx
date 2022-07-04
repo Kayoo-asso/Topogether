@@ -45,13 +45,13 @@ export const ModalRenameSector: React.FC<ModalRenameSectorProps> = (
 	return (
 		<Portal id="modal" open>
 			<div
-				className={`absolute bg-black bg-opacity-80 top-0 left-0 w-screen h-screen`}
+				className={`absolute top-0 left-0 h-screen w-screen bg-black bg-opacity-80`}
 				style={{ zIndex: 9999 }} //No tailwind for this - bug with zIndex
 				onClick={close}
 				tabIndex={-1}
 			>
 				<div
-					className="bg-white rounded-lg shadow min-h-[25%] w-11/12 md:w-5/12 absolute top-[45%] md:top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]"
+					className="absolute top-[45%] left-[50%] min-h-[25%] w-11/12 translate-x-[-50%] translate-y-[-50%] rounded-lg bg-white shadow md:top-[50%] md:w-5/12"
 					// Avoid closing the modal when we click here (otherwise propagates to the backdrop)
 					onClick={(e) => e.stopPropagation()}
 				>
@@ -84,7 +84,7 @@ export const ModalRenameSector: React.FC<ModalRenameSectorProps> = (
 						className="absolute top-3 right-3 cursor-pointer"
 						onClick={props.onClose}
 					>
-						<Clear className="stroke-dark h-8 w-8" />
+						<Clear className="h-8 w-8 stroke-dark" />
 					</div>
 				</div>
 			</div>

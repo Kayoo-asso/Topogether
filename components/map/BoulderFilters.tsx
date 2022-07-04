@@ -132,20 +132,20 @@ export const BoulderFilters: React.FC<BoulderFiltersProps> = ({
 		<>
 			{!open && (
 				<RoundButton onClick={() => setOpen(true)}>
-					<FilterIcon className="h-6 w-6 stroke-main fill-main" />
+					<FilterIcon className="h-6 w-6 fill-main stroke-main" />
 				</RoundButton>
 			)}
 			{open && (
-				<div className="bg-white z-40 relative shadow rounded-lg flex flex-col max-w-[60%] min-w-[250px]">
+				<div className="relative z-40 flex min-w-[250px] max-w-[60%] flex-col rounded-lg bg-white shadow">
 					<div
-						className="flex flex-row items-center shadow bg-main rounded-lg p-3 pt-4 pl-5 cursor-pointer max-w-[150px]"
+						className="flex max-w-[150px] cursor-pointer flex-row items-center rounded-lg bg-main p-3 pt-4 pl-5 shadow"
 						onClick={() => setOpen(false)}
 					>
-						<FilterIcon className="h-6 w-6 stroke-white fill-white" />
-						<div className="text-white ktext-subtitle ml-3">Filtres</div>
+						<FilterIcon className="h-6 w-6 fill-white stroke-white" />
+						<div className="ktext-subtitle ml-3 text-white">Filtres</div>
 					</div>
 
-					<div className="flex flex-col gap-6 min-h-[100px] p-5 pb-8">
+					<div className="flex min-h-[100px] flex-col gap-6 p-5 pb-8">
 						{renderFilters()}
 					</div>
 				</div>

@@ -46,9 +46,9 @@ export const TextArea = ({
 				placeholder={props.label}
 				id={props.id}
 				value={value}
-				className={`peer border-dark ktext-base border-b-2 overflow-hidden ${
+				className={`ktext-base peer overflow-hidden border-b-2 border-dark ${
 					displayLabel ? "placeholder-transparent" : ""
-				} focus:border-main focus:outline-none w-full ${
+				} w-full focus:border-main focus:outline-none ${
 					pointer ? " cursor-pointer" : ""
 				}`}
 				onKeyUp={adaptScrollHeight}
@@ -58,7 +58,7 @@ export const TextArea = ({
 			{displayLabel && (
 				<label
 					htmlFor={props.id}
-					className={`absolute left-0 -top-6 ktext-label text-grey-medium peer-focus:text-main transition-all peer-placeholder-shown:top-2 peer-focus:-top-6 ${
+					className={`ktext-label absolute left-0 -top-6 text-grey-medium transition-all peer-placeholder-shown:top-2 peer-focus:-top-6 peer-focus:text-main ${
 						pointer ? " cursor-pointer" : ""
 					}`}
 				>

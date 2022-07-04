@@ -56,7 +56,7 @@ export const SVGArea: React.FC<SVGAreaProps> = ({
 			return (
 				<DraggablePolyline
 					id={props.id}
-					className={`stroke-second fill-second/10 ${
+					className={`fill-second/10 stroke-second ${
 						eraser ? "hover:fill-second/50" : ""
 					} ${className}`}
 					strokeWidth={defaultTracksWeight}
@@ -74,7 +74,7 @@ export const SVGArea: React.FC<SVGAreaProps> = ({
 
 		return (
 			<polyline
-				className={`stroke-second fill-second/10 z-20 ${className}`}
+				className={`z-20 fill-second/10 stroke-second ${className}`}
 				points={pointsToPolylineStr(extendPoints)}
 				strokeWidth={defaultTracksWeight}
 			/>

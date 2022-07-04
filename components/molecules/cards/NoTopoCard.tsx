@@ -9,7 +9,7 @@ interface NoTopoCardProps {
 export const NoTopoCard: React.FC<NoTopoCardProps> = (
 	props: NoTopoCardProps
 ) => (
-	<Card className="items-center justify-center text-center text-grey-medium bg-grey-superlight">
+	<Card className="items-center justify-center bg-grey-superlight text-center text-grey-medium">
 		{props.content
 			? props.content
 			: `Aucun topo ${

@@ -30,7 +30,7 @@ export const Button: React.FC<ButtonProps> = ({
 	};
 	const button = (
 		<button
-			className={`ktext-subtitle flex flex-row items-center justify-center gap-5 shadow rounded-full px-4 py-3 lg:px-8 h-[45px] lg:h-[50px] ${getUIClasses()} ${
+			className={`ktext-subtitle flex h-[45px] flex-row items-center justify-center gap-5 rounded-full px-4 py-3 shadow lg:h-[50px] lg:px-8 ${getUIClasses()} ${
 				fullWidth ? "w-full " : ""
 			} ${className}`}
 			onClick={() => {

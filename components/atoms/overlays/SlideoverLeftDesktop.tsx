@@ -1,22 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 
-interface SlideoverLeftDesktopProps {
-	open?: boolean;
+type SlideoverLeftDesktopProps = React.PropsWithChildren<{
+	open: boolean;
 	onClose?: () => void;
 	title?: string;
 	className?: string;
-	children?: React.ReactNode;
-}
+}>;
 
 export const SlideoverLeftDesktop: React.FC<SlideoverLeftDesktopProps> = ({
-	open = false,
 	...props
 }: SlideoverLeftDesktopProps) => {
-	const [translateX, setTranslateX] = useState<number>(100);
-
-	useEffect(() => {
-		window.setTimeout(() => setTranslateX(open ? 0 : 100), 1);
-	}, [open]);
+	const translateX = props.open ? 0 : 100;
 
 	return (
 		<div
@@ -31,10 +25,7 @@ export const SlideoverLeftDesktop: React.FC<SlideoverLeftDesktopProps> = ({
 				<span className="ktext-big-title">{props.title}</span>
 				<span
 					className="ktext-base cursor-pointer text-main"
-					onClick={() => {
-						setTranslateX(100);
-						window.setTimeout(() => props.onClose && props.onClose(), 150);
-					}}
+					onClick={props.onClose}
 				>
 					Terminé
 				</span>

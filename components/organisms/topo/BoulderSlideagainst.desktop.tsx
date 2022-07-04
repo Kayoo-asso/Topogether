@@ -50,12 +50,12 @@ export const BoulderSlideagainstDesktop: React.FC<BoulderSlideagainstDesktopProp
 				>
 					<>
 						<div className="px-5">
-							<div className="flex flex-row items-end mb-2">
-								<Rock className="w-7 h-7 stroke-main" />
+							<div className="mb-2 flex flex-row items-end">
+								<Rock className="h-7 w-7 stroke-main" />
 								<span className="ktext-big-title ml-3">{boulder.name}</span>
 							</div>
 							<div
-								className="ktext-label text-grey-medium cursor-pointer"
+								className="ktext-label cursor-pointer text-grey-medium"
 								onClick={() => {
 									const data = [
 										new ClipboardItem({
@@ -87,7 +87,7 @@ export const BoulderSlideagainstDesktop: React.FC<BoulderSlideagainstDesktopProp
 								<div className="ktext-label text-grey-medium">High Ball</div>
 							)}
 							{boulder.mustSee && (
-								<div className="ktext-label text-grey-medium mb-15">
+								<div className="ktext-label mb-15 text-grey-medium">
 									Incontournable !
 								</div>
 							)}
@@ -101,7 +101,7 @@ export const BoulderSlideagainstDesktop: React.FC<BoulderSlideagainstDesktopProp
 							/>
 						</div>
 
-						<div className="flex flex-row px-5 mt-10 ktext-label font-bold my-2 justify-between">
+						<div className="ktext-label my-2 mt-10 flex flex-row justify-between px-5 font-bold">
 							<span
 								className={`cursor-pointer ${
 									officialTrackTab ? "text-main" : "text-grey-medium"
@@ -145,7 +145,7 @@ export const BoulderSlideagainstDesktop: React.FC<BoulderSlideagainstDesktopProp
 							/>
 						</div>
 						{!officialTrackTab && (
-							<div className="flex flex-col mt-4 px-5 items-center">
+							<div className="mt-4 flex flex-col items-center px-5">
 								<Button
 									content="Ajouter une voie"
 									fullWidth
@@ -164,8 +164,8 @@ export const BoulderSlideagainstDesktop: React.FC<BoulderSlideagainstDesktopProp
 				</Flash>
 
 				<ModalLogin>
-					<div className="p-8 mt-4">
-						<div className="text-center mb-8">
+					<div className="mt-4 p-8">
+						<div className="mb-8 text-center">
 							Pour ajouter une voie "Communauté", vous devez être connecté.
 						</div>
 						<LoginForm onLogin={() => hideModalLogin()} />

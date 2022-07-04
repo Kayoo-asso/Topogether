@@ -11,7 +11,7 @@ interface HandleProps {
 
 const Handle = (props: HandleProps) => (
 	<div
-		className="absolute -ml-1 mt-1.5 z-20 cursor-pointer"
+		className="absolute z-20 -ml-1 mt-1.5 cursor-pointer"
 		style={{
 			left: `${props.handle.percent}%`,
 		}}

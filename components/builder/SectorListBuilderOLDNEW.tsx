@@ -71,13 +71,13 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> =
 				(id) => bouldersIn.find((b) => b().id === id)!
 			);
 			return (
-				<div className="flex flex-col mb-10 pb-6">
+				<div className="mb-10 flex flex-col pb-6">
 					<div className="ktext-label text-grey-medium">
 						Secteur {sectorIndex + 1}
 					</div>
-					<div className="ktext-section-title text-main mb-1 flex flex-row items-center">
+					<div className="ktext-section-title mb-1 flex flex-row items-center text-main">
 						<button
-							className="pr-3 cursor-pointer"
+							className="cursor-pointer pr-3"
 							onClick={() => {
 								const newDS = [...displayedSectors];
 								if (newDS.includes(sector.id))
@@ -88,7 +88,7 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> =
 						>
 							<ArrowSimple
 								className={
-									"w-3 h-3 stroke-main stroke-2 " +
+									"h-3 w-3 stroke-main stroke-2 " +
 									(displayedSectors.includes(sector.id)
 										? "-rotate-90"
 										: "rotate-180")
@@ -110,17 +110,17 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> =
 						</div>
 
 						<div
-							className="pr-1 cursor-pointer"
+							className="cursor-pointer pr-1"
 							onClick={() => props.onRenameSector(sectorQuark)}
 						>
-							<Edit className={"w-5 h-5 stroke-main"} />
+							<Edit className={"h-5 w-5 stroke-main"} />
 						</div>
 					</div>
 
 					{displayedSectors.includes(sector.id) && (
 						// BOULDERS
 						// <div className={'flex flex-col gap-1 ml-1 p-2 rounded-sm ' + (draggingSectorId === sector.id ? 'bg-grey-superlight' : '')}>
-						<div className={"flex flex-col gap-1 ml-1 p-2 rounded-sm"}>
+						<div className={"ml-1 flex flex-col gap-1 rounded-sm p-2"}>
 							{boulderQuarks.length === 0 && (
 								<div className="">Aucun rocher référencé</div>
 							)}
@@ -171,7 +171,7 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> =
 		};
 
 		return (
-			<div className="mb-6 px-4 h-full">
+			<div className="mb-6 h-full px-4">
 				<DraggableList
 					items={sectors
 						.quarks()

@@ -22,7 +22,7 @@ export const ParkingBuilderSlide: React.FC<ParkingBuilderSlideProps> =
 			<>
 				{breakpoint === "mobile" && (
 					<SlideoverMobile onClose={props.onClose}>
-						<div className="px-6 py-14 h-full">
+						<div className="h-full px-6 py-14">
 							<ParkingForm
 								parking={props.parking}
 								onDeleteParking={showModalDelete}
@@ -32,7 +32,7 @@ export const ParkingBuilderSlide: React.FC<ParkingBuilderSlideProps> =
 				)}
 				{breakpoint !== "mobile" && (
 					<SlideagainstRightDesktop open onClose={props.onClose}>
-						<div className="px-5 py-3 h-full">
+						<div className="h-full px-5 py-3">
 							<ParkingForm
 								parking={props.parking}
 								onDeleteParking={showModalDelete}

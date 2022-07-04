@@ -23,11 +23,11 @@ export const ShellMobile: React.FC = watchDependencies(() => {
 
 	return (
 		<>
-			<div className="w-screen h-full bg-dark flex">
+			<div className="flex h-full w-screen bg-dark">
 				<Link href={session ? "/user/profile" : "/user/login"}>
 					<a
-						className={`h-full flex-1 flex justify-center items-center ${
-							activeTab === 0 ? "border-t-main border-t-6" : ""
+						className={`flex h-full flex-1 items-center justify-center ${
+							activeTab === 0 ? "border-t-6 border-t-main" : ""
 						}`}
 					>
 						<UserIcon
@@ -41,8 +41,8 @@ export const ShellMobile: React.FC = watchDependencies(() => {
 				{/* TODO: verify this link works correctly, since the logic was simplified */}
 				<Link href={activeTab === 1 ? router.pathname : "/"}>
 					<a
-						className={`h-full flex-1 flex justify-center items-center ${
-							activeTab === 1 ? "border-t-main border-t-6" : ""
+						className={`flex h-full flex-1 items-center justify-center ${
+							activeTab === 1 ? "border-t-6 border-t-main" : ""
 						}`}
 					>
 						<WaypointIcon
@@ -55,12 +55,12 @@ export const ShellMobile: React.FC = watchDependencies(() => {
 
 				<Link href={"/builder/dashboard"}>
 					<a
-						className={`h-full flex-1 flex justify-center items-center ${
-							activeTab === 2 ? "border-t-main border-t-6" : ""
+						className={`flex h-full flex-1 items-center justify-center ${
+							activeTab === 2 ? "border-t-6 border-t-main" : ""
 						}`}
 					>
 						<TopoIcon
-							className={`h-5 w-5 my-auto stroke-1 ${
+							className={`my-auto h-5 w-5 stroke-1 ${
 								activeTab === 2 ? "stroke-main" : "stroke-white"
 							} `}
 						/>

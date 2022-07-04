@@ -76,7 +76,7 @@ export const DraggableList = ({ items }: { items: JSX.Element[] }) => {
 	});
 
 	return (
-		<div className="h-full flex flex-col">
+		<div className="flex h-full flex-col">
 			{springs.map(({ zIndex, shadow, y, scale }, i) => (
 				<animated.div
 					{...bind(i)}

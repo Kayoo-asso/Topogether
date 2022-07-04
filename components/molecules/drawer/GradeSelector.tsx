@@ -44,7 +44,7 @@ export const GradeSelector: React.FC<GradeselectorDrawerProps> = (
 		<>
 			<span
 				className={
-					"flex flex-row cursor-pointer items-center " +
+					"flex cursor-pointer flex-row items-center " +
 					(props.grade
 						? "ktext-base text-white"
 						: "ktext-title text-grey-medium")
@@ -53,7 +53,7 @@ export const GradeSelector: React.FC<GradeselectorDrawerProps> = (
 			>
 				<Circle
 					className={
-						"h-6 w-6 mr-2 " +
+						"mr-2 h-6 w-6 " +
 						(props.grade ? getGradeColorClass(props.grade) : "fill-grey-medium")
 					}
 				/>
@@ -61,17 +61,17 @@ export const GradeSelector: React.FC<GradeselectorDrawerProps> = (
 			</span>
 
 			{props.open && (
-				<div className="absolute flex bottom-0 h-[95%] md:h-[82%] pt-8 flex-col gap-5 -mb-[25px] md:mb-0 md:bottom-[7vh] items-start bg-dark rounded-t-full overflow-y-scroll overflow-x-hidden hide-scrollbar right-[17%] md:right-[5%]">
+				<div className="hide-scrollbar absolute bottom-0 right-[17%] -mb-[25px] flex h-[95%] flex-col items-start gap-5 overflow-x-hidden overflow-y-scroll rounded-t-full bg-dark pt-8 md:bottom-[7vh] md:right-[5%] md:mb-0 md:h-[82%]">
 					{[...grades].reverse().map((grade) => (
 						<span
 							key={grade}
-							className="flex flex-row items-center text-white ktext-base px-3 cursor-pointer"
+							className="ktext-base flex cursor-pointer flex-row items-center px-3 text-white"
 							onClick={() => {
 								props.onGradeSelect(grade);
 								props.setOpen(false);
 							}}
 						>
-							<Circle className={"h-6 w-6 mr-2 " + getGradeColorClass(grade)} />
+							<Circle className={"mr-2 h-6 w-6 " + getGradeColorClass(grade)} />
 							{grade}
 						</span>
 					))}

@@ -39,9 +39,9 @@ export const AccessSlideover: React.FC<AccessSlideoverProps> = ({
 	const approachContent = () => {
 		if (!access)
 			return (
-				<div className="flex flex-col h-full pt-5 md:pt-0">
-					<div className="flex flex-col px-6 md:px-0 pt-5 md:pt-0">
-						<div className="ktext-big-title text-center w-full mt-4 mb-6 md:mb-3">
+				<div className="flex h-full flex-col pt-5 md:pt-0">
+					<div className="flex flex-col px-6 pt-5 md:px-0 md:pt-0">
+						<div className="ktext-big-title mt-4 mb-6 w-full text-center md:mb-3">
 							Aucune marche d'approche référencée
 						</div>
 					</div>
@@ -49,16 +49,16 @@ export const AccessSlideover: React.FC<AccessSlideoverProps> = ({
 			);
 		else
 			return (
-				<div className="flex flex-col h-full pt-5 md:pt-0">
-					<div className="flex flex-col px-6 md:px-0 pt-5 md:pt-0">
-						<div className="ktext-big-title text-center w-full mt-4 mb-6 md:hidden">
+				<div className="flex h-full flex-col pt-5 md:pt-0">
+					<div className="flex flex-col px-6 pt-5 md:px-0 md:pt-0">
+						<div className="ktext-big-title mt-4 mb-6 w-full text-center md:hidden">
 							{"Marche" +
 								(props.accesses.length > 1 ? "s" : "") +
 								" d'approche"}
 						</div>
 
 						{props.accesses.length > 1 && (
-							<Tabs tabs={getTabOptions()} className="pt-2 md:pt-8 pb-6" />
+							<Tabs tabs={getTabOptions()} className="pt-2 pb-6 md:pt-8" />
 						)}
 						<div className="flex flex-row justify-between md:flex-col">
 							{access.difficulty && (
@@ -76,7 +76,7 @@ export const AccessSlideover: React.FC<AccessSlideoverProps> = ({
 						</div>
 					</div>
 
-					<div className="flex flex-col px-6 md:px-0 mt-6 overflow-auto">
+					<div className="mt-6 flex flex-col overflow-auto px-6 md:px-0">
 						{access.steps?.map((step, index) => (
 							<div key={index} className="mb-6">
 								{access.steps && access.steps.length > 1 && (
@@ -84,7 +84,7 @@ export const AccessSlideover: React.FC<AccessSlideoverProps> = ({
 								)}
 								<div>{step.description}</div>
 								{step.image && (
-									<div className="w-auto relative mt-2 h-[200px]">
+									<div className="relative mt-2 h-[200px] w-auto">
 										<CFImage
 											image={step.image}
 											objectFit="contain"

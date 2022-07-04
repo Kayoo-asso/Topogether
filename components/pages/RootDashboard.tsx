@@ -82,15 +82,15 @@ export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies(
 			<>
 				<HeaderDesktop backLink="/" title="Mes topos" />
 
-				<div className="flex flex-row w-full h-content md:h-full">
+				<div className="flex h-content w-full flex-row md:h-full">
 					<LeftbarDesktop currentMenuItem="BUILDER" />
 
 					<div
 						ref={ref}
-						className="bg-white w-full overflow-y-auto h-contentPlusHeader md:h-contentPlusShell overflow-x-hidden pl-[1%] pb-16"
+						className="h-contentPlusHeader w-full overflow-y-auto overflow-x-hidden bg-white pl-[1%] pb-16 md:h-contentPlusShell"
 					>
-						<div className="px-4 md:px-8 py-6 flex justify-between items-center">
-							<div className="md:hidden ktext-section-title text-center">
+						<div className="flex items-center justify-between px-4 py-6 md:px-8">
+							<div className="ktext-section-title text-center md:hidden">
 								Mes topos
 							</div>
 							{lightTopos.length > 0 && (
@@ -104,7 +104,7 @@ export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies(
 									status={TopoStatus.Draft}
 									clickable="builder"
 									title={
-										<div className="text-second-light ktext-section-title px-4 md:px-8">
+										<div className="ktext-section-title px-4 text-second-light md:px-8">
 											Brouillons
 										</div>
 									}
@@ -116,7 +116,7 @@ export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies(
 									topos={submittedLightTopos}
 									status={TopoStatus.Submitted}
 									title={
-										<div className="text-third-light ktext-section-title px-4 md:px-8">
+										<div className="ktext-section-title px-4 text-third-light md:px-8">
 											En attente de validation
 										</div>
 									}
@@ -128,7 +128,7 @@ export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies(
 									status={TopoStatus.Validated}
 									clickable="topo"
 									title={
-										<div className="text-main ktext-section-title px-4 md:px-8">
+										<div className="ktext-section-title px-4 text-main md:px-8">
 											Validés
 										</div>
 									}
@@ -137,11 +137,11 @@ export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies(
 							</>
 						)}
 						{lightTopos.length === 0 && (
-							<div className="flex justify-center relative w-full h-[70vh]">
-								<div className="w-[90%] h-full flex items-center relative rounded overflow-hidden bg-grey-superlight">
+							<div className="relative flex h-[70vh] w-full justify-center">
+								<div className="relative flex h-full w-[90%] items-center overflow-hidden rounded bg-grey-superlight">
 									<Link href="/builder/new">
-										<a className="w-full flex flex-col items-center">
-											<AddIcon className="stroke-grey-medium fill-white h-16 w-16 stroke-[0.25px]" />
+										<a className="flex w-full flex-col items-center">
+											<AddIcon className="h-16 w-16 fill-white stroke-grey-medium stroke-[0.25px]" />
 											<span>Créer un topo</span>
 										</a>
 									</Link>

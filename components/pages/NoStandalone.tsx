@@ -29,10 +29,10 @@ const NoStandalone: React.FC = () => {
 	return (
 		<div
 			id="content"
-			className="h-screen w-screen bg-main flex flex-col justify-center items-center text-white py-10 px-6"
+			className="flex h-screen w-screen flex-col items-center justify-center bg-main py-10 px-6 text-white"
 		>
 			<div className="ktext-big-title">Topogether</div>
-			<div className="h-[150px] w-[150px] relative my-14">
+			<div className="relative my-14 h-[150px] w-[150px]">
 				<NextImage
 					src={staticUrl.logo_white}
 					priority
@@ -47,10 +47,10 @@ const NoStandalone: React.FC = () => {
 			</div>
 
 			{isIos && (
-				<div className="flex flex-col gap-2 justify-start">
+				<div className="flex flex-col justify-start gap-2">
 					<div className="flex flex-row items-center gap-2">
 						1. Cliquer sur le bouton <strong>Partager</strong>
-						<Share className="w-6 h-6 stroke-white" />
+						<Share className="h-6 w-6 stroke-white" />
 					</div>
 					<div>
 						2. Choisir <strong>Sur l'écran d'accueil +</strong>

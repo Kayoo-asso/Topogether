@@ -24,7 +24,7 @@ export const TrackFormSlideagainstDesktop: React.FC<TrackFormSlideagainstDesktop
 					secondary
 					onClose={props.onClose}
 				>
-					<div className="px-5 py-3 h-full">
+					<div className="h-full px-5 py-3">
 						<TrackForm track={props.track} onDeleteTrack={showModalDelete} />
 					</div>
 				</SlideagainstRightDesktop>

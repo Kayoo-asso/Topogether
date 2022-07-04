@@ -21,10 +21,10 @@ export const TopoCardList: React.FC<TopoCardListProps> = (
 		{props.title}
 		<div
 			id={`topo-card-list-${props.status}`}
-			className="overflow-x-scroll hide-scrollbar md:overflow-x-hidden"
+			className="hide-scrollbar overflow-x-scroll md:overflow-x-hidden"
 		>
-			<div className="min-w-max md:min-w-full flex flex-row md:flex-wrap">
-				<div className="md:hidden w-2 h-2"></div>
+			<div className="flex min-w-max flex-row md:min-w-full md:flex-wrap">
+				<div className="h-2 w-2 md:hidden"></div>
 				{props.topos.length === 0 &&
 					(props.status === TopoStatus.Submitted ||
 						props.status === TopoStatus.Validated) && (

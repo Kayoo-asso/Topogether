@@ -93,7 +93,7 @@ export function useModal<T>(): [
 					<ModalBG onBgClick={close}>
 						<div className="p-6 pt-10">
 							{imgUrl && (
-								<div className="w-full h-[100px] relative mb-5">
+								<div className="relative mb-5 h-[100px] w-full">
 									<NextImage
 										src={imgUrl}
 										priority
@@ -115,7 +115,7 @@ export function useModal<T>(): [
 							className="absolute top-3 right-3 cursor-pointer"
 							onClick={close}
 						>
-							<Clear className="stroke-dark h-8 w-8" />
+							<Clear className="h-8 w-8 stroke-dark" />
 						</div>
 					</ModalBG>
 				</Portal>

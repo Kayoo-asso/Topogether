@@ -79,7 +79,7 @@ export const RootWorldMap: React.FC<RootWorldMapProps> = watchDependencies(
 					displayLogin={user ? false : true}
 				/>
 
-				<div className="flex flex-row relative h-contentPlusHeader md:h-full">
+				<div className="relative flex h-contentPlusHeader flex-row md:h-full">
 					{user && <LeftbarDesktop currentMenuItem="MAP" />}
 
 					<MapControl

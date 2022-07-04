@@ -39,9 +39,9 @@ export const ManagementSlideover: React.FC<ManagementSlideoverProps> = ({
 	const managementContent = () => {
 		if (!manager)
 			return (
-				<div className="flex flex-col h-full pt-5 md:pt-0">
-					<div className="flex flex-col px-6 md:px-0 pt-5 md:pt-0">
-						<div className="ktext-big-title text-center w-full mt-4 mb-6 md:mb-3">
+				<div className="flex h-full flex-col pt-5 md:pt-0">
+					<div className="flex flex-col px-6 pt-5 md:px-0 md:pt-0">
+						<div className="ktext-big-title mt-4 mb-6 w-full text-center md:mb-3">
 							Aucun gestionnaire référencé pour ce spot
 						</div>
 					</div>
@@ -49,9 +49,9 @@ export const ManagementSlideover: React.FC<ManagementSlideoverProps> = ({
 			);
 		else
 			return (
-				<div className="flex flex-col h-full pt-5 md:pt-0">
-					<div className="flex flex-col px-6 md:px-0 pt-5 md:pt-0">
-						<div className="ktext-big-title text-center w-full mt-4 mb-6 md:hidden">
+				<div className="flex h-full flex-col pt-5 md:pt-0">
+					<div className="flex flex-col px-6 pt-5 md:px-0 md:pt-0">
+						<div className="ktext-big-title mt-4 mb-6 w-full text-center md:hidden">
 							{"Gestionnaire" +
 								(props.managers.length > 1 ? "s" : "") +
 								" du spot"}
@@ -60,9 +60,9 @@ export const ManagementSlideover: React.FC<ManagementSlideoverProps> = ({
 						{props.managers.length > 1 && (
 							<Tabs tabs={getTabOptions()} className="pt-4 pb-6" />
 						)}
-						<div className="flex flex-row justify-end gap-6 items-center pb-6 md:pt-8">
+						<div className="flex flex-row items-center justify-end gap-6 pb-6 md:pt-8">
 							{manager.image && (
-								<div className="w-1/2 relative mt-2 min-h-[100px]">
+								<div className="relative mt-2 min-h-[100px] w-1/2">
 									<CFImage
 										image={manager.image}
 										alt={"Logo gestionnaire " + managerTab}
@@ -79,7 +79,7 @@ export const ManagementSlideover: React.FC<ManagementSlideoverProps> = ({
 						</div>
 
 						<div className="flex flex-row gap-4">
-							<div className="flex flex-col gap-1 w-1/2">
+							<div className="flex w-1/2 flex-col gap-1">
 								<div className="ktext-subtitle">Adresse</div>
 								<div className="ktext-base-little">{manager.address}</div>
 								<div className="ktext-base-little">
@@ -87,7 +87,7 @@ export const ManagementSlideover: React.FC<ManagementSlideoverProps> = ({
 								</div>
 							</div>
 
-							<div className="flex flex-col gap-1 w-1/2">
+							<div className="flex w-1/2 flex-col gap-1">
 								<div className="ktext-subtitle">Coordonnées</div>
 								<div className="ktext-base-little">{manager.contactName}</div>
 								{manager.contactPhone && (
@@ -97,7 +97,7 @@ export const ManagementSlideover: React.FC<ManagementSlideoverProps> = ({
 								)}
 								{manager.contactMail && (
 									<div
-										className="ktext-base-little overflow-hidden cursor-pointer text-main"
+										className="ktext-base-little cursor-pointer overflow-hidden text-main"
 										onClick={() => {
 											const data = [
 												new ClipboardItem({

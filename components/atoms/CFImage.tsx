@@ -91,7 +91,7 @@ export const CFImage = forwardRef<HTMLImageElement, CFImageProps>(
 						{elts}
 						<Portal open={portalOpen}>
 							<div
-								className="absolute top-0 left-0 flex z-full w-screen h-screen bg-black bg-opacity-80"
+								className="absolute top-0 left-0 z-full flex h-screen w-screen bg-black bg-opacity-80"
 								onClick={() => setPortalOpen(false)}
 							>
 								{elts}
@@ -136,14 +136,14 @@ export const CFImage = forwardRef<HTMLImageElement, CFImageProps>(
 		return wrapPortal(
 			<div
 				className={
-					"w-full h-full relative overflow-hidden " + (props.className || "")
+					"relative h-full w-full overflow-hidden " + (props.className || "")
 				}
 				onClick={() =>
 					modalable && !loading && !forceLoading && setPortalOpen(true)
 				}
 			>
 				{(loading || forceLoading) && (
-					<div className="bg-white absolute w-full h-full top-0 z-1000">
+					<div className="absolute top-0 z-1000 h-full w-full bg-white">
 						<Loading bgWhite={false} SVGClassName="w-12 h-12" />
 					</div>
 				)}

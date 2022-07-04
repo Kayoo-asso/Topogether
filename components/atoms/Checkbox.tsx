@@ -23,7 +23,7 @@ export const Checkbox: React.FC<CheckboxProps> = ({
 
 	return (
 		<div
-			className={`flex flex-row space-between cursor-pointer ${props.className}`}
+			className={`space-between flex cursor-pointer flex-row ${props.className}`}
 			onClick={handleClick}
 			onKeyDown={(e) => {
 				if (e.key === "Enter") {
@@ -35,8 +35,8 @@ export const Checkbox: React.FC<CheckboxProps> = ({
 		>
 			<div className="relative h-5 w-5">
 				<div
-					className={`absolute h-5 w-5 stroke-dark rounded-[0.2rem] 
-          border-2 border-dark ${containerOpacity} ${rotation} transition-all`}
+					className={`absolute h-5 w-5 rounded-[0.2rem] border-2 
+          border-dark stroke-dark ${containerOpacity} ${rotation} transition-all`}
 				/>
 				<Checked
 					className={`absolute h-5 w-5 stroke-main transition-opacity ${iconOpacity}`}
@@ -44,7 +44,7 @@ export const Checkbox: React.FC<CheckboxProps> = ({
 			</div>
 			<label
 				htmlFor="1"
-				className="ktext-base main inline-block ml-2 cursor-pointer leading-6"
+				className="ktext-base main ml-2 inline-block cursor-pointer leading-6"
 			>
 				{props.label}
 			</label>

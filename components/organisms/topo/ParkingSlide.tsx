@@ -29,14 +29,14 @@ export const ParkingSlide: React.FC<ParkingSlideProps> = watchDependencies(
 
 		const parkingContent = () => (
 			<>
-				<div className="flex flex-col h-[90%] md:h-[85%] pt-10 md:pt-0 gap-6">
-					<div className="flex flex-col items-center md:items-start px-6">
-						<div className="ktext-big-title flex flex-row gap-3 items-center">
+				<div className="flex h-[90%] flex-col gap-6 pt-10 md:h-[85%] md:pt-0">
+					<div className="flex flex-col items-center px-6 md:items-start">
+						<div className="ktext-big-title flex flex-row items-center gap-3">
 							<ParkingIcon className="h-6 w-6 fill-second" />
 							{parking.name || "Parking"}
 						</div>
 						<div
-							className="ktext-label text-grey-medium cursor-pointer"
+							className="ktext-label cursor-pointer text-grey-medium"
 							onClick={() => {
 								const data = [
 									new ClipboardItem({
@@ -66,7 +66,7 @@ export const ParkingSlide: React.FC<ParkingSlideProps> = watchDependencies(
 						</div>
 					</div>
 
-					<div className="w-full relative max-h-[200px] h-[60%] md:h-[25%] overflow-hidden">
+					<div className="relative h-[60%] max-h-[200px] w-full overflow-hidden md:h-[25%]">
 						<CFImage
 							image={parking.image}
 							alt="Parking"
@@ -77,15 +77,15 @@ export const ParkingSlide: React.FC<ParkingSlideProps> = watchDependencies(
 						/>
 					</div>
 
-					<div className="px-6 overflow-auto">
+					<div className="overflow-auto px-6">
 						<div>
 							<span className="font-semibold">Nombre de places : </span>
 							{parking.spaces}
 						</div>
-						<div className="mt-2 ktext-base-little">{parking.description}</div>
+						<div className="ktext-base-little mt-2">{parking.description}</div>
 					</div>
 				</div>
-				<div className="absolute text-center px-6 bottom-[9%] md:bottom-2 w-full">
+				<div className="absolute bottom-[9%] w-full px-6 text-center md:bottom-2">
 					<ParkingButton onClick={() => setModalParkingOpen(true)} />
 				</div>
 			</>

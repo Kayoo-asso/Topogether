@@ -527,7 +527,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 
 				{/* overflow-clip instead of overflow-hidden, so that the Slideagainst can appear off-screen without 
                 triggering a shift of content in this div */}
-				<div className="h-content md:h-contentPlusShell relative flex flex-row md:overflow-clip">
+				<div className="relative flex h-content flex-row md:h-contentPlusShell md:overflow-clip">
 					<LeftbarBuilderDesktop
 						topoQuark={props.topoQuark}
 						boulderOrder={boulderOrder()}

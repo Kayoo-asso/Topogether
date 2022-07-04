@@ -30,7 +30,7 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 					{elts}
 					<Portal open={portalOpen}>
 						<div
-							className="absolute top-0 left-0 flex z-full w-screen h-screen bg-black bg-opacity-80"
+							className="absolute top-0 left-0 z-full flex h-screen w-screen bg-black bg-opacity-80"
 							onClick={(e) => {
 								const eltUnder = e.target as EventTarget & SVGSVGElement;
 								if (eltUnder.nodeName === "svg") setPortalOpen(false);

@@ -17,7 +17,7 @@ interface TrackProps {
 
 const Track = ({ source, target, getTrackProps }: TrackProps) => (
 	<div
-		className="absolute h-1 z-10 mt-4 rounded-lg bg-grey-medium cursor-pointer"
+		className="absolute z-10 mt-4 h-1 cursor-pointer rounded-lg bg-grey-medium"
 		style={{
 			left: `${source.percent}%`,
 			width: `${target.percent - source.percent}%`,
@@ -50,7 +50,7 @@ export const BaseSliderInput: React.FC<BaseSliderInputProps> = ({
 		domain.reverse();
 	}
 	return (
-		<div className="relative w-[calc(100%-20px)] ml-px h-8">
+		<div className="relative ml-px h-8 w-[calc(100%-20px)]">
 			<Slider
 				domain={domain}
 				values={props.values}
@@ -64,7 +64,7 @@ export const BaseSliderInput: React.FC<BaseSliderInputProps> = ({
 				<Rail>
 					{({ getRailProps }) => (
 						<div
-							className="absolute w-full h-1 mt-4 rounded-lg bg-grey-light cursor-pointer"
+							className="absolute mt-4 h-1 w-full cursor-pointer rounded-lg bg-grey-light"
 							{...getRailProps()}
 						/>
 					)}

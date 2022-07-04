@@ -90,7 +90,7 @@ export const SVGPoint: React.FC<SVGPointProps> = ({
 			y={iconHref.includes("line-point") ? props.y : props.y - props.size / 2}
 			className={`touch-none ${className} ${
 				draggable && !eraser ? "cursor-pointer" : ""
-			}${eraser ? " hover:scale-150 origin-center" : ""}`}
+			}${eraser ? " origin-center hover:scale-150" : ""}`}
 			style={{
 				transformBox: "fill-box",
 			}}

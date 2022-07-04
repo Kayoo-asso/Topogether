@@ -18,7 +18,7 @@ export const LeftbarDesktop: React.FC<LeftbarDesktopProps> = watchDependencies(
 		const user = useSession();
 
 		return (
-			<div className="hidden md:flex flex-col bg-white border-r border-grey-medium min-w-[280px] w-[280px] h-full px-8 py-10 z-200">
+			<div className="z-200 hidden h-full w-[280px] min-w-[280px] flex-col border-r border-grey-medium bg-white px-8 py-10 md:flex">
 				<div className="mb-20 mt-2">
 					<div>
 						Bonjour{" "}
@@ -26,11 +26,11 @@ export const LeftbarDesktop: React.FC<LeftbarDesktopProps> = watchDependencies(
 					</div>
 				</div>
 
-				<div className="flex-1 flex flex-col gap-10">
+				<div className="flex flex-1 flex-col gap-10">
 					<Link href="/builder/dashboard">
 						<a className="flex flex-row">
 							<TopoIcon
-								className={`h-6 w-6 mr-4 ${
+								className={`mr-4 h-6 w-6 ${
 									currentMenuItem === "BUILDER" ? "stroke-main" : "stroke-dark"
 								}`}
 							/>
@@ -46,7 +46,7 @@ export const LeftbarDesktop: React.FC<LeftbarDesktopProps> = watchDependencies(
 					<Link href="/">
 						<a className="flex flex-row">
 							<WaypointIcon
-								className={`h-6 w-6 mr-4 ${
+								className={`mr-4 h-6 w-6 ${
 									currentMenuItem === "MAP" ? "fill-main" : "fill-dark"
 								}`}
 							/>
@@ -62,7 +62,7 @@ export const LeftbarDesktop: React.FC<LeftbarDesktopProps> = watchDependencies(
 					<Link href="/user/profile">
 						<a className="flex flex-row">
 							<UserIcon
-								className={`h-6 w-6 mr-4 ${
+								className={`mr-4 h-6 w-6 ${
 									currentMenuItem === "USER" ? "fill-main" : "fill-dark"
 								}`}
 							/>
@@ -79,7 +79,7 @@ export const LeftbarDesktop: React.FC<LeftbarDesktopProps> = watchDependencies(
 						<Link href="/admin">
 							<a className="flex flex-row">
 								<KeyIcon
-									className={`h-6 w-6 mr-4 ${
+									className={`mr-4 h-6 w-6 ${
 										currentMenuItem === "ADMIN" ? "stroke-main" : "stroke-dark"
 									}`}
 								/>

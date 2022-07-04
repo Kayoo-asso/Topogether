@@ -91,13 +91,13 @@ const CustomApp = ({ Component, pageProps, session, userAgent }: Props) => {
 						<NavigationLoader>
 							<div
 								id="content"
-								className="flex-1 w-screen absolute bg-grey-light flex flex-col h-full md:h-screen overflow-hidden"
+								className="absolute flex h-full w-screen flex-1 flex-col overflow-hidden bg-grey-light md:h-screen"
 							>
 								<Component {...pageProps} />
 							</div>
 							<div
 								id="footer"
-								className="bg-dark z-500 absolute bottom-0 h-shell md:hidden"
+								className="absolute bottom-0 z-500 h-shell bg-dark md:hidden"
 							>
 								<ShellMobile />
 							</div>

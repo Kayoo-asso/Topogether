@@ -29,15 +29,15 @@ export const HeaderMobile: React.FC<HeaderMobileProps> = (
 	};
 
 	return (
-		<div className="bg-dark flex items-center h-header">
-			<div className="w-1/6 flex justify-center">
-				{wrapLink(<ArrowSimple className="stroke-white stroke-1 w-4 h-4" />)}
+		<div className="flex h-header items-center bg-dark">
+			<div className="flex w-1/6 justify-center">
+				{wrapLink(<ArrowSimple className="h-4 w-4 stroke-white stroke-1" />)}
 			</div>
 
 			<div
 				className={
 					(props.children ? "w-3/6" : "w-4/6") +
-					" text-white ktext-title whitespace-nowrap overflow-hidden"
+					" ktext-title overflow-hidden whitespace-nowrap text-white"
 				}
 				aria-label={displayTitleTooltip ? props.title : undefined}
 				data-microtip-position="bottom"
@@ -48,14 +48,14 @@ export const HeaderMobile: React.FC<HeaderMobileProps> = (
 			</div>
 
 			{props.children && (
-				<div className="w-1/6 pl-5 flex flex-row items-center">
+				<div className="flex w-1/6 flex-row items-center pl-5">
 					{props.children}
 				</div>
 			)}
 
 			{props.menuOptions && (
 				<button
-					className="w-1/6 flex justify-center"
+					className="flex w-1/6 justify-center"
 					onClick={() => setMenuOpen((x) => !x)}
 				>
 					<MenuIcon
@@ -66,7 +66,7 @@ export const HeaderMobile: React.FC<HeaderMobileProps> = (
 			{menuOpen && props.menuOptions && (
 				<Dropdown
 					options={props.menuOptions}
-					className="absolute z-1000 right-[10px] top-[7%] min-w-[40%]"
+					className="absolute right-[10px] top-[7%] z-1000 min-w-[40%]"
 					onSelect={() => setMenuOpen(false)}
 				/>
 			)}

@@ -38,7 +38,7 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
 			>
 				{/* BOULDER IMAGE */}
 				{full && (
-					<div className="flex w-full bg-dark rounded-t-lg relative overflow-hidden max-h-[40%]">
+					<div className="relative flex max-h-[40%] w-full overflow-hidden rounded-t-lg bg-dark">
 						<ImageSlider
 							images={boulder.images}
 							imageToDisplayIdx={imageToDisplayIdx}
@@ -52,10 +52,10 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
 					</div>
 				)}
 
-				<div className="flex flex-col h-[60%]">
+				<div className="flex h-[60%] flex-col">
 					{/* BOULDER INFOS */}
 					<div
-						className={`grid grid-cols-8 p-5 items-center ${
+						className={`grid grid-cols-8 items-center p-5 ${
 							full ? "" : " mt-3"
 						}`}
 					>
@@ -68,13 +68,13 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
 								<div className="ktext-base-little">Descente dangereuse !</div>
 							)}
 							{!full && (
-								<div className="flex items-center mt-2">
+								<div className="mt-2 flex items-center">
 									<GradeScale boulder={boulder} circleSize="little" />
 								</div>
 							)}
 						</div>
 
-						<div className="flex flex-row items-center gap-6 justify-end col-span-2">
+						<div className="col-span-2 flex flex-row items-center justify-end gap-6">
 							{/* {selectedTrack && boulder.tracks.filter(track => track.lines.toArray().some(line => line.imageId === props.currentImage?.id)).toArray().length > 1 &&
               <button
                 onClick={() => setDisplayPhantomTracks(!displayPhantomTracks)}
@@ -98,7 +98,7 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
 							)}
 
 							{!full && (
-								<div className="w-full relative h-[60px]">
+								<div className="relative h-[60px] w-full">
 									<CFImage
 										image={boulder.images[0]}
 										className="rounded-sm"
@@ -114,7 +114,7 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
 					{/* TODO : show once good pattern */}
 					{/* TABS */}
 					{full && (
-						<div className="flex flex-row px-5 ktext-label font-bold my-2">
+						<div className="ktext-label my-2 flex flex-row px-5 font-bold">
 							<span
 								className={`w-1/4 ${
 									trackTab ? "text-main" : "text-grey-medium"
@@ -162,7 +162,7 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
 
 					{/* BOULDER FORM */}
 					{!trackTab && full && (
-						<div className="border-t border-grey-light px-6 py-10 overflow-auto">
+						<div className="overflow-auto border-t border-grey-light px-6 py-10">
 							<BoulderForm boulder={props.boulder} topo={props.topo} />
 							<Button
 								content="Supprimer le bloc"

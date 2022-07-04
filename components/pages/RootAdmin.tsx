@@ -92,10 +92,10 @@ export const RootAdmin: React.FC<RootAdminProps> = (props: RootAdminProps) => {
 		<>
 			<Header backLink="/user/profile" title="Administration" />
 
-			<div className="h-full flex flex-row bg-white">
+			<div className="flex h-full flex-row bg-white">
 				<LeftbarDesktop currentMenuItem="ADMIN" />
 
-				<div className="w-full h-[10%] mt-[10%]">
+				<div className="mt-[10%] h-[10%] w-full">
 					<Tabs
 						tabs={[
 							{
@@ -118,8 +118,8 @@ export const RootAdmin: React.FC<RootAdminProps> = (props: RootAdminProps) => {
 							},
 						]}
 					/>
-					<div className="overflow-y-scroll h-contentPlusHeader md:h-contentPlusShell hide-scrollbar pb-40">
-						<div className="min-w-full flex flex-row flex-wrap px-4 md:px-8 py-6">
+					<div className="hide-scrollbar h-contentPlusHeader overflow-y-scroll pb-40 md:h-contentPlusShell">
+						<div className="flex min-w-full flex-row flex-wrap px-4 py-6 md:px-8">
 							{toposToDisplay.map((topo) => (
 								<TopoCard
 									key={topo.id}

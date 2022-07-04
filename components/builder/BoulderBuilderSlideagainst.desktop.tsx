@@ -55,7 +55,7 @@ export const BoulderBuilderSlideagainstDesktop = watchDependencies<
 			item={props.boulder()}
 			onClose={props.onClose}
 		>
-			<div className="flex flex-col h-full w-full">
+			<div className="flex h-full w-full flex-col">
 				<BoulderForm
 					className="mt-3 mb-6 px-5"
 					boulder={props.boulder}

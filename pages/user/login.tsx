@@ -38,8 +38,8 @@ const LoginPage: NextPage = () => {
 		<>
 			<Header backLink="/" title="Connexion" />
 
-			<div className="w-full h-content md:h-full flex flex-col items-center justify-center overflow-auto bg-bottom bg-white md:bg-[url('/assets/img/login_background.png')] md:bg-cover">
-				<div className="p-10 w-full bg-white md:w-[500px] md:shadow md:rounded-lg">
+			<div className="flex h-content w-full flex-col items-center justify-center overflow-auto bg-white bg-bottom md:h-full md:bg-[url('/assets/img/login_background.png')] md:bg-cover">
+				<div className="w-full bg-white p-10 md:w-[500px] md:rounded-lg md:shadow">
 					<LoginForm onLogin={redirect} />
 				</div>
 			</div>

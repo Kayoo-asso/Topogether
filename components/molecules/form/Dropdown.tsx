@@ -50,7 +50,7 @@ export const Dropdown: React.FC<DropdownProps> = React.memo(
 		return (
 			<div
 				ref={ref}
-				className={`shadow absolute z-1000 px-7 bg-white rounded${
+				className={`absolute z-1000 bg-white px-7 shadow rounded${
 					fullSize ? " w-full" : ""
 				} ${className}`}
 				style={{ left: `${position?.x}px`, top: `${position?.y}px` }}
@@ -58,7 +58,7 @@ export const Dropdown: React.FC<DropdownProps> = React.memo(
 				{props.options.map((opt, i) =>
 					opt.isSection ? (
 						<div
-							className={`text-grey-medium ktext-label uppercase ${
+							className={`ktext-label uppercase text-grey-medium ${
 								i > 0 && "mt-5"
 							}`}
 							key={opt.value}
@@ -71,8 +71,8 @@ export const Dropdown: React.FC<DropdownProps> = React.memo(
 						<div
 							className={`h-16 ${
 								opt.disabled
-									? "text-grey-medium cursor-default"
-									: "text-dark cursor-pointer"
+									? "cursor-default text-grey-medium"
+									: "cursor-pointer text-dark"
 							} ktext-base flex flex-row items-center`}
 							key={opt.value}
 							onPointerDown={(e) => {
@@ -89,7 +89,7 @@ export const Dropdown: React.FC<DropdownProps> = React.memo(
 								<opt.icon
 									className={`${
 										opt.disabled ? "stroke-grey-medium" : "stroke-black"
-									} h-5 w-5 mr-5`}
+									} mr-5 h-5 w-5`}
 								/>
 							)}
 							{opt.label || opt.value}

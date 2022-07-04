@@ -45,11 +45,11 @@ export const BoulderItemLeftbar: React.FC<BoulderItemLeftbarProps> =
 
 		return (
 			<>
-				<div className="flex flex-row cursor-pointer text-dark items-center">
+				<div className="flex cursor-pointer flex-row items-center text-dark">
 					<div className="pr-3">
 						<ArrowSimple
 							className={
-								"w-3 h-3 stroke-dark cursor-pointer " +
+								"h-3 w-3 cursor-pointer stroke-dark " +
 								(props.selected ? "stroke-2 " : "") +
 								(props.displayed ? "-rotate-90" : "rotate-180")
 							}
@@ -72,26 +72,26 @@ export const BoulderItemLeftbar: React.FC<BoulderItemLeftbarProps> =
 					</div>
 					<div className="cursor-pointer" onClick={props.onDeleteClick}>
 						<CrossDelete
-							className={"w-4 h-4 stroke-grey-medium hover:stroke-dark"}
+							className={"h-4 w-4 stroke-grey-medium hover:stroke-dark"}
 						/>
 					</div>
 				</div>
 
 				{props.displayed && (
 					// TRACKS
-					<div className="flex flex-col ml-4 mb-4">
+					<div className="ml-4 mb-4 flex flex-col">
 						{trackQuarks.map((trackQuark) => {
 							const track = trackQuark();
 							return (
 								<div
 									key={track.id}
-									className="flex flex-row cursor-pointer items-baseline"
+									className="flex cursor-pointer flex-row items-baseline"
 									onClick={() => props.onTrackClick(trackQuark)}
 								>
 									{track.grade && (
 										<div
 											className={
-												"mr-2 ktext-subtitle " + getGradeColorClass(track.grade)
+												"ktext-subtitle mr-2 " + getGradeColorClass(track.grade)
 											}
 										>
 											{track.grade}
@@ -111,7 +111,7 @@ export const BoulderItemLeftbar: React.FC<BoulderItemLeftbarProps> =
 						})}
 						{props.displayCreateTrack && (
 							<div
-								className="text-grey-medium cursor-pointer mt-2"
+								className="mt-2 cursor-pointer text-grey-medium"
 								onClick={props.onCreateTrack}
 							>
 								+ Nouveau passage

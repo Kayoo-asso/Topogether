@@ -22,7 +22,7 @@ interface LeftbarBuilderDesktopProps {
 export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> =
 	watchDependencies((props: LeftbarBuilderDesktopProps) => {
 		return (
-			<div className="bg-white border-r border-grey-medium min-w-[280px] w-[280px] h-full hidden md:flex flex-col px-2 py-10 z-500 overflow-auto">
+			<div className="z-500 hidden h-full w-[280px] min-w-[280px] flex-col overflow-auto border-r border-grey-medium bg-white px-2 py-10 md:flex">
 				<SectorListBuilder
 					topoQuark={props.topoQuark}
 					boulderOrder={props.boulderOrder}

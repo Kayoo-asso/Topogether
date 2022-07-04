@@ -29,8 +29,8 @@ export const AverageNote: React.FC<AverageNoteProps> = (
 						props.className ? props.className : ""
 					}`}
 				>
-					<Star className="fill-main w-6 h-6" />
-					<span className="ktext-subtitle text-main mb-[-4px]">{avgNote}</span>
+					<Star className="h-6 w-6 fill-main" />
+					<span className="ktext-subtitle mb-[-4px] text-main">{avgNote}</span>
 				</div>
 			</div>
 		);

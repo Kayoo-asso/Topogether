@@ -43,9 +43,9 @@ export const HeaderDesktop: React.FC<HeaderDesktopProps> = watchDependencies(
 		}, []);
 
 		return (
-			<div className="bg-dark items-center h-header hidden md:flex">
+			<div className="hidden h-header items-center bg-dark md:flex">
 				<Link href={props.backLink}>
-					<a className="w-1/12 relative h-[70%] cursor-pointer">
+					<a className="relative h-[70%] w-1/12 cursor-pointer">
 						<NextImage
 							src="/assets/img/Logo_white_topogether.png"
 							priority
@@ -57,12 +57,12 @@ export const HeaderDesktop: React.FC<HeaderDesktopProps> = watchDependencies(
 				</Link>
 
 				<div
-					className="flex flex-row items-center text-white ktext-title whitespace-nowrap cursor-pointer mr-4"
+					className="ktext-title mr-4 flex cursor-pointer flex-row items-center whitespace-nowrap text-white"
 					onClick={() => setMenuOpen(!menuOpen)}
 				>
 					{props.title}
 					{props.menuOptions && (
-						<ArrowFull className="fill-white w-4 h-4 rotate-90 ml-[20px] mr-10" />
+						<ArrowFull className="ml-[20px] mr-10 h-4 w-4 rotate-90 fill-white" />
 					)}
 					{props.menuOptions && menuOpen && (
 						<Dropdown
@@ -73,21 +73,21 @@ export const HeaderDesktop: React.FC<HeaderDesktopProps> = watchDependencies(
 					)}
 				</div>
 
-				<div className="flex-auto flex flex-row items-center">
+				<div className="flex flex-auto flex-row items-center">
 					{props.children}
 				</div>
 
 				{displayLogin && !user && (
 					<Link href="/user/login">
-						<a className="ktext-base text-white cursor-pointer mr-[3%]">
+						<a className="ktext-base mr-[3%] cursor-pointer text-white">
 							Se connecter
 						</a>
 					</Link>
 				)}
 
 				{displayUser && user && (
-					<div className="w-1/12 flex justify-center items-center">
-						<div className="h-[45px] w-[45px] relative">
+					<div className="flex w-1/12 items-center justify-center">
+						<div className="relative h-[45px] w-[45px]">
 							<ProfilePicture
 								image={user?.image}
 								onClick={() => setUserMenuOpen((m) => !m)}
@@ -108,7 +108,7 @@ export const HeaderDesktop: React.FC<HeaderDesktopProps> = watchDependencies(
 										},
 									},
 								]}
-								className="w-[200px] -ml-[180px] mt-[180px]"
+								className="-ml-[180px] mt-[180px] w-[200px]"
 							/>
 						)}
 					</div>

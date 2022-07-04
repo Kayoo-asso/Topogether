@@ -76,7 +76,7 @@ export const ProfileForm: React.FC<ProfileFormProps> = watchDependencies(
 
 		return (
 			<div className="flex flex-col gap-6 px-6">
-				<div className="flex flex-col gap-6 pb-4 items-center">
+				<div className="flex flex-col items-center gap-6 pb-4">
 					<TextInput
 						id="email"
 						label="Email"
@@ -96,18 +96,18 @@ export const ProfileForm: React.FC<ProfileFormProps> = watchDependencies(
 						loading={loadingChangeMail}
 					/>
 					{successMessageChangeMail && (
-						<div className="ktext-error text-main text-center">
+						<div className="ktext-error text-center text-main">
 							{successMessageChangeMail}
 						</div>
 					)}
 					{errorMessageChangeMail && (
-						<div className="ktext-error text-error text-center">
+						<div className="ktext-error text-center text-error">
 							{errorMessageChangeMail}
 						</div>
 					)}
 
 					<Link href="/user/changePassword">
-						<a className="ktext-base-little text-main cursor-pointer">
+						<a className="ktext-base-little cursor-pointer text-main">
 							Modifier le mot de passe
 						</a>
 					</Link>
@@ -168,8 +168,8 @@ export const ProfileForm: React.FC<ProfileFormProps> = watchDependencies(
 					/>
 				</div>
 
-				<div className="flex flex-row gap-3 w-full">
-					<div className="hidden md:block w-1/2">
+				<div className="flex w-full flex-row gap-3">
+					<div className="hidden w-1/2 md:block">
 						<TextInput
 							id="phone"
 							label="Téléphone"
@@ -229,19 +229,19 @@ export const ProfileForm: React.FC<ProfileFormProps> = watchDependencies(
 					loading={loadingModify}
 				/>
 				{successMessageModify && (
-					<div className="ktext-error text-main text-center">
+					<div className="ktext-error text-center text-main">
 						{successMessageModify}
 					</div>
 				)}
 				{errorMessageModify && (
-					<div className="ktext-error text-error text-center">
+					<div className="ktext-error text-center text-error">
 						{errorMessageModify}
 					</div>
 				)}
 
-				<div className="flex flex-col items-center gap-4 mb-10 md:mb-4 md:pt-4">
+				<div className="mb-10 flex flex-col items-center gap-4 md:mb-4 md:pt-4">
 					<div
-						className="ktext-base-little text-main cursor-pointer"
+						className="ktext-base-little cursor-pointer text-main"
 						onClick={async () => {
 							showLoader(true);
 							const success = await auth.signOut();
@@ -261,7 +261,7 @@ export const ProfileForm: React.FC<ProfileFormProps> = watchDependencies(
 					</div>
 
 					<div
-						className="ktext-base-little text-main cursor-pointer"
+						className="ktext-base-little cursor-pointer text-main"
 						onClick={props.onDeleteAccountClick}
 					>
 						Supprimer le compte

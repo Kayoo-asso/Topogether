@@ -19,7 +19,7 @@ export const SectorSlideoverMobile: React.FC<SectorSlideoverMobileProps> =
 	watchDependencies((props: SectorSlideoverMobileProps) => {
 		return (
 			<SlideoverMobile onClose={props.onClose}>
-				<div className="mt-10 px-3 overflow-auto pb-5">
+				<div className="mt-10 overflow-auto px-3 pb-5">
 					<SectorList
 						topoQuark={props.topoQuark}
 						boulderOrder={props.boulderOrder}

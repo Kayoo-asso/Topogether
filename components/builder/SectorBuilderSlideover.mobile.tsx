@@ -23,7 +23,7 @@ export const SectorBuilderSlideoverMobile: React.FC<SectorBuilderSlideoverMobile
 	watchDependencies((props: SectorBuilderSlideoverMobileProps) => {
 		return (
 			<SlideoverMobile onClose={props.onClose}>
-				<div className="flex flex-col mt-10 px-3 overflow-auto pb-5">
+				<div className="mt-10 flex flex-col overflow-auto px-3 pb-5">
 					<SectorListBuilder
 						topoQuark={props.topoQuark}
 						boulderOrder={props.boulderOrder}
@@ -34,7 +34,7 @@ export const SectorBuilderSlideoverMobile: React.FC<SectorBuilderSlideoverMobile
 						onDeleteBoulder={props.onDeleteBoulder}
 					/>
 
-					<div className="w-full flex flex-col items-center">
+					<div className="flex w-full flex-col items-center">
 						<Button
 							content="Nouveau secteur"
 							className="w-3/4"

@@ -68,7 +68,7 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> =
 				>
 					{/* BOULDER IMAGE */}
 					{full && (
-						<div className="flex w-full bg-dark rounded-t-lg relative overflow-hidden max-h-[40%]">
+						<div className="relative flex max-h-[40%] w-full overflow-hidden rounded-t-lg bg-dark">
 							<ImageSlider
 								images={boulder.images}
 								imageToDisplayIdx={imageToDisplayIdx}
@@ -83,10 +83,10 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> =
 						</div>
 					)}
 
-					<div className="flex flex-col h-[60%]">
+					<div className="flex h-[60%] flex-col">
 						{/* BOULDER INFOS */}
 						<div
-							className={`grid grid-cols-8 p-5 items-center ${
+							className={`grid grid-cols-8 items-center p-5 ${
 								full ? "" : " mt-3"
 							}`}
 						>
@@ -99,13 +99,13 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> =
 									<div className="ktext-base-little">Descente dangereuse !</div>
 								)}
 								{!full && (
-									<div className="flex items-center mt-2">
+									<div className="mt-2 flex items-center">
 										<GradeScale boulder={boulder} circleSize="little" />
 									</div>
 								)}
 							</div>
 
-							<div className="flex flex-row gap-5 justify-end col-span-2">
+							<div className="col-span-2 flex flex-row justify-end gap-5">
 								{selectedTrack && boulder.tracks.length > 1 && (
 									<button
 										onClick={() =>
@@ -114,7 +114,7 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> =
 									>
 										<ManyTracks
 											className={
-												"w-6 h-6 " +
+												"h-6 w-6 " +
 												(displayPhantomTracks
 													? "stroke-main"
 													: "stroke-grey-medium")
@@ -125,7 +125,7 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> =
 								{full && <LikeButton liked={boulder.liked} />}
 
 								{!full && (
-									<div className="w-full relative h-[60px]">
+									<div className="relative h-[60px] w-full">
 										<CFImage
 											image={boulder.images[0]}
 											className="rounded-sm"
@@ -141,7 +141,7 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> =
 						{/* TODO : show once good pattern */}
 						{/* TABS */}
 						{full && (
-							<div className="flex flex-row gap-8 w-full px-5 ktext-label font-bold my-2">
+							<div className="ktext-label my-2 flex w-full flex-row gap-8 px-5 font-bold">
 								<span
 									className={`${
 										officialTrackTab ? "text-main" : "text-grey-medium"
@@ -162,7 +162,7 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> =
 									<button
 										onClick={() => console.log("create community track")} // TODO
 									>
-										<AddIcon className="w-5 h-5 stroke-main" />
+										<AddIcon className="h-5 w-5 stroke-main" />
 									</button>
 								</span>
 							</div>

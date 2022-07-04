@@ -65,11 +65,11 @@ export const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
 	}, [handleUserKeyPress]);
 
 	return (
-		<div className="flex flex-col gap-6 items-center w-full">
-			<div className="ktext-section-title self-start hidden md:block">
+		<div className="flex w-full flex-col items-center gap-6">
+			<div className="ktext-section-title hidden self-start md:block">
 				Se connecter
 			</div>
-			<div className="h-[150px] w-[150px] relative mt-10 md:hidden">
+			<div className="relative mt-10 h-[150px] w-[150px] md:hidden">
 				<NextImage
 					src={staticUrl.logo_color}
 					priority
@@ -104,7 +104,7 @@ export const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
 				onKeyDown={handleUserKeyPress}
 			/>
 
-			<div className="flex flex-col w-full md:flex-row justify-start md:justify-between items-center md:mb-6">
+			<div className="flex w-full flex-col items-center justify-start md:mb-6 md:flex-row md:justify-between">
 				<div className="w-full">
 					<Button
 						content="Se connecter"
@@ -112,19 +112,19 @@ export const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
 						onClick={login}
 						loading={loading}
 					/>
-					<div className="ktext-error text-error mt-3">{errorMessage}</div>
+					<div className="ktext-error mt-3 text-error">{errorMessage}</div>
 				</div>
 			</div>
 
-			<div className="flex flex-col gap-16 w-full">
-				<div className="flex flex-row w-full justify-center md:justify-between items-center">
+			<div className="flex w-full flex-col gap-16">
+				<div className="flex w-full flex-row items-center justify-center md:justify-between">
 					<Link href="/user/signup">
-						<a className="ktext-base-little text-main cursor-pointer hidden md:block">
+						<a className="ktext-base-little hidden cursor-pointer text-main md:block">
 							Créer un compte
 						</a>
 					</Link>
 					<Link href="/user/forgotPassword">
-						<a className="ktext-base-little text-main cursor-pointer">
+						<a className="ktext-base-little cursor-pointer text-main">
 							Mot de passe oublié ?
 						</a>
 					</Link>

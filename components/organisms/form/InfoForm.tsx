@@ -35,12 +35,12 @@ export const InfoForm: React.FC<InfoFormProps> = watchDependencies(
 
 		return (
 			<div
-				className={`flex flex-col gap-6 h-[95%] overflow-auto ${
+				className={`flex h-[95%] flex-col gap-6 overflow-auto ${
 					props.className ? props.className : ""
 				}`}
 				onClick={(e) => e.stopPropagation()}
 			>
-				<div className="flex flex-row gap-6 items-end">
+				<div className="flex flex-row items-end gap-6">
 					<div className="w-32 md:mt-4">
 						<ImageInput
 							value={topo.image}

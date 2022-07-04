@@ -13,11 +13,11 @@ export const Loading: React.FC<LoadingProps> = ({
 	return (
 		<div
 			className={
-				"flex w-full h-full items-center justify-center" +
+				"flex h-full w-full items-center justify-center" +
 				(bgWhite ? " bg-white" : "")
 			}
 		>
-			<Spinner className={"stroke-main animate-spin m-2 " + SVGClassName} />
+			<Spinner className={"m-2 animate-spin stroke-main " + SVGClassName} />
 		</div>
 	);
 };

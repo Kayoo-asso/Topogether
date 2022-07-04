@@ -56,7 +56,7 @@ export const SectorList: React.FC<SectorListProps> = watchDependencies(
 		};
 
 		return (
-			<div className="h-[95%] mb-6 px-4">
+			<div className="mb-6 h-[95%] px-4">
 				{sectors.quarks().map((sectorQuark, sectorIndex) => {
 					const sector = sectorQuark();
 					const quarks: Quark<Boulder>[] = [];
@@ -65,15 +65,15 @@ export const SectorList: React.FC<SectorListProps> = watchDependencies(
 					}
 
 					return (
-						<div className="flex flex-col mb-10 pb-6" key={sector.id}>
+						<div className="mb-10 flex flex-col pb-6" key={sector.id}>
 							<div className="ktext-label text-grey-medium">
 								Secteur {sectorIndex + 1}
 							</div>
-							<div className="ktext-section-title text-main cursor-pointer mb-2 flex flex-row items-center">
+							<div className="ktext-section-title mb-2 flex cursor-pointer flex-row items-center text-main">
 								<div className="pr-3">
 									<ArrowSimple
 										className={
-											"w-3 h-3 cursor-pointer stroke-main stroke-2 " +
+											"h-3 w-3 cursor-pointer stroke-main stroke-2 " +
 											(hiddenSectors.has(sector.id)
 												? "rotate-180"
 												: "-rotate-90")
@@ -86,7 +86,7 @@ export const SectorList: React.FC<SectorListProps> = watchDependencies(
 
 							{!hiddenSectors.has(sector.id) && (
 								// BOULDERS
-								<div className="flex flex-col gap-1 ml-3">
+								<div className="ml-3 flex flex-col gap-1">
 									{quarks.length === 0 && (
 										<div className="">Aucun rocher référencé</div>
 									)}
@@ -120,13 +120,13 @@ export const SectorList: React.FC<SectorListProps> = watchDependencies(
 				})}
 
 				{/* BOULDERS WITHOUT SECTOR       */}
-				<div className="flex flex-col mb-10">
+				<div className="mb-10 flex flex-col">
 					{sectors.length > 0 && lonelyQuarks.length > 0 && (
-						<div className="ktext-label text-grey-medium mb-2">
+						<div className="ktext-label mb-2 text-grey-medium">
 							Sans secteur
 						</div>
 					)}
-					<div className="flex flex-col gap-1 ml-3">
+					<div className="ml-3 flex flex-col gap-1">
 						{lonelyQuarks.map((boulderQuark) => {
 							const boulder = boulderQuark();
 							return (

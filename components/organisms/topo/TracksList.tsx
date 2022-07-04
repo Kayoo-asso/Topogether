@@ -29,7 +29,7 @@ export const TracksList: React.FC<TracksListProps> = watchDependencies(
 		const tracks = Array.from(props.tracks);
 
 		return (
-			<div className="w-full border-t h-full border-grey-light">
+			<div className="h-full w-full border-t border-grey-light">
 				{tracks
 					.sort((t1, t2) => t1().index - t2().index)
 					.map((trackQuark) => {
@@ -39,7 +39,7 @@ export const TracksList: React.FC<TracksListProps> = watchDependencies(
 							<div
 								key={track.id}
 								className={
-									"px-5 py-5 md:py-3 flex flex-col border-b border-grey-light cursor-pointer md:hover:bg-grey-superlight" +
+									"flex cursor-pointer flex-col border-b border-grey-light px-5 py-5 md:py-3 md:hover:bg-grey-superlight" +
 									(props.selectedTrack()
 										? props.selectedTrack()!.id !== track.id
 											? " opacity-40"
@@ -48,7 +48,7 @@ export const TracksList: React.FC<TracksListProps> = watchDependencies(
 								}
 								onClick={() => props.onTrackClick(trackQuark)}
 							>
-								<div className="flex flex-row w-full items-center">
+								<div className="flex w-full flex-row items-center">
 									<GradeCircle
 										grade={grade}
 										className="cursor-pointer"
@@ -62,7 +62,7 @@ export const TracksList: React.FC<TracksListProps> = watchDependencies(
 											{track.grade}
 										</div>
 									)}
-									<div className="ml-4 w-7/12 flex flex-col">
+									<div className="ml-4 flex w-7/12 flex-col">
 										<span className="ktext-base">{track.name}</span>
 										{track.isTraverse && (
 											<div className="ktext-subtext">Traversée</div>
@@ -88,8 +88,8 @@ export const TracksList: React.FC<TracksListProps> = watchDependencies(
 											{(track.techniques ||
 												track.reception ||
 												track.orientation) && (
-												<div className="flex flex-row gap-2 justify-between mt-4">
-													<div className="flex flex-col w-1/3">
+												<div className="mt-4 flex flex-row justify-between gap-2">
+													<div className="flex w-1/3 flex-col">
 														{track.techniques && (
 															<>
 																<div className="ktext-subtitle">Techniques</div>
@@ -101,7 +101,7 @@ export const TracksList: React.FC<TracksListProps> = watchDependencies(
 														)}
 													</div>
 
-													<div className="flex flex-col w-1/3">
+													<div className="flex w-1/3 flex-col">
 														{track.reception && (
 															<div>
 																<span className="ktext-subtitle">
@@ -112,7 +112,7 @@ export const TracksList: React.FC<TracksListProps> = watchDependencies(
 														)}
 													</div>
 
-													<div className="flex flex-col w-1/3">
+													<div className="flex w-1/3 flex-col">
 														{track.orientation && (
 															<div>
 																<span className="ktext-subtitle">

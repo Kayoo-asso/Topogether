@@ -10,11 +10,11 @@ export const ParkingButton: React.FC<ParkingButtonProps> = ({
 }: ParkingButtonProps) => {
 	return (
 		<div
-			className="ktext-base text-main flex flex-row items-center justify-center cursor-pointer"
+			className="ktext-base flex cursor-pointer flex-row items-center justify-center text-main"
 			onClick={props.onClick}
 		>
 			Itinéraire vers le parking
-			<Parking className="fill-main h-5 w-5 ml-3" />
+			<Parking className="ml-3 h-5 w-5 fill-main" />
 		</div>
 	);
 };

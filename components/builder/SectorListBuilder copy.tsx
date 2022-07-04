@@ -110,7 +110,7 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> =
 		);
 
 		return (
-			<div className="mb-6 px-4 h-full">
+			<div className="mb-6 h-full px-4">
 				{sectors.quarks().map((sectorQuark, sectorIndex) => {
 					const sector = sectorQuark();
 					const quarks: Quark<Boulder>[] = [];
@@ -126,21 +126,21 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> =
 							<Droppable droppableId={sector.id} key={sector.id}>
 								{(provided) => (
 									<div
-										className="flex flex-col mb-10 pb-6"
+										className="mb-10 flex flex-col pb-6"
 										{...provided.droppableProps}
 										ref={provided.innerRef}
 									>
 										<div className="ktext-label text-grey-medium">
 											Secteur {sectorIndex + 1}
 										</div>
-										<div className="ktext-section-title text-main mb-1 flex flex-row items-center">
+										<div className="ktext-section-title mb-1 flex flex-row items-center text-main">
 											<button
-												className="pr-3 cursor-pointer"
+												className="cursor-pointer pr-3"
 												onClick={() => toggleSector(sector)}
 											>
 												<ArrowSimple
 													className={
-														"w-3 h-3 stroke-main stroke-2 " +
+														"h-3 w-3 stroke-main stroke-2 " +
 														(hiddenSectors.has(sector.id)
 															? "rotate-180"
 															: "-rotate-90")
@@ -156,10 +156,10 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> =
 											</div>
 
 											<div
-												className="pr-1 cursor-pointer"
+												className="cursor-pointer pr-1"
 												onClick={() => props.onRenameSector(sectorQuark)}
 											>
-												<Edit className={"w-5 h-5 stroke-main"} />
+												<Edit className={"h-5 w-5 stroke-main"} />
 											</div>
 										</div>
 
@@ -167,7 +167,7 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> =
 											// BOULDERS
 											<div
 												className={
-													"flex flex-col gap-1 ml-1 p-2 rounded-sm " +
+													"ml-1 flex flex-col gap-1 rounded-sm p-2 " +
 													(draggingSectorId === sector.id
 														? "bg-grey-superlight"
 														: "")
@@ -248,13 +248,13 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> =
 									ref={provided.innerRef}
 								>
 									{sectors.length > 0 && lonelyQuarks.length > 0 && (
-										<div className="ktext-label text-grey-medium mb-1">
+										<div className="ktext-label mb-1 text-grey-medium">
 											Sans secteur
 										</div>
 									)}
 									<div
 										className={
-											"flex flex-col gap-1 ml-1 p-2 rounded-sm " +
+											"ml-1 flex flex-col gap-1 rounded-sm p-2 " +
 											(draggingSectorId === "no-sector"
 												? "bg-grey-superlight"
 												: "")

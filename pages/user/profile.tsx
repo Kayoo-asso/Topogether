@@ -85,12 +85,12 @@ const ProfilePage = withRouting<ProfileProps>({
 			<>
 				<Header backLink="/" title="Profile" />
 
-				<div className="w-full h-content md:h-full flex flex-row bg-white overflow-auto">
+				<div className="flex h-content w-full flex-row overflow-auto bg-white md:h-full">
 					<LeftbarDesktop currentMenuItem="USER" />
 
-					<div className="flex flex-col relative w-full h-full justify-start overflow-x-hidden md:px-12">
-						<div className="flex flex-row justify-center md:justify-start rounded-lg px-6 pb-8 md:pb-12 pt-12 md:pt-[16px]">
-							<div className="h-[100px] w-[100px] relative cursor-pointer">
+					<div className="relative flex h-full w-full flex-col justify-start overflow-x-hidden md:px-12">
+						<div className="flex flex-row justify-center rounded-lg px-6 pb-8 pt-12 md:justify-start md:pb-12 md:pt-[16px]">
+							<div className="relative h-[100px] w-[100px] cursor-pointer">
 								<ImageInput
 									button="profile"
 									value={user.image}
@@ -105,11 +105,11 @@ const ProfilePage = withRouting<ProfileProps>({
 								/>
 							</div>
 
-							<div className="hidden md:flex flex-col ml-6 w-1/2">
+							<div className="ml-6 hidden w-1/2 flex-col md:flex">
 								<div className="mb-6">
 									<div className="ktext-subtitle">{user.userName}</div>
 									{user.role === "ADMIN" && (
-										<div className="text-main ktext-label">
+										<div className="ktext-label text-main">
 											Super-administrateur
 										</div>
 									)}

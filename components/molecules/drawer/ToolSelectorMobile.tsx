@@ -27,7 +27,7 @@ export const ToolSelectorMobile: React.FC<ToolselectorMobileProps> = (
 	return (
 		<button
 			className={
-				"shadow flex flex-col items-center justify-evenly bg-dark rounded-full cursor-pointer z-1000 w-[80px] " +
+				"z-1000 flex w-[80px] cursor-pointer flex-col items-center justify-evenly rounded-full bg-dark shadow " +
 				(open ? "h-[280px]" : "h-[80px]")
 			}
 			onClick={() => setOpen(!open)}
@@ -37,7 +37,7 @@ export const ToolSelectorMobile: React.FC<ToolselectorMobileProps> = (
 					<ForbiddenArea
 						className={
 							props.selectedTool === "FORBIDDEN_AREA_DRAWER"
-								? "h-8 w-8 cursor-pointer stroke-main order-last"
+								? "order-last h-8 w-8 cursor-pointer stroke-main"
 								: "h-6 w-6 cursor-pointer stroke-white"
 						}
 						onClick={() => {
@@ -48,7 +48,7 @@ export const ToolSelectorMobile: React.FC<ToolselectorMobileProps> = (
 					<ClimbingShoe
 						className={
 							props.selectedTool === "FOOT_DEPARTURE_DRAWER"
-								? "h-8 w-8 cursor-pointer stroke-main order-last"
+								? "order-last h-8 w-8 cursor-pointer stroke-main"
 								: "h-7 w-7 cursor-pointer stroke-white"
 						}
 						onClick={() => {
@@ -59,7 +59,7 @@ export const ToolSelectorMobile: React.FC<ToolselectorMobileProps> = (
 					<Hand
 						className={
 							props.selectedTool === "HAND_DEPARTURE_DRAWER"
-								? "h-8 w-8 cursor-pointer stroke-main order-last"
+								? "order-last h-8 w-8 cursor-pointer stroke-main"
 								: "h-6 w-6 cursor-pointer stroke-white"
 						}
 						onClick={() => {
@@ -70,7 +70,7 @@ export const ToolSelectorMobile: React.FC<ToolselectorMobileProps> = (
 					<TopoIcon
 						className={
 							props.selectedTool === "LINE_DRAWER"
-								? "h-8 w-8 cursor-pointer stroke-main order-last"
+								? "order-last h-8 w-8 cursor-pointer stroke-main"
 								: "h-6 w-6 cursor-pointer stroke-white"
 						}
 						onClick={() => {
@@ -80,7 +80,7 @@ export const ToolSelectorMobile: React.FC<ToolselectorMobileProps> = (
 					/>
 				</>
 			)}
-			{!open && <FallbackIcon className="stroke-main h-8 w-8" />}
+			{!open && <FallbackIcon className="h-8 w-8 stroke-main" />}
 		</button>
 	);
 };

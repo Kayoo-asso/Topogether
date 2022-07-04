@@ -25,12 +25,12 @@ export const WaypointForm: React.FC<WaypointFormProps> = watchDependencies(
 		return (
 			<div
 				className={
-					"flex flex-col gap-6 h-full " +
+					"flex h-full flex-col gap-6 " +
 					(props.className ? props.className : "")
 				}
 				onClick={(e) => e.stopPropagation()}
 			>
-				<div className="flex flex-row gap-6 items-end">
+				<div className="flex flex-row items-end gap-6">
 					<div className="w-28">
 						<ImageInput
 							value={waypoint.image}
@@ -48,7 +48,7 @@ export const WaypointForm: React.FC<WaypointFormProps> = watchDependencies(
 							}}
 						/>
 					</div>
-					<div className="flex flex-col gap-2 justify-between h-full">
+					<div className="flex h-full flex-col justify-between gap-2">
 						<div className="ktext-subtitle md:mb-3">Point de repère</div>
 						<TextInput
 							ref={nameInputRef}
@@ -104,7 +104,7 @@ export const WaypointForm: React.FC<WaypointFormProps> = watchDependencies(
 					}
 				/>
 
-				<div className="w-full flex grow items-end">
+				<div className="flex w-full grow items-end">
 					<Button
 						content="Supprimer"
 						onClick={() => props.onDeleteWaypoint()}

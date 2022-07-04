@@ -22,7 +22,7 @@ export const WaypointBuilderSlide: React.FC<WaypointBuilderSlideProps> =
 			<>
 				{breakpoint === "mobile" && (
 					<SlideoverMobile onClose={props.onClose}>
-						<div className="px-6 py-14 h-full">
+						<div className="h-full px-6 py-14">
 							<WaypointForm
 								waypoint={props.waypoint}
 								onDeleteWaypoint={showModalDelete}
@@ -32,7 +32,7 @@ export const WaypointBuilderSlide: React.FC<WaypointBuilderSlideProps> =
 				)}
 				{breakpoint !== "mobile" && (
 					<SlideagainstRightDesktop open onClose={props.onClose}>
-						<div className="px-5 py-3 h-full">
+						<div className="h-full px-5 py-3">
 							<WaypointForm
 								waypoint={props.waypoint}
 								onDeleteWaypoint={showModalDelete}

@@ -48,14 +48,14 @@ export function Select<T>({
 				pointer
 			/>
 			<ArrowSimple
-				className={`w-4 h-4 absolute right-0 ${
+				className={`absolute right-0 h-4 w-4 ${
 					isOpen ? "top-[14px]" : "top-[8px]"
 				} ${isOpen ? "rotate-90" : "-rotate-90"} ${
 					white ? "fill-white" : "fill-dark"
 				}`}
 			/>
 			{isOpen && (
-				<div className="pl-4 py-2 bg-white rounded-b max-h-[320px] absolute overflow-y-auto overflow-x-none z-100 w-full right-0 shadow">
+				<div className="overflow-x-none absolute right-0 z-100 max-h-[320px] w-full overflow-y-auto rounded-b bg-white py-2 pl-4 shadow">
 					{/* TODO */}
 					{/* <div
                         className={`text-grey-medium ktext-label mt-5 mb-2`}
@@ -68,7 +68,7 @@ export function Select<T>({
                     </div> */}
 					{props.options.sort().map(([value, label]) => (
 						<div
-							className="py-4 text-dark ktext-base cursor-pointer flex flex-row items-center"
+							className="ktext-base flex cursor-pointer flex-row items-center py-4 text-dark"
 							key={label}
 							onKeyDown={() => {
 								props.onChange(value);

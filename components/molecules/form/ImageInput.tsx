@@ -124,7 +124,7 @@ export const ImageInput = forwardRef<HTMLInputElement, ImageInputProps>(
 							/>
 						)}
 						{loading && (
-							<Spinner className="h-6 w-6 stroke-main animate-spin m-2" />
+							<Spinner className="m-2 h-6 w-6 animate-spin stroke-main" />
 						)}
 					</RoundButton>
 				)}
@@ -143,7 +143,7 @@ export const ImageInput = forwardRef<HTMLInputElement, ImageInputProps>(
 				)}
 				{!props.onError && (
 					<div
-						className={`ktext-error text-error pt-1 w-22 h-22 ${
+						className={`ktext-error h-22 w-22 pt-1 text-error ${
 							error && error.length > 0 ? "" : "hidden"
 						}`}
 					>

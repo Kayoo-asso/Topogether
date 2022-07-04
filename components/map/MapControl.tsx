@@ -86,14 +86,14 @@ export const MapControl = watchDependencies<google.maps.Map, MapControlProps>(
 		};
 
 		return (
-			<div className="relative w-full h-full">
+			<div className="relative h-full w-full">
 				<Wrapper
 					apiKey={process.env.NEXT_PUBLIC_GOOGLE_API_KEY || ""}
 					libraries={["places"]}
 				>
 					<div className="absolute h-full w-full">
 						{/* Top left */}
-						<div className="absolute left-0 top-0 m-3 space-y-5 w-full">
+						<div className="absolute left-0 top-0 m-3 w-full space-y-5">
 							{displaySearchbar && (
 								<MapSearchbar
 									boulders={
@@ -141,13 +141,13 @@ export const MapControl = watchDependencies<google.maps.Map, MapControlProps>(
 									className="z-10 md:hidden"
 									onClick={props.onSectorButtonClick}
 								>
-									<SectorIcon className="h-7 w-7 stroke-main fill-main" />
+									<SectorIcon className="h-7 w-7 fill-main stroke-main" />
 								</RoundButton>
 							)}
 						</div>
 
 						{/* Bottom center */}
-						<div className="absolute bottom-0 w-full flex justify-center my-3">
+						<div className="absolute bottom-0 my-3 flex w-full justify-center">
 							{props.onNewPhoto && props.onToolSelect && (
 								<ItemSelectorMobile
 									currentTool={props.currentTool}
@@ -169,7 +169,7 @@ export const MapControl = watchDependencies<google.maps.Map, MapControlProps>(
 										}
 									}}
 								>
-									<CenterIcon className="h-7 w-7 stroke-main fill-main" />
+									<CenterIcon className="h-7 w-7 fill-main stroke-main" />
 								</RoundButton>
 							)}
 						</div>

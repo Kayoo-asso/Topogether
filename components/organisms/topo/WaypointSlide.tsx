@@ -22,16 +22,16 @@ export const WaypointSlide: React.FC<WaypointSlideProps> = watchDependencies(
 
 		const waypointContent = () => (
 			<>
-				<div className="flex flex-col h-[90%] md:h-[85%] pt-10 md:pt-0 gap-6">
-					<div className="flex flex-col items-center md:items-start px-6">
-						<div className="ktext-big-title flex flex-row gap-3 items-center">
-							<div className="h-full flex items-center justify-center">
-								<HelpRound className="h-6 w-6 stroke-third fill-third" />
+				<div className="flex h-[90%] flex-col gap-6 pt-10 md:h-[85%] md:pt-0">
+					<div className="flex flex-col items-center px-6 md:items-start">
+						<div className="ktext-big-title flex flex-row items-center gap-3">
+							<div className="flex h-full items-center justify-center">
+								<HelpRound className="h-6 w-6 fill-third stroke-third" />
 							</div>
 							{waypoint.name}
 						</div>
 						<div
-							className="ktext-label text-grey-medium cursor-pointer"
+							className="ktext-label cursor-pointer text-grey-medium"
 							onClick={() => {
 								const data = [
 									new ClipboardItem({
@@ -61,7 +61,7 @@ export const WaypointSlide: React.FC<WaypointSlideProps> = watchDependencies(
 						</div>
 					</div>
 
-					<div className="w-full relative max-h-[200px] h-[60%] md:h-[25%]">
+					<div className="relative h-[60%] max-h-[200px] w-full md:h-[25%]">
 						<CFImage
 							image={waypoint.image}
 							alt="Point de repère"
@@ -72,7 +72,7 @@ export const WaypointSlide: React.FC<WaypointSlideProps> = watchDependencies(
 						/>
 					</div>
 
-					<div className="px-6 ktext-base-little">{waypoint.description}</div>
+					<div className="ktext-base-little px-6">{waypoint.description}</div>
 				</div>
 			</>
 		);

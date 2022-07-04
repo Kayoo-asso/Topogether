@@ -29,12 +29,12 @@ export const AccessForm: React.FC<AccessFormProps> = watchDependencies(
 				<>
 					<div
 						className={
-							"flex flex-col gap-6 min-h-[85%] pb-[25px] md:pb-[60px] " +
+							"flex min-h-[85%] flex-col gap-6 pb-[25px] md:pb-[60px] " +
 							(props.className ? props.className : "")
 						}
 						onClick={(e) => e.stopPropagation()}
 					>
-						<div className="flex flex-row gap-6 items-end">
+						<div className="flex flex-row items-end gap-6">
 							<Select
 								id="access-difficulty"
 								label="Difficulté"
@@ -63,14 +63,14 @@ export const AccessForm: React.FC<AccessFormProps> = watchDependencies(
 						</div>
 
 						<div className="ktext-subtitle mt-3">Etapes</div>
-						<div className="overflow-auto flex flex-col gap-6">
+						<div className="flex flex-col gap-6 overflow-auto">
 							{/* TODO : scroll to the new step when it is created */}
 							{access.steps?.map((step, index) => {
 								const newSteps = access.steps!;
 								return (
 									<div className="flex flex-col gap-2" key={index}>
 										<div
-											className="ktext-base-little text-main cursor-pointer mt-3"
+											className="ktext-base-little mt-3 cursor-pointer text-main"
 											onClick={() => {
 												newSteps.splice(index, 1);
 												props.access.set({
@@ -81,7 +81,7 @@ export const AccessForm: React.FC<AccessFormProps> = watchDependencies(
 										>
 											Supprimer l'étape
 										</div>
-										<div className="flex flex-row gap-6 items-start">
+										<div className="flex flex-row items-start gap-6">
 											<div className="w-32">
 												<ImageInput
 													value={step.image}

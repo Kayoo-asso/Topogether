@@ -55,7 +55,7 @@ export const GradeCircle: React.FC<GradeCircleProps> = ({
 
 	return (
 		<div
-			className={`relative box-border flex items-center text-center justify-center rounded-full \
+			className={`\ relative box-border flex items-center justify-center rounded-full text-center
       ${colorStyles} ${sizeStyles} ${props.className ? props.className : ""}${
 				props.onClick ? " cursor-pointer" : " cursor-default"
 			}`}

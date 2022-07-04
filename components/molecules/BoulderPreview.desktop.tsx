@@ -67,8 +67,8 @@ export const BoulderPreviewDesktop = watchDependencies<
 
 		return (
 			<>
-				<div className="px-5 mb-3">
-					<div className="bg-dark max-w-[255px]">
+				<div className="mb-3 px-5">
+					<div className="max-w-[255px] bg-dark">
 						{" "}
 						{/* max-width is very important here to avoid a bug with scrolling and image resizing when creating a first track with sitting start */}
 						<TracksImage
@@ -81,7 +81,7 @@ export const BoulderPreviewDesktop = watchDependencies<
 						/>
 					</div>
 
-					<div className="flex flex-col w-full mt-3 min-h-max">
+					<div className="mt-3 flex min-h-max w-full flex-col">
 						<MultipleImageInput
 							ref={(ref) => {
 								setReactRef(multipleImageInputRef, ref);

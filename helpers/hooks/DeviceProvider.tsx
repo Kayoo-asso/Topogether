@@ -52,7 +52,7 @@ export function DeviceManager({ userAgent, children }: DeviceManagerProps) {
 			<BreakpointContext.Provider value={bp}>
 				<div
 					ref={observe}
-					className="w-screen h-screen flex items-end flex-col"
+					className="flex h-screen w-screen flex-col items-end"
 				>
 					<div
 						id={
@@ -60,7 +60,7 @@ export function DeviceManager({ userAgent, children }: DeviceManagerProps) {
 								? "standalone"
 								: ""
 						}
-						className="w-full h-full"
+						className="h-full w-full"
 					>
 						{/* Here goes the Component + ShellMobile part */}
 						{children}

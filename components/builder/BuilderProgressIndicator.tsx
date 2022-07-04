@@ -14,11 +14,11 @@ interface BuilderProgressIndicatorProps {
 
 const displayRule = (topo: Topo, key: Rule) => {
 	return (
-		<div className={"flex ml-7 items-center"}>
+		<div className={"ml-7 flex items-center"}>
 			{validateRule(topo, key) ? (
-				<Checked className="h-3 w-3 m-2 stroke-main" />
+				<Checked className="m-2 h-3 w-3 stroke-main" />
 			) : (
-				<Clear className="h-5 w-5 m-1 stroke-grey-medium" />
+				<Clear className="m-1 h-5 w-5 stroke-grey-medium" />
 			)}
 			<div>{rulesText[key]}</div>
 		</div>
@@ -32,9 +32,9 @@ const displayMainRule = (
 	return (
 		<div className={"flex items-center"}>
 			{validateRule(topo, key) ? (
-				<Checked className="h-4 w-4 m-2 stroke-main" />
+				<Checked className="m-2 h-4 w-4 stroke-main" />
 			) : (
-				<Clear className="h-6 w-6 m-1 stroke-grey-medium" />
+				<Clear className="m-1 h-6 w-6 stroke-grey-medium" />
 			)}
 			<div>{rulesText[key]}</div>
 		</div>
@@ -63,13 +63,13 @@ export const BuilderProgressIndicator: React.FC<BuilderProgressIndicatorProps> =
 						setOpen(!open);
 						e.stopPropagation();
 					}}
-					className="w-10 h-10 rounded-full flex items-center justify-center border-2 border-white text-white ktext-light cursor-pointer"
+					className="ktext-light flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border-2 border-white text-white"
 				>
 					{props.progress}%
 				</div>
 				{open && (
 					<div
-						className={`md:min-w-[340px] w-[90%] md:w-[23%] right-5 md:right-auto md:-ml-5 shadow absolute flex flex-col p-5 bg-white rounded z-1000 top-[7%]`}
+						className={`absolute right-5 top-[7%] z-1000 flex w-[90%] flex-col rounded bg-white p-5 shadow md:right-auto md:-ml-5 md:w-[23%] md:min-w-[340px]`}
 					>
 						<div
 							className="my-2 cursor-pointer"

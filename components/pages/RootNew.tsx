@@ -89,13 +89,13 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies(
 
 				<div
 					className={
-						"h-content md:h-full w-full flex flex-row bg-main pb-5 overflow-x-hidden overflow-y-auto " +
+						"flex h-content w-full flex-row overflow-y-auto overflow-x-hidden bg-main pb-5 md:h-full " +
 						(step === 2 ? "items-start" : "justify-center")
 					}
 				>
-					<div className={"flex flex-col w-full items-center justify-center"}>
+					<div className={"flex w-full flex-col items-center justify-center"}>
 						{step === 0 && (
-							<div className="px-[10%] w-full">
+							<div className="w-full px-[10%]">
 								<TextInput
 									ref={nameInputRef}
 									id="topo-name"
@@ -113,7 +113,7 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies(
 										});
 									}}
 								/>
-								<div className="flex flex-row items-center w-full justify-between md  :justify-end">
+								<div className="md :justify-end flex w-full flex-row items-center  justify-between">
 									<Link href="/builder/dashboard">
 										<a className="ktext-base-little cursor-pointer text-white md:mr-16">
 											Annuler
@@ -125,7 +125,7 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies(
 						)}
 
 						{step === 1 && (
-							<div className="px-[10%] w-full">
+							<div className="w-full px-[10%]">
 								<Select
 									id="topo-type"
 									label="Type de spot"
@@ -143,7 +143,7 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies(
 										});
 									}}
 								/>
-								<div className="flex flex-row items-center w-full justify-between md:justify-end">
+								<div className="flex w-full flex-row items-center justify-between md:justify-end">
 									<div
 										className="ktext-base-little cursor-pointer text-white md:mr-16"
 										onClick={() => setStep(0)}
@@ -162,7 +162,7 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies(
 
 						{step === 2 && (
 							<>
-								<div className="h-[55vh] md:h-[65vh] w-full mb-10 md:mb-16">
+								<div className="mb-10 h-[55vh] w-full md:mb-16 md:h-[65vh]">
 									<MapControl
 										initialZoom={10}
 										searchbarOptions={{ findPlaces: true }}
@@ -187,7 +187,7 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies(
 									</MapControl>
 								</div>
 
-								<div className="px-[10%] w-full">
+								<div className="w-full px-[10%]">
 									<div className="flex flex-row gap-4 md:gap-16">
 										<TextInput
 											id="topo-latitude"
@@ -226,7 +226,7 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies(
 											}}
 										/>
 									</div>
-									<div className="flex flex-row items-center w-full justify-between md:justify-end">
+									<div className="flex w-full flex-row items-center justify-between md:justify-end">
 										<div
 											className="ktext-base-little cursor-pointer text-white md:mr-16"
 											onClick={() => setStep(1)}

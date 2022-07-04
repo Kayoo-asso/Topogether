@@ -55,7 +55,7 @@ export const TracksListBuilder: React.FC<TracksListBuilderProps> =
 							<div
 								key={track.id}
 								className={
-									"px-5 py-5 md:py-3 flex flex-col border-b border-grey-light cursor-pointer md:hover:bg-grey-superlight" +
+									"flex cursor-pointer flex-col border-b border-grey-light px-5 py-5 md:py-3 md:hover:bg-grey-superlight" +
 									(props.selectedTrack()
 										? props.selectedTrack()!.id !== track.id
 											? " opacity-40"
@@ -64,7 +64,7 @@ export const TracksListBuilder: React.FC<TracksListBuilderProps> =
 								}
 								onClick={() => props.onTrackClick(trackQuark)}
 							>
-								<div className="flex flex-row w-full items-center">
+								<div className="flex w-full flex-row items-center">
 									<GradeCircle
 										grade={grade}
 										className="cursor-pointer"
@@ -79,7 +79,7 @@ export const TracksListBuilder: React.FC<TracksListBuilderProps> =
 											{track.grade}
 										</div>
 									)}
-									<div className="ml-4 w-3/4 flex flex-col">
+									<div className="ml-4 flex w-3/4 flex-col">
 										<span className="ktext-base">{track.name}</span>
 										{track.isTraverse && (
 											<div className="ktext-subtext">Traversée</div>
@@ -97,7 +97,7 @@ export const TracksListBuilder: React.FC<TracksListBuilderProps> =
 												props.onDrawButtonClick!();
 											}}
 										>
-											<DrawIcon className="w-6 h-6 stroke-main" />
+											<DrawIcon className="h-6 w-6 stroke-main" />
 										</button>
 									)}
 								</div>
@@ -114,9 +114,9 @@ export const TracksListBuilder: React.FC<TracksListBuilderProps> =
 
 					<div
 						className={
-							"px-5 py-5 md:py-3 border-b border-grey-light " +
+							"border-b border-grey-light px-5 py-5 md:py-3 " +
 							(boulder.images.length > 0
-								? "hover:bg-grey-superlight cursor-pointer text-grey-medium"
+								? "cursor-pointer text-grey-medium hover:bg-grey-superlight"
 								: "cursor-default text-grey-light")
 						}
 						onClick={() => {

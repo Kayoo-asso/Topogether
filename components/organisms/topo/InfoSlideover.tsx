@@ -48,40 +48,40 @@ export const InfoSlideover: React.FC<InfoSlideoverProps> = ({
 	}
 
 	const infosContent = () => (
-		<div className="flex flex-col h-full pt-10 md:pt-0">
-			<div className="absolute z-100 left-1 md:left-2 top-1 md:top-2 flex flex-row gap-6 px-6 pt-4">
+		<div className="flex h-full flex-col pt-10 md:pt-0">
+			<div className="absolute left-1 top-1 z-100 flex flex-row gap-6 px-6 pt-4 md:left-2 md:top-2">
 				<LikeButton liked={topo.liked} />
 				<DownloadButton topo={topo} />
 			</div>
 
-			<div className="flex flex-col items-center md:items-start px-6 md:px-0 pt-5 md:pt-0">
+			<div className="flex flex-col items-center px-6 pt-5 md:items-start md:px-0 md:pt-0">
 				{topo.creator?.userName && (
 					<div className="ktext-label text-center md:hidden">
 						Topo créé par{" "}
-						<span className="text-main cursor-pointer">
+						<span className="cursor-pointer text-main">
 							{topo.creator.userName}
 						</span>
 					</div>
 				)}
 
 				{topo.forbidden && (
-					<div className="text-error ktext-section-title w-full text-center">
+					<div className="ktext-section-title w-full text-center text-error">
 						Site interdit !
 					</div>
 				)}
 
-				<div className="ktext-big-title text-center mt-4 flex flex-row items-center">
-					<div className="hidden md:inline mr-2">
-						<WaypointIcon className={"w-6 h-6 " + TopoTypeToColor(topo.type)} />
+				<div className="ktext-big-title mt-4 flex flex-row items-center text-center">
+					<div className="mr-2 hidden md:inline">
+						<WaypointIcon className={"h-6 w-6 " + TopoTypeToColor(topo.type)} />
 					</div>
 					{topo.name}
 				</div>
 
-				<div className="ktext-label flex flex-col w-full text-center mt-1">
+				<div className="ktext-label mt-1 flex w-full flex-col text-center">
 					<div className="text-grey-medium">
 						{topo.closestCity !== topo.name ? topo.closestCity : ""}
 					</div>
-					<div className="flex flex-row justify-center md:justify-between w-full">
+					<div className="flex w-full flex-row justify-center md:justify-between">
 						<div
 							className="cursor-pointer text-grey-medium"
 							onClick={() => {
@@ -114,7 +114,7 @@ export const InfoSlideover: React.FC<InfoSlideoverProps> = ({
 						{topo.creator?.userName && (
 							<div className="hidden md:block">
 								Topo créé par{" "}
-								<span className="text-main cursor-pointer">
+								<span className="cursor-pointer text-main">
 									{topo.creator.userName}
 								</span>
 							</div>
@@ -123,8 +123,8 @@ export const InfoSlideover: React.FC<InfoSlideoverProps> = ({
 				</div>
 			</div>
 
-			<div className="flex flex-col gap-6 overflow-auto px-6 md:px-0 mt-4 pb-8">
-				<div className="flex flex-row justify-between items-end min-h-[150px] md:justify-evenly">
+			<div className="mt-4 flex flex-col gap-6 overflow-auto px-6 pb-8 md:px-0">
+				<div className="flex min-h-[150px] flex-row items-end justify-between md:justify-evenly">
 					<div className="flex flex-col items-center">
 						{nbOfBoulders}
 						<Rock className="h-8 w-8 stroke-dark" />
@@ -168,7 +168,7 @@ export const InfoSlideover: React.FC<InfoSlideoverProps> = ({
 					)}
 					<div>
 						<div className="font-semibold">Equipements présents : </div>
-						<div className="flex flex-row gap-6 mt-2">
+						<div className="mt-2 flex flex-row gap-6">
 							{hasFlag(topo.amenities, Amenities.Toilets) && (
 								<Toilets className="h-5 w-5 fill-main" />
 							)}
@@ -179,7 +179,7 @@ export const InfoSlideover: React.FC<InfoSlideoverProps> = ({
 								<WaterDrop className="h-5 w-5 stroke-main" />
 							)}
 							{hasFlag(topo.amenities, Amenities.Bins) && (
-								<Bin className="h-5 w-5  stroke-main fill-main" />
+								<Bin className="h-5 w-5  fill-main stroke-main" />
 							)}
 							{hasFlag(topo.amenities, Amenities.Shelter) && (
 								<Umbrella name="umbrella" className="h-5 w-5 fill-main" />

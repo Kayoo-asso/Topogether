@@ -22,7 +22,7 @@ export const ManagementFormSlideover: React.FC<ManagementFormSlideoverProps> =
 				<>
 					{breakpoint === "mobile" && (
 						<SlideoverMobile onClose={props.onClose}>
-							<div className="px-6 mt-10 pb-10 h-full overflow-auto">
+							<div className="mt-10 h-full overflow-auto px-6 pb-10">
 								<div className="ktext-title mb-6">Gestionnaire du spot</div>
 								<ManagementForm
 									manager={props.managers.quarkAt(0)}

@@ -28,10 +28,10 @@ export function NavigationLoader({ children }: React.PropsWithChildren<{}>) {
 			<Portal id="loader" open={active}>
 				{/* Leave zIndex into "style" (tailwind bug) */}
 				<div
-					className="bg-black bg-opacity-80 absolute w-screen h-screen top-0 left-0 flex justify-center items-center"
+					className="absolute top-0 left-0 flex h-screen w-screen items-center justify-center bg-black bg-opacity-80"
 					style={{ zIndex: 10000 }}
 				>
-					<Spinner className="stroke-main w-10 h-10 animate-spin m-2" />
+					<Spinner className="m-2 h-10 w-10 animate-spin stroke-main" />
 				</div>
 			</Portal>
 			<LoaderContext.Provider value={setActive}>

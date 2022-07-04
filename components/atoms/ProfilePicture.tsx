@@ -15,7 +15,7 @@ export const ProfilePicture: React.FC<ProfilePictureProps> = ({
 }: ProfilePictureProps) => {
 	return (
 		<div
-			className={`shadow relative rounded-full border border-main overflow-hidden z-20 h-full w-full${
+			className={`relative z-20 h-full overflow-hidden rounded-full border border-main shadow w-full${
 				props.onClick ? " cursor-pointer" : ""
 			}`}
 			onClick={() => {
@@ -24,7 +24,7 @@ export const ProfilePicture: React.FC<ProfilePictureProps> = ({
 		>
 			<CFImage
 				image={props.image}
-				className="rounded-full h-full"
+				className="h-full rounded-full"
 				objectFit="cover"
 				alt="Photo de profil"
 				sizeHint="25vw"

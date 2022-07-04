@@ -11,7 +11,7 @@ export default function (props: Error404Props) {
 		<>
 			<Header title={props.title} backLink="#" />
 			<Link href="/">
-				<a className="w-full h-full relative bg-white flex items-center justify-center cursor-pointer">
+				<a className="relative flex h-full w-full cursor-pointer items-center justify-center bg-white">
 					<NextImage
 						src="/assets/img/404_error_topo_climbing.png"
 						priority

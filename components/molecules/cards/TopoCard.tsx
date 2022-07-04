@@ -104,14 +104,14 @@ export const TopoCard: React.FC<TopoCardProps> = React.memo(
 			>
 				<Card
 					className={
-						"relative text-center text-grey-medium bg-white flex flex-col" +
+						"relative flex flex-col bg-white text-center text-grey-medium" +
 						(clickable ? " cursor-pointer" : "")
 					}
 				>
-					<div className="w-full h-[55%] md:h-[75%] top-0 relative">
+					<div className="relative top-0 h-[55%] w-full md:h-[75%]">
 						<CFImage
 							image={props.topo.image}
-							className="rounded-t-lg h-full"
+							className="h-full rounded-t-lg"
 							modalable={false}
 							objectFit="cover"
 							alt="topo-image"
@@ -119,18 +119,18 @@ export const TopoCard: React.FC<TopoCardProps> = React.memo(
 						/>
 					</div>
 
-					<div className="h-[45%] md:h-[25%] px-3 md:px-4 py-1 flex flex-row gap-2 md:items-center md:justify-center">
+					<div className="flex h-[45%] flex-row gap-2 px-3 py-1 md:h-[25%] md:items-center md:justify-center md:px-4">
 						<div className="hidden md:block">{TopoIcon}</div>
 
-						<div className="w-full flex flex-col items-start overflow-hidden">
-							<div className="flex flex-row items-center mb-1 md:my-1 ">
-								<div className="pr-2 md:hidden stroke-[1.5px]">{TopoIcon}</div>
-								<div className="pr-2 truncate ktext-title text-left text-dark font-bold text-xs">
+						<div className="flex w-full flex-col items-start overflow-hidden">
+							<div className="mb-1 flex flex-row items-center md:my-1 ">
+								<div className="stroke-[1.5px] pr-2 md:hidden">{TopoIcon}</div>
+								<div className="ktext-title truncate pr-2 text-left text-xs font-bold text-dark">
 									{props.topo.name}
 								</div>
 							</div>
 
-							<div className="w-full border-t-[1px] text-xxs flex flex-col flex-wrap items-start justify-between py-1">
+							<div className="flex w-full flex-col flex-wrap items-start justify-between border-t-[1px] py-1 text-xxs">
 								<span className="whitespace-nowrap">{`${props.topo.nbBoulders} blocs - ${props.topo.nbTracks} passages`}</span>
 								<span className="mr-1 whitespace-nowrap">{lastAction}</span>
 							</div>

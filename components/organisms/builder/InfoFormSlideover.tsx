@@ -22,7 +22,7 @@ export const InfoFormSlideover: React.FC<InfoFormSlideoverProps> = ({
 		<>
 			{breakpoint === "mobile" && (
 				<SlideoverMobile onClose={props.onClose}>
-					<div className="px-6 py-10 h-full">
+					<div className="h-full px-6 py-10">
 						<div className="ktext-title mb-6">Infos du spot</div>
 						<InfoForm topo={props.topo} />
 					</div>

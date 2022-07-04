@@ -37,7 +37,7 @@ export const ImageThumb: React.FC<ImageThumbProps> = watchDependencies(
 				className={`${selected ? "border-main" : "border-dark"}${
 					props.onClick ? " cursor-pointer" : ""
 				} \
-      group border-2 w-full flex flex-col justify-center relative`}
+      group relative flex w-full flex-col justify-center border-2`}
 				onClick={() => props.onClick && props.onClick(props.image.id)}
 				style={{
 					height: containerWidth,
@@ -45,7 +45,7 @@ export const ImageThumb: React.FC<ImageThumbProps> = watchDependencies(
 			>
 				{props.onDelete && (
 					<div
-						className="absolute z-10 -top-[15px] -right-[8px] hidden md:group-hover:block"
+						className="absolute -top-[15px] -right-[8px] z-10 hidden md:group-hover:block"
 						onClick={(e) => e.stopPropagation()}
 					>
 						<DeleteButton

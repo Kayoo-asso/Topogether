@@ -23,15 +23,15 @@ export const ItemSelectorMobile: React.FC<ItemSelectorMobileProps> = (
 	const breakpoint = useBreakpoint();
 
 	return (
-		<div className="flex flex-row bg-white shadow rounded-full z-20">
-			<div className="flex flex-row items-center gap-5 bg-white rounded-full h-[60px] px-4 md:px-6">
+		<div className="z-20 flex flex-row rounded-full bg-white shadow">
+			<div className="flex h-[60px] flex-row items-center gap-5 rounded-full bg-white px-4 md:px-6">
 				{breakpoint === "desktop" && (
 					<Sector
 						className={
 							"h-6 w-6 cursor-pointer " +
 							(props.currentTool === "SECTOR"
-								? "stroke-main fill-main"
-								: "stroke-grey-light fill-grey-light")
+								? "fill-main stroke-main"
+								: "fill-grey-light stroke-grey-light")
 						}
 						onClick={() => {
 							props.onToolSelect("SECTOR");

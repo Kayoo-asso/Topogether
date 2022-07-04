@@ -186,9 +186,9 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies(
           TODO: encode the size of header / toolbar / etc... as units Tailwind config?
       */}
 				<Portal open={props.open}>
-					<div className="absolute left-0 top-[7vh] h-content md:h-contentPlusShell w-full md:w-[calc(100%-600px)] z-[600]">
+					<div className="absolute left-0 top-[7vh] z-[600] h-content w-full md:h-contentPlusShell md:w-[calc(100%-600px)]">
 						{/* Same, we know absolute size, since both header + toolbar are 7vh each */}
-						<div className="h-[84vh] flex bg-black b-opacity-90">
+						<div className="b-opacity-90 flex h-[84vh] bg-black">
 							<TracksImage
 								sizeHint="100vw"
 								objectFit="contain"

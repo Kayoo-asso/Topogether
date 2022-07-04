@@ -60,13 +60,13 @@ const ChangePasswordPage: NextPage<ChangePasswordProps> = () => {
 				displayLogin
 			/>
 
-			<div className="w-full h-full flex flex-col items-center justify-center bg-white bg-bottom md:bg-[url('/assets/img/login_background.png')] md:bg-cover">
-				<div className="p-10 w-full bg-white mb-10 md:w-[500px] md:shadow md:rounded-lg -mt-16 md:mt-0">
-					<div className="flex flex-col gap-8 items-center w-full">
-						<div className="ktext-section-title self-start hidden md:block">
+			<div className="flex h-full w-full flex-col items-center justify-center bg-white bg-bottom md:bg-[url('/assets/img/login_background.png')] md:bg-cover">
+				<div className="mb-10 -mt-16 w-full bg-white p-10 md:mt-0 md:w-[500px] md:rounded-lg md:shadow">
+					<div className="flex w-full flex-col items-center gap-8">
+						<div className="ktext-section-title hidden self-start md:block">
 							Modifier le mot de passe
 						</div>
-						<div className="h-[150px] w-[150px] relative md:hidden">
+						<div className="relative h-[150px] w-[150px] md:hidden">
 							<NextImage
 								src={staticUrl.logo_color}
 								priority
@@ -108,7 +108,7 @@ const ChangePasswordPage: NextPage<ChangePasswordProps> = () => {
 						/>
 
 						<Link href="/user/profile">
-							<a className="ktext-base-little text-main cursor-pointer hidden md:flex md:w-full">
+							<a className="ktext-base-little hidden cursor-pointer text-main md:flex md:w-full">
 								Retour
 							</a>
 						</Link>

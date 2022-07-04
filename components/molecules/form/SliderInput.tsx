@@ -11,13 +11,13 @@ interface HandleProps {
 
 const Handle = (props: HandleProps) => (
 	<div
-		className="absolute -ml-1 mt-1.5 z-20 w-6 h-6 border-0 text-center bg-main rounded-full cursor-pointer flex items-center content-center"
+		className="absolute z-20 -ml-1 mt-1.5 flex h-6 w-6 cursor-pointer content-center items-center rounded-full border-0 bg-main text-center"
 		style={{
 			left: `${props.handle.percent}%`,
 		}}
 		{...props.getHandleProps(props.handle.id)}
 	>
-		<div className="text-white w-full ktext-base text-xs font-bold">
+		<div className="ktext-base w-full text-xs font-bold text-white">
 			{props.handle.value}
 		</div>
 	</div>

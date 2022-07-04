@@ -131,7 +131,7 @@ export const MapSearchbar: React.FC<MapSearchbarProps> = ({
 				</RoundButton>
 
 				{barOpen && (
-					<div className="absolute rounded-full top-0 pl-[80px] h-[60px] w-[94%] md:w-[97%] z-100 shadow bg-white">
+					<div className="absolute top-0 z-100 h-[60px] w-[94%] rounded-full bg-white pl-[80px] shadow md:w-[97%]">
 						<TextInput
 							id="searchbar"
 							ref={inputRef}

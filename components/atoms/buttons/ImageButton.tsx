@@ -41,9 +41,9 @@ export const ImageButton: React.FC<ImageButtonProps> = ({
 			ref={observe}
 			className={
 				(activated
-					? "text-main border-main"
-					: "text-grey-medium border-grey-medium") +
-				"ktext-subtext relative text-center shadow border-2 w-full flex flex-col justify-center items-center group cursor-pointer"
+					? "border-main text-main"
+					: "border-grey-medium text-grey-medium") +
+				"ktext-subtext group relative flex w-full cursor-pointer flex-col items-center justify-center border-2 text-center shadow"
 			}
 			onClick={props.onClick}
 			style={{
@@ -51,13 +51,13 @@ export const ImageButton: React.FC<ImageButtonProps> = ({
 			}}
 		>
 			{loading && (
-				<Spinner className="stroke-main w-10 h-10 animate-spin m-2" />
+				<Spinner className="m-2 h-10 w-10 animate-spin stroke-main" />
 			)}
 			{!loading && props.image && (
 				<>
 					{props.onDelete && (
 						<div
-							className="absolute z-10 -top-[10px] -right-[8px] hidden md:group-hover:block"
+							className="absolute -top-[10px] -right-[8px] z-10 hidden md:group-hover:block"
 							onClick={(e) => e.stopPropagation()}
 						>
 							<DeleteButton onClick={props.onDelete} />

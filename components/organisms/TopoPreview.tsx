@@ -34,7 +34,7 @@ export const TopoPreview: React.FC<TopoPreviewProps> = (
 
 	const coordinateItem = () => (
 		<div
-			className="ktext-label text-grey-medium cursor-pointer"
+			className="ktext-label cursor-pointer text-grey-medium"
 			onClick={() => {
 				const data = [
 					new ClipboardItem({
@@ -64,14 +64,14 @@ export const TopoPreview: React.FC<TopoPreviewProps> = (
 
 	const topoPreviewContent = () => (
 		<>
-			<div className="absolute top-2 right-2 bg-white rounded-full z-100 px-4 py-2 flex flex-row justify-center gap-5 md:hidden">
+			<div className="absolute top-2 right-2 z-100 flex flex-row justify-center gap-5 rounded-full bg-white px-4 py-2 md:hidden">
 				<LikeButton liked={props.topo.liked} />
 				<DownloadButton topo={props.topo} />
 			</div>
 
-			<div className="md:hidden absolute top-2 left-2 max-w-[60%] overflow-hidden flex flex-row gap-2 bg-white rounded-full z-100 px-4 py-2">
+			<div className="absolute top-2 left-2 z-100 flex max-w-[60%] flex-row gap-2 overflow-hidden rounded-full bg-white px-4 py-2 md:hidden">
 				<div>
-					<Copy className="w-5 h-5 stroke-main" />
+					<Copy className="h-5 w-5 stroke-main" />
 				</div>
 				{coordinateItem()}
 			</div>
@@ -88,23 +88,23 @@ export const TopoPreview: React.FC<TopoPreviewProps> = (
 					/>
 				</div>
 
-				<div className="px-4 mt-4 ktext-section-title flex flex-row items-center">
+				<div className="ktext-section-title mt-4 flex flex-row items-center px-4">
 					<Waypoint className={"h-6 w-6 " + TopoTypeToColor(topo.type)} />
 					<div className="ml-2">{topo.name}</div>
 				</div>
 				{topo.closestCity && topo.closestCity !== topo.name && (
-					<div className="px-4 ktext-label md:text-left text-grey-medium">
+					<div className="ktext-label px-4 text-grey-medium md:text-left">
 						{topo.closestCity}
 					</div>
 				)}
-				<div className="px-4 hidden md:block">{coordinateItem()}</div>
+				<div className="hidden px-4 md:block">{coordinateItem()}</div>
 
-				<div className="ktext-base-little px-4 hide-after-three-lines overflow-hidden">
+				<div className="ktext-base-little hide-after-three-lines overflow-hidden px-4">
 					{topo.description}
 				</div>
 
-				<div className="flex flex-row md:flex-col pt-4 md:pt-10 px-4">
-					<div className="w-1/3 md:w-full flex flex-col gap-3 md:flex-row md:justify-around">
+				<div className="flex flex-row px-4 pt-4 md:flex-col md:pt-10">
+					<div className="flex w-1/3 flex-col gap-3 md:w-full md:flex-row md:justify-around">
 						<div className="flex flex-row pt-6 md:pt-0">
 							<Rock className="h-6 w-6 stroke-dark" />
 							<div className="ml-2">{topo.nbBoulders} blocs</div>
@@ -115,13 +115,13 @@ export const TopoPreview: React.FC<TopoPreviewProps> = (
 						</div>
 					</div>
 
-					<div className="w-2/3 md:w-full flex items-end justify-end md:justify-center md:mt-5 md:h-[120px]">
+					<div className="flex w-2/3 items-end justify-end md:mt-5 md:h-[120px] md:w-full md:justify-center">
 						<GradeHistogram topo={topo} size="little" />
 					</div>
 				</div>
 
-				<div className="flex flex-col w-full md:absolute md:bottom-0">
-					<div className="w-full p-4 mt-4">
+				<div className="flex w-full flex-col md:absolute md:bottom-0">
+					<div className="mt-4 w-full p-4">
 						<Button
 							content="Entrer"
 							fullWidth

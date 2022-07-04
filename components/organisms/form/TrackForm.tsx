@@ -29,7 +29,7 @@ export const TrackForm: React.FC<TrackFormProps> = watchDependencies(
 			<>
 				<div
 					className={
-						"flex flex-col gap-6 h-full " +
+						"flex h-full flex-col gap-6 " +
 						(props.className ? props.className : "")
 					}
 					onClick={(e) => e.stopPropagation()}
@@ -133,7 +133,7 @@ export const TrackForm: React.FC<TrackFormProps> = watchDependencies(
 						}
 					/>
 
-					<div className="w-full flex grow items-end">
+					<div className="flex w-full grow items-end">
 						<Button
 							content="Supprimer"
 							onClick={props.onDeleteTrack}

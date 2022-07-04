@@ -21,7 +21,7 @@ export const AccessFormSlideover: React.FC<AccessFormSlideoverProps> =
 			<>
 				{breakpoint === "mobile" && (
 					<SlideoverMobile onClose={props.onClose}>
-						<div className="px-6 mt-10 pb-10 h-full overflow-auto">
+						<div className="mt-10 h-full overflow-auto px-6 pb-10">
 							<div className="ktext-title mb-6">Marche d'approche</div>
 							<AccessForm
 								access={props.accesses.quarkAt(0)}
