@@ -16,7 +16,7 @@ interface ImageButtonProps {
 }
 
 export const ImageButton: React.FC<ImageButtonProps> = ({
-	text = "Ajouter une image",
+	text = "+ Ajouter une image",
 	loading = false,
 	activated = true,
 	...props
@@ -73,7 +73,7 @@ export const ImageButton: React.FC<ImageButtonProps> = ({
 					/>
 				</>
 			)}
-			{!loading && !props.image && <span className="m-1">{text}</span>}
+			{!loading && !props.image && <span className="m-1 text-main ktext-subtext">{text}</span>}
 		</div>
 	);
 };

@@ -105,11 +105,6 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 			sortBoulders(topo.sectors, topo.lonelyBoulders)
 		);
 
-		// TODO: Remove
-		// useEffect(() => {
-		//     downloadTopoMap(topo);
-		// }, []);
-
 		const mapRef = useRef<google.maps.Map>(null);
 		const multipleImageInputRef = useRef<HTMLInputElement>(null);
 		const [currentTool, setCurrentTool] = useState<MapToolEnum>();
