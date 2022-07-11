@@ -39,7 +39,9 @@ export default withRouting<BuilderProps>({
 	},
 
 	render({ topo }) {
-		const topoQuark = editTopo(topo);
+		// Memoize here, to avoid recreating a store from the initial page props after the first render
+		// (ex: when the URL changes when the user selects a boulder)
+		const topoQuark = useMemo(() => editTopo(topo), []);
 		return <RootBuilder topoQuark={topoQuark} />;
 	},
 });
