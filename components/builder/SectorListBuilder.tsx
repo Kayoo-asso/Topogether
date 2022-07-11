@@ -110,7 +110,7 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> =
 		);
 
 		return (
-			<div className="mb-6 h-full px-4">
+			<div className="mb-6 px-4">
 				{sectors.quarks().map((sectorQuark, sectorIndex) => {
 					const sector = sectorQuark();
 					const quarks: Quark<Boulder>[] = [];

@@ -41,11 +41,10 @@ export const createBoulder = (
 	image?: Image
 ) => {
 	const topo = topoQuark();
-	const orderIndex = topo.boulders.length;
 	// terrible hack around `liked` for now
 	const newBoulder: Boulder = setupBoulder({
 		id: v4(),
-		name: `Bloc ${orderIndex + 1}` as Name,
+		name: `Bloc sans nom` as Name,
 		liked: undefined!,
 		location,
 		isHighball: false,
@@ -72,7 +71,7 @@ export const createParking = (
 	const newParking: Parking = {
 		id: v4(),
 		spaces: 0,
-		name: `parking ${topo.parkings ? topo.parkings.length + 1 : "1"}` as Name,
+		name: `Parking ${topo.parkings ? topo.parkings.length + 1 : "1"}` as Name,
 		image: image,
 		location,
 	};
@@ -88,7 +87,7 @@ export const createWaypoint = (
 ) => {
 	const newWaypoint: Waypoint = {
 		id: v4(),
-		name: `point de repère ${
+		name: `Point de repère ${
 			topo.waypoints ? topo.waypoints.length + 1 : "1"
 		}` as Name,
 		image: image,
@@ -104,7 +103,7 @@ export const createTrack = (boulder: Boulder, creatorId: UUID) => {
 		id: v4(),
 		creatorId: creatorId,
 		index: boulder.tracks.length,
-		name: ("Voie " + (boulder.tracks.length + 1)) as Name,
+		name: "Voie sans nom" as Name,
 		mustSee: false,
 		isTraverse: false,
 		isSittingStart: false,
