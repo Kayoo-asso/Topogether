@@ -62,7 +62,7 @@ export const BoulderItemLeftbar: React.FC<BoulderItemLeftbarProps> =
 						</span>
 						<span
 							className={
-								(boulder.name.length > 16
+								(boulder.name.length > 12
 									? "ktext-base-little"
 									: "ktext-base") + (props.selected ? " font-semibold" : "")
 							}

@@ -30,7 +30,7 @@ type DeviceManagerProps = React.PropsWithChildren<{
 
 const breakpoints: Record<Breakpoint, number> = {
 	mobile: 0,
-	desktop: 1024,
+	desktop: 800,
 };
 
 export function DeviceManager({ userAgent, children }: DeviceManagerProps) {
