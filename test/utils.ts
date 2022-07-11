@@ -1,4 +1,4 @@
-export const a=null;
+export const a = null;
 //TODO : put back this
 // export function getConsoleErrorSpy() {
 //     return jest

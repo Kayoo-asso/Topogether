@@ -1,4 +1,4 @@
-export {}
+export {};
 // import { batch, registerPostUpdateHook } from ".";
 // // import { getBroadcaster } from "./Broadcaster";
 // import { quark, Quark, isSSR } from "./quarky";

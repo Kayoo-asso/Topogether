@@ -1,144 +1,159 @@
-import React, { useState } from 'react';
-import { BoulderItemLeftbar } from 'components/layouts';
-import { splitArray } from 'helpers';
-import { Quark, SelectQuarkNullable, watchDependencies } from 'helpers/quarky';
-import { Boulder, Topo, Track, UUID } from 'types';
-import ArrowSimple from 'assets/icons/arrow-simple.svg';
+import React, { useState } from "react";
+import { Quark, SelectQuarkNullable, watchDependencies } from "helpers/quarky";
+import { Boulder, Sector, Topo, Track, UUID } from "types";
+import ArrowSimple from "assets/icons/arrow-simple.svg";
+import { BoulderItemLeftbar } from "components/layouts/BoulderItemLeftbar";
+import { splitArray } from "helpers/utils";
 
 interface SectorListProps {
-    topoQuark: Quark<Topo>,
-    boulderOrder: Map<UUID, number>,
-    selectedBoulder: SelectQuarkNullable<Boulder>,
-    onBoulderSelect: (boulderQuark: Quark<Boulder>) => void,
-    onTrackSelect: (trackQuark: Quark<Track>, boulderQuark: Quark<Boulder>) => void,
+	topoQuark: Quark<Topo>;
+	boulderOrder: Map<UUID, number>;
+	selectedBoulder: SelectQuarkNullable<Boulder>;
+	onBoulderSelect: (boulderQuark: Quark<Boulder>) => void;
+	onTrackSelect: (
+		trackQuark: Quark<Track>,
+		boulderQuark: Quark<Boulder>
+	) => void;
 }
 
-export const SectorList:React.FC<SectorListProps> = watchDependencies((props: SectorListProps) => {
-    const selectedBoulder = props.selectedBoulder();
-    const topo = props.topoQuark();
-    const sectors = topo.sectors;
-    const [bouldersIn, bouldersOut] = splitArray(topo.boulders.quarks().toArray(), b => sectors.toArray().map(s => s.boulders).flat().includes(b().id));
-    const bouldersOutSorted = topo.lonelyBoulders.map(id => bouldersOut.find(b => b().id === id)!);
+export const SectorList: React.FC<SectorListProps> = watchDependencies(
+	(props: SectorListProps) => {
+		const selectedBoulder = props.selectedBoulder();
+		const topo = props.topoQuark();
+		const sectors = topo.sectors;
 
-    const [displayedSectors, setDisplayedSectors] = useState<Array<UUID>>(sectors.map(sector => sector.id).toArray());
-    const [displayedBoulders, setDisplayedBoulders] = useState<Array<UUID>>([]);
+		const boulderQuarksMap = new Map<UUID, Quark<Boulder>>();
+		for (const bq of topo.boulders.quarks()) {
+			const b = bq();
+			boulderQuarksMap.set(b.id, bq);
+		}
+		const lonelyQuarks: Quark<Boulder>[] = [];
+		for (const id of topo.lonelyBoulders) {
+			lonelyQuarks.push(boulderQuarksMap.get(id)!);
+		}
 
-    return (
-        <div className='h-[95%] mb-6 px-4'>
-            {sectors.quarks().map((sectorQuark, sectorIndex) => {
-                const sector = sectorQuark();
-                const boulderQuarks = sector.boulders.map(id => bouldersIn.find(b => b().id === id)!);
-                return (
-                    <div className='flex flex-col mb-10 pb-6' key={sector.id}>
-                        <div className="ktext-label text-grey-medium">Secteur {sectorIndex + 1}</div>
-                        <div className="ktext-section-title text-main cursor-pointer mb-2 flex flex-row items-center">
-                            <div className="pr-3">
-                                <ArrowSimple
-                                    className={'w-3 h-3 cursor-pointer stroke-main stroke-2 ' + (displayedSectors.includes(sector.id) ? '-rotate-90' : 'rotate-180')}
-                                    onClick={() => {
-                                        const newDS = [...displayedSectors];
-                                        if (newDS.includes(sector.id)) newDS.splice(newDS.indexOf(sector.id), 1)
-                                        else newDS.push(sector.id);
-                                        setDisplayedSectors(newDS);
-                                    }}
-                                />
+		// By default, all sectors are shown
+		// Thus, it's cheaper and easier to track the sectors we hide
+		const [hiddenSectors, setHiddenSectors] = useState<Set<UUID>>(new Set());
+		// The reverse is true for boulders
+		const [displayedBoulders, setDisplayedBoulders] = useState<Set<UUID>>(
+			new Set()
+		);
 
-                            </div>
-                            <div
-                                onClick={() => {
-                                    const newDS = [...displayedSectors];
-                                    if (!newDS.includes(sector.id)) {
-                                        newDS.push(sector.id);
-                                        setDisplayedSectors(newDS);
-                                    }
-                                }}
-                            >
-                                {sector.name}
-                            </div>
-                        </div>
-                        
-                        {displayedSectors.includes(sector.id) &&
-                            // BOULDERS
-                            <div className='flex flex-col gap-1 ml-3'>
-                                {boulderQuarks.length < 1 &&
-                                    <div className=''>
-                                        Aucun rocher référencé
-                                    </div>
-                                }
-                                {boulderQuarks.map((boulderQuark) => {
-                                    const boulder = boulderQuark();
-                                    return (
-                                        <div key={boulder.id}>
-                                            <BoulderItemLeftbar 
-                                                boulder={boulderQuark}
-                                                orderIndex={props.boulderOrder.get(boulder.id)!}
-                                                selected={selectedBoulder?.id === boulder.id}
-                                                displayed={displayedBoulders.includes(boulder.id)}
-                                                onArrowClick={() => {
-                                                    const newDB = [...displayedBoulders];
-                                                    if (newDB.includes(boulder.id)) newDB.splice(newDB.indexOf(boulder.id), 1)
-                                                    else newDB.push(boulder.id);
-                                                    setDisplayedBoulders(newDB);
-                                                }}
-                                                onNameClick={() => {
-                                                    props.onBoulderSelect(boulderQuark);
-                                                    const newDB = [...displayedBoulders];
-                                                    if (!newDB.includes(boulder.id)) {
-                                                        newDB.push(boulder.id);
-                                                        setDisplayedBoulders(newDB);
-                                                    }
-                                                }}
-                                                onTrackClick={(trackQuark) => props.onTrackSelect(trackQuark, boulderQuark)}
-                                                displayCreateTrack={false}
-                                            />
-                                        </div>
-                                    )
-                                })}
-                            </div>
-                        }
-                    </div>             
-                )
-            })}
-                    
-            {/* BOULDERS WITHOUT SECTOR       */}
-            <div className='flex flex-col mb-10'>
-                {sectors.length > 0 && bouldersOutSorted.length > 0 &&
-                    <div className="ktext-label text-grey-medium mb-2">Sans secteur</div>
-                }
-                <div className='flex flex-col gap-1 ml-3'>
-                    {bouldersOutSorted.map((boulderQuark) => {
-                        const boulder = boulderQuark();
-                        return (
-                            <div key={boulder.id}>
-                                <BoulderItemLeftbar 
-                                    boulder={boulderQuark}
-                                    orderIndex={props.boulderOrder.get(boulder.id)!}
-                                    selected={selectedBoulder?.id === boulder.id}
-                                    displayed={displayedBoulders.includes(boulder.id)}
-                                    onArrowClick={() => {
-                                        const newDB = [...displayedBoulders];
-                                        if (newDB.includes(boulder.id)) newDB.splice(newDB.indexOf(boulder.id), 1)
-                                        else newDB.push(boulder.id);
-                                        setDisplayedBoulders(newDB);
-                                    }}
-                                    onNameClick={() => {
-                                        props.onBoulderSelect(boulderQuark);
-                                        const newDB = [...displayedBoulders];
-                                        if (!newDB.includes(boulder.id)) {
-                                            newDB.push(boulder.id);
-                                            setDisplayedBoulders(newDB);
-                                        }
-                                    }}
-                                    onTrackClick={(trackQuark) => props.onTrackSelect(trackQuark, boulderQuark)}
-                                    displayCreateTrack={false}
-                                />
-                            </div>
-                        )
-                    })}
-                </div>
-            </div>
-        </div>
-    )
-});
+		const toggleSector = (sector: Sector) => {
+			const hs = new Set(hiddenSectors);
+			if (!hs.delete(sector.id)) {
+				hs.add(sector.id);
+			}
+			setHiddenSectors(hs);
+		};
+		const toggleBoulder = (boulder: Boulder) => {
+			const db = new Set(displayedBoulders);
+			if (!db.delete(boulder.id)) {
+				db.add(boulder.id);
+			}
+			setDisplayedBoulders(db);
+		};
+
+		return (
+			<div className="mb-6 h-[95%] px-4">
+				{sectors.quarks().map((sectorQuark, sectorIndex) => {
+					const sector = sectorQuark();
+					const quarks: Quark<Boulder>[] = [];
+					for (const id of sector.boulders) {
+						quarks.push(boulderQuarksMap.get(id)!);
+					}
+
+					return (
+						<div className="mb-10 flex flex-col pb-6" key={sector.id}>
+							<div className="ktext-label text-grey-medium">
+								Secteur {sectorIndex + 1}
+							</div>
+							<div className="ktext-section-title mb-2 flex cursor-pointer flex-row items-center text-main">
+								<div className="pr-3">
+									<ArrowSimple
+										className={
+											"h-3 w-3 cursor-pointer stroke-main stroke-2 " +
+											(hiddenSectors.has(sector.id)
+												? "rotate-180"
+												: "-rotate-90")
+										}
+										onClick={() => toggleSector(sector)}
+									/>
+								</div>
+								<div onClick={() => toggleSector(sector)}>{sector.name}</div>
+							</div>
+
+							{!hiddenSectors.has(sector.id) && (
+								// BOULDERS
+								<div className="ml-3 flex flex-col gap-1">
+									{quarks.length === 0 && (
+										<div className="">Aucun rocher référencé</div>
+									)}
+									{quarks.length > 0 &&
+										quarks.map((boulderQuark) => {
+											const boulder = boulderQuark();
+											return (
+												<div key={boulder.id}>
+													<BoulderItemLeftbar
+														boulder={boulderQuark}
+														orderIndex={props.boulderOrder.get(boulder.id)!}
+														selected={selectedBoulder?.id === boulder.id}
+														displayed={displayedBoulders.has(boulder.id)}
+														onArrowClick={() => toggleBoulder(boulder)}
+														onNameClick={() => {
+															props.onBoulderSelect(boulderQuark);
+															toggleBoulder(boulder);
+														}}
+														onTrackClick={(trackQuark) =>
+															props.onTrackSelect(trackQuark, boulderQuark)
+														}
+														displayCreateTrack={false}
+													/>
+												</div>
+											);
+										})}
+								</div>
+							)}
+						</div>
+					);
+				})}
+
+				{/* BOULDERS WITHOUT SECTOR       */}
+				<div className="mb-10 flex flex-col">
+					{sectors.length > 0 && lonelyQuarks.length > 0 && (
+						<div className="ktext-label mb-2 text-grey-medium">
+							Sans secteur
+						</div>
+					)}
+					<div className="ml-3 flex flex-col gap-1">
+						{lonelyQuarks.map((boulderQuark) => {
+							const boulder = boulderQuark();
+							return (
+								<div key={boulder.id}>
+									<BoulderItemLeftbar
+										boulder={boulderQuark}
+										orderIndex={props.boulderOrder.get(boulder.id)!}
+										selected={selectedBoulder?.id === boulder.id}
+										displayed={displayedBoulders.has(boulder.id)}
+										onArrowClick={() => toggleBoulder(boulder)}
+										onNameClick={() => {
+											props.onBoulderSelect(boulderQuark);
+											toggleBoulder(boulder);
+										}}
+										onTrackClick={(trackQuark) =>
+											props.onTrackSelect(trackQuark, boulderQuark)
+										}
+										displayCreateTrack={false}
+									/>
+								</div>
+							);
+						})}
+					</div>
+				</div>
+			</div>
+		);
+	}
+);
 
 SectorList.displayName = "SectorList";

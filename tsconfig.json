@@ -1,35 +1,27 @@
 {
-  "compilerOptions": {
-    // Gives us nicer paths to modules, by referring to them
-    // from the root of the project
-    "baseUrl": ".",
-    "target": "ES6",
-    "lib": [
-      "dom", "dom.iterable", "WebWorker"
-    ],
-    // Used to add types to libraries
-    "allowJs": true,
-    // Set this to `true`, otherwise TypeScript complains about missing type declarations
-    // (coming from dependencies of our dependencies)
-    "skipLibCheck": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "noEmit": true,
-    "esModuleInterop": true,
-    "module": "ESNext",
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "jsx": "preserve",
-    "incremental": true,
-    "allowSyntheticDefaultImports": true,
-  },
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+	"compilerOptions": {
+		// Gives us nicer paths to modules, by referring to them
+		// from the root of the project
+		"baseUrl": ".",
+		"target": "ES6",
+		"lib": ["dom", "dom.iterable", "WebWorker"],
+		// Used to add types to libraries
+		"allowJs": true,
+		// Set this to `true`, otherwise TypeScript complains about missing type declarations
+		// (coming from dependencies of our dependencies)
+		"skipLibCheck": true,
+		"strict": true,
+		"forceConsistentCasingInFileNames": true,
+		"noEmit": true,
+		"esModuleInterop": true,
+		"module": "ESNext",
+		"moduleResolution": "node",
+		"resolveJsonModule": true,
+		"isolatedModules": true,
+		"jsx": "preserve",
+		"incremental": true,
+		"allowSyntheticDefaultImports": true
+	},
+	"include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+	"exclude": ["node_modules"]
 }

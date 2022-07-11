@@ -1,6 +1,14 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 import { quark } from "helpers/quarky";
-import { TopoData, UUID, LightTopo, TopoStatus, DBTopo, Topo, DBLightTopo } from "types";
+import {
+	TopoData,
+	UUID,
+	LightTopo,
+	TopoStatus,
+	DBTopo,
+	Topo,
+	DBLightTopo,
+} from "types";
 import { sync } from ".";
 import { ImageService } from "./ImageService";
 import { get, set } from "idb-keyval";
@@ -55,9 +63,12 @@ export class ApiService {
 	}
 
 	async getLikedTopos(userId: UUID): Promise<DBLightTopo[]> {
-		const { data, error } = await this.client.rpc<DBLightTopo>("liked_topos_of_user", {
-			_user_id: userId,
-		});
+		const { data, error } = await this.client.rpc<DBLightTopo>(
+			"liked_topos_of_user",
+			{
+				_user_id: userId,
+			}
+		);
 		if (error || !data) {
 			console.error("Error getting liked topos:", error);
 			return [];
@@ -71,11 +82,14 @@ export class ApiService {
 		limit: number,
 		similarity: number = 0.3
 	): Promise<LightTopo[]> {
-		const { error, data } = await this.client.rpc<LightTopo>("search_light_topos", {
-			_query: query,
-			_nb: limit,
-			_similarity: similarity,
-		});
+		const { error, data } = await this.client.rpc<LightTopo>(
+			"search_light_topos",
+			{
+				_query: query,
+				_nb: limit,
+				_similarity: similarity,
+			}
+		);
 		if (error) {
 			console.error(`Error searching light topos for \"${query}\": `, error);
 			return [];
@@ -84,11 +98,16 @@ export class ApiService {
 	}
 
 	async setTopoStatus(topoId: UUID, status: TopoStatus): Promise<UpdateResult> {
-		const { error } = await this.client.from<DBTopo>("topos").update({ status }).eq("id", topoId);
+		const { error } = await this.client
+			.from<DBTopo>("topos")
+			.update({ status })
+			.eq("id", topoId);
 		if (error) {
 			// Postgres error code
 			// see: https://postgrest.org/en/stable/api.html#http-status-codes
-			return error.code === "42501" ? UpdateResult.Unauthorized : UpdateResult.Error;
+			return error.code === "42501"
+				? UpdateResult.Unauthorized
+				: UpdateResult.Error;
 		}
 		return UpdateResult.Ok;
 	}

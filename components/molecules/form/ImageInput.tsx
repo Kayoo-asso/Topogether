@@ -1,128 +1,156 @@
-import React, { useRef, useState, forwardRef, useEffect, useCallback } from 'react';
+import { useRef, useState, forwardRef, useEffect, useCallback } from "react";
 // eslint-disable-next-line import/no-cycle
-import { ImageButton, ProfilePicture, RoundButton } from '../../atoms';
-import { api, ImageUploadErrorReason } from 'helpers/services';
-import { Image } from 'types';
-import { setReactRef } from 'helpers';
-import Spinner from 'assets/icons/spinner.svg';
-import Camera from 'assets/icons/camera.svg';
+import { ImageButton, ProfilePicture, RoundButton } from "../../atoms";
+import { api, ImageUploadErrorReason } from "helpers/services";
+import { Image } from "types";
+import { setReactRef } from "helpers/utils";
+import Spinner from "assets/icons/spinner.svg";
+import Camera from "assets/icons/camera.svg";
 
 interface ImageInputProps {
-  label?: string,
-  multiple?: boolean,
-  value?: Image,
-  button?: 'square' | 'profile' | 'builder';
-  size?: 'little' | 'big';
-  activated?: boolean,
-  onChange: (images: Image[]) => void,
-  onDelete?: () => void,
-  onError?: (err: string) => void,
-  onLoadStart?: () => void,
-  onLoadEnd?: () => void,
+	label?: string;
+	multiple?: boolean;
+	value?: Image;
+	button?: "square" | "profile" | "builder";
+	size?: "little" | "big";
+	activated?: boolean;
+	onChange: (images: Image[]) => void;
+	onDelete?: () => void;
+	onError?: (err: string) => void;
+	onLoadStart?: () => void;
+	onLoadEnd?: () => void;
 }
 
-export const ImageInput = forwardRef<HTMLInputElement, ImageInputProps>(({
-  multiple = false,
-  button = 'square',
-  size = 'little',
-  activated = true,
-  ...props
-}: ImageInputProps, parentRef) => {
-  const fileInputRef = useRef<HTMLInputElement>();
+export const ImageInput = forwardRef<HTMLInputElement, ImageInputProps>(
+	(
+		{
+			multiple = false,
+			button = "square",
+			size = "little",
+			activated = true,
+			...props
+		}: ImageInputProps,
+		parentRef
+	) => {
+		const fileInputRef = useRef<HTMLInputElement>();
 
-  const [error, setError] = useState<string>();
-  const [loading, setLoading] = useState<boolean>(false);
+		const [error, setError] = useState<string>();
+		const [loading, setLoading] = useState<boolean>(false);
 
-  const handleFileInput = async (files: FileList) => {
-    const errorcount = {
-      [ImageUploadErrorReason.NonImage]: 0,
-      [ImageUploadErrorReason.CompressionError]: 0,
-      [ImageUploadErrorReason.UploadError]: 0,
-    };
-    if (props.onLoadStart) props.onLoadStart();
-    setLoading(true);
+		const handleFileInput = async (files: FileList) => {
+			const errorcount = {
+				[ImageUploadErrorReason.NonImage]: 0,
+				[ImageUploadErrorReason.CompressionError]: 0,
+				[ImageUploadErrorReason.UploadError]: 0,
+			};
+			if (props.onLoadStart) props.onLoadStart();
+			setLoading(true);
 
-    const { images, errors } = await api.images.uploadMany(files);
-    for (const err of errors) {
-      errorcount[err.reason]++;
-    }
+			const { images, errors } = await api.images.uploadMany(files);
+			for (const err of errors) {
+				errorcount[err.reason]++;
+			}
 
-    setLoading(false);
-    if (props.onLoadEnd) props.onLoadEnd();
-    props.onChange(images);
-    let error = ''
-    if (errorcount[ImageUploadErrorReason.NonImage] === 1) 
-      error += "Un des fichiers n'est pas une image valide.\n";
-    else if (errorcount[ImageUploadErrorReason.NonImage] > 1)
-      error += errorcount[ImageUploadErrorReason.NonImage] + " fichers ne sont pas des images valides.\n";
-    if (errorcount[ImageUploadErrorReason.CompressionError] === 1) 
-      error += "Un des fichiers est trop lourds.\n";
-    else if (errorcount[ImageUploadErrorReason.CompressionError] > 1) 
-      error += errorcount[ImageUploadErrorReason.CompressionError] + " fichiers sont trop lourds.\n";
-    if (errorcount[ImageUploadErrorReason.UploadError] === 1) 
-      error += "Un des fichiers n'a pas pu être uploadé.";
-    else if (errorcount[ImageUploadErrorReason.UploadError] > 1) 
-      error += errorcount[ImageUploadErrorReason.UploadError] + " fichiers n'ont pas pu être uploadés.";
-    setError(error);
-    
-    if(props.onError && error.length > 0) props.onError(error);
-  };
-  useEffect(() => {
-     if (props.onError && error && error.length > 0) props.onError(error);
-  }, [error, props.onError]);
+			setLoading(false);
+			if (props.onLoadEnd) props.onLoadEnd();
+			props.onChange(images);
+			let error = "";
+			if (errorcount[ImageUploadErrorReason.NonImage] === 1)
+				error += "Un des fichiers n'est pas une image valide.\n";
+			else if (errorcount[ImageUploadErrorReason.NonImage] > 1)
+				error +=
+					errorcount[ImageUploadErrorReason.NonImage] +
+					" fichers ne sont pas des images valides.\n";
+			if (errorcount[ImageUploadErrorReason.CompressionError] === 1)
+				error += "Un des fichiers est trop lourds.\n";
+			else if (errorcount[ImageUploadErrorReason.CompressionError] > 1)
+				error +=
+					errorcount[ImageUploadErrorReason.CompressionError] +
+					" fichiers sont trop lourds.\n";
+			if (errorcount[ImageUploadErrorReason.UploadError] === 1)
+				error += "Un des fichiers n'a pas pu être uploadé.";
+			else if (errorcount[ImageUploadErrorReason.UploadError] > 1)
+				error +=
+					errorcount[ImageUploadErrorReason.UploadError] +
+					" fichiers n'ont pas pu être uploadés.";
+			setError(error);
 
-  return (
-    <>
-      <input
-        type="file"
-        accept='image/png, image/jpg, image/jpeg, image/webp'
-        className="hidden"
-        multiple={multiple}
-        ref={ref => {
-          setReactRef(fileInputRef, ref);
-          setReactRef(parentRef, ref);
-        }}
-        onChange={(e) => {
-          if (e?.target?.files) { handleFileInput(e.target.files); }
-        }}
-      />
-      {button === 'profile' &&
-        <ProfilePicture 
-          image={props.value}
-          loading={loading}
-          onClick={useCallback(() => {
-            if (!loading && fileInputRef.current) fileInputRef.current.click();
-          }, [loading])}
-        />
-      }
-      {button === 'builder' &&
-        <RoundButton
-          buttonSize={size === 'little' ? 45 : 60}
-          onClick={useCallback(() => {
-            if (!loading && activated && fileInputRef.current) fileInputRef.current.click();
-          }, [loading, activated])}
-        >
-          {!loading && <Camera className={'h-6 w-6 ' + (activated ? 'stroke-main' : 'stroke-grey-light')} />}
-          {loading && <Spinner className="h-6 w-6 stroke-main animate-spin m-2" />}
-        </RoundButton>
-      }
-      {button === 'square' &&
-        <ImageButton
-          text={props.label}
-          image={props.value}
-          loading={loading}
-          activated={activated}
-          onClick={useCallback(() => {
-            if (!loading && fileInputRef.current) fileInputRef.current.click();
-          }, [loading])}
-          onDelete={props.onDelete}
-        />
-      }
-      {!props.onError &&
-        <div className={`ktext-error text-error pt-1 w-22 h-22 ${(error && error.length > 0) ? '' : 'hidden'}`}>
-          {error}
-        </div>
-      }
-    </>
-  );
-});
+			if (props.onError && error.length > 0) props.onError(error);
+		};
+		useEffect(() => {
+			if (props.onError && error && error.length > 0) props.onError(error);
+		}, [error, props.onError]);
+
+		return (
+			<>
+				<input
+					type="file"
+					accept="image/png, image/jpg, image/jpeg, image/webp"
+					className="hidden"
+					multiple={multiple}
+					ref={(ref) => {
+						setReactRef(fileInputRef, ref);
+						setReactRef(parentRef, ref);
+					}}
+					onChange={(e) => {
+						if (e?.target?.files) {
+							handleFileInput(e.target.files);
+						}
+					}}
+				/>
+				{button === "profile" && (
+					<ProfilePicture
+						image={props.value}
+						loading={loading}
+						onClick={useCallback(() => {
+							if (!loading && fileInputRef.current)
+								fileInputRef.current.click();
+						}, [loading])}
+					/>
+				)}
+				{button === "builder" && (
+					<RoundButton
+						buttonSize={size === "little" ? 45 : 60}
+						onClick={useCallback(() => {
+							if (!loading && activated && fileInputRef.current)
+								fileInputRef.current.click();
+						}, [loading, activated])}
+					>
+						{!loading && (
+							<Camera
+								className={
+									"h-6 w-6 " + (activated ? "stroke-main" : "stroke-grey-light")
+								}
+							/>
+						)}
+						{loading && (
+							<Spinner className="m-2 h-6 w-6 animate-spin stroke-main" />
+						)}
+					</RoundButton>
+				)}
+				{button === "square" && (
+					<ImageButton
+						text={props.label}
+						image={props.value}
+						loading={loading}
+						activated={activated}
+						onClick={useCallback(() => {
+							if (!loading && fileInputRef.current)
+								fileInputRef.current.click();
+						}, [loading])}
+						onDelete={props.onDelete}
+					/>
+				)}
+				{!props.onError && (
+					<div
+						className={`ktext-error h-22 w-22 pt-1 text-error ${
+							error && error.length > 0 ? "" : "hidden"
+						}`}
+					>
+						{error}
+					</div>
+				)}
+			</>
+		);
+	}
+);

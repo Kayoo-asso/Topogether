@@ -1,53 +1,53 @@
-import React from 'react';
-import { SliderItem } from 'react-compound-slider';
-import { Color } from '../../../types';
-import { BaseSliderInput } from './BaseSliderInput';
+import React from "react";
+import { GetHandleProps, SliderItem } from "react-compound-slider";
+import { Color } from "../../../types";
+import { BaseSliderInput } from "./BaseSliderInput";
 
 interface HandleProps {
-  color: Color,
-  handle: SliderItem,
-  getHandleProps: (id: string) => void
+	color: Color;
+	handle: SliderItem;
+	getHandleProps: GetHandleProps;
 }
 
 const Handle = (props: HandleProps) => (
-  <div
-    className="absolute -ml-1 mt-1.5 z-20 w-6 h-6 border-0 text-center bg-main rounded-full cursor-pointer flex items-center content-center"
-    style={{
-      left: `${props.handle.percent}%`,
-    }}
-    {...props.getHandleProps(props.handle.id)}
-  >
-    <div className="text-white w-full ktext-base text-xs font-bold" >
-      {props.handle.value}
-    </div>
-  </div>
+	<div
+		className="absolute z-20 -ml-1 mt-1.5 flex h-6 w-6 cursor-pointer content-center items-center rounded-full border-0 bg-main text-center"
+		style={{
+			left: `${props.handle.percent}%`,
+		}}
+		{...props.getHandleProps(props.handle.id)}
+	>
+		<div className="ktext-base w-full text-xs font-bold text-white">
+			{props.handle.value}
+		</div>
+	</div>
 );
 
 interface SliderInputProps {
-  domain: [number, number],
-  values: [number, number],
-  step?: number,
-  connectTracks?: boolean,
-  onChange: (range: [number, number]) => void,
+	domain: [number, number];
+	values: [number, number];
+	step?: number;
+	connectTracks?: boolean;
+	onChange: (range: [number, number]) => void;
 }
 
 export const SliderInput: React.FC<SliderInputProps> = ({
-  connectTracks = true,
-  ...props
+	connectTracks = true,
+	...props
 }: SliderInputProps) => (
-  <BaseSliderInput
-    values={props.values || props.domain}
-    step={props.step}
-    onChange={props.onChange}
-    domain={props.domain}
-    connectTracks={connectTracks}
-    handleCreator={(handle, getHandleProps) => (
-      <Handle
-        color="main"
-        handle={handle}
-        getHandleProps={getHandleProps}
-        key={handle.id}
-      />
-    )}
-  />
+	<BaseSliderInput
+		values={props.values || props.domain}
+		step={props.step}
+		onChange={props.onChange}
+		domain={props.domain}
+		connectTracks={connectTracks}
+		handleCreator={(handle, getHandleProps) => (
+			<Handle
+				color="main"
+				handle={handle}
+				getHandleProps={getHandleProps}
+				key={handle.id}
+			/>
+		)}
+	/>
 );

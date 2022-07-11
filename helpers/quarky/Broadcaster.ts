@@ -1,4 +1,4 @@
-// // TODO: 
+// // TODO:
 // // - localStorage broadcaster
 // // - use IDs to prevent NativeBroadcaster from handling its own messages
 // // - options
@@ -26,7 +26,6 @@
 //     return broadcaster;
 // }
 
-
 // export class NativeBroadcaster<T> implements Broadcaster<T> {
 //     readonly name: string;
 
@@ -42,7 +41,7 @@
 //         this.channel.addEventListener("message", (ev: MessageEvent<T>) => {
 //             if (this.onmessage) {
 //                 this.onmessage(ev.data);
-//             }            
+//             }
 //         });
 //         this.channel.onmessage
 //     }
@@ -103,7 +102,6 @@
 // //             setCount(MESSAGE_COUNT_KEY, 0);
 // //         }
 
-
 // //         addEventListener("storage", this.onStorage.bind(this));
 // //         addEventListener("beforeunload", (ev) => {
 
@@ -115,7 +113,7 @@
 // //     private onStorage(ev: StorageEvent) {
 // //         console.log("Received storage event ", ev);
 // //         if (ev.key === LISTENERS_KEY) {
-// //             this.someoneIsListening = true; 
+// //             this.someoneIsListening = true;
 // //         }
 // //         else if (ev.key?.startsWith(this.prefix)) {
 // //             // const messageCount = ev.key.substring(this.prefix.length);
