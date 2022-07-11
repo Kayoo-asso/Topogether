@@ -67,7 +67,7 @@ function imageKey(id: UUID): Request {
 	return new Request("/" + id);
 }
 
-const CLOUDFLARE_MAX_SIZE = 10e6;
+const UPLOAD_MAX_SIZE = 4.5e6;
 
 export class ImageService {
 	async downloadTopoImages(topo: TopoData): Promise<void> {
@@ -149,11 +149,11 @@ export class ImageService {
 					filename: file.name,
 					reason: ImageUploadErrorReason.NonImage,
 				});
-			} else if (file.size > CLOUDFLARE_MAX_SIZE) {
+			} else if (file.size > UPLOAD_MAX_SIZE) {
 				const promise = new Promise((resolve, _) => {
 					new Compressor(file, {
 						success(compressed: File) {
-							if (compressed.size < CLOUDFLARE_MAX_SIZE) {
+							if (compressed.size < UPLOAD_MAX_SIZE) {
 								toUpload.push(compressed);
 							} else {
 								errors.push({
