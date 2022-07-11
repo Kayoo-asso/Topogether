@@ -945,9 +945,26 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 				<ModalDeleteBoulder
 					buttonText="Confirmer"
 					imgUrl={staticUrl.deleteWarning}
-					onConfirm={(boulder) => {
-						topo.boulders.removeQuark(boulder);
-						if (selectedBoulder.quark() === boulder)
+					onConfirm={(boulderQuark) => {
+						topo.boulders.removeQuark(boulderQuark);
+						const boulder = boulderQuark();
+						// TODO : Test this code and add it to avoid "undefined" boulders
+						// const sectorWithBoulder = sectors.findQuark(s => s.boulders.some(id => id === boulder.id))
+						// if (sectorWithBoulder) {
+						// 	const boulderToDeleteIndex = sectorWithBoulder().boulders.indexOf(boulder.id)
+						// 	sectorWithBoulder.set(s => ({
+						// 		...s,
+						// 		boulders: s.boulders.splice(boulderToDeleteIndex, 1)
+						// 	}));
+						// }
+						// else { //The boulder to delete is in lonelyboulders
+						// 	const boulderToDeleteIndex = topo.lonelyBoulders.indexOf(boulder.id)
+						// 	props.topoQuark.set(t => ({
+						// 		...t,
+						// 		lonelyBoulders: t.lonelyBoulders.splice(boulderToDeleteIndex, 1)
+						// 	}));
+						// }
+						if (selectedBoulder.quark() === boulderQuark)
 							selectedBoulder.select(undefined);
 					}}
 				>
