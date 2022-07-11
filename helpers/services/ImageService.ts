@@ -246,12 +246,13 @@ async function upload(
 		body: data,
 	});
 	const dimensionsRequest = imgDimensions(file);
-	const [upload, { width, height }, [replicationResult, replicationSucceeded]] = await Promise.all([
-		uploadRequest,
-		dimensionsRequest,
-		// NOTE: enable replication to Bunny CDN
-		uploadBunny(file, info.id)
-	]);
+	const [upload, { width, height }, [replicationResult, replicationSucceeded]] =
+		await Promise.all([
+			uploadRequest,
+			dimensionsRequest,
+			// NOTE: enable replication to Bunny CDN
+			uploadBunny(file, info.id),
+		]);
 	if (!upload.ok || !replicationSucceeded) {
 		const error = {
 			filename: file.name,
@@ -265,7 +266,7 @@ async function upload(
 	const img: Image = {
 		id: info.id,
 		ratio,
-		placeholder: (replicationResult as Image).placeholder
+		placeholder: (replicationResult as Image).placeholder,
 	};
 	return [img, true];
 }
@@ -293,7 +294,10 @@ async function uploadBunny(
 			ratio,
 			placeholder,
 		};
-		console.log("Upload to Bunny CDN finished. Generated placeholder:", placeholder);
+		console.log(
+			"Upload to Bunny CDN finished. Generated placeholder:",
+			placeholder
+		);
 		return [img, true];
 	} catch {
 		const error = {

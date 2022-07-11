@@ -84,7 +84,7 @@ export const AccessSlideover: React.FC<AccessSlideoverProps> = ({
 								)}
 								<div>{step.description}</div>
 								{step.image && (
-									<div className="relative mt-2 h-[200px] w-auto rounded-lg overflow-hidden">
+									<div className="relative mt-2 h-[200px] w-auto overflow-hidden rounded-lg">
 										<CFImage
 											image={step.image}
 											objectFit="contain"

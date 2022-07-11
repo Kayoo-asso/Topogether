@@ -72,7 +72,9 @@ export const ImageButton: React.FC<ImageButtonProps> = ({
 					/>
 				</>
 			)}
-			{!loading && !props.image && <span className="m-1 text-main ktext-subtext">{text}</span>}
+			{!loading && !props.image && (
+				<span className="ktext-subtext m-1 text-main">{text}</span>
+			)}
 		</div>
 	);
 };

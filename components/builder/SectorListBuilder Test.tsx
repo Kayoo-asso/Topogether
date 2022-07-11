@@ -122,7 +122,7 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> =
 										items={quarks.map((boulderQuark, index) => {
 											const boulder = boulderQuark();
 											return (
-												<div className="flex flex-col touch-none">
+												<div className="flex touch-none flex-col">
 													<BoulderItemLeftbar
 														boulder={boulderQuark}
 														orderIndex={props.boulderOrder.get(boulder.id)!}

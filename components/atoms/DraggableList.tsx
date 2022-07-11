@@ -65,9 +65,9 @@ const fn =
 
 export const DraggableList = ({ items }: { items: JSX.Element[] }) => {
 	const order = useRef(items.map((_, index) => index)); // Store indicies as a local ref, this represents the item order
-	
+
 	const [springs, api] = useSprings(items.length, fn(order.current)); // Create springs, each corresponds to an item, controlling its transform, scale, etc.
-	
+
 	const bind = useDrag(({ args: [originalIndex], active, movement: [, y] }) => {
 		const curIndex = order.current.indexOf(originalIndex);
 		const curRow = clamp(
@@ -82,7 +82,7 @@ export const DraggableList = ({ items }: { items: JSX.Element[] }) => {
 
 	return (
 		<div className="flex h-full flex-col">
-			{springs.map( ({ zIndex, shadow, y, scale, order }, i) => (
+			{springs.map(({ zIndex, shadow, y, scale, order }, i) => (
 				<animated.div
 					{...bind(i)}
 					key={i}
