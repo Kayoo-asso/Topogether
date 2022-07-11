@@ -73,6 +73,9 @@ export type SourceSize = ViewportWidth | PixelWidth;
 export const cloudflareUrl = (imageId: UUID, width: VariantWidth): string =>
 	`https://imagedelivery.net/9m8hQCHM9NXY8VKZ1mHt-A/${imageId}/${width}w`;
 
+export const bunnyUrl = (imageId: UUID, width: VariantWidth): string =>
+	`https://topogether.b-cdn.net/${imageId}?width=${width}`;
+
 // --- Encode UUID ---
 
 const readHexByte = (uuid: UUID, start: number) =>

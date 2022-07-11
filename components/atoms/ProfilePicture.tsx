@@ -1,6 +1,8 @@
 import React from "react";
 import { Image } from "types";
 import { CFImage } from "./CFImage";
+import { Loading } from "./buttons/Loading";
+
 import defaultProfilePicture from "public/assets/img/Default_profile_picture.png";
 
 interface ProfilePictureProps {
@@ -22,15 +24,20 @@ export const ProfilePicture: React.FC<ProfilePictureProps> = ({
 				props.onClick && props.onClick();
 			}}
 		>
-			<CFImage
-				image={props.image}
-				className="h-full rounded-full"
-				objectFit="cover"
-				alt="Photo de profil"
-				sizeHint="25vw"
-				forceLoading={loading}
-				defaultImage={defaultProfilePicture}
-			/>
+			{loading && (
+				<div className="flex h-full w-full items-center justify-center bg-white">
+					<Loading bgWhite={false} SVGClassName="w-12 h-12" />
+				</div>
+			)}
+			{!loading && (
+				<CFImage
+					image={props.image}
+					objectFit="cover"
+					alt="Photo de profil"
+					sizeHint="25vw"
+					defaultImage={defaultProfilePicture}
+				/>
+			)}
 		</div>
 	);
 };

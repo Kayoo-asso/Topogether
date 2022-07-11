@@ -53,7 +53,19 @@ export const ImageThumb: React.FC<ImageThumbProps> = watchDependencies(
 						/>
 					</div>
 				)}
-				{props.tracks && props.tracks.toArray().length > 0 && (
+
+				<TracksImage
+					image={props.image}
+					tracks={props.tracks || new QuarkIter([])}
+					displayTracks
+					displayTrackOrderIndexes={true}
+					objectFit="contain"
+					// Avoid loading separate images for the thumbnail or the preview image
+					sizeHint="300px"
+					tracksWeight={60}
+					zoomable={false}
+				/>
+				{/* {props.tracks && props.tracks.toArray().length > 0 && (
 					<TracksImage
 						image={props.image}
 						tracks={props.tracks}
@@ -69,12 +81,11 @@ export const ImageThumb: React.FC<ImageThumbProps> = watchDependencies(
 					<CFImage
 						image={props.image}
 						alt="user generated image"
-						className="flex"
 						objectFit="contain"
 						sizeHint={`${containerWidth}px`}
 						zoomable={false}
 					/>
-				)}
+				)} */}
 			</div>
 		);
 	}

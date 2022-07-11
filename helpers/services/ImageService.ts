@@ -246,11 +246,13 @@ async function upload(
 		body: data,
 	});
 	const dimensionsRequest = imgDimensions(file);
-	const [upload, { width, height }] = await Promise.all([
+	const [upload, { width, height }, [replicationResult, replicationSucceeded]] = await Promise.all([
 		uploadRequest,
 		dimensionsRequest,
+		// NOTE: enable replication to Bunny CDN
+		uploadBunny(file, info.id)
 	]);
-	if (!upload.ok) {
+	if (!upload.ok || !replicationSucceeded) {
 		const error = {
 			filename: file.name,
 			reason: ImageUploadErrorReason.UploadError,
@@ -263,8 +265,43 @@ async function upload(
 	const img: Image = {
 		id: info.id,
 		ratio,
+		placeholder: (replicationResult as Image).placeholder
 	};
 	return [img, true];
+}
+
+async function uploadBunny(
+	file: File,
+	id: UUID
+): Promise<[Image, true] | [ImageUploadError, false]> {
+	const uploadRequest = fetch("/api/images/upload", {
+		method: "PUT",
+		headers: {
+			"x-image-id": id,
+		},
+		body: file,
+	}).then((x) => x.json());
+	const dimensionsRequest = imgDimensions(file);
+	try {
+		const [{ placeholder }, { width, height }] = await Promise.all([
+			uploadRequest,
+			dimensionsRequest,
+		]);
+		const ratio = width / height;
+		const img: Image = {
+			id: id,
+			ratio,
+			placeholder,
+		};
+		console.log("Upload to Bunny CDN finished. Generated placeholder:", placeholder);
+		return [img, true];
+	} catch {
+		const error = {
+			filename: file.name,
+			reason: ImageUploadErrorReason.UploadError,
+		};
+		return [error, false];
+	}
 }
 
 async function imgDimensions(file: File): Promise<ImageDimensions> {

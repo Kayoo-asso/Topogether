@@ -125,13 +125,12 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> =
 								{full && <LikeButton liked={boulder.liked} />}
 
 								{!full && (
-									<div className="relative h-[60px] w-full">
+									<div className="relative h-[60px] w-full overflow-hidden rounded-sm">
 										<CFImage
 											image={boulder.images[0]}
-											className="rounded-sm"
 											objectFit="contain"
 											alt="Boulder"
-											sizeHint="50vw"
+											sizeHint="100vw"
 										/>
 									</div>
 								)}

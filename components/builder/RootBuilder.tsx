@@ -220,7 +220,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 			[selectedBoulder]
 		);
 		// Hack: select boulder from query parameter
-		if (firstRender) {
+		useEffect(() => {
 			if (typeof bId === "string") {
 				const expanded = decodeUUID(bId);
 				if (isUUID(expanded)) {
@@ -228,7 +228,8 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 					if (boulder) toggleBoulderSelect(boulder);
 				}
 			}
-		}
+		}, []);
+
 		const toggleTrackSelect = useQuarkyCallback(
 			(trackQuark: Quark<Track>, boulderQuark: Quark<Boulder>) => {
 				setDisplaySectorSlideover(false);

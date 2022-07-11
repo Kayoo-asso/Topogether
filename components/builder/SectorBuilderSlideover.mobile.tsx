@@ -2,7 +2,7 @@ import React from "react";
 import { Button, SlideoverMobile } from "components";
 import { Boulder, Sector, Topo, Track, UUID } from "types";
 import { Quark, watchDependencies, SelectQuarkNullable } from "helpers/quarky";
-import { SectorListBuilder } from "./SectorListBuilder";
+import { SectorListBuilderExperimental } from "./SectorListBuilderExperimental";
 
 interface SectorBuilderSlideoverMobileProps {
 	topoQuark: Quark<Topo>;
@@ -24,7 +24,7 @@ export const SectorBuilderSlideoverMobile: React.FC<SectorBuilderSlideoverMobile
 		return (
 			<SlideoverMobile onClose={props.onClose}>
 				<div className="mt-10 flex flex-col overflow-auto px-3 pb-5">
-					<SectorListBuilder
+					<SectorListBuilderExperimental
 						topoQuark={props.topoQuark}
 						boulderOrder={props.boulderOrder}
 						selectedBoulder={props.selectedBoulder}

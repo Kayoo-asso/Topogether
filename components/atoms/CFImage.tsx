@@ -10,12 +10,10 @@ import {
 	forwardRef,
 	useRef,
 	useState,
-	useEffect,
 	useCallback,
 	ReactElement,
 } from "react";
 import QuickPinchZoom, { make3dTransformValue } from "react-quick-pinch-zoom";
-import { Loading } from "./buttons/Loading";
 import { useBreakpoint, Portal } from "helpers/hooks";
 import type { Image } from "types";
 
@@ -25,7 +23,9 @@ export type CFImageProps = RawImageAttributes & {
 	alt: string;
 	image?: Image;
 	objectFit?: "contain" | "cover";
-	forceLoading?: boolean;
+	// Default = "cover"
+	// Customizable
+	bgObjectFit?: "contain" | "cover";
 	sizeHint: SourceSize | { raw: string };
 	defaultImage?: StaticImageData;
 	modalable?: boolean;
@@ -46,6 +46,7 @@ export const CFImage = forwardRef<HTMLImageElement, CFImageProps>(
 			modalable,
 			zoomable = true,
 			objectFit = "contain",
+			bgObjectFit,
 			defaultImage = defaultKayoo,
 			...props
 		}: CFImageProps,
@@ -53,25 +54,6 @@ export const CFImage = forwardRef<HTMLImageElement, CFImageProps>(
 	) => {
 		const device = useBreakpoint();
 		const imgRef = useRef<HTMLImageElement>(null);
-		const [loading, setLoading] = useState(true);
-		const { forceLoading, ...imgProps } = props;
-
-		// useLayoutEffect to avoid a "flickering" loading indicator
-		useEffect(() => {
-			//If the image is already in the page because it's in cache, onLoad does not trigger
-			//So we verify if the image already exists through its naturalHeight
-			if (imgRef.current?.naturalHeight !== 0) {
-				setLoading(false);
-			}
-		}, [imgRef.current]);
-
-		const currentImage = useRef(image?.id);
-		useEffect(() => {
-			// this check prevents setting `loading` to true in case the image loads too fast
-			if (currentImage.current !== image?.id) {
-				setLoading(true);
-			}
-		}, [image?.id]);
 
 		const onPinchZoom = useCallback(
 			({ x, y, scale }) => {
@@ -108,10 +90,11 @@ export const CFImage = forwardRef<HTMLImageElement, CFImageProps>(
 		let placeholder = defaultImage.blurDataURL;
 		let srcSet = undefined;
 		let sizes = undefined;
+
+		if (portalOpen) objectFit = "contain";
 		const objectFitClass =
-			portalOpen || objectFit === "contain"
-				? " object-contain "
-				: " object-cover ";
+			objectFit === "contain" ? " object-contain " : " object-cover ";
+		const backgroundSize = bgObjectFit || objectFit;
 
 		if (image) {
 			const defaultVariant = device === "mobile" ? 640 : 1920; //TODO: optimize by checking size
@@ -129,46 +112,42 @@ export const CFImage = forwardRef<HTMLImageElement, CFImageProps>(
 				: typeof sizeHint === "string"
 				? sizeHint
 				: sizeHint.raw;
-			// no placeholder
-			placeholder = undefined;
+			placeholder = image.placeholder;
 		}
 
 		return wrapPortal(
-			<div
-				className={
-					"relative h-full w-full overflow-hidden " + (props.className || "")
-				}
-				onClick={() =>
-					modalable && !loading && !forceLoading && setPortalOpen(true)
-				}
-			>
-				{(loading || forceLoading) && (
-					<div className="absolute top-0 z-1000 h-full w-full bg-white">
-						<Loading bgWhite={false} SVGClassName="w-12 h-12" />
-					</div>
-				)}
-				<QuickPinchZoom onUpdate={onPinchZoom} draggableUnZoomed={false}>
-					<img
-						ref={(ref) => {
-							setReactRef(imgRef, ref);
-							setReactRef(parentRef, ref);
-						}}
-						src={src}
-						width={width}
-						height={height}
-						srcSet={srcSet}
-						sizes={sizes}
-						{...imgProps}
-						className={props.className + " h-full " + objectFitClass}
-						loading={props.loading ?? "lazy"}
-						decoding={props.decoding ?? "async"}
-						onLoad={() => {
-							setLoading(false);
-							currentImage.current = image?.id;
-						}}
-					/>
-				</QuickPinchZoom>
-			</div>
+			<QuickPinchZoom onUpdate={onPinchZoom} draggableUnZoomed={false}>
+				<img
+					ref={(ref) => {
+						setReactRef(imgRef, ref);
+						setReactRef(parentRef, ref);
+					}}
+					{...props}
+					src={src}
+					width={width}
+					height={height}
+					srcSet={srcSet}
+					sizes={sizes}
+					className={`h-full ${objectFitClass} ${props.className || ""}`}
+					loading={props.loading || "lazy"}
+					decoding={props.decoding || "async"}
+					// Add the placeholder as background image
+					style={
+						placeholder
+							? {
+									backgroundSize,
+									backgroundPosition: "center",
+									backgroundImage: `url(${placeholder})`,
+									backgroundRepeat: "no-repeat",
+							  }
+							: {}
+					}
+					onClick={(e) => {
+						if (props.onClick) props.onClick(e);
+						if (modalable) setPortalOpen(true);
+					}}
+				/>
+			</QuickPinchZoom>
 		);
 	}
 );

@@ -171,7 +171,6 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(
 						sizeHint={portalOpen ? "100vw" : props.sizeHint}
 						image={props.image}
 						alt={"Rocher avec tracé de voies"}
-						className="flex justify-center"
 						zoomable={zoomable}
 					/>
 					<svg
