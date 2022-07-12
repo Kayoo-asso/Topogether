@@ -948,22 +948,18 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 					onConfirm={(boulderQuark) => {
 						topo.boulders.removeQuark(boulderQuark);
 						const boulder = boulderQuark();
-						// TODO : Test this code and add it to avoid "undefined" boulders
-						// const sectorWithBoulder = sectors.findQuark(s => s.boulders.some(id => id === boulder.id))
-						// if (sectorWithBoulder) {
-						// 	const boulderToDeleteIndex = sectorWithBoulder().boulders.indexOf(boulder.id)
-						// 	sectorWithBoulder.set(s => ({
-						// 		...s,
-						// 		boulders: s.boulders.splice(boulderToDeleteIndex, 1)
-						// 	}));
-						// }
-						// else { //The boulder to delete is in lonelyboulders
-						// 	const boulderToDeleteIndex = topo.lonelyBoulders.indexOf(boulder.id)
-						// 	props.topoQuark.set(t => ({
-						// 		...t,
-						// 		lonelyBoulders: t.lonelyBoulders.splice(boulderToDeleteIndex, 1)
-						// 	}));
-						// }
+						const sectorWithBoulder = sectors.findQuark(s => s.boulders.some(id => id === boulder.id))
+						if (sectorWithBoulder) //The boulder to delete is in a sector
+							sectorWithBoulder.set(s => ({
+								...s,
+								boulders: s.boulders.filter(id => id !== boulder.id)
+							}));
+						else { //The boulder to delete is in lonelyboulders
+							props.topoQuark.set(t => ({
+								...t,
+								lonelyBoulders: t.lonelyBoulders.filter(id => id !== boulder.id)
+							}));
+						}
 						if (selectedBoulder.quark() === boulderQuark)
 							selectedBoulder.select(undefined);
 					}}

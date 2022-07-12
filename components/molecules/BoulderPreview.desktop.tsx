@@ -45,8 +45,10 @@ export const BoulderPreviewDesktop = watchDependencies<
 					images: newImages,
 				}));
 				if (props.currentImage?.id === id) props.setCurrentImage(undefined);
-				if (newImages.length === 0)
+				if (newImages.length === 0) {
 					deleteTracks(boulder.tracks.quarks().toArray());
+					props.setCurrentImage(undefined);
+				}
 			},
 			[props.boulder(), props.currentImage]
 		);
