@@ -39,12 +39,12 @@ export const BoulderPreviewDesktop = watchDependencies<
 			useModal<[Quark<Track>[], UUID]>();
 		const deleteImage = useCallback(
 			(id: UUID) => {
+				if (props.currentImage?.id === id) props.setCurrentImage(undefined);
 				const newImages = props.boulder().images.filter((img) => img.id !== id);
 				props.boulder.set((b) => ({
 					...b,
 					images: newImages,
 				}));
-				if (props.currentImage?.id === id) props.setCurrentImage(undefined);
 				if (newImages.length === 0) {
 					deleteTracks(boulder.tracks.quarks().toArray());
 					props.setCurrentImage(undefined);
