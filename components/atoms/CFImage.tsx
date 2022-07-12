@@ -148,12 +148,17 @@ export const CFImage = forwardRef<HTMLImageElement, CFImageProps>(
 							: {}
 					}
 					onClick={(e) => {
-						if (props.onClick) props.onClick(e);
 						if (modalable) setPortalOpen(true);
+						if (props.onClick) props.onClick(e);
 					}}
 					onLoad={(e) => {
-						if (props.onLoad) props.onLoad(e);
 						clearPlaceholder(e.target as HTMLImageElement);
+						if (props.onLoad) props.onLoad(e);
+					}}
+					onError={(e) => {
+						// also clear the placeholder on error
+						clearPlaceholder(e.target as HTMLImageElement);
+						if (props.onError) props.onError(e);
 					}}
 				/>
 			</QuickPinchZoom>
