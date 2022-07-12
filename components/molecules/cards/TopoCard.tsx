@@ -111,7 +111,7 @@ export const TopoCard: React.FC<TopoCardProps> = React.memo(
 						(clickable ? " cursor-pointer" : "")
 					}
 				>
-					<div className="relative top-0 h-[55%] w-full overflow-hidden rounded-t-lg md:h-[75%]">
+					<div className="relative top-0 h-[55%] w-full md:h-[75%]">
 						<CFImage
 							image={props.topo.image}
 							modalable={false}
