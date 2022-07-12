@@ -30,20 +30,24 @@ const handler: NextApiHandler = async (req, res) => {
 
 	// Setup this one first, so that we attach the listeners to get the buffer
 	// before sending the upload request
-	const placeholderPromise = toBuffer(blurStream).then(async (buffer) => {
-		const placeholderSize = 16;
+	const placeholderPromise = toBuffer(blurStream).then((buffer) => {
+		const placeholderSize = 64;
 		// Pipeline adapted from `plaiceholder`
 		// https://github.com/joe-bell/plaiceholder/blob/main/packages/plaiceholder/src/get-image.ts#L157-L162
-		return sharp(buffer)
-			.resize(placeholderSize, placeholderSize, { fit: "inside" })
-			.normalize()
-			.modulate({ saturation: 1.2, brightness: 1 })
-			.removeAlpha()
-			.toBuffer({ resolveWithObject: true })
-			.then(
-				({ data, info }) =>
-					`data:image/${info.format};base64,${data.toString("base64")}`
-			);
+		return (
+			sharp(buffer)
+				// Rotate to match EXIF metadata if needed
+				.rotate()
+				.resize(placeholderSize, placeholderSize, { fit: "inside" })
+				.normalize()
+				.modulate({ saturation: 1.2, brightness: 1 })
+				.removeAlpha()
+				.toBuffer({ resolveWithObject: true })
+				.then(
+					({ data, info }) =>
+						`data:image/${info.format};base64,${data.toString("base64")}`
+				)
+		);
 	});
 
 	const upload = fetch(
@@ -56,19 +60,23 @@ const handler: NextApiHandler = async (req, res) => {
 			},
 			body: uploadStream as any,
 		}
-	)
-		.then((response) => response.json())
-		.then((response) => console.log(response))
-		.catch((err) => console.error(err));
+	);
 
-	const [placeholder] = await Promise.all([placeholderPromise, upload]);
-	console.log("Created placeholder:", placeholder);
+	const [placeholder, uploadRes] = await Promise.all([
+		placeholderPromise,
+		upload,
+	]);
 
-	res.status(200);
-	res.json({
-		placeholder,
-	});
-	res.end();
+	if (!uploadRes.ok) {
+		res.status(uploadRes.status);
+		res.end();
+	} else {
+		res.status(200);
+		res.json({
+			placeholder,
+		});
+		res.end();
+	}
 };
 
 export default handler;

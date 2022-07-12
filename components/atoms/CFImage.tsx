@@ -12,6 +12,7 @@ import {
 	useState,
 	useCallback,
 	ReactElement,
+	useEffect,
 } from "react";
 import QuickPinchZoom, { make3dTransformValue } from "react-quick-pinch-zoom";
 import { useBreakpoint, Portal } from "helpers/hooks";
@@ -135,6 +136,7 @@ export const CFImage = forwardRef<HTMLImageElement, CFImageProps>(
 					style={
 						placeholder
 							? {
+									filter: "blur(20px)",
 									backgroundSize,
 									backgroundPosition: "center",
 									backgroundImage: `url(${placeholder})`,
@@ -146,6 +148,12 @@ export const CFImage = forwardRef<HTMLImageElement, CFImageProps>(
 						if (props.onClick) props.onClick(e);
 						if (modalable) setPortalOpen(true);
 					}}
+					onLoad={(e) => {
+						if (props.onLoad) props.onLoad(e);
+						const imgElt = e.target as HTMLImageElement;
+						imgElt.style.filter = "";
+					}}
+					onLoadStart={() => console.log("Load start")}
 				/>
 			</QuickPinchZoom>
 		);
