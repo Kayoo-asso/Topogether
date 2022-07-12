@@ -4,7 +4,7 @@ import {
 	cloudflareUrl,
 	setReactRef,
 } from "helpers/utils";
-import { StaticImageData } from "next/image";
+import type { StaticImageData } from "next/image";
 import {
 	ImgHTMLAttributes,
 	forwardRef,
@@ -12,7 +12,6 @@ import {
 	useState,
 	useCallback,
 	ReactElement,
-	useEffect,
 } from "react";
 import QuickPinchZoom, { make3dTransformValue } from "react-quick-pinch-zoom";
 import { useBreakpoint, Portal } from "helpers/hooks";
@@ -120,6 +119,10 @@ export const CFImage = forwardRef<HTMLImageElement, CFImageProps>(
 			<QuickPinchZoom onUpdate={onPinchZoom} draggableUnZoomed={false}>
 				<img
 					ref={(ref) => {
+						// In case the image has loaded before the onLoad handler was registered
+						if (ref?.complete) {
+							clearPlaceholder(ref);
+						}
 						setReactRef(imgRef, ref);
 						setReactRef(parentRef, ref);
 					}}
@@ -150,11 +153,18 @@ export const CFImage = forwardRef<HTMLImageElement, CFImageProps>(
 					}}
 					onLoad={(e) => {
 						if (props.onLoad) props.onLoad(e);
-						const imgElt = e.target as HTMLImageElement;
-						imgElt.style.filter = "";
+						clearPlaceholder(e.target as HTMLImageElement);
 					}}
 				/>
 			</QuickPinchZoom>
 		);
 	}
 );
+
+function clearPlaceholder(img: HTMLImageElement) {
+	img.style.filter = null as any;
+	img.style.backgroundSize = null as any;
+	img.style.backgroundPosition = null as any;
+	img.style.backgroundImage = null as any;
+	img.style.backgroundRepeat = null as any;
+}
