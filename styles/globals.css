@@ -4,13 +4,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer utilities {
-  .overflow-hidden {
-    -webkit-mask-image: -webkit-radial-gradient(white, black);
-    overflow: hidden;
-  }
-}
-
 @layer components {
   .ktext-big-title {
     @apply font-sans font-semibold text-2xl;
