@@ -4,6 +4,13 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+  .overflow-hidden {
+    -webkit-mask-image: -webkit-radial-gradient(white, black);
+    overflow: hidden;
+  }
+}
+
 @layer components {
   .ktext-big-title {
     @apply font-sans font-semibold text-2xl;
@@ -83,6 +90,7 @@
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
 }
+
 
 body {
   overflow: hidden;
@@ -195,3 +203,4 @@ body {
   src: local("Poppins-BoldItalic"), local("Poppins-BoldItalic"),
     url("/assets/fonts/Poppins/Poppins-BoldItalic.ttf") format("truetype");
 }
+

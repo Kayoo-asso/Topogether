@@ -153,7 +153,6 @@ export const CFImage = forwardRef<HTMLImageElement, CFImageProps>(
 						const imgElt = e.target as HTMLImageElement;
 						imgElt.style.filter = "";
 					}}
-					onLoadStart={() => console.log("Load start")}
 				/>
 			</QuickPinchZoom>
 		);
