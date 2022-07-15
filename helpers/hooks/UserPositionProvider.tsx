@@ -31,7 +31,7 @@ export const UserPositionProvider = ({
 	useEffect(() => {
 		(async () => {
 			const permission = await navigator.permissions.query({ name:'geolocation' });
-			alert(permission);
+			alert(permission.state);
 			if (permission.state === "prompt") showModalAskAccess();
 			else if (permission.state === "denied") showModalUndenyAccess();
 			else launchGeolocation();
