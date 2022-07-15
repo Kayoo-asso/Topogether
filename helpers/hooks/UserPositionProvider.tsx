@@ -31,6 +31,7 @@ export const UserPositionProvider = ({
 	useEffect(() => {
 		(async () => {
 			const permission = await navigator.permissions.query({ name:'geolocation' });
+			alert(permission);
 			if (permission.state === "prompt") showModalAskAccess();
 			else if (permission.state === "denied") showModalUndenyAccess();
 			else launchGeolocation();
@@ -42,7 +43,6 @@ export const UserPositionProvider = ({
 			timeout: 3000,
 			enableHighAccuracy: true,
 		};
-
 		const onPosChange: PositionCallback = (pos) => {
 			setPosition({
 				position: [pos.coords.longitude, pos.coords.latitude],
@@ -50,7 +50,6 @@ export const UserPositionProvider = ({
 				heading: pos.coords.heading,
 			});
 		};
-
 		const onError: PositionErrorCallback = (err) => {
 			if (err.code === 3) {
 				console.error("Geolocation timed out!");
