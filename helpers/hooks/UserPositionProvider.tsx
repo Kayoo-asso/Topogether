@@ -66,7 +66,7 @@ export const UserPositionProvider = ({
 		};
 		
 		const onPosChange: PositionCallback = (pos) => {
-			if (isIos && !position.position) localStorage.setItem("geolocationPermission", "first");
+			if (isIos && !localStorage.getItem("geolocationPermission")) localStorage.setItem("geolocationPermission", "first");
 			else if (isIos && localStorage.getItem("geolocationPermission") === "first") localStorage.setItem("geolocationPermission", "granted");
 			setPosition({
 				position: [pos.coords.longitude, pos.coords.latitude],
