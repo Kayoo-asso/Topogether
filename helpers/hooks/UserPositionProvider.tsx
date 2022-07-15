@@ -40,10 +40,12 @@ export const UserPositionProvider = ({
 			const permission = localStorage.getItem('geolocationPermission');
 			if (permission) {
 				if (permission === "first") showModalAskAccess();
-				if (permission === "denied") showModalUndenyAccess();
-				const success = () => { launchGeolocation(); hideModalUndenyAccess(); }
-				const error: PositionErrorCallback = (err) => { showModalUndenyAccess(); console.log(err) };
-				navigator.geolocation.getCurrentPosition(success, error)
+				else {
+					if (permission === "denied") showModalUndenyAccess();
+					const success = () => { launchGeolocation(); hideModalUndenyAccess(); }
+					const error: PositionErrorCallback = (err) => { showModalUndenyAccess(); console.log(err) };
+					navigator.geolocation.getCurrentPosition(success, error);
+				}
 			}
 			else showModalAskAccess();
 		}
