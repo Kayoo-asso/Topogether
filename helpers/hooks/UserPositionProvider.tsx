@@ -30,29 +30,21 @@ export const UserPositionProvider = ({
 }: React.PropsWithChildren<{}>) => {
 	const [position, setPosition] = useState<UserPosition>(defaultPosition);
 	const [ModalAskAccess, showModalAskAccess] = useModal();
-	const [ModalUndenyAccess, showModalUndenyAccess] = useModal();
+	const [ModalUndenyAccess, showModalUndenyAccess, hideModalUndenyAccess] = useModal();
 
 	const device = useDevice();
 	const isIos = device.apple.device;
-
-	const bp = useBreakpoint();
 	
 	useEffect(() => {
-		// if (isIos) {
-		// 	const permission = localStorage.getItem('geolocationPermission');
-		// 	if (permission && permission === "denied") showModalUndenyAccess();
-		// 	else if (permission && permission === "granted") launchGeolocation();
-		// 	else showModalAskAccess();
-		// }
 		if (isIos) {
 			const permission = localStorage.getItem('geolocationPermission');
 			if (permission) {
-				const success = () => launchGeolocation();
+				if (permission === "denied") showModalUndenyAccess();
+				const success = () => { launchGeolocation(); hideModalUndenyAccess(); }
 				const error: PositionErrorCallback = (err) => { showModalUndenyAccess(); console.log(err) };
 				navigator.geolocation.getCurrentPosition(success, error)
 			}
 			else showModalAskAccess();
-			
 		}
 		else {
 			(async () => {
@@ -113,7 +105,6 @@ export const UserPositionProvider = ({
 	return (
 		<UserPositionContext.Provider value={position}>
 			{children}
-
 			<ModalAskAccess
 				buttonText="Valider"
 				imgUrl={staticUrl.defaultProfilePicture}
