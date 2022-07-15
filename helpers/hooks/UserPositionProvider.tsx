@@ -43,7 +43,7 @@ export const UserPositionProvider = ({
 				else {
 					if (permission === "denied") showModalUndenyAccess();
 					const success = () => { launchGeolocation(); hideModalUndenyAccess(); }
-					const error: PositionErrorCallback = (err) => { showModalUndenyAccess(); console.log(err) };
+					const error: PositionErrorCallback = (err) => { console.log(err) };
 					navigator.geolocation.getCurrentPosition(success, error);
 				}
 			}
