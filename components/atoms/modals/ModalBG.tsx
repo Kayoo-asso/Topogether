@@ -1,3 +1,4 @@
+import { useBreakpoint } from "helpers/hooks";
 import React from "react";
 
 interface ModalBGProps {
@@ -6,9 +7,14 @@ interface ModalBGProps {
 }
 
 export const ModalBG: React.FC<ModalBGProps> = (props: ModalBGProps) => {
+	const bp = useBreakpoint();
 	return (
 		<div
-			className={`absolute top-0 left-0 h-screen w-screen bg-black bg-opacity-80`}
+			className={`absolute top-0 left-0 h-screen w-screen bg-black bg-opacity-80` + 
+			(bp === "mobile" && process.env.NODE_ENV !== "development"
+				? " standalone"
+				: "")
+			}
 			style={{ zIndex: 9999 }} //No tailwind for this - bug with zIndex
 			onClick={props.onBgClick}
 			tabIndex={-1}

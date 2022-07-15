@@ -114,8 +114,6 @@ export const UserPositionProvider = ({
 		<UserPositionContext.Provider value={position}>
 			{children}
 
-			{bp === "mobile" && process.env.NODE_ENV !== "development" && (
-			<div className="standalone hidden">
 			<ModalAskAccess
 				buttonText="Valider"
 				imgUrl={staticUrl.defaultProfilePicture}
@@ -140,8 +138,6 @@ export const UserPositionProvider = ({
 				{/* TODO: specify text depending on the device and the navigator. */}
 				Pour autoriser la géolocalisation, rendez-vous dans les paramètres de votre navigateur.
 			</ModalUndenyAccess>
-			</div>
-			)}
 		</UserPositionContext.Provider>
 	);
 };

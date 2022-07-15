@@ -56,9 +56,9 @@ export function DeviceManager({ userAgent, children }: DeviceManagerProps) {
 				>
 					<div
 						className={"h-full w-full" +
-							bp === "mobile" && process.env.NODE_ENV !== "development"
+							(bp === "mobile" && process.env.NODE_ENV !== "development"
 								? " standalone"
-								: ""
+								: "")
 						}
 					>
 						{/* Here goes the Component + ShellMobile part */}
