@@ -1,8 +1,11 @@
 import { staticUrl } from "helpers/constants";
-import React, { createContext, useState, useEffect, useContext } from "react";
+import React, { createContext, useState, useEffect, useContext, useMemo } from "react";
 import { GeoCoordinates } from "types";
-import { useDevice } from "./DeviceProvider";
+import { Breakpoint, useBreakpoint, useDevice } from "./DeviceProvider";
+import { useFirstRender } from "./useFirstRender";
 import { useModal } from "./useModal";
+import isMobile from "ismobilejs";
+import useDimensions from "react-cool-dimensions";
 
 export type UserPosition = {
 	position: GeoCoordinates | null;
@@ -32,6 +35,8 @@ export const UserPositionProvider = ({
 	const device = useDevice();
 	const isIos = device.apple.device;
 	
+	const bp = useBreakpoint();
+	
 	useEffect(() => {
 		// if (isIos) {
 		// 	const permission = localStorage.getItem('geolocationPermission');
@@ -46,8 +51,6 @@ export const UserPositionProvider = ({
 				const error: PositionErrorCallback = (err) => { showModalUndenyAccess(); console.log(err) };
 				navigator.geolocation.getCurrentPosition(success, error)
 			}
-			// if (permission && permission === "denied") showModalUndenyAccess();
-			// else if (permission && permission === "granted") launchGeolocation();
 			else showModalAskAccess();
 			
 		}
@@ -110,6 +113,8 @@ export const UserPositionProvider = ({
 	return (
 		<UserPositionContext.Provider value={position}>
 			{children}
+
+			{bp === "mobile" && process.env.NODE_ENV !== "development" && (
 			<div className="standalone">
 			<ModalAskAccess
 				buttonText="Valider"
@@ -136,6 +141,7 @@ export const UserPositionProvider = ({
 				Pour autoriser la géolocalisation, rendez-vous dans les paramètres de votre navigateur.
 			</ModalUndenyAccess>
 			</div>
+			)}
 		</UserPositionContext.Provider>
 	);
 };
