@@ -55,19 +55,18 @@ export function DeviceManager({ userAgent, children }: DeviceManagerProps) {
 					className="flex h-screen w-screen flex-col items-end"
 				>
 					<div
-						id={
+						className={"h-full w-full" +
 							bp === "mobile" && process.env.NODE_ENV !== "development"
-								? "standalone"
+								? " standalone"
 								: ""
 						}
-						className="h-full w-full"
 					>
 						{/* Here goes the Component + ShellMobile part */}
 						{children}
 					</div>
 
 					{bp === "mobile" && process.env.NODE_ENV !== "development" && (
-						<div id="no-standalone" className="z-full">
+						<div className="z-full no-standalone">
 							<NoStandalone />
 						</div>
 					)}

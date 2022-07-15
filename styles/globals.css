@@ -101,12 +101,12 @@ body {
 }
 
 @media all and (display-mode: standalone) {
-  #no-standalone {
+  .no-standalone {
     display: none;
   }
 }
 @media all and (display-mode: browser), all and (display-mode: fullscreen) {
-  #standalone {
+  .standalone {
     display: none;
   }
 }

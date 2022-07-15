@@ -110,7 +110,7 @@ export const UserPositionProvider = ({
 	return (
 		<UserPositionContext.Provider value={position}>
 			{children}
-			<div id="standalone">
+			<div className="standalone">
 			<ModalAskAccess
 				buttonText="Valider"
 				imgUrl={staticUrl.defaultProfilePicture}
