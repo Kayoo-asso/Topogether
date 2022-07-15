@@ -1,6 +1,7 @@
 import { staticUrl } from "helpers/constants";
 import React, { createContext, useState, useEffect, useContext } from "react";
 import { GeoCoordinates } from "types";
+import { useDevice } from "./DeviceProvider";
 import { useModal } from "./useModal";
 
 export type UserPosition = {
@@ -27,14 +28,25 @@ export const UserPositionProvider = ({
 	const [position, setPosition] = useState<UserPosition>(defaultPosition);
 	const [ModalAskAccess, showModalAskAccess] = useModal();
 	const [ModalUndenyAccess, showModalUndenyAccess] = useModal();
+
+	const device = useDevice();
+	const isIos = device.apple.device;
 	
 	useEffect(() => {
-		(async () => {
-			const permission = await navigator.permissions.query({ name:'geolocation' });
-			if (permission.state === "prompt") showModalAskAccess();
-			else if (permission.state === "denied") showModalUndenyAccess();
-			else launchGeolocation();
-		})();
+		if (isIos) {
+			const permission = localStorage.getItem('geolocationPermission');
+			if (permission && permission === "denied") showModalUndenyAccess();
+			else if (permission && permission === "granted") launchGeolocation();
+			else showModalAskAccess();
+		}
+		else {
+			(async () => {
+				const permission = await navigator.permissions.query({ name:'geolocation' });
+				if (permission.state === "prompt") showModalAskAccess();
+				else if (permission.state === "denied") showModalUndenyAccess();
+				else launchGeolocation();
+			})();
+		}
 	}, []);
 
 	const launchGeolocation = () => {
@@ -43,6 +55,7 @@ export const UserPositionProvider = ({
 			enableHighAccuracy: true,
 		};
 		const onPosChange: PositionCallback = (pos) => {
+			if (isIos && !position.position) localStorage.setItem("geolocationPermission", "granted");
 			setPosition({
 				position: [pos.coords.longitude, pos.coords.latitude],
 				accuracy: pos.coords.accuracy,
@@ -50,7 +63,11 @@ export const UserPositionProvider = ({
 			});
 		};
 		const onError: PositionErrorCallback = (err) => {
-			if (err.code === 3) {
+			if (err.code === 1) {
+				if (isIos) localStorage.setItem("geolocationPermission", "denied");
+				console.log(err.message);
+			}
+			else if (err.code === 3) {
 				console.error("Geolocation timed out!");
 			} else {
 				console.error("Geolocation error:", err);
