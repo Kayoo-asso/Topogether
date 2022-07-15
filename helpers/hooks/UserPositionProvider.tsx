@@ -34,7 +34,7 @@ export const UserPositionProvider = ({
 
 	const device = useDevice();
 	const isIos = device.apple.device;
-	
+
 	const bp = useBreakpoint();
 	
 	useEffect(() => {
@@ -115,7 +115,7 @@ export const UserPositionProvider = ({
 			{children}
 
 			{bp === "mobile" && process.env.NODE_ENV !== "development" && (
-			<div className="standalone">
+			<div className="standalone hidden">
 			<ModalAskAccess
 				buttonText="Valider"
 				imgUrl={staticUrl.defaultProfilePicture}
