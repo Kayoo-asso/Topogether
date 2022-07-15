@@ -54,6 +54,7 @@ export const UserPositionProvider = ({
 			timeout: 3000,
 			enableHighAccuracy: true,
 		};
+		
 		const onPosChange: PositionCallback = (pos) => {
 			if (isIos && !position.position) localStorage.setItem("geolocationPermission", "granted");
 			setPosition({
@@ -97,6 +98,7 @@ export const UserPositionProvider = ({
 	return (
 		<UserPositionContext.Provider value={position}>
 			{children}
+			<div className="standalone">
 			<ModalAskAccess
 				buttonText="Valider"
 				imgUrl={staticUrl.defaultProfilePicture}
@@ -121,6 +123,7 @@ export const UserPositionProvider = ({
 				{/* TODO: specify text depending on the device and the navigator. */}
 				Pour autoriser la géolocalisation, rendez-vous dans les paramètres de votre navigateur.
 			</ModalUndenyAccess>
+			</div>
 		</UserPositionContext.Provider>
 	);
 };
