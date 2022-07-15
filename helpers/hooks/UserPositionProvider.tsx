@@ -39,6 +39,7 @@ export const UserPositionProvider = ({
 		if (isIos) {
 			const permission = localStorage.getItem('geolocationPermission');
 			if (permission) {
+				if (permission === "first") showModalAskAccess();
 				if (permission === "denied") showModalUndenyAccess();
 				const success = () => { launchGeolocation(); hideModalUndenyAccess(); }
 				const error: PositionErrorCallback = (err) => { showModalUndenyAccess(); console.log(err) };
@@ -63,7 +64,8 @@ export const UserPositionProvider = ({
 		};
 		
 		const onPosChange: PositionCallback = (pos) => {
-			if (isIos && !position.position) localStorage.setItem("geolocationPermission", "granted");
+			if (isIos && !position.position) localStorage.setItem("geolocationPermission", "first");
+			else if (isIos && localStorage.getItem("geolocationPermission") === "first") localStorage.setItem("geolocationPermission", "granted");
 			setPosition({
 				position: [pos.coords.longitude, pos.coords.latitude],
 				accuracy: pos.coords.accuracy,
