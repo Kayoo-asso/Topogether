@@ -29,11 +29,8 @@ export const UserPositionProvider = ({
 	const [ModalUndenyAccess, showModalUndenyAccess] = useModal();
 	
 	useEffect(() => {
-		alert("ok");
 		(async () => {
-			alert("2");
 			const permission = await navigator.permissions.query({ name:'geolocation' });
-			alert(permission.state);
 			if (permission.state === "prompt") showModalAskAccess();
 			else if (permission.state === "denied") showModalUndenyAccess();
 			else launchGeolocation();
