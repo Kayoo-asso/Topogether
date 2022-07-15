@@ -54,7 +54,7 @@ export const UserMarker: React.FC<UserMarkerProps> = (
 			// Clean itself up, to only request permission once
 			window.removeEventListener("click", handleClick);
 		};
-		window.addEventListener("click", handleClick);
+		// window.addEventListener("click", handleClick);
 		// Clean the event listener in case it did not get triggered
 		return () => window.removeEventListener("click", handleClick);
 	}, []);
