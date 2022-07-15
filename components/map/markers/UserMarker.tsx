@@ -47,7 +47,6 @@ export const UserMarker: React.FC<UserMarkerProps> = (
 				window.DeviceOrientationEvent &&
 				typeof (DeviceOrientationEvent as any).requestPermission === "function"
 			) {
-				console.log("Requesting device orientation permission");
 				// If this succeeds, we get data from the deviceorientation event
 				// If it doesn't, oh well, we don't really care about it, we don't show anything
 				(DeviceOrientationEvent as any).requestPermission();
