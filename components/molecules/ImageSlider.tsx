@@ -1,5 +1,5 @@
 import { Quark, QuarkIter, SelectQuarkNullable } from "helpers/quarky";
-import React, { ReactElement, useState } from "react";
+import React, { ReactElement, useMemo, useState } from "react";
 import { Image, Track } from "types";
 import { TracksImage } from "./TracksImage";
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
@@ -57,7 +57,7 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 				selectedItem={props.imageToDisplayIdx}
 				onChange={props.onChange}
 			>
-				{props.images?.map((img) => {
+				{useMemo(() => props.images?.map((img) => {
 					return (
 						<TracksImage
 							key={img.id}
@@ -71,10 +71,10 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 							}
 							onImageClick={() => setPortalOpen(true)}
 							onZoomStart={() => setIsZooming(true)}
-							// onZoomEnd={() => setIsZooming(false)}
+							onZoomEnd={() => setIsZooming(false)}
 						/>
 					);
-				})}
+				}), [props.images, props.tracks, props.selectedTrack])}
 			</Carousel>
 		);
 	else if (props.images.length === 1)
