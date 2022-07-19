@@ -70,7 +70,7 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 								props.selectedTrack && !!props.selectedTrack()?.id
 							}
 							onImageClick={() => setPortalOpen(true)}
-							onZoomStart={() => setImageZooming(true)}
+							onZoomStart={() => setIsZooming(true)}
 							onZoomEnd={() => setIsZooming(false)}
 						/>
 					);
