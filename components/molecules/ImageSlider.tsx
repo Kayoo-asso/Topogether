@@ -22,7 +22,6 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 	modalable = true,
 	...props
 }: ImageSliderProps) => {
-	const [isZooming, setIsZooming] = useState(false);
 
 	const [portalOpen, setPortalOpen] = useState(false);
 	const wrapPortal = (elts: ReactElement<any, any>) => {
@@ -53,28 +52,29 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 				showThumbs={false}
 				showIndicators={!!(props.images && props.images.length > 1)}
 				useKeyboardArrows
-				swipeable={!isZooming}
 				selectedItem={props.imageToDisplayIdx}
 				onChange={props.onChange}
 			>
-				{useMemo(() => props.images?.map((img) => {
+			// <div className="snap-x snap-mandatory flex w-full overflow-x-auto gap-6 relative">
+				{props.images?.map((img, idx) => {
 					return (
-						<TracksImage
-							key={img.id}
-							sizeHint="100vw"
-							image={img}
-							tracks={props.tracks}
-							selectedTrack={props.selectedTrack}
-							displayPhantomTracks={displayPhantomTracks}
-							displayTracksDetails={
-								props.selectedTrack && !!props.selectedTrack()?.id
-							}
-							onImageClick={() => setPortalOpen(true)}
-							onZoomStart={() => setIsZooming(true)}
-							onZoomEnd={() => setIsZooming(false)}
-						/>
+						<div className={'snap-center shrink-0' + ((idx > 0 && idx < props.images.length - 1) ? ' first:pl-8 last:pr-8' : '')}>
+							<TracksImage
+								key={img.id}
+								sizeHint="100vw"
+								image={img}
+								tracks={props.tracks}
+								selectedTrack={props.selectedTrack}
+								displayPhantomTracks={displayPhantomTracks}
+								displayTracksDetails={
+									props.selectedTrack && !!props.selectedTrack()?.id
+								}
+								onImageClick={() => setPortalOpen(true)}
+							/>
+						</div>
 					);
-				}), [props.images, props.tracks, props.selectedTrack])}
+				})}
+			// </div>
 			</Carousel>
 		);
 	else if (props.images.length === 1)
