@@ -116,7 +116,7 @@ export const CFImage = forwardRef<HTMLImageElement, CFImageProps>(
 		}
 
 		return wrapPortal(
-			<QuickPinchZoom onUpdate={onPinchZoom} draggableUnZoomed={false}>
+			// <QuickPinchZoom onUpdate={onPinchZoom} draggableUnZoomed={false}>
 				<img
 					ref={(ref) => {
 						// In case the image has loaded before the onLoad handler was registered
@@ -161,7 +161,7 @@ export const CFImage = forwardRef<HTMLImageElement, CFImageProps>(
 						if (props.onError) props.onError(e);
 					}}
 				/>
-			</QuickPinchZoom>
+			// </QuickPinchZoom>
 		);
 	}
 );

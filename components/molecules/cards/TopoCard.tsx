@@ -102,7 +102,7 @@ export const TopoCard: React.FC<TopoCardProps> = React.memo(
 			<div
 				onContextMenu={handleMouseContextMenu}
 				onTouchStart={handleTouchStartContextMenu}
-				onTouchMove={handleTouchEndContextMenu} // If we move the finer (for example for horizontal scrolling) we don't want to display the context menu
+				onTouchMove={handleTouchEndContextMenu} // If we move the finger (for example for horizontal scrolling) we don't want to display the context menu
 				onTouchEnd={handleTouchEndContextMenu}
 			>
 				<Card
