@@ -44,7 +44,7 @@ export const CFImage = forwardRef<HTMLImageElement, CFImageProps>(
 			image,
 			sizeHint,
 			modalable,
-			zoomable = true,
+			zoomable = false,
 			objectFit = "contain",
 			bgObjectFit,
 			defaultImage = defaultKayoo,
@@ -67,22 +67,30 @@ export const CFImage = forwardRef<HTMLImageElement, CFImageProps>(
 
 		const [portalOpen, setPortalOpen] = useState(false);
 		const wrapPortal = (elts: ReactElement<any, any>) => {
-			if (modalable) {
-				return (
-					<>
-						{elts}
-						<Portal open={portalOpen}>
-							<div
-								className="absolute top-0 left-0 z-full flex h-screen w-screen bg-black bg-opacity-80"
-								onClick={() => setPortalOpen(false)}
-							>
-								{elts}
-							</div>
-						</Portal>
-					</>
-				);
-			} else return elts;
+			if (modalable) return (
+				<>
+					{elts}
+					<Portal open={portalOpen}>
+						<div
+							className="absolute top-0 left-0 z-full flex h-screen w-screen bg-black bg-opacity-80"
+							onClick={() => setPortalOpen(false)}
+						>
+							{elts}
+						</div>
+					</Portal>
+				</>
+			);
+			return elts;
 		};
+
+		const wrapZoomable = (elts: ReactElement<any, any>) => {
+			if (zoomable) return (
+				<QuickPinchZoom onUpdate={onPinchZoom} draggableUnZoomed={false}>
+					{elts}
+				</QuickPinchZoom>
+			)
+			return elts;
+		}
 
 		let src = defaultImage.src;
 		let width = defaultImage.width;
@@ -115,8 +123,7 @@ export const CFImage = forwardRef<HTMLImageElement, CFImageProps>(
 			placeholder = image.placeholder;
 		}
 
-		return wrapPortal(
-			// <QuickPinchZoom onUpdate={onPinchZoom} draggableUnZoomed={false}>
+		return wrapPortal(wrapZoomable(
 				<img
 					ref={(ref) => {
 						// In case the image has loaded before the onLoad handler was registered
@@ -161,8 +168,7 @@ export const CFImage = forwardRef<HTMLImageElement, CFImageProps>(
 						if (props.onError) props.onError(e);
 					}}
 				/>
-			// </QuickPinchZoom>
-		);
+		));
 	}
 );
 

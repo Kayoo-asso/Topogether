@@ -37,7 +37,7 @@ export const ImageThumb: React.FC<ImageThumbProps> = watchDependencies(
 				className={`${selected ? "border-main" : "border-dark"}${
 					props.onClick ? " cursor-pointer" : ""
 				} \
-      group relative flex w-full flex-col justify-center border-2`}
+      			group relative flex w-full flex-col justify-center border-2`}
 				onClick={() => props.onClick && props.onClick(props.image.id)}
 				style={{
 					height: containerWidth,
@@ -63,29 +63,7 @@ export const ImageThumb: React.FC<ImageThumbProps> = watchDependencies(
 					// Avoid loading separate images for the thumbnail or the preview image
 					sizeHint="300px"
 					tracksWeight={60}
-					zoomable={false}
 				/>
-				{/* {props.tracks && props.tracks.toArray().length > 0 && (
-					<TracksImage
-						image={props.image}
-						tracks={props.tracks}
-						displayTracks
-						displayTrackOrderIndexes={true}
-						objectFit="contain"
-						sizeHint={`${containerWidth}px`}
-						tracksWeight={60}
-						zoomable={false}
-					/>
-				)}
-				{(!props.tracks || props.tracks.toArray().length < 1) && (
-					<CFImage
-						image={props.image}
-						alt="user generated image"
-						objectFit="contain"
-						sizeHint={`${containerWidth}px`}
-						zoomable={false}
-					/>
-				)} */}
 			</div>
 		);
 	}

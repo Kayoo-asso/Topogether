@@ -33,7 +33,6 @@ type TracksImageProps = React.PropsWithChildren<{
 	tracksWeight?: number;
 	editable?: boolean;
 	modalable?: boolean;
-	zoomable?: boolean;
 	allowDoubleTapZoom?: boolean;
 	currentTool?: DrawerToolEnum;
 	onImageClick?: (pos: Position) => void;
@@ -60,7 +59,6 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(
 		tracksWeight = defaultTracksWeight,
 		objectFit = "contain",
 		editable = false,
-		zoomable = true,
 		allowDoubleTapZoom = true,
 		...props
 	}: TracksImageProps) => {
@@ -151,7 +149,7 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(
 		const imgRef = useRef<HTMLDivElement>(null);
 		const onPinchZoom = useCallback(
 			({ x, y, scale }) => {
-				if (imgRef.current && zoomable) {
+				if (imgRef.current) {
 					const value = make3dTransformValue({ x, y, scale });
 					imgRef.current.style.setProperty("transform", value);
 				}
@@ -171,7 +169,6 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(
 						sizeHint={portalOpen ? "100vw" : props.sizeHint}
 						image={props.image}
 						alt={"Rocher avec tracé de voies"}
-						zoomable={zoomable}
 					/>
 					<svg
 						className="absolute top-0 left-0 z-50 h-full w-full"

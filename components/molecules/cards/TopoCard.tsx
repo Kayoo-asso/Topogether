@@ -115,7 +115,6 @@ export const TopoCard: React.FC<TopoCardProps> = React.memo(
 						<CFImage
 							image={props.topo.image}
 							modalable={false}
-							zoomable={false}
 							objectFit="cover"
 							alt="topo-image"
 							sizeHint={"25vw"}

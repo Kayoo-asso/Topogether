@@ -93,7 +93,6 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 				alt="default boulder"
 				sizeHint="100vw"
 				modalable={false}
-				zoomable={false}
 			/>
 		);
 };

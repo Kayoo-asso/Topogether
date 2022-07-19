@@ -68,7 +68,6 @@ export const ImageButton: React.FC<ImageButtonProps> = ({
 						alt="user generated image"
 						objectFit="contain"
 						sizeHint={`${containerWidth}px`}
-						zoomable={false}
 					/>
 				</>
 			)}
