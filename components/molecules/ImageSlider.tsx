@@ -22,7 +22,7 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 	modalable = true,
 	...props
 }: ImageSliderProps) => {
-	const [imageZoomed, setImageZoomed] = useState(false);
+	const [isZooming, setIsZooming] = useState(false);
 
 	const [portalOpen, setPortalOpen] = useState(false);
 	const wrapPortal = (elts: ReactElement<any, any>) => {
@@ -53,7 +53,7 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 				showThumbs={false}
 				showIndicators={!!(props.images && props.images.length > 1)}
 				useKeyboardArrows
-				swipeable={!imageZoomed}
+				swipeable={!isZooming}
 				selectedItem={props.imageToDisplayIdx}
 				onChange={props.onChange}
 			>
@@ -70,10 +70,8 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 								props.selectedTrack && !!props.selectedTrack()?.id
 							}
 							onImageClick={() => setPortalOpen(true)}
-							onZoomChange={z => {
-								if (z > 1) setImageZoomed(true);
-								else setImageZoomed(false);
-							}}
+							onZoomStart={() => setImageZooming(true)}
+							onZoomEnd={() => setIsZooming(false)}
 						/>
 					);
 				})}

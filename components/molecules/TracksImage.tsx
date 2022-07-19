@@ -38,7 +38,8 @@ type TracksImageProps = React.PropsWithChildren<{
 	onImageClick?: (pos: Position) => void;
 	onPointClick?: (pointType: PointEnum, index: number) => void;
 	onImageLoad?: (width: number, height: number) => void;
-	onZoomChange?: (scale: number) => void;
+	onZoomStart?: () => void;
+	onZoomEnd?: () => void;
 }>;
 
 // see: https://www.sarasoueidan.com/blog/svg-object-fit/
@@ -153,7 +154,6 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(
 				if (imgRef.current) {
 					const value = make3dTransformValue({ x, y, scale });
 					imgRef.current.style.setProperty("transform", value);
-					props.onZoomChange && props.onZoomChange(scale);
 				}
 			},
 			[imgRef.current]
@@ -164,6 +164,8 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(
 				onUpdate={onPinchZoom}
 				draggableUnZoomed={false}
 				tapZoomFactor={allowDoubleTapZoom ? 1 : 0}
+				onZoomStart={props.onZoomStart}
+				onZoomEnd={props.onZoomEnd}
 			>
 				<div ref={imgRef} className={"relative h-full" + cssCursor}>
 					<CFImage
