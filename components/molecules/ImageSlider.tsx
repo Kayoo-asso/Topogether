@@ -47,15 +47,15 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 
 	if (props.images.length > 1)
 		return wrapPortal(
-			<Carousel /* Force to hardcode some css (in carouselStyle.css) */
-				showStatus={false}
-				showThumbs={false}
-				showIndicators={!!(props.images && props.images.length > 1)}
-				useKeyboardArrows
-				selectedItem={props.imageToDisplayIdx}
-				onChange={props.onChange}
-			>
-			// <div className="snap-x snap-mandatory flex w-full overflow-x-auto gap-6 relative">
+			// <Carousel /* Force to hardcode some css (in carouselStyle.css) */
+			// 	showStatus={false}
+			// 	showThumbs={false}
+			// 	showIndicators={!!(props.images && props.images.length > 1)}
+			// 	useKeyboardArrows
+			// 	selectedItem={props.imageToDisplayIdx}
+			// 	onChange={props.onChange}
+			// >
+			<div className="snap-x snap-mandatory flex w-full overflow-x-auto gap-6 relative">
 				{props.images?.map((img, idx) => {
 					return (
 						<div className={'snap-center shrink-0' + ((idx > 0 && idx < props.images.length - 1) ? ' first:pl-8 last:pr-8' : '')}>
@@ -74,8 +74,8 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 						</div>
 					);
 				})}
-			// </div>
-			</Carousel>
+			</div>
+			// </Carousel>
 		);
 	else if (props.images.length === 1)
 		return wrapPortal(
