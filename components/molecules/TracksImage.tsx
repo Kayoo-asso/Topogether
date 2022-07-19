@@ -38,6 +38,7 @@ type TracksImageProps = React.PropsWithChildren<{
 	onImageClick?: (pos: Position) => void;
 	onPointClick?: (pointType: PointEnum, index: number) => void;
 	onImageLoad?: (width: number, height: number) => void;
+	onZoomChange?: (scale: number) => void;
 }>;
 
 // see: https://www.sarasoueidan.com/blog/svg-object-fit/
@@ -152,6 +153,7 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(
 				if (imgRef.current) {
 					const value = make3dTransformValue({ x, y, scale });
 					imgRef.current.style.setProperty("transform", value);
+					props.onZoomChange && props.onZoomChange(scale);
 				}
 			},
 			[imgRef.current]
