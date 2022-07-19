@@ -123,7 +123,8 @@ export const CFImage = forwardRef<HTMLImageElement, CFImageProps>(
 			placeholder = image.placeholder;
 		}
 
-		return wrapPortal(wrapZoomable(
+		return wrapPortal(
+			wrapZoomable(
 				<img
 					ref={(ref) => {
 						// In case the image has loaded before the onLoad handler was registered
@@ -168,7 +169,8 @@ export const CFImage = forwardRef<HTMLImageElement, CFImageProps>(
 						if (props.onError) props.onError(e);
 					}}
 				/>
-		));
+			)
+		);
 	}
 );
 
