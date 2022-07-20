@@ -38,8 +38,8 @@ type TracksImageProps = React.PropsWithChildren<{
 	onImageClick?: (pos: Position) => void;
 	onPointClick?: (pointType: PointEnum, index: number) => void;
 	onImageLoad?: (width: number, height: number) => void;
-	onZoomStart?: () => void;
-	onZoomEnd?: () => void;
+	onZoomStart?: () => void,
+	onZoomEnd?: () => void,
 }>;
 
 // see: https://www.sarasoueidan.com/blog/svg-object-fit/
