@@ -91,8 +91,10 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 				}
 			}
 			else {
-				slidesRefs.current[currentIdx].scrollIntoView();
-				slidesPortalRefs.current.length = 0;
+				if (slidesPortalRefs.current.length > 0) {
+					slidesRefs.current[currentIdx].scrollIntoView();
+					slidesPortalRefs.current.length = 0;
+				}
 			}
 		}
 	}, [props.images, portalOpen, observerPortal, options]);
