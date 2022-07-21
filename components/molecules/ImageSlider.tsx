@@ -1,8 +1,7 @@
 import { Quark, QuarkIter, SelectQuarkNullable } from "helpers/quarky";
 import React, { ReactElement, useEffect, useRef, useState } from "react";
 import { Image, Track } from "types";
-import { TracksImage } from "./TracksImage";
-import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
+import { TracksImage } from "./TracksImage"; // requires a loader
 import { Portal } from "helpers/hooks";
 import { CFImage } from "components/atoms";
 
@@ -32,11 +31,17 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 
 	//For the IntersectionObserver management, see: https://www.rubensuet.com/intersectionObserver/
 	const slidesRefs = useRef<HTMLDivElement[]>([]);
-	const addNode = React.useCallback(
+	const slidesPortalRefs = useRef<HTMLDivElement[]>([]);
+	const addSlide = React.useCallback(
 		(node: HTMLDivElement) => slidesRefs.current.push(node)
 	, []);
+	const addSlidePortal = React.useCallback(
+		(node: HTMLDivElement) => slidesPortalRefs.current.push(node)
+	, []);
 	const observer = useRef<IntersectionObserver>(null);
-
+	const observerPortal = useRef<IntersectionObserver>(null);
+	
+	// Allow to always know which image is the current one
 	const handler = (
 		entries: IntersectionObserverEntry[],
 		observer: IntersectionObserver
@@ -54,6 +59,8 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 		ref.current = newObserver;
 		return newObserver;
 	};
+
+	// Bind observers to original slider (not in Portal) as soon as component is mounted
 	useEffect(() => {
 		if (observer.current) observer.current.disconnect();
 
@@ -68,70 +75,98 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 	}, [observer, options])
 
 	const [portalOpen, setPortalOpen] = useState(false);
+	// Bind/unbing observers to Portal slider when portal opens/closes
+	// And empy refs to portal slides when portal closes thanks to the trick slidesPortalRefs.current.length = 0;
+	useEffect(() => {
+		if (portalOpen) {
+			slidesPortalRefs.current[currentIdx].scrollIntoView();
+			if (observerPortal.current) observerPortal.current.disconnect();
+			const newObserver = getObserver(observerPortal);
+			for  (const  node  of  slidesPortalRefs.current)  {
+				newObserver.observe(node);
+			}
+			return () => {
+				if (observerPortal.current) observerPortal.current.disconnect();
+			}
+		}
+		else {
+			slidesRefs.current[currentIdx].scrollIntoView();
+			slidesPortalRefs.current.length = 0;
+		}
+	}, [portalOpen, observerPortal, options]);
+
+
 	const wrapPortal = (elts: ReactElement<any, any>) => {
-		if (modalable && props.images) {
+		return (
+			<Portal open={portalOpen}>
+				<div
+					className="absolute top-0 left-0 z-full flex h-screen w-screen bg-black bg-opacity-80"
+					onClick={(e) => {
+						const eltUnder = e.target as EventTarget & SVGSVGElement;
+						if (eltUnder.nodeName === "svg") setPortalOpen(false);
+					}}
+				>
+					{elts}
+				</div>
+			</Portal>
+		)
+	}
+	const getPortalContent = () => {	
+		if (props.images.length > 1) // If it is a gallery of multiple images
+			if (modalable) //If modalising is possible
+				return (
+					<>
+						{getGalleryContent(false)}
+						{wrapPortal(getGalleryContent(true))}
+					</>
+				);
+			else return getGalleryContent(false);
+		else if (modalable) // If it is a single image
 			return (
 				<>
-					{elts}
-					<Portal open={portalOpen}>
-						<div
-							className="absolute top-0 left-0 z-full flex h-screen w-screen bg-black bg-opacity-80"
-							onClick={(e) => {
-								const eltUnder = e.target as EventTarget & SVGSVGElement;
-								if (eltUnder.nodeName === "svg") setPortalOpen(false);
-							}}
-						>
-							{elts}
-						</div>
-					</Portal>
+					{getUniqueContent()}
+					{wrapPortal(getUniqueContent())}
 				</>
-			);
-		} else return elts;
+			)
+		else return getUniqueContent();
 	};
+	const getGalleryContent = (inPortal: boolean) => (
+		<>
+			<div className={"snap-x snap-mandatory flex w-full h-full overflow-y-hidden gap-6 relative gallery" + (isZooming ? " overflow-x-hidden" : "")}>
+				{props.images?.map((img, idx) => {
+					return (
+						<div 
+							key={img.id}
+							className='shrink-0 w-full h-full snap-center'
+							ref={inPortal ? addSlidePortal : addSlide}
+							id={inPortal ? 'slideportal-' + idx : 'slide-' + idx}
+						>
+							<TracksImage	
+								sizeHint="100vw"
+								image={img}
+								tracks={props.tracks}
+								selectedTrack={props.selectedTrack}
+								displayPhantomTracks={displayPhantomTracks}
+								displayTracksDetails={
+									props.selectedTrack && !!props.selectedTrack()?.id
+								}
+								onImageClick={() => setPortalOpen(true)}
+								onZoomStart={() => setIsZooming(true)}
+								onZoomEnd={() => setIsZooming(false)}
+							/>
+						</div>
+					);
+				})}
+			</div>
 
-	if (props.images.length > 1)
-		return (
-			<>
-			{wrapPortal(
-				<>
-					<div 
-						className={"snap-x snap-mandatory flex w-full h-full overflow-y-hidden gap-6 relative gallery" + (isZooming ? " overflow-x-hidden" : "")}
-					>
-						{props.images?.map((img, idx) => {
-							return (
-								<div 
-									key={img.id}
-									className={'shrink-0 w-full h-full snap-center ' + ((idx > 0 && idx < props.images.length - 1) ? ' first:pl-8 last:pr-8' : '')}
-									ref={addNode}
-									id={'slide-' + idx}
-								>
-									<TracksImage	
-										sizeHint="100vw"
-										image={img}
-										tracks={props.tracks}
-										selectedTrack={props.selectedTrack}
-										displayPhantomTracks={displayPhantomTracks}
-										displayTracksDetails={
-											props.selectedTrack && !!props.selectedTrack()?.id
-										}
-										onImageClick={() => setPortalOpen(true)}
-										onZoomStart={() => setIsZooming(true)}
-										onZoomEnd={() => setIsZooming(false)}
-									/>
-								</div>
-							);
-						})}
-					</div>	
-				</>
-			)}
-			
-			<div className='absolute w-full flex bottom-3 justify-center'>
+			<div className={'absolute w-full flex justify-center ' + (portalOpen ? "bottom-5" : "bottom-3")}>
 				<div className='w-[90%] flex gap-4 justify-center'>
 					{props.images?.map((img, idx) => (
 						<div 
 							className={'rounded-full w-3 h-3 ' + (currentIdx === idx ? 'bg-white border-main border-2' : 'bg-grey-light bg-opacity-50')}
 							onClick={() => {
-								slidesRefs.current[idx].scrollIntoView({ behavior: "smooth" });
+								if (portalOpen) slidesPortalRefs.current[idx].scrollIntoView({ behavior: "smooth" });
+								else slidesRefs.current[idx].scrollIntoView({ behavior: "smooth" });
 								setCurrentIdx(idx);
 							}}
 						></div>
@@ -139,23 +174,26 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 				</div>
 			</div>
 		</>
-		);
-	else if (props.images.length === 1)
-		return wrapPortal(
-			<TracksImage
-				key={props.images[0].id}
-				sizeHint="100vw"
-				image={props.images[0]}
-				tracks={props.tracks}
-				selectedTrack={props.selectedTrack}
-				displayPhantomTracks={displayPhantomTracks}
-				displayTracksDetails={
-					props.selectedTrack && !!props.selectedTrack()?.id
-				}
-				onImageClick={() => setPortalOpen(true)}
-			/>
-		);
-	else
+	);
+	const getUniqueContent = () => (
+		<TracksImage
+			key={props.images[0].id}
+			sizeHint="100vw"
+			image={props.images[0]}
+			tracks={props.tracks}
+			selectedTrack={props.selectedTrack}
+			displayPhantomTracks={displayPhantomTracks}
+			displayTracksDetails={
+				props.selectedTrack && !!props.selectedTrack()?.id
+			}
+			onImageClick={() => setPortalOpen(true)}
+		/>
+	)
+
+	
+	if (props.images.length > 0) // If there is at least one image
+		return getPortalContent();
+	else // If there is no image
 		return (
 			<CFImage
 				alt="default boulder"
