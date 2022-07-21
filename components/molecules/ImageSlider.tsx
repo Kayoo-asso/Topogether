@@ -78,22 +78,24 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 	// Bind/unbind observers to Portal slider when portal opens/closes
 	// And empy refs to portal slides when portal closes thanks to the trick slidesPortalRefs.current.length = 0;
 	useEffect(() => {
-		if (portalOpen) {
-			slidesPortalRefs.current[currentIdx].scrollIntoView();
-			if (observerPortal.current) observerPortal.current.disconnect();
-			const newObserver = getObserver(observerPortal);
-			for  (const  node  of  slidesPortalRefs.current)  {
-				newObserver.observe(node);
-			}
-			return () => {
+		if (props.images.length > 1) { // Do it only if it is a gallery (more than one image)
+			if (portalOpen) {
+				slidesPortalRefs.current[currentIdx].scrollIntoView();
 				if (observerPortal.current) observerPortal.current.disconnect();
+				const newObserver = getObserver(observerPortal);
+				for  (const  node  of  slidesPortalRefs.current)  {
+					newObserver.observe(node);
+				}
+				return () => {
+					if (observerPortal.current) observerPortal.current.disconnect();
+				}
+			}
+			else {
+				slidesRefs.current[currentIdx].scrollIntoView();
+				slidesPortalRefs.current.length = 0;
 			}
 		}
-		else {
-			slidesRefs.current[currentIdx].scrollIntoView();
-			slidesPortalRefs.current.length = 0;
-		}
-	}, [portalOpen, observerPortal, options]);
+	}, [props.images, portalOpen, observerPortal, options]);
 
 
 	const wrapPortal = (elts: ReactElement<any, any>) => {

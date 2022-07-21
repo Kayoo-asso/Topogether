@@ -94,9 +94,9 @@ export const SlideoverMobile: React.FC<SlideoverMobileProps> = ({
 
 	return (
 		<div
-			className={`flex flex-col ${
-				dragging ? "" : "transition ease-in-out"
-			} absolute z-500 mb-[5%] h-[100%] w-full rounded-t-lg bg-white pb-[7%] shadow`}
+			className={`flex flex-col absolute z-500 mb-[5%] h-[100%] w-full rounded-t-lg bg-white pb-[7%] shadow ${
+				dragging ? "" : "transition ease-in-out duration-1000"
+			} `}
 			style={{ transform: `translateY(${translateY}%)` }}
 		>
 			<div
