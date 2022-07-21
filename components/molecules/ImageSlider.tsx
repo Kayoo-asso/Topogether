@@ -75,7 +75,7 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 	}, [observer, options])
 
 	const [portalOpen, setPortalOpen] = useState(false);
-	// Bind/unbing observers to Portal slider when portal opens/closes
+	// Bind/unbind observers to Portal slider when portal opens/closes
 	// And empy refs to portal slides when portal closes thanks to the trick slidesPortalRefs.current.length = 0;
 	useEffect(() => {
 		if (portalOpen) {
@@ -163,6 +163,7 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 				<div className='w-[90%] flex gap-4 justify-center'>
 					{props.images?.map((img, idx) => (
 						<div 
+							key={img.id}
 							className={'rounded-full w-3 h-3 ' + (currentIdx === idx ? 'bg-white border-main border-2' : 'bg-grey-light bg-opacity-50')}
 							onClick={() => {
 								if (portalOpen) slidesPortalRefs.current[idx].scrollIntoView({ behavior: "smooth" });
