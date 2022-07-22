@@ -15,7 +15,12 @@ interface ImageSliderProps {
 	onChange?: (idx: number, item: React.ReactNode) => void;
 }
 
-const obsOptions = {
+const observerInitialOptions: IntersectionObserverInit = {
+	root: null,
+	rootMargin: "0px",
+	threshold: 1.0
+}
+const observerPortalOptions: IntersectionObserverInit = {
 	root: null,
 	rootMargin: "0px",
 	threshold: 1.0
@@ -29,10 +34,11 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 	const [currentIdx, setCurrentIdx] = useState<number>(props.imageToDisplayIdx);
 
 	//For the IntersectionObserver management, see: https://www.rubensuet.com/intersectionObserver/
-	const slidesRefs = useRef<HTMLDivElement[]>([]);
+	const containerInitialRef = useRef<HTMLDivElement>(null);
+	const slidesInitialRefs = useRef<HTMLDivElement[]>([]);
 	const slidesPortalRefs = useRef<HTMLDivElement[]>([]);
 	const addSlide = React.useCallback(
-		(node: HTMLDivElement) => slidesRefs.current.push(node)
+		(node: HTMLDivElement) => slidesInitialRefs.current.push(node)
 	, []);
 	const addSlidePortal = React.useCallback(
 		(node: HTMLDivElement) => slidesPortalRefs.current.push(node)
@@ -45,40 +51,36 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 		entries: IntersectionObserverEntry[],
 		observer: IntersectionObserver
 	) => {
-		console.log(observer);
 		for (const entry of entries)  {
 			if (entry.intersectionRatio >= 1) setCurrentIdx(parseInt(entry.target.id.split('-')[1]));
 		}
 	};
-	const getObserver = (ref: React.MutableRefObject<IntersectionObserver | null>) => {
+	const getObserver = (ref: React.MutableRefObject<IntersectionObserver | null>, opts?: IntersectionObserverInit) => {
 		let observer = ref.current;
 		if (observer !== null) {
 			return observer;
 		}
-		let newObserver = new IntersectionObserver(handler, obsOptions);
+		let newObserver = new IntersectionObserver(handler, opts);
 		ref.current = newObserver;
 		return newObserver;
 	};
 
-	const [portalOpen, setPortalOpen] = useState(false);
-
 	// Bind observers to original slider (not in Portal) as soon as component is mounted
 	useEffect(() => {
 		if (props.images.length > 1) {
-			setTimeout(() => {
 			if (observerInitial.current) observerInitial.current.disconnect();
-			const newObserver = getObserver(observerInitial);
-			for  (const  node  of  slidesRefs.current)  {
+			if (containerInitialRef.current) observerInitialOptions.root = containerInitialRef.current;
+			const newObserver = getObserver(observerInitial, observerInitialOptions);
+			for  (const  node  of  slidesInitialRefs.current)  {
 				newObserver.observe(node);
 			}
 			return () => {
 				if (observerInitial.current) observerInitial.current.disconnect();
 			}
-			}, 1000);
 		}
-	}, [observerInitial, obsOptions, slidesRefs.current])
+	}, [props.images, observerInitial, observerInitialOptions])
 
-	
+	const [portalOpen, setPortalOpen] = useState(false);
 	// Bind/unbind observers to Portal slider when portal opens/closes
 	// And empy refs to portal slides when portal closes thanks to the trick slidesPortalRefs.current.length = 0;
 	useEffect(() => {
@@ -86,7 +88,7 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 			if (portalOpen) {
 				slidesPortalRefs.current[currentIdx].scrollIntoView();
 				if (observerPortal.current) observerPortal.current.disconnect();
-				const newObserver = getObserver(observerPortal);
+				const newObserver = getObserver(observerPortal, observerPortalOptions);
 				for  (const  node  of  slidesPortalRefs.current)  {
 					newObserver.observe(node);
 				}
@@ -96,12 +98,12 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 			}
 			else {
 				if (slidesPortalRefs.current.length > 0) {
-					slidesRefs.current[currentIdx].scrollIntoView();
+					slidesInitialRefs.current[currentIdx].scrollIntoView();
 					slidesPortalRefs.current.length = 0;
 				}
 			}
 		}
-	}, [props.images, portalOpen, observerPortal, obsOptions]);
+	}, [props.images, portalOpen, observerPortal, observerPortalOptions]);
 
 
 	const wrapPortal = (elts: ReactElement<any, any>) => {
@@ -140,7 +142,10 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 	};
 	const getGalleryContent = (inPortal: boolean) => (
 		<>
-			<div className="snap-x snap-mandatory flex w-full h-full overflow-y-hidden gap-6 relative gallery">
+			<div 
+				ref={containerInitialRef}
+				className="snap-x snap-mandatory flex w-full h-full overflow-y-hidden gap-6 relative gallery"
+			>
 				{props.images?.map((img, idx) => {
 					return (
 						<div 
@@ -173,7 +178,7 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 							className={'rounded-full w-3 h-3 ' + (currentIdx === idx ? 'bg-white border-main border-2' : 'bg-grey-light bg-opacity-50')}
 							onClick={() => {
 								if (portalOpen) slidesPortalRefs.current[idx].scrollIntoView({ behavior: "smooth" });
-								else slidesRefs.current[idx].scrollIntoView({ behavior: "smooth" });
+								else slidesInitialRefs.current[idx].scrollIntoView({ behavior: "smooth" });
 								setCurrentIdx(idx);
 							}}
 						></div>
