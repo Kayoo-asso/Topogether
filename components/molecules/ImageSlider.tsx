@@ -37,7 +37,7 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 	const addSlidePortal = React.useCallback(
 		(node: HTMLDivElement) => slidesPortalRefs.current.push(node)
 	, []);
-	const observer = useRef<IntersectionObserver>(null);
+	const observerInitial = useRef<IntersectionObserver>(null);
 	const observerPortal = useRef<IntersectionObserver>(null);
 	
 	// Allow to always know which image is the current one
@@ -45,6 +45,7 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 		entries: IntersectionObserverEntry[],
 		observer: IntersectionObserver
 	) => {
+		console.log(observer);
 		for (const entry of entries)  {
 			console.log(entry);
 			if (entry.intersectionRatio >= 1) setCurrentIdx(parseInt(entry.target.id.split('-')[1]));
@@ -57,22 +58,20 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 		}
 		let newObserver = new IntersectionObserver(handler, obsOptions);
 		ref.current = newObserver;
-		console.log(newObserver);
 		return newObserver;
 	};
 
 	// Bind observers to original slider (not in Portal) as soon as component is mounted
 	useEffect(() => {
-		console.log(slidesRefs.current)
-		if (observer.current) observer.current.disconnect();
-		const newObserver = getObserver(observer);
+		if (observerInitial.current) observerInitial.current.disconnect();
+		const newObserver = getObserver(observerInitial);
 		for  (const  node  of  slidesRefs.current)  {
 			newObserver.observe(node);
 		}
 		return () => {
-			if (observer.current) observer.current.disconnect();
+			if (observerInitial.current) observerInitial.current.disconnect();
 		}
-	}, [observer, obsOptions, slidesRefs.current])
+	}, [observerInitial, obsOptions, slidesRefs.current])
 
 	const [portalOpen, setPortalOpen] = useState(false);
 	// Bind/unbind observers to Portal slider when portal opens/closes
