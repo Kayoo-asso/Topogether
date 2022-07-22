@@ -70,10 +70,10 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 		for  (const  node  of  slidesRefs.current)  {
 			newObserver.observe(node);
 		}
-		return () => {
-			if (observerInitial.current) observerInitial.current.disconnect();
-		}
-	}, [observerInitial, obsOptions, slidesRefs.current, portalOpen])
+		// return () => {
+		// 	if (observerInitial.current) observerInitial.current.disconnect();
+		// }
+	}, [observerInitial, obsOptions, slidesRefs.current])
 
 	
 	// Bind/unbind observers to Portal slider when portal opens/closes
