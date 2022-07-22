@@ -61,6 +61,8 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 		return newObserver;
 	};
 
+	const [portalOpen, setPortalOpen] = useState(false);
+
 	// Bind observers to original slider (not in Portal) as soon as component is mounted
 	useEffect(() => {
 		if (observerInitial.current) observerInitial.current.disconnect();
@@ -71,9 +73,9 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 		return () => {
 			if (observerInitial.current) observerInitial.current.disconnect();
 		}
-	}, [observerInitial, obsOptions, slidesRefs.current])
+	}, [observerInitial, obsOptions, slidesRefs.current, portalOpen])
 
-	const [portalOpen, setPortalOpen] = useState(false);
+	
 	// Bind/unbind observers to Portal slider when portal opens/closes
 	// And empy refs to portal slides when portal closes thanks to the trick slidesPortalRefs.current.length = 0;
 	useEffect(() => {
