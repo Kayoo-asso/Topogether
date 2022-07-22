@@ -65,15 +65,16 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 	// Bind observers to original slider (not in Portal) as soon as component is mounted
 	useEffect(() => {
 		if (props.images.length > 1) {
+			setTimeout(() => {
 			if (observerInitial.current) observerInitial.current.disconnect();
 			const newObserver = getObserver(observerInitial);
 			for  (const  node  of  slidesRefs.current)  {
-				console.log(node);
 				newObserver.observe(node);
 			}
 			return () => {
 				if (observerInitial.current) observerInitial.current.disconnect();
 			}
+			}, 1000);
 		}
 	}, [observerInitial, obsOptions, slidesRefs.current])
 
