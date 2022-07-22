@@ -70,35 +70,35 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 		for  (const  node  of  slidesRefs.current)  {
 			newObserver.observe(node);
 		}
-		// return () => {
-		// 	if (observerInitial.current) observerInitial.current.disconnect();
-		// }
+		return () => {
+			if (observerInitial.current) observerInitial.current.disconnect();
+		}
 	}, [observerInitial, obsOptions, slidesRefs.current])
 
 	
 	// Bind/unbind observers to Portal slider when portal opens/closes
 	// And empy refs to portal slides when portal closes thanks to the trick slidesPortalRefs.current.length = 0;
-	useEffect(() => {
-		if (props.images.length > 1) { // Do it only if it is a gallery (more than one image)
-			if (portalOpen) {
-				slidesPortalRefs.current[currentIdx].scrollIntoView();
-				if (observerPortal.current) observerPortal.current.disconnect();
-				const newObserver = getObserver(observerPortal);
-				for  (const  node  of  slidesPortalRefs.current)  {
-					newObserver.observe(node);
-				}
-				return () => {
-					if (observerPortal.current) observerPortal.current.disconnect();
-				}
-			}
-			else {
-				if (slidesPortalRefs.current.length > 0) {
-					slidesRefs.current[currentIdx].scrollIntoView();
-					slidesPortalRefs.current.length = 0;
-				}
-			}
-		}
-	}, [props.images, portalOpen, observerPortal, obsOptions]);
+	// useEffect(() => {
+	// 	if (props.images.length > 1) { // Do it only if it is a gallery (more than one image)
+	// 		if (portalOpen) {
+	// 			slidesPortalRefs.current[currentIdx].scrollIntoView();
+	// 			if (observerPortal.current) observerPortal.current.disconnect();
+	// 			const newObserver = getObserver(observerPortal);
+	// 			for  (const  node  of  slidesPortalRefs.current)  {
+	// 				newObserver.observe(node);
+	// 			}
+	// 			return () => {
+	// 				if (observerPortal.current) observerPortal.current.disconnect();
+	// 			}
+	// 		}
+	// 		else {
+	// 			if (slidesPortalRefs.current.length > 0) {
+	// 				slidesRefs.current[currentIdx].scrollIntoView();
+	// 				slidesPortalRefs.current.length = 0;
+	// 			}
+	// 		}
+	// 	}
+	// }, [props.images, portalOpen, observerPortal, obsOptions]);
 
 
 	const wrapPortal = (elts: ReactElement<any, any>) => {
