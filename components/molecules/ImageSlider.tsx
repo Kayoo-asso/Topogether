@@ -15,7 +15,7 @@ interface ImageSliderProps {
 	onChange?: (idx: number, item: React.ReactNode) => void;
 }
 
-const options = {
+const obsOptions = {
 	root: null,
 	rootMargin: "0px",
 	threshold: 1.0
@@ -55,24 +55,23 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 		if (observer !== null) {
 			return observer;
 		}
-		let newObserver = new IntersectionObserver(handler, options);
+		let newObserver = new IntersectionObserver(handler, obsOptions);
 		ref.current = newObserver;
 		return newObserver;
 	};
 
 	// Bind observers to original slider (not in Portal) as soon as component is mounted
 	useEffect(() => {
+		console.log(slidesRefs.current)
 		if (observer.current) observer.current.disconnect();
-
 		const newObserver = getObserver(observer);
 		for  (const  node  of  slidesRefs.current)  {
 			newObserver.observe(node);
 		}
-
 		return () => {
 			if (observer.current) observer.current.disconnect();
 		}
-	}, [observer, options])
+	}, [observer, obsOptions, slidesRefs.current])
 
 	const [portalOpen, setPortalOpen] = useState(false);
 	// Bind/unbind observers to Portal slider when portal opens/closes
@@ -97,7 +96,7 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 				}
 			}
 		}
-	}, [props.images, portalOpen, observerPortal, options]);
+	}, [props.images, portalOpen, observerPortal, obsOptions]);
 
 
 	const wrapPortal = (elts: ReactElement<any, any>) => {
@@ -155,8 +154,8 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 									props.selectedTrack && !!props.selectedTrack()?.id
 								}
 								onImageClick={() => setPortalOpen(true)}
-								onZoomStart={() => setIsZooming(true)}
-								onZoomEnd={() => setIsZooming(false)}
+								// onZoomStart={() => setIsZooming(true)}
+								// onZoomEnd={() => setIsZooming(false)}
 							/>
 						</div>
 					);
