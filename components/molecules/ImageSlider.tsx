@@ -26,7 +26,6 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 	modalable = true,
 	...props
 }: ImageSliderProps) => {
-	const [isZooming, setIsZooming] = useState(false);
 	const [currentIdx, setCurrentIdx] = useState<number>(props.imageToDisplayIdx);
 
 	//For the IntersectionObserver management, see: https://www.rubensuet.com/intersectionObserver/
@@ -47,6 +46,7 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 		observer: IntersectionObserver
 	) => {
 		for (const entry of entries)  {
+			console.log(entry);
 			if (entry.intersectionRatio >= 1) setCurrentIdx(parseInt(entry.target.id.split('-')[1]));
 		}
 	};
@@ -57,6 +57,7 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 		}
 		let newObserver = new IntersectionObserver(handler, obsOptions);
 		ref.current = newObserver;
+		console.log(newObserver);
 		return newObserver;
 	};
 
@@ -135,7 +136,7 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 	};
 	const getGalleryContent = (inPortal: boolean) => (
 		<>
-			<div className={"snap-x snap-mandatory flex w-full h-full overflow-y-hidden gap-6 relative gallery" + (isZooming ? " overflow-x-hidden" : "")}>
+			<div className="snap-x snap-mandatory flex w-full h-full overflow-y-hidden gap-6 relative gallery">
 				{props.images?.map((img, idx) => {
 					return (
 						<div 
@@ -154,8 +155,6 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 									props.selectedTrack && !!props.selectedTrack()?.id
 								}
 								onImageClick={() => setPortalOpen(true)}
-								// onZoomStart={() => setIsZooming(true)}
-								// onZoomEnd={() => setIsZooming(false)}
 							/>
 						</div>
 					);
