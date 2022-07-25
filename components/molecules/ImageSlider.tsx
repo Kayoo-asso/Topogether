@@ -33,7 +33,6 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 }: ImageSliderProps) => {
 	// const [currentIdx, setCurrentIdx] = useState<number>(props.imageToDisplayIdx);
 	const imgIdx = props.currentImage ? props.images.indexOf(props.currentImage) : undefined;
-	console.log(imgIdx);
 
 	//For the IntersectionObserver management, see: https://www.rubensuet.com/intersectionObserver/
 	const containerInitialRef = useRef<HTMLDivElement>(null);
@@ -109,9 +108,8 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 
 	// Change image when currentImage has changed from outside (for example by clicking on a track associated with a non-current image)
 	useEffect(() => {
-		if (props.currentImage) slidesInitialRefs.current[imgIdx || 0].scrollIntoView({ behavior: 'smooth' });
+		if (props.currentImage && imgIdx && slidesInitialRefs.current[imgIdx]) slidesInitialRefs.current[imgIdx].scrollIntoView({ behavior: 'smooth' });
 	}, [props.currentImage]);
-
 
 	const wrapPortal = (elts: ReactElement<any, any>) => {
 		return (
