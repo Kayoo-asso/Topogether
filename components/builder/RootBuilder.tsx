@@ -658,7 +658,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 									topo={props.topoQuark}
 									onClick={toggleBoulderSelect}
 									onContextMenu={displayBoulderDropdown}
-									draggable
+									draggable={selectedBoulder.quark() === boulder}
 								/>
 							)}
 						</For>
@@ -689,7 +689,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 									selected={selectedWaypoint.quark() === waypoint}
 									onClick={toggleWaypointSelect}
 									onContextMenu={displayWaypointDropdown}
-									draggable
+									draggable={selectedWaypoint.quark() === waypoint}
 								/>
 							)}
 						</For>
@@ -701,7 +701,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 									selected={selectedParking.quark() === parking}
 									onClick={toggleParkingSelect}
 									onContextMenu={displayParkingDropdown}
-									draggable
+									draggable={selectedParking.quark() === parking}
 								/>
 							)}
 						</For>

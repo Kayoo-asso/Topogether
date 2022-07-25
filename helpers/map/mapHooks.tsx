@@ -1,4 +1,4 @@
-import { useContext, useEffect, useMemo, useRef, createContext } from "react";
+import { useEffect, useRef } from "react";
 import equal from "fast-deep-equal/es6";
 import {
 	MarkerEventHandlers,
