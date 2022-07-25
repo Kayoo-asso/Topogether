@@ -32,8 +32,6 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> =
 			const boulder = props.boulder();
 			const selectedTrack = props.selectedTrack();
 
-			const [imageToDisplayIdx, setImageToDisplayIdx] = useState(0);
-
 			const [displayPhantomTracks, setDisplayPhantomTracks] = useState(false);
 			const displayedTracks = useMemo(
 				() =>
@@ -71,14 +69,11 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> =
 						<div className="relative flex max-h-[40%] w-full overflow-hidden rounded-t-lg bg-dark">
 							<ImageSlider
 								images={boulder.images}
-								imageToDisplayIdx={imageToDisplayIdx}
+								currentImage={props.currentImage}
+								setCurrentImage={props.setCurrentImage}
 								tracks={boulder.tracks.quarks()}
 								selectedTrack={props.selectedTrack}
 								displayPhantomTracks={displayPhantomTracks}
-								onChange={(idx) => {
-									setImageToDisplayIdx(idx);
-									props.setCurrentImage(boulder.images[idx]);
-								}}
 							/>
 						</div>
 					)}
@@ -180,10 +175,8 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> =
 											const newImageIndex = boulder.images.findIndex(
 												(img) => img.id === trackQuark().lines?.at(0).imageId
 											);
-											if (newImageIndex > -1) {
+											if (newImageIndex > -1)
 												props.setCurrentImage(boulder.images[newImageIndex]);
-												setImageToDisplayIdx(newImageIndex);
-											}
 											props.selectedTrack.select(trackQuark);
 										}
 									}}

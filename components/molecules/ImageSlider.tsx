@@ -7,12 +7,12 @@ import { CFImage } from "components/atoms";
 
 interface ImageSliderProps {
 	images: Image[];
-	imageToDisplayIdx: number;
+	currentImage: Image | undefined;
+	setCurrentImage: React.Dispatch<React.SetStateAction<Image | undefined>>,
 	tracks: QuarkIter<Quark<Track>>;
 	selectedTrack?: SelectQuarkNullable<Track>;
 	displayPhantomTracks?: boolean;
 	modalable?: boolean;
-	onChange?: (idx: number, item: React.ReactNode) => void;
 }
 
 const observerInitialOptions: IntersectionObserverInit = {
@@ -31,7 +31,9 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 	modalable = true,
 	...props
 }: ImageSliderProps) => {
-	const [currentIdx, setCurrentIdx] = useState<number>(props.imageToDisplayIdx);
+	// const [currentIdx, setCurrentIdx] = useState<number>(props.imageToDisplayIdx);
+	const imgIdx = props.currentImage ? props.images.indexOf(props.currentImage) : undefined;
+	console.log(imgIdx);
 
 	//For the IntersectionObserver management, see: https://www.rubensuet.com/intersectionObserver/
 	const containerInitialRef = useRef<HTMLDivElement>(null);
@@ -52,7 +54,7 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 		observer: IntersectionObserver
 	) => {
 		for (const entry of entries)  {
-			if (entry.intersectionRatio >= 1) setCurrentIdx(parseInt(entry.target.id.split('-')[1]));
+			if (entry.intersectionRatio >= 1) props.setCurrentImage(props.images[parseInt(entry.target.id.split('-')[1])]);
 		}
 	};
 	const getObserver = (ref: React.MutableRefObject<IntersectionObserver | null>, opts?: IntersectionObserverInit) => {
@@ -86,7 +88,7 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 	useEffect(() => {
 		if (props.images.length > 1) { // Do it only if it is a gallery (more than one image)
 			if (portalOpen) {
-				slidesPortalRefs.current[currentIdx].scrollIntoView();
+				slidesPortalRefs.current[imgIdx || 0].scrollIntoView();
 				if (observerPortal.current) observerPortal.current.disconnect();
 				const newObserver = getObserver(observerPortal, observerPortalOptions);
 				for  (const  node  of  slidesPortalRefs.current)  {
@@ -98,12 +100,17 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 			}
 			else {
 				if (slidesPortalRefs.current.length > 0) {
-					slidesInitialRefs.current[currentIdx].scrollIntoView();
+					slidesInitialRefs.current[imgIdx || 0].scrollIntoView();
 					slidesPortalRefs.current.length = 0;
 				}
 			}
 		}
 	}, [props.images, portalOpen, observerPortal, observerPortalOptions]);
+
+	// Change image when currentImage has changed from outside (for example by clicking on a track associated with a non-current image)
+	useEffect(() => {
+		if (props.currentImage) slidesInitialRefs.current[imgIdx || 0].scrollIntoView({ behavior: 'smooth' });
+	}, [props.currentImage]);
 
 
 	const wrapPortal = (elts: ReactElement<any, any>) => {
@@ -175,11 +182,11 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 					{props.images?.map((img, idx) => (
 						<div 
 							key={img.id}
-							className={'rounded-full w-3 h-3 ' + (currentIdx === idx ? 'bg-white border-main border-2' : 'bg-grey-light bg-opacity-50')}
+							className={'rounded-full w-3 h-3 ' + (imgIdx === idx ? 'bg-white border-main border-2' : 'bg-grey-light bg-opacity-50')}
 							onClick={() => {
 								if (portalOpen) slidesPortalRefs.current[idx].scrollIntoView({ behavior: "smooth" });
 								else slidesInitialRefs.current[idx].scrollIntoView({ behavior: "smooth" });
-								setCurrentIdx(idx);
+								props.setCurrentImage(img);
 							}}
 						></div>
 					))}

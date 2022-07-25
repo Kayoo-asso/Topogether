@@ -28,8 +28,6 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
 		const [full, setFull] = useState(!!selectedTrack);
 		const [trackTab, setTrackTab] = useState(true);
 
-		const [imageToDisplayIdx, setImageToDisplayIdx] = useState(0);
-
 		return (
 			<SlideoverMobile
 				persistent
@@ -41,13 +39,10 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
 					<div className="relative flex max-h-[40%] w-full overflow-hidden rounded-t-lg bg-dark">
 						<ImageSlider
 							images={boulder.images}
-							imageToDisplayIdx={imageToDisplayIdx}
+							currentImage={props.currentImage}
+							setCurrentImage={props.setCurrentImage}
 							tracks={boulder.tracks.quarks()}
 							selectedTrack={props.selectedTrack}
-							onChange={(idx) => {
-								setImageToDisplayIdx(idx);
-								props.setCurrentImage(boulder.images[idx]);
-							}}
 						/>
 					</div>
 				)}
@@ -147,10 +142,8 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
 									if (props.selectedTrack()?.id === trackQuark().id)
 										props.selectedTrack.select(undefined);
 									else {
-										if (newImageIndex > -1) {
+										if (newImageIndex > -1)
 											props.setCurrentImage(boulder.images[newImageIndex]);
-											setImageToDisplayIdx(newImageIndex);
-										}
 										props.selectedTrack.select(trackQuark);
 									}
 								}}
