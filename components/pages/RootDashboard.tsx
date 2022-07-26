@@ -35,6 +35,13 @@ export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies(
 		const [actionTopo, setActionTopo] = useState<LightTopo>();
 
 		const [previewTopo, setPreviewTopo] = useState<LightTopo>();
+		const togglePreviewTopo = useCallback((topo: LightTopo) => {
+			if (previewTopo && previewTopo.id === topo.id) setPreviewTopo(undefined);
+			else {
+				setActionTopo(topo);
+				setPreviewTopo(topo);
+			}
+		}, [previewTopo]);
 
 		const ref = useRef<HTMLDivElement>(null);
 		const [dropdownPosition, setDropdownPosition] = useState<{
@@ -117,7 +124,7 @@ export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies(
 										</div>
 									}
 									lastCard={<AddTopoCard />}
-									onClick={(t) => { setActionTopo(t); setPreviewTopo(t) }}
+									onClick={togglePreviewTopo}
 									onContextMenu={onContextMenu}
 								/>
 
@@ -129,7 +136,7 @@ export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies(
 											En attente de validation
 										</div>
 									}
-									onClick={(t) => { setActionTopo(t); setPreviewTopo(t) }}
+									onClick={togglePreviewTopo}
 									onContextMenu={onContextMenu}
 								/>
 
@@ -141,7 +148,7 @@ export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies(
 											Validés
 										</div>
 									}
-									onClick={(t) => {setActionTopo(t); setPreviewTopo(t) }}
+									onClick={togglePreviewTopo}
 									onContextMenu={onContextMenu}
 								/>
 							</>
@@ -166,7 +173,7 @@ export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies(
 						topo={previewTopo}
 						displayLastDate
 						mainButton={{ content: 'Modifier', link: '/builder/' + encodeUUID(previewTopo.id) }}
-						secondButton={{ content: 'Valider', onClick: showModalSubmit }}
+						secondButton={{ content: 'Valider', onClick: showModalSubmit, color: 'main' }}
 						thirdButton={{ content: 'Supprimer', onClick: showModalDelete, color: 'red' }}
 						onClose={() => setPreviewTopo(undefined)}
 					/>

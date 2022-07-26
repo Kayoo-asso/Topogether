@@ -32,6 +32,13 @@ export const RootAdmin: React.FC<RootAdminProps> = (props: RootAdminProps) => {
 	const [actionTopo, setActionTopo] = useState<LightTopo>();
 
 	const [previewTopo, setPreviewTopo] = useState<LightTopo>();
+	const togglePreviewTopo = useCallback((topo: LightTopo) => {
+		if (previewTopo && previewTopo.id === topo.id) setPreviewTopo(undefined);
+		else {
+			setActionTopo(topo);
+			setPreviewTopo(topo);
+		}
+	}, [previewTopo]);
 
 	const ref = useRef<HTMLDivElement>(null);
 	const [dropdownPosition, setDropdownPosition] = useState<{
@@ -144,7 +151,7 @@ export const RootAdmin: React.FC<RootAdminProps> = (props: RootAdminProps) => {
 									key={topo.id}
 									topo={topo}
 									onContextMenu={onContextMenu}
-									onClick={(t) => { setActionTopo(t); setPreviewTopo(t); }}
+									onClick={togglePreviewTopo}
 								/>
 							))}
 						</div>

@@ -232,8 +232,8 @@ export const TopoPreview: React.FC<TopoPreviewProps> = ({
 			<div className="hidden md:block">
 				<SlideagainstRightDesktop
 					open
-					displayLikeButton
-					displayDlButton
+					displayLikeButton={displayLikeDownload}
+					displayDlButton={displayLikeDownload}
 					item={props.topo}
 					onClose={props.onClose}
 				>

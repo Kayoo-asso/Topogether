@@ -18,6 +18,13 @@ export const DownloadedList: React.FC<DownloadedListProps> = (
 	const [actionTopo, setActionTopo] = useState<LightTopo>();
 
 	const [previewTopo, setPreviewTopo] = useState<LightTopo>();
+	const togglePreviewTopo = useCallback((topo: LightTopo) => {
+		if (previewTopo && previewTopo.id === topo.id) setPreviewTopo(undefined);
+		else {
+			setActionTopo(topo);
+			setPreviewTopo(topo);
+		}
+	}, [previewTopo]);
 
 	const ref = useRef<HTMLDivElement>(null);
 	const [dropdownPosition, setDropdownPosition] = useState<{
@@ -47,7 +54,7 @@ export const DownloadedList: React.FC<DownloadedListProps> = (
 					status={TopoStatus.Validated}
 					noTopoCardContent="Aucun topo téléchargé"
 					onContextMenu={onContextMenu}
-					onClick={(t) => { setActionTopo(t); setPreviewTopo(t) }}
+					onClick={togglePreviewTopo}
 				/>
 			</div>
 

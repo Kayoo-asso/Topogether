@@ -17,6 +17,13 @@ export const LikedList: React.FC<LikedListProps> = (props: LikedListProps) => {
 	const [actionTopo, setActionTopo] = useState<LightTopo>();
 
 	const [previewTopo, setPreviewTopo] = useState<LightTopo>();
+	const togglePreviewTopo = useCallback((topo: LightTopo) => {
+		if (previewTopo && previewTopo.id === topo.id) setPreviewTopo(undefined);
+		else {
+			setActionTopo(topo);
+			setPreviewTopo(topo);
+		}
+	}, [previewTopo]);
 
 	const ref = useRef<HTMLDivElement>(null);
 	const [dropdownPosition, setDropdownPosition] = useState<{
@@ -43,7 +50,7 @@ export const LikedList: React.FC<LikedListProps> = (props: LikedListProps) => {
 					status={TopoStatus.Validated}
 					noTopoCardContent="Aucun topo liké"
 					onContextMenu={onContextMenu}
-					onClick={(t) => { setActionTopo(t); setPreviewTopo(t); }}
+					onClick={togglePreviewTopo}
 				/>
 			</div>
 
@@ -62,7 +69,6 @@ export const LikedList: React.FC<LikedListProps> = (props: LikedListProps) => {
 				<LikedActionDropdown
 					topo={actionTopo}
 					position={dropdownPosition}
-					onUnlikeClick={showModalUnlike}
 					onSelect={() => setDropdownPosition(undefined)}
 				/>
 			)}

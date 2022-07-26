@@ -7,7 +7,6 @@ import { encodeUUID } from "helpers/utils";
 interface LikedActionDropdownProps {
 	topo: LightTopo;
 	position: { x: number; y: number };
-	onUnlikeClick: (topo: LightTopo) => void;
 	onSelect?: () => void;
 }
 
