@@ -9,10 +9,11 @@ import { LeftbarDesktop } from "components/layouts/Leftbar.desktop";
 import { Tabs } from "components/layouts/Tabs";
 import { staticUrl } from "helpers/constants";
 import { useModal } from "helpers/hooks";
-
+import { TopoPreview } from "components/organisms";
 import Edit from "assets/icons/edit.svg";
 import Recent from "assets/icons/recent.svg";
 import Checked from "assets/icons/checked.svg";
+import { encodeUUID } from "helpers/utils";
 
 interface RootAdminProps {
 	lightTopos: LightTopo[];
@@ -28,61 +29,79 @@ export const RootAdmin: React.FC<RootAdminProps> = (props: RootAdminProps) => {
 		(topo) => topo.status === selectedStatus
 	);
 
+	const [actionTopo, setActionTopo] = useState<LightTopo>();
+
+	const [previewTopo, setPreviewTopo] = useState<LightTopo>();
+
 	const ref = useRef<HTMLDivElement>(null);
-	const [topoDropdown, setTopoDropddown] = useState<LightTopo>();
 	const [dropdownPosition, setDropdownPosition] = useState<{
 		x: number;
 		y: number;
 	}>();
 
+	const [ModalSubmit, showModalSubmit] = useModal();
 	const [ModalValidate, showModalValidate] = useModal();
 	const [ModalUnvalidate, showModalUnvalidate] = useModal();
 	const [ModalReject, showModalReject] = useModal();
 	const [ModalDelete, showModalDelete] = useModal();
 
+	const submitTopo = useCallback(async () => {
+		if (actionTopo) {
+			await api.setTopoStatus(actionTopo.id, TopoStatus.Submitted);
+			const submittedTopo = lightTopos.find((lt) => lt.id === actionTopo.id)!;
+			submittedTopo.submitted = new Date().toISOString();
+			submittedTopo.status = TopoStatus.Submitted;
+			setLightTopos(lightTopos.slice());
+		}
+		setPreviewTopo(undefined);
+	}, [actionTopo, lightTopos]);
+	const rejectTopo = useCallback(async () => {
+		if (actionTopo) {
+			await api.setTopoStatus(actionTopo.id, TopoStatus.Draft);
+			const rejectedTopo = lightTopos.find((lt) => lt.id === actionTopo.id)!;
+			rejectedTopo.submitted = undefined;
+			rejectedTopo.status = TopoStatus.Draft;
+			setLightTopos(lightTopos.slice());
+		}
+		setPreviewTopo(undefined);
+	}, [actionTopo, lightTopos]);
 	const validateTopo = useCallback(async () => {
-		if (topoDropdown) {
-			await api.setTopoStatus(topoDropdown!.id, TopoStatus.Validated);
-			const validatedTopo = lightTopos.find((lt) => lt.id === topoDropdown.id)!;
+		if (actionTopo) {
+			await api.setTopoStatus(actionTopo.id, TopoStatus.Validated);
+			const validatedTopo = lightTopos.find((lt) => lt.id === actionTopo.id)!;
 			validatedTopo.validated = new Date().toISOString();
 			validatedTopo.status = TopoStatus.Validated;
 			setLightTopos(lightTopos.slice());
 		}
-	}, [topoDropdown, lightTopos]);
+		setPreviewTopo(undefined);
+	}, [actionTopo, lightTopos]);
 	const unvalidateTopo = useCallback(async () => {
-		if (topoDropdown) {
-			await api.setTopoStatus(topoDropdown!.id, TopoStatus.Submitted);
+		if (actionTopo) {
+			await api.setTopoStatus(actionTopo.id, TopoStatus.Submitted);
 			const unvalidatedTopo = lightTopos.find(
-				(lt) => lt.id === topoDropdown.id
+				(lt) => lt.id === actionTopo.id
 			)!;
 			unvalidatedTopo.validated = undefined;
 			unvalidatedTopo.status = TopoStatus.Submitted;
 			setLightTopos(lightTopos.slice());
 		}
-	}, [topoDropdown, lightTopos]);
-	const rejectTopo = useCallback(async () => {
-		if (topoDropdown) {
-			await api.setTopoStatus(topoDropdown!.id, TopoStatus.Draft);
-			const rejectedTopo = lightTopos.find((lt) => lt.id === topoDropdown.id)!;
-			rejectedTopo.submitted = undefined;
-			rejectedTopo.status = TopoStatus.Draft;
-			setLightTopos(lightTopos.slice());
-		}
-	}, [topoDropdown, lightTopos]);
+		setPreviewTopo(undefined);
+	}, [actionTopo, lightTopos]);
 	const deleteTopo = useCallback(() => {
-		if (topoDropdown) {
-			api.deleteTopo(topoDropdown);
+		if (actionTopo) {
+			api.deleteTopo(actionTopo);
 			const newLightTopos = lightTopos.filter(
-				(lt) => lt.id !== topoDropdown.id
+				(lt) => lt.id !== actionTopo.id
 			)!;
 			setLightTopos(newLightTopos);
 		}
-	}, [topoDropdown, lightTopos]);
+		setPreviewTopo(undefined);
+	}, [actionTopo, lightTopos]);
 
 	useContextMenu(() => setDropdownPosition(undefined), ref.current);
 	const onContextMenu = useCallback(
 		(topo: LightTopo, position: { x: number; y: number }) => {
-			setTopoDropddown(topo);
+			setActionTopo(topo);
 			setDropdownPosition(position);
 		},
 		[ref]
@@ -125,9 +144,7 @@ export const RootAdmin: React.FC<RootAdminProps> = (props: RootAdminProps) => {
 									key={topo.id}
 									topo={topo}
 									onContextMenu={onContextMenu}
-									clickable={
-										selectedStatus === TopoStatus.Validated ? "topo" : "builder"
-									}
+									onClick={(t) => { setActionTopo(t); setPreviewTopo(t); }}
 								/>
 							))}
 						</div>
@@ -135,9 +152,43 @@ export const RootAdmin: React.FC<RootAdminProps> = (props: RootAdminProps) => {
 				</div>
 			</div>
 
-			{topoDropdown && dropdownPosition && (
+			{previewTopo && previewTopo.status === TopoStatus.Draft &&
+				<TopoPreview
+					topo={previewTopo}
+					displayLastDate
+					mainButton={{ content: 'Ouvrir', link: '/topo/' + encodeUUID(previewTopo.id) }}
+					secondButton={{ content: 'Supprimer', onClick: showModalDelete, color: 'red' }}
+					thirdButton={{ content: 'Modifier', link: '/builder/' + encodeUUID(previewTopo.id) }}
+					fourthButton={{ content: 'Soumettre', onClick: showModalSubmit, color: 'third' }}
+					onClose={() => setPreviewTopo(undefined)}
+				/>
+			}
+			{previewTopo && previewTopo.status === TopoStatus.Submitted &&
+				<TopoPreview
+					topo={previewTopo}
+					displayLastDate
+					mainButton={{ content: 'Ouvrir', link: '/topo/' + encodeUUID(previewTopo.id) }}
+					secondButton={{ content: 'Refuser', onClick: showModalReject, color: 'second' }}
+					thirdButton={{ content: 'Modifier', link: '/builder/' + encodeUUID(previewTopo.id) }}
+					fourthButton={{ content: 'Valider', onClick: showModalValidate, color: 'main' }}
+					onClose={() => setPreviewTopo(undefined)}
+				/>
+			}
+			{previewTopo && previewTopo.status === TopoStatus.Validated &&
+				<TopoPreview
+					topo={previewTopo}
+					displayLastDate
+					mainButton={{ content: 'Ouvrir', link: '/topo/' + encodeUUID(previewTopo.id) }}
+					secondButton={{ content: 'Dévalider', onClick: showModalUnvalidate, color: 'third' }}
+					thirdButton={{ content: 'Modifier', link: '/modifier/' + encodeUUID(previewTopo.id) }}
+					fourthButton={{ content: 'Supprimer', onClick: showModalDelete, color: 'red' }}
+					onClose={() => setPreviewTopo(undefined)}
+				/>
+			}
+
+			{actionTopo && dropdownPosition && (
 				<AdminActionDropdown
-					topo={topoDropdown}
+					topo={actionTopo}
 					position={dropdownPosition}
 					onValidateClick={showModalValidate}
 					onUnvalidateClick={showModalUnvalidate}
@@ -146,6 +197,14 @@ export const RootAdmin: React.FC<RootAdminProps> = (props: RootAdminProps) => {
 					onSelect={() => setDropdownPosition(undefined)}
 				/>
 			)}
+			<ModalSubmit
+				buttonText="Confirmer"
+				imgUrl={staticUrl.deleteWarning}
+				onConfirm={submitTopo}
+			>
+				Le topo sera envoyé en validation.
+				Etes-vous sûr de vouloir continuer ?
+			</ModalSubmit>
 			<ModalValidate
 				buttonText="Confirmer"
 				imgUrl={staticUrl.deleteWarning}

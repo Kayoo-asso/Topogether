@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import { Show } from "components/atoms";
 import { HeaderDesktop } from "components/layouts/HeaderDesktop";
 import { LeftbarDesktop } from "components/layouts/Leftbar.desktop";
@@ -6,7 +7,6 @@ import { TopoPreview } from "components/organisms";
 import { hasFlag } from "helpers/bitflags";
 import { watchDependencies, useCreateQuark } from "helpers/quarky";
 import { useAuth } from "helpers/services";
-import React, { useCallback, useState } from "react";
 import { LightTopo, Amenities } from "types";
 
 interface RootWorldMapProps {
@@ -19,14 +19,6 @@ export const RootWorldMap: React.FC<RootWorldMapProps> = watchDependencies(
 		const user = auth.session();
 
 		const [selectedTopo, setSelectedTopo] = useState<LightTopo>();
-		const toggleTopoSelect = useCallback(
-			(t: LightTopo) => {
-				if (selectedTopo?.id === t.id) {
-					setSelectedTopo(undefined);
-				} else setSelectedTopo(t);
-			},
-			[selectedTopo]
-		);
 
 		// TODO: Ideally we should have the TopoFilters component right here,
 		// but for now we pass a quark and the domain through MapControl
@@ -95,7 +87,7 @@ export const RootWorldMap: React.FC<RootWorldMapProps> = watchDependencies(
 							<TopoMarker
 								key={topo.id}
 								topo={topo}
-								onClick={toggleTopoSelect}
+								onClick={(t) => setSelectedTopo(t)}
 							/>
 						))}
 					</MapControl>
@@ -104,6 +96,9 @@ export const RootWorldMap: React.FC<RootWorldMapProps> = watchDependencies(
 						{(topo) => (
 							<TopoPreview
 								topo={topo}
+								displayLikeDownload
+								displayCreator
+								displayParking
 								onClose={() => setSelectedTopo(undefined)}
 							/>
 						)}

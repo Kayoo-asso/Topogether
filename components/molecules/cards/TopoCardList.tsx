@@ -10,7 +10,7 @@ interface TopoCardListProps {
 	title?: ReactNode;
 	noTopoCardContent?: string;
 	lastCard?: ReactNode;
-	clickable?: "topo" | "builder";
+	onClick?: (topo: LightTopo) => void,
 	onContextMenu: (topo: LightTopo, position: { x: number; y: number }) => void;
 }
 
@@ -37,7 +37,7 @@ export const TopoCardList: React.FC<TopoCardListProps> = (
 					<TopoCard
 						key={topo.id}
 						topo={topo}
-						clickable={props.clickable}
+						onClick={props.onClick}
 						onContextMenu={props.onContextMenu}
 					/>
 				))}

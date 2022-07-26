@@ -1,21 +1,18 @@
 import { useEffect } from "react";
 
 export function useContextMenu(
-	close: () => void,
+	close?: () => void,
 	container?: HTMLElement | null
 ) {
 	useEffect(() => {
-		const onScroll = (e: Event) => e.preventDefault();
 		const onMouseDown = (e: MouseEvent) => {
-			close();
-			container?.removeEventListener("wheel", onScroll);
+			close && close();
 		};
 		const onTouch = (e: TouchEvent) => {
-			close();
+			close && close();
 		};
 		const onContextMenu = (e: MouseEvent) => {
-			close();
-			container?.addEventListener("wheel", onScroll);
+			close && close();
 			if (process.env.NODE_ENV === "production") e.preventDefault();
 		};
 		document.addEventListener("mousedown", onMouseDown, { capture: false });
@@ -23,7 +20,7 @@ export function useContextMenu(
 		document.addEventListener("touchstart", onTouch, { capture: true });
 
 		return () => {
-			document.removeEventListener("mousedown", onMouseDown, { capture: true });
+			document.removeEventListener("mousedown", onMouseDown, { capture: false });
 			document.removeEventListener("contextmenu", onContextMenu, {
 				capture: true,
 			});

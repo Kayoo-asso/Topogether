@@ -156,7 +156,7 @@ export const CFImage = forwardRef<HTMLImageElement, CFImageProps>(
 							: {}
 					}
 					onClick={(e) => {
-						if (modalable) setPortalOpen(true);
+						if (modalable && image) setPortalOpen(true);
 						if (props.onClick) props.onClick(e);
 					}}
 					onLoad={(e) => {

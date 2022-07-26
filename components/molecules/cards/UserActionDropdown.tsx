@@ -25,26 +25,20 @@ export const UserActionDropdown: React.FC<UserActionDropdownProps> = (
 	}, []);
 
 	const options: DropdownOption[] = [];
-	if (props.topo.status !== TopoStatus.Submitted) {
-		options.push({
-			value: "Ouvrir",
-			action: () => router.push(`/topo/${encodeUUID(props.topo.id)}`),
-		});
+	if (props.topo.status === TopoStatus.Draft) {
+		options.push(
+			{ value: "Modifier", action: () => router.push(`/builder/${encodeUUID(props.topo.id)}`) }, 
+			{ value: "Valider", action: props.onSendToValidationClick }
+		);
+	}
+	if (props.topo.status === TopoStatus.Submitted) {
+		options.push(
+			{ value: "Voir le topo", action: () => router.push(`/topo/${encodeUUID(props.topo.id)}`) }, 
+			{ value: "Modifier", action: props.onSendToDraftClick }
+		);
 	}
 	if (props.topo.status === TopoStatus.Validated) {
 		options.push({ value: "Télécharger", action: downloadTopo });
-	}
-	if (props.topo.status === TopoStatus.Draft) {
-		options.push({
-			value: "Envoyer en validation",
-			action: props.onSendToValidationClick,
-		});
-	}
-	if (props.topo.status === TopoStatus.Draft) {
-		options.push({
-			value: "Retourner en brouillon",
-			action: props.onSendToDraftClick,
-		});
 	}
 	options.push({ value: "Supprimer", action: props.onDeleteClick });
 

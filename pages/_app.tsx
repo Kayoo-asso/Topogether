@@ -38,15 +38,20 @@ const CustomApp = ({ Component, pageProps, session, userAgent }: Props) => {
 				<meta name="theme-color" content="#04D98B" />
 				<meta
 					name="keywords"
-					content="Escalade Climbing Topo Topographie Grimpe Cartographie"
+					content="Escalade Climbing Topo Topographie Grimpe Cartographie Carte Map Bloc Boulder"
 				/>
 
 				<title>Topogether</title>
 				<link rel="manifest" href="/manifest.json" />
 
+				<meta name="mobile-web-app-capable" content="yes" />
+				<meta name="apple-mobile-web-app-capable" content="yes" />
+    			<meta name="apple-touch-fullscreen" content="yes" />
+
 				<link
 					rel="apple-touch-icon"
-					href="/assets/touch/icon-512x512.png"
+					sizes="180x180"
+					href="/assets/favicon/touch/Touch-icon-180.png"
 				></link>
 				<link
 					rel="apple-touch-startup-image"

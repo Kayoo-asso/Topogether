@@ -2,6 +2,7 @@ import React, { useCallback, useRef, useState } from "react";
 import { AddTopoCard, TopoCardList, Button } from "components";
 import { LightTopo, TopoStatus } from "types";
 import { UserActionDropdown } from "components/molecules/cards/UserActionDropdown";
+import { TopoPreview } from "components/organisms";
 import { api } from "helpers/services";
 import { watchDependencies } from "helpers/quarky";
 import AddIcon from "assets/icons/add.svg";
@@ -10,6 +11,8 @@ import { HeaderDesktop } from "components/layouts/HeaderDesktop";
 import { LeftbarDesktop } from "components/layouts/Leftbar.desktop";
 import { staticUrl } from "helpers/constants";
 import { useModal, useContextMenu } from "helpers/hooks";
+import { encodeUUID } from "helpers/utils";
+import { useRouter } from "next/router";
 
 interface RootDashboardProps {
 	lightTopos: LightTopo[];
@@ -17,6 +20,7 @@ interface RootDashboardProps {
 
 export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies(
 	(props: RootDashboardProps) => {
+		const router = useRouter();
 		const [lightTopos, setLightTopos] = useState(props.lightTopos);
 		const draftLightTopos = lightTopos.filter(
 			(topo) => topo.status === TopoStatus.Draft
@@ -28,8 +32,11 @@ export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies(
 			(topo) => topo.status === TopoStatus.Validated
 		);
 
+		const [actionTopo, setActionTopo] = useState<LightTopo>();
+
+		const [previewTopo, setPreviewTopo] = useState<LightTopo>();
+
 		const ref = useRef<HTMLDivElement>(null);
-		const [topoDropdown, setTopoDropdown] = useState<LightTopo>();
 		const [dropdownPosition, setDropdownPosition] = useState<{
 			x: number;
 			y: number;
@@ -39,40 +46,42 @@ export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies(
 		const [ModalSubmit, showModalSubmit] = useModal();
 		const [ModalUnsubmit, showModalUnsubmit] = useModal();
 
-		const sendTopoToValidation = useCallback(async () => {
-			if (topoDropdown) {
-				await api.setTopoStatus(topoDropdown.id, TopoStatus.Submitted);
-				const submittedTopo = lightTopos.find(
-					(lt) => lt.id === topoDropdown.id
-				)!;
+		const submitTopo = useCallback(async () => {
+			if (actionTopo) {
+				await api.setTopoStatus(actionTopo.id, TopoStatus.Submitted);
+				const submittedTopo = lightTopos.find((lt) => lt.id === actionTopo.id)!;
 				submittedTopo.submitted = new Date().toISOString();
 				submittedTopo.status = TopoStatus.Submitted;
 				setLightTopos(lightTopos.slice());
 			}
-		}, [topoDropdown, lightTopos]);
+			setPreviewTopo(undefined);
+		}, [actionTopo, lightTopos]);
 
-		const sendTopoToDraft = useCallback(async () => {
-			if (topoDropdown) {
-				await api.setTopoStatus(topoDropdown.id, TopoStatus.Draft);
-				const toDraftTopo = lightTopos.find((lt) => lt.id === topoDropdown.id)!;
+		const unsubmitTopo = useCallback(async (openTopo?: boolean) => {
+			if (actionTopo) {
+				await api.setTopoStatus(actionTopo.id, TopoStatus.Draft);
+				const toDraftTopo = lightTopos.find((lt) => lt.id === actionTopo.id)!;
 				toDraftTopo.submitted = undefined;
 				toDraftTopo.status = TopoStatus.Draft;
 				setLightTopos(lightTopos.slice());
+				setPreviewTopo(undefined);
+				if (openTopo) router.push("/builder/" + encodeUUID(actionTopo.id));
 			}
-		}, [topoDropdown, lightTopos]);
+		}, [actionTopo, lightTopos]);
 
 		const deleteTopo = useCallback(() => {
-			const newLightTopos = lightTopos.filter(
-				(lt) => lt.id !== topoDropdown?.id
-			);
-			api.deleteTopo(topoDropdown!);
-			setLightTopos(newLightTopos);
-		}, [topoDropdown, lightTopos]);
+			if (actionTopo) {
+				const newLightTopos = lightTopos.filter((lt) => lt.id !== actionTopo.id);
+				api.deleteTopo(actionTopo);
+				setLightTopos(newLightTopos);
+			}
+			setPreviewTopo(undefined);
+		}, [actionTopo, lightTopos]);
 
 		useContextMenu(() => setDropdownPosition(undefined), ref.current);
 		const onContextMenu = useCallback(
-			(topo: LightTopo, position: { x: number; y: number }) => {
-				setTopoDropdown(topo);
+			(t: LightTopo, position: { x: number; y: number }) => {
+				setActionTopo(t)
 				setDropdownPosition(position);
 			},
 			[ref]
@@ -102,13 +111,13 @@ export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies(
 								<TopoCardList
 									topos={draftLightTopos}
 									status={TopoStatus.Draft}
-									clickable="builder"
 									title={
 										<div className="ktext-section-title px-4 text-second-light md:px-8">
 											Brouillons
 										</div>
 									}
 									lastCard={<AddTopoCard />}
+									onClick={(t) => { setActionTopo(t); setPreviewTopo(t) }}
 									onContextMenu={onContextMenu}
 								/>
 
@@ -120,18 +129,19 @@ export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies(
 											En attente de validation
 										</div>
 									}
+									onClick={(t) => { setActionTopo(t); setPreviewTopo(t) }}
 									onContextMenu={onContextMenu}
 								/>
 
 								<TopoCardList
 									topos={validatedLightTopos}
 									status={TopoStatus.Validated}
-									clickable="topo"
 									title={
 										<div className="ktext-section-title px-4 text-main md:px-8">
 											Validés
 										</div>
 									}
+									onClick={(t) => {setActionTopo(t); setPreviewTopo(t) }}
 									onContextMenu={onContextMenu}
 								/>
 							</>
@@ -151,20 +161,53 @@ export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies(
 					</div>
 				</div>
 
-				{topoDropdown && dropdownPosition && (
+				{previewTopo && previewTopo.status === TopoStatus.Draft &&
+					<TopoPreview
+						topo={previewTopo}
+						displayLastDate
+						mainButton={{ content: 'Modifier', link: '/builder/' + encodeUUID(previewTopo.id) }}
+						secondButton={{ content: 'Valider', onClick: showModalSubmit }}
+						thirdButton={{ content: 'Supprimer', onClick: showModalDelete, color: 'red' }}
+						onClose={() => setPreviewTopo(undefined)}
+					/>
+				}
+				{previewTopo && previewTopo.status === TopoStatus.Submitted &&
+					<TopoPreview
+						topo={previewTopo}
+						displayLastDate
+						mainButton={{ content: 'Voir le topo', link: '/topo/' + encodeUUID(previewTopo.id) }}
+						secondButton={{ content: 'Modifier', onClick: showModalUnsubmit }}
+						thirdButton={{ content: 'Supprimer', onClick: showModalDelete, color: 'red' }}
+						onClose={() => setPreviewTopo(undefined)}
+					/>
+				}
+				{previewTopo && previewTopo.status === TopoStatus.Validated &&
+					<TopoPreview
+						topo={previewTopo}
+						displayLastDate
+						mainButton={{ content: 'Ouvrir', link: '/topo/' + encodeUUID(previewTopo.id) }}
+						secondButton={{ content: 'Supprimer', onClick: showModalDelete, color: 'red' }}
+						onClose={() => setPreviewTopo(undefined)}
+					/>
+				}
+				
+
+				{actionTopo && dropdownPosition && (
 					<UserActionDropdown
 						position={dropdownPosition}
-						topo={topoDropdown}
+						topo={actionTopo}
 						onSendToDraftClick={showModalUnsubmit}
 						onSendToValidationClick={showModalSubmit}
 						onDeleteClick={showModalDelete}
-						onSelect={() => setDropdownPosition(undefined)}
+						onSelect={() => {
+							setDropdownPosition(undefined);
+						}}
 					/>
 				)}
 				<ModalSubmit
 					buttonText="Confirmer"
 					imgUrl={staticUrl.defaultProfilePicture}
-					onConfirm={sendTopoToValidation}
+					onConfirm={submitTopo}
 				>
 					Le topo sera envoyé en validation. Etes-vous sûr de vouloir continuer
 					?
@@ -172,9 +215,9 @@ export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies(
 				<ModalUnsubmit
 					buttonText="Confirmer"
 					imgUrl={staticUrl.defaultProfilePicture}
-					onConfirm={sendTopoToDraft}
+					onConfirm={() => unsubmitTopo(true)}
 				>
-					Le topo retournera en brouillon. Etes-vous sûr de vouloir continuer ?
+					Le topo retournera en brouillon avant de pouvoir être modifié. Etes-vous sûr de vouloir continuer ?
 				</ModalUnsubmit>
 				<ModalDelete
 					buttonText="Supprimer"
