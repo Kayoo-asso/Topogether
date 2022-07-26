@@ -121,7 +121,7 @@ export const RootAdmin: React.FC<RootAdminProps> = (props: RootAdminProps) => {
 			<div className="flex h-full flex-row bg-white">
 				<LeftbarDesktop currentMenuItem="ADMIN" />
 
-				<div className="mt-[10%] h-[10%] w-full">
+				<div className="mt-[10%] md:mt-[5%] h-[10%] w-full">
 					<Tabs
 						tabs={[
 							{
