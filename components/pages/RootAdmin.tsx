@@ -156,6 +156,7 @@ export const RootAdmin: React.FC<RootAdminProps> = (props: RootAdminProps) => {
 				<TopoPreview
 					topo={previewTopo}
 					displayLastDate
+					displayCreator
 					mainButton={{ content: 'Ouvrir', link: '/topo/' + encodeUUID(previewTopo.id) }}
 					secondButton={{ content: 'Supprimer', onClick: showModalDelete, color: 'red' }}
 					thirdButton={{ content: 'Modifier', link: '/builder/' + encodeUUID(previewTopo.id) }}
@@ -167,6 +168,7 @@ export const RootAdmin: React.FC<RootAdminProps> = (props: RootAdminProps) => {
 				<TopoPreview
 					topo={previewTopo}
 					displayLastDate
+					displayCreator
 					mainButton={{ content: 'Ouvrir', link: '/topo/' + encodeUUID(previewTopo.id) }}
 					secondButton={{ content: 'Refuser', onClick: showModalReject, color: 'second' }}
 					thirdButton={{ content: 'Modifier', link: '/builder/' + encodeUUID(previewTopo.id) }}
@@ -178,6 +180,7 @@ export const RootAdmin: React.FC<RootAdminProps> = (props: RootAdminProps) => {
 				<TopoPreview
 					topo={previewTopo}
 					displayLastDate
+					displayCreator
 					mainButton={{ content: 'Ouvrir', link: '/topo/' + encodeUUID(previewTopo.id) }}
 					secondButton={{ content: 'Dévalider', onClick: showModalUnvalidate, color: 'third' }}
 					thirdButton={{ content: 'Modifier', link: '/modifier/' + encodeUUID(previewTopo.id) }}

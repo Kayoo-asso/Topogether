@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { Dropdown } from "components";
-import { LightTopo, TopoStatus } from "types";
+import { LightTopo } from "types";
 import { useRouter } from "next/router";
 import { encodeUUID } from "helpers/utils";
 
@@ -26,17 +26,7 @@ export const LikedActionDropdown: React.FC<LikedActionDropdownProps> = (
 			className="w-64"
 			position={props.position}
 			options={[
-				...(props.topo.status !== TopoStatus.Submitted
-					? [{ value: "Ouvrir", action: openTopo }]
-					: []),
-				...(props.topo.status === TopoStatus.Validated
-					? [
-							{
-								value: "Ne plus aimer",
-								action: () => props.onUnlikeClick(props.topo),
-							},
-					  ]
-					: []),
+				{ value: "Ouvrir", action: openTopo }
 			]}
 			onSelect={props.onSelect}
 		/>

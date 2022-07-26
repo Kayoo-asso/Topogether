@@ -3,6 +3,8 @@ import { staticUrl } from "helpers/constants";
 import { useModal, useContextMenu } from "helpers/hooks";
 import React, { useCallback, useRef, useState } from "react";
 import { LightTopo, TopoStatus } from "types";
+import { TopoPreview } from "components/organisms";
+import { encodeUUID } from "helpers/utils";
 
 interface DownloadedListProps {
 	downloadedTopos: LightTopo[];
@@ -13,8 +15,11 @@ export const DownloadedList: React.FC<DownloadedListProps> = (
 ) => {
 	const [ModalUnsave, showModalUnsave] = useModal();
 
+	const [actionTopo, setActionTopo] = useState<LightTopo>();
+
+	const [previewTopo, setPreviewTopo] = useState<LightTopo>();
+
 	const ref = useRef<HTMLDivElement>(null);
-	const [topoDropdown, setTopoDropdown] = useState<LightTopo>();
 	const [dropdownPosition, setDropdownPosition] = useState<{
 		x: number;
 		y: number;
@@ -23,7 +28,7 @@ export const DownloadedList: React.FC<DownloadedListProps> = (
 	useContextMenu(() => setDropdownPosition(undefined), ref.current);
 	const onContextMenu = useCallback(
 		(topo: LightTopo, position: { x: number; y: number }) => {
-			setTopoDropdown(topo);
+			setActionTopo(topo);
 			setDropdownPosition(position);
 		},
 		[ref]
@@ -32,7 +37,7 @@ export const DownloadedList: React.FC<DownloadedListProps> = (
 	const unsaveTopo = useCallback(() => {
 		//TODO
 		alert("à venir");
-	}, []);
+	}, [actionTopo]);
 
 	return (
 		<>
@@ -40,26 +45,39 @@ export const DownloadedList: React.FC<DownloadedListProps> = (
 				<TopoCardList
 					topos={props.downloadedTopos}
 					status={TopoStatus.Validated}
-					clickable="topo"
 					noTopoCardContent="Aucun topo téléchargé"
 					onContextMenu={onContextMenu}
+					onClick={(t) => { setActionTopo(t); setPreviewTopo(t) }}
 				/>
 			</div>
 
-			{topoDropdown && dropdownPosition && (
+			{previewTopo && 
+				<TopoPreview
+					topo={previewTopo}
+					displayParking
+					displayCreator
+					displayLikeDownload
+					mainButton={{ content: 'Ouvrir', link: '/topo/' + encodeUUID(previewTopo.id) }}
+					secondButton={{ content: 'Retirer des téléchargements', onClick: showModalUnsave }}
+					onClose={() => setPreviewTopo(undefined)}
+				/>
+			}
+
+			{actionTopo && dropdownPosition && (
 				<DownloadedActionDropdown
-					topo={topoDropdown}
+					topo={actionTopo}
 					position={dropdownPosition}
 					onUnsaveClick={showModalUnsave}
 					onSelect={() => setDropdownPosition(undefined)}
 				/>
 			)}
+
 			<ModalUnsave
 				buttonText="Confirmer"
 				imgUrl={staticUrl.deleteWarning}
 				onConfirm={unsaveTopo}
 			>
-				Le topo ne sera plus accessible hors ligne. Voulez-vous continuer ?
+				Le topo ne sera plus accessible hors ligne. Êtes-vous sûr de vouloir continuer ?
 			</ModalUnsave>
 		</>
 	);

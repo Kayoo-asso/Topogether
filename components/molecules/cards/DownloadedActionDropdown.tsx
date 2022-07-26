@@ -26,12 +26,8 @@ export const DownloadedActionDropdown: React.FC<
 			className="w-64"
 			position={props.position}
 			options={[
-				...(props.topo.status !== TopoStatus.Submitted
-					? [{ value: "Ouvrir", action: openTopo }]
-					: []),
-				...(props.topo.status === TopoStatus.Validated
-					? [{ value: "Retirer", action: props.onUnsaveClick }]
-					: []),
+					{ value: "Ouvrir", action: openTopo },
+					{ value: "Retirer des téléchargements", action: props.onUnsaveClick }
 			]}
 			onSelect={props.onSelect}
 		/>

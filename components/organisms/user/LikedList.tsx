@@ -3,6 +3,8 @@ import React, { useCallback, useRef, useState } from "react";
 import { LightTopo, TopoStatus } from "types";
 import { useContextMenu, useModal } from "helpers/hooks";
 import { staticUrl } from "helpers/constants";
+import { TopoPreview } from "components/organisms";
+import { encodeUUID } from "helpers/utils";
 
 interface LikedListProps {
 	likedTopos: LightTopo[];
@@ -12,8 +14,11 @@ interface LikedListProps {
 export const LikedList: React.FC<LikedListProps> = (props: LikedListProps) => {
 	const [ModalUnlike, showModalUnlike] = useModal<LightTopo>();
 
+	const [actionTopo, setActionTopo] = useState<LightTopo>();
+
+	const [previewTopo, setPreviewTopo] = useState<LightTopo>();
+
 	const ref = useRef<HTMLDivElement>(null);
-	const [topoDropdown, setTopoDropdown] = useState<LightTopo>();
 	const [dropdownPosition, setDropdownPosition] = useState<{
 		x: number;
 		y: number;
@@ -24,7 +29,7 @@ export const LikedList: React.FC<LikedListProps> = (props: LikedListProps) => {
 		(topo: LightTopo, position: { x: number; y: number }) => {
 			// What the fuck happend with position ?? Patch for the moment.
 			const patchedPosition = { x: position.x - 282, y: position.y - 58 };
-			setTopoDropdown(topo);
+			setActionTopo(topo);
 			setDropdownPosition(patchedPosition);
 		},
 		[ref]
@@ -36,30 +41,31 @@ export const LikedList: React.FC<LikedListProps> = (props: LikedListProps) => {
 				<TopoCardList
 					topos={props.likedTopos}
 					status={TopoStatus.Validated}
-					clickable="topo"
 					noTopoCardContent="Aucun topo liké"
 					onContextMenu={onContextMenu}
+					onClick={(t) => { setActionTopo(t); setPreviewTopo(t); }}
 				/>
 			</div>
 
-			{topoDropdown && dropdownPosition && (
+			{previewTopo && 
+				<TopoPreview
+					topo={previewTopo}
+					displayParking
+					displayCreator
+					displayLikeDownload
+					mainButton={{ content: 'Ouvrir', link: '/topo/' + encodeUUID(previewTopo.id) }}
+					onClose={() => setPreviewTopo(undefined)}
+				/>
+			}
+
+			{actionTopo && dropdownPosition && (
 				<LikedActionDropdown
-					topo={topoDropdown}
+					topo={actionTopo}
 					position={dropdownPosition}
 					onUnlikeClick={showModalUnlike}
 					onSelect={() => setDropdownPosition(undefined)}
 				/>
 			)}
-			<ModalUnlike
-				buttonText="Confirmer"
-				imgUrl={staticUrl.deleteWarning}
-				onConfirm={(topo) => {
-					props.onUnlikeTopo(topo);
-				}}
-			>
-				Le topo sera retiré de la liste de vos topos likés. Voulez-vous
-				continuer ?
-			</ModalUnlike>
 		</>
 	);
 };
