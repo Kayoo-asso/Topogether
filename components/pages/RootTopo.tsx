@@ -28,6 +28,7 @@ import {
 } from "types";
 import {
 	Quark,
+	QuarkArray,
 	QuarkIter,
 	useCreateDerivation,
 	useCreateQuark,
@@ -70,7 +71,7 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 		const topo = props.topoQuark();
 
 		const sectors = topo.sectors;
-		const boulders = topo.boulders.quarks().filter(b => b().tracks.length > 0).toArray();
+		const boulders = topo.boulders;
 		const parkings = topo.parkings;
 		const waypoints = topo.waypoints;
 		const boulderOrder = useCreateDerivation(() =>
@@ -113,7 +114,7 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 			if (typeof bId === "string") {
 				const expanded = decodeUUID(bId);
 				if (isUUID(expanded)) {
-					const boulder = boulders.find((b) => b().id === expanded);
+					const boulder = boulders.findQuark((b) => b.id === expanded);
 					if (boulder) toggleBoulderSelect(boulder);
 				}
 			}
@@ -253,7 +254,7 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 
 		let maxTracks = 0;
 		for (const boulder of boulders) {
-			maxTracks = Math.max(maxTracks, boulder().tracks.length);
+			maxTracks = Math.max(maxTracks, boulder.tracks.length);
 		}
 		const defaultBoulderFilterOptions: BoulderFilterOptions = {
 			techniques: ClimbTechniques.None,
@@ -347,20 +348,22 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 						}}
 						onBoulderResultSelect={(boulder) =>
 							toggleBoulderSelect(
-								boulders.find((b) => b().id === boulder.id)!
+								boulders.findQuark((b) => b.id === boulder.id)!
 							)
 						}
 						topo={props.topoQuark}
 						boulderFilters={boulderFilters}
 						boulderFiltersDomain={defaultBoulderFilterOptions}
 						boundsTo={boulders
-							.map((b) => b().location)
-							.concat(parkings.map((p) => p.location).toArray())}
+							.map((b) => b.location)
+							.concat(parkings.map((p) => p.location))
+							.toArray()
+						}
 					>
 						{/* TODO: improve the callbacks */}
 						<ClusterProvider>
 							<For
-								each={() => filterBoulders(boulders, boulderFilters())}
+								each={() => filterBoulders(boulders.quarks().toArray(), boulderFilters())}
 							>
 								{(boulder) => (
 									<BoulderMarker

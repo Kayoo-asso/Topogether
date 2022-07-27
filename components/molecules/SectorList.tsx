@@ -3,7 +3,6 @@ import { Quark, SelectQuarkNullable, watchDependencies } from "helpers/quarky";
 import { Boulder, Sector, Topo, Track, UUID } from "types";
 import ArrowSimple from "assets/icons/arrow-simple.svg";
 import { BoulderItemLeftbar } from "components/layouts/BoulderItemLeftbar";
-import { splitArray } from "helpers/utils";
 
 interface SectorListProps {
 	topoQuark: Quark<Topo>;
