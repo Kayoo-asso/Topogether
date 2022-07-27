@@ -69,16 +69,7 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
 							)}
 						</div>
 
-						<div className="col-span-2 flex flex-row items-center justify-end gap-6">
-							{/* {selectedTrack && boulder.tracks.filter(track => track.lines.toArray().some(line => line.imageId === props.currentImage?.id)).toArray().length > 1 &&
-              <button
-                onClick={() => setDisplayPhantomTracks(!displayPhantomTracks)}
-              >
-                <ManyTracks
-                  className={'w-6 h-6 ' + (displayPhantomTracks ? 'stroke-main' : 'stroke-grey-medium')}
-                />
-              </button>
-            } */}
+						<div className="col-span-2 flex flex-col items-center justify-end gap-2">
 							{full && (
 								<ImageInput
 									button="builder"

@@ -143,7 +143,7 @@ export const ImageInput = forwardRef<HTMLInputElement, ImageInputProps>(
 				)}
 				{!props.onError && (
 					<div
-						className={`ktext-error h-22 w-22 pt-1 text-error ${
+						className={`ktext-error md:h-22 md:w-22 pt-1 text-error ${
 							error && error.length > 0 ? "" : "hidden"
 						}`}
 					>
