@@ -190,7 +190,7 @@ export const RootAdmin: React.FC<RootAdminProps> = (props: RootAdminProps) => {
 					displayCreator
 					mainButton={{ content: 'Ouvrir', link: '/topo/' + encodeUUID(previewTopo.id) }}
 					secondButton={{ content: 'Dévalider', onClick: showModalUnvalidate, color: 'third' }}
-					thirdButton={{ content: 'Modifier', link: '/modifier/' + encodeUUID(previewTopo.id) }}
+					thirdButton={{ content: 'Modifier', link: '/builder/' + encodeUUID(previewTopo.id) }}
 					fourthButton={{ content: 'Supprimer', onClick: showModalDelete, color: 'red' }}
 					onClose={() => setPreviewTopo(undefined)}
 				/>
