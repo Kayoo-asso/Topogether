@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useRef, useState } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import {
 	BoulderPreviewDesktop,
 	Button,
@@ -52,7 +52,7 @@ export const BoulderSlideagainstDesktop: React.FC<BoulderSlideagainstDesktopProp
 						<div className="px-5">
 							<div className="mb-2 flex flex-row items-end">
 								<Rock className="h-7 w-7 stroke-main" />
-								<span className="ktext-big-title ml-3">{boulder.name}</span>
+								<span className={"ktext-big-title ml-3" + (boulder.name.length > 16 ? " text-base" : "")}>{boulder.name}</span>
 							</div>
 							<div
 								className="ktext-label cursor-pointer text-grey-medium"
