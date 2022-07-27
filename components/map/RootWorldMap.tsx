@@ -8,6 +8,7 @@ import { hasFlag } from "helpers/bitflags";
 import { watchDependencies, useCreateQuark } from "helpers/quarky";
 import { useAuth } from "helpers/services";
 import { LightTopo, Amenities } from "types";
+import { encodeUUID } from "helpers/utils";
 
 interface RootWorldMapProps {
 	lightTopos: LightTopo[];
@@ -97,8 +98,9 @@ export const RootWorldMap: React.FC<RootWorldMapProps> = watchDependencies(
 							<TopoPreview
 								topo={topo}
 								displayLikeDownload
-								displayCreator
+								// displayCreator
 								displayParking
+								mainButton={{ content: 'Ouvrir', link: '/topo/' + encodeUUID(topo.id) }}
 								onClose={() => setSelectedTopo(undefined)}
 							/>
 						)}

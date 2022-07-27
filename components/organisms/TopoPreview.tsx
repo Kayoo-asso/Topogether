@@ -54,7 +54,7 @@ export const TopoPreview: React.FC<TopoPreviewProps> = ({
 
 	const coordinateItem = () => (
 		<div
-			className="ktext-label cursor-pointer text-grey-medium"
+			className="ktext-label cursor-pointer text-grey-medium overflow-hidden"
 			onClick={() => {
 				const data = [
 					new ClipboardItem({
@@ -109,9 +109,9 @@ export const TopoPreview: React.FC<TopoPreviewProps> = ({
 					/>
 				</div>
 
-				<div className="ktext-section-title mt-4 flex flex-row items-center px-4">
+				<div className="mt-4 flex flex-row items-center px-4">
 					<Waypoint className={"h-6 w-6 " + TopoTypeToColor(topo.type)} />
-					<div className="ml-2">{topo.name}</div>
+					<div className={"ml-2 ktext-section-title" + (topo.name.length > 16 ? ' text-lg' : '')}>{topo.name}</div>
 				</div>
 				{topo.creator && displayCreator &&
 					<div className='px-4 ktext-label'>
