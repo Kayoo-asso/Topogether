@@ -111,7 +111,7 @@ export const TopoPreview: React.FC<TopoPreviewProps> = ({
 
 				<div className="mt-4 flex flex-row items-center px-4">
 					<Waypoint className={"h-6 w-6 " + TopoTypeToColor(topo.type)} />
-					<div className={"ml-2 ktext-section-title" + (topo.name.length > 16 ? ' text-lg' : '')}>{topo.name}</div>
+					<div className={"ml-2 ktext-section-title" + (topo.name.length > 16 ? ' text-base' : '')}>{topo.name}</div>
 				</div>
 				{topo.creator && displayCreator &&
 					<div className='px-4 ktext-label'>
@@ -148,7 +148,7 @@ export const TopoPreview: React.FC<TopoPreviewProps> = ({
 					{topo.description}
 				</div>
 
-				<div className="flex flex-row px-4 py-4 md:flex-col md:pt-6">
+				<div className="flex flex-row px-4 py-4 md:flex-col">
 					<div className="flex w-1/3 flex-col gap-3 md:w-full md:flex-row md:justify-around">
 						<div className="flex flex-row items-center gap-2 pt-6 md:pt-0">
 							<Rock className="h-6 w-6 stroke-dark" />
@@ -172,7 +172,7 @@ export const TopoPreview: React.FC<TopoPreviewProps> = ({
 				)}
 
 				{props.mainButton &&
-					<div className="flex w-full flex-col px-4 py-6">
+					<div className="flex w-full flex-col px-4 pb-6 pt-4">
 						<Button
 							content={props.mainButton?.content || "Entrer"}
 							fullWidth
