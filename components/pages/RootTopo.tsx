@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
 	AccessSlideover,
 	InfoSlideover,
@@ -70,7 +70,7 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 		const topo = props.topoQuark();
 
 		const sectors = topo.sectors;
-		const boulders = topo.boulders;
+		const boulders = topo.boulders.filter(b => b.tracks.length > 0);
 		const parkings = topo.parkings;
 		const waypoints = topo.waypoints;
 		const boulderOrder = useCreateDerivation(() =>
