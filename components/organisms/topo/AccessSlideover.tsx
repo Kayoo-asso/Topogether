@@ -61,7 +61,7 @@ export const AccessSlideover: React.FC<AccessSlideoverProps> = ({
 							<Tabs tabs={getTabOptions()} className="pt-2 pb-6 md:pt-8" />
 						)}
 						<div className="flex flex-row justify-between md:flex-col">
-							{access.difficulty && (
+							{access.difficulty !== undefined && (
 								<div>
 									<span className="font-semibold">Difficulté : </span>
 									{DifficultyName[access.difficulty]}
