@@ -65,7 +65,6 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 		const router = useRouter();
 		const session = useSession();
 		const { b: bId } = router.query; // Get boulder id from url if selected
-		const firstRender = useFirstRender();
 		const breakpoint = useBreakpoint();
 
 		const topo = props.topoQuark();
@@ -77,6 +76,8 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 		const boulderOrder = useCreateDerivation(() =>
 			sortBoulders(topo.sectors, topo.lonelyBoulders)
 		);
+
+
 
 		const [currentImage, setCurrentImage] = useState<Image>();
 		const selectedSector = useSelectQuark<Sector>();
@@ -110,7 +111,7 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 			[selectedBoulder]
 		);
 		// Hack: select boulder from query parameter
-		if (firstRender) {
+		useEffect(() => {
 			if (typeof bId === "string") {
 				const expanded = decodeUUID(bId);
 				if (isUUID(expanded)) {
@@ -118,7 +119,8 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 					if (boulder) toggleBoulderSelect(boulder);
 				}
 			}
-		}
+		}, [])
+
 		const toggleTrackSelect = useCallback(
 			(trackQuark: Quark<Track>, boulderQuark: Quark<Boulder>) => {
 				selectedBoulder.select(undefined);
