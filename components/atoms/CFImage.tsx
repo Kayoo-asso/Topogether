@@ -7,7 +7,6 @@ import {
 import type { StaticImageData } from "next/image";
 import {
 	ImgHTMLAttributes,
-	forwardRef,
 	useRef,
 	useState,
 	useCallback,
@@ -38,7 +37,7 @@ type RawImageAttributes = Omit<
 >;
 
 // TODO: implement priority using a <link> tag + next/head (as next/image does)
-export const CFImage = forwardRef<HTMLImageElement, CFImageProps>(
+export const CFImage = (
 	(
 		{
 			image,
@@ -49,9 +48,7 @@ export const CFImage = forwardRef<HTMLImageElement, CFImageProps>(
 			bgObjectFit,
 			defaultImage = defaultKayoo,
 			...props
-		}: CFImageProps,
-		parentRef
-	) => {
+		}: CFImageProps) => {
 		const device = useBreakpoint();
 		const imgRef = useRef<HTMLImageElement>(null);
 
@@ -126,14 +123,14 @@ export const CFImage = forwardRef<HTMLImageElement, CFImageProps>(
 		return wrapPortal(
 			wrapZoomable(
 				<img
-					ref={(ref) => {
+					key={image?.id}
+					ref={useCallback((ref) => {
 						// In case the image has loaded before the onLoad handler was registered
 						if (ref?.complete) {
 							clearPlaceholder(ref);
 						}
 						setReactRef(imgRef, ref);
-						setReactRef(parentRef, ref);
-					}}
+					}, [])}
 					{...props}
 					src={src}
 					width={width}
