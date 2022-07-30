@@ -86,9 +86,6 @@ create table public.boulder_images (
 /* 5. Update dependent views */
 
 /* 5.a. public.profiles */
--- Cascades to `light_topo` but we'll recreate that later anyways
-drop view public.profiles cascade;
-
 create view public.profiles as
 	select 
 		id,
@@ -108,8 +105,6 @@ create trigger profiles_are_read_only
 	for each row execute function internal.do_nothing();
 
 /* 5.b. public.topos_with_like */
-drop view topos_with_like cascade;
-
 create view topos_with_like as
     select t.*, likes_topo(t.id) as liked
     from public.topos as t;
@@ -144,10 +139,16 @@ as $$
     )
 $$ language sql volatile;
 
+-- Now recreate the stuff we deleted
 create view public.light_topos as
 	select
 		t.id, t.name, t.status,
 		likes_topo(t.id) as liked,
+		t.location::jsonb->'coordinates' as location,
+		t.forbidden,
+		t.modified, t.submitted, t.validated,
+		t.amenities, t."rockTypes",
+		t.type, t.description, t.altitude, t."closestCity",
 		image,
 		creator,
 		count(s) as "nbSectors",
@@ -157,21 +158,50 @@ create view public.light_topos as
 		 from public.parkings 
 		 where "topoId" = t.id 
 		 limit 1
-		) as "parkingLocation"
-		-- (select jsonb_object_agg(grade, count)
-    --  from (
-    --     select grade_to_category(tr.grade) as grade, count(*) as count
-    --     from tr
-    --     group by grade_to_category(tr.grade)
-    --  ) as _
-		-- ).* as grades
+		) as "parkingLocation",
+		-- The inline query & having to go back to `public.tracks` seem bad
+		-- Not sure how to handle it otherwise (kind of want a lateral join)
+		(select jsonb_object_agg(grade, count)
+     from (
+        select grade_to_category(tr.grade) as grade, count(*) as count
+        from public.tracks as tr
+				where tr."topoId" = t.id
+        group by grade_to_category(tr.grade)
+     ) as _
+		) as grades
 	from public.topos t
 	left join public.sectors s on s."topoId" = t.id
 	left join public.boulders b on b."topoId" = t.id
 	left join public.tracks tr on tr."topoId" = t.id
 	left join public.images image on image.id = t.image_id
-	left join public.profiles creator on creator.id = topo."creatorId"
-	-- lateral ( select grade_to_category(tr.grade) as grade, count(*) from tr group by grade_to_category(tr.grade) )
-	group by t.id;
+	left join public.profiles creator on creator.id = t."creatorId"
+	group by t.id, image.id, creator.*;
+
+create function search_light_topos(_query text, _nb integer, _similarity double precision)
+returns setof public.light_topos
+as $$
+	select *
+	from public.light_topos
+	where id in (
+		select id
+		from public.topos t
+		where similarity(t.name, _query) > _similarity
+	);
+$$ language sql volatile;
+
+create function liked_topos_of_user(_user_id uuid) returns setof public.light_topos as $$
+	select t.*
+	from public.topo_likes likes
+	join public.light_topos t
+	on likes."topoId" = t.id
+	where likes."userId" = _user_id;
+$$ language sql stable;
+
+create function get_contributor_topos(_user_id uuid) returns setof public.light_topos as $$
+	select t.*
+	from topo_contributors tc
+	join light_topos t on t.id = tc.topo_id
+	where tc.user_id = _user_id;
+$$ language sql stable;
 
 commit;
