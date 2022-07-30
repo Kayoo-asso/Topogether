@@ -28,7 +28,6 @@ import {
 } from "types";
 import {
 	Quark,
-	QuarkArray,
 	QuarkIter,
 	useCreateDerivation,
 	useCreateQuark,
