@@ -3,7 +3,7 @@ import { Flash, SlideagainstRightDesktop, SlideoverMobile } from "components";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { Waypoint } from "types";
 import { useBreakpoint } from "helpers/hooks";
-import { Image } from "components/atoms/CFImage";
+import { Image } from "components/atoms/Image";
 
 import HelpRound from "assets/icons/help-round.svg";
 

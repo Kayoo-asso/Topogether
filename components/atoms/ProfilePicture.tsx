@@ -1,6 +1,6 @@
 import React from "react";
 import { Img } from "types";
-import { Image } from "./CFImage";
+import { Image } from "./Image";
 import { Loading } from "./buttons/Loading";
 
 import defaultProfilePicture from "public/assets/img/Default_profile_picture.png";

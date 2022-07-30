@@ -9,7 +9,7 @@ import {
 import { Quark, watchDependencies } from "helpers/quarky";
 import { Parking } from "types";
 import { useBreakpoint } from "helpers/hooks";
-import { Image } from "components/atoms/CFImage";
+import { Image } from "components/atoms/Image";
 
 import ParkingIcon from "assets/icons/parking.svg";
 

@@ -2,7 +2,7 @@ import React from "react";
 // eslint-disable-next-line import/no-cycle
 import useDimensions from "react-cool-dimensions";
 import { DeleteButton } from ".";
-import { Image } from "../CFImage";
+import { Image } from "../Image";
 import { Img } from "types";
 import Spinner from "assets/icons/spinner.svg";
 

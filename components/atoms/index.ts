@@ -9,4 +9,4 @@ export * from "./GradeCircle";
 export * from "./AverageNote";
 export * from "./ProfilePicture";
 export * from "./Card";
-export * from "./CFImage";
+export * from "./Image";

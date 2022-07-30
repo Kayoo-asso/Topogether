@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { QuarkArray } from "helpers/quarky";
 import { TopoAccess } from "types";
 import { DifficultyName } from "types/EnumNames";
-import { Image } from "components/atoms/CFImage";
+import { Image } from "components/atoms/Image";
 import { SlideoverMobile, SlideoverLeftDesktop } from "components/atoms";
 import { TabOption, Tabs } from "components/layouts/Tabs";
 import { useBreakpoint } from "helpers/hooks";

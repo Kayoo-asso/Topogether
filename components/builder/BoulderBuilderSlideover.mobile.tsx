@@ -4,7 +4,7 @@ import { Boulder, Img, Topo, Track } from "types";
 import { Quark, watchDependencies, SelectQuarkNullable } from "helpers/quarky";
 import { TracksListBuilder } from ".";
 import { BoulderForm } from "..";
-import { Image } from "components/atoms/CFImage";
+import { Image } from "components/atoms/Image";
 import { ImageInput } from "components/molecules";
 import { Button } from "components/atoms";
 

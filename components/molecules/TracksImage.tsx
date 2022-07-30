@@ -12,7 +12,7 @@ import {
 	SelectQuarkNullable,
 	watchDependencies,
 } from "helpers/quarky";
-import { Image } from "components/atoms/CFImage";
+import { Image } from "components/atoms/Image";
 import { SVGTrack } from "components/atoms";
 import QuickPinchZoom, { make3dTransformValue } from "react-quick-pinch-zoom";
 import { SourceSize } from "helpers/utils";

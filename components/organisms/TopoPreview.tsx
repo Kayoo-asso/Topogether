@@ -11,7 +11,7 @@ import {
 } from "components";
 import { BaseColor, LightTopo, TopoStatus } from "types";
 import { encodeUUID, formatDate } from "helpers/utils";
-import { Image } from "components/atoms/CFImage";
+import { Image } from "components/atoms/Image";
 import Rock from "assets/icons/rock.svg";
 import ManyTracks from "assets/icons/many-tracks.svg";
 import Waypoint from "assets/icons/waypoint.svg";

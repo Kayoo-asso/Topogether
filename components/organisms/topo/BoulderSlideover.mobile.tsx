@@ -9,7 +9,7 @@ import {
 import { Boulder, Img, Track, UUID } from "types";
 import { Quark, watchDependencies, SelectQuarkNullable } from "helpers/quarky";
 import { TracksList } from "..";
-import { Image } from "components/atoms/CFImage";
+import { Image } from "components/atoms/Image";
 import ManyTracks from "assets/icons/many-tracks.svg";
 import AddIcon from "assets/icons/add.svg";
 

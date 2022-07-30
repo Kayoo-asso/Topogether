@@ -1,8 +1,8 @@
 import {
 	SourceSize,
 	VariantWidths,
-	cloudflareUrl,
 	setReactRef,
+	bunnyUrl,
 } from "helpers/utils";
 import type { StaticImageData } from "next/image";
 import {
@@ -18,7 +18,7 @@ import type { Img } from "types";
 
 import defaultKayoo from "public/assets/img/Kayoo_defaut_image.png";
 
-export type CFImageProps = RawImageAttributes & {
+export type ImageProps = RawImageAttributes & {
 	alt: string;
 	image?: Img;
 	objectFit?: "contain" | "cover";
@@ -46,7 +46,7 @@ export const Image = ({
 	bgObjectFit,
 	defaultImage = defaultKayoo,
 	...props
-}: CFImageProps) => {
+}: ImageProps) => {
 	const device = useBreakpoint();
 	const imgRef = useRef<HTMLImageElement>(null);
 
@@ -104,14 +104,14 @@ export const Image = ({
 	if (image) {
 		const defaultVariant = device === "mobile" ? 640 : 1920; //TODO: optimize by checking size
 		const sources = VariantWidths.map(
-			(w) => `${cloudflareUrl(image.id, w)} ${w}w`
+			(w) => `${bunnyUrl(image.id, w)} ${w}w`
 		);
 		// note: check that width and height are not actual constraints,
 		// only aspect ratio information
 		width = defaultVariant;
 		height = width / image.ratio;
 		srcSet = sources.join();
-		src = cloudflareUrl(image.id, defaultVariant);
+		src = bunnyUrl(image.id, defaultVariant);
 		sizes = portalOpen
 			? "100vw"
 			: typeof sizeHint === "string"
