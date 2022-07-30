@@ -38,6 +38,7 @@ let topoUnderEdit: UUID | null = null;
 export async function createTopo(create: TopoCreate): Promise<TopoData | null> {
 	const dataWithArrays: TopoData = {
 		...create,
+		location: create.location,
 		liked: false,
 		sectors: [],
 		boulders: [],

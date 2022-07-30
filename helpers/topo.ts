@@ -109,9 +109,9 @@ export const validateRule = (topo: Topo, rule: Rule): boolean => {
 		case "DESCRIPTION":
 			return !!topo.description;
 		case "ROCK_TYPE":
-			return topo.rockTypes !== undefined;
+			return !!topo.rockTypes;
 		case "ALTITUDE":
-			return topo.altitude !== undefined;
+			return (topo.altitude !== undefined && topo.altitude !== null);
 		case "PARKINGS":
 			return topo.parkings.length > 0;
 		case "INFOS_ACCESS":

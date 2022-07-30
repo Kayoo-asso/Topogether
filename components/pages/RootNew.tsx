@@ -1,18 +1,17 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { StringBetween, TopoType, User } from "types";
-import Link from "next/link";
 import { v4 } from "uuid";
 import { useRouter } from "next/router";
-import { useCreateQuark, watchDependencies } from "helpers/quarky";
+import { watchDependencies } from "helpers/quarky";
 import { selectOptions, TopoTypeName } from "types/EnumNames";
-import { usePosition } from "helpers/hooks";
-import { Button } from "components/atoms";
+import { useBreakpoint, usePosition } from "helpers/hooks";
 import { Header } from "components/layouts/Header";
 import { MapControl, CreatingTopoMarker } from "components/map";
-import { TextInput, Select } from "components/molecules";
-import { fontainebleauLocation } from "helpers/constants";
+import { TextInput } from "components/molecules";
 import { TopoCreate, createTopo } from "helpers/quarkifyTopo";
 import { encodeUUID } from "helpers/utils";
+import { SelectTouch } from "components/molecules/form/SelectTouch";
+import { ValidateButton } from "components/atoms/buttons/ValidateButton";
 
 interface RootNewProps {
 	user: User;
@@ -20,24 +19,17 @@ interface RootNewProps {
 
 export const RootNew: React.FC<RootNewProps> = watchDependencies(
 	(props: RootNewProps) => {
+		const device = useBreakpoint();
 		const router = useRouter();
 		const { position } = usePosition();
 
-		const [step, setStep] = useState(0);
+		const [step, setStep] = useState(1);
 
-		const topoData: TopoCreate = {
-			id: v4(),
-			creator: props.user,
-			name: "" as StringBetween<1, 255>,
-			status: 0,
-			type: undefined,
-			forbidden: false,
-			location: position || fontainebleauLocation, // set initial position to user's location
-			modified: new Date().toISOString(),
-		};
-
-		const topoQuark = useCreateQuark<TopoCreate>(topoData);
-		const topo = topoQuark();
+		const [name, setName] = useState<string>();
+		const [type, setType] = useState<TopoType | undefined>(0);
+		// set initial position to user's location if possible
+		const [latitude, setLatitude] = useState<number | undefined>(position ? position[0] : undefined);
+		const [longitude, setLongitude] = useState<number | undefined>(position ? position[1] : undefined);
 
 		const [loading, setLoading] = useState<boolean>(false);
 		const [nameError, setNameError] = useState<string>();
@@ -51,24 +43,43 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies(
 			if (nameInputRef.current) nameInputRef.current.focus();
 		}, [nameInputRef]);
 
-		const goStep1 = () => {
+		const isValidStep0 = () => {
 			// TODO : check if the name already exists
-			if (!topo.name) setNameError("Merci d'indiquer un nom valide");
-			else setStep(1);
-		};
-		const goStep2 = () => {
-			if (topo.type && isNaN(topo.type))
-				setTypeError("Merci d'indiquer un type de spot");
-			else setStep(2);
-		};
+			if (!name) setNameError("Merci d'indiquer un nom valide");
+			if (type === undefined || isNaN(type)) setTypeError("Merci de sélectionner un type de spot");
+			if (name && type !== undefined && !isNaN(type)) return true;
+			else return false;
+		}
+		const isValideStep1 = () => {
+			if (!latitude || isNaN(latitude)) setLatitudeError("Latitude invalide");
+			if (!longitude || isNaN(longitude)) setLongitudeError("Longitude invalide");
+			if (latitude && !isNaN(latitude) && longitude && !isNaN(longitude)) return true;
+			else return false;
+		}
 
+		const goStep1 = () => {
+			if (isValidStep0()) setStep(1);
+		};
 		const create = async () => {
-			setLoading(true);
-			const newTopo = await createTopo(topo);
-			if (newTopo) {
-				await router.push("/builder/" + encodeUUID(newTopo.id));
-			} else {
-				setCreationError("Une erreur est survenue. Merci de réessayer.");
+			if (!isValidStep0()) setStep(0);
+			else if (isValideStep1()) {
+				setLoading(true);
+				const topoData: TopoCreate = {
+					id: v4(),
+					creator: props.user,
+					name: name as StringBetween<1, 255>,
+					status: 0,
+					type: type,
+					forbidden: false,
+					location: [latitude!, longitude!],
+					modified: new Date().toISOString(),
+				};
+				const newTopo = await createTopo(topoData);
+				if (newTopo) {
+					await router.push("/builder/" + encodeUUID(newTopo.id));
+				} else {
+					setCreationError("Une erreur est survenue. Merci de réessayer.");
+				}
 			}
 		};
 
@@ -77,7 +88,6 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies(
 				if (e.key === "Enter") {
 					e.preventDefault();
 					if (step === 0) goStep1();
-					else if (step === 1) goStep2();
 					else create();
 				}
 			});
@@ -85,7 +95,11 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies(
 
 		return (
 			<>
-				<Header backLink="/builder/dashboard" title="Nouveau topo" />
+				<Header 
+				 	title="Nouveau topo"
+					backLink="/builder/dashboard"
+					onBackClick={step === 1 ? () => setStep(0) : undefined}
+				/>
 
 				<div
 					className={
@@ -95,95 +109,73 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies(
 				>
 					<div className={"flex w-full flex-col items-center justify-center"}>
 						{step === 0 && (
-							<div className="w-full px-[10%]">
-								<TextInput
-									ref={nameInputRef}
-									id="topo-name"
-									label="Nom du topo"
-									big
-									white
-									wrapperClassName="w-full mb-10"
-									error={nameError}
-									value={topo.name}
-									onChange={(e) => {
-										setNameError(undefined);
-										topoQuark.set({
-											...topo,
-											name: e.target.value as StringBetween<1, 255>,
-										});
-									}}
-								/>
-								<div className="md :justify-end flex w-full flex-row items-center  justify-between">
-									<Link href="/builder/dashboard">
-										<a className="ktext-base-little cursor-pointer text-white md:mr-16">
-											Annuler
-										</a>
-									</Link>
-									<Button content="Suivant" white onClick={goStep1} />
+							<div className="w-full h-full px-[10%] pt-[45%] md:pt-[25%] pb-[5%] flex flex-col justify-between">
+								<div className="w-full flex flex-col gap-20">
+									<TextInput
+										ref={nameInputRef}
+										id="topo-name"
+										label="Nom du topo"
+										big
+										white
+										error={nameError}
+										value={name}
+										onChange={(e) => {
+											setNameError(undefined);
+											setName(e.target.value);
+										}}
+									/>
+
+									<SelectTouch 
+										options={selectOptions(TopoTypeName)}
+										value={type}
+										white
+										big={device === 'desktop' ? true : false}
+										error={typeError}
+										onChange={(val: TopoType | undefined) => {
+											setTypeError(undefined);
+											setType(val);
+										}}
+									/>
 								</div>
-							</div>
+
+								<div className="flex w-full justify-center">
+									<ValidateButton white onClick={goStep1} />
+								</div>
+							</div>								
 						)}
 
 						{step === 1 && (
-							<div className="w-full px-[10%]">
-								<Select
-									id="topo-type"
-									label="Type de spot"
-									options={selectOptions(TopoTypeName)}
-									big
-									white
-									wrapperClassname="w-full mb-10"
-									value={topo.type}
-									error={typeError}
-									onChange={(val: TopoType) => {
-										setTypeError(undefined);
-										topoQuark.set({
-											...topo,
-											type: val,
-										});
-									}}
-								/>
-								<div className="flex w-full flex-row items-center justify-between md:justify-end">
-									<div
-										className="ktext-base-little cursor-pointer text-white md:mr-16"
-										onClick={() => setStep(0)}
-									>
-										Retour
-									</div>
-									<Button
-										content="Suivant"
-										white
-										onClick={goStep2}
-										activated={!loading}
-									/>
-								</div>
-							</div>
-						)}
-
-						{step === 2 && (
 							<>
+								<div className="text-white py-5 text-center w-full ktext-subtitle">Vous pouvez cliquer sur la carte puis glisser le marqueur pour placer le topo.</div>
 								<div className="mb-10 h-[55vh] w-full md:mb-16 md:h-[65vh]">
+									
 									<MapControl
 										initialZoom={10}
 										searchbarOptions={{ findPlaces: true }}
 										onClick={(e) => {
 											if (e.latLng) {
-												topoQuark.set({
-													...topo,
-													location: [e.latLng.lng(), e.latLng.lat()],
-												});
+												setLatitude(e.latLng.lng());
+												setLongitude(e.latLng.lat());
 											}
 										}}
 										onUserMarkerClick={(e) => {
 											if (e.latLng) {
-												topoQuark.set({
-													...topo,
-													location: [e.latLng.lng(), e.latLng.lat()],
-												});
+												setLatitude(e.latLng.lng());
+												setLongitude(e.latLng.lat());
 											}
 										}}
 									>
-										<CreatingTopoMarker topo={topoQuark} draggable />
+										{latitude && longitude &&
+											<CreatingTopoMarker
+												type={type}
+												location={[latitude, longitude]}
+												setLocation={(lat: number, lng: number) => {
+													setLatitude(lat);
+													setLongitude(lng);
+												}}
+												draggable 
+											/>
+										}
 									</MapControl>
 								</div>
 
@@ -195,16 +187,10 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies(
 											error={latitudeError}
 											white
 											wrapperClassName="w-full mb-10"
-											value={topo.location[1] || ""}
+											value={latitude}
 											onChange={(e) => {
 												setLatitudeError(undefined);
-												topoQuark.set({
-													...topo,
-													location: [
-														topo.location[0],
-														parseFloat(e.target.value),
-													],
-												});
+												setLatitude(parseFloat(e.target.value));
 											}}
 										/>
 										<TextInput
@@ -213,45 +199,30 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies(
 											error={longitudeError}
 											white
 											wrapperClassName="w-full mb-10"
-											value={topo.location[0] || ""}
+											value={longitude}
 											onChange={(e) => {
 												setLongitudeError(undefined);
-												topoQuark.set({
-													...topo,
-													location: [
-														parseFloat(e.target.value),
-														topo.location[1],
-													],
-												});
+												setLongitude(parseFloat(e.target.value));
 											}}
 										/>
 									</div>
-									<div className="flex w-full flex-row items-center justify-between md:justify-end">
-										<div
-											className="ktext-base-little cursor-pointer text-white md:mr-16"
-											onClick={() => setStep(1)}
-										>
-											Retour
+
+									<div className="flex w-full flex-row justify-center md:justify-between">
+										{device === 'desktop' &&
+											<div className="text-white flex items-center cursor-pointer" onClick={() => setStep(0)}>Retour</div>
+										}
+										<div>
+											<ValidateButton 
+												white
+												loading={loading}
+												onClick={create}
+											/>
+											{creationError && (
+												<div className="ktext-error text-error mt-3">{creationError}</div>
+											)}
 										</div>
-										<Button
-											content="Créer"
-											white
-											loading={loading}
-											onClick={() => {
-												if (isNaN(topo.location[1]))
-													setLatitudeError("Latitude invalide");
-												if (isNaN(topo.location[0]))
-													setLongitudeError("Longitude invalide");
-												if (
-													!isNaN(topo.location[1]) &&
-													!isNaN(topo.location[0])
-												)
-													create();
-											}}
-										/>
-										{creationError && (
-											<div className="ktext-error">{creationError}</div>
-										)}
+										{/* Just for alignment */}
+										{device === 'desktop' && <div></div>}
 									</div>
 								</div>
 							</>

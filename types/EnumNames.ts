@@ -17,12 +17,12 @@ export const ReceptionName: { [key in Reception]: string } = {
 	[Reception.None]: "ATTENTION ! Pas d'espace de réception",
 };
 
-export const TopoTypeName: { [key in TopoType]: string } = {
+export const TopoTypeName = {
 	[TopoType.Artificial]: "Artificiel",
 	[TopoType.Boulder]: "Bloc",
-	[TopoType.Cliff]: "Falaise",
-	[TopoType.DeepWater]: "Deepwater / Psicobloc",
-	[TopoType.Multipitch]: "Grande voie",
+	// [TopoType.Cliff]: "Falaise",
+	[TopoType.DeepWater]: "Psicobloc",
+	// [TopoType.Multipitch]: "Grande voie",
 };
 
 export const OrientationName: { [key in Orientation]: string } = {

@@ -1,52 +1,47 @@
 import React, { useCallback } from "react";
-import { Quark, watchDependencies } from "helpers/quarky";
-import { MarkerEventHandlers } from "types";
+import { GeoCoordinates, MarkerEventHandlers, TopoType } from "types";
 import { markerSize, toLatLng, useMarker } from "helpers/map";
-import { TopoCreate } from "helpers/quarkifyTopo";
 import { TopoTypeToColor } from "helpers/topo";
 
 interface CreatingTopoMarkerProps {
-	topo: Quark<TopoCreate>;
+	location: GeoCoordinates,
+	setLocation: (lat: number, lng: number) => void,
+	type?: TopoType,
 	draggable?: boolean;
 }
 
-export const CreatingTopoMarker: React.FC<CreatingTopoMarkerProps> =
-	watchDependencies(
-		({ draggable = false, ...props }: CreatingTopoMarkerProps) => {
-			const topo = props.topo();
+export const CreatingTopoMarker: React.FC<CreatingTopoMarkerProps> = ({ 
+	draggable = false, 
+	...props 
+}: CreatingTopoMarkerProps) => {
+	const icon: google.maps.Icon = {
+		url:
+			"/assets/icons/colored/waypoint/_" +
+			TopoTypeToColor(props.type) +
+			".svg",
+		scaledSize: markerSize(30),
+	};
 
-			const icon: google.maps.Icon = {
-				url:
-					"/assets/icons/colored/waypoint/_" +
-					TopoTypeToColor(topo.type) +
-					".svg",
-				scaledSize: markerSize(30),
-			};
+	const options: google.maps.MarkerOptions = {
+		icon,
+		draggable,
+		zIndex: 10,
+		position: toLatLng(props.location),
+	};
 
-			const options: google.maps.MarkerOptions = {
-				icon,
-				draggable,
-				zIndex: 10,
-				position: toLatLng(topo.location),
-			};
+	const handlers: MarkerEventHandlers = {
+		onDragEnd: useCallback(
+			(e: google.maps.MapMouseEvent) => {
+				if (e.latLng) {
+					props.setLocation(e.latLng.lat(), e.latLng.lng())
+				}
+			},
+			[props.setLocation]
+		),
+	};
+	useMarker(options, handlers);
 
-			const handlers: MarkerEventHandlers = {
-				onDragEnd: useCallback(
-					(e: google.maps.MapMouseEvent) => {
-						if (e.latLng) {
-							props.topo.set({
-								...topo,
-								location: [e.latLng.lng(), e.latLng.lat()],
-							});
-						}
-					},
-					[props.topo]
-				),
-			};
-			useMarker(options, handlers);
-
-			return null;
-		}
-	);
+	return null;
+}
 
 CreatingTopoMarker.displayName = "CreatingTopoMarker";
