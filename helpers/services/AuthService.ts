@@ -81,7 +81,7 @@ export class AuthService {
 		}
 		const dto = DBConvert.user(user);
 		const { error } = await this.client
-			.from<DBUserUpdate>("users")
+			.from<DBUserUpdate>("accounts")
 			.update(dto)
 			.eq("id", dto.id);
 		if (error) {
@@ -191,7 +191,7 @@ export class AuthService {
 			return true;
 		}
 		const { data, error } = await this.client
-			.from<User>("users")
+			.from<User>("accounts")
 			.select("*")
 			.match({ id })
 			// single and not maybeSingle, since the row has to exist if we have a Supabase user

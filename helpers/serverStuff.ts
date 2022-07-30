@@ -163,7 +163,7 @@ export async function getUserInitialProps(
 	);
 
 	const { data, error } = await supabaseClient
-		.from<User>("users")
+		.from<User>("accounts")
 		.select("*")
 		.eq("id", userId)
 		.single();
