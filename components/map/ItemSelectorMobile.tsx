@@ -2,7 +2,7 @@ import React from "react";
 import { ImageInput } from "components/molecules";
 import { useBreakpoint } from "helpers/hooks";
 
-import type { Image, MapToolEnum } from "types";
+import type { Img, MapToolEnum } from "types";
 
 import Sector from "assets/icons/sector.svg";
 import Rock from "assets/icons/rock.svg";
@@ -13,7 +13,7 @@ interface ItemSelectorMobileProps {
 	currentTool?: MapToolEnum;
 	photoActivated?: boolean;
 	onToolSelect: (tool: MapToolEnum) => void;
-	onNewPhoto: (img: Image) => void;
+	onNewPhoto: (img: Img) => void;
 	onPhotoButtonClick?: () => void;
 }
 

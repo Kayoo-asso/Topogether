@@ -17,7 +17,7 @@ import {
 import {
 	Boulder,
 	ClimbTechniques,
-	Image,
+	Img,
 	isUUID,
 	Parking,
 	Sector,
@@ -76,9 +76,7 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 			sortBoulders(topo.sectors, topo.lonelyBoulders)
 		);
 
-
-
-		const [currentImage, setCurrentImage] = useState<Image>();
+		const [currentImage, setCurrentImage] = useState<Img>();
 		const selectedSector = useSelectQuark<Sector>();
 		const selectedBoulder = useSelectQuark<Boulder>();
 		const selectedTrack = useSelectQuark<Track>();
@@ -118,7 +116,7 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 					if (boulder) toggleBoulderSelect(boulder);
 				}
 			}
-		}, [])
+		}, []);
 
 		const toggleTrackSelect = useCallback(
 			(trackQuark: Quark<Track>, boulderQuark: Quark<Boulder>) => {
@@ -358,13 +356,14 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 						boundsTo={boulders
 							.map((b) => b.location)
 							.concat(parkings.map((p) => p.location))
-							.toArray()
-						}
+							.toArray()}
 					>
 						{/* TODO: improve the callbacks */}
 						<ClusterProvider>
 							<For
-								each={() => filterBoulders(boulders.quarks().toArray(), boulderFilters())}
+								each={() =>
+									filterBoulders(boulders.quarks().toArray(), boulderFilters())
+								}
 							>
 								{(boulder) => (
 									<BoulderMarker

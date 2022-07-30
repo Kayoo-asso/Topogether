@@ -1,7 +1,7 @@
 import {
 	BoulderData,
 	Name,
-	Image,
+	Img,
 	TrackData,
 	Description,
 	Difficulty,
@@ -37,7 +37,7 @@ export const fakeAdmin: User & { password: string } = {
 	role: "ADMIN",
 };
 
-export const images: Image[] = [
+export const images: Img[] = [
 	{
 		id: "08f005e1-d68d-439c-74c8-129393e10b00" as UUID,
 		ratio: 4592 / 3064,

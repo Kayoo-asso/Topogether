@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import {
 	Boulder,
 	GeoCoordinates,
-	Image,
+	Img,
 	MapToolEnum,
 	Parking,
 	Sector,
@@ -109,7 +109,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 		const multipleImageInputRef = useRef<HTMLInputElement>(null);
 		const [currentTool, setCurrentTool] = useState<MapToolEnum>();
 		const [tempCurrentTool, setTempCurrentTool] = useState<MapToolEnum>();
-		const [currentImage, setCurrentImage] = useState<Image>();
+		const [currentImage, setCurrentImage] = useState<Img>();
 
 		const selectedSector = useSelectQuark<Sector>();
 		const sectorRightClicked = useSelectQuark<Sector>();
@@ -413,7 +413,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 		}, [currentTool, tempCurrentTool]);
 
 		const handleNewPhoto = useCallback(
-			(img: Image, coords: GeoCoordinates) => {
+			(img: Img, coords: GeoCoordinates) => {
 				if (!coords) {
 					console.log("no coords");
 					return;
@@ -948,16 +948,22 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 					onConfirm={(boulderQuark) => {
 						topo.boulders.removeQuark(boulderQuark);
 						const boulder = boulderQuark();
-						const sectorWithBoulder = sectors.findQuark(s => s.boulders.some(id => id === boulder.id))
-						if (sectorWithBoulder) //The boulder to delete is in a sector
-							sectorWithBoulder.set(s => ({
+						const sectorWithBoulder = sectors.findQuark((s) =>
+							s.boulders.some((id) => id === boulder.id)
+						);
+						if (sectorWithBoulder)
+							//The boulder to delete is in a sector
+							sectorWithBoulder.set((s) => ({
 								...s,
-								boulders: s.boulders.filter(id => id !== boulder.id)
+								boulders: s.boulders.filter((id) => id !== boulder.id),
 							}));
-						else { //The boulder to delete is in lonelyboulders
-							props.topoQuark.set(t => ({
+						else {
+							//The boulder to delete is in lonelyboulders
+							props.topoQuark.set((t) => ({
 								...t,
-								lonelyBoulders: t.lonelyBoulders.filter(id => id !== boulder.id)
+								lonelyBoulders: t.lonelyBoulders.filter(
+									(id) => id !== boulder.id
+								),
 							}));
 						}
 						if (selectedBoulder.quark() === boulderQuark)

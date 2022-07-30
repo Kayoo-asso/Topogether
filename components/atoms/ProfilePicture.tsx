@@ -1,12 +1,12 @@
 import React from "react";
-import { Image } from "types";
-import { CFImage } from "./CFImage";
+import { Img } from "types";
+import { Image } from "./CFImage";
 import { Loading } from "./buttons/Loading";
 
 import defaultProfilePicture from "public/assets/img/Default_profile_picture.png";
 
 interface ProfilePictureProps {
-	image?: Image;
+	image?: Img;
 	loading?: boolean;
 	onClick?: () => void;
 }
@@ -30,7 +30,7 @@ export const ProfilePicture: React.FC<ProfilePictureProps> = ({
 				</div>
 			)}
 			{!loading && (
-				<CFImage
+				<Image
 					image={props.image}
 					objectFit="cover"
 					alt="Photo de profil"

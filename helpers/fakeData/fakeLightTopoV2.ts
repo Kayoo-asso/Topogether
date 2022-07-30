@@ -2,7 +2,7 @@ import { quark, Quark } from "helpers/quarky";
 import { sync } from "helpers/services";
 import {
 	Name,
-	Image,
+	Img,
 	Description,
 	Amenities,
 	TopoStatus,
@@ -12,7 +12,7 @@ import {
 } from "types";
 import { v4 as uuid } from "uuid";
 
-export const images: Image[] = [
+export const images: Img[] = [
 	// Topo image
 	{
 		id: uuid(),

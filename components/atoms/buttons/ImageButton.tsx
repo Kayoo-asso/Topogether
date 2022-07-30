@@ -2,13 +2,13 @@ import React from "react";
 // eslint-disable-next-line import/no-cycle
 import useDimensions from "react-cool-dimensions";
 import { DeleteButton } from ".";
-import { CFImage } from "../CFImage";
-import { Image } from "types";
+import { Image } from "../CFImage";
+import { Img } from "types";
 import Spinner from "assets/icons/spinner.svg";
 
 interface ImageButtonProps {
 	text?: string;
-	image?: Image;
+	image?: Img;
 	loading?: boolean;
 	activated?: boolean;
 	onClick: () => void;
@@ -63,7 +63,7 @@ export const ImageButton: React.FC<ImageButtonProps> = ({
 							<DeleteButton onClick={props.onDelete} />
 						</div>
 					)}
-					<CFImage
+					<Image
 						image={props.image}
 						alt="user generated image"
 						objectFit="contain"

@@ -2,7 +2,7 @@ import { useRef, useState, forwardRef, useEffect, useCallback } from "react";
 // eslint-disable-next-line import/no-cycle
 import { ImageButton, ProfilePicture, RoundButton } from "../../atoms";
 import { api, ImageUploadErrorReason } from "helpers/services";
-import { Image } from "types";
+import { Img } from "types";
 import { setReactRef } from "helpers/utils";
 import Spinner from "assets/icons/spinner.svg";
 import Camera from "assets/icons/camera.svg";
@@ -10,11 +10,11 @@ import Camera from "assets/icons/camera.svg";
 interface ImageInputProps {
 	label?: string;
 	multiple?: boolean;
-	value?: Image;
+	value?: Img;
 	button?: "square" | "profile" | "builder";
 	size?: "little" | "big";
 	activated?: boolean;
-	onChange: (images: Image[]) => void;
+	onChange: (images: Img[]) => void;
 	onDelete?: () => void;
 	onError?: (err: string) => void;
 	onLoadStart?: () => void;
@@ -143,7 +143,7 @@ export const ImageInput = forwardRef<HTMLInputElement, ImageInputProps>(
 				)}
 				{!props.onError && (
 					<div
-						className={`ktext-error md:h-22 md:w-22 pt-1 text-error ${
+						className={`ktext-error pt-1 text-error md:h-22 md:w-22 ${
 							error && error.length > 0 ? "" : "hidden"
 						}`}
 					>

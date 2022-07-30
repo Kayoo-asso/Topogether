@@ -6,10 +6,10 @@ import {
 	Show,
 	ImageSlider,
 } from "components";
-import { Boulder, Image, Track, UUID } from "types";
+import { Boulder, Img, Track, UUID } from "types";
 import { Quark, watchDependencies, SelectQuarkNullable } from "helpers/quarky";
 import { TracksList } from "..";
-import { CFImage } from "components/atoms/CFImage";
+import { Image } from "components/atoms/CFImage";
 import ManyTracks from "assets/icons/many-tracks.svg";
 import AddIcon from "assets/icons/add.svg";
 
@@ -18,8 +18,8 @@ interface BoulderSlideoverMobileProps {
 	open?: boolean;
 	selectedTrack: SelectQuarkNullable<Track>;
 	topoCreatorId?: UUID;
-	currentImage?: Image;
-	setCurrentImage: Dispatch<SetStateAction<Image | undefined>>;
+	currentImage?: Img;
+	setCurrentImage: Dispatch<SetStateAction<Img | undefined>>;
 	onClose: () => void;
 }
 
@@ -115,13 +115,14 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> =
 													: "stroke-grey-medium")
 											}
 										/>
+										Image
 									</button>
 								)}
 								{full && <LikeButton liked={boulder.liked} />}
 
 								{!full && (
 									<div className="relative h-[60px] w-full overflow-hidden rounded-sm">
-										<CFImage
+										<Image
 											image={boulder.images[0]}
 											objectFit="contain"
 											alt="Boulder"

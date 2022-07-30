@@ -14,6 +14,6 @@ export const getSupaMasterClient = (): SupabaseClient | null =>
 	process.env.NEXT_PUBLIC_API_MASTER_KEY_LOCAL
 		? createClient(
 				process.env.NEXT_PUBLIC_API_URL!,
-				process.env.NEXT_PUBLIC_API_MASTER_KEY_LOCAL!
+				process.env.API_MASTER_KEY_LOCAL!
 		  )
 		: null;

@@ -1,13 +1,13 @@
 import React from "react";
-import { Image, Track, UUID } from "types";
+import { Img, Track, UUID } from "types";
 // eslint-disable-next-line import/no-cycle
 import { DeleteButton, TracksImage } from "components";
 import useDimensions from "react-cool-dimensions";
 import { Quark, QuarkIter, watchDependencies } from "helpers/quarky";
-import { CFImage } from "./CFImage";
+import { Image } from "./CFImage";
 
 interface ImageThumbProps {
-	image: Image;
+	image: Img;
 	tracks?: QuarkIter<Quark<Track>>;
 	selected?: boolean;
 	onDelete?: (id: UUID) => void;

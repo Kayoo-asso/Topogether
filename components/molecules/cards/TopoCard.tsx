@@ -1,10 +1,5 @@
-import React, {
-	MouseEvent,
-	TouchEvent,
-	useCallback,
-	useRef,
-} from "react";
-import { Card, CFImage } from "components";
+import React, { MouseEvent, TouchEvent, useCallback, useRef } from "react";
+import { Card, Image } from "components";
 import { formatDate } from "helpers/utils";
 import equal from "fast-deep-equal/es6";
 import { LightTopo, TopoStatus } from "types";
@@ -14,13 +9,14 @@ import Edit from "assets/icons/edit.svg";
 
 interface TopoCardProps {
 	topo: LightTopo;
-	onClick?: (topo: LightTopo) => void,
+	onClick?: (topo: LightTopo) => void;
 	onContextMenu: (topo: LightTopo, position: { x: number; y: number }) => void;
 }
 
 const iconSize = "h-4 w-4 md:h-6 md:w-6";
 
-export const TopoCard: React.FC<TopoCardProps> = React.memo((props: TopoCardProps) => {
+export const TopoCard: React.FC<TopoCardProps> = React.memo(
+	(props: TopoCardProps) => {
 		const topo = props.topo;
 
 		let TopoIcon;
@@ -92,9 +88,9 @@ export const TopoCard: React.FC<TopoCardProps> = React.memo((props: TopoCardProp
 				onTouchEnd={handleTouchEndContextMenu}
 				onClick={() => props.onClick && props.onClick(topo)}
 			>
-				<Card className="relative flex flex-col bg-white text-center text-grey-medium cursor-pointer">
+				<Card className="relative flex cursor-pointer flex-col bg-white text-center text-grey-medium">
 					<div className="relative top-0 h-[55%] w-full md:h-[75%]">
-						<CFImage
+						<Image
 							image={props.topo.image}
 							modalable={false}
 							objectFit="cover"

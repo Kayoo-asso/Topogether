@@ -2,7 +2,7 @@ import {
 	Amenities,
 	Boulder,
 	BoulderData,
-	Image,
+	Img,
 	DBBoulder,
 	DBLine,
 	DBManager,

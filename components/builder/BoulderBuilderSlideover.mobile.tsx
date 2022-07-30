@@ -1,10 +1,10 @@
 import React, { Dispatch, SetStateAction, useState } from "react";
 import { GradeScale, SlideoverMobile, ImageSlider } from "components";
-import { Boulder, Image, Topo, Track } from "types";
+import { Boulder, Img, Topo, Track } from "types";
 import { Quark, watchDependencies, SelectQuarkNullable } from "helpers/quarky";
 import { TracksListBuilder } from ".";
 import { BoulderForm } from "..";
-import { CFImage } from "components/atoms/CFImage";
+import { Image } from "components/atoms/CFImage";
 import { ImageInput } from "components/molecules";
 import { Button } from "components/atoms";
 
@@ -12,8 +12,8 @@ interface BoulderBuilderSlideoverMobileProps {
 	boulder: Quark<Boulder>;
 	topo: Quark<Topo>;
 	selectedTrack: SelectQuarkNullable<Track>;
-	currentImage?: Image;
-	setCurrentImage: Dispatch<SetStateAction<Image | undefined>>;
+	currentImage?: Img;
+	setCurrentImage: Dispatch<SetStateAction<Img | undefined>>;
 	onDrawButtonClick: () => void;
 	onCreateTrack: () => void;
 	onBoulderDelete: (boulder: Quark<Boulder>) => void;
@@ -85,7 +85,7 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
 
 							{!full && (
 								<div className="relative h-[60px] w-full overflow-hidden rounded-sm">
-									<CFImage
+									<Image
 										image={boulder.images[0]}
 										objectFit="contain"
 										alt="Boulder"

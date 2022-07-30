@@ -1,11 +1,11 @@
 import React, { forwardRef, useEffect, useState } from "react";
 import { ImageThumb } from "components";
-import { Boulder, Image, UUID } from "types";
+import { Boulder, Img, UUID } from "types";
 import { ImageInput } from ".";
 import ArrowFull from "assets/icons/arrow-full.svg";
 
 interface MultipleImageInputProps {
-	images: Image[];
+	images: Img[];
 	boulder?: Boulder;
 	label?: string;
 	rows?: number;
@@ -14,7 +14,7 @@ interface MultipleImageInputProps {
 	selected?: UUID;
 	onImageClick?: (id: UUID) => void;
 	onImageDelete?: (id: UUID) => void;
-	onChange: (images: Image[]) => void;
+	onChange: (images: Img[]) => void;
 	onLoadStart?: () => void;
 	onLoadEnd?: () => void;
 }

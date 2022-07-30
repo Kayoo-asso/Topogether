@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import {
 	DrawerToolEnum,
-	Image,
+	Img,
 	LinearRing,
 	PointEnum,
 	Position,
@@ -19,7 +19,7 @@ import { staticUrl } from "helpers/constants";
 import { useModal, Portal } from "helpers/hooks";
 
 interface DrawerProps {
-	image: Image;
+	image: Img;
 	tracks: QuarkArray<Track>;
 	selectedTrack: SelectQuarkNullable<Track>;
 	open: boolean;

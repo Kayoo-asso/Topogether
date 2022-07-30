@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { QuarkArray } from "helpers/quarky";
 import { TopoAccess } from "types";
 import { DifficultyName } from "types/EnumNames";
-import { CFImage } from "components/atoms/CFImage";
+import { Image } from "components/atoms/CFImage";
 import { SlideoverMobile, SlideoverLeftDesktop } from "components/atoms";
 import { TabOption, Tabs } from "components/layouts/Tabs";
 import { useBreakpoint } from "helpers/hooks";
@@ -85,7 +85,7 @@ export const AccessSlideover: React.FC<AccessSlideoverProps> = ({
 								<div>{step.description}</div>
 								{step.image && (
 									<div className="relative mt-2 h-[200px] w-auto overflow-hidden rounded-lg">
-										<CFImage
+										<Image
 											image={step.image}
 											objectFit="contain"
 											alt={"Marche d'approche étape " + index}

@@ -3,7 +3,7 @@ import { Flash, SlideagainstRightDesktop, SlideoverMobile } from "components";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { Waypoint } from "types";
 import { useBreakpoint } from "helpers/hooks";
-import { CFImage } from "components/atoms/CFImage";
+import { Image } from "components/atoms/CFImage";
 
 import HelpRound from "assets/icons/help-round.svg";
 
@@ -62,7 +62,7 @@ export const WaypointSlide: React.FC<WaypointSlideProps> = watchDependencies(
 					</div>
 
 					<div className="relative h-[60%] max-h-[200px] w-full md:h-[25%]">
-						<CFImage
+						<Image
 							image={waypoint.image}
 							alt="Point de repère"
 							objectFit="cover"

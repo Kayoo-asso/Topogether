@@ -4,7 +4,7 @@ import { setupBoulder, setupTrack } from "helpers/quarkifyTopo";
 import {
 	Boulder,
 	GeoCoordinates,
-	Image,
+	Img,
 	Name,
 	Parking,
 	SectorData,
@@ -38,7 +38,7 @@ export const createSector = (
 export const createBoulder = (
 	topoQuark: Quark<Topo>,
 	location: GeoCoordinates,
-	image?: Image
+	image?: Img
 ) => {
 	const topo = topoQuark();
 	// terrible hack around `liked` for now
@@ -66,7 +66,7 @@ export const createBoulder = (
 export const createParking = (
 	topo: Topo,
 	location: GeoCoordinates,
-	image?: Image
+	image?: Img
 ) => {
 	const newParking: Parking = {
 		id: v4(),
@@ -83,7 +83,7 @@ export const createParking = (
 export const createWaypoint = (
 	topo: Topo,
 	location: GeoCoordinates,
-	image?: Image
+	image?: Img
 ) => {
 	const newWaypoint: Waypoint = {
 		id: v4(),

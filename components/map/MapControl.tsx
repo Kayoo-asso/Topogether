@@ -15,7 +15,7 @@ import {
 import {
 	Boulder,
 	GeoCoordinates,
-	Image,
+	Img,
 	MapProps,
 	MapToolEnum,
 	Position,
@@ -39,7 +39,7 @@ type MapControlProps = React.PropsWithChildren<
 		displayUserMarker?: boolean;
 		currentTool?: MapToolEnum;
 		onToolSelect?: (tool: MapToolEnum) => void;
-		onNewPhoto?: (img: Image, coords: GeoCoordinates) => void;
+		onNewPhoto?: (img: Img, coords: GeoCoordinates) => void;
 		onPhotoButtonClick?: () => void;
 		displaySectorButton?: boolean;
 		onSectorButtonClick?: () => void;

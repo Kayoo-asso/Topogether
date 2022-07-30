@@ -1,11 +1,11 @@
 import Compressor from "compressorjs";
 import { cloudflareUrl } from "helpers/utils";
-import { Image, UUID, Result, TopoData } from "types";
+import { Img, UUID, Result, TopoData } from "types";
 import { v4 as uuid } from "uuid";
 
 // -- Exports for the API route --
 export type ImageUploadResult = {
-	images: Image[];
+	images: Img[];
 	errors: ImageUploadError[];
 };
 
@@ -98,7 +98,7 @@ export class ImageService {
 	}
 
 	// Always make sure this code is in sync with ImageService.save() and the service worker
-	async download(image: Image): Promise<void> {
+	async download(image: Img): Promise<void> {
 		const cache = await caches.open("images-download");
 		// Key uses a URL of `current_domain/id`, to ensure we always get the same key from the same ID
 		// Without the "/" here, the path would be relative to the current URL
@@ -123,7 +123,7 @@ export class ImageService {
 		return id;
 	}
 
-	async upload(file: File): Promise<Result<Image, ImageUploadErrorReason>> {
+	async upload(file: File): Promise<Result<Img, ImageUploadErrorReason>> {
 		const { images, errors } = await this.uploadMany([file]);
 		if (images.length > 0) {
 			return {
@@ -209,16 +209,16 @@ export class ImageService {
 			};
 		}
 
-		const uploading: Promise<[Image, true] | [ImageUploadError, false]>[] = [];
+		const uploading: Promise<[Img, true] | [ImageUploadError, false]>[] = [];
 		for (let i = 0; i < toUpload.length; i++) {
 			// dunno why TypeScript trips on the getDimensions argument here
 			uploading.push(upload(toUpload[i], uploads[i]));
 		}
 		const afterUpload = await Promise.all(uploading);
-		const images: Image[] = [];
+		const images: Img[] = [];
 		for (const [result, success] of afterUpload) {
 			if (success) {
-				images.push(result as Image);
+				images.push(result as Img);
 			} else {
 				errors.push(result as ImageUploadError);
 			}
@@ -234,7 +234,7 @@ export class ImageService {
 async function upload(
 	file: File,
 	info: UploadInfo
-): Promise<[Image, true] | [ImageUploadError, false]> {
+): Promise<[Img, true] | [ImageUploadError, false]> {
 	const data = new FormData();
 	const filename =
 		process.env.NODE_ENV !== "production"
@@ -263,10 +263,10 @@ async function upload(
 
 	const ratio = width / height;
 
-	const img: Image = {
+	const img: Img = {
 		id: info.id,
 		ratio,
-		placeholder: (replicationResult as Image).placeholder,
+		placeholder: (replicationResult as Img).placeholder,
 	};
 	return [img, true];
 }
@@ -274,7 +274,7 @@ async function upload(
 async function uploadBunny(
 	file: File,
 	id: UUID
-): Promise<[Image, true] | [ImageUploadError, false]> {
+): Promise<[Img, true] | [ImageUploadError, false]> {
 	const uploadRequest = fetch("/api/images/upload", {
 		method: "PUT",
 		headers: {
@@ -289,7 +289,7 @@ async function uploadBunny(
 			dimensionsRequest,
 		]);
 		const ratio = width / height;
-		const img: Image = {
+		const img: Img = {
 			id: id,
 			ratio,
 			placeholder,

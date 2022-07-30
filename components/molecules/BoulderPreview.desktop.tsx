@@ -6,7 +6,7 @@ import React, {
 	useState,
 } from "react";
 import { Quark, SelectQuarkNullable, watchDependencies } from "helpers/quarky";
-import { Boulder, Image, Track, UUID } from "types";
+import { Boulder, Img, Track, UUID } from "types";
 import { MultipleImageInput, TracksImage } from ".";
 import { deleteTrack } from "helpers/builder";
 import { staticUrl } from "helpers/constants";
@@ -18,8 +18,8 @@ interface BoulderPreviewDesktopProps {
 	selectedTrack: SelectQuarkNullable<Track>;
 	displayAddButton?: boolean;
 	allowDelete?: boolean;
-	currentImage?: Image;
-	setCurrentImage: Dispatch<SetStateAction<Image | undefined>>;
+	currentImage?: Img;
+	setCurrentImage: Dispatch<SetStateAction<Img | undefined>>;
 }
 
 export const BoulderPreviewDesktop = watchDependencies<

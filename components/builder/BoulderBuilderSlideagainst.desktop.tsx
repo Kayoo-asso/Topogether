@@ -5,7 +5,7 @@ import {
 	BoulderForm,
 } from "components";
 import { Quark, SelectQuarkNullable, watchDependencies } from "helpers/quarky";
-import { Boulder, Image, Topo, Track } from "types";
+import { Boulder, Img, Topo, Track } from "types";
 import { TracksListBuilder } from ".";
 import { setReactRef } from "helpers/utils";
 
@@ -13,8 +13,8 @@ interface BoulderBuilderSlideagainstDesktopProps {
 	boulder: Quark<Boulder>;
 	topo: Quark<Topo>;
 	selectedTrack: SelectQuarkNullable<Track>;
-	currentImage?: Image;
-	setCurrentImage: Dispatch<SetStateAction<Image | undefined>>;
+	currentImage?: Img;
+	setCurrentImage: Dispatch<SetStateAction<Img | undefined>>;
 	onClose: () => void;
 }
 

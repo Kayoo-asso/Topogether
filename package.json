@@ -33,7 +33,6 @@
 		"react-cool-dimensions": "^2.0.7",
 		"react-dom": "17.0.2",
 		"react-quick-pinch-zoom": "^4.4.1",
-		"sharp": "^0.30.7",
 		"slick-carousel": "^1.8.1",
 		"trigram-search": "^1.0.2",
 		"uuid": "^8.3.2"
@@ -54,12 +53,15 @@
 		"@typescript-eslint/parser": "^5.9.0",
 		"autoprefixer": "^10.4.2",
 		"babel-loader": "^8.2.3",
+		"dotenv": "^16.0.1",
 		"html-webpack-plugin": "^5.5.0",
 		"jest": "^27.4.7",
 		"postcss": "^8.4.5",
+		"postgres": "^3.2.4",
 		"prettier": "2.7.1",
 		"prettier-plugin-tailwindcss": "^0.1.11",
 		"react-test-renderer": "^17.0.2",
+		"sharp": "^0.30.7",
 		"tailwindcss": "^3.1.6",
 		"typescript": "4.5.4"
 	}

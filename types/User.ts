@@ -1,5 +1,5 @@
 import { Rating } from "types";
-import { Image } from "./Image";
+import { Img } from "./Image";
 import {
 	Description,
 	Email,
@@ -28,7 +28,7 @@ export type User = {
 	city?: Name;
 	phone?: StringBetween<1, 30>;
 	birthDate?: string; // has to be in YYYY-MM-DD format
-	image?: Image;
+	image?: Img;
 };
 
 export type DBUserUpdate = NullableOptional<
@@ -44,7 +44,7 @@ export interface Profile {
 	lastName?: Name;
 	city?: Name;
 	country?: Name;
-	image?: Image;
+	image?: Img;
 }
 
 export type Role = "ADMIN" | "USER";

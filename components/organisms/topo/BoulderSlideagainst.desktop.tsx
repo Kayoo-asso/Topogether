@@ -7,9 +7,9 @@ import {
 	TracksList,
 } from "components";
 import { Quark, SelectQuarkNullable, watchDependencies } from "helpers/quarky";
-import { Boulder, Image, Track, UUID } from "types";
+import { Boulder, Img, Track, UUID } from "types";
 import { LoginForm } from "..";
-import { useSession } from "helpers/services";
+import { useSession} from "helpers/services";
 import { useModal } from "helpers/hooks";
 
 import Rock from "assets/icons/rock.svg";
@@ -18,8 +18,8 @@ interface BoulderSlideagainstDesktopProps {
 	boulder: Quark<Boulder>;
 	selectedTrack: SelectQuarkNullable<Track>;
 	topoCreatorId?: UUID;
-	currentImage?: Image;
-	setCurrentImage: Dispatch<SetStateAction<Image | undefined>>;
+	currentImage?: Img;
+	setCurrentImage: Dispatch<SetStateAction<Img | undefined>>;
 	onClose: () => void;
 }
 

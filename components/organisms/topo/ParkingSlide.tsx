@@ -9,7 +9,7 @@ import {
 import { Quark, watchDependencies } from "helpers/quarky";
 import { Parking } from "types";
 import { useBreakpoint } from "helpers/hooks";
-import { CFImage } from "components/atoms/CFImage";
+import { Image } from "components/atoms/CFImage";
 
 import ParkingIcon from "assets/icons/parking.svg";
 
@@ -67,7 +67,7 @@ export const ParkingSlide: React.FC<ParkingSlideProps> = watchDependencies(
 					</div>
 
 					<div className="relative h-[60%] max-h-[200px] w-full overflow-hidden md:h-[25%]">
-						<CFImage
+						<Image
 							image={parking.image}
 							alt="Parking"
 							sizeHint="50vw"

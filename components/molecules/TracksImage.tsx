@@ -5,14 +5,14 @@ import React, {
 	useRef,
 	useState,
 } from "react";
-import { Image, PointEnum, DrawerToolEnum, Position, Track } from "types";
+import { Img, PointEnum, DrawerToolEnum, Position, Track } from "types";
 import {
 	Quark,
 	QuarkIter,
 	SelectQuarkNullable,
 	watchDependencies,
 } from "helpers/quarky";
-import { CFImage } from "components/atoms/CFImage";
+import { Image } from "components/atoms/CFImage";
 import { SVGTrack } from "components/atoms";
 import QuickPinchZoom, { make3dTransformValue } from "react-quick-pinch-zoom";
 import { SourceSize } from "helpers/utils";
@@ -20,7 +20,7 @@ import { Portal } from "helpers/hooks";
 import { getCoordsInViewbox } from "helpers/svg";
 
 type TracksImageProps = React.PropsWithChildren<{
-	image?: Image;
+	image?: Img;
 	tracks: QuarkIter<Quark<Track>>;
 	selectedTrack?: SelectQuarkNullable<Track>;
 	// 'fill' could be possible, but it distorts the aspect ratio
@@ -38,8 +38,8 @@ type TracksImageProps = React.PropsWithChildren<{
 	onImageClick?: (pos: Position) => void;
 	onPointClick?: (pointType: PointEnum, index: number) => void;
 	onImageLoad?: (width: number, height: number) => void;
-	onZoomStart?: () => void,
-	onZoomEnd?: () => void,
+	onZoomStart?: () => void;
+	onZoomEnd?: () => void;
 }>;
 
 // see: https://www.sarasoueidan.com/blog/svg-object-fit/
@@ -168,7 +168,7 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(
 				onZoomEnd={props.onZoomEnd}
 			>
 				<div ref={imgRef} className={"relative h-full" + cssCursor}>
-					<CFImage
+					<Image
 						objectFit={objectFit}
 						sizeHint={portalOpen ? "100vw" : props.sizeHint}
 						image={props.image}

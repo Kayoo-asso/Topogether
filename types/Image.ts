@@ -1,6 +1,6 @@
 import { UUID } from "types";
 
-export type Image = {
+export type Img = {
 	readonly id: UUID;
 	readonly ratio: number;
 	readonly placeholder?: string;

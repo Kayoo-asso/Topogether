@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import { QuarkArray } from "helpers/quarky";
 import { Manager } from "types";
-import { CFImage } from "components/atoms/CFImage";
+import { Image } from "components/atoms/CFImage";
 import { SlideoverMobile, SlideoverLeftDesktop, Flash } from "components/atoms";
 import { TabOption, Tabs } from "components/layouts/Tabs";
 import { useBreakpoint } from "helpers/hooks";
@@ -63,7 +63,7 @@ export const ManagementSlideover: React.FC<ManagementSlideoverProps> = ({
 						<div className="flex flex-row items-center justify-end gap-6 pb-6 md:pt-8">
 							{manager.image && (
 								<div className="relative mt-2 min-h-[100px] w-1/2">
-									<CFImage
+									<Image
 										image={manager.image}
 										alt={"Logo gestionnaire " + managerTab}
 										sizeHint="30vw"
