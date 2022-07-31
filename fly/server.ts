@@ -12,19 +12,22 @@ const app = connect();
 const isProd = process.env.NODE_ENV === "production";
 
 const token = process.env.BUNNY_API_TOKEN!;
-if(!token) throw new Error("Undefined Bunny CDN API token");
+if (!token) throw new Error("Undefined Bunny CDN API token");
 const storageZone = "topogether-images";
 const placeholderSize = 64;
+const port = process.env.PORT || 5043;
 
 app.use(async function (req, res, next) {
 	res.setHeader(
 		"Access-Control-Allow-Origin",
-		isProd ? "https://topogether.com" : "http://localhost:3000"
+		// TODO: change later
+		"*"
+		// isProd ? "https://topogether.com" : "http://localhost:3000"
 	);
 	res.setHeader("Access-Control-Allow-Methods", "GET, PUT, POST");
 	res.setHeader(
 		"Access-Control-Allow-Headers",
-		"Content-Type, Origin, Accept, Authorization, x-image-id"
+		"Content-Type, Origin, Accept, Authorization, x-image-id, x-image-dev"
 	);
 	next();
 });
@@ -37,20 +40,22 @@ app.use("/images/upload", async function (req, res) {
 	}
 
 	const id = req.headers["x-image-id"];
+	const isDev = req.headers["x-image-dev"];
 	if (req.method !== "PUT" || !id) {
 		res.writeHead(400);
+		res.write("Invalid HTTP method");
 		res.end();
 		return;
 	}
 	// Store images uploaded during dev into a separate folder, for easy cleanup
-	const path = process.env.NODE_ENV === "production" ? "" : "dev";
+	const path = !!isDev ? "dev" : "";
 
 	const uploadStream = req.pipe(new PassThrough());
 	const blurStream = req.pipe(new PassThrough());
 
 	// Start uploading ASAP
 	const upload = fetch(
-		`https://storage.bunnycdn.com/${storageZone}/${path}/${id}`,
+		`https://storage.bunnycdn.com/${storageZone}/${path}/${id}.jpg`,
 		{
 			method: "PUT",
 			headers: {
@@ -87,16 +92,15 @@ app.use("/images/upload", async function (req, res) {
 
 	if (!uploadRes.ok) {
 		console.error("Upload failed:", await uploadRes.text());
-		res.writeHead(uploadRes.status);
+		res.writeHead(uploadRes.status, uploadRes.statusText);
 		res.end();
 	} else {
+		console.log("=> Successful upload of image " + id);
 		res.writeHead(200, { "Content-Type": "application/json" });
 		res.write(JSON.stringify({ placeholder }));
 		res.end();
 	}
 });
-
-http.createServer(app).listen(5043);
 
 function toBuffer(stream: Readable): Promise<Buffer> {
 	return new Promise<Buffer>((resolve, reject) => {
@@ -109,3 +113,5 @@ function toBuffer(stream: Readable): Promise<Buffer> {
 		stream.on("error", reject);
 	});
 }
+
+http.createServer(app).listen(port);

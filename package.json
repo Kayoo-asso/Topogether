@@ -1,6 +1,9 @@
 {
 	"name": "topogether",
 	"private": true,
+	"workspaces": [
+		"fly"
+	],
 	"scripts": {
 		"dev": "next dev",
 		"build": "next build",
@@ -20,7 +23,6 @@
 		"@use-gesture/react": "^10.2.16",
 		"compressorjs": "^1.0.7",
 		"cookie": "^0.4.2",
-		"esbuild": "^0.14.10",
 		"fast-deep-equal": "^3.1.3",
 		"idb-keyval": "^6.2.0",
 		"ismobilejs": "^1.1.1",

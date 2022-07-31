@@ -66,7 +66,7 @@ function imageKey(id: UUID): Request {
 	return new Request("/" + id);
 }
 
-const UPLOAD_MAX_SIZE = 4.5e6;
+const UPLOAD_MAX_SIZE = 20e6;
 
 export class ImageService {
 	// async downloadTopoImages(topo: TopoData): Promise<void> {
@@ -142,13 +142,17 @@ export class ImageService {
 		const files = Array.from(iter);
 		const compressing: Promise<unknown>[] = [];
 		const toUpload: File[] = [];
+		// Check for non-images / too large images before uploading
 		for (const file of files) {
+			// File type check
 			if (!isImage(file)) {
 				errors.push({
 					filename: file.name,
 					reason: ImageUploadErrorReason.NonImage,
 				});
-			} else if (file.size > UPLOAD_MAX_SIZE) {
+			} 
+			// Size check
+			else if (file.size > UPLOAD_MAX_SIZE) {
 				const promise = new Promise((resolve, _) => {
 					new Compressor(file, {
 						success(compressed: File) {
@@ -178,40 +182,10 @@ export class ImageService {
 		}
 		await Promise.all(compressing);
 
-		if (toUpload.length === 0) {
-			return {
-				errors,
-				images: [],
-			};
-		}
-
-		const getUploadUrls = await fetch("/api/images/uploadUrl", {
-			method: "POST",
-			headers: {
-				[UploadCountHeader]: toUpload.length.toString(),
-			},
-		});
-		const { uploads } = (await getUploadUrls.json()) as {
-			uploads?: UploadInfo[];
-		};
-
-		if (!getUploadUrls.ok || !uploads || uploads.length !== toUpload.length) {
-			for (const notUploaded of toUpload) {
-				errors.push({
-					filename: notUploaded.name,
-					reason: ImageUploadErrorReason.UploadError,
-				});
-			}
-			return {
-				errors,
-				images: [],
-			};
-		}
-
 		const uploading: Promise<[Img, true] | [ImageUploadError, false]>[] = [];
 		for (let i = 0; i < toUpload.length; i++) {
 			// dunno why TypeScript trips on the getDimensions argument here
-			uploading.push(upload(toUpload[i], uploads[i]));
+			uploading.push(uploadBunny(toUpload[i], uuid()));
 		}
 		const afterUpload = await Promise.all(uploading);
 		const images: Img[] = [];
@@ -230,51 +204,11 @@ export class ImageService {
 	}
 }
 
-async function upload(
-	file: File,
-	info: UploadInfo
-): Promise<[Img, true] | [ImageUploadError, false]> {
-	const data = new FormData();
-	const filename =
-		process.env.NODE_ENV !== "production"
-			? "dev_topogether_" + file.name
-			: file.name;
-	data.append("file", file, filename);
-	const uploadRequest = fetch(info.uploadURL, {
-		method: "POST",
-		body: data,
-	});
-	const dimensionsRequest = imgDimensions(file);
-	const [upload, { width, height }, [replicationResult, replicationSucceeded]] =
-		await Promise.all([
-			uploadRequest,
-			dimensionsRequest,
-			// NOTE: enable replication to Bunny CDN
-			uploadBunny(file, info.id),
-		]);
-	if (!upload.ok || !replicationSucceeded) {
-		const error = {
-			filename: file.name,
-			reason: ImageUploadErrorReason.UploadError,
-		};
-		return [error, false];
-	}
-
-	const ratio = width / height;
-
-	const img: Img = {
-		id: info.id,
-		ratio,
-		placeholder: (replicationResult as Img).placeholder,
-	};
-	return [img, true];
-}
-
-async function uploadBunny(
+export async function uploadBunny(
 	file: File,
 	id: UUID
 ): Promise<[Img, true] | [ImageUploadError, false]> {
-	const uploadRequest = fetch("/api/images/upload", {
+	const uploadRequest = fetch("https://fly-topogether.fly.dev/images/upload", {
 		method: "PUT",
 		headers: {
 			"x-image-id": id,
