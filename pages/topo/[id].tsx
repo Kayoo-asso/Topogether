@@ -33,7 +33,10 @@ const Topo: NextPage<TopoProps> = ({ topo }) => {
 		return null;
 	}
 
-	getRidOfBouldersWithoutTrack(topo);
+	const { show} = router.query;
+	if(show !== "all") {
+		getRidOfBouldersWithoutTrack(topo);
+	} 
 
 	// TODO: how to encode the fact that this topo cannot be edited?
 	const topoQuark = editTopo(topo);

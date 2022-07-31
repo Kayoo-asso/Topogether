@@ -164,7 +164,7 @@ export const RootAdmin: React.FC<RootAdminProps> = (props: RootAdminProps) => {
 					topo={previewTopo}
 					displayLastDate
 					displayCreator
-					mainButton={{ content: 'Ouvrir', link: '/topo/' + encodeUUID(previewTopo.id) }}
+					mainButton={{ content: 'Ouvrir', link: `/topo/${encodeUUID(previewTopo.id)}?show=all` }}
 					secondButton={{ content: 'Supprimer', onClick: showModalDelete, color: 'red' }}
 					thirdButton={{ content: 'Modifier', link: '/builder/' + encodeUUID(previewTopo.id) }}
 					fourthButton={{ content: 'Soumettre', onClick: showModalSubmit, color: 'third' }}
@@ -176,7 +176,7 @@ export const RootAdmin: React.FC<RootAdminProps> = (props: RootAdminProps) => {
 					topo={previewTopo}
 					displayLastDate
 					displayCreator
-					mainButton={{ content: 'Ouvrir', link: '/topo/' + encodeUUID(previewTopo.id) }}
+					mainButton={{ content: 'Ouvrir', link: `/topo/${encodeUUID(previewTopo.id)}?show=all` }}
 					secondButton={{ content: 'Refuser', onClick: showModalReject, color: 'second' }}
 					thirdButton={{ content: 'Modifier', link: '/builder/' + encodeUUID(previewTopo.id) }}
 					fourthButton={{ content: 'Valider', onClick: showModalValidate, color: 'main' }}
