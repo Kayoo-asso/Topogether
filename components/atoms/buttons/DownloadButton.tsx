@@ -20,12 +20,12 @@ export const DownloadButton: React.FC<DownloadButtonProps> = ({
 	const [loading, setLoading] = useState<boolean>(false);
 
 	const toggle = async () => {
-		if (downloaded) showModalUndownload();
-		else {
-			setLoading(true);
-			await api.downloadTopo(props.topo.id);
-			setLoading(false);
-		}
+		// if (downloaded) showModalUndownload();
+		// else {
+		// 	setLoading(true);
+		// 	await api.downloadTopo(props.topo.id);
+		// 	setLoading(false);
+		// }
 	};
 
 	return (

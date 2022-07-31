@@ -216,26 +216,26 @@ export class ApiService {
 		return data;
 	}
 
-	async downloadTopo(id: UUID, progressBar?: ProgressBar): Promise<boolean> {
-		// TODO: improve this to revalidate the cached topo
-		if (await get(id)) {
-			console.log("--- Found cached topo, skipping download ---");
-			return true;
-		}
+	// async downloadTopo(id: UUID, progressBar?: ProgressBar): Promise<boolean> {
+	// 	// TODO: improve this to revalidate the cached topo
+	// 	if (await get(id)) {
+	// 		console.log("--- Found cached topo, skipping download ---");
+	// 		return true;
+	// 	}
 
-		console.log(`--- Downloading topo... ---`);
-		const start = Date.now();
-		const topo = await this.fetchTopo(id);
-		if (!topo) return false;
+	// 	console.log(`--- Downloading topo... ---`);
+	// 	const start = Date.now();
+	// 	const topo = await this.fetchTopo(id);
+	// 	if (!topo) return false;
 
-		await Promise.all([
-			set(topo.id, topo),
-			downloadTopoMap(topo),
-			this.images.downloadTopoImages(topo),
-		]);
+	// 	await Promise.all([
+	// 		set(topo.id, topo),
+	// 		downloadTopoMap(topo),
+	// 		this.images.downloadTopoImages(topo),
+	// 	]);
 
-		const end = Date.now();
-		console.log(`Finished downloading topo in ${end - start}ms`);
-		return true;
-	}
+	// 	const end = Date.now();
+	// 	console.log(`Finished downloading topo in ${end - start}ms`);
+	// 	return true;
+	// }
 }

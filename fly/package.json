@@ -1,0 +1,16 @@
+{
+  "name": "fly-image-upload",
+  "scripts": {
+    "start": "esbuild server.ts --outfile=server.js --bundle --minify --platform=node --external:sharp && node server.js"
+  },
+  "dependencies": {
+    "connect": "^3.7.0",
+    "dotenv": "^16.0.1",
+    "koa": "^2.13.4",
+    "sharp": "^0.30.7"
+  },
+  "devDependencies": {
+    "@types/koa": "^2.13.5",
+    "esbuild": "^0.14.51"
+  }
+}
