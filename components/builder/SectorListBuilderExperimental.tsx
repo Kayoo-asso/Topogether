@@ -197,7 +197,7 @@ export const SectorListBuilderExperimental: React.FC<SectorListBuilderProps> =
 					);
 				})}
 
-				{/* <DragDropContext
+				<DragDropContext
           onDragEnd={handleDragEnd}
           onDragStart={handleDragStart}
         >
@@ -268,7 +268,7 @@ export const SectorListBuilderExperimental: React.FC<SectorListBuilderProps> =
               );
             }}
           </Droppable>
-        </DragDropContext> */}
+        </DragDropContext>
 			</div>
 		);
 	});
