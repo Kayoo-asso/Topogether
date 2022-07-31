@@ -4,7 +4,6 @@ import { Img, Track, UUID } from "types";
 import { DeleteButton, TracksImage } from "components";
 import useDimensions from "react-cool-dimensions";
 import { Quark, QuarkIter, watchDependencies } from "helpers/quarky";
-import { Image } from "./Image";
 
 interface ImageThumbProps {
 	image: Img;

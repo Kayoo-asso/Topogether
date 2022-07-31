@@ -8,15 +8,6 @@ export type ImageUploadResult = {
 	errors: ImageUploadError[];
 };
 
-export const UploadCountHeader = "x-upload-count";
-
-export type UploadInfo = {
-	id: UUID;
-	uploadURL: string;
-};
-
-// export type BoulderImageUploadSuccess = ImageUploadSuccess & ImageDimensions;
-
 export enum ImageUploadErrorReason {
 	NonImage,
 	// also includes errors from images that are too large to be compressed below target size
@@ -32,21 +23,6 @@ export interface ImageUploadError {
 type ImageDimensions = {
 	width: number;
 	height: number;
-};
-
-enum ImageHolder {
-	Topo,
-	Boulder,
-	Waypoint,
-	Parking,
-	Manager,
-	TopoAccess,
-}
-
-type ImageToUpload = {
-	id: UUID;
-	holder: ImageHolder;
-	topoId: UUID;
 };
 
 export function isImage(file: File): boolean {
@@ -184,7 +160,6 @@ export class ImageService {
 
 		const uploading: Promise<[Img, true] | [ImageUploadError, false]>[] = [];
 		for (let i = 0; i < toUpload.length; i++) {
-			// dunno why TypeScript trips on the getDimensions argument here
 			uploading.push(uploadBunny(toUpload[i], uuid()));
 		}
 		const afterUpload = await Promise.all(uploading);

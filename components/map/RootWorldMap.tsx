@@ -93,18 +93,15 @@ export const RootWorldMap: React.FC<RootWorldMapProps> = watchDependencies(
 						))}
 					</MapControl>
 
-					<Show when={() => selectedTopo}>
-						{(topo) => (
-							<TopoPreview
-								topo={topo}
+						{selectedTopo &&	<TopoPreview
+								topo={selectedTopo}
 								displayLikeDownload
 								// displayCreator
 								displayParking
-								mainButton={{ content: 'Ouvrir', link: '/topo/' + encodeUUID(topo.id) }}
+								mainButton={{ content: 'Ouvrir', link: '/topo/' + encodeUUID(selectedTopo.id) }}
 								onClose={() => setSelectedTopo(undefined)}
 							/>
-						)}
-					</Show>
+						}
 				</div>
 			</>
 		);

@@ -241,5 +241,5 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 		return getPortalContent();
 	// If there is no image
 	else
-		return <Image alt="default boulder" sizeHint="100vw" modalable={false} />;
+		return <Image alt="default boulder" sizeHint="100vw" />;
 };

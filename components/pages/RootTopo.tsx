@@ -37,7 +37,6 @@ import {
 	watchDependencies,
 } from "helpers/quarky";
 import { useRouter } from "next/router";
-import { useFirstRender } from "helpers/hooks/useFirstRender";
 import { Header } from "components/layouts/Header";
 import { LeftbarTopoDesktop } from "components/layouts/LeftbarTopoDesktop";
 import {

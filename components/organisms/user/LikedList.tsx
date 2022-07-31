@@ -1,8 +1,7 @@
 import { LikedActionDropdown, TopoCardList } from "components/molecules";
 import React, { useCallback, useRef, useState } from "react";
 import { LightTopo, TopoStatus } from "types";
-import { useContextMenu, useModal } from "helpers/hooks";
-import { staticUrl } from "helpers/constants";
+import { useContextMenu } from "helpers/hooks";
 import { TopoPreview } from "components/organisms";
 import { encodeUUID } from "helpers/utils";
 
@@ -12,8 +11,6 @@ interface LikedListProps {
 }
 
 export const LikedList: React.FC<LikedListProps> = (props: LikedListProps) => {
-	const [ModalUnlike, showModalUnlike] = useModal<LightTopo>();
-
 	const [actionTopo, setActionTopo] = useState<LightTopo>();
 
 	const [previewTopo, setPreviewTopo] = useState<LightTopo>();

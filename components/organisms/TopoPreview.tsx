@@ -12,13 +12,14 @@ import {
 import { BaseColor, LightTopo, TopoStatus } from "types";
 import { encodeUUID, formatDate } from "helpers/utils";
 import { Image } from "components/atoms/Image";
+import Link from "next/link";
+
 import Rock from "assets/icons/rock.svg";
 import ManyTracks from "assets/icons/many-tracks.svg";
 import Waypoint from "assets/icons/waypoint.svg";
 import { ModalBG } from "components/atoms";
 import Copy from "/assets/icons/copy.svg";
 import { TopoTypeToColor } from "helpers/topo";
-import Link from "next/link";
 
 type TopoPreviewButton = {
 	content: string;

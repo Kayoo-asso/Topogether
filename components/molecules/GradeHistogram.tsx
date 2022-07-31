@@ -3,7 +3,6 @@ import {
 	lightGrades,
 	LightTopo,
 	Topo,
-	GradeHistogram as GradeHistogramType,
 	gradeToLightGrade,
 } from "types";
 
@@ -23,7 +22,7 @@ const bgStyles = {
 	None: "bg-grey-light",
 };
 
-const defaultGradeHistogram = (): GradeHistogramType => ({
+const defaultGradeHistogram = () => ({
 	3: 0,
 	4: 0,
 	5: 0,
@@ -40,7 +39,6 @@ const isLight = (topo: LightTopo | Topo): topo is LightTopo =>
 export const GradeHistogram: React.FC<GradeHistogramProps> = ({
 	topo,
 	size = "normal",
-	...props
 }: GradeHistogramProps) => {
 	let histogram = defaultGradeHistogram();
 	if (isLight(topo)) {
@@ -67,13 +65,15 @@ export const GradeHistogram: React.FC<GradeHistogramProps> = ({
 		histogram["None"];
 	const { None, ...grades } = histogram;
 	const maxNbOfTracks = Math.max(...Object.values(grades));
-	const ratio = total / maxNbOfTracks;
 
 	return (
 		<div className="flex h-full">
-			{lightGrades.slice(0, -1).map((grade) => {
+			{lightGrades.map((grade) => {
 				const count = histogram[grade];
-				const heightPercent = (count / total) * 100 * ratio;
+				let heightPercent = 0;
+				if (maxNbOfTracks > 0) {
+					heightPercent = (count / maxNbOfTracks) * 100;
+				}
 				const height = `${heightPercent}%`;
 
 				return (

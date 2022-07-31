@@ -92,7 +92,6 @@ export const TopoCard: React.FC<TopoCardProps> = React.memo(
 					<div className="relative top-0 h-[55%] w-full md:h-[75%]">
 						<Image
 							image={props.topo.image}
-							modalable={false}
 							objectFit="cover"
 							alt="topo-image"
 							sizeHint={"25vw"}
