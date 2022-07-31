@@ -50,8 +50,9 @@ const handler: NextApiHandler = async (req, res) => {
 		);
 	});
 
+	// Add a `.jpg` suffix (even for PNGs), so that Bunny CDN recognizes this is an image
 	const upload = fetch(
-		`https://storage.bunnycdn.com/${storageZone}/${path}/${id}`,
+		`https://storage.bunnycdn.com/${storageZone}/${path}/${id}.jpg`,
 		{
 			method: "PUT",
 			headers: {
