@@ -28,10 +28,10 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies(
 		const [name, setName] = useState<string>();
 		const [type, setType] = useState<TopoType | undefined>(TopoType.Boulder);
 		// set initial position to user's location if possible
-		const [latitude, setLatitude] = useState<number | undefined>(
+		const [longitude, setLongitude] = useState<number | undefined>(
 			position ? position[0] : undefined
 		);
-		const [longitude, setLongitude] = useState<number | undefined>(
+		const [latitude, setLatitude] = useState<number | undefined>(
 			position ? position[1] : undefined
 		);
 
@@ -78,7 +78,7 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies(
 					status: 0,
 					type: type,
 					forbidden: false,
-					location: [latitude!, longitude!],
+					location: [longitude!, latitude!],
 					modified: new Date().toISOString(),
 				};
 				const newTopo = await createTopo(topoData);
@@ -163,14 +163,14 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies(
 										searchbarOptions={{ findPlaces: true }}
 										onClick={(e) => {
 											if (e.latLng) {
-												setLatitude(e.latLng.lat());
 												setLongitude(e.latLng.lng());
+												setLatitude(e.latLng.lat());
 											}
 										}}
 										onUserMarkerClick={(e) => {
 											if (e.latLng) {
-												setLatitude(e.latLng.lng());
-												setLongitude(e.latLng.lat());
+												setLongitude(e.latLng.lng());
+												setLatitude(e.latLng.lat());
 											}
 										}}
 									>
@@ -179,8 +179,8 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies(
 												type={type}
 												location={[longitude, latitude]}
 												setLocation={(lat: number, lng: number) => {
-													setLatitude(lat);
 													setLongitude(lng);
+													setLatitude(lat);
 												}}
 											/>
 										)}
