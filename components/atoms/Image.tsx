@@ -1,9 +1,4 @@
-import {
-	SourceSize,
-	VariantWidths,
-	setReactRef,
-	bunnyUrl,
-} from "helpers/utils";
+import { setReactRef } from "helpers/utils";
 import type { StaticImageData } from "next/image";
 import {
 	ImgHTMLAttributes,
@@ -14,7 +9,7 @@ import {
 } from "react";
 import QuickPinchZoom, { make3dTransformValue } from "react-quick-pinch-zoom";
 import { useBreakpoint, Portal } from "helpers/hooks";
-import type { Img } from "types";
+import type { Img, UUID } from "types";
 
 import defaultKayoo from "public/assets/img/Kayoo_defaut_image.png";
 
@@ -103,9 +98,7 @@ export const Image = ({
 
 	if (image) {
 		const defaultVariant = device === "mobile" ? 640 : 1920; //TODO: optimize by checking size
-		const sources = VariantWidths.map(
-			(w) => `${bunnyUrl(image.id, w)} ${w}w`
-		);
+		const sources = VariantWidths.map((w) => `${bunnyUrl(image.id, w)} ${w}w`);
 		// note: check that width and height are not actual constraints,
 		// only aspect ratio information
 		width = defaultVariant;
@@ -177,3 +170,25 @@ function clearPlaceholder(img: HTMLImageElement) {
 	img.style.backgroundImage = null as any;
 	img.style.backgroundRepeat = null as any;
 }
+
+// --- Cloudflare Images ---
+
+export const VariantWidths = [
+	16, 32, 64, 96, 128, 256, 384, 640, 750, 828, 1080, 1200, 1920, 2048, 3840,
+] as const;
+export type VariantWidth = typeof VariantWidths[number];
+
+type VW<W extends number> = `${W}vw`;
+type PX<W extends number> = `${W}px`;
+export type ViewportWidth = VW<number>;
+export type PixelWidth = PX<number>;
+
+export type SourceSize = ViewportWidth | PixelWidth;
+
+export const cloudflareUrl = (imageId: UUID, width: VariantWidth): string =>
+	`https://imagedelivery.net/9m8hQCHM9NXY8VKZ1mHt-A/${imageId}/${width}w`;
+
+// All images have a `.jpg` suffix added to let Bunny CDN recognize they are images
+// (even if they are originally a PNG)
+export const bunnyUrl = (imageId: UUID, width: VariantWidth): string =>
+	`https://topogether.b-cdn.net/${imageId}.jpg?width=${width}`;
