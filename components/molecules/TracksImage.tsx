@@ -37,8 +37,6 @@ type TracksImageProps = React.PropsWithChildren<{
 	onImageClick?: (pos: Position) => void;
 	onPointClick?: (pointType: PointEnum, index: number) => void;
 	onImageLoad?: (width: number, height: number) => void;
-	onZoomStart?: () => void;
-	onZoomEnd?: () => void;
 }>;
 
 // see: https://www.sarasoueidan.com/blog/svg-object-fit/
@@ -155,17 +153,15 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(
 					imgRef.current.style.setProperty("transform", value);
 				}
 			},
-			[imgRef.current]
+			[]
 		);
 
 		return wrapPortal(
-			<QuickPinchZoom
-				onUpdate={onPinchZoom}
-				draggableUnZoomed={false}
-				tapZoomFactor={allowDoubleTapZoom ? 1 : 0}
-				onZoomStart={props.onZoomStart}
-				onZoomEnd={props.onZoomEnd}
-			>
+			// <QuickPinchZoom
+			// 	onUpdate={onPinchZoom}
+			// 	draggableUnZoomed={false}
+			// 	tapZoomFactor={allowDoubleTapZoom ? 1 : 0}
+			// >
 				<div ref={imgRef} className={"relative h-full" + cssCursor}>
 					<Image
 						objectFit={objectFit}
@@ -250,7 +246,7 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(
 						{props.image && props.children}
 					</svg>
 				</div>
-			</QuickPinchZoom>
+			// </QuickPinchZoom>
 		);
 	}
 );

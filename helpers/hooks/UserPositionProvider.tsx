@@ -1,11 +1,8 @@
 import { staticUrl } from "helpers/constants";
-import React, { createContext, useState, useEffect, useContext, useMemo } from "react";
+import React, { createContext, useState, useEffect, useContext } from "react";
 import { GeoCoordinates } from "types";
-import { Breakpoint, useBreakpoint, useDevice } from "./DeviceProvider";
-import { useFirstRender } from "./useFirstRender";
+import { useDevice } from "./DeviceProvider";
 import { useModal } from "./useModal";
-import isMobile from "ismobilejs";
-import useDimensions from "react-cool-dimensions";
 
 export type UserPosition = {
 	position: GeoCoordinates | null;

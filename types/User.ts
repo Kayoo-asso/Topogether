@@ -1,5 +1,5 @@
 import { Rating } from "types";
-import { Img } from "./Image";
+import { Img } from "./Img";
 import {
 	Description,
 	Email,

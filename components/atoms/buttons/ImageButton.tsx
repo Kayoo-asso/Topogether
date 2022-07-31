@@ -1,6 +1,4 @@
 import React from "react";
-// eslint-disable-next-line import/no-cycle
-import useDimensions from "react-cool-dimensions";
 import { DeleteButton } from ".";
 import { Image } from "../Image";
 import { Img } from "types";
@@ -21,34 +19,16 @@ export const ImageButton: React.FC<ImageButtonProps> = ({
 	activated = true,
 	...props
 }) => {
-	const {
-		observe,
-		unobserve,
-		width: containerWidth,
-		height: containerHeight,
-		entry,
-	} = useDimensions({
-		onResize: ({ observe, unobserve, width, height, entry }) => {
-			// Triggered whenever the size of the target is changed...
-			unobserve(); // To stop observing the current target element
-			observe(); // To re-start observing the current target element
-		},
-	});
 
 	return (
-		// eslint-disable-next-line jsx-a11y/click-events-have-key-events
 		<div
-			ref={observe}
 			className={
 				(activated
 					? "border-main text-main"
 					: "border-grey-medium text-grey-medium") +
-				"ktext-subtext group relative flex w-full cursor-pointer flex-col items-center justify-center border-2 text-center shadow"
+				" ktext-subtext group relative cursor-pointer border-2 shadow w-[72px] h-[72px] flex justify-center items-center"
 			}
 			onClick={props.onClick}
-			style={{
-				height: containerWidth,
-			}}
 		>
 			{loading && (
 				<Spinner className="m-2 h-10 w-10 animate-spin stroke-main" />
@@ -67,13 +47,11 @@ export const ImageButton: React.FC<ImageButtonProps> = ({
 						image={props.image}
 						alt="user generated image"
 						objectFit="contain"
-						sizeHint={`${containerWidth}px`}
+						sizeHint='300px'
 					/>
 				</>
 			)}
-			{!loading && !props.image && (
-				<span className="ktext-subtext m-1 text-main">{text}</span>
-			)}
+			{!loading && !props.image && (<span className="text-center">{text}</span>)}
 		</div>
 	);
 };

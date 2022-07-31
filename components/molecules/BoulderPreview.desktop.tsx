@@ -70,8 +70,7 @@ export const BoulderPreviewDesktop = watchDependencies<
 		return (
 			<>
 				<div className="mb-3 px-5">
-					<div className="max-w-[255px] bg-dark">
-						{/* max-width is very important here to avoid a bug with scrolling and image resizing when creating a first track with sitting start */}
+					<div className="bg-dark">
 						<TracksImage
 							sizeHint="300px"
 							image={props.currentImage}

@@ -43,9 +43,9 @@ export const MultipleImageInput = forwardRef<
 		const [page, setPage] = useState<number>(0);
 		useEffect(() => {
 			if (props.selected) {
-				const indexOfTheImage = props.images
-					.map((img) => img.id)
-					.indexOf(props.selected);
+				const indexOfTheImage = props.images.findIndex(
+					(img) => img.id === props.selected
+				);
 				const pageToDisplay = Math.trunc(indexOfTheImage / nbVisible);
 				setPage(pageToDisplay);
 			}
@@ -58,7 +58,14 @@ export const MultipleImageInput = forwardRef<
 		const sliceStart = nbVisible * page;
 		// index of last image to display
 		const sliceEnd = sliceStart + nbVisible;
-		const toDisplay = props.images.slice(sliceStart, sliceEnd);
+		const toDisplay: Array<Img | undefined> = props.images.slice(
+			sliceStart,
+			sliceEnd
+		);
+		const missing = nbVisible - toDisplay.length;
+		if (missing > 0) {
+			toDisplay.push(...new Array(missing));
+		}
 
 		return (
 			<>
@@ -69,27 +76,27 @@ export const MultipleImageInput = forwardRef<
 						</button>
 					)}
 
-					{[...Array(nbVisible).keys()].map((i, index) => {
-						if (toDisplay[index])
-							return (
-								<ImageThumb
-									key={toDisplay[index].id}
-									image={toDisplay[index]}
-									tracks={props.boulder?.tracks
-										.quarks()
-										.filter(
-											(track) =>
-												track().lines.find(
-													(line) => line.imageId === toDisplay[index].id
-												) !== undefined
-										)}
-									selected={toDisplay[index].id === props.selected}
-									onClick={props.onImageClick}
-									onDelete={props.onImageDelete}
-								/>
-							);
-						else return <div className="w-full" key={index}></div>;
-					})}
+					{toDisplay.map((image, index) =>
+						image ? (
+							<ImageThumb
+								key={image.id}
+								image={image}
+								tracks={props.boulder?.tracks
+									.quarks()
+									.filter(
+										(track) =>
+											track().lines.find(
+												(line) => line.imageId === image.id
+											) !== undefined
+									)}
+								selected={image.id === props.selected}
+								onClick={props.onImageClick}
+								onDelete={props.onImageDelete}
+							/>
+						) : (
+							<div key={index} className="w-[73px] h-[73px]"></div>
+						)
+					)}
 
 					{allowUpload && (
 						<ImageInput
@@ -112,13 +119,13 @@ export const MultipleImageInput = forwardRef<
 						</button>
 					)}
 				</div>
-				<div
-					className={`ktext-error mt-2 w-full pt-1 text-center text-error ${
-						error && error.length > 0 ? "" : "hidden"
-					}`}
-				>
-					{error}
-				</div>
+				{error && error.length > 0 && (
+					<div
+						className={"ktext-error mt-2 w-full pt-1 text-center text-error"}
+					>
+						{error}
+					</div>
+				)}
 			</>
 		);
 	}

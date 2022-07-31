@@ -21,7 +21,7 @@ import type {
 	NullableOptional,
 } from "./Utils";
 import type { Profile, TrackRating } from "./User";
-import type { Img } from "./Image";
+import type { Img } from "./Img";
 
 export type Topo = Omit<
 	TopoData,

@@ -55,7 +55,8 @@ export const BoulderBuilderSlideagainstDesktop = watchDependencies<
 			item={props.boulder()}
 			onClose={props.onClose}
 		>
-			<div className="flex h-full w-full flex-col">
+			{/* overflow-scroll to avoid scrollbar glitches with certain image sizes, where hovering the ImageThumb would display the scrolbar & change the overall layout*/}
+			<div className="flex h-full w-full flex-col overflow-scroll">
 				<BoulderForm
 					className="mt-3 mb-6 px-5"
 					boulder={props.boulder}
