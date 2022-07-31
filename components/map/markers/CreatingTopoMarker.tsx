@@ -7,13 +7,12 @@ interface CreatingTopoMarkerProps {
 	location: GeoCoordinates,
 	setLocation: (lat: number, lng: number) => void,
 	type?: TopoType,
-	draggable?: boolean;
 }
 
 export const CreatingTopoMarker: React.FC<CreatingTopoMarkerProps> = ({ 
-	draggable = false, 
 	...props 
 }: CreatingTopoMarkerProps) => {
+	console.log("Rendering CreatingTopoMarker");
 	const icon: google.maps.Icon = {
 		url:
 			"/assets/icons/colored/waypoint/_" +
@@ -21,10 +20,11 @@ export const CreatingTopoMarker: React.FC<CreatingTopoMarkerProps> = ({
 			".svg",
 		scaledSize: markerSize(30),
 	};
+	console.log("icon", icon)
 
 	const options: google.maps.MarkerOptions = {
 		icon,
-		draggable,
+		draggable: true,
 		zIndex: 10,
 		position: toLatLng(props.location),
 	};
@@ -33,6 +33,7 @@ export const CreatingTopoMarker: React.FC<CreatingTopoMarkerProps> = ({
 		onDragEnd: useCallback(
 			(e: google.maps.MapMouseEvent) => {
 				if (e.latLng) {
+					console.log("Drag end with latLng", e.latLng.lat(), e.latLng.lng());
 					props.setLocation(e.latLng.lat(), e.latLng.lng())
 				}
 			},

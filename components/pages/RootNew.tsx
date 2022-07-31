@@ -23,13 +23,17 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies(
 		const router = useRouter();
 		const { position } = usePosition();
 
-		const [step, setStep] = useState(1);
+		const [step, setStep] = useState(0);
 
 		const [name, setName] = useState<string>();
-		const [type, setType] = useState<TopoType | undefined>(0);
+		const [type, setType] = useState<TopoType | undefined>(TopoType.Boulder);
 		// set initial position to user's location if possible
-		const [latitude, setLatitude] = useState<number | undefined>(position ? position[0] : undefined);
-		const [longitude, setLongitude] = useState<number | undefined>(position ? position[1] : undefined);
+		const [latitude, setLatitude] = useState<number | undefined>(
+			position ? position[0] : undefined
+		);
+		const [longitude, setLongitude] = useState<number | undefined>(
+			position ? position[1] : undefined
+		);
 
 		const [loading, setLoading] = useState<boolean>(false);
 		const [nameError, setNameError] = useState<string>();
@@ -46,23 +50,26 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies(
 		const isValidStep0 = () => {
 			// TODO : check if the name already exists
 			if (!name) setNameError("Merci d'indiquer un nom valide");
-			if (type === undefined || isNaN(type)) setTypeError("Merci de sélectionner un type de spot");
+			if (type === undefined || isNaN(type))
+				setTypeError("Merci de sélectionner un type de spot");
 			if (name && type !== undefined && !isNaN(type)) return true;
 			else return false;
-		}
-		const isValideStep1 = () => {
+		};
+		const isValidStep1 = () => {
 			if (!latitude || isNaN(latitude)) setLatitudeError("Latitude invalide");
-			if (!longitude || isNaN(longitude)) setLongitudeError("Longitude invalide");
-			if (latitude && !isNaN(latitude) && longitude && !isNaN(longitude)) return true;
+			if (!longitude || isNaN(longitude))
+				setLongitudeError("Longitude invalide");
+			if (latitude && !isNaN(latitude) && longitude && !isNaN(longitude))
+				return true;
 			else return false;
-		}
+		};
 
 		const goStep1 = () => {
 			if (isValidStep0()) setStep(1);
 		};
 		const create = async () => {
 			if (!isValidStep0()) setStep(0);
-			else if (isValideStep1()) {
+			else if (isValidStep1()) {
 				setLoading(true);
 				const topoData: TopoCreate = {
 					id: v4(),
@@ -95,22 +102,22 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies(
 
 		return (
 			<>
-				<Header 
-				 	title="Nouveau topo"
+				<Header
+					title="Nouveau topo"
 					backLink="/builder/dashboard"
-					onBackClick={step === 1 ? () => setStep(0) : undefined}
+					onBackClick={step > 0 ? () => setStep(step - 1) : undefined}
 				/>
 
 				<div
 					className={
 						"flex h-content w-full flex-row overflow-y-auto overflow-x-hidden bg-main pb-5 md:h-full " +
-						(step === 2 ? "items-start" : "justify-center")
+						(step === 1 ? "items-start" : "justify-center")
 					}
 				>
 					<div className={"flex w-full flex-col items-center justify-center"}>
 						{step === 0 && (
-							<div className="w-full h-full px-[10%] pt-[45%] md:pt-[25%] pb-[5%] flex flex-col justify-between">
-								<div className="w-full flex flex-col gap-20">
+							<div className="flex h-full w-full flex-col justify-between px-[10%] pt-[45%] pb-[5%] md:pt-[25%]">
+								<div className="flex w-full flex-col gap-20">
 									<TextInput
 										ref={nameInputRef}
 										id="topo-name"
@@ -125,11 +132,11 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies(
 										}}
 									/>
 
-									<SelectTouch 
+									<SelectTouch
 										options={selectOptions(TopoTypeName)}
 										value={type}
 										white
-										big={device === 'desktop' ? true : false}
+										big={device === "desktop" ? true : false}
 										error={typeError}
 										onChange={(val: TopoType | undefined) => {
 											setTypeError(undefined);
@@ -141,21 +148,23 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies(
 								<div className="flex w-full justify-center">
 									<ValidateButton white onClick={goStep1} />
 								</div>
-							</div>								
+							</div>
 						)}
 
 						{step === 1 && (
 							<>
-								<div className="text-white py-5 text-center w-full ktext-subtitle">Vous pouvez cliquer sur la carte puis glisser le marqueur pour placer le topo.</div>
+								<div className="ktext-subtitle w-full py-5 text-center text-white">
+									Vous pouvez cliquer sur la carte puis glisser le marqueur pour
+									placer le topo.
+								</div>
 								<div className="mb-10 h-[55vh] w-full md:mb-16 md:h-[65vh]">
-									
 									<MapControl
 										initialZoom={10}
 										searchbarOptions={{ findPlaces: true }}
 										onClick={(e) => {
 											if (e.latLng) {
-												setLatitude(e.latLng.lng());
-												setLongitude(e.latLng.lat());
+												setLatitude(e.latLng.lat());
+												setLongitude(e.latLng.lng());
 											}
 										}}
 										onUserMarkerClick={(e) => {
@@ -165,17 +174,16 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies(
 											}
 										}}
 									>
-										{latitude && longitude &&
+										{latitude && longitude && (
 											<CreatingTopoMarker
 												type={type}
-												location={[latitude, longitude]}
+												location={[longitude, latitude]}
 												setLocation={(lat: number, lng: number) => {
 													setLatitude(lat);
 													setLongitude(lng);
 												}}
-												draggable 
 											/>
-										}
+										)}
 									</MapControl>
 								</div>
 
@@ -208,21 +216,28 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies(
 									</div>
 
 									<div className="flex w-full flex-row justify-center md:justify-between">
-										{device === 'desktop' &&
-											<div className="text-white flex items-center cursor-pointer" onClick={() => setStep(0)}>Retour</div>
-										}
+										{device === "desktop" && (
+											<div
+												className="flex cursor-pointer items-center text-white"
+												onClick={() => setStep(0)}
+											>
+												Retour
+											</div>
+										)}
 										<div>
-											<ValidateButton 
+											<ValidateButton
 												white
 												loading={loading}
 												onClick={create}
 											/>
 											{creationError && (
-												<div className="ktext-error text-error mt-3">{creationError}</div>
+												<div className="ktext-error mt-3 text-error">
+													{creationError}
+												</div>
 											)}
 										</div>
 										{/* Just for alignment */}
-										{device === 'desktop' && <div></div>}
+										{device === "desktop" && <div></div>}
 									</div>
 								</div>
 							</>
