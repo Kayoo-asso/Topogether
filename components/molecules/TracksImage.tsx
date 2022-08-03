@@ -157,11 +157,11 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(
 		);
 
 		return wrapPortal(
-			// <QuickPinchZoom
-			// 	onUpdate={onPinchZoom}
-			// 	draggableUnZoomed={false}
-			// 	tapZoomFactor={allowDoubleTapZoom ? 1 : 0}
-			// >
+			<QuickPinchZoom
+				onUpdate={onPinchZoom}
+				draggableUnZoomed={false}
+				tapZoomFactor={allowDoubleTapZoom ? 1 : 0}
+			>
 				<div ref={imgRef} className={"relative h-full" + cssCursor}>
 					<Image
 						objectFit={objectFit}
@@ -246,7 +246,7 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(
 						{props.image && props.children}
 					</svg>
 				</div>
-			// </QuickPinchZoom>
+			</QuickPinchZoom>
 		);
 	}
 );
