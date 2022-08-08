@@ -68,7 +68,7 @@ export const GradeHistogram: React.FC<GradeHistogramProps> = ({
 
 	return (
 		<div className="flex h-full">
-			{lightGrades.map((grade) => {
+			{lightGrades.filter(g => g !== 'None').map((grade) => {
 				const count = histogram[grade];
 				let heightPercent = 0;
 				if (maxNbOfTracks > 0) {
