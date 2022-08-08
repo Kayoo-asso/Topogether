@@ -108,7 +108,10 @@ export const MultipleImageInput = forwardRef<
 								props.onChange(images);
 							}}
 							onError={(err) => setError(err)}
-							onLoadStart={props.onLoadStart}
+							onLoadStart={() => {
+								setError(undefined);
+								props.onLoadStart && props.onLoadStart();
+							}}
 							onLoadEnd={props.onLoadEnd}
 						/>
 					)}
@@ -120,9 +123,7 @@ export const MultipleImageInput = forwardRef<
 					)}
 				</div>
 				{error && error.length > 0 && (
-					<div
-						className={"ktext-error mt-2 w-full pt-1 text-center text-error"}
-					>
+					<div className={"ktext-error mt-2 w-full pt-1 text-center text-error"}>
 						{error}
 					</div>
 				)}

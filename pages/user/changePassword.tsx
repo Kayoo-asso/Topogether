@@ -21,8 +21,7 @@ const ChangePasswordPage: NextPage<ChangePasswordProps> = () => {
 
 	const [oldPasswordError, setOldPasswordError] = useState<string>("");
 	const [newPasswordError, setNewPasswordError] = useState<string>("");
-	const [secondNewPasswordError, setSecondNewPasswordError] =
-		useState<string>("");
+	const [secondNewPasswordError, setSecondNewPasswordError] = useState<string>("");
 
 	const [loading, setLoading] = useState(false);
 

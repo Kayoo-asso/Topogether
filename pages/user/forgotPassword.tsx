@@ -10,14 +10,19 @@ const ForgotPasswordPage: NextPage = () => {
 	const [email, setEmail] = useState<string>();
 	const [emailError, setEmailError] = useState<string>();
 
+	const [loading, setLoading] = useState(false);
+
 	const checkErrors = () => {
 		if (!email) setEmailError("Email invalide");
 		if (email) return true;
 		else return false;
 	};
-	const send = () => {
+	const send = async () => {
 		if (checkErrors()) {
-			console.log("Reset password"); //TODO
+			setLoading(true);
+			//TODO
+			alert("Pour des raisons de sécurité, la réinitialisation de mot de passe a été temporairement désactivé. En attendant que tout rentre dans l'ordre, vous pouvez contacter un administrateur à l'adresse contact@topogether.com");
+			setLoading(false);
 		}
 	};
 
@@ -53,6 +58,7 @@ const ForgotPasswordPage: NextPage = () => {
 							content="Réinitialiser le mot de passe"
 							fullWidth
 							onClick={send}
+							loading={loading}
 						/>
 
 						<Link href="/user/login">
