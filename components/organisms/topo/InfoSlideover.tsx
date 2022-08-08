@@ -139,7 +139,7 @@ export const InfoSlideover: React.FC<InfoSlideoverProps> = ({
 				</div>
 
 				<div className="ktext-base-little">
-					{topo.description} {topo.description}
+					{topo.description}
 				</div>
 
 				<div className="flex flex-col gap-1">
