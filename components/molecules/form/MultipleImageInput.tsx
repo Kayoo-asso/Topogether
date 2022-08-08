@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useState } from "react";
+import React, { forwardRef, useCallback, useEffect, useState } from "react";
 import { ImageThumb } from "components";
 import { Boulder, Img, UUID } from "types";
 import { ImageInput } from ".";
@@ -103,15 +103,15 @@ export const MultipleImageInput = forwardRef<
 							ref={ref}
 							label={props.label}
 							multiple
-							onChange={(images) => {
+							onChange={useCallback((images) => {
 								if (error) setError(undefined);
 								props.onChange(images);
-							}}
+							}, [error, props.onChange])}
 							onError={(err) => setError(err)}
-							onLoadStart={() => {
+							onLoadStart={useCallback(() => {
 								setError(undefined);
 								props.onLoadStart && props.onLoadStart();
-							}}
+							}, [error, props.onLoadStart])}
 							onLoadEnd={props.onLoadEnd}
 						/>
 					)}
