@@ -68,6 +68,7 @@ export const GradeHistogram: React.FC<GradeHistogramProps> = ({
 
 	return (
 		<div className="flex h-full">
+			{/* Leave this filter alone! We don't want to see a "NONE" grade in the grade histogram */}
 			{lightGrades.filter(g => g !== 'None').map((grade) => {
 				const count = histogram[grade];
 				let heightPercent = 0;
