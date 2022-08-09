@@ -1,7 +1,7 @@
 import React from "react";
 import { GradeCircle, SlideagainstRightDesktop } from "components";
 import { Signal } from "helpers/quarky";
-import { gradeToLightGrade, Orientation, Track } from "types";
+import { gradeToLightGrade, Track } from "types";
 import { OrientationName, ReceptionName } from "types/EnumNames";
 import { listFlags, ClimbTechniquesName } from "helpers/bitflags";
 

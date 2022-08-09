@@ -8,7 +8,7 @@ import FilterIcon from "assets/icons/filter.svg";
 export interface TopoFilterOptions {
 	types: TopoType[];
 	boulderRange: [number, number];
-	gradeRange: [Exclude<LightGrade, "None">, Exclude<LightGrade, "None">];
+	gradeRange: [Exclude<LightGrade, "P">, Exclude<LightGrade, "P">];
 	adaptedToChildren: boolean;
 }
 

@@ -28,7 +28,7 @@ const defaultHistogramSelection: GradeHistogramSelection = {
 	7: false,
 	8: false,
 	9: false,
-	None: false,
+	P: false,
 };
 
 const defaultGradeHistogram = (): GradeHistogram => ({
@@ -39,7 +39,7 @@ const defaultGradeHistogram = (): GradeHistogram => ({
 	7: 0,
 	8: 0,
 	9: 0,
-	None: 0,
+	P: 0,
 });
 
 export const GradeScale: React.FC<GradeScaleProps> = ({
@@ -57,17 +57,17 @@ export const GradeScale: React.FC<GradeScaleProps> = ({
 	return (
 		<div className={`flex ${props.className}`}>
 			{lightGrades.map((grade) => {
-				if (grade !== "None")
-					return (
-						<GradeCircle
-							key={grade}
-							grade={grade}
-							size={circleSize}
-							selected={!!histogram[grade]}
-							className="mr-1"
-							onClick={props.onCircleClick}
-						/>
-					);
+				if (grade === 'P' && !histogram[grade]) return;
+				return (
+					<GradeCircle
+						key={grade}
+						grade={grade}
+						size={circleSize}
+						selected={!!histogram[grade]}
+						className="mr-1"
+						onClick={props.onCircleClick}
+					/>
+				);
 			})}
 		</div>
 	);
