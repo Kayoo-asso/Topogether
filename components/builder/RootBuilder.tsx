@@ -646,9 +646,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 								}}
 							/>
 						)}
-						<For
-							each={() => filterBoulders(boulders.quarks(), boulderFilters())}
-						>
+						<For each={() => filterBoulders(boulders.quarks(), boulderFilters())}>
 							{(boulder) => (
 								<BoulderMarker
 									key={boulder().id}
@@ -689,7 +687,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 									selected={selectedWaypoint.quark() === waypoint}
 									onClick={toggleWaypointSelect}
 									onContextMenu={displayWaypointDropdown}
-									draggable={selectedWaypoint.quark() === waypoint}
+									draggable
 								/>
 							)}
 						</For>
@@ -701,7 +699,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 									selected={selectedParking.quark() === parking}
 									onClick={toggleParkingSelect}
 									onContextMenu={displayParkingDropdown}
-									draggable={selectedParking.quark() === parking}
+									draggable
 								/>
 							)}
 						</For>

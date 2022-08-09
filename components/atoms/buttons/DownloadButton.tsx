@@ -20,6 +20,7 @@ export const DownloadButton: React.FC<DownloadButtonProps> = ({
 	const [loading, setLoading] = useState<boolean>(false);
 
 	const toggle = async () => {
+		alert("Le téléchargement offline sera bientôt disponible.");
 		// if (downloaded) showModalUndownload();
 		// else {
 		// 	setLoading(true);

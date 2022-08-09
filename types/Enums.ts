@@ -79,7 +79,7 @@ export const grades = [
 	"9c+",
 ] as const;
 
-export const lightGrades = [3, 4, 5, 6, 7, 8, 9, "None"] as const;
+export const lightGrades = [3, 4, 5, 6, 7, 8, 9, "P"] as const; //"P" is for Project (the default grade, when it has not been settle yet)
 
 export type Grade = typeof grades[number];
 
@@ -89,7 +89,7 @@ export const gradeToLightGrade = (grade?: Grade): LightGrade => {
 	if (grade) {
 		return Number(grade[0]) as LightGrade;
 	}
-	return "None";
+	return "P";
 };
 
 export type MapToolEnum = "ROCK" | "SECTOR" | "PARKING" | "WAYPOINT";

@@ -162,27 +162,31 @@ export const InfoSlideover: React.FC<InfoSlideoverProps> = ({
 							{topo.danger}
 						</div>
 					)}
-					<div>
-						<div className="font-semibold">Equipements présents : </div>
-						<div className="mt-2 flex flex-row gap-6">
-							{hasFlag(topo.amenities, Amenities.Toilets) && (
-								<Toilets className="h-5 w-5 fill-main" />
-							)}
-							{hasFlag(topo.amenities, Amenities.PicnicArea) && (
-								<Picnic className="h-6 w-6 stroke-main" />
-							)}
-							{hasFlag(topo.amenities, Amenities.Waterspot) && (
-								<WaterDrop className="h-5 w-5 stroke-main" />
-							)}
-							{hasFlag(topo.amenities, Amenities.Bins) && (
-								<Bin className="h-5 w-5  fill-main stroke-main" />
-							)}
-							{hasFlag(topo.amenities, Amenities.Shelter) && (
-								<Umbrella name="umbrella" className="h-5 w-5 fill-main" />
-							)}
-						</div>
-					</div>
-					{topo.otherAmenities && <div>{topo.otherAmenities}</div>}
+					{(hasFlag(topo.amenities, Amenities.Toilets) || hasFlag(topo.amenities, Amenities.PicnicArea) || hasFlag(topo.amenities, Amenities.Waterspot) || hasFlag(topo.amenities, Amenities.Bins) || hasFlag(topo.amenities, Amenities.Shelter) || topo.otherAmenities) &&
+						<>
+							<div>
+								<div className="font-semibold">Equipements présents : </div>
+								<div className="mt-2 flex flex-row gap-6">
+									{hasFlag(topo.amenities, Amenities.Toilets) && (
+										<Toilets className="h-5 w-5 fill-main" />
+									)}
+									{hasFlag(topo.amenities, Amenities.PicnicArea) && (
+										<Picnic className="h-6 w-6 stroke-main" />
+									)}
+									{hasFlag(topo.amenities, Amenities.Waterspot) && (
+										<WaterDrop className="h-5 w-5 stroke-main" />
+									)}
+									{hasFlag(topo.amenities, Amenities.Bins) && (
+										<Bin className="h-5 w-5  fill-main stroke-main" />
+									)}
+									{hasFlag(topo.amenities, Amenities.Shelter) && (
+										<Umbrella name="umbrella" className="h-5 w-5 fill-main" />
+									)}
+								</div>
+							</div>
+							<>{topo.otherAmenities && <div>{topo.otherAmenities}</div>}</>
+						</>
+					}
 				</div>
 			</div>
 		</div>

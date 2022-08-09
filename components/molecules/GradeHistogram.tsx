@@ -19,7 +19,7 @@ const bgStyles = {
 	7: "bg-grade-7",
 	8: "bg-grade-8",
 	9: "bg-grade-9",
-	None: "bg-grey-light",
+	P: "bg-grey-light",
 };
 
 const defaultGradeHistogram = () => ({
@@ -30,7 +30,7 @@ const defaultGradeHistogram = () => ({
 	7: 0,
 	8: 0,
 	9: 0,
-	None: 0,
+	P: 0, //"P" is for Project
 });
 
 const isLight = (topo: LightTopo | Topo): topo is LightTopo =>
@@ -62,14 +62,14 @@ export const GradeHistogram: React.FC<GradeHistogramProps> = ({
 		histogram[7] +
 		histogram[8] +
 		histogram[9] +
-		histogram["None"];
-	const { None, ...grades } = histogram;
+		histogram["P"];
+	const { P, ...grades } = histogram;
 	const maxNbOfTracks = Math.max(...Object.values(grades));
 
 	return (
 		<div className="flex h-full">
-			{/* Leave this filter alone! We don't want to see a "NONE" grade in the grade histogram */}
-			{lightGrades.filter(g => g !== 'None').map((grade) => {
+			{lightGrades.map((grade) => {
+				if (grade === 'P' && histogram['P'] < 1) return;
 				const count = histogram[grade];
 				let heightPercent = 0;
 				if (maxNbOfTracks > 0) {

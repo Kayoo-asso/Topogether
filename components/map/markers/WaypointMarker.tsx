@@ -37,19 +37,21 @@ export const WaypointMarker: React.FC<WaypointMarkerProps> = watchDependencies(
 
 		const handleContextMenu = useCallback(
 			(e: google.maps.MapMouseEvent) => {
-				const evt = e.domEvent;
-				if (isMouseEvent(evt) && evt.button === 2 && props.onContextMenu) {
-					//Right click
-					props.onContextMenu(evt, props.waypoint);
-				} else if (isTouchEvent(evt) || isPointerEvent(evt)) {
-					setTimer(
-						setTimeout(() => {
-							if (!isDragging()) {
-								isPressing.set(true);
-								props.onContextMenu!(evt, props.waypoint);
-							}
-						}, 800)
-					);
+				if (props.onContextMenu) {
+					const evt = e.domEvent;
+					if (isMouseEvent(evt) && evt.button === 2) {
+						//Right click
+						props.onContextMenu(evt, props.waypoint);
+					} else if (isTouchEvent(evt) || isPointerEvent(evt)) {
+						setTimer(
+							setTimeout(() => {
+								if (!isDragging()) {
+									isPressing.set(true);
+									props.onContextMenu!(evt, props.waypoint);
+								}
+							}, 800)
+						);
+					}
 				}
 			},
 			[props.waypoint, timer, props.onContextMenu, props.onClick]
