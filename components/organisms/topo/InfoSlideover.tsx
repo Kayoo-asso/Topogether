@@ -37,14 +37,10 @@ export const InfoSlideover: React.FC<InfoSlideoverProps> = ({
 	const [flashMessage, setFlashMessage] = useState<string>();
 	const topo = props.topo();
 
-	let nbOfBoulders = 0;
+	const nbOfBoulders = topo.boulders.length;
 	let nbOfTracks = 0;
-
-	for (const sector of topo.sectors) {
-		nbOfBoulders += sector.boulders.length;
-		for (const boulder of topo.boulders) {
-			nbOfTracks += boulder.tracks.length;
-		}
+	for (const boulder of topo.boulders) {
+		nbOfTracks += boulder.tracks.length;
 	}
 
 	const infosContent = () => (

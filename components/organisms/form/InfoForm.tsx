@@ -80,7 +80,6 @@ export const InfoForm: React.FC<InfoFormProps> = watchDependencies(
 					label="Description"
 					value={topo.description}
 					onChange={(e) => {
-						console.log(e.target.value);
 						props.topo.set({
 							...topo,
 							description: e.target.value as Description,
