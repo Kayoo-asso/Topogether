@@ -91,7 +91,6 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 		const router = useRouter();
 		const session = useSession()!;
 		const { b: bId } = router.query; // Get boulder id from url if selected
-		const firstRender = useFirstRender();
 		const breakpoint = useBreakpoint();
 
 		const showLoader = useLoader();
@@ -509,6 +508,10 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 							value: "Gestionnaires du spot",
 							action: () => setCurrentDisplay("MANAGEMENT"),
 						},
+						...session.role === 'ADMIN' ? [{
+							value:  "Voir le topo",
+							action: () => router.push("/topo/" + encodeUUID(topo.id))
+						}] : [],
 						{ value: "Valider le topo", action: () => showModalSubmitTopo() },
 						{ value: "Supprimer le topo", action: () => showModalDeleteTopo() },
 					]}

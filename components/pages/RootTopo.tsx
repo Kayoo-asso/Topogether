@@ -231,7 +231,7 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 				(topo.creator?.id === session?.id || session?.role === "ADMIN")
 			)
 				menuOptions.push({
-					value: "Modifier",
+					value: "Modifier le topo",
 					action: () => router.push(`/builder/${encodeUUID(topo.id)}`),
 				});
 			// TODO : add topo.creator.mail as the first option of the OR (after mailto)
