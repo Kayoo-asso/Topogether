@@ -338,7 +338,7 @@ export class InMemorySync implements SyncService {
 		// no need for allSettled since the promises of the Supabase client never fail
 		const promises = [
 			this.insert("createdTopos"),
-			this.upsert("topos", "updatedTopos"),
+			this.update("topos", "updatedTopos"),
 			this.upsert("boulders", "updatedBoulders"),
 			this.upsert("sectors", "updatedSectors"),
 			this.upsert("managers", "updatedManagers"),
@@ -375,6 +375,32 @@ export class InMemorySync implements SyncService {
 		return unsavedChanges;
 	}
 
+	// Terrible hack to avoid problems with the INSERT policy we have for `public.topos`,
+	// which prevents upserts from working for anyone that is not the creator of the topo.
+	// Will be deleted with proper offline mode.
+	private update(this: InMemorySync, table: "topos", key: "updatedTopos") {
+		const updates = this[key];
+		if (updates.size === 0) return Promise.resolve(true);
+		const values = updates.values();
+		this[key] = new Map();
+
+		return supabaseClient
+			.from(table)
+			.update(Array.from(values), {
+				returning: "minimal",
+			})
+			.then((res) => {
+				if (res.error) {
+					console.error(`Error ${res.status} updating ${table}:`, res.error);
+					// added <any> type annotation because TypeScript is annoying
+					this[key] = mergeMaps(updates as Map<UUID, any>, this[key]);
+					this._status.set(SyncStatus.UnsavedChanges);
+					return false;
+				}
+				return true;
+			});
+	}
+
 	// assumes `updates` have been swapped with a new Map for the property on the object
 	private upsert<K extends UpdateKey>(
 		this: InMemorySync,
@@ -387,7 +413,9 @@ export class InMemorySync implements SyncService {
 		this[key] = new Map();
 		return supabaseClient
 			.from(table)
-			.upsert(Array.from(values), { returning: "minimal" })
+			.upsert(Array.from(values), {
+				returning: "minimal",
+			})
 			.then((res) => {
 				if (res.error) {
 					console.error(`Error ${res.status} updating ${table}:`, res.error);
