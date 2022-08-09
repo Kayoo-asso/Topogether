@@ -20,7 +20,7 @@ const gradeColors = {
 	7: "text-grade-7",
 	8: "text-grade-8",
 	9: "text-grade-9",
-	None: "border-grey-light bg-grey-light text-white",
+	P: "border-grey-light bg-grey-light text-white",
 };
 
 export const TracksList: React.FC<TracksListProps> = watchDependencies(
