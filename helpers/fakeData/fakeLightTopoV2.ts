@@ -67,7 +67,7 @@ export const lightTopo: LightTopo = {
 		7: 41,
 		8: 4,
 		9: 0,
-		None: 12,
+		P: 12,
 	},
 	submitted: new Date(2020, 9, 14).toISOString(),
 	validated: new Date(2020, 9, 14).toISOString(),
