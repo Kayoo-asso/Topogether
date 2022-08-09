@@ -383,12 +383,14 @@ export class InMemorySync implements SyncService {
 		if (updates.size === 0) return Promise.resolve(true);
 		const values = updates.values();
 		this[key] = new Map();
+		console.log("Applying updates", updates);
 
 		return supabaseClient
 			.from(table)
 			.update(Array.from(values), {
 				returning: "minimal",
 			})
+			.in("id", Array.from(updates.keys()))
 			.then((res) => {
 				if (res.error) {
 					console.error(`Error ${res.status} updating ${table}:`, res.error);
@@ -409,6 +411,7 @@ export class InMemorySync implements SyncService {
 	) {
 		const updates = this[key] as Map<UUID, UpdateValue<K>>;
 		if (updates.size === 0) return Promise.resolve(true);
+		console.log("Upsert for table " + table);
 		const values = updates.values();
 		this[key] = new Map();
 		return supabaseClient
@@ -468,6 +471,7 @@ export class InMemorySync implements SyncService {
 		const topos = this[key];
 		if (topos.length === 0) return Promise.resolve(true);
 		this[key] = [];
+		console.log("Inserting:", topos);
 		return supabaseClient
 			.from<DBTopo>("topos")
 			.insert(topos, { returning: "minimal" })
