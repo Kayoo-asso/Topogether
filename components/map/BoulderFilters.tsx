@@ -17,7 +17,7 @@ import { Quark } from "helpers/quarky";
 export interface BoulderFilterOptions {
 	techniques: ClimbTechniques;
 	tracksRange: [number, number];
-	gradeRange: [Exclude<LightGrade, "None">, Exclude<LightGrade, "None">];
+	gradeRange: [Exclude<LightGrade, "P">, Exclude<LightGrade, "P">];
 	mustSee: boolean;
 }
 
