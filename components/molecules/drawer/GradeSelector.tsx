@@ -76,6 +76,7 @@ export const GradeSelector: React.FC<GradeselectorProps> = (
                         <Circle className={"w-full mr-2 h-6 " + getLightGradeColorClass(3)} />
                         {getInteractionDiv("3")}
                         {getInteractionDiv("3+")}
+                        <div className='w-full'></div>
                     </div>
 
                     <div className="w-full flex justify-center">

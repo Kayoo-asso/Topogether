@@ -134,7 +134,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
 			</span>
 
 			<span
-				className="flex text-white flex-row items-center"
+				className="flex text-white flex-row items-center cursor-pointer"
 				onClick={() => setGradeSelectorOpen(true)}
 			>
 				<Circle className={"mr-2 h-6 w-6 " + getLightGradeColorClass(gradeToLightGrade(props.grade))} />
