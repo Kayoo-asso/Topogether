@@ -30,7 +30,6 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies(
 	(props: DrawerProps) => {
 		const [selectedTool, setSelectedTool] =
 			useState<DrawerToolEnum>("LINE_DRAWER");
-		const [gradeSelectorOpen, setGradeSelectorOpen] = useState(false);
 		const [displayOtherTracks, setDisplayOtherTracks] = useState(false);
 		const [ModalClear, showModalClear] = useModal();
 
@@ -204,7 +203,6 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies(
 								allowDoubleTapZoom={false}
 								displayTracksDetails
 								onImageClick={(pos) => {
-									setGradeSelectorOpen(false);
 									addPointToLine(pos);
 								}}
 								onPointClick={(pointType, index) => {
@@ -218,8 +216,6 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies(
 							selectedTool={selectedTool}
 							displayOtherTracks={displayOtherTracks}
 							grade={selectedTrack.grade}
-							gradeSelectorOpen={gradeSelectorOpen}
-							setGradeSelectorOpen={setGradeSelectorOpen}
 							onToolSelect={(tool) => setSelectedTool(tool)}
 							onGradeSelect={(grade) => {
 								props.selectedTrack.quark()?.set({

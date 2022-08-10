@@ -1,83 +1,102 @@
-import React, { useEffect, useRef } from "react";
-import { Grade, grades } from "types";
+import React, { useCallback } from "react";
+import { Grade, LightGrade } from "types";
 import Circle from "assets/icons/circle.svg";
+import { Portal } from "helpers/hooks";
+import { ValidateButton } from "components/atoms/buttons/ValidateButton";
 
-interface GradeselectorDrawerProps {
+interface GradeselectorProps {
 	open: boolean;
-	setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+	setOpen?: React.Dispatch<React.SetStateAction<boolean>>;
 	grade?: Grade;
-	onGradeSelect: (grade: Grade) => void;
+	onGradeSelect: (grade?: Grade) => void;
 }
 
-export const GradeSelector: React.FC<GradeselectorDrawerProps> = (
-	props: GradeselectorDrawerProps
+const normalGrade = [9, 8, 7, 6, 5] as const;
+export const getLightGradeColorClass = (g: LightGrade) => {
+    switch (g) {
+        case 3:
+            return "fill-grade-3";
+        case 4:
+            return "fill-grade-4";    
+        case 5:
+            return "fill-grade-5";
+        case 6:
+            return "fill-grade-6";
+        case 7:
+            return "fill-grade-7";
+        case 8:
+            return "fill-grade-8";
+        case 9:
+            return "fill-grade-9";
+        case 'P':
+            return "fill-grey-light";
+    }
+};
+
+export const GradeSelector: React.FC<GradeselectorProps> = (
+	props: GradeselectorProps
 ) => {
-	const selectorContainerRef = useRef<HTMLDivElement>(null);
 
-	const getGradeColorClass = (grade: Grade) => {
-		const lightGrade = parseInt(grade[0]);
-		switch (lightGrade) {
-			case 3:
-				return "fill-grade-3";
-			case 4:
-				return "fill-grade-4";
-			case 5:
-				return "fill-grade-5";
-			case 6:
-				return "fill-grade-6";
-			case 7:
-				return "fill-grade-7";
-			case 8:
-				return "fill-grade-8";
-			case 9:
-				return "fill-grade-9";
-		}
-	};
+    const getNormalGradeLine = (g: typeof normalGrade[number]) => (
+        <div className="w-full flex flex-row justify-between items-center" key={g}>
+            <Circle className={"w-full mr-2 h-6 " + getLightGradeColorClass(g)} />
+            {getInteractionDiv(g + "a" as Grade, g + 'A')}
+            {getInteractionDiv(g + "a+" as Grade, 'A+')}
+            {getInteractionDiv(g + "b" as Grade, 'B')}
+            {getInteractionDiv(g + "b+" as Grade, 'B+')}
+            {getInteractionDiv(g + "c" as Grade, 'C')}
+            {getInteractionDiv(g + "c+" as Grade, 'C+')}
+        </div>
+    );
 
-	useEffect(() => {
-		if (selectorContainerRef.current) {
-			selectorContainerRef.current.scrollIntoView({ behavior: "auto" });
-		}
-	}, [selectorContainerRef, props.open]);
+    const getInteractionDiv = useCallback((g: Grade, label?: string) => (
+        <div 
+            className={"w-full rounded-sm p-1 justify-center cursor-pointer flex flex-row" + (props.grade === g ? ' text-white bg-main font-semibold' : '')}
+            onClick={() => props.onGradeSelect(g)}
+        >
+            {label || g}
+        </div>
+    ), [props.grade]);
 
 	return (
-		<>
-			<span
-				className={
-					"flex cursor-pointer flex-row items-center " +
-					(props.grade
-						? "ktext-base text-white"
-						: "ktext-title text-grey-medium")
-				}
-				onClick={() => props.setOpen(!props.open)}
-			>
-				<Circle
-					className={
-						"mr-2 h-6 w-6 " +
-						(props.grade ? getGradeColorClass(props.grade) : "fill-grey-medium")
-					}
-				/>
-				{props.grade ? props.grade : "Diff"}
-			</span>
+        <Portal open={props.open}>
+            <div className='w-full h-full bg-dark bg-opacity-95 flex flex-col px-8 absolute top-0 left-0 z-full'>
+                
+                <div className="w-full h-[7vh] flex justify-center items-center text-white ktext-title">
+                    Choisir la difficulté
+                </div>
 
-			{props.open && (
-				<div className="hide-scrollbar absolute bottom-0 right-[17%] -mb-[25px] flex h-[95%] flex-col items-start gap-5 overflow-x-hidden overflow-y-scroll rounded-t-full bg-dark pt-8 md:bottom-[7vh] md:right-[5%] md:mb-0 md:h-[82%]">
-					{[...grades].reverse().map((grade) => (
-						<span
-							key={grade}
-							className="ktext-base flex cursor-pointer flex-row items-center px-3 text-white"
-							onClick={() => {
-								props.onGradeSelect(grade);
-								props.setOpen(false);
-							}}
-						>
-							<Circle className={"mr-2 h-6 w-6 " + getGradeColorClass(grade)} />
-							{grade}
-						</span>
-					))}
-					<span ref={selectorContainerRef}></span>
-				</div>
-			)}
-		</>
+                <div className="w-full flex-1 flex flex-col gap-12 justify-center items-center text-grey-light ktext-title">
+                    {normalGrade.map(g => getNormalGradeLine(g))}
+
+                    <div className="w-full flex flex-row justify-between items-center">
+                        <Circle className={"w-full mr-2 h-6 " + getLightGradeColorClass(4)} />
+                        {getInteractionDiv("4")}
+                        {getInteractionDiv("4+")}
+                        <Circle className={"w-full mr-2 h-6 " + getLightGradeColorClass(3)} />
+                        {getInteractionDiv("3")}
+                        {getInteractionDiv("3+")}
+                    </div>
+
+                    <div className="w-full flex justify-center">
+                        <div 
+                            className={"rounded-sm p-2 cursor-pointer flex flex-row" + (!props.grade ? ' text-white bg-main font-semibold' : '')}
+                            onClick={() => props.onGradeSelect(undefined)}
+                        >
+                            <Circle className={"mr-2 h-6 w-6 " + getLightGradeColorClass('P')} /> Projet
+                        </div>
+                    </div>
+                </div>
+
+                <div className="w-full h-[10vh] flex justify-center">
+                    <ValidateButton
+                        onClick={() => props.setOpen && props.setOpen(false)}
+                    />
+                </div>
+
+            </div>
+        </Portal>
 	);
 };
+
+GradeSelector.displayName = "GradeSelector";

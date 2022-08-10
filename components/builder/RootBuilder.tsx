@@ -996,6 +996,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 				>
 					Êtes-vous sûr de vouloir supprimer le point de repère ?
 				</ModalDeleteWaypoint>
+
 			</>
 		);
 	}

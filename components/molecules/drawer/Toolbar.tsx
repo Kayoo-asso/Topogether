@@ -1,6 +1,5 @@
-import React from "react";
+import React, { useState } from "react";
 import { ToolSelectorMobile } from "./ToolSelectorMobile";
-import { GradeSelector } from "./GradeSelector";
 import { DrawerToolEnum, Grade, gradeToLightGrade } from "types";
 import Clear from "assets/icons/clear.svg";
 import Rewind from "assets/icons/rewind.svg";
@@ -11,15 +10,15 @@ import Hand from "assets/icons/hand.svg";
 import ClimbingShoe from "assets/icons/climbing-shoe.svg";
 import ForbiddenArea from "assets/icons/forbidden-area.svg";
 import Checked from "assets/icons/checked.svg";
+import { getLightGradeColorClass, GradeSelector } from "./GradeSelector";
+import Circle from "assets/icons/circle.svg";
 
 interface ToolbarProps {
 	selectedTool: DrawerToolEnum;
 	displayOtherTracks: boolean;
 	grade?: Grade;
-	gradeSelectorOpen: boolean;
-	setGradeSelectorOpen: React.Dispatch<React.SetStateAction<boolean>>;
 	onToolSelect: (tool: DrawerToolEnum) => void;
-	onGradeSelect: (grade: Grade) => void;
+	onGradeSelect: (grade?: Grade) => void;
 	onClear: () => void;
 	onRewind: () => void;
 	onOtherTracks: () => void;
@@ -53,6 +52,8 @@ export const Toolbar: React.FC<ToolbarProps> = ({
 	selectedTool = "LINE_DRAWER",
 	...props
 }: ToolbarProps) => {
+	const [gradeSelectorOpen, setGradeSelectorOpen] = useState(false);
+
 	return (
 		<div className="z-200 flex h-[9vh] w-full flex-row items-center justify-center bg-dark">
 			<span className="flex w-2/5 flex-row items-center justify-around md:w-3/12">
@@ -132,13 +133,12 @@ export const Toolbar: React.FC<ToolbarProps> = ({
 				/>
 			</span>
 
-			<span className="z-100 w-1/5 md:flex md:w-3/12 md:justify-center">
-				<GradeSelector
-					open={props.gradeSelectorOpen}
-					setOpen={props.setGradeSelectorOpen}
-					grade={props.grade}
-					onGradeSelect={props.onGradeSelect}
-				/>
+			<span
+				className="flex text-white flex-row items-center"
+				onClick={() => setGradeSelectorOpen(true)}
+			>
+				<Circle className={"mr-2 h-6 w-6 " + getLightGradeColorClass(gradeToLightGrade(props.grade))} />
+				{props.grade ? props.grade : 'Pr'}
 			</span>
 
 			<span className="flex w-1/5 justify-center md:hidden">
@@ -147,6 +147,15 @@ export const Toolbar: React.FC<ToolbarProps> = ({
 					onClick={props.onValidate}
 				/>
 			</span>
+
+			<GradeSelector 
+				open={gradeSelectorOpen}
+				setOpen={setGradeSelectorOpen}
+				grade={props.grade}
+				onGradeSelect={props.onGradeSelect}
+			/>
 		</div>
 	);
 };
+
+Toolbar.displayName = "Toolbar";
