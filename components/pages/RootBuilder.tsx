@@ -15,6 +15,7 @@ import {
 	ClimbTechniques,
 } from "types";
 import {
+	quark,
 	Quark,
 	useCreateDerivation,
 	useCreateQuark,
@@ -45,13 +46,8 @@ import {
 	SectorAreaMarker,
 	WaypointMarker,
 } from "components/map";
-import {
-	TrackFormSlideagainstDesktop,
-	Drawer,
-} from "components/organisms";
-import {
-	BuilderProgressIndicator,
-} from "../builder";
+import { TrackFormSlideagainstDesktop, Drawer } from "components/organisms";
+import { BuilderProgressIndicator } from "../builder";
 import {
 	createBoulder,
 	createParking,
@@ -72,8 +68,15 @@ import { toLatLng } from "helpers/map";
 import { sortBoulders, computeBuilderProgress } from "helpers/topo";
 import { decodeUUID, encodeUUID } from "helpers/utils";
 import { Show, For } from "components/atoms";
-import { InfoType, SlideoverLeftBuilder } from "components/organisms/builder/Slideover.left.builder";
-import { isBoulder, ItemType, SlideoverRightBuilder } from "components/organisms/builder/Slideover.right.builder";
+import {
+	InfoType,
+	SlideoverLeftBuilder,
+} from "components/organisms/builder/Slideover.left.builder";
+import {
+	isBoulder,
+	ItemType,
+	SlideoverRightBuilder,
+} from "components/organisms/builder/Slideover.right.builder";
 
 interface RootBuilderProps {
 	topoQuark: Quark<Topo>;
@@ -104,7 +107,8 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 		const [currentImage, setCurrentImage] = useState<Img>();
 
 		const sectorRightClicked = useSelectQuark<Sector>();
-        const [ModalDeleteSector, showModalDeleteSector] = useModal<Quark<Sector>>();
+		const [ModalDeleteSector, showModalDeleteSector] =
+			useModal<Quark<Sector>>();
 
 		const boulderRightClicked = useSelectQuark<Boulder>();
 		const [ModalDeleteBoulder, showModalDeleteBoulder] =
@@ -132,9 +136,10 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 
 		const [ModalSubmitTopo, showModalSubmitTopo] = useModal();
 		const [ModalDeleteTopo, showModalDeleteTopo] = useModal();
-		const [displayModalSectorRename, setDisplayModalSectorRename] = useState(false);
+		const [displayModalSectorRename, setDisplayModalSectorRename] =
+			useState(false);
 
-        // TODO
+		// TODO
 		// Hack: select boulder from query parameter
 		// useEffect(() => {
 		// 	if (typeof bId === "string") {
@@ -229,8 +234,8 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 			},
 			[topo, currentTool, createBoulder, createParking, createWaypoint]
 		);
-        
-        // TODO
+
+		// TODO
 		// useEffect(() => {
 		// 	const handleKeyDown = (e: KeyboardEvent) => {
 		// 		if (e.code === "Escape") {
@@ -277,7 +282,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 		// 	};
 		// }, [currentTool, tempCurrentTool]);
 
-        // TODO
+		// TODO
 		// const handleNewPhoto = useCallback(
 		// 	(img: Img, coords: GeoCoordinates) => {
 		// 		if (!coords) {
@@ -346,12 +351,11 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 			}
 		}, [maxTracks()]);
 
-                
-        const [selectedInfo, setSelectedInfo] = useState<InfoType>();
-        const [selectedItem, setSelectedItem] = useState<ItemType>();
-        const selectedTrack = useSelectQuark<Track>();
+		const [selectedInfo, setSelectedInfo] = useState<InfoType>();
+		const [selectedItem, setSelectedItem] = useState<ItemType>();
+		const selectedTrack = useSelectQuark<Track>();
 
-        const [displayDrawer, setDisplayDrawer] = useState<boolean>(false);
+		const [displayDrawer, setDisplayDrawer] = useState<boolean>(false);
 
 		return (
 			<>
@@ -359,20 +363,25 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 					title={topo.name}
 					backLink="/builder/dashboard"
 					onBackClick={undefined} //TO-REDO
-					menuOptions={[ //TODO
-						{ value: "Infos du topo", action: () => setSelectedInfo('INFO') },
+					menuOptions={[
+						//TODO
+						{ value: "Infos du topo", action: () => setSelectedInfo("INFO") },
 						{
 							value: "Marche d'approche",
-							action: () => setSelectedInfo('ACCESS'),
+							action: () => setSelectedInfo("ACCESS"),
 						},
 						{
 							value: "Gestionnaires du spot",
-							action: () => setSelectedInfo('MANAGEMENT'),
+							action: () => setSelectedInfo("MANAGEMENT"),
 						},
-						...session.role === 'ADMIN' ? [{
-							value:  "Voir le topo",
-							action: () => router.push("/topo/" + encodeUUID(topo.id))
-						}] : [],
+						...(session.role === "ADMIN"
+							? [
+									{
+										value: "Voir le topo",
+										action: () => router.push("/topo/" + encodeUUID(topo.id)),
+									},
+							  ]
+							: []),
 						{ value: "Valider le topo", action: () => showModalSubmitTopo() },
 						{ value: "Supprimer le topo", action: () => showModalDeleteTopo() },
 					]}
@@ -388,10 +397,12 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 				{/* overflow-clip instead of overflow-hidden, so that the Slideagainst can appear off-screen without 
                 triggering a shift of content in this div */}
 				<div className="relative flex h-content flex-row md:h-contentPlusShell md:overflow-clip">
-                    <LeftbarBuilderDesktop
+					<LeftbarBuilderDesktop
 						topoQuark={props.topoQuark}
 						boulderOrder={boulderOrder()}
-						selectedBoulder={(selectedItem && isBoulder(selectedItem)) ? selectedItem : undefined}
+						selectedBoulder={
+							selectedItem && isBoulder(selectedItem) ? selectedItem : undefined
+						}
 						onBoulderSelect={(boulderQuark) => {
 							setSelectedItem(boulderQuark);
 							mapRef.current?.setCenter(toLatLng(boulderQuark().location));
@@ -405,11 +416,11 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 						onDeleteBoulder={showModalDeleteBoulder}
 					/>
 
-                    <SlideoverLeftBuilder 
-                        topo={props.topoQuark}
-                        selected={selectedInfo}
-                        onClose={() => setSelectedInfo(undefined)}
-                    />
+					<SlideoverLeftBuilder
+						topo={props.topoQuark}
+						selected={selectedInfo}
+						onClose={() => setSelectedInfo(undefined)}
+					/>
 
 					<MapControl
 						ref={mapRef}
@@ -464,7 +475,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 								}}
 							/>
 						)}
-                        {/* TODO */}
+						{/* TODO */}
 						{/* <For each={() => filterBoulders(boulders.quarks(), boulderFilters())}>
 							{(boulder) => (
 								<BoulderMarker
@@ -524,15 +535,15 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 						</For> */}
 					</MapControl>
 
-                    <SlideoverRightBuilder 
-                        topo={props.topoQuark}
-                        selected={selectedItem}
-                        selectedTrack={selectedTrack}
-                        currentImage={currentImage}
-                        setCurrentImage={setCurrentImage}
-                        setDisplayDrawer={setDisplayDrawer}
-                        onClose={() => setSelectedItem(undefined)}
-                    />
+					<SlideoverRightBuilder
+						topo={props.topoQuark}
+						selected={selectedItem}
+						selectedTrack={selectedTrack}
+						currentImage={currentImage}
+						setCurrentImage={setCurrentImage}
+						setDisplayDrawer={setDisplayDrawer}
+						onClose={() => setSelectedItem(undefined)}
+					/>
 
 					<ModalSubmitTopo
 						buttonText="Confirmer"
@@ -564,8 +575,8 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 						continuer ?
 					</ModalDeleteTopo>
 				</div>
-                
-                {/* TODO */}
+
+				{/* TODO */}
 				{/* <Show when={() => boulderRightClicked.quark()}>
 					{(quarkBoulder) => (
 						<BoulderMarkerDropdown
@@ -627,7 +638,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 					)}
 				</Show> */}
 
-                {/* TODO */}
+				{/* TODO */}
 				{/* <Show
 					when={() =>
 						[
@@ -652,7 +663,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 					)}
 				</Show> */}
 
-                {/* TODO */}
+				{/* TODO */}
 				{/* <ModalDeleteSector
 					buttonText="Confirmer"
 					imgUrl={staticUrl.deleteWarning}
@@ -717,7 +728,6 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 				>
 					Êtes-vous sûr de vouloir supprimer le point de repère ?
 				</ModalDeleteWaypoint> */}
-
 			</>
 		);
 	}
