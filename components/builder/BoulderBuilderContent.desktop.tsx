@@ -1,28 +1,32 @@
 import React, { Dispatch, SetStateAction, useCallback, useRef } from "react";
 import {
 	BoulderPreviewDesktop,
-	SlideagainstRightDesktop,
 	BoulderForm,
+	Button,
 } from "components";
 import { Quark, SelectQuarkNullable, watchDependencies } from "helpers/quarky";
 import { Boulder, Img, Topo, Track } from "types";
 import { TracksListBuilder } from ".";
 import { setReactRef } from "helpers/utils";
+import { useModal } from "helpers/hooks";
+import { staticUrl } from "helpers/constants";
 
-interface BoulderBuilderSlideagainstDesktopProps {
+interface BoulderBuilderContentDesktopProps {
 	boulder: Quark<Boulder>;
 	topo: Quark<Topo>;
 	selectedTrack: SelectQuarkNullable<Track>;
 	currentImage?: Img;
 	setCurrentImage: Dispatch<SetStateAction<Img | undefined>>;
-	onClose: () => void;
+	onDeleteBoulder: () => void;
 }
 
-export const BoulderBuilderSlideagainstDesktop = watchDependencies<
+export const BoulderBuilderContentDesktop = watchDependencies<
 	HTMLInputElement,
-	BoulderBuilderSlideagainstDesktopProps
->((props: BoulderBuilderSlideagainstDesktopProps, parentRef) => {
+	BoulderBuilderContentDesktopProps
+>((props: BoulderBuilderContentDesktopProps, parentRef) => {
 	const boulder = props.boulder();
+
+	const [ModalDelete, showModalDelete] = useModal();
 
 	const imageInputRef = useRef<HTMLInputElement>(null);
 
@@ -49,12 +53,7 @@ export const BoulderBuilderSlideagainstDesktop = watchDependencies<
 	);
 
 	return (
-		<SlideagainstRightDesktop
-			open
-			displayLikeButton
-			item={props.boulder()}
-			onClose={props.onClose}
-		>
+		<>
 			{/* overflow-scroll to avoid scrollbar glitches with certain image sizes, where hovering the ImageThumb would display the scrolbar & change the overall layout*/}
 			<div className="flex h-full w-full flex-col overflow-scroll">
 				<BoulderForm
@@ -85,10 +84,27 @@ export const BoulderBuilderSlideagainstDesktop = watchDependencies<
 						[]
 					)}
 				/>
+
+				<Button
+					content="Supprimer"
+					onClick={showModalDelete}
+					fullWidth
+				/>
+				
 			</div>
-		</SlideagainstRightDesktop>
+
+			<ModalDelete
+				buttonText="Confirmer"
+				imgUrl={staticUrl.deleteWarning}
+				onConfirm={() => {
+					props.topo().boulders.removeQuark(props.boulder);
+					props.onDeleteBoulder();
+				}}
+			>
+				Etes-vous sûr de vouloir supprimer le bloc ainsi que toutes les voies associées ?
+		</ModalDelete>
+		</>
 	);
 });
 
-BoulderBuilderSlideagainstDesktop.displayName =
-	"BoulderBuilderSlideagainstDesktop";
+BoulderBuilderContentDesktop.displayName = "BoulderBuilderContentDesktop";

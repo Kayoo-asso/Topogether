@@ -62,6 +62,33 @@ export const createBoulder = (
 	const newBoulderQuark = topo.boulders.quarkAt(-1);
 	return newBoulderQuark;
 };
+export const deleteBoulder = (
+	topoQuark: Quark<Topo>,
+	boulderQuark: Quark<Boulder>
+) => {
+	const topo = topoQuark();
+	topo.boulders.removeQuark(boulderQuark);
+	const sectors = topo.sectors;
+	const boulder = boulderQuark();
+	const sectorWithBoulder = sectors.findQuark((s) =>
+		s.boulders.some((id) => id === boulder.id)
+	);
+	if (sectorWithBoulder)
+		//The boulder to delete is in a sector
+		sectorWithBoulder.set((s) => ({
+			...s,
+			boulders: s.boulders.filter((id) => id !== boulder.id),
+		}));
+	else {
+		//The boulder to delete is in lonelyboulders
+		topoQuark.set((t) => ({
+			...t,
+			lonelyBoulders: t.lonelyBoulders.filter(
+				(id) => id !== boulder.id
+			),
+		}));
+	}
+}
 
 export const createParking = (
 	topo: Topo,

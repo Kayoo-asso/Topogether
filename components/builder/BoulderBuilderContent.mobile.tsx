@@ -1,5 +1,5 @@
 import React, { Dispatch, SetStateAction, useState } from "react";
-import { GradeScale, SlideoverMobile, ImageSlider } from "components";
+import { GradeScale, ImageSlider } from "components";
 import { Boulder, Img, Topo, Track } from "types";
 import { Quark, watchDependencies, SelectQuarkNullable } from "helpers/quarky";
 import { TracksListBuilder } from ".";
@@ -7,35 +7,33 @@ import { BoulderForm } from "..";
 import { Image } from "components/atoms/Image";
 import { ImageInput } from "components/molecules";
 import { Button } from "components/atoms";
+import { useModal } from "helpers/hooks";
+import { staticUrl } from "helpers/constants";
 
-interface BoulderBuilderSlideoverMobileProps {
+interface BoulderBuilderContentMobileProps {
+	full: boolean,
 	boulder: Quark<Boulder>;
 	topo: Quark<Topo>;
 	selectedTrack: SelectQuarkNullable<Track>;
 	currentImage?: Img;
 	setCurrentImage: Dispatch<SetStateAction<Img | undefined>>;
-	onDrawButtonClick: () => void;
-	onCreateTrack: () => void;
-	onBoulderDelete: (boulder: Quark<Boulder>) => void;
-	onClose: () => void;
+	setDisplayDrawer: Dispatch<SetStateAction<boolean>>;
+	onDeleteBoulder: () => void;
 }
 
-export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobileProps> =
-	watchDependencies((props: BoulderBuilderSlideoverMobileProps) => {
+export const BoulderBuilderContentMobile: React.FC<BoulderBuilderContentMobileProps> =
+	watchDependencies((props: BoulderBuilderContentMobileProps) => {
 		const boulder = props.boulder();
 		const selectedTrack = props.selectedTrack();
 
-		const [full, setFull] = useState(!!selectedTrack);
+		const [ModalDelete, showModalDelete] = useModal();
+
 		const [trackTab, setTrackTab] = useState(true);
 
 		return (
-			<SlideoverMobile
-				persistent
-				onSizeChange={setFull}
-				onClose={props.onClose}
-			>
+			<>
 				{/* BOULDER IMAGE */}
-				{full && (
+				{props.full && (
 					<div className="relative flex max-h-[40%] w-full overflow-hidden rounded-t-lg bg-dark">
 						<ImageSlider
 							images={boulder.images}
@@ -51,18 +49,18 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
 					{/* BOULDER INFOS */}
 					<div
 						className={`grid grid-cols-8 items-center p-5 ${
-							full ? "" : " mt-3"
+							props.full ? "" : " mt-3"
 						}`}
 					>
 						<div className="col-span-6">
 							<div className="ktext-section-title">{boulder.name}</div>
-							{boulder.isHighball && full && (
+							{boulder.isHighball && props.full && (
 								<div className="ktext-base-little">High Ball</div>
 							)}
-							{boulder.dangerousDescent && full && (
+							{boulder.dangerousDescent && props.full && (
 								<div className="ktext-base-little">Descente dangereuse !</div>
 							)}
-							{!full && (
+							{!props.full && (
 								<div className="mt-2 flex items-center">
 									<GradeScale boulder={boulder} circleSize="little" />
 								</div>
@@ -70,7 +68,7 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
 						</div>
 
 						<div className="col-span-2 flex flex-col items-center justify-end gap-2">
-							{full && (
+							{props.full && (
 								<ImageInput
 									button="builder"
 									onChange={(imgs) => {
@@ -83,7 +81,7 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
 								/>
 							)}
 
-							{!full && (
+							{!props.full && (
 								<div className="relative h-[60px] w-full overflow-hidden rounded-sm">
 									<Image
 										image={boulder.images[0]}
@@ -98,7 +96,7 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
 
 					{/* TODO : show once good pattern */}
 					{/* TABS */}
-					{full && (
+					{props.full && (
 						<div className="ktext-label my-2 flex flex-row px-5 font-bold">
 							<span
 								className={`w-1/4 ${
@@ -120,12 +118,12 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
 					)}
 
 					{/* TRACKSLIST */}
-					{trackTab && full && (
+					{trackTab && props.full && (
 						<div className="overflow-auto pb-[30px]">
 							<TracksListBuilder
 								boulder={props.boulder}
 								selectedTrack={props.selectedTrack}
-								onDrawButtonClick={props.onDrawButtonClick}
+								onDrawButtonClick={() => props.setDisplayDrawer(true)}
 								onTrackClick={(trackQuark) => {
 									const newImageIndex = boulder.images.findIndex(
 										(img) => img.id === trackQuark().lines?.at(0)?.imageId
@@ -138,26 +136,37 @@ export const BoulderBuilderSlideoverMobile: React.FC<BoulderBuilderSlideoverMobi
 										props.selectedTrack.select(trackQuark);
 									}
 								}}
-								onCreateTrack={props.onCreateTrack}
+								onCreateTrack={() => props.setDisplayDrawer(true)}
 							/>
 						</div>
 					)}
 
 					{/* BOULDER FORM */}
-					{!trackTab && full && (
+					{!trackTab && props.full && (
 						<div className="overflow-auto border-t border-grey-light px-6 py-10">
 							<BoulderForm boulder={props.boulder} topo={props.topo} />
 							<Button
 								content="Supprimer le bloc"
 								className="mt-10"
 								fullWidth
-								onClick={() => props.onBoulderDelete(props.boulder)}
+								onClick={showModalDelete}
 							/>
 						</div>
 					)}
 				</div>
-			</SlideoverMobile>
+
+				<ModalDelete
+					buttonText="Confirmer"
+					imgUrl={staticUrl.deleteWarning}
+					onConfirm={() => {
+						props.topo().boulders.removeQuark(props.boulder);
+						props.onDeleteBoulder();
+					}}
+				>
+					Etes-vous sûr de vouloir supprimer le bloc ainsi que toutes les voies associées ?
+				</ModalDelete>
+			</>
 		);
 	});
 
-BoulderBuilderSlideoverMobile.displayName = "BoulderBuilderSlideoverMobile";
+	BoulderBuilderContentMobile.displayName = "BoulderBuilderContentMobile";

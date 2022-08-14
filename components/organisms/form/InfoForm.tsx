@@ -15,13 +15,13 @@ export const InfoForm: React.FC<InfoFormProps> = watchDependencies(
 	(props: InfoFormProps) => {
 		const device = useBreakpoint();
 		const nameInputRef = useRef<HTMLInputElement>(null);
-		const topo = props.topo();
-
 		useEffect(() => {
 			if (device === "desktop" && nameInputRef.current) {
 				nameInputRef.current.focus();
 			}
 		}, []);
+
+		const topo = props.topo();
 
 		const handleAmenities = useCallback(
 			(amenity) => () => {
@@ -35,7 +35,7 @@ export const InfoForm: React.FC<InfoFormProps> = watchDependencies(
 
 		return (
 			<div
-				className={`flex h-[95%] flex-col gap-6 overflow-auto ${
+				className={`flex h-[95%] flex-col gap-6 pb-[25px] md:pb-[60px] ${
 					props.className ? props.className : ""
 				}`}
 				onClick={(e) => e.stopPropagation()}

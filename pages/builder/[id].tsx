@@ -1,10 +1,10 @@
 import { useMemo } from "react";
 import { api } from "helpers/services";
 import { isUUID, TopoData } from "types";
-import { RootBuilder } from "components/builder";
 import { editTopo } from "helpers/quarkifyTopo";
 import { withRouting } from "helpers/serverStuff";
 import { decodeUUID } from "helpers/utils";
+import { RootBuilder } from "components/pages/RootBuilder";
 
 type BuilderProps = {
 	topo: TopoData;

@@ -7,7 +7,7 @@ import { SectorListBuilder } from "components/builder";
 interface LeftbarBuilderDesktopProps {
 	topoQuark: Quark<Topo>;
 	boulderOrder: Map<UUID, number>;
-	selectedBoulder: SelectQuarkNullable<Boulder>;
+	selectedBoulder?: Quark<Boulder>;
 	onBoulderSelect: (boulderQuark: Quark<Boulder>) => void;
 	onTrackSelect: (
 		trackQuark: Quark<Track>,
@@ -15,7 +15,6 @@ interface LeftbarBuilderDesktopProps {
 	) => void;
 	activateSubmission: boolean;
 	onSubmit: () => void;
-	onRenameSector: (sectorQuark: Quark<Sector>) => void;
 	onDeleteBoulder: (boulderQuark: Quark<Boulder>) => void;
 }
 
@@ -29,8 +28,6 @@ export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> =
 					selectedBoulder={props.selectedBoulder}
 					onBoulderSelect={props.onBoulderSelect}
 					onTrackSelect={props.onTrackSelect}
-					onRenameSector={props.onRenameSector}
-					onDeleteBoulder={props.onDeleteBoulder}
 				/>
 
 				<div className="px-6 text-center">

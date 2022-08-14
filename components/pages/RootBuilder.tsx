@@ -46,21 +46,12 @@ import {
 	WaypointMarker,
 } from "components/map";
 import {
-	InfoFormSlideover,
-	AccessFormSlideover,
-	ManagementFormSlideover,
 	TrackFormSlideagainstDesktop,
 	Drawer,
-	ModalRenameSector,
 } from "components/organisms";
 import {
-	BoulderBuilderSlideagainstDesktop,
 	BuilderProgressIndicator,
-	BoulderBuilderSlideoverMobile,
-	ParkingBuilderSlide,
-	SectorBuilderSlideoverMobile,
-	WaypointBuilderSlide,
-} from ".";
+} from "../builder";
 import {
 	createBoulder,
 	createParking,
@@ -81,6 +72,8 @@ import { toLatLng } from "helpers/map";
 import { sortBoulders, computeBuilderProgress } from "helpers/topo";
 import { decodeUUID, encodeUUID } from "helpers/utils";
 import { Show, For } from "components/atoms";
+import { InfoType, SlideoverLeftBuilder } from "components/organisms/builder/Slideover.left.builder";
+import { isBoulder, ItemType, SlideoverRightBuilder } from "components/organisms/builder/Slideover.right.builder";
 
 interface RootBuilderProps {
 	topoQuark: Quark<Topo>;
@@ -110,28 +103,20 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 		const [tempCurrentTool, setTempCurrentTool] = useState<MapToolEnum>();
 		const [currentImage, setCurrentImage] = useState<Img>();
 
-		const selectedSector = useSelectQuark<Sector>();
 		const sectorRightClicked = useSelectQuark<Sector>();
+        const [ModalDeleteSector, showModalDeleteSector] = useModal<Quark<Sector>>();
 
-		const [ModalDeleteSector, showModalDeleteSector] =
-			useModal<Quark<Sector>>();
-
-		const selectedBoulder = useSelectQuark<Boulder>();
 		const boulderRightClicked = useSelectQuark<Boulder>();
 		const [ModalDeleteBoulder, showModalDeleteBoulder] =
 			useModal<Quark<Boulder>>();
 
-		const selectedParking = useSelectQuark<Parking>();
 		const parkingRightClicked = useSelectQuark<Parking>();
 		const [ModalDeleteParking, showModalDeleteParking] =
 			useModal<Quark<Parking>>();
 
-		const selectedWaypoint = useSelectQuark<Waypoint>();
 		const waypointRightClicked = useSelectQuark<Waypoint>();
 		const [ModalDeleteWaypoint, showModalDeleteWaypoint] =
 			useModal<Quark<Waypoint>>();
-
-		const selectedTrack = useSelectQuark<Track>();
 
 		const [dropdownPosition, setDropdownPosition] = useState<{
 			x: number;
@@ -145,164 +130,44 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 		}, []);
 		useContextMenu(closeDropdown);
 
-		const [displaySectorSlideover, setDisplaySectorSlideover] =
-			useState<boolean>(false);
-		const [displayDrawer, setDisplayDrawer] = useState<boolean>(false);
-		const [displayInfo, setDisplayInfo] = useState<boolean>(false);
-		const [displayApproach, setDisplayApproach] = useState<boolean>(false);
-		const [displayManagement, setDisplayManagement] = useState<boolean>(false);
-		const [currentDisplay, setCurrentDisplay] = useState<
-			"INFO" | "APPROACH" | "MANAGEMENT" | "none"
-		>();
-		useEffect(() => {
-			if (currentDisplay) {
-				setDisplaySectorSlideover(false);
-				selectedTrack.select(undefined);
-				selectedBoulder.select(undefined);
-				selectedParking.select(undefined);
-				selectedWaypoint.select(undefined);
-				if (currentDisplay === "INFO") {
-					setDisplayInfo(true);
-					setTimeout(() => {
-						setDisplayApproach(false);
-						setDisplayManagement(false);
-					}, 150);
-				} else if (currentDisplay === "APPROACH") {
-					setDisplayApproach(true);
-					setTimeout(() => {
-						setDisplayInfo(false);
-						setDisplayManagement(false);
-					}, 150);
-				} else if (currentDisplay === "MANAGEMENT") {
-					setDisplayManagement(true);
-					setTimeout(() => {
-						setDisplayInfo(false);
-						setDisplayApproach(false);
-					}, 150);
-				} else {
-					setDisplayInfo(false);
-					setDisplayApproach(false);
-					setDisplayManagement(false);
-				}
-			}
-		}, [currentDisplay]);
-
 		const [ModalSubmitTopo, showModalSubmitTopo] = useModal();
 		const [ModalDeleteTopo, showModalDeleteTopo] = useModal();
+		const [displayModalSectorRename, setDisplayModalSectorRename] = useState(false);
 
-		const [displayModalSectorRename, setDisplayModalSectorRename] =
-			useState(false);
-		const toggleSectorSelect = useQuarkyCallback(
-			(sectorQuark: Quark<Sector>) => {
-				if (currentTool) return;
-				const sSector = selectedSector();
-				sSector && sSector.id === sectorQuark().id // if the sector is already selected
-					? selectedSector.select(undefined) // we unselect it
-					: selectedSector.select(sectorQuark); // if not, we select it
-			},
-			[selectedSector, selectedBoulder]
-		);
-		const toggleBoulderSelect = useQuarkyCallback(
-			(boulderQuark: Quark<Boulder>) => {
-				setDisplaySectorSlideover(false);
-				selectedSector.select(undefined);
-				selectedTrack.select(undefined);
-				selectedParking.select(undefined);
-				selectedWaypoint.select(undefined);
-				if (selectedBoulder.quark() === boulderQuark) {
-					selectedBoulder.select(undefined);
-				} else {
-					setCurrentImage(boulderQuark().images[0]);
-					selectedBoulder.select(boulderQuark);
-				}
-			},
-			[selectedBoulder]
-		);
+        // TODO
 		// Hack: select boulder from query parameter
-		useEffect(() => {
-			if (typeof bId === "string") {
-				const expanded = decodeUUID(bId);
-				if (isUUID(expanded)) {
-					const boulder = boulders.findQuark((b) => b.id === expanded);
-					if (boulder) toggleBoulderSelect(boulder);
-				}
-			}
-		}, []);
+		// useEffect(() => {
+		// 	if (typeof bId === "string") {
+		// 		const expanded = decodeUUID(bId);
+		// 		if (isUUID(expanded)) {
+		// 			const boulder = boulders.findQuark((b) => b.id === expanded);
+		// 			if (boulder) toggleBoulderSelect(boulder);
+		// 		}
+		// 	}
+		// }, []);
 
-		const toggleTrackSelect = useQuarkyCallback(
-			(trackQuark: Quark<Track>, boulderQuark: Quark<Boulder>) => {
-				setDisplaySectorSlideover(false);
-				selectedSector.select(undefined);
-				selectedBoulder.select(undefined);
-				selectedParking.select(undefined);
-				selectedWaypoint.select(undefined);
-				const track = trackQuark();
-				if (selectedTrack()?.id === track.id) selectedTrack.select(undefined);
-				else {
-					selectedBoulder.select(boulderQuark);
-					if (track.lines.length > 0) {
-						const newImage = boulderQuark().images.find(
-							(img) => img.id === track.lines.at(0).imageId
-						);
-						if (!newImage)
-							throw new Error(
-								"Could not find the first image for the selected track!"
-							);
-						setCurrentImage(newImage);
-					}
-					selectedTrack.select(trackQuark);
-				}
-			},
-			[selectedTrack]
-		);
-		const toggleParkingSelect = useQuarkyCallback(
-			(parkingQuark: Quark<Parking>) => {
-				setDisplaySectorSlideover(false);
-				selectedSector.select(undefined);
-				selectedBoulder.select(undefined);
-				selectedTrack.select(undefined);
-				selectedWaypoint.select(undefined);
-				if (selectedParking()?.id === parkingQuark().id) {
-					selectedParking.select(undefined);
-				} else selectedParking.select(parkingQuark);
-			},
-			[selectedParking]
-		);
-		const toggleWaypointSelect = useQuarkyCallback(
-			(waypointQuark: Quark<Waypoint>) => {
-				setDisplaySectorSlideover(false);
-				selectedSector.select(undefined);
-				selectedBoulder.select(undefined);
-				selectedTrack.select(undefined);
-				selectedParking.select(undefined);
-				if (selectedWaypoint()?.id === waypointQuark().id) {
-					selectedWaypoint.select(undefined);
-				} else selectedWaypoint.select(waypointQuark);
-			},
-			[selectedWaypoint]
-		);
-		useLazyQuarkyEffect(
-			([selectedB]) => {
-				if (selectedB)
-					router.push(
-						{
-							pathname: window.location.href.split("?")[0],
-							query: { b: encodeUUID(selectedB.id) },
-						},
-						undefined,
-						{ shallow: true }
-					);
-				else
-					router.push(
-						{ pathname: window.location.href.split("?")[0] },
-						undefined,
-						{
-							shallow: true,
-						}
-					);
-			},
-			[selectedBoulder]
-		);
+		// useLazyQuarkyEffect(
+		// 	([selectedB]) => {
+		// 		if (selectedB)
+		// 			router.push(
+		// 				{
+		// 					pathname: window.location.href.split("?")[0],
+		// 					query: { b: encodeUUID(selectedB.id) },
+		// 				},
+		// 				undefined,
+		// 				{ shallow: true }
+		// 			);
+		// 		else
+		// 			router.push(
+		// 				{ pathname: window.location.href.split("?")[0] },
+		// 				undefined,
+		// 				{
+		// 					shallow: true,
+		// 				}
+		// 			);
+		// 	},
+		// 	[selectedBoulder]
+		// );
 
 		const displayBoulderDropdown = (e: Event, boulderQuark: Quark<Boulder>) => {
 			if (isMouseEvent(e) || isPointerEvent(e))
@@ -364,90 +229,92 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 			},
 			[topo, currentTool, createBoulder, createParking, createWaypoint]
 		);
+        
+        // TODO
+		// useEffect(() => {
+		// 	const handleKeyDown = (e: KeyboardEvent) => {
+		// 		if (e.code === "Escape") {
+		// 			// TODO: change this, we first wish to cancel any ongoing action,
+		// 			// then set the current tool to undefined
+		// 			if (currentTool) setCurrentTool(undefined);
+		// 			else if (
+		// 				(breakpoint !== "mobile" || displayDrawer) &&
+		// 				selectedBoulder() &&
+		// 				selectedTrack()
+		// 			)
+		// 				return; //If the Drawer is open, Escape should only deactivate Drawer tools
+		// 			else {
+		// 				selectedSector.select(undefined);
+		// 				selectedBoulder.select(undefined);
+		// 				selectedTrack.select(undefined);
+		// 				selectedParking.select(undefined);
+		// 				selectedWaypoint.select(undefined);
+		// 			}
+		// 		}
+		// 		// TODO : Add a check to know if we are on the map and not in an input or textarea in a form, to avoid deleting items when we just want to delete characters
+		// 		// else if (e.code === 'Delete') {
+		// 		//     if (selectedSector()) showModalDeleteSector(selectedSector.quark()!);
+		// 		//     else if (selectedBoulder()) showModalDeleteBoulder(selectedBoulder.quark()!);
+		// 		//     else if (selectedParking()) showModalDeleteParking(selectedParking.quark()!);
+		// 		//     else if (selectedWaypoint()) showModalDeleteWaypoint(selectedWaypoint.quark()!);
+		// 		// }
+		// 		else if (e.code === "Space" && currentTool) {
+		// 			setTempCurrentTool(currentTool);
+		// 			setCurrentTool(undefined);
+		// 		}
+		// 	};
+		// 	const handleKeyUp = (e: KeyboardEvent) => {
+		// 		if (e.code === "Space" && tempCurrentTool) {
+		// 			setCurrentTool(tempCurrentTool);
+		// 			setTempCurrentTool(undefined);
+		// 		}
+		// 	};
+		// 	window.addEventListener("keydown", handleKeyDown);
+		// 	window.addEventListener("keyup", handleKeyUp);
+		// 	return () => {
+		// 		window.removeEventListener("keydown", handleKeyDown);
+		// 		window.removeEventListener("keyup", handleKeyUp);
+		// 	};
+		// }, [currentTool, tempCurrentTool]);
 
-		useEffect(() => {
-			const handleKeyDown = (e: KeyboardEvent) => {
-				if (e.code === "Escape") {
-					// TODO: change this, we first wish to cancel any ongoing action,
-					// then set the current tool to undefined
-					if (currentTool) setCurrentTool(undefined);
-					else if (
-						(breakpoint !== "mobile" || displayDrawer) &&
-						selectedBoulder() &&
-						selectedTrack()
-					)
-						return; //If the Drawer is open, Escape should only deactivate Drawer tools
-					else {
-						selectedSector.select(undefined);
-						selectedBoulder.select(undefined);
-						selectedTrack.select(undefined);
-						selectedParking.select(undefined);
-						selectedWaypoint.select(undefined);
-					}
-				}
-				// TODO : Add a check to know if we are on the map and not in an input or textarea in a form, to avoid deleting items when we just want to delete characters
-				// else if (e.code === 'Delete') {
-				//     if (selectedSector()) showModalDeleteSector(selectedSector.quark()!);
-				//     else if (selectedBoulder()) showModalDeleteBoulder(selectedBoulder.quark()!);
-				//     else if (selectedParking()) showModalDeleteParking(selectedParking.quark()!);
-				//     else if (selectedWaypoint()) showModalDeleteWaypoint(selectedWaypoint.quark()!);
-				// }
-				else if (e.code === "Space" && currentTool) {
-					setTempCurrentTool(currentTool);
-					setCurrentTool(undefined);
-				}
-			};
-			const handleKeyUp = (e: KeyboardEvent) => {
-				if (e.code === "Space" && tempCurrentTool) {
-					setCurrentTool(tempCurrentTool);
-					setTempCurrentTool(undefined);
-				}
-			};
-			window.addEventListener("keydown", handleKeyDown);
-			window.addEventListener("keyup", handleKeyUp);
-			return () => {
-				window.removeEventListener("keydown", handleKeyDown);
-				window.removeEventListener("keyup", handleKeyUp);
-			};
-		}, [currentTool, tempCurrentTool]);
-
-		const handleNewPhoto = useCallback(
-			(img: Img, coords: GeoCoordinates) => {
-				if (!coords) {
-					console.log("no coords");
-					return;
-				}
-				if (img) {
-					setCurrentImage(img);
-					if (currentTool === "PARKING") {
-						selectedParking.select(createParking(topo, coords, img));
-					} else if (currentTool === "WAYPOINT") {
-						selectedWaypoint.select(createWaypoint(topo, coords, img));
-					} else {
-						const sBoulder = selectedBoulder();
-						if (sBoulder) {
-							const newImages = sBoulder.images;
-							newImages.push(img);
-							selectedBoulder.quark()!.set((b) => ({
-								...b,
-								images: newImages,
-							}));
-							selectedTrack.select(createTrack(sBoulder, session.id));
-						} else {
-							const newBoulderQuark = createBoulder(
-								props.topoQuark,
-								coords,
-								img
-							);
-							selectedTrack.select(createTrack(newBoulderQuark(), session.id));
-							selectedBoulder.select(newBoulderQuark);
-						}
-						setDisplayDrawer(true);
-					}
-				}
-			},
-			[topo, selectedParking(), selectedWaypoint(), selectedBoulder()]
-		);
+        // TODO
+		// const handleNewPhoto = useCallback(
+		// 	(img: Img, coords: GeoCoordinates) => {
+		// 		if (!coords) {
+		// 			console.log("no coords");
+		// 			return;
+		// 		}
+		// 		if (img) {
+		// 			setCurrentImage(img);
+		// 			if (currentTool === "PARKING") {
+		// 				selectedParking.select(createParking(topo, coords, img));
+		// 			} else if (currentTool === "WAYPOINT") {
+		// 				selectedWaypoint.select(createWaypoint(topo, coords, img));
+		// 			} else {
+		// 				const sBoulder = selectedBoulder();
+		// 				if (sBoulder) {
+		// 					const newImages = sBoulder.images;
+		// 					newImages.push(img);
+		// 					selectedBoulder.quark()!.set((b) => ({
+		// 						...b,
+		// 						images: newImages,
+		// 					}));
+		// 					selectedTrack.select(createTrack(sBoulder, session.id));
+		// 				} else {
+		// 					const newBoulderQuark = createBoulder(
+		// 						props.topoQuark,
+		// 						coords,
+		// 						img
+		// 					);
+		// 					selectedTrack.select(createTrack(newBoulderQuark(), session.id));
+		// 					selectedBoulder.select(newBoulderQuark);
+		// 				}
+		// 				setDisplayDrawer(true);
+		// 			}
+		// 		}
+		// 	},
+		// 	[topo, selectedParking(), selectedWaypoint(), selectedBoulder()]
+		// );
 
 		const progress = useCreateDerivation<number>(
 			() => computeBuilderProgress(props.topoQuark),
@@ -479,34 +346,28 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 			}
 		}, [maxTracks()]);
 
+                
+        const [selectedInfo, setSelectedInfo] = useState<InfoType>();
+        const [selectedItem, setSelectedItem] = useState<ItemType>();
+        const selectedTrack = useSelectQuark<Track>();
+
+        const [displayDrawer, setDisplayDrawer] = useState<boolean>(false);
+
 		return (
 			<>
 				<Header
 					title={topo.name}
 					backLink="/builder/dashboard"
-					onBackClick={
-						displayDrawer
-							? () => setDisplayDrawer(false)
-							: selectedBoulder()
-							? () => {
-									selectedTrack.select(undefined);
-									selectedBoulder.select(undefined);
-							  }
-							: selectedParking()
-							? () => selectedParking.select(undefined)
-							: selectedWaypoint()
-							? () => selectedWaypoint.select(undefined)
-							: undefined
-					}
-					menuOptions={[
-						{ value: "Infos du topo", action: () => setCurrentDisplay("INFO") },
+					onBackClick={undefined} //TO-REDO
+					menuOptions={[ //TODO
+						{ value: "Infos du topo", action: () => setSelectedInfo('INFO') },
 						{
 							value: "Marche d'approche",
-							action: () => setCurrentDisplay("APPROACH"),
+							action: () => setSelectedInfo('ACCESS'),
 						},
 						{
 							value: "Gestionnaires du spot",
-							action: () => setCurrentDisplay("MANAGEMENT"),
+							action: () => setSelectedInfo('MANAGEMENT'),
 						},
 						...session.role === 'ADMIN' ? [{
 							value:  "Voir le topo",
@@ -519,101 +380,55 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 					<BuilderProgressIndicator
 						topo={props.topoQuark}
 						progress={progress()}
-						displayInfosTopo={() => setCurrentDisplay("INFO")}
-						displayInfosApproach={() => setCurrentDisplay("APPROACH")}
+						displayInfosTopo={() => {}} //TODO
+						displayInfosApproach={() => {}} //TODO
 					/>
 				</Header>
 
 				{/* overflow-clip instead of overflow-hidden, so that the Slideagainst can appear off-screen without 
                 triggering a shift of content in this div */}
 				<div className="relative flex h-content flex-row md:h-contentPlusShell md:overflow-clip">
-					<LeftbarBuilderDesktop
+                    <LeftbarBuilderDesktop
 						topoQuark={props.topoQuark}
 						boulderOrder={boulderOrder()}
-						selectedBoulder={selectedBoulder}
+						selectedBoulder={(selectedItem && isBoulder(selectedItem)) ? selectedItem : undefined}
 						onBoulderSelect={(boulderQuark) => {
-							toggleBoulderSelect(boulderQuark);
+							setSelectedItem(boulderQuark);
 							mapRef.current?.setCenter(toLatLng(boulderQuark().location));
 						}}
-						onTrackSelect={toggleTrackSelect}
+						onTrackSelect={(trackQuark, boulderQuark) => {
+							selectedTrack.select(trackQuark);
+							setSelectedItem(boulderQuark);
+						}}
 						onSubmit={showModalSubmitTopo}
 						activateSubmission={progress() === 100}
-						onRenameSector={(sectorQuark) => {
-							selectedSector.select(sectorQuark);
-							setDisplayModalSectorRename(true);
-						}}
 						onDeleteBoulder={showModalDeleteBoulder}
 					/>
-					<Show
-						when={() =>
-							[breakpoint === "mobile", displaySectorSlideover] as const
-						}
-					>
-						{() => (
-							<SectorBuilderSlideoverMobile
-								topoQuark={props.topoQuark}
-								boulderOrder={boulderOrder()}
-								selectedBoulder={selectedBoulder}
-								onCreateSector={() => setCurrentTool("SECTOR")}
-								onBoulderSelect={toggleBoulderSelect}
-								onTrackSelect={toggleTrackSelect}
-								onRenameSector={(sectorQuark) => {
-									selectedSector.select(sectorQuark);
-									setDisplayModalSectorRename(true);
-								}}
-								onDeleteBoulder={showModalDeleteBoulder}
-								onClose={() => setDisplaySectorSlideover(false)}
-							/>
-						)}
-					</Show>
 
-					<Show when={() => displayInfo}>
-						<InfoFormSlideover
-							topo={props.topoQuark}
-							open
-							onClose={() => setCurrentDisplay("none")}
-							className={currentDisplay === "INFO" ? "z-300" : ""}
-						/>
-					</Show>
-					<Show when={() => displayApproach}>
-						<AccessFormSlideover
-							accesses={topo.accesses}
-							open={displayApproach}
-							onClose={() => setCurrentDisplay("none")}
-							className={currentDisplay === "APPROACH" ? "z-300" : ""}
-						/>
-					</Show>
-					<Show when={() => displayManagement}>
-						<ManagementFormSlideover
-							managers={topo.managers}
-							open={displayManagement}
-							onClose={() => setCurrentDisplay("none")}
-							className={currentDisplay === "MANAGEMENT" ? "z-300" : ""}
-						/>
-					</Show>
+                    <SlideoverLeftBuilder 
+                        topo={props.topoQuark}
+                        selected={selectedInfo}
+                        onClose={() => setSelectedInfo(undefined)}
+                    />
 
 					<MapControl
 						ref={mapRef}
 						initialZoom={16}
 						initialCenter={topo.location}
 						displaySectorButton
-						onSectorButtonClick={() => setDisplaySectorSlideover(true)}
+						onSectorButtonClick={() => {}} //TODO
 						searchbarOptions={{
 							findBoulders: true,
 							focusOnOpen: true,
 						}}
-						onBoulderResultSelect={(boulder) =>
-							toggleBoulderSelect(
-								boulders.findQuark((b) => b.id === boulder.id)!
-							)
-						}
+						onBoulderResultSelect={(boulder) => {}} //TODO
 						currentTool={currentTool}
 						onToolSelect={(tool) =>
 							tool === currentTool
 								? setCurrentTool(undefined)
 								: setCurrentTool(tool)
 						}
-						onNewPhoto={handleNewPhoto}
+						// onNewPhoto={handleNewPhoto}
 						draggableCursor={
 							currentTool === "ROCK"
 								? "url(/assets/icons/colored/_rock.svg) 16 32, auto"
@@ -643,13 +458,14 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 										path,
 										boulderOrder()
 									);
-									selectedSector.select(sector);
+									// selectedSector.select(sector); //TODO
 									setDisplayModalSectorRename(true);
 									setCurrentTool(undefined);
 								}}
 							/>
 						)}
-						<For each={() => filterBoulders(boulders.quarks(), boulderFilters())}>
+                        {/* TODO */}
+						{/* <For each={() => filterBoulders(boulders.quarks(), boulderFilters())}>
 							{(boulder) => (
 								<BoulderMarker
 									key={boulder().id}
@@ -705,93 +521,18 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 									draggable
 								/>
 							)}
-						</For>
+						</For> */}
 					</MapControl>
 
-					<Show
-						when={() =>
-							[breakpoint !== "mobile", selectedTrack.quark()] as const
-						}
-					>
-						{([, track]) => (
-							<TrackFormSlideagainstDesktop
-								track={track}
-								onClose={() => {
-									selectedTrack.select(undefined);
-								}}
-								onDeleteTrack={() =>
-									deleteTrack(selectedBoulder()!, track, selectedTrack)
-								}
-							/>
-						)}
-					</Show>
-
-					<Show when={() => selectedBoulder.quark()}>
-						{(boulder) => {
-							if (breakpoint === "mobile") {
-								return (
-									<BoulderBuilderSlideoverMobile
-										boulder={boulder}
-										topo={props.topoQuark}
-										selectedTrack={selectedTrack}
-										currentImage={currentImage}
-										setCurrentImage={setCurrentImage}
-										onDrawButtonClick={() => {
-											setDisplayDrawer(true);
-										}}
-										onCreateTrack={() => {
-											setDisplayDrawer(true);
-										}}
-										onBoulderDelete={showModalDeleteBoulder}
-										onClose={() => {
-											selectedTrack.select(undefined);
-											selectedBoulder.select(undefined);
-										}}
-									/>
-								);
-							}
-							return (
-								<BoulderBuilderSlideagainstDesktop
-									ref={multipleImageInputRef}
-									boulder={boulder}
-									topo={props.topoQuark}
-									selectedTrack={selectedTrack}
-									setCurrentImage={setCurrentImage}
-									currentImage={currentImage}
-									onClose={() => {
-										selectedTrack.select(undefined);
-										selectedBoulder.select(undefined);
-									}}
-								/>
-							);
-						}}
-					</Show>
-					<Show when={selectedParking.quark}>
-						{(parking) => (
-							<ParkingBuilderSlide
-								open
-								parking={parking}
-								onDeleteParking={() => {
-									topo.parkings.removeQuark(parking);
-									selectedParking.select(undefined);
-								}}
-								onClose={() => selectedParking.select(undefined)}
-							/>
-						)}
-					</Show>
-					<Show when={selectedWaypoint.quark}>
-						{(waypoint) => (
-							<WaypointBuilderSlide
-								open
-								waypoint={waypoint}
-								onDeleteWaypoint={() => {
-									topo.waypoints.removeQuark(waypoint);
-									selectedWaypoint.select(undefined);
-								}}
-								onClose={() => selectedWaypoint.select(undefined)}
-							/>
-						)}
-					</Show>
+                    <SlideoverRightBuilder 
+                        topo={props.topoQuark}
+                        selected={selectedItem}
+                        selectedTrack={selectedTrack}
+                        currentImage={currentImage}
+                        setCurrentImage={setCurrentImage}
+                        setDisplayDrawer={setDisplayDrawer}
+                        onClose={() => setSelectedItem(undefined)}
+                    />
 
 					<ModalSubmitTopo
 						buttonText="Confirmer"
@@ -823,18 +564,9 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 						continuer ?
 					</ModalDeleteTopo>
 				</div>
-
-				{/* <Show when={() => displayGeoCamera}>
-                <GeoCamera
-                    currentTool={currentTool || 'ROCK'}
-                    changeableTool={!selectedBoulder()}
-                    onChangeTool={(tool) => setCurrentTool(tool)}
-                    onCapture={handleGeoCameraCapture}
-                    onClose={() => setDisplayGeoCamera(false)}
-                />
-            </Show> */}
-
-				<Show when={() => boulderRightClicked.quark()}>
+                
+                {/* TODO */}
+				{/* <Show when={() => boulderRightClicked.quark()}>
 					{(quarkBoulder) => (
 						<BoulderMarkerDropdown
 							position={dropdownPosition}
@@ -893,9 +625,10 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 							onSelect={() => parkingRightClicked.select(undefined)}
 						/>
 					)}
-				</Show>
+				</Show> */}
 
-				<Show
+                {/* TODO */}
+				{/* <Show
 					when={() =>
 						[
 							breakpoint !== "mobile" || displayDrawer,
@@ -917,22 +650,10 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 							onValidate={() => setDisplayDrawer(false)}
 						/>
 					)}
-				</Show>
+				</Show> */}
 
-				<Show
-					when={() => [displayModalSectorRename, selectedSector()] as const}
-				>
-					{([, sSector]) => {
-						return (
-							<ModalRenameSector
-								sector={sectors.findQuark((s) => s.id === sSector.id)!}
-								onClose={() => setDisplayModalSectorRename(false)}
-							/>
-						);
-					}}
-				</Show>
-
-				<ModalDeleteSector
+                {/* TODO */}
+				{/* <ModalDeleteSector
 					buttonText="Confirmer"
 					imgUrl={staticUrl.deleteWarning}
 					onConfirm={(sector) => {
@@ -995,7 +716,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 					}}
 				>
 					Êtes-vous sûr de vouloir supprimer le point de repère ?
-				</ModalDeleteWaypoint>
+				</ModalDeleteWaypoint> */}
 
 			</>
 		);

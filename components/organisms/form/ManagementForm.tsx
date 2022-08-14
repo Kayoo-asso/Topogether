@@ -1,40 +1,47 @@
 import React, { useEffect, useRef } from "react";
 import { ImageInput, TextArea, TextInput } from "components";
 import { Quark, watchDependencies } from "helpers/quarky";
-import { Description, Email, Manager, Name, UUID } from "types";
+import { Description, Email, Name, Topo } from "types";
 import { Button } from "components/atoms";
 import { useBreakpoint } from "helpers/hooks";
+import { v4 } from "uuid";
 
 interface ManagementFormProps {
-	manager: Quark<Manager>;
+	topo: Quark<Topo>;
 	className?: string;
-	onCreateManager: () => void;
-	onDeleteManager: (manager: Quark<Manager>) => void;
 }
 
 export const ManagementForm: React.FC<ManagementFormProps> = watchDependencies(
 	(props: ManagementFormProps) => {
 		const breakpoint = useBreakpoint();
 		const nameInputRef = useRef<HTMLInputElement>(null);
-
 		useEffect(() => {
 			if (breakpoint === "desktop" && nameInputRef.current) {
 				nameInputRef.current.focus();
 			}
 		}, []);
 
-		if (!props.manager) {
+		const managers = props.topo().managers
+
+		if (managers.length < 1) {
 			return (
 				<div className="w-full pt-[10%]" onClick={(e) => e.stopPropagation()}>
 					<Button
 						content="Ajouter un gestionnaire"
 						fullWidth
-						onClick={props.onCreateManager}
+						onClick={() => {
+							managers.push({
+								id: v4(),
+								name: "" as Name,
+								contactName: "" as Name,
+							})
+						}}
 					/>
 				</div>
 			);
 		} else {
-			const manager = props.manager();
+			const managerQuark = managers.quarkAt(0);
+			const manager = managerQuark();
 			return (
 				<div
 					className={
@@ -48,13 +55,13 @@ export const ManagementForm: React.FC<ManagementFormProps> = watchDependencies(
 							<ImageInput
 								value={manager.image}
 								onChange={(images) => {
-									props.manager.set({
+									managerQuark.set({
 										...manager,
 										image: images[0],
 									});
 								}}
 								onDelete={() => {
-									props.manager.set({
+									managerQuark.set({
 										...manager,
 										image: undefined,
 									});
@@ -67,7 +74,7 @@ export const ManagementForm: React.FC<ManagementFormProps> = watchDependencies(
 							label="Nom de la structure"
 							value={manager.name}
 							onChange={(e) =>
-								props.manager.set({
+								managerQuark.set({
 									...manager,
 									name: e.target.value as Name,
 								})
@@ -80,7 +87,7 @@ export const ManagementForm: React.FC<ManagementFormProps> = watchDependencies(
 						label="Adresse"
 						value={manager.address}
 						onChange={(e) =>
-							props.manager.set({
+							managerQuark.set({
 								...manager,
 								address: e.target.value as Name,
 							})
@@ -93,7 +100,7 @@ export const ManagementForm: React.FC<ManagementFormProps> = watchDependencies(
 							type="number"
 							value={manager.zip}
 							onChange={(e) =>
-								props.manager.set({
+								managerQuark.set({
 									...manager,
 									zip: parseInt(e.target.value),
 								})
@@ -104,7 +111,7 @@ export const ManagementForm: React.FC<ManagementFormProps> = watchDependencies(
 							label="Ville"
 							value={manager.city}
 							onChange={(e) =>
-								props.manager.set({
+								managerQuark.set({
 									...manager,
 									city: e.target.value as Name,
 								})
@@ -117,7 +124,7 @@ export const ManagementForm: React.FC<ManagementFormProps> = watchDependencies(
 						label="Description"
 						value={manager.description}
 						onChange={(e) =>
-							props.manager.set({
+							managerQuark.set({
 								...manager,
 								description: e.target.value as Description,
 							})
@@ -131,7 +138,7 @@ export const ManagementForm: React.FC<ManagementFormProps> = watchDependencies(
 						label="Nom"
 						value={manager.contactName}
 						onChange={(e) =>
-							props.manager.set({
+							managerQuark.set({
 								...manager,
 								contactName: e.target.value as Name,
 							})
@@ -142,7 +149,7 @@ export const ManagementForm: React.FC<ManagementFormProps> = watchDependencies(
 						label="Email"
 						value={manager.contactMail}
 						onChange={(e) =>
-							props.manager.set({
+							managerQuark.set({
 								...manager,
 								contactMail: e.target.value as Email,
 							})
@@ -153,7 +160,7 @@ export const ManagementForm: React.FC<ManagementFormProps> = watchDependencies(
 						label="Téléphone"
 						value={manager.contactPhone}
 						onChange={(e) =>
-							props.manager.set({
+							managerQuark.set({
 								...manager,
 								contactPhone: e.target.value as Name,
 							})
@@ -162,7 +169,7 @@ export const ManagementForm: React.FC<ManagementFormProps> = watchDependencies(
 
 					<Button
 						content="Supprimer"
-						onClick={() => props.onDeleteManager(props.manager)}
+						onClick={() => managers.removeQuark(managerQuark)}
 					/>
 				</div>
 			);

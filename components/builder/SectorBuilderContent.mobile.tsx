@@ -1,13 +1,13 @@
 import React from "react";
-import { Button, SlideoverMobile } from "components";
+import { Button } from "components";
 import { Boulder, Sector, Topo, Track, UUID } from "types";
 import { Quark, watchDependencies, SelectQuarkNullable } from "helpers/quarky";
-import { SectorListBuilderExperimental } from "./SectorListBuilderExperimental";
+import { SectorListBuilder } from "./SectorListBuilder";
 
-interface SectorBuilderSlideoverMobileProps {
-	topoQuark: Quark<Topo>;
+interface SectorBuilderContentMobileProps {
+	topo: Quark<Topo>;
 	boulderOrder: Map<UUID, number>;
-	selectedBoulder: SelectQuarkNullable<Boulder>;
+	selectedBoulder: Quark<Boulder>;
 	onCreateSector: () => void;
 	onBoulderSelect: (boulderQuark: Quark<Boulder>) => void;
 	onTrackSelect: (
@@ -19,19 +19,16 @@ interface SectorBuilderSlideoverMobileProps {
 	onClose: () => void;
 }
 
-export const SectorBuilderSlideoverMobile: React.FC<SectorBuilderSlideoverMobileProps> =
-	watchDependencies((props: SectorBuilderSlideoverMobileProps) => {
+export const SectorBuilderContentMobile: React.FC<SectorBuilderContentMobileProps> =
+	watchDependencies((props: SectorBuilderContentMobileProps) => {
 		return (
-			<SlideoverMobile onClose={props.onClose}>
 				<div className="mt-10 flex flex-col overflow-auto px-3 pb-5">
-					<SectorListBuilderExperimental
-						topoQuark={props.topoQuark}
+					<SectorListBuilder
+						topoQuark={props.topo}
 						boulderOrder={props.boulderOrder}
 						selectedBoulder={props.selectedBoulder}
 						onBoulderSelect={props.onBoulderSelect}
 						onTrackSelect={props.onTrackSelect}
-						onRenameSector={props.onRenameSector}
-						onDeleteBoulder={props.onDeleteBoulder}
 					/>
 
 					<div className="flex w-full flex-col items-center">
@@ -45,8 +42,7 @@ export const SectorBuilderSlideoverMobile: React.FC<SectorBuilderSlideoverMobile
 						/>
 					</div>
 				</div>
-			</SlideoverMobile>
 		);
 	});
 
-SectorBuilderSlideoverMobile.displayName = "SectorBuilderSlideoverMobile";
+	SectorBuilderContentMobile.displayName = "SectorBuilderContentMobile";

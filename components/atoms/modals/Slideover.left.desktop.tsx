@@ -40,7 +40,9 @@ export const SlideoverLeftDesktop: React.FC<SlideoverLeftDesktopProps> = ({
 				</span>
 			</div>
 
-			<div className="h-full flex-1 overflow-auto">{props.children}</div>
+			{open && 
+				<div className="h-full flex-1 overflow-auto">{props.children}</div>
+			}
 		</div>
 	);
 };

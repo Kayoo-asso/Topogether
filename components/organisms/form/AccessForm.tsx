@@ -1,37 +1,42 @@
 import React from "react";
 import { Button, ImageInput, Select, TextArea, TextInput } from "components";
 import { Quark, watchDependencies } from "helpers/quarky";
-import { Description, TopoAccess } from "types";
+import { Description, Topo } from "types";
 import { DifficultyName, selectOptions } from "types/EnumNames";
+import { v4 } from "uuid";
 
 interface AccessFormProps {
-	access: Quark<TopoAccess>;
+	topo: Quark<Topo>;
 	className?: string;
-	onCreateAccess: () => void;
-	onDeleteAccess: (access: Quark<TopoAccess>) => void;
 }
 
 export const AccessForm: React.FC<AccessFormProps> = watchDependencies(
 	(props: AccessFormProps) => {
-		if (!props.access) {
+		const accesses = props.topo().accesses;
+		if (accesses.length < 1) {
 			return (
 				<div className="w-full pt-[10%]" onClick={(e) => e.stopPropagation()}>
 					<Button
 						content="Ajouter une marche d'approche"
 						fullWidth
-						onClick={props.onCreateAccess}
+						onClick={() => {
+							accesses.push({
+								id: v4(),
+								steps: [],
+							})
+						}}
 					/>
 				</div>
 			);
 		} else {
-			const access = props.access();
+			const accessQuark = accesses.quarkAt(0);
+			const access = accessQuark();
 			return (
 				<>
 					<div
-						className={
-							"flex min-h-[85%] flex-col gap-6 pb-[25px] md:pb-[60px] " +
-							(props.className ? props.className : "")
-						}
+						className={`flex min-h-[85%] flex-col gap-6 pb-[25px] md:pb-[60px] mt-6 ${
+							props.className ? props.className : ""
+						}`}
 						onClick={(e) => e.stopPropagation()}
 					>
 						<div className="flex flex-row items-end gap-6">
@@ -41,7 +46,7 @@ export const AccessForm: React.FC<AccessFormProps> = watchDependencies(
 								options={selectOptions(DifficultyName)}
 								value={access.difficulty}
 								onChange={(value) => {
-									props.access.set({
+									accessQuark.set({
 										...access,
 										difficulty: value,
 									});
@@ -54,7 +59,7 @@ export const AccessForm: React.FC<AccessFormProps> = watchDependencies(
 								step={1}
 								value={access.duration}
 								onChange={(e) =>
-									props.access.set({
+									accessQuark.set({
 										...access,
 										duration: parseInt(e.target.value),
 									})
@@ -63,7 +68,7 @@ export const AccessForm: React.FC<AccessFormProps> = watchDependencies(
 						</div>
 
 						<div className="ktext-subtitle mt-3">Etapes</div>
-						<div className="flex flex-col gap-6 overflow-auto">
+						<div className="flex flex-col gap-6">
 							{/* TODO : scroll to the new step when it is created */}
 							{access.steps?.map((step, index) => {
 								const newSteps = access.steps!;
@@ -73,7 +78,7 @@ export const AccessForm: React.FC<AccessFormProps> = watchDependencies(
 											className="ktext-base-little mt-3 cursor-pointer text-main"
 											onClick={() => {
 												newSteps.splice(index, 1);
-												props.access.set({
+												accessQuark.set({
 													...access,
 													steps: newSteps,
 												});
@@ -87,7 +92,7 @@ export const AccessForm: React.FC<AccessFormProps> = watchDependencies(
 													value={step.image}
 													onChange={(images) => {
 														newSteps[index].image = images[0];
-														props.access.set({
+														accessQuark.set({
 															...access,
 															steps: newSteps,
 														});
@@ -99,9 +104,8 @@ export const AccessForm: React.FC<AccessFormProps> = watchDependencies(
 												label="Description"
 												value={step.description}
 												onChange={(e) => {
-													newSteps[index].description = e.target
-														.value as Description;
-													props.access.set({
+													newSteps[index].description = e.target.value as Description;
+														accessQuark.set({
 														...access,
 														steps: newSteps,
 													});
@@ -120,18 +124,19 @@ export const AccessForm: React.FC<AccessFormProps> = watchDependencies(
 								newSteps.push({
 									description: "" as Description,
 								});
-								props.access.set({
+								accessQuark.set({
 									...access,
 									steps: newSteps,
 								});
 							}}
 						/>
+
 					</div>
 
 					<Button
 						content="Supprimer"
 						fullWidth
-						onClick={() => props.onDeleteAccess(props.access)}
+						onClick={() => accesses.removeQuark(accessQuark)}
 					/>
 				</>
 			);

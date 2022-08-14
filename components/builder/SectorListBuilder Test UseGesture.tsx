@@ -11,6 +11,7 @@ import {
 	DropResult,
 } from "react-beautiful-dnd";
 import { useSession } from "helpers/services";
+
 import ArrowSimple from "assets/icons/arrow-simple.svg";
 import Edit from "assets/icons/edit.svg";
 import { DraggableList } from "components/atoms/DraggableList";
@@ -26,7 +27,7 @@ export interface SectorListBuilderProps {
 }
 
 // Note: some cleanup happened here
-export const SectorListBuilder: React.FC<SectorListBuilderProps> =
+export const SectorListBuilderExperimental: React.FC<SectorListBuilderProps> =
 	watchDependencies((props: SectorListBuilderProps) => {
 		const session = useSession()!;
 
@@ -67,6 +68,48 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> =
 			setDisplayedBoulders(db);
 		};
 
+		const [draggingSectorId, setDraggingSectorId] = useState();
+		const handleDragStart = useCallback((res) => {
+			setDraggingSectorId(res.source.droppableId);
+		}, []);
+
+		const handleDragEnd = useCallback(
+			(res: DropResult) => {
+				setDraggingSectorId(undefined);
+				if (res.destination) {
+					if (res.source.droppableId === "no-sector") {
+						let newLonelyBoulders = [...topo.lonelyBoulders];
+						newLonelyBoulders = arrayMove(
+							newLonelyBoulders,
+							res.source.index,
+							res.destination.index
+						);
+						props.topoQuark.set((t) => ({
+							...t,
+							lonelyBoulders: newLonelyBoulders,
+						}));
+					} else {
+						const sector = sectors.findQuark(
+							(s) => s.id === res.source.droppableId
+						);
+						if (sector) {
+							let newSectorBoulders = [...sector().boulders];
+							newSectorBoulders = arrayMove(
+								newSectorBoulders,
+								res.source.index,
+								res.destination.index
+							);
+							sector.set((s) => ({
+								...s,
+								boulders: newSectorBoulders,
+							}));
+						}
+					}
+				}
+			},
+			[topo, sectors]
+		);
+
 		return (
 			<div className="mb-6 h-full px-4">
 				{sectors.quarks().map((sectorQuark, sectorIndex) => {
@@ -76,7 +119,7 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> =
 						quarks.push(boulderQuarksMap.get(id)!);
 					}
 					return (
-						<div className="mb-10 flex flex-col pb-6" key={sector.id}>
+						<div key={sector.id} className="mb-10 flex flex-col pb-6">
 							<div className="ktext-label text-grey-medium">
 								Secteur {sectorIndex + 1}
 							</div>
@@ -111,8 +154,8 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> =
 								// BOULDERS
 								<div
 									className={
-										"ml-1 flex flex-col gap-1 rounded-sm p-2 "
-										// + (draggingSectorId === sector.id ? "bg-grey-superlight" : "")
+										"ml-1 flex flex-col gap-1 rounded-sm p-2 " +
+										(draggingSectorId === sector.id ? "bg-grey-superlight" : "")
 									}
 								>
 									{quarks.length === 0 && (
@@ -122,7 +165,7 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> =
 										items={quarks.map((boulderQuark, index) => {
 											const boulder = boulderQuark();
 											return (
-												<div className="flex touch-none flex-col">
+												<div className="flex flex-col">
 													<BoulderItemLeftbar
 														boulder={boulderQuark}
 														orderIndex={props.boulderOrder.get(boulder.id)!}
@@ -130,8 +173,8 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> =
 														displayed={displayedBoulders.has(boulder.id)}
 														onArrowClick={() => toggleBoulder(boulder)}
 														onNameClick={() => {
-															// props.onBoulderSelect(boulderQuark);
-															// toggleBoulder(boulder);
+															props.onBoulderSelect(boulderQuark);
+															toggleBoulder(boulder);
 														}}
 														onDeleteClick={() =>
 															props.onDeleteBoulder(boulderQuark)
@@ -154,10 +197,10 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> =
 					);
 				})}
 
-				{/* <DragDropContext
-          onDragEnd={handleDragEnd}
-          onDragStart={handleDragStart}
-        >
+			<DragDropContext
+				onDragEnd={handleDragEnd}
+				onDragStart={handleDragStart}
+			>
           <Droppable droppableId="no-sector">
             {(provided) => {
               return (
@@ -225,9 +268,9 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> =
               );
             }}
           </Droppable>
-        </DragDropContext> */}
+        </DragDropContext>
 			</div>
 		);
 	});
 
-SectorListBuilder.displayName = "SectorList Builder";
+SectorListBuilderExperimental.displayName = "SectorList Builder";
