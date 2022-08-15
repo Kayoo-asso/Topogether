@@ -3,10 +3,11 @@ import { ImageThumb } from "components";
 import { Boulder, Img, UUID } from "types";
 import { ImageInput } from ".";
 import ArrowFull from "assets/icons/arrow-full.svg";
+import { SelectedBoulder } from "components/organisms/builder/Slideover.right.builder";
 
 interface MultipleImageInputProps {
 	images: Img[];
-	boulder?: Boulder;
+	selectedBoulder?: SelectedBoulder;
 	label?: string;
 	rows?: number;
 	cols?: number;
@@ -81,15 +82,17 @@ export const MultipleImageInput = forwardRef<
 							<ImageThumb
 								key={image.id}
 								image={image}
-								tracks={props.boulder?.tracks
+								tracks={props.selectedBoulder?.value()?.tracks
 									.quarks()
 									.filter(
 										(track) =>
 											track().lines.find(
 												(line) => line.imageId === image.id
 											) !== undefined
-									)}
+									)
+								}
 								selected={image.id === props.selected}
+								selectedBoulder={props.selectedBoulder}
 								onClick={props.onImageClick}
 								onDelete={props.onImageDelete}
 							/>

@@ -1,6 +1,6 @@
 import React, { Dispatch, SetStateAction, useState } from "react";
 import { GradeScale, ImageSlider } from "components";
-import { Boulder, Img, Topo } from "types";
+import { Img, Topo } from "types";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { TracksListBuilder } from ".";
 import { BoulderForm } from "..";
@@ -14,7 +14,6 @@ import { deleteBoulder } from "helpers/builder";
 
 interface BoulderBuilderContentMobileProps {
 	full: boolean,
-	boulder: Quark<Boulder>;
 	topo: Quark<Topo>;
 	selectedBoulder: SelectedBoulder;
 	setSelectedItem: Dispatch<SetStateAction<ItemType>>;
@@ -26,7 +25,7 @@ interface BoulderBuilderContentMobileProps {
 
 export const BoulderBuilderContentMobile: React.FC<BoulderBuilderContentMobileProps> =
 	watchDependencies((props: BoulderBuilderContentMobileProps) => {
-		const boulder = props.boulder();
+		const boulder = props.selectedBoulder.value();
 		const selectedTrack = props.selectedBoulder.selectedTrack && props.selectedBoulder.selectedTrack();
 
 		const [ModalDelete, showModalDelete] = useModal();
@@ -76,7 +75,7 @@ export const BoulderBuilderContentMobile: React.FC<BoulderBuilderContentMobilePr
 								<ImageInput
 									button="builder"
 									onChange={(imgs) => {
-										props.boulder.set((b) => ({
+										props.selectedBoulder.value.set((b) => ({
 											...b,
 											images: [...boulder.images].concat(imgs),
 										}));
@@ -125,7 +124,6 @@ export const BoulderBuilderContentMobile: React.FC<BoulderBuilderContentMobilePr
 					{trackTab && props.full && (
 						<div className="overflow-auto pb-[30px]">
 							<TracksListBuilder
-								boulder={props.boulder}
 								selectedBoulder={props.selectedBoulder}
 								setSelectedItem={props.setSelectedItem}
 								onDrawButtonClick={() => props.setDisplayDrawer(true)}
@@ -149,7 +147,7 @@ export const BoulderBuilderContentMobile: React.FC<BoulderBuilderContentMobilePr
 					{/* BOULDER FORM */}
 					{!trackTab && props.full && (
 						<div className="overflow-auto border-t border-grey-light px-6 py-10">
-							<BoulderForm boulder={props.boulder} topo={props.topo} />
+							<BoulderForm boulder={props.selectedBoulder.value} topo={props.topo} />
 							<Button
 								content="Supprimer le bloc"
 								className="mt-10"
@@ -164,7 +162,7 @@ export const BoulderBuilderContentMobile: React.FC<BoulderBuilderContentMobilePr
 					buttonText="Confirmer"
 					imgUrl={staticUrl.deleteWarning}
 					onConfirm={() => {
-						deleteBoulder(props.topo, props.boulder, props.setSelectedItem, props.selectedBoulder);
+						deleteBoulder(props.topo, props.selectedBoulder.value, props.setSelectedItem, props.selectedBoulder);
 						props.onDeleteBoulder();
 					}}
 				>

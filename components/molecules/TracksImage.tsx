@@ -23,8 +23,8 @@ import { ItemType, SelectedBoulder } from "components/organisms/builder/Slideove
 type TracksImageProps = React.PropsWithChildren<{
 	image?: Img;
 	tracks: QuarkIter<Quark<Track>>;
-	selectedBoulder: SelectedBoulder;
-	setSelectedItem: Dispatch<SetStateAction<ItemType>>;
+	selectedBoulder?: SelectedBoulder;
+	setSelectedItem?: Dispatch<SetStateAction<ItemType>>;
 	// 'fill' could be possible, but it distorts the aspect ratio
 	objectFit?: "contain" | "cover";
 	sizeHint: SourceSize;
@@ -64,7 +64,7 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(
 		allowDoubleTapZoom = true,
 		...props
 	}: TracksImageProps) => {
-		const selectedTrack = props.selectedBoulder.selectedTrack && props.selectedBoulder.selectedTrack();
+		const selectedTrack = props.selectedBoulder?.selectedTrack && props.selectedBoulder.selectedTrack();
 		// ratio = width / height
 		// so the most accurate way to scale the SVG viewBox is to set a height
 		// and take width = ratio * height (multiplication is better than division)
@@ -236,7 +236,7 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(
 												displayTrackDetails={displayTracksDetails}
 												displayTrackOrderIndexes={displayTrackOrderIndexes}
 												trackWeight={tracksWeight}
-												onLineClick={() => props.setSelectedItem({ ...props.selectedBoulder, selectedTrack: trackQuark })}
+												onLineClick={() => props.selectedBoulder && props.setSelectedItem && props.setSelectedItem({ ...props.selectedBoulder, selectedTrack: trackQuark })}
 												onPointClick={props.onPointClick}
 											/>
 										);

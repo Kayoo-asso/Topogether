@@ -6,7 +6,7 @@ import React, {
 	useState,
 } from "react";
 import { Quark, watchDependencies } from "helpers/quarky";
-import { Boulder, Img, Track, UUID } from "types";
+import { Img, Track, UUID } from "types";
 import { MultipleImageInput, TracksImage } from ".";
 import { deleteTrack } from "helpers/builder";
 import { staticUrl } from "helpers/constants";
@@ -15,7 +15,6 @@ import { setReactRef } from "helpers/utils";
 import { ItemType, SelectedBoulder } from "components/organisms/builder/Slideover.right.builder";
 
 interface BoulderPreviewDesktopProps {
-	boulder: Quark<Boulder>;
 	selectedBoulder: SelectedBoulder;
 	setSelectedItem: Dispatch<SetStateAction<ItemType>>;
 	displayAddButton?: boolean;
@@ -32,7 +31,7 @@ export const BoulderPreviewDesktop = watchDependencies<
 		{ displayAddButton = false, ...props }: BoulderPreviewDesktopProps,
 		parentRef
 	) => {
-		const boulder = props.boulder();
+		const boulder = props.selectedBoulder.value();
 		const multipleImageInputRef = useRef<HTMLInputElement>(null);
 
 		const [loading, setLoading] = useState(false);
@@ -42,8 +41,8 @@ export const BoulderPreviewDesktop = watchDependencies<
 		const deleteImage = useCallback(
 			(id: UUID) => {
 				if (props.currentImage?.id === id) props.setCurrentImage(undefined);
-				const newImages = props.boulder().images.filter((img) => img.id !== id);
-				props.boulder.set((b) => ({
+				const newImages = boulder.images.filter((img) => img.id !== id);
+				props.selectedBoulder.value.set((b) => ({
 					...b,
 					images: newImages,
 				}));
@@ -52,7 +51,7 @@ export const BoulderPreviewDesktop = watchDependencies<
 					props.setCurrentImage(undefined);
 				}
 			},
-			[props.boulder(), props.currentImage]
+			[props.selectedBoulder, props.selectedBoulder.value(), props.currentImage, props.setCurrentImage]
 		);
 		const deleteTracks = useCallback(
 			(tracksQuark: Quark<Track>[]) => {
@@ -91,7 +90,7 @@ export const BoulderPreviewDesktop = watchDependencies<
 								setReactRef(parentRef, ref);
 							}}
 							images={boulder.images}
-							boulder={boulder}
+							selectedBoulder={props.selectedBoulder}
 							selected={props.currentImage?.id}
 							rows={1}
 							onImageClick={useCallback(
@@ -105,7 +104,7 @@ export const BoulderPreviewDesktop = watchDependencies<
 							allowUpload={displayAddButton}
 							onChange={useCallback(
 								(images) => {
-									props.boulder.set((b) => ({
+									props.selectedBoulder.value.set((b) => ({
 										...b,
 										images: [...b.images, ...images],
 									}));

@@ -1,6 +1,6 @@
 import React, { Dispatch, SetStateAction } from "react";
 import { GradeCircle } from "components";
-import { Boulder, gradeToLightGrade, Track } from "types";
+import { gradeToLightGrade, Track } from "types";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { TrackForm } from "../organisms/form/TrackForm";
 import { useSession } from "helpers/services";
@@ -11,7 +11,6 @@ import { useBreakpoint, useModal } from "helpers/hooks";
 import { ItemType, SelectedBoulder } from "components/organisms/builder/Slideover.right.builder";
 
 interface TracksListBuilderProps {
-	boulder: Quark<Boulder>;
 	selectedBoulder: SelectedBoulder;
 	setSelectedItem: Dispatch<SetStateAction<ItemType>>;
 	onTrackClick: (trackQuark: Quark<Track>) => void;
@@ -39,7 +38,7 @@ export const TracksListBuilder: React.FC<TracksListBuilderProps> =
 
 		const breakpoint = useBreakpoint();
 
-		const boulder = props.boulder();
+		const boulder = props.selectedBoulder.value();
 		const tracks = boulder.tracks
 			.quarks()
 			.toArray()
@@ -58,7 +57,9 @@ export const TracksListBuilder: React.FC<TracksListBuilderProps> =
 								key={track.id}
 								className={
 									"flex cursor-pointer flex-col border-b border-grey-light px-5 py-5 md:py-3 md:hover:bg-grey-superlight" +
-									(selectedTrack?.id !== track.id ? " opacity-40" : "")
+									(!selectedTrack ? '' :
+										selectedTrack.id !== track.id ? 
+										" opacity-40" : "")
 								}
 								onClick={() => props.onTrackClick(trackQuark)}
 							>

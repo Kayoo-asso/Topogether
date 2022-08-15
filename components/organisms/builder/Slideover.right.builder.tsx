@@ -49,7 +49,6 @@ export const SlideoverRightBuilder: React.FC<SlideoverRightBuilderProps> = (
 					return (
 						<BoulderBuilderContentMobile
 							topo={props.topo}
-							boulder={props.selectedItem.value}
 							currentImage={props.currentImage}
 							setCurrentImage={props.setCurrentImage}
 							selectedBoulder={props.selectedItem}
@@ -62,7 +61,6 @@ export const SlideoverRightBuilder: React.FC<SlideoverRightBuilderProps> = (
 				return (
 					<BoulderBuilderContentDesktop
 						topo={props.topo}
-						boulder={props.selectedItem.value}
 						currentImage={props.currentImage}
 						setCurrentImage={props.setCurrentImage}
 						selectedBoulder={props.selectedItem}

@@ -14,7 +14,6 @@ import { ItemType, SelectedBoulder } from "components/organisms/builder/Slideove
 import { deleteBoulder } from "helpers/builder";
 
 interface BoulderBuilderContentDesktopProps {
-	boulder: Quark<Boulder>;
 	topo: Quark<Topo>;
 	selectedBoulder: SelectedBoulder;
 	setSelectedItem: Dispatch<SetStateAction<ItemType>>;
@@ -27,7 +26,7 @@ export const BoulderBuilderContentDesktop = watchDependencies<
 	HTMLInputElement,
 	BoulderBuilderContentDesktopProps
 >((props: BoulderBuilderContentDesktopProps, parentRef) => {
-	const boulder = props.boulder();
+	const boulder = props.selectedBoulder.value();
 
 	const [ModalDelete, showModalDelete] = useModal();
 
@@ -62,7 +61,7 @@ export const BoulderBuilderContentDesktop = watchDependencies<
 			<div className="flex h-full w-full flex-col overflow-scroll">
 				<BoulderForm
 					className="mt-3 mb-6 px-5"
-					boulder={props.boulder}
+					boulder={props.selectedBoulder.value}
 					topo={props.topo}
 				/>
 
@@ -71,7 +70,6 @@ export const BoulderBuilderContentDesktop = watchDependencies<
 						setReactRef(imageInputRef, ref);
 						setReactRef(parentRef, ref);
 					}}
-					boulder={props.boulder}
 					selectedBoulder={props.selectedBoulder}
 					setSelectedItem={props.setSelectedItem}
 					currentImage={props.currentImage}
@@ -81,7 +79,7 @@ export const BoulderBuilderContentDesktop = watchDependencies<
 				/>
 
 				<TracksListBuilder
-					boulder={props.boulder}
+					boulder={props.selectedBoulder.value}
 					selectedBoulder={props.selectedBoulder}
 					setSelectedItem={props.setSelectedItem}
 					onTrackClick={toggleSelectedTrack}
@@ -105,7 +103,7 @@ export const BoulderBuilderContentDesktop = watchDependencies<
 				buttonText="Confirmer"
 				imgUrl={staticUrl.deleteWarning}
 				onConfirm={() => {
-					deleteBoulder(props.topo, props.boulder, props.setSelectedItem, props.selectedBoulder)
+					deleteBoulder(props.topo, props.selectedBoulder.value, props.setSelectedItem, props.selectedBoulder);
 					props.onDeleteBoulder();
 				}}
 			>
