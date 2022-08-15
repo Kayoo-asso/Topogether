@@ -1,13 +1,15 @@
-import React from "react";
+import React, { Dispatch, SetStateAction } from "react";
 import { Button } from "components";
 import { Boulder, Sector, Topo, Track, UUID } from "types";
-import { Quark, watchDependencies, SelectQuarkNullable } from "helpers/quarky";
+import { Quark, watchDependencies } from "helpers/quarky";
 import { SectorListBuilder } from "./SectorListBuilder";
+import { ItemType, SelectedBoulder } from "components/organisms/builder/Slideover.right.builder";
 
 interface SectorBuilderContentMobileProps {
 	topo: Quark<Topo>;
 	boulderOrder: Map<UUID, number>;
-	selectedBoulder: Quark<Boulder>;
+	selectedBoulder: SelectedBoulder;
+	setSelectedItem: Dispatch<SetStateAction<ItemType>>;
 	onCreateSector: () => void;
 	onBoulderSelect: (boulderQuark: Quark<Boulder>) => void;
 	onTrackSelect: (
@@ -27,6 +29,7 @@ export const SectorBuilderContentMobile: React.FC<SectorBuilderContentMobileProp
 						topoQuark={props.topo}
 						boulderOrder={props.boulderOrder}
 						selectedBoulder={props.selectedBoulder}
+						setSelectedItem={props.setSelectedItem}
 						onBoulderSelect={props.onBoulderSelect}
 						onTrackSelect={props.onTrackSelect}
 					/>

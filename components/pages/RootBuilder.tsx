@@ -73,7 +73,6 @@ import {
 	SlideoverLeftBuilder,
 } from "components/organisms/builder/Slideover.left.builder";
 import {
-	isBoulder,
 	ItemType,
 	SlideoverRightBuilder,
 } from "components/organisms/builder/Slideover.right.builder";
@@ -136,8 +135,6 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 
 		const [ModalSubmitTopo, showModalSubmitTopo] = useModal();
 		const [ModalDeleteTopo, showModalDeleteTopo] = useModal();
-		const [displayModalSectorRename, setDisplayModalSectorRename] =
-			useState(false);
 
 		// TODO
 		// Hack: select boulder from query parameter
@@ -352,8 +349,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 		}, [maxTracks()]);
 
 		const [selectedInfo, setSelectedInfo] = useState<InfoType>();
-		const [selectedItem, setSelectedItem] = useState<ItemType>();
-		const selectedTrack = useSelectQuark<Track>();
+		const [selectedItem, setSelectedItem] = useState<ItemType>({ type: 'none' });
 
 		const [displayDrawer, setDisplayDrawer] = useState<boolean>(false);
 
@@ -364,7 +360,6 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 					backLink="/builder/dashboard"
 					onBackClick={undefined} //TO-REDO
 					menuOptions={[
-						//TODO
 						{ value: "Infos du topo", action: () => setSelectedInfo("INFO") },
 						{
 							value: "Marche d'approche",
@@ -400,16 +395,14 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 					<LeftbarBuilderDesktop
 						topoQuark={props.topoQuark}
 						boulderOrder={boulderOrder()}
-						selectedBoulder={
-							selectedItem && isBoulder(selectedItem) ? selectedItem : undefined
-						}
+						selectedBoulder={selectedItem.type === 'boulder' ? selectedItem : undefined}
+						setSelectedItem={setSelectedItem}
 						onBoulderSelect={(boulderQuark) => {
-							setSelectedItem(boulderQuark);
+							setSelectedItem({ type: 'boulder', value: boulderQuark });
 							mapRef.current?.setCenter(toLatLng(boulderQuark().location));
 						}}
 						onTrackSelect={(trackQuark, boulderQuark) => {
-							selectedTrack.select(trackQuark);
-							setSelectedItem(boulderQuark);
+							setSelectedItem({ type: 'boulder', value: boulderQuark, selectedTrack: trackQuark });
 						}}
 						onSubmit={showModalSubmitTopo}
 						activateSubmission={progress() === 100}
@@ -463,14 +456,10 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 					>
 						{currentTool === "SECTOR" && (
 							<CreatingSectorAreaMarker
+								topoQuark={props.topoQuark}
+								boulderOrder={boulderOrder()}
 								onComplete={(path) => {
-									const sector = createSector(
-										props.topoQuark,
-										path,
-										boulderOrder()
-									);
 									// selectedSector.select(sector); //TODO
-									setDisplayModalSectorRename(true);
 									setCurrentTool(undefined);
 								}}
 							/>
@@ -537,12 +526,12 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 
 					<SlideoverRightBuilder
 						topo={props.topoQuark}
-						selected={selectedItem}
-						selectedTrack={selectedTrack}
+						selectedItem={selectedItem}
+						setSelectedItem={setSelectedItem}
 						currentImage={currentImage}
 						setCurrentImage={setCurrentImage}
 						setDisplayDrawer={setDisplayDrawer}
-						onClose={() => setSelectedItem(undefined)}
+						onClose={() => setSelectedItem({ type: 'none' })}
 					/>
 
 					<ModalSubmitTopo

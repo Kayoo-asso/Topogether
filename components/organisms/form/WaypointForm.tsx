@@ -1,13 +1,15 @@
-import React, { useEffect, useRef } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useRef } from "react";
 import { Button, ImageInput, TextArea, TextInput } from "components";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { Description, Name, Topo, Waypoint } from "types";
 import { useBreakpoint, useModal } from "helpers/hooks";
 import { staticUrl } from "helpers/constants";
+import { ItemType } from "../builder/Slideover.right.builder";
 
 interface WaypointFormProps {
 	topo: Quark<Topo>;
 	waypoint: Quark<Waypoint>;
+	setSelectedItem: Dispatch<SetStateAction<ItemType>>;
 	className?: string;
 	onDeleteWaypoint: () => void;
 }
@@ -123,6 +125,7 @@ export const WaypointForm: React.FC<WaypointFormProps> = watchDependencies(
 					imgUrl={staticUrl.deleteWarning}
 					onConfirm={() => {
 						props.topo().waypoints.removeQuark(props.waypoint);
+						props.setSelectedItem({ type:'none' });
 						props.onDeleteWaypoint();
 					}}
 				>

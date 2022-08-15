@@ -5,17 +5,19 @@ import React, {
 	useRef,
 	useState,
 } from "react";
-import { Quark, SelectQuarkNullable, watchDependencies } from "helpers/quarky";
+import { Quark, watchDependencies } from "helpers/quarky";
 import { Boulder, Img, Track, UUID } from "types";
 import { MultipleImageInput, TracksImage } from ".";
 import { deleteTrack } from "helpers/builder";
 import { staticUrl } from "helpers/constants";
 import { useModal } from "helpers/hooks/useModal";
 import { setReactRef } from "helpers/utils";
+import { ItemType, SelectedBoulder } from "components/organisms/builder/Slideover.right.builder";
 
 interface BoulderPreviewDesktopProps {
 	boulder: Quark<Boulder>;
-	selectedTrack: SelectQuarkNullable<Track>;
+	selectedBoulder: SelectedBoulder;
+	setSelectedItem: Dispatch<SetStateAction<ItemType>>;
 	displayAddButton?: boolean;
 	allowDelete?: boolean;
 	currentImage?: Img;
@@ -54,11 +56,11 @@ export const BoulderPreviewDesktop = watchDependencies<
 		);
 		const deleteTracks = useCallback(
 			(tracksQuark: Quark<Track>[]) => {
-				tracksQuark.forEach((tQ) =>
-					deleteTrack(boulder, tQ, props.selectedTrack)
+				tracksQuark.forEach((tQ) => 
+					deleteTrack(boulder, tQ, props.setSelectedItem, props.selectedBoulder)
 				);
 			},
-			[boulder, props.selectedTrack]
+			[boulder, props.selectedBoulder, props.setSelectedItem]
 		);
 
 		const addImagesClick = useCallback(() => {
@@ -75,7 +77,8 @@ export const BoulderPreviewDesktop = watchDependencies<
 							sizeHint="300px"
 							image={props.currentImage}
 							tracks={boulder.tracks.quarks()}
-							selectedTrack={props.selectedTrack}
+							selectedBoulder={props.selectedBoulder}
+							setSelectedItem={props.setSelectedItem}
 							modalable={!!props.currentImage}
 							onImageClick={!loading ? addImagesClick : undefined}
 						/>

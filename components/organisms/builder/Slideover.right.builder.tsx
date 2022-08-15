@@ -1,6 +1,6 @@
 import React, { Dispatch, SetStateAction, useState } from "react";
 import { ParkingForm, WaypointForm } from "../form";
-import { Quark, SelectQuarkNullable } from "helpers/quarky";
+import { Quark } from "helpers/quarky";
 import { Boulder, Img, Parking, Topo, Track, Waypoint } from "types";
 import { useBreakpoint } from "helpers/hooks";
 import { SlideoverMobile } from "components/atoms";
@@ -8,34 +8,27 @@ import { SlideagainstRightDesktop } from "components/atoms/overlays";
 import { BoulderBuilderContentDesktop } from "components/builder/BoulderBuilderContent.desktop";
 import { BoulderBuilderContentMobile } from "components/builder/BoulderBuilderContent.mobile";
 
-export type ItemType = Quark<Boulder> | Quark<Parking> | Quark<Waypoint>;
-export const isBoulder = (item: ItemType): item is Quark<Boulder> => {
-	return (item() as Boulder).tracks !== undefined;
-};
-export const isParking = (item: ItemType): item is Quark<Parking> =>
-	(item() as Parking).spaces !== undefined;
-
-type SelectedItem = {
-	type: 'none'
-} | {
+export type SelectedBoulder = {
 	type: 'boulder',
 	value: Quark<Boulder>,
 	selectedTrack?: Quark<Track>
-} | {
+}
+export type SelectedParking = {
 	type: 'parking',
 	value: Quark<Parking>
-};
-
-function test(selected: SelectedItem) {
-	if(selected.type === "boulder") {
-		selected.value
-	}
 }
+export type SelectedWaypoint = {
+	type: 'waypoint',
+	value: Quark<Waypoint>
+}
+export type ItemType = {
+	type: 'none'
+} | SelectedBoulder | SelectedParking | SelectedWaypoint;
 
 type SlideoverRightBuilderProps = {
 	topo: Quark<Topo>;
-	selected?: ItemType;
-	selectedTrack: SelectQuarkNullable<Track>;
+	selectedItem: ItemType;
+	setSelectedItem: Dispatch<SetStateAction<ItemType>>;
 	currentImage?: Img;
 	setCurrentImage: Dispatch<SetStateAction<Img | undefined>>;
 	setDisplayDrawer: Dispatch<SetStateAction<boolean>>;
@@ -50,37 +43,40 @@ export const SlideoverRightBuilder: React.FC<SlideoverRightBuilderProps> = (
 	const [full, setFull] = useState(false);
 
 	const getContent = () => {
-		if (props.selected) {
-			if (isBoulder(props.selected)) {
-				if (breakpoint === "mobile")
+		if (props.selectedItem.type !== 'none') {
+			if (props.selectedItem.type === 'boulder') {
+				if (breakpoint === "mobile")	
 					return (
-						<BoulderBuilderContentDesktop
+						<BoulderBuilderContentMobile
 							topo={props.topo}
-							boulder={props.selected}
+							boulder={props.selectedItem.value}
 							currentImage={props.currentImage}
 							setCurrentImage={props.setCurrentImage}
-							selectedTrack={props.selectedTrack}
+							selectedBoulder={props.selectedItem}
+							setSelectedItem={props.setSelectedItem}
+							setDisplayDrawer={props.setDisplayDrawer}
+							full={full}
 							onDeleteBoulder={props.onClose}
 						/>
 					);
 				return (
-					<BoulderBuilderContentMobile
+					<BoulderBuilderContentDesktop
 						topo={props.topo}
-						boulder={props.selected}
+						boulder={props.selectedItem.value}
 						currentImage={props.currentImage}
 						setCurrentImage={props.setCurrentImage}
-						selectedTrack={props.selectedTrack}
-						setDisplayDrawer={props.setDisplayDrawer}
-						full={full}
+						selectedBoulder={props.selectedItem}
+						setSelectedItem={props.setSelectedItem}
 						onDeleteBoulder={props.onClose}
 					/>
 				);
 			}
-			if (isParking(props.selected))
+			if (props.selectedItem.type === 'parking')
 				return (
 					<ParkingForm
 						topo={props.topo}
-						parking={props.selected}
+						parking={props.selectedItem.value}
+						setSelectedItem={props.setSelectedItem}
 						onDeleteParking={props.onClose}
 					/>
 				);
@@ -88,7 +84,8 @@ export const SlideoverRightBuilder: React.FC<SlideoverRightBuilderProps> = (
 				return (
 					<WaypointForm
 						topo={props.topo}
-						waypoint={props.selected}
+						waypoint={props.selectedItem.value}
+						setSelectedItem={props.setSelectedItem}
 						onDeleteWaypoint={props.onClose}
 					/>
 				);
@@ -99,7 +96,7 @@ export const SlideoverRightBuilder: React.FC<SlideoverRightBuilderProps> = (
 		<div className="z-100">
 			{breakpoint === "mobile" && (
 				<SlideoverMobile
-					persistent={props.selected && isBoulder(props.selected)}
+					persistent={props.selectedItem.type === 'boulder'}
 					onSizeChange={setFull}
 					onClose={props.onClose}
 				>
@@ -110,16 +107,12 @@ export const SlideoverRightBuilder: React.FC<SlideoverRightBuilderProps> = (
 			)}
 			{breakpoint !== "mobile" && (
 				<SlideagainstRightDesktop
-					className="overflow-scroll"
-					item={
-						props.selected && isBoulder(props.selected)
-							? props.selected()
-							: undefined
-					}
-					open={!!props.selected}
+					// className="overflow-scroll"
+					item={props.selectedItem.type === 'boulder' ? props.selectedItem.value() : undefined}
+					open={props.selectedItem.type !== 'none'}
 					onClose={props.onClose}
 				>
-					<div className="h-full px-5 py-3">{getContent()}</div>
+					<div className="h-full">{getContent()}</div>
 				</SlideagainstRightDesktop>
 			)}
 		</div>

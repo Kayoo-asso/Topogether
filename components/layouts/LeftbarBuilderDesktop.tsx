@@ -1,13 +1,15 @@
-import React from "react";
+import React, { Dispatch, SetStateAction } from "react";
 import { Button } from "components";
-import { Quark, SelectQuarkNullable, watchDependencies } from "helpers/quarky";
-import { Boulder, Sector, Topo, Track, UUID } from "types";
+import { Quark, watchDependencies } from "helpers/quarky";
+import { Boulder, Topo, Track, UUID } from "types";
 import { SectorListBuilder } from "components/builder";
+import { ItemType, SelectedBoulder } from "components/organisms/builder/Slideover.right.builder";
 
 interface LeftbarBuilderDesktopProps {
 	topoQuark: Quark<Topo>;
 	boulderOrder: Map<UUID, number>;
-	selectedBoulder?: Quark<Boulder>;
+	selectedBoulder?: SelectedBoulder;
+	setSelectedItem: Dispatch<SetStateAction<ItemType>>;
 	onBoulderSelect: (boulderQuark: Quark<Boulder>) => void;
 	onTrackSelect: (
 		trackQuark: Quark<Track>,
@@ -26,6 +28,7 @@ export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> =
 					topoQuark={props.topoQuark}
 					boulderOrder={props.boulderOrder}
 					selectedBoulder={props.selectedBoulder}
+					setSelectedItem={props.setSelectedItem}
 					onBoulderSelect={props.onBoulderSelect}
 					onTrackSelect={props.onTrackSelect}
 				/>

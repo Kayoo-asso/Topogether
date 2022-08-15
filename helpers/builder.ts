@@ -1,4 +1,4 @@
-import { batch, quark, Quark, SelectQuarkNullable } from "helpers/quarky";
+import { batch, quark, Quark } from "helpers/quarky";
 import { sync } from "helpers/services";
 import { setupBoulder, setupTrack } from "helpers/quarkifyTopo";
 import {
@@ -14,6 +14,8 @@ import {
 	Waypoint,
 } from "types";
 import { v4 } from "uuid";
+import { ItemType, SelectedBoulder, SelectedParking, SelectedWaypoint } from "components/organisms/builder/Slideover.right.builder";
+import { Dispatch, SetStateAction } from "react";
 
 export const createSector = (
 	topoQuark: Quark<Topo>,
@@ -64,7 +66,9 @@ export const createBoulder = (
 };
 export const deleteBoulder = (
 	topoQuark: Quark<Topo>,
-	boulderQuark: Quark<Boulder>
+	boulderQuark: Quark<Boulder>,
+	setSelectedItem: Dispatch<SetStateAction<ItemType>>,
+	selectedBoulder?: SelectedBoulder,
 ) => {
 	const topo = topoQuark();
 	topo.boulders.removeQuark(boulderQuark);
@@ -88,6 +92,7 @@ export const deleteBoulder = (
 			),
 		}));
 	}
+	if (selectedBoulder && selectedBoulder.value().id === boulder.id) setSelectedItem({ type: 'none' })
 }
 
 export const createParking = (
@@ -106,6 +111,16 @@ export const createParking = (
 	const newParkingQuark = topo.parkings.quarkAt(-1);
 	return newParkingQuark;
 };
+export const deleteParking = (
+	topoQuark: Quark<Topo>,
+	parkingQuark: Quark<Parking>,
+	setSelectedItem: Dispatch<SetStateAction<ItemType>>,
+	selectedParking?: SelectedParking,
+) => {
+	const topo = topoQuark();
+	topo.parkings.removeQuark(parkingQuark);
+	if (selectedParking && selectedParking.value().id === parkingQuark().id) setSelectedItem({ type: 'none' })
+}
 
 export const createWaypoint = (
 	topo: Topo,
@@ -124,6 +139,16 @@ export const createWaypoint = (
 	const newWaypointQuark = topo.waypoints.quarkAt(-1);
 	return newWaypointQuark;
 };
+export const deleteWaypoint = (
+	topoQuark: Quark<Topo>,
+	waypointQuark: Quark<Waypoint>,
+	setSelectedItem: Dispatch<SetStateAction<ItemType>>,
+	selectedWaypoint?: SelectedWaypoint,
+) => {
+	const topo = topoQuark();
+	topo.waypoints.removeQuark(waypointQuark);
+	if (selectedWaypoint && selectedWaypoint.value().id === waypointQuark().id) setSelectedItem({ type: 'none' })
+}
 
 export const createTrack = (boulder: Boulder, creatorId: UUID) => {
 	const newTrack: Track = setupTrack({
@@ -145,7 +170,8 @@ export const createTrack = (boulder: Boulder, creatorId: UUID) => {
 export const deleteTrack = (
 	boulder: Boulder,
 	track: Quark<Track>,
-	selectedTrack: SelectQuarkNullable<Track>
+	setSelectedItem: Dispatch<SetStateAction<ItemType>>,
+	selectedBoulder?: SelectedBoulder,
 ) => {
 	boulder.tracks.removeQuark(track);
 	let i = 0;
@@ -156,7 +182,7 @@ export const deleteTrack = (
 		}));
 		i++;
 	}
-	if (selectedTrack.quark() === track) selectedTrack.select(undefined);
+	if (selectedBoulder?.selectedTrack && selectedBoulder.selectedTrack().id === track().id) setSelectedItem({ ...selectedBoulder, selectedTrack: undefined });
 };
 
 export const boulderChanged = (

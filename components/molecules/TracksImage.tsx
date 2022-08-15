@@ -1,6 +1,8 @@
 import React, {
 	CSSProperties,
+	Dispatch,
 	ReactElement,
+	SetStateAction,
 	useCallback,
 	useRef,
 	useState,
@@ -9,7 +11,6 @@ import { Img, PointEnum, DrawerToolEnum, Position, Track } from "types";
 import {
 	Quark,
 	QuarkIter,
-	SelectQuarkNullable,
 	watchDependencies,
 } from "helpers/quarky";
 import { Image, SourceSize } from "components/atoms/Image";
@@ -17,11 +18,13 @@ import { SVGTrack } from "components/atoms";
 import QuickPinchZoom, { make3dTransformValue } from "react-quick-pinch-zoom";
 import { Portal } from "helpers/hooks";
 import { getCoordsInViewbox } from "helpers/svg";
+import { ItemType, SelectedBoulder } from "components/organisms/builder/Slideover.right.builder";
 
 type TracksImageProps = React.PropsWithChildren<{
 	image?: Img;
 	tracks: QuarkIter<Quark<Track>>;
-	selectedTrack?: SelectQuarkNullable<Track>;
+	selectedBoulder: SelectedBoulder;
+	setSelectedItem: Dispatch<SetStateAction<ItemType>>;
 	// 'fill' could be possible, but it distorts the aspect ratio
 	objectFit?: "contain" | "cover";
 	sizeHint: SourceSize;
@@ -61,7 +64,7 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(
 		allowDoubleTapZoom = true,
 		...props
 	}: TracksImageProps) => {
-		const selectedTrack = props.selectedTrack && props.selectedTrack();
+		const selectedTrack = props.selectedBoulder.selectedTrack && props.selectedBoulder.selectedTrack();
 		// ratio = width / height
 		// so the most accurate way to scale the SVG viewBox is to set a height
 		// and take width = ratio * height (multiplication is better than division)
@@ -233,11 +236,7 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(
 												displayTrackDetails={displayTracksDetails}
 												displayTrackOrderIndexes={displayTrackOrderIndexes}
 												trackWeight={tracksWeight}
-												onLineClick={
-													props.selectedTrack
-														? () => props.selectedTrack!.select(trackQuark)
-														: undefined
-												}
+												onLineClick={() => props.setSelectedItem({ ...props.selectedBoulder, selectedTrack: trackQuark })}
 												onPointClick={props.onPointClick}
 											/>
 										);

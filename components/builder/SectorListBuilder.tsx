@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { Dispatch, SetStateAction, useCallback, useState } from "react";
 import { BoulderItemLeftbar } from "components/layouts/BoulderItemLeftbar";
 import { arrayMove } from "helpers/utils";
 import { createTrack, deleteBoulder } from "helpers/builder";
@@ -17,11 +17,13 @@ import Edit from "assets/icons/edit.svg";
 import { ModalRenameSector } from "components/organisms";
 import { useModal } from "helpers/hooks";
 import { staticUrl } from "helpers/constants";
+import { ItemType, SelectedBoulder } from "components/organisms/builder/Slideover.right.builder";
 
 export interface SectorListBuilderProps {
 	topoQuark: Quark<Topo>;
 	boulderOrder: Map<UUID, number>;
-	selectedBoulder?: Quark<Boulder>;
+	selectedBoulder?: SelectedBoulder;
+	setSelectedItem: Dispatch<SetStateAction<ItemType>>;
 	onBoulderSelect: (boulder: Quark<Boulder>) => void;
 	onTrackSelect: (track: Quark<Track>, boulder: Quark<Boulder>) => void;
 }
@@ -31,7 +33,7 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> =
 	watchDependencies((props: SectorListBuilderProps) => {
 		const session = useSession()!;
 
-		const selectedBoulder = props.selectedBoulder ? props.selectedBoulder() : undefined;
+		const selectedBoulder = props.selectedBoulder?.value();
 		const topo = props.topoQuark();
 		const sectors = topo.sectors;
 
@@ -320,7 +322,7 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> =
 				<ModalDeleteBoulder
 					buttonText="Confirmer"
 					imgUrl={staticUrl.deleteWarning}
-					onConfirm={(boulderQuark) => deleteBoulder(props.topoQuark, boulderQuark) }
+					onConfirm={(boulderQuark) => deleteBoulder(props.topoQuark, boulderQuark, props.setSelectedItem, props.selectedBoulder) }
 				>
 					Êtes-vous sûr de vouloir supprimer le bloc et toutes les voies
 					associées ?

@@ -1,16 +1,18 @@
-import { Quark, QuarkIter, SelectQuarkNullable } from "helpers/quarky";
-import React, { ReactElement, useEffect, useRef, useState } from "react";
+import { Quark, QuarkIter } from "helpers/quarky";
+import React, { Dispatch, ReactElement, SetStateAction, useEffect, useRef, useState } from "react";
 import { Img, Track } from "types";
 import { TracksImage } from "./TracksImage"; // requires a loader
 import { Portal } from "helpers/hooks";
 import { Image } from "components/atoms";
+import { ItemType, SelectedBoulder } from "components/organisms/builder/Slideover.right.builder";
 
 interface ImageSliderProps {
 	images: Img[];
 	currentImage: Img | undefined;
-	setCurrentImage: React.Dispatch<React.SetStateAction<Img | undefined>>;
+	setCurrentImage: Dispatch<SetStateAction<Img | undefined>>;
 	tracks: QuarkIter<Quark<Track>>;
-	selectedTrack?: SelectQuarkNullable<Track>;
+	selectedBoulder: SelectedBoulder;
+	setSelectedItem: Dispatch<SetStateAction<ItemType>>;
 	displayPhantomTracks?: boolean;
 	modalable?: boolean;
 }
@@ -31,7 +33,6 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 	modalable = true,
 	...props
 }: ImageSliderProps) => {
-	// const [currentIdx, setCurrentIdx] = useState<number>(props.imageToDisplayIdx);
 	const imgIdx = props.currentImage
 		? props.images.indexOf(props.currentImage)
 		: undefined;
@@ -139,10 +140,8 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 		);
 	};
 	const getPortalContent = () => {
-		if (props.images.length > 1)
-			if (modalable)
-				// If it is a gallery of multiple images
-				//If modalising is possible
+		if (props.images.length > 1) // If it is a gallery of multiple images
+			if (modalable) //If modalising is possible
 				return (
 					<>
 						{getGalleryContent(false)}
@@ -150,8 +149,7 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 					</>
 				);
 			else return getGalleryContent(false);
-		else if (modalable)
-			// If it is a single image
+		else if (modalable) // If it is a single image
 			return (
 				<>
 					{getUniqueContent()}
@@ -178,11 +176,10 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 								sizeHint="100vw"
 								image={img}
 								tracks={props.tracks}
-								selectedTrack={props.selectedTrack}
+								selectedBoulder={props.selectedBoulder}
+								setSelectedItem={props.setSelectedItem}
 								displayPhantomTracks={displayPhantomTracks}
-								displayTracksDetails={
-									props.selectedTrack && !!props.selectedTrack()?.id
-								}
+								displayTracksDetails={!!props.selectedBoulder.selectedTrack}
 								onImageClick={() => setPortalOpen(true)}
 							/>
 						</div>
@@ -229,9 +226,10 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 			sizeHint="100vw"
 			image={props.images[0]}
 			tracks={props.tracks}
-			selectedTrack={props.selectedTrack}
+			selectedBoulder={props.selectedBoulder}
+			setSelectedItem={props.setSelectedItem}
 			displayPhantomTracks={displayPhantomTracks}
-			displayTracksDetails={props.selectedTrack && !!props.selectedTrack()?.id}
+			displayTracksDetails={!!props.selectedBoulder.selectedTrack}
 			onImageClick={() => setPortalOpen(true)}
 		/>
 	);

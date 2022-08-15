@@ -4,17 +4,20 @@ import {
 	BoulderForm,
 	Button,
 } from "components";
-import { Quark, SelectQuarkNullable, watchDependencies } from "helpers/quarky";
-import { Boulder, Img, Topo, Track } from "types";
+import { Quark, watchDependencies } from "helpers/quarky";
+import { Boulder, Img, Topo } from "types";
 import { TracksListBuilder } from ".";
 import { setReactRef } from "helpers/utils";
 import { useModal } from "helpers/hooks";
 import { staticUrl } from "helpers/constants";
+import { ItemType, SelectedBoulder } from "components/organisms/builder/Slideover.right.builder";
+import { deleteBoulder } from "helpers/builder";
 
 interface BoulderBuilderContentDesktopProps {
 	boulder: Quark<Boulder>;
 	topo: Quark<Topo>;
-	selectedTrack: SelectQuarkNullable<Track>;
+	selectedBoulder: SelectedBoulder;
+	setSelectedItem: Dispatch<SetStateAction<ItemType>>;
 	currentImage?: Img;
 	setCurrentImage: Dispatch<SetStateAction<Img | undefined>>;
 	onDeleteBoulder: () => void;
@@ -33,8 +36,9 @@ export const BoulderBuilderContentDesktop = watchDependencies<
 	const toggleSelectedTrack = useCallback(
 		(trackQuark) => {
 			const track = trackQuark();
-			if (props.selectedTrack()?.id === track.id)
-				props.selectedTrack.select(undefined);
+			const selectedTrack = props.selectedBoulder.selectedTrack;
+			if (selectedTrack && selectedTrack().id === track.id)
+				props.setSelectedItem({ ...props.selectedBoulder, selectedTrack: undefined });
 			else {
 				if (track.lines.length > 0) {
 					const newImage = boulder.images.find(
@@ -46,10 +50,10 @@ export const BoulderBuilderContentDesktop = watchDependencies<
 						);
 					props.setCurrentImage(newImage);
 				}
-				props.selectedTrack.select(trackQuark);
+				props.setSelectedItem({ ...props.selectedBoulder, selectedTrack: trackQuark });
 			}
 		},
-		[props.selectedTrack(), boulder]
+		[props.selectedBoulder, props.selectedBoulder.selectedTrack, props.setSelectedItem, props.setCurrentImage, boulder]
 	);
 
 	return (
@@ -68,7 +72,8 @@ export const BoulderBuilderContentDesktop = watchDependencies<
 						setReactRef(parentRef, ref);
 					}}
 					boulder={props.boulder}
-					selectedTrack={props.selectedTrack}
+					selectedBoulder={props.selectedBoulder}
+					setSelectedItem={props.setSelectedItem}
 					currentImage={props.currentImage}
 					displayAddButton
 					allowDelete
@@ -77,7 +82,8 @@ export const BoulderBuilderContentDesktop = watchDependencies<
 
 				<TracksListBuilder
 					boulder={props.boulder}
-					selectedTrack={props.selectedTrack}
+					selectedBoulder={props.selectedBoulder}
+					setSelectedItem={props.setSelectedItem}
 					onTrackClick={toggleSelectedTrack}
 					onAddImage={useCallback(
 						() => imageInputRef.current && imageInputRef.current.click(),
@@ -85,11 +91,13 @@ export const BoulderBuilderContentDesktop = watchDependencies<
 					)}
 				/>
 
-				<Button
-					content="Supprimer"
-					onClick={showModalDelete}
-					fullWidth
-				/>
+				<div className="my-6 px-4">
+					<Button
+						content="Supprimer"
+						onClick={showModalDelete}
+						fullWidth
+					/>
+				</div>
 				
 			</div>
 
@@ -97,7 +105,7 @@ export const BoulderBuilderContentDesktop = watchDependencies<
 				buttonText="Confirmer"
 				imgUrl={staticUrl.deleteWarning}
 				onConfirm={() => {
-					props.topo().boulders.removeQuark(props.boulder);
+					deleteBoulder(props.topo, props.boulder, props.setSelectedItem, props.selectedBoulder)
 					props.onDeleteBoulder();
 				}}
 			>

@@ -5,7 +5,7 @@ import { Name, Sector } from "types";
 import { Portal } from "helpers/hooks";
 import Clear from "assets/icons/clear.svg";
 
-interface ModalRenameSectorProps {
+interface SectorProps {
 	sector: Quark<Sector>;
 	onClose: () => void;
 }

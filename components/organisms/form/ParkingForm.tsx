@@ -1,13 +1,15 @@
-import React, { useEffect, useRef } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useRef } from "react";
 import { Button, ImageInput, TextArea, TextInput } from "components";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { Description, Name, Parking, Topo } from "types";
 import { useBreakpoint, useModal } from "helpers/hooks";
 import { staticUrl } from "helpers/constants";
+import { ItemType } from "../builder/Slideover.right.builder";
 
 interface ParkingFormProps {
 	topo: Quark<Topo>
 	parking: Quark<Parking>;
+	setSelectedItem: Dispatch<SetStateAction<ItemType>>;
 	className?: string;
 	onDeleteParking: () => void;
 }
@@ -136,6 +138,7 @@ export const ParkingForm: React.FC<ParkingFormProps> = watchDependencies(
 					imgUrl={staticUrl.deleteWarning}
 					onConfirm={() => {
 						props.topo().parkings.removeQuark(props.parking);
+						props.setSelectedItem({ type: 'none' });
 						props.onDeleteParking();
 					}}
 				>

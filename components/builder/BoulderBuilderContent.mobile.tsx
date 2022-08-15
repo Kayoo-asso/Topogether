@@ -1,7 +1,7 @@
 import React, { Dispatch, SetStateAction, useState } from "react";
 import { GradeScale, ImageSlider } from "components";
-import { Boulder, Img, Topo, Track } from "types";
-import { Quark, watchDependencies, SelectQuarkNullable } from "helpers/quarky";
+import { Boulder, Img, Topo } from "types";
+import { Quark, watchDependencies } from "helpers/quarky";
 import { TracksListBuilder } from ".";
 import { BoulderForm } from "..";
 import { Image } from "components/atoms/Image";
@@ -9,12 +9,15 @@ import { ImageInput } from "components/molecules";
 import { Button } from "components/atoms";
 import { useModal } from "helpers/hooks";
 import { staticUrl } from "helpers/constants";
+import { ItemType, SelectedBoulder } from "components/organisms/builder/Slideover.right.builder";
+import { deleteBoulder } from "helpers/builder";
 
 interface BoulderBuilderContentMobileProps {
 	full: boolean,
 	boulder: Quark<Boulder>;
 	topo: Quark<Topo>;
-	selectedTrack: SelectQuarkNullable<Track>;
+	selectedBoulder: SelectedBoulder;
+	setSelectedItem: Dispatch<SetStateAction<ItemType>>;
 	currentImage?: Img;
 	setCurrentImage: Dispatch<SetStateAction<Img | undefined>>;
 	setDisplayDrawer: Dispatch<SetStateAction<boolean>>;
@@ -24,7 +27,7 @@ interface BoulderBuilderContentMobileProps {
 export const BoulderBuilderContentMobile: React.FC<BoulderBuilderContentMobileProps> =
 	watchDependencies((props: BoulderBuilderContentMobileProps) => {
 		const boulder = props.boulder();
-		const selectedTrack = props.selectedTrack();
+		const selectedTrack = props.selectedBoulder.selectedTrack && props.selectedBoulder.selectedTrack();
 
 		const [ModalDelete, showModalDelete] = useModal();
 
@@ -40,7 +43,8 @@ export const BoulderBuilderContentMobile: React.FC<BoulderBuilderContentMobilePr
 							currentImage={props.currentImage}
 							setCurrentImage={props.setCurrentImage}
 							tracks={boulder.tracks.quarks()}
-							selectedTrack={props.selectedTrack}
+							selectedBoulder={props.selectedBoulder}
+							setSelectedItem={props.setSelectedItem}
 						/>
 					</div>
 				)}
@@ -122,18 +126,19 @@ export const BoulderBuilderContentMobile: React.FC<BoulderBuilderContentMobilePr
 						<div className="overflow-auto pb-[30px]">
 							<TracksListBuilder
 								boulder={props.boulder}
-								selectedTrack={props.selectedTrack}
+								selectedBoulder={props.selectedBoulder}
+								setSelectedItem={props.setSelectedItem}
 								onDrawButtonClick={() => props.setDisplayDrawer(true)}
 								onTrackClick={(trackQuark) => {
 									const newImageIndex = boulder.images.findIndex(
 										(img) => img.id === trackQuark().lines?.at(0)?.imageId
 									);
-									if (props.selectedTrack()?.id === trackQuark().id)
-										props.selectedTrack.select(undefined);
+									if (selectedTrack?.id === trackQuark().id)
+										props.setSelectedItem({ ...props.selectedBoulder, selectedTrack: undefined });
 									else {
 										if (newImageIndex > -1)
 											props.setCurrentImage(boulder.images[newImageIndex]);
-										props.selectedTrack.select(trackQuark);
+										props.setSelectedItem({ ...props.selectedBoulder, selectedTrack: trackQuark });
 									}
 								}}
 								onCreateTrack={() => props.setDisplayDrawer(true)}
@@ -159,7 +164,7 @@ export const BoulderBuilderContentMobile: React.FC<BoulderBuilderContentMobilePr
 					buttonText="Confirmer"
 					imgUrl={staticUrl.deleteWarning}
 					onConfirm={() => {
-						props.topo().boulders.removeQuark(props.boulder);
+						deleteBoulder(props.topo, props.boulder, props.setSelectedItem, props.selectedBoulder);
 						props.onDeleteBoulder();
 					}}
 				>

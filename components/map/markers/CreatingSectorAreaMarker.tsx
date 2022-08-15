@@ -1,10 +1,15 @@
+import React, { useCallback, useEffect, useState } from "react";
+import { ModalRenameSector } from "components/organisms";
+import { createSector } from "helpers/builder";
 import { usePolyline } from "helpers/map";
-import React, { useCallback, useContext, useEffect, useState } from "react";
-import { GeoCoordinates, MapEventHandlers } from "types";
+import { Quark } from "helpers/quarky";
+import { GeoCoordinates, MapEventHandlers, Sector, Topo, UUID } from "types";
 import { useMap } from "..";
 import { ValidationMarker } from "./ValidationMarker";
 
 interface CreatingSectorAreaMarkerProps {
+	topoQuark: Quark<Topo>,
+	boulderOrder: Map<UUID, number>;
 	onComplete: (path: GeoCoordinates[]) => void;
 }
 
@@ -100,21 +105,38 @@ export const CreatingSectorAreaMarker: React.FC<
 		// `startedDrawing` is sufficient
 	}, [setPath, startedDrawing]);
 
+	const [sectorToRename, setSectorToRename] = useState<Quark<Sector>>();
+
 	if (path.length > 3)
 		return (
-			<ValidationMarker
-				position={path[0]}
-				onClick={() => {
-					// Remove the mouse cursor and close nicely
-					path[path.length - 1] = path[0];
-					const coords: GeoCoordinates[] = path.map((latlng) => [
-						latlng.lng(),
-						latlng.lat(),
-					]);
-					props.onComplete(coords);
-					setPath([]);
-				}}
-			/>
+			<>
+				<ValidationMarker
+					position={path[0]}
+					onClick={() => {
+						// Remove the mouse cursor and close nicely
+						path[path.length - 1] = path[0];
+						const coords: GeoCoordinates[] = path.map((latlng) => [
+							latlng.lng(),
+							latlng.lat(),
+						]);
+						setSectorToRename(createSector(
+							props.topoQuark,
+							coords,
+							props.boulderOrder
+						));
+						props.onComplete(coords);
+						setPath([]);
+					}}
+				/>
+
+				{sectorToRename &&
+					<ModalRenameSector 
+						sector={sectorToRename}
+						onClose={() => setSectorToRename(undefined)}
+					/>
+				}
+
+			</>
 		);
 
 	return null;

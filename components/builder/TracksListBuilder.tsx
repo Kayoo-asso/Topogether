@@ -1,17 +1,19 @@
-import React from "react";
+import React, { Dispatch, SetStateAction } from "react";
 import { GradeCircle } from "components";
 import { Boulder, gradeToLightGrade, Track } from "types";
-import { Quark, SelectQuarkNullable, watchDependencies } from "helpers/quarky";
+import { Quark, watchDependencies } from "helpers/quarky";
 import { TrackForm } from "../organisms/form/TrackForm";
 import { useSession } from "helpers/services";
 import DrawIcon from "assets/icons/draw.svg";
 import { createTrack, deleteTrack } from "helpers/builder";
 import { staticUrl } from "helpers/constants";
 import { useBreakpoint, useModal } from "helpers/hooks";
+import { ItemType, SelectedBoulder } from "components/organisms/builder/Slideover.right.builder";
 
 interface TracksListBuilderProps {
 	boulder: Quark<Boulder>;
-	selectedTrack: SelectQuarkNullable<Track>;
+	selectedBoulder: SelectedBoulder;
+	setSelectedItem: Dispatch<SetStateAction<ItemType>>;
 	onTrackClick: (trackQuark: Quark<Track>) => void;
 	onDrawButtonClick?: () => void;
 	onCreateTrack?: () => void;
@@ -42,7 +44,7 @@ export const TracksListBuilder: React.FC<TracksListBuilderProps> =
 			.quarks()
 			.toArray()
 			.sort((t1, t2) => t1().index - t2().index);
-		const selectedTrack = props.selectedTrack();
+		const selectedTrack = props.selectedBoulder.selectedTrack ? props.selectedBoulder.selectedTrack() : undefined;
 
 		if (!session) return null;
 		return (
@@ -56,11 +58,7 @@ export const TracksListBuilder: React.FC<TracksListBuilderProps> =
 								key={track.id}
 								className={
 									"flex cursor-pointer flex-col border-b border-grey-light px-5 py-5 md:py-3 md:hover:bg-grey-superlight" +
-									(props.selectedTrack()
-										? props.selectedTrack()!.id !== track.id
-											? " opacity-40"
-											: ""
-										: "")
+									(selectedTrack?.id !== track.id ? " opacity-40" : "")
 								}
 								onClick={() => props.onTrackClick(trackQuark)}
 							>
@@ -93,7 +91,7 @@ export const TracksListBuilder: React.FC<TracksListBuilderProps> =
 										<button
 											onClick={(e) => {
 												e.stopPropagation();
-												props.selectedTrack.select(trackQuark);
+												props.setSelectedItem((item): ItemType => ({ ...item as SelectedBoulder, selectedTrack: trackQuark }))
 												props.onDrawButtonClick!();
 											}}
 										>
@@ -122,7 +120,7 @@ export const TracksListBuilder: React.FC<TracksListBuilderProps> =
 						onClick={() => {
 							if (boulder.images.length > 0) {
 								const newQuarkTrack = createTrack(boulder, session!.id);
-								props.selectedTrack.select(newQuarkTrack);
+								props.setSelectedItem({ ...props.selectedBoulder, selectedTrack: newQuarkTrack });
 								if (props.onCreateTrack) props.onCreateTrack();
 							} else showModalAddImage();
 						}}
@@ -136,7 +134,7 @@ export const TracksListBuilder: React.FC<TracksListBuilderProps> =
 					buttonText="Confirmer"
 					imgUrl={staticUrl.deleteWarning}
 					onConfirm={(track) =>
-						deleteTrack(boulder, track, props.selectedTrack)
+						deleteTrack(boulder, track, props.setSelectedItem, props.selectedBoulder)
 					}
 				>
 					Etes-vous sûr de vouloir supprimer la voie ?
