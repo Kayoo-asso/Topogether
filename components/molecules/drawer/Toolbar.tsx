@@ -22,7 +22,7 @@ interface ToolbarProps {
 	onClear: () => void;
 	onRewind: () => void;
 	onOtherTracks: () => void;
-	onValidate: () => void;
+	onValidate?: () => void;
 }
 
 const getStrokeColorClass = (grade: Grade | undefined) => {

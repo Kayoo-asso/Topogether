@@ -4,15 +4,13 @@ import { Img, Track } from "types";
 import { TracksImage } from "./TracksImage"; // requires a loader
 import { Portal } from "helpers/hooks";
 import { Image } from "components/atoms";
-import { ItemType, SelectedBoulder } from "components/organisms/builder/Slideover.right.builder";
+import { SelectedBoulder, SelectedItem, selectImage } from "types/SelectedItems";
 
 interface ImageSliderProps {
 	images: Img[];
-	currentImage: Img | undefined;
-	setCurrentImage: Dispatch<SetStateAction<Img | undefined>>;
 	tracks: QuarkIter<Quark<Track>>;
 	selectedBoulder: SelectedBoulder;
-	setSelectedItem: Dispatch<SetStateAction<ItemType>>;
+	setSelectedItem: Dispatch<SetStateAction<SelectedItem>>;
 	displayPhantomTracks?: boolean;
 	modalable?: boolean;
 }
@@ -33,8 +31,8 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 	modalable = true,
 	...props
 }: ImageSliderProps) => {
-	const imgIdx = props.currentImage
-		? props.images.indexOf(props.currentImage)
+	const imgIdx = props.selectedBoulder.selectedImage
+		? props.images.indexOf(props.selectedBoulder.selectedImage)
 		: undefined;
 
 	//For the IntersectionObserver management, see: https://www.rubensuet.com/intersectionObserver/
@@ -59,9 +57,7 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 	) => {
 		for (const entry of entries) {
 			if (entry.intersectionRatio >= 1)
-				props.setCurrentImage(
-					props.images[parseInt(entry.target.id.split("-")[1])]
-				);
+				selectImage(props.selectedBoulder, props.images[parseInt(entry.target.id.split("-")[1])], props.setSelectedItem);
 		}
 	};
 	const getObserver = (
@@ -120,9 +116,9 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 
 	// Change image when currentImage has changed from outside (for example by clicking on a track associated with a non-current image)
 	useEffect(() => {
-		if (props.currentImage && imgIdx && slidesInitialRefs.current[imgIdx])
+		if (props.selectedBoulder.selectedImage && imgIdx && slidesInitialRefs.current[imgIdx])
 			slidesInitialRefs.current[imgIdx].scrollIntoView({ behavior: "smooth" });
-	}, [props.currentImage]);
+	}, [props.selectedBoulder.selectedImage]);
 
 	const wrapPortal = (elts: ReactElement<any, any>) => {
 		return (
@@ -212,7 +208,7 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 									slidesInitialRefs.current[idx].scrollIntoView({
 										behavior: "smooth",
 									});
-								props.setCurrentImage(img);
+								selectImage(props.selectedBoulder, img, props.setSelectedItem);
 							}}
 						></div>
 					))}

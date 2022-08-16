@@ -14,7 +14,7 @@ export const SlideoverLeftDesktop: React.FC<SlideoverLeftDesktopProps> = ({
 
 	return (
 		<div
-			className={`absolute left-[280px] flex h-contentPlusShell w-[600px] flex-col border-r border-grey-medium bg-white px-8 py-5 transition ease-in-out ${
+			className={`absolute left-[280px] flex z-300 h-contentPlusShell w-[600px] flex-col border-r border-grey-medium bg-white px-8 py-5 transition ease-in-out ${
 				props.className ? props.className : ""
 			}`}
 			style={{

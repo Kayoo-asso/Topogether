@@ -1,9 +1,10 @@
-import React, { Dispatch, SetStateAction } from 'react';
+import React, { Dispatch, SetStateAction, useCallback } from 'react';
 import { Quark, watchDependencies } from 'helpers/quarky';
 import { Topo, UUID } from 'types';
-import { InteractItem, SelectedItem } from 'types/SelectedItems';
+import { InteractItem, selectBoulder, SelectedItem } from 'types/SelectedItems';
 import { For } from 'components/atoms';
-import { BoulderFilterOptions, BoulderMarker, filterBoulders, ParkingMarker, SectorAreaMarker, WaypointMarker } from 'components/map';
+import { BoulderFilterOptions, BoulderMarker, filterBoulders, isMouseEvent, isPointerEvent, isTouchEvent, ParkingMarker, SectorAreaMarker, WaypointMarker } from 'components/map';
+import { sectorChanged } from 'helpers/builder';
 
 interface BuilderMarkersProps {
     topoQuark: Quark<Topo>,
@@ -12,7 +13,10 @@ interface BuilderMarkersProps {
     selectedItem: SelectedItem,
     setSelectedItem: Dispatch<SetStateAction<SelectedItem>>,
     setDropdownItem: Dispatch<SetStateAction<InteractItem>>,
-    setDropdownPosition: 
+    setDropdownPosition: React.Dispatch<React.SetStateAction<{
+        x: number;
+        y: number;
+    } | undefined>>
 }
 
 export const BuilderMarkers: React.FC<BuilderMarkersProps> = watchDependencies(
@@ -23,8 +27,12 @@ export const BuilderMarkers: React.FC<BuilderMarkersProps> = watchDependencies(
     const parkings = topo.parkings;
     const waypoints = topo.waypoints;
 
-    const setDropdown = () => {
-
+    const setDropdown = (e: Event, item: InteractItem) => {
+        if (isMouseEvent(e) || isPointerEvent(e))
+				props.setDropdownPosition({ x: e.pageX, y: e.pageY });
+        else if (isTouchEvent(e))
+            props.setDropdownPosition({ x: e.touches[0].pageX, y: e.touches[0].pageY });
+        props.setDropdownItem(item);
     }
    
     return (
@@ -35,11 +43,11 @@ export const BuilderMarkers: React.FC<BuilderMarkersProps> = watchDependencies(
                         key={boulder().id}
                         boulder={boulder}
                         boulderOrder={props.boulderOrder}
-                        selectedBoulder={selectedBoulder}
+                        selectedItem={props.selectedItem}
                         topo={props.topoQuark}
-                        onClick={(boulderQuark) => props.setSelectedItem({ type: 'boulder', value: boulderQuark })}
-                        onContextMenu={displayBoulderDropdown}
-                        draggable={selectedBoulder.quark() === boulder}
+                        onClick={(boulderQuark) => selectBoulder(boulderQuark, props.setSelectedItem)}
+                        onContextMenu={(e, b) => setDropdown(e, { type: 'boulder', value: b })}
+                        draggable={props.selectedItem.type === 'boulder' && props.selectedItem.value === boulder}
                     />
                 )}
             </For>
@@ -48,17 +56,17 @@ export const BuilderMarkers: React.FC<BuilderMarkersProps> = watchDependencies(
                     <SectorAreaMarker
                         key={sector().id}
                         sector={sector}
-                        selected={selectedSector.quark() === sector}
+                        // selected={props.selectedItem.type === 'sector' && props.selectedItem.value === sector}
                         // TODO: improve the callbacks
                         // TODO: how to avoid problems with the mousemove event not reaching the map while creating a sector?
 
                         // Avoid the sector area intercepting clicks if another tool is selected
-                        onClick={toggleSectorSelect}
-                        onContextMenu={displaySectorDropdown}
-                        onDragStart={() => selectedSector.select(sector)}
-                        onDragEnd={() =>
-                            sectorChanged(props.topoQuark, sector().id, boulderOrder())
-                        }
+                        // onClick={toggleSectorSelect}
+                        onContextMenu={(e, s) => setDropdown(e, { type: 'sector', value: s })}
+                        // onDragStart={() => selectedSector.select(sector)}
+                        onDragEnd={useCallback(() => {
+                            sectorChanged(props.topoQuark, sector().id, props.boulderOrder)
+                        }, [props.topoQuark, props.boulderOrder])}
                     />
                 )}
             </For>
@@ -67,9 +75,9 @@ export const BuilderMarkers: React.FC<BuilderMarkersProps> = watchDependencies(
                     <WaypointMarker
                         key={waypoint().id}
                         waypoint={waypoint}
-                        selected={selectedWaypoint.quark() === waypoint}
-                        onClick={toggleWaypointSelect}
-                        onContextMenu={displayWaypointDropdown}
+                        selected={props.selectedItem.type === 'waypoint' && props.selectedItem.value === waypoint}
+                        onClick={(waypointQuark) => props.setSelectedItem({ type: 'waypoint', value: waypointQuark })}
+                        onContextMenu={(e, w) => setDropdown(e, { type: 'waypoint', value: w })}
                         draggable
                     />
                 )}
@@ -79,9 +87,9 @@ export const BuilderMarkers: React.FC<BuilderMarkersProps> = watchDependencies(
                     <ParkingMarker
                         key={parking().id}
                         parking={parking}
-                        selected={selectedParking.quark() === parking}
-                        onClick={toggleParkingSelect}
-                        onContextMenu={displayParkingDropdown}
+                        selected={props.selectedItem.type === 'parking' && props.selectedItem.value === parking}
+                        onClick={(parkingQuark) => props.setSelectedItem({ type: 'parking', value: parkingQuark })}
+                        onContextMenu={(e, p) => setDropdown(e, { type: 'parking', value: p })}
                         draggable
                     />
                 )}

@@ -4,12 +4,12 @@ import { Quark, watchDependencies } from "helpers/quarky";
 import { Description, Name, Topo, Waypoint } from "types";
 import { useBreakpoint, useModal } from "helpers/hooks";
 import { staticUrl } from "helpers/constants";
-import { ItemType } from "../builder/Slideover.right.builder";
+import { SelectedItem } from "types/SelectedItems";
 
 interface WaypointFormProps {
 	topo: Quark<Topo>;
 	waypoint: Quark<Waypoint>;
-	setSelectedItem: Dispatch<SetStateAction<ItemType>>;
+	setSelectedItem: Dispatch<SetStateAction<SelectedItem>>;
 	className?: string;
 	onDeleteWaypoint: () => void;
 }
@@ -32,7 +32,7 @@ export const WaypointForm: React.FC<WaypointFormProps> = watchDependencies(
 			<>
 				<div
 					className={
-						"flex h-full flex-col gap-6 " +
+						"flex h-full w-full flex-col gap-6 px-5 pb-4 " +
 						(props.className ? props.className : "")
 					}
 					onClick={(e) => e.stopPropagation()}

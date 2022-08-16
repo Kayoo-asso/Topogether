@@ -7,10 +7,9 @@ import {
 	GradeHistogram,
 	ParkingButton,
 	ParkingModal,
-	SlideagainstRightDesktop,
 } from "components";
 import { BaseColor, LightTopo, TopoStatus } from "types";
-import { encodeUUID, formatDate } from "helpers/utils";
+import { formatDate } from "helpers/utils";
 import { Image } from "components/atoms/Image";
 import Link from "next/link";
 
@@ -20,6 +19,7 @@ import Waypoint from "assets/icons/waypoint.svg";
 import { ModalBG } from "components/atoms";
 import Copy from "/assets/icons/copy.svg";
 import { TopoTypeToColor } from "helpers/topo";
+import { SlideoverRightDesktop } from "components/atoms/overlays";
 
 type TopoPreviewButton = {
 	content: string;
@@ -310,7 +310,7 @@ export const TopoPreview: React.FC<TopoPreviewProps> = ({
 				<ModalBG onBgClick={props.onClose}>{topoPreviewContent()}</ModalBG>
 			</div>
 			<div className="hidden md:block">
-				<SlideagainstRightDesktop
+				<SlideoverRightDesktop
 					open
 					displayLikeButton={displayLikeDownload}
 					displayDlButton={displayLikeDownload}
@@ -318,7 +318,7 @@ export const TopoPreview: React.FC<TopoPreviewProps> = ({
 					onClose={props.onClose}
 				>
 					{topoPreviewContent()}
-				</SlideagainstRightDesktop>
+				</SlideoverRightDesktop>
 			</div>
 
 			{topo.parkingLocation && (

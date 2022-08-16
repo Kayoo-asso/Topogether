@@ -12,15 +12,13 @@ import { deleteTrack } from "helpers/builder";
 import { staticUrl } from "helpers/constants";
 import { useModal } from "helpers/hooks/useModal";
 import { setReactRef } from "helpers/utils";
-import { ItemType, SelectedBoulder } from "components/organisms/builder/Slideover.right.builder";
+import { SelectedBoulder, SelectedItem, selectImage } from "types/SelectedItems";
 
 interface BoulderPreviewDesktopProps {
 	selectedBoulder: SelectedBoulder;
-	setSelectedItem: Dispatch<SetStateAction<ItemType>>;
+	setSelectedItem: Dispatch<SetStateAction<SelectedItem>>;
 	displayAddButton?: boolean;
 	allowDelete?: boolean;
-	currentImage?: Img;
-	setCurrentImage: Dispatch<SetStateAction<Img | undefined>>;
 }
 
 export const BoulderPreviewDesktop = watchDependencies<
@@ -40,7 +38,7 @@ export const BoulderPreviewDesktop = watchDependencies<
 			useModal<[Quark<Track>[], UUID]>();
 		const deleteImage = useCallback(
 			(id: UUID) => {
-				if (props.currentImage?.id === id) props.setCurrentImage(undefined);
+				if (props.selectedBoulder.selectedImage?.id === id) props.setSelectedItem({ ...props.selectedBoulder, selectedImage: undefined });
 				const newImages = boulder.images.filter((img) => img.id !== id);
 				props.selectedBoulder.value.set((b) => ({
 					...b,
@@ -48,10 +46,10 @@ export const BoulderPreviewDesktop = watchDependencies<
 				}));
 				if (newImages.length === 0) {
 					deleteTracks(boulder.tracks.quarks().toArray());
-					props.setCurrentImage(undefined);
+					props.setSelectedItem({ ...props.selectedBoulder, selectedImage: undefined });
 				}
 			},
-			[props.selectedBoulder, props.selectedBoulder.value(), props.currentImage, props.setCurrentImage]
+			[props.selectedBoulder, props.selectedBoulder.value()]
 		);
 		const deleteTracks = useCallback(
 			(tracksQuark: Quark<Track>[]) => {
@@ -63,10 +61,10 @@ export const BoulderPreviewDesktop = watchDependencies<
 		);
 
 		const addImagesClick = useCallback(() => {
-			if (!props.currentImage && multipleImageInputRef.current) {
+			if (!props.selectedBoulder.selectedImage && multipleImageInputRef.current) {
 				multipleImageInputRef.current.click();
 			}
-		}, [props.currentImage, loading]);
+		}, [props.selectedBoulder.selectedImage, loading]);
 
 		return (
 			<>
@@ -74,11 +72,11 @@ export const BoulderPreviewDesktop = watchDependencies<
 					<div className="bg-dark">
 						<TracksImage
 							sizeHint="300px"
-							image={props.currentImage}
+							image={props.selectedBoulder.selectedImage}
 							tracks={boulder.tracks.quarks()}
 							selectedBoulder={props.selectedBoulder}
 							setSelectedItem={props.setSelectedItem}
-							modalable={!!props.currentImage}
+							modalable={!!props.selectedBoulder.selectedImage}
 							onImageClick={!loading ? addImagesClick : undefined}
 						/>
 					</div>
@@ -91,15 +89,13 @@ export const BoulderPreviewDesktop = watchDependencies<
 							}}
 							images={boulder.images}
 							selectedBoulder={props.selectedBoulder}
-							selected={props.currentImage?.id}
+							selected={props.selectedBoulder.selectedImage?.id}
 							rows={1}
 							onImageClick={useCallback(
 								(id) => {
-									props.setCurrentImage(
-										boulder.images.find((img) => img.id === id)!
-									);
+									selectImage(props.selectedBoulder, boulder.images.find((img) => img.id === id)!, props.setSelectedItem)
 								},
-								[boulder]
+								[props.selectedBoulder, boulder, props.setSelectedItem]
 							)}
 							allowUpload={displayAddButton}
 							onChange={useCallback(
@@ -108,9 +104,9 @@ export const BoulderPreviewDesktop = watchDependencies<
 										...b,
 										images: [...b.images, ...images],
 									}));
-									props.setCurrentImage(images[0]);
+									selectImage(props.selectedBoulder, images[0], props.setSelectedItem);
 								},
-								[boulder]
+								[props.selectedBoulder, boulder, props.setSelectedItem]
 							)}
 							onImageDelete={
 								props.allowDelete

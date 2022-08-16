@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { Dispatch, SetStateAction, useCallback, useEffect, useState } from "react";
 import {
 	DrawerToolEnum,
 	Img,
@@ -9,82 +9,79 @@ import {
 } from "types";
 import { Toolbar, TracksImage } from "components";
 import {
-	QuarkArray,
 	QuarkIter,
-	SelectQuarkNullable,
 	watchDependencies,
 } from "helpers/quarky";
 import { v4 } from "uuid";
 import { staticUrl } from "helpers/constants";
 import { useModal, Portal } from "helpers/hooks";
+import { SelectedBoulder, SelectedItem } from "types/SelectedItems";
 
 interface DrawerProps {
-	image: Img;
-	tracks: QuarkArray<Track>;
-	selectedTrack: SelectQuarkNullable<Track>;
-	open: boolean;
-	onValidate: () => void;
+	selectedBoulder: SelectedBoulder;
+	setSelectedItem: Dispatch<SetStateAction<SelectedItem>>;
+	onValidate?: () => void;
 }
 
 export const Drawer: React.FC<DrawerProps> = watchDependencies(
 	(props: DrawerProps) => {
+		if (!props.selectedBoulder.selectedTrack) throw new Error('Drawer opened without any track');
+		const selectedTrack: Track = props.selectedBoulder.selectedTrack();
+		const image = props.selectedBoulder.selectedImage;
+		if (!image) throw new Error("Drawer opened without any image");
+
 		const [selectedTool, setSelectedTool] =
 			useState<DrawerToolEnum>("LINE_DRAWER");
 		const [displayOtherTracks, setDisplayOtherTracks] = useState(false);
 		const [ModalClear, showModalClear] = useModal();
-
-		const selectedTrack = props.selectedTrack();
-		if (!selectedTrack) return null;
-
+		
 		const addPointToLine = (pos: Position) => {
-			if (props.image) {
-				let lineQuark = selectedTrack.lines.findQuark(
-					(l) => l.imageId === props.image.id
-				);
-				if (!lineQuark) {
-					selectedTrack.lines.push({
-						id: v4(),
-						index: selectedTrack.lines.length,
-						imageId: props.image.id,
-						points: [],
-					});
-					lineQuark = selectedTrack.lines.findQuark(
-						(l) => l.imageId === props.image.id
-					)!;
-				}
+			let lineQuark = selectedTrack.lines.findQuark(
+				(l) => l.imageId === image.id
+			);
+			if (!lineQuark) {
+				selectedTrack.lines.push({
+					id: v4(),
+					index: selectedTrack.lines.length,
+					imageId: image.id,
+					points: [],
+				});
+				lineQuark = selectedTrack.lines.findQuark(
+					(l) => l.imageId === image.id
+				)!;
+			}
 
-				const line = lineQuark();
-				switch (selectedTool) {
-					case "LINE_DRAWER":
-						line.points.push(pos);
-						lineQuark.set({
-							...line,
-							points: line.points,
-						});
-						break;
-					case "HAND_DEPARTURE_DRAWER":
-						lineQuark.set({
-							...line,
-							hand1: line.hand2,
-							hand2: pos,
-						});
-						break;
-					case "FOOT_DEPARTURE_DRAWER":
-						lineQuark.set({
-							...line,
-							foot1: line.foot2,
-							foot2: pos,
-						});
-						break;
-					case "FORBIDDEN_AREA_DRAWER":
-						const newForbiddenPoints = line.forbidden || [];
-						newForbiddenPoints.push(constructArea(pos));
-						lineQuark.set({
-							...line,
-							forbidden: newForbiddenPoints,
-						});
-						break;
-				}
+			const line = lineQuark();
+			switch (selectedTool) {
+				case "LINE_DRAWER":
+					line.points.push(pos);
+					lineQuark.set({
+						...line,
+						points: line.points,
+					});
+					break;
+				case "HAND_DEPARTURE_DRAWER":
+					lineQuark.set({
+						...line,
+						hand1: line.hand2,
+						hand2: pos,
+					});
+					break;
+				case "FOOT_DEPARTURE_DRAWER":
+					lineQuark.set({
+						...line,
+						foot1: line.foot2,
+						foot2: pos,
+					});
+					break;
+				case "FORBIDDEN_AREA_DRAWER":
+					const newForbiddenPoints = line.forbidden || [];
+					newForbiddenPoints.push(constructArea(pos));
+					lineQuark.set({
+						...line,
+						forbidden: newForbiddenPoints,
+					});
+					break;
 			}
 		};
 
@@ -182,22 +179,23 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies(
 		return (
 			<>
 				{/* Here we position absolutely, using hardcoded 7vh for the header
-          TODO: encode the size of header / toolbar / etc... as units Tailwind config?
-      */}
-				<Portal open={props.open}>
-					<div className="absolute left-0 top-[7vh] z-[600] h-content w-full md:h-contentPlusShell md:w-[calc(100%-600px)]">
+					TODO: encode the size of header / toolbar / etc... as units Tailwind config?
+				*/}
+				<Portal open>
+					<div className="absolute left-0 top-[7vh] z-[600] h-content md:h-contentPlusShell w-full md:w-[calc(100%-600px)]">
 						{/* Same, we know absolute size, since both header + toolbar are 7vh each */}
 						<div className="b-opacity-90 flex h-[84vh] bg-black">
 							<TracksImage
 								sizeHint="100vw"
 								objectFit="contain"
-								image={props.image}
+								image={image}
 								tracks={
 									displayOtherTracks
-										? props.tracks.quarks()
-										: new QuarkIter([props.selectedTrack.quark()!])
+										? props.selectedBoulder.value().tracks.quarks()
+										: new QuarkIter([props.selectedBoulder.selectedTrack])
 								}
-								selectedTrack={props.selectedTrack}
+								selectedBoulder={props.selectedBoulder}
+								setSelectedItem={props.setSelectedItem}
 								currentTool={selectedTool}
 								editable
 								allowDoubleTapZoom={false}
@@ -218,7 +216,7 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies(
 							grade={selectedTrack.grade}
 							onToolSelect={(tool) => setSelectedTool(tool)}
 							onGradeSelect={(grade) => {
-								props.selectedTrack.quark()?.set({
+								props.selectedBoulder.selectedTrack!.set({
 									...selectedTrack,
 									grade: grade,
 								});
@@ -235,11 +233,10 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies(
 					buttonText="Confirmer"
 					imgUrl={staticUrl.deleteWarning}
 					onConfirm={useCallback(() => {
-						selectedTrack.lines.removeAll((x) => x.imageId === props.image.id);
+						selectedTrack.lines.removeAll((x) => x.imageId === image.id);
 					}, [selectedTrack, selectedTrack.lines])}
 				>
-					Vous êtes sur le point de supprimer l'ensemble du tracé. Voulez-vous
-					continuer ?
+					Vous êtes sur le point de supprimer l'ensemble du tracé. Voulez-vous continuer ?
 				</ModalClear>
 			</>
 		);

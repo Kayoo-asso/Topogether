@@ -1,5 +1,4 @@
 import React, { useCallback, useRef, useState } from "react";
-import { TopoCard } from "components";
 import { LightTopo, TopoStatus } from "types";
 import { AdminActionDropdown } from "components/molecules/cards/AdminActionDropdown";
 import { useContextMenu } from "helpers/hooks/useContextMenu";
@@ -14,6 +13,7 @@ import Edit from "assets/icons/edit.svg";
 import Recent from "assets/icons/recent.svg";
 import Checked from "assets/icons/checked.svg";
 import { encodeUUID } from "helpers/utils";
+import { TopoCard } from "components/molecules";
 
 interface RootAdminProps {
 	lightTopos: LightTopo[];

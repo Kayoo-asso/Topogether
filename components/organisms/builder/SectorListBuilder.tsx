@@ -17,15 +17,15 @@ import Edit from "assets/icons/edit.svg";
 import { ModalRenameSector } from "components/organisms";
 import { useModal } from "helpers/hooks";
 import { staticUrl } from "helpers/constants";
-import { SelectedBoulder, SelectedItem } from "types/SelectedItems";
+import { selectBoulder, SelectedBoulder, SelectedItem, selectTrack } from "types/SelectedItems";
+import { toLatLng } from "helpers/map";
 
 export interface SectorListBuilderProps {
 	topoQuark: Quark<Topo>;
 	boulderOrder: Map<UUID, number>;
 	selectedBoulder?: SelectedBoulder;
 	setSelectedItem: Dispatch<SetStateAction<SelectedItem>>;
-	onBoulderSelect: (boulder: Quark<Boulder>) => void;
-	onTrackSelect: (track: Quark<Track>, boulder: Quark<Boulder>) => void;
+	map: google.maps.Map | null
 }
 
 // Note: some cleanup happened here
@@ -210,16 +210,12 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> =
 																			)}
 																			onArrowClick={() => toggleBoulder(boulder)}
 																			onNameClick={() => {
-																				props.onBoulderSelect(boulderQuark);
+																				selectBoulder(boulderQuark, props.setSelectedItem);
+																				props.map?.setCenter(toLatLng(boulderQuark().location));
 																				toggleBoulder(boulder);
 																			}}
 																			onDeleteClick={() => showModalDeleteBoulder(boulderQuark) }
-																			onTrackClick={(trackQuark) =>
-																				props.onTrackSelect(
-																					trackQuark,
-																					boulderQuark
-																				)
-																			}
+																			onTrackClick={(trackQuark) => selectTrack(boulderQuark, trackQuark, props.setSelectedItem) }
 																			displayCreateTrack
 																			onCreateTrack={() =>
 																				createTrack(boulder, session.id)
@@ -286,12 +282,13 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> =
 																	displayed={displayedBoulders.has(boulder.id)}
 																	onArrowClick={() => toggleBoulder(boulder)}
 																	onNameClick={() => {
-																		props.onBoulderSelect(boulderQuark);
+																		selectBoulder(boulderQuark, props.setSelectedItem);
+																		props.map?.setCenter(toLatLng(boulderQuark().location));
 																		toggleBoulder(boulder);
 																	}}
 																	onDeleteClick={() => showModalDeleteBoulder(boulderQuark) }
 																	onTrackClick={(trackQuark) =>
-																		props.onTrackSelect(trackQuark, boulderQuark)
+																		selectTrack(boulderQuark, trackQuark, props.setSelectedItem)
 																	}
 																	displayCreateTrack
 																	onCreateTrack={() =>

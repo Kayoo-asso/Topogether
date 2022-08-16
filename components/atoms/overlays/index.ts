@@ -1,5 +1,5 @@
 export * from "./SlideoverMobile";
-export * from "./SlideagainstRightDesktop";
+export * from "./SlideoverRightDesktop";
 export * from "./SlideoverLeftDesktop";
 
 export * from "./ModalBG";

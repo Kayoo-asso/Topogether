@@ -10,15 +10,13 @@ import { useModal } from "helpers/hooks";
 import { staticUrl } from "helpers/constants";
 import { deleteBoulder } from "helpers/builder";
 import { TracksListBuilder } from "./TracksListBuilder";
-import { SelectedBoulder, SelectedItem } from "types/SelectedItems";
+import { SelectedBoulder, SelectedItem, selectImage } from "types/SelectedItems";
 
 interface BoulderBuilderContentMobileProps {
 	full: boolean,
 	topo: Quark<Topo>;
 	selectedBoulder: SelectedBoulder;
 	setSelectedItem: Dispatch<SetStateAction<SelectedItem>>;
-	currentImage?: Img;
-	setCurrentImage: Dispatch<SetStateAction<Img | undefined>>;
 	setDisplayDrawer: Dispatch<SetStateAction<boolean>>;
 	onDeleteBoulder: () => void;
 }
@@ -39,8 +37,6 @@ export const BoulderBuilderContentMobile: React.FC<BoulderBuilderContentMobilePr
 					<div className="relative flex max-h-[40%] w-full overflow-hidden rounded-t-lg bg-dark">
 						<ImageSlider
 							images={boulder.images}
-							currentImage={props.currentImage}
-							setCurrentImage={props.setCurrentImage}
 							tracks={boulder.tracks.quarks()}
 							selectedBoulder={props.selectedBoulder}
 							setSelectedItem={props.setSelectedItem}
@@ -79,7 +75,7 @@ export const BoulderBuilderContentMobile: React.FC<BoulderBuilderContentMobilePr
 											...b,
 											images: [...boulder.images].concat(imgs),
 										}));
-										props.setCurrentImage(imgs[0]);
+										selectImage(props.selectedBoulder, imgs[0], props.setSelectedItem);
 									}}
 								/>
 							)}
@@ -135,7 +131,7 @@ export const BoulderBuilderContentMobile: React.FC<BoulderBuilderContentMobilePr
 										props.setSelectedItem({ ...props.selectedBoulder, selectedTrack: undefined });
 									else {
 										if (newImageIndex > -1)
-											props.setCurrentImage(boulder.images[newImageIndex]);
+											selectImage(props.selectedBoulder, boulder.images[newImageIndex], props.setSelectedItem);
 										props.setSelectedItem({ ...props.selectedBoulder, selectedTrack: trackQuark });
 									}
 								}}

@@ -32,17 +32,8 @@ import { LeftbarBuilderDesktop } from "components/layouts/LeftbarBuilderDesktop"
 import {
 	BoulderFilterOptions,
 	MapControl,
-	filterBoulders,
-	BoulderMarker,
 	CreatingSectorAreaMarker,
-	isMouseEvent,
-	isPointerEvent,
-	isTouchEvent,
-	ParkingMarker,
-	SectorAreaMarker,
-	WaypointMarker,
 } from "components/map";
-import { TrackFormSlideagainstDesktop, Drawer } from "components/organisms";
 import {
 	createBoulder,
 	createParking,
@@ -74,6 +65,7 @@ import { BuilderProgressIndicator } from "components/organisms/builder/BuilderPr
 import { InteractItem, SelectedItem } from "types/SelectedItems";
 import { BuilderDropdown } from "components/organisms/builder/BuilderDropdown";
 import { BuilderModalDelete } from "components/organisms/builder/BuilderModalDelete";
+import { BuilderMarkers } from "components/organisms/builder/BuilderMarkers";
 
 interface RootBuilderProps {
 	topoQuark: Quark<Topo>;
@@ -101,32 +93,6 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 		const multipleImageInputRef = useRef<HTMLInputElement>(null);
 		const [currentTool, setCurrentTool] = useState<MapToolEnum>();
 		const [tempCurrentTool, setTempCurrentTool] = useState<MapToolEnum>();
-		const [currentImage, setCurrentImage] = useState<Img>();
-
-		const sectorRightClicked = useSelectQuark<Sector>();
-		const [ModalDeleteSector, showModalDeleteSector] =
-			useModal<Quark<Sector>>();
-
-		const boulderRightClicked = useSelectQuark<Boulder>();
-		const [ModalDeleteBoulder, showModalDeleteBoulder] =
-			useModal<Quark<Boulder>>();
-
-		const parkingRightClicked = useSelectQuark<Parking>();
-		const [ModalDeleteParking, showModalDeleteParking] =
-			useModal<Quark<Parking>>();
-
-		const waypointRightClicked = useSelectQuark<Waypoint>();
-		const [ModalDeleteWaypoint, showModalDeleteWaypoint] =
-			useModal<Quark<Waypoint>>();
-
-		
-		const closeDropdown = useCallback(() => {
-			boulderRightClicked.select(undefined);
-			waypointRightClicked.select(undefined);
-			parkingRightClicked.select(undefined);
-			sectorRightClicked.select(undefined);
-		}, []);
-		useContextMenu(closeDropdown);
 
 		const [ModalSubmitTopo, showModalSubmitTopo] = useModal();
 		const [ModalDeleteTopo, showModalDeleteTopo] = useModal();
@@ -166,43 +132,6 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 		// 	[selectedBoulder]
 		// );
 
-		const displayBoulderDropdown = (e: Event, boulderQuark: Quark<Boulder>) => {
-			if (isMouseEvent(e) || isPointerEvent(e))
-				setDropdownPosition({ x: e.pageX, y: e.pageY });
-			else if (isTouchEvent(e))
-				setDropdownPosition({ x: e.touches[0].pageX, y: e.touches[0].pageY });
-			boulderRightClicked.select(boulderQuark);
-		};
-		const displayWaypointDropdown = useCallback(
-			(e: Event, waypointQuark: Quark<Waypoint>) => {
-				if (isMouseEvent(e) || isPointerEvent(e))
-					setDropdownPosition({ x: e.pageX, y: e.pageY });
-				else if (isTouchEvent(e))
-					setDropdownPosition({ x: e.touches[0].pageX, y: e.touches[0].pageY });
-				waypointRightClicked.select(waypointQuark);
-			},
-			[]
-		);
-		const displayParkingDropdown = useCallback(
-			(e: Event, parkingQuark: Quark<Parking>) => {
-				if (isMouseEvent(e) || isPointerEvent(e))
-					setDropdownPosition({ x: e.pageX, y: e.pageY });
-				else if (isTouchEvent(e))
-					setDropdownPosition({ x: e.touches[0].pageX, y: e.touches[0].pageY });
-				parkingRightClicked.select(parkingQuark);
-			},
-			[]
-		);
-		const displaySectorDropdown = useCallback(
-			(e: Event, sectorQuark: Quark<Sector>) => {
-				if (isMouseEvent(e) || isPointerEvent(e))
-					setDropdownPosition({ x: e.pageX, y: e.pageY });
-				else if (isTouchEvent(e))
-					setDropdownPosition({ x: e.touches[0].pageX, y: e.touches[0].pageY });
-				sectorRightClicked.select(sectorQuark);
-			},
-			[]
-		);
 
 		const handleCreateNewMarker = useCallback(
 			(e) => {
@@ -400,15 +329,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 						boulderOrder={boulderOrder()}
 						selectedBoulder={selectedItem.type === 'boulder' ? selectedItem : undefined}
 						setSelectedItem={setSelectedItem}
-						onBoulderSelect={(boulderQuark) => {
-							//Pass to SectorListBuilder ?
-							setSelectedItem({ type: 'boulder', value: boulderQuark });
-							mapRef.current?.setCenter(toLatLng(boulderQuark().location));
-						}}
-						onTrackSelect={(trackQuark, boulderQuark) => {
-							//Pass to SectorListBuilder ?
-							setSelectedItem({ type: 'boulder', value: boulderQuark, selectedTrack: trackQuark });
-						}}
+						map={mapRef.current}
 						onSubmit={showModalSubmitTopo}
 						activateSubmission={progress() === 100}
 					/>
@@ -454,13 +375,14 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 						topo={props.topoQuark}
 						boulderFilters={boulderFilters}
 						boulderFiltersDomain={defaultBoulderFilterOptions}
-						onMapZoomChange={closeDropdown}
+						onMapZoomChange={() => setDropdownItem({ type: 'none' })}
 						onClick={handleCreateNewMarker}
 						boundsTo={boulders
 							.map((b) => b.location)
 							.concat(parkings.map((p) => p.location))
 							.toArray()}
 					>
+						
 						{currentTool === "SECTOR" && (
 							<CreatingSectorAreaMarker
 								topoQuark={props.topoQuark}
@@ -471,74 +393,23 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 								}}
 							/>
 						)}
-						{/* TODO */}
-						{/* <For each={() => filterBoulders(boulders.quarks(), boulderFilters())}>
-							{(boulder) => (
-								<BoulderMarker
-									key={boulder().id}
-									boulder={boulder}
-									boulderOrder={boulderOrder()}
-									selectedBoulder={selectedBoulder}
-									topo={props.topoQuark}
-									onClick={toggleBoulderSelect}
-									onContextMenu={displayBoulderDropdown}
-									draggable={selectedBoulder.quark() === boulder}
-								/>
-							)}
-						</For>
-						<For each={() => sectors.quarks().toArray()}>
-							{(sector) => (
-								<SectorAreaMarker
-									key={sector().id}
-									sector={sector}
-									selected={selectedSector.quark() === sector}
-									// TODO: improve the callbacks
-									// TODO: how to avoid problems with the mousemove event not reaching the map while creating a sector?
 
-									// Avoid the sector area intercepting clicks if another tool is selected
-									onClick={toggleSectorSelect}
-									onContextMenu={displaySectorDropdown}
-									onDragStart={() => selectedSector.select(sector)}
-									onDragEnd={() =>
-										sectorChanged(props.topoQuark, sector().id, boulderOrder())
-									}
-								/>
-							)}
-						</For>
-						<For each={() => waypoints.quarks().toArray()}>
-							{(waypoint) => (
-								<WaypointMarker
-									key={waypoint().id}
-									waypoint={waypoint}
-									selected={selectedWaypoint.quark() === waypoint}
-									onClick={toggleWaypointSelect}
-									onContextMenu={displayWaypointDropdown}
-									draggable
-								/>
-							)}
-						</For>
-						<For each={() => parkings.quarks().toArray()}>
-							{(parking) => (
-								<ParkingMarker
-									key={parking().id}
-									parking={parking}
-									selected={selectedParking.quark() === parking}
-									onClick={toggleParkingSelect}
-									onContextMenu={displayParkingDropdown}
-									draggable
-								/>
-							)}
-						</For> */}
+						<BuilderMarkers 
+							topoQuark={props.topoQuark}
+							boulderFilters={boulderFilters}
+							boulderOrder={boulderOrder()}
+							selectedItem={selectedItem}
+							setSelectedItem={setSelectedItem}
+							setDropdownItem={setDropdownItem}
+							setDropdownPosition={setDropdownPosition}
+						/>
 					</MapControl>
 
 					<SlideoverRightBuilder
 						topo={props.topoQuark}
 						selectedItem={selectedItem}
 						setSelectedItem={setSelectedItem}
-						currentImage={currentImage}
-						setCurrentImage={setCurrentImage}
 						setDisplayDrawer={setDisplayDrawer}
-						onClose={() => setSelectedItem({ type: 'none' })}
 					/>
 				</div>
 				

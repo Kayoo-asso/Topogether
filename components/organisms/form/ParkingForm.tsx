@@ -4,12 +4,12 @@ import { Quark, watchDependencies } from "helpers/quarky";
 import { Description, Name, Parking, Topo } from "types";
 import { useBreakpoint, useModal } from "helpers/hooks";
 import { staticUrl } from "helpers/constants";
-import { ItemType } from "../builder/Slideover.right.builder";
+import { SelectedItem } from "types/SelectedItems";
 
 interface ParkingFormProps {
 	topo: Quark<Topo>
 	parking: Quark<Parking>;
-	setSelectedItem: Dispatch<SetStateAction<ItemType>>;
+	setSelectedItem: Dispatch<SetStateAction<SelectedItem>>;
 	className?: string;
 	onDeleteParking: () => void;
 }
@@ -32,7 +32,7 @@ export const ParkingForm: React.FC<ParkingFormProps> = watchDependencies(
 			<>
 				<div
 					className={
-						"flex h-full flex-col gap-6 " +
+						"flex h-full w-full flex-col gap-6 px-5 pb-4 " +
 						(props.className ? props.className : "")
 					}
 					onClick={(e) => e.stopPropagation()}
@@ -127,7 +127,7 @@ export const ParkingForm: React.FC<ParkingFormProps> = watchDependencies(
 					<div className="flex w-full grow items-end">
 						<Button
 							content="Supprimer"
-							onClick={() => props.onDeleteParking()}
+							onClick={showModalDelete}
 							fullWidth
 						/>
 					</div>

@@ -3,7 +3,7 @@ import { AccessForm, InfoForm, ManagementForm } from "../form";
 import { Quark } from "helpers/quarky";
 import { Topo } from "types";
 import { useBreakpoint } from "helpers/hooks";
-import { SlideoverLeftDesktop, SlideoverMobile } from "components/atoms";
+import { SlideoverLeftDesktop, SlideoverMobile } from "components/atoms/overlays";
 
 export type InfoType = "INFO" | "ACCESS" | "MANAGEMENT";
 
@@ -36,7 +36,7 @@ export const SlideoverLeftBuilder: React.FC<SlideoverLeftBuilderProps> = (props:
     }
 
 	return (
-		<div className="z-100">
+		<>
 			{breakpoint === "mobile" && (
 				<SlideoverMobile onClose={props.onClose}>
 					<div className={"h-full px-6 pb-10 mt-10 overflow-auto " + (props.className || '')}>
@@ -55,7 +55,7 @@ export const SlideoverLeftBuilder: React.FC<SlideoverLeftBuilderProps> = (props:
 					{getContent()}
 				</SlideoverLeftDesktop>
 			)}
-		</div>
+		</>
 	);
 };
 

@@ -1,19 +1,18 @@
-import React, { Dispatch, SetStateAction } from "react";
+import React, { Dispatch, SetStateAction, useCallback } from "react";
 import { GradeCircle } from "components";
 import { gradeToLightGrade, Track } from "types";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { useSession } from "helpers/services";
 import DrawIcon from "assets/icons/draw.svg";
-import { createTrack, deleteTrack } from "helpers/builder";
+import { createTrack } from "helpers/builder";
 import { staticUrl } from "helpers/constants";
 import { useBreakpoint, useModal } from "helpers/hooks";
 import { TrackForm } from "../form/TrackForm";
-import { SelectedBoulder, SelectedItem } from "types/SelectedItems";
+import { SelectedBoulder, SelectedItem, selectImage, selectTrack } from "types/SelectedItems";
 
 interface TracksListBuilderProps {
 	selectedBoulder: SelectedBoulder;
 	setSelectedItem: Dispatch<SetStateAction<SelectedItem>>;
-	onTrackClick: (trackQuark: Quark<Track>) => void;
 	onDrawButtonClick?: () => void;
 	onCreateTrack?: () => void;
 	onAddImage?: () => void;
@@ -33,7 +32,7 @@ const gradeColors = {
 export const TracksListBuilder: React.FC<TracksListBuilderProps> =
 	watchDependencies((props: TracksListBuilderProps) => {
 		const session = useSession();
-		const [ModalDelete, showModalDelete] = useModal<Quark<Track>>();
+		if (!session) return null;
 		const [ModalAddImage, showModalAddImage] = useModal();
 
 		const breakpoint = useBreakpoint();
@@ -45,7 +44,30 @@ export const TracksListBuilder: React.FC<TracksListBuilderProps> =
 			.sort((t1, t2) => t1().index - t2().index);
 		const selectedTrack = props.selectedBoulder.selectedTrack ? props.selectedBoulder.selectedTrack() : undefined;
 
-		if (!session) return null;
+		const toggleSelectedTrack = useCallback(
+			(trackQuark) => {
+				const track = trackQuark();
+				const selectedTrack = props.selectedBoulder.selectedTrack;
+				if (selectedTrack && selectedTrack().id === track.id)
+					props.setSelectedItem({ ...props.selectedBoulder, selectedTrack: undefined });
+				else {
+					if (track.lines.length > 0) {
+						const newImage = boulder.images.find(
+							(img) => img.id === track.lines.at(0).imageId
+						);
+						if (!newImage)
+							throw new Error(
+								"Could not find the first image for the selected track!"
+							);
+						selectImage(props.selectedBoulder, newImage, props.setSelectedItem);
+					}
+					selectTrack(props.selectedBoulder.value, trackQuark, props.setSelectedItem)
+				}
+			},
+			[props.selectedBoulder, props.selectedBoulder.selectedTrack, props.setSelectedItem, boulder]
+		);
+
+		
 		return (
 			<>
 				<div className="w-full border-t border-grey-light">
@@ -61,14 +83,14 @@ export const TracksListBuilder: React.FC<TracksListBuilderProps> =
 										selectedTrack.id !== track.id ? 
 										" opacity-40" : "")
 								}
-								onClick={() => props.onTrackClick(trackQuark)}
+								onClick={() => toggleSelectedTrack(trackQuark)}
 							>
 								<div className="flex w-full flex-row items-center">
 									<GradeCircle
 										grade={grade}
 										className="cursor-pointer"
 										content={(track.index + 1).toString()}
-										onClick={() => props.onTrackClick(trackQuark)}
+										onClick={() => toggleSelectedTrack(trackQuark)}
 									/>
 
 									{track.grade && (
@@ -102,9 +124,11 @@ export const TracksListBuilder: React.FC<TracksListBuilderProps> =
 								</div>
 								{selectedTrack?.id === track.id && breakpoint === "mobile" && (
 									<TrackForm
+										boulder={props.selectedBoulder.value()}
 										track={trackQuark}
+										selectedBoulder={props.selectedBoulder}
+										setSelectedItem={props.setSelectedItem}
 										className="mt-8"
-										onDeleteTrack={() => showModalDelete(trackQuark)}
 									/>
 								)}
 							</div>
@@ -130,16 +154,6 @@ export const TracksListBuilder: React.FC<TracksListBuilderProps> =
 						<span className="ktext-subtitle">Nouveau passage</span>
 					</div>
 				</div>
-
-				<ModalDelete
-					buttonText="Confirmer"
-					imgUrl={staticUrl.deleteWarning}
-					onConfirm={(track) =>
-						deleteTrack(boulder, track, props.setSelectedItem, props.selectedBoulder)
-					}
-				>
-					Etes-vous sûr de vouloir supprimer la voie ?
-				</ModalDelete>
 
 				<ModalAddImage
 					buttonText="Ajouter une image"

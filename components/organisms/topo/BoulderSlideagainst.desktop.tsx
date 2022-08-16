@@ -3,7 +3,6 @@ import {
 	BoulderPreviewDesktop,
 	Button,
 	Flash,
-	SlideagainstRightDesktop,
 	TracksList,
 } from "components";
 import { Quark, SelectQuarkNullable, watchDependencies } from "helpers/quarky";
@@ -13,6 +12,7 @@ import { useSession} from "helpers/services";
 import { useModal } from "helpers/hooks";
 
 import Rock from "assets/icons/rock.svg";
+import { SlideoverRightDesktop } from "components/atoms/overlays";
 
 interface BoulderSlideagainstDesktopProps {
 	boulder: Quark<Boulder>;
@@ -42,7 +42,7 @@ export const BoulderSlideagainstDesktop: React.FC<BoulderSlideagainstDesktopProp
 
 		return (
 			<>
-				<SlideagainstRightDesktop
+				<SlideoverRightDesktop
 					open
 					displayLikeButton
 					item={props.boulder()}
@@ -94,7 +94,7 @@ export const BoulderSlideagainstDesktop: React.FC<BoulderSlideagainstDesktopProp
 						</div>
 						<div className="mt-3">
 							<BoulderPreviewDesktop
-								boulder={props.boulder}
+								selectedBoulder={props.boulder}
 								selectedTrack={props.selectedTrack}
 								currentImage={props.currentImage}
 								setCurrentImage={props.setCurrentImage}
@@ -157,7 +157,7 @@ export const BoulderSlideagainstDesktop: React.FC<BoulderSlideagainstDesktopProp
 							</div>
 						)}
 					</>
-				</SlideagainstRightDesktop>
+				</SlideoverRightDesktop>
 
 				<Flash open={!!flashMessage} onClose={() => setFlashMessage(undefined)}>
 					{flashMessage}

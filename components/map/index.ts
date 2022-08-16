@@ -6,6 +6,4 @@ export * from "./MapSearchbar";
 export * from "./MapSearchResults";
 export * from "./RootWorldMap";
 export * from "./TopoFilters";
-
-export * from "./dropdowns";
 export * from "./markers";

@@ -1,22 +1,28 @@
-import React, { useEffect, useRef } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useRef } from "react";
 import { Button, Checkbox, Select, TextArea, TextInput } from "components";
 import { Quark, watchDependencies } from "helpers/quarky";
-import { ClimbTechniques, Description, Name, Track } from "types";
+import { Boulder, ClimbTechniques, Description, Name, Track } from "types";
 import { ReceptionName, selectOptions } from "types/EnumNames";
 import { BitflagMultipleSelect } from "components/molecules/form/BitflagMultipleSelect";
 import { ClimbTechniquesName, toggleFlag } from "helpers/bitflags";
-import { useBreakpoint } from "helpers/hooks";
+import { useBreakpoint, useModal } from "helpers/hooks";
+import { staticUrl } from "helpers/constants";
+import { deleteTrack } from "helpers/builder";
+import { SelectedBoulder, SelectedItem } from "types/SelectedItems";
 
 interface TrackFormProps {
-	track: Quark<Track>;
-	className?: string;
-	onDeleteTrack: () => void;
+	boulder: Boulder,
+	track: Quark<Track>,
+	selectedBoulder?: SelectedBoulder,
+	setSelectedItem: Dispatch<SetStateAction<SelectedItem>>;
+	className?: string,
 }
 
 export const TrackForm: React.FC<TrackFormProps> = watchDependencies(
 	(props: TrackFormProps) => {
 		const breakpoint = useBreakpoint();
 		const nameInputRef = useRef<HTMLInputElement>(null);
+		const [ModalDelete, showModalDelete] = useModal();
 		const track = props.track();
 
 		useEffect(() => {
@@ -136,11 +142,19 @@ export const TrackForm: React.FC<TrackFormProps> = watchDependencies(
 					<div className="flex w-full grow items-end">
 						<Button
 							content="Supprimer"
-							onClick={props.onDeleteTrack}
+							onClick={showModalDelete}
 							fullWidth
 						/>
 					</div>
 				</div>
+
+				<ModalDelete
+					buttonText="Confirmer"
+					imgUrl={staticUrl.deleteWarning}
+					onConfirm={() => deleteTrack(props.boulder, props.track, props.setSelectedItem, props.selectedBoulder)}
+				>
+					Etes-vous sûr de vouloir supprimer la voie ?
+				</ModalDelete>
 			</>
 		);
 	}

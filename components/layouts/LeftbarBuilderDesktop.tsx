@@ -10,11 +10,7 @@ interface LeftbarBuilderDesktopProps {
 	boulderOrder: Map<UUID, number>;
 	selectedBoulder?: SelectedBoulder;
 	setSelectedItem: Dispatch<SetStateAction<SelectedItem>>;
-	onBoulderSelect: (boulderQuark: Quark<Boulder>) => void;
-	onTrackSelect: (
-		trackQuark: Quark<Track>,
-		boulderQuark: Quark<Boulder>
-	) => void;
+	map: google.maps.Map | null
 	activateSubmission: boolean;
 	onSubmit: () => void;
 }
@@ -28,8 +24,7 @@ export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> =
 					boulderOrder={props.boulderOrder}
 					selectedBoulder={props.selectedBoulder}
 					setSelectedItem={props.setSelectedItem}
-					onBoulderSelect={props.onBoulderSelect}
-					onTrackSelect={props.onTrackSelect}
+					map={props.map}
 				/>
 
 				<div className="px-6 text-center">

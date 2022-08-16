@@ -1,9 +1,8 @@
-import { api } from "helpers/services";
 import React, { ReactNode, useEffect, useState } from "react";
 import { Boulder, LightTopo, Topo } from "types";
 import { DownloadButton, LikeButton, Show } from "..";
 
-interface SlideagainstRightDesktopProps {
+interface SlideoverRightDesktopProps {
 	open?: boolean;
 	secondary?: boolean;
 	displayLikeButton?: boolean;
@@ -17,13 +16,13 @@ interface SlideagainstRightDesktopProps {
 const isTopo = (item: Boulder | Topo | LightTopo): item is Topo =>
 	(item as Topo).rockTypes !== undefined;
 
-export const SlideagainstRightDesktop: React.FC<
-	SlideagainstRightDesktopProps
+export const SlideoverRightDesktop: React.FC<
+SlideoverRightDesktopProps
 > = ({
 	open = false,
 	secondary = false,
 	...props
-}: SlideagainstRightDesktopProps) => {
+}: SlideoverRightDesktopProps) => {
 	const size = 300;
 
 	const [offset, setOffset] = useState<number>(0);
@@ -77,3 +76,5 @@ export const SlideagainstRightDesktop: React.FC<
 		</div>
 	);
 };
+
+SlideoverRightDesktop.displayName = "SlideoverRightDesktop";

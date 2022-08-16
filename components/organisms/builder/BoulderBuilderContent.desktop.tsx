@@ -11,14 +11,13 @@ import { useModal } from "helpers/hooks";
 import { staticUrl } from "helpers/constants";
 import { deleteBoulder } from "helpers/builder";
 import { TracksListBuilder } from "./TracksListBuilder";
-import { SelectedBoulder, SelectedItem } from "types/SelectedItems";
+import { SelectedBoulder, SelectedItem, selectImage } from "types/SelectedItems";
+import { BuilderSlideoverTrackDesktop } from "./BuilderSlideoverTrack.desktop";
 
 interface BoulderBuilderContentDesktopProps {
 	topo: Quark<Topo>;
 	selectedBoulder: SelectedBoulder;
 	setSelectedItem: Dispatch<SetStateAction<SelectedItem>>;
-	currentImage?: Img;
-	setCurrentImage: Dispatch<SetStateAction<Img | undefined>>;
 	onDeleteBoulder: () => void;
 }
 
@@ -26,34 +25,8 @@ export const BoulderBuilderContentDesktop = watchDependencies<
 	HTMLInputElement,
 	BoulderBuilderContentDesktopProps
 >((props: BoulderBuilderContentDesktopProps, parentRef) => {
-	const boulder = props.selectedBoulder.value();
-
 	const [ModalDelete, showModalDelete] = useModal();
-
-	const imageInputRef = useRef<HTMLInputElement>(null);
-
-	const toggleSelectedTrack = useCallback(
-		(trackQuark) => {
-			const track = trackQuark();
-			const selectedTrack = props.selectedBoulder.selectedTrack;
-			if (selectedTrack && selectedTrack().id === track.id)
-				props.setSelectedItem({ ...props.selectedBoulder, selectedTrack: undefined });
-			else {
-				if (track.lines.length > 0) {
-					const newImage = boulder.images.find(
-						(img) => img.id === track.lines.at(0).imageId
-					);
-					if (!newImage)
-						throw new Error(
-							"Could not find the first image for the selected track!"
-						);
-					props.setCurrentImage(newImage);
-				}
-				props.setSelectedItem({ ...props.selectedBoulder, selectedTrack: trackQuark });
-			}
-		},
-		[props.selectedBoulder, props.selectedBoulder.selectedTrack, props.setSelectedItem, props.setCurrentImage, boulder]
-	);
+	const imageInputRef = useRef<HTMLInputElement>(null);	
 
 	return (
 		<>
@@ -72,16 +45,13 @@ export const BoulderBuilderContentDesktop = watchDependencies<
 					}}
 					selectedBoulder={props.selectedBoulder}
 					setSelectedItem={props.setSelectedItem}
-					currentImage={props.currentImage}
 					displayAddButton
 					allowDelete
-					setCurrentImage={props.setCurrentImage}
 				/>
 
 				<TracksListBuilder
 					selectedBoulder={props.selectedBoulder}
 					setSelectedItem={props.setSelectedItem}
-					onTrackClick={toggleSelectedTrack}
 					onAddImage={useCallback(
 						() => imageInputRef.current && imageInputRef.current.click(),
 						[]
