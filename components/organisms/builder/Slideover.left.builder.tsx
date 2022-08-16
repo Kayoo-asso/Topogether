@@ -5,11 +5,11 @@ import { Topo } from "types";
 import { useBreakpoint } from "helpers/hooks";
 import { SlideoverLeftDesktop, SlideoverMobile } from "components/atoms/overlays";
 
-export type InfoType = "INFO" | "ACCESS" | "MANAGEMENT";
+export type SelectedInfo = "INFO" | "ACCESS" | "MANAGEMENT";
 
 type SlideoverLeftBuilderProps = {
     topo: Quark<Topo>;
-    selected?: InfoType;
+    selectedInfo?: SelectedInfo;
 	className?: string;
 	onClose: () => void;
 }
@@ -18,7 +18,7 @@ export const SlideoverLeftBuilder: React.FC<SlideoverLeftBuilderProps> = (props:
     const breakpoint = useBreakpoint();
 
     const getTitle = () => {
-        switch (props.selected) {
+        switch (props.selectedInfo) {
             case 'INFO': return "Infos du topo";
             case 'ACCESS': return "Marche d'approche";
             case 'MANAGEMENT': return "Gestionnaires du site";
@@ -27,7 +27,7 @@ export const SlideoverLeftBuilder: React.FC<SlideoverLeftBuilderProps> = (props:
     }
 
     const getContent = () => {
-        switch (props.selected) {
+        switch (props.selectedInfo) {
             case 'INFO': return <InfoForm topo={props.topo} />;
             case 'ACCESS': return <AccessForm topo={props.topo} />;
             case 'MANAGEMENT': return <ManagementForm topo={props.topo} />;
@@ -38,8 +38,11 @@ export const SlideoverLeftBuilder: React.FC<SlideoverLeftBuilderProps> = (props:
 	return (
 		<>
 			{breakpoint === "mobile" && (
-				<SlideoverMobile onClose={props.onClose}>
-					<div className={"h-full px-6 pb-10 mt-10 overflow-auto " + (props.className || '')}>
+				<SlideoverMobile 
+					open={!!props.selectedInfo}
+					onClose={props.onClose}
+				>
+					<div className={"h-full pl-6 pr-3 py-14 " + (props.className || '')}>
                         <div className="ktext-title mb-6">{getTitle()}</div>
 						{getContent()}
 					</div>
@@ -49,7 +52,7 @@ export const SlideoverLeftBuilder: React.FC<SlideoverLeftBuilderProps> = (props:
 				<SlideoverLeftDesktop
 					title={getTitle()}
 					className={props.className}
-					open={!!props.selected}
+					open={!!props.selectedInfo}
 					onClose={props.onClose}
 				>
 					{getContent()}

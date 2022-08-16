@@ -3,8 +3,8 @@ import { staticUrl } from "helpers/constants";
 import { useModal, useContextMenu } from "helpers/hooks";
 import React, { useCallback, useRef, useState } from "react";
 import { LightTopo, TopoStatus } from "types";
-import { TopoPreview } from "components/organisms";
 import { encodeUUID } from "helpers/utils";
+import { TopoPreview } from "../TopoPreview";
 
 interface DownloadedListProps {
 	downloadedTopos: LightTopo[];

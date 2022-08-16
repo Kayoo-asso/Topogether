@@ -2,8 +2,8 @@ import { LikedActionDropdown, TopoCardList } from "components/molecules";
 import React, { useCallback, useRef, useState } from "react";
 import { LightTopo, TopoStatus } from "types";
 import { useContextMenu } from "helpers/hooks";
-import { TopoPreview } from "components/organisms";
 import { encodeUUID } from "helpers/utils";
+import { TopoPreview } from "../TopoPreview";
 
 interface LikedListProps {
 	likedTopos: LightTopo[];

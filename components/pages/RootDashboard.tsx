@@ -2,7 +2,6 @@ import React, { useCallback, useRef, useState } from "react";
 import { AddTopoCard, TopoCardList, Button } from "components";
 import { LightTopo, TopoStatus } from "types";
 import { UserActionDropdown } from "components/molecules/cards/UserActionDropdown";
-import { TopoPreview } from "components/organisms";
 import { api } from "helpers/services";
 import { watchDependencies } from "helpers/quarky";
 import AddIcon from "assets/icons/add.svg";
@@ -13,6 +12,7 @@ import { staticUrl } from "helpers/constants";
 import { useModal, useContextMenu } from "helpers/hooks";
 import { encodeUUID } from "helpers/utils";
 import { useRouter } from "next/router";
+import { TopoPreview } from "components/organisms/TopoPreview";
 
 interface RootDashboardProps {
 	lightTopos: LightTopo[];

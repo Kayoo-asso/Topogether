@@ -17,6 +17,7 @@ export type SelectedBoulder = {
 	selectedImage?: Img,
 }
 export const selectBoulder = (b: Quark<Boulder>, setSelectedItem: Dispatch<SetStateAction<SelectedItem>>, t?: Quark<Track>) => {
+	console.log('select boulder');
 	setSelectedItem({
 		type: 'boulder',
 		value: b,
@@ -25,6 +26,7 @@ export const selectBoulder = (b: Quark<Boulder>, setSelectedItem: Dispatch<SetSt
 	})
 }
 export const selectTrack = (b: Quark<Boulder>, t: Quark<Track>, setSelectedItem: Dispatch<SetStateAction<SelectedItem>>) => {
+	console.log('select track');
 	setSelectedItem({
 		type: 'boulder',
 		value: b,
@@ -33,6 +35,7 @@ export const selectTrack = (b: Quark<Boulder>, t: Quark<Track>, setSelectedItem:
 	})
 }
 export const selectImage = (selectedBoulder: SelectedBoulder, i: Img, setSelectedItem: Dispatch<SetStateAction<SelectedItem>>) => {
+	console.log('select image');
 	setSelectedItem({
 		...selectedBoulder,
 		selectedImage: i

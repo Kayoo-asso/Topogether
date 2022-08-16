@@ -8,7 +8,7 @@ import { createTrack } from "helpers/builder";
 import { staticUrl } from "helpers/constants";
 import { useBreakpoint, useModal } from "helpers/hooks";
 import { TrackForm } from "../form/TrackForm";
-import { SelectedBoulder, SelectedItem, selectImage, selectTrack } from "types/SelectedItems";
+import { SelectedBoulder, SelectedItem, selectTrack } from "types/SelectedItems";
 
 interface TracksListBuilderProps {
 	selectedBoulder: SelectedBoulder;
@@ -50,24 +50,11 @@ export const TracksListBuilder: React.FC<TracksListBuilderProps> =
 				const selectedTrack = props.selectedBoulder.selectedTrack;
 				if (selectedTrack && selectedTrack().id === track.id)
 					props.setSelectedItem({ ...props.selectedBoulder, selectedTrack: undefined });
-				else {
-					if (track.lines.length > 0) {
-						const newImage = boulder.images.find(
-							(img) => img.id === track.lines.at(0).imageId
-						);
-						if (!newImage)
-							throw new Error(
-								"Could not find the first image for the selected track!"
-							);
-						selectImage(props.selectedBoulder, newImage, props.setSelectedItem);
-					}
-					selectTrack(props.selectedBoulder.value, trackQuark, props.setSelectedItem)
-				}
+				else selectTrack(props.selectedBoulder.value, trackQuark, props.setSelectedItem);
 			},
 			[props.selectedBoulder, props.selectedBoulder.selectedTrack, props.setSelectedItem, boulder]
 		);
 
-		
 		return (
 			<>
 				<div className="w-full border-t border-grey-light">
@@ -114,7 +101,7 @@ export const TracksListBuilder: React.FC<TracksListBuilderProps> =
 										<button
 											onClick={(e) => {
 												e.stopPropagation();
-												props.setSelectedItem({ ...props.selectedBoulder, selectedTrack: trackQuark });
+												selectTrack(props.selectedBoulder.value, trackQuark, props.setSelectedItem);
 												props.onDrawButtonClick!();
 											}}
 										>

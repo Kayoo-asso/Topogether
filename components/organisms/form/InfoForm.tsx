@@ -35,7 +35,7 @@ export const InfoForm: React.FC<InfoFormProps> = watchDependencies(
 
 		return (
 			<div
-				className={`flex h-[95%] flex-col gap-6 pb-[25px] md:pb-[60px] ${
+				className={`flex flex-col h-[95%] gap-6 pb-[25px] md:pb-[60px] overflow-scroll ${
 					props.className ? props.className : ""
 				}`}
 				onClick={(e) => e.stopPropagation()}

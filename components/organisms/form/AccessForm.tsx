@@ -34,7 +34,7 @@ export const AccessForm: React.FC<AccessFormProps> = watchDependencies(
 			return (
 				<>
 					<div
-						className={`flex min-h-[85%] flex-col gap-6 pb-[25px] md:pb-[60px] mt-6 ${
+						className={`flex flex-col max-h-[85%] gap-6 pb-[25px] md:pb-[60px] pt-[20px] overflow-scroll ${
 							props.className ? props.className : ""
 						}`}
 						onClick={(e) => e.stopPropagation()}

@@ -45,7 +45,7 @@ export const ManagementForm: React.FC<ManagementFormProps> = watchDependencies(
 			return (
 				<div
 					className={
-						"flex h-full flex-col gap-6 " +
+						"flex h-full flex-col gap-6 pb-[25px] md:pb-[60px] overflow-scroll " +
 						(props.className ? props.className : "")
 					}
 					onClick={(e) => e.stopPropagation()}

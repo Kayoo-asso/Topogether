@@ -55,7 +55,7 @@ import { sortBoulders, computeBuilderProgress } from "helpers/topo";
 import { decodeUUID, encodeUUID } from "helpers/utils";
 import { Show, For } from "components/atoms";
 import {
-	InfoType,
+	SelectedInfo,
 	SlideoverLeftBuilder,
 } from "components/organisms/builder/Slideover.left.builder";
 import {
@@ -66,6 +66,7 @@ import { InteractItem, SelectedItem } from "types/SelectedItems";
 import { BuilderDropdown } from "components/organisms/builder/BuilderDropdown";
 import { BuilderModalDelete } from "components/organisms/builder/BuilderModalDelete";
 import { BuilderMarkers } from "components/organisms/builder/BuilderMarkers";
+import { handleNewPhoto } from "helpers/handleNewPhoto";
 
 interface RootBuilderProps {
 	topoQuark: Quark<Topo>;
@@ -203,45 +204,6 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 		// 	};
 		// }, [currentTool, tempCurrentTool]);
 
-		// TODO
-		// const handleNewPhoto = useCallback(
-		// 	(img: Img, coords: GeoCoordinates) => {
-		// 		if (!coords) {
-		// 			console.log("no coords");
-		// 			return;
-		// 		}
-		// 		if (img) {
-		// 			setCurrentImage(img);
-		// 			if (currentTool === "PARKING") {
-		// 				selectedParking.select(createParking(topo, coords, img));
-		// 			} else if (currentTool === "WAYPOINT") {
-		// 				selectedWaypoint.select(createWaypoint(topo, coords, img));
-		// 			} else {
-		// 				const sBoulder = selectedBoulder();
-		// 				if (sBoulder) {
-		// 					const newImages = sBoulder.images;
-		// 					newImages.push(img);
-		// 					selectedBoulder.quark()!.set((b) => ({
-		// 						...b,
-		// 						images: newImages,
-		// 					}));
-		// 					selectedTrack.select(createTrack(sBoulder, session.id));
-		// 				} else {
-		// 					const newBoulderQuark = createBoulder(
-		// 						props.topoQuark,
-		// 						coords,
-		// 						img
-		// 					);
-		// 					selectedTrack.select(createTrack(newBoulderQuark(), session.id));
-		// 					selectedBoulder.select(newBoulderQuark);
-		// 				}
-		// 				setDisplayDrawer(true);
-		// 			}
-		// 		}
-		// 	},
-		// 	[topo, selectedParking(), selectedWaypoint(), selectedBoulder()]
-		// );
-
 		const progress = useCreateDerivation<number>(
 			() => computeBuilderProgress(props.topoQuark),
 			[props.topoQuark]
@@ -272,8 +234,13 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 			}
 		}, [maxTracks()]);
 
-		const [selectedInfo, setSelectedInfo] = useState<InfoType>();
+		const [selectedInfo, setSelectedInfo] = useState<SelectedInfo>();
 		const [selectedItem, setSelectedItem] = useState<SelectedItem>({ type: 'none' });
+
+		const selectInfo = (info: SelectedInfo) => {
+			setSelectedInfo(info);
+			if (breakpoint === 'mobile' && selectedItem.type !== 'none') setSelectedItem({ type: 'none' });
+		}
 
 		const [dropdownItem, setDropdownItem] = useState<InteractItem>({ type: 'none' });
 		const [dropdownPosition, setDropdownPosition] = useState<{
@@ -283,8 +250,6 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 
 		const [deleteItem, setDeleteItem] = useState<InteractItem>({ type: 'none' });
 
-		const [displayDrawer, setDisplayDrawer] = useState<boolean>(false);
-
 		return (
 			<>
 				<Header
@@ -292,14 +257,14 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 					backLink="/builder/dashboard"
 					onBackClick={undefined} //TO-REDO
 					menuOptions={[
-						{ value: "Infos du topo", action: () => setSelectedInfo("INFO") },
+						{ value: "Infos du topo", action: () => selectInfo("INFO") },
 						{
 							value: "Marche d'approche",
-							action: () => setSelectedInfo("ACCESS"),
+							action: () => selectInfo("ACCESS"),
 						},
 						{
 							value: "Gestionnaires du spot",
-							action: () => setSelectedInfo("MANAGEMENT"),
+							action: () => selectInfo("MANAGEMENT"),
 						},
 						...(session.role === "ADMIN"
 							? [
@@ -336,7 +301,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 
 					<SlideoverLeftBuilder
 						topo={props.topoQuark}
-						selected={selectedInfo}
+						selectedInfo={selectedInfo}
 						onClose={() => setSelectedInfo(undefined)}
 					/>
 
@@ -360,7 +325,9 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 								? setCurrentTool(undefined)
 								: setCurrentTool(tool)
 						}
-						// onNewPhoto={handleNewPhoto} TODO
+						onNewPhoto={useCallback(
+							(img, coords) => handleNewPhoto(props.topoQuark, img, coords, selectedItem, setSelectedItem, session, currentTool)
+						, [props.topoQuark, selectedItem, setSelectedItem, session, currentTool])}
 						draggableCursor={
 							currentTool === "ROCK"
 								? "url(/assets/icons/colored/_rock.svg) 16 32, auto"
@@ -409,7 +376,6 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 						topo={props.topoQuark}
 						selectedItem={selectedItem}
 						setSelectedItem={setSelectedItem}
-						setDisplayDrawer={setDisplayDrawer}
 					/>
 				</div>
 				
@@ -461,31 +427,6 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 					Le topo sera entièrement supprimé. Etes-vous sûr de vouloir
 					continuer ?
 				</ModalDeleteTopo>
-
-				{/* TODO */}
-				{/* <Show
-					when={() =>
-						[
-							breakpoint !== "mobile" || displayDrawer,
-							selectedBoulder(),
-							selectedTrack(),
-						] as const
-					}
-				>
-					{([, sBoulder, sTrack]) => (
-						<Drawer
-							image={
-								sBoulder.images.find(
-									(img) => img.id === sTrack.lines.lazy().toArray()[0]?.imageId
-								) || currentImage!
-							}
-							tracks={sBoulder.tracks}
-							selectedTrack={selectedTrack}
-							open
-							onValidate={() => setDisplayDrawer(false)}
-						/>
-					)}
-				</Show> */}
 			</>
 		);
 	}

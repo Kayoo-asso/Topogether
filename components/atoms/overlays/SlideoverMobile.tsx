@@ -1,12 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 
 type SlideoverMobileProps = React.PropsWithChildren<{
+	open: boolean,
 	persistent?: boolean;
 	onSizeChange?: (full: boolean) => void;
 	onClose?: () => void;
 }>;
 
-const OPEN = 3; // 100% - x of the screen
+const OPEN = 5; // 100% - x of the screen
 const MINIMIZED = 80;
 const CLOSED = 100;
 
@@ -20,6 +21,11 @@ export const SlideoverMobile: React.FC<SlideoverMobileProps> = ({
 	const [dragging, setDragging] = useState(false);
 
 	const open = translateY === OPEN;
+	useEffect(() => {
+		if (!props.open) setTranslateY(CLOSED);
+		else if (persistent) setTranslateY(MINIMIZED);
+		else setTranslateY(OPEN);
+	}, [props.open]);
 
 	// Kept in a ref, since it only affects event handling, not rendering
 	const touchInfo = useRef({
@@ -28,12 +34,6 @@ export const SlideoverMobile: React.FC<SlideoverMobileProps> = ({
 		up: false,
 	});
 	const prevTranslate = useRef(translateY);
-
-	// Hack for now, because the Slideover component is not permanent on the page
-	useEffect(() => {
-		if (persistent) setTranslateY(MINIMIZED);
-		else setTranslateY(OPEN);
-	}, []);
 
 	const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
 		setDragging(true);
@@ -96,7 +96,7 @@ export const SlideoverMobile: React.FC<SlideoverMobileProps> = ({
 		<div
 			className={`flex flex-col ${
 				dragging ? "" : "transition ease-in-out"
-			} absolute z-500 mb-[5%] h-[100%] w-full rounded-t-lg bg-white pb-[7%] shadow`}
+			} absolute z-500 pb-[9%] h-[100%] w-full rounded-t-lg bg-white shadow`}
 			style={{ transform: `translateY(${translateY}%)` }}
 		>
 			<div

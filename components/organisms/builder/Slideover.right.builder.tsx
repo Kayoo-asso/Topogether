@@ -14,8 +14,6 @@ type SlideoverRightBuilderProps = {
 	topo: Quark<Topo>;
 	selectedItem: SelectedItem;
 	setSelectedItem: Dispatch<SetStateAction<SelectedItem>>;
-	setDisplayDrawer: Dispatch<SetStateAction<boolean>>;
-	className?: string;
 };
 
 export const SlideoverRightBuilder: React.FC<SlideoverRightBuilderProps> = (
@@ -28,7 +26,7 @@ export const SlideoverRightBuilder: React.FC<SlideoverRightBuilderProps> = (
 		props.setSelectedItem({ type: 'none' });
 	}, [props.setSelectedItem]);
 
-	const getContent = () => {
+	const getContent = useCallback(() => {
 		if (props.selectedItem.type !== 'none') {
 			if (props.selectedItem.type === 'boulder') {
 				if (breakpoint === "mobile")	
@@ -37,7 +35,6 @@ export const SlideoverRightBuilder: React.FC<SlideoverRightBuilderProps> = (
 							topo={props.topo}
 							selectedBoulder={props.selectedItem}
 							setSelectedItem={props.setSelectedItem}
-							setDisplayDrawer={props.setDisplayDrawer}
 							full={full}
 							onDeleteBoulder={onClose}
 						/>
@@ -70,17 +67,18 @@ export const SlideoverRightBuilder: React.FC<SlideoverRightBuilderProps> = (
 					/>
 				);
 		} else return undefined;
-	};
+	}, [full, breakpoint, props.selectedItem]);
 
 	return (
 		<>
 			{breakpoint === "mobile" && (
 				<SlideoverMobile
+					open={props.selectedItem.type !== 'none'}
 					persistent={props.selectedItem.type === 'boulder'}
 					onSizeChange={setFull}
 					onClose={onClose}
 				>
-					<div className={"h-full px-6 py-14 " + (props.className || "")}>
+					<div className={"h-full " + (props.selectedItem.type !== 'boulder' ? 'px-4 py-14' : '')}>
 						{getContent()}
 					</div>
 				</SlideoverMobile>

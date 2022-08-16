@@ -1,5 +1,5 @@
-import { Quark, QuarkIter } from "helpers/quarky";
-import React, { Dispatch, ReactElement, SetStateAction, useEffect, useRef, useState } from "react";
+import { Quark, QuarkIter, watchDependencies } from "helpers/quarky";
+import React, { Dispatch, ReactElement, SetStateAction, useCallback, useEffect, useRef, useState } from "react";
 import { Img, Track } from "types";
 import { TracksImage } from "./TracksImage"; // requires a loader
 import { Portal } from "helpers/hooks";
@@ -26,7 +26,7 @@ const observerPortalOptions: IntersectionObserverInit = {
 	threshold: 1.0,
 };
 
-export const ImageSlider: React.FC<ImageSliderProps> = ({
+export const ImageSlider: React.FC<ImageSliderProps> = watchDependencies(({
 	displayPhantomTracks = false,
 	modalable = true,
 	...props
@@ -35,6 +35,9 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 		? props.images.indexOf(props.selectedBoulder.selectedImage)
 		: undefined;
 
+	const selectedTrack = props.selectedBoulder.selectedTrack;
+	console.log(selectedTrack);
+	
 	//For the IntersectionObserver management, see: https://www.rubensuet.com/intersectionObserver/
 	const containerInitialRef = useRef<HTMLDivElement>(null);
 	const slidesInitialRefs = useRef<HTMLDivElement[]>([]);
@@ -51,16 +54,18 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 	const observerPortal = useRef<IntersectionObserver>(null);
 
 	// Allow to always know which image is the current one
-	const handler = (
+	const handler = useCallback((
 		entries: IntersectionObserverEntry[],
 		observer: IntersectionObserver
 	) => {
+		console.log(selectedTrack);
 		for (const entry of entries) {
-			if (entry.intersectionRatio >= 1)
-				selectImage(props.selectedBoulder, props.images[parseInt(entry.target.id.split("-")[1])], props.setSelectedItem);
+			// if (entry.intersectionRatio >= 1)
+			// 	selectImage(props.selectedBoulder, props.images[parseInt(entry.target.id.split("-")[1])], props.setSelectedItem);
 		}
-	};
-	const getObserver = (
+	}, [props.selectedBoulder, selectedTrack, props.images, props.setSelectedItem]);
+
+	const getObserver = useCallback((
 		ref: React.MutableRefObject<IntersectionObserver | null>,
 		opts?: IntersectionObserverInit
 	) => {
@@ -71,7 +76,7 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 		let newObserver = new IntersectionObserver(handler, opts);
 		ref.current = newObserver;
 		return newObserver;
-	};
+	}, [handler]);
 
 	// Bind observers to original slider (not in Portal) as soon as component is mounted
 	useEffect(() => {
@@ -83,11 +88,9 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 			for (const node of slidesInitialRefs.current) {
 				newObserver.observe(node);
 			}
-			return () => {
-				if (observerInitial.current) observerInitial.current.disconnect();
-			};
+			return () => observerInitial.current?.disconnect();
 		}
-	}, [props.images, observerInitial, observerInitialOptions]);
+	}, [props.images, getObserver, observerInitial, observerInitialOptions]);
 
 	const [portalOpen, setPortalOpen] = useState(false);
 	// Bind/unbind observers to Portal slider when portal opens/closes
@@ -102,9 +105,7 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 				for (const node of slidesPortalRefs.current) {
 					newObserver.observe(node);
 				}
-				return () => {
-					if (observerPortal.current) observerPortal.current.disconnect();
-				};
+				return () => observerPortal.current?.disconnect();
 			} else {
 				if (slidesPortalRefs.current.length > 0) {
 					slidesInitialRefs.current[imgIdx || 0].scrollIntoView();
@@ -112,7 +113,7 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 				}
 			}
 		}
-	}, [props.images, portalOpen, observerPortal, observerPortalOptions]);
+	}, [props.images, getObserver, portalOpen, observerPortal, observerPortalOptions]);
 
 	// Change image when currentImage has changed from outside (for example by clicking on a track associated with a non-current image)
 	useEffect(() => {
@@ -158,7 +159,7 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 		<>
 			<div
 				ref={containerInitialRef}
-				className="gallery relative flex h-full w-full snap-x snap-mandatory gap-6 overflow-y-hidden"
+				className="gallery relative flex w-full snap-x snap-mandatory gap-6 overflow-y-hidden"
 			>
 				{props.images?.map((img, idx) => {
 					return (
@@ -199,7 +200,7 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 									? "border-2 border-main bg-white"
 									: "bg-grey-light bg-opacity-50")
 							}
-							onClick={() => {
+							onClick={useCallback(() => {
 								if (portalOpen)
 									slidesPortalRefs.current[idx].scrollIntoView({
 										behavior: "smooth",
@@ -209,7 +210,7 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 										behavior: "smooth",
 									});
 								selectImage(props.selectedBoulder, img, props.setSelectedItem);
-							}}
+							}, [props.selectedBoulder, img])}
 						></div>
 					))}
 				</div>
@@ -236,4 +237,4 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
 	// If there is no image
 	else
 		return <Image alt="default boulder" sizeHint="100vw" />;
-};
+});

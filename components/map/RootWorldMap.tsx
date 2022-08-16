@@ -1,14 +1,13 @@
 import React, { useState } from "react";
-import { Show } from "components/atoms";
 import { HeaderDesktop } from "components/layouts/HeaderDesktop";
 import { LeftbarDesktop } from "components/layouts/Leftbar.desktop";
 import { TopoFilterOptions, MapControl, TopoMarker } from "./";
-import { TopoPreview } from "components/organisms";
 import { hasFlag } from "helpers/bitflags";
 import { watchDependencies, useCreateQuark } from "helpers/quarky";
 import { useAuth } from "helpers/services";
 import { LightTopo, Amenities } from "types";
 import { encodeUUID } from "helpers/utils";
+import { TopoPreview } from "components/organisms/TopoPreview";
 
 interface RootWorldMapProps {
 	lightTopos: LightTopo[];
