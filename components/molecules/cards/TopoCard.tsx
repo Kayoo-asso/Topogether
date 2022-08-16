@@ -52,11 +52,9 @@ export const TopoCard: React.FC<TopoCardProps> = React.memo(
 		const handleTouchStartContextMenu = useCallback(
 			(e: TouchEvent<HTMLDivElement>) => {
 				if (props.onContextMenu) {
-					// `setTimeout` returns an integer when called in the browser,
-					// but TypeScript gives us the type for `setTimeout` on Node.js
-					// -> need `as any`
 
-					e.preventDefault();
+					// TODO: cause une erreur "Unable to preventDefault inside passive event listener invocation."
+					// e.preventDefault();
 					e.stopPropagation();
 					timer.current = setTimeout(() => {
 						blockClick.current = true;
