@@ -11,12 +11,12 @@ export interface DropdownOption {
 }
 
 interface DropdownProps {
+	position: { x: number; y: number };
 	options: DropdownOption[];
 	onSelect?: (option: DropdownOption) => void;
 	type?: string;
 	fullSize?: boolean;
 	className?: string;
-	position?: { x: number; y: number };
 }
 
 export const Dropdown: React.FC<DropdownProps> = React.memo(

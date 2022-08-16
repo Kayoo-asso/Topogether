@@ -17,13 +17,13 @@ import Edit from "assets/icons/edit.svg";
 import { ModalRenameSector } from "components/organisms";
 import { useModal } from "helpers/hooks";
 import { staticUrl } from "helpers/constants";
-import { ItemType, SelectedBoulder } from "components/organisms/builder/Slideover.right.builder";
+import { SelectedBoulder, SelectedItem } from "types/SelectedItems";
 
 export interface SectorListBuilderProps {
 	topoQuark: Quark<Topo>;
 	boulderOrder: Map<UUID, number>;
 	selectedBoulder?: SelectedBoulder;
-	setSelectedItem: Dispatch<SetStateAction<ItemType>>;
+	setSelectedItem: Dispatch<SetStateAction<SelectedItem>>;
 	onBoulderSelect: (boulder: Quark<Boulder>) => void;
 	onTrackSelect: (track: Quark<Track>, boulder: Quark<Boulder>) => void;
 }

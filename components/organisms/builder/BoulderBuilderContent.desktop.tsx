@@ -5,18 +5,18 @@ import {
 	Button,
 } from "components";
 import { Quark, watchDependencies } from "helpers/quarky";
-import { Boulder, Img, Topo } from "types";
-import { TracksListBuilder } from ".";
+import { Img, Topo } from "types";
 import { setReactRef } from "helpers/utils";
 import { useModal } from "helpers/hooks";
 import { staticUrl } from "helpers/constants";
-import { ItemType, SelectedBoulder } from "components/organisms/builder/Slideover.right.builder";
 import { deleteBoulder } from "helpers/builder";
+import { TracksListBuilder } from "./TracksListBuilder";
+import { SelectedBoulder, SelectedItem } from "types/SelectedItems";
 
 interface BoulderBuilderContentDesktopProps {
 	topo: Quark<Topo>;
 	selectedBoulder: SelectedBoulder;
-	setSelectedItem: Dispatch<SetStateAction<ItemType>>;
+	setSelectedItem: Dispatch<SetStateAction<SelectedItem>>;
 	currentImage?: Img;
 	setCurrentImage: Dispatch<SetStateAction<Img | undefined>>;
 	onDeleteBoulder: () => void;
@@ -79,7 +79,6 @@ export const BoulderBuilderContentDesktop = watchDependencies<
 				/>
 
 				<TracksListBuilder
-					boulder={props.selectedBoulder.value}
 					selectedBoulder={props.selectedBoulder}
 					setSelectedItem={props.setSelectedItem}
 					onTrackClick={toggleSelectedTrack}

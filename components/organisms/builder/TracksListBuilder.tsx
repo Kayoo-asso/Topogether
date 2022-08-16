@@ -2,17 +2,17 @@ import React, { Dispatch, SetStateAction } from "react";
 import { GradeCircle } from "components";
 import { gradeToLightGrade, Track } from "types";
 import { Quark, watchDependencies } from "helpers/quarky";
-import { TrackForm } from "../organisms/form/TrackForm";
 import { useSession } from "helpers/services";
 import DrawIcon from "assets/icons/draw.svg";
 import { createTrack, deleteTrack } from "helpers/builder";
 import { staticUrl } from "helpers/constants";
 import { useBreakpoint, useModal } from "helpers/hooks";
-import { ItemType, SelectedBoulder } from "components/organisms/builder/Slideover.right.builder";
+import { TrackForm } from "../form/TrackForm";
+import { SelectedBoulder, SelectedItem } from "types/SelectedItems";
 
 interface TracksListBuilderProps {
 	selectedBoulder: SelectedBoulder;
-	setSelectedItem: Dispatch<SetStateAction<ItemType>>;
+	setSelectedItem: Dispatch<SetStateAction<SelectedItem>>;
 	onTrackClick: (trackQuark: Quark<Track>) => void;
 	onDrawButtonClick?: () => void;
 	onCreateTrack?: () => void;
@@ -92,7 +92,7 @@ export const TracksListBuilder: React.FC<TracksListBuilderProps> =
 										<button
 											onClick={(e) => {
 												e.stopPropagation();
-												props.setSelectedItem((item): ItemType => ({ ...item as SelectedBoulder, selectedTrack: trackQuark }))
+												props.setSelectedItem({ ...props.selectedBoulder, selectedTrack: trackQuark });
 												props.onDrawButtonClick!();
 											}}
 										>

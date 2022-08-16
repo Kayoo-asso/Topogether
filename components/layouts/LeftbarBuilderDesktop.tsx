@@ -2,14 +2,14 @@ import React, { Dispatch, SetStateAction } from "react";
 import { Button } from "components";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { Boulder, Topo, Track, UUID } from "types";
-import { SectorListBuilder } from "components/builder";
-import { ItemType, SelectedBoulder } from "components/organisms/builder/Slideover.right.builder";
+import { SelectedBoulder, SelectedItem } from "types/SelectedItems";
+import { SectorListBuilder } from "components/organisms/builder/SectorListBuilder";
 
 interface LeftbarBuilderDesktopProps {
 	topoQuark: Quark<Topo>;
 	boulderOrder: Map<UUID, number>;
 	selectedBoulder?: SelectedBoulder;
-	setSelectedItem: Dispatch<SetStateAction<ItemType>>;
+	setSelectedItem: Dispatch<SetStateAction<SelectedItem>>;
 	onBoulderSelect: (boulderQuark: Quark<Boulder>) => void;
 	onTrackSelect: (
 		trackQuark: Quark<Track>,
@@ -17,7 +17,6 @@ interface LeftbarBuilderDesktopProps {
 	) => void;
 	activateSubmission: boolean;
 	onSubmit: () => void;
-	onDeleteBoulder: (boulderQuark: Quark<Boulder>) => void;
 }
 
 export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> =

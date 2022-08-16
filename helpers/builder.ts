@@ -7,6 +7,7 @@ import {
 	Img,
 	Name,
 	Parking,
+	Sector,
 	SectorData,
 	Topo,
 	Track,
@@ -14,8 +15,8 @@ import {
 	Waypoint,
 } from "types";
 import { v4 } from "uuid";
-import { ItemType, SelectedBoulder, SelectedParking, SelectedWaypoint } from "components/organisms/builder/Slideover.right.builder";
 import { Dispatch, SetStateAction } from "react";
+import { SelectedBoulder, SelectedItem, SelectedParking, SelectedWaypoint } from "types/SelectedItems";
 
 export const createSector = (
 	topoQuark: Quark<Topo>,
@@ -36,6 +37,15 @@ export const createSector = (
 	const newSectorQuark = topo.sectors.quarkAt(-1);
 	return newSectorQuark;
 };
+export const deleteSector = ( 
+	topoQuark: Quark<Topo>,
+	sectorQuark: Quark<Sector>
+) => {
+	const topo = topoQuark();
+	topo.sectors.removeQuark(sectorQuark);
+	// TODO : add if necessary ?
+	// if (selectedItem?.type === 'sector' && selectedItem.value().id === sectorQuark().id) setSelectedItem({ type: 'none' })
+}
 
 export const createBoulder = (
 	topoQuark: Quark<Topo>,
@@ -67,8 +77,8 @@ export const createBoulder = (
 export const deleteBoulder = (
 	topoQuark: Quark<Topo>,
 	boulderQuark: Quark<Boulder>,
-	setSelectedItem: Dispatch<SetStateAction<ItemType>>,
-	selectedBoulder?: SelectedBoulder,
+	setSelectedItem: Dispatch<SetStateAction<SelectedItem>>,
+	selectedItem?: SelectedItem,
 ) => {
 	const topo = topoQuark();
 	topo.boulders.removeQuark(boulderQuark);
@@ -92,7 +102,7 @@ export const deleteBoulder = (
 			),
 		}));
 	}
-	if (selectedBoulder && selectedBoulder.value().id === boulder.id) setSelectedItem({ type: 'none' })
+	if (selectedItem?.type === 'boulder' && selectedItem.value().id === boulder.id) setSelectedItem({ type: 'none' })
 }
 
 export const createParking = (
@@ -114,12 +124,12 @@ export const createParking = (
 export const deleteParking = (
 	topoQuark: Quark<Topo>,
 	parkingQuark: Quark<Parking>,
-	setSelectedItem: Dispatch<SetStateAction<ItemType>>,
-	selectedParking?: SelectedParking,
+	setSelectedItem: Dispatch<SetStateAction<SelectedItem>>,
+	selectedItem?: SelectedItem,
 ) => {
 	const topo = topoQuark();
 	topo.parkings.removeQuark(parkingQuark);
-	if (selectedParking && selectedParking.value().id === parkingQuark().id) setSelectedItem({ type: 'none' })
+	if (selectedItem?.type === 'parking' && selectedItem.value().id === parkingQuark().id) setSelectedItem({ type: 'none' })
 }
 
 export const createWaypoint = (
@@ -142,12 +152,12 @@ export const createWaypoint = (
 export const deleteWaypoint = (
 	topoQuark: Quark<Topo>,
 	waypointQuark: Quark<Waypoint>,
-	setSelectedItem: Dispatch<SetStateAction<ItemType>>,
-	selectedWaypoint?: SelectedWaypoint,
+	setSelectedItem: Dispatch<SetStateAction<SelectedItem>>,
+	selectedItem?: SelectedItem,
 ) => {
 	const topo = topoQuark();
 	topo.waypoints.removeQuark(waypointQuark);
-	if (selectedWaypoint && selectedWaypoint.value().id === waypointQuark().id) setSelectedItem({ type: 'none' })
+	if (selectedItem?.type === 'waypoint' && selectedItem.value().id === waypointQuark().id) setSelectedItem({ type: 'none' })
 }
 
 export const createTrack = (boulder: Boulder, creatorId: UUID) => {
@@ -170,7 +180,7 @@ export const createTrack = (boulder: Boulder, creatorId: UUID) => {
 export const deleteTrack = (
 	boulder: Boulder,
 	track: Quark<Track>,
-	setSelectedItem: Dispatch<SetStateAction<ItemType>>,
+	setSelectedItem: Dispatch<SetStateAction<SelectedItem>>,
 	selectedBoulder?: SelectedBoulder,
 ) => {
 	boulder.tracks.removeQuark(track);

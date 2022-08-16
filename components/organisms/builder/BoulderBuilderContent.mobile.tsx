@@ -2,21 +2,21 @@ import React, { Dispatch, SetStateAction, useState } from "react";
 import { GradeScale, ImageSlider } from "components";
 import { Img, Topo } from "types";
 import { Quark, watchDependencies } from "helpers/quarky";
-import { TracksListBuilder } from ".";
 import { BoulderForm } from "..";
 import { Image } from "components/atoms/Image";
 import { ImageInput } from "components/molecules";
 import { Button } from "components/atoms";
 import { useModal } from "helpers/hooks";
 import { staticUrl } from "helpers/constants";
-import { ItemType, SelectedBoulder } from "components/organisms/builder/Slideover.right.builder";
 import { deleteBoulder } from "helpers/builder";
+import { TracksListBuilder } from "./TracksListBuilder";
+import { SelectedBoulder, SelectedItem } from "types/SelectedItems";
 
 interface BoulderBuilderContentMobileProps {
 	full: boolean,
 	topo: Quark<Topo>;
 	selectedBoulder: SelectedBoulder;
-	setSelectedItem: Dispatch<SetStateAction<ItemType>>;
+	setSelectedItem: Dispatch<SetStateAction<SelectedItem>>;
 	currentImage?: Img;
 	setCurrentImage: Dispatch<SetStateAction<Img | undefined>>;
 	setDisplayDrawer: Dispatch<SetStateAction<boolean>>;

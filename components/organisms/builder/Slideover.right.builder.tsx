@@ -1,34 +1,18 @@
 import React, { Dispatch, SetStateAction, useState } from "react";
 import { ParkingForm, WaypointForm } from "../form";
 import { Quark } from "helpers/quarky";
-import { Boulder, Img, Parking, Topo, Track, Waypoint } from "types";
+import { Img, Topo } from "types";
 import { useBreakpoint } from "helpers/hooks";
 import { SlideoverMobile } from "components/atoms";
 import { SlideagainstRightDesktop } from "components/atoms/overlays";
-import { BoulderBuilderContentDesktop } from "components/builder/BoulderBuilderContent.desktop";
-import { BoulderBuilderContentMobile } from "components/builder/BoulderBuilderContent.mobile";
-
-export type SelectedBoulder = {
-	type: 'boulder',
-	value: Quark<Boulder>,
-	selectedTrack?: Quark<Track>
-}
-export type SelectedParking = {
-	type: 'parking',
-	value: Quark<Parking>
-}
-export type SelectedWaypoint = {
-	type: 'waypoint',
-	value: Quark<Waypoint>
-}
-export type ItemType = {
-	type: 'none'
-} | SelectedBoulder | SelectedParking | SelectedWaypoint;
+import { BoulderBuilderContentMobile } from "./BoulderBuilderContent.mobile";
+import { BoulderBuilderContentDesktop } from "./BoulderBuilderContent.desktop";
+import { SelectedItem } from "types/SelectedItems";
 
 type SlideoverRightBuilderProps = {
 	topo: Quark<Topo>;
-	selectedItem: ItemType;
-	setSelectedItem: Dispatch<SetStateAction<ItemType>>;
+	selectedItem: SelectedItem;
+	setSelectedItem: Dispatch<SetStateAction<SelectedItem>>;
 	currentImage?: Img;
 	setCurrentImage: Dispatch<SetStateAction<Img | undefined>>;
 	setDisplayDrawer: Dispatch<SetStateAction<boolean>>;

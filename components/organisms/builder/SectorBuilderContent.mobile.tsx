@@ -3,13 +3,13 @@ import { Button } from "components";
 import { Boulder, Sector, Topo, Track, UUID } from "types";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { SectorListBuilder } from "./SectorListBuilder";
-import { ItemType, SelectedBoulder } from "components/organisms/builder/Slideover.right.builder";
+import { SelectedBoulder, SelectedItem } from "types/SelectedItems";
 
 interface SectorBuilderContentMobileProps {
 	topo: Quark<Topo>;
 	boulderOrder: Map<UUID, number>;
 	selectedBoulder: SelectedBoulder;
-	setSelectedItem: Dispatch<SetStateAction<ItemType>>;
+	setSelectedItem: Dispatch<SetStateAction<SelectedItem>>;
 	onCreateSector: () => void;
 	onBoulderSelect: (boulderQuark: Quark<Boulder>) => void;
 	onTrackSelect: (
