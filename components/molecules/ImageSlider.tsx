@@ -59,9 +59,10 @@ export const ImageSlider: React.FC<ImageSliderProps> = watchDependencies(({
 		observer: IntersectionObserver
 	) => {
 		console.log(selectedTrack);
+		// HERE IS THE BUG: selectedTrack should have the same value as at line 39...
 		for (const entry of entries) {
-			// if (entry.intersectionRatio >= 1)
-			// 	selectImage(props.selectedBoulder, props.images[parseInt(entry.target.id.split("-")[1])], props.setSelectedItem);
+			if (entry.intersectionRatio >= 1)
+				selectImage(props.selectedBoulder, props.images[parseInt(entry.target.id.split("-")[1])], props.setSelectedItem);
 		}
 	}, [props.selectedBoulder, selectedTrack, props.images, props.setSelectedItem]);
 

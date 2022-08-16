@@ -30,8 +30,6 @@ export const BoulderBuilderContentMobile: React.FC<BoulderBuilderContentMobilePr
 
 		const [trackTab, setTrackTab] = useState(true);
 
-		console.log(props.selectedBoulder);
-
 		return (
 			<>
 				{/* BOULDER IMAGE */}
