@@ -77,7 +77,7 @@ export const ImageSlider: React.FC<ImageSliderProps> = watchDependencies(({
 		let newObserver = new IntersectionObserver(handler, opts);
 		ref.current = newObserver;
 		return newObserver;
-	}, [handler]);
+	}, []);
 
 	// Bind observers to original slider (not in Portal) as soon as component is mounted
 	useEffect(() => {
