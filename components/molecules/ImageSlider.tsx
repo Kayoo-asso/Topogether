@@ -40,30 +40,49 @@ export const ImageSlider: React.FC<ImageSliderProps> = watchDependencies(
 		);
 		const [portalRef, setPortalRef] = useState<HTMLDivElement | null>(null);
 
+		// This is very hacky, but makes the UX smoother
+		// When this component mounts, or when the portal mounts,
+		// we should instantly scroll to the image we want to display.
+		// After that, we can scroll smoothly
+		const scrollSliderInstantly = useRef(true);
+		const scrollPortalInstantly = useRef(true);
+
 		// If the selected image changes externally, scroll the image into view
 		useEffect(() => {
 			if (selectedImage) {
-				// Same logic for both containers
 				if (containerRef) {
+					let behavior: ScrollBehavior = "smooth";
+					// For some reason, "smooth" prevents scrolling the main container
+					// in the background when the portal is open
+					if (portalOpen || scrollSliderInstantly.current) {
+						behavior = "auto";
+						scrollSliderInstantly.current = false;
+					}
 					for (const child of containerRef.children) {
 						const imageId = (child as any).dataset.imageId;
 						if (imageId === selectedImage.id) {
 							child.scrollIntoView({
-								// For some reason, "smooth" prevents scrolling the main container
-								// in the background when the portal is open
-								// behavior: "smooth",
+								// Without this, this useEffect messes up the Slideover on opening on mobile
 								block: "end",
-								inline: "nearest",
+								behavior,
 							});
 						}
 					}
 				}
 
 				if (portalRef) {
+					let behavior: ScrollBehavior = "smooth";
+					if (scrollPortalInstantly.current) {
+						behavior = "auto";
+						scrollPortalInstantly.current = false;
+					}
 					for (const child of portalRef.children) {
 						const imageId = (child as any).dataset.imageId;
 						if (imageId === selectedImage.id) {
-							child.scrollIntoView({ behavior: "smooth" });
+							child.scrollIntoView({
+								block: "end",
+								behavior,
+							});
 						}
 					}
 				}
@@ -76,7 +95,12 @@ export const ImageSlider: React.FC<ImageSliderProps> = watchDependencies(
 				rootMargin: "0px",
 				threshold: 1.0,
 			};
+			let skipInitialization = true;
 			const callback: IntersectionObserverCallback = (entries) => {
+				if (skipInitialization) {
+					skipInitialization = false;
+					return;
+				}
 				const entry = entries.find((x) => x.intersectionRatio === 1);
 				if (!entry) return;
 				const id = (entry.target as any).dataset.imageId;
@@ -96,24 +120,16 @@ export const ImageSlider: React.FC<ImageSliderProps> = watchDependencies(
 			return () => observer.disconnect();
 		}, []);
 
-		// Slider IntersectionObserver
 		useEffect(() => {
-			if (containerRef) {
-				// Don't forget to return the cleanup!!
-				return setupObserver(containerRef);
-			}
-			// We need containerRef.current in dependencies, so that this effect runs
-			// when the ref is set
-		}, [setupObserver, containerRef]);
-
-		useEffect(() => {
+			// Avoid having two observer at the same time
+			// The portal takes priority
 			if (portalRef) {
 				// Don't forget to return the cleanup!!
 				return setupObserver(portalRef);
+			} else if (containerRef) {
+				return setupObserver(containerRef);
 			}
-			// We need portalRef.current in dependencies, so that this effect runs
-			// when the ref is set (when the portal opens)
-		}, [setupObserver, portalRef]);
+		}, [setupObserver, containerRef, portalRef]);
 
 		const wrapPortal = (elts: ReactElement<any, any>) => {
 			return (
