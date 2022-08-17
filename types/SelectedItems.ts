@@ -34,11 +34,14 @@ export const selectTrack = (b: Quark<Boulder>, t: Quark<Track>, setSelectedItem:
 		selectedImage: b().images.find((i) => i.id === t().lines.at(0)?.imageId) || (b().images.length > 0 ? b().images[0] : undefined)
 	})
 }
-export const selectImage = (selectedBoulder: SelectedBoulder, i: Img, setSelectedItem: Dispatch<SetStateAction<SelectedItem>>) => {
-	console.log('select image');
-	setSelectedItem({
-		...selectedBoulder,
-		selectedImage: i
+export const selectImage = (img: Img, setSelectedItem: Dispatch<SetStateAction<SelectedItem>>) => {
+	setSelectedItem(selected => {
+		const boulder = selected as SelectedBoulder;
+		if(boulder.selectedImage?.id === img.id) return selected;
+		return {
+			...boulder,
+			selectedImage: img
+		}
 	})
 }
 export type SelectedParking = {

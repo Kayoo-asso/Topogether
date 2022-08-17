@@ -27,180 +27,93 @@ interface ImageSliderProps {
 	modalable?: boolean;
 }
 
-const observerInitialOptions: IntersectionObserverInit = {
-	root: null,
-	rootMargin: "0px",
-	threshold: 1.0,
-};
-const observerPortalOptions: IntersectionObserverInit = {
-	root: null,
-	rootMargin: "0px",
-	threshold: 1.0,
-};
-
 export const ImageSlider: React.FC<ImageSliderProps> = watchDependencies(
 	({
 		displayPhantomTracks = false,
 		modalable = true,
 		...props
 	}: ImageSliderProps) => {
-		const imgIdx = props.selectedBoulder.selectedImage
-			? props.images.indexOf(props.selectedBoulder.selectedImage)
-			: undefined;
-
-		const selectedBoulder = useRef(props.selectedBoulder);
-		// Make sure the ref is always up to date
-		selectedBoulder.current = props.selectedBoulder;
-
-		//For the IntersectionObserver management, see: https://www.rubensuet.com/intersectionObserver/
-		const containerInitialRef = useRef<HTMLDivElement>(null);
-		const slidesInitialRefs = useRef<HTMLDivElement[]>([]);
-		const slidesPortalRefs = useRef<HTMLDivElement[]>([]);
-		const addSlide = React.useCallback(
-			(node: HTMLDivElement) => slidesInitialRefs.current.push(node),
-			[]
+		const selectedImage = props.selectedBoulder.selectedImage;
+		const [portalOpen, setPortalOpen] = useState(false);
+		const [containerRef, setContainerRef] = useState<HTMLDivElement | null>(
+			null
 		);
-		const addSlidePortal = React.useCallback(
-			(node: HTMLDivElement) => slidesPortalRefs.current.push(node),
-			[]
-		);
-		const observerInitial = useRef<IntersectionObserver>(null);
-		const observerPortal = useRef<IntersectionObserver>(null);
+		const [portalRef, setPortalRef] = useState<HTMLDivElement | null>(null);
+
+		// If the selected image changes externally, scroll the image into view
+		useEffect(() => {
+			if (selectedImage) {
+				// Same logic for both containers
+				if (containerRef) {
+					for (const child of containerRef.children) {
+						const imageId = (child as any).dataset.imageId;
+						if (imageId === selectedImage.id) {
+							child.scrollIntoView({
+								// For some reason, "smooth" prevents scrolling the main container
+								// in the background when the portal is open
+								// behavior: "smooth",
+								block: "end",
+								inline: "nearest",
+							});
+						}
+					}
+				}
+
+				if (portalRef) {
+					for (const child of portalRef.children) {
+						const imageId = (child as any).dataset.imageId;
+						if (imageId === selectedImage.id) {
+							child.scrollIntoView({ behavior: "smooth" });
+						}
+					}
+				}
+			}
+		}, [containerRef, portalRef, selectedImage]);
+
+		const setupObserver = useCallback((elt: HTMLDivElement) => {
+			const options: IntersectionObserverInit = {
+				root: elt,
+				rootMargin: "0px",
+				threshold: 1.0,
+			};
+			const callback: IntersectionObserverCallback = (entries) => {
+				const entry = entries.find((x) => x.intersectionRatio === 1);
+				if (!entry) return;
+				const id = (entry.target as any).dataset.imageId;
+
+				const img = props.images.find((i) => i.id === id)!;
+				selectImage(img, props.setSelectedItem);
+			};
+			const observer = new IntersectionObserver(callback, options);
+			// The children of the container are the images.
+			// This useEffect reruns every time the images change, so we'll always have
+			// an IntersectionObserver hooked up to the latest images.
+			// Somewhat brittle though, so double check this is working correctly.
+			for (const child of elt.children) {
+				observer.observe(child);
+			}
+
+			return () => observer.disconnect();
+		}, []);
 
 		// Slider IntersectionObserver
 		useEffect(() => {
-			if (containerInitialRef.current) {
-				const options: IntersectionObserverInit = {
-					root: containerInitialRef.current,
-					rootMargin: "0px",
-					threshold: 1.0,
-				};
-				const callback: IntersectionObserverCallback = (entries) => {
-					const idx = entries.findIndex((x) => x.intersectionRatio === 1);
-					const img = props.images[idx];
-					props.setSelectedItem((selected) => {
-						// Could maybe clean up the `as`
-						selected = selected as SelectedBoulder;
-						// IntersectionObserver runs the callback upon setup,
-						// so this is protection to avoid unnecessary rerenders
-						if (selected.selectedImage?.id === img.id) {
-							return selected;
-						}
-
-						return {
-							...selected,
-							selectedImage: img,
-						};
-					});
-				};
-				const observer = new IntersectionObserver(callback, options);
-				// The children of the container are the images.
-				// This useEffect reruns every time the images change, so we'll always have
-				// an IntersectionObserver hooked up to the latest images.
-				// Somewhat brittle though, so double check this is working correctly.
-				for (const child of containerInitialRef.current.children) {
-					observer.observe(child);
-				}
-
-				return () => observer.disconnect();
+			if (containerRef) {
+				// Don't forget to return the cleanup!!
+				return setupObserver(containerRef);
 			}
-		}, [props.images, props.setSelectedItem]);
+			// We need containerRef.current in dependencies, so that this effect runs
+			// when the ref is set
+		}, [setupObserver, containerRef]);
 
-		// Allow to always know which image is the current one
-		const handler = useCallback(
-			(
-				entries: IntersectionObserverEntry[],
-				observer: IntersectionObserver
-			) => {
-				// HERE IS THE BUG: selectedTrack should have the same value as at line 39...
-				for (const entry of entries) {
-					if (entry.intersectionRatio >= 1)
-						selectImage(
-							selectedBoulder.current,
-							props.images[parseInt(entry.target.id.split("-")[1])],
-							props.setSelectedItem
-						);
-				}
-			},
-			[props.images, props.setSelectedItem]
-		);
-
-		const getObserver = useCallback(
-			(
-				ref: React.MutableRefObject<IntersectionObserver | null>,
-				opts?: IntersectionObserverInit
-			) => {
-				let observer = ref.current;
-				if (observer !== null) {
-					return observer;
-				}
-				let newObserver = new IntersectionObserver(handler, opts);
-				ref.current = newObserver;
-				return newObserver;
-			},
-			[]
-		);
-
-		// Bind observers to original slider (not in Portal) as soon as component is mounted
 		useEffect(() => {
-			if (props.images.length > 1) {
-				if (observerInitial.current) observerInitial.current.disconnect();
-				if (containerInitialRef.current)
-					observerInitialOptions.root = containerInitialRef.current;
-				const newObserver = getObserver(
-					observerInitial,
-					observerInitialOptions
-				);
-				for (const node of slidesInitialRefs.current) {
-					newObserver.observe(node);
-				}
-				return () => observerInitial.current?.disconnect();
+			if (portalRef) {
+				// Don't forget to return the cleanup!!
+				return setupObserver(portalRef);
 			}
-		}, [props.images, getObserver, observerInitial, observerInitialOptions]);
-
-		const [portalOpen, setPortalOpen] = useState(false);
-		// Bind/unbind observers to Portal slider when portal opens/closes
-		// And empy refs to portal slides when portal closes thanks to the trick slidesPortalRefs.current.length = 0;
-		useEffect(() => {
-			if (props.images.length > 1) {
-				// Do it only if it is a gallery (more than one image)
-				if (portalOpen) {
-					slidesPortalRefs.current[imgIdx || 0].scrollIntoView();
-					if (observerPortal.current) observerPortal.current.disconnect();
-					const newObserver = getObserver(
-						observerPortal,
-						observerPortalOptions
-					);
-					for (const node of slidesPortalRefs.current) {
-						newObserver.observe(node);
-					}
-					return () => observerPortal.current?.disconnect();
-				} else {
-					if (slidesPortalRefs.current.length > 0) {
-						slidesInitialRefs.current[imgIdx || 0].scrollIntoView();
-						slidesPortalRefs.current.length = 0;
-					}
-				}
-			}
-		}, [
-			props.images,
-			getObserver,
-			portalOpen,
-			observerPortal,
-			observerPortalOptions,
-		]);
-
-		// Change image when currentImage has changed from outside (for example by clicking on a track associated with a non-current image)
-		useEffect(() => {
-			if (
-				props.selectedBoulder.selectedImage &&
-				imgIdx &&
-				slidesInitialRefs.current[imgIdx]
-			)
-				slidesInitialRefs.current[imgIdx].scrollIntoView({
-					behavior: "smooth",
-				});
-		}, [props.selectedBoulder.selectedImage]);
+			// We need portalRef.current in dependencies, so that this effect runs
+			// when the ref is set (when the portal opens)
+		}, [setupObserver, portalRef]);
 
 		const wrapPortal = (elts: ReactElement<any, any>) => {
 			return (
@@ -218,41 +131,36 @@ export const ImageSlider: React.FC<ImageSliderProps> = watchDependencies(
 			);
 		};
 		const getPortalContent = () => {
-			if (props.images.length > 1)
-				if (modalable)
-					// If it is a gallery of multiple images
-					//If modalising is possible
-					return (
-						<>
-							{getGalleryContent(false)}
-							{wrapPortal(getGalleryContent(true))}
-						</>
-					);
-				else return getGalleryContent(false);
-			else if (modalable)
+			if (props.images.length > 1) {
+				// If it is a gallery of multiple images
+				return (
+					<>
+						{getGalleryContent(false)}
+						{portalOpen && wrapPortal(getGalleryContent(true))}
+					</>
+				);
+			} else {
 				// If it is a single image
 				return (
 					<>
 						{getUniqueContent()}
-						{wrapPortal(getUniqueContent())}
+						{portalOpen && wrapPortal(getUniqueContent())}
 					</>
 				);
-			else return getUniqueContent();
+			}
 		};
 		const getGalleryContent = (inPortal: boolean) => (
 			<>
 				<div
-					ref={containerInitialRef}
-					className="gallery relative flex w-full snap-x snap-mandatory gap-6 overflow-y-hidden"
+					ref={inPortal ? setPortalRef : setContainerRef}
+					className="gallery relative flex w-full snap-x snap-mandatory gap-6 overflow-y-scroll"
 				>
-					{props.images?.map((img, idx) => {
+					{props.images?.map((img) => {
 						return (
-							// TODO: what happens when you use a key, but also some stuff depends on the index?
 							<div
 								key={img.id}
 								className="h-full w-full shrink-0 snap-center"
-								ref={inPortal ? addSlidePortal : addSlide}
-								id={inPortal ? "slideportal-" + idx : "slide-" + idx}
+								data-image-id={img.id}
 							>
 								<TracksImage
 									sizeHint="100vw"
@@ -262,7 +170,7 @@ export const ImageSlider: React.FC<ImageSliderProps> = watchDependencies(
 									setSelectedItem={props.setSelectedItem}
 									displayPhantomTracks={displayPhantomTracks}
 									displayTracksDetails={!!props.selectedBoulder.selectedTrack}
-									onImageClick={() => setPortalOpen(true)}
+									onImageClick={() => setPortalOpen(modalable)}
 								/>
 							</div>
 						);
@@ -272,34 +180,20 @@ export const ImageSlider: React.FC<ImageSliderProps> = watchDependencies(
 				<div
 					className={
 						"absolute flex w-full justify-center " +
-						(portalOpen ? "bottom-5" : "bottom-3")
+						(inPortal ? "bottom-5" : "bottom-3")
 					}
 				>
 					<div className="flex w-[90%] justify-center gap-4">
-						{props.images?.map((img, idx) => (
+						{props.images?.map((img) => (
 							<div
 								key={img.id}
 								className={
 									"h-3 w-3 rounded-full " +
-									(imgIdx === idx
+									(img.id === selectedImage?.id
 										? "border-2 border-main bg-white"
 										: "bg-grey-light bg-opacity-50")
 								}
-								onClick={useCallback(() => {
-									if (portalOpen)
-										slidesPortalRefs.current[idx].scrollIntoView({
-											behavior: "smooth",
-										});
-									else
-										slidesInitialRefs.current[idx].scrollIntoView({
-											behavior: "smooth",
-										});
-									selectImage(
-										props.selectedBoulder,
-										img,
-										props.setSelectedItem
-									);
-								}, [props.selectedBoulder, img])}
+								onClick={() => selectImage(img, props.setSelectedItem)}
 							></div>
 						))}
 					</div>
@@ -316,7 +210,7 @@ export const ImageSlider: React.FC<ImageSliderProps> = watchDependencies(
 				setSelectedItem={props.setSelectedItem}
 				displayPhantomTracks={displayPhantomTracks}
 				displayTracksDetails={!!props.selectedBoulder.selectedTrack}
-				onImageClick={() => setPortalOpen(true)}
+				onImageClick={() => setPortalOpen(modalable)}
 			/>
 		);
 
