@@ -81,6 +81,12 @@ export const ImageSlider: React.FC<ImageSliderProps> = watchDependencies(
 					props.setSelectedItem((selected) => {
 						// Could maybe clean up the `as`
 						selected = selected as SelectedBoulder;
+						// IntersectionObserver runs the callback upon setup,
+						// so this is protection to avoid unnecessary rerenders
+						if (selected.selectedImage?.id === img.id) {
+							return selected;
+						}
+
 						return {
 							...selected,
 							selectedImage: img,
