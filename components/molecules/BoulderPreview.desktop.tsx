@@ -93,7 +93,7 @@ export const BoulderPreviewDesktop = watchDependencies<
 							rows={1}
 							onImageClick={useCallback(
 								(id) => {
-									selectImage(props.selectedBoulder, boulder.images.find((img) => img.id === id)!, props.setSelectedItem)
+									selectImage(boulder.images.find((img) => img.id === id)!, props.setSelectedItem)
 								},
 								[props.selectedBoulder, boulder, props.setSelectedItem]
 							)}
@@ -104,7 +104,7 @@ export const BoulderPreviewDesktop = watchDependencies<
 										...b,
 										images: [...b.images, ...images],
 									}));
-									selectImage(props.selectedBoulder, images[0], props.setSelectedItem);
+									selectImage(images[0], props.setSelectedItem);
 								},
 								[props.selectedBoulder, boulder, props.setSelectedItem]
 							)}

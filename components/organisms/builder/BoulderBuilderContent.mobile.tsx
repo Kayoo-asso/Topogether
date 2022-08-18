@@ -75,7 +75,7 @@ export const BoulderBuilderContentMobile: React.FC<BoulderBuilderContentMobilePr
 											...b,
 											images: [...boulder.images].concat(imgs),
 										}));
-										selectImage(props.selectedBoulder, imgs[0], props.setSelectedItem);
+										selectImage(imgs[0], props.setSelectedItem);
 									}}
 								/>
 							)}

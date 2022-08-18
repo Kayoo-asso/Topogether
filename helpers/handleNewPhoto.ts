@@ -16,7 +16,7 @@ export const handleNewPhoto = (topo: Quark<Topo>, img: Img, coords: GeoCoordinat
                 setSelectedItem({ type: 'waypoint', value: createWaypoint(topo(), coords, img) })
             } else {
                 if (selectedItem.type === 'boulder') {
-                    selectImage(selectedItem, img, setSelectedItem);
+                    selectImage(img, setSelectedItem);
                     const sBoulder = selectedItem.value();
                     const newImages = sBoulder.images;
                     newImages.push(img);

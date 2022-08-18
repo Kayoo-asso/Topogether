@@ -11,7 +11,7 @@ import { useModal } from "helpers/hooks";
 import { staticUrl } from "helpers/constants";
 import { deleteBoulder } from "helpers/builder";
 import { TracksListBuilder } from "./TracksListBuilder";
-import { SelectedBoulder, SelectedItem, selectImage } from "types/SelectedItems";
+import { SelectedBoulder, SelectedItem } from "types/SelectedItems";
 import { BuilderSlideoverTrackDesktop } from "./BuilderSlideoverTrack.desktop";
 
 interface BoulderBuilderContentDesktopProps {
