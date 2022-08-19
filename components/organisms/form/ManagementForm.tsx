@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { ImageInput, TextArea, TextInput } from "components";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { Description, Email, Name, Topo } from "types";
@@ -54,18 +54,18 @@ export const ManagementForm: React.FC<ManagementFormProps> = watchDependencies(
 						<div className="w-32 md:mt-4">
 							<ImageInput
 								value={manager.image}
-								onChange={(images) => {
-									managerQuark.set({
-										...manager,
+								onChange={useCallback((images) => {
+									managerQuark.set(m => ({
+										...m,
 										image: images[0],
-									});
-								}}
-								onDelete={() => {
-									managerQuark.set({
-										...manager,
+									}));
+								}, [managerQuark])}
+								onDelete={useCallback(() => {
+									managerQuark.set(m => ({
+										...m,
 										image: undefined,
-									});
-								}}
+									}));
+								}, [managerQuark])}
 							/>
 						</div>
 						<TextInput
@@ -73,12 +73,12 @@ export const ManagementForm: React.FC<ManagementFormProps> = watchDependencies(
 							id="manager-name"
 							label="Nom de la structure"
 							value={manager.name}
-							onChange={(e) =>
-								managerQuark.set({
-									...manager,
+							onChange={useCallback((e) =>
+								managerQuark.set(m => ({
+									...m,
 									name: e.target.value as Name,
-								})
-							}
+								}))
+							, [managerQuark])}
 						/>
 					</div>
 
@@ -86,12 +86,12 @@ export const ManagementForm: React.FC<ManagementFormProps> = watchDependencies(
 						id="manager-adress"
 						label="Adresse"
 						value={manager.address}
-						onChange={(e) =>
-							managerQuark.set({
-								...manager,
+						onChange={useCallback((e) =>
+							managerQuark.set(m => ({
+								...m,
 								address: e.target.value as Name,
-							})
-						}
+							}))
+						, [managerQuark])}
 					/>
 					<div className="flex flex-row gap-3">
 						<TextInput
@@ -99,23 +99,23 @@ export const ManagementForm: React.FC<ManagementFormProps> = watchDependencies(
 							label="Code postal"
 							type="number"
 							value={manager.zip}
-							onChange={(e) =>
-								managerQuark.set({
-									...manager,
+							onChange={useCallback((e) =>
+								managerQuark.set(m => ({
+									...m,
 									zip: parseInt(e.target.value),
-								})
-							}
+								}))
+							, [managerQuark])}
 						/>
 						<TextInput
 							id="manager-city"
 							label="Ville"
 							value={manager.city}
-							onChange={(e) =>
-								managerQuark.set({
-									...manager,
+							onChange={useCallback((e) =>
+								managerQuark.set(m => ({
+									...m,
 									city: e.target.value as Name,
-								})
-							}
+								}))
+							, [managerQuark])}
 						/>
 					</div>
 
@@ -123,12 +123,12 @@ export const ManagementForm: React.FC<ManagementFormProps> = watchDependencies(
 						id="manager-description"
 						label="Description"
 						value={manager.description}
-						onChange={(e) =>
-							managerQuark.set({
-								...manager,
+						onChange={useCallback((e) =>
+							managerQuark.set(m => ({
+								...m,
 								description: e.target.value as Description,
-							})
-						}
+							}))
+						, [managerQuark])}
 					/>
 
 					<div className="ktext-subtitle">Contact</div>
@@ -137,39 +137,39 @@ export const ManagementForm: React.FC<ManagementFormProps> = watchDependencies(
 						id="manager-contact-name"
 						label="Nom"
 						value={manager.contactName}
-						onChange={(e) =>
-							managerQuark.set({
-								...manager,
+						onChange={useCallback((e) =>
+							managerQuark.set(m => ({
+								...m,
 								contactName: e.target.value as Name,
-							})
-						}
+							}))
+						, [managerQuark])}
 					/>
 					<TextInput
 						id="manager-contact-mail"
 						label="Email"
 						value={manager.contactMail}
-						onChange={(e) =>
-							managerQuark.set({
-								...manager,
+						onChange={useCallback((e) =>
+							managerQuark.set(m => ({
+								...m,
 								contactMail: e.target.value as Email,
-							})
-						}
+							}))
+						, [managerQuark])}
 					/>
 					<TextInput
 						id="manager-contact-phone"
 						label="Téléphone"
 						value={manager.contactPhone}
-						onChange={(e) =>
-							managerQuark.set({
-								...manager,
+						onChange={useCallback((e) =>
+							managerQuark.set(m => ({
+								...m,
 								contactPhone: e.target.value as Name,
-							})
-						}
+							}))
+						, [managerQuark])}
 					/>
 
 					<Button
 						content="Supprimer"
-						onClick={() => managers.removeQuark(managerQuark)}
+						onClick={useCallback(() => managers.removeQuark(managerQuark), [managers, managerQuark])}
 					/>
 				</div>
 			);

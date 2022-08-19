@@ -1,18 +1,16 @@
-import React, { Dispatch, SetStateAction, useCallback } from "react";
+import React, { useCallback } from "react";
 import { GradeCircle } from "components";
-import { gradeToLightGrade, Track } from "types";
-import { Quark, watchDependencies } from "helpers/quarky";
+import { gradeToLightGrade } from "types";
+import { watchDependencies } from "helpers/quarky";
 import { useSession } from "helpers/services";
 import DrawIcon from "assets/icons/draw.svg";
 import { createTrack } from "helpers/builder";
 import { staticUrl } from "helpers/constants";
 import { useBreakpoint, useModal } from "helpers/hooks";
 import { TrackForm } from "../form/TrackForm";
-import { SelectedBoulder, SelectedItem, selectTrack } from "types/SelectedItems";
+import { SelectedBoulder, useSelectStore } from "components/pages/selectStore";
 
 interface TracksListBuilderProps {
-	selectedBoulder: SelectedBoulder;
-	setSelectedItem: Dispatch<SetStateAction<SelectedItem>>;
 	onDrawButtonClick?: () => void;
 	onCreateTrack?: () => void;
 	onAddImage?: () => void;
@@ -33,27 +31,28 @@ export const TracksListBuilder: React.FC<TracksListBuilderProps> =
 	watchDependencies((props: TracksListBuilderProps) => {
 		const session = useSession();
 		if (!session) return null;
-		const [ModalAddImage, showModalAddImage] = useModal();
-
 		const breakpoint = useBreakpoint();
+		const select = useSelectStore(s => s.select);
+		const flushTrack = useSelectStore(s => s.flush.track);
+		const selectedBoulder = useSelectStore(s => s.item as SelectedBoulder);
+		const selectedTrack = selectedBoulder.selectedTrack;
 
-		const boulder = props.selectedBoulder.value();
+		const boulder = selectedBoulder.value()
 		const tracks = boulder.tracks
 			.quarks()
 			.toArray()
 			.sort((t1, t2) => t1().index - t2().index);
-		const selectedTrack = props.selectedBoulder.selectedTrack ? props.selectedBoulder.selectedTrack() : undefined;
 
 		const toggleSelectedTrack = useCallback(
 			(trackQuark) => {
 				const track = trackQuark();
-				const selectedTrack = props.selectedBoulder.selectedTrack;
-				if (selectedTrack && selectedTrack().id === track.id)
-					props.setSelectedItem({ ...props.selectedBoulder, selectedTrack: undefined });
-				else selectTrack(props.selectedBoulder.value, trackQuark, props.setSelectedItem);
+				if (selectedTrack && selectedTrack().id === track.id) flushTrack();
+				else select.track(trackQuark, selectedBoulder.value);
 			},
-			[props.selectedBoulder, props.selectedBoulder.selectedTrack, props.setSelectedItem, boulder]
+			[selectedTrack, boulder, select, flushTrack]
 		);
+
+		const [ModalAddImage, showModalAddImage] = useModal();
 
 		return (
 			<>
@@ -67,7 +66,7 @@ export const TracksListBuilder: React.FC<TracksListBuilderProps> =
 								className={
 									"flex cursor-pointer flex-col border-b border-grey-light px-5 py-5 md:py-3 md:hover:bg-grey-superlight" +
 									(!selectedTrack ? '' :
-										selectedTrack.id !== track.id ? 
+										selectedTrack().id !== track.id ? 
 										" opacity-40" : "")
 								}
 								onClick={() => toggleSelectedTrack(trackQuark)}
@@ -99,24 +98,18 @@ export const TracksListBuilder: React.FC<TracksListBuilderProps> =
 
 									{props.onDrawButtonClick && (
 										<button
-											onClick={(e) => {
+											onClick={useCallback((e) => {
 												e.stopPropagation();
-												selectTrack(props.selectedBoulder.value, trackQuark, props.setSelectedItem);
+												select.track(trackQuark, selectedBoulder.value);
 												props.onDrawButtonClick!();
-											}}
+											}, [selectedBoulder, select])}
 										>
 											<DrawIcon className="h-6 w-6 stroke-main" />
 										</button>
 									)}
 								</div>
-								{selectedTrack?.id === track.id && breakpoint === "mobile" && (
-									<TrackForm
-										boulder={props.selectedBoulder.value()}
-										track={trackQuark}
-										selectedBoulder={props.selectedBoulder}
-										setSelectedItem={props.setSelectedItem}
-										className="mt-8"
-									/>
+								{selectedTrack && selectedTrack().id === track.id && breakpoint === "mobile" && (
+									<TrackForm className="mt-8" />
 								)}
 							</div>
 						);
@@ -129,13 +122,12 @@ export const TracksListBuilder: React.FC<TracksListBuilderProps> =
 								? "cursor-pointer text-grey-medium hover:bg-grey-superlight"
 								: "cursor-default text-grey-light")
 						}
-						onClick={() => {
+						onClick={useCallback(() => {
 							if (boulder.images.length > 0) {
-								const newQuarkTrack = createTrack(boulder, session!.id);
-								props.setSelectedItem({ ...props.selectedBoulder, selectedTrack: newQuarkTrack });
+								select.track(createTrack(boulder, session!.id), selectedBoulder.value);
 								if (props.onCreateTrack) props.onCreateTrack();
 							} else showModalAddImage();
-						}}
+						}, [boulder, props.onCreateTrack])}
 					>
 						<span className="ktext-subtitle ml-2 mr-5 text-xl">+</span>{" "}
 						<span className="ktext-subtitle">Nouveau passage</span>

@@ -1,8 +1,6 @@
 import React, {
 	CSSProperties,
-	Dispatch,
 	ReactElement,
-	SetStateAction,
 	useCallback,
 	useRef,
 	useState,
@@ -18,13 +16,11 @@ import { SVGTrack } from "components/atoms";
 import QuickPinchZoom, { make3dTransformValue } from "react-quick-pinch-zoom";
 import { Portal } from "helpers/hooks";
 import { getCoordsInViewbox } from "helpers/svg";
-import { ItemType, SelectedBoulder } from "components/organisms/builder/Slideover.right.builder";
+import { useSelectStore } from "components/pages/selectStore";
 
 type TracksImageProps = React.PropsWithChildren<{
 	image?: Img;
 	tracks: QuarkIter<Quark<Track>>;
-	selectedBoulder?: SelectedBoulder;
-	setSelectedItem?: Dispatch<SetStateAction<ItemType>>;
 	// 'fill' could be possible, but it distorts the aspect ratio
 	objectFit?: "contain" | "cover";
 	sizeHint: SourceSize;
@@ -64,7 +60,9 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(
 		allowDoubleTapZoom = true,
 		...props
 	}: TracksImageProps) => {
-		const selectedTrack = props.selectedBoulder?.selectedTrack && props.selectedBoulder.selectedTrack();
+		const selectedTrackQuark = useSelectStore(s => s.item.type === 'boulder' && s.item.selectedTrack || undefined);
+		const selectedTrack = selectedTrackQuark ? selectedTrackQuark() : undefined;
+		const selectTrack = useSelectStore(s => s.select.track);
 		// ratio = width / height
 		// so the most accurate way to scale the SVG viewBox is to set a height
 		// and take width = ratio * height (multiplication is better than division)
@@ -96,7 +94,7 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(
 
 		const getCursorUrl = () => {
 			let cursorColor = "grey";
-			if (selectedTrack?.grade) cursorColor = selectedTrack.grade![0];
+			if (selectedTrack?.grade) cursorColor = selectedTrack.grade[0];
 
 			let cursorUrl = "/assets/icons/colored/";
 			switch (props.currentTool) {
@@ -236,7 +234,7 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(
 												displayTrackDetails={displayTracksDetails}
 												displayTrackOrderIndexes={displayTrackOrderIndexes}
 												trackWeight={tracksWeight}
-												onLineClick={() => props.selectedBoulder && props.setSelectedItem && props.setSelectedItem({ ...props.selectedBoulder, selectedTrack: trackQuark })}
+												onLineClick={() => selectTrack(trackQuark)}
 												onPointClick={props.onPointClick}
 											/>
 										);

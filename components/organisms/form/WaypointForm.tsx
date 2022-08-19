@@ -1,24 +1,24 @@
-import React, { Dispatch, SetStateAction, useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { Button, ImageInput, TextArea, TextInput } from "components";
 import { Quark, watchDependencies } from "helpers/quarky";
-import { Description, Name, Topo, Waypoint } from "types";
+import { Description, Name, Topo } from "types";
 import { useBreakpoint, useModal } from "helpers/hooks";
 import { staticUrl } from "helpers/constants";
-import { SelectedItem } from "types/SelectedItems";
+import { SelectedWaypoint, useSelectStore } from "components/pages/selectStore";
 
 interface WaypointFormProps {
 	topo: Quark<Topo>;
-	waypoint: Quark<Waypoint>;
-	setSelectedItem: Dispatch<SetStateAction<SelectedItem>>;
 	className?: string;
-	onDeleteWaypoint: () => void;
 }
 
 export const WaypointForm: React.FC<WaypointFormProps> = watchDependencies(
 	(props: WaypointFormProps) => {
 		const breakpoint = useBreakpoint();
+		const selectedWaypoint = useSelectStore(s => s.item as SelectedWaypoint);
+		const waypoint = selectedWaypoint.value();
+		const flush = useSelectStore(s => s.flush);
+		
 		const nameInputRef = useRef<HTMLInputElement>(null);
-		const waypoint = props.waypoint();
 
 		const [ModalDelete, showModalDelete] = useModal();
 
@@ -41,18 +41,18 @@ export const WaypointForm: React.FC<WaypointFormProps> = watchDependencies(
 						<div className="w-28">
 							<ImageInput
 								value={waypoint.image}
-								onChange={(images) => {
-									props.waypoint.set({
+								onChange={useCallback((images) => {
+									selectedWaypoint.value.set({
 										...waypoint,
 										image: images[0],
 									});
-								}}
-								onDelete={() => {
-									props.waypoint.set({
+								}, [selectedWaypoint.value, waypoint])}
+								onDelete={useCallback(() => {
+									selectedWaypoint.value.set({
 										...waypoint,
 										image: undefined,
 									});
-								}}
+								}, [selectedWaypoint.value, waypoint])}
 							/>
 						</div>
 						<div className="flex h-full flex-col justify-between gap-2">
@@ -62,12 +62,12 @@ export const WaypointForm: React.FC<WaypointFormProps> = watchDependencies(
 								id="waypoint-name"
 								label="Nom"
 								value={waypoint.name}
-								onChange={(e) =>
-									props.waypoint.set({
+								onChange={useCallback((e) =>
+									selectedWaypoint.value.set({
 										...waypoint,
 										name: e.target.value as Name,
 									})
-								}
+								, [selectedWaypoint.value, waypoint])}
 							/>
 						</div>
 					</div>
@@ -78,24 +78,24 @@ export const WaypointForm: React.FC<WaypointFormProps> = watchDependencies(
 							label="Latitude"
 							type="number"
 							value={waypoint.location[1]}
-							onChange={(e) =>
-								props.waypoint.set({
+							onChange={useCallback((e) =>
+								selectedWaypoint.value.set({
 									...waypoint,
 									location: [waypoint.location[0], parseFloat(e.target.value)],
 								})
-							}
+							, [selectedWaypoint.value, waypoint, waypoint.location])}
 						/>
 						<TextInput
 							id="waypoint-longitude"
 							label="Longitude"
 							type="number"
 							value={waypoint.location[0]}
-							onChange={(e) =>
-								props.waypoint.set({
+							onChange={useCallback((e) =>
+								selectedWaypoint.value.set({
 									...waypoint,
 									location: [parseFloat(e.target.value), waypoint.location[1]],
 								})
-							}
+							, [selectedWaypoint.value, waypoint, waypoint.location])}
 						/>
 					</div>
 
@@ -103,12 +103,12 @@ export const WaypointForm: React.FC<WaypointFormProps> = watchDependencies(
 						id="waypoint-description"
 						label="Description"
 						value={waypoint.description}
-						onChange={(e) =>
-							props.waypoint.set({
+						onChange={useCallback((e) =>
+							selectedWaypoint.value.set({
 								...waypoint,
 								description: e.target.value as Description,
 							})
-						}
+						, [selectedWaypoint.value, waypoint])}
 					/>
 
 					<div className="flex w-full grow items-end">
@@ -123,11 +123,10 @@ export const WaypointForm: React.FC<WaypointFormProps> = watchDependencies(
 				<ModalDelete
 					buttonText="Confirmer"
 					imgUrl={staticUrl.deleteWarning}
-					onConfirm={() => {
-						props.topo().waypoints.removeQuark(props.waypoint);
-						props.setSelectedItem({ type:'none' });
-						props.onDeleteWaypoint();
-					}}
+					onConfirm={useCallback(() => {
+						props.topo().waypoints.removeQuark(selectedWaypoint.value);
+						breakpoint === 'mobile' ? flush.all() : flush.item();
+					}, [props.topo().waypoints, selectedWaypoint.value, breakpoint, flush.all, flush.item])}
 				>
 					Etes-vous sûr de vouloir supprimer le point de repère ?
 				</ModalDelete>

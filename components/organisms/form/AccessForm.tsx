@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { Button, ImageInput, Select, TextArea, TextInput } from "components";
 import { Quark, watchDependencies } from "helpers/quarky";
-import { Description, Topo } from "types";
+import { Description, Difficulty, Topo } from "types";
 import { DifficultyName, selectOptions } from "types/EnumNames";
 import { v4 } from "uuid";
 
@@ -45,12 +45,12 @@ export const AccessForm: React.FC<AccessFormProps> = watchDependencies(
 								label="Difficulté"
 								options={selectOptions(DifficultyName)}
 								value={access.difficulty}
-								onChange={(value) => {
-									accessQuark.set({
-										...access,
+								onChange={useCallback((value: Difficulty) => {
+									accessQuark.set(a => ({
+										...a,
 										difficulty: value,
-									});
-								}}
+									}));
+								}, [accessQuark])}
 							/>
 							<TextInput
 								id="access-duration"
@@ -58,12 +58,12 @@ export const AccessForm: React.FC<AccessFormProps> = watchDependencies(
 								type="number"
 								step={1}
 								value={access.duration}
-								onChange={(e) =>
-									accessQuark.set({
-										...access,
+								onChange={useCallback((e) =>
+									accessQuark.set(a => ({
+										...a,
 										duration: parseInt(e.target.value),
-									})
-								}
+									}))
+								, [accessQuark])}
 							/>
 						</div>
 
@@ -76,13 +76,13 @@ export const AccessForm: React.FC<AccessFormProps> = watchDependencies(
 									<div className="flex flex-col gap-2" key={index}>
 										<div
 											className="ktext-base-little mt-3 cursor-pointer text-main"
-											onClick={() => {
+											onClick={useCallback(() => {
 												newSteps.splice(index, 1);
-												accessQuark.set({
-													...access,
+												accessQuark.set(a => ({
+													...a,
 													steps: newSteps,
-												});
-											}}
+												}));
+											}, [newSteps, accessQuark])}
 										>
 											Supprimer l'étape
 										</div>
@@ -90,26 +90,26 @@ export const AccessForm: React.FC<AccessFormProps> = watchDependencies(
 											<div className="w-32">
 												<ImageInput
 													value={step.image}
-													onChange={(images) => {
+													onChange={useCallback((images) => {
 														newSteps[index].image = images[0];
-														accessQuark.set({
-															...access,
+														accessQuark.set(a => ({
+															...a,
 															steps: newSteps,
-														});
-													}}
+														}));
+													}, [newSteps[index].image, accessQuark])}
 												/>
 											</div>
 											<TextArea
 												id={"step" + index + "-description"}
 												label="Description"
 												value={step.description}
-												onChange={(e) => {
+												onChange={useCallback((e) => {
 													newSteps[index].description = e.target.value as Description;
-														accessQuark.set({
-														...access,
+														accessQuark.set(a => ({
+														...a,
 														steps: newSteps,
-													});
-												}}
+													}));
+												}, [newSteps[index].description, accessQuark])}
 											/>
 										</div>
 									</div>
@@ -119,16 +119,16 @@ export const AccessForm: React.FC<AccessFormProps> = watchDependencies(
 
 						<Button
 							content="Ajouter une étape"
-							onClick={() => {
+							onClick={useCallback(() => {
 								const newSteps = access.steps || [];
 								newSteps.push({
 									description: "" as Description,
 								});
-								accessQuark.set({
-									...access,
+								accessQuark.set(a => ({
+									...a,
 									steps: newSteps,
-								});
-							}}
+								}));
+							}, [access.steps, accessQuark])}
 						/>
 
 					</div>
@@ -136,7 +136,7 @@ export const AccessForm: React.FC<AccessFormProps> = watchDependencies(
 					<Button
 						content="Supprimer"
 						fullWidth
-						onClick={() => accesses.removeQuark(accessQuark)}
+						onClick={useCallback(() => accesses.removeQuark(accessQuark), [accesses, accessQuark])}
 					/>
 				</>
 			);

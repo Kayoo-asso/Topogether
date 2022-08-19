@@ -1,32 +1,24 @@
-import React, { Dispatch, SetStateAction } from "react";
+import React from "react";
 import { watchDependencies } from "helpers/quarky";
 import { TrackForm } from "../form/TrackForm";
 import { SlideoverRightDesktop } from "components/atoms/overlays";
-import { SelectedBoulder, SelectedItem } from "types/SelectedItems";
-import { Portal } from "helpers/hooks";
+import { SelectedBoulder, useSelectStore } from "components/pages/selectStore";
 
-interface BuilderSlideoverTrackDesktopProps {
-	selectedBoulder: SelectedBoulder,
-	setSelectedItem: Dispatch<SetStateAction<SelectedItem>>;
-}
+export const BuilderSlideoverTrackDesktop: React.FC =
+	watchDependencies(() => {
+		const selectedTrack = useSelectStore(s => s.item as SelectedBoulder).selectedTrack;
+		const flushTrack = useSelectStore(s => s.flush.track);
 
-export const BuilderSlideoverTrackDesktop: React.FC<BuilderSlideoverTrackDesktopProps> =
-	watchDependencies((props: BuilderSlideoverTrackDesktopProps) => {
 		return (
 			<SlideoverRightDesktop
 				className="overflow-scroll"
-				open={!!props.selectedBoulder.selectedTrack}
+				open={!!selectedTrack}
 				secondary
-				onClose={() => props.setSelectedItem({ ...props.selectedBoulder, selectedTrack: undefined })}
+				onClose={flushTrack}
 			>
-				{props.selectedBoulder.selectedTrack &&
+				{selectedTrack &&
 					<div className="h-full px-5 py-3">
-						<TrackForm 
-							boulder={props.selectedBoulder.value()}
-							track={props.selectedBoulder.selectedTrack} 
-							selectedBoulder={props.selectedBoulder}
-							setSelectedItem={props.setSelectedItem}
-						/>
+						<TrackForm />
 					</div>
 				}
 			</SlideoverRightDesktop>

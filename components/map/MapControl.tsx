@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { Wrapper } from "@googlemaps/react-wrapper";
 import { RoundButton, SatelliteButton } from "components";
 import {
@@ -15,7 +15,6 @@ import {
 import {
 	Boulder,
 	GeoCoordinates,
-	Img,
 	MapProps,
 	MapToolEnum,
 	Position,
@@ -29,6 +28,9 @@ import { usePosition } from "helpers/hooks";
 
 import SectorIcon from "assets/icons/sector.svg";
 import CenterIcon from "assets/icons/center.svg";
+import { useSelectStore } from "components/pages/selectStore";
+import { handleNewPhoto } from "helpers/handleNewPhoto";
+import { useSession } from "helpers/services";
 
 type MapControlProps = React.PropsWithChildren<
 	Omit<MapProps, "center" | "zoom"> & {
@@ -39,13 +41,11 @@ type MapControlProps = React.PropsWithChildren<
 		displayUserMarker?: boolean;
 		currentTool?: MapToolEnum;
 		onToolSelect?: (tool: MapToolEnum) => void;
-		onNewPhoto?: (img: Img, coords: GeoCoordinates) => void;
 		onPhotoButtonClick?: () => void;
 		displaySectorButton?: boolean;
 		onSectorButtonClick?: () => void;
 		displaySearchbar?: boolean;
 		searchbarOptions?: MapSearchbarProps;
-		onBoulderResultSelect?: (boulder: Boulder) => void;
 		topo?: Quark<Topo>;
 		topoFilters?: Quark<TopoFilterOptions>;
 		topoFiltersDomain?: TopoFilterOptions;
@@ -69,8 +69,11 @@ export const MapControl = watchDependencies<google.maps.Map, MapControlProps>(
 		},
 		parentRef
 	) => {
+		const session = useSession();
 		const mapRef = useRef<google.maps.Map>(null);
 		const { position } = usePosition();
+		const selectedBoulder = useSelectStore(s => s.item.type === 'boulder' ? s.item : undefined);
+		const select = useSelectStore(s => s.select);
 
 		const [satelliteView, setSatelliteView] = useState(false);
 		const getBoundsFromSearchbar = (
@@ -104,7 +107,11 @@ export const MapControl = watchDependencies<google.maps.Map, MapControlProps>(
 										if (placeDetails?.geometry)
 											getBoundsFromSearchbar(placeDetails.geometry);
 									}}
-									onBoulderResultSelect={props.onBoulderResultSelect}
+									onBoulderResultSelect={useCallback((boulder: Boulder) => {
+										const bQuark = props.topo!().boulders.findQuark((b) => b.id === boulder.id)!;
+										select.boulder(bQuark);
+										mapRef.current?.setCenter(toLatLng(boulder.location));
+									}, [props.topo])}
 									{...props.searchbarOptions}
 								/>
 							)}
@@ -148,14 +155,14 @@ export const MapControl = watchDependencies<google.maps.Map, MapControlProps>(
 
 						{/* Bottom center */}
 						<div className="absolute bottom-0 my-3 flex w-full justify-center">
-							{props.onNewPhoto && props.onToolSelect && (
+							{props.onToolSelect && (
 								<ItemSelectorMobile
 									currentTool={props.currentTool}
 									photoActivated={!!position}
 									onToolSelect={props.onToolSelect}
-									onNewPhoto={(img) =>
-										position && props.onNewPhoto!(img, position)
-									}
+									onNewPhoto={useCallback((img) =>
+										position && session && props.topo && handleNewPhoto(props.topo, img, position, session, select, selectedBoulder, props.currentTool)
+									, [props.topo, position, session, props.currentTool])}
 								/>
 							)}
 						</div>

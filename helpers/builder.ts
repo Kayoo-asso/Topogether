@@ -15,8 +15,7 @@ import {
 	Waypoint,
 } from "types";
 import { v4 } from "uuid";
-import { Dispatch, SetStateAction } from "react";
-import { SelectedBoulder, SelectedItem, SelectedParking, SelectedWaypoint } from "types/SelectedItems";
+import { SelectedBoulder, SelectedParking, SelectedWaypoint } from "components/pages/selectStore";
 
 export const createSector = (
 	topoQuark: Quark<Topo>,
@@ -77,8 +76,8 @@ export const createBoulder = (
 export const deleteBoulder = (
 	topoQuark: Quark<Topo>,
 	boulderQuark: Quark<Boulder>,
-	setSelectedItem: Dispatch<SetStateAction<SelectedItem>>,
-	selectedItem?: SelectedItem,
+	flushStore: () => void,
+	selectedBoulder?: SelectedBoulder,
 ) => {
 	const topo = topoQuark();
 	topo.boulders.removeQuark(boulderQuark);
@@ -102,7 +101,7 @@ export const deleteBoulder = (
 			),
 		}));
 	}
-	if (selectedItem?.type === 'boulder' && selectedItem.value().id === boulder.id) setSelectedItem({ type: 'none' })
+	if (selectedBoulder && selectedBoulder.value().id === boulder.id) flushStore()
 }
 
 export const createParking = (
@@ -124,12 +123,12 @@ export const createParking = (
 export const deleteParking = (
 	topoQuark: Quark<Topo>,
 	parkingQuark: Quark<Parking>,
-	setSelectedItem: Dispatch<SetStateAction<SelectedItem>>,
-	selectedItem?: SelectedItem,
+	flushStore: () => void,
+	selectedParking?: SelectedParking,
 ) => {
 	const topo = topoQuark();
 	topo.parkings.removeQuark(parkingQuark);
-	if (selectedItem?.type === 'parking' && selectedItem.value().id === parkingQuark().id) setSelectedItem({ type: 'none' })
+	if (selectedParking && selectedParking.value().id === parkingQuark().id) flushStore();
 }
 
 export const createWaypoint = (
@@ -152,12 +151,12 @@ export const createWaypoint = (
 export const deleteWaypoint = (
 	topoQuark: Quark<Topo>,
 	waypointQuark: Quark<Waypoint>,
-	setSelectedItem: Dispatch<SetStateAction<SelectedItem>>,
-	selectedItem?: SelectedItem,
+	flushStore: () => void,
+	selectedWaypoint?: SelectedWaypoint,
 ) => {
 	const topo = topoQuark();
 	topo.waypoints.removeQuark(waypointQuark);
-	if (selectedItem?.type === 'waypoint' && selectedItem.value().id === waypointQuark().id) setSelectedItem({ type: 'none' })
+	if (selectedWaypoint && selectedWaypoint.value().id === waypointQuark().id) flushStore();
 }
 
 export const createTrack = (boulder: Boulder, creatorId: UUID) => {
@@ -180,7 +179,7 @@ export const createTrack = (boulder: Boulder, creatorId: UUID) => {
 export const deleteTrack = (
 	boulder: Boulder,
 	track: Quark<Track>,
-	setSelectedItem: Dispatch<SetStateAction<SelectedItem>>,
+	flushTrack: () => void,
 	selectedBoulder?: SelectedBoulder,
 ) => {
 	boulder.tracks.removeQuark(track);
@@ -192,7 +191,7 @@ export const deleteTrack = (
 		}));
 		i++;
 	}
-	if (selectedBoulder?.selectedTrack && selectedBoulder.selectedTrack().id === track().id) setSelectedItem({ ...selectedBoulder, selectedTrack: undefined });
+	if (selectedBoulder?.selectedTrack && selectedBoulder.selectedTrack().id === track().id) flushTrack();
 };
 
 export const boulderChanged = (

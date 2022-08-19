@@ -1,13 +1,12 @@
 import React, { forwardRef, useCallback, useEffect, useState } from "react";
 import { ImageThumb } from "components";
-import { Boulder, Img, UUID } from "types";
+import { Img, UUID } from "types";
 import { ImageInput } from ".";
 import ArrowFull from "assets/icons/arrow-full.svg";
-import { SelectedBoulder } from "components/organisms/builder/Slideover.right.builder";
+import { SelectedBoulder, useSelectStore } from "components/pages/selectStore";
 
 interface MultipleImageInputProps {
 	images: Img[];
-	selectedBoulder?: SelectedBoulder;
 	label?: string;
 	rows?: number;
 	cols?: number;
@@ -33,6 +32,7 @@ export const MultipleImageInput = forwardRef<
 		}: MultipleImageInputProps,
 		ref
 	) => {
+		const selectedBoulder = useSelectStore(s => s.item as SelectedBoulder);
 		const [error, setError] = useState<string>();
 
 		let nbVisible = rows * cols;
@@ -82,7 +82,7 @@ export const MultipleImageInput = forwardRef<
 							<ImageThumb
 								key={image.id}
 								image={image}
-								tracks={props.selectedBoulder?.value()?.tracks
+								tracks={selectedBoulder?.value()?.tracks
 									.quarks()
 									.filter(
 										(track) =>
@@ -92,7 +92,6 @@ export const MultipleImageInput = forwardRef<
 									)
 								}
 								selected={image.id === props.selected}
-								selectedBoulder={props.selectedBoulder}
 								onClick={props.onImageClick}
 								onDelete={props.onImageDelete}
 							/>

@@ -1,31 +1,22 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import {
-	Boulder,
 	GeoCoordinates,
-	Img,
 	MapToolEnum,
-	Parking,
-	Sector,
-	Track,
-	Waypoint,
 	Topo,
-	isUUID,
 	TopoStatus,
 	ClimbTechniques,
+	UUID,
+	isUUID,
 } from "types";
 import {
-	quark,
 	Quark,
 	useCreateDerivation,
 	useCreateQuark,
 	useLazyQuarkyEffect,
-	useQuarkyCallback,
-	useSelectQuark,
 	watchDependencies,
 } from "helpers/quarky";
 import { api, sync } from "helpers/services";
-import { useFirstRender } from "helpers/hooks/useFirstRender";
 import { useSession } from "helpers/services";
 import { Header } from "components/layouts/Header";
 import { LeftbarBuilderDesktop } from "components/layouts/LeftbarBuilderDesktop";
@@ -38,35 +29,28 @@ import {
 	createBoulder,
 	createParking,
 	createWaypoint,
-	createTrack,
-	createSector,
-	sectorChanged,
-	deleteTrack,
 } from "helpers/builder";
 import { staticUrl } from "helpers/constants";
 import {
 	useBreakpoint,
-	useContextMenu,
 	useLoader,
 	useModal,
 } from "helpers/hooks";
-import { toLatLng } from "helpers/map";
 import { sortBoulders, computeBuilderProgress } from "helpers/topo";
 import { decodeUUID, encodeUUID } from "helpers/utils";
-import { Show, For } from "components/atoms";
 import {
-	SelectedInfo,
 	SlideoverLeftBuilder,
 } from "components/organisms/builder/Slideover.left.builder";
 import {
 	SlideoverRightBuilder,
 } from "components/organisms/builder/Slideover.right.builder";
 import { BuilderProgressIndicator } from "components/organisms/builder/BuilderProgressIndicator";
-import { InteractItem, SelectedItem } from "types/SelectedItems";
 import { BuilderDropdown } from "components/organisms/builder/BuilderDropdown";
 import { BuilderModalDelete } from "components/organisms/builder/BuilderModalDelete";
 import { BuilderMarkers } from "components/organisms/builder/BuilderMarkers";
-import { handleNewPhoto } from "helpers/handleNewPhoto";
+import { InteractItem, SelectedInfo, SelectedItem, useSelectStore } from "./selectStore";
+import { isOnMap } from "helpers/map";
+import { updateUrl } from "helpers/updateUrl";
 
 interface RootBuilderProps {
 	topoQuark: Quark<Topo>;
@@ -76,22 +60,33 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 	(props: RootBuilderProps) => {
 		const router = useRouter();
 		const session = useSession()!;
-		const { b: bId } = router.query; // Get boulder id from url if selected
 		const breakpoint = useBreakpoint();
 
 		const showLoader = useLoader();
 
 		const topo = props.topoQuark();
-		const sectors = topo.sectors;
-		const boulders = topo.boulders;
-		const parkings = topo.parkings;
-		const waypoints = topo.waypoints;
 		const boulderOrder = useCreateDerivation(() =>
 			sortBoulders(topo.sectors, topo.lonelyBoulders)
 		);
 
+		const isEmptyStore = useSelectStore(s => s.isEmpty);
+		const selectedItem = useSelectStore(s => s.item);
+		const selectedInfo = useSelectStore(s => s.info);
+		const flush = useSelectStore(s => s.flush);
+		const select = useSelectStore(s => s.select);
+		const selectInfo = (i: SelectedInfo) => {
+			if (breakpoint === 'mobile') flush.item();
+			select.info(i);
+		}
+
+		const [dropdownItem, setDropdownItem] = useState<InteractItem>({ type: 'none', value: undefined });
+		const [dropdownPosition, setDropdownPosition] = useState<{
+			x: number;
+			y: number;
+		}>();
+		const [deleteItem, setDeleteItem] = useState<InteractItem>({ type: 'none', value: undefined });
+
 		const mapRef = useRef<google.maps.Map>(null);
-		const multipleImageInputRef = useRef<HTMLInputElement>(null);
 		const [currentTool, setCurrentTool] = useState<MapToolEnum>();
 		const [tempCurrentTool, setTempCurrentTool] = useState<MapToolEnum>();
 
@@ -100,39 +95,44 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 
 		// TODO
 		// Hack: select boulder from query parameter
-		// useEffect(() => {
-		// 	if (typeof bId === "string") {
-		// 		const expanded = decodeUUID(bId);
-		// 		if (isUUID(expanded)) {
-		// 			const boulder = boulders.findQuark((b) => b.id === expanded);
-		// 			if (boulder) toggleBoulderSelect(boulder);
-		// 		}
-		// 	}
-		// }, []);
-
-		// useLazyQuarkyEffect(
-		// 	([selectedB]) => {
-		// 		if (selectedB)
-		// 			router.push(
-		// 				{
-		// 					pathname: window.location.href.split("?")[0],
-		// 					query: { b: encodeUUID(selectedB.id) },
-		// 				},
-		// 				undefined,
-		// 				{ shallow: true }
-		// 			);
-		// 		else
-		// 			router.push(
-		// 				{ pathname: window.location.href.split("?")[0] },
-		// 				undefined,
-		// 				{
-		// 					shallow: true,
-		// 				}
-		// 			);
-		// 	},
-		// 	[selectedBoulder]
-		// );
-
+		useEffect(() => {
+			const { i, p, w, b, t } = router.query;
+			if (p) {
+				const pId = decodeUUID(p as string);
+				if (isUUID(pId)) {					
+					const pQ = topo.parkings.findQuark((p) => p.id === pId);
+					if (pQ) select.parking(pQ);
+				}
+			}
+			else if (w) {
+				const wId = decodeUUID(w as string);
+				if (isUUID(wId)) {					
+					const wQ = topo.waypoints.findQuark((w) => w.id === wId);
+					if (wQ) select.waypoint(wQ);
+				}
+			}
+			if (b) {
+				const bId = decodeUUID(b as string);
+				if (isUUID(bId)) {					
+					const bQ = topo.boulders.findQuark((b) => b.id === bId);
+					if (bQ) {	
+						if (t) {
+							const tId = decodeUUID(t as string);
+							if (isUUID(tId)) {					
+								const tQ = bQ().tracks.findQuark((t) => t.id === tId);
+								if (tQ) select.track(tQ, bQ);
+							}
+						}
+						else select.boulder(bQ);
+					}
+				}
+			}
+			if (i) selectInfo(i as SelectedInfo)
+		}, []);
+		
+		useEffect(() => {
+			updateUrl(selectedInfo, selectedItem, router);
+		}, [selectedInfo, selectedItem]);
 
 		const handleCreateNewMarker = useCallback(
 			(e) => {
@@ -156,53 +156,35 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 			},
 			[topo, currentTool, createBoulder, createParking, createWaypoint]
 		);
-
-		// TODO
-		// useEffect(() => {
-		// 	const handleKeyDown = (e: KeyboardEvent) => {
-		// 		if (e.code === "Escape") {
-		// 			// TODO: change this, we first wish to cancel any ongoing action,
-		// 			// then set the current tool to undefined
-		// 			if (currentTool) setCurrentTool(undefined);
-		// 			else if (
-		// 				(breakpoint !== "mobile" || displayDrawer) &&
-		// 				selectedBoulder() &&
-		// 				selectedTrack()
-		// 			)
-		// 				return; //If the Drawer is open, Escape should only deactivate Drawer tools
-		// 			else {
-		// 				selectedSector.select(undefined);
-		// 				selectedBoulder.select(undefined);
-		// 				selectedTrack.select(undefined);
-		// 				selectedParking.select(undefined);
-		// 				selectedWaypoint.select(undefined);
-		// 			}
-		// 		}
-		// 		// TODO : Add a check to know if we are on the map and not in an input or textarea in a form, to avoid deleting items when we just want to delete characters
-		// 		// else if (e.code === 'Delete') {
-		// 		//     if (selectedSector()) showModalDeleteSector(selectedSector.quark()!);
-		// 		//     else if (selectedBoulder()) showModalDeleteBoulder(selectedBoulder.quark()!);
-		// 		//     else if (selectedParking()) showModalDeleteParking(selectedParking.quark()!);
-		// 		//     else if (selectedWaypoint()) showModalDeleteWaypoint(selectedWaypoint.quark()!);
-		// 		// }
-		// 		else if (e.code === "Space" && currentTool) {
-		// 			setTempCurrentTool(currentTool);
-		// 			setCurrentTool(undefined);
-		// 		}
-		// 	};
-		// 	const handleKeyUp = (e: KeyboardEvent) => {
-		// 		if (e.code === "Space" && tempCurrentTool) {
-		// 			setCurrentTool(tempCurrentTool);
-		// 			setTempCurrentTool(undefined);
-		// 		}
-		// 	};
-		// 	window.addEventListener("keydown", handleKeyDown);
-		// 	window.addEventListener("keyup", handleKeyUp);
-		// 	return () => {
-		// 		window.removeEventListener("keydown", handleKeyDown);
-		// 		window.removeEventListener("keyup", handleKeyUp);
-		// 	};
-		// }, [currentTool, tempCurrentTool]);
+		
+		
+		useEffect(() => {
+			const handleKeyDown = (e: KeyboardEvent) => {
+				if (e.code === "Escape") {
+					// TODO: change this, we first wish to cancel any ongoing action,
+					// then set the current tool to undefined
+					if (currentTool) setCurrentTool(undefined);
+					else flush.all();
+				}
+				else if (e.code === 'Delete' && isOnMap(e)) setDeleteItem(selectedItem)
+				else if (e.code === "Space" && currentTool) {
+					setTempCurrentTool(currentTool);
+					setCurrentTool(undefined);
+				}
+			};
+			const handleKeyUp = (e: KeyboardEvent) => {
+				if (e.code === "Space" && tempCurrentTool) {
+					setCurrentTool(tempCurrentTool);
+					setTempCurrentTool(undefined);
+				}
+			};
+			window.addEventListener("keydown", handleKeyDown);
+			window.addEventListener("keyup", handleKeyUp);
+			return () => {
+				window.removeEventListener("keydown", handleKeyDown);
+				window.removeEventListener("keyup", handleKeyUp);
+			};
+		}, [currentTool, tempCurrentTool]);
 
 		const progress = useCreateDerivation<number>(
 			() => computeBuilderProgress(props.topoQuark),
@@ -210,11 +192,11 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 		);
 
 		const maxTracks = useCreateDerivation<number>(() => {
-			return boulders
+			return topo.boulders
 				.toArray()
 				.map((b) => b.tracks.length)
 				.reduce((a, b) => a + b, 0);
-		}, [boulders]);
+		}, [topo.boulders]);
 		const defaultBoulderFilterOptions: BoulderFilterOptions = {
 			techniques: ClimbTechniques.None,
 			tracksRange: [0, maxTracks()],
@@ -234,28 +216,12 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 			}
 		}, [maxTracks()]);
 
-		const [selectedInfo, setSelectedInfo] = useState<SelectedInfo>();
-		const [selectedItem, setSelectedItem] = useState<SelectedItem>({ type: 'none' });
-
-		const selectInfo = (info: SelectedInfo) => {
-			setSelectedInfo(info);
-			if (breakpoint === 'mobile' && selectedItem.type !== 'none') setSelectedItem({ type: 'none' });
-		}
-
-		const [dropdownItem, setDropdownItem] = useState<InteractItem>({ type: 'none' });
-		const [dropdownPosition, setDropdownPosition] = useState<{
-			x: number;
-			y: number;
-		}>();
-
-		const [deleteItem, setDeleteItem] = useState<InteractItem>({ type: 'none' });
-
 		return (
 			<>
 				<Header
 					title={topo.name}
 					backLink="/builder/dashboard"
-					onBackClick={undefined} //TO-REDO
+					onBackClick={!isEmptyStore() ? () => flush.all() : undefined}
 					menuOptions={[
 						{ value: "Infos du topo", action: () => selectInfo("INFO") },
 						{
@@ -281,8 +247,6 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 					<BuilderProgressIndicator
 						topo={props.topoQuark}
 						progress={progress()}
-						displayInfosTopo={() => {}} //TODO
-						displayInfosApproach={() => {}} //TODO
 					/>
 				</Header>
 
@@ -292,8 +256,6 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 					<LeftbarBuilderDesktop
 						topoQuark={props.topoQuark}
 						boulderOrder={boulderOrder()}
-						selectedBoulder={selectedItem.type === 'boulder' ? selectedItem : undefined}
-						setSelectedItem={setSelectedItem}
 						map={mapRef.current}
 						onSubmit={showModalSubmitTopo}
 						activateSubmission={progress() === 100}
@@ -301,8 +263,6 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 
 					<SlideoverLeftBuilder
 						topo={props.topoQuark}
-						selectedInfo={selectedInfo}
-						onClose={() => setSelectedInfo(undefined)}
 					/>
 
 					<MapControl
@@ -315,19 +275,12 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 							findBoulders: true,
 							focusOnOpen: true,
 						}}
-						onBoulderResultSelect={useCallback((boulder) => {
-							const bQuark = boulders.findQuark((b) => b.id === boulder.id);
-							if (bQuark) setSelectedItem({ type: 'boulder', value: bQuark });
-						}, [boulders, setSelectedItem])}
 						currentTool={currentTool}
 						onToolSelect={(tool) =>
 							tool === currentTool
 								? setCurrentTool(undefined)
 								: setCurrentTool(tool)
 						}
-						onNewPhoto={useCallback(
-							(img, coords) => handleNewPhoto(props.topoQuark, img, coords, selectedItem, setSelectedItem, session, currentTool)
-						, [props.topoQuark, selectedItem, setSelectedItem, session, currentTool])}
 						draggableCursor={
 							currentTool === "ROCK"
 								? "url(/assets/icons/colored/_rock.svg) 16 32, auto"
@@ -342,11 +295,11 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 						topo={props.topoQuark}
 						boulderFilters={boulderFilters}
 						boulderFiltersDomain={defaultBoulderFilterOptions}
-						onMapZoomChange={() => setDropdownItem({ type: 'none' })}
+						onMapZoomChange={() => setDropdownItem({ type: 'none', value: undefined })}
 						onClick={handleCreateNewMarker}
-						boundsTo={boulders
+						boundsTo={topo.boulders
 							.map((b) => b.location)
-							.concat(parkings.map((p) => p.location))
+							.concat(topo.parkings.map((p) => p.location))
 							.toArray()}
 					>
 						
@@ -365,8 +318,6 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 							topoQuark={props.topoQuark}
 							boulderFilters={boulderFilters}
 							boulderOrder={boulderOrder()}
-							selectedItem={selectedItem}
-							setSelectedItem={setSelectedItem}
 							setDropdownItem={setDropdownItem}
 							setDropdownPosition={setDropdownPosition}
 						/>
@@ -374,8 +325,6 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 
 					<SlideoverRightBuilder
 						topo={props.topoQuark}
-						selectedItem={selectedItem}
-						setSelectedItem={setSelectedItem}
 					/>
 				</div>
 				
@@ -385,8 +334,6 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 						dropdownItem={dropdownItem}
 						setDropdownItem={setDropdownItem}
 						setDeleteItem={setDeleteItem}
-						selectedItem={selectedItem}
-						setSelectedItem={setSelectedItem}
 					/>
 				}
 
@@ -394,8 +341,6 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 					topo={props.topoQuark}
 					deleteItem={deleteItem}
 					setDeleteItem={setDeleteItem}
-					selectedItem={selectedItem}
-					setSelectedItem={setSelectedItem}
 				/>
 
 				<ModalSubmitTopo

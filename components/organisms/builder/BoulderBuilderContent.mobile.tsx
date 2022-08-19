@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { Dispatch, SetStateAction, useCallback, useState } from "react";
 import { GradeScale, ImageSlider } from "components";
 import { Topo } from "types";
 import { Quark, watchDependencies } from "helpers/quarky";
@@ -6,24 +6,25 @@ import { BoulderForm } from "..";
 import { Image } from "components/atoms/Image";
 import { ImageInput } from "components/molecules";
 import { Button } from "components/atoms";
-import { useModal } from "helpers/hooks";
+import { useBreakpoint, useModal } from "helpers/hooks";
 import { staticUrl } from "helpers/constants";
 import { deleteBoulder } from "helpers/builder";
 import { TracksListBuilder } from "./TracksListBuilder";
-import { SelectedBoulder, SelectedItem, selectImage } from "types/SelectedItems";
 import { Drawer } from "../Drawer";
+import { SelectedBoulder, useSelectStore } from "components/pages/selectStore";
 
 interface BoulderBuilderContentMobileProps {
 	full: boolean,
 	topo: Quark<Topo>;
-	selectedBoulder: SelectedBoulder;
-	setSelectedItem: Dispatch<SetStateAction<SelectedItem>>;
-	onDeleteBoulder: () => void;
 }
 
 export const BoulderBuilderContentMobile: React.FC<BoulderBuilderContentMobileProps> =
 	watchDependencies((props: BoulderBuilderContentMobileProps) => {
-		const boulder = props.selectedBoulder.value();
+		const breakpoint = useBreakpoint();
+		const selectedBoulder = useSelectStore(s => s.item as SelectedBoulder);
+		const boulder = selectedBoulder.value();
+		const select = useSelectStore(s => s.select);
+		const flush = useSelectStore(s => s.flush);
 
 		const [displayDrawer, setDisplayDrawer] = useState(false);
 		const [ModalDelete, showModalDelete] = useModal();
@@ -38,8 +39,6 @@ export const BoulderBuilderContentMobile: React.FC<BoulderBuilderContentMobilePr
 						<ImageSlider
 							images={boulder.images}
 							tracks={boulder.tracks.quarks()}
-							selectedBoulder={props.selectedBoulder}
-							setSelectedItem={props.setSelectedItem}
 						/>
 					</div>
 				)}
@@ -71,11 +70,11 @@ export const BoulderBuilderContentMobile: React.FC<BoulderBuilderContentMobilePr
 								<ImageInput
 									button="builder"
 									onChange={(imgs) => {
-										props.selectedBoulder.value.set((b) => ({
+										selectedBoulder.value.set((b) => ({
 											...b,
 											images: [...boulder.images].concat(imgs),
 										}));
-										selectImage(imgs[0], props.setSelectedItem);
+										select.image(imgs[0]);
 									}}
 								/>
 							)}
@@ -120,8 +119,6 @@ export const BoulderBuilderContentMobile: React.FC<BoulderBuilderContentMobilePr
 					{trackTab && props.full && (
 						<div className="overflow-auto pb-[30px]">
 							<TracksListBuilder
-								selectedBoulder={props.selectedBoulder}
-								setSelectedItem={props.setSelectedItem}
 								onDrawButtonClick={() => setDisplayDrawer(true)}
 								onCreateTrack={() => setDisplayDrawer(true)}
 							/>
@@ -131,7 +128,7 @@ export const BoulderBuilderContentMobile: React.FC<BoulderBuilderContentMobilePr
 					{/* BOULDER FORM */}
 					{!trackTab && props.full && (
 						<div className="overflow-auto border-t border-grey-light px-6 py-10">
-							<BoulderForm boulder={props.selectedBoulder.value} topo={props.topo} />
+							<BoulderForm topo={props.topo} />
 							<Button
 								content="Supprimer le bloc"
 								className="mt-10"
@@ -144,8 +141,6 @@ export const BoulderBuilderContentMobile: React.FC<BoulderBuilderContentMobilePr
 
 				{displayDrawer &&
 					<Drawer 
-						 selectedBoulder={props.selectedBoulder}
-						 setSelectedItem={props.setSelectedItem}
 						 onValidate={() => setDisplayDrawer(false)}
 					/>
 				}
@@ -153,10 +148,10 @@ export const BoulderBuilderContentMobile: React.FC<BoulderBuilderContentMobilePr
 				<ModalDelete
 					buttonText="Confirmer"
 					imgUrl={staticUrl.deleteWarning}
-					onConfirm={() => {
-						deleteBoulder(props.topo, props.selectedBoulder.value, props.setSelectedItem, props.selectedBoulder);
-						props.onDeleteBoulder();
-					}}
+					onConfirm={useCallback(() => {
+						const flushAction = breakpoint === 'mobile' ? flush.all : flush.item;
+						deleteBoulder(props.topo, selectedBoulder.value, flushAction, selectedBoulder);
+					}, [breakpoint, flush.all, flush.item, props.topo, selectedBoulder, selectedBoulder.value])}
 				>
 					Etes-vous sûr de vouloir supprimer le bloc ainsi que toutes les voies associées ?
 				</ModalDelete>

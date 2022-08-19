@@ -1,7 +1,6 @@
-import React, { Dispatch, SetStateAction, useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
 	DrawerToolEnum,
-	Img,
 	LinearRing,
 	PointEnum,
 	Position,
@@ -15,27 +14,26 @@ import {
 import { v4 } from "uuid";
 import { staticUrl } from "helpers/constants";
 import { useModal, Portal } from "helpers/hooks";
-import { SelectedBoulder, SelectedItem } from "types/SelectedItems";
+import { SelectedBoulder, useSelectStore } from "components/pages/selectStore";
 
 interface DrawerProps {
-	selectedBoulder: SelectedBoulder;
-	setSelectedItem: Dispatch<SetStateAction<SelectedItem>>;
 	onValidate?: () => void;
 }
 
 export const Drawer: React.FC<DrawerProps> = watchDependencies(
 	(props: DrawerProps) => {
-		if (!props.selectedBoulder.selectedTrack) throw new Error('Drawer opened without any track');
-		const selectedTrack: Track = props.selectedBoulder.selectedTrack();
-		const image = props.selectedBoulder.selectedImage;
-		if (!image) throw new Error("Drawer opened without any image");
+		const selectedBoulder = useSelectStore(s => s.item as SelectedBoulder);
+		if (!selectedBoulder.selectedTrack) throw new Error('Drawer opened without any track');
+		if (!selectedBoulder.selectedImage) throw new Error("Drawer opened without any image");
+		const selectedTrack: Track = selectedBoulder.selectedTrack();
+		const image = selectedBoulder.selectedImage;	
 
 		const [selectedTool, setSelectedTool] =
 			useState<DrawerToolEnum>("LINE_DRAWER");
 		const [displayOtherTracks, setDisplayOtherTracks] = useState(false);
 		const [ModalClear, showModalClear] = useModal();
 		
-		const addPointToLine = (pos: Position) => {
+		const addPointToLine = useCallback((pos: Position) => {
 			let lineQuark = selectedTrack.lines.findQuark(
 				(l) => l.imageId === image.id
 			);
@@ -83,7 +81,7 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies(
 					});
 					break;
 			}
-		};
+		}, [selectedTrack.lines]);
 
 		const deletePointToLine = useCallback(
 			(pointType: PointEnum, index: number) => {
@@ -138,7 +136,7 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies(
 					}
 				}
 			},
-			[selectedTrack, selectedTrack.lines]
+			[selectedTrack.lines]
 		);
 		const rewind = () => {
 			const pointType: PointEnum | undefined =
@@ -191,11 +189,9 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies(
 								image={image}
 								tracks={
 									displayOtherTracks
-										? props.selectedBoulder.value().tracks.quarks()
-										: new QuarkIter([props.selectedBoulder.selectedTrack])
+										? selectedBoulder.value().tracks.quarks()
+										: new QuarkIter([selectedBoulder.selectedTrack])
 								}
-								selectedBoulder={props.selectedBoulder}
-								setSelectedItem={props.setSelectedItem}
 								currentTool={selectedTool}
 								editable
 								allowDoubleTapZoom={false}
@@ -203,10 +199,10 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies(
 								onImageClick={(pos) => {
 									addPointToLine(pos);
 								}}
-								onPointClick={(pointType, index) => {
+								onPointClick={useCallback((pointType, index) => {
 									if (selectedTool === "ERASER")
 										deletePointToLine(pointType, index);
-								}}
+								}, [selectedTool])}
 							/>
 						</div>
 
@@ -215,12 +211,12 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies(
 							displayOtherTracks={displayOtherTracks}
 							grade={selectedTrack.grade}
 							onToolSelect={(tool) => setSelectedTool(tool)}
-							onGradeSelect={(grade) => {
-								props.selectedBoulder.selectedTrack!.set({
+							onGradeSelect={useCallback((grade) => {
+								selectedBoulder.selectedTrack!.set({
 									...selectedTrack,
 									grade: grade,
 								});
-							}}
+							}, [selectedBoulder, selectedTrack])}
 							onClear={showModalClear}
 							onRewind={rewind}
 							onOtherTracks={() => setDisplayOtherTracks(!displayOtherTracks)}

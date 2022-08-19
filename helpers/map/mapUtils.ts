@@ -201,3 +201,12 @@ export const googleAutocomplete = async (text: string) =>
 			}
 		}
 	);
+
+export const isOnMap = (e: KeyboardEvent) => {
+	const path = e.composedPath && e.composedPath();
+	return !!path.find((evt) => {
+		const transElt = evt as unknown;
+		const elt = transElt as Element;
+		return elt.id === "map";
+	});
+}

@@ -1,17 +1,15 @@
 import React, { Dispatch, SetStateAction, useCallback } from 'react';
 import { Quark, watchDependencies } from 'helpers/quarky';
 import { Topo, UUID } from 'types';
-import { InteractItem, selectBoulder, SelectedItem } from 'types/SelectedItems';
 import { For } from 'components/atoms';
 import { BoulderFilterOptions, BoulderMarker, filterBoulders, isMouseEvent, isPointerEvent, isTouchEvent, ParkingMarker, SectorAreaMarker, WaypointMarker } from 'components/map';
 import { sectorChanged } from 'helpers/builder';
+import { InteractItem, useSelectStore } from 'components/pages/selectStore';
 
 interface BuilderMarkersProps {
     topoQuark: Quark<Topo>,
     boulderFilters: Quark<BoulderFilterOptions>,
     boulderOrder: Map<UUID, number>,
-    selectedItem: SelectedItem,
-    setSelectedItem: Dispatch<SetStateAction<SelectedItem>>,
     setDropdownItem: Dispatch<SetStateAction<InteractItem>>,
     setDropdownPosition: React.Dispatch<React.SetStateAction<{
         x: number;
@@ -22,10 +20,8 @@ interface BuilderMarkersProps {
 export const BuilderMarkers: React.FC<BuilderMarkersProps> = watchDependencies(
     (props: BuilderMarkersProps) => {
     const topo = props.topoQuark();
-    const sectors = topo.sectors;
-    const boulders = topo.boulders;
-    const parkings = topo.parkings;
-    const waypoints = topo.waypoints;
+    const select = useSelectStore(s => s.select);
+    const selectedItem = useSelectStore(s => s.item);
 
     const setDropdown = (e: Event, item: InteractItem) => {
         if (isMouseEvent(e) || isPointerEvent(e))
@@ -37,21 +33,21 @@ export const BuilderMarkers: React.FC<BuilderMarkersProps> = watchDependencies(
    
     return (
         <>
-            <For each={() => filterBoulders(boulders.quarks(), props.boulderFilters())}>
+            <For each={() => filterBoulders(topo.boulders.quarks(), props.boulderFilters())}>
                 {(boulder) => (
                     <BoulderMarker
                         key={boulder().id}
                         boulder={boulder}
                         boulderOrder={props.boulderOrder}
-                        selectedItem={props.selectedItem}
+                        selectedBoulder={selectedItem.type === 'boulder' ? selectedItem.value : undefined}
                         topo={props.topoQuark}
-                        onClick={(boulderQuark) => selectBoulder(boulderQuark, props.setSelectedItem)}
+                        onClick={(boulderQuark) => select.boulder(boulderQuark)}
                         onContextMenu={(e, b) => setDropdown(e, { type: 'boulder', value: b })}
-                        draggable={props.selectedItem.type === 'boulder' && props.selectedItem.value === boulder}
+                        draggable={selectedItem.type === 'boulder' && selectedItem.value === boulder}
                     />
                 )}
             </For>
-            <For each={() => sectors.quarks().toArray()}>
+            <For each={() => topo.sectors.quarks().toArray()}>
                 {(sector) => (
                     <SectorAreaMarker
                         key={sector().id}
@@ -70,25 +66,25 @@ export const BuilderMarkers: React.FC<BuilderMarkersProps> = watchDependencies(
                     />
                 )}
             </For>
-            <For each={() => waypoints.quarks().toArray()}>
+            <For each={() => topo.waypoints.quarks().toArray()}>
                 {(waypoint) => (
                     <WaypointMarker
                         key={waypoint().id}
                         waypoint={waypoint}
-                        selected={props.selectedItem.type === 'waypoint' && props.selectedItem.value === waypoint}
-                        onClick={(waypointQuark) => props.setSelectedItem({ type: 'waypoint', value: waypointQuark })}
+                        selected={selectedItem.type === 'waypoint' && selectedItem.value === waypoint}
+                        onClick={(waypointQuark) => select.waypoint(waypointQuark)}
                         onContextMenu={(e, w) => setDropdown(e, { type: 'waypoint', value: w })}
                         draggable
                     />
                 )}
             </For>
-            <For each={() => parkings.quarks().toArray()}>
+            <For each={() => topo.parkings.quarks().toArray()}>
                 {(parking) => (
                     <ParkingMarker
                         key={parking().id}
                         parking={parking}
-                        selected={props.selectedItem.type === 'parking' && props.selectedItem.value === parking}
-                        onClick={(parkingQuark) => props.setSelectedItem({ type: 'parking', value: parkingQuark })}
+                        selected={selectedItem.type === 'parking' && selectedItem.value === parking}
+                        onClick={(parkingQuark) => select.parking(parkingQuark) }
                         onContextMenu={(e, p) => setDropdown(e, { type: 'parking', value: p })}
                         draggable
                     />

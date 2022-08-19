@@ -1,9 +1,9 @@
-import React, { Dispatch, SetStateAction, useCallback, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { BoulderItemLeftbar } from "components/layouts/BoulderItemLeftbar";
 import { arrayMove } from "helpers/utils";
 import { createTrack, deleteBoulder } from "helpers/builder";
-import { Quark, SelectQuarkNullable, watchDependencies } from "helpers/quarky";
-import { Boulder, Sector, Topo, Track, UUID } from "types";
+import { Quark, watchDependencies } from "helpers/quarky";
+import { Boulder, Sector, Topo, UUID } from "types";
 import {
 	DragDropContext,
 	Draggable,
@@ -11,31 +11,30 @@ import {
 	DropResult,
 } from "react-beautiful-dnd";
 import { useSession } from "helpers/services";
-
 import ArrowSimple from "assets/icons/arrow-simple.svg";
 import Edit from "assets/icons/edit.svg";
 import { ModalRenameSector } from "components/organisms";
-import { useModal } from "helpers/hooks";
+import { useBreakpoint, useModal } from "helpers/hooks";
 import { staticUrl } from "helpers/constants";
-import { selectBoulder, SelectedBoulder, SelectedItem, selectTrack } from "types/SelectedItems";
 import { toLatLng } from "helpers/map";
+import { useSelectStore } from "components/pages/selectStore";
 
 export interface SectorListBuilderProps {
 	topoQuark: Quark<Topo>;
 	boulderOrder: Map<UUID, number>;
-	selectedBoulder?: SelectedBoulder;
-	setSelectedItem: Dispatch<SetStateAction<SelectedItem>>;
 	map: google.maps.Map | null
 }
 
 // Note: some cleanup happened here
 export const SectorListBuilder: React.FC<SectorListBuilderProps> =
 	watchDependencies((props: SectorListBuilderProps) => {
-		const session = useSession()!;
+		const session = useSession();
+		if (!session) return null;
+		const breakpoint = useBreakpoint();
 
-		const selectedBoulder = props.selectedBoulder?.value();
+		const selectStore = useSelectStore();
+		const selectedBoulder = selectStore.item.type === 'boulder' ? selectStore.item : undefined;
 		const topo = props.topoQuark();
-		const sectors = topo.sectors;
 
 		const boulderQuarksMap = new Map<UUID, Quark<Boulder>>();
 		for (const bq of topo.boulders.quarks()) {
@@ -91,7 +90,7 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> =
 							lonelyBoulders: newLonelyBoulders,
 						}));
 					} else {
-						const sector = sectors.findQuark(
+						const sector = topo.sectors.findQuark(
 							(s) => s.id === res.source.droppableId
 						);
 						if (sector) {
@@ -109,7 +108,7 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> =
 					}
 				}
 			},
-			[topo, sectors]
+			[topo, topo.sectors]
 		);
 
 		const [sectorToRename, setSectorToRename] = useState<Quark<Sector>>();
@@ -118,7 +117,7 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> =
 		return (
 			<>
 				<div className="mb-6 px-4">
-					{sectors.quarks().map((sectorQuark, sectorIndex) => {
+					{topo.sectors.quarks().map((sectorQuark, sectorIndex) => {
 						const sector = sectorQuark();
 						const quarks: Quark<Boulder>[] = [];
 						for (const id of sector.boulders) {
@@ -202,20 +201,18 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> =
 																			orderIndex={
 																				props.boulderOrder.get(boulder.id)!
 																			}
-																			selected={
-																				selectedBoulder?.id === boulder.id
-																			}
+																			selected={!!(selectedBoulder && selectedBoulder.value().id === boulder.id)}
 																			displayed={displayedBoulders.has(
 																				boulder.id
 																			)}
 																			onArrowClick={() => toggleBoulder(boulder)}
 																			onNameClick={() => {
-																				selectBoulder(boulderQuark, props.setSelectedItem);
+																				selectStore.select.boulder(boulderQuark);
 																				props.map?.setCenter(toLatLng(boulderQuark().location));
 																				toggleBoulder(boulder);
 																			}}
 																			onDeleteClick={() => showModalDeleteBoulder(boulderQuark) }
-																			onTrackClick={(trackQuark) => selectTrack(boulderQuark, trackQuark, props.setSelectedItem) }
+																			onTrackClick={(trackQuark) => selectStore.select.track(trackQuark, boulderQuark) }
 																			displayCreateTrack
 																			onCreateTrack={() =>
 																				createTrack(boulder, session.id)
@@ -248,7 +245,7 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> =
 										{...provided.droppableProps}
 										ref={provided.innerRef}
 									>
-										{sectors.length > 0 && lonelyQuarks.length > 0 && (
+										{topo.sectors.length > 0 && lonelyQuarks.length > 0 && (
 											<div className="ktext-label mb-1 text-grey-medium">
 												Sans secteur
 											</div>
@@ -278,17 +275,17 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> =
 																<BoulderItemLeftbar
 																	boulder={boulderQuark}
 																	orderIndex={props.boulderOrder.get(boulder.id)!}
-																	selected={selectedBoulder?.id === boulder.id}
+																	selected={!!(selectedBoulder && selectedBoulder.value().id === boulder.id)}
 																	displayed={displayedBoulders.has(boulder.id)}
 																	onArrowClick={() => toggleBoulder(boulder)}
 																	onNameClick={() => {
-																		selectBoulder(boulderQuark, props.setSelectedItem);
+																		selectStore.select.boulder(boulderQuark);
 																		props.map?.setCenter(toLatLng(boulderQuark().location));
 																		toggleBoulder(boulder);
 																	}}
 																	onDeleteClick={() => showModalDeleteBoulder(boulderQuark) }
 																	onTrackClick={(trackQuark) =>
-																		selectTrack(boulderQuark, trackQuark, props.setSelectedItem)
+																		selectStore.select.track(trackQuark, boulderQuark)
 																	}
 																	displayCreateTrack
 																	onCreateTrack={() =>
@@ -319,7 +316,7 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> =
 				<ModalDeleteBoulder
 					buttonText="Confirmer"
 					imgUrl={staticUrl.deleteWarning}
-					onConfirm={(boulderQuark) => deleteBoulder(props.topoQuark, boulderQuark, props.setSelectedItem, props.selectedBoulder) }
+					onConfirm={(boulderQuark) => deleteBoulder(props.topoQuark, boulderQuark, breakpoint === 'mobile' ? selectStore.flush.all : selectStore.flush.item, selectedBoulder) }
 				>
 					Êtes-vous sûr de vouloir supprimer le bloc et toutes les voies
 					associées ?

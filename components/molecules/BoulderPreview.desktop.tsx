@@ -1,22 +1,18 @@
 import React, {
-	Dispatch,
-	SetStateAction,
 	useCallback,
 	useRef,
 	useState,
 } from "react";
 import { Quark, watchDependencies } from "helpers/quarky";
-import { Img, Track, UUID } from "types";
+import { Track, UUID } from "types";
 import { MultipleImageInput, TracksImage } from ".";
 import { deleteTrack } from "helpers/builder";
 import { staticUrl } from "helpers/constants";
 import { useModal } from "helpers/hooks/useModal";
 import { setReactRef } from "helpers/utils";
-import { SelectedBoulder, SelectedItem, selectImage } from "types/SelectedItems";
+import { SelectedBoulder, useSelectStore } from "components/pages/selectStore";
 
 interface BoulderPreviewDesktopProps {
-	selectedBoulder: SelectedBoulder;
-	setSelectedItem: Dispatch<SetStateAction<SelectedItem>>;
 	displayAddButton?: boolean;
 	allowDelete?: boolean;
 }
@@ -29,7 +25,12 @@ export const BoulderPreviewDesktop = watchDependencies<
 		{ displayAddButton = false, ...props }: BoulderPreviewDesktopProps,
 		parentRef
 	) => {
-		const boulder = props.selectedBoulder.value();
+		const selectedBoulder = useSelectStore(s => s.item as SelectedBoulder);
+		const boulder = selectedBoulder.value();
+		const selectedImage = selectedBoulder.selectedImage;
+		const select = useSelectStore(s => s.select);
+		const flush = useSelectStore(s => s.flush);
+
 		const multipleImageInputRef = useRef<HTMLInputElement>(null);
 
 		const [loading, setLoading] = useState(false);
@@ -38,33 +39,33 @@ export const BoulderPreviewDesktop = watchDependencies<
 			useModal<[Quark<Track>[], UUID]>();
 		const deleteImage = useCallback(
 			(id: UUID) => {
-				if (props.selectedBoulder.selectedImage?.id === id) props.setSelectedItem({ ...props.selectedBoulder, selectedImage: undefined });
+				if (selectedImage?.id === id) flush.image();
 				const newImages = boulder.images.filter((img) => img.id !== id);
-				props.selectedBoulder.value.set((b) => ({
+				selectedBoulder.value.set((b) => ({
 					...b,
 					images: newImages,
 				}));
 				if (newImages.length === 0) {
 					deleteTracks(boulder.tracks.quarks().toArray());
-					props.setSelectedItem({ ...props.selectedBoulder, selectedImage: undefined });
+					flush.image();
 				}
 			},
-			[props.selectedBoulder, props.selectedBoulder.value()]
+			[selectedBoulder.value, boulder, flush.image]
 		);
 		const deleteTracks = useCallback(
 			(tracksQuark: Quark<Track>[]) => {
 				tracksQuark.forEach((tQ) => 
-					deleteTrack(boulder, tQ, props.setSelectedItem, props.selectedBoulder)
+					deleteTrack(boulder, tQ, flush.track, selectedBoulder)
 				);
 			},
-			[boulder, props.selectedBoulder, props.setSelectedItem]
+			[boulder, selectedBoulder, flush.track]
 		);
 
 		const addImagesClick = useCallback(() => {
-			if (!props.selectedBoulder.selectedImage && multipleImageInputRef.current) {
+			if (!selectedImage && multipleImageInputRef.current) {
 				multipleImageInputRef.current.click();
 			}
-		}, [props.selectedBoulder.selectedImage, loading]);
+		}, [selectedImage, loading]);
 
 		return (
 			<>
@@ -72,41 +73,38 @@ export const BoulderPreviewDesktop = watchDependencies<
 					<div className="bg-dark">
 						<TracksImage
 							sizeHint="300px"
-							image={props.selectedBoulder.selectedImage}
+							image={selectedBoulder.selectedImage}
 							tracks={boulder.tracks.quarks()}
-							selectedBoulder={props.selectedBoulder}
-							setSelectedItem={props.setSelectedItem}
-							modalable={!!props.selectedBoulder.selectedImage}
+							modalable={!!selectedBoulder.selectedImage}
 							onImageClick={!loading ? addImagesClick : undefined}
 						/>
 					</div>
 
 					<div className="mt-3 flex min-h-max w-full flex-col">
 						<MultipleImageInput
-							ref={(ref) => {
+							ref={useCallback((ref) => {
 								setReactRef(multipleImageInputRef, ref);
 								setReactRef(parentRef, ref);
-							}}
+							}, [parentRef, multipleImageInputRef])}
 							images={boulder.images}
-							selectedBoulder={props.selectedBoulder}
-							selected={props.selectedBoulder.selectedImage?.id}
+							selected={selectedBoulder.selectedImage?.id}
 							rows={1}
 							onImageClick={useCallback(
 								(id) => {
-									selectImage(boulder.images.find((img) => img.id === id)!, props.setSelectedItem)
+									select.image(boulder.images.find((img) => img.id === id)!)
 								},
-								[props.selectedBoulder, boulder, props.setSelectedItem]
+								[select.image, boulder.images]
 							)}
 							allowUpload={displayAddButton}
 							onChange={useCallback(
 								(images) => {
-									props.selectedBoulder.value.set((b) => ({
+									selectedBoulder.value.set((b) => ({
 										...b,
 										images: [...b.images, ...images],
 									}));
-									selectImage(images[0], props.setSelectedItem);
+									select.image(images[0]);
 								},
-								[props.selectedBoulder, boulder, props.setSelectedItem]
+								[selectedBoulder.value, select.image]
 							)}
 							onImageDelete={
 								props.allowDelete
@@ -135,10 +133,10 @@ export const BoulderPreviewDesktop = watchDependencies<
 				<ModalDeleteImage
 					buttonText="Confirmer"
 					imgUrl={staticUrl.deleteWarning}
-					onConfirm={([trackQuarks, uuid]) => {
+					onConfirm={useCallback(([trackQuarks, uuid]) => {
 						deleteTracks(trackQuarks);
 						deleteImage(uuid);
-					}}
+					}, [deleteTrack, deleteImage])}
 				>
 					Tous les passages dessinés sur cette image seront supprimés. Etes-vous
 					sûr de vouloir continuer ?

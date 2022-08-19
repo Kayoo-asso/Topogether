@@ -12,17 +12,11 @@ import { Img, Track } from "types";
 import { TracksImage } from "./TracksImage"; // requires a loader
 import { Portal } from "helpers/hooks";
 import { Image } from "components/atoms";
-import {
-	SelectedBoulder,
-	SelectedItem,
-	selectImage,
-} from "types/SelectedItems";
+import { useSelectStore } from "components/pages/selectStore";
 
 interface ImageSliderProps {
 	images: Img[];
 	tracks: QuarkIter<Quark<Track>>;
-	selectedBoulder: SelectedBoulder;
-	setSelectedItem: Dispatch<SetStateAction<SelectedItem>>;
 	displayPhantomTracks?: boolean;
 	modalable?: boolean;
 }
@@ -33,7 +27,9 @@ export const ImageSlider: React.FC<ImageSliderProps> = watchDependencies(
 		modalable = true,
 		...props
 	}: ImageSliderProps) => {
-		const selectedImage = props.selectedBoulder.selectedImage;
+		const selectedTrack = useSelectStore(s => s.item.type === 'boulder' && s.item.selectedTrack || undefined);
+		const selectedImage = useSelectStore(s => s.item.type === 'boulder' && s.item.selectedImage || undefined);
+		const selectImage = useSelectStore(s => s.select.image);
 		const [portalOpen, setPortalOpen] = useState(false);
 		const [containerRef, setContainerRef] = useState<HTMLDivElement | null>(
 			null
@@ -106,7 +102,7 @@ export const ImageSlider: React.FC<ImageSliderProps> = watchDependencies(
 				const id = (entry.target as any).dataset.imageId;
 
 				const img = props.images.find((i) => i.id === id)!;
-				selectImage(img, props.setSelectedItem);
+				selectImage(img);
 			};
 			const observer = new IntersectionObserver(callback, options);
 			// The children of the container are the images.
@@ -182,10 +178,8 @@ export const ImageSlider: React.FC<ImageSliderProps> = watchDependencies(
 									sizeHint="100vw"
 									image={img}
 									tracks={props.tracks}
-									selectedBoulder={props.selectedBoulder}
-									setSelectedItem={props.setSelectedItem}
 									displayPhantomTracks={displayPhantomTracks}
-									displayTracksDetails={!!props.selectedBoulder.selectedTrack}
+									displayTracksDetails={!!selectedTrack}
 									onImageClick={() => setPortalOpen(modalable)}
 								/>
 							</div>
@@ -209,7 +203,7 @@ export const ImageSlider: React.FC<ImageSliderProps> = watchDependencies(
 										? "border-2 border-main bg-white"
 										: "bg-grey-light bg-opacity-50")
 								}
-								onClick={() => selectImage(img, props.setSelectedItem)}
+								onClick={() => selectImage(img)}
 							></div>
 						))}
 					</div>
@@ -222,10 +216,8 @@ export const ImageSlider: React.FC<ImageSliderProps> = watchDependencies(
 				sizeHint="100vw"
 				image={props.images[0]}
 				tracks={props.tracks}
-				selectedBoulder={props.selectedBoulder}
-				setSelectedItem={props.setSelectedItem}
 				displayPhantomTracks={displayPhantomTracks}
-				displayTracksDetails={!!props.selectedBoulder.selectedTrack}
+				displayTracksDetails={!!selectedTrack}
 				onImageClick={() => setPortalOpen(modalable)}
 			/>
 		);

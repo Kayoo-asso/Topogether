@@ -46,19 +46,19 @@ export const InfoForm: React.FC<InfoFormProps> = watchDependencies(
 							value={topo.image}
 							onChange={useCallback(
 								(images) => {
-									props.topo.set({
-										...props.topo(),
+									props.topo.set(t => ({
+										...t,
 										image: images[0],
-									});
+									}));
 								},
 								[props.topo]
 							)}
-							onDelete={() => {
-								props.topo.set({
-									...topo,
+							onDelete={useCallback(() => {
+								props.topo.set(t => ({
+									...t,
 									image: undefined,
-								});
-							}}
+								}));
+							}, [props.topo])}
 						/>
 					</div>
 					<TextInput
@@ -66,12 +66,12 @@ export const InfoForm: React.FC<InfoFormProps> = watchDependencies(
 						id="topo-name"
 						label="Nom du spot"
 						value={topo.name}
-						onChange={(e) =>
-							props.topo.set({
-								...topo,
+						onChange={useCallback((e) =>
+							props.topo.set(t => ({
+								...t,
 								name: e.target.value as Name,
-							})
-						}
+							}))
+						, [props.topo])}
 					/>
 				</div>
 
@@ -79,12 +79,12 @@ export const InfoForm: React.FC<InfoFormProps> = watchDependencies(
 					id="topo-description"
 					label="Description"
 					value={topo.description}
-					onChange={(e) => {
-						props.topo.set({
-							...topo,
+					onChange={useCallback((e) => {
+						props.topo.set(t => ({
+							...t,
 							description: e.target.value as Description,
-						});
-					}}
+						}));
+					}, [props.topo])}
 				/>
 
 				<BitflagMultipleSelect<RockTypes>
@@ -92,12 +92,12 @@ export const InfoForm: React.FC<InfoFormProps> = watchDependencies(
 					label="Type de roche"
 					bitflagNames={rockNames}
 					value={topo.rockTypes}
-					onChange={(value) => {
-						props.topo.set((t) => ({
+					onChange={useCallback((value) => {
+						props.topo.set(t => ({
 							...t,
-							rockTypes: toggleFlag(topo.rockTypes, value),
+							rockTypes: toggleFlag(t.rockTypes, value),
 						}));
-					}}
+					}, [props.topo])}
 				/>
 
 				<TextInput
@@ -105,12 +105,12 @@ export const InfoForm: React.FC<InfoFormProps> = watchDependencies(
 					label="Altitude (m)"
 					type="number"
 					value={topo.altitude}
-					onChange={(e) =>
-						props.topo.set({
-							...topo,
+					onChange={useCallback((e) =>
+						props.topo.set(t => ({
+							...t,
 							altitude: parseInt(e.target.value),
-						})
-					}
+						}))
+					, [props.topo])}
 				/>
 
 				<Checkbox
@@ -166,28 +166,28 @@ export const InfoForm: React.FC<InfoFormProps> = watchDependencies(
 				<Checkbox
 					label="Autres"
 					checked={!!topo.otherAmenities}
-					onClick={() =>
-						props.topo.set({
-							...topo,
+					onClick={useCallback(() =>
+						props.topo.set(t => ({
+							...t,
 							otherAmenities: (topo.otherAmenities === " "
 								? ""
 								: topo.otherAmenities && topo.otherAmenities.length > 0
 								? topo.otherAmenities
 								: " ") as Description,
-						})
-					}
+						}))
+					, [props.topo])}
 				/>
 				<Show when={() => topo.otherAmenities}>
 					<TextArea
 						id="topo-other-amenities"
 						label="Autres équipements"
 						value={topo.otherAmenities}
-						onChange={(e) =>
-							props.topo.set({
-								...topo,
+						onChange={useCallback((e) =>
+							props.topo.set(t => ({
+								...(topo),
 								otherAmenities: e.target.value as Description,
-							})
-						}
+							}))
+						, [props.topo])}
 					/>
 				</Show>
 			</div>

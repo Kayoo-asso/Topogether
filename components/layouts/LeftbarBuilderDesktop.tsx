@@ -1,15 +1,12 @@
-import React, { Dispatch, SetStateAction } from "react";
+import React from "react";
 import { Button } from "components";
 import { Quark, watchDependencies } from "helpers/quarky";
-import { Boulder, Topo, Track, UUID } from "types";
-import { SelectedBoulder, SelectedItem } from "types/SelectedItems";
+import { Topo, UUID } from "types";
 import { SectorListBuilder } from "components/organisms/builder/SectorListBuilder";
 
 interface LeftbarBuilderDesktopProps {
 	topoQuark: Quark<Topo>;
 	boulderOrder: Map<UUID, number>;
-	selectedBoulder?: SelectedBoulder;
-	setSelectedItem: Dispatch<SetStateAction<SelectedItem>>;
 	map: google.maps.Map | null
 	activateSubmission: boolean;
 	onSubmit: () => void;
@@ -22,8 +19,6 @@ export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> =
 				<SectorListBuilder
 					topoQuark={props.topoQuark}
 					boulderOrder={props.boulderOrder}
-					selectedBoulder={props.selectedBoulder}
-					setSelectedItem={props.setSelectedItem}
 					map={props.map}
 				/>
 

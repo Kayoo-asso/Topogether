@@ -4,12 +4,11 @@ import { Topo } from "types";
 import Clear from "assets/icons/clear.svg";
 import Checked from "assets/icons/checked.svg";
 import { Rule, validateRule, rulesText } from "helpers/topo";
+import { useSelectStore } from "components/pages/selectStore";
 
 interface BuilderProgressIndicatorProps {
 	topo: Quark<Topo>;
 	progress: number;
-	displayInfosTopo: () => void;
-	displayInfosApproach: () => void;
 }
 
 const displayRule = (topo: Topo, key: Rule) => {
@@ -44,6 +43,7 @@ const displayMainRule = (
 export const BuilderProgressIndicator: React.FC<BuilderProgressIndicatorProps> =
 	watchDependencies((props: BuilderProgressIndicatorProps) => {
 		const [open, setOpen] = useState(false);
+		const selectInfo = useSelectStore(s => s.select.info);
 		const ref = useRef<HTMLDivElement>(null);
 
 		useEffect(() => {
@@ -74,7 +74,7 @@ export const BuilderProgressIndicator: React.FC<BuilderProgressIndicatorProps> =
 						<div
 							className="my-2 cursor-pointer"
 							onClick={() => {
-								props.displayInfosTopo();
+								selectInfo("INFO");
 								setOpen(false);
 							}}
 						>
@@ -90,7 +90,7 @@ export const BuilderProgressIndicator: React.FC<BuilderProgressIndicatorProps> =
 						<div
 							className="my-2 cursor-pointer"
 							onClick={() => {
-								props.displayInfosApproach();
+								selectInfo("ACCESS")
 								setOpen(false);
 							}}
 						>

@@ -1,25 +1,25 @@
-import React, { Dispatch, SetStateAction, useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { Button, ImageInput, TextArea, TextInput } from "components";
 import { Quark, watchDependencies } from "helpers/quarky";
-import { Description, Name, Parking, Topo } from "types";
+import { Description, Name, Topo } from "types";
 import { useBreakpoint, useModal } from "helpers/hooks";
 import { staticUrl } from "helpers/constants";
-import { SelectedItem } from "types/SelectedItems";
+import { SelectedParking, useSelectStore } from "components/pages/selectStore";
 
 interface ParkingFormProps {
 	topo: Quark<Topo>
-	parking: Quark<Parking>;
-	setSelectedItem: Dispatch<SetStateAction<SelectedItem>>;
 	className?: string;
-	onDeleteParking: () => void;
 }
 
 export const ParkingForm: React.FC<ParkingFormProps> = watchDependencies(
 	(props: ParkingFormProps) => {
 		const breakpoint = useBreakpoint();
-		const nameInputRef = useRef<HTMLInputElement>(null);
-		const parking = props.parking();
+		const selectedParking = useSelectStore(s => s.item as SelectedParking);
+		const parking = selectedParking.value();
+		const flush = useSelectStore(s => s.flush);
 
+		const nameInputRef = useRef<HTMLInputElement>(null);
+		
 		const [ModalDelete, showModalDelete] = useModal();
 
 		useEffect(() => {
@@ -41,18 +41,18 @@ export const ParkingForm: React.FC<ParkingFormProps> = watchDependencies(
 						<div className="w-28">
 							<ImageInput
 								value={parking.image}
-								onChange={(files) => {
-									props.parking.set({
+								onChange={useCallback((files) => {
+									selectedParking.value.set({
 										...parking,
 										image: files[0],
 									});
-								}}
-								onDelete={() => {
-									props.parking.set({
+								}, [selectedParking.value, parking])}
+								onDelete={useCallback(() => {
+									selectedParking.value.set({
 										...parking,
 										image: undefined,
 									});
-								}}
+								}, [selectedParking.value, parking])}
 							/>
 						</div>
 						<div className="flex h-full flex-col justify-between gap-2">
@@ -62,12 +62,12 @@ export const ParkingForm: React.FC<ParkingFormProps> = watchDependencies(
 								id="parking-name"
 								label="Nom"
 								value={parking.name}
-								onChange={(e) =>
-									props.parking.set({
+								onChange={useCallback((e) =>
+									selectedParking.value.set({
 										...parking,
 										name: e.target.value as Name,
 									})
-								}
+								, [selectedParking.value, parking])}
 							/>
 						</div>
 					</div>
@@ -78,24 +78,24 @@ export const ParkingForm: React.FC<ParkingFormProps> = watchDependencies(
 							label="Latitude"
 							type="number"
 							value={parking.location[1]}
-							onChange={(e) =>
-								props.parking.set({
+							onChange={useCallback((e) =>
+								selectedParking.value.set({
 									...parking,
 									location: [parking.location[0], parseFloat(e.target.value)],
 								})
-							}
+							, [selectedParking.value, parking, parking.location])}
 						/>
 						<TextInput
 							id="parking-longitude"
 							label="Longitude"
 							type="number"
 							value={parking.location[0]}
-							onChange={(e) =>
-								props.parking.set({
+							onChange={useCallback((e) =>
+								selectedParking.value.set({
 									...parking,
 									location: [parseFloat(e.target.value), parking.location[1]],
 								})
-							}
+							, [selectedParking.value, parking, parking.location])}
 						/>
 					</div>
 
@@ -104,24 +104,24 @@ export const ParkingForm: React.FC<ParkingFormProps> = watchDependencies(
 						label="Nombre de places"
 						type="number"
 						value={parking.spaces}
-						onChange={(e) =>
-							props.parking.set({
+						onChange={useCallback((e) =>
+							selectedParking.value.set({
 								...parking,
 								spaces: parseInt(e.target.value),
 							})
-						}
+						, [selectedParking.value, parking])}
 					/>
 
 					<TextArea
 						id="parking-description"
 						label="Description"
 						value={parking.description}
-						onChange={(e) =>
-							props.parking.set({
+						onChange={useCallback((e) =>
+							selectedParking.value.set({
 								...parking,
 								description: e.target.value as Description,
 							})
-						}
+						, [selectedParking.value, parking])}
 					/>
 
 					<div className="flex w-full grow items-end">
@@ -136,13 +136,12 @@ export const ParkingForm: React.FC<ParkingFormProps> = watchDependencies(
 				<ModalDelete
 					buttonText="Confirmer"
 					imgUrl={staticUrl.deleteWarning}
-					onConfirm={() => {
-						props.topo().parkings.removeQuark(props.parking);
-						props.setSelectedItem({ type: 'none' });
-						props.onDeleteParking();
-					}}
+					onConfirm={useCallback(() => {
+						props.topo().parkings.removeQuark(selectedParking.value);
+						breakpoint === 'mobile' ? flush.all() : flush.item();
+					}, [props.topo().parkings, breakpoint, selectedParking.value, flush.all, flush.item])}
 				>
-					Etes-vous sûr de vouloir supprimer le point de repère ?
+					Etes-vous sûr de vouloir supprimer le parking ?
 				</ModalDelete>
 			</>
 		);

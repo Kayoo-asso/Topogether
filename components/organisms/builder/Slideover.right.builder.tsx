@@ -1,19 +1,17 @@
-import React, { Dispatch, SetStateAction, useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { ParkingForm, WaypointForm } from "../form";
 import { Quark } from "helpers/quarky";
-import { Img, Topo } from "types";
+import { Topo } from "types";
 import { useBreakpoint } from "helpers/hooks";
 import { BoulderBuilderContentMobile } from "./BoulderBuilderContent.mobile";
 import { BoulderBuilderContentDesktop } from "./BoulderBuilderContent.desktop";
-import { SelectedItem } from "types/SelectedItems";
 import { SlideoverMobile, SlideoverRightDesktop } from "components/atoms/overlays";
 import { BuilderSlideoverTrackDesktop } from "./BuilderSlideoverTrack.desktop";
 import { Drawer } from "../Drawer";
+import { useSelectStore } from "components/pages/selectStore";
 
 type SlideoverRightBuilderProps = {
 	topo: Quark<Topo>;
-	selectedItem: SelectedItem;
-	setSelectedItem: Dispatch<SetStateAction<SelectedItem>>;
 };
 
 export const SlideoverRightBuilder: React.FC<SlideoverRightBuilderProps> = (
@@ -21,64 +19,55 @@ export const SlideoverRightBuilder: React.FC<SlideoverRightBuilderProps> = (
 ) => {
 	const breakpoint = useBreakpoint();
 	const [full, setFull] = useState(false);
+	const flush = useSelectStore(s => s.flush);
+	const item = useSelectStore(s => s.item);
 
-	const onClose = useCallback(() => {
-		props.setSelectedItem({ type: 'none' });
-	}, [props.setSelectedItem]);
+	const onClose = () => {
+		if (breakpoint === 'mobile') flush.all();
+		else flush.item();
+	};
 
 	const getContent = useCallback(() => {
-		if (props.selectedItem.type !== 'none') {
-			if (props.selectedItem.type === 'boulder') {
+		if (item.type !== 'none') {
+			if (item.type === 'boulder') {
 				if (breakpoint === "mobile")	
 					return (
 						<BoulderBuilderContentMobile
 							topo={props.topo}
-							selectedBoulder={props.selectedItem}
-							setSelectedItem={props.setSelectedItem}
 							full={full}
-							onDeleteBoulder={onClose}
 						/>
 					);
 				return (
 					<BoulderBuilderContentDesktop
 						topo={props.topo}
-						selectedBoulder={props.selectedItem}
-						setSelectedItem={props.setSelectedItem}
-						onDeleteBoulder={onClose}
 					/>
 				);
 			}
-			if (props.selectedItem.type === 'parking')
+			if (item.type === 'parking')
 				return (
 					<ParkingForm
 						topo={props.topo}
-						parking={props.selectedItem.value}
-						setSelectedItem={props.setSelectedItem}
-						onDeleteParking={onClose}
 					/>
 				);
 			else
 				return (
 					<WaypointForm
 						topo={props.topo}
-						waypoint={props.selectedItem.value}
-						setSelectedItem={props.setSelectedItem}
-						onDeleteWaypoint={onClose}
 					/>
 				);
 		} else return undefined;
-	}, [full, breakpoint, props.selectedItem]);
+	}, [full, breakpoint, item]);
 
 	return (
 		<>
 			{breakpoint === "mobile" && (
 				<SlideoverMobile
-					open={props.selectedItem.type !== 'none'}
-					persistent={props.selectedItem.type === 'boulder'}
+					open={item.type !== 'none'}
+					persistent={item.type === 'boulder'}
 					onSizeChange={setFull}
 					onClose={onClose}
 				>
-					<div className={"h-full " + (props.selectedItem.type !== 'boulder' ? 'px-4 py-14' : '')}>
+					<div className={"h-full " + (item.type !== 'boulder' ? 'px-4 py-14' : '')}>
 						{getContent()}
 					</div>
 				</SlideoverMobile>
@@ -86,23 +75,17 @@ export const SlideoverRightBuilder: React.FC<SlideoverRightBuilderProps> = (
 			{breakpoint !== "mobile" && (
 				<>
 					<SlideoverRightDesktop
-						item={props.selectedItem.type === 'boulder' ? props.selectedItem.value() : undefined}
-						open={props.selectedItem.type !== 'none'}
+						item={item.type === 'boulder' ? item.value() : undefined}
+						open={item.type !== 'none'}
 						onClose={onClose}
 					>
 						<div className="h-full">{getContent()}</div>
 					</SlideoverRightDesktop>
 
-					{props.selectedItem.type === 'boulder' && props.selectedItem.selectedTrack &&
+					{item.type === 'boulder' && item.selectedTrack &&
 						<>
-							<BuilderSlideoverTrackDesktop 
-								selectedBoulder={props.selectedItem}
-								setSelectedItem={props.setSelectedItem}
-							/>
-							<Drawer
-								selectedBoulder={props.selectedItem}
-								setSelectedItem={props.setSelectedItem}
-							/>
+							<BuilderSlideoverTrackDesktop />
+							<Drawer />
 						</>
 					}
 				</>

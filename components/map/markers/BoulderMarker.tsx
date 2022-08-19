@@ -1,7 +1,6 @@
 import { MouseEvent, useCallback, useState } from "react";
 import {
 	Quark,
-	SelectQuarkNullable,
 	useCreateQuark,
 	useQuarkyCallback,
 	watchDependencies,
@@ -15,12 +14,11 @@ import {
 } from "types";
 import { boulderChanged } from "helpers/builder";
 import { toLatLng, useMarker, markerSize } from "helpers/map";
-import { SelectedItem } from "types/SelectedItems";
 
 interface BoulderMarkerProps {
 	boulder: Quark<Boulder>;
 	boulderOrder: Map<UUID, number>;
-	selectedItem: SelectedItem,
+	selectedBoulder?: Quark<Boulder>,
 	topo?: Quark<Topo>;
 	draggable?: boolean;
 	onClick?: (boulder: Quark<Boulder>) => void;
@@ -58,7 +56,7 @@ export const isPointerEvent = (
 export const BoulderMarker = watchDependencies(
 	({ draggable = false, ...props }: BoulderMarkerProps) => {
 		const boulder = props.boulder();
-		const selectedBoulder = props.selectedItem.type === 'boulder' ? props.selectedItem.value() : undefined;
+		const selectedBoulder = props.selectedBoulder ? props.selectedBoulder() : undefined;
 		const selected = selectedBoulder?.id === boulder.id;
 
 		const icon: google.maps.Icon = {

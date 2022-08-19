@@ -4,21 +4,22 @@ import { Quark } from "helpers/quarky";
 import { Topo } from "types";
 import { useBreakpoint } from "helpers/hooks";
 import { SlideoverLeftDesktop, SlideoverMobile } from "components/atoms/overlays";
+import { useSelectStore } from "components/pages/selectStore";
 
-export type SelectedInfo = "INFO" | "ACCESS" | "MANAGEMENT";
+
 
 type SlideoverLeftBuilderProps = {
     topo: Quark<Topo>;
-    selectedInfo?: SelectedInfo;
 	className?: string;
-	onClose: () => void;
 }
 
 export const SlideoverLeftBuilder: React.FC<SlideoverLeftBuilderProps> = (props: SlideoverLeftBuilderProps) => {
     const breakpoint = useBreakpoint();
+	const selectedInfo = useSelectStore(s => s.info);
+	const flush = useSelectStore(s => s.flush);
 
     const getTitle = () => {
-        switch (props.selectedInfo) {
+        switch (selectedInfo) {
             case 'INFO': return "Infos du topo";
             case 'ACCESS': return "Marche d'approche";
             case 'MANAGEMENT': return "Gestionnaires du site";
@@ -27,7 +28,7 @@ export const SlideoverLeftBuilder: React.FC<SlideoverLeftBuilderProps> = (props:
     }
 
     const getContent = () => {
-        switch (props.selectedInfo) {
+        switch (selectedInfo) {
             case 'INFO': return <InfoForm topo={props.topo} />;
             case 'ACCESS': return <AccessForm topo={props.topo} />;
             case 'MANAGEMENT': return <ManagementForm topo={props.topo} />;
@@ -35,12 +36,17 @@ export const SlideoverLeftBuilder: React.FC<SlideoverLeftBuilderProps> = (props:
         }
     }
 
+	const onClose = () => {
+		if (breakpoint === 'mobile') flush.all();
+		else flush.info()
+	}
+
 	return (
 		<>
 			{breakpoint === "mobile" && (
 				<SlideoverMobile 
-					open={!!props.selectedInfo}
-					onClose={props.onClose}
+					open={selectedInfo !== 'NONE'}
+					onClose={onClose}
 				>
 					<div className={"h-full pl-6 pr-3 py-14 " + (props.className || '')}>
                         <div className="ktext-title mb-6">{getTitle()}</div>
@@ -52,8 +58,8 @@ export const SlideoverLeftBuilder: React.FC<SlideoverLeftBuilderProps> = (props:
 				<SlideoverLeftDesktop
 					title={getTitle()}
 					className={props.className}
-					open={!!props.selectedInfo}
-					onClose={props.onClose}
+					open={selectedInfo !== 'NONE'}
+					onClose={onClose}
 				>
 					{getContent()}
 				</SlideoverLeftDesktop>

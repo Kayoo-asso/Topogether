@@ -3,19 +3,18 @@ import { Img, Track, UUID } from "types";
 // eslint-disable-next-line import/no-cycle
 import { DeleteButton, TracksImage } from "components";
 import { Quark, QuarkIter, watchDependencies } from "helpers/quarky";
-import { SelectedBoulder } from "components/organisms/builder/Slideover.right.builder";
 
 interface ImageThumbProps {
 	image: Img;
 	tracks?: QuarkIter<Quark<Track>>;
 	selected?: boolean;
-	selectedBoulder?: SelectedBoulder;
 	onDelete?: (id: UUID) => void;
 	onClick?: (id: UUID) => void;
 }
 
 export const ImageThumb: React.FC<ImageThumbProps> = watchDependencies(
 	({ selected = false, ...props }: ImageThumbProps) => {
+
 		return (
 			<div
 				className={`${selected ? "border-main" : "border-dark"}${
@@ -23,7 +22,6 @@ export const ImageThumb: React.FC<ImageThumbProps> = watchDependencies(
 				} \
       			group relative h-[73px] w-[73px] border-2`}
 				onClick={() => props.onClick && props.onClick(props.image.id)}
-				// }}
 			>
 				{props.onDelete && (
 					<div
@@ -39,7 +37,6 @@ export const ImageThumb: React.FC<ImageThumbProps> = watchDependencies(
 				<TracksImage
 					image={props.image}
 					tracks={props.tracks || new QuarkIter([])}
-					selectedBoulder={props.selectedBoulder}
 					displayTracks
 					displayTrackOrderIndexes={true}
 					objectFit="contain"

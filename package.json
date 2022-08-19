@@ -37,7 +37,8 @@
 		"react-quick-pinch-zoom": "^4.4.1",
 		"slick-carousel": "^1.8.1",
 		"trigram-search": "^1.0.2",
-		"uuid": "^8.3.2"
+		"uuid": "^8.3.2",
+		"zustand": "^4.0.0"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.16.7",

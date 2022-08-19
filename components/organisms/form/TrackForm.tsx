@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { Button, Checkbox, Select, TextArea, TextInput } from "components";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { Boulder, ClimbTechniques, Description, Name, Track } from "types";
@@ -8,13 +8,9 @@ import { ClimbTechniquesName, toggleFlag } from "helpers/bitflags";
 import { useBreakpoint, useModal } from "helpers/hooks";
 import { staticUrl } from "helpers/constants";
 import { deleteTrack } from "helpers/builder";
-import { SelectedBoulder, SelectedItem } from "types/SelectedItems";
+import { SelectedBoulder, useSelectStore } from "components/pages/selectStore";
 
 interface TrackFormProps {
-	boulder: Boulder,
-	track: Quark<Track>,
-	selectedBoulder?: SelectedBoulder,
-	setSelectedItem: Dispatch<SetStateAction<SelectedItem>>;
 	className?: string,
 }
 
@@ -23,7 +19,12 @@ export const TrackForm: React.FC<TrackFormProps> = watchDependencies(
 		const breakpoint = useBreakpoint();
 		const nameInputRef = useRef<HTMLInputElement>(null);
 		const [ModalDelete, showModalDelete] = useModal();
-		const track = props.track();
+
+		const selectedBoulder = useSelectStore(s => s.item as SelectedBoulder);
+		if (!selectedBoulder.selectedTrack) throw new Error("Trying to open TrackForm without any track");
+		const flushTrack = useSelectStore(s => s.flush.track);
+		const trackQuark = selectedBoulder.selectedTrack;
+		const track = trackQuark();
 
 		useEffect(() => {
 			if (breakpoint === "desktop" && nameInputRef.current) {
@@ -46,7 +47,7 @@ export const TrackForm: React.FC<TrackFormProps> = watchDependencies(
 						label="Nom de la voie"
 						value={track.name}
 						onChange={(e) =>
-							props.track.set({
+							trackQuark.set({
 								...track,
 								name: e.target.value as Name,
 							})
@@ -58,7 +59,7 @@ export const TrackForm: React.FC<TrackFormProps> = watchDependencies(
 							label="Traversée"
 							checked={track.isTraverse}
 							onClick={(checked) =>
-								props.track.set({
+								trackQuark.set({
 									...track,
 									isTraverse: checked,
 								})
@@ -68,7 +69,7 @@ export const TrackForm: React.FC<TrackFormProps> = watchDependencies(
 							label="Départ assis"
 							checked={track.isSittingStart}
 							onClick={(checked) =>
-								props.track.set({
+								trackQuark.set({
 									...track,
 									isSittingStart: checked,
 								})
@@ -78,7 +79,7 @@ export const TrackForm: React.FC<TrackFormProps> = watchDependencies(
 							label="Incontournable"
 							checked={track.mustSee}
 							onClick={(checked) =>
-								props.track.set({
+								trackQuark.set({
 									...track,
 									mustSee: checked,
 								})
@@ -92,7 +93,7 @@ export const TrackForm: React.FC<TrackFormProps> = watchDependencies(
 						bitflagNames={ClimbTechniquesName}
 						value={track.techniques}
 						onChange={(value) => {
-							props.track.set((t) => ({
+							trackQuark.set((t) => ({
 								...t,
 								techniques: toggleFlag(track.techniques, value),
 							}));
@@ -106,7 +107,7 @@ export const TrackForm: React.FC<TrackFormProps> = watchDependencies(
 						options={selectOptions(ReceptionName)}
 						value={track.reception}
 						onChange={(value) =>
-							props.track.set({
+							trackQuark.set({
 								...track,
 								reception: value,
 							})
@@ -120,7 +121,7 @@ export const TrackForm: React.FC<TrackFormProps> = watchDependencies(
 						step="any"
 						value={track.height}
 						onChange={(e) =>
-							props.track.set({
+							trackQuark.set({
 								...track,
 								height: parseFloat(e.target.value),
 							})
@@ -132,7 +133,7 @@ export const TrackForm: React.FC<TrackFormProps> = watchDependencies(
 						label="Description"
 						value={track.description}
 						onChange={(e) =>
-							props.track.set({
+							trackQuark.set({
 								...track,
 								description: e.target.value as Description,
 							})
@@ -151,7 +152,7 @@ export const TrackForm: React.FC<TrackFormProps> = watchDependencies(
 				<ModalDelete
 					buttonText="Confirmer"
 					imgUrl={staticUrl.deleteWarning}
-					onConfirm={() => deleteTrack(props.boulder, props.track, props.setSelectedItem, props.selectedBoulder)}
+					onConfirm={() => deleteTrack(selectedBoulder.value(), trackQuark, flushTrack, selectedBoulder)}
 				>
 					Etes-vous sûr de vouloir supprimer la voie ?
 				</ModalDelete>
