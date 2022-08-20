@@ -6,8 +6,8 @@ import { watchDependencies } from "helpers/quarky";
 import { useAuth } from "helpers/services";
 
 import TopoIcon from "assets/icons/topo.svg";
-import UserIcon from "assets/icons/user-mobile.svg";
-import WaypointIcon from "assets/icons/waypoint.svg";
+import UserIcon from "assets/icons/user.svg";
+import MarkerIcon from "assets/icons/marker-stroke.svg";
 
 export const ShellMobile: React.FC = watchDependencies(() => {
 	const router = useRouter();
@@ -32,7 +32,7 @@ export const ShellMobile: React.FC = watchDependencies(() => {
 					>
 						<UserIcon
 							className={`h-5 w-5 ${
-								activeTab === 0 ? "fill-main" : "fill-white"
+								activeTab === 0 ? "stroke-main" : "stroke-white"
 							} `}
 						/>
 					</a>
@@ -45,9 +45,9 @@ export const ShellMobile: React.FC = watchDependencies(() => {
 							activeTab === 1 ? "border-t-6 border-t-main" : ""
 						}`}
 					>
-						<WaypointIcon
-							className={`h-5 w-5 stroke-1 ${
-								activeTab === 1 ? "fill-main" : "fill-white"
+						<MarkerIcon
+							className={`h-6 w-6 stroke-1 ${
+								activeTab === 1 ? "stroke-main" : "stroke-white"
 							} `}
 						/>
 					</a>

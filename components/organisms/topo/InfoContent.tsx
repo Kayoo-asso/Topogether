@@ -10,7 +10,7 @@ import { Amenities, Topo } from "types";
 import { listRockTypes, hasFlag } from "helpers/bitflags";
 import { TopoTypeToColor } from "helpers/topo";
 
-import WaypointIcon from "assets/icons/waypoint.svg";
+import Marker from "assets/icons/marker.svg";
 import Rock from "assets/icons/rock.svg";
 import ManyTracks from "assets/icons/many-tracks.svg";
 import Toilets from "assets/icons/toilets.svg";
@@ -59,7 +59,7 @@ export const InfoContent: React.FC<InfoContentProps> = (props: InfoContentProps)
 
 					<div className="ktext-big-title mt-4 flex flex-row items-center text-center">
 						<div className="mr-2 hidden md:inline">
-							<WaypointIcon className={"h-6 w-6 " + TopoTypeToColor(topo.type)} />
+							<Marker className={"h-6 w-6 " + TopoTypeToColor(topo.type)} />
 						</div>
 						{topo.name}
 					</div>

@@ -22,7 +22,7 @@ import {
 	getUserInitialProps,
 } from "helpers/serverStuff";
 
-import Profile from "assets/icons/user-mobile.svg";
+import UserIcon from "assets/icons/user.svg";
 import Heart from "assets/icons/heart.svg";
 import Download from "assets/icons/download.svg";
 
@@ -143,7 +143,7 @@ const ProfilePage = withRouting<ProfileProps>({
 							<Tabs
 								tabs={[
 									{
-										icon: Profile,
+										icon: UserIcon,
 										iconFill: true,
 										iconClassName: "w-6 h-6",
 										color: "main",

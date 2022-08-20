@@ -5,7 +5,7 @@ import { watchDependencies } from "helpers/quarky";
 import { useSession } from "helpers/services";
 
 import TopoIcon from "assets/icons/topo.svg";
-import WaypointIcon from "assets/icons/waypoint.svg";
+import MarkerIcon from "assets/icons/marker-stroke.svg";
 import UserIcon from "assets/icons/user.svg";
 import KeyIcon from "assets/icons/key.svg";
 
@@ -45,9 +45,9 @@ export const LeftbarDesktop: React.FC<LeftbarDesktopProps> = watchDependencies(
 					</Link>
 					<Link href="/">
 						<a className="flex flex-row">
-							<WaypointIcon
-								className={`mr-4 h-6 w-6 ${
-									currentMenuItem === "MAP" ? "fill-main" : "fill-dark"
+							<MarkerIcon
+								className={`mr-4 h-6 w-6 stroke-2 ${
+									currentMenuItem === "MAP" ? "stroke-main" : "stroke-dark"
 								}`}
 							/>
 							<span
