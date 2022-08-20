@@ -212,7 +212,7 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> =
 																				toggleBoulder(boulder);
 																			}}
 																			onDeleteClick={() => showModalDeleteBoulder(boulderQuark) }
-																			onTrackClick={(trackQuark) => selectStore.select.track(trackQuark, boulderQuark) }
+																			onTrackClick={(trackQuark) => selectStore.select.track(trackQuark, boulderQuark)}
 																			displayCreateTrack
 																			onCreateTrack={() =>
 																				createTrack(boulder, session.id)

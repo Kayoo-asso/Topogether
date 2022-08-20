@@ -1,23 +1,15 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import { QuarkArray } from "helpers/quarky";
 import { Manager } from "types";
 import { Image } from "components/atoms/Image";
-import { SlideoverMobile, SlideoverLeftDesktop, Flash } from "components/atoms";
+import { Flash } from "components/atoms";
 import { TabOption, Tabs } from "components/layouts/Tabs";
-import { useBreakpoint } from "helpers/hooks";
 
-interface ManagementSlideoverProps {
+interface ManagementContentProps {
 	managers: QuarkArray<Manager>;
-	open?: boolean;
-	className?: string;
-	onClose: () => void;
 }
 
-export const ManagementSlideover: React.FC<ManagementSlideoverProps> = ({
-	open = true,
-	...props
-}: ManagementSlideoverProps) => {
-	const breakpoint = useBreakpoint();
+export const ManagementContent: React.FC<ManagementContentProps> = (props: ManagementContentProps) => {
 	const [flashMessage, setFlashMessage] = useState<string>();
 	const [managerTab, setManagerTab] = useState(0);
 	const manager = props.managers
@@ -36,9 +28,9 @@ export const ManagementSlideover: React.FC<ManagementSlideoverProps> = ({
 		return tabs;
 	};
 
-	const managementContent = () => {
-		if (!manager)
-			return (
+	return (
+		<>
+			{!manager &&
 				<div className="flex h-full flex-col pt-5 md:pt-0">
 					<div className="flex flex-col px-6 pt-5 md:px-0 md:pt-0">
 						<div className="ktext-big-title mt-4 mb-6 w-full text-center md:mb-3">
@@ -46,9 +38,8 @@ export const ManagementSlideover: React.FC<ManagementSlideoverProps> = ({
 						</div>
 					</div>
 				</div>
-			);
-		else
-			return (
+			}
+			{manager &&
 				<div className="flex h-full flex-col pt-5 md:pt-0">
 					<div className="flex flex-col px-6 pt-5 md:px-0 md:pt-0">
 						<div className="ktext-big-title mt-4 mb-6 w-full text-center md:hidden">
@@ -123,28 +114,7 @@ export const ManagementSlideover: React.FC<ManagementSlideoverProps> = ({
 						</div>
 					</div>
 				</div>
-			);
-	};
-
-	return (
-		<>
-			{breakpoint === "mobile" && (
-				<SlideoverMobile onClose={props.onClose}>
-					{managementContent()}
-				</SlideoverMobile>
-			)}
-			{breakpoint !== "mobile" && (
-				<SlideoverLeftDesktop
-					title={
-						"Gestionnaire" + (props.managers.length > 1 ? "s" : "") + " du spot"
-					}
-					open={open}
-					onClose={props.onClose}
-					className={props.className}
-				>
-					{managementContent()}
-				</SlideoverLeftDesktop>
-			)}
+			}
 
 			<Flash open={!!flashMessage} onClose={() => setFlashMessage(undefined)}>
 				{flashMessage}
@@ -152,3 +122,5 @@ export const ManagementSlideover: React.FC<ManagementSlideoverProps> = ({
 		</>
 	);
 };
+
+ManagementContent.displayName = 'ManagementContent'

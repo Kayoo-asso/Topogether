@@ -7,9 +7,7 @@ type SlideoverLeftDesktopProps = React.PropsWithChildren<{
 	className?: string;
 }>;
 
-export const SlideoverLeftDesktop: React.FC<SlideoverLeftDesktopProps> = ({
-	...props
-}: SlideoverLeftDesktopProps) => {
+export const SlideoverLeftDesktop: React.FC<SlideoverLeftDesktopProps> = (props: SlideoverLeftDesktopProps) => {
 	const translateX = props.open ? 0 : 100;
 
 	return (

@@ -1,79 +1,40 @@
-import React, { Dispatch, SetStateAction, useMemo, useState } from "react";
+import React, { useState } from "react";
 import {
 	GradeScale,
 	LikeButton,
-	SlideoverMobile,
 	Show,
 	ImageSlider,
 } from "components";
-import { Boulder, Img, Track, UUID } from "types";
-import { Quark, watchDependencies, SelectQuarkNullable } from "helpers/quarky";
-import { TracksList } from "..";
+import { UUID } from "types";
+import { watchDependencies } from "helpers/quarky";
 import { Image } from "components/atoms/Image";
 import ManyTracks from "assets/icons/many-tracks.svg";
 import AddIcon from "assets/icons/add.svg";
+import { SelectedBoulder, useSelectStore } from "components/pages/selectStore";
+import { TracksList } from "./TracksList";
 
-interface BoulderSlideoverMobileProps {
-	boulder: Quark<Boulder>;
-	open?: boolean;
-	selectedTrack: SelectQuarkNullable<Track>;
-	topoCreatorId?: UUID;
-	currentImage?: Img;
-	setCurrentImage: Dispatch<SetStateAction<Img | undefined>>;
-	onClose: () => void;
+interface BoulderContentMobileProps {
+	full: boolean,
+	topoCreatorId: UUID;
 }
 
-export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> =
-	watchDependencies(
-		({ open = true, ...props }: BoulderSlideoverMobileProps) => {
-			const [full, setFull] = useState(false);
+export const BoulderContentMobile: React.FC<BoulderContentMobileProps> =
+	watchDependencies((props: BoulderContentMobileProps) => {
 			const [officialTrackTab, setOfficialTrackTab] = useState(true);
 
-			const boulder = props.boulder();
-			const selectedTrack = props.selectedTrack();
+			const selectedBoulder = useSelectStore(s => s.item as SelectedBoulder);
+			const boulder = selectedBoulder.value();
 
 			const [displayPhantomTracks, setDisplayPhantomTracks] = useState(false);
-			const displayedTracks = useMemo(
-				() =>
-					boulder.tracks
-						.quarks()
-						.filter(
-							(track) =>
-								(track().creatorId === props.topoCreatorId) === officialTrackTab
-						),
-				[boulder.tracks, props.topoCreatorId, officialTrackTab]
-			);
-
-			// const sortBoulderImages = (boulder: Boulder) => {
-			//   console.log(boulder.images);
-			//   const buff: { img: Image, idx: number }[] = [];
-			//   for (const img of boulder.images) {
-			//     buff.push({
-			//       img,
-			//       idx: boulder.tracks.find(t => !!t.lines?.find(l => l.imageId === img.id))?.index || boulder.images.length + 1
-			//     })
-			//   }
-			//   const newImgs = buff.sort((b1, b2) => (b2.idx - b1.idx)).map(b => b.img);
-			//   console.log(newImgs);
-			// }
-			// sortBoulderImages(boulder);
 
 			return (
-				<SlideoverMobile
-					persistent
-					onSizeChange={setFull}
-					onClose={props.onClose}
-				>
+				<>
 					{/* BOULDER IMAGE */}
-					{full && (
+					{props.full && (
 						<div className="relative flex max-h-[40%] w-full overflow-hidden rounded-t-lg bg-dark">
 							<ImageSlider
 								images={boulder.images}
-								currentImage={props.currentImage}
-								setCurrentImage={props.setCurrentImage}
 								tracks={boulder.tracks.quarks()}
-								selectedTrack={props.selectedTrack}
-								displayPhantomTracks={displayPhantomTracks}
 							/>
 						</div>
 					)}
@@ -82,18 +43,18 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> =
 						{/* BOULDER INFOS */}
 						<div
 							className={`grid grid-cols-8 items-center p-5 ${
-								full ? "" : " mt-3"
+								props.full ? "" : " mt-3"
 							}`}
 						>
 							<div className="col-span-6">
 								<div className="ktext-section-title">{boulder.name}</div>
-								{boulder.isHighball && full && (
+								{boulder.isHighball && props.full && (
 									<div className="ktext-base-little">High Ball</div>
 								)}
-								{boulder.dangerousDescent && full && (
+								{boulder.dangerousDescent && props.full && (
 									<div className="ktext-base-little">Descente dangereuse !</div>
 								)}
-								{!full && (
+								{!props.full && (
 									<div className="mt-2 flex items-center">
 										<GradeScale boulder={boulder} circleSize="little" />
 									</div>
@@ -101,7 +62,7 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> =
 							</div>
 
 							<div className="col-span-2 flex flex-row justify-end gap-5">
-								{selectedTrack && boulder.tracks.length > 1 && (
+								{selectedBoulder.selectedTrack && boulder.tracks.length > 1 && (
 									<button
 										onClick={() =>
 											setDisplayPhantomTracks(!displayPhantomTracks)
@@ -118,9 +79,9 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> =
 										Image
 									</button>
 								)}
-								{full && <LikeButton liked={boulder.liked} />}
+								{props.full && <LikeButton liked={boulder.liked} />}
 
-								{!full && (
+								{!props.full && (
 									<div className="relative h-[60px] w-full overflow-hidden rounded-sm">
 										<Image
 											image={boulder.images[0]}
@@ -135,7 +96,7 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> =
 
 						{/* TODO : show once good pattern */}
 						{/* TABS */}
-						{full && (
+						{props.full && (
 							<div className="ktext-label my-2 flex w-full flex-row gap-8 px-5 font-bold">
 								<span
 									className={`${
@@ -164,30 +125,19 @@ export const BoulderSlideoverMobile: React.FC<BoulderSlideoverMobileProps> =
 						)}
 
 						{/* TRACKSLIST */}
-						<Show when={() => full}>
+						<Show when={() => props.full}>
 							<div className="overflow-auto pb-[30px]">
 								<TracksList
-									tracks={displayedTracks}
-									selectedTrack={props.selectedTrack}
-									onTrackClick={(trackQuark) => {
-										if (props.selectedTrack()?.id === trackQuark().id)
-											props.selectedTrack.select(undefined);
-										else {
-											const newImageIndex = boulder.images.findIndex(
-												(img) => img.id === trackQuark().lines?.at(0).imageId
-											);
-											if (newImageIndex > -1)
-												props.setCurrentImage(boulder.images[newImageIndex]);
-											props.selectedTrack.select(trackQuark);
-										}
-									}}
+									official={officialTrackTab}
+									topoCreatorId={props.topoCreatorId}
 								/>
 							</div>
 						</Show>
 					</div>
-				</SlideoverMobile>
+				</>
 			);
 		}
+		
 	);
 
-BoulderSlideoverMobile.displayName = "BoulderSlideoverMobile";
+	BoulderContentMobile.displayName = "BoulderContentMobile";

@@ -32,6 +32,7 @@ export const TracksListBuilder: React.FC<TracksListBuilderProps> =
 		const session = useSession();
 		if (!session) return null;
 		const breakpoint = useBreakpoint();
+		
 		const select = useSelectStore(s => s.select);
 		const flushTrack = useSelectStore(s => s.flush.track);
 		const selectedBoulder = useSelectStore(s => s.item as SelectedBoulder);

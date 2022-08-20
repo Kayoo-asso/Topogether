@@ -1,13 +1,13 @@
 import React, { useCallback } from "react";
 import { Button, ImageInput, TextArea, TextInput } from "components";
-import { Quark, watchDependencies } from "helpers/quarky";
-import { Description, Name, Topo } from "types";
+import { QuarkArray, watchDependencies } from "helpers/quarky";
+import { Description, Name, Waypoint } from "types";
 import { useBreakpoint, useModal } from "helpers/hooks";
 import { staticUrl } from "helpers/constants";
 import { SelectedWaypoint, useSelectStore } from "components/pages/selectStore";
 
 interface WaypointFormProps {
-	topo: Quark<Topo>;
+	waypoints: QuarkArray<Waypoint>;
 	className?: string;
 }
 
@@ -115,9 +115,9 @@ export const WaypointForm: React.FC<WaypointFormProps> = watchDependencies(
 					buttonText="Confirmer"
 					imgUrl={staticUrl.deleteWarning}
 					onConfirm={useCallback(() => {
-						props.topo().waypoints.removeQuark(selectedWaypoint.value);
+						props.waypoints.removeQuark(selectedWaypoint.value);
 						breakpoint === 'mobile' ? flush.all() : flush.item();
-					}, [props.topo().waypoints, selectedWaypoint.value, breakpoint, flush.all, flush.item])}
+					}, [props.waypoints, selectedWaypoint.value, breakpoint, flush.all, flush.item])}
 				>
 					Etes-vous sûr de vouloir supprimer le point de repère ?
 				</ModalDelete>

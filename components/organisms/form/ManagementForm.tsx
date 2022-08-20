@@ -1,27 +1,26 @@
 import React, { useCallback } from "react";
 import { ImageInput, TextArea, TextInput } from "components";
-import { Quark, watchDependencies } from "helpers/quarky";
-import { Description, Email, Name, Topo } from "types";
+import { Quark, QuarkArray, watchDependencies } from "helpers/quarky";
+import { Description, Email, Manager, Name, Topo } from "types";
 import { Button } from "components/atoms";
 import { v4 } from "uuid";
 
 interface ManagementFormProps {
-	topo: Quark<Topo>;
+	managers: QuarkArray<Manager>
 	className?: string;
 }
 
 export const ManagementForm: React.FC<ManagementFormProps> = watchDependencies(
 	(props: ManagementFormProps) => {
-		const managers = props.topo().managers
 
-		if (managers.length < 1) {
+		if (props.managers.length < 1) {
 			return (
 				<div className="w-full pt-[10%]" onClick={(e) => e.stopPropagation()}>
 					<Button
 						content="Ajouter un gestionnaire"
 						fullWidth
 						onClick={() => {
-							managers.push({
+							props.managers.push({
 								id: v4(),
 								name: "" as Name,
 								contactName: "" as Name,
@@ -31,7 +30,7 @@ export const ManagementForm: React.FC<ManagementFormProps> = watchDependencies(
 				</div>
 			);
 		} else {
-			const managerQuark = managers.quarkAt(0);
+			const managerQuark = props.managers.quarkAt(0);
 			const manager = managerQuark();
 			return (
 				<div
@@ -160,8 +159,8 @@ export const ManagementForm: React.FC<ManagementFormProps> = watchDependencies(
 					<Button
 						content="Supprimer"
 						onClick={useCallback(() => 
-							managers.removeQuark(managerQuark), 
-						[managers, managerQuark])}
+							props.managers.removeQuark(managerQuark), 
+						[props.managers, managerQuark])}
 					/>
 				</div>
 			);

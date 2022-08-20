@@ -1,17 +1,12 @@
 import React from "react";
-import { Quark, SelectQuarkNullable, watchDependencies } from "helpers/quarky";
-import { Boulder, Topo, Track, UUID } from "types";
+import { Quark, watchDependencies } from "helpers/quarky";
+import { Topo, UUID } from "types";
 import { SectorList } from "components";
 
 interface LeftbarTopoDesktopProps {
 	topoQuark: Quark<Topo>;
 	boulderOrder: Map<UUID, number>;
-	selectedBoulder: SelectQuarkNullable<Boulder>;
-	onBoulderSelect: (boulderQuark: Quark<Boulder>) => void;
-	onTrackSelect: (
-		trackQuark: Quark<Track>,
-		boulderQuark: Quark<Boulder>
-	) => void;
+	map: google.maps.Map | null;
 }
 
 export const LeftbarTopoDesktop: React.FC<LeftbarTopoDesktopProps> =
@@ -21,9 +16,7 @@ export const LeftbarTopoDesktop: React.FC<LeftbarTopoDesktopProps> =
 				<SectorList
 					topoQuark={props.topoQuark}
 					boulderOrder={props.boulderOrder}
-					selectedBoulder={props.selectedBoulder}
-					onBoulderSelect={props.onBoulderSelect}
-					onTrackSelect={props.onTrackSelect}
+					map={props.map}
 				/>
 			</div>
 		);

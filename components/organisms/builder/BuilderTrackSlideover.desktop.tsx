@@ -4,7 +4,7 @@ import { TrackForm } from "../form/TrackForm";
 import { SlideoverRightDesktop } from "components/atoms/overlays";
 import { SelectedBoulder, useSelectStore } from "components/pages/selectStore";
 
-export const BuilderSlideoverTrackDesktop: React.FC =
+export const BuilderTrackSlideoverDesktop: React.FC =
 	watchDependencies(() => {
 		const selectedTrack = useSelectStore(s => s.item as SelectedBoulder).selectedTrack;
 		const flushTrack = useSelectStore(s => s.flush.track);
@@ -25,4 +25,4 @@ export const BuilderSlideoverTrackDesktop: React.FC =
 		);
 	});
 
-	BuilderSlideoverTrackDesktop.displayName = "BuilderSlideoverTrackDesktop";
+	BuilderTrackSlideoverDesktop.displayName = "BuilderTrackSlideoverDesktop";

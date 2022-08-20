@@ -1,26 +1,17 @@
 import React, { useState } from "react";
-import { Flash, SlideagainstRightDesktop, SlideoverMobile } from "components";
+import { Flash } from "components";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { Waypoint } from "types";
-import { useBreakpoint } from "helpers/hooks";
 import { Image } from "components/atoms/Image";
+import { useSelectStore } from "components/pages/selectStore";
 
 import HelpRound from "assets/icons/help-round.svg";
 
-interface WaypointSlideProps {
-	open: boolean;
-	waypoint: Quark<Waypoint>;
-	onClose?: () => void;
-}
-
-export const WaypointSlide: React.FC<WaypointSlideProps> = watchDependencies(
-	({ open = true, ...props }: WaypointSlideProps) => {
-		const breakpoint = useBreakpoint();
-
+export const WaypointContent: React.FC = watchDependencies(() => {
 		const [flashMessage, setFlashMessage] = useState<string>();
-		const waypoint = props.waypoint();
+		const waypoint = useSelectStore(s => s.item.value as Quark<Waypoint>)();
 
-		const waypointContent = () => (
+		return (
 			<>
 				<div className="flex h-[90%] flex-col gap-6 pt-10 md:h-[85%] md:pt-0">
 					<div className="flex flex-col items-center px-6 md:items-start">
@@ -73,21 +64,6 @@ export const WaypointSlide: React.FC<WaypointSlideProps> = watchDependencies(
 
 					<div className="ktext-base-little px-6">{waypoint.description}</div>
 				</div>
-			</>
-		);
-
-		return (
-			<>
-				{breakpoint === "mobile" && (
-					<SlideoverMobile onClose={props.onClose}>
-						{waypointContent()}
-					</SlideoverMobile>
-				)}
-				{breakpoint !== "mobile" && (
-					<SlideagainstRightDesktop open onClose={props.onClose}>
-						{waypointContent()}
-					</SlideagainstRightDesktop>
-				)}
 
 				<Flash open={!!flashMessage} onClose={() => setFlashMessage(undefined)}>
 					{flashMessage}
@@ -97,4 +73,4 @@ export const WaypointSlide: React.FC<WaypointSlideProps> = watchDependencies(
 	}
 );
 
-WaypointSlide.displayName = "WaypointSlide";
+WaypointContent.displayName = "WaypointContent";

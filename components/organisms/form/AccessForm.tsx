@@ -1,26 +1,25 @@
 import React, { useCallback } from "react";
 import { Button, ImageInput, Select, TextArea, TextInput } from "components";
-import { Quark, watchDependencies } from "helpers/quarky";
-import { Description, Difficulty, Topo } from "types";
+import { QuarkArray, watchDependencies } from "helpers/quarky";
+import { Description, Difficulty, TopoAccess } from "types";
 import { DifficultyName, selectOptions } from "types/EnumNames";
 import { v4 } from "uuid";
 
 interface AccessFormProps {
-	topo: Quark<Topo>;
+	accesses: QuarkArray<TopoAccess>;
 	className?: string;
 }
 
 export const AccessForm: React.FC<AccessFormProps> = watchDependencies(
 	(props: AccessFormProps) => {
-		const accesses = props.topo().accesses;
-		if (accesses.length < 1) {
+		if (props.accesses.length < 1) {
 			return (
 				<div className="w-full pt-[10%]" onClick={(e) => e.stopPropagation()}>
 					<Button
 						content="Ajouter une marche d'approche"
 						fullWidth
 						onClick={() => {
-							accesses.push({
+							props.accesses.push({
 								id: v4(),
 								steps: [],
 							})
@@ -29,7 +28,7 @@ export const AccessForm: React.FC<AccessFormProps> = watchDependencies(
 				</div>
 			);
 		} else {
-			const accessQuark = accesses.quarkAt(0);
+			const accessQuark = props.accesses.quarkAt(0);
 			const access = accessQuark();
 			return (
 				<>
@@ -136,7 +135,7 @@ export const AccessForm: React.FC<AccessFormProps> = watchDependencies(
 					<Button
 						content="Supprimer"
 						fullWidth
-						onClick={useCallback(() => accesses.removeQuark(accessQuark), [accesses, accessQuark])}
+						onClick={useCallback(() => props.accesses.removeQuark(accessQuark), [props.accesses, accessQuark])}
 					/>
 				</>
 			);

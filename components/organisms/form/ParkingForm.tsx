@@ -1,13 +1,13 @@
 import React, { useCallback } from "react";
 import { Button, ImageInput, TextArea, TextInput } from "components";
-import { Quark, watchDependencies } from "helpers/quarky";
-import { Description, Name, Topo } from "types";
+import { QuarkArray, watchDependencies } from "helpers/quarky";
+import { Description, Name, Parking } from "types";
 import { useBreakpoint, useModal } from "helpers/hooks";
 import { staticUrl } from "helpers/constants";
 import { SelectedParking, useSelectStore } from "components/pages/selectStore";
 
 interface ParkingFormProps {
-	topo: Quark<Topo>
+	parkings: QuarkArray<Parking>
 	className?: string;
 }
 
@@ -128,9 +128,9 @@ export const ParkingForm: React.FC<ParkingFormProps> = watchDependencies(
 					buttonText="Confirmer"
 					imgUrl={staticUrl.deleteWarning}
 					onConfirm={useCallback(() => {
-						props.topo().parkings.removeQuark(selectedParking.value);
+						props.parkings.removeQuark(selectedParking.value);
 						breakpoint === 'mobile' ? flush.all() : flush.item();
-					}, [props.topo().parkings, breakpoint, selectedParking.value, flush.all, flush.item])}
+					}, [props.parkings, breakpoint, selectedParking.value, flush.all, flush.item])}
 				>
 					Etes-vous sûr de vouloir supprimer le parking ?
 				</ModalDelete>

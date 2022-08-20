@@ -48,6 +48,7 @@ import { BuilderMarkers } from "components/organisms/builder/BuilderMarkers";
 import { InteractItem, useSelectStore } from "./selectStore";
 import { SyncUrl } from "components/organisms/SyncUrl";
 import { KeyboardShortcut } from "components/organisms/builder/KeyboardShortcuts";
+import { DropdownOption } from "components/molecules";
 
 interface RootBuilderProps {
 	topoQuark: Quark<Topo>;
@@ -104,7 +105,29 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 				}
 			},
 			[topo, currentTool, createBoulder, createParking, createWaypoint]
-		);	
+		);
+
+		const constructMenuOptions = useCallback((): DropdownOption[] => ([
+			{ value: "Infos du topo", action: () => select.info("INFO", breakpoint) },
+			{
+				value: "Marche d'approche",
+				action: () => select.info("ACCESS", breakpoint),
+			},
+			{
+				value: "Gestionnaires du spot",
+				action: () => select.info("MANAGEMENT", breakpoint),
+			},
+			...(session.role === "ADMIN"
+				? [
+						{
+							value: "Voir le topo",
+							action: () => router.push("/topo/" + encodeUUID(topo.id)),
+						},
+					]
+				: []),
+			{ value: "Valider le topo", action: () => showModalSubmitTopo() },
+			{ value: "Supprimer le topo", action: () => showModalDeleteTopo() },
+		]), [breakpoint, router, topo, session.role]);
 
 		const progress = useCreateDerivation<number>(
 			() => computeBuilderProgress(props.topoQuark),
@@ -149,27 +172,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 					title={topo.name}
 					backLink="/builder/dashboard"
 					onBackClick={!isEmptyStore() ? () => flush.all() : undefined}
-					menuOptions={[
-						{ value: "Infos du topo", action: () => select.info("INFO", breakpoint) },
-						{
-							value: "Marche d'approche",
-							action: () => select.info("ACCESS", breakpoint),
-						},
-						{
-							value: "Gestionnaires du spot",
-							action: () => select.info("MANAGEMENT", breakpoint),
-						},
-						...(session.role === "ADMIN"
-							? [
-									{
-										value: "Voir le topo",
-										action: () => router.push("/topo/" + encodeUUID(topo.id)),
-									},
-							  ]
-							: []),
-						{ value: "Valider le topo", action: () => showModalSubmitTopo() },
-						{ value: "Supprimer le topo", action: () => showModalDeleteTopo() },
-					]}
+					menuOptions={constructMenuOptions()}
 				>
 					<BuilderProgressIndicator
 						topo={props.topoQuark}

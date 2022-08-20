@@ -1,25 +1,22 @@
 import React, { useState } from "react";
-import { Quark, SelectQuarkNullable, watchDependencies } from "helpers/quarky";
-import { Boulder, Sector, Topo, Track, UUID } from "types";
+import { Quark, watchDependencies } from "helpers/quarky";
+import { Boulder, Sector, Topo, UUID } from "types";
 import ArrowSimple from "assets/icons/arrow-simple.svg";
 import { BoulderItemLeftbar } from "components/layouts/BoulderItemLeftbar";
+import { useSelectStore } from "components/pages/selectStore";
+import { toLatLng } from "helpers/map";
 
 interface SectorListProps {
 	topoQuark: Quark<Topo>;
 	boulderOrder: Map<UUID, number>;
-	selectedBoulder: SelectQuarkNullable<Boulder>;
-	onBoulderSelect: (boulderQuark: Quark<Boulder>) => void;
-	onTrackSelect: (
-		trackQuark: Quark<Track>,
-		boulderQuark: Quark<Boulder>
-	) => void;
+	map: google.maps.Map | null;
 }
 
 export const SectorList: React.FC<SectorListProps> = watchDependencies(
 	(props: SectorListProps) => {
-		const selectedBoulder = props.selectedBoulder();
+		const selectStore = useSelectStore();
+		const selectedBoulder = selectStore.item.type === 'boulder' ? selectStore.item : undefined;	
 		const topo = props.topoQuark();
-		const sectors = topo.sectors;
 
 		const boulderQuarksMap = new Map<UUID, Quark<Boulder>>();
 		for (const bq of topo.boulders.quarks()) {
@@ -56,7 +53,7 @@ export const SectorList: React.FC<SectorListProps> = watchDependencies(
 
 		return (
 			<div className="mb-6 h-[95%] px-4">
-				{sectors.quarks().map((sectorQuark, sectorIndex) => {
+				{topo.sectors.quarks().map((sectorQuark, sectorIndex) => {
 					const sector = sectorQuark();
 					const quarks: Quark<Boulder>[] = [];
 					for (const id of sector.boulders) {
@@ -97,16 +94,15 @@ export const SectorList: React.FC<SectorListProps> = watchDependencies(
 													<BoulderItemLeftbar
 														boulder={boulderQuark}
 														orderIndex={props.boulderOrder.get(boulder.id)!}
-														selected={selectedBoulder?.id === boulder.id}
+														selected={!!(selectedBoulder && selectedBoulder.value().id === boulder.id)}
 														displayed={displayedBoulders.has(boulder.id)}
 														onArrowClick={() => toggleBoulder(boulder)}
 														onNameClick={() => {
-															props.onBoulderSelect(boulderQuark);
+															selectStore.select.boulder(boulderQuark);
+															props.map?.setCenter(toLatLng(boulderQuark().location));
 															toggleBoulder(boulder);
 														}}
-														onTrackClick={(trackQuark) =>
-															props.onTrackSelect(trackQuark, boulderQuark)
-														}
+														onTrackClick={(trackQuark) => selectStore.select.track(trackQuark, boulderQuark)}
 														displayCreateTrack={false}
 													/>
 												</div>
@@ -120,7 +116,7 @@ export const SectorList: React.FC<SectorListProps> = watchDependencies(
 
 				{/* BOULDERS WITHOUT SECTOR       */}
 				<div className="mb-10 flex flex-col">
-					{sectors.length > 0 && lonelyQuarks.length > 0 && (
+					{topo.sectors.length > 0 && lonelyQuarks.length > 0 && (
 						<div className="ktext-label mb-2 text-grey-medium">
 							Sans secteur
 						</div>
@@ -133,15 +129,16 @@ export const SectorList: React.FC<SectorListProps> = watchDependencies(
 									<BoulderItemLeftbar
 										boulder={boulderQuark}
 										orderIndex={props.boulderOrder.get(boulder.id)!}
-										selected={selectedBoulder?.id === boulder.id}
+										selected={!!(selectedBoulder && selectedBoulder.value().id === boulder.id)}
 										displayed={displayedBoulders.has(boulder.id)}
 										onArrowClick={() => toggleBoulder(boulder)}
 										onNameClick={() => {
-											props.onBoulderSelect(boulderQuark);
+											selectStore.select.boulder(boulderQuark);
+											props.map?.setCenter(toLatLng(boulderQuark().location));
 											toggleBoulder(boulder);
 										}}
 										onTrackClick={(trackQuark) =>
-											props.onTrackSelect(trackQuark, boulderQuark)
+											selectStore.select.track(trackQuark, boulderQuark)
 										}
 										displayCreateTrack={false}
 									/>

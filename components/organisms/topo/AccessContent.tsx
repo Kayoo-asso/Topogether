@@ -3,22 +3,13 @@ import { QuarkArray } from "helpers/quarky";
 import { TopoAccess } from "types";
 import { DifficultyName } from "types/EnumNames";
 import { Image } from "components/atoms/Image";
-import { SlideoverMobile, SlideoverLeftDesktop } from "components/atoms";
 import { TabOption, Tabs } from "components/layouts/Tabs";
-import { useBreakpoint } from "helpers/hooks";
 
-interface AccessSlideoverProps {
+interface AccessContentProps {
 	accesses: QuarkArray<TopoAccess>;
-	open?: boolean;
-	className?: string;
-	onClose: () => void;
 }
 
-export const AccessSlideover: React.FC<AccessSlideoverProps> = ({
-	open = true,
-	...props
-}: AccessSlideoverProps) => {
-	const breakpoint = useBreakpoint();
+export const AccessContent: React.FC<AccessContentProps> = (props: AccessContentProps) => {
 	const [accessTab, setAccessTab] = useState(0);
 	const access = props.accesses
 		? props.accesses.toArray()[accessTab]
@@ -36,9 +27,9 @@ export const AccessSlideover: React.FC<AccessSlideoverProps> = ({
 		return tabs;
 	};
 
-	const approachContent = () => {
-		if (!access)
-			return (
+	return (
+		<>
+			{!access &&
 				<div className="flex h-full flex-col pt-5 md:pt-0">
 					<div className="flex flex-col px-6 pt-5 md:px-0 md:pt-0">
 						<div className="ktext-big-title mt-4 mb-6 w-full text-center md:mb-3">
@@ -46,9 +37,8 @@ export const AccessSlideover: React.FC<AccessSlideoverProps> = ({
 						</div>
 					</div>
 				</div>
-			);
-		else
-			return (
+			}
+			{access &&
 				<div className="flex h-full flex-col pt-5 md:pt-0">
 					<div className="flex flex-col px-6 pt-5 md:px-0 md:pt-0">
 						<div className="ktext-big-title mt-4 mb-6 w-full text-center md:hidden">
@@ -98,28 +88,9 @@ export const AccessSlideover: React.FC<AccessSlideoverProps> = ({
 						))}
 					</div>
 				</div>
-			);
-	};
-
-	return (
-		<>
-			{breakpoint === "mobile" && (
-				<SlideoverMobile onClose={props.onClose}>
-					{approachContent()}
-				</SlideoverMobile>
-			)}
-			{breakpoint !== "mobile" && (
-				<SlideoverLeftDesktop
-					title={
-						"Marche" + (props.accesses.length > 1 ? "s" : "") + " d'approche"
-					}
-					open={open}
-					onClose={props.onClose}
-					className={props.className}
-				>
-					{approachContent()}
-				</SlideoverLeftDesktop>
-			)}
+			}
 		</>
 	);
 };
+
+AccessContent.displayName = 'AccessContent';

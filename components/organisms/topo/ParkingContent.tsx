@@ -3,31 +3,20 @@ import {
 	Flash,
 	ParkingButton,
 	ParkingModal,
-	SlideagainstRightDesktop,
-	SlideoverMobile,
 } from "components";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { Parking } from "types";
-import { useBreakpoint } from "helpers/hooks";
 import { Image } from "components/atoms/Image";
+import { useSelectStore } from "components/pages/selectStore";
 
 import ParkingIcon from "assets/icons/parking.svg";
 
-interface ParkingSlideProps {
-	open: boolean;
-	parking: Quark<Parking>;
-	onClose?: () => void;
-}
-
-export const ParkingSlide: React.FC<ParkingSlideProps> = watchDependencies(
-	({ open = true, ...props }: ParkingSlideProps) => {
-		const breakpoint = useBreakpoint();
-
+export const ParkingContent: React.FC = watchDependencies(() => {
 		const [flashMessage, setFlashMessage] = useState<string>();
 		const [modalParkingOpen, setModalParkingOpen] = useState(false);
-		const parking = props.parking();
+		const parking = useSelectStore(s => s.item.value as Quark<Parking>)();
 
-		const parkingContent = () => (
+		return (
 			<>
 				<div className="flex h-[90%] flex-col gap-6 pt-10 md:h-[85%] md:pt-0">
 					<div className="flex flex-col items-center px-6 md:items-start">
@@ -87,21 +76,6 @@ export const ParkingSlide: React.FC<ParkingSlideProps> = watchDependencies(
 				<div className="absolute bottom-[9%] w-full px-6 text-center md:bottom-2">
 					<ParkingButton onClick={() => setModalParkingOpen(true)} />
 				</div>
-			</>
-		);
-
-		return (
-			<>
-				{breakpoint === "mobile" && (
-					<SlideoverMobile onClose={props.onClose}>
-						{parkingContent()}
-					</SlideoverMobile>
-				)}
-				{breakpoint !== "mobile" && (
-					<SlideagainstRightDesktop open onClose={props.onClose}>
-						{parkingContent()}
-					</SlideagainstRightDesktop>
-				)}
 
 				<Flash open={!!flashMessage} onClose={() => setFlashMessage(undefined)}>
 					{flashMessage}
@@ -119,4 +93,4 @@ export const ParkingSlide: React.FC<ParkingSlideProps> = watchDependencies(
 	}
 );
 
-ParkingSlide.displayName = "ParkingSlide";
+ParkingContent.displayName = "ParkingContent";

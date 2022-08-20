@@ -1,16 +1,11 @@
-import React from "react";
+import React, { useCallback, useMemo } from "react";
 import { AverageNote, GradeCircle } from "components";
-import { gradeToLightGrade, Track } from "types";
-import { Quark, SelectQuarkNullable, watchDependencies } from "helpers/quarky";
+import { gradeToLightGrade, UUID } from "types";
+import { watchDependencies } from "helpers/quarky";
 import { ClimbTechniquesName, listFlags } from "helpers/bitflags";
 import { OrientationName, ReceptionName } from "types/EnumNames";
 import { useBreakpoint } from "helpers/hooks";
-
-interface TracksListProps {
-	tracks: Iterable<Quark<Track>>;
-	selectedTrack: SelectQuarkNullable<Track>;
-	onTrackClick: (trackQuark: Quark<Track>) => void;
-}
+import { SelectedBoulder, useSelectStore } from "components/pages/selectStore";
 
 const gradeColors = {
 	3: "text-grade-3",
@@ -23,15 +18,42 @@ const gradeColors = {
 	P: "border-grey-light bg-grey-light text-white",
 };
 
-export const TracksList: React.FC<TracksListProps> = watchDependencies(
-	(props: TracksListProps) => {
+interface TracksListProps {
+	official: boolean,
+	topoCreatorId : UUID,
+}
+
+export const TracksList: React.FC<TracksListProps> = watchDependencies((props: TracksListProps) => {
 		const breakpoint = useBreakpoint();
-		const tracks = Array.from(props.tracks);
+
+		const select = useSelectStore(s => s.select);
+		const flushTrack = useSelectStore(s => s.flush.track);
+		const selectedBoulder = useSelectStore(s => s.item as SelectedBoulder);
+		const selectedTrack = selectedBoulder.selectedTrack;
+
+		const boulder = selectedBoulder.value()
+		const tracks = useMemo(() => boulder.tracks
+			.quarks()
+			.filter(
+				(track) =>
+					(track().creatorId === props.topoCreatorId) === props.official
+			)
+			.toArray()
+			.sort((t1, t2) => t1().index - t2().index),
+		[boulder.tracks, props.topoCreatorId, props.official]);
+
+		const toggleSelectedTrack = useCallback(
+			(trackQuark) => {
+				const track = trackQuark();
+				if (selectedTrack && selectedTrack().id === track.id) flushTrack();
+				else select.track(trackQuark, selectedBoulder.value);
+			},
+			[selectedTrack, boulder, select, flushTrack]
+		);
 
 		return (
 			<div className="h-full w-full border-t border-grey-light">
 				{tracks
-					.sort((t1, t2) => t1().index - t2().index)
 					.map((trackQuark) => {
 						const track = trackQuark();
 						const grade = gradeToLightGrade(track.grade);
@@ -40,19 +62,18 @@ export const TracksList: React.FC<TracksListProps> = watchDependencies(
 								key={track.id}
 								className={
 									"flex cursor-pointer flex-col border-b border-grey-light px-5 py-5 md:py-3 md:hover:bg-grey-superlight" +
-									(props.selectedTrack()
-										? props.selectedTrack()!.id !== track.id
-											? " opacity-40"
-											: ""
-										: "")
+									(!selectedTrack ? '' :
+										selectedTrack().id !== track.id ? 
+										" opacity-40" : "")
 								}
-								onClick={() => props.onTrackClick(trackQuark)}
+								onClick={() => toggleSelectedTrack(trackQuark)}
 							>
 								<div className="flex w-full flex-row items-center">
 									<GradeCircle
 										grade={grade}
 										className="cursor-pointer"
 										content={(track.index + 1).toString()}
+										onClick={() => toggleSelectedTrack(trackQuark)}
 									/>
 
 									{track.grade && (
@@ -79,7 +100,7 @@ export const TracksList: React.FC<TracksListProps> = watchDependencies(
 									/>
 								</div>
 
-								{props.selectedTrack()?.id === track.id &&
+								{selectedTrack && selectedTrack().id === track.id &&
 									breakpoint === "mobile" && (
 										<>
 											{track.description && (

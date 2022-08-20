@@ -1,18 +1,18 @@
 import React from "react";
-import { AccessForm, InfoForm, ManagementForm } from "../form";
 import { Quark } from "helpers/quarky";
 import { Topo } from "types";
 import { useBreakpoint } from "helpers/hooks";
 import { SlideoverLeftDesktop, SlideoverMobile } from "components/atoms/overlays";
 import { useSelectStore } from "components/pages/selectStore";
+import { InfoContent } from "./InfoContent";
+import { AccessContent } from "./AccessContent";
+import { ManagementContent } from "./ManagementContent";
 
-
-
-type SlideoverLeftBuilderProps = {
+type SlideoverLeftTopoProps = {
     topo: Quark<Topo>;
 }
 
-export const SlideoverLeftBuilder: React.FC<SlideoverLeftBuilderProps> = (props: SlideoverLeftBuilderProps) => {
+export const SlideoverLeftTopo: React.FC<SlideoverLeftTopoProps> = (props: SlideoverLeftTopoProps) => {
     const breakpoint = useBreakpoint();
 	const selectedInfo = useSelectStore(s => s.info);
 	const flush = useSelectStore(s => s.flush);
@@ -28,9 +28,9 @@ export const SlideoverLeftBuilder: React.FC<SlideoverLeftBuilderProps> = (props:
 
     const getContent = () => {
         switch (selectedInfo) {
-            case 'INFO': return <InfoForm topo={props.topo} />;
-            case 'ACCESS': return <AccessForm accesses={props.topo().accesses} />;
-            case 'MANAGEMENT': return <ManagementForm managers={props.topo().managers} />;
+            case 'INFO': return <InfoContent topo={props.topo} />;
+            case 'ACCESS': return <AccessContent accesses={props.topo().accesses} />;
+            case 'MANAGEMENT': return <ManagementContent managers={props.topo().managers} />;
             default: return undefined;
         }
     }
@@ -66,4 +66,4 @@ export const SlideoverLeftBuilder: React.FC<SlideoverLeftBuilderProps> = (props:
 	);
 };
 
-SlideoverLeftBuilder.displayName = "SlideoverLeftBuilder"
+SlideoverLeftTopo.displayName = "SlideoverLeftTopo"

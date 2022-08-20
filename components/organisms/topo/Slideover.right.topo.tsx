@@ -1,21 +1,22 @@
 import React, { useCallback, useState } from "react";
-import { ParkingForm, WaypointForm } from "../form";
-import { Quark } from "helpers/quarky";
+import { Quark, QuarkIter } from "helpers/quarky";
 import { Topo } from "types";
 import { useBreakpoint } from "helpers/hooks";
-import { BoulderBuilderContentMobile } from "./BoulderBuilderContent.mobile";
-import { BoulderBuilderContentDesktop } from "./BoulderBuilderContent.desktop";
 import { SlideoverMobile, SlideoverRightDesktop } from "components/atoms/overlays";
-import { BuilderTrackSlideoverDesktop } from "./BuilderTrackSlideover.desktop";
-import { Drawer } from "../Drawer";
 import { useSelectStore } from "components/pages/selectStore";
+import { ParkingContent } from "./ParkingContent";
+import { WaypointContent } from "./WaypointContent";
+import { BoulderContentMobile } from "./BoulderContent.mobile";
+import { BoulderContentDesktop } from "./BoulderContent.desktop";
+import { TopoTrackSlideoverDesktop } from "./TopoTrackSlideover.desktop";
+import { TracksImage } from "components/molecules";
 
-type SlideoverRightBuilderProps = {
+type SlideoverRightTopoProps = {
 	topo: Quark<Topo>;
 };
 
-export const SlideoverRightBuilder: React.FC<SlideoverRightBuilderProps> = (
-	props: SlideoverRightBuilderProps
+export const SlideoverRightTopo: React.FC<SlideoverRightTopoProps> = (
+	props: SlideoverRightTopoProps
 ) => {
 	const breakpoint = useBreakpoint();
 	const [full, setFull] = useState(false);
@@ -32,28 +33,26 @@ export const SlideoverRightBuilder: React.FC<SlideoverRightBuilderProps> = (
 			if (item.type === 'boulder') {
 				if (breakpoint === "mobile")	
 					return (
-						<BoulderBuilderContentMobile
-							topo={props.topo}
+						<BoulderContentMobile
 							full={full}
+							// TODO Props to del when tracks and boulder will have a flag 'official'
+							topoCreatorId={props.topo().creator!.id}
 						/>
 					);
 				return (
-					<BoulderBuilderContentDesktop
-						topo={props.topo}
+					<BoulderContentDesktop
+						// TODO Props to del when tracks and boulder will have a flag 'official'
+						topoCreatorId={props.topo().creator!.id}
 					/>
 				);
 			}
 			if (item.type === 'parking')
 				return (
-					<ParkingForm
-						parkings={props.topo().parkings}
-					/>
+					<ParkingContent />
 				);
 			else
 				return (
-					<WaypointForm
-						waypoints={props.topo().waypoints}
-					/>
+					<WaypointContent />
 				);
 		} else return undefined;
 	}, [full, breakpoint, item]);
@@ -84,8 +83,17 @@ export const SlideoverRightBuilder: React.FC<SlideoverRightBuilderProps> = (
 
 					{item.type === 'boulder' && item.selectedTrack &&
 						<>
-							<BuilderTrackSlideoverDesktop />
-							<Drawer />
+							<TopoTrackSlideoverDesktop />
+							<div className="absolute top-0 z-1000 flex h-full w-full flex-col bg-black bg-opacity-90 md:w-[calc(100%-600px)]">
+								<div className="relative flex h-full flex-1 items-center">
+									<TracksImage
+										image={item.selectedImage}
+										sizeHint="100vw"
+										tracks={new QuarkIter([item.selectedTrack])}
+										displayTracksDetails
+									/>
+								</div>
+							</div>
 						</>
 					}
 				</>
@@ -94,4 +102,4 @@ export const SlideoverRightBuilder: React.FC<SlideoverRightBuilderProps> = (
 	);
 };
 
-SlideoverRightBuilder.displayName = "SlideoverRightBuilder";
+SlideoverRightTopo.displayName = "SlideoverRightTopo";
