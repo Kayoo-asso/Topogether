@@ -39,7 +39,7 @@ export const LeftbarDesktop: React.FC<LeftbarDesktopProps> = watchDependencies(
 									currentMenuItem === "BUILDER" ? "text-main" : "text-dark"
 								}`}
 							>
-								Mes topos
+								Topos
 							</span>
 						</a>
 					</Link>

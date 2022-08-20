@@ -2,19 +2,16 @@ import React, { useState } from "react";
 import {
 	Button,
 	DownloadButton,
-	Flash,
 	LikeButton,
 	GradeHistogram,
 	ParkingButton,
-	ParkingModal,
 } from "components";
 import { BaseColor, LightTopo, TopoStatus } from "types";
 import { formatDate } from "helpers/utils";
 import { Image } from "components/atoms/Image";
 import Link from "next/link";
-import { ModalBG } from "components/atoms";
 import { TopoTypeToColor } from "helpers/topo";
-import { SlideoverRightDesktop } from "components/atoms/overlays";
+import { Flash, ModalBG, ParkingModal, SlideoverRightDesktop } from "components/atoms/overlays";
 
 import Rock from "assets/icons/rock.svg";
 import ManyTracks from "assets/icons/many-tracks.svg";

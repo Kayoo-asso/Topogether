@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import { Flash } from "components";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { Waypoint } from "types";
 import { Image } from "components/atoms/Image";
 import { useSelectStore } from "components/pages/selectStore";
 
 import HelpRound from "assets/icons/help-round.svg";
+import { Flash } from "components/atoms/overlays";
 
 export const WaypointContent: React.FC = watchDependencies(() => {
 		const [flashMessage, setFlashMessage] = useState<string>();

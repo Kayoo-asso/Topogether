@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import {
-	Flash,
 	ParkingButton,
-	ParkingModal,
 } from "components";
+import { Flash, ParkingModal } from "components/atoms/overlays";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { Parking } from "types";
 import { Image } from "components/atoms/Image";

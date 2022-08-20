@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import {
 	BoulderPreviewDesktop,
 	Button,
-	Flash,
 } from "components";
 import { watchDependencies } from "helpers/quarky";
 import { UUID } from "types";
@@ -13,6 +12,7 @@ import { useModal } from "helpers/hooks";
 import Rock from "assets/icons/rock.svg";
 import { SelectedBoulder, useSelectStore } from "components/pages/selectStore";
 import { TracksList } from "./TracksList";
+import { Flash } from "components/atoms/overlays";
 
 interface BoulderContentDesktopProps {
 	topoCreatorId: UUID;

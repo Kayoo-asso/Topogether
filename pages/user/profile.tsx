@@ -3,17 +3,14 @@ import {
 	Button,
 	ImageInput,
 	ProfileForm,
-	TextInput,
 	LikedList,
 	DownloadedList,
 } from "components";
-import { DBLightTopo, LightTopo, Name, User } from "types";
+import { DBLightTopo, LightTopo, User } from "types";
 import { api, useAuth } from "helpers/services";
 import { Header } from "components/layouts/Header";
 import { LeftbarDesktop } from "components/layouts/Leftbar.desktop";
 import { Tabs } from "components/layouts/Tabs";
-import { staticUrl } from "helpers/constants";
-import { useModal } from "helpers/hooks";
 import { quarkifyLightTopos } from "helpers/quarkifyTopo";
 import {
 	withRouting,
@@ -25,6 +22,8 @@ import {
 import UserIcon from "assets/icons/user.svg";
 import Heart from "assets/icons/heart.svg";
 import Download from "assets/icons/download.svg";
+import { ProfileContent } from "components/organisms/user/ProfileContent";
+import { useCreateQuark } from "helpers/quarky";
 
 type ProfileProps = {
 	user: User;
@@ -55,14 +54,19 @@ const ProfilePage = withRouting<ProfileProps>({
 	},
 	render(props) {
 		const auth = useAuth();
-		const [user, setUser] = useState(props.user);
+		const userQuark = useCreateQuark(props.user);
+		const user = userQuark();
+
+		const [displayModifyProfile, setDisplayModifyProfile] = useState(true);
+		const [imageError, setImageError] = useState<string>();
+		//////
 
 		const [selectedTab, setSelectedTab] = useState<
 			"PROFILE" | "LIKED" | "DOWNLOADED"
 		>("PROFILE");
-		const [likedTopos, setLikedTopos] = useState(props.likedTopos);
+		
 
-		const [userNameError, setUserNameError] = useState<string>();
+		const [likedTopos, setLikedTopos] = useState(props.likedTopos);
 
 		const unlikeTopo = useCallback(
 			(topo: LightTopo) => {
@@ -74,12 +78,6 @@ const ProfilePage = withRouting<ProfileProps>({
 			},
 			[likedTopos]
 		);
-
-		const [ModalDelete, showModalDelete] = useModal();
-		const deleteAccount = () => {
-			alert("à venir"); //TODO
-			console.log("delete account");
-		};
 
 		return (
 			<>
@@ -99,33 +97,23 @@ const ProfilePage = withRouting<ProfileProps>({
 											...user,
 											image: images[0],
 										};
-										setUser(newUser);
-										await auth.updateUserInfo(newUser);
+										const res = await auth.updateUserInfo(newUser);
+										if (!res) setImageError("Une erreur est survenue.");
+										else userQuark.set(newUser);
 									}}
 								/>
+								{imageError &&
+									<div className="ktext-error text-error">{imageError}</div>
+								}
 							</div>
 
-							<div className="ml-6 hidden w-1/2 flex-col md:flex">
-								<div className="mb-6">
+							<div className="ml-6 hidden w-1/2 flex-col md:flex justify-center">
 									<div className="ktext-subtitle">{user.userName}</div>
 									{user.role === "ADMIN" && (
 										<div className="ktext-label text-main">
 											Super-administrateur
 										</div>
 									)}
-								</div>
-								<TextInput
-									id="pseudo"
-									label="Pseudo"
-									error={userNameError}
-									value={user.userName}
-									onChange={(e) =>
-										setUser({
-											...user,
-											userName: e.target.value as Name,
-										})
-									}
-								/>
 							</div>
 
 							{user.role === "ADMIN" && (
@@ -135,7 +123,7 @@ const ProfilePage = withRouting<ProfileProps>({
 							)}
 						</div>
 
-						<div
+						{/* <div
 							className={
 								"w-full " + (selectedTab === "PROFILE" ? "mb-8 md:mb-12" : "")
 							}
@@ -166,16 +154,23 @@ const ProfilePage = withRouting<ProfileProps>({
 									},
 								]}
 							/>
-						</div>
+						</div> */}
 
-						{selectedTab === "PROFILE" && (
+						{!displayModifyProfile &&
+							<ProfileContent 
+								user={user}
+								onModifyButtonClick={() => setDisplayModifyProfile(true)}
+							/>
+						}
+
+						{displayModifyProfile && (
 							<ProfileForm
-								user={props.user}
-								onDeleteAccountClick={showModalDelete}
+							userQuark={userQuark}
+								setDisplayModifyProfile={setDisplayModifyProfile}
 							/>
 						)}
 
-						{selectedTab === "LIKED" && (
+						{/* {selectedTab === "LIKED" && (
 							<LikedList
 								likedTopos={quarkifyLightTopos(likedTopos)}
 								onUnlikeTopo={(topo) => unlikeTopo(topo)}
@@ -186,18 +181,9 @@ const ProfilePage = withRouting<ProfileProps>({
 							<DownloadedList
 								downloadedTopos={[]} //TODO
 							/>
-						)}
+						)} */}
 					</div>
 				</div>
-
-				<ModalDelete
-					buttonText="Confirmer"
-					imgUrl={staticUrl.deleteWarning}
-					onConfirm={deleteAccount}
-				>
-					Toutes les données du compte seront définitivement supprimées.
-					Êtes-vous sûr.e de vouloir continuer ?
-				</ModalDelete>
 			</>
 		);
 	},

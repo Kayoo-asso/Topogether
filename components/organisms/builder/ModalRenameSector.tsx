@@ -28,7 +28,6 @@ export const ModalRenameSector: React.FC<ModalRenameSectorProps> = (props: Modal
 	}, [inputRef.current]);
 
 	const handleUserKeyPress = useCallback((e: KeyboardEvent) => {
-		e.preventDefault();
 		e.stopPropagation();
 		if (e.key === "Enter") props.onClose();
 		if (e.key === "Escape") props.onClose();
@@ -45,7 +44,7 @@ export const ModalRenameSector: React.FC<ModalRenameSectorProps> = (props: Modal
 			<div
 				className={`absolute top-0 left-0 h-screen w-screen bg-black bg-opacity-80`}
 				style={{ zIndex: 9999 }} //No tailwind for this - bug with zIndex
-				onClick={close}
+				onClick={props.onClose}
 				tabIndex={-1}
 			>
 				<div

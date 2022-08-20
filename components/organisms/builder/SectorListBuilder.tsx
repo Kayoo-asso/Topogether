@@ -163,7 +163,7 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> =
 
 												<div
 													className="cursor-pointer pr-1"
-													onClick={() => setSectorToRename(sectorQuark)}
+													onClick={() => setSectorToRename(() => sectorQuark)}
 												>
 													<Edit className={"h-5 w-5 stroke-main"} />
 												</div>

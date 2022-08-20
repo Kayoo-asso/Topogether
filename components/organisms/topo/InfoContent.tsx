@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import {
 	DownloadButton,
-	Flash,
 	GradeHistogram,
 	LikeButton,
 } from "components";
@@ -18,6 +17,7 @@ import Picnic from "assets/icons/picnic.svg";
 import WaterDrop from "assets/icons/water-drop.svg";
 import Bin from "assets/icons/bin.svg";
 import Umbrella from "assets/icons/umbrella.svg";
+import { Flash } from "components/atoms/overlays";
 
 interface InfoContentProps {
 	topo: Signal<Topo>;

@@ -1,6 +1,5 @@
 export * from "./buttons";
 export * from "./svg";
-export * from "./modals";
 export * from "./utils";
 
 export * from "./ImageThumb";

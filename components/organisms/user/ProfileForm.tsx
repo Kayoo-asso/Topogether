@@ -1,42 +1,30 @@
-import React, { useState } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import { Button, TextInput } from "components";
-import Link from "next/link";
-import { useCreateQuark, watchDependencies } from "helpers/quarky";
+import { Quark, watchDependencies } from "helpers/quarky";
 import { Email, isEmail, Name, StringBetween, User } from "types";
 import { useAuth } from "helpers/services";
-import { useRouter } from "next/router";
-import { useLoader } from "helpers/hooks";
+import { ChangePasswordModal } from "./ChangePasswordModal";
+import { ChangeMailModal } from "./ChangeMailModal";
 
 interface ProfileFormProps {
-	user: User;
-	onDeleteAccountClick: () => void;
+	userQuark: Quark<User>;
+	setDisplayModifyProfile: Dispatch<SetStateAction<boolean>>
 }
 
 export const ProfileForm: React.FC<ProfileFormProps> = watchDependencies(
 	(props: ProfileFormProps) => {
 		const auth = useAuth();
-		const router = useRouter();
-		const userQuark = useCreateQuark(props.user);
-		const user = userQuark();
-
-		const showLoader = useLoader();
-
-		const [emailError, setEmailError] = useState<string>();
-		const [successMessageChangeMail, setSuccessMessageChangeMail] =
-			useState<string>();
-		const [errorMessageChangeMail, setErrorMessageChangeMail] =
-			useState<string>();
+		const [user, setUser] = useState(props.userQuark());
 
 		const [userNameError, setUserNameError] = useState<string>();
 		const [phoneError, setPhoneError] = useState<string>();
-
 		const [successMessageModify, setSuccessMessageModify] = useState<string>();
 		const [errorMessageModify, setErrorMessageModify] = useState<string>();
-
-		const [errorMessageSignout, setErrorMessageSignout] = useState<string>();
+		
+		const [displayChangePassword, setDisplayChangePassword] = useState(false);
+		const [displayChangeMail, setDisplayChangeMail] = useState(false);
 
 		const [loadingModify, setLoadingModify] = useState(false);
-		const [loadingChangeMail, setLoadingChangeMail] = useState(false);
 
 		const modifyProfile = async () => {
 			let hasError = false;
@@ -57,217 +45,200 @@ export const ProfileForm: React.FC<ProfileFormProps> = watchDependencies(
 			if (!hasError) {
 				setLoadingModify(true);
 				const res = await auth.updateUserInfo(user);
-				if (res) setSuccessMessageModify("Profil modifié");
+				if (res) {
+					setSuccessMessageModify("Profil modifié");
+					props.userQuark.set(user);
+					props.setDisplayModifyProfile(false);
+				}
 				else
 					setErrorMessageModify("Une erreur est survenue. Merci de réessayer.");
 				setLoadingModify(false);
 			}
 		};
 
-		const changeMail = async () => {
-			if (!user.email || (user.email && !isEmail(user.email)))
-				setEmailError("Email invalide");
-			else {
-				setLoadingChangeMail(true);
-				await auth.changeEmail(user.email);
-				setLoadingChangeMail(false);
-			}
-		};
-
 		return (
-			<div className="flex flex-col gap-6 px-6">
-				<div className="flex flex-col items-center gap-6 pb-4">
-					<TextInput
-						id="email"
-						label="Email"
-						error={emailError}
-						value={user.email}
-						onChange={(e) =>
-							userQuark.set({
-								...user,
-								email: e.target.value as Email,
-							})
-						}
-					/>
-					<Button
-						content="Modifier l'email"
-						fullWidth
-						onClick={changeMail}
-						loading={loadingChangeMail}
-					/>
-					{successMessageChangeMail && (
-						<div className="ktext-error text-center text-main">
-							{successMessageChangeMail}
-						</div>
-					)}
-					{errorMessageChangeMail && (
-						<div className="ktext-error text-center text-error">
-							{errorMessageChangeMail}
-						</div>
-					)}
+			<>
+				<div className="flex flex-col gap-6 px-6">
+					<div className="flex flex-row items-center">
+						<TextInput
+							id="email"
+							label='Email'
+							value={user.email}
+							readOnly
+							inputClassName="cursor-pointer"
+							onClick={() => setDisplayChangeMail(true)}
+						/>
+					</div>
 
-					<Link href="/user/changePassword">
-						<a className="ktext-base-little cursor-pointer text-main">
-							Modifier le mot de passe
-						</a>
-					</Link>
-				</div>
+					<div className="flex flex-row items-center gap-3">
+						<TextInput
+							id="pseudo"
+							label="Pseudo"
+							error={userNameError}
+							value={user.userName}
+							onChange={(e) =>
+								setUser(u => ({
+									...u,
+									userName: e.target.value as Name,
+								}))
+							}
+						/>
 
-				<div className="md:hidden">
-					<TextInput
-						id="pseudo"
-						label="Pseudo"
-						error={userNameError}
-						value={user.userName}
-						onChange={(e) =>
-							userQuark.set({
-								...user,
-								userName: e.target.value as Name,
-							})
-						}
-					/>
-				</div>
+						<TextInput 
+							id='password'
+							label="Mot de passe"
+							value="*********"
+							readOnly
+							inputClassName="cursor-pointer"
+							onClick={() => setDisplayChangePassword(true)}
+						/>
+						{/* <Button
+							content="Modifier l'email"
+							fullWidth
+							onClick={changeMail}
+							loading={loadingChangeMail}
+						/>
+						{successMessageChangeMail && (
+							<div className="ktext-error text-center text-main">
+								{successMessageChangeMail}
+							</div>
+						)}
+						{errorMessageChangeMail && (
+							<div className="ktext-error text-center text-error">
+								{errorMessageChangeMail}
+							</div>
+						)} */}
 
-				<div className="flex flex-row gap-3">
-					<TextInput
-						id="firstName"
-						label="Prénom"
-						value={user.firstName}
-						onChange={(e) =>
-							userQuark.set({
-								...user,
-								firstName: e.target.value as Name,
-							})
-						}
-					/>
-					<TextInput
-						id="lastName"
-						label="Nom"
-						value={user.lastName}
-						onChange={(e) =>
-							userQuark.set({
-								...user,
-								lastName: e.target.value as Name,
-							})
-						}
-					/>
-				</div>
+					</div>
 
-				<div className="md:hidden">
-					<TextInput
-						id="phone"
-						label="Téléphone"
-						error={phoneError}
-						value={user.phone}
-						onChange={(e) =>
-							userQuark.set({
-								...user,
-								phone: e.target.value as StringBetween<1, 30>,
-							})
-						}
-					/>
-				</div>
 
-				<div className="flex w-full flex-row gap-3">
-					<div className="hidden w-1/2 md:block">
+					<div className="flex flex-row gap-3">
+						<TextInput
+							id="firstName"
+							label="Prénom"
+							value={user.firstName}
+							onChange={(e) =>
+								setUser(u => ({
+									...u,
+									firstName: e.target.value as Name,
+								}))
+							}
+						/>
+						<TextInput
+							id="lastName"
+							label="Nom"
+							value={user.lastName}
+							onChange={(e) =>
+								setUser(u => ({
+									...u,
+									lastName: e.target.value as Name,
+								}))
+							}
+						/>
+					</div>
+
+					<div className="md:hidden">
 						<TextInput
 							id="phone"
 							label="Téléphone"
 							error={phoneError}
 							value={user.phone}
 							onChange={(e) =>
-								userQuark.set({
-									...user,
+								setUser(u => ({
+									...u,
 									phone: e.target.value as StringBetween<1, 30>,
-								})
+								}))
 							}
 						/>
 					</div>
-					<TextInput
-						id="birthDate"
-						label="Date de naissance"
-						wrapperClassName="md:w-1/2"
-						value={user.birthDate}
-						onChange={(e) =>
-							userQuark.set({
-								...user,
-								birthDate: e.target.value,
-							})
-						}
-					/>
-				</div>
 
-				<div className="flex flex-row gap-2">
-					<TextInput
-						id="citizenship"
-						label="Pays"
-						value={user.country}
-						onChange={(e) =>
-							userQuark.set({
-								...user,
-								country: e.target.value as Name,
-							})
-						}
-					/>
-					<TextInput
-						id="city"
-						label="Ville"
-						value={user.city}
-						onChange={(e) =>
-							userQuark.set({
-								...user,
-								city: e.target.value as Name,
-							})
-						}
-					/>
-				</div>
-
-				<Button
-					content="Modifier le profil"
-					fullWidth
-					onClick={modifyProfile}
-					loading={loadingModify}
-				/>
-				{successMessageModify && (
-					<div className="ktext-error text-center text-main">
-						{successMessageModify}
-					</div>
-				)}
-				{errorMessageModify && (
-					<div className="ktext-error text-center text-error">
-						{errorMessageModify}
-					</div>
-				)}
-
-				<div className="mb-10 flex flex-col items-center gap-4 md:mb-4 md:pt-4">
-					<div
-						className="ktext-base-little cursor-pointer text-main"
-						onClick={async () => {
-							showLoader(true);
-							const success = await auth.signOut();
-							if (success) await router.push("/user/login");
-							else {
-								setErrorMessageSignout(
-									"Une erreur est survenue. Merci de réessayer."
-								);
-								showLoader(false);
+					<div className="flex w-full flex-row gap-3">
+						<div className="hidden w-1/2 md:block">
+							<TextInput
+								id="phone-md"
+								label="Téléphone"
+								error={phoneError}
+								value={user.phone}
+								onChange={(e) =>
+									setUser(u => ({
+										...u,
+										phone: e.target.value as StringBetween<1, 30>,
+									}))
+								}
+							/>
+						</div>
+						<TextInput
+							id="birthDate"
+							label="Date de naissance"
+							wrapperClassName="md:w-1/2"
+							value={user.birthDate}
+							onChange={(e) =>
+								setUser(u => ({
+									...u,
+									birthDate: e.target.value,
+								}))
 							}
-						}}
-					>
-						Se déconnecter
-						{errorMessageSignout && (
-							<div className="ktext-error">{errorMessageSignout}</div>
-						)}
+						/>
 					</div>
 
-					<div
-						className="ktext-base-little cursor-pointer text-main"
-						onClick={props.onDeleteAccountClick}
-					>
-						Supprimer le compte
+					<div className="flex flex-row gap-2">
+						<TextInput
+							id="city"
+							label="Ville"
+							value={user.city}
+							onChange={(e) =>
+								setUser(u => ({
+									...u,
+									city: e.target.value as Name,
+								}))
+							}
+						/>
+						<TextInput
+							id="citizenship"
+							label="Pays"
+							value={user.country}
+							onChange={(e) =>
+								setUser(u => ({
+									...u,
+									country: e.target.value as Name,
+								}))
+							}
+						/>
 					</div>
+
+					<Button
+						content="Valider les modifications"
+						fullWidth
+						onClick={modifyProfile}
+						loading={loadingModify}
+					/>
+					{successMessageModify && (
+						<div className="ktext-error text-center text-main">
+							{successMessageModify}
+						</div>
+					)}
+					{errorMessageModify && (
+						<div className="ktext-error text-center text-error">
+							{errorMessageModify}
+						</div>
+					)}
+
+					<div 
+						className="text-grey-medium cursor-pointer mb-6 hidden md:flex"
+						onClick={() => props.setDisplayModifyProfile(false)}
+					>Retour</div>
 				</div>
-			</div>
+
+				<ChangePasswordModal 
+					open={displayChangePassword}
+					onClose={() => setDisplayChangePassword(false)}
+				/>
+				<ChangeMailModal 
+					mail={user.email}
+					open={displayChangeMail}
+					onClose={() => setDisplayChangeMail(false)}
+				/>
+			</>
 		);
 	}
 );

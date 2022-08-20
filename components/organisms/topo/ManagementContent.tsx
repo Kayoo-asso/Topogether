@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { QuarkArray } from "helpers/quarky";
 import { Manager } from "types";
 import { Image } from "components/atoms/Image";
-import { Flash } from "components/atoms";
 import { TabOption, Tabs } from "components/layouts/Tabs";
+import { Flash } from "components/atoms/overlays";
 
 interface ManagementContentProps {
 	managers: QuarkArray<Manager>;
