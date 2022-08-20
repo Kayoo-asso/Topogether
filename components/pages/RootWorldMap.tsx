@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { HeaderDesktop } from "components/layouts/HeaderDesktop";
 import { LeftbarDesktop } from "components/layouts/Leftbar.desktop";
-import { TopoFilterOptions, MapControl, TopoMarker } from "./";
+import { TopoFilterOptions, MapControl, TopoMarker } from "../map";
 import { hasFlag } from "helpers/bitflags";
 import { watchDependencies, useCreateQuark } from "helpers/quarky";
 import { useAuth } from "helpers/services";
@@ -92,7 +92,8 @@ export const RootWorldMap: React.FC<RootWorldMapProps> = watchDependencies(
 						))}
 					</MapControl>
 
-						{selectedTopo &&	<TopoPreview
+						{selectedTopo &&	
+							<TopoPreview
 								topo={selectedTopo}
 								displayLikeDownload
 								// displayCreator

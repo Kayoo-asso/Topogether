@@ -95,6 +95,7 @@ export const BoulderContentMobile: React.FC<BoulderContentMobileProps> =
 						</div>
 
 						{/* TODO : show once good pattern */}
+						{/* TODO : display uniquely if there is some community track */}
 						{/* TABS */}
 						{props.full && (
 							<div className="ktext-label my-2 flex w-full flex-row gap-8 px-5 font-bold">
@@ -114,13 +115,14 @@ export const BoulderContentMobile: React.FC<BoulderContentMobileProps> =
 								>
 									communautés
 								</span>
-								<span className="flex w-full justify-end">
+								{/* TODO */}
+								{/* <span className="flex w-full justify-end">
 									<button
-										onClick={() => console.log("create community track")} // TODO
+										onClick={() => console.log("create community track")}
 									>
 										<AddIcon className="h-5 w-5 stroke-main" />
 									</button>
-								</span>
+								</span> */}
 							</div>
 						)}
 

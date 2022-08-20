@@ -70,11 +70,13 @@ export const BoulderItemLeftbar: React.FC<BoulderItemLeftbarProps> =
 							{boulder.name}
 						</span>
 					</div>
-					<div className="cursor-pointer" onClick={props.onDeleteClick}>
-						<CrossDelete
-							className={"h-4 w-4 stroke-grey-medium hover:stroke-dark"}
-						/>
-					</div>
+					{props.onDeleteClick &&
+						<div className="cursor-pointer" onClick={props.onDeleteClick}>
+							<CrossDelete
+								className={"h-4 w-4 stroke-grey-medium hover:stroke-dark"}
+							/>
+						</div>
+					}
 				</div>
 
 				{props.displayed && (

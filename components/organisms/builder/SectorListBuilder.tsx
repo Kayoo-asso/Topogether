@@ -13,11 +13,11 @@ import {
 import { useSession } from "helpers/services";
 import ArrowSimple from "assets/icons/arrow-simple.svg";
 import Edit from "assets/icons/edit.svg";
-import { ModalRenameSector } from "components/organisms";
 import { useBreakpoint, useModal } from "helpers/hooks";
 import { staticUrl } from "helpers/constants";
 import { toLatLng } from "helpers/map";
 import { useSelectStore } from "components/pages/selectStore";
+import { ModalRenameSector } from "./ModalRenameSector";
 
 export interface SectorListBuilderProps {
 	topoQuark: Quark<Topo>;

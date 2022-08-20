@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { ModalRenameSector } from "components/organisms";
 import { createSector } from "helpers/builder";
 import { usePolyline } from "helpers/map";
 import { Quark } from "helpers/quarky";
 import { GeoCoordinates, MapEventHandlers, Sector, Topo, UUID } from "types";
 import { useMap } from "..";
 import { ValidationMarker } from "./ValidationMarker";
+import { ModalRenameSector } from "components/organisms/builder/ModalRenameSector";
 
 interface CreatingSectorAreaMarkerProps {
 	topoQuark: Quark<Topo>,

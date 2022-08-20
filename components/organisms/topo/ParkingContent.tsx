@@ -14,11 +14,12 @@ import ParkingIcon from "assets/icons/parking.svg";
 export const ParkingContent: React.FC = watchDependencies(() => {
 		const [flashMessage, setFlashMessage] = useState<string>();
 		const [modalParkingOpen, setModalParkingOpen] = useState(false);
-		const parking = useSelectStore(s => s.item.value as Quark<Parking>)();
+		const parkingQuark = useSelectStore(s => s.item.value as Quark<Parking>);
+		const parking = parkingQuark();
 
 		return (
 			<>
-				<div className="flex h-[90%] flex-col gap-6 pt-10 md:h-[85%] md:pt-0">
+				<div className="flex h-[90%] flex-col gap-6 md:h-[85%] md:pt-0">
 					<div className="flex flex-col items-center px-6 md:items-start">
 						<div className="ktext-big-title flex flex-row items-center gap-3">
 							<ParkingIcon className="h-6 w-6 fill-second" />
