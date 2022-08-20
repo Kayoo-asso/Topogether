@@ -1,3 +1,4 @@
+// SVGR
 declare type SVG = React.VFC<React.SVGProps<SVGSVGElement>>;
 
 declare module "*.svg" {
@@ -5,3 +6,10 @@ declare module "*.svg" {
 	const SVG: SVG;
 	export = SVG;
 }
+
+// UUID
+declare module "uuid" {
+	export function v4(): UUID;
+}
+
+// OpenLayers
