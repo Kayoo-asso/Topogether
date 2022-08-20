@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef } from "react";
+import React, { useCallback } from "react";
 import { Button, ImageInput, TextArea, TextInput } from "components";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { Description, Name, Topo } from "types";
@@ -17,16 +17,8 @@ export const ParkingForm: React.FC<ParkingFormProps> = watchDependencies(
 		const selectedParking = useSelectStore(s => s.item as SelectedParking);
 		const parking = selectedParking.value();
 		const flush = useSelectStore(s => s.flush);
-
-		const nameInputRef = useRef<HTMLInputElement>(null);
 		
 		const [ModalDelete, showModalDelete] = useModal();
-
-		useEffect(() => {
-			if (breakpoint === "desktop" && nameInputRef.current) {
-				nameInputRef.current.focus();
-			}
-		}, []);
 
 		return (
 			<>
@@ -58,7 +50,6 @@ export const ParkingForm: React.FC<ParkingFormProps> = watchDependencies(
 						<div className="flex h-full flex-col justify-between gap-2">
 							<div className="ktext-subtitle md:mb-3">Parking</div>
 							<TextInput
-								ref={nameInputRef}
 								id="parking-name"
 								label="Nom"
 								value={parking.name}

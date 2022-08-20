@@ -1,9 +1,8 @@
-import React, { useCallback, useEffect, useRef } from "react";
+import React, { useCallback } from "react";
 import { Checkbox, TextInput } from "components";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { GeoCoordinates, Name, Topo } from "types";
 import { boulderChanged } from "helpers/builder";
-import { useBreakpoint } from "helpers/hooks";
 import { SelectedBoulder, useSelectStore } from "components/pages/selectStore";
 
 interface BoulderFormProps {
@@ -13,16 +12,8 @@ interface BoulderFormProps {
 
 export const BoulderForm: React.FC<BoulderFormProps> = watchDependencies(
 	(props: BoulderFormProps) => {
-		const breakpoint = useBreakpoint();
-		const nameInputRef = useRef<HTMLInputElement>(null);
 		const selectedBoulder = useSelectStore(s => s.item as SelectedBoulder);
 		const boulder = selectedBoulder.value();
-
-		useEffect(() => {
-			if (breakpoint === "desktop" && nameInputRef.current) {
-				nameInputRef.current.focus();
-			}
-		}, []);
 
 		return (
 			<div
@@ -32,7 +23,6 @@ export const BoulderForm: React.FC<BoulderFormProps> = watchDependencies(
 				onClick={(e) => e.stopPropagation()}
 			>
 				<TextInput
-					ref={nameInputRef}
 					id="boulder-name"
 					label="Nom du bloc"
 					value={boulder.name}

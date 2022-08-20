@@ -1,9 +1,9 @@
+import React, { Dispatch, SetStateAction, useCallback, useEffect } from 'react';
 import { InteractItem, useSelectStore } from 'components/pages/selectStore';
 import { deleteBoulder, deleteParking, deleteSector, deleteWaypoint } from 'helpers/builder';
 import { staticUrl } from 'helpers/constants';
 import { useBreakpoint, useModal } from 'helpers/hooks';
 import { Quark, watchDependencies } from 'helpers/quarky';
-import React, { Dispatch, SetStateAction, useCallback, useEffect } from 'react';
 import { Topo } from 'types';
 
 interface BuilderModalDeleteProps {
@@ -26,9 +26,9 @@ export const BuilderModalDelete: React.FC<BuilderModalDeleteProps> = watchDepend
 
         const getModalContent = () => {
             if (props.deleteItem.type === 'sector') return "Êtes-vous sûr de vouloir supprimer le secteur (les blocs associés ne seront pas supprimés) ?"
-            else if (props.deleteItem.type === 'boulder') return "Êtes-vous sûr de vouloir supprimer le bloc et toutes les voies associées ?"
-            else if (props.deleteItem.type === 'parking') return "Êtes-vous sûr de vouloir supprimer le parking ?"
-            else if (props.deleteItem.type === 'waypoint') return "Êtes-vous sûr de vouloir supprimer le point d'intérêt ?"
+            else if (props.deleteItem.type === 'boulder') return <>Êtes-vous sûr de vouloir supprimer le bloc <span className='font-semibold'>{props.deleteItem.value().name}</span> et toutes les voies associées ?</>
+            else if (props.deleteItem.type === 'parking') return <>Êtes-vous sûr de vouloir supprimer le parking <span className='font-semibold'>{props.deleteItem.value().name}</span> ?</>
+            else if (props.deleteItem.type === 'waypoint') return <>Êtes-vous sûr de vouloir supprimer le point d'intérêt <span className='font-semibold'>{props.deleteItem.value().name}</span> ?</>
         }
 
         const deleteItem = useCallback(() => {

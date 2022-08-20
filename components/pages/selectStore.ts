@@ -1,3 +1,4 @@
+import { Breakpoint } from "helpers/hooks";
 import { Quark } from "helpers/quarky"
 import { Boulder, Parking, Sector, Track, Waypoint, Img } from "types"
 import create from 'zustand'
@@ -35,7 +36,7 @@ export type DropdownItem = {
 }
 
 export type Selectors = {
-	info: (s: SelectedInfo) => void,
+	info: (s: SelectedInfo, b: Breakpoint) => void,
 	boulder: (b: Quark<Boulder>) => void,
 	track: (t: Quark<Track>, b?: Quark<Boulder>) => void,
 	image: (i: Img) => void,
@@ -57,7 +58,7 @@ export type SelectStore =
 	{ flush: Flushers } &
 	{ isEmpty: () => boolean };
 
-export const useSelectStore = create<SelectStore>()((set) => ({
+export const useSelectStore = create<SelectStore>()((set, get) => ({
 	info: "NONE",
 	item: {
 		type: 'none',
@@ -65,7 +66,10 @@ export const useSelectStore = create<SelectStore>()((set) => ({
 	},
 	isEmpty: function() { return (!this || (this.info === "NONE" && this.item.type === 'none')) },
 	select: {
-		info: (i: SelectedInfo) => set({ info: i }),
+		info: function(i: SelectedInfo, b: Breakpoint) {
+			if (b === 'mobile') get().flush.item();
+			set({ info: i });
+		},
 		boulder: (b: Quark<Boulder>) => set({ item: { type: 'boulder', value: b, selectedTrack: undefined, selectedImage: b().images.length > 0 ? b().images[0] : undefined } }),
 		track: (t: Quark<Track>, b?: Quark<Boulder>) => set(s => {
 			if (s.item.type === 'boulder') {

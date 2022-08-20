@@ -13,14 +13,6 @@ interface InfoFormProps {
 
 export const InfoForm: React.FC<InfoFormProps> = watchDependencies(
 	(props: InfoFormProps) => {
-		const device = useBreakpoint();
-		const nameInputRef = useRef<HTMLInputElement>(null);
-		useEffect(() => {
-			if (device === "desktop" && nameInputRef.current) {
-				nameInputRef.current.focus();
-			}
-		}, []);
-
 		const topo = props.topo();
 
 		const handleAmenities = useCallback(
@@ -62,7 +54,6 @@ export const InfoForm: React.FC<InfoFormProps> = watchDependencies(
 						/>
 					</div>
 					<TextInput
-						ref={nameInputRef}
 						id="topo-name"
 						label="Nom du spot"
 						value={topo.name}

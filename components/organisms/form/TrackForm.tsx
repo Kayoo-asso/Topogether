@@ -1,11 +1,11 @@
-import React, { useEffect, useRef } from "react";
+import React from "react";
 import { Button, Checkbox, Select, TextArea, TextInput } from "components";
-import { Quark, watchDependencies } from "helpers/quarky";
-import { Boulder, ClimbTechniques, Description, Name, Track } from "types";
+import { watchDependencies } from "helpers/quarky";
+import { ClimbTechniques, Description, Name } from "types";
 import { ReceptionName, selectOptions } from "types/EnumNames";
 import { BitflagMultipleSelect } from "components/molecules/form/BitflagMultipleSelect";
 import { ClimbTechniquesName, toggleFlag } from "helpers/bitflags";
-import { useBreakpoint, useModal } from "helpers/hooks";
+import { useModal } from "helpers/hooks";
 import { staticUrl } from "helpers/constants";
 import { deleteTrack } from "helpers/builder";
 import { SelectedBoulder, useSelectStore } from "components/pages/selectStore";
@@ -16,8 +16,6 @@ interface TrackFormProps {
 
 export const TrackForm: React.FC<TrackFormProps> = watchDependencies(
 	(props: TrackFormProps) => {
-		const breakpoint = useBreakpoint();
-		const nameInputRef = useRef<HTMLInputElement>(null);
 		const [ModalDelete, showModalDelete] = useModal();
 
 		const selectedBoulder = useSelectStore(s => s.item as SelectedBoulder);
@@ -25,12 +23,6 @@ export const TrackForm: React.FC<TrackFormProps> = watchDependencies(
 		const flushTrack = useSelectStore(s => s.flush.track);
 		const trackQuark = selectedBoulder.selectedTrack;
 		const track = trackQuark();
-
-		useEffect(() => {
-			if (breakpoint === "desktop" && nameInputRef.current) {
-				nameInputRef.current.focus();
-			}
-		}, []);
 
 		return (
 			<>
@@ -42,7 +34,6 @@ export const TrackForm: React.FC<TrackFormProps> = watchDependencies(
 					onClick={(e) => e.stopPropagation()}
 				>
 					<TextInput
-						ref={nameInputRef}
 						id="track-name"
 						label="Nom de la voie"
 						value={track.name}

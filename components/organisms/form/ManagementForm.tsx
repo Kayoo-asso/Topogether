@@ -1,9 +1,8 @@
-import React, { useCallback, useEffect, useRef } from "react";
+import React, { useCallback } from "react";
 import { ImageInput, TextArea, TextInput } from "components";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { Description, Email, Name, Topo } from "types";
 import { Button } from "components/atoms";
-import { useBreakpoint } from "helpers/hooks";
 import { v4 } from "uuid";
 
 interface ManagementFormProps {
@@ -13,14 +12,6 @@ interface ManagementFormProps {
 
 export const ManagementForm: React.FC<ManagementFormProps> = watchDependencies(
 	(props: ManagementFormProps) => {
-		const breakpoint = useBreakpoint();
-		const nameInputRef = useRef<HTMLInputElement>(null);
-		useEffect(() => {
-			if (breakpoint === "desktop" && nameInputRef.current) {
-				nameInputRef.current.focus();
-			}
-		}, []);
-
 		const managers = props.topo().managers
 
 		if (managers.length < 1) {
@@ -69,7 +60,6 @@ export const ManagementForm: React.FC<ManagementFormProps> = watchDependencies(
 							/>
 						</div>
 						<TextInput
-							ref={nameInputRef}
 							id="manager-name"
 							label="Nom de la structure"
 							value={manager.name}
@@ -169,7 +159,9 @@ export const ManagementForm: React.FC<ManagementFormProps> = watchDependencies(
 
 					<Button
 						content="Supprimer"
-						onClick={useCallback(() => managers.removeQuark(managerQuark), [managers, managerQuark])}
+						onClick={useCallback(() => 
+							managers.removeQuark(managerQuark), 
+						[managers, managerQuark])}
 					/>
 				</div>
 			);

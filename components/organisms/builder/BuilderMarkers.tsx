@@ -5,6 +5,7 @@ import { For } from 'components/atoms';
 import { BoulderFilterOptions, BoulderMarker, filterBoulders, isMouseEvent, isPointerEvent, isTouchEvent, ParkingMarker, SectorAreaMarker, WaypointMarker } from 'components/map';
 import { sectorChanged } from 'helpers/builder';
 import { InteractItem, useSelectStore } from 'components/pages/selectStore';
+import { useContextMenu } from 'helpers/hooks';
 
 interface BuilderMarkersProps {
     topoQuark: Quark<Topo>,
@@ -30,6 +31,8 @@ export const BuilderMarkers: React.FC<BuilderMarkersProps> = watchDependencies(
             props.setDropdownPosition({ x: e.touches[0].pageX, y: e.touches[0].pageY });
         props.setDropdownItem(item);
     }
+
+    useContextMenu(() => props.setDropdownItem({ type: 'none', value: undefined}));
    
     return (
         <>
