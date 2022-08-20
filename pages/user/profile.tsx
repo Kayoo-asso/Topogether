@@ -144,8 +144,8 @@ const ProfilePage = withRouting<ProfileProps>({
 								tabs={[
 									{
 										icon: UserIcon,
-										iconFill: true,
-										iconClassName: "w-6 h-6",
+										iconStroke: true,
+										iconClassName: "w-6 h-6 stroke-2",
 										color: "main",
 										action: () => setSelectedTab("PROFILE"),
 									},

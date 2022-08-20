@@ -62,8 +62,8 @@ export const LeftbarDesktop: React.FC<LeftbarDesktopProps> = watchDependencies(
 					<Link href="/user/profile">
 						<a className="flex flex-row">
 							<UserIcon
-								className={`mr-4 h-6 w-6 ${
-									currentMenuItem === "USER" ? "fill-main" : "fill-dark"
+								className={`mr-4 h-6 w-6 stroke-2 ${
+									currentMenuItem === "USER" ? "stroke-main" : "stroke-dark"
 								}`}
 							/>
 							<span
