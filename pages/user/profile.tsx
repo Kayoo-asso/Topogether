@@ -1,17 +1,13 @@
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import {
 	Button,
 	ImageInput,
 	ProfileForm,
-	LikedList,
-	DownloadedList,
 } from "components";
-import { DBLightTopo, LightTopo, User } from "types";
-import { api, useAuth } from "helpers/services";
+import { User } from "types";
+import { useAuth } from "helpers/services";
 import { Header } from "components/layouts/Header";
 import { LeftbarDesktop } from "components/layouts/Leftbar.desktop";
-import { Tabs } from "components/layouts/Tabs";
-import { quarkifyLightTopos } from "helpers/quarkifyTopo";
 import {
 	withRouting,
 	getSessionId,
@@ -19,15 +15,11 @@ import {
 	getUserInitialProps,
 } from "helpers/serverStuff";
 
-import UserIcon from "assets/icons/user.svg";
-import Heart from "assets/icons/heart.svg";
-import Download from "assets/icons/download.svg";
 import { ProfileContent } from "components/organisms/user/ProfileContent";
 import { useCreateQuark } from "helpers/quarky";
 
 type ProfileProps = {
 	user: User;
-	likedTopos: DBLightTopo[];
 };
 
 const ProfilePage = withRouting<ProfileProps>({
@@ -36,19 +28,16 @@ const ProfilePage = withRouting<ProfileProps>({
 		if (!userId) {
 			return loginRedirect("/user/profile");
 		}
-		const [user, likedTopos] = await Promise.all([
-			// using this function instead of `fetchUser(userId)` avoids a fetch on the client
-			getUserInitialProps(ctx),
-			api.getLikedTopos(userId),
-		]);
+
+		// using this function instead of `fetchUser(userId)` avoids a fetch on the client
+		const user = await getUserInitialProps(ctx);	
 		if (!user) {
 			return loginRedirect("/user/profile");
 		}
 
 		return {
 			props: {
-				user,
-				likedTopos,
+				user
 			},
 		};
 	},
@@ -59,25 +48,6 @@ const ProfilePage = withRouting<ProfileProps>({
 
 		const [displayModifyProfile, setDisplayModifyProfile] = useState(true);
 		const [imageError, setImageError] = useState<string>();
-		//////
-
-		const [selectedTab, setSelectedTab] = useState<
-			"PROFILE" | "LIKED" | "DOWNLOADED"
-		>("PROFILE");
-		
-
-		const [likedTopos, setLikedTopos] = useState(props.likedTopos);
-
-		const unlikeTopo = useCallback(
-			(topo: LightTopo) => {
-				if (topo) {
-					topo.liked.set(false);
-					const newLikedTopos = likedTopos.filter((t) => t.id !== topo.id);
-					setLikedTopos(newLikedTopos);
-				}
-			},
-			[likedTopos]
-		);
 
 		return (
 			<>

@@ -10,7 +10,7 @@ import Edit from "assets/icons/edit.svg";
 interface TopoCardProps {
 	topo: LightTopo;
 	onClick?: (topo: LightTopo) => void;
-	onContextMenu: (topo: LightTopo, position: { x: number; y: number }) => void;
+	onContextMenu?: (topo: LightTopo, position: { x: number; y: number }) => void;
 }
 
 const iconSize = "h-4 w-4 md:h-6 md:w-6";

@@ -6,6 +6,7 @@ import { DBLightTopo } from "types";
 
 type DashboardProps = {
 	myTopos: DBLightTopo[];
+	likedTopos: DBLightTopo[];
 };
 
 export default withRouting<DashboardProps>({
@@ -15,9 +16,19 @@ export default withRouting<DashboardProps>({
 			return loginRedirect("/builder/dashboard");
 		}
 		const myTopos = await api.getLightTopos({ userId });
-		return { props: { myTopos } };
+
+		const likedTopos = await api.getLikedTopos(userId);
+
+		return { props: { 
+			myTopos, 
+			likedTopos 
+		}};
 	},
-	render({ myTopos }) {
-		return <RootDashboard lightTopos={quarkifyLightTopos(myTopos)} />;
+	render(props) {
+		return <RootDashboard 
+			myTopos={quarkifyLightTopos(props.myTopos)} 
+			likedTopos={quarkifyLightTopos(props.likedTopos)} 
+			dlTopos={quarkifyLightTopos([])} //TODO when dl is ready
+		/>;
 	},
 });

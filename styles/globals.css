@@ -32,11 +32,14 @@
   .ktext-label {
     @apply font-sans font-medium text-sm uppercase;
   }
-  input::placeholder {
-    @apply font-sans font-normal text-base;
-  }
   .ktext-label-superbig {
     @apply font-sans font-semibold text-3xl uppercase;
+  }
+  .ktext-label-little {
+    @apply font-sans font-medium text-xxs uppercase;
+  }
+  input::placeholder {
+    @apply font-sans font-normal text-base;
   }
   .ktext-error {
     @apply font-sans font-normal text-xs italic;
