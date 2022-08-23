@@ -116,7 +116,7 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies(
 				>
 					<div className={"flex w-full flex-col items-center justify-center"}>
 						{step === 0 && (
-							<div className="flex h-full w-full flex-col justify-between px-[10%] pt-[45%] pb-[5%] md:pt-[25%]">
+							<div className="flex h-full w-full flex-col justify-between px-[10%] pt-[45%] pb-[5%] md:pt-[20%]">
 								<div className="flex w-full flex-col gap-20">
 									<TextInput
 										ref={nameInputRef}
@@ -157,7 +157,7 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies(
 									Vous pouvez cliquer sur la carte puis glisser le marqueur pour
 									placer le topo.
 								</div>
-								<div className="mb-10 h-[55vh] w-full md:mb-16 md:h-[65vh]">
+								<div className="mb-10 h-[55vh] w-full md:mb-12 md:h-[60vh]">
 									<MapControl
 										initialZoom={10}
 										searchbarOptions={{ findPlaces: true }}

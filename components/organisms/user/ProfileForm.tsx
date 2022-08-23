@@ -45,14 +45,14 @@ export const ProfileForm: React.FC<ProfileFormProps> = watchDependencies(
 			if (!hasError) {
 				setLoadingModify(true);
 				const res = await auth.updateUserInfo(user);
+				setLoadingModify(false);
 				if (res) {
 					setSuccessMessageModify("Profil modifié");
 					props.userQuark.set(user);
 					props.setDisplayModifyProfile(false);
 				}
 				else
-					setErrorMessageModify("Une erreur est survenue. Merci de réessayer.");
-				setLoadingModify(false);
+					setErrorMessageModify("Une erreur est survenue. Merci de réessayer.");		
 			}
 		};
 
@@ -225,7 +225,10 @@ export const ProfileForm: React.FC<ProfileFormProps> = watchDependencies(
 
 					<div 
 						className="text-grey-medium cursor-pointer mb-6 hidden md:flex"
-						onClick={() => props.setDisplayModifyProfile(false)}
+						onClick={() => {
+							setUser(props.userQuark());
+							props.setDisplayModifyProfile(false);
+						}}
 					>Retour</div>
 				</div>
 
