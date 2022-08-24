@@ -33,11 +33,12 @@ export const AccessForm: React.FC<AccessFormProps> = watchDependencies(
 			return (
 				<>
 					<div
-						className={`flex flex-col max-h-[85%] gap-6 pb-[25px] md:pb-[60px] pt-[20px] overflow-scroll ${
+						className={`flex flex-col max-h-[90%] gap-6 pb-6 overflow-scroll ${
 							props.className ? props.className : ""
 						}`}
 						onClick={(e) => e.stopPropagation()}
 					>
+						<div className="flex w-full ktext-subtitle mb-1">Marche d'approche</div>
 						<div className="flex flex-row items-end gap-6">
 							<Select
 								id="access-difficulty"

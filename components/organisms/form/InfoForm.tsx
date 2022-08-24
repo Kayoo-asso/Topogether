@@ -1,10 +1,9 @@
-import React, { useCallback, useEffect, useRef } from "react";
+import React, { useCallback, useState } from "react";
 import { Checkbox, ImageInput, Show, TextArea, TextInput } from "components";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { Amenities, Description, Name, RockTypes, Topo } from "types";
 import { BitflagMultipleSelect } from "components/molecules/form/BitflagMultipleSelect";
 import { toggleFlag, rockNames, hasFlag } from "helpers/bitflags";
-import { useBreakpoint } from "helpers/hooks";
 
 interface InfoFormProps {
 	topo: Quark<Topo>;
@@ -14,6 +13,8 @@ interface InfoFormProps {
 export const InfoForm: React.FC<InfoFormProps> = watchDependencies(
 	(props: InfoFormProps) => {
 		const topo = props.topo();
+
+		const [displayOtherAmenities, setDisplayOtherAmenities] = useState(!!topo.otherAmenities);
 
 		const handleAmenities = useCallback(
 			(amenity) => () => {
@@ -27,11 +28,12 @@ export const InfoForm: React.FC<InfoFormProps> = watchDependencies(
 
 		return (
 			<div
-				className={`flex flex-col h-[95%] gap-6 pb-[25px] md:pb-[60px] overflow-scroll ${
+				className={`flex flex-col h-full gap-6 overflow-scroll ${
 					props.className ? props.className : ""
 				}`}
 				onClick={(e) => e.stopPropagation()}
 			>
+				<div className="flex w-full ktext-subtitle mb-1">Infos du topo</div>
 				<div className="flex flex-row items-end gap-6">
 					<div className="w-32 md:mt-4">
 						<ImageInput
@@ -156,26 +158,19 @@ export const InfoForm: React.FC<InfoFormProps> = watchDependencies(
 
 				<Checkbox
 					label="Autres"
-					checked={!!topo.otherAmenities}
-					onClick={useCallback(() =>
-						props.topo.set(t => ({
-							...t,
-							otherAmenities: (topo.otherAmenities === " "
-								? ""
-								: topo.otherAmenities && topo.otherAmenities.length > 0
-								? topo.otherAmenities
-								: " ") as Description,
-						}))
-					, [props.topo])}
+					checked={displayOtherAmenities}
+					onClick={useCallback(() => 
+						setDisplayOtherAmenities(!displayOtherAmenities)
+					, [displayOtherAmenities])}
 				/>
-				<Show when={() => topo.otherAmenities}>
+				<Show when={() => displayOtherAmenities}>
 					<TextArea
 						id="topo-other-amenities"
 						label="Autres équipements"
 						value={topo.otherAmenities}
 						onChange={useCallback((e) =>
 							props.topo.set(t => ({
-								...(topo),
+								...t,
 								otherAmenities: e.target.value as Description,
 							}))
 						, [props.topo])}

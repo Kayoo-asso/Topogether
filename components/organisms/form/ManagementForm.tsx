@@ -35,11 +35,12 @@ export const ManagementForm: React.FC<ManagementFormProps> = watchDependencies(
 			return (
 				<div
 					className={
-						"flex h-full flex-col gap-6 pb-[25px] md:pb-[60px] overflow-scroll " +
+						"flex flex-col h-full gap-6 overflow-scroll " +
 						(props.className ? props.className : "")
 					}
 					onClick={(e) => e.stopPropagation()}
 				>
+					<div className="flex w-full ktext-subtitle mb-1">Gestionnaire du spot</div>
 					<div className="flex flex-row items-end gap-6">
 						<div className="w-32 md:mt-4">
 							<ImageInput
@@ -156,12 +157,15 @@ export const ManagementForm: React.FC<ManagementFormProps> = watchDependencies(
 						, [managerQuark])}
 					/>
 
-					<Button
-						content="Supprimer"
-						onClick={useCallback(() => 
-							props.managers.removeQuark(managerQuark), 
-						[props.managers, managerQuark])}
-					/>
+					<div className="pb-6 w-full">
+						<Button
+							content="Supprimer"
+							fullWidth
+							onClick={useCallback(() => 
+								props.managers.removeQuark(managerQuark), 
+							[props.managers, managerQuark])}
+						/>
+					</div>
 				</div>
 			);
 		}

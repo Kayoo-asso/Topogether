@@ -24,10 +24,10 @@ export const TextArea = ({
 	const ref = useRef<HTMLTextAreaElement>(null);
 	const value = props.value || "";
 
-	const [height, setHeight] = useState<number>(0);
+	const [height, setHeight] = useState<number>(100);
 
 	const adaptScrollHeight = useCallback(() => {
-		if (ref?.current?.scrollHeight !== height) setHeight(0);
+		if (ref?.current?.scrollHeight !== height) setHeight(100);
 	}, [height]);
 
 	useEffect(() => {
@@ -38,27 +38,26 @@ export const TextArea = ({
 	}, [height]);
 
 	return (
-		<div className={`relative mt-6 w-full ${className}`}>
+		<div className={`relative w-full mt-2 ${className}`}>
 			<textarea
 				ref={ref}
 				{...props}
-				style={{ height: value ? `${height}px` : "40px" }}
+				style={{ height: value ? `${height}px` : "100px" }}
 				placeholder={props.label}
 				id={props.id}
 				value={value}
-				className={`ktext-base peer overflow-hidden border-b-2 border-dark ${
+				className={`ktext-base peer w-full p-4 rounded-sm border-2 border-grey-superlight text-dark focus:border-main focus:outline-none " ${
 					displayLabel ? "placeholder-transparent" : ""
-				} w-full focus:border-main focus:outline-none ${
+				}${
 					pointer ? " cursor-pointer" : ""
 				}`}
 				onKeyUp={adaptScrollHeight}
-				// onKeyDown={(e) => props.onChange(e)}
 			/>
 
 			{displayLabel && (
 				<label
 					htmlFor={props.id}
-					className={`ktext-label absolute left-0 -top-6 text-grey-medium transition-all peer-placeholder-shown:top-2 peer-focus:-top-6 peer-focus:text-main ${
+					className={`ktext-label absolute left-4 -top-5 text-grey-medium transition-all peer-placeholder-shown:top-2 peer-focus:-top-5 peer-focus:left-0 peer-focus:text-main ${
 						pointer ? " cursor-pointer" : ""
 					}`}
 				>

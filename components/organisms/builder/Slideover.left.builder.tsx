@@ -47,15 +47,13 @@ export const SlideoverLeftBuilder: React.FC<SlideoverLeftBuilderProps> = (props:
 					open={selectedInfo !== 'NONE'}
 					onClose={onClose}
 				>
-					<div className="h-full pl-6 pr-3 py-14">
-                        <div className="ktext-title mb-6">{getTitle()}</div>
+					<div className="h-full pl-6 pr-3 pt-14">
 						{getContent()}
 					</div>
 				</SlideoverMobile>
 			)}
 			{breakpoint !== "mobile" && (
 				<SlideoverLeftDesktop
-					title={getTitle()}
 					open={selectedInfo !== 'NONE'}
 					onClose={onClose}
 				>

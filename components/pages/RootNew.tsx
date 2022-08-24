@@ -153,11 +153,11 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies(
 
 						{step === 1 && (
 							<>
-								<div className="ktext-subtitle w-full py-5 text-center text-white">
+								<div className="ktext-subtitle w-[95%] py-5 text-center text-white">
 									Vous pouvez cliquer sur la carte puis glisser le marqueur pour
 									placer le topo.
 								</div>
-								<div className="mb-10 h-[55vh] w-full md:mb-12 md:h-[60vh]">
+								<div className="mb-6 w-full h-[50vh] md:h-[55vh]">
 									<MapControl
 										initialZoom={10}
 										searchbarOptions={{ findPlaces: true }}
@@ -187,14 +187,14 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies(
 									</MapControl>
 								</div>
 
-								<div className="w-full px-[10%]">
-									<div className="flex flex-row gap-4 md:gap-16">
+								<div className="w-full px-[6%]">
+									<div className="flex flex-row gap-4 md:gap-16 mb-6 md:mb-10">
 										<TextInput
 											id="topo-latitude"
 											label="Latitude"
 											error={latitudeError}
 											white
-											wrapperClassName="w-full mb-10"
+											wrapperClassName="w-full"
 											value={latitude}
 											onChange={(e) => {
 												setLatitudeError(undefined);
@@ -206,7 +206,7 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies(
 											label="Longitude"
 											error={longitudeError}
 											white
-											wrapperClassName="w-full mb-10"
+											wrapperClassName="w-full"
 											value={longitude}
 											onChange={(e) => {
 												setLongitudeError(undefined);

@@ -48,9 +48,8 @@ export function Select<T>({
 				pointer
 			/>
 			<ArrowSimple
-				className={`absolute right-0 h-4 w-4 ${
-					isOpen ? "top-[14px]" : "top-[8px]"
-				} ${isOpen ? "rotate-90" : "-rotate-90"} ${
+				className={`absolute right-3 top-[50%] translate-y-[-50%] h-4 w-4 
+				${isOpen ? "rotate-90 top-[55%]" : "-rotate-90"} ${
 					white ? "fill-white" : "fill-dark"
 				}`}
 			/>

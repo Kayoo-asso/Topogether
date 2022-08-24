@@ -81,6 +81,7 @@
 }
 .hide-scrollbar::-webkit-scrollbar {
   display: none;
+  overflow: -moz-hidden-unscrollable;
 }
 .hide-scrollbar {
   -ms-overflow-style: none; /* IE and Edge */

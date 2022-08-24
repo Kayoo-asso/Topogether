@@ -87,7 +87,7 @@ export const TabsFly: React.FC<TabsFlyProps> = (props: TabsFlyProps) => {
 
 	return (
 		<div
-			className={`w-[90%] md:w-auto z-full bg-white px-8 md:px-12 rounded-full shadow flex flex-row justify-around items-center ${
+			className={`w-[90%] md:w-auto bg-white px-8 md:px-12 rounded-full shadow flex flex-row justify-around items-center ${
 				props.className ? props.className : ""
 			}`}
 		>

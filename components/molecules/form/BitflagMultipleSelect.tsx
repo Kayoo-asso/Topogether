@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { Checkbox } from "components";
 import { hasFlag, listFlags } from "helpers/bitflags";
 import { Bitflag } from "types";
@@ -20,6 +20,11 @@ export const BitflagMultipleSelect = <T extends Bitflag>(
 	const ref = useRef<HTMLInputElement>(null);
 	const [isOpen, setIsOpen] = useState(false);
 
+	const toggleOpen = useCallback(() => {
+		setIsOpen((x) => !x);
+		if (!isOpen) ref.current?.focus();
+	}, [isOpen]);
+
 	const textValue =
 		props.value && listFlags(props.value, props.bitflagNames).join(", ");
 
@@ -32,16 +37,14 @@ export const BitflagMultipleSelect = <T extends Bitflag>(
 				value={textValue}
 				pointer
 				readOnly
-				onClick={() => {
-					setIsOpen((x) => !x);
-					if (!isOpen) ref.current?.focus();
-				}}
+				onClick={toggleOpen}
 			/>
 
 			<ArrowSimple
-				className={`absolute right-0 h-4 w-4 fill-dark ${
-					isOpen ? "top-[14px] rotate-90" : "top-[8px] -rotate-90"
+				className={`absolute right-3 top-[50%] translate-y-[-50%] h-4 w-4 fill-dark ${
+					isOpen ? "rotate-90 top-[55%]" : "-rotate-90"
 				}`}
+				onClick={toggleOpen}
 			/>
 
 			{isOpen && (
