@@ -70,6 +70,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 		const isEmptyStore = useSelectStore(s => s.isEmpty);
 		const flush = useSelectStore(s => s.flush);
 		const select = useSelectStore(s => s.select);
+		const tool = useSelectStore(s => s.tool);
 
 		const [dropdownItem, setDropdownItem] = useState<InteractItem>({ type: 'none', value: undefined });
 		const [dropdownPosition, setDropdownPosition] = useState<{
@@ -79,7 +80,6 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 		const [deleteItem, setDeleteItem] = useState<InteractItem>({ type: 'none', value: undefined });
 
 		const mapRef = useRef<google.maps.Map>(null);
-		const [currentTool, setCurrentTool] = useState<MapToolEnum>();
 		
 		const [ModalSubmitTopo, showModalSubmitTopo] = useModal();
 		const [ModalDeleteTopo, showModalDeleteTopo] = useModal();
@@ -88,7 +88,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 			(e) => {
 				if (e.latLng) {
 					const loc: GeoCoordinates = [e.latLng.lng(), e.latLng.lat()];
-					switch (currentTool) {
+					switch (tool) {
 						case "ROCK":
 							createBoulder(props.topoQuark, loc);
 							break;
@@ -104,7 +104,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 					}
 				}
 			},
-			[topo, currentTool, createBoulder, createParking, createWaypoint]
+			[topo, tool, createBoulder, createParking, createWaypoint]
 		);
 
 		const constructMenuOptions = useCallback((): DropdownOption[] => ([
@@ -163,8 +163,6 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 			<>
 				<SyncUrl topo={topo} />
 				<KeyboardShortcut 
-					currentTool={currentTool}
-					setCurrentTool={setCurrentTool}
 					onDelete={(item) => setDeleteItem(item)}
 				/>
 				
@@ -193,6 +191,8 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 
 					<SlideoverLeftBuilder
 						topo={props.topoQuark}
+						boulderOrder={boulderOrder()}
+						map={mapRef.current}
 					/>
 
 					<MapControl
@@ -200,28 +200,12 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 						initialZoom={16}
 						initialCenter={topo.location}
 						displaySectorButton
-						onSectorButtonClick={() => {}} //TODO
+						onSectorButtonClick={() => select.info("SECTOR", breakpoint)}
 						searchbarOptions={{
 							findBoulders: true,
 							focusOnOpen: true,
 						}}
-						currentTool={currentTool}
-						onToolSelect={(tool) =>
-							tool === currentTool
-								? setCurrentTool(undefined)
-								: setCurrentTool(tool)
-						}
-						draggableCursor={
-							currentTool === "ROCK"
-								? "url(/assets/icons/colored/_rock.svg) 16 32, auto"
-								: currentTool === "SECTOR"
-								? "url(/assets/icons/colored/line-point/_line-point-grey.svg), auto"
-								: currentTool === "PARKING"
-								? "url(/assets/icons/colored/_parking.svg) 16 30, auto"
-								: currentTool === "WAYPOINT"
-								? "url(/assets/icons/colored/_help-round.svg) 16 30, auto"
-								: ""
-						}
+						displayToolSelector
 						topo={props.topoQuark}
 						boulderFilters={boulderFilters}
 						boulderFiltersDomain={defaultBoulderFilterOptions}
@@ -233,14 +217,10 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 							.toArray()}
 					>
 						
-						{currentTool === "SECTOR" && (
+						{tool === "SECTOR" && (
 							<CreatingSectorAreaMarker
 								topoQuark={props.topoQuark}
 								boulderOrder={boulderOrder()}
-								onComplete={(path) => {
-									// selectedSector.select(sector); //TODO
-									setCurrentTool(undefined);
-								}}
 							/>
 						)}
 
@@ -256,6 +236,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 					<SlideoverRightBuilder
 						topo={props.topoQuark}
 					/>
+
 				</div>
 				
 				{dropdownPosition && dropdownItem.type !== 'none' &&

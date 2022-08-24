@@ -4,7 +4,6 @@ import { RoundButton, SatelliteButton } from "components";
 import {
 	BoulderFilterOptions,
 	BoulderFilters,
-	ItemSelectorMobile,
 	Map,
 	MapSearchbar,
 	MapSearchbarProps,
@@ -16,7 +15,6 @@ import {
 	Boulder,
 	GeoCoordinates,
 	MapProps,
-	MapToolEnum,
 	Position,
 	Topo,
 } from "types";
@@ -31,6 +29,7 @@ import CenterIcon from "assets/icons/center.svg";
 import { useSelectStore } from "components/pages/selectStore";
 import { handleNewPhoto } from "helpers/handleNewPhoto";
 import { useSession } from "helpers/services";
+import { MapToolSelector } from "./MapToolSelector";
 
 type MapControlProps = React.PropsWithChildren<
 	Omit<MapProps, "center" | "zoom"> & {
@@ -39,8 +38,7 @@ type MapControlProps = React.PropsWithChildren<
 		initialZoom?: number;
 		displaySatelliteButton?: boolean;
 		displayUserMarker?: boolean;
-		currentTool?: MapToolEnum;
-		onToolSelect?: (tool: MapToolEnum) => void;
+		displayToolSelector?: boolean;
 		onPhotoButtonClick?: () => void;
 		displaySectorButton?: boolean;
 		onSectorButtonClick?: () => void;
@@ -64,6 +62,7 @@ export const MapControl = watchDependencies<google.maps.Map, MapControlProps>(
 			displaySearchbar = true,
 			displaySatelliteButton = true,
 			displayUserMarker = true,
+			displayToolSelector = false,
 			displaySectorButton = false,
 			...props
 		},
@@ -74,6 +73,7 @@ export const MapControl = watchDependencies<google.maps.Map, MapControlProps>(
 		const { position } = usePosition();
 		const selectedBoulder = useSelectStore(s => s.item.type === 'boulder' ? s.item : undefined);
 		const select = useSelectStore(s => s.select);
+		const tool = useSelectStore(s => s.tool);
 
 		const [satelliteView, setSatelliteView] = useState(false);
 		const getBoundsFromSearchbar = (
@@ -87,6 +87,16 @@ export const MapControl = watchDependencies<google.maps.Map, MapControlProps>(
 				mapRef.current.fitBounds(newBounds);
 			}
 		};
+
+		const getMapCursor = useCallback(() => {
+			switch (tool) {
+				case 'ROCK': return "url(/assets/icons/colored/_rock.svg) 16 32, auto";
+				case 'SECTOR': return "url(/assets/icons/colored/line-point/_line-point-grey.svg), auto";
+				case 'PARKING': return "url(/assets/icons/colored/_parking.svg) 16 30, auto";
+				case 'WAYPOINT': return "url(/assets/icons/colored/_help-round.svg) 16 30, auto";
+				default: return undefined;
+			}
+		}, [tool]);
 
 		return (
 			<div className="relative h-full w-full">
@@ -155,14 +165,12 @@ export const MapControl = watchDependencies<google.maps.Map, MapControlProps>(
 
 						{/* Bottom center */}
 						<div className="absolute bottom-0 my-3 flex w-full justify-center">
-							{props.onToolSelect && (
-								<ItemSelectorMobile
-									currentTool={props.currentTool}
+							{displayToolSelector && (
+								<MapToolSelector
 									photoActivated={!!position}
-									onToolSelect={props.onToolSelect}
 									onNewPhoto={useCallback((img) =>
-										position && session && props.topo && handleNewPhoto(props.topo, img, position, session, select, selectedBoulder, props.currentTool)
-									, [props.topo, position, session, props.currentTool])}
+										position && session && props.topo && handleNewPhoto(props.topo, img, position, session, select, selectedBoulder, tool)
+									, [props.topo, position, session, tool])}
 								/>
 							)}
 						</div>
@@ -194,6 +202,7 @@ export const MapControl = watchDependencies<google.maps.Map, MapControlProps>(
 								props.onMapZoomChange(mapRef.current.getZoom());
 							}
 						}}
+						draggableCursor={getMapCursor()}
 						onLoad={(map) => {
 							map.setZoom(initialZoom);
 							const locs = props.boundsTo;

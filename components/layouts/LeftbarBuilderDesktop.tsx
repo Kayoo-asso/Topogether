@@ -14,6 +14,7 @@ interface LeftbarBuilderDesktopProps {
 
 export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> =
 	watchDependencies((props: LeftbarBuilderDesktopProps) => {
+		
 		return (
 			<div className="z-500 hidden h-full w-[280px] min-w-[280px] flex-col overflow-auto border-r border-grey-medium bg-white px-2 py-10 md:flex">
 				<SectorListBuilder

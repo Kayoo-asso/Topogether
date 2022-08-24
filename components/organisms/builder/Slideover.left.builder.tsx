@@ -1,15 +1,16 @@
 import React from "react";
 import { AccessForm, InfoForm, ManagementForm } from "../form";
 import { Quark } from "helpers/quarky";
-import { Topo } from "types";
+import { Topo, UUID } from "types";
 import { useBreakpoint } from "helpers/hooks";
 import { SlideoverLeftDesktop, SlideoverMobile } from "components/atoms/overlays";
 import { useSelectStore } from "components/pages/selectStore";
-
-
+import { SectorBuilderContentMobile } from "./SectorBuilderContent.mobile";
 
 type SlideoverLeftBuilderProps = {
     topo: Quark<Topo>;
+	boulderOrder: Map<UUID, number>;
+	map: google.maps.Map | null
 }
 
 export const SlideoverLeftBuilder: React.FC<SlideoverLeftBuilderProps> = (props: SlideoverLeftBuilderProps) => {
@@ -17,20 +18,12 @@ export const SlideoverLeftBuilder: React.FC<SlideoverLeftBuilderProps> = (props:
 	const selectedInfo = useSelectStore(s => s.info);
 	const flush = useSelectStore(s => s.flush);
 
-    const getTitle = () => {
-        switch (selectedInfo) {
-            case 'INFO': return "Infos du topo";
-            case 'ACCESS': return "Marche d'approche";
-            case 'MANAGEMENT': return "Gestionnaires du site";
-            default: return undefined;
-        }
-    }
-
     const getContent = () => {
         switch (selectedInfo) {
             case 'INFO': return <InfoForm topo={props.topo} />;
             case 'ACCESS': return <AccessForm accesses={props.topo().accesses} />;
             case 'MANAGEMENT': return <ManagementForm managers={props.topo().managers} />;
+			case 'SECTOR': return <SectorBuilderContentMobile topoQuark={props.topo} boulderOrder={props.boulderOrder} map={props.map} />
             default: return undefined;
         }
     }

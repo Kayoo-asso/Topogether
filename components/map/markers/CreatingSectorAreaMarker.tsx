@@ -6,16 +6,19 @@ import { GeoCoordinates, MapEventHandlers, Sector, Topo, UUID } from "types";
 import { useMap } from "..";
 import { ValidationMarker } from "./ValidationMarker";
 import { ModalRenameSector } from "components/organisms/builder/ModalRenameSector";
+import { useSelectStore } from "components/pages/selectStore";
 
 interface CreatingSectorAreaMarkerProps {
 	topoQuark: Quark<Topo>,
 	boulderOrder: Map<UUID, number>;
-	onComplete: (path: GeoCoordinates[]) => void;
 }
 
 const polylineOptions: google.maps.PolylineOptions = {
 	strokeColor: "#04D98B",
 	strokeWeight: 2,
+	icons: [{
+		icon: { path: window.google.maps.SymbolPath.CIRCLE }
+	}]
 };
 
 function addPoint(
@@ -36,7 +39,9 @@ export const CreatingSectorAreaMarker: React.FC<
 	CreatingSectorAreaMarkerProps
 > = (props: CreatingSectorAreaMarkerProps) => {
 	// NOTE: the last point of the path follows the mouse cursor, after we started drawing
+	const flush = useSelectStore(s => s.flush);
 	const [path, setPath] = useState<google.maps.LatLng[]>([]);
+	const [sectorToRename, setSectorToRename] = useState<Quark<Sector>>();
 
 	const map = useMap();
 	const onClick = useCallback(
@@ -105,14 +110,12 @@ export const CreatingSectorAreaMarker: React.FC<
 		// `startedDrawing` is sufficient
 	}, [setPath, startedDrawing]);
 
-	const [sectorToRename, setSectorToRename] = useState<Quark<Sector>>();
-
 	if (path.length > 3)
 		return (
 			<>
 				<ValidationMarker
 					position={path[0]}
-					onClick={() => {
+					onClick={useCallback(() => {
 						// Remove the mouse cursor and close nicely
 						path[path.length - 1] = path[0];
 						const coords: GeoCoordinates[] = path.map((latlng) => [
@@ -124,9 +127,9 @@ export const CreatingSectorAreaMarker: React.FC<
 							coords,
 							props.boulderOrder
 						));
-						props.onComplete(coords);
+						flush.tool();
 						setPath([]);
-					}}
+					}, [path, props.topoQuark, props.boulderOrder, flush.tool])}
 				/>
 
 				{sectorToRename &&

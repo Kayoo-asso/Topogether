@@ -1,9 +1,9 @@
 import { Breakpoint } from "helpers/hooks";
 import { Quark } from "helpers/quarky"
-import { Boulder, Parking, Sector, Track, Waypoint, Img } from "types"
+import { Boulder, Parking, Sector, Track, Waypoint, Img, MapToolEnum } from "types"
 import create from 'zustand'
 
-export type SelectedInfo = "INFO" | "ACCESS" | "MANAGEMENT" | "NONE";
+export type SelectedInfo = "INFO" | "ACCESS" | "MANAGEMENT" | "SECTOR" | "NONE";
 
 export type SelectedNone = {
 	type: 'none',
@@ -37,6 +37,7 @@ export type DropdownItem = {
 
 export type Selectors = {
 	info: (s: SelectedInfo, b: Breakpoint) => void,
+	tool: (t: MapToolEnum) => void,
 	boulder: (b: Quark<Boulder>) => void,
 	track: (t: Quark<Track>, b?: Quark<Boulder>) => void,
 	image: (i: Img) => void,
@@ -45,6 +46,7 @@ export type Selectors = {
 }
 export type Flushers = {
 	info: () => void,
+	tool: () => void,
 	item: () => void,
 	track: () => void,
 	image: () => void,
@@ -54,6 +56,7 @@ export type Flushers = {
 export type SelectStore = 
 	{ info: SelectedInfo } & 
 	{ item: SelectedItem } & 
+	{ tool: MapToolEnum } &
 	{ select: Selectors } &
 	{ flush: Flushers } &
 	{ isEmpty: () => boolean };
@@ -64,12 +67,14 @@ export const useSelectStore = create<SelectStore>()((set, get) => ({
 		type: 'none',
 		value: undefined,
 	},
+	tool: undefined,
 	isEmpty: function() { return (!this || (this.info === "NONE" && this.item.type === 'none')) },
 	select: {
 		info: function(i: SelectedInfo, b: Breakpoint) {
 			if (b === 'mobile') get().flush.item();
 			set({ info: i });
 		},
+		tool: (t: MapToolEnum) => set({ tool: t }),
 		boulder: (b: Quark<Boulder>) => set({ item: { type: 'boulder', value: b, selectedTrack: undefined, selectedImage: b().images.length > 0 ? b().images[0] : undefined } }),
 		track: (t: Quark<Track>, b?: Quark<Boulder>) => set(s => {
 			if (s.item.type === 'boulder') {
@@ -93,16 +98,17 @@ export const useSelectStore = create<SelectStore>()((set, get) => ({
 		waypoint: (w: Quark<Waypoint>) => set({ item: { type: 'waypoint', value: w } }),
 	},
 	flush: {
-		track: () => set(s => ({ item: { ...s.item, selectedTrack: undefined } })),
-		image: () => set(s => ({ item: { ...s.item, selectedImage: undefined } })),
 		info: () => set(s => {
 			if (s.info === "NONE") return s;
 			else return { info: "NONE" };
 		}),
+		tool: () => set({ tool: undefined }),
 		item: () => set(s => {
 			if (s.item.type === 'none') return s;
 			else return { item: { type: 'none', value: undefined } }
 		}),
+		track: () => set(s => ({ item: { ...s.item, selectedTrack: undefined } })),
+		image: () => set(s => ({ item: { ...s.item, selectedImage: undefined } })),
 		all: function() { this.info(); this.item() }
 	}
 }));
