@@ -11,7 +11,7 @@ export interface DropdownOption {
 }
 
 interface DropdownProps {
-	position: { x: number; y: number };
+	position?: { x: number; y: number };
 	options: DropdownOption[];
 	onSelect?: (option: DropdownOption) => void;
 	type?: string;

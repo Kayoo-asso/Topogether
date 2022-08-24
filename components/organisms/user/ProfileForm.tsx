@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { Dispatch, SetStateAction, useCallback, useEffect, useState } from "react";
 import { Button, TextInput } from "components";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { Email, isEmail, Name, StringBetween, User } from "types";
@@ -26,7 +26,7 @@ export const ProfileForm: React.FC<ProfileFormProps> = watchDependencies(
 
 		const [loadingModify, setLoadingModify] = useState(false);
 
-		const modifyProfile = async () => {
+		const modifyProfile = useCallback(async () => {
 			let hasError = false;
 			if (!user.userName) {
 				setUserNameError("Pseudo invalide");
@@ -54,7 +54,17 @@ export const ProfileForm: React.FC<ProfileFormProps> = watchDependencies(
 				else
 					setErrorMessageModify("Une erreur est survenue. Merci de réessayer.");		
 			}
-		};
+		}, [user]);
+
+		useEffect(() => {
+			const handleKeydown = (e: KeyboardEvent) => {
+				if (e.key === "Enter") {
+					modifyProfile();
+				}
+			};
+			window.addEventListener("keydown", handleKeydown);
+			return () => window.removeEventListener("keydown", handleKeydown);
+		}, [modifyProfile]);
 
 		return (
 			<>
@@ -92,23 +102,6 @@ export const ProfileForm: React.FC<ProfileFormProps> = watchDependencies(
 							inputClassName="cursor-pointer"
 							onClick={() => setDisplayChangePassword(true)}
 						/>
-						{/* <Button
-							content="Modifier l'email"
-							fullWidth
-							onClick={changeMail}
-							loading={loadingChangeMail}
-						/>
-						{successMessageChangeMail && (
-							<div className="ktext-error text-center text-main">
-								{successMessageChangeMail}
-							</div>
-						)}
-						{errorMessageChangeMail && (
-							<div className="ktext-error text-center text-error">
-								{errorMessageChangeMail}
-							</div>
-						)} */}
-
 					</div>
 
 
@@ -137,23 +130,8 @@ export const ProfileForm: React.FC<ProfileFormProps> = watchDependencies(
 						/>
 					</div>
 
-					<div className="md:hidden">
-						<TextInput
-							id="phone"
-							label="Téléphone"
-							error={phoneError}
-							value={user.phone}
-							onChange={(e) =>
-								setUser(u => ({
-									...u,
-									phone: e.target.value as StringBetween<1, 30>,
-								}))
-							}
-						/>
-					</div>
-
 					<div className="flex w-full flex-row gap-3">
-						<div className="hidden w-1/2 md:block">
+						<div className="w-1/2">
 							<TextInput
 								id="phone-md"
 								label="Téléphone"
@@ -170,7 +148,7 @@ export const ProfileForm: React.FC<ProfileFormProps> = watchDependencies(
 						<TextInput
 							id="birthDate"
 							label="Date de naissance"
-							wrapperClassName="md:w-1/2"
+							wrapperClassName="w-1/2"
 							value={user.birthDate}
 							onChange={(e) =>
 								setUser(u => ({
@@ -205,23 +183,25 @@ export const ProfileForm: React.FC<ProfileFormProps> = watchDependencies(
 							}
 						/>
 					</div>
-
-					<Button
-						content="Valider les modifications"
-						fullWidth
-						onClick={modifyProfile}
-						loading={loadingModify}
-					/>
-					{successMessageModify && (
-						<div className="ktext-error text-center text-main">
-							{successMessageModify}
-						</div>
-					)}
-					{errorMessageModify && (
-						<div className="ktext-error text-center text-error">
-							{errorMessageModify}
-						</div>
-					)}
+					
+					<div className='w-full flex pb-6 md:pb-0'>
+						<Button
+							content="Valider les modifications"
+							fullWidth
+							onClick={modifyProfile}
+							loading={loadingModify}
+						/>
+						{successMessageModify && (
+							<div className="ktext-error text-center text-main">
+								{successMessageModify}
+							</div>
+						)}
+						{errorMessageModify && (
+							<div className="ktext-error text-center text-error">
+								{errorMessageModify}
+							</div>
+						)}
+					</div>
 
 					<div 
 						className="text-grey-medium cursor-pointer mb-6 hidden md:flex"
