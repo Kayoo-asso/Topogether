@@ -37,7 +37,7 @@ SlideoverRightDesktopProps
 
 	return (
 		<div
-			className={`absolute top-0 flex h-full w-[300px] flex-col border-l border-grey-medium bg-white py-5
+			className={`absolute top-0 flex h-full w-[300px] flex-col border-l border-grey-medium bg-white pt-5
                 ${secondary ? "z-200" : "z-300"}
                 ${props.className ? props.className : ""}`}
 			style={{

@@ -81,7 +81,7 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies(
 					});
 					break;
 			}
-		}, [selectedTrack.lines]);
+		}, [selectedTool, image, selectedTrack.lines]);
 
 		const deletePointToLine = useCallback(
 			(pointType: PointEnum, index: number) => {
