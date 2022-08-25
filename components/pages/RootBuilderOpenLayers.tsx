@@ -24,6 +24,7 @@ import {
 	BoulderFilterOptions,
 	MapControl,
 	CreatingSectorAreaMarker,
+	filterBoulders,
 } from "components/map";
 import { createBoulder, createParking, createWaypoint } from "helpers/builder";
 import { fontainebleauLocation, staticUrl } from "helpers/constants";
@@ -45,6 +46,9 @@ import {
 import { isOnMap } from "helpers/map";
 import { updateUrl } from "helpers/updateUrl";
 import { Map } from "components/map/ol/Map";
+import { UserMarker } from "components/map/ol/UserMarker";
+import { BoulderMarker } from "components/map/ol/BoulderMarker";
+import { For } from "components/atoms/utils";
 
 interface RootBuilderProps {
 	topoQuark: Quark<Topo>;
@@ -260,8 +264,24 @@ export const RootBuilderOpenLayers: React.FC<RootBuilderProps> =
 
 					<SlideoverLeftBuilder topo={props.topoQuark} />
 
-					<Map initialCenter={fontainebleauLocation}>
+					<Map initialCenter={topo.location}>
+						<UserMarker	/>
 
+            <For each={() => filterBoulders(topo.boulders.quarks(), boulderFilters())}>
+                {(boulder) => (
+                    <BoulderMarker
+                        key={boulder().id}
+                        boulder={boulder}
+                        boulderOrder={boulderOrder()}
+                        selectedBoulder={selectedItem.type === 'boulder' ? selectedItem.value : undefined}
+                        topo={props.topoQuark}
+                        onClick={(boulderQuark) => select.boulder(boulderQuark)}
+                        // onContextMenu={(e, b) => setDropdown(e, { type: 'boulder', value: b })}
+                        draggable={selectedItem.type === 'boulder' && selectedItem.value === boulder}
+                    />
+                )}
+            </For>
+						{/* TODO: put everything into BuilderMarkers */}
 					</Map>
 					{/* <MapControl
 						ref={mapRef}

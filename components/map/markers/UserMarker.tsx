@@ -7,11 +7,6 @@ interface UserMarkerProps {
 	onClick?: (e: google.maps.MapMouseEvent) => void;
 }
 
-type DeviceOrientation = {
-	alpha: number | null;
-	beta: number | null;
-	gamma: number | null;
-};
 
 export const UserMarker: React.FC<UserMarkerProps> = (
 	props: UserMarkerProps
@@ -21,24 +16,16 @@ export const UserMarker: React.FC<UserMarkerProps> = (
 	const center = position
 		? { lng: position[0], lat: position[1] }
 		: { lng: 0, lat: 0 };
-	const [orientation, setOrientation] = useState<DeviceOrientation>();
+	const [orientation, setOrientation] = useState<DeviceOrientationEvent>();
 	const alpha = orientation?.alpha;
 
 	useEffect(() => {
 		// Check for support before adding a listener
 		if (!window.DeviceOrientationEvent) return;
 
-		const onDeviceOrientation = (event: DeviceOrientationEvent): void => {
-			// console.log("deviceorientation event:", event);
-			setOrientation({
-				alpha: event.alpha,
-				beta: event.beta,
-				gamma: event.gamma,
-			});
-		};
-		window.addEventListener("deviceorientation", onDeviceOrientation);
+		window.addEventListener("deviceorientation", setOrientation);
 		return () =>
-			window.removeEventListener("deviceorientation", onDeviceOrientation);
+			window.removeEventListener("deviceorientation", setOrientation);
 	}, []);
 
 	useEffect(() => {

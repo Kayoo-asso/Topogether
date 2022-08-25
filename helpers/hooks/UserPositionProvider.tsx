@@ -92,7 +92,8 @@ export const UserPositionProvider = ({
 
 	const launchGeolocation = () => {
 		const options: PositionOptions = {
-			timeout: 3000,
+			timeout: 60000,
+			maximumAge: 10000,
 			enableHighAccuracy: true,
 		};
 
