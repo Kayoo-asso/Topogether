@@ -1,1 +1,0 @@
-alter type public.img add attribute placeholder text;
