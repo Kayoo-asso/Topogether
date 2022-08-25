@@ -13,14 +13,6 @@ interface CreatingSectorAreaMarkerProps {
 	boulderOrder: Map<UUID, number>;
 }
 
-const polylineOptions: google.maps.PolylineOptions = {
-	strokeColor: "#04D98B",
-	strokeWeight: 2,
-	icons: [{
-		icon: { path: window.google.maps.SymbolPath.CIRCLE }
-	}]
-};
-
 function addPoint(
 	path: google.maps.LatLng[],
 	point: google.maps.LatLng
@@ -54,6 +46,14 @@ export const CreatingSectorAreaMarker: React.FC<
 		[setPath]
 	);
 
+	
+	const polylineOptions: google.maps.PolylineOptions = {
+		strokeColor: "#04D98B",
+		strokeWeight: 2,
+		icons: [{
+			icon: { path: google.maps.SymbolPath.CIRCLE }
+		}]
+	};
 	usePolyline(
 		{
 			...polylineOptions,

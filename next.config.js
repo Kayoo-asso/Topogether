@@ -11,9 +11,9 @@ const withPWA = require("next-pwa")({
 
 module.exports = withPWA({
 	reactStrictMode: false,
-	images: {
-		domains: ["builder.topogether.com", "imagedelivery.net"],
-	},
+	// images: {
+	// 	domains: ["builder.topogether.com", "imagedelivery.net"],
+	// },
 	eslint: {
 		// Warning: This allows production builds to successfully complete even if
 		// your project has ESLint errors.
