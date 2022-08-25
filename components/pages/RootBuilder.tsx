@@ -173,7 +173,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 					menuOptions={constructMenuOptions()}
 				>
 					<BuilderProgressIndicator
-						topo={props.topoQuark}
+						topo={props.topoQuark()}
 						progress={progress()}
 					/>
 				</Header>

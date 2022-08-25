@@ -1,13 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Quark, watchDependencies } from "helpers/quarky";
+import { watchDependencies } from "helpers/quarky";
 import { Topo } from "types";
 import Clear from "assets/icons/clear.svg";
 import Checked from "assets/icons/checked.svg";
 import { Rule, validateRule, rulesText } from "helpers/topo";
 import { useSelectStore } from "components/pages/selectStore";
+import { useBreakpoint } from "helpers/hooks";
 
 interface BuilderProgressIndicatorProps {
-	topo: Quark<Topo>;
+	topo: Topo;
 	progress: number;
 }
 
@@ -42,9 +43,12 @@ const displayMainRule = (
 
 export const BuilderProgressIndicator: React.FC<BuilderProgressIndicatorProps> =
 	watchDependencies((props: BuilderProgressIndicatorProps) => {
+		const breakpoint = useBreakpoint();
 		const [open, setOpen] = useState(false);
-		const selectInfo = useSelectStore(s => s.select.info);
+		const select = useSelectStore(s => s.select);
 		const ref = useRef<HTMLDivElement>(null);
+
+		const topo = props.topo;
 
 		useEffect(() => {
 			if (ref) {
@@ -74,36 +78,36 @@ export const BuilderProgressIndicator: React.FC<BuilderProgressIndicatorProps> =
 						<div
 							className="my-2 cursor-pointer"
 							onClick={() => {
-								selectInfo("INFO");
+								select.info("INFO", breakpoint);
 								setOpen(false);
 							}}
 						>
-							{displayMainRule(props.topo(), "INFOS_TOPO")}
-							{displayRule(props.topo(), "TOPO_IMAGE")}
-							{displayRule(props.topo(), "DESCRIPTION")}
-							{displayRule(props.topo(), "ROCK_TYPE")}
-							{displayRule(props.topo(), "ALTITUDE")}
+							{displayMainRule(topo, "INFOS_TOPO")}
+							{displayRule(topo, "TOPO_IMAGE")}
+							{displayRule(topo, "DESCRIPTION")}
+							{displayRule(topo, "ROCK_TYPE")}
+							{displayRule(topo, "ALTITUDE")}
 						</div>
 						<div className="my-2">
-							{displayMainRule(props.topo(), "PARKINGS")}
+							{displayMainRule(topo, "PARKINGS")}
 						</div>
 						<div
 							className="my-2 cursor-pointer"
 							onClick={() => {
-								selectInfo("ACCESS")
+								select.info("ACCESS", breakpoint)
 								setOpen(false);
 							}}
 						>
-							{displayMainRule(props.topo(), "INFOS_ACCESS")}
-							{displayRule(props.topo(), "ACCESS_DURATION")}
-							{displayRule(props.topo(), "ACCESS_DIFFICULTY")}
-							{displayRule(props.topo(), "ACCESS_STEP")}
+							{displayMainRule(topo, "INFOS_ACCESS")}
+							{displayRule(topo, "ACCESS_DURATION")}
+							{displayRule(topo, "ACCESS_DIFFICULTY")}
+							{displayRule(topo, "ACCESS_STEP")}
 						</div>
 						<div className="my-2">
-							{displayMainRule(props.topo(), "BOULDERS")}
+							{displayMainRule(topo, "BOULDERS")}
 						</div>
 						<div className="my-2">
-							{displayMainRule(props.topo(), "TRACKS")}
+							{displayMainRule(topo, "TRACKS")}
 						</div>
 					</div>
 				)}
