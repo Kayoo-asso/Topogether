@@ -28,41 +28,41 @@ export const SlideoverRightBuilder: React.FC<SlideoverRightBuilderProps> = (
 	};
 
 	const getContent = useCallback(() => {
-		if (item.type !== 'none') {
-			if (item.type === 'boulder') {
+		switch (item.type) {
+			case 'sector': return undefined;
+			case 'boulder': {
 				if (breakpoint === "mobile")	
-					return (
-						<BoulderBuilderContentMobile
-							topo={props.topo}
-							full={full}
-						/>
-					);
+				return (
+					<BoulderBuilderContentMobile
+						topo={props.topo}
+						full={full}
+					/>
+				);
 				return (
 					<BoulderBuilderContentDesktop
 						topo={props.topo}
 					/>
 				);
 			}
-			if (item.type === 'parking')
-				return (
-					<ParkingForm
-						parkings={props.topo().parkings}
-					/>
-				);
-			else
-				return (
-					<WaypointForm
-						waypoints={props.topo().waypoints}
-					/>
-				);
-		} else return undefined;
-	}, [full, breakpoint, item]);
+			case 'parking': return (
+				<ParkingForm
+					parkings={props.topo().parkings}
+				/>
+			);
+			case 'waypoint': return (
+				<WaypointForm
+					waypoints={props.topo().waypoints}
+				/>
+			);
+			default: return undefined;
+		}
+	}, [full, props.topo, breakpoint, item.type]);
 
 	return (
 		<>
 			{breakpoint === "mobile" && (
 				<SlideoverMobile
-					open={item.type !== 'none'}
+					open={item.type !== 'none' && item.type !== 'sector'}
 					persistent={item.type === 'boulder'}
 					onSizeChange={setFull}
 					onClose={onClose}
@@ -76,7 +76,7 @@ export const SlideoverRightBuilder: React.FC<SlideoverRightBuilderProps> = (
 				<>
 					<SlideoverRightDesktop
 						item={item.type === 'boulder' ? item.value() : undefined}
-						open={item.type !== 'none'}
+						open={item.type !== 'none' && item.type !== 'sector'}
 						onClose={onClose}
 					>
 						<div className="h-full">{getContent()}</div>

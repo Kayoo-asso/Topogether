@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import {
 	GeoCoordinates,
-	MapToolEnum,
 	Topo,
 	TopoStatus,
 	ClimbTechniques,

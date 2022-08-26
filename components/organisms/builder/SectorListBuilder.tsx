@@ -158,7 +158,11 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> =
 													className="flex-1"
 													onClick={() => toggleSector(sector)}
 												>
-													<span className="cursor-pointer">{sector.name}</span>
+													<span className={"cursor-pointer " + (sector.name.length > 12
+														? "text-lg"
+														: "")}>
+														{sector.name}
+													</span>
 												</div>
 
 												<div

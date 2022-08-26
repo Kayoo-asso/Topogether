@@ -28,8 +28,8 @@ export type SelectedWaypoint = {
 	value: Quark<Waypoint>
 }
 
-export type SelectedItem = SelectedNone | SelectedBoulder | SelectedParking | SelectedWaypoint;
-export type InteractItem = SelectedNone | SelectedSector | SelectedBoulder | SelectedParking | SelectedWaypoint;
+export type SelectedItem = SelectedNone | SelectedSector | SelectedBoulder | SelectedParking | SelectedWaypoint;
+export type InteractItem = SelectedItem;
 export type DropdownItem = {
 	position: { x: number, y: number },
 	item: InteractItem
@@ -38,6 +38,7 @@ export type DropdownItem = {
 export type Selectors = {
 	info: (s: SelectedInfo, b: Breakpoint) => void,
 	tool: (t: MapToolEnum) => void,
+	sector: (s: Quark<Sector>) => void,
 	boulder: (b: Quark<Boulder>) => void,
 	track: (t: Quark<Track>, b?: Quark<Boulder>) => void,
 	image: (i: Img) => void,
@@ -75,6 +76,7 @@ export const useSelectStore = create<SelectStore>()((set, get) => ({
 			set({ info: i });
 		},
 		tool: (t: MapToolEnum) => set({ tool: t }),
+		sector: (s: Quark<Sector>) => set({ item: { type: 'sector', value: s }}),
 		boulder: (b: Quark<Boulder>) => set({ item: { type: 'boulder', value: b, selectedTrack: undefined, selectedImage: b().images.length > 0 ? b().images[0] : undefined } }),
 		track: (t: Quark<Track>, b?: Quark<Boulder>) => set(s => {
 			if (s.item.type === 'boulder') {

@@ -54,18 +54,11 @@ export const BuilderMarkers: React.FC<BuilderMarkersProps> = watchDependencies(
                 {(sector) => (
                     <SectorAreaMarker
                         key={sector().id}
+                        topoQuark={props.topoQuark}
                         sector={sector}
-                        // selected={props.selectedItem.type === 'sector' && props.selectedItem.value === sector}
-                        // TODO: improve the callbacks
-                        // TODO: how to avoid problems with the mousemove event not reaching the map while creating a sector?
-
-                        // Avoid the sector area intercepting clicks if another tool is selected
-                        // onClick={toggleSectorSelect}
+                        boulderOrder={props.boulderOrder}
+                        isOnBuilder
                         onContextMenu={(e, s) => setDropdown(e, { type: 'sector', value: s })}
-                        // onDragStart={() => selectedSector.select(sector)}
-                        onDragEnd={useCallback(() => {
-                            sectorChanged(props.topoQuark, sector().id, props.boulderOrder)
-                        }, [props.topoQuark, props.boulderOrder])}
                     />
                 )}
             </For>

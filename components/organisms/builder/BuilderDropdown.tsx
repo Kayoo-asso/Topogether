@@ -3,7 +3,7 @@ import { InteractItem, SelectedNone, useSelectStore } from 'components/pages/sel
 import { createTrack } from 'helpers/builder';
 import { Quark, watchDependencies } from 'helpers/quarky';
 import { useSession } from 'helpers/services';
-import React, { Dispatch, SetStateAction, useCallback, useState } from 'react';
+import React, { Dispatch, SetStateAction, useCallback, useEffect, useState } from 'react';
 import { Boulder, Sector } from 'types';
 import { ModalRenameSector } from './ModalRenameSector';
 
@@ -18,7 +18,7 @@ export const BuilderDropdown: React.FC<BuilderDropdownProps> = watchDependencies
     (props: BuilderDropdownProps) => {
     const session = useSession();
     const selectTack = useSelectStore(s => s.select.track);
-
+        
     const [sectorToRename, setSectorToRename] = useState<Quark<Sector>>();
     const addTrack = useCallback(() => {
         if (session) {
@@ -28,10 +28,10 @@ export const BuilderDropdown: React.FC<BuilderDropdownProps> = watchDependencies
         }
     }, [props.dropdownItem, session]);
 
-    const getOptions = (): DropdownOption[] => {
+    const getOptions = useCallback((): DropdownOption[] => {
         if (props.dropdownItem.type === 'sector') 
             return [
-                { value: "Renommer", action: () => setSectorToRename(props.dropdownItem.value as Quark<Sector>) },
+                { value: "Renommer", action: () => setSectorToRename(() => props.dropdownItem.value as Quark<Sector>) },
                 { value: "Supprimer", action: () => props.setDeleteItem(props.dropdownItem) },
             ]
         else if (props.dropdownItem.type === 'boulder')
@@ -43,7 +43,12 @@ export const BuilderDropdown: React.FC<BuilderDropdownProps> = watchDependencies
             return [{ value: "Supprimer", action: () => props.setDeleteItem(props.dropdownItem) }]
         else // Case Waypoint
             return [{ value: "Supprimer", action: () => props.setDeleteItem(props.dropdownItem) }]
-    }
+    }, [props.dropdownItem, props.dropdownItem.value, addTrack]);
+
+    useEffect(() => {
+        if (sectorToRename) console.log(sectorToRename())
+        else console.log('null')
+    }, [sectorToRename])
    
     return (
         <>

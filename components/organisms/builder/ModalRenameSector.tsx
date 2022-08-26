@@ -13,6 +13,8 @@ interface ModalRenameSectorProps {
 export const ModalRenameSector: React.FC<ModalRenameSectorProps> = (props: ModalRenameSectorProps) => {
 	const sector = props.sector();
 
+	console.log(sector);
+
 	const [sectorNameError, setSectorNameError] = useState<string>();
 
 	const inputRef = useRef<HTMLInputElement>(null);
@@ -53,7 +55,7 @@ export const ModalRenameSector: React.FC<ModalRenameSectorProps> = (props: Modal
 					onClick={(e) => e.stopPropagation()}
 				>
 					<div className="flex flex-col gap-6 p-6 pt-10">
-						<div>Renommer le secteur</div>
+						<div className="ktext-label">Renommer le secteur</div>
 						<TextInput
 							ref={inputRef}
 							id="sector-name"
