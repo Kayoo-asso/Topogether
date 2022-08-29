@@ -42,7 +42,7 @@ export const ProfileContent: React.FC<ProfileContentProps> = (props: ProfileCont
             <div className='flex flex-col gap-6'>
                 
                 <div className="flex flex-col md:flex-row gap-6 items-center">
-                    <div className="flex flex-col md:flex-row gap-4 md:gap-0 border-main border-2 rounded-sm w-[90%] md:w-full py-6 md:py-12 px-6 shadow items-start md:items-center">
+                    <div className="flex flex-col md:flex-row h-full gap-4 md:gap-0 border-main border-2 rounded-sm w-[90%] md:w-full py-6 md:py-12 px-6 shadow items-start md:items-center">
                         <div className="w-[40%] flex md:justify-center">
                             <div className='rounded-full bg-main bg-opacity-10 h-20 w-20 flex justify-center items-center'>
                                 <UserInfoIcon className='w-9 h-9 stroke-main stroke-2' />
@@ -61,7 +61,7 @@ export const ProfileContent: React.FC<ProfileContentProps> = (props: ProfileCont
                         </div>
                     </div>
 
-                    <div className="flex flex-col md:flex-row gap-4 md:gap-0 border-main border-2 rounded-sm w-[90%] md:w-full py-6 md:py-12 px-6 shadow items-start md:items-center">
+                    <div className="flex flex-col md:flex-row h-full gap-4 md:gap-0 border-main border-2 rounded-sm w-[90%] md:w-full py-6 md:py-12 px-6 shadow items-start md:items-center">
                         <div className="w-[40%] flex md:justify-center">
                             <div className='rounded-full bg-main bg-opacity-10 h-20 w-20 flex justify-center items-center'>
                                 <div className="text-main text-4xl mb-2">@</div>
