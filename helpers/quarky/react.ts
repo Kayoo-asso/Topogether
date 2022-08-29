@@ -40,13 +40,15 @@ import {
 
 setBatchingBehavior(ReactDOM.unstable_batchedUpdates);
 
+type MemoFn<T> = (
+				prevProps: Readonly<React.PropsWithChildren<T>>,
+				nextProps: Readonly<React.PropsWithChildren<T>>
+		  ) => boolean;
+
 export interface WatchDependenciesOptions<T> {
 	memo?:
 		| boolean
-		| ((
-				prevProps: Readonly<React.PropsWithChildren<T>>,
-				nextProps: Readonly<React.PropsWithChildren<T>>
-		  ) => boolean);
+		| MemoFn<T>;
 }
 
 type FunctionComponent<P extends object> = (
@@ -66,19 +68,19 @@ const isServer = typeof window === "undefined";
 // which can cause unexpected bugs.
 export function watchDependencies<P extends object>(
 	component: FunctionComponent<P>,
-	options?: WatchDependenciesOptions<P>
+	options: { memo: true | MemoFn<P> }
 ): NamedExoticComponent<P>;
 export function watchDependencies<R, P extends object>(
 	component: ForwardRefComponent<R, P>,
-	options?: WatchDependenciesOptions<P>
+	options: { memo: true | MemoFn<P> }
 ): NamedExoticComponent<P & RefAttributes<R>>;
 export function watchDependencies<P extends object>(
 	component: FunctionComponent<P>,
-	options: { memo: false }
+	options?: { memo: false }
 ): React.FC<P>;
 export function watchDependencies<R, P extends object>(
 	component: ForwardRefComponent<R, P>,
-	options: { memo: false }
+	options?: { memo: false }
 ): React.FC<P & RefAttributes<R>>;
 // Don't even try doing proper internal types for the component function
 export function watchDependencies<P extends object, R = undefined>(
