@@ -16,7 +16,7 @@ import {
 } from "helpers/serverStuff";
 
 import { ProfileContent } from "components/organisms/user/ProfileContent";
-import { useCreateQuark } from "helpers/quarky";
+import { watchDependencies } from "helpers/quarky";
 
 type ProfileProps = {
 	user: User;
@@ -41,10 +41,9 @@ const ProfilePage = withRouting<ProfileProps>({
 			},
 		};
 	},
-	render(props) {
+	render: watchDependencies(props => {
 		const auth = useAuth();
-		const userQuark = useCreateQuark(props.user);
-		const user = userQuark();
+		const user = auth.session()!;
 
 		const [displayModifyProfile, setDisplayModifyProfile] = useState(false);
 		const [imageError, setImageError] = useState<string>();
@@ -52,7 +51,7 @@ const ProfilePage = withRouting<ProfileProps>({
 		return (
 			<>
 				<Header 
-					title="Profile"
+					title="Profil"
 					backLink="/" 
 					onBackClick={displayModifyProfile ? () => setDisplayModifyProfile(false) : undefined}
 				/>
@@ -65,15 +64,13 @@ const ProfilePage = withRouting<ProfileProps>({
 							<div className="relative h-[100px] w-[100px] cursor-pointer">
 								<ImageInput
 									button="profile"
-									value={user.image}
+									value={auth.session()!.image}
 									onChange={useCallback(async (images) => {
-										const newUser = {
+										const res = await auth.updateUserInfo({
 											...user,
 											image: images[0],
-										};
-										const res = await auth.updateUserInfo(newUser);
+										});
 										if (!res) setImageError("Une erreur est survenue.");
-										else userQuark.set(newUser);
 									}, [user])}
 								/>
 								{imageError &&
@@ -99,14 +96,12 @@ const ProfilePage = withRouting<ProfileProps>({
 
 						{!displayModifyProfile &&
 							<ProfileContent 
-								user={user}
-								onModifyButtonClick={() => setDisplayModifyProfile(true)}
+								setDisplayModifyProfile={setDisplayModifyProfile}
 							/>
 						}
 
 						{displayModifyProfile && (
 							<ProfileForm
-							userQuark={userQuark}
 								setDisplayModifyProfile={setDisplayModifyProfile}
 							/>
 						)}
@@ -115,7 +110,7 @@ const ProfilePage = withRouting<ProfileProps>({
 				</div>
 			</>
 		);
-	},
+	}),
 });
 
 export default ProfilePage;

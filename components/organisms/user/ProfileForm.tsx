@@ -1,20 +1,19 @@
 import React, { Dispatch, SetStateAction, useCallback, useEffect, useState } from "react";
 import { Button, TextInput } from "components";
 import { Quark, watchDependencies } from "helpers/quarky";
-import { Email, isEmail, Name, StringBetween, User } from "types";
+import { Name, StringBetween, User } from "types";
 import { useAuth } from "helpers/services";
 import { ChangePasswordModal } from "./ChangePasswordModal";
 import { ChangeMailModal } from "./ChangeMailModal";
 
 interface ProfileFormProps {
-	userQuark: Quark<User>;
 	setDisplayModifyProfile: Dispatch<SetStateAction<boolean>>
 }
 
 export const ProfileForm: React.FC<ProfileFormProps> = watchDependencies(
 	(props: ProfileFormProps) => {
 		const auth = useAuth();
-		const [user, setUser] = useState(props.userQuark());
+		const [user, setUser] = useState(auth.session()!);
 
 		const [userNameError, setUserNameError] = useState<string>();
 		const [phoneError, setPhoneError] = useState<string>();
@@ -48,7 +47,6 @@ export const ProfileForm: React.FC<ProfileFormProps> = watchDependencies(
 				setLoadingModify(false);
 				if (res) {
 					setSuccessMessageModify("Profil modifié");
-					props.userQuark.set(user);
 					props.setDisplayModifyProfile(false);
 				}
 				else
@@ -206,7 +204,7 @@ export const ProfileForm: React.FC<ProfileFormProps> = watchDependencies(
 					<div 
 						className="text-grey-medium cursor-pointer mb-6 hidden md:flex"
 						onClick={() => {
-							setUser(props.userQuark());
+							setUser(auth.session()!);
 							props.setDisplayModifyProfile(false);
 						}}
 					>Retour</div>
