@@ -20,7 +20,7 @@ interface RootDashboardProps {
 
 export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies(
 	(props: RootDashboardProps) => {
-		const [tab, setTab] = useState<"MY" | "LIKED" | "DL">("MY");
+		const [tab, setTab] = useState<"MY"| "DL" | "LIKED">("MY");
 		const ref = useRef<HTMLDivElement>(null);
 
 		return (
@@ -50,19 +50,19 @@ export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies(
 										action: () => setTab("MY"),
 									},
 									{
+										icon: Download,
+										iconStroke: true,
+										label: "Topos téléchargés",
+										color: "main",
+										action: () => setTab("DL"),
+									},
+									{
 										icon: Heart,
 										iconStroke: true,
 										iconFill: tab === "LIKED" ? true : false,
 										label: "Topos favoris",
 										color: "main",	
 										action: () => setTab("LIKED"),
-									},
-									{
-										icon: Download,
-										iconStroke: true,
-										label: "Topos téléchargés",
-										color: "main",
-										action: () => setTab("DL"),
 									},
 								]}
 							/>
