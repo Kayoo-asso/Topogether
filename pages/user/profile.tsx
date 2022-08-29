@@ -18,11 +18,7 @@ import {
 import { ProfileContent } from "components/organisms/user/ProfileContent";
 import { watchDependencies } from "helpers/quarky";
 
-type ProfileProps = {
-	user: User;
-};
-
-const ProfilePage = withRouting<ProfileProps>({
+const ProfilePage = withRouting({
 	async getInitialProps(ctx) {
 		const userId = getSessionId(ctx);
 		if (!userId) {
@@ -35,11 +31,7 @@ const ProfilePage = withRouting<ProfileProps>({
 			return loginRedirect("/user/profile");
 		}
 
-		return {
-			props: {
-				user
-			},
-		};
+		return { props: {} };
 	},
 	render: watchDependencies(props => {
 		const auth = useAuth();
