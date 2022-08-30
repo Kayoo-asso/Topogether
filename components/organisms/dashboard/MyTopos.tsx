@@ -19,7 +19,7 @@ interface MyToposProps {
 
 export const MyTopos: React.FC<MyToposProps> = watchDependencies(
 	(props: MyToposProps) => {
-		const router = useRouter();
+		const router = useRouter(); 
 		const [lightTopos, setLightTopos] = useState(props.myTopos);
 		const draftLightTopos = lightTopos.filter(
 			(topo) => topo.status === TopoStatus.Draft
