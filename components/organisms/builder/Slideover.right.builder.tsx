@@ -82,7 +82,7 @@ export const SlideoverRightBuilder: React.FC<SlideoverRightBuilderProps> = (
 						<div className="h-full">{getContent()}</div>
 					</SlideoverRightDesktop>
 
-					{item.type === 'boulder' && item.selectedTrack &&
+					{item.type === 'boulder' && item.selectedTrack && item.selectedImage &&
 						<>
 							<BuilderTrackSlideoverDesktop />
 							<Drawer />

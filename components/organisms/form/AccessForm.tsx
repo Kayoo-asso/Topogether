@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React from "react";
 import { Button, ImageInput, Select, TextArea, TextInput } from "components";
 import { QuarkArray, watchDependencies } from "helpers/quarky";
 import { Description, Difficulty, TopoAccess } from "types";

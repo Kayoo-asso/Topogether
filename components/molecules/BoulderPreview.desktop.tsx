@@ -35,23 +35,6 @@ export const BoulderPreviewDesktop = watchDependencies<
 
 		const [loading, setLoading] = useState(false);
 
-		const [ModalDeleteImage, showModalDeleteImage] =
-			useModal<[Quark<Track>[], UUID]>();
-		const deleteImage = useCallback(
-			(id: UUID) => {
-				if (selectedImage?.id === id) flush.image();
-				const newImages = boulder.images.filter((img) => img.id !== id);
-				selectedBoulder.value.set((b) => ({
-					...b,
-					images: newImages,
-				}));
-				if (newImages.length === 0) {
-					deleteTracks(boulder.tracks.quarks().toArray());
-					flush.image();
-				}
-			},
-			[selectedBoulder.value, boulder, flush.image]
-		);
 		const deleteTracks = useCallback(
 			(tracksQuark: Quark<Track>[]) => {
 				tracksQuark.forEach((tQ) => 
@@ -59,6 +42,29 @@ export const BoulderPreviewDesktop = watchDependencies<
 				);
 			},
 			[boulder, selectedBoulder, flush.track]
+		);
+
+		const [ModalDeleteImage, showModalDeleteImage] = useModal<[Quark<Track>[], UUID]>();
+		const deleteImage = useCallback(
+			(id: UUID) => {
+				const imgIndex = boulder.images.indexOf(boulder.images.find(img => img.id === id)!);
+				const newImages = boulder.images.filter((img) => img.id !== id);
+				if (newImages.length === 0) {
+					deleteTracks(boulder.tracks.quarks().toArray());
+					flush.image();
+				}
+				//Select the image that come just after (or just before if it was the last one)
+				else if (selectedImage?.id === id) {
+					if (imgIndex === -1) flush.image();
+					else if (imgIndex < newImages.length) select.image(newImages[imgIndex]);
+					else select.image(newImages[newImages.length - 1]);
+				}
+				selectedBoulder.value.set((b) => ({
+					...b,
+					images: newImages,
+				}));
+			},
+			[selectedBoulder.value, selectedImage, boulder.images, flush.image, select.image, deleteTracks]
 		);
 
 		const addImagesClick = useCallback(() => {
@@ -120,7 +126,7 @@ export const BoulderPreviewDesktop = watchDependencies<
 													showModalDeleteImage([tracksOnTheImage, id]);
 												else deleteImage(id);
 											},
-											[boulder.tracks]
+											[boulder.tracks, deleteImage, props.allowDelete]
 									  )
 									: undefined
 							}
@@ -136,7 +142,7 @@ export const BoulderPreviewDesktop = watchDependencies<
 					onConfirm={useCallback(([trackQuarks, uuid]) => {
 						deleteTracks(trackQuarks);
 						deleteImage(uuid);
-					}, [deleteTrack, deleteImage])}
+					}, [deleteTracks, deleteImage, boulder.images])}
 				>
 					Tous les passages dessinés sur cette image seront supprimés. Etes-vous
 					sûr de vouloir continuer ?
