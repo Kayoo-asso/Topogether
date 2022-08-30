@@ -46,23 +46,6 @@ export const CreatingSectorAreaMarker: React.FC<
 		[setPath]
 	);
 
-	const onValidate = useCallback(() => {
-		// Remove the mouse cursor and close nicely
-		path[path.length - 1] = path[0];
-		const coords: GeoCoordinates[] = path.map((latlng) => [
-			latlng.lng(),
-			latlng.lat(),
-		]);
-		const newSector = createSector(
-			props.topoQuark,
-			coords,
-			props.boulderOrder
-		);
-		setSectorToRename(() => newSector);
-		flush.tool();
-		setPath([]);
-	}, [path, props.topoQuark, props.boulderOrder, flush.tool]);
-
 	const polylineOptions: google.maps.PolylineOptions = {
 		strokeColor: "#04D98B",
 		strokeWeight: 2,
@@ -130,17 +113,33 @@ export const CreatingSectorAreaMarker: React.FC<
 			{path.length > 3 &&
 				<ValidationMarker
 					position={path[0]}
-					onClick={onValidate}
+					onClick={() => {
+						// Remove the mouse cursor and close nicely
+						path[path.length - 1] = path[0];
+						const coords: GeoCoordinates[] = path.map((latlng) => [
+							latlng.lng(),
+							latlng.lat(),
+						]);
+						const newSector = createSector(
+							props.topoQuark,
+							coords,
+							props.boulderOrder
+						);
+						setSectorToRename(() => newSector);
+					}}
 				/>
 			}
 
 			{sectorToRename &&
 				<ModalRenameSector 
 					sector={sectorToRename}
-					onClose={() => setSectorToRename(undefined)}
+					onClose={() => {
+						flush.tool();
+						setPath([]);
+						setSectorToRename(undefined);
+					}}
 				/>
 			}
-
 		</>
 	);
 });

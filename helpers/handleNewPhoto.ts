@@ -1,9 +1,9 @@
-import { Selectors, SelectedBoulder } from "components/pages/selectStore";
+import { Selectors, SelectedBoulder, SelectedItem } from "components/pages/selectStore";
 import { GeoCoordinates, Img, MapToolEnum, Topo, User } from "types";
 import { createBoulder, createParking, createTrack, createWaypoint } from "./builder";
 import { Quark } from "./quarky";
 
-export const handleNewPhoto = (topo: Quark<Topo>, img: Img, coords: GeoCoordinates, session: User, select: Selectors, selectedBoulder?: SelectedBoulder, currentTool?: MapToolEnum) => {
+export const handleNewPhoto = (topo: Quark<Topo>, img: Img, coords: GeoCoordinates, session: User, select: Selectors, selectedItem?: SelectedItem, currentTool?: MapToolEnum) => {
         if (!coords) {
             console.log("no coords");
             return;
@@ -14,13 +14,13 @@ export const handleNewPhoto = (topo: Quark<Topo>, img: Img, coords: GeoCoordinat
             } else if (currentTool === "WAYPOINT") {
                 select.waypoint(createWaypoint(topo(), coords, img))
             } else {
-                if (selectedBoulder) { 
-                    selectedBoulder.value.set((b) => ({
+                if (selectedItem?.type === 'boulder') { 
+                    selectedItem.value.set((b) => ({
                         ...b,
                         images: [...b.images, img],
                     }));
                     select.image(img);
-                    select.track(createTrack(selectedBoulder.value(), session.id), selectedBoulder.value);
+                    select.track(createTrack(selectedItem.value(), session.id), selectedItem.value);
                 } else {
                     const newBoulderQuark = createBoulder(
                         topo,

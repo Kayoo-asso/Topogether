@@ -71,8 +71,9 @@ export const MapControl = watchDependencies<google.maps.Map, MapControlProps>(
 		const session = useSession();
 		const mapRef = useRef<google.maps.Map>(null);
 		const { position } = usePosition();
-		const selectedBoulder = useSelectStore(s => s.item.type === 'boulder' ? s.item : undefined);
+		const selectedItem = useSelectStore(s => s.item);
 		const select = useSelectStore(s => s.select);
+		const flush = useSelectStore(s => s.flush);
 		const tool = useSelectStore(s => s.tool);
 
 		const [satelliteView, setSatelliteView] = useState(false);
@@ -169,7 +170,7 @@ export const MapControl = watchDependencies<google.maps.Map, MapControlProps>(
 								<MapToolSelector
 									photoActivated={!!position}
 									onNewPhoto={useCallback((img) =>
-										position && session && props.topo && handleNewPhoto(props.topo, img, position, session, select, selectedBoulder, tool)
+										position && session && props.topo && handleNewPhoto(props.topo, img, position, session, select, selectedItem, tool)
 									, [props.topo, position, session, tool])}
 								/>
 							)}
@@ -191,6 +192,7 @@ export const MapControl = watchDependencies<google.maps.Map, MapControlProps>(
 					</div>
 
 					<Map
+						{...props}
 						ref={(ref) => {
 							setReactRef(mapRef, ref);
 							setReactRef(parentRef, ref);
@@ -203,6 +205,10 @@ export const MapControl = watchDependencies<google.maps.Map, MapControlProps>(
 							}
 						}}
 						draggableCursor={getMapCursor()}
+						onClick={(e) => {
+							if (selectedItem.type === 'sector') flush.item();
+							if (props.onClick) props.onClick(e);
+						}}
 						onLoad={(map) => {
 							map.setZoom(initialZoom);
 							const locs = props.boundsTo;
@@ -219,7 +225,6 @@ export const MapControl = watchDependencies<google.maps.Map, MapControlProps>(
 								map.setCenter(toLatLng(fontainebleauLocation));
 							}
 						}}
-						{...props}
 					>
 						{props.children}
 

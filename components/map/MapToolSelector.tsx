@@ -20,6 +20,7 @@ export const MapToolSelector: React.FC<MapToolSelectorProps> = (
 ) => {
 	const breakpoint = useBreakpoint();
 	const select = useSelectStore(s => s.select);
+	const flush = useSelectStore(s => s.flush);
 	const tool = useSelectStore(s => s.tool);
 
 	return (
@@ -34,7 +35,8 @@ export const MapToolSelector: React.FC<MapToolSelectorProps> = (
 								: "fill-grey-light stroke-grey-light")
 						}
 						onClick={() => {
-							select.tool("SECTOR");
+							if (tool === 'SECTOR') flush.tool();
+							else select.tool("SECTOR");
 						}}
 					/>
 				)}
@@ -44,7 +46,8 @@ export const MapToolSelector: React.FC<MapToolSelectorProps> = (
 						(tool === "ROCK" ? "stroke-main" : "stroke-grey-light")
 					}
 					onClick={() => {
-						select.tool("ROCK");
+						if (tool === 'ROCK') flush.tool();
+						else select.tool("ROCK");
 					}}
 				/>
 				<Waypoint
@@ -55,7 +58,8 @@ export const MapToolSelector: React.FC<MapToolSelectorProps> = (
 							: "fill-grey-light stroke-grey-light")
 					}
 					onClick={() => {
-						select.tool("WAYPOINT");
+						if (tool === 'WAYPOINT') flush.tool();
+						else select.tool("WAYPOINT");
 					}}
 				/>
 				<Parking
@@ -66,7 +70,8 @@ export const MapToolSelector: React.FC<MapToolSelectorProps> = (
 							: "fill-grey-light")
 					}
 					onClick={() => {
-						select.tool("PARKING");
+						if (tool === 'PARKING') flush.tool();
+						else select.tool("PARKING");
 					}}
 				/>
 			</div>

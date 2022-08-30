@@ -237,15 +237,13 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 					/>
 
 				</div>
-				
-				{dropdownPosition && dropdownItem.type !== 'none' &&
-					<BuilderDropdown 
-						position={dropdownPosition}
-						dropdownItem={dropdownItem}
-						setDropdownItem={setDropdownItem}
-						setDeleteItem={setDeleteItem}
-					/>
-				}
+
+				<BuilderDropdown 
+					position={dropdownPosition}
+					dropdownItem={dropdownItem}
+					setDropdownItem={setDropdownItem}
+					setDeleteItem={setDeleteItem}
+				/>
 
 				<BuilderModalDelete 
 					topo={props.topoQuark}

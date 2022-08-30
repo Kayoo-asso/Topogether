@@ -60,7 +60,7 @@ export type SelectStore =
 	{ tool: MapToolEnum } &
 	{ select: Selectors } &
 	{ flush: Flushers } &
-	{ isEmpty: () => boolean };
+	{ isEmpty: () => boolean }
 
 export const useSelectStore = create<SelectStore>()((set, get) => ({
 	info: "NONE",

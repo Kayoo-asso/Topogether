@@ -8,8 +8,8 @@ import { Boulder, Sector } from 'types';
 import { ModalRenameSector } from './ModalRenameSector';
 
 interface BuilderDropdownProps {
-    position: { x: number; y: number };
-    dropdownItem: Exclude<InteractItem, SelectedNone>,
+    position?: { x: number; y: number };
+    dropdownItem?: InteractItem,
     setDropdownItem: Dispatch<SetStateAction<InteractItem>>,
     setDeleteItem: Dispatch<SetStateAction<InteractItem>>,
 }
@@ -21,52 +21,40 @@ export const BuilderDropdown: React.FC<BuilderDropdownProps> = watchDependencies
         
     const [sectorToRename, setSectorToRename] = useState<Quark<Sector>>();
     
-    const addTrack = useCallback(() => {
+    const addTrack = useCallback((bQuark: Quark<Boulder>) => {
         if (session) {
-            const boulderQuark = props.dropdownItem.value as Quark<Boulder>
-            const trackQuark = createTrack(boulderQuark(), session.id);
-            selectTack(trackQuark, boulderQuark);
+            const trackQuark = createTrack(bQuark(), session.id);
+            selectTack(trackQuark, bQuark);
         }
-    }, [props.dropdownItem, session]);
-
-    const showModal = useCallback(() => {
-        console.log(props.dropdownItem.value());
-        console.log(sectorToRename);
-        setSectorToRename(() => props.dropdownItem.value as Quark<Sector>);
-
-
-    }, [props.dropdownItem.value, sectorToRename, setSectorToRename]);
+    }, [session]);
 
     const getOptions = useCallback((): DropdownOption[] => {
-        if (props.dropdownItem.type === 'sector') 
+        const item = props.dropdownItem!;
+        if (item.type === 'sector') 
             return [
-                { value: "Renommer", action: showModal },
-                { value: "Supprimer", action: () => props.setDeleteItem(props.dropdownItem) },
+                { value: "Renommer", action: () => setSectorToRename(() => item.value as Quark<Sector>) },
+                { value: "Supprimer", action: () => props.setDeleteItem(item) },
             ]
-        else if (props.dropdownItem.type === 'boulder')
+        else if (item.type === 'boulder')
             return [
-                { value: "Ajouter un passage", action: addTrack },
-                { value: "Supprimer", action: () => props.setDeleteItem(props.dropdownItem) },
+                { value: "Ajouter un passage", action: () => addTrack(item.value as Quark<Boulder>) },
+                { value: "Supprimer", action: () => props.setDeleteItem(item) },
             ];
-        else if (props.dropdownItem.type === 'parking')
-            return [{ value: "Supprimer", action: () => props.setDeleteItem(props.dropdownItem) }]
+        else if (item.type === 'parking')
+            return [{ value: "Supprimer", action: () => props.setDeleteItem(item) }]
         else // Case Waypoint
-            return [{ value: "Supprimer", action: () => props.setDeleteItem(props.dropdownItem) }]
-    }, [props.dropdownItem, props.dropdownItem.value, addTrack, showModal]);
-
-    useEffect(() => {
-        console.log(sectorToRename);
-        if (sectorToRename) console.log(sectorToRename())
-        else console.log('null')
-    }, [sectorToRename])
+            return [{ value: "Supprimer", action: () => props.setDeleteItem(item) }]
+    }, [props.dropdownItem, addTrack]);
    
     return (
         <>
-            <Dropdown 
-                position={props.position}
-                options={getOptions()}
-                onSelect={() => props.setDropdownItem({ type:'none', value: undefined })}
-            />
+            {props.position && props.dropdownItem && props.dropdownItem.type !== 'none' &&
+                <Dropdown 
+                    position={props.position}
+                    options={getOptions()}
+                    onSelect={() => props.setDropdownItem({ type:'none', value: undefined })}
+                />
+            }
 
             {sectorToRename &&
                 <ModalRenameSector 
