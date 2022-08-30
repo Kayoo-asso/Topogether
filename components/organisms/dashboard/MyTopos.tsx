@@ -23,13 +23,13 @@ export const MyTopos: React.FC<MyToposProps> = watchDependencies(
 		const [lightTopos, setLightTopos] = useState(props.myTopos);
 		const draftLightTopos = lightTopos.filter(
 			(topo) => topo.status === TopoStatus.Draft
-		);
+		).sort((t1, t2) => { return new Date(t2.modified).getTime() - new Date(t1.modified).getTime() });
 		const submittedLightTopos = lightTopos.filter(
 			(topo) => topo.status === TopoStatus.Submitted
-		);
+		).sort((t1, t2) => { return new Date(t2.submitted!).getTime() - new Date(t1.submitted!).getTime() });
 		const validatedLightTopos = lightTopos.filter(
 			(topo) => topo.status === TopoStatus.Validated
-		);
+		).sort((t1, t2) => { return new Date(t2.validated!).getTime() - new Date(t1.validated!).getTime() });
 
 		const [actionTopo, setActionTopo] = useState<LightTopo>();
 

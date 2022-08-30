@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Button, TextInput } from "components";
-import { Quark } from "helpers/quarky";
+import { Quark, watchDependencies } from "helpers/quarky";
 import { Name, Sector } from "types";
 import { Portal } from "helpers/hooks";
 import Clear from "assets/icons/clear.svg";
@@ -10,10 +10,8 @@ interface ModalRenameSectorProps {
 	onClose: () => void;
 }
 
-export const ModalRenameSector: React.FC<ModalRenameSectorProps> = (props: ModalRenameSectorProps) => {
+export const ModalRenameSector: React.FC<ModalRenameSectorProps> = watchDependencies((props: ModalRenameSectorProps) => {
 	const sector = props.sector();
-
-	console.log(sector);
 
 	const [sectorNameError, setSectorNameError] = useState<string>();
 
@@ -89,4 +87,4 @@ export const ModalRenameSector: React.FC<ModalRenameSectorProps> = (props: Modal
 			</div>
 		</Portal>
 	);
-};
+});

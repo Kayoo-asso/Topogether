@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { createSector } from "helpers/builder";
 import { usePolyline } from "helpers/map";
-import { Quark } from "helpers/quarky";
+import { Quark, watchDependencies } from "helpers/quarky";
 import { GeoCoordinates, MapEventHandlers, Sector, Topo, UUID } from "types";
 import { useMap } from "..";
 import { ValidationMarker } from "./ValidationMarker";
@@ -29,7 +29,7 @@ function addPoint(
 // - map.move: last point in path follows mouse cursor
 export const CreatingSectorAreaMarker: React.FC<
 	CreatingSectorAreaMarkerProps
-> = (props: CreatingSectorAreaMarkerProps) => {
+> = watchDependencies((props: CreatingSectorAreaMarkerProps) => {
 	// NOTE: the last point of the path follows the mouse cursor, after we started drawing
 	const flush = useSelectStore(s => s.flush);
 	const [path, setPath] = useState<google.maps.LatLng[]>([]);
@@ -143,6 +143,6 @@ export const CreatingSectorAreaMarker: React.FC<
 
 		</>
 	);
-};
+});
 
 CreatingSectorAreaMarker.displayName = "Creating Sector AreaMarker";

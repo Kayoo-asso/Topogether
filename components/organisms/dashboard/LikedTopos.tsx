@@ -15,7 +15,7 @@ interface LikedToposProps {
 export const LikedTopos: React.FC<LikedToposProps> = watchDependencies(
 	(props: LikedToposProps) => {
 		const [likedTopos, setLikedTopos] = useState(props.likedTopos);
-		const [ModalUnlike, showModalUnlike] = useModal<LightTopo>();
+		const [ModalUnlike, showModalUnlike] = useModal<LightTopo>(); //TODO : Link that action
 
 		const [previewTopo, setPreviewTopo] = useState<LightTopo>();
 		const togglePreviewTopo = useCallback((topo: LightTopo) => {

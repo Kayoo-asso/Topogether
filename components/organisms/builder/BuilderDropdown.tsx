@@ -20,6 +20,7 @@ export const BuilderDropdown: React.FC<BuilderDropdownProps> = watchDependencies
     const selectTack = useSelectStore(s => s.select.track);
         
     const [sectorToRename, setSectorToRename] = useState<Quark<Sector>>();
+    
     const addTrack = useCallback(() => {
         if (session) {
             const boulderQuark = props.dropdownItem.value as Quark<Boulder>
@@ -28,10 +29,18 @@ export const BuilderDropdown: React.FC<BuilderDropdownProps> = watchDependencies
         }
     }, [props.dropdownItem, session]);
 
+    const showModal = useCallback(() => {
+        console.log(props.dropdownItem.value());
+        console.log(sectorToRename);
+        setSectorToRename(() => props.dropdownItem.value as Quark<Sector>);
+
+
+    }, [props.dropdownItem.value, sectorToRename, setSectorToRename]);
+
     const getOptions = useCallback((): DropdownOption[] => {
         if (props.dropdownItem.type === 'sector') 
             return [
-                { value: "Renommer", action: () => setSectorToRename(() => props.dropdownItem.value as Quark<Sector>) },
+                { value: "Renommer", action: showModal },
                 { value: "Supprimer", action: () => props.setDeleteItem(props.dropdownItem) },
             ]
         else if (props.dropdownItem.type === 'boulder')
@@ -43,9 +52,10 @@ export const BuilderDropdown: React.FC<BuilderDropdownProps> = watchDependencies
             return [{ value: "Supprimer", action: () => props.setDeleteItem(props.dropdownItem) }]
         else // Case Waypoint
             return [{ value: "Supprimer", action: () => props.setDeleteItem(props.dropdownItem) }]
-    }, [props.dropdownItem, props.dropdownItem.value, addTrack]);
+    }, [props.dropdownItem, props.dropdownItem.value, addTrack, showModal]);
 
     useEffect(() => {
+        console.log(sectorToRename);
         if (sectorToRename) console.log(sectorToRename())
         else console.log('null')
     }, [sectorToRename])

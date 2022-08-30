@@ -14,6 +14,7 @@ import Checked from "assets/icons/checked.svg";
 import { encodeUUID } from "helpers/utils";
 import { TopoCard } from "components/molecules";
 import { TopoPreview } from "components/organisms/TopoPreview";
+import { TabsFly } from "components/layouts/TabsFly";
 
 interface RootAdminProps {
 	lightTopos: LightTopo[];
@@ -25,9 +26,17 @@ export const RootAdmin: React.FC<RootAdminProps> = (props: RootAdminProps) => {
 	);
 
 	const [lightTopos, setLightTopos] = useState(props.lightTopos);
-	const toposToDisplay = lightTopos.filter(
-		(topo) => topo.status === selectedStatus
-	);
+	const draftLightTopos = lightTopos.filter(
+		(topo) => topo.status === TopoStatus.Draft
+	).sort((t1, t2) => { return new Date(t2.modified).getTime() - new Date(t1.modified).getTime() });
+	const submittedLightTopos = lightTopos.filter(
+		(topo) => topo.status === TopoStatus.Submitted
+	).sort((t1, t2) => { return new Date(t2.submitted!).getTime() - new Date(t1.submitted!).getTime() });
+	const validatedLightTopos = lightTopos.filter(
+		(topo) => topo.status === TopoStatus.Validated
+	).sort((t1, t2) => { return new Date(t2.validated!).getTime() - new Date(t1.validated!).getTime() });
+
+	const toposToDisplay = selectedStatus === TopoStatus.Draft ? draftLightTopos : TopoStatus.Submitted ? submittedLightTopos : validatedLightTopos;
 
 	const [actionTopo, setActionTopo] = useState<LightTopo>();
 
@@ -122,30 +131,17 @@ export const RootAdmin: React.FC<RootAdminProps> = (props: RootAdminProps) => {
 				<LeftbarDesktop currentMenuItem="ADMIN" />
 
 				<div className="mt-[10%] md:mt-[5%] h-[10%] w-full">
-					<Tabs
-						tabs={[
-							{
-								icon: Edit,
-								iconStroke: true,
-								color: "second",
-								action: () => setSelectedStatus(TopoStatus.Draft),
-							},
-							{
-								icon: Recent,
-								iconStroke: true,
-								color: "third",
-								action: () => setSelectedStatus(TopoStatus.Submitted),
-							},
-							{
-								icon: Checked,
-								iconFill: true,
-								color: "main",
-								action: () => setSelectedStatus(TopoStatus.Validated),
-							},
-						]}
-					/>
 					<div className="hide-scrollbar h-contentPlusHeader overflow-y-scroll pb-40 md:h-contentPlusShell">
 						<div className="flex min-w-full flex-row flex-wrap px-4 py-6 md:px-8">
+							{toposToDisplay.length === 0 &&
+								<div className="relative flex h-[70vh] w-full justify-center">
+									<div className="relative flex h-full w-[90%] items-center overflow-hidden rounded bg-grey-superlight">
+											<div className="flex w-full flex-col items-center">
+												<span>Aucun topo dans cette catégorie</span>
+											</div>
+									</div>
+								</div>
+							}
 							{toposToDisplay.map((topo) => (
 								<TopoCard
 									key={topo.id}
@@ -154,6 +150,34 @@ export const RootAdmin: React.FC<RootAdminProps> = (props: RootAdminProps) => {
 									onClick={togglePreviewTopo}
 								/>
 							))}
+						</div>
+
+						<div className="absolute w-full md:w-[calc(100%-300px)] left-0 md:left-[calc(300px+1%)] bottom-[12vh] md:bottom-8 flex justify-center">
+							<TabsFly 
+								tabs={[
+									{
+										icon: Edit,
+										iconStroke: true,
+										label: "Brouillons",
+										color: "second",
+										action: () => setSelectedStatus(TopoStatus.Draft),
+									},
+									{
+										icon: Recent,
+										iconStroke: true,
+										label: "En attente de validation",
+										color: "third",
+										action: () => setSelectedStatus(TopoStatus.Submitted),
+									},
+									{
+										icon: Checked,
+										iconFill: true,
+										label: "Validés",
+										color: "main",
+										action: () => setSelectedStatus(TopoStatus.Validated),
+									},
+								]}
+							/>
 						</div>
 					</div>
 				</div>
