@@ -49,9 +49,6 @@ export const CreatingSectorAreaMarker: React.FC<
 	const polylineOptions: google.maps.PolylineOptions = {
 		strokeColor: "#04D98B",
 		strokeWeight: 2,
-		icons: [{
-			icon: { path: google.maps.SymbolPath.CIRCLE }
-		}]
 	};
 	usePolyline(
 		{
@@ -110,9 +107,9 @@ export const CreatingSectorAreaMarker: React.FC<
 
 	return (
 		<>
-			{path.length > 3 &&
+			{path.length > 0 &&
 				<ValidationMarker
-					position={path[0]}
+					path={path}
 					onClick={() => {
 						// Remove the mouse cursor and close nicely
 						path[path.length - 1] = path[0];
