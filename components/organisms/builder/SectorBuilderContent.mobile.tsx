@@ -17,7 +17,7 @@ export const SectorBuilderContentMobile: React.FC<SectorBuilderContentMobileProp
 		const flush = useSelectStore(s => s.flush);
 
 		return (
-				<div className="mt-10 flex flex-col overflow-auto px-3 pb-5">
+				<div className="flex flex-col w-full px-5 pb-5 overflow-scroll md:hidden">
 					<SectorListBuilder
 						topoQuark={props.topoQuark}
 						boulderOrder={props.boulderOrder}
@@ -28,6 +28,7 @@ export const SectorBuilderContentMobile: React.FC<SectorBuilderContentMobileProp
 						<Button
 							content="Nouveau secteur"
 							className="w-3/4"
+							fullWidth
 							onClick={() => {
 								select.tool('SECTOR');
 								flush.info();

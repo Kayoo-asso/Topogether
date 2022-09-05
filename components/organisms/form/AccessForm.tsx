@@ -34,7 +34,7 @@ export const AccessForm: React.FC<AccessFormProps> = watchDependencies(
 				{props.accesses.length > 0 && accessQuark && access &&
 					<>
 						<div
-							className={`flex flex-col max-h-[90%] gap-6 pb-6 overflow-scroll ${
+							className={`flex flex-col max-h-[90%] gap-6 pb-6 overflow-auto ${
 								props.className ? props.className : ""
 							}`}
 							onClick={(e) => e.stopPropagation()}

@@ -40,7 +40,7 @@ export const SlideoverLeftBuilder: React.FC<SlideoverLeftBuilderProps> = (props:
 					open={selectedInfo !== 'NONE'}
 					onClose={onClose}
 				>
-					<div className="h-full pl-6 pr-3 pt-14">
+					<div className="flex flex-col h-full px-4 pt-14">
 						{getContent()}
 					</div>
 				</SlideoverMobile>

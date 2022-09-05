@@ -85,7 +85,12 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 
 		const handleCreateNewMarker = useCallback(
 			(e) => {
-				if (e.latLng) {
+				console.log('click');
+				if (!isEmptyStore()) {
+					flush.info();
+					flush.item();
+				}
+				else if (e.latLng) {
 					const loc: GeoCoordinates = [e.latLng.lng(), e.latLng.lat()];
 					switch (tool) {
 						case "ROCK":
@@ -103,7 +108,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 					}
 				}
 			},
-			[topo, tool, createBoulder, createParking, createWaypoint]
+			[topo, tool, createBoulder, createParking, createWaypoint, isEmptyStore()]
 		);
 
 		const constructMenuOptions = useCallback((): DropdownOption[] => ([

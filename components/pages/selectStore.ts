@@ -69,7 +69,7 @@ export const useSelectStore = create<SelectStore>()((set, get) => ({
 		value: undefined,
 	},
 	tool: undefined,
-	isEmpty: function() { return (!this || (this.info === "NONE" && this.item.type === 'none')) },
+	isEmpty: function() { return (!get() || (get().info === "NONE" && get().item.type === 'none')) },
 	select: {
 		info: function(i: SelectedInfo, b: Breakpoint) {
 			if (b === 'mobile') get().flush.item();
@@ -111,7 +111,7 @@ export const useSelectStore = create<SelectStore>()((set, get) => ({
 		}),
 		track: () => set(s => ({ item: { ...s.item, selectedTrack: undefined } })),
 		image: () => set(s => ({ item: { ...s.item, selectedImage: undefined } })),
-		all: function() { this.info(); this.item() }
+		all: function() { get().flush.info(); get().flush.item() }
 	}
 }));
 

@@ -62,8 +62,6 @@ export const Dropdown: React.FC<DropdownProps> = React.memo(
 								i > 0 && "mt-5"
 							}`}
 							key={opt.value}
-							role="menuitem"
-							tabIndex={0}
 						>
 							{opt.label || opt.value}
 						</div>
@@ -75,15 +73,13 @@ export const Dropdown: React.FC<DropdownProps> = React.memo(
 									: "cursor-pointer text-dark"
 							} ktext-base flex flex-row items-center`}
 							key={opt.value}
-							onPointerDown={(e) => {
+							onClick={(e) => {
 								e.preventDefault();
 								if (!opt.disabled) {
 									props.onSelect && props.onSelect(opt);
 									opt.action && opt.action();
 								}
 							}}
-							role="menuitem"
-							tabIndex={0}
 						>
 							{opt.icon && (
 								<opt.icon

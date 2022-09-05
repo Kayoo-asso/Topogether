@@ -47,7 +47,7 @@ export const SlideoverLeftTopo: React.FC<SlideoverLeftTopoProps> = (props: Slide
 					open={selectedInfo !== 'NONE'}
 					onClose={onClose}
 				>
-					<div className="h-full pl-6 pr-3 py-14">
+					<div className="h-full pl-6 pr-3 pt-14">
                         <div className="ktext-title mb-6">{getTitle()}</div>
 						{getContent()}
 					</div>
