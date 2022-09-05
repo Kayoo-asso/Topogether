@@ -6,7 +6,7 @@ import {
 } from "components";
 import { Signal } from "helpers/quarky";
 import { Amenities, Topo } from "types";
-import { listRockTypes, hasFlag } from "helpers/bitflags";
+import { hasFlag, listFlags } from "helpers/bitflags";
 import { TopoTypeToColor } from "helpers/topo";
 
 import Marker from "assets/icons/marker.svg";
@@ -18,6 +18,7 @@ import WaterDrop from "assets/icons/water-drop.svg";
 import Bin from "assets/icons/bin.svg";
 import Umbrella from "assets/icons/umbrella.svg";
 import { Flash } from "components/atoms/overlays";
+import { rockNames } from "types/BitflagNames";
 
 interface InfoContentProps {
 	topo: Signal<Topo>;
@@ -133,7 +134,7 @@ export const InfoContent: React.FC<InfoContentProps> = (props: InfoContentProps)
 						{topo.rockTypes && (
 							<div>
 								<span className="font-semibold">Roche : </span>
-								{listRockTypes(topo.rockTypes).join(", ")}
+								{listFlags(topo.rockTypes, rockNames).join(", ")}
 							</div>
 						)}
 						{topo.altitude && (

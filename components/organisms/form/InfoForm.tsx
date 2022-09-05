@@ -3,7 +3,8 @@ import { Checkbox, ImageInput, Show, TextArea, TextInput } from "components";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { Amenities, Description, Name, RockTypes, Topo } from "types";
 import { BitflagMultipleSelect } from "components/molecules/form/BitflagMultipleSelect";
-import { toggleFlag, rockNames, hasFlag } from "helpers/bitflags";
+import { toggleFlag, rockNames, hasFlag, listFlags } from "helpers/bitflags";
+import { RockTypeSelector } from "components/molecules/form/RockTypeSelector";
 
 interface InfoFormProps {
 	topo: Quark<Topo>;
@@ -13,6 +14,8 @@ interface InfoFormProps {
 export const InfoForm: React.FC<InfoFormProps> = watchDependencies(
 	(props: InfoFormProps) => {
 		const topo = props.topo();
+
+		const [displayRockTypeSelector, setDisplayRockTypeSelector] = useState(false);
 
 		const [displayOtherAmenities, setDisplayOtherAmenities] = useState(!!topo.otherAmenities);
 
@@ -80,17 +83,18 @@ export const InfoForm: React.FC<InfoFormProps> = watchDependencies(
 					}, [props.topo])}
 				/>
 
-				<BitflagMultipleSelect<RockTypes>
+				<TextInput 
 					id="topo-rock-type"
 					label="Type de roche"
-					bitflagNames={rockNames}
-					value={topo.rockTypes}
-					onChange={useCallback((value) => {
-						props.topo.set(t => ({
-							...t,
-							rockTypes: toggleFlag(t.rockTypes, value),
-						}));
-					}, [props.topo])}
+					value={topo.rockTypes && listFlags(topo.rockTypes, rockNames).join(", ")}
+					pointer
+					readOnly
+					onClick={() => setDisplayRockTypeSelector(true)}
+				/>
+				<RockTypeSelector 
+					open={displayRockTypeSelector}
+					setOpen={setDisplayRockTypeSelector}
+					topo={props.topo}
 				/>
 
 				<TextInput

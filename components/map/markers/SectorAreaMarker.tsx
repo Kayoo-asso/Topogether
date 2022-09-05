@@ -33,16 +33,16 @@ export const SectorAreaMarker: React.FC<SectorAreaMarkerProps> =
 		const select = useSelectStore(s => s.select);
 		const flush = useSelectStore(s => s.flush);
 		const item = useSelectStore(s => { if (s.item.type === 'sector') return s.item });
+		const tool = useSelectStore(s => s.tool);
 
 		const sector = props.sector();
 		const selected = item && item.value().id === sector.id;
-		const map = useMap();
 
 		const options: google.maps.PolygonOptions = {
 			paths: sector.path.map((p) => toLatLng(p)),
 			draggable: props.isOnBuilder && selected,
 			editable: props.isOnBuilder && selected,
-			clickable: props.isOnBuilder,
+			clickable: props.isOnBuilder && !tool,
 			fillColor: "#04D98B",
 			fillOpacity: selected ? 0.3 : 0,
 			strokeColor: "#04D98B",
@@ -110,8 +110,8 @@ export const SectorAreaMarker: React.FC<SectorAreaMarkerProps> =
 			// ),
 			onClick: useCallback((e: PolyMouseEvent) => {
 			    if (selected) flush.item();
-				else select.sector(props.sector);
-			}, [props.sector, selected]),
+				else if (!tool) select.sector(props.sector);
+			}, [props.sector, selected, tool]),
 			// onMouseMove: useCallback((e: google.maps.PolyMouseEvent) => props.onMouseMoveOnSector && props.onMouseMoveOnSector(e), [props.sector, props.onMouseMoveOnSector]),
 			onDragEnd: useCallback(() => {
 				if (dragging.current) {

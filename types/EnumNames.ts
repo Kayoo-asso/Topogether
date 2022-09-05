@@ -1,7 +1,5 @@
-import { SelectOption } from "components";
-import { Reception, Difficulty, TopoType, Orientation } from "./Enums";
+import { Reception, Difficulty, TopoType, Orientation, TrackStyle, HoldType, BodyPosition, Dangers, Enum, RockType } from "./Enums";
 
-export type Enum = Difficulty | Orientation | Reception | TopoType;
 
 export const DifficultyName: { [key in Difficulty]: string } = {
 	[Difficulty.Good]: "Facile",

@@ -3,42 +3,42 @@ import React from "react";
 
 export type SelectOption<T> = [value: T, label: string];
 
-interface SelectTouchProps<T> {
+interface MultipleSelectTouchProps<T> {
 	label?: string,
 	wrapperClassname?: string;
 	options: SelectOption<T>[];
-	value?: T;
+	value?: T[];
 	white?: boolean,
 	big?: boolean,
 	error?: string;
 	onChange: (value: T | undefined) => void;
 }
 
-export function SelectTouch<T>({
+export function MultipleSelectTouch<T>({
 	white = false,
 	big = false,
 	...props
-}: SelectTouchProps<T>) {
+}: MultipleSelectTouchProps<T>) {
 	const device = useBreakpoint();
-	const selected = props.options.map(o => o[0]).find(val => val === props.value) || [null, null];
+	const selected = props.options.map(o => o[0]).filter(val => props.value?.some(v => v === val));
 	
 	const getClassName = (val: T) => {
 		let classes = '';
 		if (big) {
 			classes += ' py-3 px-4 text-xl'
-			if (selected === val) classes += " font-semibold"
+			if (selected[0] === val) classes += " font-semibold"
 		}
 		else {
 			classes += ' py-2 px-3'
-			if (selected === val) classes += " font-semibold"
+			if (selected[0] === val) classes += " font-semibold"
 		}
 
 		if (white) {
-			if (selected === val) classes += " bg-white text-main"
+			if (selected[0] === val) classes += " bg-white text-main"
 			else classes += " text-white";
 		}
 		else {
-			if (selected === val) classes += " bg-main text-white"
+			if (selected[0] === val) classes += " bg-main text-white"
 			else classes += " text-dark"
 		}
 		return classes;
@@ -52,9 +52,9 @@ export function SelectTouch<T>({
 				{props.options.sort().map(([value, label], index) => (
 					<div 
 						key={index}
-						className={"h-full rounded-sm cursor-pointer ktext-label " +  ((selected === value || device === 'mobile') ? '' : "hover:bg-dark hover:bg-opacity-20 ") + getClassName(value)}
+						className={"h-full rounded-sm cursor-pointer ktext-label " +  ((selected.some(v => v === value) || device === 'mobile') ? '' : "hover:bg-dark hover:bg-opacity-20 ") + getClassName(value)}
 						onClick={() => {
-							if (selected === value) props.onChange(undefined)
+							if (selected.some(v => v === value)) props.onChange(undefined)
 							else props.onChange(value)
 						}}
 						role="menuitem"

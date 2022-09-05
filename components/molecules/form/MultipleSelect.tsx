@@ -22,7 +22,6 @@ export const MultipleSelect = <T extends number | string>(
 		?.filter((option) => props.values.includes(option.value))
 		.map((option) => option.label)
 		.join(", ");
-	console.log(props.options);
 
 	return (
 		<div id={props.id} className={`relative cursor-pointer ${props.className}`}>

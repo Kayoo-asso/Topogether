@@ -1,6 +1,8 @@
 // NEVER reorder the values of an enum, only add new values at the end.
 // This is necessary to avoid a mismatch with existing values in the database.
 
+export type Enum = Difficulty | Orientation | Reception | TopoType | TrackStyle | HoldType | BodyPosition | Dangers;
+
 export enum Difficulty {
 	Good,
 	OK,
@@ -24,6 +26,68 @@ export enum Orientation {
 	SW,
 	W,
 	NW,
+}
+
+export enum RockType {
+	Andesite,
+	Basalt,
+	Composite,
+	Conglomerate,
+	Chalk,
+	Dolerite,
+	Gabbro,
+	Gneiss,
+	Granite,
+	Limestone,
+	Migmatite,
+	Molasse,
+	Porphyry,
+	Quartz,
+	Quartzite,
+	Rhyolite,
+	Sandstone,
+	Schist,
+	Serpentinite,
+	Trachyandesite,
+	Trachyte,
+	Tuff,
+	Volcanic,
+}
+
+export type TrackSpecification = TrackStyle & HoldType & BodyPosition & Dangers;
+
+export enum TrackStyle {
+	CRACK,
+	DIHEDRAL,
+	LAYBACK,
+	OVERHANG,
+	ROOF,
+	SLAB,
+	TRAVERSE,	
+}
+
+export enum HoldType {	
+	ADHERENCE,
+	CRIMP,
+	ONEFINGER,
+	PINCH,
+	SLOPPER,
+	TWOFINGERS,
+}
+
+export enum BodyPosition {
+	DROPKNEE,
+	DYNAMIC,
+	FLAG,
+	HEELHOOK,
+	KNEEBAR,
+	TOEHOOK,
+}
+
+export enum Dangers {
+	BadReception,
+	DangerousDescent, 
+	Exposed,
 }
 
 export type Rating = 1 | 2 | 3 | 4 | 5;
