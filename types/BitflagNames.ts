@@ -1,6 +1,6 @@
 import { ClimbTechniques, RockTypes } from "./Bitflags";
 
-export const rockNames: [RockTypes, string][] = [
+export const RockNames: [RockTypes, string][] = [
 	[RockTypes.Andesite, "Andésite"],
 	[RockTypes.Basalt, "Basalte"],
 	[RockTypes.Composite, "Composite"],

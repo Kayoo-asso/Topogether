@@ -18,7 +18,7 @@ import WaterDrop from "assets/icons/water-drop.svg";
 import Bin from "assets/icons/bin.svg";
 import Umbrella from "assets/icons/umbrella.svg";
 import { Flash } from "components/atoms/overlays";
-import { rockNames } from "types/BitflagNames";
+import { RockNames } from "types/BitflagNames";
 
 interface InfoContentProps {
 	topo: Signal<Topo>;
@@ -134,7 +134,7 @@ export const InfoContent: React.FC<InfoContentProps> = (props: InfoContentProps)
 						{topo.rockTypes && (
 							<div>
 								<span className="font-semibold">Roche : </span>
-								{listFlags(topo.rockTypes, rockNames).join(", ")}
+								{listFlags(topo.rockTypes, RockNames).join(", ")}
 							</div>
 						)}
 						{topo.altitude && (

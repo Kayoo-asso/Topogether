@@ -5,7 +5,7 @@ import { ValidateButton } from "components/atoms/buttons/ValidateButton";
 import { MultipleSelectTouch } from "./MultipleSelectTouch";
 import { Quark } from "helpers/quarky";
 import { toggleFlag } from "helpers/bitflags";
-import { rockNames } from "types/BitflagNames";
+import { RockNames } from "types/BitflagNames";
 
 interface RockTypeSelectorProps {
 	open: boolean;
@@ -30,7 +30,7 @@ export const RockTypeSelector: React.FC<RockTypeSelectorProps> = (
 
                 <div className="w-full flex-1 flex flex-col gap-12 justify-center items-center text-grey-light ktext-title">
                     <MultipleSelectTouch<RockTypes>
-                        bitflagNames={rockNames}
+                        bitflagNames={RockNames}
                         value={topo.rockTypes}
                         white
                         big
