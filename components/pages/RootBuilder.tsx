@@ -4,7 +4,7 @@ import {
 	GeoCoordinates,
 	Topo,
 	TopoStatus,
-	ClimbTechniques,
+	TrackDanger,
 } from "types";
 import {
 	Quark,
@@ -48,6 +48,7 @@ import { InteractItem, useSelectStore } from "./selectStore";
 import { SyncUrl } from "components/organisms/SyncUrl";
 import { KeyboardShortcut } from "components/organisms/builder/KeyboardShortcuts";
 import { DropdownOption } from "components/molecules";
+import { Flash } from "components/atoms/overlays";
 
 interface RootBuilderProps {
 	topoQuark: Quark<Topo>;
@@ -83,34 +84,6 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 		const [ModalSubmitTopo, showModalSubmitTopo] = useModal();
 		const [ModalDeleteTopo, showModalDeleteTopo] = useModal();
 
-		const handleCreateNewMarker = useCallback(
-			(e) => {
-				console.log('click');
-				if (!isEmptyStore()) {
-					flush.info();
-					flush.item();
-				}
-				else if (e.latLng) {
-					const loc: GeoCoordinates = [e.latLng.lng(), e.latLng.lat()];
-					switch (tool) {
-						case "ROCK":
-							createBoulder(props.topoQuark, loc);
-							break;
-						case "PARKING":
-							createParking(topo, loc);
-							break;
-						case "WAYPOINT":
-							createWaypoint(topo, loc);
-							break;
-						// case 'SECTOR' is handled by inserting a CreatingSectorAreaMarker component
-						default:
-							break;
-					}
-				}
-			},
-			[topo, tool, createBoulder, createParking, createWaypoint, isEmptyStore()]
-		);
-
 		const constructMenuOptions = useCallback((): DropdownOption[] => ([
 			{ value: "Infos du topo", action: () => select.info("INFO", breakpoint) },
 			{
@@ -145,7 +118,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 				.reduce((a, b) => a + b, 0);
 		}, [topo.boulders]);
 		const defaultBoulderFilterOptions: BoulderFilterOptions = {
-			techniques: ClimbTechniques.None,
+			spec: TrackDanger.None,
 			tracksRange: [0, maxTracks()],
 			gradeRange: [3, 9],
 			mustSee: false,
@@ -153,6 +126,10 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 		const boulderFilters = useCreateQuark<BoulderFilterOptions>(
 			defaultBoulderFilterOptions
 		);
+		const isFilterEmpty = () => {
+			const fl = boulderFilters();
+			return (fl.spec === TrackDanger.None && !fl.mustSee && fl.gradeRange[0] === 3 && fl.gradeRange[1] === 9 && fl.tracksRange[0] === 0 && fl.tracksRange[1] === maxTracks())
+		}
 		useEffect(() => {
 			const max = maxTracks();
 			if (max !== boulderFilters().tracksRange[1]) {
@@ -162,6 +139,35 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 				}));
 			}
 		}, [maxTracks()]);
+
+		const [flashOpen, setFlashOpen] = useState(false);
+		const handleCreateNewMarker = useCallback(
+			(e) => {
+				if (!isEmptyStore()) {
+					flush.info();
+					flush.item();
+				}
+				else if (e.latLng) {
+					const loc: GeoCoordinates = [e.latLng.lng(), e.latLng.lat()];
+					switch (tool) {
+						case "ROCK":
+							if (!isFilterEmpty()) setFlashOpen(true);
+							createBoulder(props.topoQuark, loc);
+							break;
+						case "PARKING":
+							createParking(topo, loc);
+							break;
+						case "WAYPOINT":
+							createWaypoint(topo, loc);
+							break;
+						// case 'SECTOR' is handled by inserting a CreatingSectorAreaMarker component
+						default:
+							break;
+					}
+				}
+			},
+			[topo, tool, createBoulder, createParking, createWaypoint, isEmptyStore(), isFilterEmpty()]
+		);
 
 		return (
 			<>
@@ -285,6 +291,11 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 					Le topo sera entièrement supprimé. Etes-vous sûr de vouloir
 					continuer ?
 				</ModalDeleteTopo>
+
+				<Flash 
+					open={flashOpen}
+					onClose={() => setFlashOpen(false)}
+				>Attention ! Des filtres sont activés et peuvent masquer les nouveaux blocs.</Flash>
 			</>
 		);
 	}

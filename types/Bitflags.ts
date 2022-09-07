@@ -3,32 +3,7 @@
 
 // Used to define helper functions that only operate on one of the bitflags
 // Register new bitflags here
-export type Bitflag = ClimbTechniques | Amenities | RockTypes;
-
-export const enum ClimbTechniques {
-	None = 0,
-	Aplat = 1 << 0,
-	Adherence = 1 << 1,
-	Bidoigt = 1 << 2,
-	Contrepointe = 1 << 3,
-	Dalle = 1 << 4,
-	Devers = 1 << 5,
-	Diedre = 1 << 6,
-	Drapeau = 1 << 7,
-	Dulfer = 1 << 8,
-	Dynamique = 1 << 9,
-	Epaule = 1 << 10,
-	Fissure = 1 << 11,
-	Genou = 1 << 12,
-	Inverse = 1 << 13,
-	Lolotte = 1 << 14,
-	PetitsPieds = 1 << 15,
-	Pince = 1 << 16,
-	Reglette = 1 << 17,
-	Retablissement = 1 << 18,
-	Talon = 1 << 19,
-	Toit = 1 << 20,
-}
+export type Bitflag = Amenities | RockTypes | TopoTypes | TrackDanger | TrackStyle | HoldType | BodyPosition;
 
 export const enum Amenities {
 	None = 0,
@@ -66,4 +41,51 @@ export const enum RockTypes {
 	Trachyte = 1 << 21,
 	Tuff = 1 << 22,
 	Volcanic = 1 << 23,
+}
+
+export const enum TopoTypes {
+	None = 0,
+	Artificial = 1 << 3,
+	Boulder = 1 << 0,
+	Cliff = 1 << 1,
+	DeepWater = 1 << 2,
+	Multipitch = 1 << 3,
+}
+
+
+export type TrackSpec = TrackDanger | TrackStyle | HoldType | BodyPosition;
+
+
+export const enum TrackDanger {
+	None = 0,
+	BadReception = 1 << 0,
+	High = 1 << 1,
+	LooseRock = 1 << 2,
+}
+
+export const enum TrackStyle {
+	Crack = 1 << 3,
+	Dihedral = 1 << 4,
+	Layback = 1 << 5,
+	Overhang = 1 << 6,
+	Roof = 1 << 7,
+	Slab = 1 << 8,
+	Traverse = 1 << 9,
+}
+
+export const enum HoldType {
+	Adherence = 1 << 10,
+	Crimp = 1 << 11,
+	OneFinger = 1 << 12,
+	Pinch = 1 << 13,
+	Slopper = 1 << 14,
+	TwoFingers = 1 << 15,
+}
+
+export const enum BodyPosition {
+	DropKnee = 1 << 16,
+	Dynamic = 1 << 17,
+	HeelHook = 1 << 18,
+	Kneebar = 1 << 19,
+	ToeHook = 1 << 20,
 }

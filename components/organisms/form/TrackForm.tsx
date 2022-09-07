@@ -1,14 +1,15 @@
 import React from "react";
-import { Button, Checkbox, Select, TextArea, TextInput } from "components";
+import { Button, Checkbox, TextArea, TextInput } from "components";
 import { watchDependencies } from "helpers/quarky";
-import { ClimbTechniques, Description, Name } from "types";
+import { Description, Name, TrackSpec } from "types";
 import { ReceptionName, selectOptions } from "types/EnumNames";
-import { BitflagMultipleSelect } from "components/molecules/form/BitflagMultipleSelect";
-import { ClimbTechniquesName, toggleFlag } from "helpers/bitflags";
+import { toggleFlag } from "helpers/bitflags";
 import { useModal } from "helpers/hooks";
 import { staticUrl } from "helpers/constants";
 import { deleteTrack } from "helpers/builder";
 import { SelectedBoulder, useSelectStore } from "components/pages/selectStore";
+import { Select } from "components/molecules/form/Select";
+import { SpecSelector } from "components/molecules/form/SpecSelector";
 
 interface TrackFormProps {
 	className?: string,
@@ -78,31 +79,14 @@ export const TrackForm: React.FC<TrackFormProps> = watchDependencies(
 						/>
 					</div>
 
-					<BitflagMultipleSelect<ClimbTechniques>
-						id="track-techniques"
-						label="Techniques"
-						bitflagNames={ClimbTechniquesName}
-						value={track.techniques}
-						onChange={(value) => {
+					<SpecSelector
+						value={track.spec}
+						onChange={(v) => {
 							trackQuark.set((t) => ({
 								...t,
-								techniques: toggleFlag(track.techniques, value),
+								spec: toggleFlag(track.spec, v as TrackSpec),
 							}));
 						}}
-					/>
-
-					<Select
-						id="track-receptions"
-						label="Réception"
-						//TODO FINISH
-						options={selectOptions(ReceptionName)}
-						value={track.reception}
-						onChange={(value) =>
-							trackQuark.set({
-								...track,
-								reception: value,
-							})
-						}
 					/>
 
 					<TextInput

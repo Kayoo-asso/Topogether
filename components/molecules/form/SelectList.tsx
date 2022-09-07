@@ -3,9 +3,9 @@ import React from "react";
 
 export type SelectOption<T> = [value: T, label: string];
 
-interface SelectTouchProps<T> {
+interface SelectListProps<T> {
 	label?: string,
-	wrapperClassname?: string;
+	className?: string;
 	options: SelectOption<T>[];
 	value?: T;
 	white?: boolean,
@@ -14,11 +14,11 @@ interface SelectTouchProps<T> {
 	onChange: (value: T | undefined) => void;
 }
 
-export function SelectTouch<T>({
+export function SelectList<T>({
 	white = false,
 	big = false,
 	...props
-}: SelectTouchProps<T>) {
+}: SelectListProps<T>) {
 	const device = useBreakpoint();
 	const selected = props.options.map(o => o[0]).find(val => val === props.value) || [null, null];
 	
@@ -45,7 +45,7 @@ export function SelectTouch<T>({
 	}
 
 	return (
-		<div className={`relative w-full ktext-base ${props.wrapperClassname}`}>
+		<div className={`relative w-full ktext-base ${props.className}`}>
 			{props.label && <div className={"ktext-label " + (white ? 'text-white' : 'text-dark')}>{props.label}</div>}
 
 			<div className="flex flex-row flex-wrap	w-full gap-6 mt-3">

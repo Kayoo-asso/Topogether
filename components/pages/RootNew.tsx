@@ -1,17 +1,17 @@
 import React, { useEffect, useRef, useState } from "react";
-import { StringBetween, TopoType, User } from "types";
+import { StringBetween, TopoTypes, User } from "types";
 import { v4 } from "uuid";
 import { useRouter } from "next/router";
 import { watchDependencies } from "helpers/quarky";
-import { selectOptions, TopoTypeName } from "types/EnumNames";
 import { useBreakpoint, usePosition } from "helpers/hooks";
 import { Header } from "components/layouts/Header";
 import { MapControl, CreatingTopoMarker } from "components/map";
 import { TextInput } from "components/molecules";
 import { TopoCreate, createTopo } from "helpers/quarkifyTopo";
 import { encodeUUID } from "helpers/utils";
-import { SelectTouch } from "components/molecules/form/SelectTouch";
 import { ValidateButton } from "components/atoms/buttons/ValidateButton";
+import { SelectListMultiple } from "components/molecules/form/SelectListMultiple";
+import { TopoTypesName } from "types/BitflagNames";
 
 interface RootNewProps {
 	user: User;
@@ -26,7 +26,7 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies(
 		const [step, setStep] = useState(0);
 
 		const [name, setName] = useState<string>();
-		const [type, setType] = useState<TopoType | undefined>(TopoType.Boulder);
+		const [type, setType] = useState<TopoTypes>(TopoTypes.Boulder);
 		// set initial position to user's location if possible
 		const [longitude, setLongitude] = useState<number | undefined>(
 			position ? position[0] : undefined
@@ -50,7 +50,7 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies(
 		const isValidStep0 = () => {
 			// TODO : check if the name already exists
 			if (!name) setNameError("Merci d'indiquer un nom valide");
-			if (type === undefined || isNaN(type))
+			if (type === undefined || type === 0)
 				setTypeError("Merci de sélectionner un type de spot");
 			if (name && type !== undefined && !isNaN(type)) return true;
 			else return false;
@@ -132,13 +132,13 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies(
 										}}
 									/>
 
-									<SelectTouch
-										options={selectOptions(TopoTypeName)}
+									<SelectListMultiple
+										bitflagNames={TopoTypesName}
 										value={type}
 										white
 										big={device === "desktop" ? true : false}
 										error={typeError}
-										onChange={(val: TopoType | undefined) => {
+										onChange={(val) => {
 											setTypeError(undefined);
 											setType(val);
 										}}

@@ -56,7 +56,7 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
 			{displayLabel && (
 				<label
 					htmlFor={props.id}
-					className={`ktext-label absolute left-0 transition-all peer-placeholder-shown:top-5
+					className={`ktext-label absolute left-0 transition-all peer-placeholder-shown:top-4
 					${big
 						? "-top-7 left-4 text-xl peer-focus:-top-7 peer-focus:left-0"
 						: "-top-5 left-4 peer-focus:-top-5 peer-focus:left-0"

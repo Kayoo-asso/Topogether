@@ -5,12 +5,10 @@ import {
 	TrackData,
 	Description,
 	Difficulty,
-	ClimbTechniques,
 	SectorData,
 	TopoData,
 	Amenities,
 	TopoStatus,
-	TopoType,
 	RockTypes,
 	TopoAccess,
 	Topo,
@@ -22,6 +20,9 @@ import {
 	Waypoint,
 	Email,
 	User,
+	TrackStyle,
+	HoldType,
+	TopoTypes,
 } from "types";
 import { v4 as uuid } from "uuid";
 
@@ -58,41 +59,6 @@ export const images: Img[] = [
 	},
 ];
 
-// export const lines: Line[] = [
-//     // Line 0, track 0
-//     {
-//         id: uuid(),
-//         index: 0,
-//         imageId: images[1].id,
-//         points: [
-//             [2044, 1948],
-//             [2125, 770],
-//             [1764, 55],
-//             [1717, 1349],
-//             [2269, 1200]
-//         ],
-//         hand1: [1050, 620],
-//     },
-//     // Line 1, track 1
-//     {
-//         id: uuid(),
-//         index: 1,
-//         imageId: images[1].id,
-//         points: [
-//             [2207, 1942],
-//             [2262, 787],
-//             [1901, 51]
-//         ],
-//         forbidden: [
-//             [[1200, 50],
-//             [1650, 50],
-//             [1650, 400],
-//             [1200, 400]],
-//         ],
-//         foot1: [600, 250],
-//     }
-// ]
-
 export const tracks: TrackData[] = [
 	// Track 0, boulder 0
 	{
@@ -101,7 +67,7 @@ export const tracks: TrackData[] = [
 		name: "Passage 1" as Name,
 		grade: "4+",
 		reception: Reception.OK,
-		techniques: ClimbTechniques.Adherence,
+		spec: TrackStyle.Dihedral | HoldType.Adherence,
 		description: "Une petite montée facile" as Description,
 
 		isTraverse: false,
@@ -124,7 +90,7 @@ export const tracks: TrackData[] = [
 		grade: "6a",
 		reception: Reception.OK,
 		// -> Bitflag example
-		techniques: ClimbTechniques.Adherence | ClimbTechniques.Pince,
+		spec: HoldType.Pinch | HoldType.Adherence,
 
 		isTraverse: true,
 		isSittingStart: false,
@@ -292,7 +258,7 @@ export const fakeTopov2: TopoData = {
 	description:
 		"Le site d'Yzéron est situé sur le massif de Py froid à environ 800m d'altitude. Il est le plus grand site de bloc de la région Lyonnaise avec une grande diversité de profil (dévers, dalle, réta...). L'esplanade sépare la plus grande partie du site en amont, et une falaise idéale pour l'initiation, située en contrebas. La forêt protège une bonne partie du site contre les aléas météorologiques ce qui, combiné à l'altitude, permet la pratique de la grimpe toute l'année." as Description,
 	status: TopoStatus.Draft,
-	type: TopoType.Boulder,
+	type: TopoTypes.Boulder,
 
 	modified: new Date().toISOString(),
 

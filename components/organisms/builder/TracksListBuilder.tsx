@@ -99,11 +99,11 @@ export const TracksListBuilder: React.FC<TracksListBuilderProps> =
 
 									{props.onDrawButtonClick && (
 										<button
-											onClick={useCallback((e) => {
+											onClick={(e) => {
 												e.stopPropagation();
 												select.track(trackQuark, selectedBoulder.value);
 												props.onDrawButtonClick!();
-											}, [selectedBoulder, select])}
+											}}
 										>
 											<DrawIcon className="h-6 w-6 stroke-main" />
 										</button>
@@ -123,12 +123,12 @@ export const TracksListBuilder: React.FC<TracksListBuilderProps> =
 								? "cursor-pointer text-grey-medium hover:bg-grey-superlight"
 								: "cursor-default text-grey-light")
 						}
-						onClick={useCallback(() => {
+						onClick={() => {
 							if (boulder.images.length > 0) {
 								select.track(createTrack(boulder, session!.id), selectedBoulder.value);
 								if (props.onCreateTrack) props.onCreateTrack();
 							} else showModalAddImage();
-						}, [boulder, props.onCreateTrack])}
+						}}
 					>
 						<span className="ktext-subtitle ml-2 mr-5 text-xl">+</span>{" "}
 						<span className="ktext-subtitle">Nouveau passage</span>

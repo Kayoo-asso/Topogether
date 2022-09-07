@@ -1,12 +1,14 @@
 import React, { useCallback, useState } from "react";
 import { Checkbox, RoundButton } from "components";
-import { LightGrade, TopoType } from "types";
-import { GradeSliderInput, MultipleSelect, SliderInput } from "..";
-import { TopoTypeName } from "types/EnumNames";
+import { LightGrade, TopoTypes } from "types";
+import { GradeSliderInput, SliderInput } from "..";
 import FilterIcon from "assets/icons/filter.svg";
+import { SelectListMultiple } from "components/molecules/form/SelectListMultiple";
+import { TopoTypesName } from "types/BitflagNames";
+import { toggleFlag } from "helpers/bitflags";
 
 export interface TopoFilterOptions {
-	types: TopoType[];
+	types: TopoTypes;
 	boulderRange: [number, number];
 	gradeRange: [Exclude<LightGrade, "P">, Exclude<LightGrade, "P">];
 	adaptedToChildren: boolean;
@@ -37,34 +39,15 @@ export const TopoFilters: React.FC<TopoFiltersProps> = ({
 		[props.values]
 	);
 
-	const updateTypeFilters = useCallback(
-		(value: TopoType) => {
-			if (props.values.types.includes(value)) {
-				props.onChange({
-					...props.values,
-					types: props.values.types.filter((v) => v !== value),
-				});
-			} else {
-				props.onChange({
-					...props.values,
-					types: [...props.values.types, value],
-				});
-			}
-		},
-		[props.values]
-	);
-
 	const renderFilters = () => (
 		<React.Fragment>
-			<MultipleSelect<number>
-				id="topo-types"
+			<SelectListMultiple 
+				bitflagNames={TopoTypesName}
+				value={props.values.types}
 				label="Types de spot"
-				options={Object.entries(TopoTypeName).map(([stringValue, label]) => ({
-					value: +stringValue,
-					label,
-				}))}
-				values={props.values.types || []}
-				onChange={updateTypeFilters}
+				justify={false}
+				onChange={(value) => updateTopoFilters("types", toggleFlag(props.values.types, value as TopoTypes))
+			}
 			/>
 			<div>
 				<div className="ktext-label text-grey-medium">Nombre de blocs</div>
@@ -101,7 +84,7 @@ export const TopoFilters: React.FC<TopoFiltersProps> = ({
 				</RoundButton>
 			)}
 			{open && (
-				<div className="relative z-40 flex min-w-[250px] max-w-[60%] flex-col rounded-lg bg-white shadow md:max-w-[40%]">
+				<div className="relative z-40 flex min-w-[250px] max-w-[80%] flex-col rounded-lg bg-white shadow md:max-w-[40%]">
 					<div
 						className="flex max-w-[150px] cursor-pointer flex-row items-center rounded-lg bg-main p-3 pt-4 pl-5 shadow"
 						onClick={() => setOpen(false)}

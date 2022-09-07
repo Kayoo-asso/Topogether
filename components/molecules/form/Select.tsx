@@ -1,88 +1,68 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
+import { ValidateButton } from "components/atoms/buttons/ValidateButton";
+import { Portal } from "helpers/hooks";
+import { SelectList, SelectOption } from "./SelectList";
 import { TextInput } from "./TextInput";
-import ArrowSimple from "assets/icons/arrow-simple.svg";
-
-export type SelectOption<T> = [value: T, label: string];
-export type SelectValue = number | string | symbol;
-export type SelectLabels<V extends SelectValue> = Record<V, string>;
 
 interface SelectProps<T> {
 	id: string;
 	label: string;
-	wrapperClassname?: string;
+	title?: string;
 	options: SelectOption<T>[];
 	big?: boolean;
 	white?: boolean;
-	value?: T;
+	value?: T | undefined;
 	error?: string;
-	onChange: (value: T) => void;
+	className?: string;
+	onChange: (value: T | undefined) => void;
 }
 
-export function Select<T>({
-	big = false,
-	white = false,
-	...props
-}: SelectProps<T>) {
-	const ref = useRef<HTMLInputElement>(null);
+export const Select = <T extends number | string>(props: SelectProps<T>) => {
 	const [isOpen, setIsOpen] = useState(false);
 	const selected = props.options.find((x) => x[0] === props.value);
 
 	return (
-		<div
-			id={props.id}
-			className={`relative cursor-pointer ${props.wrapperClassname}`}
-			onClick={() => {
-				setIsOpen((x) => !x);
-				if (!isOpen) ref.current?.focus();
-			}}
-		>
+		<>
 			<TextInput
-				ref={ref}
 				label={props.label}
 				id={`${props.id}-input`}
-				big={big}
-				white={white}
+				big={props.big}
+				white={props.white}
 				value={selected ? selected[1] : ""}
 				error={props.error}
 				readOnly
 				pointer
+				onClick={() => setIsOpen(true)}
 			/>
-			<ArrowSimple
-				className={`absolute right-3 top-[50%] translate-y-[-50%] h-4 w-4 
-				${isOpen ? "rotate-90 top-[55%]" : "-rotate-90"} ${
-					white ? "fill-white" : "fill-dark"
-				}`}
-			/>
-			{isOpen && (
-				<div className="overflow-x-none absolute right-0 z-100 max-h-[320px] w-full overflow-y-auto rounded-b bg-white py-2 pl-4 shadow">
-					{/* TODO */}
-					{/* <div
-                        className={`text-grey-medium ktext-label mt-5 mb-2`}
-                        key="select_label"
-                        role="menuitem"
-                        tabIndex={0}
-                        onKeyDown={() => props.onChange(undefined)} 
-                    >
-                        {props.label}
-                    </div> */}
-					{props.options.sort().map(([value, label]) => (
-						<div
-							className="ktext-base flex cursor-pointer flex-row items-center py-4 text-dark"
-							key={label}
-							onKeyDown={() => {
-								props.onChange(value);
-							}}
-							onMouseDown={() => {
-								props.onChange(value);
-							}}
-							role="menuitem"
-							tabIndex={0}
-						>
-							{label}
+
+			<Portal open={isOpen}>
+				<div className='w-full h-full bg-dark bg-opacity-95 flex flex-col px-8 absolute top-0 left-0 z-full md:px-[15%]'>
+					
+					{props.title &&
+						<div className="w-full h-[7vh] flex justify-center items-center text-white ktext-title">
+							{props.title}
 						</div>
-					))}
+					}
+
+					<div className="w-full flex-1 flex flex-col gap-12 justify-center items-center text-grey-light ktext-title">
+						<SelectList
+							options={props.options}
+							value={props.value}
+							white
+							big
+							className={props.className}
+							onChange={props.onChange}
+						/>
+					</div>
+
+					<div className="w-full h-[10vh] flex justify-center">
+						<ValidateButton
+							onClick={() => setIsOpen(false)}
+						/>
+					</div>
+
 				</div>
-			)}
-		</div>
+			</Portal>
+		</>		
 	);
 }

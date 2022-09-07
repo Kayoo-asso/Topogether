@@ -2,10 +2,11 @@ import React, { useCallback, useMemo } from "react";
 import { AverageNote, GradeCircle } from "components";
 import { gradeToLightGrade, UUID } from "types";
 import { watchDependencies } from "helpers/quarky";
-import { ClimbTechniquesName, listFlags } from "helpers/bitflags";
+import { listFlags } from "helpers/bitflags";
 import { OrientationName, ReceptionName } from "types/EnumNames";
 import { useBreakpoint } from "helpers/hooks";
 import { SelectedBoulder, useSelectStore } from "components/pages/selectStore";
+import { TrackSpecName } from "types/BitflagNames";
 
 const gradeColors = {
 	3: "text-grade-3",
@@ -106,17 +107,15 @@ export const TracksList: React.FC<TracksListProps> = watchDependencies((props: T
 											{track.description && (
 												<div className="mt-4">{track.description}</div>
 											)}
-											{(track.techniques ||
-												track.reception ||
-												track.orientation) && (
+											{(track.spec || track.orientation) && (
 												<div className="mt-4 flex flex-row justify-between gap-2">
 													<div className="flex w-1/3 flex-col">
-														{track.techniques && (
+														{track.spec && (
 															<>
-																<div className="ktext-subtitle">Techniques</div>
+																<div className="ktext-subtitle">Spécifications</div>
 																{listFlags(
-																	track.techniques!,
-																	ClimbTechniquesName
+																	track.spec,
+																	TrackSpecName
 																).join(", ")}
 															</>
 														)}

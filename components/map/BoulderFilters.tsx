@@ -1,21 +1,20 @@
 import React, { useState, useCallback } from "react";
 import { Checkbox, RoundButton } from "components";
-import { Boulder, ClimbTechniques, gradeToLightGrade, LightGrade } from "types";
+import { Boulder, gradeToLightGrade, LightGrade, TrackDanger, TrackSpec } from "types";
 import {
 	GradeSliderInput,
-	BitflagMultipleSelect,
 	SliderInput,
 } from "../molecules";
 import {
-	ClimbTechniquesName,
 	hasSomeFlags,
 	toggleFlag,
 } from "helpers/bitflags";
 import FilterIcon from "assets/icons/filter.svg";
 import { Quark } from "helpers/quarky";
+import { SpecSelector } from "components/molecules/form/SpecSelector";
 
 export interface BoulderFilterOptions {
-	techniques: ClimbTechniques;
+	spec: TrackSpec;
 	tracksRange: [number, number];
 	gradeRange: [Exclude<LightGrade, "P">, Exclude<LightGrade, "P">];
 	mustSee: boolean;
@@ -48,19 +47,19 @@ export function filterBoulders(
 		const minGrade = options.gradeRange[0];
 		const maxGrade = options.gradeRange[1];
 		// Skip the iteration in the common case where the options are the default ones
-		// - options.techniques === ClimbTechniques.None means the user does not want to filter based on techniques
+		// - options.spec === TrackDanger.None means the user does not want to filter based on spec
 		// - `maxGrade - minGrade` is 6 only if the range goes from grade 3 to grade 9, which always matches all tracks
 		let hasGrade = maxGrade - minGrade === 6;
-		let hasTechniques = options.techniques === ClimbTechniques.None;
-		if (!hasGrade || !hasTechniques) {
+		let hasSpec = options.spec === TrackDanger.None;
+		if (!hasGrade || !hasSpec) {
 			for (const track of boulder.tracks) {
-				hasTechniques =
-					hasTechniques || hasSomeFlags(track.techniques, options.techniques);
+				hasSpec =
+				hasSpec || hasSomeFlags(track.spec, options.spec);
 				const lightGrade = gradeToLightGrade(track.grade);
 				hasGrade =
 					hasGrade || (lightGrade >= minGrade && lightGrade <= maxGrade);
 			}
-			if (!hasGrade || !hasTechniques) continue;
+			if (!hasGrade || !hasSpec) continue;
 		}
 		result.push(boulderQ);
 	}
@@ -86,33 +85,29 @@ export const BoulderFilters: React.FC<BoulderFiltersProps> = ({
 		[props.values]
 	);
 
-	const updateClimbTechniquesFilters = useCallback(
-		(value: ClimbTechniques) => {
-			props.onChange({
-				...props.values,
-				techniques: toggleFlag(props.values.techniques, value),
-			});
-		},
-		[props.values]
-	);
+	const updateSpec = useCallback((v) => {
+		props.onChange({
+			...props.values,
+			spec: toggleFlag(props.values.spec, v),
+		});
+	}, [props.values]);
 
 	const renderFilters = () => (
 		<React.Fragment>
-			<BitflagMultipleSelect<ClimbTechniques>
-				id="track-techniques"
-				label="Techniques"
-				bitflagNames={ClimbTechniquesName}
-				value={props.values.techniques}
-				onChange={updateClimbTechniquesFilters}
+			<SpecSelector 
+				value={props.values.spec}
+				onChange={updateSpec}
 			/>
-			<div>
-				<div className="ktext-label text-grey-medium">Nombre de voies</div>
-				<SliderInput
-					domain={props.domain.tracksRange}
-					values={props.values.tracksRange}
-					onChange={(value) => updateBoulderFilters("tracksRange", value)}
-				/>
-			</div>
+			{props.domain.tracksRange[1] > 0 &&
+				<div>
+					<div className="ktext-label text-grey-medium">Nombre de voies</div>
+					<SliderInput
+						domain={props.domain.tracksRange}
+						values={props.values.tracksRange}
+						onChange={(value) => updateBoulderFilters("tracksRange", value)}
+					/>
+				</div>
+			}
 			<div>
 				<div className="ktext-label text-grey-medium">Difficultés</div>
 				<GradeSliderInput

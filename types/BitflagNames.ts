@@ -1,4 +1,4 @@
-import { ClimbTechniques, RockTypes } from "./Bitflags";
+import { BodyPosition, HoldType, RockTypes, TopoTypes, TrackDanger, TrackStyle } from "./Bitflags";
 
 export const RockNames: [RockTypes, string][] = [
 	[RockTypes.Andesite, "Andésite"],
@@ -27,61 +27,50 @@ export const RockNames: [RockTypes, string][] = [
 	[RockTypes.Volcanic, "Volcanique"],
 ];
 
-export const ClimbTechniquesName: [ClimbTechniques, string][] = [
-	[ClimbTechniques.Aplat, "Aplat"],
-	[ClimbTechniques.Adherence, "Adhérence"],
-	[ClimbTechniques.Bidoigt, "Bidoigt"],
-	[ClimbTechniques.Contrepointe, "Contrepointe"],
-	[ClimbTechniques.Dalle, "Dalle"],
-	[ClimbTechniques.Devers, "Dévers"],
-	[ClimbTechniques.Diedre, "Dièdre"],
-	[ClimbTechniques.Drapeau, "Drapeau"],
-	[ClimbTechniques.Dulfer, "Dulfer"],
-	[ClimbTechniques.Dynamique, "Dynamique"],
-	[ClimbTechniques.Epaule, "Epaule"],
-	[ClimbTechniques.Fissure, "Fissure"],
-	[ClimbTechniques.Genou, "Genou"],
-	[ClimbTechniques.Inverse, "Inverse"],
-	[ClimbTechniques.Lolotte, "Lolotte"],
-	[ClimbTechniques.PetitsPieds, "Petits pieds"],
-	[ClimbTechniques.Pince, "Pince"],
-	[ClimbTechniques.Reglette, "Réglette"],
-	[ClimbTechniques.Retablissement, "Rétablissement"],
-	[ClimbTechniques.Talon, "Talon"],
-	[ClimbTechniques.Toit, "Toit"],
-];
+export const TopoTypesName: [TopoTypes, string][] = [
+	[TopoTypes.Artificial, "Artificiel"],
+	[TopoTypes.Boulder, "Bloc"],
+	// [TopoTypes.Cliff, "Couenne"],
+	[TopoTypes.DeepWater, "Deepwater"],
+	// [TopoTypes.Multipitch, "Grande voie"],
+]
 
+export const TrackDangerName: [TrackDanger, string][] = [
+	[TrackDanger.BadReception, 'Mauvaise réception'],
+	[TrackDanger.High, 'Voie haute'],
+	[TrackDanger.LooseRock, 'Roche friable'],
+]
 
-// export const TrackStyleName: { [key in TrackStyle]: string } = {
-// 	[TrackStyle.CRACK]: 'Fissure',
-// 	[TrackStyle.DIHEDRAL]: 'Dièdre',
-// 	[TrackStyle.LAYBACK]: 'Dulfer',
-// 	[TrackStyle.OVERHANG]: 'Dévers',
-// 	[TrackStyle.ROOF]: 'Toit',
-// 	[TrackStyle.SLAB]: 'Dalle',
-// 	[TrackStyle.TRAVERSE]: 'Traversée',
-// }
+export const TrackStyleName: [TrackStyle, string][] = [
+	[TrackStyle.Crack, 'Fissure'],
+	[TrackStyle.Dihedral, 'Dièdre'],
+	[TrackStyle.Layback, 'Dulfer'],
+	[TrackStyle.Overhang, 'Dévers'],
+	[TrackStyle.Roof, 'Toit'],
+	[TrackStyle.Slab, 'Dalle'],
+	[TrackStyle.Traverse, 'Traversée'],
+]
 
-// export const HoldTypeName: { [key in HoldType]: string } = {
-// 	[HoldType.ADHERENCE]: 'Adhérence',
-// 	[HoldType.CRIMP]: 'Réglettes',
-// 	[HoldType.ONEFINGER]: 'Monodoigts',
-// 	[HoldType.PINCH]: 'Pinces',
-// 	[HoldType.SLOPPER]: 'A-plats',
-// 	[HoldType.TWOFINGERS]: 'Bidoigts',
-// }
+export const HoldTypeName: [HoldType, string][] = [
+	[HoldType.Adherence, 'Adhérence'],
+	[HoldType.Crimp, 'Réglettes'],
+	[HoldType.OneFinger, 'Monodoigts'],
+	[HoldType.Pinch, 'Pinces'],
+	[HoldType.Slopper, 'A-plats'],
+	[HoldType.TwoFingers, 'Bidoigts'],
+]
 
-// export const BodyPositionName: { [key in BodyPosition]: string } = {
-// 	[BodyPosition.DROPKNEE]: 'Lolotte',
-// 	[BodyPosition.DYNAMIC]: "Dynamique",
-// 	[BodyPosition.FLAG]: 'Drapeau',
-// 	[BodyPosition.HEELHOOK]: 'Talon',
-// 	[BodyPosition.KNEEBAR]: 'Coincement de genou',
-// 	[BodyPosition.TOEHOOK]: 'Contrepointe',
-// }
+export const BodyPositionName: [BodyPosition, string][] = [
+	[BodyPosition.DropKnee, 'Lolotte'],
+	[BodyPosition.Dynamic, 'Dynamique'],
+	[BodyPosition.HeelHook, 'Talon'],
+	[BodyPosition.Kneebar, 'Coincement de genou'],
+	[BodyPosition.ToeHook, 'Contrepointe'],
+]
 
-// export const DangersName: { [key in Dangers]: string } = {
-// 	[Dangers.BadReception]: 'Mauvaise réception',
-// 	[Dangers.DangerousDescent]: 'Descente dangereuse',
-// 	[Dangers.Exposed]: 'Voie exposée',
-// }
+export const TrackSpecName: [TrackDanger | TrackStyle | HoldType | BodyPosition, string][] = [
+	...TrackDangerName,
+	...TrackStyleName,
+	...HoldTypeName,
+	...BodyPositionName,
+]

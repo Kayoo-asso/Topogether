@@ -1,4 +1,4 @@
-import { Bitflag, ClimbTechniques, RockTypes } from "types";
+import { Bitflag } from "types";
 
 export const hasFlag = <T extends Bitflag>(
 	value: T | undefined,

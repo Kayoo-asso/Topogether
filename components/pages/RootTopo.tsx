@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useRef } from "react";
 import { DropdownOption } from "components";
 import {
-	ClimbTechniques,
 	Topo,
 	TopoStatus,
+	TrackDanger,
 } from "types";
 import {
 	Quark,
@@ -92,7 +92,7 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 				.reduce((a, b) => a + b, 0);
 		}, [topo.boulders]);
 		const defaultBoulderFilterOptions: BoulderFilterOptions = {
-			techniques: ClimbTechniques.None,
+			spec: TrackDanger.None,
 			tracksRange: [0, maxTracks()],
 			gradeRange: [3, 9],
 			mustSee: false,
