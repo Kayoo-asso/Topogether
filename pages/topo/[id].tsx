@@ -21,10 +21,7 @@ const redirect = (destination: string, res: ServerResponse | undefined) => {
 
 const getRidOfBouldersWithoutTrack = (topo: TopoData) => {
 	topo.lonelyBoulders = topo.lonelyBoulders.filter(id => topo.boulders.find(b => b.id === id)!.tracks.length > 0)
-	topo.sectors = topo.sectors.map(s => ({...s, boulders: s.boulders.filter(id => {
-		const b = topo.boulders.find(b => b.id === id)
-		if (b && b.tracks?.length > 0) return true;
-	})}));
+	topo.sectors = topo.sectors.map(s => ({ ...s, boulders: s.boulders.filter(id => topo.boulders.find(b => b.id === id)!.tracks?.length > 0) }));
 	topo.boulders = topo.boulders.filter(b => b.tracks.length > 0);
 }
 
