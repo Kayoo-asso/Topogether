@@ -36,7 +36,7 @@ export const RootAdmin: React.FC<RootAdminProps> = (props: RootAdminProps) => {
 		(topo) => topo.status === TopoStatus.Validated
 	).sort((t1, t2) => { return new Date(t2.validated!).getTime() - new Date(t1.validated!).getTime() });
 
-	const toposToDisplay = selectedStatus === TopoStatus.Draft ? draftLightTopos : TopoStatus.Submitted ? submittedLightTopos : validatedLightTopos;
+	const toposToDisplay = (selectedStatus === TopoStatus.Draft) ? draftLightTopos : (selectedStatus === TopoStatus.Submitted) ? submittedLightTopos : validatedLightTopos;
 
 	const [actionTopo, setActionTopo] = useState<LightTopo>();
 
@@ -115,13 +115,11 @@ export const RootAdmin: React.FC<RootAdminProps> = (props: RootAdminProps) => {
 	}, [actionTopo, lightTopos]);
 
 	useContextMenu(() => setDropdownPosition(undefined), ref.current);
-	const onContextMenu = useCallback(
-		(topo: LightTopo, position: { x: number; y: number }) => {
-			setActionTopo(topo);
-			setDropdownPosition(position);
-		},
-		[ref]
-	);
+	const onContextMenu = (topo: LightTopo, position: { x: number; y: number }) => {
+		console.log(topo);
+		setActionTopo(topo);
+		setDropdownPosition(position);
+	}
 
 	return (
 		<>

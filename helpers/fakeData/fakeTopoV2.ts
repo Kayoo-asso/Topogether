@@ -11,7 +11,6 @@ import {
 	TopoStatus,
 	RockTypes,
 	TopoAccess,
-	Topo,
 	Parking,
 	StringBetween,
 	Manager,
@@ -279,7 +278,7 @@ export const fakeTopov2: TopoData = {
 
 	sectors: sectors,
 	boulders: boulders,
-	lonelyBoulders: [boulders[3].id],
+	lonelyBoulders: [],
 	waypoints: waypoints,
 	parkings: parkings,
 	accesses: access,

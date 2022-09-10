@@ -60,8 +60,8 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 				},
 			];
 			if (
-				topo.status === TopoStatus.Draft &&
-				(topo.creator?.id === session?.id || session?.role === "ADMIN")
+				(topo.status === TopoStatus.Draft &&
+				topo.creator?.id === session?.id) || session?.role === "ADMIN"
 			)
 				menuOptions.push({
 					value: "Modifier le topo",

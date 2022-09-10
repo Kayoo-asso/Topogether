@@ -39,7 +39,7 @@ export const AdminActionDropdown: React.FC<AdminActionDropdownProps> = (
 			{ value: "Modifier", action: editTopo },
 			...(props.topo.status === TopoStatus.Submitted
 				? [
-						{ value: "Valider", action: props.onValidateClick },
+						{ value: "Valider", action: () => {console.log("1"); props.onValidateClick(); } },
 						{ value: "Refuser", action: props.onRejectClick },
 				  ]
 				: []),
