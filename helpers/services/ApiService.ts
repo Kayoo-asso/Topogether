@@ -190,7 +190,7 @@ export class ApiService {
                     location:location->coordinates,
                     images,
                     tracks:tracks!boulderId(
-                        id, index, name, description, height, grade, orientation, reception, anchors, techniques,
+                        id, index, name, description, height, grade, orientation, reception, anchors, techniques, spec,
                         isTraverse, isSittingStart, mustSee, hasMantle,
                         creatorId,
                         lines:lines!trackId(

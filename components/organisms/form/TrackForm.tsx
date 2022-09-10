@@ -2,13 +2,11 @@ import React from "react";
 import { Button, Checkbox, TextArea, TextInput } from "components";
 import { watchDependencies } from "helpers/quarky";
 import { Description, Name, TrackSpec } from "types";
-import { ReceptionName, selectOptions } from "types/EnumNames";
 import { toggleFlag } from "helpers/bitflags";
 import { useModal } from "helpers/hooks";
 import { staticUrl } from "helpers/constants";
 import { deleteTrack } from "helpers/builder";
 import { SelectedBoulder, useSelectStore } from "components/pages/selectStore";
-import { Select } from "components/molecules/form/Select";
 import { SpecSelector } from "components/molecules/form/SpecSelector";
 
 interface TrackFormProps {
@@ -24,6 +22,8 @@ export const TrackForm: React.FC<TrackFormProps> = watchDependencies(
 		const flushTrack = useSelectStore(s => s.flush.track);
 		const trackQuark = selectedBoulder.selectedTrack;
 		const track = trackQuark();
+
+		console.log(track);
 
 		return (
 			<>
@@ -82,6 +82,7 @@ export const TrackForm: React.FC<TrackFormProps> = watchDependencies(
 					<SpecSelector
 						value={track.spec}
 						onChange={(v) => {
+							console.log(v);
 							trackQuark.set((t) => ({
 								...t,
 								spec: toggleFlag(track.spec, v as TrackSpec),

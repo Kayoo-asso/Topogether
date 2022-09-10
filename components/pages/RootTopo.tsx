@@ -139,7 +139,9 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 						initialZoom={16}
 						initialCenter={topo.location}
 						displaySectorButton
-						onSectorButtonClick={() => {}} //TODO
+						onSectorButtonClick={() => {
+							
+						}} //TODO
 						searchbarOptions={{
 							findBoulders: true,
 						}}
