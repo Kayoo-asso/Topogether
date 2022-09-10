@@ -2,7 +2,8 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import Clear from "assets/icons/clear.svg";
 import ReactDOM from "react-dom";
 import NextImage from "next/image";
-import { Button, ModalBG } from "components";
+import { Button } from "components";
+import { ModalBG } from "components/atoms/overlays";
 
 export type ModalProps<T = undefined> = React.PropsWithChildren<{
 	buttonText?: string;

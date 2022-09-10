@@ -80,7 +80,7 @@ const NoStandalone: React.FC = () => {
 							}}
 						/>
 					</div>
-					<div>2. Suivez les instructions</div>
+					<div>2. Suivre les instructions</div>
 					<div>3. L'application est installée !</div>
 				</>
 			)}
@@ -90,7 +90,7 @@ const NoStandalone: React.FC = () => {
 					<div className="flex flex-row gap-2">
 						2. Cliquer sur <strong>Installer l'application</strong>
 					</div>
-					<div>3. Suivez les instructions</div>
+					<div>3. Suivre les instructions</div>
 					<div>4. L'application est installée !</div>
 				</>
 			)}

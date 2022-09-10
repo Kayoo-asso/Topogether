@@ -1,26 +1,27 @@
 import React from "react";
 import { ImageInput } from "components/molecules";
 import { useBreakpoint } from "helpers/hooks";
-
-import type { Img, MapToolEnum } from "types";
+import type { Img } from "types";
 
 import Sector from "assets/icons/sector.svg";
 import Rock from "assets/icons/rock.svg";
 import Parking from "assets/icons/parking.svg";
 import Waypoint from "assets/icons/help-round.svg";
+import { useSelectStore } from "components/pages/selectStore";
 
-interface ItemSelectorMobileProps {
-	currentTool?: MapToolEnum;
+interface MapToolSelectorProps {
 	photoActivated?: boolean;
-	onToolSelect: (tool: MapToolEnum) => void;
 	onNewPhoto: (img: Img) => void;
 	onPhotoButtonClick?: () => void;
 }
 
-export const ItemSelectorMobile: React.FC<ItemSelectorMobileProps> = (
-	props: ItemSelectorMobileProps
+export const MapToolSelector: React.FC<MapToolSelectorProps> = (
+	props: MapToolSelectorProps
 ) => {
 	const breakpoint = useBreakpoint();
+	const select = useSelectStore(s => s.select);
+	const flush = useSelectStore(s => s.flush);
+	const tool = useSelectStore(s => s.tool);
 
 	return (
 		<div className="z-20 flex flex-row rounded-full bg-white shadow">
@@ -29,44 +30,48 @@ export const ItemSelectorMobile: React.FC<ItemSelectorMobileProps> = (
 					<Sector
 						className={
 							"h-6 w-6 cursor-pointer " +
-							(props.currentTool === "SECTOR"
+							(tool === "SECTOR"
 								? "fill-main stroke-main"
 								: "fill-grey-light stroke-grey-light")
 						}
 						onClick={() => {
-							props.onToolSelect("SECTOR");
+							if (tool === 'SECTOR') flush.tool();
+							else select.tool("SECTOR");
 						}}
 					/>
 				)}
 				<Rock
 					className={
 						"h-6 w-6 cursor-pointer " +
-						(props.currentTool === "ROCK" ? "stroke-main" : "stroke-grey-light")
+						(tool === "ROCK" ? "stroke-main" : "stroke-grey-light")
 					}
 					onClick={() => {
-						props.onToolSelect("ROCK");
+						if (tool === 'ROCK') flush.tool();
+						else select.tool("ROCK");
 					}}
 				/>
 				<Waypoint
 					className={
 						"h-6 w-6 cursor-pointer " +
-						(props.currentTool === "WAYPOINT"
+						(tool === "WAYPOINT"
 							? "fill-third stroke-third"
 							: "fill-grey-light stroke-grey-light")
 					}
 					onClick={() => {
-						props.onToolSelect("WAYPOINT");
+						if (tool === 'WAYPOINT') flush.tool();
+						else select.tool("WAYPOINT");
 					}}
 				/>
 				<Parking
 					className={
 						"h-6 w-6 cursor-pointer " +
-						(props.currentTool === "PARKING"
+						(tool === "PARKING"
 							? "fill-second"
 							: "fill-grey-light")
 					}
 					onClick={() => {
-						props.onToolSelect("PARKING");
+						if (tool === 'PARKING') flush.tool();
+						else select.tool("PARKING");
 					}}
 				/>
 			</div>
@@ -85,3 +90,5 @@ export const ItemSelectorMobile: React.FC<ItemSelectorMobileProps> = (
 		</div>
 	);
 };
+
+MapToolSelector.displayName = 'MapToolSelector';

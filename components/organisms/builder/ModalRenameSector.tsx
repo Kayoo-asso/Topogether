@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Button, TextInput } from "components";
-import { Quark } from "helpers/quarky";
+import { Quark, watchDependencies } from "helpers/quarky";
 import { Name, Sector } from "types";
 import { Portal } from "helpers/hooks";
 import Clear from "assets/icons/clear.svg";
@@ -10,7 +10,7 @@ interface ModalRenameSectorProps {
 	onClose: () => void;
 }
 
-export const ModalRenameSector: React.FC<ModalRenameSectorProps> = (props: ModalRenameSectorProps) => {
+export const ModalRenameSector: React.FC<ModalRenameSectorProps> = watchDependencies((props: ModalRenameSectorProps) => {
 	const sector = props.sector();
 
 	const [sectorNameError, setSectorNameError] = useState<string>();
@@ -28,7 +28,6 @@ export const ModalRenameSector: React.FC<ModalRenameSectorProps> = (props: Modal
 	}, [inputRef.current]);
 
 	const handleUserKeyPress = useCallback((e: KeyboardEvent) => {
-		e.preventDefault();
 		e.stopPropagation();
 		if (e.key === "Enter") props.onClose();
 		if (e.key === "Escape") props.onClose();
@@ -45,7 +44,7 @@ export const ModalRenameSector: React.FC<ModalRenameSectorProps> = (props: Modal
 			<div
 				className={`absolute top-0 left-0 h-screen w-screen bg-black bg-opacity-80`}
 				style={{ zIndex: 9999 }} //No tailwind for this - bug with zIndex
-				onClick={close}
+				onClick={props.onClose}
 				tabIndex={-1}
 			>
 				<div
@@ -54,7 +53,7 @@ export const ModalRenameSector: React.FC<ModalRenameSectorProps> = (props: Modal
 					onClick={(e) => e.stopPropagation()}
 				>
 					<div className="flex flex-col gap-6 p-6 pt-10">
-						<div>Renommer le secteur</div>
+						<div className="ktext-label">Renommer le secteur</div>
 						<TextInput
 							ref={inputRef}
 							id="sector-name"
@@ -88,4 +87,4 @@ export const ModalRenameSector: React.FC<ModalRenameSectorProps> = (props: Modal
 			</div>
 		</Portal>
 	);
-};
+});

@@ -29,7 +29,7 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
 		}: TextInputProps,
 		ref
 	) => (
-		<div className={`relative w-full ${wrapperClassName}`}>
+		<div className={`relative w-full mt-2 ${wrapperClassName}`}>
 			<input
 				{...props}
 				onKeyDown={(e) => {
@@ -41,33 +41,31 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
 				type={type}
 				id={props.id}
 				value={props.value || ""}
-				className={`ktext-base \ peer h-10 w-full focus:outline-none
-        ${big ? "border-b-3" : "border-b-2"}  \
-        ${
-					white
-						? "border-white bg-white bg-opacity-0 text-white"
-						: "border-dark text-dark focus:border-main"
-				} \ 
-        ${displayLabel ? "placeholder-transparent" : ""} \
-        ${pointer ? " cursor-pointer" : ""} \
-        ${inputClassName}`}
+				className={`ktext-base peer h-14 w-full p-4 rounded-sm focus:outline-none
+					${big ? "border-3" : "border-2"}  \
+					${white
+							? "border-white bg-white bg-opacity-0 text-white"
+							: "border-grey-superlight text-dark focus:border-main"
+					} \ 
+					${displayLabel ? "placeholder-transparent" : ""} \
+					${pointer ? " cursor-pointer" : ""} \
+					${inputClassName}`
+				}
 			/>
 
 			{displayLabel && (
 				<label
 					htmlFor={props.id}
-					className={`ktext-label \ absolute left-0 transition-all peer-placeholder-shown:top-2
-        ${
-					big
-						? "-top-6 text-xl peer-focus:-top-6"
-						: "-top-3.5 peer-focus:-top-3.5"
-				} \
-        ${
-					white
+					className={`ktext-label absolute left-0 transition-all peer-placeholder-shown:top-4
+					${big
+						? "-top-7 left-4 text-xl peer-focus:-top-7 peer-focus:left-0"
+						: "-top-5 left-4 peer-focus:-top-5 peer-focus:left-0"
+					} \
+					${white
 						? "text-white peer-focus:text-white"
 						: "text-grey-medium peer-focus:text-main"
-				} \
-        ${pointer ? " cursor-pointer" : ""} ${labelClassName}`}
+					} \
+					${pointer ? " cursor-pointer" : ""} ${labelClassName}`}
 				>
 					{props.label}
 				</label>

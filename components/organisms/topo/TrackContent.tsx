@@ -1,8 +1,9 @@
 import { GradeCircle } from 'components/atoms';
 import { SelectedBoulder, useSelectStore } from 'components/pages/selectStore';
-import { ClimbTechniquesName, listFlags } from 'helpers/bitflags';
+import { listFlags } from 'helpers/bitflags';
 import React from 'react';
 import { gradeToLightGrade } from 'types';
+import { TrackSpecName } from 'types/BitflagNames';
 import { OrientationName, ReceptionName } from 'types/EnumNames';
 
 export const TrackContent: React.FC = () => {
@@ -30,12 +31,7 @@ export const TrackContent: React.FC = () => {
             <div className="mt-4 flex flex-col gap-3">
                 <div>
                     <span className="ktext-subtitle">Techniques : </span>
-                    {listFlags(track.techniques!, ClimbTechniquesName).join(", ")}
-                </div>
-
-                <div>
-                    <span className="ktext-subtitle">Réception : </span>
-                    {ReceptionName[track.reception!]}
+                    {listFlags(track.spec!, TrackSpecName).join(", ")}
                 </div>
 
                 <div>

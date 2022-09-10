@@ -1,10 +1,9 @@
 import { SelectedInfo, useSelectStore } from 'components/pages/selectStore';
 import { useBreakpoint } from 'helpers/hooks';
-import { updateUrl } from 'helpers/updateUrl';
-import { decodeUUID } from 'helpers/utils';
+import { decodeUUID, encodeUUID } from 'helpers/utils';
 import { useRouter } from 'next/router';
 import React, { useEffect } from 'react';
-import { isUUID, Topo } from 'types';
+import { isUUID, Topo, UUID } from 'types';
 
 interface SyncUrlProps {
     topo: Topo,
@@ -17,7 +16,6 @@ export const SyncUrl: React.FC<SyncUrlProps> = (props: SyncUrlProps) => {
     const selectedItem = useSelectStore(s => s.item);
     const selectedInfo = useSelectStore(s => s.info);
     const select = useSelectStore(s => s.select);
-
 
     // Sync URL with selectedItem
     useEffect(() => {
@@ -56,7 +54,32 @@ export const SyncUrl: React.FC<SyncUrlProps> = (props: SyncUrlProps) => {
     }, []);
 
     useEffect(() => {
-        updateUrl(selectedInfo, selectedItem, router);
+        let newQ: { id?: UUID, i?: SelectedInfo, p?: string, w?: string, b?: string, t?: string } = { ...router.query };
+        delete newQ.id;
+
+        if (selectedInfo === 'NONE') delete newQ.i;
+        else if (router.query.i !== selectedInfo) newQ.i = selectedInfo;
+    
+        delete newQ.p; delete newQ.w; delete newQ.b; delete newQ.t;
+        const type = selectedItem.type;
+        if (type !== 'none') {
+            const id = encodeUUID(selectedItem.value().id);
+            if (type === 'parking') newQ.p = id;
+            else if (type === 'waypoint') newQ.w = id;
+            else if (type === 'boulder') { 
+                newQ.b = id;
+                if (selectedItem.selectedTrack) newQ.t = encodeUUID(selectedItem.selectedTrack().id)
+            }
+        }
+        
+        router.push(
+            {
+                pathname: window.location.href.split("?")[0],
+                query: newQ,
+            },
+            undefined,
+            { shallow: true }
+        );
     }, [selectedInfo, selectedItem]);
 
     return null;

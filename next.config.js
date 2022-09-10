@@ -1,20 +1,19 @@
 /** @type {import('next').NextConfig} */
 
-const withPWA = require("next-pwa");
+const withPWA = require("next-pwa")({
+	// disable during local development (unless focusing on SW)
+	disable: process.env.NODE_ENV !== "production",
+	// disable: false,
+	dest: "public",
+	swSrc: "worker/sw.ts",
+	buildExcludes: [/.*sw\.js$/],
+});
 
 module.exports = withPWA({
-	pwa: {
-		// disable during local development (unless focusing on SW)
-		disable: process.env.NODE_ENV !== "production",
-		// disable: false,
-		dest: "public",
-		swSrc: "worker/sw.ts",
-		buildExcludes: [/.*sw\.js$/],
-	},
 	reactStrictMode: false,
-	images: {
-		domains: ["builder.topogether.com", "imagedelivery.net"],
-	},
+	// images: {
+	// 	domains: ["builder.topogether.com", "imagedelivery.net"],
+	// },
 	eslint: {
 		// Warning: This allows production builds to successfully complete even if
 		// your project has ESLint errors.

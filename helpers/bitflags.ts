@@ -1,4 +1,4 @@
-import { Bitflag, ClimbTechniques, RockTypes } from "types";
+import { Bitflag } from "types";
 
 export const hasFlag = <T extends Bitflag>(
 	value: T | undefined,
@@ -37,59 +37,4 @@ export function listFlags<T extends Bitflag>(
 		}
 	}
 	return flagList;
-}
-
-export const rockNames: [RockTypes, string][] = [
-	[RockTypes.Andesite, "Andésite"],
-	[RockTypes.Basalt, "Basalte"],
-	[RockTypes.Composite, "Composite"],
-	[RockTypes.Conglomerate, "Conglomérat"],
-	[RockTypes.Chalk, "Craie"],
-	[RockTypes.Dolerite, "Dolérite"],
-	[RockTypes.Gabbro, "Gabbro"],
-	[RockTypes.Gneiss, "Gneiss"],
-	[RockTypes.Granite, "Granite"],
-	[RockTypes.Gritstone, "Meulière"],
-	[RockTypes.Limestone, "Calcaire"],
-	[RockTypes.Migmatite, "Migmatite"],
-	[RockTypes.Molasse, "Molasse"],
-	[RockTypes.Porphyry, "Porphyre"],
-	[RockTypes.Quartz, "Quartz"],
-	[RockTypes.Quartzite, "Quartzite"],
-	[RockTypes.Rhyolite, "Rhyolite"],
-	[RockTypes.Sandstone, "Grès"],
-	[RockTypes.Schist, "Schiste"],
-	[RockTypes.Serpentinite, "Serpentinite"],
-	[RockTypes.Trachyandesite, "Trachy-andésite"],
-	[RockTypes.Trachyte, "Trachyte"],
-	[RockTypes.Tuff, "Tuff"],
-	[RockTypes.Volcanic, "Volcanique"],
-];
-
-export const ClimbTechniquesName: [ClimbTechniques, string][] = [
-	[ClimbTechniques.Aplat, "Aplat"],
-	[ClimbTechniques.Adherence, "Adhérence"],
-	[ClimbTechniques.Bidoigt, "Bidoigt"],
-	[ClimbTechniques.Contrepointe, "Contrepointe"],
-	[ClimbTechniques.Dalle, "Dalle"],
-	[ClimbTechniques.Devers, "Dévers"],
-	[ClimbTechniques.Diedre, "Dièdre"],
-	[ClimbTechniques.Drapeau, "Drapeau"],
-	[ClimbTechniques.Dulfer, "Dulfer"],
-	[ClimbTechniques.Dynamique, "Dynamique"],
-	[ClimbTechniques.Epaule, "Epaule"],
-	[ClimbTechniques.Fissure, "Fissure"],
-	[ClimbTechniques.Genou, "Genou"],
-	[ClimbTechniques.Inverse, "Inverse"],
-	[ClimbTechniques.Lolotte, "Lolotte"],
-	[ClimbTechniques.PetitsPieds, "Petits pieds"],
-	[ClimbTechniques.Pince, "Pince"],
-	[ClimbTechniques.Reglette, "Réglette"],
-	[ClimbTechniques.Retablissement, "Rétablissement"],
-	[ClimbTechniques.Talon, "Talon"],
-	[ClimbTechniques.Toit, "Toit"],
-];
-
-export function listRockTypes(value: RockTypes): string[] {
-	return listFlags(value, rockNames);
 }

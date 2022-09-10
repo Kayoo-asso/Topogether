@@ -138,7 +138,8 @@ export const MapSearchbar: React.FC<MapSearchbarProps> = ({
 							autoComplete="off"
 							label="Recherche..."
 							displayLabel={false}
-							wrapperClassName="w-[95%] mt-[4px]"
+							inputClassName="border-none"
+							wrapperClassName="w-[95%] mt-1"
 							value={value}
 							onChange={(e) => {
 								setValue(e.target.value);

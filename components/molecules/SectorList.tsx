@@ -23,6 +23,7 @@ export const SectorList: React.FC<SectorListProps> = watchDependencies(
 			const b = bq();
 			boulderQuarksMap.set(b.id, bq);
 		}
+		// console.log(topo.boulders.length);
 		const lonelyQuarks: Quark<Boulder>[] = [];
 		for (const id of topo.lonelyBoulders) {
 			lonelyQuarks.push(boulderQuarksMap.get(id)!);
@@ -57,9 +58,10 @@ export const SectorList: React.FC<SectorListProps> = watchDependencies(
 					const sector = sectorQuark();
 					const quarks: Quark<Boulder>[] = [];
 					for (const id of sector.boulders) {
-						quarks.push(boulderQuarksMap.get(id)!);
+						const bQ = boulderQuarksMap.get(id);
+						if (bQ) quarks.push(bQ);
 					}
-
+					
 					return (
 						<div className="mb-10 flex flex-col pb-6" key={sector.id}>
 							<div className="ktext-label text-grey-medium">
@@ -88,6 +90,7 @@ export const SectorList: React.FC<SectorListProps> = watchDependencies(
 									)}
 									{quarks.length > 0 &&
 										quarks.map((boulderQuark) => {
+											
 											const boulder = boulderQuark();
 											return (
 												<div key={boulder.id}>

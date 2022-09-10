@@ -1,7 +1,4 @@
-import { SelectOption } from "components";
-import { Reception, Difficulty, TopoType, Orientation } from "./Enums";
-
-export type Enum = Difficulty | Orientation | Reception | TopoType;
+import { Reception, Difficulty, Orientation, Enum } from "./Enums";
 
 export const DifficultyName: { [key in Difficulty]: string } = {
 	[Difficulty.Good]: "Facile",
@@ -15,14 +12,6 @@ export const ReceptionName: { [key in Reception]: string } = {
 	[Reception.OK]: "Moyenne : sol irrégulier ou en pente",
 	[Reception.Dangerous]: "Dangereuse : rocher présent",
 	[Reception.None]: "ATTENTION ! Pas d'espace de réception",
-};
-
-export const TopoTypeName = {
-	[TopoType.Artificial]: "Artificiel",
-	[TopoType.Boulder]: "Bloc",
-	// [TopoType.Cliff]: "Falaise",
-	[TopoType.DeepWater]: "Psicobloc",
-	// [TopoType.Multipitch]: "Grande voie",
 };
 
 export const OrientationName: { [key in Orientation]: string } = {

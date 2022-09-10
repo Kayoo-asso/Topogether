@@ -116,7 +116,7 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> =
 
 		return (
 			<>
-				<div className="mb-6 px-4">
+				<div className="mb-6">
 					{topo.sectors.quarks().map((sectorQuark, sectorIndex) => {
 						const sector = sectorQuark();
 						const quarks: Quark<Boulder>[] = [];
@@ -158,12 +158,16 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> =
 													className="flex-1"
 													onClick={() => toggleSector(sector)}
 												>
-													<span className="cursor-pointer">{sector.name}</span>
+													<span className={"cursor-pointer " + (sector.name.length > 12
+														? "text-lg"
+														: "")}>
+														{sector.name}
+													</span>
 												</div>
 
 												<div
 													className="cursor-pointer pr-1"
-													onClick={() => setSectorToRename(sectorQuark)}
+													onClick={() => setSectorToRename(() => sectorQuark)}
 												>
 													<Edit className={"h-5 w-5 stroke-main"} />
 												</div>

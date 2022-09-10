@@ -29,7 +29,7 @@ export const SlideoverRightTopo: React.FC<SlideoverRightTopoProps> = (
 	};
 
 	const getContent = useCallback(() => {
-		if (item.type !== 'none') {
+		if (item.type !== 'none' && item.type !== 'sector') {
 			if (item.type === 'boulder') {
 				if (breakpoint === "mobile")	
 					return (
@@ -61,7 +61,7 @@ export const SlideoverRightTopo: React.FC<SlideoverRightTopoProps> = (
 		<>
 			{breakpoint === "mobile" && (
 				<SlideoverMobile
-					open={item.type !== 'none'}
+					open={item.type !== 'none' && item.type !== 'sector'}
 					persistent={item.type === 'boulder'}
 					onSizeChange={setFull}
 					onClose={onClose}
@@ -75,7 +75,7 @@ export const SlideoverRightTopo: React.FC<SlideoverRightTopoProps> = (
 				<>
 					<SlideoverRightDesktop
 						item={item.type === 'boulder' ? item.value() : undefined}
-						open={item.type !== 'none'}
+						open={item.type !== 'none' && item.type !== 'sector'}
 						onClose={onClose}
 					>
 						<div className="h-full">{getContent()}</div>

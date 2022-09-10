@@ -3,40 +3,39 @@ import React from "react";
 import { PolygonEventHandlers } from "types";
 
 interface ValidationMarkerProps {
-	position: google.maps.LatLng;
+	path: google.maps.LatLng[];
 	onClick?: () => void;
 }
 
-export const ValidationMarker: React.FC<ValidationMarkerProps> = ({
-	position,
-	onClick,
-}: ValidationMarkerProps) => {
+export const ValidationMarker: React.FC<ValidationMarkerProps> = (props: ValidationMarkerProps) => {
+
+	const closable = props.path.length > 3;
 	const firstPointOptions: google.maps.MarkerOptions = {
-		position,
+		position: props.path[0],
 		icon: {
 			path: google.maps.SymbolPath.CIRCLE,
-			scale: 14,
+			scale: closable ? 14 : 6,
 			fillColor: "#04D98B",
 			fillOpacity: 1,
 			strokeWeight: 0,
 		},
 	};
 	const firstPointHandlers: PolygonEventHandlers = {
-		onClick,
+		onClick: closable ? props.onClick : undefined,
 	};
 	useMarker(firstPointOptions, firstPointHandlers);
 
 	const checkIcon: google.maps.Icon = {
 		url: "/assets/icons/colored/_checked.svg",
-		scaledSize: markerSize(16),
+		scaledSize: closable ? markerSize(16) : markerSize(0),
 		anchor: new google.maps.Point(8, 8),
 	};
 	const checkOptions: google.maps.MarkerOptions = {
 		icon: checkIcon,
-		position: position,
+		position: props.path[0],
 	};
 	const checkHandlers: PolygonEventHandlers = {
-		onClick,
+		onClick: props.onClick,
 	};
 	useMarker(checkOptions, checkHandlers);
 

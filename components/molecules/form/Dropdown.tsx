@@ -11,7 +11,7 @@ export interface DropdownOption {
 }
 
 interface DropdownProps {
-	position: { x: number; y: number };
+	position?: { x: number; y: number };
 	options: DropdownOption[];
 	onSelect?: (option: DropdownOption) => void;
 	type?: string;
@@ -62,8 +62,6 @@ export const Dropdown: React.FC<DropdownProps> = React.memo(
 								i > 0 && "mt-5"
 							}`}
 							key={opt.value}
-							role="menuitem"
-							tabIndex={0}
 						>
 							{opt.label || opt.value}
 						</div>
@@ -82,8 +80,6 @@ export const Dropdown: React.FC<DropdownProps> = React.memo(
 									opt.action && opt.action();
 								}
 							}}
-							role="menuitem"
-							tabIndex={0}
 						>
 							{opt.icon && (
 								<opt.icon

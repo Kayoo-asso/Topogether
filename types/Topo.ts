@@ -1,11 +1,10 @@
 import type { Quark, QuarkArray } from "helpers/quarky";
-import type { Amenities, ClimbTechniques, RockTypes } from "./Bitflags";
+import type { Amenities, RockTypes, TopoTypes, TrackSpec } from "./Bitflags";
 import type {
 	Grade,
 	LightGrade,
 	Orientation,
 	TopoStatus,
-	TopoType,
 	Difficulty,
 	Reception,
 } from "./Enums";
@@ -59,7 +58,7 @@ export interface TopoData {
 	name: Name;
 	status: TopoStatus;
 	liked: boolean;
-	type?: TopoType;
+	type: TopoTypes;
 	forbidden: boolean;
 
 	// Date strings in ISO format
@@ -116,7 +115,7 @@ export type DBTopo = NullableOptional<{
 	amenities: Amenities;
 	rockTypes: RockTypes;
 
-	type?: TopoType;
+	type: TopoTypes;
 	description?: Description;
 	faunaProtection?: Description;
 	ethics?: Description;
@@ -148,7 +147,7 @@ export interface LightTopo {
 	amenities: Amenities;
 	rockTypes: RockTypes;
 
-	type?: TopoType;
+	type: TopoTypes;
 	description?: Description;
 	altitude?: number;
 	closestCity?: Name;
@@ -322,7 +321,7 @@ export interface TrackData {
 	orientation?: Orientation;
 	reception?: Reception;
 	anchors?: number;
-	techniques?: ClimbTechniques;
+	spec: TrackSpec;
 
 	isTraverse: boolean;
 	isSittingStart: boolean;
@@ -346,12 +345,12 @@ export type DBTrack = NullableOptional<{
 	orientation?: Orientation;
 	reception?: Reception;
 	anchors?: number;
-	techniques: ClimbTechniques;
 
 	isTraverse: boolean;
 	isSittingStart: boolean;
 	mustSee: boolean;
 	hasMantle: boolean;
+	spec: TrackSpec;
 
 	topoId: UUID;
 	boulderId: UUID;

@@ -5,7 +5,7 @@ import { TopoFilterOptions, MapControl, TopoMarker } from "../map";
 import { hasFlag } from "helpers/bitflags";
 import { watchDependencies, useCreateQuark } from "helpers/quarky";
 import { useAuth } from "helpers/services";
-import { LightTopo, Amenities } from "types";
+import { LightTopo, Amenities, TopoTypes } from "types";
 import { encodeUUID } from "helpers/utils";
 import { TopoPreview } from "components/organisms/TopoPreview";
 
@@ -28,7 +28,7 @@ export const RootWorldMap: React.FC<RootWorldMapProps> = watchDependencies(
 			maxBoulders = Math.max(maxBoulders, topo.nbBoulders);
 		}
 		const topoFilterDomain: TopoFilterOptions = {
-			types: [],
+			types: 0,
 			boulderRange: [0, maxBoulders],
 			gradeRange: [3, 9],
 			adaptedToChildren: false,
@@ -37,7 +37,8 @@ export const RootWorldMap: React.FC<RootWorldMapProps> = watchDependencies(
 
 		const filterFn = (topo: LightTopo) => {
 			const options = topoFilters();
-			if (options.types.length && !options.types.includes(topo.type!)) {
+			//TODO : check if this works
+			if (options.types === TopoTypes.None && !hasFlag(options.types, topo.type)) {
 				return false;
 			}
 			if (

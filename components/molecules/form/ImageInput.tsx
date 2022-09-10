@@ -101,6 +101,7 @@ export const ImageInput = forwardRef<HTMLInputElement, ImageInputProps>(
 				{button === "profile" && (
 					<ProfilePicture
 						image={props.value}
+						input
 						loading={loading}
 						onClick={useCallback(() => {
 							if (!loading && fileInputRef.current)

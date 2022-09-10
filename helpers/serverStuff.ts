@@ -55,7 +55,7 @@ type WithRoutingOptions<Props> = {
 	getInitialProps(
 		ctx: NextPageContext
 	): GetServerSidePropsResult<Props> | Promise<GetServerSidePropsResult<Props>>;
-	render(props: Props): React.ReactElement<any, any>;
+	render(props: Props): React.ReactElement<any, any> | null;
 };
 
 type GetServerSidePropsResult<P> =

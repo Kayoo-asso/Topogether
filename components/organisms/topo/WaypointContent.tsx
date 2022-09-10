@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { Flash } from "components";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { Waypoint } from "types";
 import { Image } from "components/atoms/Image";
 import { useSelectStore } from "components/pages/selectStore";
+import { Flash } from "components/atoms/overlays";
 
 import HelpRound from "assets/icons/help-round.svg";
 

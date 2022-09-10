@@ -48,7 +48,7 @@ export const UserMarker: React.FC<UserMarkerProps> = (
 
 	// Main blue dot
 	const mainIcon: google.maps.Symbol = {
-		path: window.google.maps.SymbolPath.CIRCLE,
+		path: google.maps.SymbolPath.CIRCLE,
 		scale: 8,
 		fillOpacity: 1,
 		fillColor: "#4EABFF",
@@ -84,7 +84,7 @@ export const UserMarker: React.FC<UserMarkerProps> = (
 
 	// Heading
 	const headingIcon: google.maps.Symbol = {
-		path: window.google.maps.SymbolPath.FORWARD_OPEN_ARROW,
+		path: google.maps.SymbolPath.FORWARD_OPEN_ARROW,
 		rotation: alpha ? 360 - alpha : 0,
 		scale: alpha ? 6 : 0,
 		fillOpacity: alpha && breakpoint === "mobile" ? 0.4 : 0,

@@ -1,6 +1,8 @@
 // NEVER reorder the values of an enum, only add new values at the end.
 // This is necessary to avoid a mismatch with existing values in the database.
 
+export type Enum = Difficulty | Orientation | Reception;
+
 export enum Difficulty {
 	Good,
 	OK,
@@ -32,14 +34,6 @@ export enum TopoStatus {
 	Draft,
 	Submitted,
 	Validated,
-}
-
-export enum TopoType {
-	Boulder,
-	Cliff,
-	DeepWater,
-	Multipitch,
-	Artificial,
 }
 
 export const grades = [
@@ -92,7 +86,7 @@ export const gradeToLightGrade = (grade?: Grade): LightGrade => {
 	return "P";
 };
 
-export type MapToolEnum = "ROCK" | "SECTOR" | "PARKING" | "WAYPOINT";
+export type MapToolEnum = "ROCK" | "SECTOR" | "PARKING" | "WAYPOINT" | undefined;
 
 export type DrawerToolEnum =
 	| "LINE_DRAWER"

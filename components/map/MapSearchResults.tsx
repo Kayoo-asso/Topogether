@@ -5,7 +5,7 @@ import type { Boulder, LightTopo } from "types";
 
 import Rock from "assets/icons/rock.svg";
 import Flag from "assets/icons/flag.svg";
-import WaypointIcon from "assets/icons/waypoint.svg";
+import MarkerIcon from "assets/icons/marker.svg";
 
 interface MapSearchResultsProps {
 	topoApiResults: LightTopo[];
@@ -28,7 +28,7 @@ export const MapSearchResults: React.FC<MapSearchResultsProps> = (
 				props.topoApiResults.map((topo) => (
 					<Link href={"/topo/" + encodeUUID(topo.id)} key={topo.id}>
 						<a className="ktext-base flex cursor-pointer flex-row items-center gap-4 py-3 text-dark">
-							<WaypointIcon className="h-5 w-5 fill-main" />
+							<MarkerIcon className="h-5 w-5 fill-main" />
 							<div>{topo.name}</div>
 						</a>
 					</Link>

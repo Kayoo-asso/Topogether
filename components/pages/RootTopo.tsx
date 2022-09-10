@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useRef } from "react";
 import { DropdownOption } from "components";
 import {
-	ClimbTechniques,
 	Topo,
 	TopoStatus,
+	TrackDanger,
 } from "types";
 import {
 	Quark,
@@ -60,8 +60,8 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 				},
 			];
 			if (
-				topo.status === TopoStatus.Draft &&
-				(topo.creator?.id === session?.id || session?.role === "ADMIN")
+				(topo.status === TopoStatus.Draft &&
+				topo.creator?.id === session?.id) || session?.role === "ADMIN"
 			)
 				menuOptions.push({
 					value: "Modifier le topo",
@@ -92,7 +92,7 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 				.reduce((a, b) => a + b, 0);
 		}, [topo.boulders]);
 		const defaultBoulderFilterOptions: BoulderFilterOptions = {
-			techniques: ClimbTechniques.None,
+			spec: TrackDanger.None,
 			tracksRange: [0, maxTracks()],
 			gradeRange: [3, 9],
 			mustSee: false,
@@ -139,7 +139,9 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 						initialZoom={16}
 						initialCenter={topo.location}
 						displaySectorButton
-						onSectorButtonClick={() => {}} //TODO
+						onSectorButtonClick={() => {
+							
+						}} //TODO
 						searchbarOptions={{
 							findBoulders: true,
 						}}

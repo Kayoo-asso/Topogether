@@ -12,7 +12,6 @@ interface CreatingTopoMarkerProps {
 export const CreatingTopoMarker: React.FC<CreatingTopoMarkerProps> = ({ 
 	...props 
 }: CreatingTopoMarkerProps) => {
-	console.log("Rendering CreatingTopoMarker");
 	const icon: google.maps.Icon = {
 		url:
 			"/assets/icons/colored/waypoint/_" +
@@ -20,7 +19,6 @@ export const CreatingTopoMarker: React.FC<CreatingTopoMarkerProps> = ({
 			".svg",
 		scaledSize: markerSize(30),
 	};
-	console.log("icon", icon)
 
 	const options: google.maps.MarkerOptions = {
 		icon,

@@ -21,7 +21,7 @@ export function ClusterProvider({ children }: ClusterProviderProps) {
 		// }
 
 		const mainIcon: google.maps.Symbol = {
-			path: window.google.maps.SymbolPath.CIRCLE,
+			path: google.maps.SymbolPath.CIRCLE,
 			scale: 18,
 			fillOpacity: 1,
 			fillColor: "#04D98B",

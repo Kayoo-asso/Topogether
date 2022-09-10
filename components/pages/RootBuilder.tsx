@@ -2,10 +2,9 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import {
 	GeoCoordinates,
-	MapToolEnum,
 	Topo,
 	TopoStatus,
-	ClimbTechniques,
+	TrackDanger,
 } from "types";
 import {
 	Quark,
@@ -49,6 +48,7 @@ import { InteractItem, useSelectStore } from "./selectStore";
 import { SyncUrl } from "components/organisms/SyncUrl";
 import { KeyboardShortcut } from "components/organisms/builder/KeyboardShortcuts";
 import { DropdownOption } from "components/molecules";
+import { Flash } from "components/atoms/overlays";
 
 interface RootBuilderProps {
 	topoQuark: Quark<Topo>;
@@ -70,6 +70,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 		const isEmptyStore = useSelectStore(s => s.isEmpty);
 		const flush = useSelectStore(s => s.flush);
 		const select = useSelectStore(s => s.select);
+		const tool = useSelectStore(s => s.tool);
 
 		const [dropdownItem, setDropdownItem] = useState<InteractItem>({ type: 'none', value: undefined });
 		const [dropdownPosition, setDropdownPosition] = useState<{
@@ -79,33 +80,9 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 		const [deleteItem, setDeleteItem] = useState<InteractItem>({ type: 'none', value: undefined });
 
 		const mapRef = useRef<google.maps.Map>(null);
-		const [currentTool, setCurrentTool] = useState<MapToolEnum>();
 		
 		const [ModalSubmitTopo, showModalSubmitTopo] = useModal();
 		const [ModalDeleteTopo, showModalDeleteTopo] = useModal();
-
-		const handleCreateNewMarker = useCallback(
-			(e) => {
-				if (e.latLng) {
-					const loc: GeoCoordinates = [e.latLng.lng(), e.latLng.lat()];
-					switch (currentTool) {
-						case "ROCK":
-							createBoulder(props.topoQuark, loc);
-							break;
-						case "PARKING":
-							createParking(topo, loc);
-							break;
-						case "WAYPOINT":
-							createWaypoint(topo, loc);
-							break;
-						// case 'SECTOR' is handled by inserting a CreatingSectorAreaMarker component
-						default:
-							break;
-					}
-				}
-			},
-			[topo, currentTool, createBoulder, createParking, createWaypoint]
-		);
 
 		const constructMenuOptions = useCallback((): DropdownOption[] => ([
 			{ value: "Infos du topo", action: () => select.info("INFO", breakpoint) },
@@ -141,7 +118,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 				.reduce((a, b) => a + b, 0);
 		}, [topo.boulders]);
 		const defaultBoulderFilterOptions: BoulderFilterOptions = {
-			techniques: ClimbTechniques.None,
+			spec: TrackDanger.None,
 			tracksRange: [0, maxTracks()],
 			gradeRange: [3, 9],
 			mustSee: false,
@@ -149,6 +126,10 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 		const boulderFilters = useCreateQuark<BoulderFilterOptions>(
 			defaultBoulderFilterOptions
 		);
+		const isFilterEmpty = () => {
+			const fl = boulderFilters();
+			return (fl.spec === TrackDanger.None && !fl.mustSee && fl.gradeRange[0] === 3 && fl.gradeRange[1] === 9 && fl.tracksRange[0] === 0 && fl.tracksRange[1] === maxTracks())
+		}
 		useEffect(() => {
 			const max = maxTracks();
 			if (max !== boulderFilters().tracksRange[1]) {
@@ -159,12 +140,39 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 			}
 		}, [maxTracks()]);
 
+		const [flashOpen, setFlashOpen] = useState(false);
+		const handleCreateNewMarker = useCallback(
+			(e) => {
+				if (!isEmptyStore()) {
+					flush.info();
+					flush.item();
+				}
+				else if (e.latLng) {
+					const loc: GeoCoordinates = [e.latLng.lng(), e.latLng.lat()];
+					switch (tool) {
+						case "ROCK":
+							if (!isFilterEmpty()) setFlashOpen(true);
+							createBoulder(props.topoQuark, loc);
+							break;
+						case "PARKING":
+							createParking(topo, loc);
+							break;
+						case "WAYPOINT":
+							createWaypoint(topo, loc);
+							break;
+						// case 'SECTOR' is handled by inserting a CreatingSectorAreaMarker component
+						default:
+							break;
+					}
+				}
+			},
+			[topo, tool, createBoulder, createParking, createWaypoint, isEmptyStore(), isFilterEmpty()]
+		);
+
 		return (
 			<>
 				<SyncUrl topo={topo} />
 				<KeyboardShortcut 
-					currentTool={currentTool}
-					setCurrentTool={setCurrentTool}
 					onDelete={(item) => setDeleteItem(item)}
 				/>
 				
@@ -175,7 +183,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 					menuOptions={constructMenuOptions()}
 				>
 					<BuilderProgressIndicator
-						topo={props.topoQuark}
+						topo={props.topoQuark()}
 						progress={progress()}
 					/>
 				</Header>
@@ -193,6 +201,8 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 
 					<SlideoverLeftBuilder
 						topo={props.topoQuark}
+						boulderOrder={boulderOrder()}
+						map={mapRef.current}
 					/>
 
 					<MapControl
@@ -200,28 +210,12 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 						initialZoom={16}
 						initialCenter={topo.location}
 						displaySectorButton
-						onSectorButtonClick={() => {}} //TODO
+						onSectorButtonClick={() => select.info("SECTOR", breakpoint)}
 						searchbarOptions={{
 							findBoulders: true,
 							focusOnOpen: true,
 						}}
-						currentTool={currentTool}
-						onToolSelect={(tool) =>
-							tool === currentTool
-								? setCurrentTool(undefined)
-								: setCurrentTool(tool)
-						}
-						draggableCursor={
-							currentTool === "ROCK"
-								? "url(/assets/icons/colored/_rock.svg) 16 32, auto"
-								: currentTool === "SECTOR"
-								? "url(/assets/icons/colored/line-point/_line-point-grey.svg), auto"
-								: currentTool === "PARKING"
-								? "url(/assets/icons/colored/_parking.svg) 16 30, auto"
-								: currentTool === "WAYPOINT"
-								? "url(/assets/icons/colored/_help-round.svg) 16 30, auto"
-								: ""
-						}
+						displayToolSelector
 						topo={props.topoQuark}
 						boulderFilters={boulderFilters}
 						boulderFiltersDomain={defaultBoulderFilterOptions}
@@ -233,14 +227,10 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 							.toArray()}
 					>
 						
-						{currentTool === "SECTOR" && (
+						{tool === "SECTOR" && (
 							<CreatingSectorAreaMarker
 								topoQuark={props.topoQuark}
 								boulderOrder={boulderOrder()}
-								onComplete={(path) => {
-									// selectedSector.select(sector); //TODO
-									setCurrentTool(undefined);
-								}}
 							/>
 						)}
 
@@ -256,16 +246,15 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 					<SlideoverRightBuilder
 						topo={props.topoQuark}
 					/>
+
 				</div>
-				
-				{dropdownPosition && dropdownItem.type !== 'none' &&
-					<BuilderDropdown 
-						position={dropdownPosition}
-						dropdownItem={dropdownItem}
-						setDropdownItem={setDropdownItem}
-						setDeleteItem={setDeleteItem}
-					/>
-				}
+
+				<BuilderDropdown 
+					position={dropdownPosition}
+					dropdownItem={dropdownItem}
+					setDropdownItem={setDropdownItem}
+					setDeleteItem={setDeleteItem}
+				/>
 
 				<BuilderModalDelete 
 					topo={props.topoQuark}
@@ -302,6 +291,11 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 					Le topo sera entièrement supprimé. Etes-vous sûr de vouloir
 					continuer ?
 				</ModalDeleteTopo>
+
+				<Flash 
+					open={flashOpen}
+					onClose={() => setFlashOpen(false)}
+				>Attention ! Des filtres sont activés et peuvent masquer les nouveaux blocs.</Flash>
 			</>
 		);
 	}

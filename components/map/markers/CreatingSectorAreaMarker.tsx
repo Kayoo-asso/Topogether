@@ -1,22 +1,17 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { createSector } from "helpers/builder";
 import { usePolyline } from "helpers/map";
-import { Quark } from "helpers/quarky";
+import { Quark, watchDependencies } from "helpers/quarky";
 import { GeoCoordinates, MapEventHandlers, Sector, Topo, UUID } from "types";
 import { useMap } from "..";
 import { ValidationMarker } from "./ValidationMarker";
 import { ModalRenameSector } from "components/organisms/builder/ModalRenameSector";
+import { useSelectStore } from "components/pages/selectStore";
 
 interface CreatingSectorAreaMarkerProps {
 	topoQuark: Quark<Topo>,
 	boulderOrder: Map<UUID, number>;
-	onComplete: (path: GeoCoordinates[]) => void;
 }
-
-const polylineOptions: google.maps.PolylineOptions = {
-	strokeColor: "#04D98B",
-	strokeWeight: 2,
-};
 
 function addPoint(
 	path: google.maps.LatLng[],
@@ -34,9 +29,11 @@ function addPoint(
 // - map.move: last point in path follows mouse cursor
 export const CreatingSectorAreaMarker: React.FC<
 	CreatingSectorAreaMarkerProps
-> = (props: CreatingSectorAreaMarkerProps) => {
+> = watchDependencies((props: CreatingSectorAreaMarkerProps) => {
 	// NOTE: the last point of the path follows the mouse cursor, after we started drawing
+	const flush = useSelectStore(s => s.flush);
 	const [path, setPath] = useState<google.maps.LatLng[]>([]);
+	const [sectorToRename, setSectorToRename] = useState<Quark<Sector>>();
 
 	const map = useMap();
 	const onClick = useCallback(
@@ -49,6 +46,10 @@ export const CreatingSectorAreaMarker: React.FC<
 		[setPath]
 	);
 
+	const polylineOptions: google.maps.PolylineOptions = {
+		strokeColor: "#04D98B",
+		strokeWeight: 2,
+	};
 	usePolyline(
 		{
 			...polylineOptions,
@@ -58,7 +59,6 @@ export const CreatingSectorAreaMarker: React.FC<
 	);
 
 	const startedDrawing = path.length > 0;
-
 	useEffect(() => {
 		// Use MapEventHandlers for the type, to avoid mistakes
 		const clickHandler: MapEventHandlers["onClick"] = (e) => {
@@ -105,13 +105,11 @@ export const CreatingSectorAreaMarker: React.FC<
 		// `startedDrawing` is sufficient
 	}, [setPath, startedDrawing]);
 
-	const [sectorToRename, setSectorToRename] = useState<Quark<Sector>>();
-
-	if (path.length > 3)
-		return (
-			<>
+	return (
+		<>
+			{path.length > 0 &&
 				<ValidationMarker
-					position={path[0]}
+					path={path}
 					onClick={() => {
 						// Remove the mouse cursor and close nicely
 						path[path.length - 1] = path[0];
@@ -119,27 +117,28 @@ export const CreatingSectorAreaMarker: React.FC<
 							latlng.lng(),
 							latlng.lat(),
 						]);
-						setSectorToRename(createSector(
+						const newSector = createSector(
 							props.topoQuark,
 							coords,
 							props.boulderOrder
-						));
-						props.onComplete(coords);
-						setPath([]);
+						);
+						setSectorToRename(() => newSector);
 					}}
 				/>
+			}
 
-				{sectorToRename &&
-					<ModalRenameSector 
-						sector={sectorToRename}
-						onClose={() => setSectorToRename(undefined)}
-					/>
-				}
-
-			</>
-		);
-
-	return null;
-};
+			{sectorToRename &&
+				<ModalRenameSector 
+					sector={sectorToRename}
+					onClose={() => {
+						flush.tool();
+						setPath([]);
+						setSectorToRename(undefined);
+					}}
+				/>
+			}
+		</>
+	);
+});
 
 CreatingSectorAreaMarker.displayName = "Creating Sector AreaMarker";

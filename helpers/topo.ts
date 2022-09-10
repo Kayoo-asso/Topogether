@@ -1,6 +1,5 @@
-import type { Quark } from "helpers/quarky";
-import type { Topo, Sector, TrackRating, UUID } from "types";
-import { TopoType } from "types";
+import { Quark } from "helpers/quarky";
+import { Topo, Sector, TrackRating, UUID, TopoTypes } from "types";
 
 // --- averageTrackNote ---
 export function averageTrackNote(ratings: TrackRating[]): number {
@@ -12,17 +11,17 @@ export function averageTrackNote(ratings: TrackRating[]): number {
 }
 
 // --- TopoTypeToColor ---
-export const TopoTypeToColor = (type: TopoType | undefined) => {
+export const TopoTypeToColor = (type: TopoTypes) => {
 	switch (type) {
-		case TopoType.Boulder:
+		case TopoTypes.Boulder:
 			return "fill-main";
-		case TopoType.Cliff:
+		case TopoTypes.Cliff:
 			return "fill-third";
-		case TopoType.DeepWater:
+		case TopoTypes.DeepWater:
 			return "fill-grade-5";
-		case TopoType.Multipitch:
+		case TopoTypes.Multipitch:
 			return "fill-third-light";
-		case TopoType.Artificial:
+		case TopoTypes.Artificial:
 			return "fill-dark";
 		default:
 			return "fill-grey-light";

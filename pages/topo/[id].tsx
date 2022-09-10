@@ -21,7 +21,7 @@ const redirect = (destination: string, res: ServerResponse | undefined) => {
 
 const getRidOfBouldersWithoutTrack = (topo: TopoData) => {
 	topo.lonelyBoulders = topo.lonelyBoulders.filter(id => topo.boulders.find(b => b.id === id)!.tracks.length > 0)
-	topo.sectors = topo.sectors.map(s => ({...s, boulders: s.boulders.filter(id => topo.boulders.find(b => b.id === id)!.tracks.length > 0)}));
+	topo.sectors = topo.sectors.map(s => ({ ...s, boulders: s.boulders.filter(id => topo.boulders.find(b => b.id === id)!.tracks?.length > 0) }));
 	topo.boulders = topo.boulders.filter(b => b.tracks.length > 0);
 }
 
@@ -33,10 +33,11 @@ const Topo: NextPage<TopoProps> = ({ topo }) => {
 		return null;
 	}
 
-	const { show} = router.query;
-	if(show !== "all") {
+	const { show } = router.query;
+	if (show !== "all") {
+		//Issue : because quarky sync everything, this delete the boulders in the database !
 		getRidOfBouldersWithoutTrack(topo);
-	} 
+	}
 
 	// TODO: how to encode the fact that this topo cannot be edited?
 	const topoQuark = editTopo(topo);

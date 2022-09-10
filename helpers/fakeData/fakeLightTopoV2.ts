@@ -6,9 +6,9 @@ import {
 	Description,
 	Amenities,
 	TopoStatus,
-	TopoType,
 	RockTypes,
 	LightTopo,
+	TopoTypes,
 } from "types";
 import { v4 as uuid } from "uuid";
 
@@ -35,7 +35,7 @@ export const lightTopo: LightTopo = {
 	description:
 		"Le site d'Yzéron est situé sur le massif de Py froid à environ 800m d'altitude. Il est le plus grand site de bloc de la région Lyonnaise avec une grande diversité de profil (dévers, dalle, réta...). L'esplanade sépare la plus grande partie du site en amont, et une falaise idéale pour l'initiation, située en contrebas. La forêt protège une bonne partie du site contre les aléas météorologiques ce qui, combiné à l'altitude, permet la pratique de la grimpe toute l'année." as Description,
 	status: TopoStatus.Draft,
-	type: TopoType.Boulder,
+	type: TopoTypes.Boulder,
 
 	altitude: 775,
 	closestCity: "Yzéron" as Name,

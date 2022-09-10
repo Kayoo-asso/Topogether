@@ -2,7 +2,6 @@ import { batch } from ".";
 import { Flattened, CloneInitIterator } from "./iterators";
 import { QuarkIter } from "./QuarkIter";
 import {
-	derive,
 	quark,
 	Quark,
 	Signal,
@@ -22,7 +21,7 @@ export interface QuarkArrayCallbacks<T> {
 // Should we not return anything instead? Or wrap them in a Ref object, to ensure the values can be used at the end of the batch
 // TODO: ensure onAdd and onDelete are called properly for every array method
 export class QuarkArray<T> {
-	#source: Quark<Array<Quark<T>>>;
+	private source: Quark<Array<Quark<T>>>;
 	quarkifier: (item: T) => Quark<T>;
 	onAdd?: (item: T) => void;
 	onDelete?: (item: T) => void;
@@ -35,29 +34,29 @@ export class QuarkArray<T> {
 		items = items ?? [];
 		const quarks = items.map(this.quarkifier);
 		// the alwaysFalse allows us to modify the array in place and return the same reference to update the quark
-		this.#source = quark(quarks, { equal: alwaysFalse });
+		this.source = quark(quarks, { equal: alwaysFalse });
 	}
 
 	get length(): number {
-		return this.#source().length;
+		return this.source().length;
 	}
 
 	// removing undefined from the return type, since it's annoying
 	at(i: number): T {
-		const arr = this.#source();
+		const arr = this.source();
 		if (i < 0) i += arr.length;
 		const val: Quark<T> | undefined = arr[i];
 		return val ? val() : undefined!;
 	}
 
 	quarkAt(i: number): Quark<T> {
-		const arr = this.#source();
+		const arr = this.source();
 		if (i < 0) i += arr.length;
 		return arr[i];
 	}
 
 	set(i: number, value: ValueOrWrappedFunction<T>) {
-		this.#source()[i].set(value);
+		this.source()[i].set(value);
 	}
 
 	// === Iterator functionality ===
@@ -98,18 +97,18 @@ export class QuarkArray<T> {
 	}
 
 	findQuark(filter: (item: T) => boolean): Quark<T> | undefined {
-		const source = this.#source();
+		const source = this.source();
 		for (let i = 0; i < source.length; i++) {
 			const q = source[i];
 			if (filter(q())) return q;
 		}
 	}
 
-	#apply<U>(operation: (buffer: Quark<T>[]) => U): U {
+	private applyMutation<U>(operation: (buffer: Quark<T>[]) => U): U {
 		// batching ensures the returned value is not undefined
 		return batch(() => {
 			let output: U;
-			this.#source.set((x) => {
+			this.source.set((x) => {
 				output = operation(x);
 				return x;
 			});
@@ -121,17 +120,17 @@ export class QuarkArray<T> {
 	push(value: T): number {
 		if (this.onAdd) this.onAdd(value);
 		const q = this.quarkifier(value);
-		return this.#apply((x) => x.push(q));
+		return this.applyMutation((x) => x.push(q));
 	}
 
 	pop(): Quark<T> | undefined {
-		const val = this.#apply((x) => x.pop());
+		const val = this.applyMutation((x) => x.pop());
 		if (this.onDelete && val) untrack(() => this.onDelete!(val()));
 		return val;
 	}
 
 	shift(): Quark<T> | undefined {
-		const quark = this.#apply((x) => x.shift());
+		const quark = this.applyMutation((x) => x.shift());
 		if (quark && this.onDelete) untrack(() => this.onDelete!(quark()));
 		return quark;
 	}
@@ -142,11 +141,11 @@ export class QuarkArray<T> {
 			if (this.onAdd) this.onAdd(items[i]);
 			quarks[i] = this.quarkifier(items[i]);
 		}
-		return this.#apply((x) => x.unshift(...quarks));
+		return this.applyMutation((x) => x.unshift(...quarks));
 	}
 
 	splice(start: number, deleteCount?: number, ...items: T[]): Quark<T>[] {
-		return this.#apply((x) =>
+		return this.applyMutation((x) =>
 			deleteCount
 				? x.splice(start, deleteCount as number, ...items.map((x) => quark(x)))
 				: // does not work if a 2nd argument is provided, even if it's undefined
@@ -156,7 +155,7 @@ export class QuarkArray<T> {
 
 	remove(item: T) {
 		untrack(() => {
-			const arr = this.#source();
+			const arr = this.source();
 			for (let i = 0; i < arr.length; i++) {
 				const q = arr[i];
 				const val = q();
@@ -166,13 +165,13 @@ export class QuarkArray<T> {
 					break;
 				}
 			}
-			this.#source.set(arr);
+			this.source.set(arr);
 		});
 	}
 
 	removeQuark(quark: Quark<T>) {
 		untrack(() => {
-			const arr = this.#source().slice(0);
+			const arr = this.source().slice(0);
 			for (let i = 0; i < arr.length; i++) {
 				if (quark === arr[i]) {
 					arr.splice(i, 1);
@@ -180,13 +179,13 @@ export class QuarkArray<T> {
 					break;
 				}
 			}
-			this.#source.set(arr);
+			this.source.set(arr);
 		});
 	}
 
 	removeAll(selection: (item: T) => boolean) {
 		untrack(() => {
-			const current = this.#source();
+			const current = this.source();
 			const after = [];
 			for (let i = 0; i < current.length; ++i) {
 				const quark = current[i];
@@ -196,7 +195,7 @@ export class QuarkArray<T> {
 					this.onDelete(quark());
 				}
 			}
-			this.#source.set(after);
+			this.source.set(after);
 		});
 	}
 
@@ -205,18 +204,18 @@ export class QuarkArray<T> {
 	}
 
 	[Symbol.iterator]() {
-		const iter = new QuarkArrayIterator(this.#source);
+		const iter = new QuarkArrayIterator(this.source);
 		iter.init();
 		return iter;
 	}
 
 	quarks(): QuarkIter<Quark<T>> {
-		const iter = new QuarkArrayIteratorRaw(this.#source);
+		const iter = new QuarkArrayIteratorRaw(this.source);
 		return new QuarkIter(iter);
 	}
 
 	lazy(): QuarkIter<T> {
-		const iter = new QuarkArrayIterator(this.#source);
+		const iter = new QuarkArrayIterator(this.source);
 		return new QuarkIter(iter);
 	}
 }

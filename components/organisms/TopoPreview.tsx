@@ -2,24 +2,21 @@ import React, { useState } from "react";
 import {
 	Button,
 	DownloadButton,
-	Flash,
 	LikeButton,
 	GradeHistogram,
 	ParkingButton,
-	ParkingModal,
 } from "components";
 import { BaseColor, LightTopo, TopoStatus } from "types";
 import { formatDate } from "helpers/utils";
 import { Image } from "components/atoms/Image";
 import Link from "next/link";
+import { TopoTypeToColor } from "helpers/topo";
+import { Flash, ModalBG, ParkingModal, SlideoverRightDesktop } from "components/atoms/overlays";
 
 import Rock from "assets/icons/rock.svg";
 import ManyTracks from "assets/icons/many-tracks.svg";
-import Waypoint from "assets/icons/waypoint.svg";
-import { ModalBG } from "components/atoms";
+import Marker from "assets/icons/marker.svg";
 import Copy from "/assets/icons/copy.svg";
-import { TopoTypeToColor } from "helpers/topo";
-import { SlideoverRightDesktop } from "components/atoms/overlays";
 
 type TopoPreviewButton = {
 	content: string;
@@ -116,7 +113,7 @@ export const TopoPreview: React.FC<TopoPreviewProps> = ({
 				</div>
 
 				<div className="mt-4 flex flex-row items-center px-4">
-					<Waypoint className={"h-6 w-6 " + TopoTypeToColor(topo.type)} />
+					<Marker className={"h-6 w-6 " + TopoTypeToColor(topo.type)} />
 					<div
 						className={
 							"ktext-section-title ml-2" +

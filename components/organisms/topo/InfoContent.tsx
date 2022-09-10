@@ -1,16 +1,15 @@
 import React, { useState } from "react";
 import {
 	DownloadButton,
-	Flash,
 	GradeHistogram,
 	LikeButton,
 } from "components";
 import { Signal } from "helpers/quarky";
 import { Amenities, Topo } from "types";
-import { listRockTypes, hasFlag } from "helpers/bitflags";
+import { hasFlag, listFlags } from "helpers/bitflags";
 import { TopoTypeToColor } from "helpers/topo";
 
-import WaypointIcon from "assets/icons/waypoint.svg";
+import Marker from "assets/icons/marker.svg";
 import Rock from "assets/icons/rock.svg";
 import ManyTracks from "assets/icons/many-tracks.svg";
 import Toilets from "assets/icons/toilets.svg";
@@ -18,6 +17,8 @@ import Picnic from "assets/icons/picnic.svg";
 import WaterDrop from "assets/icons/water-drop.svg";
 import Bin from "assets/icons/bin.svg";
 import Umbrella from "assets/icons/umbrella.svg";
+import { Flash } from "components/atoms/overlays";
+import { RockNames } from "types/BitflagNames";
 
 interface InfoContentProps {
 	topo: Signal<Topo>;
@@ -59,7 +60,7 @@ export const InfoContent: React.FC<InfoContentProps> = (props: InfoContentProps)
 
 					<div className="ktext-big-title mt-4 flex flex-row items-center text-center">
 						<div className="mr-2 hidden md:inline">
-							<WaypointIcon className={"h-6 w-6 " + TopoTypeToColor(topo.type)} />
+							<Marker className={"h-6 w-6 " + TopoTypeToColor(topo.type)} />
 						</div>
 						{topo.name}
 					</div>
@@ -133,7 +134,7 @@ export const InfoContent: React.FC<InfoContentProps> = (props: InfoContentProps)
 						{topo.rockTypes && (
 							<div>
 								<span className="font-semibold">Roche : </span>
-								{listRockTypes(topo.rockTypes).join(", ")}
+								{listFlags(topo.rockTypes, RockNames).join(", ")}
 							</div>
 						)}
 						{topo.altitude && (

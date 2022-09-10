@@ -11,7 +11,7 @@ interface TopoCardListProps {
 	noTopoCardContent?: string;
 	lastCard?: ReactNode;
 	onClick?: (topo: LightTopo) => void,
-	onContextMenu: (topo: LightTopo, position: { x: number; y: number }) => void;
+	onContextMenu?: (topo: LightTopo, position: { x: number; y: number }) => void;
 }
 
 export const TopoCardList: React.FC<TopoCardListProps> = (

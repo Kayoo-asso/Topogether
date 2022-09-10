@@ -1,9 +1,9 @@
-import React, { Dispatch, SetStateAction } from 'react';
+import React from 'react';
 import { Quark, watchDependencies } from 'helpers/quarky';
 import { Topo, UUID } from 'types';
 import { For } from 'components/atoms';
 import { BoulderFilterOptions, BoulderMarker, ClusterProvider, filterBoulders, ParkingMarker, SectorAreaMarker, WaypointMarker } from 'components/map';
-import { InteractItem, useSelectStore } from 'components/pages/selectStore';
+import { useSelectStore } from 'components/pages/selectStore';
 
 interface TopoMarkersProps {
     topoQuark: Quark<Topo>,
@@ -37,9 +37,9 @@ export const TopoMarkers: React.FC<TopoMarkersProps> = watchDependencies(
                 {(sector) => (
                     <SectorAreaMarker
                         key={sector().id}
+                        topoQuark={props.topoQuark}
+                        boulderOrder={props.boulderOrder}
                         sector={sector}
-                        // selected={props.selectedItem.type === 'sector' && props.selectedItem.value === sector}
-                        // onClick={toggleSectorSelect}
                     />
                 )}
             </For>

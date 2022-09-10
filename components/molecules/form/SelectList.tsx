@@ -3,9 +3,9 @@ import React from "react";
 
 export type SelectOption<T> = [value: T, label: string];
 
-interface SelectTouchProps<T> {
+interface SelectListProps<T> {
 	label?: string,
-	wrapperClassname?: string;
+	className?: string;
 	options: SelectOption<T>[];
 	value?: T;
 	white?: boolean,
@@ -14,47 +14,47 @@ interface SelectTouchProps<T> {
 	onChange: (value: T | undefined) => void;
 }
 
-export function SelectTouch<T>({
+export function SelectList<T>({
 	white = false,
 	big = false,
 	...props
-}: SelectTouchProps<T>) {
+}: SelectListProps<T>) {
 	const device = useBreakpoint();
-	const selected = props.options.find((x) => x[0] === props.value) || [null, null];
+	const selected = props.options.map(o => o[0]).find(val => val === props.value) || [null, null];
 	
 	const getClassName = (val: T) => {
 		let classes = '';
 		if (big) {
 			classes += ' py-3 px-4 text-xl'
-			if (selected[0] === val) classes += " font-semibold"
+			if (selected === val) classes += " font-semibold"
 		}
 		else {
 			classes += ' py-2 px-3'
-			if (selected[0] === val) classes += " font-semibold"
+			if (selected === val) classes += " font-semibold"
 		}
 
 		if (white) {
-			if (selected[0] === val) classes += " bg-white text-main"
+			if (selected === val) classes += " bg-white text-main"
 			else classes += " text-white";
 		}
 		else {
-			if (selected[0] === val) classes += " bg-main text-white"
+			if (selected === val) classes += " bg-main text-white"
 			else classes += " text-dark"
 		}
 		return classes;
 	}
 
 	return (
-		<div className={`relative w-full ktext-base ${props.wrapperClassname}`}>
+		<div className={`relative w-full ktext-base ${props.className}`}>
 			{props.label && <div className={"ktext-label " + (white ? 'text-white' : 'text-dark')}>{props.label}</div>}
 
 			<div className="flex flex-row flex-wrap	w-full gap-6 mt-3">
 				{props.options.sort().map(([value, label], index) => (
 					<div 
 						key={index}
-						className={"h-full rounded-sm cursor-pointer ktext-label " +  ((selected[0] === value || device === 'mobile') ? '' : "hover:bg-dark hover:bg-opacity-20 ") + getClassName(value)}
+						className={"h-full rounded-sm cursor-pointer ktext-label " +  ((selected === value || device === 'mobile') ? '' : "hover:bg-dark hover:bg-opacity-20 ") + getClassName(value)}
 						onClick={() => {
-							if (selected[0] === value) props.onChange(undefined)
+							if (selected === value) props.onChange(undefined)
 							else props.onChange(value)
 						}}
 						role="menuitem"
