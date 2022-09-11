@@ -10,7 +10,8 @@ import { fromLonLat } from "ol/proj";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import "ol/ol.css";
-import { makePublicRouterInstance } from "next/router";
+import Layer from "ol/layer/Layer";
+import Interaction from "ol/interaction/Interaction";
 
 const MAPBOX_KEY = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 
@@ -47,7 +48,7 @@ export function useLayer(key: string): VectorLayer<VectorSource> {
 			const source = new VectorSource({ features: [] });
 			l = new VectorLayer({ source });
 			console.log("Created layer with source:", l.getSource());
-			// map.addLayer(l);
+			map.addLayer(l);
 			allLayers.set(key, l);
 		}
 		return l;

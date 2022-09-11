@@ -16,6 +16,7 @@ interface UserMarkerProps {
 }
 
 export function UserMarker(props: UserMarkerProps) {
+	const map = useMap();
 	const source = useSource("user");
 	const breakpoint = useBreakpoint();
 	const { position, accuracy } = usePosition();

@@ -278,7 +278,7 @@ export const fakeTopov2: TopoData = {
 
 	sectors: sectors,
 	boulders: boulders,
-	lonelyBoulders: [],
+	lonelyBoulders: [boulders[3].id],
 	waypoints: waypoints,
 	parkings: parkings,
 	accesses: access,
