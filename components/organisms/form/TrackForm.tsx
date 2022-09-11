@@ -23,8 +23,6 @@ export const TrackForm: React.FC<TrackFormProps> = watchDependencies(
 		const trackQuark = selectedBoulder.selectedTrack;
 		const track = trackQuark();
 
-		console.log(track);
-
 		return (
 			<>
 				<div

@@ -10,6 +10,7 @@ interface SelectListProps<T> {
 	value?: T;
 	white?: boolean,
 	big?: boolean,
+	justify?: boolean,
 	error?: string;
 	onChange: (value: T | undefined) => void;
 }
@@ -17,6 +18,7 @@ interface SelectListProps<T> {
 export function SelectList<T>({
 	white = false,
 	big = false,
+	justify = true,
 	...props
 }: SelectListProps<T>) {
 	const device = useBreakpoint();
@@ -34,10 +36,12 @@ export function SelectList<T>({
 		}
 
 		if (white) {
+			classes += ' border-white'
 			if (selected === val) classes += " bg-white text-main"
 			else classes += " text-white";
 		}
 		else {
+			classes += " border-grey-medium"
 			if (selected === val) classes += " bg-main text-white"
 			else classes += " text-dark"
 		}
@@ -48,11 +52,11 @@ export function SelectList<T>({
 		<div className={`relative w-full ktext-base ${props.className}`}>
 			{props.label && <div className={"ktext-label " + (white ? 'text-white' : 'text-dark')}>{props.label}</div>}
 
-			<div className="flex flex-row flex-wrap	w-full gap-6 mt-3">
+			<div className={"flex flex-row flex-wrap w-full gap-6 mt-3" + (justify ? ' justify-between' : '')}>
 				{props.options.sort().map(([value, label], index) => (
 					<div 
 						key={index}
-						className={"h-full rounded-sm cursor-pointer ktext-label " +  ((selected === value || device === 'mobile') ? '' : "hover:bg-dark hover:bg-opacity-20 ") + getClassName(value)}
+						className={"h-full border border-opacity-25 rounded-sm cursor-pointer ktext-label " + ((selected === value || device === 'mobile') ? '' : "hover:bg-dark hover:bg-opacity-20 ") + getClassName(value)}
 						onClick={() => {
 							if (selected === value) props.onChange(undefined)
 							else props.onChange(value)

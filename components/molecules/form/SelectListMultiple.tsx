@@ -35,10 +35,12 @@ export const SelectListMultiple = <T extends Bitflag>({
 		}
 
 		if (white) {
+			classes += ' border-white'
 			if (hasFlag(val, flag)) classes += " bg-white text-main"
 			else classes += " text-white";
 		}
 		else {
+			classes += " border-grey-medium"
 			if (hasFlag(val, flag)) classes += " bg-main text-white"
 			else classes += " text-dark"
 		}
@@ -57,7 +59,7 @@ export const SelectListMultiple = <T extends Bitflag>({
 					}).map(([flag, name]) => (
 						<div 
 							key={name}
-							className={"h-full border rounded-full cursor-pointer ktext-label " + (white ? "border-white " : "border-grey-light ") + ((props.value && hasFlag(props.value, flag) || device === 'mobile') ? '' : "hover:bg-dark hover:bg-opacity-20 ") + getClassName(props.value, flag)}
+							className={"h-full border border-opacity-25 rounded-sm cursor-pointer ktext-label " + ((props.value && hasFlag(props.value, flag) || device === 'mobile') ? '' : "hover:bg-dark hover:bg-opacity-20 ") + getClassName(props.value, flag)}
 							onClick={() => props.onChange(flag)}
 							role="menuitem"
 							tabIndex={0}
