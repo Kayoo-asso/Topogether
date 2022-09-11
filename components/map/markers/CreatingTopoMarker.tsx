@@ -1,12 +1,12 @@
 import React, { useCallback } from "react";
-import { GeoCoordinates, MarkerEventHandlers, TopoType } from "types";
+import { GeoCoordinates, MarkerEventHandlers, TopoTypes } from "types";
 import { markerSize, toLatLng, useMarker } from "helpers/map";
 import { TopoTypeToColor } from "helpers/topo";
 
 interface CreatingTopoMarkerProps {
 	location: GeoCoordinates,
 	setLocation: (lat: number, lng: number) => void,
-	type?: TopoType,
+	type?: TopoTypes,
 }
 
 export const CreatingTopoMarker: React.FC<CreatingTopoMarkerProps> = ({ 
@@ -31,7 +31,7 @@ export const CreatingTopoMarker: React.FC<CreatingTopoMarkerProps> = ({
 		onDragEnd: useCallback(
 			(e: google.maps.MapMouseEvent) => {
 				if (e.latLng) {
-					console.log("Drag end with latLng", e.latLng.lat(), e.latLng.lng());
+					// console.log("Drag end with latLng", e.latLng.lat(), e.latLng.lng());
 					props.setLocation(e.latLng.lat(), e.latLng.lng())
 				}
 			},
