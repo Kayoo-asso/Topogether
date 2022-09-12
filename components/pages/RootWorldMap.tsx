@@ -38,7 +38,7 @@ export const RootWorldMap: React.FC<RootWorldMapProps> = watchDependencies(
 		const filterFn = (topo: LightTopo) => {
 			const options = topoFilters();
 			//TODO : check if this works
-			if (options.types === TopoTypes.None && !hasFlag(options.types, topo.type)) {
+			if (options.types !== TopoTypes.None && !hasFlag(options.types, topo.type)) {
 				return false;
 			}
 			if (
