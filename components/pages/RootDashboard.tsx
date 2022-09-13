@@ -8,7 +8,7 @@ import { LikedTopos } from "components/organisms/dashboard/LikedTopos";
 import { DlTopos } from "components/organisms/dashboard/DlTopos";
 import { TabsFly } from "components/layouts/TabsFly";
 
-import UserIcon from "assets/icons/user.svg";
+import UserTopoIcon from "assets/icons/user-topo.svg";
 import Heart from "assets/icons/heart.svg";
 import Download from "assets/icons/download.svg";
 
@@ -43,7 +43,7 @@ export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies(
 							<TabsFly 
 								tabs={[
 									{
-										icon: UserIcon,
+										icon: UserTopoIcon,
 										iconStroke: true,
 										label: "Mes topos",
 										color: "main",
