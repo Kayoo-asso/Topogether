@@ -11,6 +11,7 @@ interface SelectProps<T> {
 	options: SelectOption<T>[];
 	big?: boolean;
 	white?: boolean;
+	justify?: boolean;
 	value?: T | undefined;
 	error?: string;
 	className?: string;
@@ -50,6 +51,7 @@ export const Select = <T extends number | string>(props: SelectProps<T>) => {
 							value={props.value}
 							white
 							big
+							justify={props.justify}
 							className={props.className}
 							onChange={props.onChange}
 						/>

@@ -11,7 +11,7 @@ export function averageTrackNote(ratings: TrackRating[]): number {
 }
 
 // --- TopoTypeToColor ---
-export const TopoTypeToColor = (type: TopoTypes) => {
+export const TopoTypeToColor = (type?: TopoTypes) => {
 	switch (type) {
 		case TopoTypes.Boulder:
 			return "fill-main";

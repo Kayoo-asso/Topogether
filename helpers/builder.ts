@@ -171,6 +171,7 @@ export const createTrack = (boulder: Boulder, creatorId: UUID) => {
 		hasMantle: false,
 		lines: [],
 		ratings: [],
+		spec: 0,
 	});
 	boulder.tracks.push(newTrack);
 	const newTrackQuark = boulder.tracks.quarkAt(-1);

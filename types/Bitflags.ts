@@ -45,11 +45,11 @@ export const enum RockTypes {
 
 export const enum TopoTypes {
 	None = 0,
-	Artificial = 1 << 3,
-	Boulder = 1 << 0,
-	Cliff = 1 << 1,
-	DeepWater = 1 << 2,
-	Multipitch = 1 << 3,
+	Artificial = 1 << 0,
+	Boulder = 1 << 1,
+	Cliff = 1 << 2,
+	DeepWater = 1 << 3,
+	Multipitch = 1 << 4,
 }
 
 

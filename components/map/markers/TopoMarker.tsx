@@ -1,11 +1,11 @@
 import React, { useCallback } from "react";
 import { markerSize, toLatLng, useMarker } from "helpers/map";
-import { MarkerEventHandlers, TopoType, LightTopo } from "types";
+import { MarkerEventHandlers, LightTopo, TopoTypes } from "types";
 import { TopoTypeToColor } from "helpers/topo";
 
 interface TopoMarkerProps {
 	topo: LightTopo;
-	type?: TopoType;
+	type?: TopoTypes;
 	onClick?: (topo: LightTopo) => void;
 }
 

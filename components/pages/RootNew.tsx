@@ -137,6 +137,7 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies(
 										value={type}
 										white
 										big={device === "desktop" ? true : false}
+										justify={false}
 										error={typeError}
 										onChange={(val) => {
 											setTypeError(undefined);

@@ -116,7 +116,6 @@ export const RootAdmin: React.FC<RootAdminProps> = (props: RootAdminProps) => {
 
 	useContextMenu(() => setDropdownPosition(undefined), ref.current);
 	const onContextMenu = (topo: LightTopo, position: { x: number; y: number }) => {
-		console.log(topo);
 		setActionTopo(topo);
 		setDropdownPosition(position);
 	}
