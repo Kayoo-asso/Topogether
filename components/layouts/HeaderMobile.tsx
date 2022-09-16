@@ -3,6 +3,7 @@ import { Dropdown, DropdownOption } from "components";
 import Link from "next/link";
 import ArrowSimple from "assets/icons/arrow-simple.svg";
 import MenuIcon from "assets/icons/menu.svg";
+import { NetworkIndicator } from "components/atoms/NetworkIndicator";
 
 interface HeaderMobileProps {
 	title: string;
@@ -36,8 +37,8 @@ export const HeaderMobile: React.FC<HeaderMobileProps> = (
 
 			<div
 				className={
-					(props.children ? "w-3/6" : "w-4/6") +
-					" ktext-title overflow-hidden whitespace-nowrap text-white"
+					(props.children ? "w-3/6" : "w-3/6") +
+					" w-3/6 ktext-title overflow-hidden whitespace-nowrap text-white"
 				}
 				aria-label={displayTitleTooltip ? props.title : undefined}
 				data-microtip-position="bottom"
@@ -46,23 +47,26 @@ export const HeaderMobile: React.FC<HeaderMobileProps> = (
 			>
 				{props.title}
 			</div>
+			
+			<div className="flex w-2/6 flex-row items-center gap-5 mr-2">
+				{props.children && (
+					<>{props.children}</>
+				)}
 
-			{props.children && (
-				<div className="flex w-1/6 flex-row items-center pl-5">
-					{props.children}
-				</div>
-			)}
+				<NetworkIndicator />
 
-			{props.menuOptions && (
-				<button
-					className="flex w-1/6 justify-center"
-					onClick={() => setMenuOpen((x) => !x)}
-				>
-					<MenuIcon
-						className={`h-4 w-4 fill-white ${menuOpen ? "rotate-90" : ""}`}
-					/>
-				</button>
-			)}
+				{props.menuOptions && (
+					<button
+						className="flex w-1/6 justify-center"
+						onClick={() => setMenuOpen((x) => !x)}
+					>
+						<MenuIcon
+							className={`h-4 w-4 fill-white ${menuOpen ? "rotate-90" : ""}`}
+						/>
+					</button>
+				)}
+			</div>
+			
 			{menuOpen && props.menuOptions && (
 				<Dropdown
 					options={props.menuOptions}
