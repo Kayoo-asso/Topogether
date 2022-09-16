@@ -3,7 +3,6 @@ import { Dropdown, DropdownOption } from "components";
 import Link from "next/link";
 import ArrowSimple from "assets/icons/arrow-simple.svg";
 import MenuIcon from "assets/icons/menu.svg";
-import { NetworkIndicator } from "components/atoms/NetworkIndicator";
 
 interface HeaderMobileProps {
 	title: string;
@@ -52,8 +51,6 @@ export const HeaderMobile: React.FC<HeaderMobileProps> = (
 				{props.children && (
 					<>{props.children}</>
 				)}
-
-				<NetworkIndicator />
 
 				{props.menuOptions && (
 					<button

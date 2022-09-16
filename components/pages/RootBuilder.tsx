@@ -49,6 +49,7 @@ import { SyncUrl } from "components/organisms/SyncUrl";
 import { KeyboardShortcut } from "components/organisms/builder/KeyboardShortcuts";
 import { DropdownOption } from "components/molecules";
 import { Flash } from "components/atoms/overlays";
+import { NetworkIndicator } from "components/atoms/NetworkIndicator";
 
 interface RootBuilderProps {
 	topoQuark: Quark<Topo>;
@@ -186,6 +187,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 						topo={props.topoQuark()}
 						progress={progress()}
 					/>
+					<div className="md:pl-8"><NetworkIndicator /></div>
 				</Header>
 
 				{/* overflow-clip instead of overflow-hidden, so that the Slideagainst can appear off-screen without 
