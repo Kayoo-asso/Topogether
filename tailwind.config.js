@@ -386,9 +386,12 @@ module.exports = {
 				"system-ui",
 				'"Segoe UI"',
 				'"Helvetica Neue"',
-				"Arial",
 				"sans-serif",
 			],
+			fun: [
+				"TitanOne",
+				'Arial'
+			]
 		},
 		fontSize: {
 			xxs: ["0.65rem", { lineHeight: "0.8rem" }],
@@ -400,6 +403,8 @@ module.exports = {
 			"2xl": ["1.5rem", { lineHeight: "2rem" }],
 			"3xl": ["1.875rem", { lineHeight: "2.25rem" }],
 			"4xl": ["2.25rem", { lineHeight: "2.5rem" }],
+			"6xl": ["3.75rem", { lineHeight: "4rem" }],
+			"8xl": ["4.5rem", { lineHeight: "4.75rem" }],
 			subtitle: ["0.8125rem", { lineHeight: "1.25rem" }],
 		},
 		fontWeight: {

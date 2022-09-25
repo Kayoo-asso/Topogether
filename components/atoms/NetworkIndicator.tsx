@@ -45,7 +45,6 @@ export const NetworkIndicator: React.FC = watchDependencies(() => {
         else if (isOnline) {
             interval = setInterval(() => {
                 setIcon(icon => icon === NetIcon.Saving3 ? NetIcon.Saving2 : icon === NetIcon.Saving2 ? NetIcon.Saving1 : NetIcon.Saving3);
-                console.log(icon);
             }, 150);
         }
         else {

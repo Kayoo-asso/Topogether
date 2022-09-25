@@ -5,6 +5,9 @@
 @tailwind utilities;
 
 @layer components {
+  .ktext-fun-title {
+    @apply font-fun font-normal text-8xl;
+  }
   .ktext-big-title {
     @apply font-sans font-semibold text-2xl;
   }
@@ -201,3 +204,10 @@ body {
     url("/assets/fonts/Poppins/Poppins-BoldItalic.ttf") format("truetype");
 }
 
+@font-face {
+  font-family: "TitanOne";
+  font-style: normal;
+  font-weight: 700;
+  src: local("TitanOne-Regular"), local("TitanOne-Regular"),
+    url("/assets/fonts/TitanOne/TitanOne-Regular.ttf") format("truetype");
+}

@@ -7,10 +7,13 @@ import Clear from "assets/icons/clear.svg";
 
 interface ModalRenameSectorProps {
 	sector: Quark<Sector>;
+	firstNaming?: boolean,
 	onClose: () => void;
 }
 
-export const ModalRenameSector: React.FC<ModalRenameSectorProps> = watchDependencies((props: ModalRenameSectorProps) => {
+export const ModalRenameSector: React.FC<ModalRenameSectorProps> = watchDependencies(({
+	firstNaming = false,
+	...props}: ModalRenameSectorProps) => {
 	const sector = props.sector();
 
 	const [sectorNameError, setSectorNameError] = useState<string>();
@@ -53,7 +56,14 @@ export const ModalRenameSector: React.FC<ModalRenameSectorProps> = watchDependen
 					onClick={(e) => e.stopPropagation()}
 				>
 					<div className="flex flex-col gap-6 p-6 pt-10">
-						<div className="ktext-label">Renommer le secteur</div>
+						{firstNaming && 
+							<div className="flex flex-col gap-16">
+								<div className="ktext-fun-title text-main text-center">Secteur créé !</div>
+								<div className="ktext-base text-grey-medium">Est-ce qu'il a déjà un petit nom ?</div>
+							</div>
+						}
+
+						{!firstNaming && <div className="ktext-base text-grey-medium">Renommer le secteur</div>}
 						<TextInput
 							ref={inputRef}
 							id="sector-name"

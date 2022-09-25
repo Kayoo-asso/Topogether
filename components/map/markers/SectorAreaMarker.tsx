@@ -15,7 +15,6 @@ import {
 } from "types";
 import { isMouseEvent, isPointerEvent, isTouchEvent } from "./BoulderMarker";
 import { toLatLng, usePolygon } from "helpers/map";
-import { useMap } from "..";
 import { sectorChanged } from "helpers/builder";
 import { useSelectStore } from "components/pages/selectStore";
 
@@ -78,6 +77,7 @@ export const SectorAreaMarker: React.FC<SectorAreaMarkerProps> =
 				const evt = e.domEvent;
 				if (isMouseEvent(evt) && evt.button === 2 && props.onContextMenu) {
 					//Right click
+					select.sector(props.sector);
 					props.onContextMenu(evt, props.sector);
 				} else if (isTouchEvent(evt) || isPointerEvent(evt)) {
 					setTimer(

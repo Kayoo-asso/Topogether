@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { createSector } from "helpers/builder";
-import { usePolyline } from "helpers/map";
+import { usePolygon, usePolyline } from "helpers/map";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { GeoCoordinates, MapEventHandlers, Sector, Topo, UUID } from "types";
 import { useMap } from "..";
@@ -35,7 +35,16 @@ export const CreatingSectorAreaMarker: React.FC<
 	const [path, setPath] = useState<google.maps.LatLng[]>([]);
 	const [sectorToRename, setSectorToRename] = useState<Quark<Sector>>();
 
-	const map = useMap();
+	const moveHandler: MapEventHandlers["onMouseMove"] = (e) => {
+		if (!startedDrawing || !e.latLng) return;
+		const latlng = e.latLng;
+		// Replace the last point with the current mouse position
+		setPath((current) => {
+			const newPath = current.slice();
+			newPath[newPath.length - 1] = latlng;
+			return newPath;
+		});
+	};
 	const onClick = useCallback(
 		(e: google.maps.MapMouseEvent) => {
 			if (e.latLng) {
@@ -46,15 +55,26 @@ export const CreatingSectorAreaMarker: React.FC<
 		[setPath]
 	);
 
+	const map = useMap();
+	const polygonOptions: google.maps.PolygonOptions = {
+		paths: [...path],
+		strokeColor: 'none',
+		strokeOpacity: 0,
+		fillColor: '#04D98B',
+		fillOpacity: path.length > 3 ?  0.4 : 0,
+	}
+	usePolygon(polygonOptions, {
+		onMouseMove: moveHandler,
+		onClick
+	});
+	
 	const polylineOptions: google.maps.PolylineOptions = {
+		path: path,
 		strokeColor: "#04D98B",
 		strokeWeight: 2,
 	};
 	usePolyline(
-		{
-			...polylineOptions,
-			path: path,
-		},
+		polylineOptions,
 		{ onClick }
 	);
 
@@ -71,16 +91,16 @@ export const CreatingSectorAreaMarker: React.FC<
 		const clickListener = map.addListener("click", clickHandler);
 
 		// Use MapEventHandlers for the type, to avoid mistakes
-		const moveHandler: MapEventHandlers["onMouseMove"] = (e) => {
-			if (!startedDrawing || !e.latLng) return;
-			const latlng = e.latLng;
-			// Replace the last point with the current mouse position
-			setPath((current) => {
-				const newPath = current.slice();
-				newPath[newPath.length - 1] = latlng;
-				return newPath;
-			});
-		};
+		// const moveHandler: MapEventHandlers["onMouseMove"] = (e) => {
+		// 	if (!startedDrawing || !e.latLng) return;
+		// 	const latlng = e.latLng;
+		// 	// Replace the last point with the current mouse position
+		// 	setPath((current) => {
+		// 		const newPath = current.slice();
+		// 		newPath[newPath.length - 1] = latlng;
+		// 		return newPath;
+		// 	});
+		// };
 		const moveListener = map.addListener("mousemove", moveHandler);
 
 		let keyHandler = (e: KeyboardEvent) => {
@@ -130,6 +150,7 @@ export const CreatingSectorAreaMarker: React.FC<
 			{sectorToRename &&
 				<ModalRenameSector 
 					sector={sectorToRename}
+					firstNaming
 					onClose={() => {
 						flush.tool();
 						setPath([]);
