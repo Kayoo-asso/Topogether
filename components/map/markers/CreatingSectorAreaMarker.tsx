@@ -7,6 +7,7 @@ import { useMap } from "..";
 import { ValidationMarker } from "./ValidationMarker";
 import { ModalRenameSector } from "components/organisms/builder/ModalRenameSector";
 import { useSelectStore } from "components/pages/selectStore";
+import { useBreakpoint } from "helpers/hooks";
 
 interface CreatingSectorAreaMarkerProps {
 	topoQuark: Quark<Topo>,
@@ -31,6 +32,7 @@ export const CreatingSectorAreaMarker: React.FC<
 	CreatingSectorAreaMarkerProps
 > = watchDependencies((props: CreatingSectorAreaMarkerProps) => {
 	// NOTE: the last point of the path follows the mouse cursor, after we started drawing
+	const breakpoint = useBreakpoint();
 	const flush = useSelectStore(s => s.flush);
 	const [path, setPath] = useState<google.maps.LatLng[]>([]);
 	const [sectorToRename, setSectorToRename] = useState<Quark<Sector>>();
@@ -132,7 +134,7 @@ export const CreatingSectorAreaMarker: React.FC<
 					path={path}
 					onClick={() => {
 						// Remove the mouse cursor and close nicely
-						path[path.length - 1] = path[0];
+						if (breakpoint === 'desktop') path[path.length - 1] = path[0];
 						const coords: GeoCoordinates[] = path.map((latlng) => [
 							latlng.lng(),
 							latlng.lat(),

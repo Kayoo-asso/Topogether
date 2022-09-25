@@ -1,6 +1,7 @@
 import React, { useCallback, useRef, useState } from "react";
 import { Wrapper } from "@googlemaps/react-wrapper";
 import { RoundButton, SatelliteButton } from "components";
+import { ImageInput } from "components/molecules";
 import {
 	BoulderFilterOptions,
 	BoulderFilters,
@@ -22,7 +23,7 @@ import { Quark, watchDependencies } from "helpers/quarky";
 import { fontainebleauLocation } from "helpers/constants";
 import { googleGetPlace, toLatLng } from "helpers/map";
 import { setReactRef } from "helpers/utils";
-import { usePosition } from "helpers/hooks";
+import { useBreakpoint, usePosition } from "helpers/hooks";
 
 import SectorIcon from "assets/icons/sector.svg";
 import CenterIcon from "assets/icons/center.svg";
@@ -69,12 +70,15 @@ export const MapControl = watchDependencies<google.maps.Map, MapControlProps>(
 		parentRef
 	) => {
 		const session = useSession();
+		const breakpoint = useBreakpoint();
 		const mapRef = useRef<google.maps.Map>(null);
 		const { position } = usePosition();
 		const selectedItem = useSelectStore(s => s.item);
 		const select = useSelectStore(s => s.select);
 		const flush = useSelectStore(s => s.flush);
 		const tool = useSelectStore(s => s.tool);
+
+		const [mapToolSelectorOpen, setMapToolSelectorOpen] = useState(breakpoint === 'desktop');
 
 		const [satelliteView, setSatelliteView] = useState(false);
 		const getBoundsFromSearchbar = (
@@ -165,14 +169,27 @@ export const MapControl = watchDependencies<google.maps.Map, MapControlProps>(
 						</div>
 
 						{/* Bottom center */}
-						<div className="absolute bottom-0 my-3 flex w-full justify-center">
+						<div className="absolute bottom-0 my-3 flex w-full justify-center z-100">
 							{displayToolSelector && (
-								<MapToolSelector
-									photoActivated={!!position}
-									onNewPhoto={useCallback((img) =>
-										position && session && props.topo && handleNewPhoto(props.topo, img, position, session, select, selectedItem, tool)
-									, [props.topo, position, session, tool])}
-								/>
+								<div className="flex flex-row gap-5 w-full justify-center">
+									<MapToolSelector
+										open={mapToolSelectorOpen}
+										setOpen={setMapToolSelectorOpen}
+									/>
+									{!mapToolSelectorOpen &&
+										<ImageInput
+											button="builder"
+											size="big"
+											multiple={false}
+											activated={
+												!!position || process.env.NODE_ENV === "development"
+											}
+											onChange={(files) => {
+												position && session && props.topo && handleNewPhoto(props.topo, files[0], position, session, select, selectedItem, tool)
+											}}
+										/>
+									}
+								</div>
 							)}
 						</div>
 						{/* Bottom right */}
