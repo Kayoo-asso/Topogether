@@ -25,7 +25,7 @@ const ViewContext = createContext<ViewObject | null>(null);
 export function useView(): ViewObject {
 	const view = useContext(ViewContext);
 	if (!view) {
-		throw new Error("useView should only be used inside a <View> component");
+		throw new Error("useView should only be used in chidren of a <View> component");
 	}
 	return view;
 }
@@ -71,5 +71,7 @@ export function View({ children, ...options }: ViewProps) {
 		}
 	}, [view, o.zoom]);
 
-	return view ? children : null;
+	return view ? (
+		<ViewContext.Provider value={view}>{children}</ViewContext.Provider>
+	) : null;
 }
