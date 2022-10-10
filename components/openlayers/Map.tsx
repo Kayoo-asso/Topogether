@@ -5,6 +5,7 @@ import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { setMethodName } from "./utils";
 import type { MapEvent, MapBrowserEvent } from "ol";
 import type RenderEvent from "ol/render/Event";
+import { useView } from "./View";
 
 type RestrictedOptions = Omit<
 	MapOptions,
@@ -99,6 +100,7 @@ const eventMethods = [
 ] as const;
 
 const Component = function (props: MapProps) {
+	const view = useView();
 	const [map, setMap] = useState<Map>();
 	const { children, ...options } = props;
 
@@ -110,6 +112,7 @@ const Component = function (props: MapProps) {
 	const resetDeps = resetProps.map((x) => options[x]);
 
 	useEffect(() => {
+		(options as MapOptions).view = view;
 		const m = new Map(options);
 		setMap(m);
 
