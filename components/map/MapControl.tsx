@@ -169,7 +169,10 @@ export const MapControl = watchDependencies<google.maps.Map, MapControlProps>(
 						</div>
 
 						{/* Bottom center */}
-						<div className="absolute bottom-0 my-3 flex w-full justify-center z-100">
+						<div className={
+							(mapToolSelectorOpen ? "z-100" : "z-1") +
+							" absolute bottom-0 my-3 flex w-full justify-center"
+						}>
 							{displayToolSelector && (
 								<div className="flex flex-row gap-5 w-full justify-center">
 									<MapToolSelector
