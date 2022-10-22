@@ -1,6 +1,6 @@
 import React, { Dispatch, SetStateAction, useCallback, useEffect, useState } from "react";
 import { Button, TextInput } from "components";
-import { Quark, watchDependencies } from "helpers/quarky";
+import { watchDependencies } from "helpers/quarky";
 import { Name, StringBetween, User } from "types";
 import { useAuth } from "helpers/services";
 import { ChangePasswordModal } from "./ChangePasswordModal";
@@ -147,13 +147,15 @@ export const ProfileForm: React.FC<ProfileFormProps> = watchDependencies(
 							id="birthDate"
 							label="Date de naissance"
 							wrapperClassName="w-1/2"
+							type="date"
 							value={user.birthDate}
-							onChange={(e) =>
+							onChange={(e) => {
+								console.log(e.target.value);
 								setUser(u => ({
 									...u,
 									birthDate: e.target.value,
 								}))
-							}
+							}}
 						/>
 					</div>
 

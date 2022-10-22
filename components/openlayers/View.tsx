@@ -19,7 +19,7 @@ export function useView(message?: string): View {
 	const view = useContext(ViewContext);
 	if (!view) {
 		throw new Error(
-			message || "useView should only used in children of a <View> component"
+			message || "useView should only be used in children of a <View> component"
 		);
 	}
 	return view;

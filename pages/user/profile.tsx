@@ -4,7 +4,6 @@ import {
 	ImageInput,
 	ProfileForm,
 } from "components";
-import { User } from "types";
 import { useAuth } from "helpers/services";
 import { Header } from "components/layouts/Header";
 import { LeftbarDesktop } from "components/layouts/Leftbar.desktop";
