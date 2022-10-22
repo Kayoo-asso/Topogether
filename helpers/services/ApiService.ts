@@ -1,5 +1,4 @@
 import { SupabaseClient } from "@supabase/supabase-js";
-import { quark } from "helpers/quarky";
 import {
 	TopoData,
 	UUID,
@@ -12,8 +11,6 @@ import {
 import { sync } from ".";
 import { ImageService } from "./ImageService";
 import { get, set } from "idb-keyval";
-import { ProgressBar } from "helpers/hooks/useProgressBar";
-import { downloadTopoMap } from "helpers/services/downloadTopoMap";
 
 export type LightTopoFilters = {
 	userId?: UUID;
@@ -181,6 +178,10 @@ export class ApiService {
                 ),
                 accesses:topo_accesses!topoId (*),
                 managers:managers!topoId (*),
+				contributors:topo_contributors!topo_id (
+					id: user_id,
+					role
+				),
                 sectors:sectors!topoId (
                     *,
                     path:path->coordinates

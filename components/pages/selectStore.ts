@@ -3,7 +3,7 @@ import { Quark } from "helpers/quarky"
 import { Boulder, Parking, Sector, Track, Waypoint, Img, MapToolEnum } from "types"
 import create from 'zustand'
 
-export type SelectedInfo = "INFO" | "ACCESS" | "MANAGEMENT" | "SECTOR" | "NONE";
+export type SelectedInfo = "INFO" | "ACCESS" | "MANAGEMENT" | "CONTRIBUTORS" | "SECTOR" | "NONE";
 
 export type SelectedNone = {
 	type: 'none',

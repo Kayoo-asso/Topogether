@@ -2,7 +2,9 @@ import { quark, Quark } from "helpers/quarky";
 import {
 	Boulder,
 	BoulderData,
+	Contributor,
 	DBBoulder,
+	DBContributor,
 	DBLightTopo,
 	DBLine,
 	DBManager,
@@ -65,6 +67,9 @@ export interface SyncService {
 
 	managerUpdate(manager: Manager, topoId: UUID): void;
 	managerDelete(manager: Manager): void;
+
+	contributorUpdate(contributor: Contributor, topoId: UUID): void;
+	contributorDelete(contributor: Contributor): void;
 
 	sectorUpdate(sector: Sector, topoId: UUID): void;
 	sectorDelete(sector: Sector): void;
@@ -249,6 +254,22 @@ export class InMemorySync implements SyncService {
 		this._status.set(SyncStatus.UnsavedChanges);
 	}
 
+	updatedContributors: Map<UUID, DBContributor> = new Map();
+	deletedContributors: Set<UUID> = new Set();
+
+	contributorUpdate(contributor: Contributor, topoId: UUID) {
+		const dto = DBConvert.contributor(contributor, topoId);
+		this.updatedContributors.set(dto.id, dto);
+		this.deletedContributors.delete(dto.id);
+		this._status.set(SyncStatus.UnsavedChanges);
+	}
+
+	contributorDelete(contributor: Contributor) {
+		this.deletedContributors.add(contributor.id);
+		this.updatedContributors.delete(contributor.id);
+		this._status.set(SyncStatus.UnsavedChanges);
+	}
+
 	updatedSectors: Map<UUID, DBSector> = new Map();
 	deletedSectors: Set<UUID> = new Set();
 
@@ -342,6 +363,7 @@ export class InMemorySync implements SyncService {
 			this.upsert("boulders", "updatedBoulders"),
 			this.upsert("sectors", "updatedSectors"),
 			this.upsert("managers", "updatedManagers"),
+			this.upsert("contributors", "updatedContributors"),
 			this.upsert("tracks", "updatedTracks"),
 			this.upsert("parkings", "updatedParkings"),
 			this.upsert("waypoints", "updatedWaypoints"),
@@ -354,6 +376,7 @@ export class InMemorySync implements SyncService {
 			this.delete("tracks", "deletedTracks"),
 			this.delete("lines", "deletedLines"),
 			this.delete("managers", "deletedManagers"),
+			this.delete("contributors", "deletedContributors"),
 			this.delete("parkings", "deletedParkings"),
 			this.delete("waypoints", "deletedWaypoints"),
 			this.delete("topo_accesses", "deletedTopoAccesses"),

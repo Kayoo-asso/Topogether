@@ -48,6 +48,7 @@ export interface Profile {
 }
 
 export type Role = "ADMIN" | "USER";
+export type ContributorRole = "ADMIN" | "CONTRIBUTOR";
 
 export interface TrackRating {
 	id: UUID;

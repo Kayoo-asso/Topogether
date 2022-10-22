@@ -5,7 +5,7 @@ export interface DropdownOption {
 	value: any;
 	label?: string;
 	isSection?: boolean;
-	action?: () => void;
+	action?: (e: React.PointerEvent<HTMLDivElement>) => void;
 	icon?: SVG;
 	disabled?: boolean;
 }
@@ -58,13 +58,10 @@ export const Dropdown: React.FC<DropdownProps> = React.memo(
 				{props.options.map((opt, i) =>
 					opt.isSection ? (
 						<div
-							className={`ktext-label uppercase text-grey-medium ${
-								i > 0 && "mt-5"
-							}`}
+							className={`ktext-label uppercase text-grey-medium cursor-default pb-2 mt-2 border-t-2 border-grey-light`}
 							key={opt.value}
-						>
-							{opt.label || opt.value}
-						</div>
+							onClick={(e) => e.stopPropagation()}
+						></div>
 					) : (
 						<div
 							className={`h-16 ${
@@ -77,7 +74,7 @@ export const Dropdown: React.FC<DropdownProps> = React.memo(
 								e.preventDefault();
 								if (!opt.disabled) {
 									props.onSelect && props.onSelect(opt);
-									opt.action && opt.action();
+									opt.action && opt.action(e);
 								}
 							}}
 						>

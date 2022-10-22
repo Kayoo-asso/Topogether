@@ -22,6 +22,7 @@ import {
 	TrackStyle,
 	HoldType,
 	TopoTypes,
+	Contributor,
 } from "types";
 import { v4 as uuid } from "uuid";
 
@@ -239,6 +240,14 @@ export const managers: Manager[] = [
 	},
 ];
 
+export const contributors: Contributor[] = [
+	{
+		id: uuid(),
+		pseudo: "Jérôme" as Name,
+		role: 'CONTRIBUTOR',
+	},
+];
+
 export const waypoints: Waypoint[] = [
 	{
 		id: uuid(),
@@ -283,6 +292,7 @@ export const fakeTopov2: TopoData = {
 	parkings: parkings,
 	accesses: access,
 	managers: managers,
+	contributors: contributors,
 };
 
 // export const quarkTopo: Quark<Topo> = editTopo(fakeTopov2);

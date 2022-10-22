@@ -6,6 +6,7 @@ import { useBreakpoint } from "helpers/hooks";
 import { SlideoverLeftDesktop, SlideoverMobile } from "components/atoms/overlays";
 import { useSelectStore } from "components/pages/selectStore";
 import { SectorBuilderContentMobile } from "./SectorBuilderContent.mobile";
+import { ContributorsList } from "./ContributorsList";
 
 type SlideoverLeftBuilderProps = {
     topo: Quark<Topo>;
@@ -23,6 +24,7 @@ export const SlideoverLeftBuilder: React.FC<SlideoverLeftBuilderProps> = (props:
             case 'INFO': return <InfoForm topo={props.topo} />;
             case 'ACCESS': return <AccessForm accesses={props.topo().accesses} />;
             case 'MANAGEMENT': return <ManagementForm managers={props.topo().managers} />;
+			case 'CONTRIBUTORS': return <ContributorsList contributors={props.topo().contributors} topoCreatorId={props.topo().creator?.id} />;
 			case 'SECTOR': return <SectorBuilderContentMobile topoQuark={props.topo} boulderOrder={props.boulderOrder} map={props.map} />
             default: return undefined;
         }

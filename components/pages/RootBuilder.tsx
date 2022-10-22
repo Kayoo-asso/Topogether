@@ -95,6 +95,14 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 				value: "Gestionnaires du spot",
 				action: () => select.info("MANAGEMENT", breakpoint),
 			},
+			{
+				value: "Contributeurs",
+				action: () => select.info("CONTRIBUTORS", breakpoint),
+			},
+			{
+				value: "",
+				isSection: true,
+			},
 			...(session.role === "ADMIN"
 				? [
 						{

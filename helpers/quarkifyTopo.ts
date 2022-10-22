@@ -18,6 +18,7 @@ import {
 	DBLightTopo,
 	LightTopo,
 	DBTopo,
+	Contributor,
 } from "types";
 
 export type TopoCreate = Omit<
@@ -29,6 +30,7 @@ export type TopoCreate = Omit<
 	| "accesses"
 	| "parkings"
 	| "managers"
+	| "contributors"
 	| "lonelyBoulders"
 >;
 
@@ -43,6 +45,7 @@ export async function createTopo(create: TopoCreate): Promise<TopoData | null> {
 		sectors: [],
 		boulders: [],
 		managers: [],
+		contributors: [],
 		waypoints: [],
 		accesses: [],
 		parkings: [],
@@ -106,6 +109,7 @@ export function quarkifyTopo(data: TopoData, seedData: boolean): Quark<Topo> {
 		accesses: quarkifyTopoAccesses(data.accesses, data.id, seedData),
 		parkings: quarkifyParkings(data.parkings, data.id, seedData),
 		managers: quarkifyManagers(data.managers, data.id, seedData),
+		contributors: quarkifyContributors(data.contributors, data.id, seedData),
 	};
 	const onChange = (topo: Topo) => sync.topoUpdate(topo);
 	const q = quark(topo, { onChange });
@@ -186,6 +190,21 @@ function quarkifyManagers(
 		quarkifier: (s) => quark(s, { onChange }),
 		onAdd: onChange,
 		onDelete: (manager) => sync.managerDelete(manager),
+	});
+}
+
+function quarkifyContributors(
+	contributors: Contributor[],
+	topoId: UUID,
+	seedData: boolean
+): QuarkArray<Contributor> {
+	const onChange = (contributor: Contributor) => sync.contributorUpdate(contributor, topoId);
+	if (seedData) contributors.forEach(onChange);
+
+	return new QuarkArray(contributors, {
+		quarkifier: (s) => quark(s, { onChange }),
+		onAdd: onChange,
+		onDelete: (contributor) => sync.contributorDelete(contributor),
 	});
 }
 

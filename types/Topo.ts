@@ -19,7 +19,7 @@ import type {
 	Email,
 	NullableOptional,
 } from "./Utils";
-import type { Profile, TrackRating } from "./User";
+import type { ContributorRole, Profile, TrackRating } from "./User";
 import type { Img } from "./Img";
 
 export type Topo = Omit<
@@ -31,6 +31,7 @@ export type Topo = Omit<
 	| "parkings"
 	| "accesses"
 	| "managers"
+	| "contributors"
 > & {
 	liked: Quark<boolean>;
 	sectors: QuarkArray<Sector>;
@@ -39,6 +40,7 @@ export type Topo = Omit<
 	parkings: QuarkArray<Parking>;
 	accesses: QuarkArray<TopoAccess>;
 	managers: QuarkArray<Manager>;
+	contributors: QuarkArray<Contributor>;
 };
 
 export type Sector = SectorData;
@@ -95,6 +97,7 @@ export interface TopoData {
 	parkings: Parking[];
 	accesses: TopoAccess[];
 	managers: Manager[];
+	contributors: Contributor[];
 }
 
 export type DBTopo = NullableOptional<{
@@ -171,6 +174,12 @@ export type GradeHistogram = {
 	[K in LightGrade]: number;
 };
 
+export interface Contributor {
+	readonly id: UUID;
+	pseudo: Name;
+	role: ContributorRole;
+}
+
 export interface Manager {
 	readonly id: UUID;
 	name: Name;
@@ -197,6 +206,13 @@ export type DBManager = NullableOptional<{
 
 	topoId: UUID;
 	image?: Img;
+}>;
+
+export type DBContributor = NullableOptional<{
+	id: UUID;
+	pseudo: Name;
+	role: ContributorRole
+	topoId: UUID;
 }>;
 
 // TODO: is the RequireAtLeastOne correct?

@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { ImageInput, TextArea, TextInput } from "components";
-import { Quark, QuarkArray, watchDependencies } from "helpers/quarky";
-import { Description, Email, Manager, Name, Topo } from "types";
+import { QuarkArray, watchDependencies } from "helpers/quarky";
+import { Description, Email, Manager, Name } from "types";
 import { Button } from "components/atoms";
 import { v4 } from "uuid";
 

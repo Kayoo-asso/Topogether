@@ -2,7 +2,9 @@ import {
 	Amenities,
 	Boulder,
 	BoulderData,
+	Contributor,
 	DBBoulder,
+	DBContributor,
 	DBLine,
 	DBManager,
 	DBParking,
@@ -198,6 +200,15 @@ export class DBConvert {
 			zip: manager.zip ?? null,
 			city: manager.city ?? null,
 			image: manager.image ?? null,
+			topoId,
+		};
+	}
+
+	static contributor(contributor: Contributor, topoId: UUID): DBContributor {
+		return {
+			id: contributor.id,
+			pseudo: contributor.pseudo,
+			role: contributor.role,
 			topoId,
 		};
 	}
