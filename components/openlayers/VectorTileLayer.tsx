@@ -3,8 +3,44 @@ import type { ObjectEvent } from "ol/Object";
 import type RenderEvent from "ol/render/Event";
 import { useEffect, useRef, useState } from "react";
 import { setMethodName } from "./utils";
-import VectorTileLayer, { Options } from "ol/layer/VectorTile";
-import { LayerContext } from "./LayerContext";
+import OLVectorTileLayer, { Options } from "ol/layer/VectorTile";
+import { LayerContext } from "./Layer";
+import { useMap } from "./MapOld";
+import { createBehavior } from "./core";
+
+const useBehavior = createBehavior(OLVectorTileLayer, {
+	events: [
+		"change",
+		"change:extent",
+		"change:maxResolution",
+		"change:maxZoom",
+		"change:minResolution",
+		"change:minZoom",
+		"change:opacity",
+		"change:preload",
+		"change:source",
+		"change:useInterimTilesOnError",
+		"change:visible",
+		"change:zIndex",
+		"error",
+		"postrender",
+		"prerender",
+		"propertychange",
+	],
+	reactive: [
+		"background",
+		"extent",
+		"maxResolution",
+		"maxZoom",
+		"minResolution",
+		"minZoom",
+		"opacity",
+		"preload",
+		// Or should it be controlled through components?
+		"style",
+	],
+	reset: [],
+});
 
 type RestrictedOptions = Omit<Options, "map" | "source">;
 
@@ -81,8 +117,9 @@ const eventMethods = [
 	"onPropertyChange",
 ] as const;
 
-const Component = function (props: Props) {
-	const [view, setView] = useState<VectorTileLayer>();
+export function VectorTileLayer(props: Props) {
+	const map = useMap();
+	const [layer, setLayer] = useState<OLVectorTileLayer>();
 	const { children, ...options } = props;
 
 	const reactive = updateProps.map((x) => options[x]);
@@ -93,21 +130,25 @@ const Component = function (props: Props) {
 	const resetDeps = resetProps.map((x) => options[x]);
 
 	useEffect(() => {
-		const v = new VectorTileLayer(options);
-		setView(v);
+		const l = new OLVectorTileLayer(options);
+		setLayer(l);
+		map.addLayer(l);
 
-		return () => v.dispose();
+		return () => {
+			map.removeLayer(l);
+			l.dispose();
+		};
 	}, resetDeps);
 
 	// Synchronously updating the map should be fine, so we can avoid many useEffect
 	// (but maybe we want to prioritise DOM updates and we move this into a useEffect)
-	if (view) {
+	if (layer) {
 		for (let i = 0; i < reactive.length; i++) {
 			const current = reactive[i];
 			const prev = prevReactive.current[i];
 			if (current !== prev) {
 				const methodName = updateMethods[i];
-				const method = view[methodName] as Function;
+				const method = layer[methodName] as Function;
 				method(current);
 			}
 		}
@@ -115,28 +156,25 @@ const Component = function (props: Props) {
 
 	const eventListeners = eventMethods.map((x) => options[x]);
 	useEffect(() => {
-		if (view) {
+		if (layer) {
 			for (let i = 0; i < eventListeners.length; i++) {
 				const fn = eventListeners[i];
 				const event = events[i];
-				view.on(event as any, fn as any);
+				layer.on(event as any, fn as any);
 			}
 			return () => {
 				for (let i = 0; i < eventListeners.length; i++) {
-					view.un(events[i] as any, eventListeners[i] as any);
+					layer.un(events[i] as any, eventListeners[i] as any);
 				}
 			};
 		}
-	}, [view, ...eventListeners]);
+	}, [layer, ...eventListeners]);
 
-	if (view) {
+	if (layer) {
 		return (
-			<LayerContext.Provider value={view}>{children}</LayerContext.Provider>
+			<LayerContext.Provider value={layer}>{children}</LayerContext.Provider>
 		);
 	} else {
 		return null;
 	}
-};
-
-Component.displayName = "View";
-export default Component;
+}

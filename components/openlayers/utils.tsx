@@ -9,8 +9,16 @@ type EventTitleCase<S extends string> =
 		? `on${TitleCase<Base>}${TitleCase<Suffix>}`
 		: `on${TitleCase<S>}`;
 
+export const eventMap = {
+	"change:error": "changeError"
+}
+
+export function titleCase<S extends string>(s: S): TitleCase<S> {
+	return s.charAt(0).toLocaleUpperCase() + s.substring(1) as any;
+}
+
 export function setMethodName<S extends string>(property: S): SetMethodTitleCase<S> {
-	return "set" + (property.charAt(0).toUpperCase() + property.substring(1)) as any;
+	return `set${titleCase(property)}`;
 }
 
 export function eventPropName<S extends string>(

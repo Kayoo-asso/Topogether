@@ -1,4 +1,5 @@
 import { Base64 } from "js-base64";
+import type { ForwardedRef } from "react";
 import type { UUID } from "types";
 
 export function arrayMove<T>(array: T[], from: number, to: number) {
@@ -28,8 +29,7 @@ export const splitArray = function <T>(
 };
 
 export function setReactRef<T>(
-	// React types for refs are a mess, using manual ones is easier
-	ref: { current: T } | ((value: T) => void) | null,
+	ref: ForwardedRef<T> | null,
 	value: T
 ) {
 	if (typeof ref === "function") {
