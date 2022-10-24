@@ -5,7 +5,14 @@ import type MapEvent from "ol/MapEvent";
 import type { ObjectEvent } from "ol/Object";
 import type RenderEvent from "ol/render/Event";
 import { TileSourceEvent } from "ol/source/Tile";
-import { ForwardedRef, useEffect, useRef, useState } from "react";
+import { VectorSourceEvent } from "ol/source/Vector";
+import {
+	ForwardedRef,
+	useEffect,
+	useImperativeHandle,
+	useRef,
+	useState,
+} from "react";
 import { setMethodName } from "./utils";
 
 // TODO:
@@ -18,9 +25,9 @@ interface Definition<
 	ReactiveProps extends string & keyof Options,
 	ResetProps extends string & keyof Options
 > {
-	reactive: ReactiveProps[];
-	reset: ResetProps[];
 	events: Events[];
+	reactive: ReactiveProps[];
+	reset?: ResetProps[];
 }
 
 interface OLBase<Events, Handlers> {
@@ -46,8 +53,9 @@ export function createBehavior<
 	ReactiveProps extends string & keyof Options,
 	ResetProps extends string & keyof Options,
 	D extends Definition<Options, Events, ReactiveProps, ResetProps>
->(constructor: new (options?: Options) => T, definition: D) {
-	const handlers = definition.events.map((x) => eventHandlers[x]);
+>(constructor: new <_>(options?: Options) => T, definition: D) {
+	const events = { ...baseEvents, ...definition.events };
+	const handlers = events.map((x) => eventHandlers[x]);
 	const updateMethods = definition.reactive.map(setMethodName);
 
 	return function (
@@ -72,6 +80,7 @@ export function createBehavior<
 		}, []);
 
 		// ForwardRef
+		// Can't use `useImperativeHandle` because we can't return null or undefined there
 		useEffect(() => {
 			if (ref && instance) {
 				setReactRef(ref, instance);
@@ -112,30 +121,37 @@ export function createBehavior<
 	};
 }
 
-const eventHandlers = {
+export const baseEvents = {
 	change: "onChange",
-	"change:center": "onChangeCenter",
+	error: "onError",
+	propertychange: "onPropertyChange",
+} as const;
+
+export const renderEvents = {
+	postrender: "onPostRender",
+	prerender: "onPreRender",
+} as const;
+
+export const layerEvents = {
+	...renderEvents,
 	"change:extent": "onChangeExtent",
-	"change:layerGroup": "onChangeLayerGroup",
 	"change:maxResolution": "onChangeMaxResolution",
 	"change:maxZoom": "onChangeMaxZoom",
 	"change:minResolution": "onChangeMinResolution",
 	"change:minZoom": "onChangeMinZoom",
 	"change:opacity": "onChangeOpacity",
-	"change:preload": "onChangePreload",
-	"change:resolution": "onChangeResolution",
-	"change:rotation": "onChangeRotation",
-	"change:size": "onChangeSize",
 	"change:source": "onChangeSource",
-	"change:target": "onChangeTarget",
-	"change:view": "onChangeView",
-	"change:useInterimTilesOnError": "onChangeUseInterimTilesOnError",
 	"change:visible": "onChangeVisible",
 	"change:zIndex": "onChangeZIndex",
+} as const;
 
+export const mapEvents = {
+	"change:layerGroup": "onChangeLayerGroup",
+	"change:size": "onChangeSize",
+	"change:target": "onChangeTarget",
+	"change:view": "onChangeView",
 	click: "onClick",
 	dblclick: "onDoubleClick",
-	error: "onError",
 	loadend: "onLoadEnd",
 	loadstart: "onLoadStart",
 	moveend: "onMoveEnd",
@@ -143,41 +159,72 @@ const eventHandlers = {
 	pointerdrag: "onPointerDrag",
 	pointermove: "onPointerMove",
 	postcompose: "onPostCompose",
-	postrender: "onPostRender",
 	precompose: "onPreCompose",
-	prerender: "onPreRender",
-	propertychange: "onPropertyChange",
 	rendercomplete: "onRenderComplete",
 	singleclick: "onSingleClick",
+} as const;
+
+export const tileSourceEvents = {
 	tileloadend: "onTileLoadEnd",
 	tileloaderror: "onTileLoadError",
 	tileloadstart: "onTileLoadStart",
 } as const;
 
+export const vectorSourceEvents = {
+	addfeature: "onAddFeature",
+	changefeature: "onChangeFeature",
+	clear: "onClear",
+	featuresloadend: "onFeaturesLoadEnd",
+	featuresloaderror: "onFeaturesLoadError",
+	featuresloadstart: "onFeaturesLoadStart",
+	removefeature: "onRemoveFeature",
+} as const;
+
+export const tileLayerEvents = {
+	"change:preload": "onChangePreload",
+	"change:useInterimTilesOnError": "onChangeUseInterimTilesOnError",
+} as const;
+
+export const viewEvents = {
+	"change:center": "onChangeCenter",
+	"change:resolution": "onChangeResolution",
+	"change:rotation": "onChangeRotation",
+} as const;
+
+export function events(
+	...args: Partial<Record<Event, EventHandler<Event>>>[]
+): Event[] {
+	return Object.keys(Object.assign({}, ...args)) as Event[];
+}
+
+export const eventHandlers = {
+	...baseEvents,
+	...layerEvents,
+	...mapEvents,
+	...renderEvents,
+	...vectorSourceEvents,
+	...tileSourceEvents,
+	...tileLayerEvents,
+	...viewEvents,
+} as const;
+
 interface EventMap {
+	// Base
 	onChange(e: BaseEvent): void;
-	onChangeCenter(e: ObjectEvent): void;
-	onChangeExtent(event: ObjectEvent): void;
+	onError(e: BaseEvent): void;
+	onPropertyChange(e: ObjectEvent): void;
+
+	// Render
+	onPostRender(event: RenderEvent): void;
+	onPreRender(event: RenderEvent): void;
+
+	// Map
 	onChangeLayerGroup(event: ObjectEvent): void;
-	onChangeMaxResolution(event: ObjectEvent): void;
-	onChangeMaxZoom(event: ObjectEvent): void;
-	onChangeMinResolution(event: ObjectEvent): void;
-	onChangeMinZoom(event: ObjectEvent): void;
-	onChangeOpacity(event: ObjectEvent): void;
-	onChangePreload(event: ObjectEvent): void;
-	onChangeResolution(e: ObjectEvent): void;
-	onChangeRotation(e: ObjectEvent): void;
 	onChangeSize(event: ObjectEvent): void;
-	onChangeSource(event: ObjectEvent): void;
 	onChangeTarget(event: ObjectEvent): void;
 	onChangeView(event: ObjectEvent): void;
-	onChangeUseInterimTilesOnError(event: ObjectEvent): void;
-	onChangeVisible(event: ObjectEvent): void;
-	onChangeZIndex(event: ObjectEvent): void;
-
 	onClick(event: MapBrowserEvent<MouseEvent>): void;
 	onDoubleClick(event: MapBrowserEvent<MouseEvent>): void;
-	onError(e: BaseEvent): void;
 	onLoadEnd(event: MapEvent): void;
 	onLoadStart(event: MapEvent): void;
 	onMoveEnd(event: MapEvent): void;
@@ -185,15 +232,45 @@ interface EventMap {
 	onPointerDrag(event: MapBrowserEvent<PointerEvent>): void;
 	onPointerMove(event: MapBrowserEvent<PointerEvent>): void;
 	onPostCompose(event: MapEvent): void;
-	onPostRender(event: RenderEvent): void;
 	onPreCompose(event: RenderEvent): void;
-	onPreRender(event: RenderEvent): void;
-	onPropertyChange(e: ObjectEvent): void;
 	onRenderComplete(event: RenderEvent): void;
 	onSingleClick(event: MapBrowserEvent<MouseEvent>): void;
+
+	// View
+	onChangeCenter(e: ObjectEvent): void;
+	onChangeResolution(e: ObjectEvent): void;
+	onChangeRotation(e: ObjectEvent): void;
+
+	// Layer
+	onChangeExtent(event: ObjectEvent): void;
+	onChangeMaxResolution(event: ObjectEvent): void;
+	onChangeMaxZoom(event: ObjectEvent): void;
+	onChangeMinResolution(event: ObjectEvent): void;
+	onChangeMinZoom(event: ObjectEvent): void;
+	onChangeOpacity(event: ObjectEvent): void;
+	onChangeSource(event: ObjectEvent): void;
+	onChangeVisible(event: ObjectEvent): void;
+	onChangeZIndex(event: ObjectEvent): void;
+
+	// Tile layer
+	onChangePreload(event: ObjectEvent): void;
+	onChangeUseInterimTilesOnError(event: ObjectEvent): void;
+
+	// Vector layer
+
+	// Tile source
 	onTileLoadEnd(event: TileSourceEvent): void;
 	onTileLoadError(event: TileSourceEvent): void;
 	onTileLoadStart(event: TileSourceEvent): void;
+
+	// Vector source
+	onAddFeature(event: VectorSourceEvent): void;
+	onChangeFeature(event: VectorSourceEvent): void;
+	onClear(event: VectorSourceEvent): void;
+	onFeaturesLoadEnd(event: VectorSourceEvent): void;
+	onFeaturesLoadError(event: VectorSourceEvent): void;
+	onFeaturesLoadStart(event: VectorSourceEvent): void;
+	onRemoveFeature(event: VectorSourceEvent): void;
 }
 type EventHandlers = typeof eventHandlers;
 type Event = keyof EventHandlers;

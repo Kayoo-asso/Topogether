@@ -1,8 +1,10 @@
-import View from "ol/View";
-import Map from "ol/Map";
-import Layer from "ol/layer/Layer";
-import Source from "ol/source/Source";
+import type View from "ol/View";
+import type Map from "ol/Map";
+import type Layer from "ol/layer/Layer";
+import type Source from "ol/source/Source";
 import { createContext, useContext } from "react";
+import VectorLayer from "ol/layer/Vector";
+import VectorSource from "ol/source/Vector";
 
 export const ViewContext = createContext<View | null>(null);
 
@@ -39,6 +41,14 @@ export function useLayer(message?: string): Layer {
 	}
 	return layer;
 }
+export function useVectorLayer(message?: string): VectorLayer<VectorSource> {
+	const layer = useLayer(message);
+	if(layer instanceof VectorLayer) {
+		return layer;
+	} 
+	throw new Error(`useVectorLayer called inside a non-vector layer (type: ${typeof layer})`)
+}
+
 
 export const SourceContext = createContext<Source | null>(null);
 
@@ -50,4 +60,12 @@ export function useSource(message?: string): Source {
 		);
 	}
 	return source;
+}
+
+export function useVectorSource(message?: string): VectorSource {
+	const source = useSource(message);
+	if(source instanceof VectorSource) {
+		return source;
+	} 
+	throw new Error(`useVectorSource called inside a non-vector source (type: ${typeof source})`)
 }

@@ -1,10 +1,10 @@
 import { ViewContext } from "./contexts";
-import OLView, { ViewOptions } from "ol/View";
-import { createBehavior, Props, PropsWithChildren } from "./core";
+import OLView from "ol/View";
+import { createBehavior, events, PropsWithChildren, viewEvents } from "./core";
 import { forwardRef } from "react";
 
 const useBehavior = createBehavior(OLView, {
-	events: ["change", "change:center", "change:resolution", "change:rotation"],
+	events: events(viewEvents),
 	reactive: [
 		"center",
 		"constrainResolution",

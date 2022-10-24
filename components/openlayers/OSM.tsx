@@ -1,7 +1,7 @@
 import { forwardRef, useEffect } from "react";
 import OLOSM from "ol/source/OSM";
 import { SourceContext, useLayer } from "./contexts";
-import { createBehavior, Props } from "./core";
+import { createBehavior, events, Props, tileSourceEvents } from "./core";
 
 // TODO:
 // - setUrls
@@ -9,14 +9,7 @@ import { createBehavior, Props } from "./core";
 // - setTileGridProjection
 // - setTileUrlFunction
 const useBehavior = createBehavior(OLOSM, {
-	events: [
-		"change",
-		"error",
-		"propertychange",
-		"tileloadend",
-		"tileloaderror",
-		"tileloadstart",
-	],
+	events: events(tileSourceEvents),
 	reactive: ["attributions", "tileLoadFunction", "url"],
 	reset: [],
 });
@@ -31,7 +24,7 @@ export const OSM = forwardRef<OLOSM, Props<typeof useBehavior>>(
 				layer.setSource(source);
 				return () => layer.setSource(null);
 			}
-		});
+		}, [layer, source]);
 
 		if (source) {
 			return (

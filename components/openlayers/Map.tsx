@@ -1,42 +1,41 @@
 import { useView, MapContext } from "./contexts";
 import OLMap from "ol/Map";
-import { createBehavior, PropsWithChildren } from "./core";
+import {
+	createBehavior,
+	events,
+	PropsWithChildren,
+	renderEvents,
+	mapEvents
+} from "./core";
 import { forwardRef, useEffect } from "react";
+
+// VERY IMPORTANT
+import "ol/ol.css";
 
 // TODO: way to omit some Props
 // TODO: additional reactive properties that are not in the Options
 const useBehavior = createBehavior(OLMap, {
-	events: [
-		"change",
-		"change:layerGroup",
-		"change:size",
-		"change:target",
-		"change:view",
-		"click",
-		"dblclick",
-		"error",
-		"loadend",
-		"loadstart",
-		"moveend",
-		"movestart",
-		"pointerdrag",
-		"pointermove",
-		"postcompose",
-		"postrender",
-		"precompose",
-		"propertychange",
-		"rendercomplete",
-		"singleclick",
-	],
+	events: events(mapEvents, renderEvents),
 	reactive: [
 		// "size",
 	],
 	reset: [],
 });
 
-export const Map = forwardRef<OLMap, PropsWithChildren<typeof useBehavior>>(
-	({ children, ...props }, ref) => {
+type InternalProps = PropsWithChildren<typeof useBehavior> & {
+	id?: string;
+	className?: string;
+};
+
+type ExternalProps = Omit<InternalProps, "view" | "target">;
+
+export const Map = forwardRef<OLMap, ExternalProps>(
+	({ children, id, className, ...props }, ref) => {
+		const options = props as InternalProps;
+		id = id || "map";
+		options.target = id;
 		const map = useBehavior(props, ref);
+		console.log("Map:", map);
 		const view = useView();
 
 		useEffect(() => {
@@ -46,7 +45,7 @@ export const Map = forwardRef<OLMap, PropsWithChildren<typeof useBehavior>>(
 		}, [map, view]);
 
 		return (
-			<div id="map">
+			<div id={id} className={className}>
 				{map ? (
 					<MapContext.Provider value={map}>{children}</MapContext.Provider>
 				) : null}
