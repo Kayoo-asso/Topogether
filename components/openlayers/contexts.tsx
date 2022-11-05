@@ -5,6 +5,12 @@ import type Source from "ol/source/Source";
 import { createContext, useContext } from "react";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
+import Interaction from "ol/interaction/Interaction";
+import Select from "ol/interaction/Select";
+import Draw from "ol/interaction/Draw";
+import DragBox from "ol/interaction/DragBox";
+import Modify from "ol/interaction/Modify";
+import Snap from "ol/interaction/Snap";
 
 export const ViewContext = createContext<View | null>(null);
 
@@ -43,12 +49,13 @@ export function useLayer(message?: string): Layer {
 }
 export function useVectorLayer(message?: string): VectorLayer<VectorSource> {
 	const layer = useLayer(message);
-	if(layer instanceof VectorLayer) {
+	if (layer instanceof VectorLayer) {
 		return layer;
-	} 
-	throw new Error(`useVectorLayer called inside a non-vector layer (type: ${typeof layer})`)
+	}
+	throw new Error(
+		`useVectorLayer called inside a non-vector layer (type: ${typeof layer})`
+	);
 }
-
 
 export const SourceContext = createContext<Source | null>(null);
 
@@ -56,7 +63,8 @@ export function useSource(message?: string): Source {
 	const source = useContext(SourceContext);
 	if (!source) {
 		throw new Error(
-			message || "useSource should only used in children of a <Source> component"
+			message ||
+				"useSource should only used in children of a <Source> component"
 		);
 	}
 	return source;
@@ -64,8 +72,10 @@ export function useSource(message?: string): Source {
 
 export function useVectorSource(message?: string): VectorSource {
 	const source = useSource(message);
-	if(source instanceof VectorSource) {
+	if (source instanceof VectorSource) {
 		return source;
-	} 
-	throw new Error(`useVectorSource called inside a non-vector source (type: ${typeof source})`)
+	}
+	throw new Error(
+		`useVectorSource called inside a non-vector source (type: ${typeof source})`
+	);
 }

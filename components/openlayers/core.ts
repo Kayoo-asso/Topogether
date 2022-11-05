@@ -1,5 +1,9 @@
 import { setReactRef } from "helpers/utils";
 import type BaseEvent from "ol/events/Event";
+import { DragBoxEvent } from "ol/interaction/DragBox";
+import { DrawEvent } from "ol/interaction/Draw";
+import { ModifyEvent } from "ol/interaction/Modify";
+import type { SelectEvent } from "ol/interaction/Select";
 import type MapBrowserEvent from "ol/MapBrowserEvent";
 import type MapEvent from "ol/MapEvent";
 import type { ObjectEvent } from "ol/Object";
@@ -22,8 +26,8 @@ interface Definition<
 	Options,
 	// Options,
 	Events extends Event,
-	ReactiveProps extends string & keyof Options,
-	ResetProps extends string & keyof Options
+	ReactiveProps extends string & keyof RemoveUndefined<Options>,
+	ResetProps extends string & keyof RemoveUndefined<Options>
 > {
 	events: Events[];
 	reactive: ReactiveProps[];
@@ -36,7 +40,7 @@ interface OLBase<Events, Handlers> {
 	dispose?: () => void;
 }
 
-type BuildProps<Options, Events extends Event> = Options & {
+type BuildProps<Options, Events extends Event> = RemoveUndefined<Options> & {
 	[E in EventHandlers[Events]]?: EventFn<E>;
 };
 
@@ -46,14 +50,16 @@ export type PropsWithChildren<UseBehavior extends (...args: any) => any> =
 export type Props<UseBehavior extends (...args: any) => any> =
 	Parameters<UseBehavior>[0];
 
+type RemoveUndefined<T> = T extends undefined ? never : T;
+
 export function createBehavior<
 	Options,
 	T extends OLBase<any, any>,
 	Events extends Event,
-	ReactiveProps extends string & keyof Options,
-	ResetProps extends string & keyof Options,
+	ReactiveProps extends string & keyof RemoveUndefined<Options>,
+	ResetProps extends string & keyof RemoveUndefined<Options>,
 	D extends Definition<Options, Events, ReactiveProps, ResetProps>
->(constructor: new <_>(options?: Options) => T, definition: D) {
+>(constructor: new <_>(options: Options) => T, definition: D) {
 	const events = { ...baseEvents, ...definition.events };
 	const handlers = events.map((x) => eventHandlers[x]);
 	const updateMethods = definition.reactive.map(setMethodName);
@@ -206,6 +212,22 @@ export const eventHandlers = {
 	...tileSourceEvents,
 	...tileLayerEvents,
 	...viewEvents,
+	// Interaction events
+	"change:active": "onChangeActive",
+	// Select
+	"select": "onSelect",
+	// Draw
+	"drawabort": "onDrawAbort",
+	"drawend": "onDrawEnd",
+	"drawstart": "onDrawStart",
+	// DragBox
+	"boxcancel": "onBoxCancel",
+	"boxdrag": "onBoxDrag",
+	"boxend": "onBoxEnd",
+	"boxstart": "onBoxStart",
+	// Modify
+	"modifyend": "onModifyEnd",
+	"modifystart": "onModifyStart"
 } as const;
 
 interface EventMap {
@@ -271,6 +293,23 @@ interface EventMap {
 	onFeaturesLoadError(event: VectorSourceEvent): void;
 	onFeaturesLoadStart(event: VectorSourceEvent): void;
 	onRemoveFeature(event: VectorSourceEvent): void;
+
+	// Interactions
+	onChangeActive(event: ObjectEvent): void;
+	// Draw
+	onDrawAbort(event: DrawEvent): void;	
+	onDrawEnd(event: DrawEvent): void;
+	onDrawStart(event: DrawEvent): void;
+	// Select
+	onSelect(event: SelectEvent): void;
+	// DragBox
+	onBoxCancel(event: DragBoxEvent): void;
+	onBoxDrag(event: DragBoxEvent): void;
+	onBoxEnd(event: DragBoxEvent): void;
+	onBoxStart(event: DragBoxEvent): void;
+	// Modify
+	onModifyEnd(event: ModifyEvent): void;
+	onModifyStart(event: ModifyEvent): void;
 }
 type EventHandlers = typeof eventHandlers;
 type Event = keyof EventHandlers;
