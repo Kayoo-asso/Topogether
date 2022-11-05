@@ -1,10 +1,11 @@
 import OLVectorSource from "ol/source/Vector";
-import { forwardRef, PropsWithChildren, useEffect } from "react";
+import { forwardRef, useEffect } from "react";
 import { SourceContext, useVectorLayer } from "./contexts";
 import {
 	createBehavior,
 	events,
 	vectorSourceEvents,
+	PropsWithChildren,
 } from "./core";
 
 const useBehavior = createBehavior(OLVectorSource, {
@@ -12,21 +13,22 @@ const useBehavior = createBehavior(OLVectorSource, {
 	reactive: ["attributions", "loader", "url"],
 });
 
-export const VectorSource = forwardRef<
-	OLVectorSource,
-	PropsWithChildren<typeof useBehavior>
->(({ children, ...props }, ref) => {
-	const layer = useVectorLayer();
-	const source = useBehavior(props, ref);
+type Props = PropsWithChildren<typeof useBehavior>;
 
-	useEffect(() => {
-		if (source) {
-			layer.setSource(source);
-			return () => layer.setSource(null);
-		}
-	}, [layer, source]);
+export const VectorSource = forwardRef<OLVectorSource, Props>(
+	({ children, ...props }, ref) => {
+		const layer = useVectorLayer();
+		const source = useBehavior(props, ref);
 
-	return source ? (
-		<SourceContext.Provider value={source}>{children}</SourceContext.Provider>
-	) : null;
-});
+		useEffect(() => {
+			if (source) {
+				layer.setSource(source);
+				return () => layer.setSource(null);
+			}
+		}, [layer, source]);
+
+		return source ? (
+			<SourceContext.Provider value={source}>{children}</SourceContext.Provider>
+		) : null;
+	}
+);
