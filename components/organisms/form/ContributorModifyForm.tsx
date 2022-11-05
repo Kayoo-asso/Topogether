@@ -37,7 +37,7 @@ export const ContributorModifyForm: React.FC<ContributorMoodifyFormProps> = (pro
             />
 
             <Button 
-                content="Modifier"
+                content="Valider"
                 onClick={showModalModify}
             />
 

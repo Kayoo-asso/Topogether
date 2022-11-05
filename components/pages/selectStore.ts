@@ -111,7 +111,7 @@ export const useSelectStore = create<SelectStore>()((set, get) => ({
 		}),
 		track: () => set(s => ({ item: { ...s.item, selectedTrack: undefined } })),
 		image: () => set(s => ({ item: { ...s.item, selectedImage: undefined } })),
-		all: function() { get().flush.info(); get().flush.item() }
+		all: function() { get().flush.info(); get().flush.item(); get().flush.tool() }
 	}
 }));
 

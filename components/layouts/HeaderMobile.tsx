@@ -3,6 +3,7 @@ import { Dropdown, DropdownOption } from "components";
 import Link from "next/link";
 import ArrowSimple from "assets/icons/arrow-simple.svg";
 import MenuIcon from "assets/icons/menu.svg";
+import { useRouter } from "next/router";
 
 interface HeaderMobileProps {
 	title: string;
@@ -15,11 +16,16 @@ interface HeaderMobileProps {
 export const HeaderMobile: React.FC<HeaderMobileProps> = (
 	props: HeaderMobileProps
 ) => {
+	const router = useRouter();
+
 	const [menuOpen, setMenuOpen] = useState(false);
 	const [displayTitleTooltip, setDisplayTitleTooltip] = useState(false);
 
 	const wrapLink = (elts: ReactElement<any, any>) => {
-		if (props.onBackClick) return <a onClick={props.onBackClick}>{elts}</a>;
+		if (props.onBackClick) return <a onClick={() => {
+			props.onBackClick!();
+			router.push(props.backLink);
+		}}>{elts}</a>;
 		else
 			return (
 				<Link href={props.backLink}>

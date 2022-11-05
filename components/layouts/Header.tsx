@@ -5,7 +5,7 @@ import { HeaderMobile } from "./HeaderMobile";
 
 interface HeaderProps {
 	backLink: string;
-	onBackClick?: () => void; //Overwrite backLink on mobile
+	onBackClick?: () => void; //Triggered before going to backLink;
 	title: string;
 	menuOptions?: DropdownOption[];
 	displayLogin?: boolean;

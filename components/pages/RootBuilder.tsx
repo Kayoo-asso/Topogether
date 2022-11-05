@@ -188,7 +188,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 				<Header
 					title={topo.name}
 					backLink="/builder/dashboard"
-					onBackClick={!isEmptyStore() ? () => flush.all() : undefined}
+					onBackClick={flush.all}
 					menuOptions={constructMenuOptions()}
 				>
 					<BuilderProgressIndicator
