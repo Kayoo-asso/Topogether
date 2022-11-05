@@ -73,6 +73,7 @@ export const useSelectStore = create<SelectStore>()((set, get) => ({
 	select: {
 		info: function(i: SelectedInfo, b: Breakpoint) {
 			if (b === 'mobile') get().flush.item();
+			else get().flush.track();
 			set({ info: i });
 		},
 		tool: (t: MapToolEnum) => set({ tool: t }),

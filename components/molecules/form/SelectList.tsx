@@ -22,7 +22,8 @@ export function SelectList<T>({
 	...props
 }: SelectListProps<T>) {
 	const device = useBreakpoint();
-	const selected = props.options.map(o => o[0]).find(val => val === props.value) || [null, null];
+	const selection = props.options.map(o => o[0]).find(val => val === props.value);
+	const selected = selection !== undefined ? selection : [null, null];
 	
 	const getClassName = (val: T) => {
 		let classes = '';

@@ -21,7 +21,6 @@ interface SelectProps<T> {
 export const Select = <T extends number | string>(props: SelectProps<T>) => {
 	const [isOpen, setIsOpen] = useState(false);
 	const selected = props.options.find((x) => x[0] === props.value);
-
 	return (
 		<>
 			<TextInput
