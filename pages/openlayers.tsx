@@ -9,11 +9,17 @@ import { fontainebleauLocation } from "helpers/constants";
 import Style from "ol/style/Style";
 import Icon from "ol/style/Icon";
 
+const boulderMarkerStyle = new Style({
+	image: new Icon({
+		src: "/assets/icons/colored/_rock_bold.svg",
+	}),
+});
+
 export default function Page() {
 	const [zoom, setZoom] = useState(2);
 	useEffect(() => {
 		setTimeout(() => {
-			console.log("Setting zoom")
+			console.log("Setting zoom");
 			setZoom(zoom === 2 ? 6 : 2);
 		}, 2000);
 	});
@@ -23,13 +29,9 @@ export default function Page() {
 				<TileLayer>
 					<OSM />
 				</TileLayer>
-				<VectorLayer>
+				<VectorLayer style={boulderMarkerStyle}>
 					<VectorSource>
-						<Point coordinates={fontainebleauLocation} style={new Style({
-							image: new Icon({
-								src: "/assets/icons/colored/_rock_bold.svg"
-							})
-						})}/>
+						<Point coordinates={fontainebleauLocation} />
 					</VectorSource>
 				</VectorLayer>
 			</Map>
