@@ -3,6 +3,11 @@ import { View } from "components/openlayers/View";
 import { OSM } from "components/openlayers/OSM";
 import { TileLayer } from "components/openlayers/TileLayer";
 import { useEffect, useState } from "react";
+import { VectorLayer, VectorSource } from "components/openlayers";
+import { Point } from "components/openlayers/Point";
+import { fontainebleauLocation } from "helpers/constants";
+import Style from "ol/style/Style";
+import Icon from "ol/style/Icon";
 
 export default function Page() {
 	const [zoom, setZoom] = useState(2);
@@ -18,6 +23,15 @@ export default function Page() {
 				<TileLayer>
 					<OSM />
 				</TileLayer>
+				<VectorLayer>
+					<VectorSource>
+						<Point coordinates={fontainebleauLocation} style={new Style({
+							image: new Icon({
+								src: "/assets/icons/colored/_rock_bold.svg"
+							})
+						})}/>
+					</VectorSource>
+				</VectorLayer>
 			</Map>
 		</View>
 	);
