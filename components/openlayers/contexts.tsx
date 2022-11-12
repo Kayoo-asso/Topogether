@@ -5,12 +5,6 @@ import type Source from "ol/source/Source";
 import { createContext, useContext } from "react";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
-import Interaction from "ol/interaction/Interaction";
-import Select from "ol/interaction/Select";
-import Draw from "ol/interaction/Draw";
-import DragBox from "ol/interaction/DragBox";
-import Modify from "ol/interaction/Modify";
-import Snap from "ol/interaction/Snap";
 
 export const ViewContext = createContext<View | null>(null);
 

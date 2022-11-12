@@ -1,12 +1,12 @@
 import { forwardRef, useEffect } from "react";
 import OLXYZ from "ol/source/XYZ";
-import { SourceContext, useLayer } from "./contexts";
+import { SourceContext, useLayer } from "../contexts";
 import {
 	createBehavior,
 	events,
 	PropsWithChildren,
 	tileSourceEvents,
-} from "./core";
+} from "../core";
 
 const useBehavior = createBehavior(OLXYZ, {
 	events: events(tileSourceEvents),

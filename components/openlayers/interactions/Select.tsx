@@ -1,6 +1,6 @@
 import OLSelect from "ol/interaction/Select";
-import { forwardRef, useEffect } from "react";
-import { useMap } from "../contexts";
+import { forwardRef, useContext, useEffect } from "react";
+import { LayerContext, useLayer, useMap } from "../contexts";
 import { createBehavior, Props } from "../core";
 
 const useBehavior = createBehavior(OLSelect, {
@@ -8,14 +8,21 @@ const useBehavior = createBehavior(OLSelect, {
 	reactive: ["hitTolerance"],
 });
 
-type P = Props<typeof useBehavior> & {
+type P = Omit<Props<typeof useBehavior>, "layers"> & {
+	layers: string[];
 	active?: boolean;
 };
 
 export const Select = forwardRef<OLSelect, P>(
-	({ active, ...props }, ref) => {
-		const select = useBehavior(props, ref);
+	({ active, layers, ...props }, ref) => {
 		const map = useMap();
+		const mapLayers = map.getLayers();
+		const actualLayers = layers.map((key) => mapLayers.get(key));
+		const options: Props<typeof useBehavior> = props;
+		options.layers = actualLayers;
+
+		// TODO: actually recreate the Select if we change the layers selection
+		const select = useBehavior(props, ref);
 
 		// Additional property
 		if (active) {
@@ -31,6 +38,6 @@ export const Select = forwardRef<OLSelect, P>(
 			}
 		}, [select, map]);
 
-return null;
+		return null;
 	}
 );

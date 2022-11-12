@@ -1,12 +1,12 @@
 import OLVectorSource from "ol/source/Vector";
 import { forwardRef, useEffect } from "react";
-import { SourceContext, useVectorLayer } from "./contexts";
+import { SourceContext, useVectorLayer } from "../contexts";
 import {
 	createBehavior,
 	events,
 	vectorSourceEvents,
 	PropsWithChildren,
-} from "./core";
+} from "../core";
 
 const useBehavior = createBehavior(OLVectorSource, {
 	events: events(vectorSourceEvents),

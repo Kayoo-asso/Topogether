@@ -61,7 +61,8 @@ export function createBehavior<
 	D extends Definition<Options, Events, ReactiveProps, ResetProps>
 >(constructor: new <_>(options: Options) => T, definition: D) {
 	const events = { ...baseEvents, ...definition.events };
-	const handlers = events.map((x) => eventHandlers[x]);
+	const handlers = Object.values(events);
+	// const handlers = events.map((x) => eventHandlers[x]);
 	const updateMethods = definition.reactive.map(setMethodName);
 
 	return function (

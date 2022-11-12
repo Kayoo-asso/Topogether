@@ -1,7 +1,7 @@
 import { forwardRef, useEffect } from "react";
 import OLOSM from "ol/source/OSM";
-import { SourceContext, useLayer } from "./contexts";
-import { createBehavior, events, Props, tileSourceEvents } from "./core";
+import { SourceContext, useLayer } from "../contexts";
+import { createBehavior, events, Props, tileSourceEvents } from "../core";
 
 // TODO:
 // - setUrls
