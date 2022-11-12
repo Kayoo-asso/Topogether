@@ -116,7 +116,7 @@ export const BoulderItemLeftbar: React.FC<BoulderItemLeftbarProps> =
 								className="mt-2 cursor-pointer text-grey-medium"
 								onClick={props.onCreateTrack}
 							>
-								+ Nouveau passage
+								+ Nouvelle voie
 							</div>
 						)}
 					</div>

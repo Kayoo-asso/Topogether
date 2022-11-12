@@ -23,14 +23,11 @@ const attributions =
 	"OpenStreetMap contributors</a>";
 
 export function BaseMap({
-	center,
-	zoom,
-	className,
-	children,
+	...props
 }: React.PropsWithChildren<BaseMapProps>) {
 	return (
-		<View center={center} zoom={zoom}>
-			<Map className={className}>
+		<View center={props.center} zoom={props.zoom}>
+			<Map>
 				{/* <MapboxVector
 					styleUrl="mapbox://styles/mapbox/outdoors-v11"
 					accessToken={MAPBOX_TOKEN}
@@ -44,10 +41,8 @@ export function BaseMap({
 						tileSize={512}
 					/>
 				</TileLayer>
-				<VectorLayer id={"machin"}>
-					<VectorSource></VectorSource>
-				</VectorLayer>
-				{children}
+
+				{props.children}
 			</Map>
 		</View>
 	);

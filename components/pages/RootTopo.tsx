@@ -18,6 +18,8 @@ import {
 	BoulderFilterOptions,
 	MapControl,
 } from "components/map";
+import { MapControl2 } from "components/map/MapControl2";
+import Map from "ol/Map";
 import { useBreakpoint } from "helpers/hooks";
 import { useSession } from "helpers/services";
 import { sortBoulders } from "helpers/topo";
@@ -27,6 +29,10 @@ import { SyncUrl } from "components/organisms/SyncUrl";
 import { SlideoverLeftTopo } from "components/organisms/topo/Slideover.left.topo";
 import { TopoMarkers } from "components/organisms/topo/TopoMarkers";
 import { SlideoverRightTopo } from "components/organisms/topo/Slideover.right.topo";
+import { Point, Polygon, VectorLayer, VectorSource } from "components/openlayers";
+import { Style, Circle, Fill, Stroke, Icon } from "ol/style";
+import { fromLonLat } from "ol/proj";
+import { BoulderMarker2 } from "components/map/markers/BoulderMarker2";
 
 interface RootTopoProps {
 	topoQuark: Quark<Topo>;
@@ -83,7 +89,7 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 			return menuOptions;
 		}, [breakpoint, topo, router, session]);
 
-		const mapRef = useRef<google.maps.Map>(null);
+		const mapRef = useRef<Map>(null);
 
 		const maxTracks = useCreateDerivation<number>(() => {
 			return topo.boulders
@@ -134,7 +140,31 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 						topo={props.topoQuark}
 					/>
 
-					<MapControl
+					<MapControl2 
+						ref={mapRef}
+						topo={props.topoQuark}
+						initialZoom={16}
+						initialCenter={topo.location}
+						searchbarOptions={{
+							findBoulders: true,
+						}}
+					>
+						<VectorLayer>
+							<BoulderMarker2 
+								boulder={props.topoQuark().boulders.quarkAt(0)}
+								boulderOrder={boulderOrder()}
+							/>
+						</VectorLayer>
+						<VectorLayer>
+							<VectorSource>
+								<Polygon 
+									coordinates={[props.topoQuark().sectors.at(0).path.map(p => fromLonLat(p))]}
+								/>
+							</VectorSource>
+						</VectorLayer>
+					</MapControl2>
+
+					{/* <MapControl
 						ref={mapRef}
 						initialZoom={16}
 						initialCenter={topo.location}
@@ -158,7 +188,7 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 							boulderFilters={boulderFilters}
 							boulderOrder={boulderOrder()}
 						/>
-					</MapControl>
+					</MapControl> */}
 
 					<SlideoverRightTopo topo={props.topoQuark} />
 				</div>

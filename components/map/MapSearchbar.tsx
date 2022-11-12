@@ -61,6 +61,7 @@ export const MapSearchbar: React.FC<MapSearchbarProps> = ({
 		}
 		if (findBoulders) {
 			const boulderResults: TrigramOutput = boulderSearcher.find(value);
+			console.log(boulderResults);
 			setBoulderResults(boulderResults.map((res) => res.value as Boulder));
 		}
 		if (findPlaces) {
@@ -97,8 +98,6 @@ export const MapSearchbar: React.FC<MapSearchbarProps> = ({
 		if (resultsOpen && props.onOpenResults) props.onOpenResults();
 	}, [resultsOpen]);
 
-	// Note: I removed the useIsMounted hook here, it should not be needed,
-	// since the ref should be null after the component unmounts
 	useEffect(() => {
 		if (barOpen && focusOnOpen && inputRef.current) inputRef.current.focus();
 	}, [barOpen]);
@@ -112,6 +111,7 @@ export const MapSearchbar: React.FC<MapSearchbarProps> = ({
 	useEffect(() => {
 		if (inputRef.current)
 			inputRef.current.addEventListener("keyup", handleKeyboardShortcuts);
+		//TODO: add a return !
 	}, [inputRef.current]);
 
 	return (

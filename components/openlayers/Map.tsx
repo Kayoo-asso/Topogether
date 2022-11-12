@@ -27,7 +27,7 @@ type InternalProps = PropsWithChildren<typeof useBehavior> & {
 	className?: string;
 };
 
-type ExternalProps = Omit<InternalProps, "view" | "target">;
+export type ExternalProps = Omit<InternalProps, "view" | "target">;
 
 export const Map = forwardRef<OLMap, ExternalProps>(
 	({ children, id, className, ...props }, ref) => {

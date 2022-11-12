@@ -26,6 +26,7 @@ import {
 interface CoordinatesTypeMap {
 	point: Coordinate;
 	linestring: Array<Coordinate>;
+	//TODO: change the type of polygon (throw off one "Array<>")
 	polygon: Array<Array<Coordinate>>;
 	multipoint: Array<Coordinate>;
 	multilinestring: Array<Array<Coordinate>>;
