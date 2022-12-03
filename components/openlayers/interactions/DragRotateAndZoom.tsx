@@ -1,14 +1,14 @@
 import OLDragRotateAndZoom from "ol/interaction/DragRotateAndZoom";
 import { forwardRef, useEffect } from "react";
 import { useMap } from "../contexts";
-import { createBehavior, Props} from "../core";
+import { createBehavior, InferProps} from "../core";
 
 const useBehavior = createBehavior(OLDragRotateAndZoom, {
 	events: ["change:active"],
 	reactive: [],
 });
 
-type P = Props<typeof useBehavior> & {
+type P = InferProps<typeof useBehavior> & {
 	active?: boolean;
 };
 

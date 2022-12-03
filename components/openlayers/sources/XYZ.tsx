@@ -4,7 +4,7 @@ import { SourceContext, useLayer } from "../contexts";
 import {
 	createBehavior,
 	events,
-	PropsWithChildren,
+	InferPropsWithChildren,
 	tileSourceEvents,
 } from "../core";
 
@@ -21,7 +21,7 @@ const useBehavior = createBehavior(OLXYZ, {
 });
 
 // Should we restrict TileGrid and Projection to go through dedicated elements?
-type Props = PropsWithChildren<typeof useBehavior>;
+type Props = InferPropsWithChildren<typeof useBehavior>;
 
 export const XYZ = forwardRef<OLXYZ, Props>(({ children, ...props }, ref) => {
 	const xyz = useBehavior(props, ref);

@@ -1,14 +1,14 @@
 import OLDraw from "ol/interaction/Draw";
 import { forwardRef, useEffect } from "react";
 import { useMap } from "../contexts";
-import { createBehavior, Props } from "../core";
+import { createBehavior, InferProps } from "../core";
 
 const useBehavior = createBehavior(OLDraw, {
 	events: ["change:active", "drawabort", "drawend", "drawstart"],
 	reactive: [],
 });
 
-type P = Props<typeof useBehavior> & {
+type P = InferProps<typeof useBehavior> & {
 	active?: boolean;
 };
 

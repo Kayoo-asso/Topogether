@@ -6,29 +6,13 @@ import { createContext, useContext } from "react";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 
-export const ViewContext = createContext<View | null>(null);
+export const ViewContext = createContext<View | undefined>(undefined);
 
-export function useView(message?: string): View {
-	const view = useContext(ViewContext);
-	if (!view) {
-		throw new Error(
-			message || "useView should only used in children of a <View> component"
-		);
-	}
-	return view;
-}
+export const useView = () => useContext(ViewContext);
 
-export const MapContext = createContext<Map | null>(null);
+export const MapContext = createContext<Map | undefined>(undefined);
 
-export function useMap(message?: string): Map {
-	const map = useContext(MapContext);
-	if (!map) {
-		throw new Error(
-			message || "useMap should only used in children of a <Map> component"
-		);
-	}
-	return map;
-}
+export const useMap = () => useContext(MapContext);
 
 export const LayerContext = createContext<Layer | null>(null);
 

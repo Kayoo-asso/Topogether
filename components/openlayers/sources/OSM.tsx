@@ -1,7 +1,7 @@
 import { forwardRef, useEffect } from "react";
 import OLOSM from "ol/source/OSM";
 import { SourceContext, useLayer } from "../contexts";
-import { createBehavior, events, Props, tileSourceEvents } from "../core";
+import { createBehavior, events, InferProps, tileSourceEvents } from "../core";
 
 // TODO:
 // - setUrls
@@ -14,7 +14,7 @@ const useBehavior = createBehavior(OLOSM, {
 	reset: [],
 });
 
-export const OSM = forwardRef<OLOSM, Props<typeof useBehavior>>(
+export const OSM = forwardRef<OLOSM, InferProps<typeof useBehavior>>(
 	({ children, ...props }, ref) => {
 		const source = useBehavior(props, ref);
 		const layer = useLayer();

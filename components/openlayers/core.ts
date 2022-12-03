@@ -44,10 +44,10 @@ type BuildProps<Options, Events extends Event> = RemoveUndefined<Options> & {
 	[E in EventHandlers[Events]]?: EventFn<E>;
 };
 
-export type PropsWithChildren<UseBehavior extends (...args: any) => any> =
-	React.PropsWithChildren<Props<UseBehavior>>;
+export type InferPropsWithChildren<UseBehavior extends (...args: any) => any> =
+	React.PropsWithChildren<InferProps<UseBehavior>>;
 
-export type Props<UseBehavior extends (...args: any) => any> =
+export type InferProps<UseBehavior extends (...args: any) => any> =
 	Parameters<UseBehavior>[0];
 
 type RemoveUndefined<T> = T extends undefined ? never : T;

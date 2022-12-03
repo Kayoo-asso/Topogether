@@ -1,7 +1,7 @@
-import { ViewContext } from "./contexts";
+import { OpenLayersContext, MainContext } from "./init";
 import OLView from "ol/View";
-import { createBehavior, events, PropsWithChildren, viewEvents } from "./core";
-import { forwardRef } from "react";
+import { createBehavior, events, InferPropsWithChildren, viewEvents } from "./core";
+import { forwardRef, useEffect, useMemo, useRef } from "react";
 
 const useBehavior = createBehavior(OLView, {
 	events: events(viewEvents),
@@ -17,12 +17,21 @@ const useBehavior = createBehavior(OLView, {
 	reset: [],
 });
 
-export const View = forwardRef<OLView, PropsWithChildren<typeof useBehavior>>(
+export const View = forwardRef<OLView, InferPropsWithChildren<typeof useBehavior>>(
 	({ children, ...props }, ref) => {
 		const view = useBehavior(props, ref);
+		const { current: ctx } = useRef<OpenLayersContext>(new OpenLayersContext());
 
-		return view ? (
-			<ViewContext.Provider value={view}>{children}</ViewContext.Provider>
-		) : null;
+
+		useEffect(() => {
+			if (!view) return;
+			
+			ctx.view = view;
+			ctx.flush();
+		});
+
+		return (
+			<MainContext.Provider value={ctx}>{children}</MainContext.Provider>
+		);
 	}
 );

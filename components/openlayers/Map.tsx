@@ -1,13 +1,13 @@
-import { useView, MapContext } from "./contexts";
+import { MainContext, useMainContext } from "./init";
 import OLMap from "ol/Map";
 import {
 	createBehavior,
 	events,
-	PropsWithChildren,
+	InferPropsWithChildren,
 	renderEvents,
-	mapEvents
+	mapEvents,
 } from "./core";
-import { forwardRef, useEffect } from "react";
+import { forwardRef, useContext, useEffect, useState } from "react";
 
 // VERY IMPORTANT
 import "ol/ol.css";
@@ -22,33 +22,34 @@ const useBehavior = createBehavior(OLMap, {
 	reset: [],
 });
 
-type InternalProps = PropsWithChildren<typeof useBehavior> & {
+type InternalProps = InferPropsWithChildren<typeof useBehavior> & {
 	id?: string;
 	className?: string;
 };
 
-export type ExternalProps = Omit<InternalProps, "view" | "target">;
+export type ExternalProps = Omit<
+	InternalProps,
+	"view" | "target" | "layers" | "interactions" | "overlays"
+>;
 
 export const Map = forwardRef<OLMap, ExternalProps>(
 	({ children, id, className, ...props }, ref) => {
 		const options = props as InternalProps;
 		id = id || "map";
 		options.target = id;
+
 		const map = useBehavior(props, ref);
-		console.log("Map:", map);
-		const view = useView();
+		const ctx = useMainContext();
 
 		useEffect(() => {
-			if (map) {
-				map.setView(view);
+			if (map && ctx.view) {
+				map.setView(ctx.view);
 			}
-		}, [map, view]);
+		}, [map, ctx.view]);
 
 		return (
 			<div id={id} className={className}>
-				{map ? (
-					<MapContext.Provider value={map}>{children}</MapContext.Provider>
-				) : null}
+				{children}
 			</div>
 		);
 	}

@@ -5,7 +5,7 @@ import {
 	createBehavior,
 	events,
 	vectorSourceEvents,
-	PropsWithChildren,
+	InferPropsWithChildren,
 } from "../core";
 
 const useBehavior = createBehavior(OLVectorSource, {
@@ -13,7 +13,7 @@ const useBehavior = createBehavior(OLVectorSource, {
 	reactive: ["attributions", "loader", "url"],
 });
 
-type Props = PropsWithChildren<typeof useBehavior>;
+type Props = InferPropsWithChildren<typeof useBehavior>;
 
 export const VectorSource = forwardRef<OLVectorSource, Props>(
 	({ children, ...props }, ref) => {

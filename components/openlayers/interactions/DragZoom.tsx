@@ -1,14 +1,14 @@
 import OLDragZoom from "ol/interaction/DragZoom";
 import { forwardRef, useEffect } from "react";
 import { useMap } from "../contexts";
-import { createBehavior, Props } from "../core";
+import { createBehavior, InferProps } from "../core";
 
 const useBehavior = createBehavior(OLDragZoom, {
 	events: ["change:active"],
 	reactive: [],
 });
 
-type P = Props<typeof useBehavior> & {
+type P = InferProps<typeof useBehavior> & {
 	active?: boolean;
 };
 

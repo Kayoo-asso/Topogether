@@ -6,7 +6,7 @@ import {
 	createBehavior,
 	events,
 	layerEvents,
-	PropsWithChildren,
+	InferPropsWithChildren,
 	tileLayerEvents,
 } from "../core";
 
@@ -27,7 +27,7 @@ const useBehavior = createBehavior(OLTileLayer, {
 	reset: [],
 });
 
-type Props = Omit<PropsWithChildren<typeof useBehavior>, "source"> & {
+type Props = Omit<InferPropsWithChildren<typeof useBehavior>, "source"> & {
 	id?: string;
 };
 
@@ -36,7 +36,7 @@ export const TileLayer = forwardRef<OLTileLayer<TileSource>, Props>(
 		const layer = useBehavior(props, ref);
 		const map = useMap();
 		useEffect(() => {
-			if (layer) {
+			if (layer && map) {
 				// This is Map.addLayer() does
 				const layers = map.getLayerGroup().getLayers();
 				layers.push(layer);

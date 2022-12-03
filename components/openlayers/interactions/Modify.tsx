@@ -1,14 +1,14 @@
 import OLModify from "ol/interaction/Modify";
 import { forwardRef, useEffect } from "react";
 import { useMap } from "../contexts";
-import { createBehavior, Props } from "../core";
+import { createBehavior, InferProps } from "../core";
 
 const useBehavior = createBehavior(OLModify, {
 	events: ["change:active", "modifyend", "modifystart"],
 	reactive: [],
 });
 
-type P = Props<typeof useBehavior> & {
+type P = InferProps<typeof useBehavior> & {
 	active?: boolean;
 };
 

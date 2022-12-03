@@ -1,13 +1,13 @@
 import OLMapboxVector from "ol/layer/MapboxVector";
-import { forwardRef, useEffect } from "react";
-import { useMap } from "../contexts";
+import { forwardRef, useEffect, useMemo, useRef, useState } from "react";
 import {
 	createBehavior,
 	events,
 	layerEvents,
 	tileLayerEvents,
-	Props,
+	InferProps,
 } from "../core";
+import { useId, useMainContext } from "../init";
 
 const useBehavior = createBehavior(OLMapboxVector, {
 	reactive: [
@@ -26,20 +26,24 @@ const useBehavior = createBehavior(OLMapboxVector, {
 	events: events(layerEvents, tileLayerEvents),
 });
 
-export const MapboxVector = forwardRef<
-	OLMapboxVector,
-	Props<typeof useBehavior>
->((props, ref) => {
-	const layer = useBehavior(props, ref);
-	const map = useMap();
+type Props = InferProps<typeof useBehavior> & {
+	id?: string;
+};
 
-	useEffect(() => {
-		if (layer) {
-			map.addLayer(layer);
-			return () => {
-				map.removeLayer(layer);
-			};
-		}
-	}, [layer, map]);
-	return null;
-});
+export const MapboxVector = forwardRef<OLMapboxVector, Props>(
+	({ id, ...props }, ref) => {
+		const layer = useBehavior(props, ref);
+		const internalId = useId(id);
+		const ctx = useMainContext();
+
+		useEffect(() => {
+			if (layer) {
+				ctx.registerLayer(layer, internalId);
+
+				return () => ctx.disposeLayer(layer, internalId);
+			}
+		}, [layer]);
+
+		return null;
+	}
+);

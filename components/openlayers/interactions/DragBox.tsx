@@ -1,14 +1,14 @@
 import OLDragBox from "ol/interaction/DragBox";
 import { forwardRef, useEffect } from "react";
 import { useMap } from "../contexts";
-import { createBehavior, Props } from "../core";
+import { createBehavior, InferProps } from "../core";
 
 const useBehavior = createBehavior(OLDragBox, {
 	reactive: [],
 	events: ["change:active", "boxcancel", "boxdrag", "boxend", "boxstart"],
 });
 
-type P = Props<typeof useBehavior> & {
+type P = InferProps<typeof useBehavior> & {
 	active?: boolean;
 };
 
