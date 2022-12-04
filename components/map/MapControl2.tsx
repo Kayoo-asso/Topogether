@@ -43,10 +43,10 @@ import { handleNewPhoto } from "helpers/handleNewPhoto";
 import { useSession } from "helpers/services";
 import { MapToolSelector } from "./MapToolSelector";
 import { MapEvent } from "ol";
-import { ExternalProps } from "components/openlayers/Map";
+import { Props } from "components/openlayers/Map";
 
 type MapControlProps = React.PropsWithChildren<
-	ExternalProps & {
+	Props & {
 		className?: string;
 		initialCenter: Position;
 		initialZoom?: number;

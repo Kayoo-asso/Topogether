@@ -21,7 +21,7 @@ const useLifecycle = createLifecycle(OLMap, {
 
 type Options = InferOptions<typeof useLifecycle>;
 
-type Props = Omit<
+export type Props = Omit<
 	Options,
 	"view" | "target" | "interactions" | "overlays" | "layers"
 > & React.PropsWithChildren<{
