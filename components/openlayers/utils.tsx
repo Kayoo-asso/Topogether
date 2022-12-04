@@ -1,6 +1,6 @@
 import Map from "ol/Map";
 import Layer from "ol/layer/Layer";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import BaseLayer from "ol/layer/Base";
 import { group } from "console";
 import Source from "ol/source/Source";
@@ -42,32 +42,38 @@ export function eventPropName<S extends string>(
 }
 
 export function useGetLayers(map: Map | undefined, ids: Array<string | undefined>) {
-	// The array can contain undefineds because we really want it to be the same length as the `ids` array
-	const layers: Array<Layer | undefined> = [];
 	// TODO: likely should migrate to useSyncWithExternalStore
-	const [, setSymbol] = useState(Symbol());
-	if (map) {
-		const collection = map.getLayers();
-		for (const id of ids) {
-			if(id) {
-				const item = collection.get(id);
-				layers.push(item);
-			} else {
-				layers.push(undefined);
+	const [symbol, setSymbol] = useState(Symbol());
+	// The array can contain undefineds because we really want it to be the same length as the `ids` array
+	const layers: Array<Layer | undefined> = useMemo(() => {
+		const list = []
+		console.log("Getting layers:", ids)
+		if (map) {
+			const collection = map.getLayers();
+			for (const id of ids) {
+				if(id) {
+					const item = collection.get(id);
+					list.push(item);
+				} else {
+					list.push(undefined);
+				}
 			}
 		}
-	}
+		return list;
+	}, [map, symbol]);
 
 	useEffect(() => {
 		if (map) {
 			const rerender = () => setSymbol(Symbol());
 			const group = map.getLayerGroup();
 			const collection = group.getLayers();
+			map.on("change:layergroup", rerender);
 			group.on("change:layers", rerender);
-			collection.on("change", rerender);
+			collection.on("propertychange", rerender);
 			return () => {
+				map.un("change:layergroup", rerender);
 				group.un("change:layers", rerender);
-				collection.un("change", rerender);
+				collection.un("propertychange", rerender);
 			};
 		}
 	}, [map]);

@@ -17,11 +17,12 @@ import { toLatLng, useMarker, markerSize } from "helpers/map";
 import { Point, VectorSource } from "components/openlayers";
 import { fromLonLat } from "ol/proj";
 import { Fill, Icon, Stroke, Style, Text } from "ol/style";
+import { FeatureLike } from "ol/Feature";
 
 interface BoulderMarkerProps {
 	boulder: Quark<Boulder>;
 	boulderOrder: Map<UUID, number>;
-	selectedBoulder?: Quark<Boulder>,
+	// selectedBoulder?: Quark<Boulder>;
 	topo?: Quark<Topo>;
 	draggable?: boolean;
 	onClick?: (boulder: Quark<Boulder>) => void;
@@ -56,27 +57,38 @@ export const isPointerEvent = (
 		| MouseEvent<HTMLDivElement, MouseEvent>
 ): e is PointerEvent => (e as PointerEvent).pointerType !== undefined;
 
-export const BoulderMarker2 = watchDependencies(
-	({ draggable = false, ...props }: BoulderMarkerProps) => {
-		const boulder = props.boulder();
-		const selectedBoulder = props.selectedBoulder ? props.selectedBoulder() : undefined;
-		const selected = selectedBoulder?.id === boulder.id;
+export type BoulderMarkerData = {
+	label: string;
+	quark: Quark<Boulder>;
+}
 
+export function boulderMarkerStyle(feature: FeatureLike, selected: boolean, anySelected: boolean) {
+	 const { label } = feature.get("data") as BoulderMarkerData;
 		const icon = new Icon({
-			opacity: selectedBoulder ? (selected ? 1 : 0.4) : 1,
+			opacity: anySelected ? (selected ? 1 : 0.4) : 1,
 			src: selected ? "/assets/icons/colored/_rock_bold.svg" : "/assets/icons/colored/_rock.svg",
 			scale: 1,
 		});
-		const label = new Text({
-			text: (
-				props.boulderOrder.get(boulder.id)! +
-				(process.env.NODE_ENV === "development" ? ". " + boulder.name : "")
-			).toString(),
+		const text = new Text({
+			text: label,
 			scale: 1.4,
 			fill: new Fill({ color: "#04D98B" }),
 			font: "Poppins",
 			offsetY: 22,
 		})
+		return new Style({
+			image: icon,
+			text,
+			// zIndex: 100
+		});
+}
+
+export const BoulderMarker2 = watchDependencies(
+	({ draggable = false, ...props }: BoulderMarkerProps) => {
+		const boulder = props.boulder();
+
+		const label = props.boulderOrder.get(boulder.id)! +
+				(process.env.NODE_ENV === "development" ? ". " + boulder.name : "")
 
 		// const options: google.maps.MarkerOptions = {
 		// 	icon,
@@ -95,17 +107,18 @@ export const BoulderMarker2 = watchDependencies(
 		// };
 
 		return (
-			<VectorSource>
-				<Point 
-					coordinates={fromLonLat(boulder.location)}
-					style={new Style({
-						image: icon,
-						text: label,
-						zIndex: 1000,
-					})}
-				/>
-			</VectorSource>
-		)
+			<Point
+				coordinates={fromLonLat(boulder.location)}
+				// style={
+				// 	new Style({
+				// 		image: icon,
+				// 		text: label,
+				// 		zIndex: 1000,
+				// 	})
+				// }
+				data={{ quark: props.boulder, label }}
+			/>
+		);
 
 		// const [timer, setTimer] = useState<ReturnType<typeof setTimeout>>(
 		// 	setTimeout(() => {}, 0)

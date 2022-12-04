@@ -53,7 +53,7 @@ export function createLifecycle<
 	const updateMethods = definition.reactive.map(setMethodName);
 
 	// console.log(`=== Definition for ${constructor.name} ===`)
-	// console.log(`-> Events = ${events}`)
+	// console.log(`-> Reset props = ${definition.reset}`)
 	// console.log(`-> Handlers = ${handlers}`)
 	// console.log(`-> Update methods = ${updateMethods}`)
 
@@ -64,6 +64,7 @@ export function createLifecycle<
 		const [instance, setInstance] = useState<T>();
 		const observed = definition.reactive.map((x) => props[x]);
 		const prevObserved = useRef(observed);
+		const propsThatRequireAReset = definition.reset ? definition.reset.map(x => props[x]) : [];
 
 		//
 		useEffect(() => {
@@ -76,7 +77,7 @@ export function createLifecycle<
 					obj.dispose();
 				}
 			};
-		}, []);
+		}, propsThatRequireAReset);
 
 		// ForwardRef
 		// Can't use `useImperativeHandle` because we can't return null or undefined there

@@ -12,6 +12,7 @@ export function useInteractionLifecycle(
 
 	useEffect(() => {
 		if (interaction && map) {
+			console.log("Adding interaction to map:", interaction)
 			map.addInteraction(interaction);
 			return () => {
 				map.removeInteraction(interaction);

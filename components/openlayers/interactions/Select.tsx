@@ -1,6 +1,6 @@
 import OLSelect from "ol/interaction/Select";
 import Layer from "ol/layer/Layer";
-import { forwardRef, useContext, useEffect } from "react";
+import { forwardRef, useContext, useEffect, useMemo } from "react";
 import { LayerContext, useLayer, useMap } from "../contexts";
 import { createLifecycle, InferOptions } from "../createLifecycle";
 import { useGetLayers } from "../utils";
@@ -16,6 +16,7 @@ const useBehavior = createLifecycle(OLSelect, {
 		"condition",
 		"filter",
 		"multi",
+		"layers",
 		"removeCondition",
 		"style",
 		"toggleCondition",
@@ -31,10 +32,14 @@ export const Select = forwardRef<OLSelect, P>(
 	({ active, layers, ...props }, ref) => {
 		const map = useMap();
 		const ls = useGetLayers(map, layers);
-		const filtered: Array<Layer> = [];
-		for (const l of ls) {
-			if (l) filtered.push(l);
-		}
+		console.log("Layers: ", ls)
+		const filtered: Array<Layer> = useMemo(() => {
+			const list =[]
+			for (const l of ls) {
+				if (l) list.push(l);
+			}
+			return list;
+		}, [ls]);
 		const select = useBehavior({ ...props, layers: filtered }, ref);
 		useInteractionLifecycle(select, active, map);
 

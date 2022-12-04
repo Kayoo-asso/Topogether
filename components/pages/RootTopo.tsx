@@ -1,10 +1,6 @@
 import React, { useCallback, useEffect, useRef } from "react";
 import { DropdownOption } from "components";
-import {
-	Topo,
-	TopoStatus,
-	TrackDanger,
-} from "types";
+import { Boulder, Topo, TopoStatus, TrackDanger } from "types";
 import {
 	Quark,
 	useCreateDerivation,
@@ -14,10 +10,7 @@ import {
 import { useRouter } from "next/router";
 import { Header } from "components/layouts/Header";
 import { LeftbarTopoDesktop } from "components/layouts/LeftbarTopoDesktop";
-import {
-	BoulderFilterOptions,
-	MapControl,
-} from "components/map";
+import { BoulderFilterOptions, MapControl } from "components/map";
 import { MapControl2 } from "components/map/MapControl2";
 import Map from "ol/Map";
 import { useBreakpoint } from "helpers/hooks";
@@ -29,10 +22,20 @@ import { SyncUrl } from "components/organisms/SyncUrl";
 import { SlideoverLeftTopo } from "components/organisms/topo/Slideover.left.topo";
 import { TopoMarkers } from "components/organisms/topo/TopoMarkers";
 import { SlideoverRightTopo } from "components/organisms/topo/Slideover.right.topo";
-import { Point, Polygon, VectorLayer, VectorSource } from "components/openlayers";
+import {
+	Point,
+	Polygon,
+	Select,
+	VectorLayer,
+	VectorSource,
+} from "components/openlayers";
 import { Style, Circle, Fill, Stroke, Icon } from "ol/style";
 import { fromLonLat } from "ol/proj";
-import { BoulderMarker2 } from "components/map/markers/BoulderMarker2";
+import {
+	BoulderMarker2,
+	BoulderMarkerData,
+	boulderMarkerStyle,
+} from "components/map/markers/BoulderMarker2";
 
 interface RootTopoProps {
 	topoQuark: Quark<Topo>;
@@ -49,13 +52,17 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 			sortBoulders(topo.sectors, topo.lonelyBoulders)
 		);
 
-		const isEmptyStore = useSelectStore(s => s.isEmpty);
-		const flush = useSelectStore(s => s.flush);
-		const select = useSelectStore(s => s.select);
+		const isEmptyStore = useSelectStore((s) => s.isEmpty);
+		const flush = useSelectStore((s) => s.flush);
+		const select = useSelectStore((s) => s.select);
+		const selectedType = useSelectStore((s) => s.item.type);
 
 		const constructMenuOptions = useCallback((): DropdownOption[] => {
 			const menuOptions: DropdownOption[] = [
-				{ value: "Infos du topo", action: () => select.info("INFO", breakpoint) },
+				{
+					value: "Infos du topo",
+					action: () => select.info("INFO", breakpoint),
+				},
 				{
 					value: "Marche d'approche",
 					action: () => select.info("ACCESS", breakpoint),
@@ -67,7 +74,8 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 			];
 			if (
 				(topo.status === TopoStatus.Draft &&
-				topo.creator?.id === session?.id) || session?.role === "ADMIN"
+					topo.creator?.id === session?.id) ||
+				session?.role === "ADMIN"
 			)
 				menuOptions.push({
 					value: "Modifier le topo",
@@ -136,11 +144,9 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 						map={mapRef.current}
 					/>
 
-					<SlideoverLeftTopo 
-						topo={props.topoQuark}
-					/>
+					<SlideoverLeftTopo topo={props.topoQuark} />
 
-					<MapControl2 
+					<MapControl2
 						ref={mapRef}
 						topo={props.topoQuark}
 						initialZoom={16}
@@ -149,16 +155,51 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 							findBoulders: true,
 						}}
 					>
-						<VectorLayer>
-							<BoulderMarker2 
-								boulder={props.topoQuark().boulders.quarkAt(0)}
-								boulderOrder={boulderOrder()}
-							/>
-						</VectorLayer>
-						<VectorLayer>
+						<Select
+							active={true}
+							layers={["boulders"]}
+							style={function (feature) {
+								return boulderMarkerStyle(feature, true, true);
+							}}
+							onSelect={(ev) => {
+								if (ev.selected.length === 1) {
+									const feature = ev.selected[0];
+									console.log("Feature style:", feature.getStyle());
+									const {quark} = feature.get("data") as BoulderMarkerData;
+									console.log("Selected boulder: ", quark());
+								} else {
+									console.log("No selected feature");
+								}
+							}}
+						/>
+						<VectorLayer id="sectors">
 							<VectorSource>
-								<Polygon 
-									coordinates={[props.topoQuark().sectors.at(0).path.map(p => fromLonLat(p))]}
+								<Polygon
+									coordinates={[
+										props
+											.topoQuark()
+											.sectors.at(0)
+											.path.map((p) => fromLonLat(p)),
+									]}
+								/>
+							</VectorSource>
+						</VectorLayer>
+						<VectorLayer
+							id="boulders"
+							style={useCallback(
+								(feature) =>
+									boulderMarkerStyle(
+										feature,
+										false,
+										selectedType === "boulder"
+									),
+								[selectedType]
+							)}
+						>
+							<VectorSource>
+								<BoulderMarker2
+									boulder={props.topoQuark().boulders.quarkAt(0)}
+									boulderOrder={boulderOrder()}
 								/>
 							</VectorSource>
 						</VectorLayer>

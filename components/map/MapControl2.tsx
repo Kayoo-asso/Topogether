@@ -10,7 +10,7 @@ import {
 	XYZ,
 } from "components/openlayers";
 import Map from "ol/Map";
-import { fromLonLat } from "ol/proj"
+import { fromLonLat } from "ol/proj";
 
 import { RoundButton, SatelliteButton } from "components";
 import { ImageInput } from "components/molecules";
@@ -23,13 +23,7 @@ import {
 	TopoFilters,
 	UserMarker,
 } from "./";
-import {
-	Boulder,
-	GeoCoordinates,
-	MapProps,
-	Position,
-	Topo,
-} from "types";
+import { Boulder, GeoCoordinates, MapProps, Position, Topo } from "types";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { fontainebleauLocation } from "helpers/constants";
 import { googleGetPlace, toLatLng } from "helpers/map";
@@ -74,7 +68,8 @@ const attributions =
 	'© <a href="https://www.mapbox.com/map-feedback/">Mapbox</a> ' +
 	'© <a href="https://www.openstreetmap.org/copyright">' +
 	"OpenStreetMap contributors</a>";
-const attributionsSatellite = "Powered by Esri. " + 
+const attributionsSatellite =
+	"Powered by Esri. " +
 	"Source: Esri, DigitalGlobe, GeoEye, Earthstar Geographics, CNES/Airbus DS, USDA, USGS, AeroGRID, IGN, and the GIS User Community";
 
 export const MapControl2 = watchDependencies<Map, MapControlProps>(
@@ -94,12 +89,14 @@ export const MapControl2 = watchDependencies<Map, MapControlProps>(
 		const breakpoint = useBreakpoint();
 		const mapRef = useRef<Map>(null);
 		const { position } = usePosition();
-		const selectedItem = useSelectStore(s => s.item);
-		const select = useSelectStore(s => s.select);
-		const flush = useSelectStore(s => s.flush);
-		const tool = useSelectStore(s => s.tool);
+		const selectedItem = useSelectStore((s) => s.item);
+		const select = useSelectStore((s) => s.select);
+		const flush = useSelectStore((s) => s.flush);
+		const tool = useSelectStore((s) => s.tool);
 
-		const [mapToolSelectorOpen, setMapToolSelectorOpen] = useState(breakpoint === 'desktop');
+		const [mapToolSelectorOpen, setMapToolSelectorOpen] = useState(
+			breakpoint === "desktop"
+		);
 
 		const [satelliteView, setSatelliteView] = useState(false);
 		const getBoundsFromSearchbar = (
@@ -117,11 +114,16 @@ export const MapControl2 = watchDependencies<Map, MapControlProps>(
 
 		const getMapCursorClass = useCallback(() => {
 			switch (tool) {
-				case 'ROCK': return "cursor-[url(/assets/icons/colored/_rock.svg),_pointer]";
-				case 'SECTOR': return "cursor-[url(/assets/icons/colored/line-point/_line-point-grey),_pointer]";
-				case 'PARKING': return "cursor-[url(/assets/icons/colored/_parking.svg),_pointer]";
-				case 'WAYPOINT': return "cursor-[url(/assets/icons/colored/_help-round.svg),_pointer]";
-				default: return "";
+				case "ROCK":
+					return "cursor-[url(/assets/icons/colored/_rock.svg),_pointer]";
+				case "SECTOR":
+					return "cursor-[url(/assets/icons/colored/line-point/_line-point-grey),_pointer]";
+				case "PARKING":
+					return "cursor-[url(/assets/icons/colored/_parking.svg),_pointer]";
+				case "WAYPOINT":
+					return "cursor-[url(/assets/icons/colored/_help-round.svg),_pointer]";
+				default:
+					return "";
 			}
 		}, [tool]);
 
@@ -130,39 +132,46 @@ export const MapControl2 = watchDependencies<Map, MapControlProps>(
 				<div className="absolute h-full w-full">
 					{/* Top left */}
 					<div className="absolute left-0 top-0 m-3 w-full space-y-5">
-					{displaySearchbar && (
-						<MapSearchbar
-							boulders={
-								props.topo ? props.topo().boulders.toArray() : undefined
-							}
-							//TODO: change this function to use MapBox GeoCoding
-							// onGoogleResultSelect={async (res) => {
-							// 	const placeDetails = await googleGetPlace(res.place_id);
-							// 	if (placeDetails?.geometry)
-							// 		getBoundsFromSearchbar(placeDetails.geometry);
-							// }}
-							onBoulderResultSelect={useCallback((boulder: Boulder) => {
-								const bQuark = props.topo!().boulders.findQuark((b) => b.id === boulder.id)!;
-								select.boulder(bQuark);
-								mapRef.current?.getView().setCenter(fromLonLat(boulder.location));
-							}, [props.topo])}
-							{...props.searchbarOptions}
-						/>
-					)}
-					{props.topoFilters && props.topoFiltersDomain && (
-						<TopoFilters
-							domain={props.topoFiltersDomain}
-							values={props.topoFilters()}
-							onChange={props.topoFilters.set}
-						/>
-					)}
-					{props.boulderFilters && props.boulderFiltersDomain && (
-						<BoulderFilters
-							domain={props.boulderFiltersDomain}
-							values={props.boulderFilters()}
-							onChange={props.boulderFilters.set}
-						/>
-					)}
+						{displaySearchbar && (
+							<MapSearchbar
+								boulders={
+									props.topo ? props.topo().boulders.toArray() : undefined
+								}
+								//TODO: change this function to use MapBox GeoCoding
+								// onGoogleResultSelect={async (res) => {
+								// 	const placeDetails = await googleGetPlace(res.place_id);
+								// 	if (placeDetails?.geometry)
+								// 		getBoundsFromSearchbar(placeDetails.geometry);
+								// }}
+								onBoulderResultSelect={useCallback(
+									(boulder: Boulder) => {
+										const bQuark = props.topo!().boulders.findQuark(
+											(b) => b.id === boulder.id
+										)!;
+										select.boulder(bQuark);
+										mapRef.current
+											?.getView()
+											.setCenter(fromLonLat(boulder.location));
+									},
+									[props.topo]
+								)}
+								{...props.searchbarOptions}
+							/>
+						)}
+						{props.topoFilters && props.topoFiltersDomain && (
+							<TopoFilters
+								domain={props.topoFiltersDomain}
+								values={props.topoFilters()}
+								onChange={props.topoFilters.set}
+							/>
+						)}
+						{props.boulderFilters && props.boulderFiltersDomain && (
+							<BoulderFilters
+								domain={props.boulderFiltersDomain}
+								values={props.boulderFilters()}
+								onChange={props.boulderFilters.set}
+							/>
+						)}
 					</div>
 
 					{/* Top right */}
@@ -189,17 +198,19 @@ export const MapControl2 = watchDependencies<Map, MapControlProps>(
 					</div>
 
 					{/* Bottom center */}
-					<div className={
-						(mapToolSelectorOpen ? "z-100" : "z-1") +
-						" absolute bottom-0 my-3 flex w-full justify-center"
-					}>
+					<div
+						className={
+							(mapToolSelectorOpen ? "z-100" : "z-1") +
+							" absolute bottom-0 my-3 flex w-full justify-center"
+						}
+					>
 						{displayToolSelector && (
-							<div className="flex flex-row gap-5 w-full justify-center">
+							<div className="flex w-full flex-row justify-center gap-5">
 								<MapToolSelector
 									open={mapToolSelectorOpen}
 									setOpen={setMapToolSelectorOpen}
 								/>
-								{!mapToolSelectorOpen &&
+								{!mapToolSelectorOpen && (
 									<ImageInput
 										button="builder"
 										size="big"
@@ -208,10 +219,21 @@ export const MapControl2 = watchDependencies<Map, MapControlProps>(
 											!!position || process.env.NODE_ENV === "development"
 										}
 										onChange={(files) => {
-											position && session && props.topo && handleNewPhoto(props.topo, files[0], position, session, select, selectedItem, tool)
+											position &&
+												session &&
+												props.topo &&
+												handleNewPhoto(
+													props.topo,
+													files[0],
+													position,
+													session,
+													select,
+													selectedItem,
+													tool
+												);
 										}}
 									/>
-								}
+								)}
 							</div>
 						)}
 					</div>
@@ -230,45 +252,47 @@ export const MapControl2 = watchDependencies<Map, MapControlProps>(
 							</RoundButton>
 						)}
 					</div>
-
 				</div>
 
-				<View center={fromLonLat(props.initialCenter)} zoom={initialZoom}>
-					<BaseMap 
-						ref={(ref) => {
-							setReactRef(mapRef, ref);
-							setReactRef(parentRef, ref);
-						}}
-						className={"w-full h-full "+getMapCursorClass()}
-						onClick={(e) => {
-							if (selectedItem.type === 'sector') flush.item();
-							if (props.onClick) props.onClick(e);
-						}}
-						onLoadEnd={(e: MapEvent) => {
-							const map = e.map;
-						}}
-					>
-						{/* <MapboxVector
+				<BaseMap
+					ref={(ref) => {
+						setReactRef(mapRef, ref);
+						setReactRef(parentRef, ref);
+					}}
+					className={"h-full w-full " + getMapCursorClass()}
+					onClick={(e) => {
+						if (selectedItem.type === "sector") flush.item();
+						if (props.onClick) props.onClick(e);
+					}}
+					onLoadEnd={(e: MapEvent) => {
+						const map = e.map;
+					}}
+				>
+					<View center={fromLonLat(props.initialCenter)} zoom={initialZoom} />
+
+					{/* <MapboxVector
 							styleUrl="mapbox://styles/mapbox/outdoors-v11"
 							accessToken={MAPBOX_TOKEN}
 						/> */}
-						<TileLayer>
-							<XYZ
-								// TODO: fix satelliteView that does not work yet
-								attributions={satelliteView ? attributionsSatellite : attributions}		
-								url={satelliteView ?
-									"https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/${z}/${y}/${x}" :
-									`https://api.mapbox.com/styles/v1/mapbox/outdoors-v11/tiles/512/{z}/{x}/{y}@2x?access_token=${MAPBOX_TOKEN}`}
-								// IMPORTANT
-								tilePixelRatio={2}
-								tileSize={512}
-							/>
-						</TileLayer>
+					<TileLayer>
+						<XYZ
+							// TODO: fix satelliteView that does not work yet
+							attributions={
+								satelliteView ? attributionsSatellite : attributions
+							}
+							url={
+								satelliteView
+									? "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/${z}/${y}/${x}"
+									: `https://api.mapbox.com/styles/v1/mapbox/outdoors-v11/tiles/512/{z}/{x}/{y}@2x?access_token=${MAPBOX_TOKEN}`
+							}
+							// IMPORTANT
+							tilePixelRatio={2}
+							tileSize={512}
+						/>
+					</TileLayer>
 
-						{props.children}
-					</BaseMap>
-				</View>
-				
+					{props.children}
+				</BaseMap>
 
 				{/* <Wrapper
 					apiKey={process.env.NEXT_PUBLIC_GOOGLE_API_KEY || ""}

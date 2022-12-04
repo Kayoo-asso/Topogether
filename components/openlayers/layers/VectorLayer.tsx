@@ -1,6 +1,6 @@
 import OLVectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
-import { forwardRef } from "react";
+import { forwardRef, useEffect } from "react";
 import { LayerContext } from "../contexts";
 import { createLifecycle, InferOptions } from "../createLifecycle";
 
