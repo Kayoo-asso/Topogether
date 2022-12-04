@@ -85,12 +85,15 @@ export function useGetSources(map: Map | undefined, ids: Array<string | undefine
 	// TODO: remove duplication with Symbol state inside useGetLayers
 	const [, setSymbol] = useState(Symbol());
 	const layers = useGetLayers(map, ids);
-	const sources: Array<Source | undefined> = [];
-	for (const l of layers) {
-		const s = l?.getSource();
-		// nulls are problematic for our use later on
-		sources.push(s || undefined);
-	}
+	const sources: Array<Source | undefined> = useMemo(() => {
+		const list = [];
+		for (const l of layers) {
+			const s = l?.getSource();
+			// nulls are problematic for our use later on
+			list.push(s || undefined);
+		}
+		return list;
+	}, [layers]);
 	useEffect(() => {
 		const rerender = () => setSymbol(Symbol());
 		for (const l of layers) {
@@ -101,7 +104,7 @@ export function useGetSources(map: Map | undefined, ids: Array<string | undefine
 				l?.un("change:source", rerender);
 			}
 		};
-	});
+	}, [layers]);
 
 	return sources;
 }
