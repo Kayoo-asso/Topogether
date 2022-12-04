@@ -271,6 +271,30 @@ export const MapControl2 = watchDependencies<Map, MapControlProps>(
 					<View center={fromLonLat(props.initialCenter)} zoom={initialZoom} />
 
 					{/* <MapboxVector
+				<View center={fromLonLat(props.initialCenter)} zoom={initialZoom}>
+					<BaseMap 
+						ref={(ref) => {
+							setReactRef(mapRef, ref);
+							setReactRef(parentRef, ref);
+						}}
+						className={"w-full h-full "+getMapCursorClass()}
+						onClick={(e) => {
+							if (selectedItem.type === 'sector') flush.item();
+							if (props.onClick) props.onClick(e);
+						}}
+						onChangeResolution={(e) => {
+							if (mapRef.current && props.onMapZoomChange) {
+								// props.onMapZoomChange(mapRef.current.getZoom());
+							}
+						}}
+						onMoveEnd={(e) => {
+							console.log(e);
+						}}
+						onLoadEnd={(e: MapEvent) => {
+							const map = e.map;
+						}}
+					>
+						{/* <MapboxVector
 							styleUrl="mapbox://styles/mapbox/outdoors-v11"
 							accessToken={MAPBOX_TOKEN}
 						/> */}
