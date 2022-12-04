@@ -206,10 +206,9 @@ export class DBConvert {
 
 	static contributor(contributor: Contributor, topoId: UUID): DBContributor {
 		return {
-			id: contributor.id,
-			pseudo: contributor.pseudo,
 			role: contributor.role,
-			topoId,
+			topo_id: topoId,
+			user_id: contributor.id
 		};
 	}
 

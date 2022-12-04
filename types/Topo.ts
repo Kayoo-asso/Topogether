@@ -209,10 +209,9 @@ export type DBManager = NullableOptional<{
 }>;
 
 export type DBContributor = NullableOptional<{
-	id: UUID;
-	pseudo: Name;
+	topo_id: UUID;
+	user_id: UUID;
 	role: ContributorRole
-	topoId: UUID;
 }>;
 
 // TODO: is the RequireAtLeastOne correct?

@@ -254,13 +254,14 @@ export class InMemorySync implements SyncService {
 		this._status.set(SyncStatus.UnsavedChanges);
 	}
 
-	updatedContributors: Map<UUID, DBContributor> = new Map();
-	deletedContributors: Set<UUID> = new Set();
+	updatedContributors: Map<string, DBContributor> = new Map();
+	deletedContributors: Set<string> = new Set();
 
 	contributorUpdate(contributor: Contributor, topoId: UUID) {
 		const dto = DBConvert.contributor(contributor, topoId);
-		this.updatedContributors.set(dto.id, dto);
-		this.deletedContributors.delete(dto.id);
+		const id = dto.user_id + dto.topo_id;
+		this.updatedContributors.set(id, dto);
+		this.deletedContributors.delete(id);
 		this._status.set(SyncStatus.UnsavedChanges);
 	}
 
@@ -363,7 +364,7 @@ export class InMemorySync implements SyncService {
 			this.upsert("boulders", "updatedBoulders"),
 			this.upsert("sectors", "updatedSectors"),
 			this.upsert("managers", "updatedManagers"),
-			this.upsert("contributors", "updatedContributors"),
+			this.upsert("topo_contributors", "updatedContributors"),
 			this.upsert("tracks", "updatedTracks"),
 			this.upsert("parkings", "updatedParkings"),
 			this.upsert("waypoints", "updatedWaypoints"),
@@ -376,7 +377,7 @@ export class InMemorySync implements SyncService {
 			this.delete("tracks", "deletedTracks"),
 			this.delete("lines", "deletedLines"),
 			this.delete("managers", "deletedManagers"),
-			this.delete("contributors", "deletedContributors"),
+			this.delete("topo_contributors", "deletedContributors"),
 			this.delete("parkings", "deletedParkings"),
 			this.delete("waypoints", "deletedWaypoints"),
 			this.delete("topo_accesses", "deletedTopoAccesses"),
@@ -417,7 +418,7 @@ export class InMemorySync implements SyncService {
 				if (res.error) {
 					console.error(`Error ${res.status} updating ${table}:`, res.error);
 					// added <any> type annotation because TypeScript is annoying
-					this[key] = mergeMaps(updates as Map<UUID, any>, this[key]);
+					this[key] = mergeMaps(updates as Map<UUID, any>, this[key]) as any;
 					this._status.set(SyncStatus.UnsavedChanges);
 					return false;
 				}
@@ -444,7 +445,7 @@ export class InMemorySync implements SyncService {
 				if (res.error) {
 					console.error(`Error ${res.status} updating ${table}:`, res.error);
 					// added <any> type annotation because TypeScript is annoying
-					this[key] = mergeMaps(updates as Map<UUID, any>, this[key]);
+					this[key] = mergeMaps(updates as Map<UUID, any>, this[key]) as any;
 					this._status.set(SyncStatus.UnsavedChanges);
 					return false;
 				}
@@ -457,7 +458,7 @@ export class InMemorySync implements SyncService {
 		if (set.size === 0) {
 			return Promise.resolve(true);
 		}
-		this[key] = new Set();
+		this[key] = new Set() as any;
 		return supabaseClient
 			.from(table)
 			.delete({ returning: "minimal" })
@@ -465,7 +466,7 @@ export class InMemorySync implements SyncService {
 			.then((res) => {
 				if (res.error) {
 					console.error("Error deleting from " + table + ":", res.error);
-					this[key] = mergeSets(set, this[key]);
+					this[key] = mergeSets(set, this[key]) as any;
 					this._status.set(SyncStatus.UnsavedChanges);
 					return false;
 				}
@@ -480,7 +481,7 @@ export class InMemorySync implements SyncService {
 		return supabaseClient.rpc(key, { _ids: Array.from(ids) }).then((res) => {
 			if (res.error) {
 				console.error(`Error calling ${key}:`, res.error);
-				this[key] = mergeSets(ids, this[key]);
+				this[key] = mergeSets(ids, this[key]) as any;
 				this._status.set(SyncStatus.UnsavedChanges);
 				return false;
 			}
@@ -508,7 +509,7 @@ export class InMemorySync implements SyncService {
 }
 
 // modifies `dest`
-function mergeMaps<T>(dest: Map<UUID, T>, source: Map<UUID, T>): Map<UUID, T> {
+function mergeMaps<T>(dest: Map<UUID | string, T>, source: Map<UUID | string, T>): Map<UUID | string, T> {
 	for (const [k, v] of source) {
 		dest.set(k, v);
 	}
@@ -516,7 +517,7 @@ function mergeMaps<T>(dest: Map<UUID, T>, source: Map<UUID, T>): Map<UUID, T> {
 }
 
 // modifies `dest`
-function mergeSets(dest: Set<UUID>, source: Set<UUID>): Set<UUID> {
+function mergeSets(dest: Set<UUID | string>, source: Set<UUID | string>): Set<UUID | string> {
 	for (const x of source) {
 		dest.add(x);
 	}
@@ -524,7 +525,7 @@ function mergeSets(dest: Set<UUID>, source: Set<UUID>): Set<UUID> {
 }
 
 type UpdateKey = {
-	[K in keyof InMemorySync]: InMemorySync[K] extends Map<UUID, any>
+	[K in keyof InMemorySync]: InMemorySync[K] extends Map<UUID | string, any>
 		? K extends `updated${infer _}`
 			? K
 			: never
@@ -534,7 +535,7 @@ type UpdateKey = {
 type UpdateValue<K extends UpdateKey> = MapValue<InMemorySync[K]>;
 
 type DeleteKey = {
-	[K in keyof InMemorySync]: InMemorySync[K] extends Set<UUID>
+	[K in keyof InMemorySync]: InMemorySync[K] extends Set<UUID | string>
 		? K extends `deleted${infer _}`
 			? K
 			: never

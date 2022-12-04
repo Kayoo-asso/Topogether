@@ -240,12 +240,13 @@ export const managers: Manager[] = [
 	},
 ];
 
+// TODO: remettre plus tard
 export const contributors: Contributor[] = [
-	{
-		id: uuid(),
-		pseudo: "Jérôme" as Name,
-		role: 'CONTRIBUTOR',
-	},
+	// {
+	// 	id: uuid(),
+	// 	pseudo: "Jérôme" as Name,
+	// 	role: 'CONTRIBUTOR',
+	// },
 ];
 
 export const waypoints: Waypoint[] = [
