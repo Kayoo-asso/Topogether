@@ -1,20 +1,17 @@
-import { useView, MapContext } from "./contexts";
+import { MapContext } from "./contexts";
 import OLMap from "ol/Map";
 import {
-	createBehavior,
-	events,
-	PropsWithChildren,
-	renderEvents,
-	mapEvents
-} from "./core";
-import { forwardRef, useEffect } from "react";
+	createLifecycle,
+	InferOptions,
+} from "./createLifecycle";
+import { forwardRef } from "react";
 
 // VERY IMPORTANT
 import "ol/ol.css";
+import { events, mapEvents, renderEvents } from "./events";
 
-// TODO: way to omit some Props
 // TODO: additional reactive properties that are not in the Options
-const useBehavior = createBehavior(OLMap, {
+const useLifecycle = createLifecycle(OLMap, {
 	events: events(mapEvents, renderEvents),
 	reactive: [
 		// "size",
@@ -22,33 +19,24 @@ const useBehavior = createBehavior(OLMap, {
 	reset: [],
 });
 
-type InternalProps = PropsWithChildren<typeof useBehavior> & {
+type Options = InferOptions<typeof useLifecycle>;
+
+type Props = Omit<
+	Options,
+	"view" | "target" | "interactions" | "overlays" | "layers"
+> & {
 	id?: string;
 	className?: string;
 };
 
-export type ExternalProps = Omit<InternalProps, "view" | "target">;
-
-export const Map = forwardRef<OLMap, ExternalProps>(
+export const Map = forwardRef<OLMap, Props>(
 	({ children, id, className, ...props }, ref) => {
-		const options = props as InternalProps;
 		id = id || "map";
-		options.target = id;
-		const map = useBehavior(props, ref);
-		console.log("Map:", map);
-		const view = useView();
-
-		useEffect(() => {
-			if (map) {
-				map.setView(view);
-			}
-		}, [map, view]);
+		const map = useLifecycle({ ...props, target: id }, ref);
 
 		return (
 			<div id={id} className={className}>
-				{map ? (
-					<MapContext.Provider value={map}>{children}</MapContext.Provider>
-				) : null}
+				<MapContext.Provider value={map}>{children}</MapContext.Provider>
 			</div>
 		);
 	}

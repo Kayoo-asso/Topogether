@@ -1,33 +1,66 @@
 import OLDraw from "ol/interaction/Draw";
+import BaseLayer from "ol/layer/Base";
+import Source from "ol/source/Source";
+import VectorSource from "ol/source/Vector";
 import { forwardRef, useEffect } from "react";
 import { useMap } from "../contexts";
-import { createBehavior, Props } from "../core";
+import { createLifecycle, InferOptions } from "../createLifecycle";
+import { useGetSources } from "../utils";
+import { useInteractionLifecycle } from "./useInteractionLifecycle";
 
-const useBehavior = createBehavior(OLDraw, {
+const useBehavior = createLifecycle(OLDraw, {
 	events: ["change:active", "drawabort", "drawend", "drawstart"],
 	reactive: [],
+	reset: [
+		"clickTolerance",
+		"condition",
+		"dragVertexDelay",
+		"finishCondition",
+		"freehand",
+		"freehandCondition",
+		"geometryFunction",
+		"geometryLayout",
+		"geometryName",
+		"maxPoints",
+		"minPoints",
+		"snapTolerance",
+		"source",
+		"stopClick",
+		"style",
+		"trace",
+		"traceSource",
+		"type",
+		"wrapX",
+	],
 });
 
-type P = Props<typeof useBehavior> & {
+type Props = Omit<
+	InferOptions<typeof useBehavior>,
+	"source" | "traceSource" | "features"
+> & {
+	source: string;
+	traceSource?: string;
 	active?: boolean;
 };
 
-export const Draw = forwardRef<OLDraw, P>(
-	({ active, ...props }, ref) => {
-		const draw = useBehavior(props, ref);
+export const Draw = forwardRef<OLDraw, Props>(
+	({ active, source, traceSource, ...props }, ref) => {
 		const map = useMap();
+		const [s, ts] = useGetSources(map, [source, traceSource]);
+		if (s && !(s instanceof VectorSource)) {
+			throw new Error(
+				`The target source of a Draw interaction should be a VectorSource`
+			);
+		}
+		if (ts && !(ts instanceof VectorSource)) {
+			throw new Error(
+				`The trace source of a Draw interaction should be a VectorSource`
+			);
+		}
 
-		if (active) draw?.setActive(active);
+		const draw = useBehavior({ ...props, source: s, traceSource: ts}, ref);
+		useInteractionLifecycle(draw, active, map);
 
-		useEffect(() => {
-			if (draw) {
-				map.addInteraction(draw);
-				return () => {
-					map.removeInteraction(draw);
-				};
-			}
-		}, [draw, map]);
-
-return null;
+		return null;
 	}
 );

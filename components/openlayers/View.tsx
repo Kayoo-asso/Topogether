@@ -1,9 +1,10 @@
-import { ViewContext } from "./contexts";
 import OLView from "ol/View";
-import { createBehavior, events, PropsWithChildren, viewEvents } from "./core";
-import { forwardRef } from "react";
+import { createLifecycle, InferOptions } from "./createLifecycle";
+import { forwardRef, useEffect } from "react";
+import { useMap } from "./contexts";
+import { events, viewEvents } from "./events";
 
-const useBehavior = createBehavior(OLView, {
+const useLifecycle = createLifecycle(OLView, {
 	events: events(viewEvents),
 	reactive: [
 		"center",
@@ -17,12 +18,19 @@ const useBehavior = createBehavior(OLView, {
 	reset: [],
 });
 
-export const View = forwardRef<OLView, PropsWithChildren<typeof useBehavior>>(
-	({ children, ...props }, ref) => {
-		const view = useBehavior(props, ref);
+type Props = React.PropsWithChildren<InferOptions<typeof useLifecycle>>;
 
-		return view ? (
-			<ViewContext.Provider value={view}>{children}</ViewContext.Provider>
-		) : null;
+export const View = forwardRef<OLView, Props>(
+	({ children, ...props }, ref) => {
+		const view = useLifecycle(props, ref);
+		const map = useMap();
+
+		useEffect(() => {
+			if(map && view) {
+				map.setView(view);
+			}
+		}, [map, view]);
+
+		return <>{children}</>;
 	}
 );

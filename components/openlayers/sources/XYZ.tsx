@@ -1,14 +1,10 @@
 import { forwardRef, useEffect } from "react";
 import OLXYZ from "ol/source/XYZ";
-import { SourceContext, useLayer } from "../contexts";
-import {
-	createBehavior,
-	events,
-	PropsWithChildren,
-	tileSourceEvents,
-} from "../core";
+import { useLayer } from "../contexts";
+import { createLifecycle, InferOptions } from "../createLifecycle";
+import { events, tileSourceEvents } from "../events";
 
-const useBehavior = createBehavior(OLXYZ, {
+const useBehavior = createLifecycle(OLXYZ, {
 	events: events(tileSourceEvents),
 	reactive: [
 		"attributions",
@@ -21,14 +17,14 @@ const useBehavior = createBehavior(OLXYZ, {
 });
 
 // Should we restrict TileGrid and Projection to go through dedicated elements?
-type Props = PropsWithChildren<typeof useBehavior>;
+type Props = InferOptions<typeof useBehavior>;
 
-export const XYZ = forwardRef<OLXYZ, Props>(({ children, ...props }, ref) => {
+export const XYZ = forwardRef<OLXYZ, Props>((props, ref) => {
 	const xyz = useBehavior(props, ref);
 	const layer = useLayer();
 
 	useEffect(() => {
-		if (xyz) {
+		if (xyz && layer) {
 			layer.setSource(xyz);
 			return () => layer.setSource(null);
 		}
@@ -40,7 +36,5 @@ export const XYZ = forwardRef<OLXYZ, Props>(({ children, ...props }, ref) => {
 		}
 	}, [xyz, props.tileGrid, props.projection]);
 
-	return xyz ? (
-		<SourceContext.Provider value={xyz}>{children}</SourceContext.Provider>
-	) : null;
+	return null;
 });

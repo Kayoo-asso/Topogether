@@ -1,9 +1,11 @@
-import { forwardRef, PropsWithChildren, useEffect } from "react";
+import { forwardRef, PropsWithChildren } from "react";
 import OLVectorTileLayer from "ol/layer/VectorTile";
-import { LayerContext, useMap } from "../contexts";
-import { createBehavior, events, layerEvents, tileLayerEvents } from "../core";
+import { LayerContext } from "../contexts";
+import { createLifecycle } from "../createLifecycle";
+import { useLayerLifecycle } from "./useLayerLifecycle";
+import { events, layerEvents, tileLayerEvents } from "../events";
 
-const useBehavior = createBehavior(OLVectorTileLayer, {
+const useBehavior = createLifecycle(OLVectorTileLayer, {
 	events: events(layerEvents, tileLayerEvents),
 	reactive: [
 		"background",
@@ -26,33 +28,12 @@ type Props = PropsWithChildren<typeof useBehavior> & {
 
 export const VectorTileLayer = forwardRef<OLVectorTileLayer, Props>(
 	({ children, id, ...props }, ref) => {
-		const map = useMap();
 		const layer = useBehavior(props, ref);
 
-		useEffect(() => {
-			if (layer) {
-				// This is Map.addLayer() does
-				const layers = map.getLayerGroup().getLayers();
-				layers.push(layer);
-				// We also add the ability to store them by ID
-				if (id) {
-					layers.set(id, layer);
-				}
-				return () => {
-					map.removeLayer(layer);
-					if (id) {
-						layers.set(id, undefined);
-					}
-				};
-			}
-		}, [map, layer, id]);
+		useLayerLifecycle(id, layer);
 
-		if (layer) {
-			return (
-				<LayerContext.Provider value={layer}>{children}</LayerContext.Provider>
-			);
-		} else {
-			return null;
-		}
+		return (
+			<LayerContext.Provider value={layer}>{children}</LayerContext.Provider>
+		);
 	}
 );

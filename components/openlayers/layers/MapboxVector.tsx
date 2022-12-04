@@ -2,14 +2,18 @@ import OLMapboxVector from "ol/layer/MapboxVector";
 import { forwardRef, useEffect } from "react";
 import { useMap } from "../contexts";
 import {
-	createBehavior,
+	createLifecycle,
+	InferOptions,
+} from "../createLifecycle";
+import {
+	
 	events,
 	layerEvents,
 	tileLayerEvents,
-	Props,
-} from "../core";
+} from "../events";
+import { useLayerLifecycle } from "./useLayerLifecycle";
 
-const useBehavior = createBehavior(OLMapboxVector, {
+const useLifecycle = createLifecycle(OLMapboxVector, {
 	reactive: [
 		"background",
 		"extent",
@@ -26,20 +30,17 @@ const useBehavior = createBehavior(OLMapboxVector, {
 	events: events(layerEvents, tileLayerEvents),
 });
 
+
+type Options = InferOptions<typeof useLifecycle>;
+type Props = Omit<Options, "map" | "source"> & {
+	id?: string;
+}
+
 export const MapboxVector = forwardRef<
 	OLMapboxVector,
-	Props<typeof useBehavior>
->((props, ref) => {
-	const layer = useBehavior(props, ref);
-	const map = useMap();
-
-	useEffect(() => {
-		if (layer) {
-			map.addLayer(layer);
-			return () => {
-				map.removeLayer(layer);
-			};
-		}
-	}, [layer, map]);
+	Props
+>(({ id, ...props}, ref) => {
+	const layer = useLifecycle(props, ref);
+	useLayerLifecycle(id, layer);
 	return null;
 });

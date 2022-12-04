@@ -1,10 +1,6 @@
 export {
-	useView,
 	useMap,
 	useLayer,
-	useVectorLayer,
-	useSource,
-	useVectorSource,
 } from "./contexts";
 export { View } from "./View";
 export { Map } from "./Map";
@@ -23,7 +19,7 @@ export {
 	MultiPoint,
 	MultiLineString,
 	MultiPolygon,
-} from "./geometries";
+} from "./features";
 export { Select } from "./interactions/Select";
 export { Modify } from "./interactions/Modify";
 export { Draw } from "./interactions/Draw";

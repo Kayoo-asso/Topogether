@@ -1,75 +1,22 @@
-import type View from "ol/View";
 import type Map from "ol/Map";
 import type Layer from "ol/layer/Layer";
-import type Source from "ol/source/Source";
-import { createContext, useContext } from "react";
-import VectorLayer from "ol/layer/Vector";
-import VectorSource from "ol/source/Vector";
+import { createContext, useContext, useEffect, useState } from "react";
 
-export const ViewContext = createContext<View | null>(null);
+export const MapContext = createContext<Map | undefined>(undefined);
+export const useMap = () => useContext(MapContext);
 
-export function useView(message?: string): View {
-	const view = useContext(ViewContext);
-	if (!view) {
-		throw new Error(
-			message || "useView should only used in children of a <View> component"
-		);
-	}
-	return view;
-}
+export const LayerContext = createContext<Layer | undefined>(undefined);
+export const useLayer = () => useContext(LayerContext);
 
-export const MapContext = createContext<Map | null>(null);
-
-export function useMap(message?: string): Map {
-	const map = useContext(MapContext);
-	if (!map) {
-		throw new Error(
-			message || "useMap should only used in children of a <Map> component"
-		);
-	}
-	return map;
-}
-
-export const LayerContext = createContext<Layer | null>(null);
-
-export function useLayer(message?: string): Layer {
-	const layer = useContext(LayerContext);
-	if (!layer) {
-		throw new Error(
-			message || "useLayer should only used in children of a <Layer> component"
-		);
-	}
-	return layer;
-}
-export function useVectorLayer(message?: string): VectorLayer<VectorSource> {
-	const layer = useLayer(message);
-	if (layer instanceof VectorLayer) {
-		return layer;
-	}
-	throw new Error(
-		`useVectorLayer called inside a non-vector layer (type: ${typeof layer})`
-	);
-}
-
-export const SourceContext = createContext<Source | null>(null);
-
-export function useSource(message?: string): Source {
-	const source = useContext(SourceContext);
-	if (!source) {
-		throw new Error(
-			message ||
-				"useSource should only used in children of a <Source> component"
-		);
-	}
-	return source;
-}
-
-export function useVectorSource(message?: string): VectorSource {
-	const source = useSource(message);
-	if (source instanceof VectorSource) {
-		return source;
-	}
-	throw new Error(
-		`useVectorSource called inside a non-vector source (type: ${typeof source})`
-	);
+export function useSource() {
+	const layer = useLayer();
+	const [, setSymbol] = useState(Symbol());
+	useEffect(() => {
+		if (layer) {
+			const rerender = () => setSymbol(Symbol());
+			layer.on("change:source", rerender);
+			return () => layer.un("change:source", rerender);
+		}
+	}, [layer]);
+	return layer?.getSource();
 }

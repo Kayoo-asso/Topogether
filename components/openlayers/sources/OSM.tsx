@@ -1,39 +1,31 @@
 import { forwardRef, useEffect } from "react";
 import OLOSM from "ol/source/OSM";
-import { SourceContext, useLayer } from "../contexts";
-import { createBehavior, events, Props, tileSourceEvents } from "../core";
+import { useLayer } from "../contexts";
+import { createLifecycle, InferOptions } from "../createLifecycle";
+import { events, tileSourceEvents } from "../events";
 
 // TODO:
 // - setUrls
 // - setRenderReprojectionEdges
 // - setTileGridProjection
 // - setTileUrlFunction
-const useBehavior = createBehavior(OLOSM, {
+const useBehavior = createLifecycle(OLOSM, {
 	events: events(tileSourceEvents),
 	reactive: ["attributions", "tileLoadFunction", "url"],
 	reset: [],
 });
 
-export const OSM = forwardRef<OLOSM, Props<typeof useBehavior>>(
-	({ children, ...props }, ref) => {
+export const OSM = forwardRef<OLOSM, InferOptions<typeof useBehavior>>(
+	(props, ref) => {
 		const source = useBehavior(props, ref);
 		const layer = useLayer();
 
 		useEffect(() => {
-			if (source) {
+			if (source && layer) {
 				layer.setSource(source);
 				return () => layer.setSource(null);
 			}
 		}, [layer, source]);
-
-		if (source) {
-			return (
-				<SourceContext.Provider value={source}>
-					{children}
-				</SourceContext.Provider>
-			);
-		} else {
-			return null;
-		}
+		return null;
 	}
 );

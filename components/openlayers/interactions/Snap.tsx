@@ -1,32 +1,35 @@
 import OLSnap from "ol/interaction/Snap";
+import VectorSource from "ol/source/Vector";
 import { forwardRef, useEffect } from "react";
 import { useMap } from "../contexts";
-import { createBehavior, Props } from "../core";
+import { createLifecycle, InferOptions } from "../createLifecycle";
+import { useGetSources } from "../utils";
+import { useInteractionLifecycle } from "./useInteractionLifecycle";
 
-const useBehavior = createBehavior(OLSnap, {
+const useBehavior = createLifecycle(OLSnap, {
 	events: ["change:active"],
 	reactive: [],
+	reset: ["edge", "pixelTolerance", "source", "vertex"]
 });
 
-type P = Props<typeof useBehavior> & {
+// Add support for a target Collection
+type P = Omit<InferOptions<typeof useBehavior>, "features" | "source"> & {
 	active?: boolean;
+	source: string;
 };
 
 export const Modify = forwardRef<OLSnap, P>(
-	({ children, active, ...props }, ref) => {
-		const draw = useBehavior(props, ref);
+	({ children, active, source, ...props }, ref) => {
 		const map = useMap();
+		const [s] = useGetSources(map, [source]);
+		if (s && !(s instanceof VectorSource)) {
+			throw new Error(
+				`The target source of a Draw interaction should be a VectorSource`
+			);
+		}
+		const modify = useBehavior({...props, source: s}, ref);
 
-		if (active) draw?.setActive(active);
-
-		useEffect(() => {
-			if (draw) {
-				map.addInteraction(draw);
-				return () => {
-					map.removeInteraction(draw);
-				};
-			}
-		}, [draw, map]);
+		useInteractionLifecycle(modify, active, map);
 
 		return null;
 	}

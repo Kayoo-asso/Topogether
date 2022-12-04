@@ -1,33 +1,44 @@
 import OLModify from "ol/interaction/Modify";
-import { forwardRef, useEffect } from "react";
+import VectorSource from "ol/source/Vector";
+import { forwardRef } from "react";
 import { useMap } from "../contexts";
-import { createBehavior, Props } from "../core";
+import { createLifecycle, InferOptions } from "../createLifecycle";
+import { useGetSources } from "../utils";
+import { useInteractionLifecycle } from "./useInteractionLifecycle";
 
-const useBehavior = createBehavior(OLModify, {
+const useBehavior = createLifecycle(OLModify, {
 	events: ["change:active", "modifyend", "modifystart"],
 	reactive: [],
+	reset: [
+		"condition",
+		"deleteCondition",
+		"hitDetection",
+		"insertVertexCondition",
+		"pixelTolerance",
+		"snapToPointer",
+		"style",
+		"wrapX",
+	],
 });
 
-type P = Props<typeof useBehavior> & {
+type P = Omit<InferOptions<typeof useBehavior>, "features" | "source"> & {
 	active?: boolean;
+	source: string;
 };
 
 export const Modify = forwardRef<OLModify, P>(
-	({ active, ...props }, ref) => {
-		const draw = useBehavior(props, ref);
+	({ active, source, ...props }, ref) => {
 		const map = useMap();
+		const [s] = useGetSources(map, [source]);
+		if (s && !(s instanceof VectorSource)) {
+			throw new Error(
+				`The target source of a Draw interaction should be a VectorSource`
+			);
+		}
 
-		if (active) draw?.setActive(active);
+		const modify = useBehavior({ ...props, source: s }, ref);
+		useInteractionLifecycle(modify, active, map);
 
-		useEffect(() => {
-			if (draw) {
-				map.addInteraction(draw);
-				return () => {
-					map.removeInteraction(draw);
-				};
-			}
-		}, [draw, map]);
-
-return null;
+		return null;
 	}
 );
