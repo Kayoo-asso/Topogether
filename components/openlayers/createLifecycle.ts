@@ -1,4 +1,5 @@
 import { setReactRef } from "helpers/utils";
+import { update } from "idb-keyval";
 import {
 	ForwardedRef,
 	useEffect,
@@ -51,6 +52,11 @@ export function createLifecycle<
 	// const handlers = events.map((x) => eventHandlers[x]);
 	const updateMethods = definition.reactive.map(setMethodName);
 
+	// console.log(`=== Definition for ${constructor.name} ===`)
+	// console.log(`-> Events = ${events}`)
+	// console.log(`-> Handlers = ${handlers}`)
+	// console.log(`-> Update methods = ${updateMethods}`)
+
 	return function (
 		props: BuildProps<Options, Events>,
 		ref: ForwardedRef<T> | undefined
@@ -100,11 +106,15 @@ export function createLifecycle<
 				for (let i = 0; i < eventFns.length; i++) {
 					const fn = eventFns[i];
 					const event = definition.events[i];
-					instance.on(event, fn);
+					if(fn) {
+						instance.on(event, fn);
+					}
 				}
 				return () => {
 					for (let i = 0; i < eventFns.length; i++) {
-						instance.un(definition.events[i], eventFns[i]);
+						if(eventFns[i]) {
+							instance.un(definition.events[i], eventFns[i]);
+						}
 					}
 				};
 			}
