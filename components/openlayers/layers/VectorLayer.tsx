@@ -22,9 +22,9 @@ const useBehavior = createLifecycle(OLVectorLayer, {
 	],
 });
 
-type Props = Omit<InferOptions<typeof useBehavior>, "source" | "map"> & {
+type Props = Omit<InferOptions<typeof useBehavior>, "source" | "map"> & React.PropsWithChildren<{
 	id?: string;
-};
+}>;
 
 export const VectorLayer = forwardRef<OLVectorLayer<VectorSource>, Props>(
 	({ children, id, ...props }, ref) => {

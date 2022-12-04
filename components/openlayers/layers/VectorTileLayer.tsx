@@ -22,9 +22,9 @@ const useBehavior = createLifecycle(OLVectorTileLayer, {
 	reset: [],
 });
 
-type Props = PropsWithChildren<typeof useBehavior> & {
+type Props = PropsWithChildren<typeof useBehavior> & React.PropsWithChildren<{
 	id?: string;
-};
+}>;
 
 export const VectorTileLayer = forwardRef<OLVectorTileLayer, Props>(
 	({ children, id, ...props }, ref) => {

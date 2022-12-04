@@ -23,9 +23,9 @@ const useBehavior = createLifecycle(OLTileLayer, {
 	reset: [],
 });
 
-type Props = Omit<InferOptions<typeof useBehavior>, "source"> & {
+type Props = Omit<InferOptions<typeof useBehavior>, "source"> & React.PropsWithChildren<{
 	id?: string;
-};
+}>;
 
 export const TileLayer = forwardRef<OLTileLayer<TileSource>, Props>(
 	({ children, id, ...props }, ref) => {

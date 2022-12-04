@@ -24,10 +24,10 @@ type Options = InferOptions<typeof useLifecycle>;
 type Props = Omit<
 	Options,
 	"view" | "target" | "interactions" | "overlays" | "layers"
-> & {
+> & React.PropsWithChildren<{
 	id?: string;
 	className?: string;
-};
+}>;
 
 export const Map = forwardRef<OLMap, Props>(
 	({ children, id, className, ...props }, ref) => {

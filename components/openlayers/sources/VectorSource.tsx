@@ -1,19 +1,15 @@
 import OLVectorSource from "ol/source/Vector";
 import { forwardRef, useEffect } from "react";
 import { useLayer } from "../contexts";
-import {
-	createLifecycle,
-	InferOptions,
-} from "../createLifecycle";
+import { createLifecycle, InferOptions } from "../createLifecycle";
 import { events, vectorSourceEvents } from "../events";
-
 
 const useBehavior = createLifecycle(OLVectorSource, {
 	events: events(vectorSourceEvents),
 	reactive: ["attributions", "loader", "url"],
 });
 
-type Props = InferOptions<typeof useBehavior>;
+type Props = InferOptions<typeof useBehavior> & React.PropsWithChildren<{}>;
 
 export const VectorSource = forwardRef<OLVectorSource, Props>(
 	({ children, ...props }, ref) => {
@@ -27,6 +23,6 @@ export const VectorSource = forwardRef<OLVectorSource, Props>(
 			}
 		}, [layer, source]);
 
-		return <>{children}</>
+		return <>{children}</>;
 	}
 );
