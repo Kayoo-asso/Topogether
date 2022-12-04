@@ -18,7 +18,7 @@ type P = Omit<InferOptions<typeof useBehavior>, "features" | "source"> & {
 	source: string;
 };
 
-export const Modify = forwardRef<OLSnap, P>(
+export const Snap = forwardRef<OLSnap, P>(
 	({ children, active, source, ...props }, ref) => {
 		const map = useMap();
 		const [s] = useGetSources(map, [source]);

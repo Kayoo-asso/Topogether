@@ -157,15 +157,14 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 						}}
 					>
 						<Select
-							active={true}
 							layers={["boulders"]}
+							hitTolerance={5}
 							style={function (feature) {
 								return boulderMarkerStyle(feature, true, true);
 							}}
 							onSelect={(ev) => {
 								if (ev.selected.length === 1) {
 									const feature = ev.selected[0];
-									console.log("Feature style:", feature.getStyle());
 									const {quark} = feature.get("data") as BoulderMarkerData;
 									console.log("Selected boulder: ", quark());
 								} else {

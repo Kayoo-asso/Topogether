@@ -1,6 +1,4 @@
 import OLDraw from "ol/interaction/Draw";
-import BaseLayer from "ol/layer/Base";
-import Source from "ol/source/Source";
 import VectorSource from "ol/source/Vector";
 import { forwardRef, useEffect } from "react";
 import { useMap } from "../contexts";
