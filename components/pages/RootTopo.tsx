@@ -36,6 +36,7 @@ import {
 	BoulderMarkerData,
 	boulderMarkerStyle,
 } from "components/map/markers/BoulderMarker2";
+import { singleClick } from "ol/events/condition";
 
 interface RootTopoProps {
 	topoQuark: Quark<Topo>;
@@ -171,8 +172,9 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 									console.log("No selected feature");
 								}
 							}}
+							toggleCondition={singleClick}
 						/>
-						<VectorLayer id="sectors">
+						{/* <VectorLayer id="sectors">
 							<VectorSource>
 								<Polygon
 									coordinates={[
@@ -183,7 +185,7 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 									]}
 								/>
 							</VectorSource>
-						</VectorLayer>
+						</VectorLayer> */}
 						<VectorLayer
 							id="boulders"
 							style={useCallback(
