@@ -13,7 +13,8 @@ import { Circle, Fill, Stroke, Style } from 'ol/style';
 import { Sector } from 'types';
 import { singleClick } from "ol/events/condition";
 import { useSelectStore } from 'components/pages/selectStore';
-import { fromLonLat } from 'ol/proj';
+import { fromLonLat, toLonLat } from 'ol/proj';
+import { Polygon as PolygonType } from 'ol/geom';
 
 interface SectorAreaMarkersLayerProps {
     sectors: QuarkArray<Sector>;
@@ -45,7 +46,6 @@ export function sectorMarkerStyle(selected: boolean) {
 
 const creatingSectorMarkerStyle = (feature: FeatureLike) => {
     const geometry = feature.getGeometry()!;
-    console.log('geometry', geometry.getType());
     if (geometry.getType() === 'LineString') {
         const styles = [
             new Style({
@@ -96,7 +96,6 @@ export const SectorAreaMarkersLayer: React.FC<SectorAreaMarkersLayerProps> = wat
     creating = false,
     ...props
 }: SectorAreaMarkersLayerProps) => {
-    const selectedType = useSelectStore((s) => s.item.type);
 
     return (
         <>
@@ -121,6 +120,12 @@ export const SectorAreaMarkersLayer: React.FC<SectorAreaMarkersLayerProps> = wat
                     source='sectors'
                     type='Polygon'
                     style={creatingSectorMarkerStyle}
+                    onDrawEnd={(e) => {
+                        const feature = e.feature;
+                        const poly = feature.getGeometry() as PolygonType | undefined;
+                        const coords = poly!.getCoordinates()[0].map(c => toLonLat(c));
+                        console.log(coords);
+                    }}
                 />
             }
 
