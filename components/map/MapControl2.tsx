@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Wrapper } from "@googlemaps/react-wrapper";
 import {
 	Map as BaseMap,
@@ -266,6 +266,17 @@ export const MapControl2 = watchDependencies<Map, MapControlProps>(
 					}}
 					onLoadEnd={(e: MapEvent) => {
 						const map = e.map;
+						// Allow markers to have a pointer cursor on hover
+						map.on('pointermove', function (e) {
+							const hit = map.forEachFeatureAtPixel(e.pixel, function(feature, layer) {
+								return true;
+							}); 
+							if (hit) {
+								map.getTargetElement().style.cursor = 'pointer';
+							} else {
+								map.getTargetElement().style.cursor = '';
+							}
+						})
 					}}
 				>
 					<View center={fromLonLat(props.initialCenter)} zoom={initialZoom} />
@@ -317,48 +328,6 @@ export const MapControl2 = watchDependencies<Map, MapControlProps>(
 
 					{props.children}
 				</BaseMap>
-
-				{/* <Wrapper
-					apiKey={process.env.NEXT_PUBLIC_GOOGLE_API_KEY || ""}
-					libraries={["places"]}
-				>
-					<Map
-						{...props}
-						ref={(ref) => {
-							setReactRef(mapRef, ref);
-							setReactRef(parentRef, ref);
-						}}
-						mapTypeId={satelliteView ? "satellite" : "roadmap"}
-						className={props.className ? props.className : ""}
-						onZoomChange={() => {
-							if (mapRef.current && props.onMapZoomChange) {
-								props.onMapZoomChange(mapRef.current.getZoom());
-							}
-						}}
-						draggableCursor={getMapCursor()}
-						onClick={(e) => {
-							if (selectedItem.type === 'sector') flush.item();
-							if (props.onClick) props.onClick(e);
-						}}
-						onLoad={(map) => {
-							map.setZoom(initialZoom);
-							const locs = props.boundsTo;
-							const initialCenter = props.initialCenter || position;
-							if (initialCenter) {
-								map.setCenter(toLatLng(initialCenter));
-							} else if (locs && locs.length > 1) {
-								const bounds = new google.maps.LatLngBounds();
-								for (const loc of locs) {
-									bounds.extend(toLatLng(loc));
-								}
-								map.fitBounds(bounds);
-							} else {
-								map.setCenter(toLatLng(fontainebleauLocation));
-							}
-						}}
-					>
-					</Map>
-				</Wrapper> */}
 			</div>
 		);
 	}

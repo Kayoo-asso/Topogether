@@ -32,7 +32,7 @@ export const Select = forwardRef<OLSelect, P>(
 	({ active, layers, ...props }, ref) => {
 		const map = useMap();
 		const ls = useGetLayers(map, layers);
-		console.log("Layers: ", ls)
+		// console.log("Layers: ", ls)
 		const filtered: Array<Layer> = useMemo(() => {
 			const list =[]
 			for (const l of ls) {

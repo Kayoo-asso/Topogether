@@ -47,7 +47,7 @@ export function useGetLayers(map: Map | undefined, ids: Array<string | undefined
 	// The array can contain undefineds because we really want it to be the same length as the `ids` array
 	const layers: Array<Layer | undefined> = useMemo(() => {
 		const list = []
-		console.log("Getting layers:", ids)
+		// console.log("Getting layers:", ids)
 		if (map) {
 			const collection = map.getLayers();
 			for (const id of ids) {
