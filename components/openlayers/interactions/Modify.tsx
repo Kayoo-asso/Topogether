@@ -22,12 +22,11 @@ const useBehavior = createLifecycle(OLModify, {
 });
 
 type P = Omit<InferOptions<typeof useBehavior>, "features" | "source"> & {
-	active?: boolean;
 	source: string;
 };
 
 export const Modify = forwardRef<OLModify, P>(
-	({ active, source, ...props }, ref) => {
+	({ source, ...props }, ref) => {
 		const map = useMap();
 		const [s] = useGetSources(map, [source]);
 		if (s && !(s instanceof VectorSource)) {
@@ -37,7 +36,7 @@ export const Modify = forwardRef<OLModify, P>(
 		}
 
 		const modify = useBehavior({ ...props, source: s }, ref);
-		useInteractionLifecycle(modify, active, map);
+		useInteractionLifecycle(modify, map);
 
 		return null;
 	}

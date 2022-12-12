@@ -10,6 +10,7 @@ import {
 	useEffect,
 	useImperativeHandle,
 	useMemo,
+	useState,
 } from "react";
 import { useSource } from "./contexts";
 
@@ -33,6 +34,8 @@ interface CoordinatesTypeMap {
 	multilinestring: Array<Array<Coordinate>>;
 	multipolygon: Array<Array<Array<Coordinate>>>;
 }
+
+type CoordinatesArray = CoordinatesTypeMap[keyof CoordinatesTypeMap];
 
 type Geometry =
 	| OLCircle
@@ -82,6 +85,7 @@ function implementation<G extends GeometryType>(
 ) {
 	const source = useSource();
 
+
 	let geometry: Geometry;
 	// The `type` prop should never change for a given component.
 	// The `implementation` function is never exported and only used through the components defined below
@@ -97,7 +101,8 @@ function implementation<G extends GeometryType>(
 		const g = useMemo(() => {
 			const fn = constructors[props.type];
 			return new fn(props.coordinates as any, props.layout);
-		}, [props.coordinates, props.layout]);
+		}, []);
+
 		g.setCoordinates(props.coordinates as any, props.layout);
 		geometry = g;
 	}
@@ -105,7 +110,8 @@ function implementation<G extends GeometryType>(
 	const feature = useMemo(() => new Feature({ geometry }), [geometry]);
 
 	feature.setId(props.id);
-	feature.setStyle(props.style);
+	// TODO: deep comparison before updating style?
+	// feature.setStyle(props.style);
 	feature.setProperties({
 		data: props.data
 	});

@@ -96,6 +96,7 @@ export const SectorAreaMarkersLayer: React.FC<SectorAreaMarkersLayerProps> = wat
     creating = false,
     ...props
 }: SectorAreaMarkersLayerProps) => {
+    const flush = useSelectStore(s => s.flush);
 
     return (
         <>
@@ -108,11 +109,14 @@ export const SectorAreaMarkersLayer: React.FC<SectorAreaMarkersLayerProps> = wat
                     return sectorMarkerStyle(true);
                 }}
                 onSelect={(ev) => {
+                    ev.stopPropagation();
+                    ev.preventDefault();
                     if (ev.selected.length === 1) {
                         const feature = ev.selected[0];
+                    } else if (ev.deselected.length === 1) {
+                        flush.item();
                     }
                 }}
-                toggleCondition={singleClick}
             />
 
             {creating &&

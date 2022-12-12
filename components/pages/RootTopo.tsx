@@ -142,14 +142,15 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 							findBoulders: true,
 						}}
 					>
-						<BoulderMarkersLayer 
-							boulders={props.topoQuark().boulders}
-							boulderOrder={boulderOrder()}
-						/>
 						<SectorAreaMarkersLayer 
 							sectors={props.topoQuark().sectors}
 							// creating
 						/>
+						<BoulderMarkersLayer 
+							boulders={props.topoQuark().boulders}
+							boulderOrder={boulderOrder()}
+						/>
+						
 						
 					</MapControl2>
 

@@ -12,6 +12,7 @@ import { Boulder, UUID } from 'types';
 import { singleClick } from "ol/events/condition";
 import { useSelectStore } from 'components/pages/selectStore';
 import { fromLonLat } from 'ol/proj';
+import { SelectEvent } from 'ol/interaction/Select';
 
 interface BoulderMarkersLayerProps {
     boulders: QuarkArray<Boulder>;
@@ -93,22 +94,20 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> = watchDepe
                 layers={["boulders"]}
                 hitTolerance={5}
                 style={(feature) => {
-                    console.log("ici");
                     return boulderMarkerStyle(feature, true, true);
                 }}
-                onSelect={(ev) => {
-                    // console.log(ev);
+                onSelect={(ev: SelectEvent) => {
+                    ev.mapBrowserEvent.stopPropagation();
+                    ev.mapBrowserEvent.preventDefault();
                     if (ev.selected.length === 1) {
                         const feature = ev.selected[0];
                         const { quark } = feature.get("data") as BoulderMarkerData;
                         select.boulder(quark);
                         // console.log("Selected boulder: ", quark());
                     } else if (ev.deselected.length === 1) {
-                        // flush.item();
+                        flush.item();
                     }
                 }}
-                condition={singleClick}
-                toggleCondition={singleClick}
             />
 
             <VectorLayer

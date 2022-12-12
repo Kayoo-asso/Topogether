@@ -95,7 +95,6 @@ function handleUpEvent(this: DragInteraction) {
 }
 
 type Options = {
-	active?: boolean,
 	condition?: Condition;
 	cursor?: string;
 	// onPointerDown(event: MapBrowserEvent<UIEvent>): void;

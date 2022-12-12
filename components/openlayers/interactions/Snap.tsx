@@ -14,12 +14,11 @@ const useBehavior = createLifecycle(OLSnap, {
 
 // Add support for a target Collection
 type P = Omit<InferOptions<typeof useBehavior>, "features" | "source"> & {
-	active?: boolean;
 	source: string;
 };
 
 export const Snap = forwardRef<OLSnap, P>(
-	({ children, active, source, ...props }, ref) => {
+	({ children, source, ...props }, ref) => {
 		const map = useMap();
 		const [s] = useGetSources(map, [source]);
 		if (s && !(s instanceof VectorSource)) {
@@ -29,7 +28,7 @@ export const Snap = forwardRef<OLSnap, P>(
 		}
 		const modify = useBehavior({...props, source: s}, ref);
 
-		useInteractionLifecycle(modify, active, map);
+		useInteractionLifecycle(modify, map);
 
 		return null;
 	}

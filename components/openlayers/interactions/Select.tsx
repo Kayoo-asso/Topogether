@@ -18,20 +18,19 @@ const useBehavior = createLifecycle(OLSelect, {
 		"multi",
 		"layers",
 		"removeCondition",
-		"style",
 		"toggleCondition",
 	],
 });
 
 type P = Omit<InferOptions<typeof useBehavior>, "features" | "layers"> & {
 	layers: string[];
-	active?: boolean;
 };
 
 export const Select = forwardRef<OLSelect, P>(
-	({ active, layers, ...props }, ref) => {
+	({ layers, ...props }, ref) => {
 		const map = useMap();
 		const ls = useGetLayers(map, layers);
+
 		// console.log("Layers: ", ls)
 		const filtered: Array<Layer> = useMemo(() => {
 			const list =[]
@@ -41,7 +40,10 @@ export const Select = forwardRef<OLSelect, P>(
 			return list;
 		}, [ls]);
 		const select = useBehavior({ ...props, layers: filtered }, ref);
-		useInteractionLifecycle(select, active, map);
+		if(select && props.style) {
+			(select as any).style_=  props.style;
+		}
+		useInteractionLifecycle(select, map);
 
 		return null;
 	}

@@ -38,11 +38,10 @@ type Props = Omit<
 > & {
 	source: string;
 	traceSource?: string;
-	active?: boolean;
 };
 
 export const Draw = forwardRef<OLDraw, Props>(
-	({ active, source, traceSource, ...props }, ref) => {
+	({ source, traceSource, ...props }, ref) => {
 		const map = useMap();
 		const [s, ts] = useGetSources(map, [source, traceSource]);
 		if (s && !(s instanceof VectorSource)) {
@@ -57,7 +56,7 @@ export const Draw = forwardRef<OLDraw, Props>(
 		}
 
 		const draw = useBehavior({ ...props, source: s, traceSource: ts}, ref);
-		useInteractionLifecycle(draw, active, map);
+		useInteractionLifecycle(draw, map);
 
 		return null;
 	}
