@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { Quark, QuarkArray, watchDependencies } from 'helpers/quarky';
 import {
 	Point,
@@ -24,8 +24,9 @@ export type BoulderMarkerData = {
 	quark: Quark<Boulder>;
 }
 
-export function boulderMarkerStyle(feature: FeatureLike, selected: boolean, anySelected: boolean) {
+export const boulderMarkerStyle = (feature: FeatureLike, selected: boolean, anySelected: boolean) => {
     const { label } = feature.get("data") as BoulderMarkerData;
+
     const icon = new Icon({
         opacity: anySelected ? (selected ? 1 : 0.4) : 1,
         src: selected ? "/assets/icons/colored/_rock_bold.svg" : "/assets/icons/colored/_rock.svg",
@@ -50,6 +51,39 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> = watchDepe
     ...props
 }: BoulderMarkersLayerProps) => {
     const selectedType = useSelectStore((s) => s.item.type);
+    const selectedItem = useSelectStore((s) => s.item.value);
+
+    const select = useSelectStore(s => s.select);
+    const flush = useSelectStore(s => s.flush);
+
+
+    // const boulderMarkerStyle = useCallback((feature: FeatureLike, selected: boolean, anySelected: boolean) => {
+    //     const { label } = feature.get("data") as BoulderMarkerData;
+    //     const { quark } = feature.get("data");
+    //     const selectedB = selectedItem && selectedItem()
+    //     const same = quark().id === selectedB?.id;
+    //     // console.log(quark().id);
+    //     // console.log(selectedB?.id)
+ 
+    //     const icon = new Icon({
+    //         opacity: anySelected ? (same ? 1 : 0.4) : 1,
+    //         src: same ? "/assets/icons/colored/_rock_bold.svg" : "/assets/icons/colored/_rock.svg",
+    //         scale: 1,
+    //     });
+    //     const text = new Text({
+    //         text: label,
+    //         scale: 1.4,
+    //         fill: new Fill({ color: "#04D98B" }),
+    //         font: "Poppins",
+    //         offsetY: 22,
+    //     })
+    //     return new Style({
+    //         image: icon,
+    //         text,
+    //         // zIndex: 100
+    //     });
+    // }, [selectedItem, selectedItem && selectedItem()]);
+
 
     return (
         <>
@@ -58,32 +92,35 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> = watchDepe
             <Select
                 layers={["boulders"]}
                 hitTolerance={5}
-                style={function (feature) {
+                style={(feature) => {
+                    console.log("ici");
                     return boulderMarkerStyle(feature, true, true);
                 }}
                 onSelect={(ev) => {
+                    // console.log(ev);
                     if (ev.selected.length === 1) {
                         const feature = ev.selected[0];
                         const { quark } = feature.get("data") as BoulderMarkerData;
+                        select.boulder(quark);
                         // console.log("Selected boulder: ", quark());
-                    } else {
-                        // console.log("No selected feature");
+                    } else if (ev.deselected.length === 1) {
+                        // flush.item();
                     }
                 }}
+                condition={singleClick}
                 toggleCondition={singleClick}
             />
 
             <VectorLayer
                 id="boulders"     
                 style={useCallback(
-                    (feature) =>
-                        boulderMarkerStyle(
+                    (feature) => boulderMarkerStyle (
                             feature,
                             false,
                             selectedType === "boulder"
-                        ),
-                    [selectedType]
-                )}
+                        )
+                    , [selectedType])
+                }
             >
                 <VectorSource>
                     {props.boulders.quarks().map(bQuark => {

@@ -148,7 +148,7 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 						/>
 						<SectorAreaMarkersLayer 
 							sectors={props.topoQuark().sectors}
-							creating
+							// creating
 						/>
 						
 					</MapControl2>
