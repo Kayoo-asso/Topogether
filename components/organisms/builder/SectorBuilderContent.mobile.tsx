@@ -4,11 +4,12 @@ import { Topo, UUID } from "types";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { SectorListBuilder } from "./SectorListBuilder";
 import { useSelectStore } from "components/pages/selectStore";
+import { Map } from "ol";
 
 interface SectorBuilderContentMobileProps {
 	topoQuark: Quark<Topo>;
-	boulderOrder: Map<UUID, number>;
-	map: google.maps.Map | null;
+	boulderOrder: globalThis.Map<UUID, number>;
+	map: Map | null;
 }
 
 export const SectorBuilderContentMobile: React.FC<SectorBuilderContentMobileProps> =

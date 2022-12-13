@@ -143,7 +143,7 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 							findBoulders: true,
 						}}
 						displaySectorButton
-						// onClick={(e) => console.log(toLonLat(e.coordinate))}
+						onClick={(e) => console.log(toLonLat(e.coordinate))}
 					>
 						<SectorAreaMarkersLayer
 							topoQuark={props.topoQuark}
@@ -155,7 +155,6 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 							boulders={props.topoQuark().boulders}
 							boulderOrder={boulderOrder()}
 						/>
-						
 						
 					</MapControl2>
 

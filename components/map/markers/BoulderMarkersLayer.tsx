@@ -11,7 +11,6 @@ import { Fill, Icon, Style, Text } from 'ol/style';
 import { Boulder, UUID } from 'types';
 import { useSelectStore } from 'components/pages/selectStore';
 import { fromLonLat } from 'ol/proj';
-import { Map } from 'ol';
 
 interface BoulderMarkersLayerProps {
     boulders: QuarkArray<Boulder>;
@@ -54,7 +53,7 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> = watchDepe
     const selectedItem = useSelectStore((s) => s.item.value);
     const select = useSelectStore(s => s.select);
     const flush = useSelectStore(s => s.flush);
-
+    
     return (
         <>
             {/* TODO: Drag Interaction */}

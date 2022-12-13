@@ -18,11 +18,13 @@ import { staticUrl } from "helpers/constants";
 import { toLatLng } from "helpers/map";
 import { useSelectStore } from "components/pages/selectStore";
 import { ModalRenameSector } from "./ModalRenameSector";
+import { Map } from "ol";
+import { fromLonLat } from "ol/proj";
 
 export interface SectorListBuilderProps {
 	topoQuark: Quark<Topo>;
-	boulderOrder: Map<UUID, number>;
-	map: google.maps.Map | null
+	boulderOrder: globalThis.Map<UUID, number>;
+	map: Map | null
 }
 
 // Note: some cleanup happened here
@@ -36,7 +38,7 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> =
 		const selectedBoulder = selectStore.item.type === 'boulder' ? selectStore.item : undefined;
 		const topo = props.topoQuark();
 
-		const boulderQuarksMap = new Map<UUID, Quark<Boulder>>();
+		const boulderQuarksMap = new globalThis.Map<UUID, Quark<Boulder>>();
 		for (const bq of topo.boulders.quarks()) {
 			const b = bq();
 			boulderQuarksMap.set(b.id, bq);
@@ -212,7 +214,7 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> =
 																			onArrowClick={() => toggleBoulder(boulder)}
 																			onNameClick={() => {
 																				selectStore.select.boulder(boulderQuark);
-																				props.map?.setCenter(toLatLng(boulderQuark().location));
+																				props.map?.getView().setCenter(fromLonLat(boulderQuark().location));
 																				toggleBoulder(boulder);
 																			}}
 																			onDeleteClick={() => showModalDeleteBoulder(boulderQuark) }
@@ -284,7 +286,7 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> =
 																	onArrowClick={() => toggleBoulder(boulder)}
 																	onNameClick={() => {
 																		selectStore.select.boulder(boulderQuark);
-																		props.map?.setCenter(toLatLng(boulderQuark().location));
+																		props.map?.getView().setCenter(fromLonLat(boulderQuark().location));
 																		toggleBoulder(boulder);
 																	}}
 																	onDeleteClick={() => showModalDeleteBoulder(boulderQuark) }

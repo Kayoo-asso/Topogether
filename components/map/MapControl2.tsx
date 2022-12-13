@@ -281,6 +281,11 @@ export const MapControl2 = watchDependencies<Map, MapControlProps>(
 						if (selectedItem.type === "sector") flush.item();
 						if (props.onClick) props.onClick(e);
 					}}
+					onLoadEnd={(e) => {
+						const map = e.map;
+						// const bbox = [1, 1, 1, 1];
+						// map.getView().fit(bbox, { size: map.getSize() });
+					}}
 				>
 					<View center={fromLonLat(props.initialCenter)} zoom={initialZoom} />
 

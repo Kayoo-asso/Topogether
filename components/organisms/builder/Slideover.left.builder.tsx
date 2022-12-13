@@ -7,11 +7,12 @@ import { SlideoverLeftDesktop, SlideoverMobile } from "components/atoms/overlays
 import { useSelectStore } from "components/pages/selectStore";
 import { SectorBuilderContentMobile } from "./SectorBuilderContent.mobile";
 import { ContributorsList } from "./ContributorsList";
+import { Map } from "ol";
 
 type SlideoverLeftBuilderProps = {
     topo: Quark<Topo>;
-	boulderOrder: Map<UUID, number>;
-	map: google.maps.Map | null
+	boulderOrder: globalThis.Map<UUID, number>;
+	map: Map | null
 }
 
 export const SlideoverLeftBuilder: React.FC<SlideoverLeftBuilderProps> = (props: SlideoverLeftBuilderProps) => {

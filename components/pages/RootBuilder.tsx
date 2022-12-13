@@ -246,7 +246,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 						<BoulderMarkersLayer 
 							boulders={props.topoQuark().boulders}
 							boulderOrder={boulderOrder()}
-							draggable
+							// draggable
 						/>
 
 					</MapControl2>

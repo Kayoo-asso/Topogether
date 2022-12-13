@@ -3,11 +3,12 @@ import { Button } from "components";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { Topo, UUID } from "types";
 import { SectorListBuilder } from "components/organisms/builder/SectorListBuilder";
+import { Map } from "ol";
 
 interface LeftbarBuilderDesktopProps {
 	topoQuark: Quark<Topo>;
-	boulderOrder: Map<UUID, number>;
-	map: google.maps.Map | null
+	boulderOrder: globalThis.Map<UUID, number>;
+	map: Map | null
 	activateSubmission: boolean;
 	onSubmit: () => void;
 }
