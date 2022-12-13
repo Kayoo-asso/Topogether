@@ -2,11 +2,12 @@ import React from "react";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { Topo, UUID } from "types";
 import { SectorList } from "components";
+import { Map } from "ol";
 
 interface LeftbarTopoDesktopProps {
 	topoQuark: Quark<Topo>;
-	boulderOrder: Map<UUID, number>;
-	map: google.maps.Map | null;
+	boulderOrder: globalThis.Map<UUID, number>;
+	map: Map | null;
 }
 
 export const LeftbarTopoDesktop: React.FC<LeftbarTopoDesktopProps> =

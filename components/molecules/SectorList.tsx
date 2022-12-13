@@ -4,12 +4,15 @@ import { Boulder, Sector, Topo, UUID } from "types";
 import ArrowSimple from "assets/icons/arrow-simple.svg";
 import { BoulderItemLeftbar } from "components/layouts/BoulderItemLeftbar";
 import { useSelectStore } from "components/pages/selectStore";
-import { toLatLng } from "helpers/map";
+import { Map } from "ol";
+
+import { transform } from 'ol/proj.js';
+import Select from "ol/interaction/Select";
 
 interface SectorListProps {
 	topoQuark: Quark<Topo>;
-	boulderOrder: Map<UUID, number>;
-	map: google.maps.Map | null;
+	boulderOrder: globalThis.Map<UUID, number>;
+	map: Map | null;
 }
 
 export const SectorList: React.FC<SectorListProps> = watchDependencies(
@@ -18,7 +21,7 @@ export const SectorList: React.FC<SectorListProps> = watchDependencies(
 		const selectedBoulder = selectStore.item.type === 'boulder' ? selectStore.item : undefined;	
 		const topo = props.topoQuark();
 
-		const boulderQuarksMap = new Map<UUID, Quark<Boulder>>();
+		const boulderQuarksMap = new globalThis.Map<UUID, Quark<Boulder>>();
 		for (const bq of topo.boulders.quarks()) {
 			const b = bq();
 			boulderQuarksMap.set(b.id, bq);
@@ -102,7 +105,7 @@ export const SectorList: React.FC<SectorListProps> = watchDependencies(
 														onArrowClick={() => toggleBoulder(boulder)}
 														onNameClick={() => {
 															selectStore.select.boulder(boulderQuark);
-															props.map?.setCenter(toLatLng(boulderQuark().location));
+															props.map?.getView().setCenter(transform(boulderQuark().location, 'EPSG:4326', 'EPSG:3857'));
 															toggleBoulder(boulder);
 														}}
 														onTrackClick={(trackQuark) => selectStore.select.track(trackQuark, boulderQuark)}
@@ -137,7 +140,7 @@ export const SectorList: React.FC<SectorListProps> = watchDependencies(
 										onArrowClick={() => toggleBoulder(boulder)}
 										onNameClick={() => {
 											selectStore.select.boulder(boulderQuark);
-											props.map?.setCenter(toLatLng(boulderQuark().location));
+											props.map?.getView().setCenter(transform(boulderQuark().location, 'EPSG:4326', 'EPSG:3857'));
 											toggleBoulder(boulder);
 										}}
 										onTrackClick={(trackQuark) =>

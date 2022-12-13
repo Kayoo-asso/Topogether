@@ -50,6 +50,11 @@ import { KeyboardShortcut } from "components/organisms/builder/KeyboardShortcuts
 import { DropdownOption } from "components/molecules";
 import { Flash } from "components/atoms/overlays";
 import { NetworkIndicator } from "components/atoms/NetworkIndicator";
+import { MapControl2 } from "components/map/MapControl2";
+import { Map, MapBrowserEvent } from "ol";
+import { toLonLat } from "ol/proj";
+import { SectorAreaMarkersLayer } from "components/map/markers/SectorAreaMarkersLayer";
+import { BoulderMarkersLayer } from "components/map/markers/BoulderMarkersLayer";
 
 interface RootBuilderProps {
 	topoQuark: Quark<Topo>;
@@ -80,7 +85,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 		}>();
 		const [deleteItem, setDeleteItem] = useState<InteractItem>({ type: 'none', value: undefined });
 
-		const mapRef = useRef<google.maps.Map>(null);
+		const mapRef = useRef<Map>(null);
 		
 		const [ModalSubmitTopo, showModalSubmitTopo] = useModal();
 		const [ModalDeleteTopo, showModalDeleteTopo] = useModal();
@@ -151,13 +156,14 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 
 		const [flashOpen, setFlashOpen] = useState(false);
 		const handleCreateNewMarker = useCallback(
-			(e) => {
+			(e: MapBrowserEvent<MouseEvent>) => {
 				if (!isEmptyStore()) {
 					flush.info();
 					flush.item();
 				}
-				else if (e.latLng) {
-					const loc: GeoCoordinates = [e.latLng.lng(), e.latLng.lat()];
+				else if (e.coordinate) {
+					const lonlat = toLonLat(e.coordinate)
+					const loc: GeoCoordinates = [lonlat[0], lonlat[1]];
 					switch (tool) {
 						case "ROCK":
 							if (!isFilterEmpty()) setFlashOpen(true);
@@ -215,7 +221,37 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 						map={mapRef.current}
 					/>
 
-					<MapControl
+					<MapControl2 
+						ref={mapRef}
+						topo={props.topoQuark}
+						initialZoom={16}
+						initialCenter={topo.location}
+						displaySectorButton
+						onSectorButtonClick={() => select.info("SECTOR", breakpoint)}
+						searchbarOptions={{
+							findBoulders: true,
+							focusOnOpen: true,
+						}}
+						displayToolSelector
+						boulderFilters={boulderFilters}
+						boulderFiltersDomain={defaultBoulderFilterOptions}
+						onClick={handleCreateNewMarker}
+					>
+						<SectorAreaMarkersLayer
+							topoQuark={props.topoQuark}
+							boulderOrder={boulderOrder()}
+							selectable
+							creating={tool === "SECTOR"}
+						/>
+						<BoulderMarkersLayer 
+							boulders={props.topoQuark().boulders}
+							boulderOrder={boulderOrder()}
+							draggable
+						/>
+
+					</MapControl2>
+
+					{/* <MapControl
 						ref={mapRef}
 						initialZoom={16}
 						initialCenter={topo.location}
@@ -251,7 +287,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 							setDropdownItem={setDropdownItem}
 							setDropdownPosition={setDropdownPosition}
 						/>
-					</MapControl>
+					</MapControl> */}
 
 					<SlideoverRightBuilder
 						topo={props.topoQuark}

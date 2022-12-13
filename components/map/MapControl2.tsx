@@ -36,7 +36,7 @@ import { useSelectStore } from "components/pages/selectStore";
 import { handleNewPhoto } from "helpers/handleNewPhoto";
 import { useSession } from "helpers/services";
 import { MapToolSelector } from "./MapToolSelector";
-import { MapEvent } from "ol";
+import { MapBrowserEvent, MapEvent } from "ol";
 import { Props } from "components/openlayers/Map";
 
 type MapControlProps = React.PropsWithChildren<
@@ -126,7 +126,24 @@ export const MapControl2 = watchDependencies<Map, MapControlProps>(
 					return "";
 			}
 		}, [tool]);
-
+		//If a tool is selected, display the corresponding cursor. If not, display pointer on features.
+		const determinePointer = useCallback((e) => {
+			if (tool || !mapRef.current) return;
+			const map = mapRef.current;
+			const hit = map.forEachFeatureAtPixel(e.pixel, function(feature, layer) {
+				return true;
+			}); 
+			if (hit) {
+				map.getTargetElement().style.cursor = 'pointer';
+			} else {
+				map.getTargetElement().style.cursor = '';
+			}
+		}, [mapRef.current, tool]);
+		useEffect(() => {
+			mapRef.current?.addEventListener('pointermove', determinePointer);
+			return () => mapRef.current?.removeEventListener('pointermove', determinePointer);
+		}, [mapRef.current, tool]);
+		
 		return (
 			<div className="relative h-full w-full">
 				<div className="absolute h-full w-full">
@@ -186,7 +203,7 @@ export const MapControl2 = watchDependencies<Map, MapControlProps>(
 					</div>
 
 					{/* Bottom left */}
-					<div className="absolute bottom-0 left-0 m-3">
+					<div className={"absolute bottom-0 left-0 m-3" + (breakpoint === "desktop" ? " z-100" : "")}>
 						{displaySectorButton && (
 							<RoundButton
 								className="z-10 md:hidden"
@@ -239,8 +256,8 @@ export const MapControl2 = watchDependencies<Map, MapControlProps>(
 					</div>
 
 					{/* Bottom right */}
-					<div className="absolute right-0 bottom-0 m-3">
-						{displayUserMarker && (
+					<div className={"absolute right-0 bottom-0 m-3" + (breakpoint === "desktop" ? " z-100" : "")}>
+						{displayUserMarker && position && (
 							<RoundButton
 								onClick={() => {
 									if (position) {
@@ -263,20 +280,6 @@ export const MapControl2 = watchDependencies<Map, MapControlProps>(
 					onClick={(e) => {
 						if (selectedItem.type === "sector") flush.item();
 						if (props.onClick) props.onClick(e);
-					}}
-					onLoadEnd={(e: MapEvent) => {
-						const map = e.map;
-						// Allow markers to have a pointer cursor on hover
-						map.on('pointermove', function (e) {
-							const hit = map.forEachFeatureAtPixel(e.pixel, function(feature, layer) {
-								return true;
-							}); 
-							if (hit) {
-								map.getTargetElement().style.cursor = 'pointer';
-							} else {
-								map.getTargetElement().style.cursor = '';
-							}
-						})
 					}}
 				>
 					<View center={fromLonLat(props.initialCenter)} zoom={initialZoom} />

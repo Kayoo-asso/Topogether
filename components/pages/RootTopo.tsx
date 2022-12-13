@@ -24,6 +24,7 @@ import { TopoMarkers } from "components/organisms/topo/TopoMarkers";
 import { SlideoverRightTopo } from "components/organisms/topo/Slideover.right.topo";
 import { BoulderMarkersLayer } from "components/map/markers/BoulderMarkersLayer";
 import { SectorAreaMarkersLayer } from "components/map/markers/SectorAreaMarkersLayer";
+import { toLonLat } from "ol/proj";
 
 interface RootTopoProps {
 	topoQuark: Quark<Topo>;
@@ -141,9 +142,13 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 						searchbarOptions={{
 							findBoulders: true,
 						}}
+						displaySectorButton
+						// onClick={(e) => console.log(toLonLat(e.coordinate))}
 					>
-						<SectorAreaMarkersLayer 
-							sectors={props.topoQuark().sectors}
+						<SectorAreaMarkersLayer
+							topoQuark={props.topoQuark}
+							boulderOrder={boulderOrder()}
+							// selectable
 							// creating
 						/>
 						<BoulderMarkersLayer 
