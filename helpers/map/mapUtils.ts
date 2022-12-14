@@ -1,4 +1,6 @@
 import type { Breakpoint } from "helpers/hooks";
+import { Map } from "ol";
+import { buffer, extend, Extent } from "ol/extent";
 import { GeoCoordinates, Position } from "types";
 
 // --- LatLng helpers ---
@@ -20,6 +22,24 @@ export function fromLatLngLiteralFn(
 	latLng: google.maps.LatLngLiteral
 ): Position {
 	return [latLng.lng, latLng.lat];
+}
+
+export type LayerNames = 'boulders' | 'parkings' | 'sectors' | 'waypoints' | 'topos';
+export const getLayersExtent = (map: Map, lyrsClassName: LayerNames[]) => {
+	let ext: Extent = [0, 0, 0, 0];
+	let i = 0;
+	for (let className of lyrsClassName) {
+		const lyr = map.getLayers().getArray().find(l => l.getClassName().includes(className)) as any;
+		if (lyr) { 
+			if (i === 0) ext = lyr.getSource().getExtent();
+			else ext = extend(ext, lyr.getSource().getExtent());
+			i++;
+		}
+	}
+	map.getView().fit(buffer(ext, 500), { size: map.getSize(), maxZoom: 18 });
+}
+export const getExtentFromSearchbar = () => {
+
 }
 
 // --- markerSize ---

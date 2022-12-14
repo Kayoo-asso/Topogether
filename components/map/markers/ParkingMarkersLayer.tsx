@@ -6,52 +6,37 @@ import {
 	VectorLayer,
 	VectorSource,
 } from "components/openlayers";
-import { FeatureLike } from 'ol/Feature';
-import { Fill, Icon, Style, Text } from 'ol/style';
-import { Boulder, UUID } from 'types';
+import { Icon, Style } from 'ol/style';
+import { Parking } from 'types';
 import { useSelectStore } from 'components/pages/selectStore';
 import { fromLonLat } from 'ol/proj';
-import { singleClick } from 'ol/events/condition';
 
-interface BoulderMarkersLayerProps {
-    boulders: QuarkArray<Boulder>;
-	boulderOrder: globalThis.Map<UUID, number>;
+interface ParkingMarkersLayerProps {
+    parkings: QuarkArray<Parking>;
     draggable?: boolean;
 }
 
-export type BoulderMarkerData = {
+export type ParkingMarkerData = {
 	label: string;
-	quark: Quark<Boulder>;
+	quark: Quark<Parking>;
 }
 
-export const boulderMarkerStyle = (feature: FeatureLike, selected: boolean, anySelected: boolean) => {
-    const { label } = feature.get("data") as BoulderMarkerData;
-
+export const parkingMarkerStyle = (selected: boolean, anySelected: boolean) => {
     const icon = new Icon({
         opacity: anySelected ? (selected ? 1 : 0.4) : 1,
-        src: selected ? "/assets/icons/colored/_rock_bold.svg" : "/assets/icons/colored/_rock.svg",
+        src: selected ? "/assets/icons/colored/_parking_bold.svg" : "/assets/icons/colored/_parking.svg",
         scale: 1,
     });
-    const text = new Text({
-        text: label,
-        scale: 1.4,
-        fill: new Fill({ 
-            color: anySelected ? (selected ? "#04D98B" : 'rgba(4, 217, 139, 0.3)') : "#04D98B",  
-        }),
-        font: "Poppins",
-        offsetY: 22,
-    })
     return new Style({
         image: icon,
-        text,
         zIndex: 100
     });
 }
 
-export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> = watchDependencies(({
+export const ParkingMarkersLayer: React.FC<ParkingMarkersLayerProps> = watchDependencies(({
     draggable = false,
     ...props
-}: BoulderMarkersLayerProps) => {
+}: ParkingMarkersLayerProps) => {
     const selectedType = useSelectStore((s) => s.item.type);
     const selectedItem = useSelectStore((s) => s.item.value);
     const select = useSelectStore(s => s.select);
@@ -62,7 +47,7 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> = watchDepe
             {/* TODO: Drag Interaction */}
 
             <Select
-                layers={["boulders"]}
+                layers={["parkings"]}
                 hitTolerance={5}
                 onSelect={(e) => {
                     e.target.getFeatures().clear();
@@ -70,9 +55,8 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> = watchDepe
                     e.mapBrowserEvent.preventDefault();
                     if (e.selected.length === 1) {
                         const feature = e.selected[0];
-                        const { quark } = feature.get("data") as BoulderMarkerData;
-                        select.boulder(quark);
-                        // console.log("Selected boulder: ", quark());
+                        const { quark } = feature.get("data") as ParkingMarkerData;
+                        select.parking(quark);
                     } else if (e.deselected.length === 1) {
                         flush.item();
                     }
@@ -80,13 +64,12 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> = watchDepe
             />
 
             <VectorLayer
-                id="boulders"
-                className='boulders'
+                id="parkings"
+                className='parkings'
                 style={useCallback(
                     (feature) => {
                         const bId = feature.get("data").quark().id;
-                        return boulderMarkerStyle (
-                            feature,
+                        return parkingMarkerStyle (
                             selectedItem ? selectedItem().id === bId : false,
                             selectedType !== "none"
                         )}
@@ -94,15 +77,13 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> = watchDepe
                 }
             >
                 <VectorSource>
-                    {props.boulders.quarks().map(bQuark => {
-                        const b = bQuark();
-                        const label = props.boulderOrder.get(b.id)! +
-                            (process.env.NODE_ENV === "development" ? ". " + b.name : "")
+                    {props.parkings.quarks().map(pQuark => {
+                        const p = pQuark();
                         return (
                             <Point
-                                key={b.id}
-                                coordinates={fromLonLat(b.location)}
-                                data={{ quark: bQuark, label }}
+                                key={p.id}
+                                coordinates={fromLonLat(p.location)}
+                                data={{ quark: pQuark }}
                             />
                         )
                     })}
@@ -112,4 +93,4 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> = watchDepe
     )
 })
 
-BoulderMarkersLayer.displayName = "BoulderMarkersLayer";
+ParkingMarkersLayer.displayName = "ParkingMarkersLayer";

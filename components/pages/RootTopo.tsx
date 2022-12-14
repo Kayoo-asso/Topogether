@@ -25,6 +25,7 @@ import { SlideoverRightTopo } from "components/organisms/topo/Slideover.right.to
 import { BoulderMarkersLayer } from "components/map/markers/BoulderMarkersLayer";
 import { SectorAreaMarkersLayer } from "components/map/markers/SectorAreaMarkersLayer";
 import { toLonLat } from "ol/proj";
+import { ParkingMarkersLayer } from "components/map/markers/ParkingMarkersLayer";
 
 interface RootTopoProps {
 	topoQuark: Quark<Topo>;
@@ -139,21 +140,25 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 						topo={props.topoQuark}
 						initialZoom={16}
 						initialCenter={topo.location}
+						layerClassNameForInitialExtent={['boulders', 'parkings', 'waypoints']}
 						searchbarOptions={{
 							findBoulders: true,
 						}}
 						displaySectorButton
-						onClick={(e) => console.log(toLonLat(e.coordinate))}
+						onClick={(e) => {
+							// console.log(toLonLat(e.coordinate));
+						}}
 					>
 						<SectorAreaMarkersLayer
 							topoQuark={props.topoQuark}
 							boulderOrder={boulderOrder()}
-							// selectable
-							// creating
 						/>
 						<BoulderMarkersLayer 
-							boulders={props.topoQuark().boulders}
+							boulders={topo.boulders}
 							boulderOrder={boulderOrder()}
+						/>
+						<ParkingMarkersLayer 
+							parkings={topo.parkings}
 						/>
 						
 					</MapControl2>

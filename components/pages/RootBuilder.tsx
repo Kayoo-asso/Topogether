@@ -55,6 +55,7 @@ import { Map, MapBrowserEvent } from "ol";
 import { toLonLat } from "ol/proj";
 import { SectorAreaMarkersLayer } from "components/map/markers/SectorAreaMarkersLayer";
 import { BoulderMarkersLayer } from "components/map/markers/BoulderMarkersLayer";
+import { ParkingMarkersLayer } from "components/map/markers/ParkingMarkersLayer";
 
 interface RootBuilderProps {
 	topoQuark: Quark<Topo>;
@@ -244,9 +245,13 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 							creating={tool === "SECTOR"}
 						/>
 						<BoulderMarkersLayer 
-							boulders={props.topoQuark().boulders}
+							boulders={topo.boulders}
 							boulderOrder={boulderOrder()}
-							// draggable
+							draggable
+						/>
+						<ParkingMarkersLayer 
+							parkings={topo.parkings}
+							draggable
 						/>
 
 					</MapControl2>

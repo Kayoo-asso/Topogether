@@ -26,7 +26,7 @@ import {
 import { Boulder, GeoCoordinates, MapProps, Position, Topo } from "types";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { fontainebleauLocation } from "helpers/constants";
-import { googleGetPlace, toLatLng } from "helpers/map";
+import { getLayersExtent, googleGetPlace, LayerNames, toLatLng } from "helpers/map";
 import { setReactRef } from "helpers/utils";
 import { useBreakpoint, usePosition } from "helpers/hooks";
 
@@ -38,11 +38,14 @@ import { useSession } from "helpers/services";
 import { MapToolSelector } from "./MapToolSelector";
 import { MapBrowserEvent, MapEvent } from "ol";
 import { Props } from "components/openlayers/Map";
+import { UserMarkerLayer } from "./markers/UserMarkerLayer";
+import { buffer, extend, Extent } from "ol/extent";
 
 type MapControlProps = React.PropsWithChildren<
 	Props & {
 		className?: string;
 		initialCenter: Position;
+		layerClassNameForInitialExtent?: LayerNames[];
 		initialZoom?: number;
 		displaySatelliteButton?: boolean;
 		displayUserMarker?: boolean;
@@ -57,8 +60,7 @@ type MapControlProps = React.PropsWithChildren<
 		topoFiltersDomain?: TopoFilterOptions;
 		boulderFilters?: Quark<BoulderFilterOptions>;
 		boulderFiltersDomain?: BoulderFilterOptions;
-		boundsTo?: GeoCoordinates[];
-		onUserMarkerClick?: (pos: google.maps.MapMouseEvent) => void;
+		onUserMarkerClick?: (pos: MapBrowserEvent<any>) => void;
 		onMapZoomChange?: (zoom: number | undefined) => void;
 	}
 >;
@@ -94,10 +96,7 @@ export const MapControl2 = watchDependencies<Map, MapControlProps>(
 		const flush = useSelectStore((s) => s.flush);
 		const tool = useSelectStore((s) => s.tool);
 
-		const [mapToolSelectorOpen, setMapToolSelectorOpen] = useState(
-			breakpoint === "desktop"
-		);
-
+		const [mapToolSelectorOpen, setMapToolSelectorOpen] = useState(breakpoint === "desktop");
 		const [satelliteView, setSatelliteView] = useState(false);
 		const getBoundsFromSearchbar = (
 			geometry: google.maps.places.PlaceGeometry
@@ -143,6 +142,11 @@ export const MapControl2 = watchDependencies<Map, MapControlProps>(
 			mapRef.current?.addEventListener('pointermove', determinePointer);
 			return () => mapRef.current?.removeEventListener('pointermove', determinePointer);
 		}, [mapRef.current, tool]);
+
+		// Initial extension
+		useEffect(() => {
+			if (mapRef.current && props.layerClassNameForInitialExtent) getLayersExtent(mapRef.current, props.layerClassNameForInitialExtent);
+		}, [mapRef.current]);
 		
 		return (
 			<div className="relative h-full w-full">
@@ -278,16 +282,17 @@ export const MapControl2 = watchDependencies<Map, MapControlProps>(
 					}}
 					className={"h-full w-full " + getMapCursorClass()}
 					onClick={(e) => {
-						if (selectedItem.type === "sector") flush.item();
-						if (props.onClick) props.onClick(e);
-					}}
-					onLoadEnd={(e) => {
-						const map = e.map;
-						// const bbox = [1, 1, 1, 1];
-						// map.getView().fit(bbox, { size: map.getSize() });
+						const map = mapRef.current;
+						const hit = map?.forEachFeatureAtPixel(e.pixel, function(feature, layer) {
+							return true;
+						});
+						if (!hit) { 
+							flush.item();
+							if (props.onClick) props.onClick(e);
+						}
 					}}
 				>
-					<View center={fromLonLat(props.initialCenter)} zoom={initialZoom} />
+					<View center={props.layerClassNameForInitialExtent ? undefined : fromLonLat(props.initialCenter)} zoom={initialZoom} />
 
 					{/* <MapboxVector
 				<View center={fromLonLat(props.initialCenter)} zoom={initialZoom}>
@@ -335,6 +340,10 @@ export const MapControl2 = watchDependencies<Map, MapControlProps>(
 					</TileLayer>
 
 					{props.children}
+
+					{displayUserMarker && (
+						<UserMarkerLayer onClick={props.onUserMarkerClick} />
+					)}
 				</BaseMap>
 			</div>
 		);
