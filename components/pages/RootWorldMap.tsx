@@ -8,6 +8,8 @@ import { useAuth } from "helpers/services";
 import { LightTopo, Amenities, TopoTypes } from "types";
 import { encodeUUID } from "helpers/utils";
 import { TopoPreview } from "components/organisms/TopoPreview";
+import { MapControl2 } from "components/map/MapControl2";
+import { TopoMarkersLayer } from "components/map/markers/TopoMarkersLayer";
 
 interface RootWorldMapProps {
 	lightTopos: LightTopo[];
@@ -75,7 +77,7 @@ export const RootWorldMap: React.FC<RootWorldMapProps> = watchDependencies(
 				<div className="relative flex h-contentPlusHeader flex-row md:h-full">
 					{user && <LeftbarDesktop currentMenuItem="MAP" />}
 
-					<MapControl
+					<MapControl2 
 						initialZoom={5}
 						searchbarOptions={{
 							findTopos: true,
@@ -83,15 +85,20 @@ export const RootWorldMap: React.FC<RootWorldMapProps> = watchDependencies(
 						}}
 						topoFilters={topoFilters}
 						topoFiltersDomain={topoFilterDomain}
+						onClick={(e) => {
+							const map = e.map;
+							const hit = map?.forEachFeatureAtPixel(e.pixel, function(feature, layer) {
+								return true;
+							});
+							if (!hit) setSelectedTopo(undefined);
+						}}
 					>
-						{props.lightTopos.filter(filterFn).map((topo) => (
-							<TopoMarker
-								key={topo.id}
-								topo={topo}
-								onClick={(t) => setSelectedTopo(t)}
-							/>
-						))}
-					</MapControl>
+						<TopoMarkersLayer 
+							topos={props.lightTopos.filter(filterFn)}
+							selectedTopo={selectedTopo}
+							onTopoSelect={(t) => setSelectedTopo(t)}
+						/>
+					</MapControl2>
 
 						{selectedTopo &&	
 							<TopoPreview

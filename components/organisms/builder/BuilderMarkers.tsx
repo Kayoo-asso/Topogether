@@ -3,7 +3,6 @@ import { Quark, watchDependencies } from 'helpers/quarky';
 import { Topo, UUID } from 'types';
 import { For } from 'components/atoms';
 import { BoulderFilterOptions, BoulderMarker, filterBoulders, isMouseEvent, isPointerEvent, isTouchEvent, ParkingMarker, SectorAreaMarker, WaypointMarker } from 'components/map';
-import { sectorChanged } from 'helpers/builder';
 import { InteractItem, useSelectStore } from 'components/pages/selectStore';
 import { useContextMenu } from 'helpers/hooks';
 

@@ -2,10 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Wrapper } from "@googlemaps/react-wrapper";
 import {
 	Map as BaseMap,
-	VectorLayer,
-	VectorSource,
 	View,
-	MapboxVector,
 	TileLayer,
 	XYZ,
 } from "components/openlayers";
@@ -36,15 +33,14 @@ import { useSelectStore } from "components/pages/selectStore";
 import { handleNewPhoto } from "helpers/handleNewPhoto";
 import { useSession } from "helpers/services";
 import { MapToolSelector } from "./MapToolSelector";
-import { MapBrowserEvent, MapEvent } from "ol";
+import { MapBrowserEvent } from "ol";
 import { Props } from "components/openlayers/Map";
 import { UserMarkerLayer } from "./markers/UserMarkerLayer";
-import { buffer, extend, Extent } from "ol/extent";
 
 type MapControlProps = React.PropsWithChildren<
 	Props & {
 		className?: string;
-		initialCenter: Position;
+		initialCenter?: Position;
 		layerClassNameForInitialExtent?: LayerNames[];
 		initialZoom?: number;
 		displaySatelliteButton?: boolean;
@@ -282,7 +278,7 @@ export const MapControl2 = watchDependencies<Map, MapControlProps>(
 					}}
 					className={"h-full w-full " + getMapCursorClass()}
 					onClick={(e) => {
-						const map = mapRef.current;
+						const map = e.map;
 						const hit = map?.forEachFeatureAtPixel(e.pixel, function(feature, layer) {
 							return true;
 						});
@@ -291,8 +287,9 @@ export const MapControl2 = watchDependencies<Map, MapControlProps>(
 							if (props.onClick) props.onClick(e);
 						}
 					}}
+					// controls={}
 				>
-					<View center={props.layerClassNameForInitialExtent ? undefined : fromLonLat(props.initialCenter)} zoom={initialZoom} />
+					<View center={props.layerClassNameForInitialExtent ? undefined : fromLonLat(props.initialCenter || position || fontainebleauLocation)} zoom={initialZoom} />
 
 					{/* <MapboxVector
 				<View center={fromLonLat(props.initialCenter)} zoom={initialZoom}>

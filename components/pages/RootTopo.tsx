@@ -145,8 +145,8 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 							findBoulders: true,
 						}}
 						displaySectorButton
-						onClick={(e) => {
-							// console.log(toLonLat(e.coordinate));
+						onSectorButtonClick={() => {
+							//TODO
 						}}
 					>
 						<SectorAreaMarkersLayer
