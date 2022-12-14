@@ -16,7 +16,7 @@ export const SatelliteButton: React.FC<SatelliteButtonProps> = ({
 			className="relative z-20 h-[60px] w-[60px] rounded-full p-7 shadow"
 			onClick={() => {
 				props.onClick(displaySatellite);
-				setDisplaySatellite(!displaySatellite);
+				setDisplaySatellite(s => !s);
 			}}
 		>
 			<NextImage

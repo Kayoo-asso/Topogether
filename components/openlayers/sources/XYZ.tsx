@@ -13,7 +13,7 @@ const useBehavior = createLifecycle(OLXYZ, {
 		"url",
 		"urls",
 	],
-	reset: [],
+	reset:  [],
 });
 
 // Should we restrict TileGrid and Projection to go through dedicated elements?

@@ -36,6 +36,7 @@ import { MapToolSelector } from "./MapToolSelector";
 import { MapBrowserEvent } from "ol";
 import { Props } from "components/openlayers/Map";
 import { UserMarkerLayer } from "./markers/UserMarkerLayer";
+import { XYZ as XYZType } from "ol/source";
 
 type MapControlProps = React.PropsWithChildren<
 	Props & {
@@ -94,18 +95,18 @@ export const MapControl2 = watchDependencies<Map, MapControlProps>(
 
 		const [mapToolSelectorOpen, setMapToolSelectorOpen] = useState(breakpoint === "desktop");
 		const [satelliteView, setSatelliteView] = useState(false);
-		const getBoundsFromSearchbar = (
-			geometry: google.maps.places.PlaceGeometry
-		) => {
-			if (mapRef.current) {
-				const newBounds = new google.maps.LatLngBounds();
-				if (geometry.viewport) newBounds.union(geometry.viewport);
-				else if (geometry.location) newBounds.extend(geometry.location);
-				else return;
-				// TODO: change the way bounds are fitted.
-				// mapRef.current.fitBounds(newBounds);
+		// TODO : try to fix XYZ component in order it to rerender when url and attributions props change, and thus avoiding this hack
+		const sourceRef = useRef<XYZType>(null);
+		useEffect(() => {
+			if (sourceRef.current) {
+				sourceRef.current.setUrl(
+					satelliteView ?
+					`https://api.mapbox.com/styles/v1/mapbox/satellite-v9/tiles/512/{z}/{x}/{y}@2x?access_token=${MAPBOX_TOKEN}` :
+					`https://api.mapbox.com/styles/v1/mapbox/outdoors-v11/tiles/512/{z}/{x}/{y}@2x?access_token=${MAPBOX_TOKEN}`
+				);
+				sourceRef.current.setAttributions(satelliteView ? attributionsSatellite : attributions);
 			}
-		};
+		}, [satelliteView, sourceRef.current])
 
 		const getMapCursorClass = useCallback(() => {
 			switch (tool) {
@@ -139,7 +140,7 @@ export const MapControl2 = watchDependencies<Map, MapControlProps>(
 			return () => mapRef.current?.removeEventListener('pointermove', determinePointer);
 		}, [mapRef.current, tool]);
 
-		// Initial extension
+		// Initial extension / bounding
 		useEffect(() => {
 			if (mapRef.current && props.layerClassNameForInitialExtent) getLayersExtent(mapRef.current, props.layerClassNameForInitialExtent);
 		}, [mapRef.current]);
@@ -195,9 +196,7 @@ export const MapControl2 = watchDependencies<Map, MapControlProps>(
 					<div className="absolute right-0 top-0 m-3">
 						{displaySatelliteButton && (
 							<SatelliteButton
-								onClick={(displaySatellite) =>
-									setSatelliteView(displaySatellite)
-								}
+								onClick={setSatelliteView}
 							/>
 						)}
 					</div>
@@ -289,47 +288,15 @@ export const MapControl2 = watchDependencies<Map, MapControlProps>(
 					}}
 					// controls={}
 				>
-					<View center={props.layerClassNameForInitialExtent ? undefined : fromLonLat(props.initialCenter || position || fontainebleauLocation)} zoom={initialZoom} />
-
-					{/* <MapboxVector
-				<View center={fromLonLat(props.initialCenter)} zoom={initialZoom}>
-					<BaseMap 
-						ref={(ref) => {
-							setReactRef(mapRef, ref);
-							setReactRef(parentRef, ref);
-						}}
-						className={"w-full h-full "+getMapCursorClass()}
-						onClick={(e) => {
-							if (selectedItem.type === 'sector') flush.item();
-							if (props.onClick) props.onClick(e);
-						}}
-						onChangeResolution={(e) => {
-							if (mapRef.current && props.onMapZoomChange) {
-								// props.onMapZoomChange(mapRef.current.getZoom());
-							}
-						}}
-						onMoveEnd={(e) => {
-							console.log(e);
-						}}
-						onLoadEnd={(e: MapEvent) => {
-							const map = e.map;
-						}}
-					>
-						{/* <MapboxVector
-							styleUrl="mapbox://styles/mapbox/outdoors-v11"
-							accessToken={MAPBOX_TOKEN}
-						/> */}
+					<View 
+						center={props.layerClassNameForInitialExtent ? undefined : fromLonLat(props.initialCenter || position || fontainebleauLocation)} 
+						zoom={initialZoom}
+					/>
 					<TileLayer>
 						<XYZ
-							// TODO: fix satelliteView that does not work yet
-							attributions={
-								satelliteView ? attributionsSatellite : attributions
-							}
-							url={
-								satelliteView
-									? "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/${z}/${y}/${x}"
-									: `https://api.mapbox.com/styles/v1/mapbox/outdoors-v11/tiles/512/{z}/{x}/{y}@2x?access_token=${MAPBOX_TOKEN}`
-							}
+							ref={sourceRef}
+							attributions={attributions}
+							url={`https://api.mapbox.com/styles/v1/mapbox/outdoors-v11/tiles/512/{z}/{x}/{y}@2x?access_token=${MAPBOX_TOKEN}`}
 							// IMPORTANT
 							tilePixelRatio={2}
 							tileSize={512}

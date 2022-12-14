@@ -38,9 +38,7 @@ export const getLayersExtent = (map: Map, lyrsClassName: LayerNames[]) => {
 	}
 	map.getView().fit(buffer(ext, 500), { size: map.getSize(), maxZoom: 18 });
 }
-export const getExtentFromSearchbar = () => {
 
-}
 
 // --- markerSize ---
 type Size = {
