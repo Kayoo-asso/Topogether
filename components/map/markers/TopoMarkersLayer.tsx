@@ -7,15 +7,18 @@ import {
 	VectorSource,
 } from "components/openlayers";
 import { Icon, Style } from 'ol/style';
-import { LightTopo } from 'types';
+import { GeoCoordinates, LightTopo, TopoTypes, UUID } from 'types';
 import { fromLonLat } from 'ol/proj';
 import { TopoTypeToColor } from 'helpers/topo';
 
+type TopoForMarkers = LightTopo | { id: UUID, type: TopoTypes, location: GeoCoordinates };
+
 interface TopoMarkersLayerProps {
-    topos: LightTopo[];
+    topos: TopoForMarkers[];
     selectedTopo?: LightTopo;
     draggable?: boolean;
-    onTopoSelect?: (topo?: LightTopo) => void,
+    onTopoSelect?: (topo?: TopoForMarkers) => void,
+    onDragEnd?: (topoId: TopoForMarkers, newLocation: GeoCoordinates) => void,
 }
 
 export type TopoMarkerData = {
@@ -50,14 +53,6 @@ export const TopoMarkersLayer: React.FC<TopoMarkersLayerProps> = watchDependenci
             <Select
                 layers={["topos"]}
                 hitTolerance={5}
-                // style={(feature) => {
-                //         const t = feature.get("data");
-                //         return topoMarkerStyle (
-                //             t,
-                //             true,
-                //             true
-                //         )}
-                // }
                 onSelect={(e) => {
                     e.target.getFeatures().clear();
                     e.mapBrowserEvent.stopPropagation();

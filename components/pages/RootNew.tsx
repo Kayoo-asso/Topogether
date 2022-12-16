@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { StringBetween, TopoTypes, User } from "types";
-import { v4 } from "uuid";
+import { v4 as uuid } from "uuid";
 import { useRouter } from "next/router";
 import { watchDependencies } from "helpers/quarky";
 import { useBreakpoint, usePosition } from "helpers/hooks";
@@ -12,6 +12,9 @@ import { encodeUUID } from "helpers/utils";
 import { ValidateButton } from "components/atoms/buttons/ValidateButton";
 import { SelectListMultiple } from "components/molecules/form/SelectListMultiple";
 import { TopoTypesName } from "types/BitflagNames";
+import { MapControl2 } from "components/map/MapControl2";
+import { toLonLat } from "ol/proj";
+import { TopoMarkersLayer } from "components/map/markers/TopoMarkersLayer";
 
 interface RootNewProps {
 	user: User;
@@ -72,7 +75,7 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies(
 			else if (isValidStep1()) {
 				setLoading(true);
 				const topoData: TopoCreate = {
-					id: v4(),
+					id: uuid(),
 					creator: props.user,
 					name: name as StringBetween<1, 255>,
 					status: 0,
@@ -159,7 +162,36 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies(
 									placer le topo.
 								</div>
 								<div className="mb-6 w-full h-[50vh] md:h-[55vh]">
-									<MapControl
+									<MapControl2 
+										initialZoom={10}
+										searchbarOptions={{ findPlaces: true }}
+										onClick={(e) => {
+											if (e.coordinate) {
+												const lonlat = toLonLat(e.coordinate)
+												setLongitude(lonlat[0]);
+												setLatitude(lonlat[1]);
+											}
+										}}
+										onUserMarkerClick={(e) => {
+											if (e.coordinate) {
+												const lonlat = toLonLat(e.coordinate)
+												setLongitude(lonlat[0]);
+												setLatitude(lonlat[1]);
+											}
+										}}
+									>
+										{latitude && longitude && (
+											<TopoMarkersLayer 
+												topos={[{ id: uuid(), type: type, location: [longitude, latitude] }]}
+												draggable
+												onDragEnd={(_, loc) => {
+													setLongitude(loc[0]);
+													setLatitude(loc[1]);
+												}}
+											/>
+										)}
+									</MapControl2>
+									{/* <MapControl
 										initialZoom={10}
 										searchbarOptions={{ findPlaces: true }}
 										onClick={(e) => {
@@ -185,7 +217,7 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies(
 												}}
 											/>
 										)}
-									</MapControl>
+									</MapControl> */}
 								</div>
 
 								<div className="w-full px-[6%]">
