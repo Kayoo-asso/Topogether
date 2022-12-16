@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { watchDependencies } from 'helpers/quarky';
 import {
 	Point,
@@ -8,10 +8,11 @@ import {
 } from "components/openlayers";
 import { Fill, Stroke, Style, Circle } from 'ol/style';
 import { usePosition } from 'helpers/hooks';
-import { MapBrowserEvent } from 'ol';
+import { GeoCoordinates } from 'types';
+import { fromLonLat } from 'ol/proj';
 
 interface UserMarkerLayerProps {
-    onClick?: (e: MapBrowserEvent<any>) => void,
+    onClick?: (pos: GeoCoordinates | null) => void,
 }
 
 export const userMarkerStyle = () => {
@@ -33,9 +34,8 @@ export const userMarkerStyle = () => {
 
 export const UserMarkerLayer: React.FC<UserMarkerLayerProps> = watchDependencies((props: UserMarkerLayerProps) => {
     const { position, accuracy } = usePosition();
-    // console.log(toLonLat(position))
 
-    const accuracyMarkerStyle = () => {
+    const accuracyMarkerStyle = useCallback(() => {
         if (!accuracy) return;
         const image = new Circle({
             radius: accuracy,
@@ -47,19 +47,19 @@ export const UserMarkerLayer: React.FC<UserMarkerLayerProps> = watchDependencies
             image,
             zIndex: 2
         });
-    }
+    }, [accuracy]);
 
     return (
         <>
             <Select
                 layers={["user"]}
                 hitTolerance={2}
-                onSelect={(e) => {
+                onSelect={useCallback((e) => {
                     e.mapBrowserEvent.stopPropagation();
                     e.mapBrowserEvent.preventDefault();
-                    props.onClick && props.onClick(e.mapBrowserEvent);
+                    props.onClick && props.onClick(position);
                     e.target.getFeatures().clear();
-                }}
+                }, [position])}
             />
 
             <VectorLayer
@@ -69,7 +69,7 @@ export const UserMarkerLayer: React.FC<UserMarkerLayerProps> = watchDependencies
                 <VectorSource>
                     {accuracy && position &&
                         <Point
-                            coordinates={[position[1], position[0]]}
+                            coordinates={fromLonLat(position)}
                         />
                     }
                 </VectorSource>
@@ -82,7 +82,7 @@ export const UserMarkerLayer: React.FC<UserMarkerLayerProps> = watchDependencies
                 <VectorSource>
                     {position &&
                         <Point
-                            coordinates={[position[1], position[0]]}
+                            coordinates={fromLonLat(position)}
                         />
                     }
                 </VectorSource>

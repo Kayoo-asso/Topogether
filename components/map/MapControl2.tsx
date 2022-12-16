@@ -57,7 +57,7 @@ type MapControlProps = React.PropsWithChildren<
 		topoFiltersDomain?: TopoFilterOptions;
 		boulderFilters?: Quark<BoulderFilterOptions>;
 		boulderFiltersDomain?: BoulderFilterOptions;
-		onUserMarkerClick?: (pos: MapBrowserEvent<any>) => void;
+		onUserMarkerClick?: (pos: GeoCoordinates | null) => void;
 		onMapZoomChange?: (zoom: number | undefined) => void;
 	}
 >;

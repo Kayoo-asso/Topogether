@@ -10,6 +10,7 @@ import { encodeUUID } from "helpers/utils";
 import { TopoPreview } from "components/organisms/TopoPreview";
 import { MapControl2 } from "components/map/MapControl2";
 import { TopoMarkersLayer } from "components/map/markers/TopoMarkersLayer";
+import { toLonLat } from "ol/proj";
 
 interface RootWorldMapProps {
 	lightTopos: LightTopo[];
@@ -85,6 +86,7 @@ export const RootWorldMap: React.FC<RootWorldMapProps> = watchDependencies(
 						}}
 						topoFilters={topoFilters}
 						topoFiltersDomain={topoFilterDomain}
+						onUserMarkerClick={(e) => console.log(e)}
 						onClick={(e) => {
 							const map = e.map;
 							const hit = map?.forEachFeatureAtPixel(e.pixel, function(feature, layer) {
@@ -96,7 +98,7 @@ export const RootWorldMap: React.FC<RootWorldMapProps> = watchDependencies(
 						<TopoMarkersLayer 
 							topos={props.lightTopos.filter(filterFn)}
 							selectedTopo={selectedTopo}
-							onTopoSelect={(t) => setSelectedTopo(t)}
+							onTopoSelect={(t) => setSelectedTopo(t as LightTopo)}
 						/>
 					</MapControl2>
 

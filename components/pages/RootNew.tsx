@@ -172,11 +172,10 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies(
 												setLatitude(lonlat[1]);
 											}
 										}}
-										onUserMarkerClick={(e) => {
-											if (e.coordinate) {
-												const lonlat = toLonLat(e.coordinate)
-												setLongitude(lonlat[0]);
-												setLatitude(lonlat[1]);
+										onUserMarkerClick={(pos) => {
+											if (pos) {
+												setLongitude(pos[0]);
+												setLatitude(pos[1]);
 											}
 										}}
 									>
