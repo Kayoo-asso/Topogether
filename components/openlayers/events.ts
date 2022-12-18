@@ -9,6 +9,7 @@ import type { ObjectEvent } from "ol/Object";
 import type RenderEvent from "ol/render/Event";
 import { TileSourceEvent } from "ol/source/Tile";
 import { VectorSourceEvent } from "ol/source/Vector";
+import { DragEvent } from "./interactions/DragInteraction";
 
 const baseEvents = {
 	change: "onChange",
@@ -80,11 +81,13 @@ export const viewEvents = {
 	"change:rotation": "onChangeRotation",
 } as const;
 
-export function events(
-	...args: Partial<Record<Event, EventHandler<Event>>>[]
-): Event[] {
+type KeysOfUnion<T> = T extends any ? keyof T: never;
+
+export function events<Args extends Array<Partial<Record<Event, EventHandler<Event>>>>>(
+	...args: Args
+): Array<KeysOfUnion<Args[number]>> {
   args.push(baseEvents);
-	return Object.keys(Object.assign({}, ...args)) as Event[];
+	return Object.keys(Object.assign({}, ...args)) as any;
 }
 
 export const eventHandlers = {
@@ -111,7 +114,11 @@ export const eventHandlers = {
 	"boxstart": "onBoxStart",
 	// Modify
 	"modifyend": "onModifyEnd",
-	"modifystart": "onModifyStart"
+	"modifystart": "onModifyStart",
+	// Drag
+	"drag": "onDrag",
+	"dragend": "onDragEnd",
+	"dragstart": "onDragStart",
 } as const;
 
 interface EventMap {
@@ -194,6 +201,10 @@ interface EventMap {
 	// Modify
 	onModifyEnd(event: ModifyEvent): void;
 	onModifyStart(event: ModifyEvent): void;
+	// Drag
+	onDrag(event: DragEvent): void;
+	onDragEnd(event: DragEvent): void;
+	onDragStart(event: DragEvent): void;
 }
 export type EventHandlers = typeof eventHandlers;
 export type Event = keyof EventHandlers;

@@ -1,5 +1,4 @@
 import { setReactRef } from "helpers/utils";
-import { update } from "idb-keyval";
 import { ForwardedRef, useEffect, useRef, useState } from "react";
 import { Event, EventFn, eventHandlers, EventHandlers } from "./events";
 import { setMethodName } from "./utils";
@@ -11,13 +10,13 @@ import { useEffectDeepEqual } from "components/openlayers/useEffectDeepEqual";
 interface Definition<
 	Options,
 	// Options,
-	Events extends Event,
+	Events extends ReadonlyArray<Event>,
 	ReactiveProps extends string & keyof RemoveUndefined<Options>,
 	ResetProps extends string & keyof RemoveUndefined<Options>
 > {
-	events: Events[];
-	reactive: ReactiveProps[];
-	reset?: ResetProps[];
+	events: Events;
+	reactive: ReadonlyArray<ReactiveProps>;
+	reset?: ReadonlyArray<ResetProps>;
 }
 
 interface OLBase<Events, Handlers> {
@@ -26,23 +25,33 @@ interface OLBase<Events, Handlers> {
 	dispose?: () => void;
 }
 
-type BuildProps<Options, Events extends Event> = RemoveUndefined<Options> & {
-	[EH in EventHandlers[Events]]?: EventFn<EH>;
+type BuildProps<Options, Events extends ReadonlyArray<Event>> = RemoveUndefined<Options> & {
+	[EH in EventHandlers[Events[number]]]?: EventFn<EH>;
 };
 
-export type InferOptions<UseBehavior extends (...args: any) => any> =
-	Parameters<UseBehavior>[0];
+export type InferOptions<Fn extends UseBehavior<any, any, any>> =
+	Fn extends UseBehavior<infer Options, any, infer Events>
+		? BuildProps<Options, Events>
+		: never;
 
 type RemoveUndefined<T> = T extends undefined ? never : T;
+
+type UseBehavior<Options, T extends OLBase<any, any>, Events extends ReadonlyArray<Event>> = (
+	props: BuildProps<Options, Events>,
+	ref: ForwardedRef<T> | undefined
+) => T | undefined;
 
 export function createLifecycle<
 	Options,
 	T extends OLBase<any, any>,
-	Events extends Event,
+	Events extends ReadonlyArray<Event>,
 	ReactiveProps extends string & keyof RemoveUndefined<Options>,
 	ResetProps extends string & keyof RemoveUndefined<Options>,
 	D extends Definition<Options, Events, ReactiveProps, ResetProps>
->(constructor: new <_>(options: Options) => T, definition: D) {
+>(
+	constructor: new <_>(options: Options) => T,
+	definition: D
+): UseBehavior<Options, T, Events> {
 	const events = definition.events;
 	const handlers = events.map((ev) => eventHandlers[ev]);
 	// const handlers = events.map((x) => eventHandlers[x]);
@@ -59,7 +68,6 @@ export function createLifecycle<
 	) {
 		const [instance, setInstance] = useState<T>();
 		const observed = definition.reactive.map((x) => props[x]);
-		const prevObserved = useRef(observed);
 		const propsThatRequireAReset = definition.reset
 			? definition.reset.map((x) => props[x])
 			: [];
@@ -98,7 +106,7 @@ export function createLifecycle<
 		}
 
 		// Event listeners
-		const eventFns = handlers.map((x) => props[x]);
+		const eventFns = handlers.map((x) => (props as any)[x]);
 		useEffect(() => {
 			if (instance) {
 				for (let i = 0; i < eventFns.length; i++) {

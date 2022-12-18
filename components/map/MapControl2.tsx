@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Wrapper } from "@googlemaps/react-wrapper";
 import {
 	Map as BaseMap,
 	View,
@@ -33,7 +32,6 @@ import { useSelectStore } from "components/pages/selectStore";
 import { handleNewPhoto } from "helpers/handleNewPhoto";
 import { useSession } from "helpers/services";
 import { MapToolSelector } from "./MapToolSelector";
-import { MapBrowserEvent } from "ol";
 import { Props } from "components/openlayers/Map";
 import { UserMarkerLayer } from "./markers/UserMarkerLayer";
 import { XYZ as XYZType } from "ol/source";

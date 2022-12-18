@@ -80,7 +80,10 @@ export function useGetLayers(map: Map | undefined, ids: Array<string | undefined
 	return layers;
 }
 
-export function useGetSources(map: Map | undefined, ids: Array<string | undefined>) {
+export function useGetSources(map: Map | undefined, ids: Array<string | undefined>, filterNulls: true) : Array<Source>
+export function useGetSources(map: Map | undefined, ids: Array<string | undefined>, filterNulls?: false): Array<Source | undefined>
+
+export function useGetSources(map: Map | undefined, ids: Array<string | undefined>, filterNulls: boolean = false) {
 	// TODO: likely should migrate to useSyncWithExternalStore
 	// TODO: remove duplication with Symbol state inside useGetLayers
 	const [, setSymbol] = useState(Symbol());
@@ -90,7 +93,9 @@ export function useGetSources(map: Map | undefined, ids: Array<string | undefine
 		for (const l of layers) {
 			const s = l?.getSource();
 			// nulls are problematic for our use later on
-			list.push(s || undefined);
+			if(s || !filterNulls) {
+				list.push(s || undefined);
+			}
 		}
 		return list;
 	}, [layers]);

@@ -17,7 +17,9 @@ const useLifecycle = createLifecycle(OLMap, {
 		// "size",
 	],
 	reset: [],
-});
+} as const);
+
+type Test = typeof useLifecycle;
 
 type Options = InferOptions<typeof useLifecycle>;
 
@@ -41,3 +43,4 @@ export const Map = forwardRef<OLMap, Props>(
 		);
 	}
 );
+
