@@ -1,13 +1,9 @@
 import { setReactRef } from "helpers/utils";
 import { update } from "idb-keyval";
-import {
-	ForwardedRef,
-	useEffect,
-	useRef,
-	useState,
-} from "react";
+import { ForwardedRef, useEffect, useRef, useState } from "react";
 import { Event, EventFn, eventHandlers, EventHandlers } from "./events";
 import { setMethodName } from "./utils";
+import { useEffectDeepEqual } from "components/openlayers/useEffectDeepEqual";
 
 // TODO:
 // - Add checks that all reactive props `P` have an associated `setP` method
@@ -48,7 +44,7 @@ export function createLifecycle<
 	D extends Definition<Options, Events, ReactiveProps, ResetProps>
 >(constructor: new <_>(options: Options) => T, definition: D) {
 	const events = definition.events;
-	const handlers = events.map(ev => eventHandlers[ev])
+	const handlers = events.map((ev) => eventHandlers[ev]);
 	// const handlers = events.map((x) => eventHandlers[x]);
 	const updateMethods = definition.reactive.map(setMethodName);
 
@@ -64,7 +60,9 @@ export function createLifecycle<
 		const [instance, setInstance] = useState<T>();
 		const observed = definition.reactive.map((x) => props[x]);
 		const prevObserved = useRef(observed);
-		const propsThatRequireAReset = definition.reset ? definition.reset.map(x => props[x]) : [];
+		const propsThatRequireAReset = definition.reset
+			? definition.reset.map((x) => props[x])
+			: [];
 
 		//
 		useEffect(() => {
@@ -92,11 +90,10 @@ export function createLifecycle<
 		if (instance) {
 			for (let i = 0; i < observed.length; i++) {
 				const current = observed[i];
-				const prev = prevObserved.current[i];
-				if (current !== prev) {
+				useEffectDeepEqual(() => {
 					const methodName = updateMethods[i];
 					((instance as any)[methodName] as Function)(current);
-				}
+				}, [current]);
 			}
 		}
 
@@ -107,13 +104,13 @@ export function createLifecycle<
 				for (let i = 0; i < eventFns.length; i++) {
 					const fn = eventFns[i];
 					const event = definition.events[i];
-					if(fn) {
+					if (fn) {
 						instance.on(event, fn);
 					}
 				}
 				return () => {
 					for (let i = 0; i < eventFns.length; i++) {
-						if(eventFns[i]) {
+						if (eventFns[i]) {
 							instance.un(definition.events[i], eventFns[i]);
 						}
 					}
