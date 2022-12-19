@@ -10,7 +10,6 @@ import { Fill, Stroke, Style, Circle } from 'ol/style';
 import { usePosition } from 'helpers/hooks';
 import { GeoCoordinates } from 'types';
 import { fromLonLat } from 'ol/proj';
-import { FeatureLike } from 'ol/Feature';
 import { Map } from 'ol';
 
 interface UserMarkerLayerProps {

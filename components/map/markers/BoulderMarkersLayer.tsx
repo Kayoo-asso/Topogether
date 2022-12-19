@@ -7,11 +7,12 @@ import {
 	VectorSource,
 } from "components/openlayers";
 import { FeatureLike } from 'ol/Feature';
-import { Fill, Icon, Style, Text } from 'ol/style';
+import { Circle, Fill, Icon, Stroke, Style, Text } from 'ol/style';
 import { Boulder, UUID } from 'types';
 import { useSelectStore } from 'components/pages/selectStore';
-import { fromLonLat } from 'ol/proj';
-import { singleClick } from 'ol/events/condition';
+import { fromLonLat, toLonLat } from 'ol/proj';
+import { Drag } from 'components/openlayers/interactions/Drag';
+import { Cluster } from 'components/openlayers/sources/Cluster';
 
 interface BoulderMarkersLayerProps {
     boulders: QuarkArray<Boulder>;
@@ -48,6 +49,28 @@ export const boulderMarkerStyle = (feature: FeatureLike, selected: boolean, anyS
     });
 }
 
+// const clusterMarkerStyle = (feature: FeatureLike) => {
+//     const image = new Circle({
+//         radius: 6,
+//         fill: new Fill({
+//           color: '#4EABFF',
+//         }),
+//         stroke: new Stroke({
+//           color: 'white',
+//           width: 2,
+//         }),
+//     });
+//     const style = new Style({
+//         image,
+//         zIndex: 100
+//     });
+//     return (
+//         <Point 
+
+//         />
+//     )
+// }
+
 export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> = watchDependencies(({
     draggable = false,
     ...props
@@ -59,7 +82,24 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> = watchDepe
     
     return (
         <>
-            {/* TODO: Drag Interaction */}
+            {draggable &&
+                <Drag 
+                    sources={'boulders'}
+                    hitTolerance={5}
+                    startCondition={useCallback((e) => { 
+                        const bId = e.feature.get("data").quark().id as UUID;
+                        return !!(selectedItem && selectedItem().id === bId); 
+                    }, [selectedItem])}
+                    onDragEnd={(e) => {
+                        const newLoc = toLonLat(e.mapBrowserEvent.coordinate);
+                        const { quark } = e.feature.get("data") as BoulderMarkerData;
+                        quark.set(b => ({
+                            ...b,
+                            location: [newLoc[0], newLoc[1]],
+                        }))
+                    }}
+                />
+            }
 
             <Select
                 layers={["boulders"]}
@@ -72,7 +112,6 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> = watchDepe
                         const feature = e.selected[0];
                         const { quark } = feature.get("data") as BoulderMarkerData;
                         select.boulder(quark);
-                        // console.log("Selected boulder: ", quark());
                     } else if (e.deselected.length === 1) {
                         flush.item();
                     }
@@ -84,7 +123,7 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> = watchDepe
                 className='boulders'
                 style={useCallback(
                     (feature) => {
-                        const bId = feature.get("data").quark().id;
+                        const bId = feature.get("data").quark().id as UUID;
                         return boulderMarkerStyle (
                             feature,
                             selectedItem ? selectedItem().id === bId : false,
@@ -94,6 +133,9 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> = watchDepe
                 }
             >
                 <VectorSource>
+                    {/* <Cluster 
+                        distance={20}
+                    /> */}
                     {props.boulders.quarks().map(bQuark => {
                         const b = bQuark();
                         const label = props.boulderOrder.get(b.id)! +
