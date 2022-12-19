@@ -18,12 +18,10 @@ const useBehavior = createLifecycle(OLCluster, {
 		"removefeature",
 	],
 	reactive: ["distance", "minDistance"],
-  reset: ["source"]
+	reset: ["source"],
 });
 
-export type ClusterProps = React.PropsWithChildren<
-	Omit<InferOptions<typeof useBehavior>, "source">
->;
+export type ClusterProps = Omit<InferOptions<typeof useBehavior>, "source">;
 
 export const Cluster = forwardRef<OLCluster, ClusterProps>(
 	({ children, ...props }, ref) => {
@@ -40,12 +38,12 @@ export const Cluster = forwardRef<OLCluster, ClusterProps>(
 		const layer = useLayer();
 		useEffect(() => {
 			if (layer && cluster) {
-        layer.setSource(cluster);
-        return () => {
-          layer.setSource(cluster.getSource());
-          cluster.setSource(null);
-          cluster.dispose();
-        }
+				layer.setSource(cluster);
+				return () => {
+					layer.setSource(cluster.getSource());
+					cluster.setSource(null);
+					cluster.dispose();
+				};
 			}
 		}, [layer, cluster]);
 		return <>{children}</>;
