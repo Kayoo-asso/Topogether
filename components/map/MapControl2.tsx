@@ -20,7 +20,7 @@ import {
 	UserMarker,
 } from "./";
 import { Boulder, GeoCoordinates, MapProps, Position, Topo } from "types";
-import { Quark, watchDependencies } from "helpers/quarky";
+import { Quark, useCreateQuark, watchDependencies } from "helpers/quarky";
 import { fontainebleauLocation } from "helpers/constants";
 import { getLayersExtent, googleGetPlace, LayerNames, toLatLng } from "helpers/map";
 import { setReactRef } from "helpers/utils";
@@ -92,6 +92,7 @@ export const MapControl2 = watchDependencies<Map, MapControlProps>(
 		const tool = useSelectStore((s) => s.tool);
 
 		const [mapToolSelectorOpen, setMapToolSelectorOpen] = useState(breakpoint === "desktop");
+		const mapZoom = useCreateQuark(initialZoom);
 		const [satelliteView, setSatelliteView] = useState(false);
 		// TODO : try to fix XYZ component in order it to rerender when url and attributions props change, and thus avoiding this hack
 		const sourceRef = useRef<XYZType>(null);
@@ -99,7 +100,7 @@ export const MapControl2 = watchDependencies<Map, MapControlProps>(
 			if (sourceRef.current) {
 				sourceRef.current.setUrl(
 					satelliteView ?
-					`https://api.mapbox.com/styles/v1/mapbox/satellite-v9/tiles/512/{z}/{x}/{y}@2x?access_token=${MAPBOX_TOKEN}` :
+					`https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/tiles/512/{z}/{x}/{y}@2x?access_token=${MAPBOX_TOKEN}` :
 					`https://api.mapbox.com/styles/v1/mapbox/outdoors-v11/tiles/512/{z}/{x}/{y}@2x?access_token=${MAPBOX_TOKEN}`
 				);
 				sourceRef.current.setAttributions(satelliteView ? attributionsSatellite : attributions);
@@ -289,7 +290,9 @@ export const MapControl2 = watchDependencies<Map, MapControlProps>(
 					<View 
 						center={props.layerClassNameForInitialExtent ? undefined : fromLonLat(props.initialCenter || position || fontainebleauLocation)} 
 						zoom={initialZoom}
+						onChange={(e) => mapZoom.set(e.target.getZoom())}
 					/>
+
 					<TileLayer>
 						<XYZ
 							ref={sourceRef}
@@ -304,7 +307,7 @@ export const MapControl2 = watchDependencies<Map, MapControlProps>(
 					{props.children}
 
 					{displayUserMarker && (
-						<UserMarkerLayer onClick={props.onUserMarkerClick} />
+						<UserMarkerLayer mapZoom={mapZoom} onClick={props.onUserMarkerClick} />
 					)}
 				</BaseMap>
 			</div>

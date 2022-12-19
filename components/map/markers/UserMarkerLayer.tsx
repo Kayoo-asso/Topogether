@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { watchDependencies } from 'helpers/quarky';
+import { Quark, watchDependencies } from 'helpers/quarky';
 import {
 	Point,
 	Select,
@@ -10,8 +10,12 @@ import { Fill, Stroke, Style, Circle } from 'ol/style';
 import { usePosition } from 'helpers/hooks';
 import { GeoCoordinates } from 'types';
 import { fromLonLat } from 'ol/proj';
+import { FeatureLike } from 'ol/Feature';
+import { Map } from 'ol';
 
 interface UserMarkerLayerProps {
+    map?: Map;
+    mapZoom?: Quark<number>;
     onClick?: (pos: GeoCoordinates | null) => void,
 }
 
@@ -34,26 +38,29 @@ export const userMarkerStyle = () => {
 
 export const UserMarkerLayer: React.FC<UserMarkerLayerProps> = watchDependencies((props: UserMarkerLayerProps) => {
     const { position, accuracy } = usePosition();
+    // console.log(accuracy);
 
     const accuracyMarkerStyle = useCallback(() => {
-        if (!accuracy) return;
+        if (!accuracy || !props.mapZoom) return;
+        // const r = Math.min(accuracy, 60)/100 * (props.mapZoom()**4 / 200)
+        // console.log(r);
         const image = new Circle({
             radius: accuracy,
             fill: new Fill({
-              color: 'rgba(31, 67, 100, 0.2)',
+              color: 'rgba(31, 67, 100, 0.3)',
             }),
         });
         return new Style({
             image,
             zIndex: 2
         });
-    }, [accuracy]);
+    }, [accuracy, props.mapZoom]);
 
     return (
         <>
             <Select
-                layers={["user"]}
-                hitTolerance={2}
+                layers={["user", "userAccuracy"]}
+                hitTolerance={1}
                 onSelect={useCallback((e) => {
                     e.mapBrowserEvent.stopPropagation();
                     e.mapBrowserEvent.preventDefault();
@@ -63,7 +70,7 @@ export const UserMarkerLayer: React.FC<UserMarkerLayerProps> = watchDependencies
             />
 
             <VectorLayer
-                id="userAccuracy"     
+                id="userAccuracy"
                 style={accuracyMarkerStyle}
             >
                 <VectorSource>

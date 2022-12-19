@@ -24,6 +24,7 @@ export const View = forwardRef<OLView, Props>(
 	({ children, ...props }, ref) => {
 		const view = useLifecycle(props, ref);
 		const map = useMap();
+		console.log("render view");
 
 		useEffect(() => {
 			if(map && view) {
