@@ -18,10 +18,10 @@ const useBehavior = createLifecycle(OLCluster, {
 		"removefeature",
 	],
 	reactive: ["distance", "minDistance"],
-	reset: ["source"],
+	reset: ["source", "geometryFunction", "createCluster", "wrapX"],
 });
 
-export type ClusterProps = Omit<InferOptions<typeof useBehavior>, "source">;
+export type ClusterProps = Omit<InferOptions<typeof useBehavior>, "source"> 
 
 export const Cluster = forwardRef<OLCluster, ClusterProps>(
 	({ children, ...props }, ref) => {
@@ -49,3 +49,5 @@ export const Cluster = forwardRef<OLCluster, ClusterProps>(
 		return <>{children}</>;
 	}
 );
+
+<Cluster   />
