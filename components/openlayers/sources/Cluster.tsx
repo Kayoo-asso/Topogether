@@ -32,7 +32,7 @@ export const Cluster = forwardRef<OLCluster, ClusterProps>(
 			);
 		}
 		const cluster = useBehavior(
-			{ ...props, source: source as VectorSource | undefined },
+			{ ...props, source: source || undefined },
 			ref
 		);
 		const layer = useLayer();
