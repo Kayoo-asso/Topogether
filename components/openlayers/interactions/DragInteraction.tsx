@@ -4,13 +4,16 @@
 import type { Map, MapBrowserEvent } from "ol";
 import type { Coordinate } from "ol/coordinate";
 import BaseEvent from "ol/events/Event";
-import type { Condition } from "ol/events/condition";
 import type { FeatureLike } from "ol/Feature";
 import type { Geometry } from "ol/geom";
 import PointerInteraction from "ol/interaction/Pointer";
 import {  Vector } from "ol/source";
 import { boundingExtent } from "ol/extent";
 import VectorSource from "ol/source/Vector";
+
+// Departure from standard OpenLayers API
+// TODO: change that & use collections for fine-grained feature selection
+type Condition = (event: DragEvent) => boolean;
 
 export interface DragOptions {
 	startCondition?: Condition;
@@ -101,16 +104,17 @@ export class DragInteraction extends PointerInteraction {
 	}
 }
 function handleDownEvent(this: DragInteraction, evt: MapBrowserEvent<UIEvent>) {
-	// If a condition exists and it is false, do not initiate a drag sequence
-	if (this.startCondition_ && !this.startCondition_(evt)) {
-		return false;
-	}
 	const feature = this.findFeature(evt);
-
+	
 	if (feature) {
 		this.coordinate_ = evt.coordinate;
 		this.feature_ = feature;
-		this.dispatchEvent(new DragEvent("dragstart", feature, evt));
+		const dragEvent = new DragEvent("dragstart", feature, evt);
+		// If a condition exists and it is false, do not initiate a drag sequence
+		if (this.startCondition_ && !this.startCondition_(dragEvent)) {
+			return false;
+		}
+		this.dispatchEvent(dragEvent);
 	}
 
 	return !!feature;
