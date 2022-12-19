@@ -84,7 +84,7 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> = watchDepe
         <>
             {draggable &&
                 <Drag 
-                    sources={'boulders'}
+                    sources='boulders'
                     hitTolerance={5}
                     startCondition={useCallback((e) => { 
                         const bId = e.feature.get("data").quark().id as UUID;
@@ -134,7 +134,8 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> = watchDepe
             >
                 <VectorSource>
                     {/* <Cluster 
-                        distance={20}
+                        distance={50}
+                        minDistance={20}
                     /> */}
                     {props.boulders.quarks().map(bQuark => {
                         const b = bQuark();

@@ -7,9 +7,10 @@ import {
 	VectorSource,
 } from "components/openlayers";
 import { Icon, Style } from 'ol/style';
-import { Parking } from 'types';
+import { Parking, UUID } from 'types';
 import { useSelectStore } from 'components/pages/selectStore';
-import { fromLonLat } from 'ol/proj';
+import { fromLonLat, toLonLat } from 'ol/proj';
+import { Drag } from 'components/openlayers/interactions/Drag';
 
 interface ParkingMarkersLayerProps {
     parkings: QuarkArray<Parking>;
@@ -44,7 +45,24 @@ export const ParkingMarkersLayer: React.FC<ParkingMarkersLayerProps> = watchDepe
     
     return (
         <>
-            {/* TODO: Drag Interaction */}
+            {draggable &&
+                <Drag 
+                    sources='parkings'
+                    hitTolerance={5}
+                    startCondition={useCallback((e) => { 
+                        const pId = e.feature.get("data").quark().id as UUID;
+                        return !!(selectedItem && selectedItem().id === pId); 
+                    }, [selectedItem])}
+                    onDragEnd={(e) => {
+                        const newLoc = toLonLat(e.mapBrowserEvent.coordinate);
+                        const { quark } = e.feature.get("data") as ParkingMarkerData;
+                        quark.set(p => ({
+                            ...p,
+                            location: [newLoc[0], newLoc[1]],
+                        }))
+                    }}
+                />
+            }
 
             <Select
                 layers={["parkings"]}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Quark, watchDependencies } from 'helpers/quarky';
 import {
     Draw,
@@ -7,14 +7,15 @@ import {
 	VectorLayer,
 	VectorSource,
 } from "components/openlayers";
-import { FeatureLike } from 'ol/Feature';
+import Feature, { FeatureLike } from 'ol/Feature';
 import { Circle, Fill, Stroke, Style } from 'ol/style';
 import { GeoCoordinates, Sector, Topo, UUID } from 'types';
 import { useSelectStore } from 'components/pages/selectStore';
 import { fromLonLat, toLonLat } from 'ol/proj';
-import { Polygon as PolygonType } from 'ol/geom';
+import { Geometry, Polygon as PolygonType } from 'ol/geom';
 import { createSector } from 'helpers/builder';
 import { ModalRenameSector } from 'components/organisms/builder/ModalRenameSector';
+import { Drag } from 'components/openlayers/interactions/Drag';
 
 interface SectorAreaMarkersLayerProps {
     topoQuark: Quark<Topo>,
@@ -93,6 +94,15 @@ const creatingSectorMarkerStyle = (feature: FeatureLike) => {
     return [];
 }
 
+const getPathFromFeature = (feature: FeatureLike) => {
+    const poly = feature.getGeometry() as PolygonType | undefined;
+    const coords: GeoCoordinates[] = poly!.getCoordinates()[0].map(c => {
+        const lonlat = toLonLat(c);
+        return [lonlat[0], lonlat[1]];
+    });
+    return coords;
+}
+
 // Events we need to handle (TODO)
 // - window.keydown: ENTER or ESC
 export const SectorAreaMarkersLayer: React.FC<SectorAreaMarkersLayerProps> = watchDependencies(({
@@ -104,11 +114,29 @@ export const SectorAreaMarkersLayer: React.FC<SectorAreaMarkersLayerProps> = wat
     const sectors = props.topoQuark().sectors;
     const flush = useSelectStore(s => s.flush);
 
+    const [selected, setSelected] = useState<UUID>();
     const [sectorToRename, setSectorToRename] = useState<Quark<Sector>>();
 
     return (
         <>
-            {/* TODO: Drag Interaction */}
+            {draggable &&
+                <Drag 
+                    sources='sectors'
+                    hitTolerance={5}
+                    startCondition={useCallback((e) => { 
+                        const sId = e.feature.get("data").quark().id as UUID;
+                        return (selected === sId); 
+                    }, [selected])}
+                    onDragEnd={(e) => {
+                        const path = getPathFromFeature(e.feature);
+                        const { quark } = e.feature.get("data") as SectorMarkerData;
+                        quark.set(s => ({
+                            ...s,
+                            path: path,
+                        }))
+                    }}
+                />
+            }
 
             {selectable &&
                 <Select
@@ -117,10 +145,15 @@ export const SectorAreaMarkersLayer: React.FC<SectorAreaMarkersLayerProps> = wat
                     style={function (feature) {
                         return sectorMarkerStyle(true);
                     }}
-                    onSelect={(ev) => {
-                        ev.mapBrowserEvent.stopPropagation();
-                        ev.mapBrowserEvent.preventDefault();
-                        if (ev.deselected.length === 1) {
+                    onSelect={(e) => {
+                        e.mapBrowserEvent.stopPropagation();
+                        e.mapBrowserEvent.preventDefault();
+                        if (e.selected.length === 1) {
+                            const feature = e.selected[0];
+                            const { quark } = feature.get("data") as SectorMarkerData;
+                            setSelected(quark().id);
+                        }
+                        else if (e.deselected.length === 1) {
                             flush.item();
                         }
                     }}
@@ -133,15 +166,10 @@ export const SectorAreaMarkersLayer: React.FC<SectorAreaMarkersLayerProps> = wat
                     type='Polygon'
                     style={creatingSectorMarkerStyle}
                     onDrawEnd={(e) => {
-                        const feature = e.feature;
-                        const poly = feature.getGeometry() as PolygonType | undefined;
-                        const coords: GeoCoordinates[] = poly!.getCoordinates()[0].map(c => {
-                            const lonlat = toLonLat(c);
-                            return [lonlat[0], lonlat[1]];
-                        });
+                        const path = getPathFromFeature(e.feature);
                         const newSector = createSector(
 							props.topoQuark,
-							coords,
+							path,
 							props.boulderOrder
 						);
                         setSectorToRename(() => newSector);

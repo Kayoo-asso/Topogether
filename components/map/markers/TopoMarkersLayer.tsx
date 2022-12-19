@@ -8,8 +8,9 @@ import {
 } from "components/openlayers";
 import { Icon, Style } from 'ol/style';
 import { GeoCoordinates, LightTopo, TopoTypes, UUID } from 'types';
-import { fromLonLat } from 'ol/proj';
+import { fromLonLat, toLonLat } from 'ol/proj';
 import { TopoTypeToColor } from 'helpers/topo';
+import { Drag } from 'components/openlayers/interactions/Drag';
 
 type TopoForMarkers = LightTopo | { id: UUID, type: TopoTypes, location: GeoCoordinates };
 
@@ -18,7 +19,7 @@ interface TopoMarkersLayerProps {
     selectedTopo?: LightTopo;
     draggable?: boolean;
     onTopoSelect?: (topo?: TopoForMarkers) => void,
-    onDragEnd?: (topoId: TopoForMarkers, newLocation: GeoCoordinates) => void,
+    onDragEnd?: (topoId: UUID, newLocation: GeoCoordinates) => void,
 }
 
 export type TopoMarkerData = {
@@ -48,7 +49,17 @@ export const TopoMarkersLayer: React.FC<TopoMarkersLayerProps> = watchDependenci
        
     return (
         <>
-            {/* TODO: Drag Interaction */}
+            {draggable &&
+                <Drag 
+                    sources='topos'
+                    hitTolerance={5}
+                    onDragEnd={(e) => {
+                        const newLoc = toLonLat(e.mapBrowserEvent.coordinate);
+                        const { topo } = e.feature.get("data") as TopoMarkerData;
+                        props.onDragEnd && props.onDragEnd(topo.id, [newLoc[0], newLoc[1]]);
+                    }}
+                />
+            }
 
             <Select
                 layers={["topos"]}

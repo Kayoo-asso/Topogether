@@ -7,9 +7,10 @@ import {
 	VectorSource,
 } from "components/openlayers";
 import { Icon, Style } from 'ol/style';
-import { Parking, Waypoint } from 'types';
+import { Parking, UUID, Waypoint } from 'types';
 import { useSelectStore } from 'components/pages/selectStore';
-import { fromLonLat } from 'ol/proj';
+import { fromLonLat, toLonLat } from 'ol/proj';
+import { Drag } from 'components/openlayers/interactions/Drag';
 
 interface WaypointMarkersLayerProps {
     waypoints: QuarkArray<Waypoint>;
@@ -44,10 +45,27 @@ export const WaypointMarkersLayer: React.FC<WaypointMarkersLayerProps> = watchDe
     
     return (
         <>
-            {/* TODO: Drag Interaction */}
+            {draggable &&
+                <Drag 
+                    sources='waypoints'
+                    hitTolerance={5}
+                    startCondition={useCallback((e) => { 
+                        const wId = e.feature.get("data").quark().id as UUID;
+                        return !!(selectedItem && selectedItem().id === wId); 
+                    }, [selectedItem])}
+                    onDragEnd={(e) => {
+                        const newLoc = toLonLat(e.mapBrowserEvent.coordinate);
+                        const { quark } = e.feature.get("data") as WaypointMarkerData;
+                        quark.set(w => ({
+                            ...w,
+                            location: [newLoc[0], newLoc[1]],
+                        }))
+                    }}
+                />
+            }
 
             <Select
-                layers={["parkings"]}
+                layers={["waypoints"]}
                 hitTolerance={5}
                 onSelect={(e) => {
                     e.target.getFeatures().clear();
