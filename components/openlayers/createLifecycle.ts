@@ -25,7 +25,10 @@ interface OLBase<Events, Handlers> {
 	dispose?: () => void;
 }
 
-type BuildProps<Options, Events extends ReadonlyArray<Event>> = RemoveUndefined<Options> & {
+type BuildProps<
+	Options,
+	Events extends ReadonlyArray<Event>
+> = RemoveUndefined<Options> & {
 	[EH in EventHandlers[Events[number]]]?: EventFn<EH>;
 };
 
@@ -36,7 +39,11 @@ export type InferOptions<Fn extends UseBehavior<any, any, any>> =
 
 type RemoveUndefined<T> = T extends undefined ? never : T;
 
-type UseBehavior<Options, T extends OLBase<any, any>, Events extends ReadonlyArray<Event>> = (
+type UseBehavior<
+	Options,
+	T extends OLBase<any, any>,
+	Events extends ReadonlyArray<Event>
+> = (
 	props: BuildProps<Options, Events>,
 	ref: ForwardedRef<T> | undefined
 ) => T | undefined;
@@ -95,14 +102,14 @@ export function createLifecycle<
 
 		// Reactive properties
 		// Synchronous updates should be fine
-		if (instance) {
-			for (let i = 0; i < observed.length; i++) {
-				const current = observed[i];
-				useEffectDeepEqual(() => {
+		for (let i = 0; i < observed.length; i++) {
+			const current = observed[i];
+			useEffectDeepEqual(() => {
+				if (instance) {
 					const methodName = updateMethods[i];
 					((instance as any)[methodName] as Function)(current);
-				}, [current]);
-			}
+				}
+			}, [current]);
 		}
 
 		// Event listeners
