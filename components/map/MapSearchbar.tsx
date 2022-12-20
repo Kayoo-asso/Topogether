@@ -6,8 +6,9 @@ import { useRouter } from "next/router";
 import { Boulder, LightTopo } from "types";
 import { TrigramOutput } from "trigram-search/build/main/lib/ITrigram";
 import SearchIcon from "assets/icons/search.svg";
-import { googleAutocomplete } from "helpers/map/mapUtils";
 import { MapSearchResults } from "./MapSearchResults";
+import { findPlace, GeocodingFeature } from "helpers/map/geocodingMapbox";
+import { usePosition } from "helpers/hooks";
 
 export interface MapSearchbarProps {
 	initialOpen?: boolean;
@@ -20,9 +21,7 @@ export interface MapSearchbarProps {
 	topoIdToRestrict?: number;
 	onButtonClick?: (barOpen: boolean) => void;
 	onOpenResults?: () => void;
-	onGoogleResultSelect?: (
-		place: google.maps.places.AutocompletePrediction
-	) => void;
+	onMapboxResultSelect?: (place: GeocodingFeature) => void;
 	onBoulderResultSelect?: (boulder: Boulder) => void;
 	// onAddTopoSelect?: () => void,
 }
@@ -39,14 +38,13 @@ export const MapSearchbar: React.FC<MapSearchbarProps> = ({
 }: MapSearchbarProps) => {
 	const router = useRouter();
 	const inputRef = useRef<HTMLInputElement>(null);
+	const { position } = usePosition();
 
 	const [barOpen, setBarOpen] = useState(initialOpen);
 	const [resultsOpen, setResultsOpen] = useState(false);
 	const [value, setValue] = useState("");
 	const [topoApiResults, setTopoApiResults] = useState<LightTopo[]>([]);
-	const [googleApiResults, setGoogleApiResults] = useState<
-		google.maps.places.AutocompletePrediction[]
-	>([]);
+	const [mapboxApiResults, setMapboxApiResults] = useState<GeocodingFeature[]>([]);
 	const [boulderResults, setBoulderResults] = useState<Boulder[]>([]);
 	const boulderSearcher = new Trigram(props.boulders, {
 		idField: "id",
@@ -61,15 +59,17 @@ export const MapSearchbar: React.FC<MapSearchbarProps> = ({
 		}
 		if (findBoulders) {
 			const boulderResults: TrigramOutput = boulderSearcher.find(value);
-			console.log(boulderResults);
 			setBoulderResults(boulderResults.map((res) => res.value as Boulder));
 		}
 		if (findPlaces) {
-			const googleResults = await googleAutocomplete(value);
-			setGoogleApiResults(googleResults || []);
+			const mapboxResults = await findPlace(value, { 
+				types: ["country", "region", "place", 'address', 'poi'],
+				proximity: position || undefined 
+			});
+			setMapboxApiResults(mapboxResults || []);
 		}
 	};
-	useEffect(() => {
+	useEffect(() => { // throttle
 		if (value?.length > 2) {
 			clearTimeout(timer);
 			timer = setTimeout(() => {
@@ -83,10 +83,10 @@ export const MapSearchbar: React.FC<MapSearchbarProps> = ({
 		setValue(topo.name);
 		router.push("/topo/" + topo.id);
 	};
-	const selectPlace = (place: google.maps.places.AutocompletePrediction) => {
+	const selectPlace = (place: GeocodingFeature) => {
 		setResultsOpen(false);
-		setValue(place.description);
-		props.onGoogleResultSelect && props.onGoogleResultSelect(place);
+		setValue(place.text);
+		props.onMapboxResultSelect && props.onMapboxResultSelect(place);
 	};
 	const selectBoulder = (boulder: Boulder) => {
 		setResultsOpen(false);
@@ -105,13 +105,14 @@ export const MapSearchbar: React.FC<MapSearchbarProps> = ({
 	const handleKeyboardShortcuts = (e: KeyboardEvent) => {
 		if (e.code === "Enter" && value.length > 2) {
 			if (topoApiResults.length > 0) selectTopo(topoApiResults[0]);
-			else if (googleApiResults.length > 0) selectPlace(googleApiResults[0]);
+			else if (mapboxApiResults.length > 0) selectPlace(mapboxApiResults[0]);
 		} else if (e.code === "Escape") setValue("");
 	};
 	useEffect(() => {
-		if (inputRef.current)
-			inputRef.current.addEventListener("keyup", handleKeyboardShortcuts);
-		//TODO: add a return !
+		if (inputRef.current) inputRef.current.addEventListener("keyup", handleKeyboardShortcuts);
+		return () => {
+			if (inputRef.current) inputRef.current.removeEventListener("keyup", handleKeyboardShortcuts);
+		};
 	}, [inputRef.current]);
 
 	return (
@@ -158,7 +159,7 @@ export const MapSearchbar: React.FC<MapSearchbarProps> = ({
 			{barOpen && resultsOpen && (
 				<MapSearchResults
 					topoApiResults={topoApiResults}
-					googleApiResults={googleApiResults}
+					mapboxApiResults={mapboxApiResults}
 					boulderResults={boulderResults}
 					onPlaceSelect={selectPlace}
 					onBoulderSelect={selectBoulder}

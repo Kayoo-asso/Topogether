@@ -7,8 +7,10 @@ import { GeoCoordinates, GeomCoordinates, GeometryType } from "types";
 
 // Only deals with forward geocoding
 
+type GeocodingTypes = "country" | "region" | "postcode" | "district" | "place" | "locality" | "neighborhood" | "address" | "poi";
 export type GeocodingOptions = {
 	// those have full coverage on Mapbox
+	types?: GeocodingTypes[];
 	language?: "en" | "fr" | "de" | "it" | "nl";
 	limit?: 5 | 6 | 7 | 8 | 9 | 10;
 	proximity?: GeoCoordinates;

@@ -17,12 +17,12 @@ import {
 	MapSearchbarProps,
 	TopoFilterOptions,
 	TopoFilters,
-	UserMarker,
 } from "./";
-import { Boulder, GeoCoordinates, MapProps, Position, Topo } from "types";
+import { Boulder, GeoCoordinates, Position, Topo } from "types";
 import { Quark, useCreateQuark, watchDependencies } from "helpers/quarky";
 import { fontainebleauLocation } from "helpers/constants";
-import { getLayersExtent, googleGetPlace, LayerNames, toLatLng } from "helpers/map";
+import { findPlace } from "helpers/map/geocodingMapbox"
+import { getLayersExtent, LayerNames } from "helpers/map";
 import { setReactRef } from "helpers/utils";
 import { useBreakpoint, usePosition } from "helpers/hooks";
 
@@ -69,6 +69,7 @@ const attributionsSatellite =
 	"Powered by Esri. " +
 	"Source: Esri, DigitalGlobe, GeoEye, Earthstar Geographics, CNES/Airbus DS, USDA, USGS, AeroGRID, IGN, and the GIS User Community";
 
+
 export const MapControl2 = watchDependencies<Map, MapControlProps>(
 	(
 		{
@@ -94,7 +95,6 @@ export const MapControl2 = watchDependencies<Map, MapControlProps>(
 		const [mapToolSelectorOpen, setMapToolSelectorOpen] = useState(breakpoint === "desktop");
 		const mapZoom = useCreateQuark(initialZoom);
 		const [satelliteView, setSatelliteView] = useState(false);
-		// TODO : try to fix XYZ component in order it to rerender when url and attributions props change, and thus avoiding this hack
 		const sourceRef = useRef<XYZType>(null);
 		useEffect(() => {
 			if (sourceRef.current) {
@@ -142,7 +142,7 @@ export const MapControl2 = watchDependencies<Map, MapControlProps>(
 		// Initial extension / bounding
 		useEffect(() => {
 			if (mapRef.current && props.layerClassNameForInitialExtent) getLayersExtent(mapRef.current, props.layerClassNameForInitialExtent);
-		}, [mapRef.current]);
+		}, [mapRef.current]);		
 		
 		return (
 			<div className="relative h-full w-full">
@@ -154,24 +154,16 @@ export const MapControl2 = watchDependencies<Map, MapControlProps>(
 								boulders={
 									props.topo ? props.topo().boulders.toArray() : undefined
 								}
-								//TODO: change this function to use MapBox GeoCoding
-								// onGoogleResultSelect={async (res) => {
-								// 	const placeDetails = await googleGetPlace(res.place_id);
-								// 	if (placeDetails?.geometry)
-								// 		getBoundsFromSearchbar(placeDetails.geometry);
-								// }}
-								onBoulderResultSelect={useCallback(
-									(boulder: Boulder) => {
-										const bQuark = props.topo!().boulders.findQuark(
-											(b) => b.id === boulder.id
-										)!;
-										select.boulder(bQuark);
-										mapRef.current
-											?.getView()
-											.setCenter(fromLonLat(boulder.location));
-									},
-									[props.topo]
-								)}
+								onMapboxResultSelect={(place) => {
+									mapRef.current?.getView().setCenter(fromLonLat(place.center));
+								}}
+								onBoulderResultSelect={useCallback((boulder: Boulder) => {
+									const bQuark = props.topo!().boulders.findQuark(
+										(b) => b.id === boulder.id
+									)!;
+									select.boulder(bQuark);
+									mapRef.current?.getView().setCenter(fromLonLat(boulder.location));
+								}, [props.topo])}
 								{...props.searchbarOptions}
 							/>
 						)}

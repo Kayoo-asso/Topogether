@@ -151,6 +151,28 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> = watchDepe
                     })}
                 </VectorSource>
             </VectorLayer>
+            
+            {/* Context Menu TODO */}
+            {/* <VectorLayer
+                id="boulder-controls"
+                style={new Style({
+                    image: new Icon({
+                        size: [70, 70],
+                        offset: [-15, 0],
+                        src: '/assets/icons/colored/_rock_bold.svg',
+                    })
+                })}
+            >
+                <VectorSource>
+                    {props.boulders.map(b => {
+                        if (selectedItem && b.id === selectedItem().id) return (
+                            <Point
+                                coordinates={fromLonLat(b.location)}
+                            />
+                        )
+                    })}
+                </VectorSource>
+            </VectorLayer> */}
         </>
     )
 })

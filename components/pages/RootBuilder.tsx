@@ -233,6 +233,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 						onSectorButtonClick={() => select.info("SECTOR", breakpoint)}
 						searchbarOptions={{
 							findBoulders: true,
+							findPlaces: true, //TODO : remove that
 							focusOnOpen: true,
 						}}
 						displayToolSelector

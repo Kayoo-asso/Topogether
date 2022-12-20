@@ -6,12 +6,13 @@ import type { Boulder, LightTopo } from "types";
 import Rock from "assets/icons/rock.svg";
 import Flag from "assets/icons/flag.svg";
 import MarkerIcon from "assets/icons/marker.svg";
+import { GeocodingFeature } from "helpers/map/geocodingMapbox";
 
 interface MapSearchResultsProps {
 	topoApiResults: LightTopo[];
-	googleApiResults: google.maps.places.AutocompletePrediction[];
+	mapboxApiResults: GeocodingFeature[]
 	boulderResults: Boulder[];
-	onPlaceSelect: (place: google.maps.places.AutocompletePrediction) => void;
+	onPlaceSelect: (place: GeocodingFeature) => void;
 	onBoulderSelect: (boulder: Boulder) => void;
 	onClose: () => void;
 }
@@ -20,14 +21,14 @@ export const MapSearchResults: React.FC<MapSearchResultsProps> = (
 	props: MapSearchResultsProps
 ) => {
 	return (
-		<div className="absolute left-0 top-0 z-50 w-[94%] rounded-lg bg-white px-7 pt-[55px] pb-3 shadow md:w-[97%]">
+		<div className="absolute left-0 top-0 z-50 w-[94%] rounded-lg bg-white pt-[55px] pb-3 shadow md:w-[97%]">
 			{/* TODO: Add closing button */}
 			{/* TODO: Add "Résultats récents" */}
 
 			{props.topoApiResults.length > 0 &&
 				props.topoApiResults.map((topo) => (
 					<Link href={"/topo/" + encodeUUID(topo.id)} key={topo.id}>
-						<a className="ktext-base flex cursor-pointer flex-row items-center gap-4 py-3 text-dark">
+						<a className="ktext-base flex cursor-pointer flex-row items-center gap-4 py-3 px-7 text-dark hover:bg-grey-light">
 							<MarkerIcon className="h-5 w-5 fill-main" />
 							<div>{topo.name}</div>
 						</a>
@@ -38,7 +39,7 @@ export const MapSearchResults: React.FC<MapSearchResultsProps> = (
 				props.boulderResults.map((boulder) => (
 					<div
 						key={boulder.id}
-						className="ktext-base flex cursor-pointer flex-row items-center gap-4 py-3 text-dark"
+						className="ktext-base flex cursor-pointer flex-row items-center gap-4 py-3 px-7 text-dark hover:bg-grey-light"
 						onClick={() => props.onBoulderSelect(boulder)}
 					>
 						<Rock className="h-5 w-5 stroke-main" />
@@ -46,19 +47,19 @@ export const MapSearchResults: React.FC<MapSearchResultsProps> = (
 					</div>
 				))}
 
-			{props.googleApiResults.length > 0 && (
+			{props.mapboxApiResults.length > 0 && (
 				<>
-					<div className="ktext-label mt-5 mb-2 uppercase text-grey-medium">
+					<div className="ktext-label mt-5 mb-2 px-7 uppercase text-grey-medium">
 						Lieux
 					</div>
-					{props.googleApiResults.map((res) => (
+					{props.mapboxApiResults.map((res) => (
 						<div
-							key={res.place_id}
-							className="ktext-base flex cursor-pointer flex-row items-center gap-4 py-3 text-dark"
+							key={res.place_name}
+							className="ktext-base flex cursor-pointer flex-row items-center gap-4 py-3 px-7 text-dark hover:bg-grey-light"
 							onClick={() => props.onPlaceSelect(res)}
 						>
 							<Flag className="h-5 w-5 stroke-dark" />
-							<div>{res.description}</div>
+							<div>{res.text}</div>
 						</div>
 					))}
 				</>

@@ -26,6 +26,7 @@ import { BoulderMarkersLayer } from "components/map/markers/BoulderMarkersLayer"
 import { SectorAreaMarkersLayer } from "components/map/markers/SectorAreaMarkersLayer";
 import { toLonLat } from "ol/proj";
 import { ParkingMarkersLayer } from "components/map/markers/ParkingMarkersLayer";
+import { WaypointMarkersLayer } from "components/map/markers/WaypointMarkersLayer";
 
 interface RootTopoProps {
 	topoQuark: Quark<Topo>;
@@ -145,9 +146,7 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 							findBoulders: true,
 						}}
 						displaySectorButton
-						onSectorButtonClick={() => {
-							//TODO
-						}}
+						onSectorButtonClick={() => select.info("SECTOR", breakpoint)}
 					>
 						<SectorAreaMarkersLayer
 							topoQuark={props.topoQuark}
@@ -159,6 +158,9 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 						/>
 						<ParkingMarkersLayer 
 							parkings={topo.parkings}
+						/>
+						<WaypointMarkersLayer 
+							waypoints={topo.waypoints}
 						/>
 						
 					</MapControl2>

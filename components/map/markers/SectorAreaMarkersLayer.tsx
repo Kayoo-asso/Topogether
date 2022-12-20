@@ -148,13 +148,11 @@ export const SectorAreaMarkersLayer: React.FC<SectorAreaMarkersLayerProps> = wat
                     onSelect={(e) => {
                         e.mapBrowserEvent.stopPropagation();
                         e.mapBrowserEvent.preventDefault();
+                        flush.item();
                         if (e.selected.length === 1) {
                             const feature = e.selected[0];
                             const { quark } = feature.get("data") as SectorMarkerData;
                             setSelected(quark().id);
-                        }
-                        else if (e.deselected.length === 1) {
-                            flush.item();
                         }
                     }}
                 />
