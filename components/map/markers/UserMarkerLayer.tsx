@@ -1,87 +1,100 @@
-import React, { useCallback } from 'react';
-import { Quark, watchDependencies } from 'helpers/quarky';
+import React, { useCallback } from "react";
+import { Quark, watchDependencies } from "helpers/quarky";
 import {
 	Point,
 	Select,
 	VectorLayer,
 	VectorSource,
+	Circle,
+    useMap,
 } from "components/openlayers";
-import { Fill, Stroke, Style, Circle } from 'ol/style';
-import { usePosition } from 'helpers/hooks';
-import { GeoCoordinates } from 'types';
-import { fromLonLat } from 'ol/proj';
-import { Map } from 'ol';
+import { Fill, Stroke, Style, Circle as CircleStyle } from "ol/style";
+import { usePosition } from "helpers/hooks";
+import { GeoCoordinates } from "types";
+import { fromLonLat } from "ol/proj";
+import { Map } from "ol";
+import { SelectEvent } from "ol/interaction/Select";
 
 interface UserMarkerLayerProps {
-    map?: Map;
-    mapZoom?: Quark<number>;
-    onClick?: (pos: GeoCoordinates | null) => void,
+	map?: Map;
+	onClick?: (pos: GeoCoordinates | null) => void;
 }
 
-export const userMarkerStyle = () => {
-    const image = new Circle({
-        radius: 6,
-        fill: new Fill({
-          color: '#4EABFF',
-        }),
-        stroke: new Stroke({
-          color: 'white',
-          width: 2,
-        }),
-    });
-    return new Style({
-        image,
-        zIndex: 5
-    });
-}
+const userMarkerStyle = new Style({
+	image: new CircleStyle({
+		radius: 6,
+		fill: new Fill({
+			color: "#4EABFF",
+		}),
+		stroke: new Stroke({
+			color: "white",
+			width: 2,
+		}),
+	}),
+	zIndex: 5,
+});
 
-export const UserMarkerLayer: React.FC<UserMarkerLayerProps> = watchDependencies((props: UserMarkerLayerProps) => {
-    const { position, accuracy } = usePosition();
-    // console.log(accuracy);
+const accuracyMarkerStyle = new Style({
+	zIndex: 2,
+	fill: new Fill({
+		color: "rgba(31, 67, 100, 0.3)",
+	}),
+});
 
-    const accuracyMarkerStyle = useCallback(() => {
-        if (!accuracy || !props.mapZoom) return;
-        // const r = Math.min(accuracy, 60)/100 * (props.mapZoom()**4 / 200)
-        // console.log(r);
-        const image = new Circle({
-            radius: accuracy,
-            fill: new Fill({
-              color: 'rgba(31, 67, 100, 0.3)',
-            }),
-        });
-        return new Style({
-            image,
-            zIndex: 2
-        });
-    }, [accuracy, props.mapZoom]);
+export const UserMarkerLayer: React.FC<UserMarkerLayerProps> =
+(props: UserMarkerLayerProps) => {
+		let { position, accuracy } = usePosition();
+        // Hook of react-openlayers to get the map, when it loads
+        const map = useMap();
+        // We need to convert the accuracy in meters to a distance in the map's projection
+        const projection = map?.getView().getProjection();
+        const metersPerUnit = projection?.getMetersPerUnit()
+        if(metersPerUnit && accuracy) {
+            accuracy = accuracy / metersPerUnit;
+        } else {
+            accuracy = 0;
+        }
 
-    return (
-        <>
-            <Select
-                layers={["user", "userAccuracy"]}
-                hitTolerance={1}
-                onSelect={useCallback((e) => {
-                    e.mapBrowserEvent.stopPropagation();
-                    e.mapBrowserEvent.preventDefault();
-                    props.onClick && props.onClick(position);
-                    e.target.getFeatures().clear();
-                }, [position])}
-            />
 
-            <VectorLayer
-                id="userAccuracy"
-                style={accuracyMarkerStyle}
-            >
-                <VectorSource>
-                    {accuracy && position &&
-                        <Point
-                            coordinates={fromLonLat(position)}
-                        />
-                    }
-                </VectorSource>
-            </VectorLayer>
+		return (
+			<>
+				<Select
+					layers={["user"]}
+					hitTolerance={1}
+					onSelect={useCallback(
+						(e: SelectEvent) => {
+							e.mapBrowserEvent.stopPropagation();
+							e.mapBrowserEvent.preventDefault();
+							props.onClick && props.onClick(position);
+							e.target.getFeatures().clear();
+						},
+						[position]
+					)}
+				/>
+				<VectorLayer id="user">
+					<VectorSource>
+						{position && (
+							<Point
+								coordinates={fromLonLat(position)}
+								style={userMarkerStyle}
+							/>
+						)}
 
-            <VectorLayer
+						{accuracy && position && (
+							<Circle center={fromLonLat(position)} radius={accuracy} style={accuracyMarkerStyle} />
+						)}
+					</VectorSource>
+				</VectorLayer>
+
+				{/* <VectorLayer id="userAccuracy" style={accuracyMarkerStyle}>
+					<VectorSource>
+						{accuracy && position && (
+							<Point coordinates={fromLonLat(position)} />
+						)}
+					</VectorSource>
+				</VectorLayer> */}
+
+				{/* <VectorLayer
                 id="user"     
                 style={userMarkerStyle}
             >
@@ -92,9 +105,9 @@ export const UserMarkerLayer: React.FC<UserMarkerLayerProps> = watchDependencies
                         />
                     }
                 </VectorSource>
-            </VectorLayer>
-        </>
-    )
-})
+            </VectorLayer> */}
+			</>
+		);
+	};
 
 UserMarkerLayer.displayName = "UserMarkerLayer";
