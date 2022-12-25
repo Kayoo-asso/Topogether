@@ -60,28 +60,6 @@ export const boulderMarkerStyle = (
 	});
 };
 
-// const clusterMarkerStyle = (feature: FeatureLike) => {
-//     const image = new Circle({
-//         radius: 6,
-//         fill: new Fill({
-//           color: '#4EABFF',
-//         }),
-//         stroke: new Stroke({
-//           color: 'white',
-//           width: 2,
-//         }),
-//     });
-//     const style = new Style({
-//         image,
-//         zIndex: 100
-//     });
-//     return (
-//         <Point
-
-//         />
-//     )
-// }
-
 export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> =
 	watchDependencies(
 		({ draggable = false, ...props }: BoulderMarkersLayerProps) => {
@@ -145,6 +123,7 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> =
 						style={useCallback((cluster) => {
 							const features = cluster.get("features");
 
+<<<<<<< Updated upstream
 							const size = features.length;
 							// Cluster style
 							if (size > 1) {
@@ -199,6 +178,45 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> =
 
 					{/* Context Menu TODO */}
 					{/* <VectorLayer
+=======
+            <VectorLayer
+                id="boulders"
+                className='boulders'
+                style={useCallback(
+                    (feature) => {
+                        const bId = feature.get("data").quark().id as UUID;
+                        return boulderMarkerStyle (
+                            feature,
+                            selectedItem ? selectedItem().id === bId : false,
+                            selectedType !== "none"
+                        )}
+                    , [selectedType, selectedItem])
+                }
+            >
+                <VectorSource>
+                    <Cluster 
+                        distance={20}
+                        minDistance={10}
+
+                    />
+                    {props.boulders.quarks().map(bQuark => {
+                        const b = bQuark();
+                        const label = props.boulderOrder.get(b.id)! +
+                            (process.env.NODE_ENV === "development" ? ". " + b.name : "")
+                        return (
+                            <Point
+                                key={b.id}
+                                coordinates={fromLonLat(b.location)}
+                                data={{ quark: bQuark, label }}
+                            />
+                        )
+                    })}
+                </VectorSource>
+            </VectorLayer>
+            
+            {/* Context Menu TODO */}
+            {/* <VectorLayer
+>>>>>>> Stashed changes
                 id="boulder-controls"
                 style={new Style({
                     image: new Icon({
