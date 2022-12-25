@@ -1,10 +1,8 @@
 import OLCluster from "ol/source/Cluster";
 import { InferOptions, createLifecycle } from "../createLifecycle";
-import { forwardRef, useEffect, useRef, useState } from "react";
-import { useLayer, useSource } from "../contexts";
+import { forwardRef, useEffect, useState } from "react";
+import { useLayer } from "../contexts";
 import VectorSource from "ol/source/Vector";
-import { Source } from "ol/source";
-import { ObjectEvent } from "ol/Object";
 
 const useBehavior = createLifecycle(OLCluster, {
 	events: [
@@ -33,10 +31,7 @@ export const Cluster = forwardRef<OLCluster, ClusterProps>(
 		// source in the layer
 		useEffect(() => {
 			if (layer) {
-				const updateSource = (evt?: ObjectEvent) => {
-					if(evt) {
-						console.log("Update event:", evt)
-					}
+				const updateSource = () => {
 					const source = layer.getSource() || undefined;
 					if (source instanceof OLCluster) {
 						return;
@@ -57,10 +52,23 @@ export const Cluster = forwardRef<OLCluster, ClusterProps>(
 			}
 		}, [layer]);
 		const cluster = useBehavior({ ...props, source: source }, ref);
+		useEffect(() => console.log("Cluster change:", cluster), [cluster])
 		useEffect(() => {
 			if (layer && cluster && source) {
 				layer.setSource(cluster);
+				console.log("setting cluster as source")
+					console.log("cluster features:", cluster.getFeatures())
+					console.log("source features:", source.getFeatures())
 				return () => {
+					console.log("disposing of cluster")
+					console.log("cluster features:", cluster.getFeatures())
+					console.log("source features:", source.getFeatures())
+					for(const f of cluster.getFeatures()) {
+						if(!source.hasFeature(f)) {
+							source.addFeature(f)
+						}
+					}
+					cluster.addFeature
 					layer.setSource(source);
 					cluster.setSource(null);
 					cluster.dispose();

@@ -12,7 +12,8 @@ import {
 	useMemo,
 	useState,
 } from "react";
-import { useSource } from "./contexts";
+import { useLayer } from "./contexts";
+import { Cluster, Source } from "ol/source";
 
 import {
 	Circle as OLCircle,
@@ -34,8 +35,6 @@ interface CoordinatesTypeMap {
 	multilinestring: Array<Array<Coordinate>>;
 	multipolygon: Array<Array<Array<Coordinate>>>;
 }
-
-type CoordinatesArray = CoordinatesTypeMap[keyof CoordinatesTypeMap];
 
 type Geometry =
 	| OLCircle
@@ -83,8 +82,23 @@ function implementation<G extends GeometryType>(
 	props: Props<G>,
 	ref: ForwardedRef<Feature>
 ) {
-	const source = useSource();
+	const layer = useLayer();
+	const [source, setSource] = useState<Source | null>(null);
 
+	useEffect(() => {
+		if(layer) {
+			const updateSource = () => {
+				const source = layer.getSource();
+				// Don't interact with Cluster sources, interact with the underlying source
+				if(source instanceof Cluster) {
+					return;
+				}
+				setSource(source);
+			}
+			layer.on("change:source", updateSource)
+			return () => layer.un("change:source", updateSource);
+		}
+	}, [layer]);
 
 	let geometry: Geometry;
 	// The `type` prop should never change for a given component.
@@ -113,7 +127,7 @@ function implementation<G extends GeometryType>(
 	// TODO: deep comparison before updating style?
 	// feature.setStyle(props.style);
 	feature.setProperties({
-		data: props.data
+		data: props.data,
 	});
 
 	useImperativeHandle(ref, () => feature, [feature]);
@@ -126,7 +140,9 @@ function implementation<G extends GeometryType>(
 				);
 			}
 			source.addFeature(feature);
-			return () => source.removeFeature(feature);
+			return () => {
+				// source.removeFeature(feature);
+			};
 		}
 	}, [source, feature]);
 

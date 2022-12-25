@@ -299,7 +299,7 @@ export const MapControl2 = watchDependencies<Map, MapControlProps>(
 					{props.children}
 
 					{displayUserMarker && (
-						<UserMarkerLayer mapZoom={mapZoom} onClick={props.onUserMarkerClick} />
+						<UserMarkerLayer onClick={props.onUserMarkerClick} />
 					)}
 				</BaseMap>
 			</div>
