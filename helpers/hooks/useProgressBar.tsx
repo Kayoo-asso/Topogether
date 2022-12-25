@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useRef, useState } from "react";
 
 export interface ProgressTracker {
 	start(total: number): void;
@@ -8,29 +8,35 @@ export interface ProgressTracker {
 export function useProgressBar(threshold: number): [number, ProgressTracker] {
 	const [progress, setProgress] = useState(0);
 
-	let total = 1;
-	let count = 0;
+	let total = useRef(1);
+	let count = useRef(0);
 
-	const start = (tot: number) => {
-		total = tot;
-		count = 0;
-	};
+	const tracker = useMemo(
+		() => ({
+			start(tot: number) {
+				total.current = tot;
+				count.current = 0;
+			},
+			increment(n?: number) {
+				const step = threshold * total.current;
+				n = n ?? 1;
+				const next = count.current + n;
 
-	const increment = (n?: number) => {
-		const step = threshold * total;
-		n = n ?? 1;
-		const next = count + n;
+				if (next > total.current) {
+					throw new Error(
+						`Progress bar count (${count}) higher than ${total.current}`
+					);
+				}
 
-		if (next > total) {
-			throw new Error(`Progress bar count (${count}) higher than ${total}`);
-		}
+				const nextTick = Math.ceil(count.current / step);
+				count.current += next;
+				if (next > nextTick * step) {
+					setProgress(nextTick);
+				}
+			},
+		}),
+		[threshold]
+	);
 
-		const nextTick = Math.ceil(count / step);
-		count += next;
-		if (next > nextTick * step) {
-			setProgress(nextTick);
-		}
-	};
-
-	return [progress, { start, increment }];
+	return [progress, tracker];
 }
