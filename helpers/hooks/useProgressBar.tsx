@@ -16,6 +16,7 @@ export function useProgressBar(threshold: number): [number, ProgressTracker] {
 			start(tot: number) {
 				total.current = tot;
 				count.current = 0;
+        setProgress(0);
 			},
 			increment(n?: number) {
 				const step = threshold * total.current;

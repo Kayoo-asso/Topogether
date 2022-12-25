@@ -223,7 +223,7 @@ export type TopoAccess = RequireAtLeastOne<
 		duration?: number;
 		steps: TopoAccessStep[];
 	},
-	"danger" | "difficulty" | "duration" | "steps"
+	"danger" | "difficulty" | "duration"
 >;
 
 export interface TopoAccessStep {
