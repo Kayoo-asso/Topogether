@@ -114,28 +114,37 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> =
 						/>
 					)}
 
-					{/* <Select
+					<Select
 						layers={["boulders"]}
 						hitTolerance={5}
 						onSelect={(e) => {
+                            console.log("select event:", e)
 							e.target.getFeatures().clear();
 							e.mapBrowserEvent.stopPropagation();
 							e.mapBrowserEvent.preventDefault();
 							if (e.selected.length === 1) {
-								const feature = e.selected[0];
-								const { quark } = feature.get("data") as BoulderMarkerData;
-								select.boulder(quark);
+                                // Because we're using Cluster, the feature in the selection is a cluster of features
+								const cluster = e.selected[0];
+                                const clusterFeatures = cluster.get('features');
+                                if(clusterFeatures.length === 1) {
+                                    const feature = clusterFeatures[0];
+                                    const { quark } = feature.get("data") as BoulderMarkerData;
+                                    select.boulder(quark);
+                                } else {
+                                    // TODO: zoom into the cluster?
+                                }
 							} else if (e.deselected.length === 1) {
 								flush.item();
 							}
 						}}
-					/> */}
+					/>
 
 					<VectorLayer
 						id="boulders"
 						className="boulders"
-						style={function (cluster) {
+						style={useCallback((cluster) => {
 							const features = cluster.get("features");
+
 							const size = features.length;
 							// Cluster style
 							if (size > 1) {
@@ -165,11 +174,7 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> =
 									selectedType !== "none"
 								);
 							}
-						}}
-						// style={useCallback(
-						//     (feature) => {
-						//     , [selectedType, selectedItem])
-						// }
+						}, [selectedType, selectedItem])}
 					>
 						<Cluster
                             minDistance={10}
