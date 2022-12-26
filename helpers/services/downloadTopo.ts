@@ -5,8 +5,8 @@ import {
 	getTopoExtent,
 } from "helpers/map/getTopoExtent";
 import { ProgressTracker } from "helpers/hooks";
-import { set } from "idb-keyval";
-import { CACHED_IMG_WIDTH, bunnyUrl, tileUrl } from "./sharedWithServiceWorker";
+import { get, set } from "idb-keyval";
+import { CACHED_IMG_WIDTH, bunnyUrl, tileUrl, TOPO_CACHE_KEY } from "./sharedWithServiceWorker";
 import { createXYZ } from "ol/tilegrid";
 import { useEffect } from "react";
 
@@ -18,12 +18,14 @@ import { useEffect } from "react";
 
 // Note: max zoom of 21 seems fine, which significantly reduces the nb of downloaded tiles
 const MAX_ZOOM = 21;
-// May need more teesting to ensure 1000 concurrent requests don't overload weaker devices
+// 1000 max concurrent requests seems to work fine (1500 is too much)
+// Needs more teesting to ensure 1000 concurrent requests don't overload weaker devices
 const MAX_CONCURRENT_REQUESTS = 1000;
 
 export type DownloadTopoResult =
 	| {
 			success: true;
+			cachedUrls: string[]
 	  }
 	| {
 			success: false;
@@ -45,7 +47,7 @@ export async function downloadTopo(
 	);
 
 	const start = Date.now();
-	const cache = await caches.open("topo-download");
+	const cache = await caches.open(TOPO_CACHE_KEY);
 	const lock = new Semaphore(MAX_CONCURRENT_REQUESTS);
 	const promises: Promise<void>[] = [
 		...urls.map((url) =>
@@ -61,9 +63,19 @@ export async function downloadTopo(
 			tileUrls.length
 		} tiles, ${imgUrls.length} images)`
 	);
+	// OK, the work is done, it's time to look for errors
+	// Three types of errors possible:
+	// - a tile failed to download
+	// - an image failed to download
+	// - saving the topo to IndexedDB failed (= global error)
+	// The first 2 categories may be OK if there are only a few errors,
+	// but we can't do anything without the topo data.
 	let tileErrors = 0;
 	let imageErrors = 0;
 	let globalError = false;
+	// Oh, we also need to keep track of which entries we actually managed to cache
+	const cachedUrls: string[] = [];
+	// We skip the last promise, since it corresponds to the write to IndexedDB for the topo data
 	for(let i = 0 ; i < results.length - 1; ++i) {
 		const res = results[i];
 		if(res.status === "rejected") {
@@ -72,14 +84,24 @@ export async function downloadTopo(
 			} else {
 				imageErrors++;
 			}
+		} else {
+			cachedUrls.push(urls[i])
 		}
 	}
 	if(results[results.length - 1].status === "rejected") {
 		globalError = true;
-	}
+		// Do not delete just yet, in case the user attempts again
+	} 
+
+	// Keep track of cached entries, in case user wants to clear data
+	await addCachedEntries(topo, cachedUrls);
+
+	// Record the cached entries, in case the user asks to delete the data for this topo
+
 
 	if(tileErrors === 0 && imageErrors === 0 && globalError === false) {
-		return { success: true }
+		await markAsAvailableOffline(topo);
+		return { success: true, cachedUrls }
 	} else {
 		return {
 			success: false,
@@ -195,4 +217,58 @@ export function withExponentialBackoff<T>(
 		}
 		attempt(maxRetries);
 	});
+}
+
+const OFFLINE_TOPOS_KEY = "topogether-offline-topos";
+
+export function cachedEntriesKey(id: UUID) {
+	return id + "/cache-keys";
+}
+
+async function addCachedEntries(topo: TopoData | Topo, urls: string[]) {
+	const key = cachedEntriesKey(topo.id);
+	let current = new Set(await get(key) as string[] | undefined);
+
+	for(let i = 0; i < urls.length; i++) {
+		current.add(urls[i]);
+	}
+	await set(key, Array.from(current));
+}
+
+export async function hasCachedEntries(id: UUID): Promise<boolean> {
+	const cachedEntries = await get(cachedEntriesKey(id)) as string[] | undefined;
+	return !!cachedEntries
+}
+
+export async function markAsAvailableOffline(topo: TopoData | Topo) {
+	const currentlyAvailable = new Set(await get(OFFLINE_TOPOS_KEY) as UUID[]);
+	currentlyAvailable.add(topo.id);
+	await set(OFFLINE_TOPOS_KEY, Array.from(currentlyAvailable));
+}
+
+export async function isAvailableOffline(id: UUID): Promise<boolean> {
+	const currentlyAvailable = new Set(await get(OFFLINE_TOPOS_KEY) as UUID[]);
+	return currentlyAvailable.has(id);
+}
+
+export async function removeTopoFromCache(id: UUID): Promise<boolean> {
+	const entriesKey = cachedEntriesKey(id);
+	const entries = await get(entriesKey) as string[] | undefined;
+	const cache = await caches.open(TOPO_CACHE_KEY)
+	if(entries && entries.length > 0) {
+		const promises = entries.map(url => cache.delete(url))
+		const results = await Promise.allSettled(promises);
+		const notDeleted: string[] = [];
+		for(let i = 0; i < results.length; i++) {
+			if(results[i].status === "rejected") {
+				notDeleted.push(entries[i])
+			}
+		}
+		const hasErrors = notDeleted.length > 0;
+		const idbValue = hasErrors ? notDeleted : undefined;
+		await set(entriesKey, idbValue);
+		return hasErrors;
+	}
+	// no entries found
+	return true;
 }

@@ -9,7 +9,7 @@ import {
 	NetworkOnly,
 } from "workbox-strategies";
 import { ExpirationPlugin } from "workbox-expiration";
-import { tileUrl } from "helpers/services/sharedWithServiceWorker";
+import { TOPO_CACHE_KEY, tileUrl } from "helpers/services/sharedWithServiceWorker";
 
 // TODO:
 // - Redirect to home page if page is not cached
@@ -129,7 +129,7 @@ registerRoute(
 		// We remove the leading slash using .substring()
 		const id = url.pathname.split(".")[0].substring(1)
 		const imageUrl = `https://topogether.b-cdn.net/${id}.jpg?width=${2048}`;
-		const cache = await caches.open("topo-download");
+		const cache = await caches.open(TOPO_CACHE_KEY);
 		const response = await cache.match(imageUrl);
 		if(response) {
 			return response;
@@ -165,7 +165,7 @@ registerRoute(
 		if (match) {
 			// First match is always the original string
 			const [_, z, x, y] = match;
-			const cache = await caches.open("topo-download");
+			const cache = await caches.open(TOPO_CACHE_KEY);
 			const cachedResponse = await cache.match(tileUrl(+x, +y, +z));
 			if (cachedResponse) {
 				return cachedResponse;

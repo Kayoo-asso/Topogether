@@ -1,5 +1,6 @@
 import type { UUID } from "types";
 
+export const TOPO_CACHE_KEY = "topo-download";
 export const CACHED_IMG_WIDTH = 2048;
 
 const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
