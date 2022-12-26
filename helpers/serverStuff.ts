@@ -18,7 +18,6 @@ export type AccessJWT = {
 };
 
 export const loginRedirect = (source: string) => {
-	console.log("Login redirect from " + source);
 	return {
 		redirect: {
 			destination: `/user/login?redirectTo=${source}`,

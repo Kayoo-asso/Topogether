@@ -52,17 +52,10 @@ export const Cluster = forwardRef<OLCluster, ClusterProps>(
 			}
 		}, [layer]);
 		const cluster = useBehavior({ ...props, source: source }, ref);
-		useEffect(() => console.log("Cluster change:", cluster), [cluster])
 		useEffect(() => {
 			if (layer && cluster && source) {
 				layer.setSource(cluster);
-				console.log("setting cluster as source")
-					console.log("cluster features:", cluster.getFeatures())
-					console.log("source features:", source.getFeatures())
 				return () => {
-					console.log("disposing of cluster")
-					console.log("cluster features:", cluster.getFeatures())
-					console.log("source features:", source.getFeatures())
 					for(const f of cluster.getFeatures()) {
 						if(!source.hasFeature(f)) {
 							source.addFeature(f)

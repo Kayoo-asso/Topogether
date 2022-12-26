@@ -1,10 +1,13 @@
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { api } from "helpers/services";
 import { isUUID, TopoData } from "types";
 import { editTopo } from "helpers/quarkifyTopo";
 import { withRouting } from "helpers/serverStuff";
 import { decodeUUID } from "helpers/utils";
 import { RootBuilder } from "components/pages/RootBuilder";
+import { useProgressBar } from "helpers/hooks";
+import { downloadTopo } from "helpers/services/downloadTopo";
+import { DownloadTester } from "components/DownloadTester";
 
 type BuilderProps = {
 	topo: TopoData;
@@ -42,6 +45,11 @@ export default withRouting<BuilderProps>({
 		// Memoize here, to avoid recreating a store from the initial page props after the first render
 		// (ex: when the URL changes when the user selects a boulder)
 		const topoQuark = useMemo(() => editTopo(topo), []);
-		return <RootBuilder topoQuark={topoQuark} />;
+		return (
+			<>
+				<RootBuilder topoQuark={topoQuark} />
+				<DownloadTester topo={topo} />
+			</>
+		);
 	},
 });

@@ -96,7 +96,6 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> =
 						layers={["boulders"]}
 						hitTolerance={5}
 						onSelect={(e) => {
-                            console.log("select event:", e)
 							e.target.getFeatures().clear();
 							e.mapBrowserEvent.stopPropagation();
 							e.mapBrowserEvent.preventDefault();

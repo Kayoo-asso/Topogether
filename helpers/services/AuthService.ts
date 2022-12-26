@@ -152,7 +152,6 @@ export class AuthService {
 			console.error("Error updating email:", error);
 			return false;
 		}
-		console.log("Updated email, received user:", user);
 		return true;
 	}
 
@@ -210,7 +209,6 @@ export class AuthService {
 		event: AuthChangeEvent,
 		session: SupabaseSession | null
 	) {
-		console.log("[AuthStateChange] " + event);
 		if (event === "SIGNED_OUT") {
 			this._session.set(null);
 			deleteCookie(AccessTokenCookie);

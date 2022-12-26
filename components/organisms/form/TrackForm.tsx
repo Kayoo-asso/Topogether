@@ -80,7 +80,6 @@ export const TrackForm: React.FC<TrackFormProps> = watchDependencies(
 					<SpecSelector
 						value={track.spec}
 						onChange={(v) => {
-							console.log(v);
 							trackQuark.set((t) => ({
 								...t,
 								spec: toggleFlag(track.spec, v as TrackSpec),

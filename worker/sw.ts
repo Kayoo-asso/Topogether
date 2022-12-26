@@ -10,6 +10,10 @@ import {
 } from "workbox-strategies";
 import { ExpirationPlugin } from "workbox-expiration";
 
+import { tileUrl, CACHED_IMG_WIDTH } from "helpers/services/downloadTopo";
+import { bunnyUrl } from "components/atoms/Image";
+import type { UUID } from "types";
+
 // TODO:
 // - Redirect to home page if page is not cached
 // - Cache pages on navigation, to avoid problems with offline refreshes
@@ -108,49 +112,40 @@ const imageCache = new CacheFirst({
 	cacheName: "images",
 	plugins: [
 		new ExpirationPlugin({
-			maxEntries: 5,
+			maxEntries: 10,
 			purgeOnQuotaError: true,
 		}),
 	],
 });
 
-const networkOnly = new NetworkOnly();
 
 registerRoute(
-	({ request, url, sameOrigin }) => {
+	({ request, url }) => {
 		return (
 			request.destination === "image" &&
-			(sameOrigin ||
-				url.hostname === "imagedelivery.net" ||
-				url.hostname === "maps.gstatic.com")
+			url.hostname === "topogether.b-cdn.net"
 		);
 	},
 	async (options) => {
 		const { url } = options;
-		if (url.hostname === "imagedelivery.net") {
-			// Expected: ['', ACCOUNT_ID, IMAGE_ID, VARIANT]
-			const parts = url.pathname.split("/");
-			if (parts.length === 4) {
-				const id = parts[2];
-				const cache = await caches.open("images-download");
-
-				// Key uses a URL of `current_domain/id`, to ensure we always get the same key from the same ID
-				// Without the "/" here, the path would be relative to the current URL
-				const key = new Request("/" + id);
-				const response = await cache.match(key);
-				if (response) {
-					console.log("Serving image " + id + " from cache");
-					return response;
-				}
-			}
+		// Pathname is of shape "/08f005e1-d68d-439c-74c8-129393e10b00.jpg?width=640"
+		// Splitting on '.' gives us "/08f005e1-d68d-439c-74c8-129393e10b00" as the first item
+		// We remove the leading slash using .substring()
+		const id = url.pathname.split(".")[0].substring(1)
+		const imageUrl = bunnyUrl(id as UUID, CACHED_IMG_WIDTH);
+		const cache = await caches.open("topo-download");
+		const response = await cache.match(imageUrl);
+		if(response) {
+			return response;
+		} else {
+			// Use regular cache
+			return imageCache.handle(options)
 		}
-		// don't cache images to avoid bloating the cache
-		return networkOnly.handle(options);
 	}
 );
 
-// Google Maps tiles
-const tileRegex = /^.*1i(\d*)!2i(\d*)!3i(\d*)!.*$/m;
+// Mapbox tiles
+const tileRegex = /tiles\/\d*\/(\d*)\/(\d*)\/(\d*)/m;
 
 const tileCache = new CacheFirst({
 	cacheName: "tiles",
@@ -165,7 +160,7 @@ const tileCache = new CacheFirst({
 registerRoute(
 	({ url, request }) => {
 		return (
-			url.hostname === "maps.googleapis.com" &&
+			url.hostname === "api.mapbox.com" &&
 			url.pathname === "/maps/vt" &&
 			request.destination === "image"
 		);
@@ -175,7 +170,7 @@ registerRoute(
 		if (match) {
 			// First match is always the original string
 			const [_, z, x, y] = match;
-			const cache = await caches.open("tile-download");
+			const cache = await caches.open("topo-download");
 			const cachedResponse = await cache.match(tileUrl(+x, +y, +z));
 			if (cachedResponse) {
 				return cachedResponse;
@@ -184,9 +179,3 @@ registerRoute(
 		return tileCache.handle(options);
 	}
 );
-
-// Just copied for now
-function tileUrl(x: number, y: number, z: number): string {
-	// fun fact: the API key is not required to actually get back an image
-	return `https://maps.googleapis.com/maps/vt?pb=!1m5!1m4!1i${z}!2i${x}!3i${y}!4i256!2m3!1e0!2sm!3i606336644!3m17!2sen-GB!3sUS!5e18!12m4!1e68!2m2!1sset!2sRoadmap!12m3!1e37!2m1!1ssmartmaps!12m4!1e26!2m2!1sstyles!2zcy50OjZ8cy5lOmd8cC5jOiNmZmU5ZTllOXxwLmw6MTcscy50OjV8cy5lOmd8cC5jOiNmZmY1ZjVmNXxwLmw6MjAscy50OjQ5fHMuZTpnLmZ8cC5jOiNmZmZmZmZmZnxwLmw6MTcscy50OjQ5fHMuZTpnLnN8cC5jOiNmZmZmZmZmZnxwLmw6Mjl8cC53OjAuMixzLnQ6NTB8cy5lOmd8cC5jOiNmZmZmZmZmZnxwLmw6MTgscy50OjUxfHMuZTpnfHAuYzojZmZmZmZmZmZ8cC5sOjE2LHMudDoyfHMuZTpnfHAuYzojZmZmNWY1ZjV8cC5sOjIxLHMudDo0MHxzLmU6Z3xwLmM6I2ZmZGVkZWRlfHAubDoyMSxzLmU6bC50LnN8cC52Om9ufHAuYzojZmZmZmZmZmZ8cC5sOjE2LHMuZTpsLnQuZnxwLnM6MzZ8cC5jOiNmZjMzMzMzM3xwLmw6NDAscy5lOmwuaXxwLnY6b2ZmLHMudDo0fHMuZTpnfHAuYzojZmZmMmYyZjJ8cC5sOjE5LHMudDoxfHMuZTpnLmZ8cC5jOiNmZmZlZmVmZXxwLmw6MjAscy50OjF8cy5lOmcuc3xwLmM6I2ZmZmVmZWZlfHAubDoxN3xwLnc6MS4y!4e0!5m1!5f2!23i1379903`;
-}

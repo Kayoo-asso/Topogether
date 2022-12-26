@@ -17,15 +17,17 @@ export function useProgressBar(threshold: number): [number, ProgressTracker] {
 				total.current = tot;
 				count.current = 0;
         setProgress(0);
+        console.log("Starting progress for " + tot + " tasks")
 			},
 			increment(n?: number) {
 				const step = threshold * total.current;
 				n = n ?? 1;
+        console.log("Incrementing by " + n);
 				const next = count.current + n;
 
 				if (next > total.current) {
 					throw new Error(
-						`Progress bar count (${count}) higher than ${total.current}`
+						`Progress bar count (${count.current}) higher than ${total.current}`
 					);
 				}
 

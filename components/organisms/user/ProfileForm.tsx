@@ -150,7 +150,6 @@ export const ProfileForm: React.FC<ProfileFormProps> = watchDependencies(
 							type="date"
 							value={user.birthDate}
 							onChange={(e) => {
-								console.log(e.target.value);
 								setUser(u => ({
 									...u,
 									birthDate: e.target.value,

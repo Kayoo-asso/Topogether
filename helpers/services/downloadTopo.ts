@@ -1,4 +1,4 @@
-import { Img, TopoData } from "types";
+import { Img, TopoData, UUID } from "types";
 import { Semaphore } from "helpers/semaphore";
 import { bunnyUrl } from "components";
 import { getTopoBounds } from "helpers/map/getTopoBounds";
@@ -11,18 +11,21 @@ import { set } from "idb-keyval";
 const TILE_SIZE = 256;
 // Note: maybe max zoom of 21 is fine, which significantly reduces the nb of downloaded tiles
 const MAX_ZOOM = 21;
-const IMG_WIDTH = 2048;
+export const CACHED_IMG_WIDTH = 2048;
 const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 
-export async function downloadTopo(topo: TopoData, progress: ProgressTracker) {
-	const urls = [...getTileUrls(topo), ...getImageUrls(topo)];
-	progress.start(urls.length);
+export async function downloadTopo(topo: TopoData, tracker: ProgressTracker) {
+	const tileUrls = getTileUrls(topo);
+	const imgUrls = getImageUrls(topo);
+	const urls = [...tileUrls, ...imgUrls];
+	tracker.start(urls.length);
+	console.log(`Downloading ${tileUrls.length} tiles and ${imgUrls.length} images`);
 
 	const start = Date.now();
 	const cache = await caches.open("topo-download");
 	const lock = new Semaphore(200);
 	const promises: Promise<void>[] = [
-		...urls.map((url) => downloadUrl(url, cache, lock, progress)),
+		...urls.map((url) => downloadUrl(url, cache, lock, tracker)),
 		set(topo.id, topo),
 	];
 
@@ -39,7 +42,7 @@ async function downloadUrl(
 	url: string,
 	cache: Cache,
 	lock: Semaphore,
-	progress: ProgressTracker
+	tracker: ProgressTracker
 ) {
 	const exists = await cache.match(url);
 	if (!exists) {
@@ -47,10 +50,10 @@ async function downloadUrl(
 		await cache.add(url);
 		lock.release();
 	}
-	progress.increment();
+	tracker.increment();
 }
 
-function tileUrl(x: number, y: number, z: number): string {
+export function tileUrl(x: number, y: number, z: number): string {
 	return `https://api.mapbox.com/styles/v1/mapbox/outdoors-v11/tiles/512/${z}/${x}/${y}@2x?access_token=${MAPBOX_TOKEN}`;
 }
 
@@ -134,5 +137,6 @@ function getImageUrls(topo: TopoData): Array<string> {
 			images.push(m.image);
 		}
 	}
-	return images.map((img) => bunnyUrl(img.id, IMG_WIDTH));
+	return images.map((img) => bunnyUrl(img.id, CACHED_IMG_WIDTH));
 }
+

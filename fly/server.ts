@@ -95,7 +95,6 @@ app.use("/images/upload", async function (req, res) {
 		res.writeHead(uploadRes.status, uploadRes.statusText);
 		res.end();
 	} else {
-		console.log("=> Successful upload of image " + id);
 		res.writeHead(200, { "Content-Type": "application/json" });
 		res.write(JSON.stringify({ placeholder }));
 		res.end();

@@ -202,10 +202,6 @@ export async function uploadBunny(
 			ratio,
 			placeholder,
 		};
-		console.log(
-			"Upload to Bunny CDN finished. Generated placeholder:",
-			placeholder
-		);
 		return [img, true];
 	} catch {
 		const error = {
