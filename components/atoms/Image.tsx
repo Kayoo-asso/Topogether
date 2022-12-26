@@ -46,7 +46,7 @@ export const Image = ({
 					{elts}
 					<Portal open={portalOpen}>
 						<div
-							className="absolute top-0 left-0 z-full flex h-screen w-screen bg-black bg-opacity-80 overflow-hidden"
+							className="absolute top-0 left-0 z-full flex h-screen w-screen overflow-hidden bg-black bg-opacity-80"
 							onClick={() => setPortalOpen(false)}
 						>
 							{elts}

@@ -19,7 +19,9 @@ export async function downloadTopo(topo: TopoData, tracker: ProgressTracker) {
 	const imgUrls = getImageUrls(topo);
 	const urls = [...tileUrls, ...imgUrls];
 	tracker.start(urls.length);
-	console.log(`Downloading ${tileUrls.length} tiles and ${imgUrls.length} images`);
+	console.log(
+		`Downloading ${tileUrls.length} tiles and ${imgUrls.length} images`
+	);
 
 	const start = Date.now();
 	const cache = await caches.open("topo-download");
@@ -39,10 +41,10 @@ export async function downloadTopo(topo: TopoData, tracker: ProgressTracker) {
 }
 
 async function downloadUrl(
-	url: string,
+	url: string | URL,
 	cache: Cache,
 	lock: Semaphore,
-	tracker: ProgressTracker
+	tracker: ProgressTracker,
 ) {
 	const exists = await cache.match(url);
 	if (!exists) {
@@ -139,4 +141,3 @@ function getImageUrls(topo: TopoData): Array<string> {
 	}
 	return images.map((img) => bunnyUrl(img.id, CACHED_IMG_WIDTH));
 }
-
