@@ -1,10 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import {
-	Map as BaseMap,
-	View,
-	TileLayer,
-	XYZ,
-} from "components/openlayers";
+import { Map as BaseMap, View, TileLayer, XYZ } from "components/openlayers";
 import Map from "ol/Map";
 import { fromLonLat } from "ol/proj";
 
@@ -21,7 +16,7 @@ import {
 import { Boulder, GeoCoordinates, Position, Topo } from "types";
 import { Quark, useCreateQuark, watchDependencies } from "helpers/quarky";
 import { fontainebleauLocation } from "helpers/constants";
-import { findPlace } from "helpers/map/geocodingMapbox"
+import { findPlace } from "helpers/map/geocodingMapbox";
 import { getLayersExtent, LayerNames } from "helpers/map";
 import { setReactRef } from "helpers/utils";
 import { useBreakpoint, usePosition } from "helpers/hooks";
@@ -34,7 +29,7 @@ import { useSession } from "helpers/services";
 import { MapToolSelector } from "./MapToolSelector";
 import { Props } from "components/openlayers/Map";
 import { UserMarkerLayer } from "./markers/UserMarkerLayer";
-import { XYZ as XYZType } from "ol/source";
+import { XYZ as XYZObject } from "ol/source";
 
 type MapControlProps = React.PropsWithChildren<
 	Props & {
@@ -69,7 +64,6 @@ const attributionsSatellite =
 	"Powered by Esri. " +
 	"Source: Esri, DigitalGlobe, GeoEye, Earthstar Geographics, CNES/Airbus DS, USDA, USGS, AeroGRID, IGN, and the GIS User Community";
 
-
 export const MapControl2 = watchDependencies<Map, MapControlProps>(
 	(
 		{
@@ -85,27 +79,30 @@ export const MapControl2 = watchDependencies<Map, MapControlProps>(
 	) => {
 		const session = useSession();
 		const breakpoint = useBreakpoint();
-		const mapRef = useRef<Map>(null);
+		const [map, setMap] = useState<Map | null>(null);
+		const [xyz, setXYZ] = useState<XYZObject | null>(null);
 		const { position } = usePosition();
 		const selectedItem = useSelectStore((s) => s.item);
 		const select = useSelectStore((s) => s.select);
 		const flush = useSelectStore((s) => s.flush);
 		const tool = useSelectStore((s) => s.tool);
 
-		const [mapToolSelectorOpen, setMapToolSelectorOpen] = useState(breakpoint === "desktop");
-		const mapZoom = useCreateQuark(initialZoom);
+		const [mapToolSelectorOpen, setMapToolSelectorOpen] = useState(
+			breakpoint === "desktop"
+		);
 		const [satelliteView, setSatelliteView] = useState(false);
-		const sourceRef = useRef<XYZType>(null);
 		useEffect(() => {
-			if (sourceRef.current) {
-				sourceRef.current.setUrl(
-					satelliteView ?
-					`https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/tiles/512/{z}/{x}/{y}@2x?access_token=${MAPBOX_TOKEN}` :
-					`https://api.mapbox.com/styles/v1/mapbox/outdoors-v11/tiles/512/{z}/{x}/{y}@2x?access_token=${MAPBOX_TOKEN}`
+			if (xyz) {
+				xyz.setUrl(
+					satelliteView
+						? `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/tiles/512/{z}/{x}/{y}@2x?access_token=${MAPBOX_TOKEN}`
+						: `https://api.mapbox.com/styles/v1/mapbox/outdoors-v11/tiles/512/{z}/{x}/{y}@2x?access_token=${MAPBOX_TOKEN}`
 				);
-				sourceRef.current.setAttributions(satelliteView ? attributionsSatellite : attributions);
+				xyz.setAttributions(
+					satelliteView ? attributionsSatellite : attributions
+				);
 			}
-		}, [satelliteView, sourceRef.current])
+		}, [satelliteView, xyz]);
 
 		const getMapCursorClass = useCallback(() => {
 			switch (tool) {
@@ -122,28 +119,29 @@ export const MapControl2 = watchDependencies<Map, MapControlProps>(
 			}
 		}, [tool]);
 		//If a tool is selected, display the corresponding cursor. If not, display pointer on features.
-		const determinePointer = useCallback((e) => {
-			if (tool || !mapRef.current) return;
-			const map = mapRef.current;
-			const hit = map.forEachFeatureAtPixel(e.pixel, function(feature, layer) {
-				return true;
-			}); 
-			if (hit) {
-				map.getTargetElement().style.cursor = 'pointer';
-			} else {
-				map.getTargetElement().style.cursor = '';
-			}
-		}, [mapRef.current, tool]);
+		const determinePointer = useCallback(
+			(e) => {
+				if (tool || !map) return;
+				const hit = map.getFeaturesAtPixel(e.pixel).length > 0;
+				if (hit) {
+					map.getTargetElement().style.cursor = "pointer";
+				} else {
+					map.getTargetElement().style.cursor = "";
+				}
+			},
+			[map, tool]
+		);
 		useEffect(() => {
-			mapRef.current?.addEventListener('pointermove', determinePointer);
-			return () => mapRef.current?.removeEventListener('pointermove', determinePointer);
-		}, [mapRef.current, tool]);
+			map?.addEventListener("pointermove", determinePointer);
+			return () => map?.removeEventListener("pointermove", determinePointer);
+		}, [map, tool]);
 
 		// Initial extension / bounding
 		useEffect(() => {
-			if (mapRef.current && props.layerClassNameForInitialExtent) getLayersExtent(mapRef.current, props.layerClassNameForInitialExtent);
-		}, [mapRef.current]);		
-		
+			if (map && props.layerClassNameForInitialExtent)
+				getLayersExtent(map, props.layerClassNameForInitialExtent);
+		}, [map]);
+
 		return (
 			<div className="relative h-full w-full">
 				<div className="absolute h-full w-full">
@@ -155,15 +153,18 @@ export const MapControl2 = watchDependencies<Map, MapControlProps>(
 									props.topo ? props.topo().boulders.toArray() : undefined
 								}
 								onMapboxResultSelect={(place) => {
-									mapRef.current?.getView().setCenter(fromLonLat(place.center));
+									map?.getView().setCenter(fromLonLat(place.center));
 								}}
-								onBoulderResultSelect={useCallback((boulder: Boulder) => {
-									const bQuark = props.topo!().boulders.findQuark(
-										(b) => b.id === boulder.id
-									)!;
-									select.boulder(bQuark);
-									mapRef.current?.getView().setCenter(fromLonLat(boulder.location));
-								}, [props.topo])}
+								onBoulderResultSelect={useCallback(
+									(boulder: Boulder) => {
+										const bQuark = props.topo!().boulders.findQuark(
+											(b) => b.id === boulder.id
+										)!;
+										select.boulder(bQuark);
+										map?.getView().setCenter(fromLonLat(boulder.location));
+									},
+									[props.topo]
+								)}
 								{...props.searchbarOptions}
 							/>
 						)}
@@ -186,14 +187,17 @@ export const MapControl2 = watchDependencies<Map, MapControlProps>(
 					{/* Top right */}
 					<div className="absolute right-0 top-0 m-3">
 						{displaySatelliteButton && (
-							<SatelliteButton
-								onClick={setSatelliteView}
-							/>
+							<SatelliteButton onClick={setSatelliteView} />
 						)}
 					</div>
 
 					{/* Bottom left */}
-					<div className={"absolute bottom-0 left-0 m-3" + (breakpoint === "desktop" ? " z-100" : "")}>
+					<div
+						className={
+							"absolute bottom-0 left-0 m-3" +
+							(breakpoint === "desktop" ? " z-100" : "")
+						}
+					>
 						{displaySectorButton && (
 							<RoundButton
 								className="z-10 md:hidden"
@@ -246,12 +250,17 @@ export const MapControl2 = watchDependencies<Map, MapControlProps>(
 					</div>
 
 					{/* Bottom right */}
-					<div className={"absolute right-0 bottom-0 m-3" + (breakpoint === "desktop" ? " z-100" : "")}>
+					<div
+						className={
+							"absolute right-0 bottom-0 m-3" +
+							(breakpoint === "desktop" ? " z-100" : "")
+						}
+					>
 						{displayUserMarker && position && (
 							<RoundButton
 								onClick={() => {
 									if (position) {
-										mapRef.current?.getView().setCenter(fromLonLat(position));
+										map?.getView().setCenter(fromLonLat(position));
 									}
 								}}
 							>
@@ -262,32 +271,40 @@ export const MapControl2 = watchDependencies<Map, MapControlProps>(
 				</div>
 
 				<BaseMap
-					ref={(ref) => {
-						setReactRef(mapRef, ref);
+					ref={useCallback((ref) => {
+						setMap(map);
 						setReactRef(parentRef, ref);
-					}}
+					}, [])}
 					className={"h-full w-full " + getMapCursorClass()}
 					onClick={(e) => {
 						const map = e.map;
-						const hit = map?.forEachFeatureAtPixel(e.pixel, function(feature, layer) {
-							return true;
-						});
-						if (!hit) { 
+						const hit = map?.forEachFeatureAtPixel(
+							e.pixel,
+							function (feature, layer) {
+								return true;
+							}
+						);
+						if (!hit) {
 							flush.item();
 							if (props.onClick) props.onClick(e);
 						}
 					}}
 					// controls={}
 				>
-					<View 
-						center={props.layerClassNameForInitialExtent ? undefined : fromLonLat(props.initialCenter || position || fontainebleauLocation)} 
+					<View
+						center={
+							props.layerClassNameForInitialExtent
+								? undefined
+								: fromLonLat(
+										props.initialCenter || position || fontainebleauLocation
+								  )
+						}
 						zoom={initialZoom}
-						onChange={(e) => mapZoom.set(e.target.getZoom())}
 					/>
 
 					<TileLayer>
 						<XYZ
-							ref={sourceRef}
+							ref={setXYZ}
 							attributions={attributions}
 							url={`https://api.mapbox.com/styles/v1/mapbox/outdoors-v11/tiles/512/{z}/{x}/{y}@2x?access_token=${MAPBOX_TOKEN}`}
 							// IMPORTANT
