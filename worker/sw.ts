@@ -9,10 +9,7 @@ import {
 	NetworkOnly,
 } from "workbox-strategies";
 import { ExpirationPlugin } from "workbox-expiration";
-
-import { tileUrl, CACHED_IMG_WIDTH } from "helpers/services/downloadTopo";
-import { bunnyUrl } from "components/atoms/Image";
-import type { UUID } from "types";
+import { tileUrl } from "helpers/services/sharedWithServiceWorker";
 
 // TODO:
 // - Redirect to home page if page is not cached
@@ -118,6 +115,7 @@ const imageCache = new CacheFirst({
 	],
 });
 
+"https://api.mapbox.com/styles/v1/mapbox/outdoors-v11/tiles/512/16/33606/23392@2x?access_token=pk.eyJ1IjoiZXJ3aW5rbiIsImEiOiJjbDM2NzdpNXcxa3RwM2pwOXZpZDg2bnppIn0.vGoRAqjK6jqpEtwHTs5Erg"
 
 registerRoute(
 	({ request, url }) => {
@@ -132,7 +130,7 @@ registerRoute(
 		// Splitting on '.' gives us "/08f005e1-d68d-439c-74c8-129393e10b00" as the first item
 		// We remove the leading slash using .substring()
 		const id = url.pathname.split(".")[0].substring(1)
-		const imageUrl = bunnyUrl(id as UUID, CACHED_IMG_WIDTH);
+		const imageUrl = `https://topogether.b-cdn.net/${id}.jpg?width=${2048}`;
 		const cache = await caches.open("topo-download");
 		const response = await cache.match(imageUrl);
 		if(response) {
@@ -161,8 +159,7 @@ registerRoute(
 	({ url, request }) => {
 		return (
 			url.hostname === "api.mapbox.com" &&
-			url.pathname === "/maps/vt" &&
-			request.destination === "image"
+			url.href.match(tileRegex)
 		);
 	},
 	async (options) => {
@@ -175,6 +172,7 @@ registerRoute(
 			if (cachedResponse) {
 				return cachedResponse;
 			}
+			console.log(`Returning tile NOT from cache [${z}, ${x}, ${y}]`)
 		}
 		return tileCache.handle(options);
 	}

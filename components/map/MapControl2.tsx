@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Map as BaseMap, View, TileLayer, XYZ } from "components/openlayers";
 import Map from "ol/Map";
 import { fromLonLat } from "ol/proj";
@@ -14,10 +14,8 @@ import {
 	TopoFilters,
 } from "./";
 import { Boulder, GeoCoordinates, Position, Topo } from "types";
-import { Quark, useCreateQuark, watchDependencies } from "helpers/quarky";
+import { Quark, watchDependencies } from "helpers/quarky";
 import { fontainebleauLocation } from "helpers/constants";
-import { findPlace } from "helpers/map/geocodingMapbox";
-import { getLayersExtent, LayerNames } from "helpers/map";
 import { setReactRef } from "helpers/utils";
 import { useBreakpoint, usePosition } from "helpers/hooks";
 
@@ -30,12 +28,13 @@ import { MapToolSelector } from "./MapToolSelector";
 import { Props } from "components/openlayers/Map";
 import { UserMarkerLayer } from "./markers/UserMarkerLayer";
 import { XYZ as XYZObject } from "ol/source";
+import { MapBrowserEvent } from "ol";
+import { getTopoExtent } from "helpers/map/getTopoExtent";
 
 type MapControlProps = React.PropsWithChildren<
 	Props & {
 		className?: string;
 		initialCenter?: Position;
-		layerClassNameForInitialExtent?: LayerNames[];
 		initialZoom?: number;
 		displaySatelliteButton?: boolean;
 		displayUserMarker?: boolean;
@@ -95,9 +94,7 @@ export const MapControl2 = watchDependencies<Map, MapControlProps>(
 						? `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/tiles/512/{z}/{x}/{y}@2x?access_token=${MAPBOX_TOKEN}`
 						: `https://api.mapbox.com/styles/v1/mapbox/outdoors-v11/tiles/512/{z}/{x}/{y}@2x?access_token=${MAPBOX_TOKEN}`
 				);
-				xyz.setAttributions(
-					attributions
-				);
+				xyz.setAttributions(attributions);
 			}
 		}, [satelliteView, xyz]);
 
@@ -116,8 +113,8 @@ export const MapControl2 = watchDependencies<Map, MapControlProps>(
 			}
 		}, [tool]);
 		//If a tool is selected, display the corresponding cursor. If not, display pointer on features.
-		const determinePointer = useCallback(
-			(e) => {
+		useEffect(() => {
+			const determinePointer = (e: MapBrowserEvent<PointerEvent>) => {
 				if (tool || !map) return;
 				const hit = map.getFeaturesAtPixel(e.pixel).length > 0;
 				if (hit) {
@@ -125,19 +122,21 @@ export const MapControl2 = watchDependencies<Map, MapControlProps>(
 				} else {
 					map.getTargetElement().style.cursor = "";
 				}
-			},
-			[map, tool]
-		);
-		useEffect(() => {
-			map?.addEventListener("pointermove", determinePointer);
-			return () => map?.removeEventListener("pointermove", determinePointer);
+			};
+			map?.on("pointermove", determinePointer);
+			return () => map?.un("pointermove", determinePointer);
 		}, [map, tool]);
 
 		// Initial extension / bounding
 		useEffect(() => {
-			if (map && props.layerClassNameForInitialExtent)
-				getLayersExtent(map, props.layerClassNameForInitialExtent);
-		}, [map]);
+			if (map && props.topo) {
+				const extent = getTopoExtent(props.topo(), 500);
+				map.getView().fit(extent, {
+					size: map.getSize(),
+					maxZoom: 18,
+				});
+			}
+		}, [map, props.topo]);
 
 		return (
 			<div className="relative h-full w-full">
@@ -275,12 +274,7 @@ export const MapControl2 = watchDependencies<Map, MapControlProps>(
 					className={"h-full w-full " + getMapCursorClass()}
 					onClick={(e) => {
 						const map = e.map;
-						const hit = map?.forEachFeatureAtPixel(
-							e.pixel,
-							function (feature, layer) {
-								return true;
-							}
-						);
+						const hit = map.getFeaturesAtPixel(e.pixel).length > 0;
 						if (!hit) {
 							flush.item();
 							if (props.onClick) props.onClick(e);
@@ -289,13 +283,9 @@ export const MapControl2 = watchDependencies<Map, MapControlProps>(
 					// controls={}
 				>
 					<View
-						center={
-							props.layerClassNameForInitialExtent
-								? undefined
-								: fromLonLat(
-										props.initialCenter || position || fontainebleauLocation
-								  )
-						}
+						center={fromLonLat(
+							props.initialCenter || position || fontainebleauLocation
+						)}
 						zoom={initialZoom}
 					/>
 

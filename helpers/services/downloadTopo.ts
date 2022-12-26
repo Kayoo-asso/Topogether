@@ -1,9 +1,15 @@
 import { Img, TopoData, UUID } from "types";
 import { Semaphore } from "helpers/semaphore";
-import { bunnyUrl } from "components";
-import { getTopoBounds } from "helpers/map/getTopoBounds";
+import { getTopoExtent } from "helpers/map/getTopoExtent";
 import { ProgressTracker } from "helpers/hooks";
 import { set } from "idb-keyval";
+import { CACHED_IMG_WIDTH, bunnyUrl, tileUrl } from "./sharedWithServiceWorker";
+import {createXYZ} from "ol/tilegrid";
+import { fromLonLat } from "ol/proj";
+import { buffer } from "ol/extent";
+
+// IMPORTANT: any changes to the tile or image URLS, as well as to the cached image width,
+// MUST be reflected in the service worker (`sw.ts`)
 
 // TODO:
 // - Add error handling / retries
@@ -11,8 +17,6 @@ import { set } from "idb-keyval";
 const TILE_SIZE = 256;
 // Note: maybe max zoom of 21 is fine, which significantly reduces the nb of downloaded tiles
 const MAX_ZOOM = 21;
-export const CACHED_IMG_WIDTH = 2048;
-const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 
 export async function downloadTopo(topo: TopoData, tracker: ProgressTracker) {
 	const tileUrls = getTileUrls(topo);
@@ -55,9 +59,6 @@ async function downloadUrl(
 	tracker.increment();
 }
 
-export function tileUrl(x: number, y: number, z: number): string {
-	return `https://api.mapbox.com/styles/v1/mapbox/outdoors-v11/tiles/512/${z}/${x}/${y}@2x?access_token=${MAPBOX_TOKEN}`;
-}
 
 // Based on https://developers.google.com/maps/documentation/javascript/examples/map-coordinates
 function worldCoords(lng: number, lat: number): [number, number] {
@@ -89,18 +90,41 @@ function findTileXY(
 }
 
 export function getTileUrls(topo: TopoData, maxZoom: number = MAX_ZOOM) {
-	const bounds = getTopoBounds(topo);
+	const extent = getTopoExtent(topo, 500);
+	// Giving an extent to the TileGrid doesn't work with TileGrid.getFullTileRange()
+	// (I don't know why)
+	// So we're not giving an extent and computing tile coordinates manually
+	const tileGrid = createXYZ({
+		tileSize: 512
+	});
+	console.log("tileGrid:", tileGrid)
 	const tileUrls: Array<string> = [];
 	for (let z = 0; z <= maxZoom; z++) {
-		// The y-axis is flipped, the origin for (x,y) tiles coordinates is top-left
-		let [xmin, ymax] = findTileXY(bounds[0], bounds[1], z);
-		let [xmax, ymin] = findTileXY(bounds[2], bounds[3], z);
-		console.log(
-			`Corner tiles zoom ${z}: [${xmin}, ${ymax}], [${xmax}, ${ymin}]`
-		);
+		// NOTE: y-axis is reversed between map coordinates and tile coordinates
+		// Input coords: minX and maxY
+		// Output coords: minX and minY
+		const [, minX, minY] = tileGrid.getTileCoordForCoordAndZ([extent[0], extent[3]], z);
+		// Input coords: maxX and minY
+		// Output coords: maxX and maxY
+		const [, maxX, maxY] = tileGrid.getTileCoordForCoordAndZ([extent[2], extent[1]], z);
+		console.log(`[Z = ${z}]`)
+		console.log(`Min = [${minX}, ${minY}]`)
+		console.log(`Max = [${maxX}, ${maxY}]`)
+		
+		// const minX = range.minX;
+		// const maxX = range.maxX;
+		// const minY = range.minY;
+		// const maxY = range.maxY;
 
-		for (let x = xmin; x <= xmax; x++) {
-			for (let y = ymin; y <= ymax; y++) {
+		// // // The y-axis is flipped, the origin for (x,y) tiles coordinates is top-left
+		// // let [xmin, ymax] = findTileXY(bounds[0], bounds[1], z);
+		// // let [xmax, ymin] = findTileXY(bounds[2], bounds[3], z);
+		// console.log(
+		// 	`Corner tiles zoom ${z}: [${minX}, ${maxY}], [${maxX}, ${minY}]`
+		// );
+
+		for (let x = minX; x <= maxX; x++) {
+			for (let y = minY; y <= maxY; y++) {
 				tileUrls.push(tileUrl(x, y, z));
 			}
 		}

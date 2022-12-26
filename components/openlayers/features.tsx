@@ -88,9 +88,10 @@ function implementation<G extends GeometryType>(
 	useEffect(() => {
 		if(layer) {
 			const updateSource = () => {
-				const source = layer.getSource();
+				let source = layer.getSource();
 				// Don't interact with Cluster sources, interact with the underlying source
 				if(source instanceof Cluster) {
+					source = source.getSource()
 					return;
 				}
 				setSource(source);

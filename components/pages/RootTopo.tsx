@@ -141,7 +141,6 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 						topo={props.topoQuark}
 						initialZoom={16}
 						initialCenter={topo.location}
-						layerClassNameForInitialExtent={['boulders', 'parkings', 'waypoints']}
 						searchbarOptions={{
 							findBoulders: true,
 						}}

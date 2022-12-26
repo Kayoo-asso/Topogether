@@ -83,7 +83,6 @@ export const ParkingMarkersLayer: React.FC<ParkingMarkersLayerProps> = watchDepe
 
             <VectorLayer
                 id="parkings"
-                className='parkings'
                 style={useCallback(
                     (feature) => {
                         const bId = feature.get("data").quark().id;

@@ -228,7 +228,6 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 						topo={props.topoQuark}
 						initialZoom={16}
 						initialCenter={topo.location}
-						layerClassNameForInitialExtent={['boulders', 'parkings', 'waypoints']}
 						displaySectorButton
 						onSectorButtonClick={() => select.info("SECTOR", breakpoint)}
 						searchbarOptions={{

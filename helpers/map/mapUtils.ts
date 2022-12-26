@@ -1,6 +1,6 @@
 import type { Breakpoint } from "helpers/hooks";
 import { Map } from "ol";
-import { buffer, extend, Extent } from "ol/extent";
+import { buffer, createEmpty, extend, Extent } from "ol/extent";
 import { GeoCoordinates, Position } from "types";
 
 // --- LatLng helpers ---
@@ -24,21 +24,26 @@ export function fromLatLngLiteralFn(
 	return [latLng.lng, latLng.lat];
 }
 
-export type LayerNames = 'boulders' | 'parkings' | 'sectors' | 'waypoints' | 'topos';
-export const getLayersExtent = (map: Map, lyrsClassName: LayerNames[]) => {
-	let ext: Extent = [0, 0, 0, 0];
-	let i = 0;
+export type LayerNames =
+	| "boulders"
+	| "parkings"
+	| "sectors"
+	| "waypoints"
+	| "topos";
+export const fitExtentToLayers = (map: Map, lyrsClassName: LayerNames[]) => {
+	let ext: Extent = createEmpty();
 	for (let className of lyrsClassName) {
-		const lyr = map.getLayers().getArray().find(l => l.getClassName().includes(className)) as any;
-		if (lyr) { 
-			if (i === 0) ext = lyr.getSource().getExtent();
-			else ext = extend(ext, lyr.getSource().getExtent());
-			i++;
+		const lyr = map
+			.getLayers()
+			.getArray()
+			.find((l) => l.getClassName().includes(className)) as any;
+		if (lyr) {
+			ext = extend(ext, lyr.getSource().getExtent());
 		}
 	}
+	console.log("Fitting map to extent:", ext);
 	map.getView().fit(buffer(ext, 500), { size: map.getSize(), maxZoom: 18 });
-}
-
+};
 
 // --- markerSize ---
 type Size = {
@@ -163,4 +168,4 @@ export const isOnMap = (e: KeyboardEvent) => {
 		const elt = transElt as Element;
 		return elt.id === "map";
 	});
-}
+};

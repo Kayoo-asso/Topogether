@@ -6,7 +6,7 @@ import {
 	VectorLayer,
 	VectorSource,
 } from "components/openlayers";
-import { FeatureLike } from "ol/Feature";
+import Feature, { FeatureLike } from "ol/Feature";
 import { Circle, Fill, Icon, Stroke, Style, Text } from "ol/style";
 import { Boulder, UUID } from "types";
 import { useSelectStore } from "components/pages/selectStore";
@@ -118,11 +118,10 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> =
 
 					<VectorLayer
 						id="boulders"
-						className="boulders"
 						style={useCallback((cluster) => {
-							const features = cluster.get("features");
-
-							const size = features.length;
+                            // TODO: fix this, by ensuring the layer does not get a simple VectorSource before the Cluster
+							const features = cluster.get("features") as Array<FeatureLike> | undefined;
+							const size = features?.length || 0;
 							// Cluster style
 							if (size > 1) {
 								return new Style({
@@ -143,7 +142,7 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> =
 									}),
 								});
 							} else {
-								const feature = features[0];
+								const feature = features ? features[0] : cluster;
 								const bId = feature.get("data").quark().id as UUID;
 								return boulderMarkerStyle(
 									feature,

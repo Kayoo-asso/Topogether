@@ -9,7 +9,6 @@ interface DownloadTesterProps {
 
 export function DownloadTester({ topo }: DownloadTesterProps) {
 	const [progress, tracker] = useProgressBar(0.01);
-	console.log("Progress:", progress);
 	useEffect(() => {
 		downloadTopo(topo, tracker);
 	}, []);

@@ -80,7 +80,6 @@ export const TopoMarkersLayer: React.FC<TopoMarkersLayerProps> = watchDependenci
 
             <VectorLayer
                 id="topos"
-                className='topos'
                 style={useCallback(
                     (feature) => {
                         const { topo } = feature.get("data");

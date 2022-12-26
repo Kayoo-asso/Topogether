@@ -83,7 +83,6 @@ export const WaypointMarkersLayer: React.FC<WaypointMarkersLayerProps> = watchDe
 
             <VectorLayer
                 id="waypoints"
-                className='waypoints'
                 style={useCallback(
                     (feature) => {
                         const bId = feature.get("data").quark().id;
