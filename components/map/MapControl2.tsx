@@ -60,9 +60,6 @@ const attributions =
 	'© <a href="https://www.mapbox.com/map-feedback/">Mapbox</a> ' +
 	'© <a href="https://www.openstreetmap.org/copyright">' +
 	"OpenStreetMap contributors</a>";
-const attributionsSatellite =
-	"Powered by Esri. " +
-	"Source: Esri, DigitalGlobe, GeoEye, Earthstar Geographics, CNES/Airbus DS, USDA, USGS, AeroGRID, IGN, and the GIS User Community";
 
 export const MapControl2 = watchDependencies<Map, MapControlProps>(
 	(
@@ -99,7 +96,7 @@ export const MapControl2 = watchDependencies<Map, MapControlProps>(
 						: `https://api.mapbox.com/styles/v1/mapbox/outdoors-v11/tiles/512/{z}/{x}/{y}@2x?access_token=${MAPBOX_TOKEN}`
 				);
 				xyz.setAttributions(
-					satelliteView ? attributionsSatellite : attributions
+					attributions
 				);
 			}
 		}, [satelliteView, xyz]);
