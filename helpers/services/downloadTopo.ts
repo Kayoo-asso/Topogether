@@ -97,8 +97,6 @@ export async function downloadTopo(
 	await addCachedEntries(topo, cachedUrls);
 
 	// Record the cached entries, in case the user asks to delete the data for this topo
-
-
 	if(tileErrors === 0 && imageErrors === 0 && globalError === false) {
 		await markAsAvailableOffline(topo);
 		return { success: true, cachedUrls }
@@ -110,7 +108,6 @@ export async function downloadTopo(
 			imageErrors
 		}
 	}
-	// Check for a global error
 }
 
 async function downloadUrl(
