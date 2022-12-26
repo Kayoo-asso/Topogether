@@ -1,6 +1,6 @@
 import { Img, TopoData, UUID } from "types";
 import { Semaphore } from "helpers/semaphore";
-import { getTopoExtent } from "helpers/map/getTopoExtent";
+import { DEFAULT_EXTENT_BUFFER, getTopoExtent } from "helpers/map/getTopoExtent";
 import { ProgressTracker } from "helpers/hooks";
 import { set } from "idb-keyval";
 import { CACHED_IMG_WIDTH, bunnyUrl, tileUrl } from "./sharedWithServiceWorker";
@@ -14,9 +14,10 @@ import { buffer } from "ol/extent";
 // TODO:
 // - Add error handling / retries
 
-const TILE_SIZE = 256;
-// Note: maybe max zoom of 21 is fine, which significantly reduces the nb of downloaded tiles
+// Note: max zoom of 21 seems fine, which significantly reduces the nb of downloaded tiles
 const MAX_ZOOM = 21;
+// May need more teesting to ensure 1000 concurrent requests don't overload weaker devices
+const MAX_CONCURRENT_REQUESTS = 1000;
 
 export async function downloadTopo(topo: TopoData, tracker: ProgressTracker) {
 	const tileUrls = getTileUrls(topo);
@@ -29,7 +30,7 @@ export async function downloadTopo(topo: TopoData, tracker: ProgressTracker) {
 
 	const start = Date.now();
 	const cache = await caches.open("topo-download");
-	const lock = new Semaphore(200);
+	const lock = new Semaphore(MAX_CONCURRENT_REQUESTS);
 	const promises: Promise<void>[] = [
 		...urls.map((url) => downloadUrl(url, cache, lock, tracker)),
 		set(topo.id, topo),
@@ -38,9 +39,9 @@ export async function downloadTopo(topo: TopoData, tracker: ProgressTracker) {
 	await Promise.all(promises);
 	const end = Date.now();
 	console.log(
-		`--- Finished downloading ${topo.name} in ${end - start}ms (${
-			urls.length
-		} URLs)`
+		`--- Finished downloading ${topo.name} in ${(end - start)/1000}s (${
+			tileUrls.length
+		} tiles, ${imgUrls.length} images)`
 	);
 }
 
@@ -60,37 +61,8 @@ async function downloadUrl(
 }
 
 
-// Based on https://developers.google.com/maps/documentation/javascript/examples/map-coordinates
-function worldCoords(lng: number, lat: number): [number, number] {
-	let siny = Math.sin((lat * Math.PI) / 180);
-
-	// Truncating to 0.9999 effectively limits latitude to 89.189. This is
-	// about a third of a tile past the edge of the world tile.
-	siny = Math.min(Math.max(siny, -0.9999), 0.9999);
-
-	return [
-		TILE_SIZE * (0.5 + lng / 360),
-		TILE_SIZE * (0.5 - Math.log((1 + siny) / (1 - siny)) / (4 * Math.PI)),
-	];
-}
-
-function findTileXY(
-	lng: number,
-	lat: number,
-	zoom: number
-): [x: number, y: number] {
-	const [worldx, worldy] = worldCoords(lng, lat);
-
-	const scale = 1 << zoom;
-
-	const tilex = ((worldx * scale) / TILE_SIZE) | 0;
-	const tiley = ((worldy * scale) / TILE_SIZE) | 0;
-
-	return [tilex, tiley];
-}
-
 export function getTileUrls(topo: TopoData, maxZoom: number = MAX_ZOOM) {
-	const extent = getTopoExtent(topo, 500);
+	const extent = getTopoExtent(topo, DEFAULT_EXTENT_BUFFER);
 	// Giving an extent to the TileGrid doesn't work with TileGrid.getFullTileRange()
 	// (I don't know why)
 	// So we're not giving an extent and computing tile coordinates manually
@@ -107,9 +79,6 @@ export function getTileUrls(topo: TopoData, maxZoom: number = MAX_ZOOM) {
 		// Input coords: maxX and minY
 		// Output coords: maxX and maxY
 		const [, maxX, maxY] = tileGrid.getTileCoordForCoordAndZ([extent[2], extent[1]], z);
-		console.log(`[Z = ${z}]`)
-		console.log(`Min = [${minX}, ${minY}]`)
-		console.log(`Max = [${maxX}, ${maxY}]`)
 		
 		// const minX = range.minX;
 		// const maxX = range.maxX;

@@ -3,7 +3,9 @@ import { fromLonLat } from "ol/proj";
 import { Topo, TopoData } from "types";
 import { buffer as addBuffer } from "ol/extent";
 
-// TODO: merge those two
+// Used both for fitting the initial extent in MapControl and downloading the tiles in downloadTopo()
+export const DEFAULT_EXTENT_BUFFER = 500;
+
 export function getTopoExtent(topo: TopoData | Topo, buffer?: number): Extent {
 	// xmin, ymin, xmax, ymax
 	let extent = createEmpty()

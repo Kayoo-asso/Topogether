@@ -115,8 +115,6 @@ const imageCache = new CacheFirst({
 	],
 });
 
-"https://api.mapbox.com/styles/v1/mapbox/outdoors-v11/tiles/512/16/33606/23392@2x?access_token=pk.eyJ1IjoiZXJ3aW5rbiIsImEiOiJjbDM2NzdpNXcxa3RwM2pwOXZpZDg2bnppIn0.vGoRAqjK6jqpEtwHTs5Erg"
-
 registerRoute(
 	({ request, url }) => {
 		return (
@@ -172,7 +170,6 @@ registerRoute(
 			if (cachedResponse) {
 				return cachedResponse;
 			}
-			console.log(`Returning tile NOT from cache [${z}, ${x}, ${y}]`)
 		}
 		return tileCache.handle(options);
 	}

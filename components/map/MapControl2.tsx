@@ -29,7 +29,7 @@ import { Props } from "components/openlayers/Map";
 import { UserMarkerLayer } from "./markers/UserMarkerLayer";
 import { XYZ as XYZObject } from "ol/source";
 import { MapBrowserEvent } from "ol";
-import { getTopoExtent } from "helpers/map/getTopoExtent";
+import { DEFAULT_EXTENT_BUFFER, getTopoExtent } from "helpers/map/getTopoExtent";
 
 type MapControlProps = React.PropsWithChildren<
 	Props & {
@@ -130,7 +130,7 @@ export const MapControl2 = watchDependencies<Map, MapControlProps>(
 		// Initial extension / bounding
 		useEffect(() => {
 			if (map && props.topo) {
-				const extent = getTopoExtent(props.topo(), 500);
+				const extent = getTopoExtent(props.topo(), DEFAULT_EXTENT_BUFFER);
 				map.getView().fit(extent, {
 					size: map.getSize(),
 					maxZoom: 18,
