@@ -8,6 +8,7 @@ import { ProgressTracker } from "helpers/hooks";
 import { set } from "idb-keyval";
 import { CACHED_IMG_WIDTH, bunnyUrl, tileUrl } from "./sharedWithServiceWorker";
 import { createXYZ } from "ol/tilegrid";
+import { useEffect } from "react";
 
 // IMPORTANT: any changes to the tile or image URLS, as well as to the cached image width,
 // MUST be reflected in the service worker (`sw.ts`)
@@ -20,10 +21,21 @@ const MAX_ZOOM = 21;
 // May need more teesting to ensure 1000 concurrent requests don't overload weaker devices
 const MAX_CONCURRENT_REQUESTS = 1000;
 
+export type DownloadTopoResult =
+	| {
+			success: true;
+	  }
+	| {
+			success: false;
+			globalError: boolean;
+			imageErrors: number;
+			tileErrors: number;
+	  };
+
 export async function downloadTopo(
 	topo: TopoData | Topo,
 	tracker: ProgressTracker
-) {
+): Promise<DownloadTopoResult> {
 	const tileUrls = getTileUrls(topo);
 	const imgUrls = getImageUrls(topo);
 	const urls = [...tileUrls, ...imgUrls];
@@ -36,17 +48,47 @@ export async function downloadTopo(
 	const cache = await caches.open("topo-download");
 	const lock = new Semaphore(MAX_CONCURRENT_REQUESTS);
 	const promises: Promise<void>[] = [
-		...urls.map((url) => downloadUrl(url, cache, lock, tracker)),
+		...urls.map((url) =>
+			withExponentialBackoff(() => downloadUrl(url, cache, lock, tracker))
+		),
 		set(topo.id, topo),
 	];
 
-	await Promise.all(promises);
+	const results = await Promise.allSettled(promises);
 	const end = Date.now();
 	console.log(
 		`--- Finished downloading ${topo.name} in ${(end - start) / 1000}s (${
 			tileUrls.length
 		} tiles, ${imgUrls.length} images)`
 	);
+	let tileErrors = 0;
+	let imageErrors = 0;
+	let globalError = false;
+	for(let i = 0 ; i < results.length - 1; ++i) {
+		const res = results[i];
+		if(res.status === "rejected") {
+			if(i < tileUrls.length) {
+				tileErrors++;
+			} else {
+				imageErrors++;
+			}
+		}
+	}
+	if(results[results.length - 1].status === "rejected") {
+		globalError = true;
+	}
+
+	if(tileErrors === 0 && imageErrors === 0 && globalError === false) {
+		return { success: true }
+	} else {
+		return {
+			success: false,
+			globalError,
+			tileErrors,
+			imageErrors
+		}
+	}
+	// Check for a global error
 }
 
 async function downloadUrl(
@@ -89,18 +131,6 @@ export function getTileUrls(topo: TopoData | Topo, maxZoom: number = MAX_ZOOM) {
 			z
 		);
 
-		// const minX = range.minX;
-		// const maxX = range.maxX;
-		// const minY = range.minY;
-		// const maxY = range.maxY;
-
-		// // // The y-axis is flipped, the origin for (x,y) tiles coordinates is top-left
-		// // let [xmin, ymax] = findTileXY(bounds[0], bounds[1], z);
-		// // let [xmax, ymin] = findTileXY(bounds[2], bounds[3], z);
-		// console.log(
-		// 	`Corner tiles zoom ${z}: [${minX}, ${maxY}], [${maxX}, ${minY}]`
-		// );
-
 		for (let x = minX; x <= maxX; x++) {
 			for (let y = minY; y <= maxY; y++) {
 				tileUrls.push(tileUrl(x, y, z));
@@ -142,4 +172,27 @@ function getImageUrls(topo: TopoData | Topo): Array<string> {
 		}
 	}
 	return images.map((img) => bunnyUrl(img.id, CACHED_IMG_WIDTH));
+}
+
+export function withExponentialBackoff<T>(
+	fn: () => Promise<T>,
+	maxRetries = 3,
+	baseDelay = 500,
+	factor = 2
+): Promise<T> {
+	return new Promise((resolve, reject) => {
+		function attempt(retries: number) {
+			fn()
+				.then(resolve)
+				.catch((error) => {
+					if (retries === 0) {
+						reject(error);
+					} else {
+						const delay = baseDelay * Math.pow(factor, maxRetries - retries);
+						setTimeout(() => attempt(retries - 1), delay);
+					}
+				});
+		}
+		attempt(maxRetries);
+	});
 }
