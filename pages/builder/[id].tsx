@@ -1,12 +1,10 @@
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { api } from "helpers/services";
 import { isUUID, TopoData } from "types";
 import { editTopo } from "helpers/quarkifyTopo";
 import { withRouting } from "helpers/serverStuff";
 import { decodeUUID } from "helpers/utils";
 import { RootBuilder } from "components/pages/RootBuilder";
-import { useProgressBar } from "helpers/hooks";
-import { downloadTopo } from "helpers/services/downloadTopo";
 import { DownloadTester } from "components/DownloadTester";
 
 type BuilderProps = {
@@ -48,7 +46,7 @@ export default withRouting<BuilderProps>({
 		return (
 			<>
 				<RootBuilder topoQuark={topoQuark} />
-				<DownloadTester topo={topo} />
+				{/* <DownloadTester topo={topo} /> */}
 			</>
 		);
 	},

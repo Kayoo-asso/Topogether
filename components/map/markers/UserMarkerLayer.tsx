@@ -53,6 +53,8 @@ export const UserMarkerLayer: React.FC<UserMarkerLayerProps> = (
 		accuracy = 0;
 	}
 
+	// console.log(position);
+
 	return (
 		<>
 			<Select

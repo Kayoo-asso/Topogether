@@ -1,31 +1,35 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { LightTopo, Topo } from "types";
 import Download from "assets/icons/download.svg";
 import { staticUrl } from "helpers/constants";
 import { useModal } from "helpers/hooks/useModal";
 import { Loading } from "./Loading";
+import { useProgressBar } from "helpers/hooks";
+import { downloadTopo, removeTopoFromCache, isAvailableOffline } from "helpers/services/downloadTopo";
+import { api } from "helpers/services";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 interface DownloadButtonProps {
-	downloaded?: boolean;
 	className?: string;
 	topo: Topo | LightTopo;
 }
 
-export const DownloadButton: React.FC<DownloadButtonProps> = ({
-	downloaded = false,
-	...props
-}: DownloadButtonProps) => {
+const isLight = (topo: Topo | LightTopo): topo is LightTopo => {
+	return (topo as LightTopo).nbBoulders !== undefined;
+  }
+
+export const DownloadButton: React.FC<DownloadButtonProps> = (props: DownloadButtonProps) => {
 	const [ModalUndownload, showModalUndownload] = useModal();
 	const [loading, setLoading] = useState<boolean>(false);
+	const [progress, tracker] = useProgressBar(0.01);
+	const { data: isDl } = useQuery({ queryKey: ['isDl'], queryFn: () => isAvailableOffline(props.topo.id) });	
 
-	const toggle = async () => {
-		alert("Le téléchargement offline sera bientôt disponible.");
-		// if (downloaded) showModalUndownload();
-		// else {
-		// 	setLoading(true);
-		// 	await api.downloadTopo(props.topo.id);
-		// 	setLoading(false);
-		// }
+	const download = async () => {
+		setLoading(true);
+		let topo = isLight(props.topo) ? await api.getTopo(props.topo.id) : props.topo;
+		if (topo) await downloadTopo(topo, tracker);
+		else alert("Le topo est introuvable...");
+		setLoading(false);
 	};
 
 	return (
@@ -35,17 +39,20 @@ export const DownloadButton: React.FC<DownloadButtonProps> = ({
 				<Download
 					className={
 						"cursor-pointer " +
-						(downloaded ? "h-5 w-5 stroke-main" : "h-5 w-5 stroke-dark") +
+						(isDl ? "h-5 w-5 stroke-main" : "h-5 w-5 stroke-dark") +
 						(props.className ? " " + props.className : "")
 					}
-					onClick={toggle}
+					onClick={() => {
+						if (isDl) showModalUndownload();
+						else download();
+					}}
 				/>
 			)}
 
 			<ModalUndownload
 				buttonText="Confirmer"
 				imgUrl={staticUrl.deleteWarning}
-				onConfirm={() => alert("à venir")} //TODO
+				onConfirm={() => removeTopoFromCache(props.topo.id)}
 			>
 				Le topo ne sera plus accessible hors ligne.
 			</ModalUndownload>

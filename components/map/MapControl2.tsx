@@ -30,6 +30,7 @@ import { UserMarkerLayer } from "./markers/UserMarkerLayer";
 import { XYZ as XYZObject } from "ol/source";
 import { MapBrowserEvent } from "ol";
 import { DEFAULT_EXTENT_BUFFER, getTopoExtent } from "helpers/map/getTopoExtent";
+import { getMapCursorClass } from "helpers/map/getMapCursorClass";
 
 type MapControlProps = React.PropsWithChildren<
 	Props & {
@@ -98,23 +99,10 @@ export const MapControl2 = watchDependencies<Map, MapControlProps>(
 			}
 		}, [satelliteView, xyz]);
 
-		const getMapCursorClass = useCallback(() => {
-			switch (tool) {
-				case "ROCK":
-					return "cursor-[url(/assets/icons/colored/_rock.svg),_pointer]";
-				case "SECTOR":
-					return "cursor-[url(/assets/icons/colored/line-point/_line-point-grey),_pointer]";
-				case "PARKING":
-					return "cursor-[url(/assets/icons/colored/_parking.svg),_pointer]";
-				case "WAYPOINT":
-					return "cursor-[url(/assets/icons/colored/_help-round.svg),_pointer]";
-				default:
-					return "";
-			}
-		}, [tool]);
 		//If a tool is selected, display the corresponding cursor. If not, display pointer on features.
 		useEffect(() => {
 			const determinePointer = (e: MapBrowserEvent<PointerEvent>) => {
+				console.log("1")
 				if (tool || !map) return;
 				const hit = map.getFeaturesAtPixel(e.pixel).length > 0;
 				if (hit) {
@@ -271,7 +259,7 @@ export const MapControl2 = watchDependencies<Map, MapControlProps>(
 						setMap(map);
 						setReactRef(parentRef, ref);
 					}, [])}
-					className={"h-full w-full " + getMapCursorClass()}
+					className={"h-full w-full " + getMapCursorClass(tool)}
 					onClick={(e) => {
 						const map = e.map;
 						const hit = map.getFeaturesAtPixel(e.pixel).length > 0;
@@ -280,7 +268,7 @@ export const MapControl2 = watchDependencies<Map, MapControlProps>(
 							if (props.onClick) props.onClick(e);
 						}
 					}}
-					// controls={}
+					// controls={[]}
 				>
 					<View
 						center={fromLonLat(

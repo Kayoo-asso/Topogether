@@ -12,6 +12,7 @@ async function test(topo: TopoData, tracker: ProgressTracker) {
   if(!result.success) {
     console.log("Errors while downloading:", result);
   }
+  else console.log(result);
 }
 
 

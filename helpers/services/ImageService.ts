@@ -45,45 +45,6 @@ function imageKey(id: UUID): Request {
 const UPLOAD_MAX_SIZE = 20e6;
 
 export class ImageService {
-	// async downloadTopoImages(topo: TopoData): Promise<void> {
-	// 	const promises: Promise<void>[] = [];
-	// 	if (topo.image) promises.push(this.download(topo.image));
-	// 	for (const boulder of topo.boulders) {
-	// 		for (const img of boulder.images) {
-	// 			promises.push(this.download(img));
-	// 		}
-	// 	}
-	// 	for (const waypoint of topo.waypoints) {
-	// 		if (waypoint.image) promises.push(this.download(waypoint.image));
-	// 	}
-	// 	for (const parking of topo.parkings) {
-	// 		if (parking.image) promises.push(this.download(parking.image));
-	// 	}
-	// 	for (const manager of topo.managers) {
-	// 		if (manager.image) promises.push(this.download(manager.image));
-	// 	}
-	// 	for (const access of topo.accesses) {
-	// 		if (access.steps) {
-	// 			for (const step of access.steps) {
-	// 				if (step.image) promises.push(this.download(step.image));
-	// 			}
-	// 		}
-	// 	}
-	// 	await Promise.all(promises);
-	// }
-
-	// Always make sure this code is in sync with ImageService.save() and the service worker
-	// async download(image: Img): Promise<void> {
-	// 	const cache = await caches.open("images-download");
-	// 	// Key uses a URL of `current_domain/id`, to ensure we always get the same key from the same ID
-	// 	// Without the "/" here, the path would be relative to the current URL
-	// 	const key = imageKey(image.id);
-	// 	if (await cache.match(key)) return;
-	// 	const url = cloudflareUrl(image.id, 2048);
-	// 	const value = await fetch(url);
-	// 	await cache.put(key, value);
-	// }
-
 	async save(blob: Blob): Promise<UUID> {
 		const id = uuid();
 		const key = imageKey(id);

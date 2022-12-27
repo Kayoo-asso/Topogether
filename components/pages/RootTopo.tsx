@@ -151,15 +151,15 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 							topoQuark={props.topoQuark}
 							boulderOrder={boulderOrder()}
 						/>
-						<BoulderMarkersLayer 
-							boulders={topo.boulders}
-							boulderOrder={boulderOrder()}
-						/>
 						<ParkingMarkersLayer 
 							parkings={topo.parkings}
 						/>
 						<WaypointMarkersLayer 
 							waypoints={topo.waypoints}
+						/>
+						<BoulderMarkersLayer 
+							boulders={topo.boulders}
+							boulderOrder={boulderOrder()}
 						/>
 						
 					</MapControl2>

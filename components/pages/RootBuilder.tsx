@@ -246,17 +246,17 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 							creating={tool === "SECTOR"}
 							draggable
 						/>
-						<BoulderMarkersLayer 
-							boulders={topo.boulders}
-							boulderOrder={boulderOrder()}
-							draggable
-						/>
 						<ParkingMarkersLayer 
 							parkings={topo.parkings}
 							draggable
 						/>
 						<WaypointMarkersLayer 
 							waypoints={topo.waypoints}
+							draggable
+						/>
+						<BoulderMarkersLayer 
+							boulders={topo.boulders}
+							boulderOrder={boulderOrder()}
 							draggable
 						/>
 					</MapControl2>

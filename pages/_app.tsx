@@ -10,6 +10,7 @@ import { initSupabaseSession, getUserInitialProps } from "helpers/serverStuff";
 import { resetServerContext } from "react-beautiful-dnd";
 import { User } from "types";
 import { NavigationLoader } from "components/layouts/NavigationLoader";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 type CustomProps = {
 	session: User | null;
@@ -20,6 +21,8 @@ const isServer = typeof window === "undefined";
 
 type InitialProps = AppInitialProps & CustomProps;
 type Props = AppProps & CustomProps;
+
+const queryClient = new QueryClient();
 
 const CustomApp = ({ Component, pageProps, session, userAgent }: Props) => {
 	return (
@@ -161,18 +164,20 @@ const CustomApp = ({ Component, pageProps, session, userAgent }: Props) => {
 				<DeviceManager userAgent={userAgent}>
 					<UserPositionProvider>
 						<NavigationLoader>
-							<div
-								id="content"
-								className="absolute flex h-full w-screen flex-1 flex-col overflow-hidden bg-grey-light md:h-screen"
-							>
-								<Component {...pageProps} />
-							</div>
-							<div
-								id="footer"
-								className="absolute bottom-0 z-500 h-shell bg-dark md:hidden"
-							>
-								<ShellMobile />
-							</div>
+							<QueryClientProvider client={queryClient}>
+								<div
+									id="content"
+									className="absolute flex h-full w-screen flex-1 flex-col overflow-hidden bg-grey-light md:h-screen"
+								>
+									<Component {...pageProps} />
+								</div>
+								<div
+									id="footer"
+									className="absolute bottom-0 z-500 h-shell bg-dark md:hidden"
+								>
+									<ShellMobile />
+								</div>
+							</QueryClientProvider>
 						</NavigationLoader>
 					</UserPositionProvider>
 				</DeviceManager>

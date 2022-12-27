@@ -13,9 +13,6 @@ import { useEffect } from "react";
 // IMPORTANT: any changes to the tile or image URLS, as well as to the cached image width,
 // MUST be reflected in the service worker (`sw.ts`)
 
-// TODO:
-// - Add error handling / retries
-
 // Note: max zoom of 21 seems fine, which significantly reduces the nb of downloaded tiles
 const MAX_ZOOM = 21;
 // 1000 max concurrent requests seems to work fine (1500 is too much)
