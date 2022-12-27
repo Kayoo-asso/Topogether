@@ -142,7 +142,7 @@ function implementation<G extends GeometryType>(
 			}
 			source.addFeature(feature);
 			return () => {
-				// source.removeFeature(feature);
+				source.removeFeature(feature);
 			};
 		}
 	}, [source, feature]);
