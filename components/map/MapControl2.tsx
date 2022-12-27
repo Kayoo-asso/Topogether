@@ -102,7 +102,6 @@ export const MapControl2 = watchDependencies<Map, MapControlProps>(
 		//If a tool is selected, display the corresponding cursor. If not, display pointer on features.
 		useEffect(() => {
 			const determinePointer = (e: MapBrowserEvent<PointerEvent>) => {
-				console.log("1")
 				if (tool || !map) return;
 				const hit = map.getFeaturesAtPixel(e.pixel).length > 0;
 				if (hit) {
@@ -243,8 +242,8 @@ export const MapControl2 = watchDependencies<Map, MapControlProps>(
 						{displayUserMarker && position && (
 							<RoundButton
 								onClick={() => {
-									if (position) {
-										map?.getView().setCenter(fromLonLat(position));
+									if (position && map) {
+										map.getView().setCenter(fromLonLat(position));
 									}
 								}}
 							>
@@ -256,7 +255,8 @@ export const MapControl2 = watchDependencies<Map, MapControlProps>(
 
 				<BaseMap
 					ref={useCallback((ref) => {
-						setMap(map);
+						console.log("ref callback", ref)
+						setMap(ref);
 						setReactRef(parentRef, ref);
 					}, [])}
 					className={"h-full w-full " + getMapCursorClass(tool)}
