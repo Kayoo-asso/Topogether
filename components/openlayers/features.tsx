@@ -98,6 +98,7 @@ function implementation<G extends GeometryType>(
 				setSource(source);
 			};
 			layer.on("change:source", updateSource);
+			updateSource();
 			return () => layer.un("change:source", updateSource);
 		}
 	}, [layer]);
@@ -131,7 +132,7 @@ function implementation<G extends GeometryType>(
 
 	useEffect(() => {
 		feature.setId(props.id);
-	}, [props.id])
+	}, [props.id]);
 
 	useEffectDeepEqual(() => {
 		feature.setStyle(props.style);
