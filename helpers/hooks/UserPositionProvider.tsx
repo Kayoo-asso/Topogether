@@ -55,9 +55,13 @@ export const UserPositionProvider = ({
 
 	const device = useDevice();
 	const isIos = device.apple.device;
+	const latestPosition = useRef<UserPosition>();
 
 	const subscribe = useCallback((fn: PositionSubscriber) => {
 		subscribers.current.add(fn);
+		if(latestPosition.current) {
+			fn(latestPosition.current);
+		}
 		return () => subscribers.current.delete(fn);
 	}, []);
 
@@ -110,6 +114,7 @@ export const UserPositionProvider = ({
 				accuracy: pos.coords.accuracy,
 				heading: pos.coords.heading,
 			};
+			latestPosition.current = position;
 			for (const listener of subscribers.current) {
 				listener(position);
 			}
