@@ -25,6 +25,7 @@ import {
 	MultiPolygon as OLMultiPolygon,
 } from "ol/geom";
 import VectorSource from "ol/source/Vector";
+import { useEffectDeepEqual } from "./useEffectDeepEqual";
 
 interface CoordinatesTypeMap {
 	point: Coordinate;
@@ -86,17 +87,17 @@ function implementation<G extends GeometryType>(
 	const [source, setSource] = useState<Source | null>(null);
 
 	useEffect(() => {
-		if(layer) {
+		if (layer) {
 			const updateSource = () => {
 				let source = layer.getSource();
 				// Don't interact with Cluster sources, interact with the underlying source
-				if(source instanceof Cluster) {
-					source = source.getSource()
+				if (source instanceof Cluster) {
+					source = source.getSource();
 					return;
 				}
 				setSource(source);
-			}
-			layer.on("change:source", updateSource)
+			};
+			layer.on("change:source", updateSource);
 			return () => layer.un("change:source", updateSource);
 		}
 	}, [layer]);
@@ -110,7 +111,9 @@ function implementation<G extends GeometryType>(
 			[props.center, props.radius, props.layout]
 		);
 
-		c.setCenterAndRadius(props.center, props.radius, props.layout);
+		useEffectDeepEqual(() => {
+			c.setCenterAndRadius(props.center, props.radius, props.layout);
+		}, [c, props.center, props.radius, props.layout]);
 		geometry = c;
 	} else {
 		const g = useMemo(() => {
@@ -118,15 +121,22 @@ function implementation<G extends GeometryType>(
 			return new fn(props.coordinates as any, props.layout);
 		}, []);
 
-		g.setCoordinates(props.coordinates as any, props.layout);
+		useEffect(() => {
+			g.setCoordinates(props.coordinates as any, props.layout);
+		}, [g, props.coordinates, props.layout]);
 		geometry = g;
 	}
 
 	const feature = useMemo(() => new Feature({ geometry }), [geometry]);
 
-	feature.setId(props.id);
-	// TODO: deep comparison before updating style?
-	// feature.setStyle(props.style);
+	useEffect(() => {
+		feature.setId(props.id);
+	}, [props.id])
+
+	useEffectDeepEqual(() => {
+		feature.setStyle(props.style);
+	}, [props.style]);
+
 	feature.setProperties({
 		data: props.data,
 	});
