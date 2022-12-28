@@ -16,10 +16,8 @@ const useLifecycle = createLifecycle(OLMap, {
 	reactive: [
 		// "size",
 	],
-	reset: [],
+	reset: ["controls"],
 } as const);
-
-type Test = typeof useLifecycle;
 
 type Options = InferOptions<typeof useLifecycle>;
 

@@ -29,6 +29,7 @@ import { Props } from "components/openlayers/Map";
 import { UserMarkerLayer } from "./markers/UserMarkerLayer";
 import { XYZ as XYZObject } from "ol/source";
 import { MapBrowserEvent } from "ol";
+import {Rotate, Attribution} from "ol/control";
 import { DEFAULT_EXTENT_BUFFER, getTopoExtent } from "helpers/map/getTopoExtent";
 import { getMapCursorClass } from "helpers/map/getMapCursorClass";
 
@@ -60,6 +61,12 @@ const attributions =
 	'© <a href="https://www.mapbox.com/map-feedback/">Mapbox</a> ' +
 	'© <a href="https://www.openstreetmap.org/copyright">' +
 	"OpenStreetMap contributors</a>";
+
+// The default controls except the zoom +/- buttons
+const controls = typeof window === "undefined" ? [] : [
+	new Rotate(),
+	new Attribution()
+]
 
 export const MapControl2 = watchDependencies<Map, MapControlProps>(
 	(
@@ -268,7 +275,7 @@ export const MapControl2 = watchDependencies<Map, MapControlProps>(
 							if (props.onClick) props.onClick(e);
 						}
 					}}
-					// controls={[]}
+					controls={controls}
 				>
 					<View
 						center={fromLonLat(

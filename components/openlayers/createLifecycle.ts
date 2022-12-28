@@ -3,6 +3,7 @@ import { ForwardedRef, useEffect, useRef, useState } from "react";
 import { Event, EventFn, eventHandlers, EventHandlers } from "./events";
 import { setMethodName } from "./utils";
 import { useEffectDeepEqual } from "components/openlayers/useEffectDeepEqual";
+import { useEffectWithDeepEqual } from "helpers/map";
 
 // TODO:
 // - Add checks that all reactive props `P` have an associated `setP` method
@@ -79,8 +80,7 @@ export function createLifecycle<
 			? definition.reset.map((x) => props[x])
 			: [];
 
-		//
-		useEffect(() => {
+		useEffectDeepEqual(() => {
 			// Do we need to delete eventFns from the props before instantiation?
 			const obj = new constructor(props);
 			setInstance(obj);
