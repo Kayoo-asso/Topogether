@@ -29,7 +29,6 @@ type PositionSubscriptions = {
 	subscribe: (setState: PositionSubscriber) => () => void;
 };
 
-// TODO: provide a way to get the current position?
 const UserPositionContext = createContext<PositionSubscriptions>({
 	subscribe: () => () => {},
 });
@@ -96,7 +95,7 @@ export const UserPositionProvider = ({
 
 	const launchGeolocation = () => {
 		const options: PositionOptions = {
-			timeout: 3000,
+			timeout: 5000,
 			enableHighAccuracy: true,
 		};
 

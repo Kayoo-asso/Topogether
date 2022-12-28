@@ -262,7 +262,6 @@ export const MapControl2 = watchDependencies<Map, MapControlProps>(
 
 				<BaseMap
 					ref={useCallback((ref) => {
-						console.log("ref callback", ref)
 						setMap(ref);
 						setReactRef(parentRef, ref);
 					}, [])}

@@ -53,8 +53,6 @@ export const UserMarkerLayer: React.FC<UserMarkerLayerProps> = (
 		accuracy = 0;
 	}
 
-	// console.log(position);
-
 	return (
 		<>
 			<Select
@@ -76,7 +74,7 @@ export const UserMarkerLayer: React.FC<UserMarkerLayerProps> = (
 						<Point coordinates={fromLonLat(position)} style={userMarkerStyle} />
 					)}
 
-					{accuracy && position && (
+					{position && !!accuracy && (
 						<Circle
 							center={fromLonLat(position)}
 							radius={accuracy}
