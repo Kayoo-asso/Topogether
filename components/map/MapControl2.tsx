@@ -62,9 +62,8 @@ const attributions =
 	'© <a href="https://www.openstreetmap.org/copyright">' +
 	"OpenStreetMap contributors</a>";
 
-// The default controls except the zoom +/- buttons
+// The default controls except the zoom +/- buttons and the rotate button
 const controls = typeof window === "undefined" ? [] : [
-	new Rotate(),
 	new Attribution()
 ]
 

@@ -68,18 +68,23 @@ export const UserMarkerLayer: React.FC<UserMarkerLayerProps> = (
 					[position]
 				)}
 			/>
-			<VectorLayer id="user">
-				<VectorSource>
-					{position && (
-						<Point coordinates={fromLonLat(position)} style={userMarkerStyle} />
-					)}
 
+			<VectorLayer id="accuracy">
+				<VectorSource>
 					{position && !!accuracy && (
 						<Circle
 							center={fromLonLat(position)}
 							radius={accuracy}
 							style={accuracyMarkerStyle}
 						/>
+					)}
+				</VectorSource>
+			</VectorLayer>
+
+			<VectorLayer id="user">
+				<VectorSource>
+					{position && (
+						<Point coordinates={fromLonLat(position)} style={userMarkerStyle} />
 					)}
 				</VectorSource>
 			</VectorLayer>
