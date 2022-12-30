@@ -1,6 +1,7 @@
 // Custom interaction here
 // Based on: https://openlayers.org/en/latest/examples/custom-interactions.html
 
+import { Feature } from "ol";
 import type { Map, MapBrowserEvent } from "ol";
 import type { Coordinate } from "ol/coordinate";
 import BaseEvent from "ol/events/Event";
@@ -27,11 +28,11 @@ type DragEvents = "dragstart" | "drag" | "dragend";
 
 // Adapted from OpenLayer's ModifyEvent
 export class DragEvent extends BaseEvent {
-	feature: FeatureLike;
+	feature: Feature;
 	mapBrowserEvent: MapBrowserEvent<UIEvent>;
 	constructor(
 		type: DragEvents,
-		feature: FeatureLike,
+		feature: Feature,
 		mapBrowserEvent: MapBrowserEvent<UIEvent>
 	) {
 		super(type);
@@ -45,8 +46,7 @@ export class DragEvent extends BaseEvent {
 export class DragInteraction extends PointerInteraction {
 	protected coordinate_: Coordinate | null;
 	protected cursor_: string | undefined;
-	protected feature_: FeatureLike | null;
-	protected element_: HTMLElement | null;
+	protected feature_: Feature | null;
 	protected previousCursor_: string | undefined;
 	protected startCondition_: Condition | undefined;
 	protected hitTolerance_: number;
@@ -64,7 +64,6 @@ export class DragInteraction extends PointerInteraction {
 		this.coordinate_ = null;
 		this.cursor_ = options.cursor || "pointer";
 		this.feature_ = null;
-		this.element_ = null;
 		this.previousCursor_ = undefined;
 		this.startCondition_ = options.startCondition;
 		this.hitTolerance_ = options.hitTolerance ?? 0;
@@ -84,15 +83,18 @@ export class DragInteraction extends PointerInteraction {
 		}.bind(this);
 	}
 
-	findFeature(evt: MapBrowserEvent<UIEvent>): FeatureLike | undefined {
+	findFeature(evt: MapBrowserEvent<UIEvent>): Feature | undefined {
 		const map = evt.map;
 		if (this.sources) {
 			const features = map.getFeaturesAtPixel(evt.pixel, {
 				layerFilter: this.layerFilter_,
 				hitTolerance: this.hitTolerance_,
 			});
-			if (features.length > 0) {
-				return features[0];
+			for(let i =0; i < features.length; ++i) {
+				const f = features[i];
+				if(f instanceof Feature) {
+					return f
+				}
 			}
 		}
 	}
@@ -137,7 +139,7 @@ function handleDragEvent(this: DragInteraction, evt: MapBrowserEvent<UIEvent>) {
 function handleMoveEvent(this: DragInteraction, evt: MapBrowserEvent<UIEvent>) {
 	if (this.cursor_) {
 		const feature = this.findFeature(evt);
-		const element = (this.element_ = evt.map.getTargetElement());
+		const element = evt.map.getTargetElement();
 
 		if (feature) {
 			if (element.style.cursor != this.cursor_) {
