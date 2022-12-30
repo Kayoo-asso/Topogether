@@ -36,7 +36,7 @@ export const Map = forwardRef<OLMap, Props>(
 
 		return (
 			<div id={id} className={className}>
-				<MapContext.Provider value={map}>{children}</MapContext.Provider>
+				{map && <MapContext.Provider value={map}>{children}</MapContext.Provider>}
 			</div>
 		);
 	}
