@@ -1,5 +1,5 @@
 import { InteractItem, useSelectStore } from 'components/pages/selectStore';
-import { isOnMap } from 'helpers/map';
+import { isOnMap } from 'helpers/map/mapUtils';
 import React, { useEffect, useState } from 'react';
 import { MapToolEnum } from 'types';
 

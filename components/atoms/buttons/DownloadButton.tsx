@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { LightTopo, Topo } from "types";
 import Download from "assets/icons/download.svg";
 import { staticUrl } from "helpers/constants";
@@ -7,7 +7,7 @@ import { Loading } from "./Loading";
 import { useProgressBar } from "helpers/hooks";
 import { downloadTopo, removeTopoFromCache, isAvailableOffline } from "helpers/services/downloadTopo";
 import { api } from "helpers/services";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 
 interface DownloadButtonProps {
 	className?: string;
