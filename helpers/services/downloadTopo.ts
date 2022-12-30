@@ -4,7 +4,7 @@ import {
 	DEFAULT_EXTENT_BUFFER,
 	getTopoExtent,
 } from "helpers/map/getTopoExtent";
-import { ProgressTracker } from "helpers/hooks";
+import { ProgressTracker, getProgressTracker } from "helpers/hooks";
 import { get, set } from "idb-keyval";
 import { CACHED_IMG_WIDTH, bunnyUrl, tileUrl, TOPO_CACHE_KEY } from "./sharedWithServiceWorker";
 import { createXYZ } from "ol/tilegrid";
@@ -32,8 +32,8 @@ export type DownloadTopoResult =
 
 export async function downloadTopo(
 	topo: TopoData | Topo,
-	tracker: ProgressTracker
 ): Promise<DownloadTopoResult> {
+	const tracker = getProgressTracker(topo.id);
 	const tileUrls = getTileUrls(topo);
 	const imgUrls = getImageUrls(topo);
 	const urls = [...tileUrls, ...imgUrls];

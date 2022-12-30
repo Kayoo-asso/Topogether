@@ -21,13 +21,13 @@ const isLight = (topo: Topo | LightTopo): topo is LightTopo => {
 export const DownloadButton: React.FC<DownloadButtonProps> = (props: DownloadButtonProps) => {
 	const [ModalUndownload, showModalUndownload] = useModal();
 	const [loading, setLoading] = useState<boolean>(false);
-	const [progress, tracker] = useProgressBar(0.01);
+	const progress = useProgressBar(props.topo.id);
 	const { data: isDl } = useQuery({ queryKey: ['isDl'], queryFn: () => isAvailableOffline(props.topo.id) });	
 
 	const download = async () => {
 		setLoading(true);
 		let topo = isLight(props.topo) ? await api.getTopo(props.topo.id) : props.topo;
-		if (topo) await downloadTopo(topo, tracker);
+		if (topo) await downloadTopo(topo);
 		else alert("Le topo est introuvable...");
 		setLoading(false);
 	};
