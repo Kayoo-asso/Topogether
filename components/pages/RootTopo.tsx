@@ -132,7 +132,7 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 						map={mapRef.current}
 					/>
 
-					<SlideoverLeftTopo topo={props.topoQuark} />
+					<SlideoverLeftTopo topo={props.topoQuark} boulderOrder={boulderOrder()} map={mapRef.current} />
 
 					<MapControl2
 						ref={mapRef}

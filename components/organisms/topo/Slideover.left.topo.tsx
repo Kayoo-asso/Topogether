@@ -1,15 +1,19 @@
 import React from "react";
 import { Quark } from "helpers/quarky";
-import { Topo } from "types";
+import { Topo, UUID } from "types";
 import { useBreakpoint } from "helpers/hooks";
 import { SlideoverLeftDesktop, SlideoverMobile } from "components/atoms/overlays";
 import { useSelectStore } from "components/pages/selectStore";
 import { InfoContent } from "./InfoContent";
 import { AccessContent } from "./AccessContent";
 import { ManagementContent } from "./ManagementContent";
+import { SectorList } from "components/molecules";
+import { Map } from "ol";
 
 type SlideoverLeftTopoProps = {
     topo: Quark<Topo>;
+	boulderOrder: globalThis.Map<UUID, number>;
+	map: Map | null
 }
 
 export const SlideoverLeftTopo: React.FC<SlideoverLeftTopoProps> = (props: SlideoverLeftTopoProps) => {
@@ -31,7 +35,12 @@ export const SlideoverLeftTopo: React.FC<SlideoverLeftTopoProps> = (props: Slide
             case 'INFO': return <InfoContent topo={props.topo} />;
             case 'ACCESS': return <AccessContent accesses={props.topo().accesses} />;
             case 'MANAGEMENT': return <ManagementContent managers={props.topo().managers} />;
-            default: return undefined;
+			case 'SECTOR': return <SectorList
+										topoQuark={props.topo}
+										boulderOrder={props.boulderOrder}
+										map={props.map}
+									/>;
+			default: return undefined;
         }
     }
 

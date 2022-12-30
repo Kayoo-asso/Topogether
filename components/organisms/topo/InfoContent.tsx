@@ -36,8 +36,8 @@ export const InfoContent: React.FC<InfoContentProps> = (props: InfoContentProps)
 
 	return (
 		<>
-			<div className="flex h-full flex-col pt-10 md:pt-0">
-				<div className="absolute left-1 top-1 z-100 flex flex-row gap-6 px-6 pt-4 md:left-2 md:top-2">
+			<div className="flex h-full flex-col">
+				<div className="absolute z-100 flex flex-row gap-6 px-6 pt-4 left-1 top-1 md:left-48 md:top-3">
 					<LikeButton liked={topo.liked} />
 					<DownloadButton topo={topo} />
 				</div>
