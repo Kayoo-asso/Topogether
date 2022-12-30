@@ -10,7 +10,7 @@ interface ContributorAddFormProps {
 
 let timer: NodeJS.Timeout;
 export const ContributorAddForm: React.FC<ContributorAddFormProps> = (props: ContributorAddFormProps) => {
-    const [pseudo, setPseudo] = useState<Name>('' as Name);
+    const [email, setEmail] = useState<Name>('' as Name);
     const [id, setId] = useState<UUID>();
     const [role, setRole] = useState<ContributorRole>();
 
@@ -18,29 +18,32 @@ export const ContributorAddForm: React.FC<ContributorAddFormProps> = (props: Con
     const [results, setResults] = useState<{pseudo: string, id: UUID}[]>([]);
 
     const searchUser = (pseudo: string) => {
-        //Call API for searching for the user
+        //TODO: Call API for searching for the user
         console.log("searching...");
     }
     useEffect(() => {
-		if (pseudo?.length > 2) {
+		if (email?.length > 2) {
 			clearTimeout(timer);
 			timer = setTimeout(() => {
-				searchUser(pseudo);
+				searchUser(email);
 			}, 300);
 		}
-	}, [pseudo]);
+	}, [email]);
     
     return (
         <>
             <div className="flex w-full ktext-subtitle mb-1">Ajouter un contributeur</div>
 
-            <div className='w-full relative'>
+            <div>Fonctionnalité à venir</div>
+
+            {/* <div className='w-full relative'>
                 <TextInput 
-                    id='pseudo'
-                    label='Pseudo du contributeur'
-                    value={pseudo}
+                    id='mail'
+                    type='email'
+                    label='Email du contributeur'
+                    value={email}
                     onChange={(e) => {
-                        setPseudo(e.target.value as Name);
+                        setEmail(e.target.value as Name);
                         if (e.target.value?.length > 2) {
                             setResultsOpen(true);
                             searchUser(e.target.value);
@@ -64,7 +67,7 @@ export const ContributorAddForm: React.FC<ContributorAddFormProps> = (props: Con
                                 key={res.id}
                                 className="ktext-base flex cursor-pointer flex-row items-center gap-4 py-3 text-dark"
                                 onClick={() => {
-                                    setPseudo(res.pseudo as Name);
+                                    setEmail(res.pseudo as Name);
                                     setId(res.id);
                                     setResultsOpen(false);
                                 }}
@@ -85,9 +88,9 @@ export const ContributorAddForm: React.FC<ContributorAddFormProps> = (props: Con
 
             <Button 
                 content='Ajouter le contributeur'
-                activated={!!(id && role && pseudo)}
+                activated={!!(id && role && email)}
                 fullWidth
-            />
+            /> */}
 
             <div className="py-6 w-full text-center ktext-label text-grey-medium cursor-pointer" onClick={props.onClose}>
                 Retour

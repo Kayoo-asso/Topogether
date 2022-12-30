@@ -6,14 +6,13 @@ import {
 	VectorLayer,
 	VectorSource,
 } from "components/openlayers";
-import Feature, { FeatureLike } from "ol/Feature";
-import { Circle, Fill, Icon, Stroke, Style, Text } from "ol/style";
+import { FeatureLike } from "ol/Feature";
+import { Fill, Icon, Style, Text } from "ol/style";
 import { Boulder, UUID } from "types";
 import { useSelectStore } from "components/pages/selectStore";
 import { fromLonLat, toLonLat } from "ol/proj";
 import { Drag } from "components/openlayers/interactions/Drag";
 import { Cluster } from "components/openlayers/sources/Cluster";
-import CircleStyle from "ol/style/Circle";
 import { Breakpoint, useBreakpoint } from "helpers/hooks";
 
 interface BoulderMarkersLayerProps {
@@ -44,12 +43,12 @@ export const boulderMarkerStyle = (
 		fill: new Fill({
 			color: anySelected
 				? selected
-					? "#04D98B"
+					? "#343644"
 					: "rgba(4, 217, 139, 0.3)"
-				: "#04D98B",
+				: "#343644",
 		}),
-		font: "14px Poppins",
-		offsetY: 32,
+		font: "bold 11px Poppins",
+		offsetY: 7,
 	});
 	return new Style({
 		image: icon,
@@ -158,9 +157,7 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> = watchDepe
 				<VectorSource>
 					{props.boulders.quarks().map((bQuark) => {
 						const b = bQuark();
-						const label =
-							props.boulderOrder.get(b.id)! +
-							(process.env.NODE_ENV === "development" ? ". " + b.name : "");
+						const label = props.boulderOrder.get(b.id)?.toString();
 						return (
 							<Point
 								key={b.id}

@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Quark, QuarkArray, watchDependencies } from "helpers/quarky";
+import React, { useCallback, useState } from "react";
+import { QuarkArray, watchDependencies } from "helpers/quarky";
 import { Contributor, ContributorRole, UUID } from "types";
 
 import UserInfoIcon from "assets/icons/user-info.svg";
@@ -27,7 +27,8 @@ export const ContributorsList: React.FC<ContributorsListProps> = watchDependenci
         const [toModify, setToModify] = useState<Contributor>();
 
         const getContent = () => {
-            if (props.contributors.length < 2) return ( //There is always at least 1 contributor : the admin of the topo
+            if (displayAddForm) return <ContributorAddForm onClose={() => setDisplayAddForm(false)} />
+            else if (props.contributors.length < 2) return ( //There is always at least 1 contributor : the admin of the topo
                 <div 
                     className="flex flex-col md:flex-row mt-6 cursor-pointer border-main border-2 rounded-sm w-[90%] md:w-full py-6 md:py-12 px-6 shadow items-start md:items-center"
                     onClick={() => setDisplayAddForm(true)}
@@ -42,7 +43,6 @@ export const ContributorsList: React.FC<ContributorsListProps> = watchDependenci
                     </div>
                 </div>
             );
-            else if (displayAddForm) return <ContributorAddForm onClose={() => setDisplayAddForm(false)} />
             else if (toModify) return <ContributorModifyForm contributor={toModify} onClose={() => setToModify(undefined)} />           
             else return (  
                 <>

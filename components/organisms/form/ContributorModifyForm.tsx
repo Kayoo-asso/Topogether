@@ -5,12 +5,12 @@ import { useModal } from 'helpers/hooks';
 import React, { useState } from 'react';
 import { Contributor, ContributorRole } from 'types';
 
-interface ContributorMoodifyFormProps {
+interface ContributorModifyFormProps {
     contributor: Contributor,
     onClose: () => void,
 }
 
-export const ContributorModifyForm: React.FC<ContributorMoodifyFormProps> = (props: ContributorMoodifyFormProps) => {
+export const ContributorModifyForm: React.FC<ContributorModifyFormProps> = (props: ContributorModifyFormProps) => {
     const [contributor, setContributor] = useState<Contributor>(props.contributor);
 
     const [ModalModify, showModalModify] = useModal();
