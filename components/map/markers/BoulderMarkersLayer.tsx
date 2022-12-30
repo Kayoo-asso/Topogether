@@ -116,6 +116,7 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> = watchDepe
 				/>
 			)}
 
+			
 			<Select
 				layers={["boulders"]}
 				hitTolerance={5}
