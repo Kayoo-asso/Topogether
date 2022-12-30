@@ -14,7 +14,7 @@ import { fromLonLat, toLonLat } from "ol/proj";
 import { Drag } from "components/openlayers/interactions/Drag";
 import { Cluster } from "components/openlayers/sources/Cluster";
 import { Breakpoint, useBreakpoint } from "helpers/hooks";
-import { useMapPointerCoordinates } from "helpers/hooks/useMapPointer";
+import { useMapPointerCoordinates } from "helpers/hooks/useMapPointerCoordinates";
 import { MapBrowserEvent } from "ol";
 
 interface BoulderMarkersLayerProps {
@@ -86,7 +86,7 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> = watchDepe
 	const tool = useSelectStore(s => s.tool);
 
 	const device = useBreakpoint();
-	const pointerCoords = useMapPointerCoordinates();
+	const pointerCoords = useMapPointerCoordinates(!!tool);
 
 	return (
 		<>

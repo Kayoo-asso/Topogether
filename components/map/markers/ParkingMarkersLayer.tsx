@@ -15,7 +15,7 @@ import { useMapZoom } from 'helpers/hooks/useMapZoom';
 import { Breakpoint, useBreakpoint } from 'helpers/hooks';
 import { disappearZoom } from './WaypointMarkersLayer';
 import { MapBrowserEvent } from 'ol';
-import { useMapPointerCoordinates } from 'helpers/hooks/useMapPointer';
+import { useMapPointerCoordinates } from 'helpers/hooks/useMapPointerCoordinates';
 
 interface ParkingMarkersLayerProps {
     parkings: QuarkArray<Parking>;
@@ -52,7 +52,7 @@ export const ParkingMarkersLayer: React.FC<ParkingMarkersLayerProps> = watchDepe
 
     const mapZoom = useMapZoom(disappearZoom);
     const device = useBreakpoint();
-    const pointerCoords = useMapPointerCoordinates();
+    const pointerCoords = useMapPointerCoordinates(!!tool);
     
     return (
         <>
