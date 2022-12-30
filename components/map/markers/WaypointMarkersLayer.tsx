@@ -26,7 +26,7 @@ export type WaypointMarkerData = {
 
 export const waypointMarkerStyle = (mapZoom: number, selected: boolean, anySelected: boolean, device: Breakpoint) => {
     const icon = new Icon({
-        opacity: mapZoom > 13.5 ? (anySelected ? (selected ? 1 : 0.4) : 1) : 0,
+        opacity: mapZoom > disappearZoom ? (anySelected ? (selected ? 1 : 0.4) : 1) : 0,
         src: "/assets/icons/markers/info.svg",
         scale: device === 'desktop' ? 0.8 : 1,
     });
@@ -36,6 +36,7 @@ export const waypointMarkerStyle = (mapZoom: number, selected: boolean, anySelec
     });
 }
 
+export const disappearZoom = 14;
 export const WaypointMarkersLayer: React.FC<WaypointMarkersLayerProps> = watchDependencies(({
     draggable = false,
     ...props
@@ -44,7 +45,7 @@ export const WaypointMarkersLayer: React.FC<WaypointMarkersLayerProps> = watchDe
     const selectedItem = useSelectStore((s) => s.item.value);
     const select = useSelectStore(s => s.select);
     const flush = useSelectStore(s => s.flush);
-    const mapZoom = useMapZoom(13.5);
+    const mapZoom = useMapZoom(disappearZoom);
     const device = useBreakpoint();
     
     return (

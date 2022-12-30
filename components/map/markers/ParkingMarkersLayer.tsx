@@ -13,6 +13,7 @@ import { fromLonLat, toLonLat } from 'ol/proj';
 import { Drag } from 'components/openlayers/interactions/Drag';
 import { useMapZoom } from 'helpers/hooks/useMapZoom';
 import { Breakpoint, useBreakpoint } from 'helpers/hooks';
+import { disappearZoom } from './WaypointMarkersLayer';
 
 interface ParkingMarkersLayerProps {
     parkings: QuarkArray<Parking>;
@@ -26,7 +27,7 @@ export type ParkingMarkerData = {
 
 export const parkingMarkerStyle = (mapZoom: number, selected: boolean, anySelected: boolean, device: Breakpoint) => {
     const icon = new Icon({
-        opacity: mapZoom > 13.5 ? (anySelected ? (selected ? 1 : 0.4) : 1) : 0,
+        opacity: mapZoom > disappearZoom ? (anySelected ? (selected ? 1 : 0.4) : 1) : 0,
         src: "/assets/icons/markers/parking.svg",
         scale: device === 'desktop' ? 0.8 : 1,
     });
@@ -44,7 +45,7 @@ export const ParkingMarkersLayer: React.FC<ParkingMarkersLayerProps> = watchDepe
     const selectedItem = useSelectStore((s) => s.item.value);
     const select = useSelectStore(s => s.select);
     const flush = useSelectStore(s => s.flush);
-    const mapZoom = useMapZoom(13.5);
+    const mapZoom = useMapZoom(disappearZoom);
     const device = useBreakpoint();
     
     return (

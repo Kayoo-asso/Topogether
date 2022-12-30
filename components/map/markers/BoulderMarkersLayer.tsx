@@ -41,7 +41,6 @@ export const boulderMarkerStyle = (
 	});
 	const text = new Text({
 		text: label,
-		scale: 1.4,
 		fill: new Fill({
 			color: anySelected
 				? selected
@@ -49,7 +48,7 @@ export const boulderMarkerStyle = (
 					: "rgba(4, 217, 139, 0.3)"
 				: "#04D98B",
 		}),
-		font: "Poppins",
+		font: "14px Poppins",
 		offsetY: 32,
 	});
 	return new Style({
@@ -63,15 +62,17 @@ export const clusterMarkerStyle = (size: number) => {
 		src: "/assets/icons/markers/clusterBoulder.svg",
 		scale: 0.8,
 	});
+	const text = new Text({
+		text: size.toString(),
+		fill: new Fill({
+			color: "#343644",
+		}),
+		font: "bold 26px Poppins",
+		offsetY: 3
+	})
 	return new Style({
 		image: icon,
-		text: new Text({
-			text: size.toString(),
-			fill: new Fill({
-				color: "#fff",
-			}),
-			offsetY: 100
-		}),
+		text,
 	});
 }
 
