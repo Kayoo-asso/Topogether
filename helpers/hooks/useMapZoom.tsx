@@ -30,6 +30,7 @@ export function useMapZoom(zoomLevels: number | number[]) {
       prevZoom.current = zoom;
 		};
 
+		updateZoom();
 		map.on("change:view", updateView);
 		view.on("change:resolution", updateZoom);
 

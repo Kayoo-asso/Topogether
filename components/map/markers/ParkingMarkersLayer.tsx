@@ -43,7 +43,7 @@ export const ParkingMarkersLayer: React.FC<ParkingMarkersLayerProps> = watchDepe
     const selectedItem = useSelectStore((s) => s.item.value);
     const select = useSelectStore(s => s.select);
     const flush = useSelectStore(s => s.flush);
-    const mapZoom = useMapZoom();
+    const mapZoom = useMapZoom(13.5);
     
     return (
         <>
