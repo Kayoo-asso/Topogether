@@ -16,6 +16,7 @@ import { Breakpoint, useBreakpoint } from 'helpers/hooks';
 import { disappearZoom } from './WaypointMarkersLayer';
 import { MapBrowserEvent } from 'ol';
 import { useMapPointerCoordinates } from 'helpers/hooks/useMapPointerCoordinates';
+import PointGeom from "ol/geom/Point";
 
 interface ParkingMarkersLayerProps {
     parkings: QuarkArray<Parking>;
@@ -65,12 +66,14 @@ export const ParkingMarkersLayer: React.FC<ParkingMarkersLayerProps> = watchDepe
                         return !!(selectedItem && selectedItem().id === pId); 
                     }, [selectedItem])}
                     onDragEnd={(e) => {
-                        const newLoc = toLonLat(e.mapBrowserEvent.coordinate);
-                        const { quark } = e.feature.get("data") as ParkingMarkerData;
-                        quark.set(p => ({
-                            ...p,
-                            location: [newLoc[0], newLoc[1]],
-                        }))
+                        const data = e.feature.get("data") as ParkingMarkerData;
+                            const point = e.feature.getGeometry() as PointGeom;
+                            const coords = toLonLat(point.getCoordinates());
+                            if (data)
+                                data.quark.set((b) => ({
+                                    ...b,
+                                    location: [coords[0], coords[1]],
+                                }));
                     }}
                 />
             }
