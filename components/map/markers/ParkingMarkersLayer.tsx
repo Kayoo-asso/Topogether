@@ -25,7 +25,7 @@ export type ParkingMarkerData = {
 
 export const parkingMarkerStyle = (mapZoom: number, selected: boolean, anySelected: boolean) => {
     const icon = new Icon({
-        opacity: mapZoom ? (anySelected ? (selected ? 1 : 0.4) : 1) : 0,
+        opacity: mapZoom < 10 ? (anySelected ? (selected ? 1 : 0.4) : 1) : 0,
         src: selected ? "/assets/icons/colored/_parking_bold.svg" : "/assets/icons/colored/_parking.svg",
         scale: 1,
     });
