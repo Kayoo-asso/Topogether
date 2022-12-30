@@ -1,7 +1,6 @@
 import React, { useCallback } from 'react';
 import { Quark, QuarkArray, watchDependencies } from 'helpers/quarky';
 import {
-    Modify,
 	Point,
 	Select,
 	VectorLayer,
@@ -59,24 +58,7 @@ export const WaypointMarkersLayer: React.FC<WaypointMarkersLayerProps> = watchDe
         <>
             {draggable &&
                 <>
-                    <Modify 
-                        hitDetection={true}
-                        source='waypoints'
-                        onModifyStart={useCallback((e) => {
-                            const feature = e.features.getArray().at(0)
-                            const wId = feature?.get("data")?.quark().id as UUID;
-                            return !!(selectedItem && selectedItem().id === wId);  
-                        }, [selectedItem])}
-                        onDragEnd={(e) => {
-                            const newLoc = toLonLat(e.mapBrowserEvent.coordinate);
-                            const { quark } = e.feature.get("data") as WaypointMarkerData;
-                            quark.set(w => ({
-                                ...w,
-                                location: [newLoc[0], newLoc[1]],
-                            }))
-                        }}
-                    />
-                    {/* <Drag 
+                    <Drag 
                         sources='waypoints'
                         hitTolerance={5}
                         startCondition={useCallback((e) => { 
@@ -84,14 +66,15 @@ export const WaypointMarkersLayer: React.FC<WaypointMarkersLayerProps> = watchDe
                             return !!(selectedItem && selectedItem().id === wId); 
                         }, [selectedItem])}
                         onDragEnd={(e) => {
-                            const newLoc = toLonLat(e.mapBrowserEvent.coordinate);
+                            const loc = e.feature.values_.geometry.flatCoordinates;
+                            const newLoc = toLonLat(loc);
                             const { quark } = e.feature.get("data") as WaypointMarkerData;
                             quark.set(w => ({
                                 ...w,
                                 location: [newLoc[0], newLoc[1]],
                             }))
                         }}
-                    /> */}
+                    />
                 </>
             }
 
