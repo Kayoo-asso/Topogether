@@ -18,12 +18,16 @@ const useBehavior = createLifecycle(OLModify, {
 		"snapToPointer",
 		"style",
 		"wrapX",
+		"source"
 	],
 });
 
 type P = Omit<InferOptions<typeof useBehavior>, "features" | "source"> & {
 	source: string;
 };
+
+// Terrible hack
+const emptySource = new VectorSource();
 
 export const Modify = forwardRef<OLModify, P>(
 	({ source, ...props }, ref) => {
@@ -35,7 +39,7 @@ export const Modify = forwardRef<OLModify, P>(
 			);
 		}
 
-		const modify = useBehavior({ ...props, source: s }, ref);
+		const modify = useBehavior({ ...props, source: s || emptySource }, ref);
 		useInteractionLifecycle(modify, map);
 
 		return null;
