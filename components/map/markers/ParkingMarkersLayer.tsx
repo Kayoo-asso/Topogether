@@ -12,6 +12,7 @@ import { useSelectStore } from 'components/pages/selectStore';
 import { fromLonLat, toLonLat } from 'ol/proj';
 import { Drag } from 'components/openlayers/interactions/Drag';
 import { useMapZoom } from 'helpers/hooks/useMapZoom';
+import { Breakpoint, useBreakpoint } from 'helpers/hooks';
 
 interface ParkingMarkersLayerProps {
     parkings: QuarkArray<Parking>;
@@ -23,11 +24,11 @@ export type ParkingMarkerData = {
 	quark: Quark<Parking>;
 }
 
-export const parkingMarkerStyle = (mapZoom: number, selected: boolean, anySelected: boolean) => {
+export const parkingMarkerStyle = (mapZoom: number, selected: boolean, anySelected: boolean, device: Breakpoint) => {
     const icon = new Icon({
         opacity: mapZoom > 13.5 ? (anySelected ? (selected ? 1 : 0.4) : 1) : 0,
-        src: selected ? "/assets/icons/colored/_parking_bold.svg" : "/assets/icons/colored/_parking.svg",
-        scale: 1,
+        src: "/assets/icons/markers/parking.svg",
+        scale: device === 'desktop' ? 0.8 : 1,
     });
     return new Style({
         image: icon,
@@ -44,6 +45,7 @@ export const ParkingMarkersLayer: React.FC<ParkingMarkersLayerProps> = watchDepe
     const select = useSelectStore(s => s.select);
     const flush = useSelectStore(s => s.flush);
     const mapZoom = useMapZoom(13.5);
+    const device = useBreakpoint();
     
     return (
         <>
@@ -91,7 +93,8 @@ export const ParkingMarkersLayer: React.FC<ParkingMarkersLayerProps> = watchDepe
                         return parkingMarkerStyle (
                             mapZoom,
                             selectedItem ? selectedItem().id === bId : false,
-                            selectedType !== "none"
+                            selectedType !== "none",
+                            device
                         )}
                     , [mapZoom, selectedType, selectedItem])
                 }
