@@ -7,8 +7,8 @@ interface DownloadTesterProps {
 	topo: TopoData;
 }
 
-async function test(topo: TopoData, tracker: ProgressTracker) {
-  const result = await downloadTopo(topo, tracker);
+async function test(topo: TopoData) {
+  const result = await downloadTopo(topo);
   if(!result.success) {
     console.log("Errors while downloading:", result);
   }
@@ -17,9 +17,12 @@ async function test(topo: TopoData, tracker: ProgressTracker) {
 
 
 export function DownloadTester({ topo }: DownloadTesterProps) {
-	const [progress, tracker] = useProgressBar(0.01);
+	const progress  = useProgressBar(topo.id);
 	useEffect(() => {
-    test(topo, tracker)
+    if(progress === undefined) {
+      test(topo)
+    }
 	}, []);
+  console.log("Progress:", progress);
 	return null;
 }

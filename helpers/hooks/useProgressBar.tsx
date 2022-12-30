@@ -28,18 +28,24 @@ export class ProgressTracker {
 		}
 		let next = count + n;
 		if (next === this.total) {
-			this.listeners.forEach(x => x(undefined));
+			this.listeners.forEach((x) => x(undefined));
 		} else {
-			const nextTick = PROGRESS_TICK * Math.ceil(count / PROGRESS_TICK);
-			if(next >= nextTick) {
-				this.listeners.forEach(x => x(nextTick))
-			}
+			const nextTick = this.tick()! + PROGRESS_TICK;
 			this.count = next;
+			if (next >= nextTick) {
+				this.listeners.forEach((x) => x(nextTick));
+			}
 		}
 	}
 
 	tick() {
-		return this.count ? PROGRESS_TICK * Math.floor(this.count / PROGRESS_TICK) : undefined;
+		if (this.count) {
+			const percent = this.count / this.total;
+			const nbTicks = Math.floor(percent / PROGRESS_TICK);
+			return PROGRESS_TICK * nbTicks;
+		} else {
+			return undefined;
+		}
 	}
 }
 
@@ -47,16 +53,14 @@ const trackers: Map<string, ProgressTracker> = new Map();
 
 export function getProgressTracker(id: string) {
 	let existing = trackers.get(id);
-	if(!existing) {
+	if (!existing) {
 		existing = new ProgressTracker();
 		trackers.set(id, existing);
 	}
 	return existing;
 }
 
-export function useProgressBar(
-	id: string,
-): number | undefined {
+export function useProgressBar(id: string): number | undefined {
 	const tracker = getProgressTracker(id);
 	const [progress, setProgress] = useState<number | undefined>(tracker.tick());
 
@@ -65,6 +69,9 @@ export function useProgressBar(
 		tracker.listeners.add(setProgress);
 		// In case the ID changes
 		setProgress(tracker.tick());
+		return () => {
+			tracker.listeners.delete(setProgress);
+		};
 	}, [tracker]);
 
 	return progress;
