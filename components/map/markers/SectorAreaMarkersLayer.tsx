@@ -33,9 +33,9 @@ export type SectorMarkerData = {
 export function sectorMarkerStyle(selected: boolean) {
     const stroke = new Stroke({
         color: selected ? 'rgba(4, 217, 139, 0.7)' : 'rgba(4, 217, 139, 0.5)',
-        width: 2,
-        lineDash: [4,8],
-        lineDashOffset: 6
+        width: 4,
+        lineDash: [4,16],
+        lineDashOffset: 20
     });
     const fill = new Fill({
         color: selected ? 'rgba(4, 217, 139, 0.3)' : 'rgba(0,0,0,0)',

@@ -52,7 +52,6 @@ type MapControlProps = React.PropsWithChildren<
 		boulderFilters?: Quark<BoulderFilterOptions>;
 		boulderFiltersDomain?: BoulderFilterOptions;
 		onUserMarkerClick?: (pos: GeoCoordinates | null) => void;
-		onMapZoomChange?: (zoom: number | undefined) => void;
 	}
 >;
 
@@ -99,8 +98,9 @@ export const MapControl2 = watchDependencies<Map, MapControlProps>(
 				xyz.setUrl(
 					satelliteView
 						? `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/tiles/512/{z}/{x}/{y}@2x?access_token=${MAPBOX_TOKEN}`
-						: `https://api.mapbox.com/styles/v1/mapbox/outdoors-v11/tiles/512/{z}/{x}/{y}@2x?access_token=${MAPBOX_TOKEN}`
-				);
+						// : `https://api.mapbox.com/styles/v1/mapbox/outdoors-v11/tiles/512/{z}/{x}/{y}@2x?access_token=${MAPBOX_TOKEN}`
+						: `https://api.mapbox.com/styles/v1/erwinkn/clbs8clin005514qrc9iueujg/tiles/512/{z}/{x}/{y}@2x?access_token=${MAPBOX_TOKEN}`
+					);
 				xyz.setAttributions(attributions);
 			}
 		}, [satelliteView, xyz]);

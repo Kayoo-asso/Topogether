@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef } from "react";
 import { DropdownOption } from "components";
-import { Boulder, Topo, TopoStatus, TrackDanger } from "types";
+import { Topo, TopoStatus, TrackDanger } from "types";
 import {
 	Quark,
 	useCreateDerivation,
@@ -10,7 +10,7 @@ import {
 import { useRouter } from "next/router";
 import { Header } from "components/layouts/Header";
 import { LeftbarTopoDesktop } from "components/layouts/LeftbarTopoDesktop";
-import { BoulderFilterOptions, MapControl } from "components/map";
+import { BoulderFilterOptions } from "components/map";
 import { MapControl2 } from "components/map/MapControl2";
 import Map from "ol/Map";
 import { useBreakpoint } from "helpers/hooks";
@@ -20,13 +20,12 @@ import { encodeUUID } from "helpers/utils";
 import { useSelectStore } from "./selectStore";
 import { SyncUrl } from "components/organisms/SyncUrl";
 import { SlideoverLeftTopo } from "components/organisms/topo/Slideover.left.topo";
-import { TopoMarkers } from "components/organisms/topo/TopoMarkers";
 import { SlideoverRightTopo } from "components/organisms/topo/Slideover.right.topo";
 import { BoulderMarkersLayer } from "components/map/markers/BoulderMarkersLayer";
 import { SectorAreaMarkersLayer } from "components/map/markers/SectorAreaMarkersLayer";
-import { toLonLat } from "ol/proj";
 import { ParkingMarkersLayer } from "components/map/markers/ParkingMarkersLayer";
 import { WaypointMarkersLayer } from "components/map/markers/WaypointMarkersLayer";
+import { useMapZoom } from "helpers/hooks/useMapZoom";
 
 interface RootTopoProps {
 	topoQuark: Quark<Topo>;
@@ -37,6 +36,7 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 		const router = useRouter();
 		const session = useSession();
 		const breakpoint = useBreakpoint();
+		const mapZoom = useMapZoom();
 
 		const topo = props.topoQuark();
 		const boulderOrder = useCreateDerivation(() =>
@@ -151,7 +151,7 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 							topoQuark={props.topoQuark}
 							boulderOrder={boulderOrder()}
 						/>
-						<ParkingMarkersLayer 
+						<ParkingMarkersLayer
 							parkings={topo.parkings}
 						/>
 						<WaypointMarkersLayer 
@@ -163,32 +163,6 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 						/>
 						
 					</MapControl2>
-
-					{/* <MapControl
-						ref={mapRef}
-						initialZoom={16}
-						initialCenter={topo.location}
-						displaySectorButton
-						onSectorButtonClick={() => {
-							
-						}} //TODO
-						searchbarOptions={{
-							findBoulders: true,
-						}}
-						topo={props.topoQuark}
-						boulderFilters={boulderFilters}
-						boulderFiltersDomain={defaultBoulderFilterOptions}
-						boundsTo={topo.boulders
-							.map((b) => b.location)
-							.concat(topo.parkings.map((p) => p.location))
-							.toArray()}
-					>
-						<TopoMarkers 
-							topoQuark={props.topoQuark}
-							boulderFilters={boulderFilters}
-							boulderOrder={boulderOrder()}
-						/>
-					</MapControl> */}
 
 					<SlideoverRightTopo topo={props.topoQuark} />
 				</div>
