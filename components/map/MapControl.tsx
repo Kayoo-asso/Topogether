@@ -32,6 +32,7 @@ import { MapBrowserEvent } from "ol";
 import { Attribution} from "ol/control";
 import { DEFAULT_EXTENT_BUFFER, getTopoExtent } from "helpers/map/getTopoExtent";
 import { getMapCursorClass } from "helpers/map/getMapCursorClass";
+import { isEmpty } from "ol/extent";
 
 type MapControlProps = React.PropsWithChildren<
 	Props & {
@@ -123,10 +124,11 @@ export const MapControl = watchDependencies<Map, MapControlProps>(
 		useEffect(() => {
 			if (map && props.topo) {
 				const extent = getTopoExtent(props.topo(), DEFAULT_EXTENT_BUFFER);
-				map.getView().fit(extent, {
-					size: map.getSize(),
-					maxZoom: 18,
-				});
+				if (!isEmpty(extent)) 
+					map.getView().fit(extent, {
+						size: map.getSize(),
+						maxZoom: 18,
+					});
 			}
 		}, [map, props.topo]);
 

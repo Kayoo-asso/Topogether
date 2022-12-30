@@ -1,4 +1,4 @@
-import { Extent, createEmpty, extendCoordinate } from "ol/extent";
+import { Extent, createEmpty, extendCoordinate, isEmpty } from "ol/extent";
 import { fromLonLat } from "ol/proj";
 import { Topo, TopoData } from "types";
 import { buffer as addBuffer } from "ol/extent";
@@ -19,9 +19,11 @@ export function getTopoExtent(topo: TopoData | Topo, buffer?: number): Extent {
 	for (const waypoint of topo.waypoints) {
 		extendCoordinate(extent, fromLonLat(waypoint.location));
 	}
-	if(buffer) {
+	if (buffer) {
 		extent = addBuffer(extent, buffer);
 	}
+	// if (isEmpty(extent)) extent = addBuffer(extent, 100);
+	// console.log(isEmpty(extent));
 	return extent;
 }
 
