@@ -9,12 +9,13 @@ import {
 import { Icon, Style } from 'ol/style';
 import { UUID, Waypoint } from 'types';
 import { useSelectStore } from 'components/pages/selectStore';
-import { fromLonLat, toLonLat } from 'ol/proj';
+import { fromLonLat } from 'ol/proj';
 import { Drag } from 'components/openlayers/interactions/Drag';
 import { useMapZoom } from 'helpers/hooks/useMapZoom';
 import { Breakpoint, useBreakpoint } from 'helpers/hooks';
 import { useMapPointerCoordinates } from 'helpers/hooks/useMapPointerCoordinates';
 import { MapBrowserEvent } from 'ol';
+import PointGeom from "ol/geom/Point";
 
 interface WaypointMarkersLayerProps {
     waypoints: QuarkArray<Waypoint>;
@@ -66,13 +67,14 @@ export const WaypointMarkersLayer: React.FC<WaypointMarkersLayerProps> = watchDe
                             return !!(selectedItem && selectedItem().id === wId); 
                         }, [selectedItem])}
                         onDragEnd={(e) => {
-                            // e.feature.getGeometry()?.getSimplifiedGeometry
-                            const newLoc = toLonLat(e.mapBrowserEvent.coordinate);
-                            const { quark } = e.feature.get("data") as WaypointMarkerData;
-                            quark.set(w => ({
-                                ...w,
-                                location: [newLoc[0], newLoc[1]],
-                            }))
+                            const data = e.feature.get("data") as WaypointMarkerData;
+                            const point = e.feature.getGeometry() as PointGeom;
+                            const coords = point.getCoordinates();
+                            if (data)
+                                data.quark.set((b) => ({
+                                    ...b,
+                                    location: [coords[0], coords[1]],
+                                }));
                         }}
                     />
                 </>

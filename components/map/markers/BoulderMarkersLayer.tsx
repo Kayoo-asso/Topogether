@@ -1,7 +1,6 @@
 import React, { useCallback } from "react";
 import { Quark, QuarkArray, watchDependencies } from "helpers/quarky";
 import {
-	Modify,
 	Point,
 	Select,
 	VectorLayer,
@@ -11,7 +10,7 @@ import { FeatureLike } from "ol/Feature";
 import { Fill, Icon, Style, Text } from "ol/style";
 import { Boulder, UUID } from "types";
 import { useSelectStore } from "components/pages/selectStore";
-import { fromLonLat, toLonLat } from "ol/proj";
+import { fromLonLat } from "ol/proj";
 import { Drag } from "components/openlayers/interactions/Drag";
 import { Cluster } from "components/openlayers/sources/Cluster";
 import { Breakpoint, useBreakpoint } from "helpers/hooks";
