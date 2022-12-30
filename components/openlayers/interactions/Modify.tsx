@@ -26,7 +26,7 @@ type P = Omit<InferOptions<typeof useBehavior>, "features" | "source"> & {
 	source: string;
 };
 
-// Terrible hack
+// Terrible hack, because Modify is not happy if we do not pass a source, layer or feature collection
 const emptySource = new VectorSource();
 
 export const Modify = forwardRef<OLModify, P>(

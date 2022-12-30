@@ -7,9 +7,10 @@ import BaseEvent from "ol/events/Event";
 import type { FeatureLike } from "ol/Feature";
 import type { Geometry } from "ol/geom";
 import PointerInteraction from "ol/interaction/Pointer";
-import {  Vector } from "ol/source";
+import { Vector } from "ol/source";
 import { boundingExtent } from "ol/extent";
 import VectorSource from "ol/source/Vector";
+import Layer from "ol/layer/Layer";
 
 // Departure from standard OpenLayers API
 // TODO: change that & use collections for fine-grained feature selection
@@ -50,6 +51,7 @@ export class DragInteraction extends PointerInteraction {
 	protected startCondition_: Condition | undefined;
 	protected hitTolerance_: number;
 	protected sources: Array<VectorSource>;
+	protected layerFilter_: (layer: Layer) => boolean;
 
 	constructor(options: DragOptions) {
 		super({
@@ -67,30 +69,30 @@ export class DragInteraction extends PointerInteraction {
 		this.startCondition_ = options.startCondition;
 		this.hitTolerance_ = options.hitTolerance ?? 0;
 
-		if(Array.isArray(options.sources)) {
-			this.sources = options.sources
+		if (Array.isArray(options.sources)) {
+			this.sources = options.sources;
 		} else {
-			this.sources = [options.sources]
+			this.sources = [options.sources];
 		}
+
+		this.layerFilter_ = function (
+			this: DragInteraction,
+			layer: Layer
+		): boolean {
+			const layerSource = layer.getSource();
+			return !!this.sources.find((x) => x === layerSource);
+		}.bind(this);
 	}
 
 	findFeature(evt: MapBrowserEvent<UIEvent>): FeatureLike | undefined {
 		const map = evt.map;
-		if(this.sources) {
-			const lowerLeft = map.getCoordinateFromPixel([
-				evt.pixel[0] - this.hitTolerance_,
-				evt.pixel[1] + this.hitTolerance_,
-			]);
-			const upperRight = map.getCoordinateFromPixel([
-				evt.pixel[0] + this.hitTolerance_,
-				evt.pixel[1] - this.hitTolerance_,
-			]);
-			const extent = boundingExtent([lowerLeft, upperRight]);
-			for(const source of this.sources) {
-				const features = source.getFeaturesInExtent(extent);
-				if(features.length > 0) {
-					return features[0]
-				}
+		if (this.sources) {
+			const features = map.getFeaturesAtPixel(evt.pixel, {
+				layerFilter: this.layerFilter_,
+				hitTolerance: this.hitTolerance_,
+			});
+			if (features.length > 0) {
+				return features[0];
 			}
 		}
 	}
@@ -105,7 +107,7 @@ export class DragInteraction extends PointerInteraction {
 }
 function handleDownEvent(this: DragInteraction, evt: MapBrowserEvent<UIEvent>) {
 	const feature = this.findFeature(evt);
-	
+
 	if (feature) {
 		this.coordinate_ = evt.coordinate;
 		this.feature_ = feature;
@@ -134,7 +136,7 @@ function handleDragEvent(this: DragInteraction, evt: MapBrowserEvent<UIEvent>) {
 
 function handleMoveEvent(this: DragInteraction, evt: MapBrowserEvent<UIEvent>) {
 	if (this.cursor_) {
-		const feature = this.findFeature(evt)
+		const feature = this.findFeature(evt);
 		const element = (this.element_ = evt.map.getTargetElement());
 
 		if (feature) {
@@ -151,8 +153,8 @@ function handleMoveEvent(this: DragInteraction, evt: MapBrowserEvent<UIEvent>) {
 
 function handleUpEvent(this: DragInteraction, evt: MapBrowserEvent<UIEvent>) {
 	// If the drag sequence was not initiated, this.feature_ may be null
-	if(this.feature_) {
-		this.dispatchEvent(new DragEvent("dragend", this.feature_, evt))
+	if (this.feature_) {
+		this.dispatchEvent(new DragEvent("dragend", this.feature_, evt));
 	}
 	this.coordinate_ = null;
 	this.feature_ = null;
