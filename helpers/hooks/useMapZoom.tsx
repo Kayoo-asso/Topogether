@@ -24,10 +24,10 @@ export function useMapZoom(zoomLevels: number | number[]) {
 					(prevZoom.current >= t && zoom < t)
 				) {
 					setZoom(zoom);
-          break;
+          			break;
 				}
 			}
-      prevZoom.current = zoom;
+      		prevZoom.current = zoom;
 		};
 
 		updateZoom();

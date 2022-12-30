@@ -105,14 +105,9 @@ export const MapControl = watchDependencies<Map, MapControlProps>(
 			}
 		}, [satelliteView, xyz]);
 
-		//If a tool is selected, display the corresponding cursor. If not, display pointer on features.
 		useEffect(() => {
 			const determinePointer = (e: MapBrowserEvent<PointerEvent>) => {
-				if (!map) return;
-				else if (tool) {
-					// console.log(tool);
-					// map.getTargetElement().style.cursor = "url('/assets/icons/markers/boulder.svg'), auto";
-				}
+				if (!map || tool) return;
 				const hit = map.getFeaturesAtPixel(e.pixel).length > 0;
 				if (hit) {
 					map.getTargetElement().style.cursor = "pointer";

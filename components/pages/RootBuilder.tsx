@@ -232,7 +232,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 						displayToolSelector
 						boulderFilters={boulderFilters}
 						boulderFiltersDomain={defaultBoulderFilterOptions}
-						onClick={handleCreateNewMarker}
+						// onClick={handleCreateNewMarker}
 					>
 						<SectorAreaMarkersLayer
 							topoQuark={props.topoQuark}
@@ -244,15 +244,18 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 						<ParkingMarkersLayer 
 							parkings={topo.parkings}
 							draggable
+							onCreate={handleCreateNewMarker}
 						/>
 						<WaypointMarkersLayer 
 							waypoints={topo.waypoints}
 							draggable
+							onCreate={handleCreateNewMarker}
 						/>
 						<BoulderMarkersLayer 
 							boulders={topo.boulders}
 							boulderOrder={boulderOrder()}
 							draggable
+							onCreate={handleCreateNewMarker}
 						/>
 					</MapControl>
 

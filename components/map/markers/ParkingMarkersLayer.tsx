@@ -14,10 +14,13 @@ import { Drag } from 'components/openlayers/interactions/Drag';
 import { useMapZoom } from 'helpers/hooks/useMapZoom';
 import { Breakpoint, useBreakpoint } from 'helpers/hooks';
 import { disappearZoom } from './WaypointMarkersLayer';
+import { MapBrowserEvent } from 'ol';
+import { useMapPointerCoordinates } from 'helpers/hooks/useMapPointer';
 
 interface ParkingMarkersLayerProps {
     parkings: QuarkArray<Parking>;
     draggable?: boolean;
+    onCreate?: (e: MapBrowserEvent<MouseEvent>) => void;
 }
 
 export type ParkingMarkerData = {
@@ -45,8 +48,11 @@ export const ParkingMarkersLayer: React.FC<ParkingMarkersLayerProps> = watchDepe
     const selectedItem = useSelectStore((s) => s.item.value);
     const select = useSelectStore(s => s.select);
     const flush = useSelectStore(s => s.flush);
+    const tool = useSelectStore(s => s.tool);
+
     const mapZoom = useMapZoom(disappearZoom);
     const device = useBreakpoint();
+    const pointerCoords = useMapPointerCoordinates();
     
     return (
         <>
@@ -55,7 +61,7 @@ export const ParkingMarkersLayer: React.FC<ParkingMarkersLayerProps> = watchDepe
                     sources='parkings'
                     hitTolerance={5}
                     startCondition={useCallback((e) => { 
-                        const pId = e.feature.get("data").quark().id as UUID;
+                        const pId = e.feature.get("data")?.quark().id as UUID;
                         return !!(selectedItem && selectedItem().id === pId); 
                     }, [selectedItem])}
                     onDragEnd={(e) => {
@@ -74,12 +80,15 @@ export const ParkingMarkersLayer: React.FC<ParkingMarkersLayerProps> = watchDepe
                 hitTolerance={5}
                 onSelect={(e) => {
                     e.target.getFeatures().clear();
-                    e.mapBrowserEvent.stopPropagation();
-                    e.mapBrowserEvent.preventDefault();
                     if (e.selected.length === 1) {
                         const feature = e.selected[0];
-                        const { quark } = feature.get("data") as ParkingMarkerData;
-                        select.parking(quark);
+                        const data = feature.get("data") as ParkingMarkerData;
+                        if (data) { // It's an existing marker
+                            e.mapBrowserEvent.stopPropagation();
+                            e.mapBrowserEvent.preventDefault();
+                            select.parking(data.quark); 
+                        }
+                        else props.onCreate && props.onCreate(e.mapBrowserEvent)
                     } else if (e.deselected.length === 1) {
                         flush.item();
                     }
@@ -90,7 +99,7 @@ export const ParkingMarkersLayer: React.FC<ParkingMarkersLayerProps> = watchDepe
                 id="parkings"
                 style={useCallback(
                     (feature) => {
-                        const bId = feature.get("data").quark().id;
+                        const bId = feature.get("data")?.quark().id;
                         return parkingMarkerStyle (
                             mapZoom,
                             selectedItem ? selectedItem().id === bId : false,
@@ -110,7 +119,13 @@ export const ParkingMarkersLayer: React.FC<ParkingMarkersLayerProps> = watchDepe
                                 data={{ quark: pQuark }}
                             />
                         )
-                    })}
+                    })}  
+                    {tool === 'PARKING' && pointerCoords &&
+						<Point
+							key={"creating"}
+							coordinates={pointerCoords}
+						/>
+					}
                 </VectorSource>
             </VectorLayer>
         </>

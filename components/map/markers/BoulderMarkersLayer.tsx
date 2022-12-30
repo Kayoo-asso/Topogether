@@ -14,11 +14,14 @@ import { fromLonLat, toLonLat } from "ol/proj";
 import { Drag } from "components/openlayers/interactions/Drag";
 import { Cluster } from "components/openlayers/sources/Cluster";
 import { Breakpoint, useBreakpoint } from "helpers/hooks";
+import { useMapPointerCoordinates } from "helpers/hooks/useMapPointer";
+import { MapBrowserEvent } from "ol";
 
 interface BoulderMarkersLayerProps {
 	boulders: QuarkArray<Boulder>;
 	boulderOrder: globalThis.Map<UUID, number>;
 	draggable?: boolean;
+	onCreate?: (e: MapBrowserEvent<MouseEvent>) => void;
 }
 
 export type BoulderMarkerData = {
@@ -33,8 +36,6 @@ export const boulderMarkerStyle = (
 	device: Breakpoint
 ) => {
 	const { label } = feature.get("data") as BoulderMarkerData;
-	// console.log(label)
-
 	const icon = new Icon({
 		opacity: anySelected ? (selected ? 1 : 0.4) : 1,
 		src: "/assets/icons/markers/boulder.svg",
@@ -82,7 +83,10 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> = watchDepe
 	const selectedItem = useSelectStore((s) => s.item.value);
 	const select = useSelectStore((s) => s.select);
 	const flush = useSelectStore((s) => s.flush);
+	const tool = useSelectStore(s => s.tool);
+
 	const device = useBreakpoint();
+	const pointerCoords = useMapPointerCoordinates();
 
 	return (
 		<>
@@ -92,18 +96,19 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> = watchDepe
 					hitTolerance={5}
 					startCondition={useCallback(
 						(e) => {
-							const bId = e.feature.get("data").quark().id as UUID;
+							const bId = e.feature.get("data")?.quark().id as UUID;
 							return !!(selectedItem && selectedItem().id === bId);
 						},
 						[selectedItem]
 					)}
 					onDragEnd={(e) => {
 						const newLoc = toLonLat(e.mapBrowserEvent.coordinate);
-						const { quark } = e.feature.get("data") as BoulderMarkerData;
-						quark.set((b) => ({
-							...b,
-							location: [newLoc[0], newLoc[1]],
-						}));
+						const data = e.feature.get("data") as BoulderMarkerData;
+						if (data)
+							data.quark.set((b) => ({
+								...b,
+								location: [newLoc[0], newLoc[1]],
+							}));
 					}}
 				/>
 			)}
@@ -113,16 +118,19 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> = watchDepe
 				hitTolerance={5}
 				onSelect={(e) => {
 					e.target.getFeatures().clear();
-					e.mapBrowserEvent.stopPropagation();
-					e.mapBrowserEvent.preventDefault();
 					if (e.selected.length === 1) {
 						// Because we're using Cluster, the feature in the selection is a cluster of features
 						const cluster = e.selected[0];
 						const clusterFeatures = cluster.get('features');
 						if (clusterFeatures.length === 1) {
 							const feature = clusterFeatures[0];
-							const { quark } = feature.get("data") as BoulderMarkerData;
-							select.boulder(quark);
+							const data = feature.get("data") as BoulderMarkerData;
+							if (data) {
+								e.mapBrowserEvent.stopPropagation();
+								e.mapBrowserEvent.preventDefault();
+								select.boulder(data.quark);
+							}
+							else props.onCreate && props.onCreate(e.mapBrowserEvent)	
 						} else {
 							// TODO: zoom into the cluster?
 						}
@@ -138,12 +146,11 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> = watchDepe
 					// TODO: fix this, by ensuring the layer does not get a simple VectorSource before the Cluster
 					const features = cluster.get("features") as Array<FeatureLike> | undefined;
 					const size = features?.length || 0;
-					console.log(size);
 					// Cluster style
 					if (size > 1) return clusterMarkerStyle(size);
 					else {
 						const feature = features ? features[0] : cluster;
-						const bId = feature.get("data").quark().id as UUID;
+						const bId = feature.get("data")?.quark().id as UUID;
 						return boulderMarkerStyle(
 							feature,
 							selectedItem ? selectedItem().id === bId : false,
@@ -169,6 +176,12 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> = watchDepe
 							/>
 						);
 					})}
+					{tool === 'ROCK' && pointerCoords &&
+						<Point
+							key={"creating"}
+							coordinates={pointerCoords}
+						/>
+					}
 				</VectorSource>
 			</VectorLayer>
 
