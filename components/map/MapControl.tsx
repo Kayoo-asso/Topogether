@@ -1,27 +1,21 @@
-import React, { useCallback, useRef, useState } from "react";
-import { Wrapper } from "@googlemaps/react-wrapper";
+import React, { useCallback, useEffect, useState } from "react";
+import { Map as BaseMap, View, TileLayer, XYZ } from "components/openlayers";
+import Map from "ol/Map";
+import { fromLonLat } from "ol/proj";
+
 import { RoundButton, SatelliteButton } from "components";
 import { ImageInput } from "components/molecules";
 import {
 	BoulderFilterOptions,
 	BoulderFilters,
-	Map,
 	MapSearchbar,
 	MapSearchbarProps,
 	TopoFilterOptions,
 	TopoFilters,
-	UserMarker,
-} from "./";
-import {
-	Boulder,
-	GeoCoordinates,
-	MapProps,
-	Position,
-	Topo,
-} from "types";
+} from ".";
+import { Boulder, GeoCoordinates, Position, Topo } from "types";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { fontainebleauLocation } from "helpers/constants";
-import { googleGetPlace, toLatLng } from "helpers/map";
 import { setReactRef } from "helpers/utils";
 import { useBreakpoint, usePosition } from "helpers/hooks";
 
@@ -31,9 +25,16 @@ import { useSelectStore } from "components/pages/selectStore";
 import { handleNewPhoto } from "helpers/handleNewPhoto";
 import { useSession } from "helpers/services";
 import { MapToolSelector } from "./MapToolSelector";
+import { Props } from "components/openlayers/Map";
+import { UserMarkerLayer } from "./markers/UserMarkerLayer";
+import { XYZ as XYZObject } from "ol/source";
+import { MapBrowserEvent } from "ol";
+import { Attribution} from "ol/control";
+import { DEFAULT_EXTENT_BUFFER, getTopoExtent } from "helpers/map/getTopoExtent";
+import { getMapCursorClass } from "helpers/map/getMapCursorClass";
 
 type MapControlProps = React.PropsWithChildren<
-	Omit<MapProps, "center" | "zoom"> & {
+	Props & {
 		className?: string;
 		initialCenter?: Position;
 		initialZoom?: number;
@@ -50,13 +51,22 @@ type MapControlProps = React.PropsWithChildren<
 		topoFiltersDomain?: TopoFilterOptions;
 		boulderFilters?: Quark<BoulderFilterOptions>;
 		boulderFiltersDomain?: BoulderFilterOptions;
-		boundsTo?: GeoCoordinates[];
-		onUserMarkerClick?: (pos: google.maps.MapMouseEvent) => void;
-		onMapZoomChange?: (zoom: number | undefined) => void;
+		onUserMarkerClick?: (pos: GeoCoordinates | null) => void;
 	}
 >;
 
-export const MapControl = watchDependencies<google.maps.Map, MapControlProps>(
+const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
+const attributions =
+	'© <a href="https://www.mapbox.com/map-feedback/">Mapbox</a> ' +
+	'© <a href="https://www.openstreetmap.org/copyright">' +
+	"OpenStreetMap contributors</a>";
+
+// The default controls except the zoom +/- buttons and the rotate button
+const controls = typeof window === "undefined" ? [] : [
+	new Attribution()
+]
+
+export const MapControl2 = watchDependencies<Map, MapControlProps>(
 	(
 		{
 			initialZoom = 8,
@@ -71,188 +81,224 @@ export const MapControl = watchDependencies<google.maps.Map, MapControlProps>(
 	) => {
 		const session = useSession();
 		const breakpoint = useBreakpoint();
-		const mapRef = useRef<google.maps.Map>(null);
+		const [map, setMap] = useState<Map | null>(null);
+		const [xyz, setXYZ] = useState<XYZObject | null>(null);
 		const { position } = usePosition();
-		const selectedItem = useSelectStore(s => s.item);
-		const select = useSelectStore(s => s.select);
-		const flush = useSelectStore(s => s.flush);
-		const tool = useSelectStore(s => s.tool);
+		const selectedItem = useSelectStore((s) => s.item);
+		const select = useSelectStore((s) => s.select);
+		const flush = useSelectStore((s) => s.flush);
+		const tool = useSelectStore((s) => s.tool);
 
-		const [mapToolSelectorOpen, setMapToolSelectorOpen] = useState(breakpoint === 'desktop');
-
+		const [mapToolSelectorOpen, setMapToolSelectorOpen] = useState(
+			breakpoint === "desktop"
+		);
 		const [satelliteView, setSatelliteView] = useState(false);
-		const getBoundsFromSearchbar = (
-			geometry: google.maps.places.PlaceGeometry
-		) => {
-			if (mapRef.current) {
-				const newBounds = new google.maps.LatLngBounds();
-				if (geometry.viewport) newBounds.union(geometry.viewport);
-				else if (geometry.location) newBounds.extend(geometry.location);
-				else return;
-				mapRef.current.fitBounds(newBounds);
+		useEffect(() => {
+			if (xyz) {
+				xyz.setUrl(
+					satelliteView
+						? `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/tiles/512/{z}/{x}/{y}@2x?access_token=${MAPBOX_TOKEN}`
+						// : `https://api.mapbox.com/styles/v1/mapbox/outdoors-v11/tiles/512/{z}/{x}/{y}@2x?access_token=${MAPBOX_TOKEN}`
+						: `https://api.mapbox.com/styles/v1/erwinkn/clbs8clin005514qrc9iueujg/tiles/512/{z}/{x}/{y}@2x?access_token=${MAPBOX_TOKEN}`
+					);
+				xyz.setAttributions(attributions);
 			}
-		};
+		}, [satelliteView, xyz]);
 
-		const getMapCursor = useCallback(() => {
-			switch (tool) {
-				case 'ROCK': return "url(/assets/icons/colored/_rock.svg) 16 32, auto";
-				case 'SECTOR': return "url(/assets/icons/colored/line-point/_line-point-grey.svg), auto";
-				case 'PARKING': return "url(/assets/icons/colored/_parking.svg) 16 30, auto";
-				case 'WAYPOINT': return "url(/assets/icons/colored/_help-round.svg) 16 30, auto";
-				default: return undefined;
+		//If a tool is selected, display the corresponding cursor. If not, display pointer on features.
+		useEffect(() => {
+			const determinePointer = (e: MapBrowserEvent<PointerEvent>) => {
+				if (tool || !map) return;
+				const hit = map.getFeaturesAtPixel(e.pixel).length > 0;
+				if (hit) {
+					map.getTargetElement().style.cursor = "pointer";
+				} else {
+					map.getTargetElement().style.cursor = "";
+				}
+			};
+			map?.on("pointermove", determinePointer);
+			return () => map?.un("pointermove", determinePointer);
+		}, [map, tool]);
+
+		// Initial extension / bounding
+		useEffect(() => {
+			if (map && props.topo) {
+				const extent = getTopoExtent(props.topo(), DEFAULT_EXTENT_BUFFER);
+				map.getView().fit(extent, {
+					size: map.getSize(),
+					maxZoom: 18,
+				});
 			}
-		}, [tool]);
+		}, [map, props.topo]);
 
 		return (
 			<div className="relative h-full w-full">
-				<Wrapper
-					apiKey={process.env.NEXT_PUBLIC_GOOGLE_API_KEY || ""}
-					libraries={["places"]}
-				>
-					<div className="absolute h-full w-full">
-						{/* Top left */}
-						<div className="absolute left-0 top-0 m-3 w-full space-y-5">
-							{displaySearchbar && (
-								<MapSearchbar
-									boulders={
-										props.topo ? props.topo().boulders.toArray() : undefined
-									}
-									onGoogleResultSelect={async (res) => {
-										const placeDetails = await googleGetPlace(res.place_id);
-										if (placeDetails?.geometry)
-											getBoundsFromSearchbar(placeDetails.geometry);
-									}}
-									onBoulderResultSelect={useCallback((boulder: Boulder) => {
-										const bQuark = props.topo!().boulders.findQuark((b) => b.id === boulder.id)!;
+				<div className="absolute h-full w-full">
+					{/* Top left */}
+					<div className="absolute left-0 top-0 m-3 w-full space-y-5">
+						{displaySearchbar && (
+							<MapSearchbar
+								boulders={
+									props.topo ? props.topo().boulders.toArray() : undefined
+								}
+								onMapboxResultSelect={(place) => {
+									map?.getView().setCenter(fromLonLat(place.center));
+								}}
+								onBoulderResultSelect={useCallback(
+									(boulder: Boulder) => {
+										const bQuark = props.topo!().boulders.findQuark(
+											(b) => b.id === boulder.id
+										)!;
 										select.boulder(bQuark);
-										mapRef.current?.setCenter(toLatLng(boulder.location));
-									}, [props.topo])}
-									{...props.searchbarOptions}
-								/>
-							)}
-							{props.topoFilters && props.topoFiltersDomain && (
-								<TopoFilters
-									domain={props.topoFiltersDomain}
-									values={props.topoFilters()}
-									onChange={props.topoFilters.set}
-								/>
-							)}
-							{props.boulderFilters && props.boulderFiltersDomain && (
-								<BoulderFilters
-									domain={props.boulderFiltersDomain}
-									values={props.boulderFilters()}
-									onChange={props.boulderFilters.set}
-								/>
-							)}
-						</div>
-						{/* Top right */}
-						<div className="absolute right-0 top-0 m-3">
-							{displaySatelliteButton && (
-								<SatelliteButton
-									onClick={(displaySatellite) =>
-										setSatelliteView(displaySatellite)
-									}
-								/>
-							)}
-						</div>
-
-						{/* Bottom left */}
-						<div className="absolute bottom-0 left-0 m-3">
-							{displaySectorButton && (
-								<RoundButton
-									className="z-10 md:hidden"
-									onClick={props.onSectorButtonClick}
-								>
-									<SectorIcon className="h-7 w-7 fill-main stroke-main" />
-								</RoundButton>
-							)}
-						</div>
-
-						{/* Bottom center */}
-						<div className={
-							(mapToolSelectorOpen ? "z-100" : "z-1") +
-							" absolute bottom-0 my-3 flex w-full justify-center"
-						}>
-							{displayToolSelector && (
-								<div className="flex flex-row gap-5 w-full justify-center">
-									<MapToolSelector
-										open={mapToolSelectorOpen}
-										setOpen={setMapToolSelectorOpen}
-									/>
-									{!mapToolSelectorOpen &&
-										<ImageInput
-											button="builder"
-											size="big"
-											multiple={false}
-											activated={
-												!!position || process.env.NODE_ENV === "development"
-											}
-											onChange={(files) => {
-												position && session && props.topo && handleNewPhoto(props.topo, files[0], position, session, select, selectedItem, tool)
-											}}
-										/>
-									}
-								</div>
-							)}
-						</div>
-						{/* Bottom right */}
-						<div className="absolute right-0 bottom-0 m-3">
-							{displayUserMarker && (
-								<RoundButton
-									onClick={() => {
-										if (position) {
-											mapRef.current?.panTo(toLatLng(position));
-										}
-									}}
-								>
-									<CenterIcon className="h-7 w-7 fill-main stroke-main" />
-								</RoundButton>
-							)}
-						</div>
+										map?.getView().setCenter(fromLonLat(boulder.location));
+									},
+									[props.topo]
+								)}
+								{...props.searchbarOptions}
+							/>
+						)}
+						{props.topoFilters && props.topoFiltersDomain && (
+							<TopoFilters
+								domain={props.topoFiltersDomain}
+								values={props.topoFilters()}
+								onChange={props.topoFilters.set}
+							/>
+						)}
+						{props.boulderFilters && props.boulderFiltersDomain && (
+							<BoulderFilters
+								domain={props.boulderFiltersDomain}
+								values={props.boulderFilters()}
+								onChange={props.boulderFilters.set}
+							/>
+						)}
 					</div>
 
-					<Map
-						{...props}
-						ref={(ref) => {
-							setReactRef(mapRef, ref);
-							setReactRef(parentRef, ref);
-						}}
-						mapTypeId={satelliteView ? "satellite" : "roadmap"}
-						className={props.className ? props.className : ""}
-						onZoomChange={() => {
-							if (mapRef.current && props.onMapZoomChange) {
-								props.onMapZoomChange(mapRef.current.getZoom());
-							}
-						}}
-						draggableCursor={getMapCursor()}
-						onClick={(e) => {
-							if (selectedItem.type === 'sector') flush.item();
-							if (props.onClick) props.onClick(e);
-						}}
-						onLoad={(map) => {
-							map.setZoom(initialZoom);
-							const locs = props.boundsTo;
-							const initialCenter = props.initialCenter || position;
-							if (initialCenter) {
-								map.setCenter(toLatLng(initialCenter));
-							} else if (locs && locs.length > 1) {
-								const bounds = new google.maps.LatLngBounds();
-								for (const loc of locs) {
-									bounds.extend(toLatLng(loc));
-								}
-								map.fitBounds(bounds);
-							} else {
-								map.setCenter(toLatLng(fontainebleauLocation));
-							}
-						}}
-					>
-						{props.children}
-
-						{displayUserMarker && (
-							<UserMarker onClick={props.onUserMarkerClick} />
+					{/* Top right */}
+					<div className="absolute right-0 top-0 m-3">
+						{displaySatelliteButton && (
+							<SatelliteButton onClick={setSatelliteView} />
 						)}
-					</Map>
-				</Wrapper>
+					</div>
+
+					{/* Bottom left */}
+					<div
+						className={
+							"absolute bottom-0 left-0 m-3" +
+							(breakpoint === "desktop" ? " z-100" : "")
+						}
+					>
+						{displaySectorButton && (
+							<RoundButton
+								className="z-10 md:hidden"
+								onClick={props.onSectorButtonClick}
+							>
+								<SectorIcon className="h-7 w-7 fill-main stroke-main" />
+							</RoundButton>
+						)}
+					</div>
+
+					{/* Bottom center */}
+					<div
+						className={
+							(mapToolSelectorOpen ? "z-100" : "z-1") +
+							" absolute bottom-0 my-3 flex w-full justify-center"
+						}
+					>
+						{displayToolSelector && (
+							<div className="flex w-full flex-row justify-center gap-5">
+								<MapToolSelector
+									open={mapToolSelectorOpen}
+									setOpen={setMapToolSelectorOpen}
+								/>
+								{!mapToolSelectorOpen && (
+									<ImageInput
+										button="builder"
+										size="big"
+										multiple={false}
+										activated={
+											!!position || process.env.NODE_ENV === "development"
+										}
+										onChange={(files) => {
+											position &&
+												session &&
+												props.topo &&
+												handleNewPhoto(
+													props.topo,
+													files[0],
+													position,
+													session,
+													select,
+													selectedItem,
+													tool
+												);
+										}}
+									/>
+								)}
+							</div>
+						)}
+					</div>
+
+					{/* Bottom right */}
+					<div
+						className={
+							"absolute right-0 bottom-0 m-3" +
+							(breakpoint === "desktop" ? " z-100" : "")
+						}
+					>
+						{displayUserMarker && position && (
+							<RoundButton
+								onClick={() => {
+									if (position && map) {
+										map.getView().setCenter(fromLonLat(position));
+									}
+								}}
+							>
+								<CenterIcon className="h-7 w-7 fill-main stroke-main" />
+							</RoundButton>
+						)}
+					</div>
+				</div>
+
+				<BaseMap
+					ref={useCallback((ref) => {
+						setMap(ref);
+						setReactRef(parentRef, ref);
+					}, [])}
+					className={"h-full w-full " + getMapCursorClass(tool)}
+					onClick={(e) => {
+						const map = e.map;
+						const hit = map.getFeaturesAtPixel(e.pixel).length > 0;
+						if (!hit) {
+							flush.item();
+							if (props.onClick) props.onClick(e);
+						}
+					}}
+					controls={controls}
+				>
+					<View
+						center={fromLonLat(
+							props.initialCenter || position || fontainebleauLocation
+						)}
+						zoom={initialZoom}
+					/>
+
+					<TileLayer>
+						<XYZ
+							ref={setXYZ}
+							attributions={attributions}
+							url={`https://api.mapbox.com/styles/v1/mapbox/outdoors-v11/tiles/512/{z}/{x}/{y}@2x?access_token=${MAPBOX_TOKEN}`}
+							// IMPORTANT
+							tilePixelRatio={2}
+							tileSize={512}
+						/>
+					</TileLayer>
+
+					{props.children}
+
+					{displayUserMarker && (
+						<UserMarkerLayer onClick={props.onUserMarkerClick} />
+					)}
+				</BaseMap>
 			</div>
 		);
 	}

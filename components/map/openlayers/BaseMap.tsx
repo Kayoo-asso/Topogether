@@ -1,9 +1,6 @@
 import {
 	Map,
-	VectorLayer,
-	VectorSource,
 	View,
-	MapboxVector,
 	TileLayer,
 	XYZ,
 } from "components/openlayers";

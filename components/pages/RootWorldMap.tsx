@@ -8,7 +8,7 @@ import { useAuth } from "helpers/services";
 import { LightTopo, Amenities, TopoTypes } from "types";
 import { encodeUUID } from "helpers/utils";
 import { TopoPreview } from "components/organisms/TopoPreview";
-import { MapControl2 } from "components/map/MapControl2";
+import { MapControl2 } from "components/map/MapControl";
 import { TopoMarkersLayer } from "components/map/markers/TopoMarkersLayer";
 import { toLonLat } from "ol/proj";
 

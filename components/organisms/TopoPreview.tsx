@@ -113,7 +113,7 @@ export const TopoPreview: React.FC<TopoPreviewProps> = ({
 				</div>
 
 				<div className="mt-4 flex flex-row items-center px-4">
-					<Marker className={"h-6 w-6 " + TopoTypeToColor(topo.type)} />
+					<Marker className={"h-6 w-6 fill-" + TopoTypeToColor(topo.type)} />
 					<div
 						className={
 							"ktext-section-title ml-2" +

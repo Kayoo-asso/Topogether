@@ -7,7 +7,7 @@ import {
 	VectorSource,
 } from "components/openlayers";
 import { Icon, Style } from 'ol/style';
-import { Parking, UUID, Waypoint } from 'types';
+import { UUID, Waypoint } from 'types';
 import { useSelectStore } from 'components/pages/selectStore';
 import { fromLonLat, toLonLat } from 'ol/proj';
 import { Drag } from 'components/openlayers/interactions/Drag';

@@ -11,7 +11,7 @@ import { useRouter } from "next/router";
 import { Header } from "components/layouts/Header";
 import { LeftbarTopoDesktop } from "components/layouts/LeftbarTopoDesktop";
 import { BoulderFilterOptions } from "components/map";
-import { MapControl2 } from "components/map/MapControl2";
+import { MapControl2 } from "components/map/MapControl";
 import Map from "ol/Map";
 import { useBreakpoint } from "helpers/hooks";
 import { useSession } from "helpers/services";

@@ -12,7 +12,7 @@ import { encodeUUID } from "helpers/utils";
 import { ValidateButton } from "components/atoms/buttons/ValidateButton";
 import { SelectListMultiple } from "components/molecules/form/SelectListMultiple";
 import { TopoTypesName } from "types/BitflagNames";
-import { MapControl2 } from "components/map/MapControl2";
+import { MapControl2 } from "components/map/MapControl";
 import { toLonLat } from "ol/proj";
 import { TopoMarkersLayer } from "components/map/markers/TopoMarkersLayer";
 

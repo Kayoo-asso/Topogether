@@ -15,17 +15,17 @@ export const TopoTypeToColor = (type?: TopoTypes) => {
 	// console.log(type);
 	switch (type) {
 		case TopoTypes.Boulder:
-			return "fill-main";
+			return "main";
 		case TopoTypes.Cliff:
-			return "fill-third";
+			return "third";
 		case TopoTypes.DeepWater:
-			return "fill-grade-5";
+			return "grade-5";
 		case TopoTypes.Multipitch:
-			return "fill-third-light";
+			return "third-light";
 		case TopoTypes.Artificial:
-			return "fill-dark";
+			return "dark";
 		default:
-			return "fill-grey-light";
+			return "grey-light";
 	}
 };
 

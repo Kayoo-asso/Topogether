@@ -60,7 +60,7 @@ export const InfoContent: React.FC<InfoContentProps> = (props: InfoContentProps)
 
 					<div className="ktext-big-title mt-4 flex flex-row items-center text-center">
 						<div className="mr-2 hidden md:inline">
-							<Marker className={"h-6 w-6 " + TopoTypeToColor(topo.type)} />
+							<Marker className={"h-6 w-6 fill-" + TopoTypeToColor(topo.type)} />
 						</div>
 						{topo.name}
 					</div>

@@ -50,7 +50,7 @@ import { KeyboardShortcut } from "components/organisms/builder/KeyboardShortcuts
 import { DropdownOption } from "components/molecules";
 import { Flash } from "components/atoms/overlays";
 import { NetworkIndicator } from "components/atoms/NetworkIndicator";
-import { MapControl2 } from "components/map/MapControl2";
+import { MapControl2 } from "components/map/MapControl";
 import { Map, MapBrowserEvent } from "ol";
 import { toLonLat } from "ol/proj";
 import { SectorAreaMarkersLayer } from "components/map/markers/SectorAreaMarkersLayer";

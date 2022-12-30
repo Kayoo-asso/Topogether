@@ -8,7 +8,7 @@ import {
 	ReactElement,
 } from "react";
 import { useBreakpoint, Portal } from "helpers/hooks";
-import type { Img, UUID } from "types";
+import type { Img } from "types";
 
 import defaultKayoo from "public/assets/img/Kayoo_defaut_image.png";
 import { SourceSize, VariantWidths, bunnyUrl } from "helpers/services/sharedWithServiceWorker";

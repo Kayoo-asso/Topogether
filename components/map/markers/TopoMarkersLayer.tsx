@@ -28,13 +28,10 @@ export type TopoMarkerData = {
 }
 
 export const topoMarkerStyle = (topo: LightTopo, selected: boolean, anySelected: boolean) => {
-    // console.log(topo.type)
     const icon = new Icon({
         opacity: anySelected ? (selected ? 1 : 0.4) : 1,
-        src: "/assets/icons/colored/waypoint/_" +
-            TopoTypeToColor(topo.type) +
-            ".svg",
-        scale: 2,
+        src: "/assets/icons/markers/topo/"+ TopoTypeToColor(topo.type) +".svg",
+        scale: 0.8,
     });
     return new Style({
         image: icon,

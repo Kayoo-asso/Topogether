@@ -7,12 +7,12 @@ import {
 	VectorLayer,
 	VectorSource,
 } from "components/openlayers";
-import Feature, { FeatureLike } from 'ol/Feature';
+import { FeatureLike } from 'ol/Feature';
 import { Circle, Fill, Stroke, Style } from 'ol/style';
 import { GeoCoordinates, Sector, Topo, UUID } from 'types';
 import { useSelectStore } from 'components/pages/selectStore';
 import { fromLonLat, toLonLat } from 'ol/proj';
-import { Geometry, Polygon as PolygonType } from 'ol/geom';
+import { Polygon as PolygonType } from 'ol/geom';
 import { createSector } from 'helpers/builder';
 import { ModalRenameSector } from 'components/organisms/builder/ModalRenameSector';
 import { Drag } from 'components/openlayers/interactions/Drag';
