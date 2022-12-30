@@ -3,10 +3,9 @@ import { useBreakpoint } from "helpers/hooks";
 import { useSelectStore } from "components/pages/selectStore";
 
 import Add from "assets/icons/add.svg";
-import Sector from "assets/icons/sector.svg";
 import Rock from "assets/icons/rock.svg";
-import Parking from "assets/icons/parking.svg";
-import Waypoint from "assets/icons/help-round.svg";
+import InfoLight from "assets/icons/infoLight.svg";
+import ParkingLight from "assets/icons/parkingLight.svg";
 import { RoundButton } from "components/atoms";
 
 interface MapToolSelectorProps {
@@ -44,18 +43,6 @@ export const MapToolSelector: React.FC<MapToolSelectorProps> = (props: MapToolSe
 					>Ajouter au topo</div>
 					
 					<div className="flex flex-row items-center gap-3 rounded-full bg-white px-4 md:px-6">
-						{/* <Sector
-							className={
-								"h-6 w-6 cursor-pointer " +
-								(tool === "SECTOR"
-									? "fill-main stroke-main"
-									: "fill-grey-light stroke-grey-light")
-							}
-							onClick={() => {
-								if (tool === 'SECTOR') flush.tool();
-								else select.tool("SECTOR");
-							}}
-						/> */}
 						<div 
 							className={"ktext-label text-xs cursor-pointer p-3 rounded-sm " + (tool === "SECTOR" ? 'text-main bg-main bg-opacity-30' : 'text-grey-light')}
 							onClick={() => {
@@ -82,31 +69,31 @@ export const MapToolSelector: React.FC<MapToolSelectorProps> = (props: MapToolSe
 						</div>
 
 						<div 
-							className={"cursor-pointer p-2 rounded-sm" + (tool === "WAYPOINT" ? " bg-third bg-opacity-30" : "")}
+							className={"cursor-pointer p-2 rounded-sm" + (tool === "WAYPOINT" ? " bg-info-light" : "")}
 							onClick={() => {
 								if (tool === 'WAYPOINT') flush.tool();
 								else select.tool("WAYPOINT");
 							}}
 						>
-							<Waypoint
+							<InfoLight
 								className={
-									"h-6 w-6 cursor-pointer " +
-									(tool === "WAYPOINT" ? "fill-third stroke-third" : "fill-grey-light stroke-grey-light")
+									"h-5 w-5 cursor-pointer stroke-[1.2px] " +
+									(tool === "WAYPOINT" ? "stroke-info fill-info" : "stroke-grey-light fill-grey-light")
 								}
 							/>
 						</div>
 
 						<div 
-							className={"cursor-pointer p-2 rounded-sm" + (tool === "PARKING" ? " bg-second bg-opacity-30" : "")}
+							className={"cursor-pointer p-2 rounded-sm" + (tool === "PARKING" ? " bg-info-light" : "")}
 							onClick={() => {
 								if (tool === 'PARKING') flush.tool();
 								else select.tool("PARKING");
 							}}
 						>
-							<Parking
+							<ParkingLight
 								className={
-									"h-6 w-6 cursor-pointer " +
-									(tool === "PARKING" ? "fill-second" : "fill-grey-light")
+									"h-5 w-5 cursor-pointer " +
+									(tool === "PARKING" ? "fill-info" : "fill-grey-light")
 								}
 							/>
 						</div>

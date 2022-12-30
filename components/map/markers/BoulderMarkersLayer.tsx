@@ -33,10 +33,12 @@ export const boulderMarkerStyle = (
 	device: Breakpoint
 ) => {
 	const { label } = feature.get("data") as BoulderMarkerData;
+	// console.log(label)
+
 	const icon = new Icon({
 		opacity: anySelected ? (selected ? 1 : 0.4) : 1,
 		src: "/assets/icons/markers/boulder.svg",
-		scale: device === 'desktop' ? 0.8 : 1,
+		scale: device === 'desktop' ? 1 : 1.2,
 	});
 	const text = new Text({
 		text: label,
@@ -44,7 +46,7 @@ export const boulderMarkerStyle = (
 			color: anySelected
 				? selected
 					? "#343644"
-					: "rgba(4, 217, 139, 0.3)"
+					: "rgba(52, 54, 68, 0.3)"
 				: "#343644",
 		}),
 		font: "bold 11px Poppins",
@@ -117,7 +119,7 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> = watchDepe
 						// Because we're using Cluster, the feature in the selection is a cluster of features
 						const cluster = e.selected[0];
 						const clusterFeatures = cluster.get('features');
-						if(clusterFeatures.length === 1) {
+						if (clusterFeatures.length === 1) {
 							const feature = clusterFeatures[0];
 							const { quark } = feature.get("data") as BoulderMarkerData;
 							select.boulder(quark);
@@ -136,6 +138,7 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> = watchDepe
 					// TODO: fix this, by ensuring the layer does not get a simple VectorSource before the Cluster
 					const features = cluster.get("features") as Array<FeatureLike> | undefined;
 					const size = features?.length || 0;
+					console.log(size);
 					// Cluster style
 					if (size > 1) return clusterMarkerStyle(size);
 					else {
@@ -148,14 +151,14 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> = watchDepe
 							device
 						);
 					}
-				}, [selectedType, selectedItem])}
+				}, [selectedType, selectedItem, device])}
 			>
 				<Cluster
 					minDistance={10}
 					distance={30}
 				/>
 				<VectorSource>
-					{props.boulders.quarks().map((bQuark) => {
+					{props.boulders.quarks().map((bQuark) => {					
 						const b = bQuark();
 						const label = props.boulderOrder.get(b.id)?.toString();
 						return (

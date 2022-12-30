@@ -122,7 +122,7 @@ export const SectorAreaMarkersLayer: React.FC<SectorAreaMarkersLayerProps> = wat
             {draggable &&
                 <Drag 
                     sources='sectors'
-                    hitTolerance={5}
+                    hitTolerance={0}
                     startCondition={useCallback((e) => { 
                         const sId = e.feature.get("data").quark().id as UUID;
                         return (selected === sId); 

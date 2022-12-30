@@ -16,11 +16,7 @@ import { api, sync } from "helpers/services";
 import { useSession } from "helpers/services";
 import { Header } from "components/layouts/Header";
 import { LeftbarBuilderDesktop } from "components/layouts/LeftbarBuilderDesktop";
-import {
-	BoulderFilterOptions,
-	MapControl,
-	CreatingSectorAreaMarker,
-} from "components/map";
+import { BoulderFilterOptions } from "components/map";
 import {
 	createBoulder,
 	createParking,
@@ -43,14 +39,13 @@ import {
 import { BuilderProgressIndicator } from "components/organisms/builder/BuilderProgressIndicator";
 import { BuilderDropdown } from "components/organisms/builder/BuilderDropdown";
 import { BuilderModalDelete } from "components/organisms/builder/BuilderModalDelete";
-import { BuilderMarkers } from "components/organisms/builder/BuilderMarkers";
 import { InteractItem, useSelectStore } from "./selectStore";
 import { SyncUrl } from "components/organisms/SyncUrl";
 import { KeyboardShortcut } from "components/organisms/builder/KeyboardShortcuts";
 import { DropdownOption } from "components/molecules";
 import { Flash } from "components/atoms/overlays";
 import { NetworkIndicator } from "components/atoms/NetworkIndicator";
-import { MapControl2 } from "components/map/MapControl";
+import { MapControl } from "components/map/MapControl";
 import { Map, MapBrowserEvent } from "ol";
 import { toLonLat } from "ol/proj";
 import { SectorAreaMarkersLayer } from "components/map/markers/SectorAreaMarkersLayer";
@@ -223,7 +218,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 						map={mapRef.current}
 					/>
 
-					<MapControl2 
+					<MapControl 
 						ref={mapRef}
 						topo={props.topoQuark}
 						initialZoom={16}
@@ -259,45 +254,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 							boulderOrder={boulderOrder()}
 							draggable
 						/>
-					</MapControl2>
-
-					{/* <MapControl
-						ref={mapRef}
-						initialZoom={16}
-						initialCenter={topo.location}
-						displaySectorButton
-						onSectorButtonClick={() => select.info("SECTOR", breakpoint)}
-						searchbarOptions={{
-							findBoulders: true,
-							focusOnOpen: true,
-						}}
-						displayToolSelector
-						topo={props.topoQuark}
-						boulderFilters={boulderFilters}
-						boulderFiltersDomain={defaultBoulderFilterOptions}
-						onMapZoomChange={() => setDropdownItem({ type: 'none', value: undefined })}
-						onClick={handleCreateNewMarker}
-						boundsTo={topo.boulders
-							.map((b) => b.location)
-							.concat(topo.parkings.map((p) => p.location))
-							.toArray()}
-					>
-						
-						{tool === "SECTOR" && (
-							<CreatingSectorAreaMarker
-								topoQuark={props.topoQuark}
-								boulderOrder={boulderOrder()}
-							/>
-						)}
-
-						<BuilderMarkers 
-							topoQuark={props.topoQuark}
-							boulderFilters={boulderFilters}
-							boulderOrder={boulderOrder()}
-							setDropdownItem={setDropdownItem}
-							setDropdownPosition={setDropdownPosition}
-						/>
-					</MapControl> */}
+					</MapControl>
 
 					<SlideoverRightBuilder
 						topo={props.topoQuark}

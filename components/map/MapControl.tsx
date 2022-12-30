@@ -66,7 +66,7 @@ const controls = typeof window === "undefined" ? [] : [
 	new Attribution()
 ]
 
-export const MapControl2 = watchDependencies<Map, MapControlProps>(
+export const MapControl = watchDependencies<Map, MapControlProps>(
 	(
 		{
 			initialZoom = 8,
@@ -108,7 +108,11 @@ export const MapControl2 = watchDependencies<Map, MapControlProps>(
 		//If a tool is selected, display the corresponding cursor. If not, display pointer on features.
 		useEffect(() => {
 			const determinePointer = (e: MapBrowserEvent<PointerEvent>) => {
-				if (tool || !map) return;
+				if (!map) return;
+				else if (tool) {
+					// console.log(tool);
+					// map.getTargetElement().style.cursor = "url('/assets/icons/markers/boulder.svg'), auto";
+				}
 				const hit = map.getFeaturesAtPixel(e.pixel).length > 0;
 				if (hit) {
 					map.getTargetElement().style.cursor = "pointer";
@@ -200,7 +204,7 @@ export const MapControl2 = watchDependencies<Map, MapControlProps>(
 					{/* Bottom center */}
 					<div
 						className={
-							(mapToolSelectorOpen ? "z-100" : "z-1") +
+							((mapToolSelectorOpen && breakpoint === "mobile") ? "z-100" : "z-1") +
 							" absolute bottom-0 my-3 flex w-full justify-center"
 						}
 					>
@@ -303,3 +307,5 @@ export const MapControl2 = watchDependencies<Map, MapControlProps>(
 		);
 	}
 );
+
+MapControl.displayName = "MapControl"

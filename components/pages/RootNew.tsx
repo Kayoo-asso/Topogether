@@ -5,14 +5,13 @@ import { useRouter } from "next/router";
 import { watchDependencies } from "helpers/quarky";
 import { useBreakpoint, usePosition } from "helpers/hooks";
 import { Header } from "components/layouts/Header";
-import { MapControl, CreatingTopoMarker } from "components/map";
 import { TextInput } from "components/molecules";
 import { TopoCreate, createTopo } from "helpers/quarkifyTopo";
 import { encodeUUID } from "helpers/utils";
 import { ValidateButton } from "components/atoms/buttons/ValidateButton";
 import { SelectListMultiple } from "components/molecules/form/SelectListMultiple";
 import { TopoTypesName } from "types/BitflagNames";
-import { MapControl2 } from "components/map/MapControl";
+import { MapControl } from "components/map/MapControl";
 import { toLonLat } from "ol/proj";
 import { TopoMarkersLayer } from "components/map/markers/TopoMarkersLayer";
 
@@ -162,7 +161,7 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies(
 									placer le topo.
 								</div>
 								<div className="mb-6 w-full h-[50vh] md:h-[55vh]">
-									<MapControl2 
+									<MapControl 
 										initialZoom={10}
 										searchbarOptions={{ findPlaces: true }}
 										onClick={(e) => {
@@ -189,34 +188,7 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies(
 												}}
 											/>
 										)}
-									</MapControl2>
-									{/* <MapControl
-										initialZoom={10}
-										searchbarOptions={{ findPlaces: true }}
-										onClick={(e) => {
-											if (e.latLng) {
-												setLongitude(e.latLng.lng());
-												setLatitude(e.latLng.lat());
-											}
-										}}
-										onUserMarkerClick={(e) => {
-											if (e.latLng) {
-												setLongitude(e.latLng.lng());
-												setLatitude(e.latLng.lat());
-											}
-										}}
-									>
-										{latitude && longitude && (
-											<CreatingTopoMarker
-												type={type}
-												location={[longitude, latitude]}
-												setLocation={(lat: number, lng: number) => {
-													setLongitude(lng);
-													setLatitude(lat);
-												}}
-											/>
-										)}
-									</MapControl> */}
+									</MapControl>
 								</div>
 
 								<div className="w-full px-[6%]">

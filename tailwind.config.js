@@ -30,6 +30,8 @@ module.exports = {
 				superlight: "#E8EAF0",
 			},
 			white: colors.white,
+			info: "#035DF3",
+			"info-light": "#C7EFFC",
 			error: "#FF686B",
 			grade: {
 				3: "#FFD600",

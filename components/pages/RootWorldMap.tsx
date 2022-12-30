@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import { HeaderDesktop } from "components/layouts/HeaderDesktop";
 import { LeftbarDesktop } from "components/layouts/Leftbar.desktop";
-import { TopoFilterOptions, MapControl, TopoMarker } from "../map";
+import { TopoFilterOptions } from "../map";
 import { hasFlag } from "helpers/bitflags";
 import { watchDependencies, useCreateQuark } from "helpers/quarky";
 import { useAuth } from "helpers/services";
 import { LightTopo, Amenities, TopoTypes } from "types";
 import { encodeUUID } from "helpers/utils";
 import { TopoPreview } from "components/organisms/TopoPreview";
-import { MapControl2 } from "components/map/MapControl";
+import { MapControl } from "components/map/MapControl";
 import { TopoMarkersLayer } from "components/map/markers/TopoMarkersLayer";
 import { toLonLat } from "ol/proj";
 
@@ -78,7 +78,7 @@ export const RootWorldMap: React.FC<RootWorldMapProps> = watchDependencies(
 				<div className="relative flex h-contentPlusHeader flex-row md:h-full">
 					{user && <LeftbarDesktop currentMenuItem="MAP" />}
 
-					<MapControl2 
+					<MapControl 
 						initialZoom={5}
 						searchbarOptions={{
 							findTopos: true,
@@ -100,7 +100,7 @@ export const RootWorldMap: React.FC<RootWorldMapProps> = watchDependencies(
 							selectedTopo={selectedTopo}
 							onTopoSelect={(t) => setSelectedTopo(t as LightTopo)}
 						/>
-					</MapControl2>
+					</MapControl>
 
 						{selectedTopo &&	
 							<TopoPreview
