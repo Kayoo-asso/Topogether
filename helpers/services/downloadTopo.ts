@@ -8,7 +8,6 @@ import { ProgressTracker } from "helpers/hooks";
 import { get, set } from "idb-keyval";
 import { CACHED_IMG_WIDTH, bunnyUrl, tileUrl, TOPO_CACHE_KEY } from "./sharedWithServiceWorker";
 import { createXYZ } from "ol/tilegrid";
-import { useEffect } from "react";
 
 // IMPORTANT: any changes to the tile or image URLS, as well as to the cached image width,
 // MUST be reflected in the service worker (`sw.ts`)
@@ -215,7 +214,7 @@ export function withExponentialBackoff<T>(
 
 const OFFLINE_TOPOS_KEY = "topogether-offline-topos";
 
-export function cachedEntriesKey(id: UUID) {
+function cachedEntriesKey(id: UUID) {
 	return id + "/cache-keys";
 }
 
@@ -229,20 +228,18 @@ async function addCachedEntries(topo: TopoData | Topo, urls: string[]) {
 	await set(key, Array.from(current));
 }
 
-export async function hasCachedEntries(id: UUID): Promise<boolean> {
-	const cachedEntries = await get(cachedEntriesKey(id)) as string[] | undefined;
-	return !!cachedEntries
+export function getToposAvailableOffline(): UUID[] {
+	return JSON.parse(localStorage.getItem(OFFLINE_TOPOS_KEY) || "[]");
 }
 
-export async function markAsAvailableOffline(topo: TopoData | Topo) {
-	const currentlyAvailable = new Set(await get(OFFLINE_TOPOS_KEY) as UUID[]);
-	currentlyAvailable.add(topo.id);
-	await set(OFFLINE_TOPOS_KEY, Array.from(currentlyAvailable));
+export function markAsAvailableOffline(topo: TopoData | Topo) {
+	const available = new Set(getToposAvailableOffline());
+	available.add(topo.id);
+	localStorage.setItem(OFFLINE_TOPOS_KEY, JSON.stringify(Array.from(available)));
 }
 
-export async function isAvailableOffline(id: UUID): Promise<boolean> {
-	const currentlyAvailable = new Set(await get(OFFLINE_TOPOS_KEY) as UUID[]);
-	return currentlyAvailable.has(id);
+export function isAvailableOffline(id: UUID): boolean {
+	return new Set(getToposAvailableOffline()).has(id);
 }
 
 export async function removeTopoFromCache(id: UUID): Promise<boolean> {
