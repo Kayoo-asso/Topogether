@@ -25,7 +25,7 @@ export type ParkingMarkerData = {
 
 export const parkingMarkerStyle = (mapZoom: number, selected: boolean, anySelected: boolean) => {
     const icon = new Icon({
-        opacity: mapZoom < 10 ? (anySelected ? (selected ? 1 : 0.4) : 1) : 0,
+        opacity: mapZoom > 13.5 ? (anySelected ? (selected ? 1 : 0.4) : 1) : 0,
         src: selected ? "/assets/icons/colored/_parking_bold.svg" : "/assets/icons/colored/_parking.svg",
         scale: 1,
     });
@@ -43,9 +43,7 @@ export const ParkingMarkersLayer: React.FC<ParkingMarkersLayerProps> = watchDepe
     const selectedItem = useSelectStore((s) => s.item.value);
     const select = useSelectStore(s => s.select);
     const flush = useSelectStore(s => s.flush);
-
     const mapZoom = useMapZoom();
-    console.log(mapZoom);
     
     return (
         <>
@@ -95,7 +93,7 @@ export const ParkingMarkersLayer: React.FC<ParkingMarkersLayerProps> = watchDepe
                             selectedItem ? selectedItem().id === bId : false,
                             selectedType !== "none"
                         )}
-                    , [selectedType, selectedItem, mapZoom])
+                    , [mapZoom, selectedType, selectedItem])
                 }
             >
                 <VectorSource>

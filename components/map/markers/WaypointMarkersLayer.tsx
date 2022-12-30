@@ -11,6 +11,7 @@ import { Parking, UUID, Waypoint } from 'types';
 import { useSelectStore } from 'components/pages/selectStore';
 import { fromLonLat, toLonLat } from 'ol/proj';
 import { Drag } from 'components/openlayers/interactions/Drag';
+import { useMapZoom } from 'helpers/hooks/useMapZoom';
 
 interface WaypointMarkersLayerProps {
     waypoints: QuarkArray<Waypoint>;
@@ -22,9 +23,9 @@ export type WaypointMarkerData = {
 	quark: Quark<Waypoint>;
 }
 
-export const waypointMarkerStyle = (selected: boolean, anySelected: boolean) => {
+export const waypointMarkerStyle = (mapZoom: number, selected: boolean, anySelected: boolean) => {
     const icon = new Icon({
-        opacity: anySelected ? (selected ? 1 : 0.4) : 1,
+        opacity: mapZoom > 13.5 ? (anySelected ? (selected ? 1 : 0.4) : 1) : 0,
         src: selected ? "/assets/icons/colored/_help-round_bold.svg" : "/assets/icons/colored/_help-round.svg",
         scale: 1,
     });
@@ -42,6 +43,7 @@ export const WaypointMarkersLayer: React.FC<WaypointMarkersLayerProps> = watchDe
     const selectedItem = useSelectStore((s) => s.item.value);
     const select = useSelectStore(s => s.select);
     const flush = useSelectStore(s => s.flush);
+    const mapZoom = useMapZoom();
     
     return (
         <>
@@ -87,10 +89,11 @@ export const WaypointMarkersLayer: React.FC<WaypointMarkersLayerProps> = watchDe
                     (feature) => {
                         const bId = feature.get("data").quark().id;
                         return waypointMarkerStyle (
+                            mapZoom,
                             selectedItem ? selectedItem().id === bId : false,
                             selectedType !== "none"
                         )}
-                    , [selectedType, selectedItem])
+                    , [mapZoom, selectedType, selectedItem])
                 }
             >
                 <VectorSource>
