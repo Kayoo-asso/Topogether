@@ -25,7 +25,6 @@ import { BoulderMarkersLayer } from "components/map/markers/BoulderMarkersLayer"
 import { SectorAreaMarkersLayer } from "components/map/markers/SectorAreaMarkersLayer";
 import { ParkingMarkersLayer } from "components/map/markers/ParkingMarkersLayer";
 import { WaypointMarkersLayer } from "components/map/markers/WaypointMarkersLayer";
-import { useMapZoom } from "helpers/hooks/useMapZoom";
 
 interface RootTopoProps {
 	topoQuark: Quark<Topo>;
@@ -36,7 +35,6 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 		const router = useRouter();
 		const session = useSession();
 		const breakpoint = useBreakpoint();
-		const mapZoom = useMapZoom();
 
 		const topo = props.topoQuark();
 		const boulderOrder = useCreateDerivation(() =>

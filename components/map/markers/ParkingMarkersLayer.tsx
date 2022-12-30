@@ -45,6 +45,7 @@ export const ParkingMarkersLayer: React.FC<ParkingMarkersLayerProps> = watchDepe
     const flush = useSelectStore(s => s.flush);
 
     const mapZoom = useMapZoom();
+    console.log(mapZoom);
     
     return (
         <>
@@ -94,7 +95,7 @@ export const ParkingMarkersLayer: React.FC<ParkingMarkersLayerProps> = watchDepe
                             selectedItem ? selectedItem().id === bId : false,
                             selectedType !== "none"
                         )}
-                    , [selectedType, selectedItem])
+                    , [selectedType, selectedItem, mapZoom])
                 }
             >
                 <VectorSource>
