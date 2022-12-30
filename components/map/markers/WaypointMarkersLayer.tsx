@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
 import { Quark, QuarkArray, watchDependencies } from 'helpers/quarky';
 import {
+    Modify,
 	Point,
 	Select,
 	VectorLayer,
@@ -56,6 +57,10 @@ export const WaypointMarkersLayer: React.FC<WaypointMarkersLayerProps> = watchDe
 
     return (
         <>
+            <Modify 
+				hitDetection={true}
+				source='waypoints'
+			/>
             {draggable &&
                 <Drag 
                     sources='waypoints'
