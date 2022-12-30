@@ -1,6 +1,7 @@
 import React, { useCallback } from "react";
 import { Quark, QuarkArray, watchDependencies } from "helpers/quarky";
 import {
+	Modify,
 	Point,
 	Select,
 	VectorLayer,
@@ -16,6 +17,7 @@ import { Cluster } from "components/openlayers/sources/Cluster";
 import { Breakpoint, useBreakpoint } from "helpers/hooks";
 import { useMapPointerCoordinates } from "helpers/hooks/useMapPointerCoordinates";
 import { MapBrowserEvent } from "ol";
+import PointGeom from "ol/geom/Point";
 
 interface BoulderMarkersLayerProps {
 	boulders: QuarkArray<Boulder>;
@@ -102,12 +104,13 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> = watchDepe
 						[selectedItem]
 					)}
 					onDragEnd={(e) => {
-						const newLoc = toLonLat(e.mapBrowserEvent.coordinate);
 						const data = e.feature.get("data") as BoulderMarkerData;
+						const point = e.feature.getGeometry() as PointGeom;
+						const coords = point.getCoordinates();
 						if (data)
 							data.quark.set((b) => ({
 								...b,
-								location: [newLoc[0], newLoc[1]],
+								location: [coords[0], coords[1]],
 							}));
 					}}
 				/>
