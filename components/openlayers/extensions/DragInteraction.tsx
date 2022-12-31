@@ -12,6 +12,7 @@ import { Vector } from "ol/source";
 import { boundingExtent } from "ol/extent";
 import VectorSource from "ol/source/Vector";
 import Layer from "ol/layer/Layer";
+import VectorLayer from "ol/layer/Vector";
 
 // Departure from standard OpenLayers API
 // TODO: change that & use collections for fine-grained feature selection
@@ -52,6 +53,8 @@ export class DragInteraction extends PointerInteraction {
 	protected hitTolerance_: number;
 	protected sources: Array<VectorSource>;
 	protected layerFilter_: (layer: Layer) => boolean;
+	protected tempLayer_: VectorLayer<VectorSource> | null;
+	protected origSource_: VectorSource | null;
 
 	constructor(options: DragOptions) {
 		super({
@@ -81,20 +84,33 @@ export class DragInteraction extends PointerInteraction {
 			const layerSource = layer.getSource();
 			return !!this.sources.find((x) => x === layerSource);
 		}.bind(this);
+
+		this.tempLayer_ = null;
+		this.origSource_ = null;
 	}
 
-	findFeature(evt: MapBrowserEvent<UIEvent>): Feature | undefined {
+	findFeature(evt: MapBrowserEvent<UIEvent>): [Feature, VectorLayer<VectorSource>] | undefined {
 		const map = evt.map;
 		if (this.sources) {
-			const features = map.getFeaturesAtPixel(evt.pixel, {
-				layerFilter: this.layerFilter_,
-				hitTolerance: this.hitTolerance_,
-			});
-			for(let i =0; i < features.length; ++i) {
-				const f = features[i];
+			let feature: Feature | undefined;
+			let layer: VectorLayer<VectorSource> | undefined;
+			map.forEachFeatureAtPixel(evt.pixel, function (f, l) {
 				if(f instanceof Feature) {
-					return f
+					feature = f;
+					// TODO: remove after debugging
+					if(!(l instanceof VectorLayer)) {
+						throw new Error("Unexpected!")
+					}
+					layer = l;
+					// Signal to stop
+					return true;
 				}
+			}, {
+				layerFilter: this.layerFilter_,
+				hitTolerance: this.hitTolerance_
+			})
+			if(feature && layer) {
+				return [feature, layer]
 			}
 		}
 	}
@@ -108,20 +124,40 @@ export class DragInteraction extends PointerInteraction {
 	}
 }
 function handleDownEvent(this: DragInteraction, evt: MapBrowserEvent<UIEvent>) {
-	const feature = this.findFeature(evt);
+	const found = this.findFeature(evt);
 
-	if (feature) {
-		this.coordinate_ = evt.coordinate;
-		this.feature_ = feature;
+	if (found) {
+		const [feature, layer] = found;
+		// Check if we should start dragging
 		const dragEvent = new DragEvent("dragstart", feature, evt);
 		// If a condition exists and it is false, do not initiate a drag sequence
 		if (this.startCondition_ && !this.startCondition_(dragEvent)) {
 			return false;
 		}
+		// Keep track of the last coordinate, to translate the feature as the pointer moves
+		this.coordinate_ = evt.coordinate;
+		// Keep track of the feature and its original source
+		this.feature_ = feature;
+		this.origSource_ = layer.getSource()!;
+		// Setup a temporary layer for the dragging motion
+		this.tempLayer_ = new VectorLayer({
+			source: new VectorSource({
+				useSpatialIndex: false,
+				wrapX: layer.getSource()?.getWrapX(),
+				features: [feature]
+			}),
+			style: layer.getStyle(),
+			updateWhileAnimating: true,
+			updateWhileInteracting: true
+		});
+		// Remove the feature from its original source
+		this.origSource_.removeFeature(feature)
+		// Show the new layer
+		evt.map.addLayer(this.tempLayer_);
 		this.dispatchEvent(dragEvent);
 	}
 
-	return !!feature;
+	return !!found;
 }
 
 function handleDragEvent(this: DragInteraction, evt: MapBrowserEvent<UIEvent>) {
@@ -155,10 +191,17 @@ function handleMoveEvent(this: DragInteraction, evt: MapBrowserEvent<UIEvent>) {
 
 function handleUpEvent(this: DragInteraction, evt: MapBrowserEvent<UIEvent>) {
 	// If the drag sequence was not initiated, this.feature_ may be null
+	// (as well as this.tempLayer_ and this.origSource_)
 	if (this.feature_) {
+		const layer = this.tempLayer_!;
+		const origSource = this.origSource_!;
+		evt.map.removeLayer(layer);
+		origSource.addFeature(this.feature_);
 		this.dispatchEvent(new DragEvent("dragend", this.feature_, evt));
 	}
 	this.coordinate_ = null;
 	this.feature_ = null;
+	this.tempLayer_ = null;
+	this.origSource_ = null;
 	return false;
 }
