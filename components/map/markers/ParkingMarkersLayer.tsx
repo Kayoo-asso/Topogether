@@ -123,7 +123,8 @@ export const ParkingMarkersLayer: React.FC<ParkingMarkersLayerProps> = watchDepe
                             />
                         )
                     })}  
-                    {tool === 'PARKING' && pointerCoords &&
+                    {tool === 'PARKING' && pointerCoords && 
+                    //A mettre sur un autre layer avec un zIndex spécifique pour que ce soit toujours devant les autres marqueurs
 						<Point
 							key={"creating"}
 							coordinates={pointerCoords}

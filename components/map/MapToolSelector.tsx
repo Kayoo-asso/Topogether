@@ -48,6 +48,7 @@ export const MapToolSelector: React.FC<MapToolSelectorProps> = (props: MapToolSe
 							onClick={() => {
 								if (tool === 'SECTOR') flush.tool();
 								else select.tool("SECTOR");
+								flush.item();
 							}}
 						>Nouveau secteur</div>
 
@@ -58,6 +59,7 @@ export const MapToolSelector: React.FC<MapToolSelectorProps> = (props: MapToolSe
 							onClick={() => {
 								if (tool === 'ROCK') flush.tool();
 								else select.tool("ROCK");
+								flush.item();
 							}}
 						>
 							<Rock
@@ -73,6 +75,7 @@ export const MapToolSelector: React.FC<MapToolSelectorProps> = (props: MapToolSe
 							onClick={() => {
 								if (tool === 'WAYPOINT') flush.tool();
 								else select.tool("WAYPOINT");
+								flush.item();
 							}}
 						>
 							<InfoLight
@@ -88,6 +91,7 @@ export const MapToolSelector: React.FC<MapToolSelectorProps> = (props: MapToolSe
 							onClick={() => {
 								if (tool === 'PARKING') flush.tool();
 								else select.tool("PARKING");
+								flush.item();
 							}}
 						>
 							<ParkingLight
