@@ -14,15 +14,16 @@ export const useMap = (): Map => {
 export const LayerContext = createContext<Layer | undefined>(undefined);
 export const useLayer = () => useContext(LayerContext);
 
-// export function useSource() {
-// 	const layer = useLayer();
-// 	const [, setSymbol] = useState(Symbol());
-// 	useEffect(() => {
-// 		if (layer) {
-// 			const rerender = () => setSymbol(Symbol());
-// 			layer.on("change:source", rerender);
-// 			return () => layer.un("change:source", rerender);
-// 		}
-// 	}, [layer]);
-// 	return layer?.getSource();
-// }
+export function useSource() {
+	const layer = useLayer();
+  const [source, setSource] = useState(layer?.getSource());
+	useEffect(() => {
+		if (layer) {
+      const updateSource = () => setSource(layer.getSource());
+			layer.on("change:source", updateSource);
+      updateSource();
+			return () => layer.un("change:source", updateSource);
+		}
+	}, [layer]);
+	return source;
+}

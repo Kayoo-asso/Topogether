@@ -2,19 +2,15 @@ import { forwardRef, useEffect } from "react";
 import OLXYZ from "ol/source/XYZ";
 import { useLayer } from "../contexts";
 import { createLifecycle, InferOptions } from "../createLifecycle";
-import { events, tileSourceEvents } from "../events";
+import { e, tileSourceEvents } from "../events";
 
-const useBehavior = createLifecycle(OLXYZ, {
-	events: events(tileSourceEvents),
-	reactive: [
-		"attributions",
-		"tileLoadFunction",
-		"tileUrlFunction",
-		"url",
-		"urls",
-	],
-	reset:  [],
-});
+const useBehavior = createLifecycle(OLXYZ, e(tileSourceEvents), [
+	"attributions",
+	"tileLoadFunction",
+	"tileUrlFunction",
+	"url",
+	"urls",
+]);
 
 // Should we restrict TileGrid and Projection to go through dedicated elements?
 type Props = InferOptions<typeof useBehavior>;

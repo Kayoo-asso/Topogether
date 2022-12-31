@@ -1,16 +1,17 @@
 import { forwardRef } from "react";
 import { InferOptions, createLifecycle } from "../createLifecycle";
-import { DragInteraction } from "./DragInteraction";
+import { DragInteraction } from "../extensions/DragInteraction";
 import { useMap } from "../contexts";
 import { useInteractionLifecycle } from "./useInteractionLifecycle";
 import { useGetSources } from "../utils";
 import VectorSource from "ol/source/Vector";
 
-const useBehavior = createLifecycle(DragInteraction, {
-	events: ["drag", "dragend", "dragstart"],
-	reactive: ["cursor", "startCondition"],
-	reset: ["sources"],
-} as const);
+const useBehavior = createLifecycle(
+	DragInteraction,
+	["drag", "dragend", "dragstart"],
+	["cursor", "startCondition"],
+	["sources"]
+);
 
 export type DragProps = Omit<InferOptions<typeof useBehavior>, "sources"> & {
 	sources: string | Array<string>;

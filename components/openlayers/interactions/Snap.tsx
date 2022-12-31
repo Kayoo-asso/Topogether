@@ -6,11 +6,12 @@ import { createLifecycle, InferOptions } from "../createLifecycle";
 import { useGetSources } from "../utils";
 import { useInteractionLifecycle } from "./useInteractionLifecycle";
 
-const useBehavior = createLifecycle(OLSnap, {
-	events: ["change:active"],
-	reactive: [],
-	reset: ["edge", "pixelTolerance", "source", "vertex"]
-});
+const useBehavior = createLifecycle(
+	OLSnap,
+	["change:active"],
+	[],
+	["edge", "pixelTolerance", "source", "vertex"]
+);
 
 // Add support for a target Collection
 type P = Omit<InferOptions<typeof useBehavior>, "features" | "source"> & {
@@ -26,7 +27,7 @@ export const Snap = forwardRef<OLSnap, P>(
 				`The target source of a Draw interaction should be a VectorSource`
 			);
 		}
-		const modify = useBehavior({...props, source: s}, ref);
+		const modify = useBehavior({ ...props, source: s }, ref);
 
 		useInteractionLifecycle(modify, map);
 

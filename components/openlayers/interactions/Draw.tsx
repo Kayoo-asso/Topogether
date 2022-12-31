@@ -6,10 +6,11 @@ import { createLifecycle, InferOptions } from "../createLifecycle";
 import { useGetSources } from "../utils";
 import { useInteractionLifecycle } from "./useInteractionLifecycle";
 
-const useBehavior = createLifecycle(OLDraw, {
-	events: ["change:active", "drawabort", "drawend", "drawstart"],
-	reactive: [],
-	reset: [
+const useBehavior = createLifecycle(
+	OLDraw,
+	["change:active", "drawabort", "drawend", "drawstart"],
+	[],
+	[
 		"clickTolerance",
 		"condition",
 		"dragVertexDelay",
@@ -29,8 +30,8 @@ const useBehavior = createLifecycle(OLDraw, {
 		"traceSource",
 		"type",
 		"wrapX",
-	],
-});
+	]
+);
 
 type Props = Omit<
 	InferOptions<typeof useBehavior>,
@@ -55,7 +56,7 @@ export const Draw = forwardRef<OLDraw, Props>(
 			);
 		}
 
-		const draw = useBehavior({ ...props, source: s, traceSource: ts}, ref);
+		const draw = useBehavior({ ...props, source: s, traceSource: ts }, ref);
 		useInteractionLifecycle(draw, map);
 
 		return null;

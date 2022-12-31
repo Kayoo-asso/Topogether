@@ -1,72 +1,45 @@
 import OLCluster from "ol/source/Cluster";
 import { InferOptions, createLifecycle } from "../createLifecycle";
 import { forwardRef, useEffect, useState } from "react";
-import { useLayer } from "../contexts";
+import { useLayer, useMap, useSource } from "../contexts";
 import VectorSource from "ol/source/Vector";
+import { useGetSources } from "../utils";
+import { vectorSourceEvents, e } from "../events";
 
-const useBehavior = createLifecycle(OLCluster, {
-	events: [
-		"addfeature",
-		"change",
-		"changefeature",
-		"clear",
-		"error",
-		"featuresloadend",
-		"featuresloaderror",
-		"featuresloadstart",
-		"propertychange",
-		"removefeature",
-	],
-	reactive: ["distance", "minDistance"],
-	reset: ["source", "geometryFunction", "createCluster", "wrapX"],
-});
+const useBehavior = createLifecycle(OLCluster, 
+	e(vectorSourceEvents),
+	["distance", "minDistance"],
+	["geometryFunction", "createCluster", "wrapX"],
+);
 
-export type ClusterProps = Omit<InferOptions<typeof useBehavior>, "source">;
+export type ClusterProps = Omit<InferOptions<typeof useBehavior>, "source"> & {
+	source: string;
+};
 
 export const Cluster = forwardRef<OLCluster, ClusterProps>(
-	({ children, ...props }, ref) => {
-		const [source, setSource] = useState<VectorSource>();
+	({ children, source, ...props }, ref) => {
+		// const source = useSource();
+		const map = useMap();
 		const layer = useLayer();
-		// Cluster can't use the regular `useSource`, because it will update also after Cluster replaces the original
-		// source in the layer
+		const [s] = useGetSources(map, [source]);
+		const cluster = useBehavior({ ...props }, ref);
+
 		useEffect(() => {
-			if (layer) {
-				const updateSource = () => {
-					const source = layer.getSource() || undefined;
-					if (source instanceof OLCluster) {
-						return;
-					}
-					if (source && !(source instanceof VectorSource)) {
-						throw new Error(
-							"<Cluster /> has to be used inside a <VectorSource /> "
-							);
-						}
-					setSource(source);
-				};
-				updateSource();
-				layer.on("change:source", updateSource);
+			if(layer && cluster && s) {
+				if(!(s instanceof VectorSource)) {
+					throw new Error("Cluster `source` can only be a VectorSource");
+				}
+				// Do those two together, because a Cluster with null source will
+				// throw an error when used as a layer source
+				cluster.setSource(s);
+				layer.setSource(cluster);
 				return () => {
-					layer.un("change:source", updateSource);
-					setSource(undefined);
-				};
-			}
-		}, [layer]);
-		const cluster = useBehavior({ ...props, source: source }, ref);
-		useEffect(() => {
-			if (layer && cluster) {
-				const source = cluster.getSource();
-				if(source) {
-					layer.setSource(cluster);
-					return () => {
-						layer.setSource(source);
-						cluster.setSource(null);
-						cluster.dispose();
-					};
-				} else {
-					layer.setSource(cluster)
+					layer.setSource(null);
+					cluster.setSource(null);
 				}
 			}
-		}, [layer, cluster]);
+		}, [cluster, s, layer])
+
 		return <>{children}</>;
 	}
 );

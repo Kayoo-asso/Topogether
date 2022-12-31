@@ -8,10 +8,10 @@ import { useInteractionLifecycle } from "./useInteractionLifecycle";
 
 // TODO: add the option to specify a Collection to place the features in
 
-const useBehavior = createLifecycle(OLSelect, {
-	events: ["change:active", "select"],
-	reactive: ["hitTolerance"],
-	reset: [
+const useBehavior = createLifecycle(OLSelect, 
+	["change:active", "select"],
+	["hitTolerance"],
+	[
 		"addCondition",
 		"condition",
 		"filter",
@@ -20,7 +20,7 @@ const useBehavior = createLifecycle(OLSelect, {
 		"removeCondition",
 		"toggleCondition",
 	],
-});
+);
 
 type P = Omit<InferOptions<typeof useBehavior>, "features" | "layers"> & {
 	layers: string[];

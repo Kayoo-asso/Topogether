@@ -1,24 +1,17 @@
 import { setReactRef } from "helpers/utils";
 import { ForwardedRef, useEffect, useRef, useState } from "react";
-import { Event, EventFn, eventHandlers, EventHandlers } from "./events";
+import {
+	baseEvents,
+	e,
+	Event,
+	EventFn,
+	eventHandlers,
+	EventHandlers,
+} from "./events";
 import { setMethodName } from "./utils";
 import { useEffectDeepEqual } from "components/openlayers/useEffectDeepEqual";
-import { useEffectWithDeepEqual } from "helpers/map";
 
-// TODO:
-// - Add checks that all reactive props `P` have an associated `setP` method
-
-interface Definition<
-	Options,
-	// Options,
-	Events extends ReadonlyArray<Event>,
-	ReactiveProps extends string & keyof RemoveUndefined<Options>,
-	ResetProps extends string & keyof RemoveUndefined<Options>
-> {
-	events: Events;
-	reactive: ReadonlyArray<ReactiveProps>;
-	reset?: ReadonlyArray<ResetProps>;
-}
+type BaseEvents = keyof typeof baseEvents;
 
 interface OLBase<Events, Handlers> {
 	on: (event: Events, handler: Handlers) => void;
@@ -26,11 +19,8 @@ interface OLBase<Events, Handlers> {
 	dispose?: () => void;
 }
 
-type BuildProps<
-	Options,
-	Events extends ReadonlyArray<Event>
-> = RemoveUndefined<Options> & {
-	[EH in EventHandlers[Events[number]]]?: EventFn<EH>;
+type BuildProps<Options, Events extends Event> = RemoveUndefined<Options> & {
+	[EH in EventHandlers[Events]]?: EventFn<EH>;
 };
 
 export type InferOptions<Fn extends UseBehavior<any, any, any>> =
@@ -40,45 +30,35 @@ export type InferOptions<Fn extends UseBehavior<any, any, any>> =
 
 type RemoveUndefined<T> = T extends undefined ? never : T;
 
-type UseBehavior<
-	Options,
-	T extends OLBase<any, any>,
-	Events extends ReadonlyArray<Event>
-> = (
-	props: BuildProps<Options, Events>,
+type UseBehavior<Options, T extends OLBase<any, any>, E extends Event> = (
+	props: BuildProps<Options, E>,
 	ref: ForwardedRef<T> | undefined
 ) => T | undefined;
 
 export function createLifecycle<
 	Options,
 	T extends OLBase<any, any>,
-	Events extends ReadonlyArray<Event>,
-	ReactiveProps extends string & keyof RemoveUndefined<Options>,
-	ResetProps extends string & keyof RemoveUndefined<Options>,
-	D extends Definition<Options, Events, ReactiveProps, ResetProps>
+	E extends Event
 >(
-	constructor: new <_>(options: Options) => T,
-	definition: D
-): UseBehavior<Options, T, Events> {
-	const events = definition.events;
+	constructor:
+		| (new (options: Options) => T)
+		| (new (options?: Options) => T)
+		| (new <_>(options: Options) => T),
+	events: Array<E>,
+	reactive: Array<string & keyof Options>,
+	reset: Array<string & keyof Options> = []
+): UseBehavior<Options, T, E | BaseEvents> {
+	events.push(...(e(baseEvents) as any));
 	const handlers = events.map((ev) => eventHandlers[ev]);
-	// const handlers = events.map((x) => eventHandlers[x]);
-	const updateMethods = definition.reactive.map(setMethodName);
-
-	// console.log(`=== Definition for ${constructor.name} ===`)
-	// console.log(`-> Reset props = ${definition.reset}`)
-	// console.log(`-> Handlers = ${handlers}`)
-	// console.log(`-> Update methods = ${updateMethods}`)
+	const updateMethods = reactive.map(setMethodName);
 
 	return function (
-		props: BuildProps<Options, Events>,
+		props: BuildProps<Options, E | BaseEvents>,
 		ref: ForwardedRef<T> | undefined
 	) {
 		const [instance, setInstance] = useState<T>();
-		const observed = definition.reactive.map((x) => props[x]);
-		const propsThatRequireAReset = definition.reset
-			? definition.reset.map((x) => props[x])
-			: [];
+		const observed = reactive.map((x) => props[x]);
+		const propsThatRequireAReset = reset ? reset.map((x) => props[x]) : [];
 
 		useEffectDeepEqual(() => {
 			// Do we need to delete eventFns from the props before instantiation?
@@ -101,7 +81,6 @@ export function createLifecycle<
 		}, [ref, instance]);
 
 		// Reactive properties
-		// Synchronous updates should be fine
 		for (let i = 0; i < observed.length; i++) {
 			const current = observed[i];
 			useEffectDeepEqual(() => {
@@ -118,7 +97,7 @@ export function createLifecycle<
 			if (instance) {
 				for (let i = 0; i < eventFns.length; i++) {
 					const fn = eventFns[i];
-					const event = definition.events[i];
+					const event = events[i];
 					if (fn) {
 						instance.on(event, fn);
 					}
@@ -126,7 +105,7 @@ export function createLifecycle<
 				return () => {
 					for (let i = 0; i < eventFns.length; i++) {
 						if (eventFns[i]) {
-							instance.un(definition.events[i], eventFns[i]);
+							instance.un(events[i], eventFns[i]);
 						}
 					}
 				};

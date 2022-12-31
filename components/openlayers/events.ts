@@ -9,9 +9,9 @@ import type { ObjectEvent } from "ol/Object";
 import type RenderEvent from "ol/render/Event";
 import { TileSourceEvent } from "ol/source/Tile";
 import { VectorSourceEvent } from "ol/source/Vector";
-import { DragEvent } from "./interactions/DragInteraction";
+import { DragEvent } from "./extensions/DragInteraction";
 
-const baseEvents = {
+export const baseEvents = {
 	change: "onChange",
 	error: "onError",
 	propertychange: "onPropertyChange",
@@ -83,11 +83,12 @@ export const viewEvents = {
 
 type KeysOfUnion<T> = T extends any ? keyof T: never;
 
-export function events<Args extends Array<Partial<Record<Event, EventHandler<Event>>>>>(
-	...args: Args
-): Array<KeysOfUnion<Args[number]>> {
-  args.push(baseEvents);
-	return Object.keys(Object.assign({}, ...args)) as any;
+
+
+export function e<Arg extends Partial<Record<Event, EventHandler<Event>>>>(
+	events: Arg
+): Array<keyof Arg> {
+	return Array.from(Object.keys(events)) as any;
 }
 
 export const eventHandlers = {

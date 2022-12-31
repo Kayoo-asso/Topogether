@@ -11,12 +11,13 @@ import {
 	QuarkIter,
 	watchDependencies,
 } from "helpers/quarky";
-import { Image, SourceSize } from "components/atoms/Image";
+import { Image } from "components/atoms/Image";
 import { SVGTrack } from "components/atoms";
 import QuickPinchZoom, { make3dTransformValue } from "react-quick-pinch-zoom";
 import { Portal } from "helpers/hooks";
 import { getCoordsInViewbox } from "helpers/svg";
 import { useSelectStore } from "components/pages/selectStore";
+import { SourceSize } from "helpers/services/sharedWithServiceWorker";
 
 type TracksImageProps = React.PropsWithChildren<{
 	image?: Img;

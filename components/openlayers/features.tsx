@@ -131,6 +131,10 @@ function implementation<G extends GeometryType>(
 	const feature = useMemo(() => new Feature({ geometry }), [geometry]);
 
 	useEffect(() => {
+		console.log("New feature", feature);
+	}, []);
+
+	useEffect(() => {
 		feature.setId(props.id);
 	}, [props.id]);
 
@@ -138,9 +142,11 @@ function implementation<G extends GeometryType>(
 		feature.setStyle(props.style);
 	}, [props.style]);
 
-	feature.setProperties({
-		data: props.data,
-	});
+	useEffectDeepEqual(() => {
+		feature.setProperties({
+			data: props.data,
+		});
+	}, [props.data]);
 
 	useImperativeHandle(ref, () => feature, [feature]);
 
