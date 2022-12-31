@@ -1,22 +1,23 @@
-import OLCluster from "ol/source/Cluster";
 import { InferOptions, createLifecycle } from "../createLifecycle";
 import { forwardRef, useEffect, useState } from "react";
 import { useLayer, useMap, useSource } from "../contexts";
 import VectorSource from "ol/source/Vector";
 import { useGetSources } from "../utils";
 import { vectorSourceEvents, e } from "../events";
+import { ClusterSource } from "../extensions/ClusterSource";
 
-const useBehavior = createLifecycle(OLCluster, 
+const useBehavior = createLifecycle(
+	ClusterSource,
 	e(vectorSourceEvents),
 	["distance", "minDistance"],
-	["geometryFunction", "createCluster", "wrapX"],
+	["geometryFunction", "createCluster", "wrapX"]
 );
 
 export type ClusterProps = Omit<InferOptions<typeof useBehavior>, "source"> & {
 	source: string;
 };
 
-export const Cluster = forwardRef<OLCluster, ClusterProps>(
+export const Cluster = forwardRef<ClusterSource, ClusterProps>(
 	({ children, source, ...props }, ref) => {
 		// const source = useSource();
 		const map = useMap();
@@ -25,8 +26,8 @@ export const Cluster = forwardRef<OLCluster, ClusterProps>(
 		const cluster = useBehavior({ ...props }, ref);
 
 		useEffect(() => {
-			if(layer && cluster && s) {
-				if(!(s instanceof VectorSource)) {
+			if (layer && cluster && s) {
+				if (!(s instanceof VectorSource)) {
 					throw new Error("Cluster `source` can only be a VectorSource");
 				}
 				// Do those two together, because a Cluster with null source will
@@ -36,9 +37,9 @@ export const Cluster = forwardRef<OLCluster, ClusterProps>(
 				return () => {
 					layer.setSource(null);
 					cluster.setSource(null);
-				}
+				};
 			}
-		}, [cluster, s, layer])
+		}, [cluster, s, layer]);
 
 		return <>{children}</>;
 	}
