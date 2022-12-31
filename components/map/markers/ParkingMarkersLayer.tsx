@@ -14,14 +14,12 @@ import { Drag } from 'components/openlayers/interactions/Drag';
 import { useMapZoom } from 'helpers/hooks/useMapZoom';
 import { Breakpoint, useBreakpoint } from 'helpers/hooks';
 import { disappearZoom } from './WaypointMarkersLayer';
-import { MapBrowserEvent } from 'ol';
 import { useMapPointerCoordinates } from 'helpers/hooks/useMapPointerCoordinates';
 import PointGeom from "ol/geom/Point";
 
 interface ParkingMarkersLayerProps {
     parkings: QuarkArray<Parking>;
     draggable?: boolean;
-    onCreate?: (e: MapBrowserEvent<MouseEvent>) => void;
 }
 
 export type ParkingMarkerData = {
@@ -29,7 +27,7 @@ export type ParkingMarkerData = {
 	quark: Quark<Parking>;
 }
 
-export const parkingMarkerStyle = (mapZoom: number, selected: boolean, anySelected: boolean, device: Breakpoint) => {
+export const parkingMarkerStyle = (selected: boolean, anySelected: boolean, device: Breakpoint, mapZoom: number) => {
     const icon = new Icon({
         opacity: mapZoom > disappearZoom ? (anySelected ? (selected ? 1 : 0.4) : 1) : 0,
         src: "/assets/icons/markers/parking.svg",
@@ -49,11 +47,9 @@ export const ParkingMarkersLayer: React.FC<ParkingMarkersLayerProps> = watchDepe
     const selectedItem = useSelectStore((s) => s.item.value);
     const select = useSelectStore(s => s.select);
     const flush = useSelectStore(s => s.flush);
-    const tool = useSelectStore(s => s.tool);
 
     const mapZoom = useMapZoom(disappearZoom);
     const device = useBreakpoint();
-    const pointerCoords = useMapPointerCoordinates(!!tool);
     
     return (
         <>
@@ -62,7 +58,7 @@ export const ParkingMarkersLayer: React.FC<ParkingMarkersLayerProps> = watchDepe
                     sources='parkings'
                     hitTolerance={5}
                     startCondition={useCallback((e) => { 
-                        const pId = e.feature.get("data")?.quark().id as UUID;
+                        const pId = e.feature.get("data").quark().id as UUID;
                         return !!(selectedItem && selectedItem().id === pId); 
                     }, [selectedItem])}
                     onDragEnd={(e) => {
@@ -83,15 +79,12 @@ export const ParkingMarkersLayer: React.FC<ParkingMarkersLayerProps> = watchDepe
                 hitTolerance={5}
                 onSelect={(e) => {
                     e.target.getFeatures().clear();
+                    e.mapBrowserEvent.stopPropagation();
+                    e.mapBrowserEvent.preventDefault();
                     if (e.selected.length === 1) {
                         const feature = e.selected[0];
-                        const data = feature.get("data") as ParkingMarkerData;
-                        if (data) { // It's an existing marker
-                            e.mapBrowserEvent.stopPropagation();
-                            e.mapBrowserEvent.preventDefault();
-                            select.parking(data.quark); 
-                        }
-                        else props.onCreate && props.onCreate(e.mapBrowserEvent)
+                        const { quark } = feature.get("data") as ParkingMarkerData;
+                        select.parking(quark); 
                     } else if (e.deselected.length === 1) {
                         flush.item();
                     }
@@ -102,12 +95,12 @@ export const ParkingMarkersLayer: React.FC<ParkingMarkersLayerProps> = watchDepe
                 id="parkings"
                 style={useCallback(
                     (feature) => {
-                        const bId = feature.get("data")?.quark().id;
+                        const bId = feature.get("data").quark().id;
                         return parkingMarkerStyle (
-                            mapZoom,
                             selectedItem ? selectedItem().id === bId : false,
                             selectedType !== "none",
-                            device
+                            device,
+                            mapZoom
                         )}
                     , [mapZoom, selectedType, selectedItem])
                 }
@@ -123,13 +116,6 @@ export const ParkingMarkersLayer: React.FC<ParkingMarkersLayerProps> = watchDepe
                             />
                         )
                     })}  
-                    {tool === 'PARKING' && pointerCoords && 
-                    //A mettre sur un autre layer avec un zIndex spécifique pour que ce soit toujours devant les autres marqueurs
-						<Point
-							key={"creating"}
-							coordinates={pointerCoords}
-						/>
-					}
                 </VectorSource>
             </VectorLayer>
         </>

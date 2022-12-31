@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { useBreakpoint } from "helpers/hooks";
 import { useSelectStore } from "components/pages/selectStore";
 
@@ -7,6 +7,7 @@ import Rock from "assets/icons/rock.svg";
 import InfoLight from "assets/icons/infoLight.svg";
 import ParkingLight from "assets/icons/parkingLight.svg";
 import { RoundButton } from "components/atoms";
+import { MapToolEnum } from "types";
 
 interface MapToolSelectorProps {
 	open: boolean;
@@ -18,6 +19,11 @@ export const MapToolSelector: React.FC<MapToolSelectorProps> = (props: MapToolSe
 	const select = useSelectStore(s => s.select);
 	const flush = useSelectStore(s => s.flush);
 	const tool = useSelectStore(s => s.tool);
+
+	const onToolClick = useCallback((t: MapToolEnum) => {
+		if (tool === t) flush.tool();
+		else select.tool(t);
+	}, [tool]);
 
 	return (
 		<>
@@ -42,25 +48,18 @@ export const MapToolSelector: React.FC<MapToolSelectorProps> = (props: MapToolSe
 						}}
 					>Ajouter au topo</div>
 					
+
 					<div className="flex flex-row items-center gap-3 rounded-full bg-white px-4 md:px-6">
 						<div 
 							className={"ktext-label text-xs cursor-pointer p-3 rounded-sm " + (tool === "SECTOR" ? 'text-main bg-main bg-opacity-30' : 'text-grey-light')}
-							onClick={() => {
-								if (tool === 'SECTOR') flush.tool();
-								else select.tool("SECTOR");
-								flush.item();
-							}}
+							onClick={() => onToolClick('SECTOR')}
 						>Nouveau secteur</div>
 
 						<div className="text-grey-light"> | </div>
 
 						<div 
 							className={"cursor-pointer p-2 rounded-sm" + (tool === "ROCK" ? " bg-main bg-opacity-30" : "")}
-							onClick={() => {
-								if (tool === 'ROCK') flush.tool();
-								else select.tool("ROCK");
-								flush.item();
-							}}
+							onClick={() => onToolClick('ROCK')}
 						>
 							<Rock
 								className={
@@ -72,11 +71,7 @@ export const MapToolSelector: React.FC<MapToolSelectorProps> = (props: MapToolSe
 
 						<div 
 							className={"cursor-pointer p-2 rounded-sm" + (tool === "WAYPOINT" ? " bg-info-light" : "")}
-							onClick={() => {
-								if (tool === 'WAYPOINT') flush.tool();
-								else select.tool("WAYPOINT");
-								flush.item();
-							}}
+							onClick={() => onToolClick('WAYPOINT')}
 						>
 							<InfoLight
 								className={
@@ -88,11 +83,7 @@ export const MapToolSelector: React.FC<MapToolSelectorProps> = (props: MapToolSe
 
 						<div 
 							className={"cursor-pointer p-2 rounded-sm" + (tool === "PARKING" ? " bg-info-light" : "")}
-							onClick={() => {
-								if (tool === 'PARKING') flush.tool();
-								else select.tool("PARKING");
-								flush.item();
-							}}
+							onClick={() => onToolClick('PARKING')}
 						>
 							<ParkingLight
 								className={

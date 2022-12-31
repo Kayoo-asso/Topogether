@@ -4,8 +4,8 @@ import { useEffect, useRef, useState } from "react";
 
 const UNDEFINED_ZOOM = -1;
 
-export function useMapZoom(zoomLevels: number | number[]) {
-	const thresholds = Array.isArray(zoomLevels) ? zoomLevels : [zoomLevels];
+export function useMapZoom(zoomLevels?: number | number[]) {
+	const thresholds = zoomLevels ? (Array.isArray(zoomLevels) ? zoomLevels : [zoomLevels]) : Array.from(Array(25),(x,i)=>i);
 	const map = useMap();
 	const [view, setView] = useState<View>(map.getView());
 	const [zoom, setZoom] = useState<number>(

@@ -39,6 +39,7 @@ type MapControlProps = React.PropsWithChildren<
 		className?: string;
 		initialCenter?: Position;
 		initialZoom?: number;
+		minZoom?: number;
 		displaySatelliteButton?: boolean;
 		displayUserMarker?: boolean;
 		displayToolSelector?: boolean;
@@ -281,6 +282,7 @@ export const MapControl = watchDependencies<Map, MapControlProps>(
 							props.initialCenter || position || fontainebleauLocation
 						)}
 						zoom={initialZoom}
+						minZoom={props.minZoom}
 					/>
 
 					<TileLayer>

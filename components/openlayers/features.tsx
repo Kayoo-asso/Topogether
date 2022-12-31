@@ -131,7 +131,7 @@ function implementation<G extends GeometryType>(
 	const feature = useMemo(() => new Feature({ geometry }), [geometry]);
 
 	useEffect(() => {
-		console.log("New feature", feature);
+		// console.log("New feature", feature);
 	}, []);
 
 	useEffect(() => {

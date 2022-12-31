@@ -13,14 +13,11 @@ import { fromLonLat, toLonLat } from 'ol/proj';
 import { Drag } from 'components/openlayers/interactions/Drag';
 import { useMapZoom } from 'helpers/hooks/useMapZoom';
 import { Breakpoint, useBreakpoint } from 'helpers/hooks';
-import { useMapPointerCoordinates } from 'helpers/hooks/useMapPointerCoordinates';
-import { MapBrowserEvent } from 'ol';
 import PointGeom from "ol/geom/Point";
 
 interface WaypointMarkersLayerProps {
     waypoints: QuarkArray<Waypoint>;
     draggable?: boolean;
-    onCreate?: (e: MapBrowserEvent<MouseEvent>) => void;
 }
 
 export type WaypointMarkerData = {
@@ -28,7 +25,7 @@ export type WaypointMarkerData = {
 	quark: Quark<Waypoint>;
 }
 
-export const waypointMarkerStyle = (mapZoom: number, selected: boolean, anySelected: boolean, device: Breakpoint) => {
+export const waypointMarkerStyle = (selected: boolean, anySelected: boolean, device: Breakpoint, mapZoom: number) => {
     const icon = new Icon({
         opacity: mapZoom > disappearZoom ? (anySelected ? (selected ? 1 : 0.4) : 1) : 0,
         src: "/assets/icons/markers/info.svg",
@@ -49,11 +46,9 @@ export const WaypointMarkersLayer: React.FC<WaypointMarkersLayerProps> = watchDe
     const selectedItem = useSelectStore((s) => s.item.value);
     const select = useSelectStore(s => s.select);
     const flush = useSelectStore(s => s.flush);
-    const tool = useSelectStore(s => s.tool);
-
+    
     const mapZoom = useMapZoom(disappearZoom);
     const device = useBreakpoint();
-    const pointerCoords = useMapPointerCoordinates(!!tool);
 
     return (
         <>
@@ -85,15 +80,12 @@ export const WaypointMarkersLayer: React.FC<WaypointMarkersLayerProps> = watchDe
                 hitTolerance={5}
                 onSelect={(e) => {
                     e.target.getFeatures().clear();
+                    e.mapBrowserEvent.stopPropagation();
+                    e.mapBrowserEvent.preventDefault();
                     if (e.selected.length === 1) {
                         const feature = e.selected[0];
-                        const data = feature.get("data") as WaypointMarkerData;
-                        if (data) { // It's an existing marker
-                            e.mapBrowserEvent.stopPropagation();
-                            e.mapBrowserEvent.preventDefault();
-                            select.waypoint(data.quark); 
-                        }
-                        else props.onCreate && props.onCreate(e.mapBrowserEvent)
+                        const { quark } = feature.get("data") as WaypointMarkerData;  
+                        select.waypoint(quark); 
                     } else if (e.deselected.length === 1) {
                         flush.item();
                     }
@@ -104,12 +96,12 @@ export const WaypointMarkersLayer: React.FC<WaypointMarkersLayerProps> = watchDe
                 id="waypoints"
                 style={useCallback(
                     (feature) => {     
-                        const bId = feature.get("data")?.quark().id;
+                        const bId = feature.get("data").quark().id;
                         return waypointMarkerStyle (
-                            mapZoom,
                             selectedItem ? selectedItem().id === bId : false,
                             selectedType !== "none",
-                            device
+                            device,
+                            mapZoom
                         )}
                     , [mapZoom, selectedType, selectedItem])
                 }
@@ -125,12 +117,6 @@ export const WaypointMarkersLayer: React.FC<WaypointMarkersLayerProps> = watchDe
                             />
                         )
                     })}
-                    {tool === 'WAYPOINT' && pointerCoords &&
-						<Point
-							key={"creating"}
-							coordinates={pointerCoords}
-						/>
-					}
                 </VectorSource>
             </VectorLayer>
         </>

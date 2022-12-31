@@ -51,7 +51,8 @@ import { toLonLat } from "ol/proj";
 import { SectorAreaMarkersLayer } from "components/map/markers/SectorAreaMarkersLayer";
 import { BoulderMarkersLayer } from "components/map/markers/BoulderMarkersLayer";
 import { ParkingMarkersLayer } from "components/map/markers/ParkingMarkersLayer";
-import { WaypointMarkersLayer } from "components/map/markers/WaypointMarkersLayer";
+import { WaypointMarkersLayer, disappearZoom } from "components/map/markers/WaypointMarkersLayer";
+import { CreatingMarkersLayer } from "components/map/markers/CreatingMarkersLayer";
 
 interface RootBuilderProps {
 	topoQuark: Quark<Topo>;
@@ -222,6 +223,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 						ref={mapRef}
 						topo={props.topoQuark}
 						initialZoom={16}
+						minZoom={disappearZoom - 1}
 						initialCenter={topo.location}
 						displaySectorButton
 						onSectorButtonClick={() => select.info("SECTOR", breakpoint)}
@@ -232,8 +234,12 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 						displayToolSelector
 						boulderFilters={boulderFilters}
 						boulderFiltersDomain={defaultBoulderFilterOptions}
-						// onClick={handleCreateNewMarker}
 					>
+						{tool && tool !== "SECTOR" &&
+							<CreatingMarkersLayer 
+								onCreate={handleCreateNewMarker}
+							/>
+						}
 						<SectorAreaMarkersLayer
 							topoQuark={props.topoQuark}
 							boulderOrder={boulderOrder()}
@@ -244,18 +250,15 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 						<ParkingMarkersLayer 
 							parkings={topo.parkings}
 							draggable
-							onCreate={handleCreateNewMarker}
 						/>
 						<WaypointMarkersLayer 
 							waypoints={topo.waypoints}
 							draggable
-							onCreate={handleCreateNewMarker}
 						/>
 						<BoulderMarkersLayer 
 							boulders={topo.boulders}
 							boulderOrder={boulderOrder()}
 							draggable
-							onCreate={handleCreateNewMarker}
 						/>
 					</MapControl>
 

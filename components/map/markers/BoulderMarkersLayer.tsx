@@ -6,7 +6,7 @@ import {
 	VectorLayer,
 	VectorSource,
 } from "components/openlayers";
-import Feature, { FeatureLike } from "ol/Feature";
+import { FeatureLike } from "ol/Feature";
 import { Fill, Icon, Style, Text } from "ol/style";
 import { Boulder, UUID } from "types";
 import { useSelectStore } from "components/pages/selectStore";
@@ -14,15 +14,13 @@ import { fromLonLat, toLonLat } from "ol/proj";
 import { Drag } from "components/openlayers/interactions/Drag";
 import { Cluster } from "components/openlayers/sources/Cluster";
 import { Breakpoint, useBreakpoint } from "helpers/hooks";
-import { useMapPointerCoordinates } from "helpers/hooks/useMapPointerCoordinates";
-import { MapBrowserEvent } from "ol";
 import PointGeom from "ol/geom/Point";
+import { useMapZoom } from "helpers/hooks/useMapZoom";
 
 interface BoulderMarkersLayerProps {
 	boulders: QuarkArray<Boulder>;
 	boulderOrder: globalThis.Map<UUID, number>;
 	draggable?: boolean;
-	onCreate?: (e: MapBrowserEvent<MouseEvent>) => void;
 }
 
 export type BoulderMarkerData = {
@@ -31,12 +29,13 @@ export type BoulderMarkerData = {
 };
 
 export const boulderMarkerStyle = (
-	feature: FeatureLike,
 	selected: boolean,
 	anySelected: boolean,
-	device: Breakpoint
+	device: Breakpoint,
+	mapZoom: number, //Will allow to make boulders disappear when cluster will be on another layer
+	feature?: FeatureLike,
 ) => {
-	const { label } = feature.get("data") as BoulderMarkerData;
+	const label = feature ? feature.get("data").label : '';
 	const icon = new Icon({
 		opacity: anySelected ? (selected ? 1 : 0.4) : 1,
 		src: "/assets/icons/markers/boulder.svg",
@@ -86,10 +85,9 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> =
 			const selectedItem = useSelectStore((s) => s.item.value);
 			const select = useSelectStore((s) => s.select);
 			const flush = useSelectStore((s) => s.flush);
-			const tool = useSelectStore((s) => s.tool);
 
 			const device = useBreakpoint();
-			const pointerCoords = useMapPointerCoordinates(!!tool);
+			const mapZoom = useMapZoom();
 
 <<<<<<< HEAD
 			return (
@@ -101,7 +99,7 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> =
 							startCondition={useCallback(
 								(e) => {
 									const feature = e.feature;
-									const bId = feature.get("data")?.quark().id as UUID;
+									const bId = feature.get("data").quark().id as UUID;
 									return !!(selectedItem && selectedItem().id === bId);
 								},
 								[selectedItem]
@@ -220,15 +218,13 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> =
 						hitTolerance={5}
 						onSelect={(e) => {
 							e.target.getFeatures().clear();
+							e.mapBrowserEvent.stopPropagation();
+									e.mapBrowserEvent.preventDefault();
 							if (e.selected.length === 1) {
 								// Because we're using Cluster, the feature in the selection is a cluster of features
 								const feature = e.selected[0];
-								const data = feature.get("data") as BoulderMarkerData;
-								if (data) {
-									e.mapBrowserEvent.stopPropagation();
-									e.mapBrowserEvent.preventDefault();
-									select.boulder(data.quark);
-								} else props.onCreate && props.onCreate(e.mapBrowserEvent);
+								const { quark } = feature.get("data") as BoulderMarkerData;
+								select.boulder(quark);									
 							} else if (e.deselected.length === 1) {
 								flush.item();
 							}
@@ -250,12 +246,13 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> =
 						id="boulders"
 						style={useCallback(
 							(feature: FeatureLike) => {
-								const bId = feature.get("data")?.quark().id as UUID;
+								const bId = feature.get("data").quark().id as UUID;
 								return boulderMarkerStyle(
-									feature,
 									selectedItem ? selectedItem().id === bId : false,
 									selectedType !== "none",
-									device
+									device,
+									mapZoom,
+									feature
 								);
 							},
 							[selectedType, selectedItem, device]
@@ -273,9 +270,6 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> =
 									/>
 								);
 							})}
-							{tool === "ROCK" && pointerCoords && (
-								<Point key={"creating"} coordinates={pointerCoords} />
-							)}
 						</VectorSource>
 					</VectorLayer>
 
