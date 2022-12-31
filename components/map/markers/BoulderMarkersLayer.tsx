@@ -31,9 +31,10 @@ export const boulderMarkerStyle = (
 	selected: boolean,
 	anySelected: boolean,
 	device: Breakpoint,
-	feature: FeatureLike,
+	feature?: FeatureLike,
+	bouldersNb?: number,
 ) => {
-	const { label } = feature.get("data") as BoulderMarkerData;
+	const label = feature ? feature.get("data").label : (bouldersNb! + 1).toString();
 	const icon = new Icon({
 		opacity: anySelected ? (selected ? 1 : 0.4) : 1,
 		src: "/assets/icons/markers/boulder.svg",

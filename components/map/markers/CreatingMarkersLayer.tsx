@@ -14,6 +14,7 @@ import { disappearZoom, waypointMarkerStyle } from './WaypointMarkersLayer';
 import { boulderMarkerStyle } from './BoulderMarkersLayer';
 
 interface CreatingMarkersLayerProps {
+    bouldersNb?: number;
     onCreate?: (e: MapBrowserEvent<MouseEvent>) => void;
 }
 
@@ -33,12 +34,11 @@ export const CreatingMarkersLayer: React.FC<CreatingMarkersLayerProps> = (props:
             <VectorLayer
                 id="creating"
                 style={useCallback(() => {
-                    const style = 
-                        tool === 'PARKING' ? parkingMarkerStyle : 
-                        tool === 'WAYPOINT' ? waypointMarkerStyle :
-                        tool === 'ROCK' ? boulderMarkerStyle :
-                        undefined;
-                    if (style) return style(false, false, device, disappearZoom + 1, undefined);
+                    switch (tool) {
+                        case "PARKING": return parkingMarkerStyle(false, false, device, disappearZoom + 1); break;
+                        case "WAYPOINT": return waypointMarkerStyle(false, false, device, disappearZoom + 1); break;
+                        case 'ROCK': return boulderMarkerStyle(false, false, device, undefined, props.bouldersNb); break;
+                    }
                 }, [tool, device])}
             >
                 <VectorSource> 

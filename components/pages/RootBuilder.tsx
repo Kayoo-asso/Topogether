@@ -237,6 +237,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 					>
 						{tool && tool !== "SECTOR" &&
 							<CreatingMarkersLayer 
+								bouldersNb={topo.boulders.length}
 								onCreate={handleCreateNewMarker}
 							/>
 						}
