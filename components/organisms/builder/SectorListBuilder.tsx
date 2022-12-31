@@ -15,7 +15,6 @@ import ArrowSimple from "assets/icons/arrow-simple.svg";
 import Edit from "assets/icons/edit.svg";
 import { useBreakpoint, useModal } from "helpers/hooks";
 import { staticUrl } from "helpers/constants";
-import { toLatLng } from "helpers/map";
 import { useSelectStore } from "components/pages/selectStore";
 import { ModalRenameSector } from "./ModalRenameSector";
 import { Map } from "ol";

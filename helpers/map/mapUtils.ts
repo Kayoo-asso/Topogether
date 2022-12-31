@@ -1,70 +1,5 @@
 import type { Breakpoint } from "helpers/hooks";
-import { Map } from "ol";
-import { buffer, createEmpty, extend, Extent } from "ol/extent";
 import { GeoCoordinates, Position } from "types";
-
-// --- LatLng helpers ---
-export function toLatLng(pos: Position): { lng: number; lat: number } {
-	return {
-		lng: pos[0],
-		lat: pos[1],
-	};
-}
-
-export function fromLatLng(latLng: { lat: number; lng: number }): Position {
-	return [latLng.lng, latLng.lat];
-}
-
-export function fromLatLngFn(latLng: google.maps.LatLng): Position {
-	return [latLng.lng(), latLng.lat()];
-}
-export function fromLatLngLiteralFn(
-	latLng: google.maps.LatLngLiteral
-): Position {
-	return [latLng.lng, latLng.lat];
-}
-
-export type LayerNames =
-	| "boulders"
-	| "parkings"
-	| "sectors"
-	| "waypoints"
-	| "topos";
-export const fitExtentToLayers = (map: Map, lyrsClassName: LayerNames[]) => {
-	let ext: Extent = createEmpty();
-	for (let className of lyrsClassName) {
-		const lyr = map
-			.getLayers()
-			.getArray()
-			.find((l) => l.getClassName().includes(className)) as any;
-		if (lyr) {
-			ext = extend(ext, lyr.getSource().getExtent());
-		}
-	}
-	console.log("Fitting map to extent:", ext);
-	map.getView().fit(buffer(ext, 500), { size: map.getSize(), maxZoom: 18 });
-};
-
-// --- markerSize ---
-type Size = {
-	width: number;
-	height: number;
-	equals(other: Size): boolean;
-};
-
-export const markerSize = (w: number, h?: number): Size => {
-	return {
-		width: w,
-		height: h || w,
-		equals: function (other) {
-			return (
-				other !== null &&
-				this.width === other.width &&
-				this.height === other.height
-			);
-		},
-	};
-};
 
 // --- launchNavigation ---
 export const launchNavigation = (
@@ -74,11 +9,17 @@ export const launchNavigation = (
 	device: Breakpoint,
 	isIos: boolean
 ) => {
-	const d = toLatLng(destination);
+	const d = {
+		lng: destination[0],
+		lat: destination[1]
+	};
 
 	// We have the user position so we can propose the itinerary
 	if (origin) {
-		const o = toLatLng(origin);
+		const o = {
+			lng: origin[0],
+			lat: origin[1],
+		};
 		if (provider === "apple") {
 			// OPEN ON PLAN
 			device === "desktop"
@@ -164,8 +105,7 @@ export const launchNavigation = (
 export const isOnMap = (e: KeyboardEvent) => {
 	const path = e.composedPath && e.composedPath();
 	return !!path.find((evt) => {
-		const transElt = evt as unknown;
-		const elt = transElt as Element;
+		const elt = evt as unknown as Element;
 		return elt.id === "map";
 	});
 };

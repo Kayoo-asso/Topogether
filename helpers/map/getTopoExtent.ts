@@ -22,15 +22,5 @@ export function getTopoExtent(topo: TopoData | Topo, buffer?: number): Extent {
 	if (buffer) {
 		extent = addBuffer(extent, buffer);
 	}
-	// if (isEmpty(extent)) extent = addBuffer(extent, 100);
-	// console.log(isEmpty(extent));
 	return extent;
 }
-
-// const extendBounds = (location: GeoCoordinates, bounds: Bounds) => {
-//   location = fromLonLat(location) as GeoCoordinates;
-// 	bounds[0] = Math.min(bounds[0], location[0]);
-// 	bounds[1] = Math.min(bounds[1], location[1]);
-// 	bounds[2] = Math.max(bounds[2], location[0]);
-// 	bounds[3] = Math.max(bounds[3], location[1]);
-// };
