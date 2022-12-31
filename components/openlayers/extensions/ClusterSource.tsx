@@ -1,4 +1,3 @@
-import EventType from "ol/events/EventType";
 import Feature from "ol/Feature";
 import Point from "ol/geom/Point.js";
 import VectorSource from "ol/source/Vector";
@@ -11,13 +10,19 @@ import {
 	createOrUpdateFromCoordinate,
 	getCenter,
 } from "ol/extent";
-import { getUid } from "ol/util";
 import { AttributionLike } from "ol/source/Source";
 import { Projection } from "ol/proj";
 import VectorEventType from "ol/source/VectorEventType";
-import { Fill, Style } from "ol/style";
+import { Style } from "ol/style";
 import { Geometry } from "ol/geom";
 import { StyleLike } from "ol/style/Style";
+
+
+// TODO:
+// - implement Cluster.clear() properly
+// - add more specific event handlers:
+//   -> feature added / changed / removed = incremental patch
+//   -> resolution change = recalculation
 
 interface Options {
 	attributions?: AttributionLike;
@@ -31,11 +36,6 @@ interface Options {
 	source?: VectorSource | null;
 	hideInSource?: boolean;
 	wrapX?: boolean;
-}
-
-interface CopyInformation {
-	copy: Feature<Geometry>;
-	origStyle: StyleLike | undefined;
 }
 
 const defaultOptions = {
