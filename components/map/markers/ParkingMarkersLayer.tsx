@@ -14,7 +14,6 @@ import { Drag } from 'components/openlayers/interactions/Drag';
 import { useMapZoom } from 'helpers/hooks/useMapZoom';
 import { Breakpoint, useBreakpoint } from 'helpers/hooks';
 import { disappearZoom } from './WaypointMarkersLayer';
-import { useMapPointerCoordinates } from 'helpers/hooks/useMapPointerCoordinates';
 import PointGeom from "ol/geom/Point";
 
 interface ParkingMarkersLayerProps {

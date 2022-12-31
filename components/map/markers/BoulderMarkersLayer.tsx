@@ -15,7 +15,6 @@ import { Drag } from "components/openlayers/interactions/Drag";
 import { Cluster } from "components/openlayers/sources/Cluster";
 import { Breakpoint, useBreakpoint } from "helpers/hooks";
 import PointGeom from "ol/geom/Point";
-import { useMapZoom } from "helpers/hooks/useMapZoom";
 
 interface BoulderMarkersLayerProps {
 	boulders: QuarkArray<Boulder>;
@@ -32,10 +31,9 @@ export const boulderMarkerStyle = (
 	selected: boolean,
 	anySelected: boolean,
 	device: Breakpoint,
-	mapZoom: number, //Will allow to make boulders disappear when cluster will be on another layer
-	feature?: FeatureLike,
+	feature: FeatureLike,
 ) => {
-	const label = feature ? feature.get("data").label : '';
+	const { label } = feature.get("data") as BoulderMarkerData;
 	const icon = new Icon({
 		opacity: anySelected ? (selected ? 1 : 0.4) : 1,
 		src: "/assets/icons/markers/boulder.svg",
@@ -87,9 +85,7 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> =
 			const flush = useSelectStore((s) => s.flush);
 
 			const device = useBreakpoint();
-			const mapZoom = useMapZoom();
 
-<<<<<<< HEAD
 			return (
 				<>
 					{draggable && (
@@ -114,102 +110,6 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> =
 										location: [coords[0], coords[1]],
 									}));
 							}}
-=======
-	return (
-		<>
-			{draggable && (
-				<Drag
-					sources="boulders"
-					hitTolerance={5}
-					startCondition={useCallback(
-						(e) => {
-							const bId = e.feature.get("data")?.quark().id as UUID;
-							return !!(selectedItem && selectedItem().id === bId);
-						},
-						[selectedItem]
-					)}
-					onDragEnd={(e) => {
-						const data = e.feature.get("data") as BoulderMarkerData;
-						const point = e.feature.getGeometry() as PointGeom;
-						const coords = toLonLat(point.getCoordinates());
-						if (data)
-							data.quark.set((b) => ({
-								...b,
-								location: [coords[0], coords[1]],
-							}));
-					}}
-				/>
-			)}
-
-			
-			<Select
-				layers={["boulders"]}
-				hitTolerance={5}
-				onSelect={(e) => {
-					e.target.getFeatures().clear();
-					if (e.selected.length === 1) {
-						// Because we're using Cluster, the feature in the selection is a cluster of features
-						const cluster = e.selected[0];
-						const clusterFeatures = cluster.get('features');
-						if (clusterFeatures.length === 1) {
-							const feature = clusterFeatures[0];
-							const data = feature.get("data") as BoulderMarkerData;
-							if (data) {
-								e.mapBrowserEvent.stopPropagation();
-								e.mapBrowserEvent.preventDefault();
-								select.boulder(data.quark);
-							}
-							else props.onCreate && props.onCreate(e.mapBrowserEvent)	
-						} else {
-							// TODO: zoom into the cluster?
-						}
-					} else if (e.deselected.length === 1) {
-						flush.item();
-					}
-				}}
-			/>
-
-			<VectorLayer
-				id="boulders"
-				style={useCallback((cluster) => {
-					// TODO: fix this, by ensuring the layer does not get a simple VectorSource before the Cluster
-					const features = cluster.get("features") as Array<FeatureLike> | undefined;
-					const size = features?.length || 0;
-					// Cluster style
-					if (size > 1) return clusterMarkerStyle(size);
-					else {
-						const feature = features ? features[0] : cluster;
-						const bId = feature.get("data")?.quark().id as UUID;
-						return boulderMarkerStyle(
-							feature,
-							selectedItem ? selectedItem().id === bId : false,
-							selectedType !== "none",
-							device
-						);
-					}
-				}, [selectedType, selectedItem, device])}
-			>
-				<Cluster
-					minDistance={10}
-					distance={30}
-				/>
-				<VectorSource>
-					{props.boulders.quarks().map((bQuark) => {					
-						const b = bQuark();
-						const label = props.boulderOrder.get(b.id)?.toString();
-						return (
-							<Point
-								key={b.id}
-								coordinates={fromLonLat(b.location)}
-								data={{ quark: bQuark, label }}
-							/>
-						);
-					})}
-					{tool === 'ROCK' && pointerCoords &&
-						<Point
-							key={"creating"}
-							coordinates={pointerCoords}
->>>>>>> aa6529b (wip drag)
 						/>
 					)}
 
@@ -219,12 +119,12 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> =
 						onSelect={(e) => {
 							e.target.getFeatures().clear();
 							e.mapBrowserEvent.stopPropagation();
-									e.mapBrowserEvent.preventDefault();
+							e.mapBrowserEvent.preventDefault();
 							if (e.selected.length === 1) {
 								// Because we're using Cluster, the feature in the selection is a cluster of features
 								const feature = e.selected[0];
-								const { quark } = feature.get("data") as BoulderMarkerData;
-								select.boulder(quark);									
+								const data = feature.get("data") as BoulderMarkerData;
+								select.boulder(data.quark);
 							} else if (e.deselected.length === 1) {
 								flush.item();
 							}
@@ -251,7 +151,6 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> =
 									selectedItem ? selectedItem().id === bId : false,
 									selectedType !== "none",
 									device,
-									mapZoom,
 									feature
 								);
 							},
