@@ -1,28 +1,23 @@
-import React, { useCallback, useState } from 'react';
+import React, { useState } from 'react';
 import { Quark, watchDependencies } from 'helpers/quarky';
 import {
     Draw,
 	Polygon,
-	Select,
 	VectorLayer,
 	VectorSource,
 } from "components/openlayers";
 import { FeatureLike } from 'ol/Feature';
 import { Circle, Fill, Stroke, Style } from 'ol/style';
 import { GeoCoordinates, Sector, Topo, UUID } from 'types';
-import { SelectedSector, useSelectStore } from 'components/pages/selectStore';
+import { useSelectStore } from 'components/pages/selectStore';
 import { fromLonLat, toLonLat } from 'ol/proj';
 import { Polygon as PolygonType } from 'ol/geom';
-import { createSector, sectorChanged } from 'helpers/builder';
+import { createSector } from 'helpers/builder';
 import { ModalRenameSector } from 'components/organisms/builder/ModalRenameSector';
-import { Drag } from 'components/openlayers/interactions/Drag';
-import { MapBrowserEvent } from 'ol';
 
 interface SectorAreaMarkersLayerProps {
     topoQuark: Quark<Topo>,
 	boulderOrder: Map<UUID, number>;
-    draggable?: boolean;
-    selectable?: boolean;
     creating?: boolean;
 }
 
@@ -89,7 +84,7 @@ const creatingSectorMarkerStyle = (feature: FeatureLike) => {
     return [];
 }
 
-const getPathFromFeature = (feature: FeatureLike) => {
+export const getPathFromFeature = (feature: FeatureLike) => {
     const poly = feature.getGeometry() as PolygonType | undefined;
     const coords: GeoCoordinates[] = poly!.getCoordinates()[0].map(c => {
         const lonlat = toLonLat(c);
@@ -101,39 +96,16 @@ const getPathFromFeature = (feature: FeatureLike) => {
 // Events we need to handle (TODO)
 // - window.keydown: ENTER or ESC
 export const SectorAreaMarkersLayer: React.FC<SectorAreaMarkersLayerProps> = watchDependencies(({
-    draggable = false,
-    selectable = false,
     creating = false,
     ...props
 }: SectorAreaMarkersLayerProps) => {
     const sectors = props.topoQuark().sectors;
-    const selectedItem = useSelectStore((s) => s.item.value);
     const flush = useSelectStore(s => s.flush);
 
     const [sectorToRename, setSectorToRename] = useState<Quark<Sector>>();
 
     return (
         <>
-            {draggable &&
-                <Drag 
-                    sources='sectors'
-                    hitTolerance={0}
-                    startCondition={useCallback((e) => { 
-                        const sId = e.feature.get("data").value().id as UUID;
-                        return !!(selectedItem && selectedItem().id === sId); 
-                    }, [selectedItem])}
-                    onDragEnd={(e) => {
-                        const path = getPathFromFeature(e.feature);
-                        const { value } = e.feature.get("data") as SelectedSector;
-                        value.set(s => ({
-                            ...s,
-                            path: path,
-                        }))
-                        sectorChanged(props.topoQuark, value().id, props.boulderOrder);
-                    }}
-                />
-            }
-
             {creating &&
                 <Draw 
                     source='sectors'

@@ -6,17 +6,14 @@ import {
 	VectorSource,
 } from "components/openlayers";
 import { Icon, Style } from 'ol/style';
-import { UUID, Waypoint } from 'types';
-import { SelectedWaypoint, useSelectStore } from 'components/pages/selectStore';
-import { fromLonLat, toLonLat } from 'ol/proj';
-import { Drag } from 'components/openlayers/interactions/Drag';
+import { Waypoint } from 'types';
+import { useSelectStore } from 'components/pages/selectStore';
+import { fromLonLat } from 'ol/proj';
 import { useMapZoom } from 'helpers/hooks/useMapZoom';
 import { Breakpoint, useBreakpoint } from 'helpers/hooks';
-import PointGeom from "ol/geom/Point";
 
 interface WaypointMarkersLayerProps {
     waypoints: QuarkArray<Waypoint>;
-    draggable?: boolean;
 }
 
 export const waypointMarkerStyle = (selected: boolean, anySelected: boolean, device: Breakpoint, mapZoom: number) => {
@@ -32,50 +29,24 @@ export const waypointMarkerStyle = (selected: boolean, anySelected: boolean, dev
 }
 
 export const disappearZoom = 14;
-export const WaypointMarkersLayer: React.FC<WaypointMarkersLayerProps> = watchDependencies(({
-    draggable = false,
-    ...props
-}: WaypointMarkersLayerProps) => {
+export const WaypointMarkersLayer: React.FC<WaypointMarkersLayerProps> = watchDependencies((props: WaypointMarkersLayerProps) => {
     const selectedType = useSelectStore((s) => s.item.type);
-    const selectedItem = useSelectStore((s) => s.item.value);
+    const mustDisappear = !!(selectedType !== 'none' && selectedType !== 'sector');
     
     const mapZoom = useMapZoom(disappearZoom);
     const device = useBreakpoint();
 
     return (
         <>
-            {draggable &&
-                <>
-                    <Drag 
-                        sources='waypoints'
-                        hitTolerance={5}
-                        startCondition={useCallback((e) => { 
-                            const wId = e.feature.get("data")?.value().id as UUID;
-                            return !!(selectedItem && selectedItem().id === wId); 
-                        }, [selectedItem])}
-                        onDragEnd={(e) => {
-                            const data = e.feature.get("data") as SelectedWaypoint;
-                            const point = e.feature.getGeometry() as PointGeom;
-                            const coords = toLonLat(point.getCoordinates());
-                            if (data)
-                                data.value.set((b) => ({
-                                    ...b,
-                                    location: [coords[0], coords[1]],
-                                }));
-                        }}
-                    />
-                </>
-            }
-
             <VectorLayer
                 id="waypoints"
                 style={useCallback(() =>
                     waypointMarkerStyle (
                             false,
-                            selectedType !== "none",
+                            mustDisappear,
                             device,
                             mapZoom
-                        ), [mapZoom, selectedType])
+                        ), [mapZoom, device, mustDisappear])
                 }
             >
                 <VectorSource>

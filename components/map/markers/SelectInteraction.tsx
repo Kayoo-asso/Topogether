@@ -23,6 +23,7 @@ export const SelectInteraction: React.FC<SelectInteractionProps> = ({
     ...props
 }: SelectInteractionProps) => {
     const selectedType = useSelectStore((s) => s.item.type);
+    const mustDisappear = !!(selectedType !== 'none' && selectedType !== 'sector');
     const select = useSelectStore((s) => s.select);
     const flush = useSelectStore((s) => s.flush);
 
@@ -45,7 +46,7 @@ export const SelectInteraction: React.FC<SelectInteractionProps> = ({
                         case 'boulder': select.boulder(item.value); break;
                         case 'parking': select.parking(item.value); break;
                         case 'waypoint': select.waypoint(item.value); break;
-                        case 'sector': flush.item(); break;
+                        case 'sector': select.sector(item.value); break;
                         default: return;
                     }                 
                 } else if (e.deselected.length === 1) {
@@ -55,13 +56,13 @@ export const SelectInteraction: React.FC<SelectInteractionProps> = ({
             style={useCallback((feature: FeatureLike) => {
                 const item = feature.get("data");
                 switch (item.type) {
-                    case 'boulder': return boulderMarkerStyle(true, true, device, props.boulderOrder, feature); break;
-                    case 'parking': return parkingMarkerStyle(true, selectedType !== "none", device, mapZoom); break;
-                    case 'waypoint': return waypointMarkerStyle(true, selectedType !== "none", device, mapZoom); break;
+                    case 'boulder': return boulderMarkerStyle(true, mustDisappear, device, props.boulderOrder, feature); break;
+                    case 'parking': return parkingMarkerStyle(true, mustDisappear, device, mapZoom); break;
+                    case 'waypoint': return waypointMarkerStyle(true, mustDisappear, device, mapZoom); break;
                     case 'sector': return sectorMarkerStyle(true); break;
                     default: return;
                 }  
-            }, [device, mapZoom])}
+            }, [device, mapZoom, mustDisappear])}
             // Necessary to register single clicks outside any feature
             // Toggle when clicking again
             toggleCondition={singleClick}

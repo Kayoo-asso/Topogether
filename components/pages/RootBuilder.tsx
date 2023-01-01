@@ -54,6 +54,7 @@ import { ParkingMarkersLayer } from "components/map/markers/ParkingMarkersLayer"
 import { WaypointMarkersLayer, disappearZoom } from "components/map/markers/WaypointMarkersLayer";
 import { CreatingMarkersLayer } from "components/map/markers/CreatingMarkersLayer";
 import { SelectInteraction } from "components/map/markers/SelectInteraction";
+import { DragInteraction } from "components/map/markers/DragInteraction";
 
 interface RootBuilderProps {
 	topoQuark: Quark<Topo>;
@@ -247,25 +248,24 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 							boulderOrder={boulderOrder()}
 							selectableSector
 						/>
+						<DragInteraction 
+							topoQuark={props.topoQuark}
+							boulderOrder={boulderOrder()}
+						/>
 						<SectorAreaMarkersLayer
 							topoQuark={props.topoQuark}
 							boulderOrder={boulderOrder()}
-							selectable
 							creating={tool === "SECTOR"}
-							draggable
 						/>
 						<ParkingMarkersLayer 
 							parkings={topo.parkings}
-							draggable
 						/>
 						<WaypointMarkersLayer 
 							waypoints={topo.waypoints}
-							draggable
 						/>
 						<BoulderMarkersLayer 
 							topo={props.topoQuark}
 							boulderOrder={boulderOrder()}
-							draggable
 						/>
 					</MapControl>
 
