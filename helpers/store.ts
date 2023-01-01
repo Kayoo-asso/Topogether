@@ -1,6 +1,6 @@
-import { createStore, KeepIfHasCellId, Schema, SchemaInstance, Tables, TablesWithCellId } from "tinybase/store";
+import { createStore } from "tinybase/store";
 
-const schema = {
+const store = createStore().setSchema({
 	downloads: {
 		status: { type: "string" },
 		progress: { type: "number" },
@@ -12,9 +12,25 @@ const schema = {
   }, 
   pets: {
     name: {type: "string"},
-    age: { type: "boolean"},
+    // kind of artificial, but good for the demo
+    age: { type: "string"},
   }
-} satisfies Schema;
+});
+
+store.addCellListener(
+  null, // listening to all tables is the most challenging case
+  "someRowId",
+  "age", // auto-completion for all possible cell IDs
+  (store, tableId, rowId, cellId, newCell, oldCell, getCellChange) => {
+    // `tableId` is known to be `stores` or `pets`
+    // `rowId` is known to be constant
+    // `cellId` is known to be constant
+    // `newCell` and `oldCell` are known to be a string or a number
+    //  -> (can't refine more than that, even by checking `tableId` unfortunately)
+    // `getCellChange` is also fully typesafe here
+  }
+)
+
 
 
 
