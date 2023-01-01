@@ -53,8 +53,8 @@ export class DragInteraction extends PointerInteraction {
 	protected hitTolerance_: number;
 	protected sources: Array<VectorSource>;
 	protected layerFilter_: (layer: Layer) => boolean;
+	protected origLayer_: VectorLayer<VectorSource> | null;
 	protected tempLayer_: VectorLayer<VectorSource> | null;
-	protected origSource_: VectorSource | null;
 
 	constructor(options: DragOptions) {
 		super({
@@ -86,7 +86,7 @@ export class DragInteraction extends PointerInteraction {
 		}.bind(this);
 
 		this.tempLayer_ = null;
-		this.origSource_ = null;
+		this.origLayer_ = null;
 	}
 
 	findFeature(evt: MapBrowserEvent<UIEvent>): [Feature, VectorLayer<VectorSource>] | undefined {
@@ -138,22 +138,8 @@ function handleDownEvent(this: DragInteraction, evt: MapBrowserEvent<UIEvent>) {
 		this.coordinate_ = evt.coordinate;
 		// Keep track of the feature and its original source
 		this.feature_ = feature;
-		this.origSource_ = layer.getSource()!;
-		// Setup a temporary layer for the dragging motion
-		this.tempLayer_ = new VectorLayer({
-			source: new VectorSource({
-				useSpatialIndex: false,
-				wrapX: layer.getSource()?.getWrapX(),
-				features: [feature]
-			}),
-			style: layer.getStyle(),
-			updateWhileAnimating: true,
-			updateWhileInteracting: true
-		});
-		// Remove the feature from its original source
-		this.origSource_.removeFeature(feature)
-		// Show the new layer
-		evt.map.addLayer(this.tempLayer_);
+		this.origLayer_ = layer;
+		// We'll setup a temporary layer for the Drag on the first move
 		this.dispatchEvent(dragEvent);
 	}
 
@@ -161,15 +147,37 @@ function handleDownEvent(this: DragInteraction, evt: MapBrowserEvent<UIEvent>) {
 }
 
 function handleDragEvent(this: DragInteraction, evt: MapBrowserEvent<UIEvent>) {
-	const deltaX = evt.coordinate[0] - this.coordinate_![0];
-	const deltaY = evt.coordinate[1] - this.coordinate_![1];
+	const origLayer = this.origLayer_!;
+	const origSource = origLayer.getSource()!;
+	const feature = this.feature_!;
+	if(!this.tempLayer_) {
+		// Setup a temporary layer for the dragging motion
+		this.tempLayer_ = new VectorLayer({
+			source: new VectorSource({
+				useSpatialIndex: false,
+				wrapX: origSource.getWrapX(),
+				features: [feature]
+			}),
+			style: origLayer.getStyle(),
+			updateWhileAnimating: true,
+			updateWhileInteracting: true
+		});
+		// Show the new layer
+		evt.map.addLayer(this.tempLayer_);
+		// Remove the feature from its original source
+		origSource.removeFeature(feature)
+	}
+	const prevCoord = this.coordinate_!;
+	const deltaX = evt.coordinate[0] - prevCoord[0];
+	const deltaY = evt.coordinate[1] - prevCoord[1];
 
-	const geometry = this.feature_!.getGeometry() as Geometry;
+	const geometry = feature.getGeometry() as Geometry;
 	geometry.translate(deltaX, deltaY);
 
-	this.coordinate_![0] = evt.coordinate[0];
-	this.coordinate_![1] = evt.coordinate[1];
-	this.dispatchEvent(new DragEvent("drag", this.feature_!, evt));
+	prevCoord[0] = evt.coordinate[0];
+	prevCoord[1] = evt.coordinate[1];
+
+	this.dispatchEvent(new DragEvent("drag", feature, evt));
 }
 
 function handleMoveEvent(this: DragInteraction, evt: MapBrowserEvent<UIEvent>) {
@@ -193,15 +201,19 @@ function handleUpEvent(this: DragInteraction, evt: MapBrowserEvent<UIEvent>) {
 	// If the drag sequence was not initiated, this.feature_ may be null
 	// (as well as this.tempLayer_ and this.origSource_)
 	if (this.feature_) {
-		const layer = this.tempLayer_!;
-		const origSource = this.origSource_!;
-		evt.map.removeLayer(layer);
-		origSource.addFeature(this.feature_);
-		this.dispatchEvent(new DragEvent("dragend", this.feature_, evt));
+		const feature = this.feature_;
+		this.dispatchEvent(new DragEvent("dragend", feature, evt));
+		// The temporary layer may not have been created if there was no movement
+		// In that case, the feature is still in its original source, so we shouldn't move it
+		if(this.tempLayer_) {
+			evt.map.removeLayer(this.tempLayer_);
+			const origLayer = this.origLayer_!;
+			origLayer.getSource()?.addFeature(feature);
+		}
 	}
 	this.coordinate_ = null;
 	this.feature_ = null;
 	this.tempLayer_ = null;
-	this.origSource_ = null;
+	this.origLayer_ = null;
 	return false;
 }

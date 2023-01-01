@@ -37,7 +37,7 @@ export const SelectInteraction: React.FC<SelectInteractionProps> = ({
             onSelect={(e) => {
                 // Avoid selecting something in another layer
                 // TODO: fix by having only a single Select interaction
-                e.mapBrowserEvent.stopPropagation();
+                // e.mapBrowserEvent.stopPropagation();
                 removePreviouslySelected(e);
                 if (e.selected.length > 0) {
                     const selected = e.selected[0];
