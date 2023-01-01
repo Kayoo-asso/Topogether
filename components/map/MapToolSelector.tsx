@@ -21,6 +21,7 @@ export const MapToolSelector: React.FC<MapToolSelectorProps> = (props: MapToolSe
 	const tool = useSelectStore(s => s.tool);
 
 	const onToolClick = useCallback((t: MapToolEnum) => {
+		flush.item();
 		if (tool === t) flush.tool();
 		else select.tool(t);
 	}, [tool]);

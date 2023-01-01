@@ -27,7 +27,10 @@ export const CreatingMarkersLayer: React.FC<CreatingMarkersLayerProps> = (props:
         <>
             <Select
                 layers={["creating"]}
-                onSelect={(e) => props.onCreate && props.onCreate(e.mapBrowserEvent)}
+                onSelect={(e) => {
+                    e.target.getFeatures().clear(); 
+                    props.onCreate && props.onCreate(e.mapBrowserEvent)
+                }}
             />
 
             <VectorLayer
@@ -38,7 +41,7 @@ export const CreatingMarkersLayer: React.FC<CreatingMarkersLayerProps> = (props:
                         case "WAYPOINT": return waypointMarkerStyle(false, false, device, disappearZoom + 1); break;
                         case 'ROCK': return boulderMarkerStyle(false, false, device, undefined, props.bouldersNb); break;
                     }
-                }, [tool, device])}
+                }, [tool, device, props.bouldersNb])}
             >
                 <VectorSource> 
                     {pointerCoords &&
