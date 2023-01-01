@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { Quark, QuarkArray, watchDependencies } from 'helpers/quarky';
+import { QuarkArray, watchDependencies } from 'helpers/quarky';
 import {
 	Point,
 	VectorLayer,
@@ -69,16 +69,13 @@ export const WaypointMarkersLayer: React.FC<WaypointMarkersLayerProps> = watchDe
 
             <VectorLayer
                 id="waypoints"
-                style={useCallback(
-                    (feature) => {     
-                        const bId = feature.get("data").value().id;
-                        return waypointMarkerStyle (
+                style={useCallback(() =>
+                    waypointMarkerStyle (
                             false,
                             selectedType !== "none",
                             device,
                             mapZoom
-                        )}
-                    , [mapZoom, selectedType, selectedItem])
+                        ), [mapZoom, selectedType])
                 }
             >
                 <VectorSource>

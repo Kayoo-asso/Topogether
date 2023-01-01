@@ -11,12 +11,17 @@ import { UUID } from "types";
 import { parkingMarkerStyle } from "./ParkingMarkersLayer";
 import { useMapZoom } from "helpers/hooks/useMapZoom";
 import { disappearZoom, waypointMarkerStyle } from "./WaypointMarkersLayer";
+import { sectorMarkerStyle } from "./SectorAreaMarkersLayer";
 
 interface SelectInteractionProps {
     boulderOrder: globalThis.Map<UUID, number>;
+    selectableSector?: boolean;
 }
 
-export const SelectInteraction: React.FC<SelectInteractionProps> = (props: SelectInteractionProps) => {
+export const SelectInteraction: React.FC<SelectInteractionProps> = ({
+    selectableSector = false,
+    ...props
+}: SelectInteractionProps) => {
     const selectedType = useSelectStore((s) => s.item.type);
     const select = useSelectStore((s) => s.select);
     const flush = useSelectStore((s) => s.flush);
@@ -26,7 +31,7 @@ export const SelectInteraction: React.FC<SelectInteractionProps> = (props: Selec
 
     return (
         <Select 
-            layers={["boulders", "parkings", "waypoints"]}
+            layers={["boulders", "parkings", "waypoints", selectableSector ? "sectors" : ""]}
             hitTolerance={5}
             onSelect={(e) => {
                 // Avoid selecting something in another layer
@@ -40,6 +45,8 @@ export const SelectInteraction: React.FC<SelectInteractionProps> = (props: Selec
                         case 'boulder': select.boulder(item.value); break;
                         case 'parking': select.parking(item.value); break;
                         case 'waypoint': select.waypoint(item.value); break;
+                        case 'sector': flush.item(); break;
+                        default: return;
                     }                 
                 } else if (e.deselected.length === 1) {
                     flush.item();
@@ -51,8 +58,10 @@ export const SelectInteraction: React.FC<SelectInteractionProps> = (props: Selec
                     case 'boulder': return boulderMarkerStyle(true, true, device, props.boulderOrder, feature); break;
                     case 'parking': return parkingMarkerStyle(true, selectedType !== "none", device, mapZoom); break;
                     case 'waypoint': return waypointMarkerStyle(true, selectedType !== "none", device, mapZoom); break;
+                    case 'sector': return sectorMarkerStyle(true); break;
+                    default: return;
                 }  
-            }, [device])}
+            }, [device, mapZoom])}
             // Necessary to register single clicks outside any feature
             // Toggle when clicking again
             toggleCondition={singleClick}

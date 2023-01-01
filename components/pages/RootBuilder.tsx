@@ -245,6 +245,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 						}
 						<SelectInteraction
 							boulderOrder={boulderOrder()}
+							selectableSector
 						/>
 						<SectorAreaMarkersLayer
 							topoQuark={props.topoQuark}

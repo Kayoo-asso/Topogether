@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { Quark, QuarkArray, watchDependencies } from 'helpers/quarky';
+import { QuarkArray, watchDependencies } from 'helpers/quarky';
 import {
 	Point,
 	VectorLayer,
@@ -67,16 +67,13 @@ export const ParkingMarkersLayer: React.FC<ParkingMarkersLayerProps> = watchDepe
 
             <VectorLayer
                 id="parkings"
-                style={useCallback(
-                    (feature) => {
-                        const bId = feature.get("data").value().id;
-                        return parkingMarkerStyle (
-                            selectedItem ? selectedItem().id === bId : false,
+                style={useCallback(() =>
+                        parkingMarkerStyle (
+                            false,
                             selectedType !== "none",
                             device,
                             mapZoom
-                        )}
-                    , [mapZoom, selectedType, selectedItem])
+                        ), [mapZoom, selectedType])
                 }
             >
                 <VectorSource>

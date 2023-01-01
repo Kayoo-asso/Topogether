@@ -25,6 +25,7 @@ import { BoulderMarkersLayer } from "components/map/markers/BoulderMarkersLayer"
 import { SectorAreaMarkersLayer } from "components/map/markers/SectorAreaMarkersLayer";
 import { ParkingMarkersLayer } from "components/map/markers/ParkingMarkersLayer";
 import { WaypointMarkersLayer } from "components/map/markers/WaypointMarkersLayer";
+import { SelectInteraction } from "components/map/markers/SelectInteraction";
 
 interface RootTopoProps {
 	topoQuark: Quark<Topo>;
@@ -145,6 +146,9 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 						displaySectorButton
 						onSectorButtonClick={() => select.info("SECTOR", breakpoint)}
 					>
+						<SelectInteraction
+							boulderOrder={boulderOrder()}
+						/>
 						<SectorAreaMarkersLayer
 							topoQuark={props.topoQuark}
 							boulderOrder={boulderOrder()}
@@ -156,7 +160,7 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 							waypoints={topo.waypoints}
 						/>
 						<BoulderMarkersLayer 
-							boulders={topo.boulders}
+							topo={props.topoQuark}
 							boulderOrder={boulderOrder()}
 						/>
 						
