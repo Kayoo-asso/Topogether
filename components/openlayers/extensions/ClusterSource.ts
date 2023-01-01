@@ -16,7 +16,6 @@ import VectorEventType from "ol/source/VectorEventType";
 import { Style } from "ol/style";
 import { Geometry } from "ol/geom";
 import { StyleLike } from "ol/style/Style";
-import { Listener } from "ol/events";
 
 // TODO:
 // - add more specific event handlers:
@@ -188,10 +187,6 @@ export class ClusterSource extends VectorSource {
 		this.refresh();
 	}
 
-	protected handleChangeFeature_(event: VectorSourceEvent) {
-		console.log("changefeature:", event);
-	}
-
 	clear(fast?: boolean | undefined): void {
 		this.busy = true;
 		for (const [feature, origStyle] of Array.from(this.originalStyles)) {
@@ -212,10 +207,13 @@ export class ClusterSource extends VectorSource {
 			return;
 		}
 		this.clear();
+		// `clear` resets `this.busy` to `false` at the end
+		this.busy = true;
 		const inClusters: Set<Feature> = new Set();
 
 		// Inlined `cluster()` function from the original code, slightly modified
 		if (this.resolution === undefined || !this.source) {
+			this.busy = false;
 			return;
 		}
 		const mapDistance = this.distance * this.resolution;
