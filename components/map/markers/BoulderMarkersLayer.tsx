@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { Quark, QuarkArray, watchDependencies } from "helpers/quarky";
+import { Quark, watchDependencies } from "helpers/quarky";
 import {
 	Point,
 	Select,
@@ -8,16 +8,17 @@ import {
 } from "components/openlayers";
 import { FeatureLike } from "ol/Feature";
 import { Fill, Icon, Style, Text } from "ol/style";
-import { Boulder, UUID } from "types";
+import { Boulder, GeoCoordinates, Topo, UUID } from "types";
 import { useSelectStore } from "components/pages/selectStore";
 import { fromLonLat, toLonLat } from "ol/proj";
 import { Drag } from "components/openlayers/interactions/Drag";
 import { Cluster } from "components/openlayers/sources/Cluster";
 import { Breakpoint, useBreakpoint } from "helpers/hooks";
 import PointGeom from "ol/geom/Point";
+import { boulderChanged } from "helpers/builder";
 
 interface BoulderMarkersLayerProps {
-	boulders: QuarkArray<Boulder>;
+	topo: Quark<Topo>;
 	boulderOrder: globalThis.Map<UUID, number>;
 	draggable?: boolean;
 }
@@ -105,11 +106,14 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> =
 								const data = e.feature.get("data") as BoulderMarkerData;
 								const point = e.feature.getGeometry() as PointGeom;
 								const coords = toLonLat(point.getCoordinates());
-								if (data)
+								const loc = [coords[0], coords[1]] as GeoCoordinates;
+								if (data) {
 									data.quark.set((b) => ({
 										...b,
-										location: [coords[0], coords[1]],
+										location: loc,
 									}));
+									boulderChanged(props.topo!, data.quark().id, loc);
+								}
 							}}
 						/>
 					)}
@@ -159,7 +163,7 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> =
 						)}
 					>
 						<VectorSource>
-							{props.boulders.quarks().map((bQuark) => {
+							{props.topo().boulders.quarks().map((bQuark) => {
 								const b = bQuark();
 								const label = props.boulderOrder.get(b.id)?.toString();
 								return (
