@@ -25,7 +25,6 @@ export const CreatingMarkersLayer: React.FC<CreatingMarkersLayerProps> = (props:
     
     return (
         <>
-
             <Select
                 layers={["creating"]}
                 onSelect={(e) => props.onCreate && props.onCreate(e.mapBrowserEvent)}
