@@ -1,6 +1,6 @@
 import Feature from "ol/Feature";
 import Point from "ol/geom/Point.js";
-import VectorSource from "ol/source/Vector";
+import VectorSource, { VectorSourceEvent } from "ol/source/Vector";
 import { add as addCoordinate, scale as scaleCoordinate } from "ol/coordinate";
 import { assert } from "ol/asserts";
 import {
@@ -16,10 +16,9 @@ import VectorEventType from "ol/source/VectorEventType";
 import { Style } from "ol/style";
 import { Geometry } from "ol/geom";
 import { StyleLike } from "ol/style/Style";
-
+import { Listener } from "ol/events";
 
 // TODO:
-// - implement Cluster.clear() properly
 // - add more specific event handlers:
 //   -> feature added / changed / removed = incremental patch
 //   -> resolution change = recalculation
@@ -28,21 +27,24 @@ interface Options {
 	attributions?: AttributionLike;
 	distance?: number;
 	minDistance?: number;
+	minFeatures?: number;
+	wrapX?: boolean;
+	styleWhileInCluster?: StyleLike | undefined;
+	source?: VectorSource | null;
 	geometryFunction?: (feature: Feature) => Point;
 	createCluster?: (
 		clusterCenter: Point,
 		clusterFeatures: Array<Feature>
 	) => Feature;
-	source?: VectorSource | null;
-	hideInSource?: boolean;
-	wrapX?: boolean;
 }
 
 const defaultOptions = {
 	distance: 20,
 	minDistance: 0,
+	minFeatures: 2,
 	wrapX: true,
 	hideInSource: true,
+	styleWhileInCluster: new Style(),
 	geometryFunction(feature: Feature) {
 		const geometry = feature.getGeometry() as Point;
 		assert(geometry.getType() == "Point", 10); // The default `geometryFunction` can only handle `Point` geometries
@@ -50,8 +52,6 @@ const defaultOptions = {
 	},
 }; // satisfies Options;
 // TODO: add back `satisfies` once we upgrade React + Next
-
-const invisibleStyle = new Style();
 
 /**
  * Layer source to cluster vector data. Works out of the box with point
@@ -66,13 +66,16 @@ export class ClusterSource extends VectorSource {
 	// -- Options --
 	distance: number;
 	minDistance: number;
-	hideInSource: boolean;
+	minFeatures: number;
+	styleWhileInCluster: StyleLike | undefined;
 	source: VectorSource | null = null;
 	geometryFunction: (feature: Feature) => Point;
 	createCustomCluster_?: (
 		clusterCenter: Point,
 		clusterFeatures: Array<Feature>
 	) => Feature;
+	// Avoid infinite loops when clearing / refreshing
+	protected busy: boolean;
 	// -- Internal stuff --
 	protected resolution: number | undefined = undefined;
 	protected interpolationRatio: number = 0;
@@ -81,7 +84,7 @@ export class ClusterSource extends VectorSource {
 	// (if `hideInSource` is true, at least)
 	// We keep track of the mapping between source features and copies here.
 	// This can also act as a collection of all features currently in clusters.
-	protected hidden: Map<Feature, StyleLike | undefined> = new Map();
+	protected originalStyles: Map<Feature, StyleLike | undefined> = new Map();
 	protected boundRefresh_: () => void = this.refresh.bind(this);
 
 	constructor(userOptions: Options) {
@@ -94,10 +97,13 @@ export class ClusterSource extends VectorSource {
 
 		this.distance = options.distance;
 		this.minDistance = options.minDistance;
+		this.minFeatures = options.minFeatures;
+		this.styleWhileInCluster = options.styleWhileInCluster;
 		this.geometryFunction = options.geometryFunction;
 		this.createCustomCluster_ = options.createCluster;
-		this.hideInSource = options.hideInSource;
 		this.boundRefresh_ = this.refresh.bind(this);
+
+		this.busy = false;
 
 		this.updateDistance(this.distance, this.minDistance);
 		this.setSource(options.source || null);
@@ -155,44 +161,64 @@ export class ClusterSource extends VectorSource {
 	setSource(source: VectorSource | null) {
 		if (this.source) {
 			this.source.removeEventListener(
+				VectorEventType.ADDFEATURE,
+				this.boundRefresh_
+			);
+			this.source.removeEventListener(
 				VectorEventType.CHANGEFEATURE,
+				this.boundRefresh_
+			);
+			this.source.removeEventListener(
+				VectorEventType.REMOVEFEATURE,
 				this.boundRefresh_
 			);
 		}
 		this.source = source;
 		if (source) {
+			source.addEventListener(VectorEventType.ADDFEATURE, this.boundRefresh_);
 			source.addEventListener(
 				VectorEventType.CHANGEFEATURE,
+				this.boundRefresh_
+			);
+			source.addEventListener(
+				VectorEventType.REMOVEFEATURE,
 				this.boundRefresh_
 			);
 		}
 		this.refresh();
 	}
 
+	protected handleChangeFeature_(event: VectorSourceEvent) {
+		console.log("changefeature:", event);
+	}
+
+	clear(fast?: boolean | undefined): void {
+		this.busy = true;
+		for (const [feature, origStyle] of Array.from(this.originalStyles)) {
+			// do this first to avoid an infinite loop, since Feature.setStyle()
+			// will trigger an `update` event on the source
+			this.originalStyles.delete(feature);
+			feature.setStyle(origStyle);
+		}
+		super.clear(fast);
+		this.busy = false;
+	}
+
 	/**
 	 * Handle the source changing.
 	 */
 	refresh() {
-		// Original code
+		if (this.busy) {
+			return;
+		}
 		this.clear();
-		// Goals:
-		// 1. rebuild an Array of features for the clusters
-		// 2. set style of source features newly added to clusters
-		// 3. restore style of features removed from clusters
-		// 1. + 2. are achieved during the clustering process
-		// 3. is achieved by taking a set difference after finishing the clustering
 		const inClusters: Set<Feature> = new Set();
-		// Every time we add a feature to a cluster, we'll remove it from here
-		// At the end, this set will only contain the deleted features
-		const notInClusters: Set<Feature> = new Set(this.hidden.keys());
 
-		// Original code -> copy pasted and slightly changed here
+		// Inlined `cluster()` function from the original code, slightly modified
 		if (this.resolution === undefined || !this.source) {
 			return;
 		}
 		const mapDistance = this.distance * this.resolution;
-		// NOTE: we'll have to handle features that may have been
-		// readded back to the source by some other process
 		const srcFeatures = this.source.getFeatures();
 
 		// Create empty extent outside the loop for reuse
@@ -210,44 +236,46 @@ export class ClusterSource extends VectorSource {
 					buffer(extent, mapDistance, extent);
 
 					// Important: inCluster will also find the feature we're currently examining
-					const neighbors = this.source
-						.getFeaturesInExtent(extent)
-						.filter((f) => !inClusters.has(f));
-					// Only create clusters with 2+ features
-					if (neighbors.length > 1) {
-						for (let y = 0; y < neighbors.length; y++) {
-							const feature = neighbors[y];
-							this.beforeAddingToCluster(feature);
+					const neighbors = this.source.getFeaturesInExtent(extent);
+					const candidates: Array<Feature> = [];
+					// Filter features that have already been added to other clusters
+					for (let y = 0; y < neighbors.length; ++y) {
+						const feature = neighbors[y];
+						if (!inClusters.has(feature)) {
 							inClusters.add(feature);
-							notInClusters.delete(feature);
+							candidates.push(feature);
 						}
-						const cluster = this.createCluster(neighbors, extent);
+					}
+					// Only create clusters with enough features to clear the threshold
+					if (candidates.length > this.minFeatures) {
+						for (let y = 0; y < candidates.length; ++y) {
+							const feature = candidates[y];
+							this.applyHiddenStyle(feature);
+							inClusters.add(feature);
+						}
+						const cluster = this.createCluster(candidates, extent);
 						clusters.push(cluster);
 					}
 				}
 			}
 		}
 
-		for (const deleted of Array.from(notInClusters)) {
-			this.removeFromClusters(deleted);
-		}
 		this.addFeatures(clusters);
+		this.busy = false;
 	}
 
-	protected beforeAddingToCluster(feature: Feature<Geometry>) {
-		if (!this.hidden.has(feature)) {
-			this.hidden.set(feature, feature.getStyle());
-			if (this.hideInSource) {
-				feature.setStyle(invisibleStyle);
-			}
+	protected applyHiddenStyle(feature: Feature<Geometry>) {
+		if (!this.originalStyles.has(feature)) {
+			this.originalStyles.set(feature, feature.getStyle());
+			feature.setStyle(this.styleWhileInCluster);
 		}
 	}
 
-	protected removeFromClusters(feature: Feature<Geometry>): void {
-		const origStyle = this.hidden.get(feature);
+	protected restoreOrigStyle(feature: Feature<Geometry>): void {
+		const origStyle = this.originalStyles.get(feature);
 		// do this before feature.setStyle, to avoid this infinite loop:
 		// feature.setStyle => event => refresh => feature still in `hidden`
-		this.hidden.delete(feature);
+		this.originalStyles.delete(feature);
 		feature.setStyle(origStyle);
 	}
 
