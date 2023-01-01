@@ -10,11 +10,11 @@ import { FeatureLike } from "ol/Feature";
 import { Fill, Icon, Style, Text } from "ol/style";
 import { Boulder, UUID } from "types";
 import { useSelectStore } from "components/pages/selectStore";
-import { fromLonLat, toLonLat } from "ol/proj";
-import { Drag } from "components/openlayers/interactions/Drag";
+import { fromLonLat } from "ol/proj";
 import { Cluster } from "components/openlayers/sources/Cluster";
 import { Breakpoint, useBreakpoint } from "helpers/hooks";
-import PointGeom from "ol/geom/Point";
+import { singleClick } from "ol/events/condition";
+import { removePreviouslySelected } from "components/openlayers/interactions/Select";
 
 interface BoulderMarkersLayerProps {
 	boulders: QuarkArray<Boulder>;
@@ -32,9 +32,11 @@ export const boulderMarkerStyle = (
 	anySelected: boolean,
 	device: Breakpoint,
 	feature?: FeatureLike,
-	bouldersNb?: number,
+	bouldersNb?: number
 ) => {
-	const label = feature ? feature.get("data").label : (bouldersNb! + 1).toString();
+	const label = feature
+		? feature.get("data").label
+		: (bouldersNb! + 1).toString();
 	const icon = new Icon({
 		opacity: anySelected ? (selected ? 1 : 0.4) : 1,
 		src: "/assets/icons/markers/boulder.svg",
@@ -81,7 +83,6 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> =
 	watchDependencies(
 		({ draggable = false, ...props }: BoulderMarkersLayerProps) => {
 			const selectedType = useSelectStore((s) => s.item.type);
-			const selectedItem = useSelectStore((s) => s.item.value);
 			const select = useSelectStore((s) => s.select);
 			const flush = useSelectStore((s) => s.flush);
 
@@ -89,7 +90,7 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> =
 
 			return (
 				<>
-					{draggable && (
+					{/* {draggable && (
 						<Drag
 							sources="boulders"
 							hitTolerance={5}
@@ -112,24 +113,33 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> =
 									}));
 							}}
 						/>
-					)}
+					)} */}
 
 					<Select
 						layers={["boulders"]}
 						hitTolerance={5}
 						onSelect={(e) => {
-							e.target.getFeatures().clear();
+							// Avoid selecting something in another layer
+							// TODO: fix by having only a single Select interaction
 							e.mapBrowserEvent.stopPropagation();
-							e.mapBrowserEvent.preventDefault();
-							if (e.selected.length === 1) {
-								// Because we're using Cluster, the feature in the selection is a cluster of features
-								const feature = e.selected[0];
-								const data = feature.get("data") as BoulderMarkerData;
+							removePreviouslySelected(e);
+							if (e.selected.length > 0) {
+								const selected = e.selected[0];
+								const data = selected.get("data") as BoulderMarkerData;
 								select.boulder(data.quark);
 							} else if (e.deselected.length === 1) {
 								flush.item();
 							}
 						}}
+						style={useCallback(
+							function (feature) {
+								return boulderMarkerStyle(true, true, device, feature);
+							},
+							[device]
+						)}
+						// Necessary to register single clicks outside any feature
+						// Toggle when clicking again
+						toggleCondition={singleClick}
 					/>
 
 					<VectorLayer
@@ -147,15 +157,14 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> =
 						id="boulders"
 						style={useCallback(
 							(feature: FeatureLike) => {
-								const bId = feature.get("data").quark().id as UUID;
 								return boulderMarkerStyle(
-									selectedItem ? selectedItem().id === bId : false,
+									false,
 									selectedType !== "none",
 									device,
 									feature
 								);
 							},
-							[selectedType, selectedItem, device]
+							[selectedType, device]
 						)}
 					>
 						<VectorSource>

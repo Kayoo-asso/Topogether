@@ -267,6 +267,7 @@ export const MapControl = watchDependencies<Map, MapControlProps>(
 						setReactRef(parentRef, ref);
 					}, [])}
 					className={"h-full w-full " + getMapCursorClass(tool)}
+					// TODO: remove once Select is fixed
 					onClick={(e) => {
 						const map = e.map;
 						const hit = map.getFeaturesAtPixel(e.pixel).length > 0;
