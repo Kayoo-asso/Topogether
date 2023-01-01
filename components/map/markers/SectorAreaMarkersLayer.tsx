@@ -13,9 +13,10 @@ import { GeoCoordinates, Sector, Topo, UUID } from 'types';
 import { useSelectStore } from 'components/pages/selectStore';
 import { fromLonLat, toLonLat } from 'ol/proj';
 import { Polygon as PolygonType } from 'ol/geom';
-import { createSector } from 'helpers/builder';
+import { createSector, sectorChanged } from 'helpers/builder';
 import { ModalRenameSector } from 'components/organisms/builder/ModalRenameSector';
 import { Drag } from 'components/openlayers/interactions/Drag';
+import { MapBrowserEvent } from 'ol';
 
 interface SectorAreaMarkersLayerProps {
     topoQuark: Quark<Topo>,
@@ -43,7 +44,6 @@ export function sectorMarkerStyle(selected: boolean) {
     return new Style({
         stroke,
         fill,
-        zIndex: 10
     });
 }
 
@@ -134,6 +134,7 @@ export const SectorAreaMarkersLayer: React.FC<SectorAreaMarkersLayerProps> = wat
                             ...s,
                             path: path,
                         }))
+                        sectorChanged(props.topoQuark, quark().id, props.boulderOrder);
                     }}
                 />
             }
@@ -142,18 +143,25 @@ export const SectorAreaMarkersLayer: React.FC<SectorAreaMarkersLayerProps> = wat
                 <Select
                     layers={["sectors"]}
                     hitTolerance={5}
-                    style={function (feature) {
-                        return sectorMarkerStyle(true);
-                    }}
+                    // style={useCallback((e) => {
+                    //     const { quark } = e.get("data") as SectorMarkerData;
+                    //     // console.log(quark().id);
+                    //     // console.log("selected: " + selected);
+                    //     return sectorMarkerStyle(true)
+                    // }, [selected])}
                     onSelect={(e) => {
+                        e.target.getFeatures().clear();
                         e.mapBrowserEvent.stopPropagation();
                         e.mapBrowserEvent.preventDefault();
                         flush.item();
                         if (e.selected.length === 1) {
                             const feature = e.selected[0];
                             const { quark } = feature.get("data") as SectorMarkerData;
-                            setSelected(quark().id);
+                            setSelected(s => {
+                                return quark().id === s ? undefined : quark().id
+                            });
                         }
+                        else if (e.deselected.length === 1) setSelected(undefined);
                     }}
                 />
             }
@@ -177,7 +185,10 @@ export const SectorAreaMarkersLayer: React.FC<SectorAreaMarkersLayerProps> = wat
 
             <VectorLayer
                 id="sectors"     
-                style={() => sectorMarkerStyle(false)}
+                style={useCallback((e) => {
+                    const { quark } = e.get("data");
+                    return sectorMarkerStyle(quark().id === selected);
+                }, [selected])}
             >
                 <VectorSource>
                     {sectors.quarks().map(sQuark => {

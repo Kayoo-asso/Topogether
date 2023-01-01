@@ -53,6 +53,7 @@ import { BoulderMarkersLayer } from "components/map/markers/BoulderMarkersLayer"
 import { ParkingMarkersLayer } from "components/map/markers/ParkingMarkersLayer";
 import { WaypointMarkersLayer, disappearZoom } from "components/map/markers/WaypointMarkersLayer";
 import { CreatingMarkersLayer } from "components/map/markers/CreatingMarkersLayer";
+import { SelectInteraction } from "components/map/markers/SelectInteraction";
 
 interface RootBuilderProps {
 	topoQuark: Quark<Topo>;
@@ -238,10 +239,13 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 					>
 						{tool && tool !== "SECTOR" &&
 							<CreatingMarkersLayer 
-								bouldersNb={topo.boulders.length}
+								boulderOrder={boulderOrder()}
 								onCreate={handleCreateNewMarker}
 							/>
 						}
+						<SelectInteraction
+							boulderOrder={boulderOrder()}
+						/>
 						<SectorAreaMarkersLayer
 							topoQuark={props.topoQuark}
 							boulderOrder={boulderOrder()}
@@ -258,7 +262,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 							draggable
 						/>
 						<BoulderMarkersLayer 
-							boulders={topo.boulders}
+							topo={props.topoQuark}
 							boulderOrder={boulderOrder()}
 							draggable
 						/>
