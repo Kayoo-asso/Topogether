@@ -47,6 +47,8 @@ declare module "tinybase/store" {
 		[Table in keyof S]: Record<string, RowInstance<S[Table]>>;
 	};
 
+	export type Tables<S extends Store> = S extends Store<infer DB> ? DB : never;
+
 	type CellValue = CellInstance<CellSchema>;
 
 	type RowBase = Record<string, CellValue>;
@@ -62,6 +64,29 @@ declare module "tinybase/store" {
 			: true
 		: false;
 	type HasTables<DB extends Database> = HasKeys<DB>;
+
+	type KeysOfUnion<T> = T extends any ? keyof T : never;
+	export type AllCellIds<Tables extends Database> = KeysOfUnion<
+		Tables[keyof Tables][string]
+	>;
+
+	export type AllowedCellIds<
+		Tables extends Database,
+		TableId extends keyof Tables | null
+	> = TableId extends null ? AllCellIds<Tables> : keyof Tables[TableId][string];
+
+	export type KeepIfHasCellId<
+		Tables,
+		TableId extends keyof Tables,
+		CellId extends AllCellIds<Tables>
+	> = CellId extends keyof Tables[TableId][string] ? TableId : never;
+
+	export type TablesWithCellId<
+		Tables extends Database,
+		CellId extends AllCellIds<Tables>
+	> = {
+		[K in keyof Tables]: KeepIfHasCellId<Tables, K, CellId>
+	}[keyof Tables];
 
 	type MapCell<Cell> = (cell: Cell | undefined) => Cell;
 	type CellUpdate<Cell> = Cell | MapCell<Cell>;
@@ -89,6 +114,11 @@ declare module "tinybase/store" {
 		getCellChange: GetCellChange<Tables>
 	) => void;
 
+	// Not entirely clear on what this does, it may need to receive a store with a different schema
+	type TablesIdListener<Tables extends Database> = (
+		store: Store<Tables>
+	) => void;
+
 	type GlobalTableListener<Tables extends Database> = (
 		store: Store<Tables>,
 		// ?: I don't think this type should be lifted in a generic for the function
@@ -102,9 +132,120 @@ declare module "tinybase/store" {
 		getCellChange: GetCellChange<Tables>
 	) => void;
 
-	// Not entirely clear on what this does, it may need to receive a store with a different schema
-	type TablesIdListener<Tables extends Database> = (
-		store: Store<Tables>
+	type GlobalRowIdsListener<Tables extends Database> = (
+		store: Store<Tables>,
+		tableId: keyof Tables
+	) => void;
+
+	type RowIdsListener<Tables extends Database, TableId extends keyof Tables> = (
+		store: Store<Tables>,
+		tableId: TableId
+	) => void;
+
+	// I don't think it's worth it to provide two types, each with `descending` either `true` or `false`
+	type SortedRowIdsListener<
+		Tables extends Database,
+		TableId extends keyof Tables,
+		CellIdOrUndefined extends keyof Tables[TableId][string] | undefined
+	> = (
+		store: Store<Tables>,
+		tableId: TableId,
+		cellId: CellIdOrUndefined,
+		descending: boolean,
+		offset: number,
+		limit: number | undefined,
+		sortedRowIds: Array<string>
+	) => void;
+
+	type RowListener<
+		Tables extends Database,
+		TableId extends keyof Database | null,
+		RowId extends string | null
+	> = (
+		store: Store<Tables>,
+		tableId: TableId extends null ? keyof Tables : TableId,
+		rowId: RowId extends null ? string : RowId,
+		getCellChange: GetCellChange<Tables> | undefined
+	) => void;
+
+	type CellIdsListener<
+		Tables extends Database,
+		TableId extends keyof Database | null,
+		RowId extends string | null
+	> = (
+		store: Store<Tables>,
+		tableId: TableId extends null ? keyof Tables : TableId,
+		rowId: RowId extends null ? string : RowId
+	) => void;
+
+	type ExactCellListener<
+		Tables extends Database,
+		TableId extends keyof Database,
+		RowId extends string | null,
+		CellId extends keyof Tables[TableId][string]
+	> = (
+		store: Store<Tables>,
+		tableId: TableId,
+		rowId: RowId extends null ? string : RowId,
+		cellId: CellId,
+		newCell: Tables[TableId][string][CellId],
+		oldCell: Tables[TableId][string][CellId],
+		getCellChange: GetCellChange<Tables> | undefined
+	) => void;
+
+	type CrossTablesCellListener<
+		Tables extends Database,
+		RowId extends string | null,
+		CellId extends AllCellIds<Tables>
+	> = <TableId extends TablesWithCellId<Tables, CellId>>(
+		store: Store<Tables>,
+		tableId: TableId,
+		rowId: RowId extends null ? string : RowId,
+		cellId: CellId,
+		/* NOTE: we can provide the most accurate union possible here,
+		* but if 2 tables have the same cellId associated with two different types,
+		* the listener won't be able to narrow down the type of the cell by checking
+		* the name of the table.
+		* It would only be possible if the arguments were passed as a single object.
+		* Example:
+		* ```
+		* createStore().setSchema({
+		*	  a: {
+		*     name: { type: "string" }	
+		*   },
+		*   b: {
+		*     name: { type: "number" }
+		*   },
+		*   c: {
+		*     otherField: { type: "boolean" }
+		*   }
+		* }).addCellListener(
+		*   null, "rowId", "name",
+		*   (store, tableId, rowId, cellId, newCell, oldCell) => {
+		*     // TypeScript will be able to tell you that `tableId` can only be "a" or "b", but never "c"
+		*     if(tableId === "a") {
+		*       // TypeScript won't be able to know that `newCell` has to be a string at this point
+		*     }
+		*   }
+		* )
+		* ```
+		*/
+		newCell: Tables[TableId][string][CellId],
+		oldCell: Tables[TableId][string][CellId],
+		getCellChange: GetCellChange<Tables> | undefined
+	) => void;
+
+	type CellListener<Tables extends Database, RowId extends string | null> = <
+		TableId extends keyof Tables,
+		CellId extends keyof Tables[TableId][string]
+	>(
+		store: Store<Tables>,
+		tableId: TableId,
+		rowId: RowId extends null ? string : RowId,
+		cellId: CellId,
+		newCell: Tables[TableId][string][CellId],
+		oldCell: Tables[TableId][string][CellId],
+		getCellChange: GetCellChange<Tables> | undefined
 	) => void;
 
 	export interface Store<Tables extends Database> {
@@ -183,11 +324,13 @@ declare module "tinybase/store" {
 			tableId: TableId,
 			row: Tables[TableId][string]
 		): string | undefined;
+
 		setPartialRow<TableId extends keyof Tables>(
 			tableId: TableId,
 			rowId: string,
 			partialRow: Partial<Tables[TableId][string]>
 		): Store<Tables>;
+
 		setCell<
 			TableId extends keyof Tables,
 			CellId extends keyof Tables[TableId][string]
@@ -223,11 +366,91 @@ declare module "tinybase/store" {
 			listener: TableListener<Tables, TableId>,
 			mutator?: boolean
 		): string;
+
+		// 2 overloads for `addRowIdsListener`
+		addRowIdsListener(
+			tableId: null,
+			listener: GlobalRowIdsListener<Tables>,
+			mutator?: boolean
+		): string;
+		addRowIdsListener<TableId extends keyof Tables>(
+			tableId: TableId,
+			listener: RowIdsListener<Tables, TableId>,
+			mutator?: boolean
+		): string;
+
+		addSortedRowIdsListener<
+			TableId extends keyof Tables,
+			CellIdOrUndefined extends keyof Tables[TableId][string] | undefined
+		>(
+			tableId: TableId,
+			cellId: CellIdOrUndefined,
+			descending: boolean,
+			offset: number,
+			limit: number | undefined,
+			listener: SortedRowIdsListener<Tables, TableId, CellIdOrUndefined>,
+			mutator?: boolean
+		): string;
+
+		addRowListener<
+			TableId extends keyof Tables | null,
+			RowId extends string | null
+		>(
+			tableId: TableId,
+			rowId: RowId,
+			listener: RowListener<Tables, TableId, RowId>,
+			mutator?: boolean
+		): string;
+
+		addCellIdsListener<
+			TableId extends keyof Tables | null,
+			RowId extends string | null
+		>(
+			tableId: TableId,
+			rowId: RowId,
+			listener: CellIdsListener<Tables, TableId, RowId>,
+			mutator?: boolean
+		): string;
+
+		// 3 overloads for addCellListener
+		// Necessary to provide precise typings on the cell values received by the listener
+		addCellListener<
+			TableId extends keyof Tables,
+			RowId extends string | null,
+			CellId extends keyof Tables[TableId][string]
+		>(
+			tableId: TableId,
+			rowId: RowId,
+			cellId: CellId,
+			listener: ExactCellListener<Tables, TableId, RowId, CellId>,
+			mutator?: boolean
+		): string;
+
+		addCellListener<
+			RowId extends string | null,
+			CellId extends AllCellIds<Tables>
+		>(
+			tableId: null,
+			rowId: RowId,
+			cellId: CellId,
+			listener: CrossTablesCellListener<Tables, RowId, CellId>,
+			mutator?: boolean
+		): string;
+
+		addCellListener<RowId extends string | null>(
+			tableId: null,
+			rowId: RowId,
+			cellId: null,
+			listener: CellListener<Tables, RowId>,
+			mutator?: boolean
+		): string;
 	}
 
 	export function createStore<Tables extends Database = {}>(): Store<Tables>;
 
-	// TODO: add opaque types for different types of IDs, to avoid confusing them with other strings?
-	// (ex: ListenerId)
-	// This may complicate the use of the library too much though
+	// TODO:
+	// - add opaque types for different types of IDs, to avoid confusing them with other strings?
+	//   (ex: ListenerId)
+	//   This may complicate the use of the library too much though
+	// - find a way to enforce mutator / non mutator distinction on listeners?
 }
