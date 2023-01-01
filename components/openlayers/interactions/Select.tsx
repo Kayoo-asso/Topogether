@@ -1,4 +1,4 @@
-import OLSelect from "ol/interaction/Select";
+import OLSelect, { SelectEvent } from "ol/interaction/Select";
 import Layer from "ol/layer/Layer";
 import { forwardRef, useContext, useEffect, useMemo } from "react";
 import { LayerContext, useLayer, useMap } from "../contexts";
@@ -48,3 +48,17 @@ export const Select = forwardRef<OLSelect, P>(
 		return null;
 	}
 );
+
+export function removePreviouslySelected(event: SelectEvent) {
+	if(event.selected.length > 0) {
+		const selected = new Set(event.selected);
+		const interaction = event.target as OLSelect;
+		const collection = interaction.getFeatures();
+		const array = collection.getArray();
+		for(let i =0; i< array.length; i++) {
+			if(!selected.has(array[i])) {
+				collection.removeAt(i);
+			}
+		}
+	}
+}

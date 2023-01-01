@@ -2,13 +2,12 @@ import React, { useCallback } from 'react';
 import { Quark, QuarkArray, watchDependencies } from 'helpers/quarky';
 import {
 	Point,
-	Select,
 	VectorLayer,
 	VectorSource,
 } from "components/openlayers";
 import { Icon, Style } from 'ol/style';
 import { UUID, Waypoint } from 'types';
-import { useSelectStore } from 'components/pages/selectStore';
+import { SelectedWaypoint, useSelectStore } from 'components/pages/selectStore';
 import { fromLonLat, toLonLat } from 'ol/proj';
 import { Drag } from 'components/openlayers/interactions/Drag';
 import { useMapZoom } from 'helpers/hooks/useMapZoom';
@@ -18,11 +17,6 @@ import PointGeom from "ol/geom/Point";
 interface WaypointMarkersLayerProps {
     waypoints: QuarkArray<Waypoint>;
     draggable?: boolean;
-}
-
-export type WaypointMarkerData = {
-	label: string;
-	quark: Quark<Waypoint>;
 }
 
 export const waypointMarkerStyle = (selected: boolean, anySelected: boolean, device: Breakpoint, mapZoom: number) => {
@@ -44,8 +38,6 @@ export const WaypointMarkersLayer: React.FC<WaypointMarkersLayerProps> = watchDe
 }: WaypointMarkersLayerProps) => {
     const selectedType = useSelectStore((s) => s.item.type);
     const selectedItem = useSelectStore((s) => s.item.value);
-    const select = useSelectStore(s => s.select);
-    const flush = useSelectStore(s => s.flush);
     
     const mapZoom = useMapZoom(disappearZoom);
     const device = useBreakpoint();
@@ -58,15 +50,15 @@ export const WaypointMarkersLayer: React.FC<WaypointMarkersLayerProps> = watchDe
                         sources='waypoints'
                         hitTolerance={5}
                         startCondition={useCallback((e) => { 
-                            const wId = e.feature.get("data")?.quark().id as UUID;
+                            const wId = e.feature.get("data")?.value().id as UUID;
                             return !!(selectedItem && selectedItem().id === wId); 
                         }, [selectedItem])}
                         onDragEnd={(e) => {
-                            const data = e.feature.get("data") as WaypointMarkerData;
+                            const data = e.feature.get("data") as SelectedWaypoint;
                             const point = e.feature.getGeometry() as PointGeom;
                             const coords = toLonLat(point.getCoordinates());
                             if (data)
-                                data.quark.set((b) => ({
+                                data.value.set((b) => ({
                                     ...b,
                                     location: [coords[0], coords[1]],
                                 }));
@@ -75,30 +67,13 @@ export const WaypointMarkersLayer: React.FC<WaypointMarkersLayerProps> = watchDe
                 </>
             }
 
-            <Select
-                layers={["waypoints"]}
-                hitTolerance={5}
-                onSelect={(e) => {
-                    e.target.getFeatures().clear();
-                    e.mapBrowserEvent.stopPropagation();
-                    e.mapBrowserEvent.preventDefault();
-                    if (e.selected.length === 1) {
-                        const feature = e.selected[0];
-                        const { quark } = feature.get("data") as WaypointMarkerData;  
-                        select.waypoint(quark); 
-                    } else if (e.deselected.length === 1) {
-                        flush.item();
-                    }
-                }}
-            />
-
             <VectorLayer
                 id="waypoints"
                 style={useCallback(
                     (feature) => {     
-                        const bId = feature.get("data").quark().id;
+                        const bId = feature.get("data").value().id;
                         return waypointMarkerStyle (
-                            selectedItem ? selectedItem().id === bId : false,
+                            false,
                             selectedType !== "none",
                             device,
                             mapZoom
@@ -113,7 +88,7 @@ export const WaypointMarkersLayer: React.FC<WaypointMarkersLayerProps> = watchDe
                             <Point
                                 key={w.id}
                                 coordinates={fromLonLat(w.location)}
-                                data={{ quark: wQuark }}
+                                data={{ type: 'waypoint', value: wQuark }}
                             />
                         )
                     })}

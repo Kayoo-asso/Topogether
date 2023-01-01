@@ -2,13 +2,12 @@ import React, { useCallback } from 'react';
 import { Quark, QuarkArray, watchDependencies } from 'helpers/quarky';
 import {
 	Point,
-	Select,
 	VectorLayer,
 	VectorSource,
 } from "components/openlayers";
 import { Icon, Style } from 'ol/style';
 import { Parking, UUID } from 'types';
-import { useSelectStore } from 'components/pages/selectStore';
+import { SelectedParking, useSelectStore } from 'components/pages/selectStore';
 import { fromLonLat, toLonLat } from 'ol/proj';
 import { Drag } from 'components/openlayers/interactions/Drag';
 import { useMapZoom } from 'helpers/hooks/useMapZoom';
@@ -19,11 +18,6 @@ import PointGeom from "ol/geom/Point";
 interface ParkingMarkersLayerProps {
     parkings: QuarkArray<Parking>;
     draggable?: boolean;
-}
-
-export type ParkingMarkerData = {
-	label: string;
-	quark: Quark<Parking>;
 }
 
 export const parkingMarkerStyle = (selected: boolean, anySelected: boolean, device: Breakpoint, mapZoom: number) => {
@@ -44,8 +38,6 @@ export const ParkingMarkersLayer: React.FC<ParkingMarkersLayerProps> = watchDepe
 }: ParkingMarkersLayerProps) => {
     const selectedType = useSelectStore((s) => s.item.type);
     const selectedItem = useSelectStore((s) => s.item.value);
-    const select = useSelectStore(s => s.select);
-    const flush = useSelectStore(s => s.flush);
 
     const mapZoom = useMapZoom(disappearZoom);
     const device = useBreakpoint();
@@ -57,44 +49,27 @@ export const ParkingMarkersLayer: React.FC<ParkingMarkersLayerProps> = watchDepe
                     sources='parkings'
                     hitTolerance={5}
                     startCondition={useCallback((e) => { 
-                        const pId = e.feature.get("data").quark().id as UUID;
+                        const pId = e.feature.get("data").value().id as UUID;
                         return !!(selectedItem && selectedItem().id === pId); 
                     }, [selectedItem])}
                     onDragEnd={(e) => {
-                        const data = e.feature.get("data") as ParkingMarkerData;
-                            const point = e.feature.getGeometry() as PointGeom;
-                            const coords = toLonLat(point.getCoordinates());
-                            if (data)
-                                data.quark.set((b) => ({
-                                    ...b,
-                                    location: [coords[0], coords[1]],
-                                }));
+                        const data = e.feature.get("data") as SelectedParking;
+                        const point = e.feature.getGeometry() as PointGeom;
+                        const coords = toLonLat(point.getCoordinates());
+                        if (data)
+                            data.value.set((b) => ({
+                                ...b,
+                                location: [coords[0], coords[1]],
+                            }));
                     }}
                 />
             }
-
-            <Select
-                layers={["parkings"]}
-                hitTolerance={5}
-                onSelect={(e) => {
-                    e.target.getFeatures().clear();
-                    e.mapBrowserEvent.stopPropagation();
-                    e.mapBrowserEvent.preventDefault();
-                    if (e.selected.length === 1) {
-                        const feature = e.selected[0];
-                        const { quark } = feature.get("data") as ParkingMarkerData;
-                        select.parking(quark); 
-                    } else if (e.deselected.length === 1) {
-                        flush.item();
-                    }
-                }}
-            />
 
             <VectorLayer
                 id="parkings"
                 style={useCallback(
                     (feature) => {
-                        const bId = feature.get("data").quark().id;
+                        const bId = feature.get("data").value().id;
                         return parkingMarkerStyle (
                             selectedItem ? selectedItem().id === bId : false,
                             selectedType !== "none",
@@ -111,7 +86,7 @@ export const ParkingMarkersLayer: React.FC<ParkingMarkersLayerProps> = watchDepe
                             <Point
                                 key={p.id}
                                 coordinates={fromLonLat(p.location)}
-                                data={{ quark: pQuark }}
+                                data={{ type: 'parking', value: pQuark }}
                             />
                         )
                     })}  
