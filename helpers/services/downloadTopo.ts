@@ -8,7 +8,12 @@ import { ProgressTracker, getProgressTracker } from "helpers/hooks";
 import { get, set } from "idb-keyval";
 import { CACHED_IMG_WIDTH, bunnyUrl, tileUrl, TOPO_CACHE_KEY } from "./sharedWithServiceWorker";
 import { createXYZ } from "ol/tilegrid";
+import { createStore } from "tinybase/store";
 
+
+export interface TopoDownloadMessage {
+	topo: TopoData
+}
 // IMPORTANT: any changes to the tile or image URLS, as well as to the cached image width,
 // MUST be reflected in the service worker (`sw.ts`)
 
@@ -29,6 +34,15 @@ export type DownloadTopoResult =
 			imageErrors: number;
 			tileErrors: number;
 	  };
+
+let worker: SharedWorker | undefined;
+
+export function getWorker() {
+	if(!worker) {
+		worker = new SharedWorker(new URL("./download-worker.ts", import.meta.url))
+	}
+	return worker;
+}
 
 export async function downloadTopo(
 	topo: TopoData | Topo,
