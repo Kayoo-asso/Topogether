@@ -32,7 +32,9 @@ declare module "tinybase/store" {
 		[Table in keyof S]: Record<string, RowInstance<S[Table]>>;
 	};
 
-	export type Tables<S extends Store> = S extends Store<infer DB> ? DB : never;
+	export type Tables<S extends Store<any>> = S extends Store<infer DB>
+		? DB
+		: never;
 
 	type CellValue = CellInstance<CellSchema>;
 
@@ -58,7 +60,9 @@ declare module "tinybase/store" {
 	export type AllowedCellIds<
 		Tables extends Database,
 		TableId extends keyof Tables | null
-	> = TableId extends null ? AllCellIds<Tables> : keyof Tables[TableId][string];
+	> = TableId extends keyof Tables
+		? Tables[TableId][string]
+		: AllCellIds<Tables>;
 
 	export type KeepIfHasCellId<
 		Tables extends Database,
@@ -144,7 +148,7 @@ declare module "tinybase/store" {
 
 	type RowListener<
 		Tables extends Database,
-		TableId extends keyof Database | null,
+		TableId extends keyof Tables | null,
 		RowId extends string | null
 	> = (
 		store: Store<Tables>,
@@ -155,7 +159,7 @@ declare module "tinybase/store" {
 
 	type CellIdsListener<
 		Tables extends Database,
-		TableId extends keyof Database | null,
+		TableId extends keyof Tables | null,
 		RowId extends string | null
 	> = (
 		store: Store<Tables>,
@@ -165,7 +169,7 @@ declare module "tinybase/store" {
 
 	type ExactCellListener<
 		Tables extends Database,
-		TableId extends keyof Database,
+		TableId extends keyof Tables,
 		RowId extends string | null,
 		CellId extends keyof Tables[TableId][string]
 	> = (
@@ -233,6 +237,23 @@ declare module "tinybase/store" {
 		getCellChange: GetCellChange<Tables> | undefined
 	) => void;
 
+	type InvalidCellListener<
+		Tables extends Database,
+		TableId extends keyof Tables | null,
+		RowId extends string | null,
+		CellId extends AllowedCellIds<Tables, TableId> | null
+	> = (
+		store: Store<Tables>,
+		tableId: TableId extends null ? keyof Tables : TableId,
+		rowId: RowId extends null ? string : RowId,
+		cellId: CellId extends null
+			? TableId extends null
+				? AllCellIds<Tables>
+				: keyof Tables[TableId][string]
+			: CellId,
+		invalidCells: any[]
+	) => void;
+
 	export interface Store<Tables extends Database> {
 		// === Schema definition ===
 		setSchema<S extends Schema>(schema: S): Store<SchemaInstance<S>>;
@@ -241,7 +262,7 @@ declare module "tinybase/store" {
 		getTable<TableId extends keyof Tables>(tableId: TableId): Tables[TableId];
 		getTables(): Tables;
 		// This method is meant to be used as a type guard with arbitrary strings
-		hasTable<Id extends string>(tableId: Id): Id is keyof Tables;
+		hasTable(tableId: string): tableId is string & keyof Tables;
 		hasTables(): HasKeys<Tables>;
 		/* We can't give a more precise type, since TypeScript doesn't keep track of the order of object keys
 		 * Example:
@@ -278,11 +299,11 @@ declare module "tinybase/store" {
 			cellId: CellId
 		): Tables[TableId][string][CellId] | undefined;
 		// Meant to be used as a type guard for arbitrary strings
-		hasCell<TableId extends keyof Tables, CellId extends string>(
+		hasCell<TableId extends keyof Tables>(
 			tableId: TableId,
 			rowId: string,
-			cellId: CellId
-		): CellId is keyof Tables[TableId][string];
+			cellId: string
+		): cellId is string & keyof Tables[TableId][string];
 		getCellIds<TableId extends keyof Tables>(
 			tableId: TableId,
 			rowId: string
@@ -324,7 +345,7 @@ declare module "tinybase/store" {
 			rowId: string,
 			cellId: CellId,
 			cell: CellUpdate<Tables[TableId][string][CellId]>
-		);
+		): Store<Tables>;
 		// This is the Wild West, all bets are off
 		setJson(json: string): Store<Tables>;
 
@@ -427,6 +448,18 @@ declare module "tinybase/store" {
 			rowId: RowId,
 			cellId: null,
 			listener: CellListener<Tables, RowId>,
+			mutator?: boolean
+		): string;
+
+		addInvalidCellListener<
+			TableId extends keyof Tables | null,
+			RowId extends string | null,
+			CellId extends AllowedCellIds<TableId> | null
+		>(
+			tableId: TableId,
+			rowId: RowId,
+			cellId: CellId,
+			listener: InvalidCellListener<Tables, TableId, RowId, CellId>,
 			mutator?: boolean
 		): string;
 	}
