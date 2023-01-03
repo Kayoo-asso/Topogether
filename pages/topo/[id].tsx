@@ -13,21 +13,6 @@ type TopoProps = {
 	topo: TopoData;
 };
 
-// const redirect = (destination: string, res: ServerResponse | undefined) => {
-// 	if (res) {
-// 		res.writeHead(307, { Location: destination });
-// 		res.end();
-// 	}
-// 	return { topo: undefined };
-// };
-
-const redirect = (destination: string) => ({
-	redirect: {
-		destination,
-		permanent: false,
-	},
-});
-
 const getRidOfBouldersWithoutTrack = (topo: TopoData) => {
 	topo.lonelyBoulders = topo.lonelyBoulders.filter(id => topo.boulders.find(b => b.id === id)!.tracks.length > 0)
 	topo.sectors = topo.sectors.map(s => ({ ...s, boulders: s.boulders.filter(id => topo.boulders.find(b => b.id === id)!.tracks?.length > 0) }));
@@ -46,7 +31,7 @@ export default withRouting<TopoProps>({
 	
 		// Try to redirect on server
 		if (!topo) {
-			return redirect("/");
+			return { notFound: true };
 		}
 	
 		return { props: { topo } };

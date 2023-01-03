@@ -10,22 +10,15 @@ type BuilderProps = {
 	topo: TopoData;
 };
 
-const redirect = (destination: string) => ({
-	redirect: {
-		destination,
-		permanent: false,
-	},
-});
-
 // TODO: check the user is a contributor of the topo
 
 export default withRouting<BuilderProps>({
 	async getInitialProps({ query }) {
 		const { id } = query;
-		if (typeof id !== "string") return redirect("/");
+		if (typeof id !== "string") return { notFound: true };
 
 		const expanded = decodeUUID(id);
-		if (!isUUID(expanded)) return redirect("/");
+		if (!isUUID(expanded)) return { notFound: true };
 
 		const [topo, canEdit] = await Promise.all([
 			api.getTopo(expanded),
