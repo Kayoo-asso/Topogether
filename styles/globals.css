@@ -119,31 +119,9 @@ body {
 }
 
 /* MAP */
-#map a[href^="http://maps.google.com/maps"],
-#map a[href^="https://maps.google.com/maps"],
-#map a[href^="https://www.google.com/maps"]
-{
-  display: none !important;
-}
-#map .gmnoprint a,
-#map .gmnoprint span,
-#map .gm-style-cc {
-  display: none;
-}
-#map .gmnoprint div {
-  background: none !important;
-}
-#map img[src*="phantom"] {
-  opacity: 0.4;
-}
-#map.cursor-rock div {
-  cursor: url("/assets/icons/colored/_rock.svg"), auto;
-}
-#map.cursor-parking div {
-  cursor: url("/assets/icons/colored/_parking.svg"), auto;
-}
-#map.cursor-waypoint div {
-  cursor: url("/assets/icons/colored/_help-round.svg"), auto;
+.ol-attribution {
+  left: 0.5em !important;
+  right: initial !important;
 }
 
 /* FONT */
