@@ -24,7 +24,7 @@ import { SlideoverRightTopo } from "components/organisms/topo/Slideover.right.to
 import { BoulderMarkersLayer } from "components/map/markers/BoulderMarkersLayer";
 import { SectorAreaMarkersLayer } from "components/map/markers/SectorAreaMarkersLayer";
 import { ParkingMarkersLayer } from "components/map/markers/ParkingMarkersLayer";
-import { WaypointMarkersLayer } from "components/map/markers/WaypointMarkersLayer";
+import { WaypointMarkersLayer, disappearZoom } from "components/map/markers/WaypointMarkersLayer";
 import { SelectInteraction } from "components/map/markers/SelectInteraction";
 
 interface RootTopoProps {
@@ -139,6 +139,7 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 						ref={mapRef}
 						topo={props.topoQuark}
 						initialZoom={16}
+						minZoom={disappearZoom - 1}
 						initialCenter={topo.location}
 						searchbarOptions={{
 							findBoulders: true,
