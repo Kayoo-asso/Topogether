@@ -110,10 +110,8 @@ function implementation<G extends GeometryType>(
 	// The `implementation` function is never exported and only used through the components defined below
 	if (props.type === "circle") {
 		// Make TypeScript happy, define them before the callback
-		const center = props.center;
-		const radius = props.radius;
 		const c = useMemo(
-			() => new OLCircle(center, radius, props.layout),
+			() => new OLCircle(props.center, props.radius, props.layout),
 			[props.center, props.radius, props.layout]
 		);
 
