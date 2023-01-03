@@ -211,20 +211,16 @@ export type DBManager = NullableOptional<{
 export type DBContributor = NullableOptional<{
 	topo_id: UUID;
 	user_id: UUID;
-	role: ContributorRole
+	role: ContributorRole;
 }>;
 
-// TODO: is the RequireAtLeastOne correct?
-export type TopoAccess = RequireAtLeastOne<
-	{
-		readonly id: UUID;
-		danger?: Description;
-		difficulty?: Difficulty;
-		duration?: number;
-		steps: TopoAccessStep[];
-	},
-	"danger" | "difficulty" | "duration"
->;
+export type TopoAccess = {
+	readonly id: UUID;
+	danger?: Description;
+	difficulty?: Difficulty;
+	duration?: number;
+	steps: TopoAccessStep[];
+};
 
 export interface TopoAccessStep {
 	description: Description;
