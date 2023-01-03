@@ -105,7 +105,7 @@ export const RootWorldMap: React.FC<RootWorldMapProps> = watchDependencies(
 						{selectedTopo &&	
 							<TopoPreview
 								topo={selectedTopo}
-								displayLikeDownload
+								displayLikeDownload={!!user}
 								// displayCreator
 								displayParking
 								mainButton={{ content: 'Ouvrir', link: '/topo/' + encodeUUID(selectedTopo.id) }}

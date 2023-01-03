@@ -19,6 +19,7 @@ import Bin from "assets/icons/bin.svg";
 import Umbrella from "assets/icons/umbrella.svg";
 import { Flash } from "components/atoms/overlays";
 import { RockNames } from "types/BitflagNames";
+import { useSession } from "helpers/services";
 
 interface InfoContentProps {
 	topo: Signal<Topo>;
@@ -27,6 +28,7 @@ interface InfoContentProps {
 export const InfoContent: React.FC<InfoContentProps> = (props: InfoContentProps) => {
 	const [flashMessage, setFlashMessage] = useState<string>();
 	const topo = props.topo();
+	const session = useSession();
 
 	const nbOfBoulders = topo.boulders.length;
 	let nbOfTracks = 0;
@@ -38,8 +40,12 @@ export const InfoContent: React.FC<InfoContentProps> = (props: InfoContentProps)
 		<>
 			<div className="flex h-full flex-col">
 				<div className="absolute z-100 flex flex-row gap-6 px-6 pt-4 left-1 top-1 md:left-48 md:top-3">
-					<LikeButton liked={topo.liked} />
-					<DownloadButton topo={topo} />
+					{session &&
+						<>
+							<LikeButton liked={topo.liked} />
+							<DownloadButton topo={topo} />
+						</>
+					}
 				</div>
 
 				<div className="flex flex-col items-center px-6 pt-5 md:items-start md:px-0 md:pt-0">
