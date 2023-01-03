@@ -5,7 +5,6 @@ import { editTopo } from "helpers/quarkifyTopo";
 import { withRouting } from "helpers/serverStuff";
 import { decodeUUID } from "helpers/utils";
 import { RootBuilder } from "components/pages/RootBuilder";
-import { DownloadTester } from "components/DownloadTester";
 
 type BuilderProps = {
 	topo: TopoData;
@@ -46,7 +45,6 @@ export default withRouting<BuilderProps>({
 		return (
 			<>
 				<RootBuilder topoQuark={topoQuark} />
-				{/* <DownloadTester topo={topo} /> */}
 			</>
 		);
 	},

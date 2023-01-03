@@ -73,7 +73,7 @@ export const ParkingContent: React.FC = watchDependencies(() => {
 						<div className="ktext-base-little mt-2">{parking.description}</div>
 					</div>
 				</div>
-				<div className="absolute bottom-[9%] w-full px-6 text-center md:bottom-2">
+				<div className="absolute bottom-[9%] w-full px-6 text-center md:bottom-6">
 					<ParkingButton onClick={() => setModalParkingOpen(true)} />
 				</div>
 
