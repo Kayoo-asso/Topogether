@@ -87,7 +87,7 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> = watchDepe
 					}
 				}, [])}
 			>
-				<Cluster source="boulders" minDistance={20} distance={50} />
+				<Cluster source="boulders" minDistance={20} distance={60} />
 			</VectorLayer>
 
 			<VectorLayer
