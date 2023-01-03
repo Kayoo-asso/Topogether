@@ -58,17 +58,19 @@ interface CommonProps {
 	onPropertyChange?: (event: ObjectEvent) => void;
 }
 
-type Props<G extends GeometryType | "circle"> = CommonProps &
-	(G extends keyof CoordinatesTypeMap
+type Props<G extends GeometryType> = CommonProps &
+	(G extends "circle"
+		? {
+				type: G;
+				center: Coordinate;
+				radius: number;
+		  }
+		: G extends keyof CoordinatesTypeMap
 		? {
 				type: G;
 				coordinates: CoordinatesTypeMap[G];
 		  }
-		: {
-				type: "circle";
-				center: Coordinate;
-				radius: number;
-		  });
+		: never);
 
 const constructors = {
 	point: OLPoint,
@@ -107,8 +109,11 @@ function implementation<G extends GeometryType>(
 	// The `type` prop should never change for a given component.
 	// The `implementation` function is never exported and only used through the components defined below
 	if (props.type === "circle") {
+		// Make TypeScript happy, define them before the callback
+		const center = props.center;
+		const radius = props.radius;
 		const c = useMemo(
-			() => new OLCircle(props.center, props.radius, props.layout),
+			() => new OLCircle(center, radius, props.layout),
 			[props.center, props.radius, props.layout]
 		);
 
