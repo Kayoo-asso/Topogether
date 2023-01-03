@@ -87,12 +87,12 @@ export class ClusterSource extends VectorSource {
 	protected boundRefresh_: () => void = this.refresh.bind(this);
 
 	constructor(userOptions: Options) {
-		const options = { ...defaultOptions, ...userOptions };
-
 		super({
-			attributions: options.attributions,
+			attributions: userOptions.attributions,
 			wrapX: userOptions.wrapX || true,
 		});
+
+		const options = { ...defaultOptions, ...userOptions };
 
 		this.distance = options.distance;
 		this.minDistance = options.minDistance;
