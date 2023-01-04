@@ -1,15 +1,17 @@
 import { useEffect } from "react";
 
-function cacheDocument(url: string | URL | null | undefined) {
+async function cacheDocument(url: string | URL | null | undefined) {
 	if (!url || !window.navigator.onLine) {
 		return;
 	}
 	console.log("Caching url", url);
-	// Keep in sync with sw.ts
-	return caches
-		.open("documents")
-		.then((cache) => cache.add(url))
-		.catch();
+	url = removeSearchParams(url);
+	// Keep cache name in sync with sw.ts
+	const cache = await caches.open("documents")
+	const match = await cache.match(url, {ignoreSearch: true})
+	if(!match) {
+		return cache.add(url);
+	}
 }
 
 export function PageCaching() {
@@ -38,4 +40,11 @@ export function PageCaching() {
 		};
 	}, []);
 	return null;
+}
+
+
+function removeSearchParams(url: string | URL): string {
+	const obj = new URL(url);
+	obj.search = "";
+	return obj.href
 }
