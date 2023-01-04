@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-async function cacheDocument(url: string | URL | null | undefined) {
+export async function cacheDocument(url: string | URL | null | undefined) {
 	if (!url || !window.navigator.onLine) {
 		return;
 	}

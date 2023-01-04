@@ -9,6 +9,7 @@ import { get, set } from "idb-keyval";
 import { CACHED_IMG_WIDTH, bunnyUrl, tileUrl, TOPO_CACHE_KEY } from "./sharedWithServiceWorker";
 import { createXYZ } from "ol/tilegrid";
 import { createStore } from "tinybase/store";
+import { cacheDocument } from "./PageCaching";
 
 
 export interface TopoDownloadMessage {
@@ -64,6 +65,11 @@ export async function downloadTopo(
 			withExponentialBackoff(() => downloadUrl(url, cache, lock, tracker))
 		),
 		set(topo.id, topo),
+		// Cache the page's HTML
+		// This is important if the person has never opened the topo, downloads it,
+		// navigates to the page while offline & then refreshes. In that case,
+		// the app will ask for the HTML of /topo/[id], which we cache here.
+		cacheDocument("/topo/" + topo.id)
 	];
 
 	const results = await Promise.allSettled(promises);
@@ -85,8 +91,8 @@ export async function downloadTopo(
 	let globalError = false;
 	// Oh, we also need to keep track of which entries we actually managed to cache
 	const cachedUrls: string[] = [];
-	// We skip the last promise, since it corresponds to the write to IndexedDB for the topo data
-	for(let i = 0 ; i < results.length - 1; ++i) {
+	// We skip the last 2 promises (= caching topo data + page HTML)
+	for(let i = 0 ; i < results.length - 2; ++i) {
 		const res = results[i];
 		if(res.status === "rejected") {
 			if(i < tileUrls.length) {
