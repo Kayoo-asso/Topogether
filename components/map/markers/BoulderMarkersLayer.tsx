@@ -89,7 +89,8 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> = watchDepe
 				style={useCallback((cluster: FeatureLike) => {
 					const features: FeatureLike[] = cluster.get("features");
 					let selected = false;
-					if (selectedType === "boulder") { // If there is a selectedItem and the cluster contains the selected item
+					// If there is a selectedItem and the cluster contains the selected item, the clust must be selected also
+					if (selectedType === "boulder") {
 						if (features.some(f => f.get("data").value().id === selectedItem!().id)) selected = true;
 					}
 					if (features.length > 1) {
