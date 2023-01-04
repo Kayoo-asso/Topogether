@@ -11,6 +11,7 @@ import { resetServerContext } from "react-beautiful-dnd";
 import { User } from "types";
 import { NavigationLoader } from "components/layouts/NavigationLoader";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { PageCaching } from "helpers/services/PageCaching";
 
 type CustomProps = {
 	session: User | null;
@@ -159,6 +160,8 @@ const CustomApp = ({ Component, pageProps, session, userAgent }: Props) => {
 				/>
 
 			</Head>
+
+			<PageCaching />
 
 			<AuthProvider initial={session}>
 				<DeviceManager userAgent={userAgent}>

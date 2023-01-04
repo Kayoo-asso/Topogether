@@ -70,17 +70,14 @@ const documents = new Route(
 	({ request }) => {
 		return request.destination === "document";
 	},
+	// Keep name of this cache in sync with PageCaching component
 	new NetworkFirst({
 		cacheName: "documents",
-		networkTimeoutSeconds: 7,
-		plugins: [
-			new ExpirationPlugin({
-				maxEntries: 30,
-				purgeOnQuotaError: true,
-			}),
-		],
+		networkTimeoutSeconds: 60,
 	})
 );
+
+addEventListener
 
 const nextDataRegex = /^\/_next\/data\/.*\.json/;
 const nextData = new Route(

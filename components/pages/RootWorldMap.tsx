@@ -10,7 +10,7 @@ import { encodeUUID } from "helpers/utils";
 import { TopoPreview } from "components/organisms/TopoPreview";
 import { MapControl } from "components/map/MapControl";
 import { TopoMarkersLayer } from "components/map/markers/TopoMarkersLayer";
-import { toLonLat } from "ol/proj";
+import { usePosition } from "helpers/hooks";
 
 interface RootWorldMapProps {
 	lightTopos: LightTopo[];
@@ -20,6 +20,7 @@ export const RootWorldMap: React.FC<RootWorldMapProps> = watchDependencies(
 	(props: RootWorldMapProps) => {
 		const auth = useAuth();
 		const user = auth.session();
+		const { position } = usePosition();
 
 		const [selectedTopo, setSelectedTopo] = useState<LightTopo>();
 
@@ -80,13 +81,14 @@ export const RootWorldMap: React.FC<RootWorldMapProps> = watchDependencies(
 
 					<MapControl 
 						initialZoom={5}
+						initialCenter={position || undefined}
 						searchbarOptions={{
 							findTopos: true,
 							findPlaces: true,
 						}}
 						topoFilters={topoFilters}
 						topoFiltersDomain={topoFilterDomain}
-						onUserMarkerClick={(e) => console.log(e)}
+						// onUserMarkerClick={(e) => console.log(e)}
 						onClick={(e) => {
 							const map = e.map;
 							const hit = map?.forEachFeatureAtPixel(e.pixel, function(feature, layer) {

@@ -29,7 +29,7 @@ import { Props } from "components/openlayers/Map";
 import { UserMarkerLayer } from "./markers/UserMarkerLayer";
 import { XYZ as XYZObject } from "ol/source";
 import { MapBrowserEvent } from "ol";
-import { Attribution} from "ol/control";
+import { Attribution, Rotate} from "ol/control";
 import { DEFAULT_EXTENT_BUFFER, getTopoExtent } from "helpers/map/getTopoExtent";
 import { getMapCursorClass } from "helpers/map/getMapCursorClass";
 import { isEmpty } from "ol/extent";
@@ -65,7 +65,7 @@ const attributions =
 
 // The default controls except the zoom +/- buttons and the rotate button
 const controls = typeof window === "undefined" ? [] : [
-	new Attribution()
+	new Attribution(),
 ]
 
 export const MapControl = watchDependencies<Map, MapControlProps>(
@@ -284,6 +284,7 @@ export const MapControl = watchDependencies<Map, MapControlProps>(
 						)}
 						zoom={initialZoom}
 						minZoom={props.minZoom}
+						enableRotation={false}
 					/>
 
 					<TileLayer>
