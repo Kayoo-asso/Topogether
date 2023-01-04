@@ -84,7 +84,6 @@ export const MapControl = watchDependencies<Map, MapControlProps>(
 		const session = useSession();
 		const breakpoint = useBreakpoint();
 		const [map, setMap] = useState<Map | null>(null);
-		const [xyz, setXYZ] = useState<XYZObject | null>(null);
 		const { position } = usePosition();
 		const selectedItem = useSelectStore((s) => s.item);
 		const select = useSelectStore((s) => s.select);
@@ -95,17 +94,6 @@ export const MapControl = watchDependencies<Map, MapControlProps>(
 			breakpoint === "desktop"
 		);
 		const [satelliteView, setSatelliteView] = useState(false);
-		useEffect(() => {
-			if (xyz) {
-				xyz.setUrl(
-					satelliteView
-						? `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/tiles/512/{z}/{x}/{y}@2x?access_token=${MAPBOX_TOKEN}`
-						// : `https://api.mapbox.com/styles/v1/mapbox/outdoors-v11/tiles/512/{z}/{x}/{y}@2x?access_token=${MAPBOX_TOKEN}`
-						: `https://api.mapbox.com/styles/v1/erwinkn/clbs8clin005514qrc9iueujg/tiles/512/{z}/{x}/{y}@2x?access_token=${MAPBOX_TOKEN}`
-					);
-				xyz.setAttributions(attributions);
-			}
-		}, [satelliteView, xyz]);
 
 		useEffect(() => {
 			const determinePointer = (e: MapBrowserEvent<PointerEvent>) => {
@@ -289,9 +277,10 @@ export const MapControl = watchDependencies<Map, MapControlProps>(
 
 					<TileLayer>
 						<XYZ
-							ref={setXYZ}
 							attributions={attributions}
-							url={`https://api.mapbox.com/styles/v1/mapbox/outdoors-v11/tiles/512/{z}/{x}/{y}@2x?access_token=${MAPBOX_TOKEN}`}
+							url={satelliteView ?
+								`https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/tiles/512/{z}/{x}/{y}@2x?access_token=${MAPBOX_TOKEN}`
+							: `https://api.mapbox.com/styles/v1/erwinkn/clbs8clin005514qrc9iueujg/tiles/512/{z}/{x}/{y}@2x?access_token=${MAPBOX_TOKEN}`}
 							// IMPORTANT
 							tilePixelRatio={2}
 							tileSize={512}

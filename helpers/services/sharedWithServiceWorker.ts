@@ -5,7 +5,7 @@ export const CACHED_IMG_WIDTH = 2048;
 
 const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 export function tileUrl(x: number, y: number, z: number): string {
-	return `https://api.mapbox.com/styles/v1/mapbox/outdoors-v11/tiles/512/${z}/${x}/${y}@2x?access_token=${MAPBOX_TOKEN}`;
+	return `https://api.mapbox.com/styles/v1/erwinkn/clbs8clin005514qrc9iueujg/tiles/512/${z}/${x}/${y}@2x?access_token=${MAPBOX_TOKEN}`;
 }
 
 export const VariantWidths = [
