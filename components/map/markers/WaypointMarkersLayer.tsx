@@ -31,7 +31,7 @@ export const waypointMarkerStyle = (selected: boolean, anySelected: boolean, dev
 export const disappearZoom = 14;
 export const WaypointMarkersLayer: React.FC<WaypointMarkersLayerProps> = watchDependencies((props: WaypointMarkersLayerProps) => {
     const selectedType = useSelectStore((s) => s.item.type);
-    const mustDisappear = !!(selectedType !== 'none' && selectedType !== 'sector');
+    const anySelected = !!(selectedType !== 'none' && selectedType !== 'sector');
     
     const mapZoom = useMapZoom(disappearZoom);
     const device = useBreakpoint();
@@ -43,10 +43,10 @@ export const WaypointMarkersLayer: React.FC<WaypointMarkersLayerProps> = watchDe
                 style={useCallback(() =>
                     waypointMarkerStyle (
                             false,
-                            mustDisappear,
+                            anySelected,
                             device,
                             mapZoom
-                        ), [mapZoom, device, mustDisappear])
+                        ), [mapZoom, device, anySelected])
                 }
             >
                 <VectorSource>

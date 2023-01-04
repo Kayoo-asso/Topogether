@@ -15,7 +15,6 @@ import {
 } from ".";
 import { Boulder, GeoCoordinates, Position, Topo } from "types";
 import { Quark, watchDependencies } from "helpers/quarky";
-import { fontainebleauLocation } from "helpers/constants";
 import { setReactRef } from "helpers/utils";
 import { useBreakpoint, usePosition } from "helpers/hooks";
 
@@ -27,12 +26,15 @@ import { useSession } from "helpers/services";
 import { MapToolSelector } from "./MapToolSelector";
 import { Props } from "components/openlayers/Map";
 import { UserMarkerLayer } from "./markers/UserMarkerLayer";
-import { XYZ as XYZObject } from "ol/source";
 import { MapBrowserEvent } from "ol";
-import { Attribution, Rotate} from "ol/control";
-import { DEFAULT_EXTENT_BUFFER, getTopoExtent } from "helpers/map/getTopoExtent";
+import { Attribution, Rotate } from "ol/control";
+import {
+	DEFAULT_EXTENT_BUFFER,
+	getTopoExtent,
+} from "helpers/map/getTopoExtent";
 import { getMapCursorClass } from "helpers/map/getMapCursorClass";
 import { isEmpty } from "ol/extent";
+import { fontainebleauLocation } from "helpers/constants";
 
 type MapControlProps = React.PropsWithChildren<
 	Props & {
@@ -64,9 +66,7 @@ const attributions =
 	"OpenStreetMap contributors</a>";
 
 // The default controls except the zoom +/- buttons and the rotate button
-const controls = typeof window === "undefined" ? [] : [
-	new Attribution(),
-]
+const controls = typeof window === "undefined" ? [] : [new Attribution()];
 
 export const MapControl = watchDependencies<Map, MapControlProps>(
 	(
@@ -84,28 +84,23 @@ export const MapControl = watchDependencies<Map, MapControlProps>(
 		const session = useSession();
 		const breakpoint = useBreakpoint();
 		const [map, setMap] = useState<Map | null>(null);
-		const [xyz, setXYZ] = useState<XYZObject | null>(null);
 		const { position } = usePosition();
 		const selectedItem = useSelectStore((s) => s.item);
 		const select = useSelectStore((s) => s.select);
 		const flush = useSelectStore((s) => s.flush);
 		const tool = useSelectStore((s) => s.tool);
 
+		// We don't want to recenter the View after initial load, so we need to never change
+		// its `center` prop
+		const [initialCenter, setInitialCenter] = useState(props.initialCenter);
+		if (!initialCenter && props.initialCenter) {
+			setInitialCenter(props.initialCenter);
+		}
+
 		const [mapToolSelectorOpen, setMapToolSelectorOpen] = useState(
 			breakpoint === "desktop"
 		);
 		const [satelliteView, setSatelliteView] = useState(false);
-		useEffect(() => {
-			if (xyz) {
-				xyz.setUrl(
-					satelliteView
-						? `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/tiles/512/{z}/{x}/{y}@2x?access_token=${MAPBOX_TOKEN}`
-						// : `https://api.mapbox.com/styles/v1/mapbox/outdoors-v11/tiles/512/{z}/{x}/{y}@2x?access_token=${MAPBOX_TOKEN}`
-						: `https://api.mapbox.com/styles/v1/erwinkn/clbs8clin005514qrc9iueujg/tiles/512/{z}/{x}/{y}@2x?access_token=${MAPBOX_TOKEN}`
-					);
-				xyz.setAttributions(attributions);
-			}
-		}, [satelliteView, xyz]);
 
 		useEffect(() => {
 			const determinePointer = (e: MapBrowserEvent<PointerEvent>) => {
@@ -125,7 +120,7 @@ export const MapControl = watchDependencies<Map, MapControlProps>(
 		useEffect(() => {
 			if (map && props.topo) {
 				const extent = getTopoExtent(props.topo(), DEFAULT_EXTENT_BUFFER);
-				if (!isEmpty(extent)) 
+				if (!isEmpty(extent))
 					map.getView().fit(extent, {
 						size: map.getSize(),
 						maxZoom: 18,
@@ -202,8 +197,9 @@ export const MapControl = watchDependencies<Map, MapControlProps>(
 					{/* Bottom center */}
 					<div
 						className={
-							((mapToolSelectorOpen && breakpoint === "mobile") ? "z-100" : "z-1") +
-							" absolute bottom-0 my-3 flex w-full justify-center"
+							(mapToolSelectorOpen && breakpoint === "mobile"
+								? "z-100"
+								: "z-1") + " absolute bottom-0 my-3 flex w-full justify-center"
 						}
 					>
 						{displayToolSelector && (
@@ -279,9 +275,7 @@ export const MapControl = watchDependencies<Map, MapControlProps>(
 					controls={controls}
 				>
 					<View
-						center={fromLonLat(
-							props.initialCenter || position || fontainebleauLocation
-						)}
+						center={initialCenter ? fromLonLat(initialCenter) : fromLonLat(fontainebleauLocation)}
 						zoom={initialZoom}
 						minZoom={props.minZoom}
 						enableRotation={false}
@@ -289,9 +283,12 @@ export const MapControl = watchDependencies<Map, MapControlProps>(
 
 					<TileLayer>
 						<XYZ
-							ref={setXYZ}
 							attributions={attributions}
-							url={`https://api.mapbox.com/styles/v1/mapbox/outdoors-v11/tiles/512/{z}/{x}/{y}@2x?access_token=${MAPBOX_TOKEN}`}
+							url={
+								satelliteView
+									? `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/tiles/512/{z}/{x}/{y}@2x?access_token=${MAPBOX_TOKEN}`
+									: `https://api.mapbox.com/styles/v1/erwinkn/clbs8clin005514qrc9iueujg/tiles/512/{z}/{x}/{y}@2x?access_token=${MAPBOX_TOKEN}`
+							}
 							// IMPORTANT
 							tilePixelRatio={2}
 							tileSize={512}
@@ -309,4 +306,4 @@ export const MapControl = watchDependencies<Map, MapControlProps>(
 	}
 );
 
-MapControl.displayName = "MapControl"
+MapControl.displayName = "MapControl";

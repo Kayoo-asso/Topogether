@@ -52,15 +52,20 @@ export const boulderMarkerStyle = (
 		zIndex: 100,
 	});
 };
-export const clusterMarkerStyle = (size: number) => {
+export const clusterMarkerStyle = (selected: boolean, anySelected: boolean,size: number) => {
 	const icon = new Icon({
+		opacity: anySelected ? (selected ? 1 : 0.4) : 1,
 		src: "/assets/icons/markers/clusterBoulder.svg",
 		scale: 0.8,
 	});
 	const text = new Text({
 		text: size.toString(),
 		fill: new Fill({
-			color: "#ffffff",
+			color: anySelected
+			? selected
+				? "#fff"
+				: "rgba(255, 255, 255, 0.3)"
+			: "#fff",
 		}),
 		font: "bold 26px Poppins",
 		offsetY: 3,
@@ -72,8 +77,9 @@ export const clusterMarkerStyle = (size: number) => {
 };
 
 export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> = watchDependencies((props: BoulderMarkersLayerProps) => {
+	const selectedItem = useSelectStore(s => s.item.value);
 	const selectedType = useSelectStore((s) => s.item.type);
-	const mustDisappear = !!(selectedType !== 'none' && selectedType !== 'sector');
+	const anySelected = !!(selectedType !== 'none' && selectedType !== 'sector');
 
 	const device = useBreakpoint();
 
@@ -81,11 +87,20 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> = watchDepe
 		<>
 			<VectorLayer
 				style={useCallback((cluster: FeatureLike) => {
-					const features = cluster.get("features");
-					if (features.length > 1) {
-						return clusterMarkerStyle(features.length);
+					const features: FeatureLike[] = cluster.get("features");
+					let selected = false;
+					// If there is a selectedItem and the cluster contains the selected item, the clust must be selected also
+					if (selectedType === "boulder") {
+						if (features.some(f => f.get("data").value().id === selectedItem!().id)) selected = true;
 					}
-				}, [])}
+					if (features.length > 1) {
+						return clusterMarkerStyle(
+							selected,
+							anySelected,
+							features.length
+						);
+					}
+				}, [selectedItem])}
 			>
 				<Cluster source="boulders" minDistance={20} distance={60} />
 			</VectorLayer>
@@ -96,13 +111,13 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> = watchDepe
 					(feature: FeatureLike) => {
 						return boulderMarkerStyle(
 							false,
-							mustDisappear,
+							anySelected,
 							device,
 							props.boulderOrder,
 							feature
 						);
 					},
-					[selectedType, device, mustDisappear, props.boulderOrder]
+					[selectedType, device, anySelected, props.boulderOrder]
 				)}
 			>
 				<VectorSource>

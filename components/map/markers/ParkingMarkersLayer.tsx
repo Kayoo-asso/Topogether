@@ -31,7 +31,7 @@ export const parkingMarkerStyle = (selected: boolean, anySelected: boolean, devi
 
 export const ParkingMarkersLayer: React.FC<ParkingMarkersLayerProps> = watchDependencies((props: ParkingMarkersLayerProps) => {
     const selectedType = useSelectStore((s) => s.item.type);
-    const mustDisappear = !!(selectedType !== 'none' && selectedType !== 'sector');
+    const anySelected = !!(selectedType !== 'none' && selectedType !== 'sector');
 
     const mapZoom = useMapZoom(disappearZoom);
     const device = useBreakpoint();
@@ -43,10 +43,10 @@ export const ParkingMarkersLayer: React.FC<ParkingMarkersLayerProps> = watchDepe
                 style={useCallback(() =>
                         parkingMarkerStyle (
                             false,
-                            mustDisappear,
+                            anySelected,
                             device,
                             mapZoom
-                        ), [mapZoom, device, mustDisappear])
+                        ), [mapZoom, device, anySelected])
                 }
             >
                 <VectorSource>

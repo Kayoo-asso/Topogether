@@ -23,12 +23,12 @@ export const SelectInteraction: React.FC<SelectInteractionProps> = ({
     ...props
 }: SelectInteractionProps) => {
     const selectedType = useSelectStore((s) => s.item.type);
-    const mustDisappear = !!(selectedType !== 'none' && selectedType !== 'sector');
+    const anySelected = !!(selectedType !== 'none' && selectedType !== 'sector');
     const select = useSelectStore((s) => s.select);
     const flush = useSelectStore((s) => s.flush);
 
     const device = useBreakpoint();
-    const mapZoom = useMapZoom(disappearZoom);
+    const mapZoom = useMapZoom(disappearZoom);    
 
     return (
         <Select 
@@ -56,13 +56,13 @@ export const SelectInteraction: React.FC<SelectInteractionProps> = ({
             style={useCallback((feature: FeatureLike) => {
                 const item = feature.get("data");
                 switch (item.type) {
-                    case 'boulder': return boulderMarkerStyle(true, mustDisappear, device, props.boulderOrder, feature); break;
-                    case 'parking': return parkingMarkerStyle(true, mustDisappear, device, mapZoom); break;
-                    case 'waypoint': return waypointMarkerStyle(true, mustDisappear, device, mapZoom); break;
+                    case 'boulder': return boulderMarkerStyle(true, anySelected, device, props.boulderOrder, feature); break;
+                    case 'parking': return parkingMarkerStyle(true, anySelected, device, mapZoom); break;
+                    case 'waypoint': return waypointMarkerStyle(true, anySelected, device, mapZoom); break;
                     case 'sector': return sectorMarkerStyle(true); break;
                     default: return;
                 }  
-            }, [device, mapZoom, mustDisappear])}
+            }, [device, mapZoom, anySelected])}
             // Necessary to register single clicks outside any feature
             // Toggle when clicking again
             toggleCondition={singleClick}
