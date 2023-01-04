@@ -4,12 +4,12 @@ async function cacheDocument(url: string | URL | null | undefined) {
 	if (!url || !window.navigator.onLine) {
 		return;
 	}
-	console.log("Caching url", url);
-	url = removeSearchParams(url);
 	// Keep cache name in sync with sw.ts
-	const cache = await caches.open("documents")
-	const match = await cache.match(url, {ignoreSearch: true})
-	if(!match) {
+	url = removeSearchParams(url);
+	const cache = await caches.open("documents");
+	const match = await cache.match(url, { ignoreSearch: true });
+	if (!match) {
+		console.log("Caching url", url);
 		return cache.add(url);
 	}
 }
@@ -42,9 +42,6 @@ export function PageCaching() {
 	return null;
 }
 
-
 function removeSearchParams(url: string | URL): string {
-	const obj = new URL(url);
-	obj.search = "";
-	return obj.href
+	return url.toString().split("?")[0];
 }
