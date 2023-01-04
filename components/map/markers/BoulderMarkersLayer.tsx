@@ -60,7 +60,7 @@ export const clusterMarkerStyle = (size: number) => {
 	const text = new Text({
 		text: size.toString(),
 		fill: new Fill({
-			color: "#343644",
+			color: "#ffffff",
 		}),
 		font: "bold 26px Poppins",
 		offsetY: 3,

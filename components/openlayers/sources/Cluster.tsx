@@ -19,7 +19,6 @@ export type ClusterProps = Omit<InferOptions<typeof useBehavior>, "source"> & {
 
 export const Cluster = forwardRef<ClusterSource, ClusterProps>(
 	({ children, source, ...props }, ref) => {
-		// const source = useSource();
 		const map = useMap();
 		const layer = useLayer();
 		const [s] = useGetSources(map, [source]);
