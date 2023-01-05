@@ -254,6 +254,69 @@ declare module "tinybase/store" {
 		invalidCells: any[]
 	) => void;
 
+	type TransactionListener<Tables extends Database> = (
+		store: Store<Tables>,
+		cellsTouched: boolean
+	) => void;
+
+	type CellCallback<Tables extends Database, TableId extends keyof Tables> = <
+		CellId extends keyof Tables[TableId][string]
+	>(
+		cellId: CellId,
+		cell: Tables[TableId][string][CellId]
+	) => void;
+
+	type RowCallback<Tables extends Database, TableId extends keyof Tables> = (
+		rowId: string,
+		forEachCell: (cellCallback: CellCallback<Tables, TableId>) => void
+	) => void;
+
+	type TableCallback<Tables extends Database> = <TableId extends keyof Tables>(
+		tableId: TableId,
+		forEachRow: (rowCallback: RowCallback<Tables, TableId>) => void
+	) => void;
+
+	type ChangedCells<Tables extends Database> = Partial<{
+		[TableId in keyof Tables]: Record<
+			string,
+			Partial<{
+				[CellId in keyof Tables[TableId][string]]: Array<
+					Tables[TableId][string][CellId] | undefined,
+					Tables[TableId][string][CellId] | undefined
+				>;
+			}>
+		>;
+	}>;
+
+	type InvalidCells<Tables extends Database> = Partial<{
+		[TableId in keyof Tables]: Record<
+			string,
+			Partial<{
+				[CellId in keyof Tables[TableId][string]]: Array<any>;
+			}>
+		>;
+	}>;
+
+	export type DoRollback<Tables> = (
+		changedCells: ChangedCells<Tables>,
+		invalidCells: InvalidCells<Tables>
+	) => boolean;
+
+	export interface StoreListenerStats {
+		tables?: number;
+		tableIds?: number;
+		table?: number;
+		rowIds?: number;
+		sortedRowIds?: number;
+		row?: number;
+		cellIds?: number;
+		cell?: number;
+		invalidCell?: number;
+		transaction?: number;
+	}
+
+	// === Callbacks ===
+
 	export interface Store<Tables extends Database> {
 		// === Schema definition ===
 		setSchema<S extends Schema>(schema: S): Store<SchemaInstance<S>>;
@@ -314,6 +377,9 @@ declare module "tinybase/store" {
 		getSchemaJson(): string;
 
 		// === Setters ===
+		// TODO: should we allow creation of new tables here?
+		// Example: I don't know what TinyBase does if you .setTable() for a table ID
+		// that is not in the schema
 		setTables(tables: Tables): Store<Tables>;
 		setTables<TableId extends keyof Tables>(
 			tableId: TableId,
@@ -462,6 +528,59 @@ declare module "tinybase/store" {
 			listener: InvalidCellListener<Tables, TableId, RowId, CellId>,
 			mutator?: boolean
 		): string;
+
+		addDidFinishTransactionListener(
+			listener: TransactionListener<Tables>
+		): string;
+		addWillFinishTransactionListener(
+			listener: TransactionListener<Tables>
+		): string;
+
+		callListener(listenerId: string): Store<Tables>;
+		delListener(listenerId: string): Store<Tables>;
+
+		// === [Iterator methods] ===
+		forEachTable(tableCallback: TableCallback<Tables>): void;
+		forEachRow<TableId extends keyof Tables>(
+			tableId: TableId,
+			rowCallback: RowCallback<Tables, TableId>
+		): void;
+		forEachCell<TableId extends keyof Tables>(
+			tableId: TableId,
+			rowId: string,
+			cellCallback: CellCallback<Tables, TableId>
+		): void;
+
+		// === [Transaction methods] ===
+		transaction<T>(actions: () => T, doRollback?: DoRollback<Tables>): T;
+		startTransaction(): Store<Tables>;
+		finishTransaction(doRollback?: DoRollback<Tables>): Store<Tables>;
+
+		// === [Delete methode] ===
+		// TODO: should this remove the table from the type
+		delTables(): Store<Tables>;
+		// TODO: should this remove the table from the type?
+		delTable<TableId extends keyof Tables>(tableId: TableId): Store<Tables>;
+		delRow<TableId extends keyof Tables>(
+			tableId: TableId,
+			rowId: string
+		): Store<Tables>;
+
+		// TODO: shoud we make the Store generic by its schema, to refine the type for this?
+		// I don't think it's worth it
+		delCell<
+			TableId extends keyof Tables,
+			CellId extends keyof Tables[TableId][string]
+		>(
+			tableId: TableId,
+			rowId: string,
+			cellId: CellId,
+			forceDel?: boolean
+		): Store<Tables>;
+
+		delSchema(): Store<{}>;
+
+		getListenerStats(): StoreListenerStats;
 	}
 
 	export function createStore<Tables extends Database = {}>(): Store<Tables>;
