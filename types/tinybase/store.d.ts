@@ -24,7 +24,7 @@ declare module "tinybase/store" {
 		? string
 		: never;
 
-	type SupportedCellValues = CellValue<CellSchema>;
+	export type SupportedCellValues = CellValue<CellSchema>;
 
 	type KeysWithoutDefault<Table extends TableSchema> = {
 		[Key in keyof Table]: Table[Key]["default"] extends CellValue<Table[Key]>
