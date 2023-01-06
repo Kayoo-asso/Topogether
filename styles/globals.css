@@ -123,6 +123,9 @@ body {
   left: 0.5em !important;
   right: initial !important;
 }
+.ol-touch .ol-control button {
+  font-size: 0.8em !important;
+}
 
 /* FONT */
 @font-face {
