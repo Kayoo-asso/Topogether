@@ -42,7 +42,7 @@ export const DragInteraction: React.FC<DragInteractionProps> = watchDependencies
                     case 'boulder': 
                         item.value.set((b) => ({ ...b, location }));
                         boulderChanged(props.topoQuark, item.value().id, location);
-                        console.log(props.boulderOrder);
+                        // console.log(props.boulderOrder);
                         boulderMarkerStyle(true, anySelected, device, props.boulderOrder, e.feature)
                         break;
                     case 'parking': item.value.set((p) => ({ ...p, location })); break;

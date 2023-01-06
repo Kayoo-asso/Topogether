@@ -59,7 +59,7 @@ export const SelectInteraction: React.FC<SelectInteractionProps> = watchDependen
                     case 'boulder': return boulderMarkerStyle(true, anySelected, device, props.boulderOrder, feature); break;
                     case 'parking': return parkingMarkerStyle(true, anySelected, device, mapZoom); break;
                     case 'waypoint': return waypointMarkerStyle(true, anySelected, device, mapZoom); break;
-                    case 'sector': return sectorMarkerStyle(true, resolution); break;
+                    case 'sector': return sectorMarkerStyle(true, feature, resolution); break;
                     default: return;
                 }  
             }, [device, mapZoom, anySelected, props.boulderOrder])}

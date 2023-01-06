@@ -8,7 +8,7 @@ import {
 } from "components/openlayers";
 import { FeatureLike } from 'ol/Feature';
 import { Circle, Fill, Stroke, Style, Text } from 'ol/style';
-import { GeoCoordinates, Sector, Topo, UUID } from 'types';
+import { GeoCoordinates, Sector, SectorData, Topo, UUID } from 'types';
 import { useSelectStore } from 'components/pages/selectStore';
 import { fromLonLat, toLonLat } from 'ol/proj';
 import { Polygon as PolygonType } from 'ol/geom';
@@ -21,8 +21,9 @@ interface SectorAreaMarkersLayerProps {
     creating?: boolean;
 }
 
-export function sectorMarkerStyle(selected: boolean, resolution: number) {
+export function sectorMarkerStyle(selected: boolean, feature: FeatureLike, resolution: number) {
     const font = '600 ' + Math.min(20, 36 / resolution) + 'px Poppins';
+    const sector = feature.get('data').value() as SectorData;
 
     const polygonStyle = new Style({
         stroke: new Stroke({
@@ -35,7 +36,7 @@ export function sectorMarkerStyle(selected: boolean, resolution: number) {
             color: selected ? 'rgba(4, 217, 139, 0.3)' : 'rgba(0,0,0,0)',
         }),
         text: new Text({
-            text: "Je suis un secteur",          
+            text: sector.name,          
             // textAlign: 'right',
             placement: 'line',
             textBaseline: 'bottom',
@@ -134,7 +135,7 @@ export const SectorAreaMarkersLayer: React.FC<SectorAreaMarkersLayerProps> = wat
 
             <VectorLayer
                 id="sectors"     
-                style={(feature, resolution) => sectorMarkerStyle(false, resolution)}
+                style={(feature, resolution) => sectorMarkerStyle(false, feature, resolution)}
                 updateWhileAnimating
                 updateWhileInteracting
             >
