@@ -33,11 +33,11 @@ export const DownloadButton: React.FC<DownloadButtonProps> = (props: DownloadBut
 
 	return (
 		<>
-			{loading && <Loading SVGClassName="h-5 w-5" />}
+			{loading && <Loading SVGClassName="h-4 w-4 m-0 ml-4" />}
 			{!loading && (
 				<Download
 					className={
-						"cursor-pointer " +
+						"cursor-pointer ml-5 " +
 						(isDl ? "h-5 w-5 stroke-main" : "h-5 w-5 stroke-dark") +
 						(props.className ? " " + props.className : "")
 					}
@@ -51,7 +51,9 @@ export const DownloadButton: React.FC<DownloadButtonProps> = (props: DownloadBut
 			<ModalUndownload
 				buttonText="Confirmer"
 				imgUrl={staticUrl.deleteWarning}
-				onConfirm={() => removeTopoFromCache(props.topo.id)}
+				onConfirm={() => {
+					removeTopoFromCache(props.topo.id);
+				}}
 			>
 				Le topo ne sera plus accessible hors ligne.
 			</ModalUndownload>

@@ -83,7 +83,7 @@ export const TopoPreview: React.FC<TopoPreviewProps> = ({
 	const topoPreviewContent = () => (
 		<>
 			{displayLikeDownload && (
-				<div className="absolute top-2 right-2 z-100 flex flex-row justify-center gap-5 rounded-full bg-white px-4 py-2 md:hidden">
+				<div className="absolute top-2 right-2 z-100 flex flex-row justify-center rounded-full bg-white px-4 py-2 md:hidden">
 					<LikeButton liked={props.topo.liked} />
 					<DownloadButton topo={props.topo} />
 				</div>
