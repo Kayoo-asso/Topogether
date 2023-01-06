@@ -35,7 +35,7 @@ export const BoulderBuilderContentMobile: React.FC<BoulderBuilderContentMobilePr
 			<>
 				{/* BOULDER IMAGE */}
 				{props.full && (
-					<div className="relative flex max-h-[40%] w-full overflow-hidden rounded-t-lg bg-dark">
+					<div className="relative flex max-h-[40%] h-[40%] w-full overflow-hidden rounded-t-lg bg-dark">
 						<ImageSlider
 							images={boulder.images}
 							tracks={boulder.tracks.quarks()}

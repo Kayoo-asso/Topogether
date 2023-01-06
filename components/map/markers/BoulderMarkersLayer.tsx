@@ -82,7 +82,6 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> = watchDepe
 	const anySelected = !!(selectedType !== 'none' && selectedType !== 'sector');
 
 	const device = useBreakpoint();
-	console.log("render");
 
 	return (
 		<>
