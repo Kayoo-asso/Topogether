@@ -17,6 +17,7 @@ type SlideoverLeftBuilderProps = {
 
 export const SlideoverLeftBuilder: React.FC<SlideoverLeftBuilderProps> = (props: SlideoverLeftBuilderProps) => {
     const breakpoint = useBreakpoint();
+	const selectedType = useSelectStore(s => s.item.type);
 	const selectedInfo = useSelectStore(s => s.info);
 	const flush = useSelectStore(s => s.flush);
 
@@ -40,7 +41,7 @@ export const SlideoverLeftBuilder: React.FC<SlideoverLeftBuilderProps> = (props:
 		<>
 			{breakpoint === "mobile" && (
 				<SlideoverMobile 
-					open={selectedInfo !== 'NONE'}
+					open={selectedInfo !== 'NONE' && selectedType === 'none'}
 					onClose={onClose}
 				>
 					<div className="flex flex-col h-full px-4 pt-14">
