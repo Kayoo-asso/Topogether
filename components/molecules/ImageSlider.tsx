@@ -190,7 +190,7 @@ export const ImageSlider: React.FC<ImageSliderProps> = watchDependencies(
 				<div
 					className={
 						"absolute flex w-full justify-center " +
-						(inPortal ? "bottom-5" : "bottom-3")
+						(inPortal ? "bottom-5" : "bottom-2")
 					}
 				>
 					<div className="flex w-[90%] justify-center gap-4">
@@ -198,7 +198,7 @@ export const ImageSlider: React.FC<ImageSliderProps> = watchDependencies(
 							<div
 								key={img.id}
 								className={
-									"h-3 w-3 rounded-full " +
+									"h-2 w-2 rounded-full " +
 									(img.id === selectedImage?.id
 										? "border-2 border-main bg-white"
 										: "bg-grey-light bg-opacity-50")
