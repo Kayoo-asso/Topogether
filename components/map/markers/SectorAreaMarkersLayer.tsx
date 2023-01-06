@@ -21,8 +21,8 @@ interface SectorAreaMarkersLayerProps {
     creating?: boolean;
 }
 
-export function sectorMarkerStyle(selected: boolean, feature: FeatureLike, resolution: number) {
-    const font = '600 ' + (26 / resolution) + 'px Poppins';
+export function sectorMarkerStyle(selected: boolean, resolution: number) {
+    const font = '600 ' + Math.min(20, 36 / resolution) + 'px Poppins';
 
     const polygonStyle = new Style({
         stroke: new Stroke({
@@ -36,7 +36,7 @@ export function sectorMarkerStyle(selected: boolean, feature: FeatureLike, resol
         }),
         text: new Text({
             text: "Je suis un secteur",          
-            textAlign: 'start',
+            // textAlign: 'right',
             placement: 'line',
             textBaseline: 'bottom',
             font,
@@ -134,7 +134,7 @@ export const SectorAreaMarkersLayer: React.FC<SectorAreaMarkersLayerProps> = wat
 
             <VectorLayer
                 id="sectors"     
-                style={(feature, resolution) => sectorMarkerStyle(false, feature, resolution)}
+                style={(feature, resolution) => sectorMarkerStyle(false, resolution)}
                 updateWhileAnimating
                 updateWhileInteracting
             >
