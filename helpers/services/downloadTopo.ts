@@ -14,6 +14,12 @@ import {
 } from "./sharedWithServiceWorker";
 import { createXYZ } from "ol/tilegrid";
 import { cacheDocument, onInit } from "./Initializers";
+import { useEffect, useState } from "react";
+
+// TODO:
+// - SharedWorker
+// - proper sync of state with worker using TinyBase
+// - also clear topo JSON + HTML when clearing cache
 
 export interface TopoDownloadMessage {
 	topo: TopoData;
@@ -30,13 +36,9 @@ const MAX_CONCURRENT_REQUESTS = 1000;
 export type DownloadTopoResult =
 	| {
 			success: true;
-			cachedUrls: string[];
 	  }
 	| {
 			success: false;
-			globalError: boolean;
-			imageErrors: number;
-			tileErrors: number;
 	  };
 
 let worker: SharedWorker | undefined;
@@ -46,6 +48,23 @@ export function getWorker() {
 		worker = new SharedWorker(new URL("./download-worker.ts", import.meta.url));
 	}
 	return worker;
+}
+
+// Hacks until we have a proper sync with TinyBase and a SharedWorker
+export function useToposAvailableOffline(): Set<UUID> {
+	const [availableOffline, setAvailableOffline] = useState(new Set(getToposAvailableOffline()))
+
+	useEffect(() => {
+		const update = () => setAvailableOffline(new Set(getToposAvailableOffline()));
+		window.addEventListener("storage", update);
+		return () => window.removeEventListener("storage", update);
+	}, []);
+
+	return availableOffline;
+}
+export function useIsAvailableOffline(topoId: UUID): boolean {
+	const available = useToposAvailableOffline();
+	return available.has(topoId);
 }
 
 export async function downloadTopo(
@@ -60,75 +79,67 @@ export async function downloadTopo(
 		`Downloading ${tileUrls.length} tiles and ${imgUrls.length} images`
 	);
 
-	const start = Date.now();
-	const cache = await caches.open(TOPO_CACHE_KEY);
-	const lock = new Semaphore(MAX_CONCURRENT_REQUESTS);
-	const promises: Promise<void>[] = [
-		...urls.map((url) =>
-			withExponentialBackoff(() => downloadUrl(url, cache, lock, tracker))
-		),
-		set(topo.id, topo),
-		// Cache the page's HTML
-		// This is important if the person has never opened the topo, downloads it,
-		// navigates to the page while offline & then refreshes. In that case,
-		// the app will ask for the HTML of /topo/[id], which we cache here.
-		cacheDocument("/topo/" + topo.id),
-	];
-
-	const results = await Promise.allSettled(promises);
-	const end = Date.now();
-	console.log(
-		`--- Finished downloading ${topo.name} in ${(end - start) / 1000}s (${
-			tileUrls.length
-		} tiles, ${imgUrls.length} images)`
-	);
-	// OK, the work is done, it's time to look for errors
-	// Three types of errors possible:
-	// - a tile failed to download
-	// - an image failed to download
-	// - saving the topo JSON or HTML to IndexedDB failed (= global error)
-	// The first 2 categories may be OK if there are only a few errors,
-	// but we can't do anything without the topo data.
-	let tileErrors = 0;
-	let imageErrors = 0;
-	let globalError = false;
-	// Oh, we also need to keep track of which entries we actually managed to cache
-	const cachedUrls: string[] = [];
-	// We skip the last 2 promises (= caching topo data + page HTML)
-	for (let i = 0; i < results.length - 2; ++i) {
-		const res = results[i];
-		if (res.status === "rejected") {
-			if (i < tileUrls.length) {
-				tileErrors++;
-			} else {
-				imageErrors++;
-			}
-		} else {
-			cachedUrls.push(urls[i]);
-		}
-	}
-	if (
-		results[results.length - 2].status === "rejected" ||
-		results[results.length - 1].status === "rejected"
-	) {
-		globalError = true;
-		// Do not delete just yet, in case the user attempts again
-	}
-
-	// Keep track of cached entries, in case user wants to clear data
-	await addCachedEntries(topo, cachedUrls);
-
-	// Record the cached entries, in case the user asks to delete the data for this topo
-	if (tileErrors === 0 && imageErrors === 0 && globalError === false) {
-		markSuccessfulDownload(topo.id);
-		return { success: true, cachedUrls };
-	} else {
+	try {
+		// Record cached entries as the first thing
+		// That way, if anything after this fails, we can still clear the cache
+		await setCachedEntries(topo, urls);
+		// Also mark the topo as an incomplete download.
+		// If everything is successful, this will be removed at the end.
+		// In the meantime, this makes sure this topo will get registered for cleaning
+		// if anything fails.
 		markIncompleteDownload(topo.id);
+
+		const start = Date.now();
+		const cache = await caches.open(TOPO_CACHE_KEY);
+		const lock = new Semaphore(MAX_CONCURRENT_REQUESTS);
+		const promises: Promise<void>[] = [
+			...urls.map((url) =>
+				withExponentialBackoff(() => downloadUrl(url, cache, lock, tracker))
+			),
+			set(topo.id, topo),
+			// Cache the page's HTML
+			// This is important if the person has never opened the topo, downloads it,
+			// navigates to the page while offline & then refreshes. In that case,
+			// the app will ask for the HTML of /topo/[id], which we cache here.
+			cacheDocument("/topo/" + topo.id),
+		];
+
+		const results = await Promise.allSettled(promises);
+		const end = Date.now();
+		console.log(
+			`--- Finished downloading ${topo.name} in ${(end - start) / 1000}s (${
+				tileUrls.length
+			} tiles, ${imgUrls.length} images)`
+		);
+		// OK, the work is done, it's time to look for errors
+		// We also need to keep track of which entries we actually managed to cache
+		const cachedUrls: string[] = [];
+		let error = false;
+		// We skip the last 2 promises (= caching topo data + page HTML)
+		for (let i = 0; i < results.length - 2; ++i) {
+			const res = results[i];
+			if(res.status === "fulfilled" && i < urls.length) {
+				cachedUrls.push(urls[i]);
+			} else {
+				error = true;
+			}
+		}
+
+		// Update list of cached entries, so we don't have to clear everything if only
+		// a few downloads succeeded
+		await setCachedEntries(topo, cachedUrls);
+
+		if(error) {
+			// 
+			return { success: false }
+		} else {
+			// All is good!
+			markSuccessfulDownload(topo.id);
+			return { success: true, };
+		}
+	} catch {
 		return {
 			success: false,
-			globalError,
-			tileErrors,
-			imageErrors,
 		};
 	}
 }
@@ -156,7 +167,6 @@ export function getTileUrls(topo: TopoData | Topo, maxZoom: number = MAX_ZOOM) {
 	const tileGrid = createXYZ({
 		tileSize: 512,
 	});
-	console.log("tileGrid:", tileGrid);
 	const tileUrls: Array<string> = [];
 	for (let z = 0; z <= maxZoom; z++) {
 		// NOTE: y-axis is reversed between map coordinates and tile coordinates
@@ -246,14 +256,34 @@ function cachedEntriesKey(id: UUID) {
 	return id + "/cache-keys";
 }
 
-async function addCachedEntries(topo: TopoData | Topo, urls: string[]) {
+async function setCachedEntries(topo: TopoData | Topo, urls: string[]) {
 	const key = cachedEntriesKey(topo.id);
-	let current = new Set((await get(key)) as string[] | undefined);
+	await set(key, urls);
+}
 
-	for (let i = 0; i < urls.length; i++) {
-		current.add(urls[i]);
+async function clearCachedEntries(id: UUID) {
+	const entriesKey = cachedEntriesKey(id);
+	const entries = (await get(entriesKey)) as string[] | undefined;
+	const cache = await caches.open(TOPO_CACHE_KEY);
+	let hasErrors = false;
+	if (entries && entries.length > 0) {
+		const promises = entries.map((url) => cache.delete(url));
+		const results = await Promise.allSettled(promises);
+		const notDeleted: string[] = [];
+		for (let i = 0; i < results.length; i++) {
+			if (results[i].status === "rejected") {
+				notDeleted.push(entries[i]);
+			}
+		}
+		hasErrors = notDeleted.length > 0;
+		const idbValue = hasErrors ? notDeleted : undefined;
+		try {
+			await set(entriesKey, idbValue);
+		} catch {
+			hasErrors = true;
+		}
 	}
-	await set(key, Array.from(current));
+	return hasErrors;
 }
 
 export function getToposAvailableOffline(): UUID[] {
@@ -279,10 +309,11 @@ export function isAvailableOffline(id: UUID): boolean {
 	return new Set(getToposAvailableOffline()).has(id);
 }
 
+
 async function clearIncompleteDownloads() {
 	const list = getIncompleteDownloads();
 	const tasks = list.map((id) =>
-		withExponentialBackoff(() => clearTopoCache(id))
+		withExponentialBackoff(() => clearCachedEntries(id))
 	);
 	const results = await Promise.allSettled(tasks);
 	const remaining = [];
@@ -313,37 +344,13 @@ function markIncompleteDownload(id: UUID) {
 	);
 }
 
-async function clearTopoCache(id: UUID) {
-	const entriesKey = cachedEntriesKey(id);
-	const entries = (await get(entriesKey)) as string[] | undefined;
-	const cache = await caches.open(TOPO_CACHE_KEY);
-	let hasErrors = false;
-	if (entries && entries.length > 0) {
-		const promises = entries.map((url) => cache.delete(url));
-		const results = await Promise.allSettled(promises);
-		const notDeleted: string[] = [];
-		for (let i = 0; i < results.length; i++) {
-			if (results[i].status === "rejected") {
-				notDeleted.push(entries[i]);
-			}
-		}
-		hasErrors = notDeleted.length > 0;
-		const idbValue = hasErrors ? notDeleted : undefined;
-		try {
-			await set(entriesKey, idbValue);
-		} catch {
-			hasErrors = true;
-		}
-	}
-	return hasErrors;
-}
 
 export function removeTopoFromCache(id: UUID) {
 	// Worst case, we'll clean up later
 	markIncompleteDownload(id);
 
 	setTimeout(async () => {
-		const cleared = await clearTopoCache(id);
+		const cleared = await clearCachedEntries(id);
 		if (cleared) {
 			// The topo has already been removed from downloads
 			// Now it has been fully cleared, so we can remove it from our lists altogether

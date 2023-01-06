@@ -15,7 +15,7 @@ async function test(topo: TopoData) {
 	const result = await downloadTopo(topo);
 	if (!result.success) {
 		console.log("Errors while downloading:", result);
-	} else console.log(result);
+	} else console.log("Download success");
 }
 
 export function DownloadTester({ topo }: DownloadTesterProps) {
@@ -37,9 +37,9 @@ export function DownloadTester({ topo }: DownloadTesterProps) {
 		}
 	});
 	useEffect(() => {
-		// if(progress === undefined) {
-		//   test(topo)
-		// }
+		if(progress === undefined) {
+		  test(topo)
+		}
 	}, []);
 	console.log("Progress:", progress);
 	return null;
