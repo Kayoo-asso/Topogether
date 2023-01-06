@@ -28,6 +28,8 @@ export class ProgressTracker {
 		}
 		let next = count + n;
 		if (next === this.total) {
+			// Reset count
+			this.count = undefined;
 			this.listeners.forEach((x) => x(undefined));
 		} else {
 			const nextTick = this.tick()! + PROGRESS_TICK;
