@@ -7,7 +7,10 @@ import PointGeom from "ol/geom/Point";
 import { toLonLat } from "ol/proj";
 import { getPathFromFeature } from "./SectorAreaMarkersLayer";
 import { boulderChanged, sectorChanged } from "helpers/builder";
-import { Quark } from "helpers/quarky";
+import { Quark, watchDependencies } from "helpers/quarky";
+import { boulderMarkerStyle } from "./BoulderMarkersLayer";
+import { useBreakpoint } from "helpers/hooks";
+import { DragEvent } from "components/openlayers/extensions/DragInteraction";
 
 
 interface DragInteractionProps {
@@ -15,8 +18,12 @@ interface DragInteractionProps {
     boulderOrder: globalThis.Map<UUID, number>;
 }
 
-export const DragInteraction: React.FC<DragInteractionProps> = (props: DragInteractionProps) => {
+export const DragInteraction: React.FC<DragInteractionProps> = watchDependencies((props: DragInteractionProps) => {
     const selectedItem = useSelectStore((s) => s.item.value);
+    const selectedType = useSelectStore((s) => s.item.type);
+    const anySelected = !!(selectedType !== 'none' && selectedType !== 'sector');
+
+    const device = useBreakpoint();
 
     return (
         <Drag 
@@ -26,7 +33,7 @@ export const DragInteraction: React.FC<DragInteractionProps> = (props: DragInter
                 const id = e.feature.get("data")?.value().id as UUID;
                 return !!(selectedItem && selectedItem().id === id); 
             }, [selectedItem])}
-            onDragEnd={(e) => {
+            onDragEnd={useCallback((e: DragEvent) => {
                 const item = e.feature.get("data") as SelectedItem;
                 const point = e.feature.getGeometry() as PointGeom;
                 const coords = toLonLat(point.getCoordinates());
@@ -35,6 +42,8 @@ export const DragInteraction: React.FC<DragInteractionProps> = (props: DragInter
                     case 'boulder': 
                         item.value.set((b) => ({ ...b, location }));
                         boulderChanged(props.topoQuark, item.value().id, location);
+                        console.log(props.boulderOrder);
+                        boulderMarkerStyle(true, anySelected, device, props.boulderOrder, e.feature)
                         break;
                     case 'parking': item.value.set((p) => ({ ...p, location })); break;
                     case 'waypoint': item.value.set((w) => ({ ...w, location })); break;
@@ -45,7 +54,9 @@ export const DragInteraction: React.FC<DragInteractionProps> = (props: DragInter
                         break;
                     default: return;
                 }
-            }}
+            }, [props.topoQuark, props.boulderOrder, anySelected, device])}
         />
     )
-}
+});
+
+DragInteraction.displayName = 'DragInteraction';
