@@ -5,9 +5,8 @@ import { staticUrl } from "helpers/constants";
 import { useModal } from "helpers/hooks/useModal";
 import { Loading } from "./Loading";
 import { useProgressBar } from "helpers/hooks";
-import { downloadTopo, removeTopoFromCache, isAvailableOffline } from "helpers/services/downloadTopo";
+import { downloadTopo, removeTopoFromCache, isAvailableOffline, useIsAvailableOffline } from "helpers/services/downloadTopo";
 import { api } from "helpers/services";
-import { useQuery } from "@tanstack/react-query";
 
 interface DownloadButtonProps {
 	className?: string;
@@ -22,7 +21,7 @@ export const DownloadButton: React.FC<DownloadButtonProps> = (props: DownloadBut
 	const [ModalUndownload, showModalUndownload] = useModal();
 	const [loading, setLoading] = useState<boolean>(false);
 	const progress = useProgressBar(props.topo.id);
-	const { data: isDl } = useQuery({ queryKey: ['isDl'], queryFn: () => isAvailableOffline(props.topo.id) });	
+	const isDl = useIsAvailableOffline(props.topo.id);
 
 	const download = async () => {
 		setLoading(true);

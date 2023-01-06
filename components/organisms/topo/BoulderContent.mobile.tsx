@@ -35,6 +35,7 @@ export const BoulderContentMobile: React.FC<BoulderContentMobileProps> =
 							<ImageSlider
 								images={boulder.images}
 								tracks={boulder.tracks.quarks()}
+								displayPhantomTracks={displayPhantomTracks}
 							/>
 						</div>
 					)}
@@ -76,7 +77,6 @@ export const BoulderContentMobile: React.FC<BoulderContentMobileProps> =
 													: "stroke-grey-medium")
 											}
 										/>
-										Image
 									</button>
 								)}
 								{props.full && <LikeButton liked={boulder.liked} />}

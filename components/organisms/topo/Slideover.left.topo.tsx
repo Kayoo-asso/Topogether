@@ -18,6 +18,7 @@ type SlideoverLeftTopoProps = {
 
 export const SlideoverLeftTopo: React.FC<SlideoverLeftTopoProps> = (props: SlideoverLeftTopoProps) => {
     const breakpoint = useBreakpoint();
+	const selectedType = useSelectStore(s => s.item.type);
 	const selectedInfo = useSelectStore(s => s.info);
 	const flush = useSelectStore(s => s.flush);
 
@@ -53,7 +54,7 @@ export const SlideoverLeftTopo: React.FC<SlideoverLeftTopoProps> = (props: Slide
 		<>
 			{breakpoint === "mobile" && (
 				<SlideoverMobile 
-					open={selectedInfo !== 'NONE'}
+					open={selectedInfo !== 'NONE' && selectedType === 'none'}
 					onClose={onClose}
 				>
 					<div className="h-full pl-6 pr-3 pt-14">

@@ -4,7 +4,7 @@ function cacheDocument(url: string | URL | null | undefined) {
 	if (!url || !window.navigator.onLine) {
 		return;
 	}
-	console.log("Caching url", url);
+	// console.log("Caching url", url);
 	// Keep in sync with sw.ts
 	return caches
 		.open("documents")

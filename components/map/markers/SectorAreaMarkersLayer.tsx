@@ -7,7 +7,7 @@ import {
 	VectorSource,
 } from "components/openlayers";
 import { FeatureLike } from 'ol/Feature';
-import { Circle, Fill, Stroke, Style } from 'ol/style';
+import { Circle, Fill, Stroke, Style, Text } from 'ol/style';
 import { GeoCoordinates, Sector, Topo, UUID } from 'types';
 import { useSelectStore } from 'components/pages/selectStore';
 import { fromLonLat, toLonLat } from 'ol/proj';
@@ -21,20 +21,31 @@ interface SectorAreaMarkersLayerProps {
     creating?: boolean;
 }
 
-export function sectorMarkerStyle(selected: boolean) {
-    const stroke = new Stroke({
-        color: selected ? 'rgba(4, 217, 139, 0.7)' : 'rgba(4, 217, 139, 0.5)',
-        width: 4,
-        lineDash: [4,16],
-        lineDashOffset: 20
+export function sectorMarkerStyle(selected: boolean, resolution: number) {
+    const font = '600 ' + Math.min(20, 36 / resolution) + 'px Poppins';
+
+    const polygonStyle = new Style({
+        stroke: new Stroke({
+            color: selected ? 'rgba(4, 217, 139, 0.9)' : 'rgba(4, 217, 139, 0.7)',
+            width: 4,
+            lineJoin: 'round',
+            lineDash: [10, 18],
+        }),
+        fill: new Fill({
+            color: selected ? 'rgba(4, 217, 139, 0.3)' : 'rgba(0,0,0,0)',
+        }),
+        text: new Text({
+            text: "Je suis un secteur",          
+            // textAlign: 'right',
+            placement: 'line',
+            textBaseline: 'bottom',
+            font,
+            fill: new Fill({
+                color: selected ? 'rgba(4, 217, 139, 0.9)' : 'rgba(4, 217, 139, 0.7)',
+            }),
+        }),
     });
-    const fill = new Fill({
-        color: selected ? 'rgba(4, 217, 139, 0.3)' : 'rgba(0,0,0,0)',
-    })
-    return new Style({
-        stroke,
-        fill,
-    });
+    return polygonStyle;
 }
 
 const creatingSectorMarkerStyle = (feature: FeatureLike) => {
@@ -93,8 +104,6 @@ export const getPathFromFeature = (feature: FeatureLike) => {
     return coords;
 }
 
-// Events we need to handle (TODO)
-// - window.keydown: ENTER or ESC
 export const SectorAreaMarkersLayer: React.FC<SectorAreaMarkersLayerProps> = watchDependencies(({
     creating = false,
     ...props
@@ -125,7 +134,9 @@ export const SectorAreaMarkersLayer: React.FC<SectorAreaMarkersLayerProps> = wat
 
             <VectorLayer
                 id="sectors"     
-                style={() => sectorMarkerStyle(false)}
+                style={(feature, resolution) => sectorMarkerStyle(false, resolution)}
+                updateWhileAnimating
+                updateWhileInteracting
             >
                 <VectorSource>
                     {sectors.quarks().map(sQuark => {

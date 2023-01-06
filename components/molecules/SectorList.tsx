@@ -7,7 +7,6 @@ import { useSelectStore } from "components/pages/selectStore";
 import { Map } from "ol";
 
 import { transform } from 'ol/proj.js';
-import Select from "ol/interaction/Select";
 
 interface SectorListProps {
 	topoQuark: Quark<Topo>;
