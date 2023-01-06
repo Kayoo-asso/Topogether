@@ -28,7 +28,7 @@ export const boulderMarkerStyle = (
 	const label = feature
 		? boulderOrder.get(feature.get("data").value().id)?.toString()
 		: (boulderOrder.size + 1).toString();
-
+	// console.log(label);
 	const icon = new Icon({
 		opacity: anySelected ? (selected ? 1 : 0.4) : 1,
 		src: "/assets/icons/markers/boulder.svg",
@@ -52,7 +52,7 @@ export const boulderMarkerStyle = (
 		zIndex: 100,
 	});
 };
-export const clusterMarkerStyle = (selected: boolean, anySelected: boolean,size: number) => {
+export const clusterMarkerStyle = (selected: boolean, anySelected: boolean, size: number) => {
 	const icon = new Icon({
 		opacity: anySelected ? (selected ? 1 : 0.4) : 1,
 		src: "/assets/icons/markers/clusterBoulder.svg",
@@ -82,6 +82,7 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> = watchDepe
 	const anySelected = !!(selectedType !== 'none' && selectedType !== 'sector');
 
 	const device = useBreakpoint();
+	console.log("render");
 
 	return (
 		<>
@@ -100,7 +101,7 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> = watchDepe
 							features.length
 						);
 					}
-				}, [selectedItem])}
+				}, [selectedItem, selectedItem && selectedItem(), selectedType, anySelected])}
 			>
 				<Cluster source="boulders" minDistance={20} distance={60} />
 			</VectorLayer>
@@ -117,7 +118,7 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> = watchDepe
 							feature
 						);
 					},
-					[selectedType, device, anySelected, props.boulderOrder]
+					[device, anySelected, props.boulderOrder]
 				)}
 			>
 				<VectorSource>
