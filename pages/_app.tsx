@@ -7,7 +7,6 @@ import { AuthProvider } from "components/AuthProvider";
 import { ShellMobile } from "components/layouts/ShellMobile";
 import { DeviceManager, UserPositionProvider } from "helpers/hooks";
 import { initSupabaseSession, getUserInitialProps } from "helpers/serverStuff";
-import { resetServerContext } from "react-beautiful-dnd";
 import { User } from "types";
 import { NavigationLoader } from "components/layouts/NavigationLoader";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -207,9 +206,6 @@ CustomApp.getInitialProps = async (
 		App.getInitialProps(context),
 		getUserInitialProps(context.ctx),
 	]);
-
-	// Make React DnD happy
-	resetServerContext();
 
 	return { ...appProps, session, userAgent };
 };
