@@ -2,8 +2,8 @@ import React from "react";
 import { Button } from "components";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { Topo, UUID } from "types";
-import { SectorListBuilder } from "components/organisms/builder/SectorListBuilder";
 import { Map } from "ol";
+import { SectorListBuilder } from "components/organisms/builder/SectorListBuilder";
 
 interface LeftbarBuilderDesktopProps {
 	topoQuark: Quark<Topo>;
@@ -18,7 +18,7 @@ export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> =
 		
 		return (
 			<div className="z-500 hidden h-full w-[280px] min-w-[280px] flex-col overflow-auto border-r border-grey-medium bg-white px-6 py-10 md:flex">
-				<SectorListBuilder
+				<SectorListBuilder 
 					topoQuark={props.topoQuark}
 					boulderOrder={props.boulderOrder}
 					map={props.map}

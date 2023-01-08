@@ -25,7 +25,6 @@ export const SectorList: React.FC<SectorListProps> = watchDependencies(
 			const b = bq();
 			boulderQuarksMap.set(b.id, bq);
 		}
-		// console.log(topo.boulders.length);
 		const lonelyQuarks: Quark<Boulder>[] = [];
 		for (const id of topo.lonelyBoulders) {
 			lonelyQuarks.push(boulderQuarksMap.get(id)!);
