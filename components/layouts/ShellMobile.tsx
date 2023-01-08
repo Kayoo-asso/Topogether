@@ -39,7 +39,7 @@ export const ShellMobile: React.FC = watchDependencies(() => {
 				</Link>
 
 				{/* TODO: verify this link works correctly, since the logic was simplified */}
-				<Link href={activeTab === 1 ? router.pathname : "/"}>
+				<Link href={activeTab === 1 ? {pathname: router.pathname, query: router.query } : "/"}>
 					<a
 						className={`flex h-full flex-1 items-center justify-center ${
 							activeTab === 1 ? "border-t-6 border-t-main" : ""
