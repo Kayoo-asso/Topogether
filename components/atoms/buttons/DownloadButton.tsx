@@ -7,6 +7,7 @@ import { Loading } from "./Loading";
 import { useProgressBar } from "helpers/hooks";
 import { downloadTopo, removeTopoFromCache, isAvailableOffline, useIsAvailableOffline } from "helpers/services/downloadTopo";
 import { api } from "helpers/services";
+import { RoundProgressBar } from "./RoundProgressBar";
 
 interface DownloadButtonProps {
 	className?: string;
@@ -19,7 +20,7 @@ const isLight = (topo: Topo | LightTopo): topo is LightTopo => {
 
 export const DownloadButton: React.FC<DownloadButtonProps> = (props: DownloadButtonProps) => {
 	const [ModalUndownload, showModalUndownload] = useModal();
-	const [loading, setLoading] = useState<boolean>(false);
+	const [loading, setLoading] = useState(false);
 	const progress = useProgressBar(props.topo.id);
 	const isDl = useIsAvailableOffline(props.topo.id);
 
@@ -33,7 +34,13 @@ export const DownloadButton: React.FC<DownloadButtonProps> = (props: DownloadBut
 
 	return (
 		<>
-			{loading && <Loading SVGClassName="h-4 w-4 m-0 ml-4" />}
+			{loading && 
+				<RoundProgressBar 
+					percentage={progress || 0}
+					displayLabel={false}
+					onClick={showModalUndownload}
+				/>
+			}
 			{!loading && (
 				<Download
 					className={
