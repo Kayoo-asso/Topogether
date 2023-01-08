@@ -88,6 +88,7 @@ export const RootWorldMap: React.FC<RootWorldMapProps> = watchDependencies(
 						}}
 						topoFilters={topoFilters}
 						topoFiltersDomain={topoFilterDomain}
+						displayUserMarker='under'
 						// onUserMarkerClick={(e) => console.log(e)}
 						onClick={(e) => {
 							const map = e.map;

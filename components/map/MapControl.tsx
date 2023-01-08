@@ -43,7 +43,7 @@ type MapControlProps = React.PropsWithChildren<
 		initialZoom?: number;
 		minZoom?: number;
 		displaySatelliteButton?: boolean;
-		displayUserMarker?: boolean;
+		displayUserMarker?: 'above' | 'under';
 		displayToolSelector?: boolean;
 		onPhotoButtonClick?: () => void;
 		displaySectorButton?: boolean;
@@ -74,7 +74,7 @@ export const MapControl = watchDependencies<Map, MapControlProps>(
 			initialZoom = 8,
 			displaySearchbar = true,
 			displaySatelliteButton = true,
-			displayUserMarker = true,
+			displayUserMarker = 'above',
 			displayToolSelector = false,
 			displaySectorButton = false,
 			...props
@@ -295,9 +295,13 @@ export const MapControl = watchDependencies<Map, MapControlProps>(
 						/>
 					</TileLayer>
 
+					{displayUserMarker === 'under' && (
+						<UserMarkerLayer onClick={props.onUserMarkerClick} />
+					)}
+
 					{props.children}
 
-					{displayUserMarker && (
+					{displayUserMarker === 'above' && (
 						<UserMarkerLayer onClick={props.onUserMarkerClick} />
 					)}
 				</BaseMap>

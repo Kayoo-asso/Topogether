@@ -144,6 +144,8 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 						searchbarOptions={{
 							findBoulders: true,
 						}}
+						boulderFilters={boulderFilters}
+						boulderFiltersDomain={defaultBoulderFilterOptions}
 						displaySectorButton
 						onSectorButtonClick={() => select.info("SECTOR", breakpoint)}
 					>

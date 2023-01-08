@@ -45,6 +45,7 @@ export const boulderMarkerStyle = (
 		}),
 		font: "bold 11px Poppins",
 		offsetY: 7,
+		offsetX: -1,
 	});
 	return new Style({
 		image: icon,
