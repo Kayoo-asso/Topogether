@@ -15,6 +15,7 @@ import {
 import { createXYZ } from "ol/tilegrid";
 import { cacheDocument, onInit } from "./Initializers";
 import { useEffect, useState } from "react";
+import { encodeUUID } from "helpers/utils";
 
 // TODO:
 // - SharedWorker
@@ -43,12 +44,13 @@ export type DownloadTopoResult =
 
 let worker: SharedWorker | undefined;
 
-export function getWorker() {
-	if (!worker) {
-		worker = new SharedWorker(new URL("./download-worker.ts", import.meta.url));
-	}
-	return worker;
-}
+
+// export function getWorker() {
+// 	if (!worker) {
+// 		worker = new SharedWorker(new URL("./download-worker.ts", import.meta.url));
+// 	}
+// 	return worker;
+// }
 
 // Hacks until we have a proper sync with TinyBase and a SharedWorker
 export function useToposAvailableOffline(): Set<UUID> {
@@ -101,7 +103,7 @@ export async function downloadTopo(
 			// This is important if the person has never opened the topo, downloads it,
 			// navigates to the page while offline & then refreshes. In that case,
 			// the app will ask for the HTML of /topo/[id], which we cache here.
-			cacheDocument("/topo/" + topo.id),
+			cacheDocument("/topo/" + encodeUUID(topo.id)),
 		];
 
 		const results = await Promise.allSettled(promises);
