@@ -44,7 +44,7 @@ export type DownloadTopoResult =
 
 let worker: SharedWorker | undefined;
 
-
+const LOCK = new Semaphore(1000);
 // export function getWorker() {
 // 	if (!worker) {
 // 		worker = new SharedWorker(new URL("./download-worker.ts", import.meta.url));
@@ -54,10 +54,13 @@ let worker: SharedWorker | undefined;
 
 // Hacks until we have a proper sync with TinyBase and a SharedWorker
 export function useToposAvailableOffline(): Set<UUID> {
-	const [availableOffline, setAvailableOffline] = useState(new Set(getToposAvailableOffline()))
+	const [availableOffline, setAvailableOffline] = useState(
+		new Set(getToposAvailableOffline())
+	);
 
 	useEffect(() => {
-		const update = () => setAvailableOffline(new Set(getToposAvailableOffline()));
+		const update = () =>
+			setAvailableOffline(new Set(getToposAvailableOffline()));
 		window.addEventListener("storage", update);
 		return () => window.removeEventListener("storage", update);
 	}, []);
@@ -93,10 +96,9 @@ export async function downloadTopo(
 
 		const start = Date.now();
 		const cache = await caches.open(TOPO_CACHE_KEY);
-		const lock = new Semaphore(MAX_CONCURRENT_REQUESTS);
 		const promises: Promise<void>[] = [
 			...urls.map((url) =>
-				withExponentialBackoff(() => downloadUrl(url, cache, lock, tracker))
+				withExponentialBackoff(() => downloadUrl(url, cache, tracker))
 			),
 			set(topo.id, topo),
 			// Cache the page's HTML
@@ -120,7 +122,7 @@ export async function downloadTopo(
 		// We skip the last 2 promises (= caching topo data + page HTML)
 		for (let i = 0; i < results.length - 2; ++i) {
 			const res = results[i];
-			if(res.status === "fulfilled" && i < urls.length) {
+			if (res.status === "fulfilled" && i < urls.length) {
 				cachedUrls.push(urls[i]);
 			} else {
 				error = true;
@@ -131,13 +133,13 @@ export async function downloadTopo(
 		// a few downloads succeeded
 		await setCachedEntries(topo, cachedUrls);
 
-		if(error) {
-			// 
-			return { success: false }
+		if (error) {
+			//
+			return { success: false };
 		} else {
 			// All is good!
 			markSuccessfulDownload(topo.id);
-			return { success: true, };
+			return { success: true };
 		}
 	} catch {
 		return {
@@ -146,19 +148,29 @@ export async function downloadTopo(
 	}
 }
 
-async function downloadUrl(
+function downloadUrl(
 	url: string | URL,
 	cache: Cache,
-	lock: Semaphore,
 	tracker: ProgressTracker
-) {
-	const exists = await cache.match(url);
-	if (!exists) {
-		await lock.acquire();
-		await cache.add(url);
-		lock.release();
-	}
-	tracker.increment();
+): Promise<void> {
+	// Use callbacks instead of `await` syntax for a small performance boost
+	return cache.match(url).then((exists) => {
+		if (!exists) {
+			return LOCK.acquire()
+				.then(() => cache.add(url))
+				.then(() => tracker.increment())
+				// Always release the lock, even if the download fails
+				.finally(() => LOCK.release());
+		}
+	});
+
+	// const exists = await cache.match(url);
+	// if (!exists) {
+	// 	await LOCK.acquire();
+	// 	await cache.add(url);
+	// 	LOCK.release();
+	// }
+	// tracker.increment();
 }
 
 export function getTileUrls(topo: TopoData | Topo, maxZoom: number = MAX_ZOOM) {
@@ -311,7 +323,6 @@ export function isAvailableOffline(id: UUID): boolean {
 	return new Set(getToposAvailableOffline()).has(id);
 }
 
-
 async function clearIncompleteDownloads() {
 	const list = getIncompleteDownloads();
 	const tasks = list.map((id) =>
@@ -345,7 +356,6 @@ function markIncompleteDownload(id: UUID) {
 		JSON.stringify(Array.from(downloads))
 	);
 }
-
 
 export function removeTopoFromCache(id: UUID) {
 	// Worst case, we'll clean up later
