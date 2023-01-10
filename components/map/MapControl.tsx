@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useState } from "react";
 import { Map as BaseMap, View, TileLayer, XYZ } from "components/openlayers";
 import Map from "ol/Map";
 import { fromLonLat } from "ol/proj";
-
 import { RoundButton, SatelliteButton } from "components";
 import { ImageInput } from "components/molecules";
 import {
@@ -17,9 +16,6 @@ import { Boulder, GeoCoordinates, Position, Topo } from "types";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { setReactRef } from "helpers/utils";
 import { useBreakpoint, usePosition } from "helpers/hooks";
-
-import SectorIcon from "assets/icons/sector.svg";
-import CenterIcon from "assets/icons/center.svg";
 import { useSelectStore } from "components/pages/selectStore";
 import { handleNewPhoto } from "helpers/handleNewPhoto";
 import { useSession } from "helpers/services";
@@ -27,7 +23,7 @@ import { MapToolSelector } from "./MapToolSelector";
 import { Props } from "components/openlayers/Map";
 import { UserMarkerLayer } from "./markers/UserMarkerLayer";
 import { MapBrowserEvent } from "ol";
-import { Attribution, Rotate } from "ol/control";
+import { Attribution } from "ol/control";
 import {
 	DEFAULT_EXTENT_BUFFER,
 	getTopoExtent,
@@ -35,6 +31,11 @@ import {
 import { getMapCursorClass } from "helpers/map/getMapCursorClass";
 import { isEmpty } from "ol/extent";
 import { fontainebleauLocation } from "helpers/constants";
+
+import SectorIcon from "assets/icons/sector.svg";
+import CenterIcon from "assets/icons/center.svg";
+
+import ContextMenu from "ol-contextmenu";
 
 type MapControlProps = React.PropsWithChildren<
 	Props & {
@@ -64,6 +65,26 @@ const attributions =
 	'© <a href="https://www.mapbox.com/map-feedback/">Mapbox</a> ' +
 	'© <a href="https://www.openstreetmap.org/copyright">' +
 	"OpenStreetMap contributors</a>";
+
+// const cm = new ContextMenu({ 
+// 	width: 200,
+// 	defaultItems: true,
+// 	items: [
+//         {
+//             text: 'Center map here',
+//             classname: 'some-style-class', // add some CSS rules
+//             callback: () => {}, // `center` is your callback function
+//         },
+//         {
+//             text: 'Add a Marker',
+//             classname: 'some-style-class', // you can add this icon with a CSS class
+//             // instead of `icon` property (see next line)
+//             callback: () => {},
+//         },
+//         '-', // this is a separator
+//     ]
+// })
+
 
 // The default controls except the zoom +/- buttons and the rotate button
 const controls = typeof window === "undefined" ? [] : [new Attribution()];
@@ -127,6 +148,10 @@ export const MapControl = watchDependencies<Map, MapControlProps>(
 					});
 			}
 		}, [map, props.topo]);
+
+		// useEffect(() => {
+		// 	if (map) map.addControl(cm);
+		// }, [map])
 
 		return (
 			<div className="relative h-full w-full">

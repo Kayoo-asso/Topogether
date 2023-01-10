@@ -12,6 +12,7 @@ import { useSelectStore } from "components/pages/selectStore";
 import { fromLonLat } from "ol/proj";
 import { Cluster } from "components/openlayers/sources/Cluster";
 import { Breakpoint, useBreakpoint } from "helpers/hooks";
+import { Select } from "components/openlayers";
 
 interface BoulderMarkersLayerProps {
 	topo: Quark<Topo>;
@@ -86,7 +87,15 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> = watchDepe
 
 	return (
 		<>
+			<Select 
+				layers={['clusters']}
+				hitTolerance={5}
+				onSelect={(e) => {
+					console.log(e);
+				}}
+			/>
 			<VectorLayer
+				id="clusters"
 				style={useCallback((cluster: FeatureLike) => {
 					const features: FeatureLike[] = cluster.get("features");
 					let selected = false;
@@ -101,7 +110,7 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> = watchDepe
 							features.length
 						);
 					}
-				}, [selectedItem, selectedItem && selectedItem(), selectedType, anySelected])}
+				}, [selectedItem, selectedItem && selectedItem(), selectedType, anySelected])}		
 			>
 				<Cluster source="boulders" minDistance={20} distance={60} />
 			</VectorLayer>
