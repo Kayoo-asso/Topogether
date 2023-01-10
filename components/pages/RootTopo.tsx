@@ -38,10 +38,6 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 		const breakpoint = useBreakpoint();
 
 		const topo = props.topoQuark();
-		// const boulderOrder = useCreateDerivation(() =>
-		// 	sortBoulders(topo.sectors, topo.lonelyBoulders)
-		// );
-
 		const boulderOrder = sortBoulders(topo.sectors, topo.lonelyBoulders);
 
 		const isEmptyStore = useSelectStore((s) => s.isEmpty);
