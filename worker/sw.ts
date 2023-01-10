@@ -138,7 +138,8 @@ registerRoute(
 );
 
 // Mapbox tiles
-const tileRegex = /tiles\/\d*\/(\d*)\/(\d*)\/(\d*)/m;
+// Match [user, style, z, x, y]
+const tileRegex = /\/styles\/v1\/(\w*)\/(\w*)\/tiles\/\d*\/(\d*)\/(\d*)\/(\d*)/m
 
 const tileCache = new CacheFirst({
 	cacheName: "tiles",
@@ -158,14 +159,17 @@ registerRoute(
 		);
 	},
 	async (options) => {
-		const match = options.url.href.match(tileRegex);
+		const match = options.url.pathname.match(tileRegex);
 		if (match) {
+			// Matches: [user, style, x, y, z]
 			// First match is always the original string
-			const [_, z, x, y] = match;
-			const cache = await caches.open(TOPO_CACHE_KEY);
-			const cachedResponse = await cache.match(tileUrl(+x, +y, +z));
-			if (cachedResponse) {
-				return cachedResponse;
+			const [_, user, __, z, x, y] = match;
+			if(user === "erwinkn") {
+				const cache = await caches.open(TOPO_CACHE_KEY);
+				const cachedResponse = await cache.match(tileUrl(+x, +y, +z));
+				if (cachedResponse) {
+					return cachedResponse;
+				}
 			}
 		}
 		return tileCache.handle(options);
