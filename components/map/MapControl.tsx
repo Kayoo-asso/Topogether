@@ -35,8 +35,6 @@ import { fontainebleauLocation } from "helpers/constants";
 import SectorIcon from "assets/icons/sector.svg";
 import CenterIcon from "assets/icons/center.svg";
 
-import ContextMenu from "ol-contextmenu";
-
 type MapControlProps = React.PropsWithChildren<
 	Props & {
 		className?: string;
@@ -65,25 +63,6 @@ const attributions =
 	'© <a href="https://www.mapbox.com/map-feedback/">Mapbox</a> ' +
 	'© <a href="https://www.openstreetmap.org/copyright">' +
 	"OpenStreetMap contributors</a>";
-
-// const cm = new ContextMenu({ 
-// 	width: 200,
-// 	defaultItems: true,
-// 	items: [
-//         {
-//             text: 'Center map here',
-//             classname: 'some-style-class', // add some CSS rules
-//             callback: () => {}, // `center` is your callback function
-//         },
-//         {
-//             text: 'Add a Marker',
-//             classname: 'some-style-class', // you can add this icon with a CSS class
-//             // instead of `icon` property (see next line)
-//             callback: () => {},
-//         },
-//         '-', // this is a separator
-//     ]
-// })
 
 
 // The default controls except the zoom +/- buttons and the rotate button
@@ -148,10 +127,6 @@ export const MapControl = watchDependencies<Map, MapControlProps>(
 					});
 			}
 		}, [map, props.topo]);
-
-		// useEffect(() => {
-		// 	if (map) map.addControl(cm);
-		// }, [map])
 
 		return (
 			<div className="relative h-full w-full">
