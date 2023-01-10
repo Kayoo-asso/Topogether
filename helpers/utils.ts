@@ -141,3 +141,26 @@ export function decodeUUID(short: string): string {
 	// the 'uuid' l
 	return output;
 }
+
+export function withExponentialBackoff<T>(
+	fn: () => Promise<T>,
+	maxRetries = 3,
+	baseDelay = 500,
+	factor = 2
+): Promise<T> {
+	return new Promise((resolve, reject) => {
+		function attempt(retries: number) {
+			fn()
+				.then(resolve)
+				.catch((error) => {
+					if (retries === 0) {
+						reject(error);
+					} else {
+						const delay = baseDelay * Math.pow(factor, maxRetries - retries);
+						setTimeout(() => attempt(retries - 1), delay);
+					}
+				});
+		}
+		attempt(maxRetries);
+	});
+}

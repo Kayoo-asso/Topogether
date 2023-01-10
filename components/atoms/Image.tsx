@@ -11,7 +11,7 @@ import { useBreakpoint, Portal } from "helpers/hooks";
 import type { Img } from "types";
 
 import defaultKayoo from "public/assets/img/Kayoo_defaut_image.png";
-import { SourceSize, VariantWidths, bunnyUrl } from "helpers/services/sharedWithServiceWorker";
+import { SourceSize, VariantWidths, bunnyUrl } from "helpers/sharedWithServiceWorker";
 
 export type ImageProps = RawImageAttributes & {
 	alt: string;

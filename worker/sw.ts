@@ -9,7 +9,7 @@ import {
 	NetworkOnly,
 } from "workbox-strategies";
 import { ExpirationPlugin } from "workbox-expiration";
-import { TOPO_CACHE_KEY, tileUrl } from "helpers/services/sharedWithServiceWorker";
+import { TOPO_CACHE_KEY, tileUrl } from "helpers/sharedWithServiceWorker";
 
 // TODO:
 // - Redirect to home page if page is not cached

@@ -13,7 +13,7 @@ interface DownloadTesterProps {
 
 async function test(topo: TopoData) {
 	const result = await downloadTopo(topo);
-	if (!result.success) {
+	if (!result.status) {
 		console.log("Errors while downloading:", result);
 	} else console.log("Download success");
 }
