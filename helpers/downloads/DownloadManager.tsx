@@ -49,6 +49,7 @@ interface DownloadTracker {
 	quark: Quark<DownloadState>;
 	count: number;
 	total: number;
+	abort: AbortController | null;
 }
 
 interface GlobalTracker {
@@ -90,6 +91,7 @@ class DownloadManager {
 				this.downloads.set(id, {
 					count: 0,
 					total: 0,
+					abort: null,
 					quark: quark<DownloadState>({
 						status: "downloaded",
 					}),
@@ -125,8 +127,10 @@ class DownloadManager {
 			// In the meantime, this makes sure this topo will get registered for cleaning
 			// if anything fails.
 			markIncomplete(topo.id);
+
+			const abort = new AbortController();
 			// We have two more tasks, but they likely will complete way before all the downloads do
-			this.start(topo.id, urls.length);
+			this.start(topo.id, urls.length, abort);
 
 			const start = Date.now();
 			const cache = await caches.open(TOPO_CACHE_KEY);
@@ -138,7 +142,7 @@ class DownloadManager {
 				// the app will ask for the HTML of /topo/[id], which we cache here.
 				cacheDocument("/topo/" + encodeUUID(topo.id)),
 				...urls.map((url) =>
-					withExponentialBackoff(() => this.downloadUrl(url, topo.id, cache))
+					withExponentialBackoff(() => this.downloadUrl(url, topo.id, abort.signal, cache))
 				),
 			];
 
@@ -180,6 +184,7 @@ class DownloadManager {
 				return { status: "success" };
 			}
 		} catch (e: any) {
+			this.cancel(topo.id);
 			return {
 				status: isQuotaExceededError(e) ? "quotaExceeded" : "failure",
 			};
@@ -188,8 +193,9 @@ class DownloadManager {
 
 	cancel(id: UUID) {
 		const tracker = this.getTracker(id);
-		const running = tracker.quark().status === "downloading";
-		if (running) {
+		// This means the download is currently ongoing (expected scenario)
+		if(tracker.abort) {
+			tracker.abort.abort();
 			const global = this.global;
 			const globalState = global.quark();
 			// This was the last download
@@ -218,15 +224,17 @@ class DownloadManager {
 		const tracker = this.getTracker(id);
 		tracker.count = 0;
 		tracker.total = 0;
+		tracker.abort = null;
 		tracker.quark.set({
 			status: "none",
 		});
 	}
 
-	private start(id: UUID, total: number) {
+	private start(id: UUID, total: number, abort: AbortController) {
 		const tracker = this.getTracker(id);
 		tracker.count = 0;
 		tracker.total = total;
+		tracker.abort = abort;
 		tracker.quark.set({
 			status: "downloading",
 			progress: 0,
@@ -272,6 +280,7 @@ class DownloadManager {
 	private downloadUrl(
 		url: string | URL,
 		id: UUID,
+		signal: AbortSignal,
 		cache: Cache
 	): Promise<void> {
 		// Use callbacks instead of `await` syntax for a small performance boost
@@ -279,9 +288,9 @@ class DownloadManager {
 			if (!exists) {
 				return (
 					LOCK.acquire()
-						.then(() => cache.add(url))
-						.then(() => this.increment(id))
-						// Always release the lock, even if the download fails
+					.then(() => cache.add(new Request(url, { signal})))
+						.then(() => { !signal.aborted && this.increment(id) })
+						// Always release the lock, even if the download fails or is aborted
 						.finally(() => LOCK.release())
 				);
 			}
@@ -298,8 +307,9 @@ class DownloadManager {
 
 	private finish(id: UUID) {
 		const tracker = this.getTracker(id);
-		const running = tracker.quark().status === "downloading";
-		if (running) {
+		// The download is currently ongoing (expected scenario)
+		if (tracker.abort) {
+			// No need to send an abort signal
 			const global = this.global;
 			const globalState = global.quark();
 			// This was the last download
@@ -318,6 +328,7 @@ class DownloadManager {
 		}
 		tracker.count = 0;
 		tracker.total = 0;
+		tracker.abort = null;
 		tracker.quark.set({
 			status: "downloaded",
 		});
@@ -329,6 +340,7 @@ class DownloadManager {
 			tracker = {
 				count: 0,
 				total: 0,
+				abort: null,
 				quark: quark<DownloadState>({
 					status: "none",
 				}),
