@@ -104,7 +104,7 @@ export const MapControl = watchDependencies<Map, MapControlProps>(
 
 		useEffect(() => {
 			const determinePointer = (e: MapBrowserEvent<PointerEvent>) => {
-				if (!map || tool) return;
+				if (!map || tool || breakpoint !== 'desktop') return;
 				const hit = map.getFeaturesAtPixel(e.pixel).length > 0;
 				if (hit) {
 					map.getTargetElement().style.cursor = "pointer";
