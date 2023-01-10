@@ -87,13 +87,14 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> = watchDepe
 
 	return (
 		<>
-			<Select 
+			{/* <Select 
 				layers={['clusters']}
 				hitTolerance={5}
 				onSelect={(e) => {
 					console.log(e);
 				}}
-			/>
+				style={() => clusterMarkerStyle()}
+			/> */}
 			<VectorLayer
 				id="clusters"
 				style={useCallback((cluster: FeatureLike) => {
