@@ -110,7 +110,7 @@ class DownloadManager {
 		return this.global.quark();
 	}
 
-	async cacheTopo(topo: Topo | TopoData) {
+	async cacheTopo(topo: TopoData) {
 		const tileUrls = getTileUrls(topo);
 		const imgUrls = getImageUrls(topo);
 		const urls = [...tileUrls, ...imgUrls];
@@ -191,6 +191,12 @@ class DownloadManager {
 				status: isQuotaExceededError(e) ? "quotaExceeded" : "failure",
 			};
 		}
+	}
+
+	async getOfflineToposList(): Promise<Array<TopoData>> {
+		return Promise.all(
+			getOfflineTopos().map(id => get(id) as Promise<TopoData>)
+		);
 	}
 
 
