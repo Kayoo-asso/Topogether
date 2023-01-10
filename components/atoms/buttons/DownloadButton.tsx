@@ -20,8 +20,8 @@ const isLight = (topo: Topo | LightTopo): topo is LightTopo => {
 export const DownloadButton: React.FC<DownloadButtonProps> = watchDependencies(
 	(props: DownloadButtonProps) => {
 		const [ModalUndownload, showModalUndownload] = useModal();
-		const state = downloads.getState(props.topo.id);
-		console.log("Topo download state:", state);
+		const dlState = downloads.getState(props.topo.id);
+		console.log("Topo download state:", dlState);
 
 		const download = async () => {
 			// TODO: handle errors
@@ -34,24 +34,24 @@ export const DownloadButton: React.FC<DownloadButtonProps> = watchDependencies(
 
 		return (
 			<>
-				{state.status === "downloading" && (
+				{dlState.status === "downloading" && (
 					<RoundProgressBar
-						percentage={state.progress}
+						percentage={dlState.progress}
 						displayLabel={false}
 						onClick={showModalUndownload}
 					/>
 				)}
-				{state.status !== "downloading" && (
+				{dlState.status !== "downloading" && (
 					<Download
 						className={
 							"ml-5 cursor-pointer " +
-							(state.status === "downloaded"
+							(dlState.status === "downloaded"
 								? "h-5 w-5 stroke-main"
 								: "h-5 w-5 stroke-dark") +
 							(props.className ? " " + props.className : "")
 						}
 						onClick={() => {
-							if (state.status === "downloaded") showModalUndownload();
+							if (dlState.status === "downloaded") showModalUndownload();
 							else download();
 						}}
 					/>
