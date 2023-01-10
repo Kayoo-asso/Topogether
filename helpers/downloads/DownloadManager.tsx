@@ -142,7 +142,9 @@ class DownloadManager {
 				// the app will ask for the HTML of /topo/[id], which we cache here.
 				cacheDocument("/topo/" + encodeUUID(topo.id)),
 				...urls.map((url) =>
-					withExponentialBackoff(() => this.downloadUrl(url, topo.id, abort.signal, cache))
+					withExponentialBackoff(() =>
+						this.downloadUrl(url, topo.id, abort.signal, cache)
+					)
 				),
 			];
 
@@ -184,18 +186,25 @@ class DownloadManager {
 				return { status: "success" };
 			}
 		} catch (e: any) {
-			this.cancel(topo.id);
+			this.delete(topo.id);
 			return {
 				status: isQuotaExceededError(e) ? "quotaExceeded" : "failure",
 			};
 		}
 	}
 
-	cancel(id: UUID) {
+
+	delete(id: UUID) {
+		// Immediately mark as incomplete
+		// We'll clean up later with the auto schedule
+		markIncomplete(id);
+
+		// This means the download is currently ongoing
 		const tracker = this.getTracker(id);
-		// This means the download is currently ongoing (expected scenario)
-		if(tracker.abort) {
+		if (tracker.abort) {
 			tracker.abort.abort();
+			tracker.abort = null;
+
 			const global = this.global;
 			const globalState = global.quark();
 			// This was the last download
@@ -203,7 +212,9 @@ class DownloadManager {
 				global.count = 0;
 				global.total = 0;
 				global.quark.set(emptyGlobalState);
-			} else {
+			}
+			// There are other ongoing downloads
+			else {
 				global.total -= tracker.total;
 				global.count -= tracker.count;
 				global.quark.set((prev) => ({
@@ -214,17 +225,8 @@ class DownloadManager {
 				}));
 			}
 		}
-		this.delete(id);
-	}
-
-	delete(id: UUID) {
-		// Mark as incomplete, to get an immediate update
-		// We'll clean up later with the auto schedule
-		markIncomplete(id);
-		const tracker = this.getTracker(id);
 		tracker.count = 0;
 		tracker.total = 0;
-		tracker.abort = null;
 		tracker.quark.set({
 			status: "none",
 		});
@@ -288,8 +290,10 @@ class DownloadManager {
 			if (!exists) {
 				return (
 					LOCK.acquire()
-					.then(() => cache.add(new Request(url, { signal})))
-						.then(() => { !signal.aborted && this.increment(id) })
+						.then(() => cache.add(new Request(url, { signal })))
+						.then(() => {
+							!signal.aborted && this.increment(id);
+						})
 						// Always release the lock, even if the download fails or is aborted
 						.finally(() => LOCK.release())
 				);
