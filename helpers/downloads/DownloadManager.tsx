@@ -287,7 +287,7 @@ class DownloadManager {
 	): Promise<void> {
 		// Use callbacks instead of `await` syntax for a small performance boost
 		return cache.match(url).then((exists) => {
-			if (!exists) {
+			if (!exists && !signal.aborted) {
 				return (
 					LOCK.acquire()
 						.then(() => cache.add(new Request(url, { signal })))
