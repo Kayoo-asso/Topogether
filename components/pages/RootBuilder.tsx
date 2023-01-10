@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import {
 	GeoCoordinates,
@@ -90,7 +90,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 		const [ModalSubmitTopo, showModalSubmitTopo] = useModal();
 		const [ModalDeleteTopo, showModalDeleteTopo] = useModal();
 
-		const constructMenuOptions = useCallback((): DropdownOption[] => ([
+		const menuOptions = useMemo((): DropdownOption[] => ([
 			{ value: "Infos du topo", action: () => select.info("INFO", breakpoint) },
 			{
 				value: "Marche d'approche",
@@ -196,7 +196,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 					title={topo.name}
 					backLink="/builder/dashboard"
 					onBackClick={flush.all}
-					menuOptions={constructMenuOptions()}
+					menuOptions={menuOptions}
 				>
 					<BuilderProgressIndicator
 						topo={props.topoQuark()}
