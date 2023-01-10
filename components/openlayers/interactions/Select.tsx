@@ -42,6 +42,10 @@ export const Select = forwardRef<OLSelect, P>(
 		const select = useBehavior({ ...props, layers: filtered }, ref);
 		if(select && props.style) {
 			(select as any).style_=  props.style;
+			// TODO: not sure this is always correct
+			for(const feature of select.getFeatures().getArray()) {
+				feature.setStyle(props.style)
+			}
 		}
 		useInteractionLifecycle(select, map);
 

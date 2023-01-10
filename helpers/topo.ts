@@ -43,16 +43,16 @@ export function sortBoulders(
 	lonelyBoulders: UUID[]
 ): Map<UUID, number> {
 	let idx = 1;
-	let map: Map<UUID, number> = new Map();
+	let order: Map<UUID, number> = new Map();
 	for (const sector of sectors) {
 		for (const boulderId of sector.boulders) {
-			map.set(boulderId, idx++);
+			order.set(boulderId, idx++);
 		}
 	}
 	for (const boulderId of lonelyBoulders) {
-		map.set(boulderId, idx++);
+		order.set(boulderId, idx++);
 	}
-	return map;
+	return order;
 }
 
 // --- computeBuilderProgress ---

@@ -15,7 +15,7 @@ import { sectorMarkerStyle } from "./SectorAreaMarkersLayer";
 import { watchDependencies } from "helpers/quarky";
 
 interface SelectInteractionProps {
-    boulderOrder: globalThis.Map<UUID, number>;
+    boulderOrder: Map<UUID, number>;
     selectableSector?: boolean;
 }
 

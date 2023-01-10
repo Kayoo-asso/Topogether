@@ -69,9 +69,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 		const showLoader = useLoader();
 
 		const topo = props.topoQuark();
-		const boulderOrder = useCreateDerivation(() =>
-			sortBoulders(topo.sectors, topo.lonelyBoulders)
-		);
+		const boulderOrder = sortBoulders(topo.sectors, topo.lonelyBoulders)
 
 		const isEmptyStore = useSelectStore(s => s.isEmpty);
 		const flush = useSelectStore(s => s.flush);
@@ -210,7 +208,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 				<div className="relative flex h-content flex-row md:h-contentPlusShell md:overflow-clip">
 					<LeftbarBuilderDesktop
 						topoQuark={props.topoQuark}
-						boulderOrder={boulderOrder()}
+						boulderOrder={boulderOrder}
 						map={mapRef.current}
 						onSubmit={showModalSubmitTopo}
 						activateSubmission={progress() === 100}
@@ -218,7 +216,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 
 					<SlideoverLeftBuilder
 						topo={props.topoQuark}
-						boulderOrder={boulderOrder()}
+						boulderOrder={boulderOrder}
 						map={mapRef.current}
 					/>
 
@@ -240,21 +238,21 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 					>
 						{tool && tool !== "SECTOR" &&
 							<CreatingMarkersLayer 
-								boulderOrder={boulderOrder()}
+								boulderOrder={boulderOrder}
 								onCreate={handleCreateNewMarker}
 							/>
 						}
 						<SelectInteraction
-							boulderOrder={boulderOrder()}
+							boulderOrder={boulderOrder}
 							selectableSector
 						/>
 						<DragInteraction 
 							topoQuark={props.topoQuark}
-							boulderOrder={boulderOrder()}
+							boulderOrder={boulderOrder}
 						/>
 						<SectorAreaMarkersLayer
 							topoQuark={props.topoQuark}
-							boulderOrder={boulderOrder()}
+							boulderOrder={boulderOrder}
 							creating={tool === "SECTOR"}
 						/>
 						<ParkingMarkersLayer 
@@ -265,7 +263,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 						/>
 						<BoulderMarkersLayer 
 							topo={props.topoQuark}
-							boulderOrder={boulderOrder()}
+							boulderOrder={boulderOrder}
 						/>
 					</MapControl>
 

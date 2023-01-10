@@ -38,9 +38,11 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 		const breakpoint = useBreakpoint();
 
 		const topo = props.topoQuark();
-		const boulderOrder = useCreateDerivation(() =>
-			sortBoulders(topo.sectors, topo.lonelyBoulders)
-		);
+		// const boulderOrder = useCreateDerivation(() =>
+		// 	sortBoulders(topo.sectors, topo.lonelyBoulders)
+		// );
+
+		const boulderOrder = sortBoulders(topo.sectors, topo.lonelyBoulders);
 
 		const isEmptyStore = useSelectStore((s) => s.isEmpty);
 		const flush = useSelectStore((s) => s.flush);
@@ -129,11 +131,11 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 				<div className="relative flex h-content flex-row md:h-full md:overflow-clip">
 					<LeftbarTopoDesktop
 						topoQuark={props.topoQuark}
-						boulderOrder={boulderOrder()}
+						boulderOrder={boulderOrder}
 						map={mapRef.current}
 					/>
 
-					<SlideoverLeftTopo topo={props.topoQuark} boulderOrder={boulderOrder()} map={mapRef.current} />
+					<SlideoverLeftTopo topo={props.topoQuark} boulderOrder={boulderOrder} map={mapRef.current} />
 
 					<MapControl
 						ref={mapRef}
@@ -150,11 +152,11 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 						onSectorButtonClick={() => select.info("SECTOR", breakpoint)}
 					>
 						<SelectInteraction
-							boulderOrder={boulderOrder()}
+							boulderOrder={boulderOrder}
 						/>
 						<SectorAreaMarkersLayer
 							topoQuark={props.topoQuark}
-							boulderOrder={boulderOrder()}
+							boulderOrder={boulderOrder}
 						/>
 						<ParkingMarkersLayer
 							parkings={topo.parkings}
@@ -164,7 +166,7 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 						/>
 						<BoulderMarkersLayer 
 							topo={props.topoQuark}
-							boulderOrder={boulderOrder()}
+							boulderOrder={boulderOrder}
 						/>
 						
 					</MapControl>
