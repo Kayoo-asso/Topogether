@@ -29,7 +29,7 @@ export const SpecSelector: React.FC<SpecSelectorProps> = (
             />
 
             <Portal open={specSelectorOpen}>
-                <div className='w-full h-full bg-dark bg-opacity-95 flex flex-col px-8 py-8 overflow-auto absolute top-0 left-0 z-full md:px-[15%]'>
+                <div className='w-full h-full bg-dark bg-opacity-95 flex flex-col px-8 py-8 overflow-auto hide-scrollbar absolute top-0 left-0 z-full md:px-[15%]'>
                     
                     <div className="w-full h-[7vh] flex justify-center items-center text-white ktext-title">
                         Choisir les spécifications
