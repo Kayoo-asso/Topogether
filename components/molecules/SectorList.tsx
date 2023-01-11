@@ -7,6 +7,7 @@ import { useSelectStore } from "components/pages/selectStore";
 import { Map } from "ol";
 
 import { transform } from 'ol/proj.js';
+import { useBreakpoint } from "helpers/hooks";
 
 interface SectorListProps {
 	topoQuark: Quark<Topo>;
@@ -16,6 +17,7 @@ interface SectorListProps {
 
 export const SectorList: React.FC<SectorListProps> = watchDependencies(
 	(props: SectorListProps) => {
+		const bp = useBreakpoint();
 		const selectStore = useSelectStore();
 		const selectedBoulder = selectStore.item.type === 'boulder' ? selectStore.item : undefined;	
 		const topo = props.topoQuark();
@@ -68,15 +70,11 @@ export const SectorList: React.FC<SectorListProps> = watchDependencies(
 							<div className="ktext-label text-grey-medium">
 								Secteur {sectorIndex + 1}
 							</div>
-							<div className="ktext-section-title mb-2 flex cursor-pointer flex-row items-center text-main">
+							<div className={`ktext-section-title mb-2 flex flex-row items-center text-main md:cursor-pointer`}>
 								<div className="pr-3">
 									<ArrowSimple
-										className={
-											"h-3 w-3 cursor-pointer stroke-main stroke-2 " +
-											(hiddenSectors.has(sector.id)
-												? "rotate-180"
-												: "-rotate-90")
-										}
+										className={`h-3 w-3 stroke-main stroke-2 md:cursor-pointer 
+										${hiddenSectors.has(sector.id) ? "rotate-180" : "-rotate-90"}`}
 										onClick={() => toggleSector(sector)}
 									/>
 								</div>

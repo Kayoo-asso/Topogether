@@ -78,7 +78,7 @@ export const AccessForm: React.FC<AccessFormProps> = watchDependencies(
 									return (
 										<div className="flex flex-col gap-2" key={index}>
 											<div
-												className="ktext-base-little mt-3 cursor-pointer text-main"
+												className="ktext-base-little mt-3 md:cursor-pointer text-main"
 												onClick={() => {
 													newSteps.splice(index, 1);
 													accessQuark.set(a => ({

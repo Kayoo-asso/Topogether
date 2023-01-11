@@ -86,7 +86,7 @@ export const TopoCard: React.FC<TopoCardProps> = React.memo(
 				onTouchEnd={handleTouchEndContextMenu}
 				onClick={() => props.onClick && props.onClick(topo)}
 			>
-				<Card className="relative flex cursor-pointer flex-col bg-white text-center text-grey-medium">
+				<Card className="relative flex md:cursor-pointer flex-col bg-white text-center text-grey-medium">
 					<div className="relative top-0 h-[55%] w-full md:h-[75%]">
 						<Image
 							image={props.topo.image}

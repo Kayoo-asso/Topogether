@@ -62,7 +62,7 @@ const ForgotPasswordPage: NextPage = () => {
 						/>
 
 						<Link href="/user/login">
-							<a className="ktext-base-little hidden cursor-pointer text-main md:block">
+							<a className="ktext-base-little hidden md:cursor-pointer text-main md:block">
 								Retour
 							</a>
 						</Link>

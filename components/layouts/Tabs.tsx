@@ -96,7 +96,7 @@ export const Tabs: React.FC<TabsProps> = (props: TabsProps) => {
 				return (
 					<div
 						key={index}
-						className={`flex w-full cursor-pointer justify-center border-b-2 pb-2${getBorderClassName(
+						className={`flex w-full justify-center md:cursor-pointer border-b-2 pb-2${getBorderClassName(
 							tab,
 							selected
 						)}`}

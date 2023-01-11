@@ -73,7 +73,7 @@ export const ProfileForm: React.FC<ProfileFormProps> = watchDependencies(
 							label='Email'
 							value={user.email}
 							readOnly
-							inputClassName="cursor-pointer"
+							inputClassName="md:cursor-pointer"
 							onClick={() => setDisplayChangeMail(true)}
 						/>
 					</div>
@@ -97,7 +97,7 @@ export const ProfileForm: React.FC<ProfileFormProps> = watchDependencies(
 							label="Mot de passe"
 							value="*********"
 							readOnly
-							inputClassName="cursor-pointer"
+							inputClassName="md:cursor-pointer"
 							onClick={() => setDisplayChangePassword(true)}
 						/>
 					</div>
@@ -203,7 +203,7 @@ export const ProfileForm: React.FC<ProfileFormProps> = watchDependencies(
 					</div>
 
 					<div 
-						className="text-grey-medium cursor-pointer mb-6 hidden md:flex"
+						className="text-grey-medium md:cursor-pointer mb-6 hidden md:flex"
 						onClick={() => {
 							setUser(auth.session()!);
 							props.setDisplayModifyProfile(false);

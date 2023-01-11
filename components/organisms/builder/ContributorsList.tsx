@@ -30,7 +30,7 @@ export const ContributorsList: React.FC<ContributorsListProps> = watchDependenci
             if (displayAddForm) return <ContributorAddForm onClose={() => setDisplayAddForm(false)} />
             else if (props.contributors.length < 2) return ( //There is always at least 1 contributor : the admin of the topo
                 <div 
-                    className="flex flex-col md:flex-row mt-6 cursor-pointer border-main border-2 rounded-sm w-[90%] md:w-full py-6 md:py-12 px-6 shadow items-start md:items-center"
+                    className="flex flex-col md:flex-row mt-6 md:cursor-pointer border-main border-2 rounded-sm w-[90%] md:w-full py-6 md:py-12 px-6 shadow items-start md:items-center"
                     onClick={() => setDisplayAddForm(true)}
                 >
                     <div className="w-[40%] flex md:justify-center">
@@ -54,7 +54,7 @@ export const ContributorsList: React.FC<ContributorsListProps> = watchDependenci
                             return (
                                 <div 
                                     key={contributor.id}
-                                    className="flex flex-col md:flex-row cursor-pointer h-full gap-4 md:gap-0 border-main border-2 rounded-sm w-[90%] md:w-full py-6 md:py-12 px-6 shadow items-start md:items-center"
+                                    className="flex flex-col md:flex-row md:cursor-pointer h-full gap-4 md:gap-0 border-main border-2 rounded-sm w-[90%] md:w-full py-6 md:py-12 px-6 shadow items-start md:items-center"
                                     onClick={() => setToModify(contributor)}
                                 >
                                     <div className="w-[40%] flex md:justify-center">
@@ -72,7 +72,7 @@ export const ContributorsList: React.FC<ContributorsListProps> = watchDependenci
                         })}
                     </div>
 
-                    <div className="py-6 w-full text-center ktext-label text-grey-medium cursor-pointer" onClick={() => setDisplayAddForm(true)}>
+                    <div className="py-6 w-full text-center ktext-label text-grey-medium md:cursor-pointer" onClick={() => setDisplayAddForm(true)}>
                         Ajouter un contributeur
                     </div>
                 </>

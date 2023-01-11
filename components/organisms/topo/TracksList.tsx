@@ -62,7 +62,7 @@ export const TracksList: React.FC<TracksListProps> = watchDependencies((props: T
 							<div
 								key={track.id}
 								className={
-									"flex cursor-pointer flex-col border-b border-grey-light px-5 py-5 md:py-3 md:hover:bg-grey-superlight" +
+									"flex md:cursor-pointer flex-col border-b border-grey-light px-5 py-5 md:py-3 md:hover:bg-grey-superlight" +
 									(!selectedTrack ? '' :
 										selectedTrack().id !== track.id ? 
 										" opacity-40" : "")
@@ -72,7 +72,7 @@ export const TracksList: React.FC<TracksListProps> = watchDependencies((props: T
 								<div className="flex w-full flex-row items-center">
 									<GradeCircle
 										grade={grade}
-										className="cursor-pointer"
+										className="md:cursor-pointer"
 										content={(track.index + 1).toString()}
 										onClick={() => toggleSelectedTrack(trackQuark)}
 									/>

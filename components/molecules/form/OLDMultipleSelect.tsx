@@ -24,7 +24,7 @@ export const MultipleSelect = <T extends number | string>(
 		.join(", ");
 
 	return (
-		<div id={props.id} className={`relative cursor-pointer ${props.className}`}>
+		<div id={props.id} className={`relative md:cursor-pointer ${props.className}`}>
 			<TextInput
 				ref={ref}
 				label={props.label}
@@ -56,7 +56,7 @@ export const MultipleSelect = <T extends number | string>(
 						})
 						.map(({ value, label }) => (
 							<div
-								className="ktext-base flex cursor-pointer flex-row items-center py-4 text-dark"
+								className="ktext-base flex md:cursor-pointer flex-row items-center py-4 text-dark"
 								key={value}
 								onKeyDown={() => {
 									props.onChange(value);

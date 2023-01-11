@@ -17,7 +17,7 @@ interface TrackProps {
 
 const Track = ({ source, target, getTrackProps }: TrackProps) => (
 	<div
-		className="absolute z-10 mt-4 h-1 cursor-pointer rounded-lg bg-grey-medium"
+		className="absolute z-10 mt-4 h-1 md:cursor-pointer rounded-lg bg-grey-medium"
 		style={{
 			left: `${source.percent}%`,
 			width: `${target.percent - source.percent}%`,
@@ -64,7 +64,7 @@ export const BaseSliderInput: React.FC<BaseSliderInputProps> = ({
 				<Rail>
 					{({ getRailProps }) => (
 						<div
-							className="absolute mt-4 h-1 w-full cursor-pointer rounded-lg bg-grey-light"
+							className="absolute mt-4 h-1 w-full md:cursor-pointer rounded-lg bg-grey-light"
 							{...getRailProps()}
 						/>
 					)}

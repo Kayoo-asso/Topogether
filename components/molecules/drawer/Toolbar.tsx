@@ -58,17 +58,17 @@ export const Toolbar: React.FC<ToolbarProps> = ({
 		<div className="z-200 flex h-[9vh] w-full flex-row items-center justify-center bg-dark">
 			<span className="flex w-2/5 flex-row items-center justify-around md:w-3/12">
 				<Clear
-					className="h-8 w-8 cursor-pointer stroke-white"
+					className="h-8 w-8 md:cursor-pointer stroke-white"
 					onClick={props.onClear}
 				/>
 				<Rewind
-					className="h-6 w-6 cursor-pointer stroke-white"
+					className="h-6 w-6 md:cursor-pointer stroke-white"
 					onClick={props.onRewind}
 				/>
 				<div className="hidden md:block">
 					<Eraser
 						className={
-							"h-6 w-6 cursor-pointer " +
+							"h-6 w-6 md:cursor-pointer " +
 							(selectedTool === "ERASER"
 								? "fill-main stroke-main"
 								: "fill-white stroke-white")
@@ -78,7 +78,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
 				</div>
 				<ManyTracks
 					className={
-						"h-6 w-6 cursor-pointer " +
+						"h-6 w-6 md:cursor-pointer " +
 						(props.displayOtherTracks ? "stroke-main" : "stroke-white")
 					}
 					onClick={props.onOtherTracks}
@@ -97,7 +97,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
 			<span className="hidden w-6/12 flex-row items-center justify-around px-[13%] md:flex">
 				<Topo
 					className={
-						"h-6 w-6 cursor-pointer " +
+						"h-6 w-6 md:cursor-pointer " +
 						(selectedTool === "LINE_DRAWER"
 							? getStrokeColorClass(props.grade)
 							: "stroke-white")
@@ -106,7 +106,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
 				/>
 				<Hand
 					className={
-						"h-6 w-6 cursor-pointer " +
+						"h-6 w-6 md:cursor-pointer " +
 						(selectedTool === "HAND_DEPARTURE_DRAWER"
 							? getStrokeColorClass(props.grade) + " fill-white"
 							: "stroke-white")
@@ -115,7 +115,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
 				/>
 				<ClimbingShoe
 					className={
-						"h-7 w-7 cursor-pointer " +
+						"h-7 w-7 md:cursor-pointer " +
 						(selectedTool === "FOOT_DEPARTURE_DRAWER"
 							? getStrokeColorClass(props.grade) + " fill-white"
 							: "stroke-white")
@@ -124,7 +124,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
 				/>
 				<ForbiddenArea
 					className={
-						"h-6 w-6 cursor-pointer " +
+						"h-6 w-6 md:cursor-pointer " +
 						(selectedTool === "FORBIDDEN_AREA_DRAWER"
 							? "fill-white stroke-second"
 							: "stroke-white")
@@ -134,7 +134,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
 			</span>
 
 			<span
-				className="flex text-white flex-row items-center cursor-pointer"
+				className="flex text-white flex-row items-center md:cursor-pointer"
 				onClick={() => setGradeSelectorOpen(true)}
 			>
 				<Circle className={"mr-2 h-6 w-6 " + getLightGradeColorClass(gradeToLightGrade(props.grade))} />
@@ -143,7 +143,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
 
 			<span className="flex w-1/5 justify-center md:hidden">
 				<Checked
-					className="h-6 w-6 cursor-pointer fill-main"
+					className="h-6 w-6 md:cursor-pointer fill-main"
 					onClick={props.onValidate}
 				/>
 			</span>

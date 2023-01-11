@@ -30,7 +30,7 @@ export function Select<T>({
 	return (
 		<div
 			id={props.id}
-			className={`relative cursor-pointer ${props.wrapperClassname}`}
+			className={`relative md:cursor-pointer ${props.wrapperClassname}`}
 			onClick={() => {
 				setIsOpen((x) => !x);
 				if (!isOpen) ref.current?.focus();
@@ -67,7 +67,7 @@ export function Select<T>({
                     </div> */}
 					{props.options.sort().map(([value, label]) => (
 						<div
-							className="ktext-base flex cursor-pointer flex-row items-center py-4 text-dark"
+							className="ktext-base flex md:cursor-pointer flex-row items-center py-4 text-dark"
 							key={label}
 							onKeyDown={() => {
 								props.onChange(value);

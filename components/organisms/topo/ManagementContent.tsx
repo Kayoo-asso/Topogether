@@ -88,7 +88,7 @@ export const ManagementContent: React.FC<ManagementContentProps> = (props: Manag
 								)}
 								{manager.contactMail && (
 									<div
-										className="ktext-base-little cursor-pointer overflow-hidden text-main"
+										className="ktext-base-little md:cursor-pointer overflow-hidden text-main"
 										onClick={() => {
 											const data = [
 												new ClipboardItem({

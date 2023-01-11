@@ -25,7 +25,7 @@ export const ParkingContent: React.FC = watchDependencies(() => {
 							{parking.name || "Parking"}
 						</div>
 						<div
-							className="ktext-label cursor-pointer text-grey-medium"
+							className="ktext-label md:cursor-pointer text-grey-medium"
 							onClick={() => {
 								const data = [
 									new ClipboardItem({

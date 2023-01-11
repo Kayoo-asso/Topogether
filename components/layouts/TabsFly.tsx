@@ -96,7 +96,7 @@ export const TabsFly: React.FC<TabsFlyProps> = (props: TabsFlyProps) => {
 				return (
 					<div
 						key={index}
-						className={`px-2 md:px-8 cursor-pointer ${getBorderClassName(
+						className={`px-2 md:px-8 md:cursor-pointer ${getBorderClassName(
 							tab,
 							selected
 						)}`}

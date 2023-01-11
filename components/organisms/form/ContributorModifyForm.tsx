@@ -41,11 +41,11 @@ export const ContributorModifyForm: React.FC<ContributorModifyFormProps> = (prop
                 onClick={showModalModify}
             />
 
-            <div className="py-6 w-full text-center ktext-label text-error cursor-pointer" onClick={showModalDelete}>
+            <div className="py-6 w-full text-center ktext-label text-error md:cursor-pointer" onClick={showModalDelete}>
                 Supprimer le contributeur
             </div>
 
-            <div className="py-6 w-full text-center ktext-label text-grey-medium cursor-pointer" onClick={props.onClose}>
+            <div className="py-6 w-full text-center ktext-label text-grey-medium md:cursor-pointer" onClick={props.onClose}>
                 Retour
             </div>
 

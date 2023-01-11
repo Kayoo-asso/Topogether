@@ -17,10 +17,11 @@ export const ProfilePicture: React.FC<ProfilePictureProps> = ({
 	loading = false,
 	...props
 }: ProfilePictureProps) => {
+
 	return (
 		<div
 			className={`relative z-20 h-full overflow-hidden rounded-full border border-main shadow w-full${
-				props.onClick ? " cursor-pointer" : ""
+				props.onClick ? " md:cursor-pointer" : ""
 			}`}
 			onClick={() => {
 				props.onClick && props.onClick();

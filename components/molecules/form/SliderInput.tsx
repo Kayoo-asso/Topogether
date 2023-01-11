@@ -11,7 +11,7 @@ interface HandleProps {
 
 const Handle = (props: HandleProps) => (
 	<div
-		className="absolute z-20 -ml-1 mt-1.5 flex h-6 w-6 cursor-pointer content-center items-center rounded-full border-0 bg-main text-center"
+		className="absolute z-20 -ml-1 mt-1.5 flex h-6 w-6 md:cursor-pointer content-center items-center rounded-full border-0 bg-main text-center"
 		style={{
 			left: `${props.handle.percent}%`,
 		}}

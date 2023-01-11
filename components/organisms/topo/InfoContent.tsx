@@ -52,7 +52,7 @@ export const InfoContent: React.FC<InfoContentProps> = (props: InfoContentProps)
 					{topo.creator?.userName && (
 						<div className="ktext-label text-center md:hidden">
 							Topo créé par{" "}
-							<span className="cursor-pointer text-main">
+							<span className="md:cursor-pointer text-main">
 								{topo.creator.userName}
 							</span>
 						</div>
@@ -77,7 +77,7 @@ export const InfoContent: React.FC<InfoContentProps> = (props: InfoContentProps)
 						</div>
 						<div className="flex w-full flex-row justify-center md:justify-between">
 							<div
-								className="cursor-pointer text-grey-medium"
+								className="md:cursor-pointer text-grey-medium"
 								onClick={() => {
 									const data = [
 										new ClipboardItem({
@@ -108,7 +108,7 @@ export const InfoContent: React.FC<InfoContentProps> = (props: InfoContentProps)
 							{topo.creator?.userName && (
 								<div className="hidden md:block">
 									Topo créé par{" "}
-									<span className="cursor-pointer text-main">
+									<span className="md:cursor-pointer text-main">
 										{topo.creator.userName}
 									</span>
 								</div>

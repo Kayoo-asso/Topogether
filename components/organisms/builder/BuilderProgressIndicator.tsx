@@ -67,7 +67,7 @@ export const BuilderProgressIndicator: React.FC<BuilderProgressIndicatorProps> =
 						setOpen(!open);
 						e.stopPropagation();
 					}}
-					className="ktext-light flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border-2 border-white text-white"
+					className="ktext-light flex h-10 w-10 md:cursor-pointer items-center justify-center rounded-full border-2 border-white text-white"
 				>
 					{props.progress}%
 				</div>
@@ -76,7 +76,7 @@ export const BuilderProgressIndicator: React.FC<BuilderProgressIndicatorProps> =
 						className={`absolute right-5 top-[7%] z-1000 flex w-[90%] flex-col rounded bg-white p-5 shadow md:right-auto md:-ml-5 md:w-[23%] md:min-w-[340px]`}
 					>
 						<div
-							className="my-2 cursor-pointer"
+							className="my-2 md:cursor-pointer"
 							onClick={() => {
 								select.info("INFO", breakpoint);
 								setOpen(false);
@@ -92,7 +92,7 @@ export const BuilderProgressIndicator: React.FC<BuilderProgressIndicatorProps> =
 							{displayMainRule(topo, "PARKINGS")}
 						</div>
 						<div
-							className="my-2 cursor-pointer"
+							className="my-2 md:cursor-pointer"
 							onClick={() => {
 								select.info("ACCESS", breakpoint)
 								setOpen(false);

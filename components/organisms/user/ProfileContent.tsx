@@ -54,7 +54,7 @@ export const ProfileContent: React.FC<ProfileContentProps> = (props: ProfileCont
                             <div>{getFrom()}</div>
                             {(!user.firstName || !user.lastName || !user.birthDate || !user.city) &&
                                 <div 
-                                    className='border-2 border-second bg-second bg-opacity-10 text-second rounded-full mt-2 py-2 px-4 ktext-error cursor-pointer'
+                                    className='border-2 border-second bg-second bg-opacity-10 text-second rounded-full mt-2 py-2 px-4 ktext-error md:cursor-pointer'
                                     onClick={() => props.setDisplayModifyProfile(true)}
                                 >Votre profil est encore à compléter ;)</div>
                             }
@@ -84,7 +84,7 @@ export const ProfileContent: React.FC<ProfileContentProps> = (props: ProfileCont
                     
                     <div className="flex flex-row w-full md:w-auto justify-around md:gap-6 py-6 md:pt-0">
                         <div
-                            className="ktext-base-little cursor-pointer text-error"
+                            className="ktext-base-little md:cursor-pointer text-error"
                             onClick={async () => {
                                 showLoader(true);
                                 const success = await auth.signOut();
@@ -103,7 +103,7 @@ export const ProfileContent: React.FC<ProfileContentProps> = (props: ProfileCont
                             )}
                         </div>
                         <div
-                            className="ktext-base-little cursor-pointer text-error"
+                            className="ktext-base-little md:cursor-pointer text-error"
                             onClick={showModalDelete}
                         >
                             Supprimer le compte

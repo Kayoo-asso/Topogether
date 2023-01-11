@@ -51,7 +51,7 @@ export const GradeSelector: React.FC<GradeselectorProps> = (
 
     const getInteractionDiv = useCallback((g: Grade, label?: string) => (
         <div 
-            className={"w-full rounded-sm p-1 justify-center cursor-pointer flex flex-row" + (props.grade === g ? ' text-white bg-main font-semibold' : '')}
+            className={"w-full rounded-sm p-1 justify-center md:cursor-pointer flex flex-row" + (props.grade === g ? ' text-white bg-main font-semibold' : '')}
             onClick={() => props.onGradeSelect(g)}
         >
             {label || g}
@@ -81,7 +81,7 @@ export const GradeSelector: React.FC<GradeselectorProps> = (
 
                     <div className="w-full flex justify-center">
                         <div 
-                            className={"rounded-sm p-2 cursor-pointer flex flex-row" + (!props.grade ? ' text-white bg-main font-semibold' : '')}
+                            className={"rounded-sm p-2 md:cursor-pointer flex flex-row" + (!props.grade ? ' text-white bg-main font-semibold' : '')}
                             onClick={() => props.onGradeSelect(undefined)}
                         >
                             <Circle className={"mr-2 h-6 w-6 " + getLightGradeColorClass('P')} /> Projet

@@ -86,7 +86,7 @@ export const TopoFilters: React.FC<TopoFiltersProps> = ({
 			{open && (
 				<div className="relative z-40 flex min-w-[250px] max-w-[80%] flex-col rounded-lg bg-white shadow md:max-w-[40%]">
 					<div
-						className="flex max-w-[150px] cursor-pointer flex-row items-center rounded-lg bg-main p-3 pt-4 pl-5 shadow"
+						className={`flex max-w-[150px] flex-row items-center rounded-lg bg-main p-3 pt-4 pl-5 shadow md:cursor-pointer`}
 						onClick={() => setOpen(false)}
 					>
 						<FilterIcon className="h-6 w-6 fill-white stroke-white" />

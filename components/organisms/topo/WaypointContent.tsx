@@ -22,7 +22,7 @@ export const WaypointContent: React.FC = watchDependencies(() => {
 							{waypoint.name}
 						</div>
 						<div
-							className="ktext-label cursor-pointer text-grey-medium"
+							className="ktext-label md:cursor-pointer text-grey-medium"
 							onClick={() => {
 								const data = [
 									new ClipboardItem({

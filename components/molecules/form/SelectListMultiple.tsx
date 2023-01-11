@@ -59,7 +59,7 @@ export const SelectListMultiple = <T extends Bitflag>({
 					}).map(([flag, name]) => (
 						<div 
 							key={name}
-							className={"h-full border border-opacity-25 rounded-sm cursor-pointer ktext-label " + ((props.value && hasFlag(props.value, flag) || device === 'mobile') ? '' : "hover:bg-dark hover:bg-opacity-20 ") + getClassName(props.value, flag)}
+							className={"h-full border border-opacity-25 rounded-sm md:cursor-pointer ktext-label " + ((props.value && hasFlag(props.value, flag) || device === 'mobile') ? '' : "hover:bg-dark hover:bg-opacity-20 ") + getClassName(props.value, flag)}
 							onClick={() => props.onChange(flag)}
 							role="menuitem"
 							tabIndex={0}

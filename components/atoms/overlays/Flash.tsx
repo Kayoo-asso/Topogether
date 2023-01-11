@@ -35,11 +35,11 @@ export const Flash: React.FC<FlashProps> = (props: FlashProps) => {
 		<Portal open={props.open}>
 			<div
 				className={
-					"z-full w-[90%] bg-white text-center transition-[bottom] ease-in-out md:w-auto " +
+					"z-full w-[90%] bg-white text-center transition-[bottom] ease-in-out md:w-auto md:cursor-pointer " +
 					(display
 						? "bottom-[5%] md:bottom-[8%]"
 						: "-bottom-[20%] md:-bottom-[10%]") +
-					" absolute left-[50%] translate-x-[-50%] cursor-pointer rounded-lg px-6 py-4 shadow"
+					" absolute left-[50%] translate-x-[-50%] rounded-lg px-6 py-4 shadow"
 				}
 				onClick={() => setDisplay(false)}
 			>

@@ -152,7 +152,7 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> =
 								</div>
 								<div className="ktext-section-title mb-1 flex flex-row items-center text-main">
 									<button
-										className="cursor-pointer pr-3"
+										className="md:cursor-pointer pr-3"
 										onClick={() => toggleSector(sector)}
 									>
 										<ArrowSimple
@@ -169,7 +169,7 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> =
 										className="flex-1"
 										onClick={() => toggleSector(sector)}
 									>
-										<span className={"cursor-pointer " + (sector.name.length > 12
+										<span className={"md:cursor-pointer " + (sector.name.length > 12
 											? "text-lg"
 											: "")}>
 											{sector.name}
@@ -177,7 +177,7 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> =
 									</div>
 
 									<div
-										className="cursor-pointer pr-1"
+										className="md:cursor-pointer pr-1"
 										onClick={() => setSectorToRename(() => sectorQuark)}
 									>
 										<Edit className={"h-5 w-5 stroke-main"} />

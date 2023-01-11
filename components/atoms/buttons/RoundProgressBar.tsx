@@ -56,7 +56,7 @@ export const RoundProgressBar: React.FC<RoundProgressBarProps> = ({
 	const pct = cleanPercentage(props.percentage);
 	const userPct = 10 + pct*90/100;
 	return (
-		<svg width={size} height={size} onClick={props.onClick} className={props.onClick ? 'cursor-pointer' : ''}>
+		<svg width={size} height={size} onClick={props.onClick} className={props.onClick ? 'md:cursor-pointer' : ''}>
 			<g transform={`rotate(-90 ${size/2 + " " + size/2})`}>
 				<Circle color="#E8EAF0" percentage={100} size={size} />
 				<Circle color={color} percentage={userPct} size={size} />

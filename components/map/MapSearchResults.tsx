@@ -20,6 +20,7 @@ interface MapSearchResultsProps {
 export const MapSearchResults: React.FC<MapSearchResultsProps> = (
 	props: MapSearchResultsProps
 ) => {
+
 	return (
 		<div className="absolute left-0 top-0 z-50 w-[94%] rounded-lg bg-white pt-[55px] pb-3 shadow md:w-[97%]">
 			{/* TODO: Add closing button */}
@@ -28,7 +29,7 @@ export const MapSearchResults: React.FC<MapSearchResultsProps> = (
 			{props.topoApiResults.length > 0 &&
 				props.topoApiResults.map((topo) => (
 					<Link href={"/topo/" + encodeUUID(topo.id)} key={topo.id}>
-						<a className="ktext-base flex cursor-pointer flex-row items-center gap-4 py-3 px-7 text-dark hover:bg-grey-light">
+						<a className={`ktext-base flex flex-row items-center gap-4 py-3 px-7 text-dark md:cursor-pointer hover:bg-grey-light`}>
 							<MarkerIcon className="h-5 w-5 fill-main" />
 							<div>{topo.name}</div>
 						</a>
@@ -39,7 +40,7 @@ export const MapSearchResults: React.FC<MapSearchResultsProps> = (
 				props.boulderResults.map((boulder) => (
 					<div
 						key={boulder.id}
-						className="ktext-base flex cursor-pointer flex-row items-center gap-4 py-3 px-7 text-dark hover:bg-grey-light"
+						className={`ktext-base flex flex-row items-center gap-4 py-3 px-7 text-dark md:cursor-pointer hover:bg-grey-light`}
 						onClick={() => props.onBoulderSelect(boulder)}
 					>
 						<Rock className="h-5 w-5 stroke-main" />
@@ -55,7 +56,7 @@ export const MapSearchResults: React.FC<MapSearchResultsProps> = (
 					{props.mapboxApiResults.map((res) => (
 						<div
 							key={res.place_name}
-							className="ktext-base flex cursor-pointer flex-row items-center gap-4 py-3 px-7 text-dark hover:bg-grey-light"
+							className={`ktext-base flex flex-row items-center gap-4 py-3 px-7 text-dark md:cursor-pointer hover:bg-grey-light`}
 							onClick={() => props.onPlaceSelect(res)}
 						>
 							<Flag className="h-5 w-5 stroke-dark" />

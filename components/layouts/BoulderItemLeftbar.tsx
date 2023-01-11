@@ -6,7 +6,6 @@ import CrossDelete from "assets/icons/clear.svg";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from '@dnd-kit/utilities';
 
-
 interface BoulderItemLeftbarProps {
 	boulder: Quark<Boulder>;
 	orderIndex: number;
@@ -59,11 +58,11 @@ export const BoulderItemLeftbar: React.FC<BoulderItemLeftbarProps> = watchDepend
 
 	return (
 		<div ref={setNodeRef} style={style} {...attributes} {...listeners}>
-			<div className="flex cursor-pointer flex-row items-center text-dark">
+			<div className={`flex flex-row items-center text-dark md:cursor-pointer`}>
 				<div className="pr-3">
 					<ArrowSimple
 						className={
-							"h-3 w-3 cursor-pointer stroke-dark " +
+							"h-3 w-3 stroke-dark md:cursor-pointer " +
 							(props.selected ? "stroke-2 " : "") +
 							(props.displayed ? "-rotate-90" : "rotate-180")
 						}
@@ -85,7 +84,7 @@ export const BoulderItemLeftbar: React.FC<BoulderItemLeftbarProps> = watchDepend
 					</span>
 				</div>
 				{props.onDeleteClick &&
-					<div className="cursor-pointer" onClick={props.onDeleteClick}>
+					<div className={`md:cursor-pointer`} onClick={props.onDeleteClick}>
 						<CrossDelete
 							className={"h-4 w-4 stroke-grey-medium hover:stroke-dark"}
 						/>
@@ -101,7 +100,7 @@ export const BoulderItemLeftbar: React.FC<BoulderItemLeftbarProps> = watchDepend
 						return (
 							<div
 								key={track.id}
-								className="flex cursor-pointer flex-row items-baseline"
+								className={`flex flex-row items-baseline md:cursor-pointer`}
 								onClick={() => props.onTrackClick(trackQuark)}
 							>
 								{track.grade && (
@@ -127,7 +126,7 @@ export const BoulderItemLeftbar: React.FC<BoulderItemLeftbarProps> = watchDepend
 					})}
 					{props.displayCreateTrack && (
 						<div
-							className="mt-2 cursor-pointer text-grey-medium"
+							className={`mt-2 text-grey-medium md:cursor-pointer`}
 							onClick={props.onCreateTrack}
 						>
 							+ Nouvelle voie

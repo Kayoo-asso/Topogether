@@ -65,7 +65,7 @@ export const ContributorAddForm: React.FC<ContributorAddFormProps> = (props: Con
                         {results.length > 0 && results.map(res => (
                             <div
                                 key={res.id}
-                                className="ktext-base flex cursor-pointer flex-row items-center gap-4 py-3 text-dark"
+                                className="ktext-base flex md:cursor-pointer flex-row items-center gap-4 py-3 text-dark"
                                 onClick={() => {
                                     setEmail(res.pseudo as Name);
                                     setId(res.id);
@@ -92,7 +92,7 @@ export const ContributorAddForm: React.FC<ContributorAddFormProps> = (props: Con
                 fullWidth
             /> */}
 
-            <div className="py-6 w-full text-center ktext-label text-grey-medium cursor-pointer" onClick={props.onClose}>
+            <div className="py-6 w-full text-center ktext-label text-grey-medium md:cursor-pointer" onClick={props.onClose}>
                 Retour
             </div>
         </>

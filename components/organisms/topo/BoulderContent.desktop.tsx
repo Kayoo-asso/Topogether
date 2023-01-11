@@ -37,7 +37,7 @@ export const BoulderContentDesktop: React.FC<BoulderContentDesktopProps> =
 						<span className={"ktext-big-title ml-3" + (boulder.name.length > 16 ? " text-base" : "")}>{boulder.name}</span>
 					</div>
 					<div
-						className="ktext-label cursor-pointer text-grey-medium"
+						className="ktext-label md:cursor-pointer text-grey-medium"
 						onClick={() => {
 							const data = [
 								new ClipboardItem({
@@ -80,7 +80,7 @@ export const BoulderContentDesktop: React.FC<BoulderContentDesktopProps> =
 
 				<div className="ktext-label my-2 mt-10 flex flex-row justify-between px-5 font-bold">
 					<span
-						className={`cursor-pointer ${
+						className={`md:cursor-pointer ${
 							officialTrackTab ? "text-main" : "text-grey-medium"
 						}`}
 						onClick={() => setOfficialTrackTab(true)}
@@ -88,7 +88,7 @@ export const BoulderContentDesktop: React.FC<BoulderContentDesktopProps> =
 						officielles
 					</span>
 					<span
-						className={`cursor-pointer ${
+						className={`md:cursor-pointer ${
 							!officialTrackTab ? "text-main" : "text-grey-medium"
 						}`}
 						onClick={() => setOfficialTrackTab(false)}

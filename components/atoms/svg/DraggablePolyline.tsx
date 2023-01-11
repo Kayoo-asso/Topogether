@@ -79,7 +79,7 @@ export const DraggablePolyline: React.FC<DraggablePolylineProps> = ({
 		<polyline
 			id={props.id}
 			className={`${cursorPosition.active ? "z-50" : "z-20"} ${
-				pointer ? "cursor-pointer " : ""
+				pointer ? "md:cursor-pointer " : ""
 			}${className}`}
 			points={pointsToPolylineStr(props.points)}
 			strokeWidth={strokeWidth}

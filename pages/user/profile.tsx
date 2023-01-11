@@ -52,7 +52,7 @@ const ProfilePage = withRouting({
 
 					<div className="relative flex h-full w-full flex-col justify-start overflow-x-hidden md:px-12">
 						<div className="flex flex-row rounded-lg px-5 md:px-6 pb-8 pt-12 justify-start md:pb-12 md:pt-[16px]">
-							<div className="relative h-[100px] w-[100px] cursor-pointer">
+							<div className="relative h-[100px] w-[100px] md:cursor-pointer">
 								<ImageInput
 									button="profile"
 									value={auth.session()!.image}

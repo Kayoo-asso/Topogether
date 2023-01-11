@@ -48,7 +48,7 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
 							: "border-grey-superlight text-dark focus:border-main"
 					} \ 
 					${displayLabel ? "placeholder-transparent" : ""} \
-					${pointer ? " cursor-pointer" : ""} \
+					${pointer ? " md:cursor-pointer" : ""} \
 					${inputClassName}`
 				}
 			/>
@@ -65,7 +65,7 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
 						? "text-white peer-focus:text-white"
 						: "text-grey-medium peer-focus:text-main"
 					} \
-					${pointer ? " cursor-pointer" : ""} ${labelClassName}`}
+					${pointer ? " md:cursor-pointer" : ""} ${labelClassName}`}
 				>
 					{props.label}
 				</label>

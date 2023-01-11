@@ -67,7 +67,7 @@ export const Dropdown: React.FC<DropdownProps> = React.memo(
 							className={`h-16 ${
 								opt.disabled
 									? "cursor-default text-grey-medium"
-									: "cursor-pointer text-dark"
+									: "md:cursor-pointer text-dark"
 							} ktext-base flex flex-row items-center`}
 							key={opt.value}
 							onPointerDown={(e) => {

@@ -67,7 +67,7 @@ export const DownloadButton: React.FC<DownloadButtonProps> = watchDependencies(
 				{dlState.status !== "downloading" && (
 					<Download
 						className={
-							"ml-5 cursor-pointer " +
+							"ml-5 md:cursor-pointer" +
 							(dlState.status === "downloaded"
 								? "h-5 w-5 stroke-main"
 								: "h-5 w-5 stroke-dark") +

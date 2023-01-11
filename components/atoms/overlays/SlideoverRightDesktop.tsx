@@ -62,7 +62,7 @@ SlideoverRightDesktopProps
 					</Show>
 				</div>
 				<span
-					className="ktext-base cursor-pointer text-main"
+					className={`ktext-base text-main md:cursor-pointer`}
 					onClick={() => {
 						setOffset(0);
 						window.setTimeout(() => props.onClose && props.onClose(), 150);

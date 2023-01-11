@@ -8,9 +8,10 @@ interface ParkingButtonProps {
 export const ParkingButton: React.FC<ParkingButtonProps> = ({
 	...props
 }: ParkingButtonProps) => {
+	
 	return (
 		<div
-			className="ktext-base flex cursor-pointer flex-row items-center justify-center text-main"
+			className={`ktext-base flex flex-row items-center justify-center text-main md:cursor-pointer`}
 			onClick={props.onClick}
 		>
 			Itinéraire vers le parking

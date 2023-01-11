@@ -113,7 +113,7 @@ export function useModal<T>(): [
 						</div>
 
 						<div
-							className="absolute top-3 right-3 cursor-pointer"
+							className="absolute top-3 right-3 md:cursor-pointer"
 							onClick={close}
 						>
 							<Clear className="h-8 w-8 stroke-dark" />

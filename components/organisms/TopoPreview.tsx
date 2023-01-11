@@ -52,7 +52,7 @@ export const TopoPreview: React.FC<TopoPreviewProps> = ({
 
 	const coordinateItem = () => (
 		<div
-			className="ktext-label cursor-pointer overflow-hidden text-grey-medium"
+			className="ktext-label md:cursor-pointer overflow-hidden text-grey-medium"
 			onClick={() => {
 				const data = [
 					new ClipboardItem({
@@ -100,7 +100,7 @@ export const TopoPreview: React.FC<TopoPreviewProps> = ({
 				<div
 					className={
 						"h-[200px] w-full overflow-hidden" +
-						(topo.image ? " cursor-pointer" : "")
+						(topo.image ? " md:cursor-pointer" : "")
 					}
 				>
 					<Image
@@ -210,7 +210,7 @@ export const TopoPreview: React.FC<TopoPreviewProps> = ({
 					<div className="flex w-full flex-row justify-between px-8 pt-4 pb-8 md:pb-2">
 						<div
 							className={
-								"ktext-label cursor-pointer " +
+								"ktext-label md:cursor-pointer " +
 								(props.secondButton.color === "main"
 									? "text-main"
 									: props.secondButton.color === "second"
@@ -239,7 +239,7 @@ export const TopoPreview: React.FC<TopoPreviewProps> = ({
 						{props.thirdButton && (
 							<div
 								className={
-									"ktext-label cursor-pointer " +
+									"ktext-label md:cursor-pointer " +
 									(props.thirdButton.color === "main"
 										? "text-main"
 										: props.thirdButton.color === "second"
@@ -269,7 +269,7 @@ export const TopoPreview: React.FC<TopoPreviewProps> = ({
 						{props.fourthButton && (
 							<div
 								className={
-									"ktext-label cursor-pointer " +
+									"ktext-label md:cursor-pointer " +
 									(props.fourthButton.color === "main"
 										? "text-main"
 										: props.fourthButton.color === "second"

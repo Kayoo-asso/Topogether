@@ -65,7 +65,7 @@ export const TracksListBuilder: React.FC<TracksListBuilderProps> =
 							<div
 								key={track.id}
 								className={
-									"flex cursor-pointer flex-col border-b border-grey-light px-5 py-5 md:py-3 md:hover:bg-grey-superlight" +
+									"flex md:cursor-pointer flex-col border-b border-grey-light px-5 py-5 md:py-3 md:hover:bg-grey-superlight" +
 									(!selectedTrack ? '' :
 										selectedTrack().id !== track.id ? 
 										" opacity-40" : "")
@@ -75,7 +75,7 @@ export const TracksListBuilder: React.FC<TracksListBuilderProps> =
 								<div className="flex w-full flex-row items-center">
 									<GradeCircle
 										grade={grade}
-										className="cursor-pointer"
+										className="md:cursor-pointer"
 										content={(track.index + 1).toString()}
 										onClick={() => toggleSelectedTrack(trackQuark)}
 									/>
@@ -120,7 +120,7 @@ export const TracksListBuilder: React.FC<TracksListBuilderProps> =
 						className={
 							"border-b border-grey-light px-5 py-5 md:py-3 " +
 							(boulder.images.length > 0
-								? "cursor-pointer text-grey-medium hover:bg-grey-superlight"
+								? "md:cursor-pointer text-grey-medium hover:bg-grey-superlight"
 								: "cursor-default text-grey-light")
 						}
 						onClick={() => {

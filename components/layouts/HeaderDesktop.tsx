@@ -58,7 +58,7 @@ export const HeaderDesktop: React.FC<HeaderDesktopProps> = watchDependencies(
 
 		return (
 			<div className="hidden h-header items-center bg-dark md:flex">
-				<div className="relative h-[70%] w-1/12 cursor-pointer">
+				<div className={`relative h-[70%] w-1/12 md:cursor-pointer`}>
 					{wrapLink(<NextImage
 							src="/assets/img/Logo_white_topogether.png"
 							priority
@@ -70,7 +70,7 @@ export const HeaderDesktop: React.FC<HeaderDesktopProps> = watchDependencies(
 				</div>
 
 				<div
-					className="ktext-title mr-4 flex cursor-pointer flex-row items-center whitespace-nowrap text-white"
+					className={`ktext-title mr-4 flex flex-row items-center whitespace-nowrap text-white md:cursor-pointer`}
 					onClick={() => setMenuOpen(!menuOpen)}
 				>
 					{props.title}
@@ -92,7 +92,7 @@ export const HeaderDesktop: React.FC<HeaderDesktopProps> = watchDependencies(
 
 				{displayLogin && !user && (
 					<Link href="/user/login">
-						<a className="ktext-base mr-[3%] cursor-pointer text-white">
+						<a className={`ktext-base mr-[3%] text-white md:cursor-pointer`}>
 							Se connecter
 						</a>
 					</Link>

@@ -13,7 +13,7 @@ interface ParkingModalProps {
 export const ParkingModal: React.FC<ParkingModalProps> = (
 	props: ParkingModalProps
 ) => {
-	const breakpoint = useBreakpoint();
+	const bp = useBreakpoint();
 	const { position } = usePosition();
 	const [flashMessage, setFlashMessage] = useState<string>();
 	const device = useDevice();
@@ -26,7 +26,7 @@ export const ParkingModal: React.FC<ParkingModalProps> = (
 				onClick={props.onClose}
 			>
 				<div className="absolute left-[50%] bottom-[80px] w-11/12 translate-x-[-50%] shadow">
-					<div className="ktext-base cursor-pointer rounded bg-white text-center text-main">
+					<div className={`ktext-base rounded bg-white text-center text-main md:cursor-pointer`}>
 						<div
 							className="border-b border-grey-light py-5"
 							onClick={(e) => {
@@ -35,7 +35,7 @@ export const ParkingModal: React.FC<ParkingModalProps> = (
 									props.parkingLocation,
 									position,
 									"google",
-									breakpoint,
+									bp,
 									isIos
 								);
 								props.onClose();
@@ -52,7 +52,7 @@ export const ParkingModal: React.FC<ParkingModalProps> = (
 										props.parkingLocation,
 										position,
 										"apple",
-										breakpoint,
+										bp,
 										isIos
 									);
 									props.onClose();
@@ -94,7 +94,7 @@ export const ParkingModal: React.FC<ParkingModalProps> = (
 							Copier les coordonnées
 						</div>
 					</div>
-					<div className="ktext-base mt-2 cursor-pointer rounded bg-white py-5 text-center text-main">
+					<div className={`ktext-base mt-2 rounded bg-white py-5 text-center text-main md:cursor-pointer`}>
 						Annuler
 					</div>
 				</div>

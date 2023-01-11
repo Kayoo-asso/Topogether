@@ -1,3 +1,4 @@
+import { useBreakpoint } from "helpers/hooks";
 import React from "react";
 import { LightGrade } from "types";
 
@@ -39,6 +40,7 @@ export const GradeCircle: React.FC<GradeCircleProps> = ({
 	size = "normal",
 	...props
 }: GradeCircleProps) => {
+	const bp = useBreakpoint();
 	const colorStyles = selected
 		? selectedColorStyles[props.grade]
 		: notSelectedColorStyles[props.grade];
@@ -56,7 +58,7 @@ export const GradeCircle: React.FC<GradeCircleProps> = ({
 		<div
 			className={`\ relative box-border flex items-center justify-center rounded-full text-center
       ${colorStyles} ${sizeStyles} ${props.className ? props.className : ""}${
-				props.onClick ? " cursor-pointer" : " cursor-default"
+				(props.onClick && bp === 'desktop') ? " cursor-pointer" : " cursor-default"
 			}`}
 			onClick={(e) => {
 				e.preventDefault();
@@ -69,7 +71,7 @@ export const GradeCircle: React.FC<GradeCircleProps> = ({
 		>
 			<span
 				className={`ktext-subtitle${size === "little" ? " text-xs" : ""}${
-					props.onClick ? " cursor-pointer" : ""
+					(props.onClick && bp === 'desktop') ? " cursor-pointer" : ""
 				}`}
 			>
 				{content}

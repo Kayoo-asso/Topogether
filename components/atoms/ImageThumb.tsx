@@ -18,7 +18,7 @@ export const ImageThumb: React.FC<ImageThumbProps> = watchDependencies(
 		return (
 			<div
 				className={`${selected ? "border-main" : "border-dark"}${
-					props.onClick ? " cursor-pointer" : ""
+					props.onClick ? " md:cursor-pointer" : ""
 				} \
       			group relative h-[73px] w-[73px] border-2`}
 				onClick={() => props.onClick && props.onClick(props.image.id)}

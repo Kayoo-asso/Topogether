@@ -22,7 +22,7 @@ export const SlideoverLeftDesktop: React.FC<SlideoverLeftDesktopProps> = (props:
 			<div className="flex h-[5%] items-center justify-between">
 				<span className="ktext-big-title">{props.title}</span>
 				<span
-					className="ktext-base cursor-pointer text-main"
+					className={`ktext-base text-main md:cursor-pointer`}
 					onClick={props.onClose}
 				>
 					Terminé

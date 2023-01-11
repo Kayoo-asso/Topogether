@@ -10,6 +10,7 @@ interface LikeButtonProps {
 
 export const LikeButton: React.FC<LikeButtonProps> = watchDependencies(
 	({ liked, ...props }: LikeButtonProps) => {
+		
 		const toggle = useCallback(async () => {
 			liked.set((l) => !l);
 			await sync.attemptSync();
@@ -18,7 +19,7 @@ export const LikeButton: React.FC<LikeButtonProps> = watchDependencies(
 
 		return (
 			<Heart
-				className={`h-5 w-5 cursor-pointer ${color} ${props.className}`}
+				className={`h-5 w-5 md:cursor-pointer ${color} ${props.className}`}
 				onClick={toggle}
 			/>
 		);

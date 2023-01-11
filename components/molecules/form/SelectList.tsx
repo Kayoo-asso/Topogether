@@ -57,7 +57,7 @@ export function SelectList<T>({
 				{props.options.sort().map(([value, label], index) => (
 					<div 
 						key={index}
-						className={"h-full border border-opacity-25 rounded-sm cursor-pointer ktext-label " + ((selected === value || device === 'mobile') ? '' : "hover:bg-dark hover:bg-opacity-20 ") + getClassName(value)}
+						className={"h-full border border-opacity-25 rounded-sm md:cursor-pointer ktext-label " + ((selected === value || device === 'mobile') ? '' : "hover:bg-dark hover:bg-opacity-20 ") + getClassName(value)}
 						onClick={() => {
 							if (selected === value) props.onChange(undefined)
 							else props.onChange(value)

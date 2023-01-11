@@ -222,7 +222,7 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies(
 									<div className="flex w-full flex-row justify-center md:justify-between">
 										{device === "desktop" && (
 											<div
-												className="flex cursor-pointer items-center text-white"
+												className="flex md:cursor-pointer items-center text-white"
 												onClick={() => setStep(0)}
 											>
 												Retour

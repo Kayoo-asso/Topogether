@@ -23,7 +23,7 @@ export const Checkbox: React.FC<CheckboxProps> = ({
 
 	return (
 		<div
-			className={`space-between flex cursor-pointer flex-row ${props.className}`}
+			className={`space-between flex flex-row md:cursor-pointer ${props.className}`}
 			onClick={handleClick}
 			onKeyDown={(e) => {
 				if (e.key === "Enter") {
@@ -44,7 +44,7 @@ export const Checkbox: React.FC<CheckboxProps> = ({
 			</div>
 			<label
 				htmlFor="1"
-				className="ktext-base main ml-2 inline-block cursor-pointer leading-6"
+				className={`ktext-base main ml-2 inline-block leading-6 md:cursor-pointer`}
 			>
 				{props.label}
 			</label>
