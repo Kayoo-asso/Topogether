@@ -2,7 +2,7 @@ import { ValidateButton } from "components/atoms/buttons/ValidateButton";
 import { listFlags } from "helpers/bitflags";
 import { Portal } from "helpers/hooks";
 import React, { useState } from "react";
-import { Track, TrackSpec } from "types";
+import { TrackSpec } from "types";
 import { BodyPositionName, HoldTypeName, TrackDangerName, TrackSpecName, TrackStyleName } from "types/BitflagNames";
 import { SelectListMultiple } from "./SelectListMultiple";
 import { TextInput } from "./TextInput";
@@ -29,7 +29,7 @@ export const SpecSelector: React.FC<SpecSelectorProps> = (
             />
 
             <Portal open={specSelectorOpen}>
-                <div className='w-full h-full bg-dark bg-opacity-95 flex flex-col px-8 absolute top-0 left-0 z-full md:px-[15%]'>
+                <div className='w-full h-full bg-dark bg-opacity-95 flex flex-col px-8 py-8 overflow-auto absolute top-0 left-0 z-full md:px-[15%]'>
                     
                     <div className="w-full h-[7vh] flex justify-center items-center text-white ktext-title">
                         Choisir les spécifications
