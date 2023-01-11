@@ -87,14 +87,16 @@ export const ProfileContent: React.FC<ProfileContentProps> = (props: ProfileCont
                             className="ktext-base-little md:cursor-pointer text-error"
                             onClick={async () => {
                                 showLoader(true);
-                                const success = await auth.signOut();
-                                if (success) await router.push("/user/login");
-                                else {
-                                    setErrorMessageSignout(
-                                        "Une erreur est survenue. Merci de réessayer."
-                                    );
-                                    showLoader(false);
-                                }
+                                await router.push("/user/login")
+                                await auth.signOut();
+                                // const success = await auth.signOut();
+                                // if (success) await router.push("/user/login");
+                                // else {
+                                //     setErrorMessageSignout(
+                                //         "Une erreur est survenue. Merci de réessayer."
+                                //     );
+                                //     showLoader(false);
+                                // }
                             }}
                         >
                             Se déconnecter
