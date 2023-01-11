@@ -199,6 +199,7 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> =
 										)}
 										{boulders.length > 0 &&
 											<DndContext 
+												id={sector.id}
 												sensors={sensors}
 												collisionDetection={closestCenter}
 												modifiers={[restrictToVerticalAxis]}
