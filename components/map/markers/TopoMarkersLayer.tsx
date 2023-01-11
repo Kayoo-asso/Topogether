@@ -11,6 +11,7 @@ import { GeoCoordinates, LightTopo, TopoTypes, UUID } from 'types';
 import { fromLonLat, toLonLat } from 'ol/proj';
 import { TopoTypeToColor } from 'helpers/topo';
 import { Drag } from 'components/openlayers/interactions/Drag';
+import { removePreviouslySelected } from 'components/openlayers/interactions/Select';
 
 type TopoForMarkers = LightTopo | { id: UUID, type: TopoTypes, location: GeoCoordinates };
 
@@ -62,9 +63,7 @@ export const TopoMarkersLayer: React.FC<TopoMarkersLayerProps> = watchDependenci
                 layers={["topos"]}
                 hitTolerance={5}
                 onSelect={(e) => {
-                    e.target.getFeatures().clear();
-                    e.mapBrowserEvent.stopPropagation();
-                    e.mapBrowserEvent.preventDefault();
+                    removePreviouslySelected(e)
                     if (e.selected.length === 1) {
                         const feature = e.selected[0];
                         const { topo } = feature.get("data") as TopoMarkerData;
