@@ -154,7 +154,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 
 		const [flashOpen, setFlashOpen] = useState(false);
 		const handleCreateNewMarker = useCallback(
-			(e: MapBrowserEvent<MouseEvent>) => {
+			(e: MapBrowserEvent<any>) => {
 				e.preventDefault(); e.stopPropagation();
 				if (!isEmptyStore()) {
 					flush.info();

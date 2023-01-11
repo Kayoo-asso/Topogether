@@ -1,9 +1,10 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import {
 	Point,
 	Select,
 	VectorLayer,
 	VectorSource,
+    useMap,
 } from "components/openlayers";
 import { useSelectStore } from 'components/pages/selectStore';
 import { useBreakpoint } from 'helpers/hooks';
@@ -23,6 +24,15 @@ export const CreatingMarkersLayer: React.FC<CreatingMarkersLayerProps> = (props:
     const tool = useSelectStore(s => s.tool);
     const device = useBreakpoint();
     const pointerCoords = useMapPointerCoordinates(!!tool);
+
+    const map = useMap();
+    useEffect(() => {
+        const handleTouchCreation = (e: MapBrowserEvent<any>) => {
+            props.onCreate && props.onCreate(e);
+        }
+        map.on('click', handleTouchCreation);
+        return () => map.un('click', handleTouchCreation);
+    }, [map]);
     
     return (
         <>
@@ -30,7 +40,6 @@ export const CreatingMarkersLayer: React.FC<CreatingMarkersLayerProps> = (props:
                 layers={["creating"]}
                 onSelect={(e) => {
                     e.target.getFeatures().clear(); 
-                    props.onCreate && props.onCreate(e.mapBrowserEvent)
                 }}
             />
 
