@@ -41,7 +41,10 @@ export function eventPropName<S extends string>(
 	return result as any;
 }
 
-export function useGetLayers(map: Map | undefined, ids: Array<string | undefined>) {
+
+export function useGetLayers(map: Map | undefined, ids: string | Array<string | undefined>, filterUndefineds: true): Array<Layer<Source>>;
+export function useGetLayers(map: Map | undefined, ids: string | Array<string | undefined>, filterUndefineds?: false): Array<Layer<Source> | undefined>;
+export function useGetLayers(map: Map | undefined, ids: string | Array<string | undefined>, filterUndefineds: boolean = false) {
 	// TODO: likely should migrate to useSyncWithExternalStore
 	const [symbol, setSymbol] = useState(Symbol());
 	// The array can contain undefineds because we really want it to be the same length as the `ids` array
@@ -50,11 +53,16 @@ export function useGetLayers(map: Map | undefined, ids: Array<string | undefined
 		// console.log("Getting layers:", ids)
 		if (map) {
 			const collection = map.getLayers();
+			if(!Array.isArray(ids)) {
+				ids = [ids];
+			}
 			for (const id of ids) {
 				if(id) {
 					const item = collection.get(id);
-					list.push(item);
-				} else {
+					if(item || !filterUndefineds) {
+						list.push(item);
+					}
+				} else if(!filterUndefineds) {
 					list.push(undefined);
 				}
 			}
@@ -80,10 +88,10 @@ export function useGetLayers(map: Map | undefined, ids: Array<string | undefined
 	return layers;
 }
 
-export function useGetSources(map: Map | undefined, ids: Array<string | undefined>, filterNulls: true) : Array<Source>
-export function useGetSources(map: Map | undefined, ids: Array<string | undefined>, filterNulls?: false): Array<Source | undefined>
+export function useGetSources(map: Map | undefined, ids: Array<string | undefined>, filterUndefineds: true) : Array<Source>
+export function useGetSources(map: Map | undefined, ids: Array<string | undefined>, filterUndefineds?: false): Array<Source | undefined>
 
-export function useGetSources(map: Map | undefined, ids: Array<string | undefined>, filterNulls: boolean = false) {
+export function useGetSources(map: Map | undefined, ids: string | Array<string | undefined>, filterUndefineds: boolean = false) {
 	// TODO: likely should migrate to useSyncWithExternalStore
 	// TODO: remove duplication with Symbol state inside useGetLayers
 	const [, setSymbol] = useState(Symbol());
@@ -93,7 +101,7 @@ export function useGetSources(map: Map | undefined, ids: Array<string | undefine
 		for (const l of layers) {
 			const s = l?.getSource();
 			// nulls are problematic for our use later on
-			if(s || !filterNulls) {
+			if(s || !filterUndefineds) {
 				list.push(s || undefined);
 			}
 		}

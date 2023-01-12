@@ -34,6 +34,7 @@ import { fontainebleauLocation } from "helpers/constants";
 
 import SectorIcon from "assets/icons/sector.svg";
 import CenterIcon from "assets/icons/center.svg";
+import { OnClickFeature } from "components/openlayers/extensions/OnClick";
 
 type MapControlProps = React.PropsWithChildren<
 	Props & {
@@ -42,7 +43,7 @@ type MapControlProps = React.PropsWithChildren<
 		initialZoom?: number;
 		minZoom?: number;
 		displaySatelliteButton?: boolean;
-		displayUserMarker?: 'above' | 'under';
+		displayUserMarker?: "above" | "under";
 		displayToolSelector?: boolean;
 		onPhotoButtonClick?: () => void;
 		displaySectorButton?: boolean;
@@ -64,7 +65,6 @@ const attributions =
 	'© <a href="https://www.openstreetmap.org/copyright">' +
 	"OpenStreetMap contributors</a>";
 
-
 // The default controls except the zoom +/- buttons and the rotate button
 const controls = typeof window === "undefined" ? [] : [new Attribution()];
 
@@ -74,7 +74,7 @@ export const MapControl = watchDependencies<Map, MapControlProps>(
 			initialZoom = 8,
 			displaySearchbar = true,
 			displaySatelliteButton = true,
-			displayUserMarker = 'above',
+			displayUserMarker = "above",
 			displayToolSelector = false,
 			displaySectorButton = false,
 			...props
@@ -104,7 +104,7 @@ export const MapControl = watchDependencies<Map, MapControlProps>(
 
 		useEffect(() => {
 			const determinePointer = (e: MapBrowserEvent<PointerEvent>) => {
-				if (!map || tool || breakpoint !== 'desktop') return;
+				if (!map || tool || breakpoint !== "desktop") return;
 				const hit = map.getFeaturesAtPixel(e.pixel).length > 0;
 				if (hit) {
 					map.getTargetElement().style.cursor = "pointer";
@@ -274,8 +274,17 @@ export const MapControl = watchDependencies<Map, MapControlProps>(
 					}}
 					controls={controls}
 				>
+					{/* For demo purposes */}
+					<OnClickFeature
+						layers={["topos", "boulders", "parkings", "sectors", "waypoints"]}
+						onClick={(evt) => console.log("onClickFeature:", evt)}
+					/>
 					<View
-						center={initialCenter ? fromLonLat(initialCenter) : fromLonLat(fontainebleauLocation)}
+						center={
+							initialCenter
+								? fromLonLat(initialCenter)
+								: fromLonLat(fontainebleauLocation)
+						}
 						zoom={initialZoom}
 						minZoom={props.minZoom}
 						enableRotation={false}
@@ -295,13 +304,13 @@ export const MapControl = watchDependencies<Map, MapControlProps>(
 						/>
 					</TileLayer>
 
-					{displayUserMarker === 'under' && (
+					{displayUserMarker === "under" && (
 						<UserMarkerLayer onClick={props.onUserMarkerClick} />
 					)}
 
 					{props.children}
 
-					{displayUserMarker === 'above' && (
+					{displayUserMarker === "above" && (
 						<UserMarkerLayer onClick={props.onUserMarkerClick} />
 					)}
 				</BaseMap>
