@@ -23,6 +23,7 @@ export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies(
 		const [tab, setTab] = useState<"MY"| "DL" | "LIKED">("MY");
 		const ref = useRef<HTMLDivElement>(null);
 
+		console.log(props.dlTopos);
 		return (
 			<>
 				<HeaderDesktop backLink="/" title="Mes topos" />

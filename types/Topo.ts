@@ -72,8 +72,8 @@ export interface TopoData {
 	cleaned?: string;
 
 	location: GeoCoordinates;
-	rockTypes?: RockTypes;
-	amenities?: Amenities;
+	rockTypes: RockTypes;
+	amenities: Amenities;
 
 	// these are optional, in case the profile has been deleted
 	// (or the topo has not yet been validated)

@@ -1,9 +1,10 @@
-import React, { ReactElement, ReactNode, useState } from "react";
+import React, { ReactElement, ReactNode, useEffect, useState } from "react";
 import { Dropdown, DropdownOption } from "components";
 import Link from "next/link";
 import ArrowSimple from "assets/icons/arrow-simple.svg";
 import MenuIcon from "assets/icons/menu.svg";
 import { useRouter } from "next/router";
+import { useSelectStore } from "components/pages/selectStore";
 
 interface HeaderMobileProps {
 	title: string;
@@ -20,6 +21,11 @@ export const HeaderMobile: React.FC<HeaderMobileProps> = (
 
 	const [menuOpen, setMenuOpen] = useState(false);
 	const [displayTitleTooltip, setDisplayTitleTooltip] = useState(false);
+
+	const itemType = useSelectStore(s => s.item.type);
+	useEffect(() => {
+		if (itemType !== 'none') setMenuOpen(false);
+	}, [itemType]);
 
 	const wrapLink = (elts: ReactElement<any, any>) => {
 		if (props.onBackClick) return <a onClick={() => {

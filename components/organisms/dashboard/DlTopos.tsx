@@ -1,13 +1,9 @@
 import React, { useCallback, useState } from "react";
-import { AddTopoCard, TopoCardList } from "components";
-import { DBLightTopo, LightTopo, TopoStatus } from "types";
+import { TopoCardList } from "components";
+import { LightTopo, TopoStatus } from "types";
 import { watchDependencies } from "helpers/quarky";
 import { staticUrl } from "helpers/constants";
 import { useModal } from "helpers/hooks";
-
-import UserIcon from "assets/icons/user.svg";
-import Heart from "assets/icons/heart.svg";
-import Download from "assets/icons/download.svg";
 import { TopoPreview } from "../TopoPreview";
 import { encodeUUID } from "helpers/utils";
 
