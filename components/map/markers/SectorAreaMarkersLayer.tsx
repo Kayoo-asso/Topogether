@@ -14,6 +14,7 @@ import { fromLonLat, toLonLat } from 'ol/proj';
 import { Polygon as PolygonType } from 'ol/geom';
 import { createSector } from 'helpers/builder';
 import { ModalRenameSector } from 'components/organisms/builder/ModalRenameSector';
+import { DrawEvent } from 'ol/interaction/Draw';
 
 interface SectorAreaMarkersLayerProps {
     topoQuark: Quark<Topo>,
@@ -23,7 +24,10 @@ interface SectorAreaMarkersLayerProps {
 
 export function sectorMarkerStyle(selected: boolean, feature: FeatureLike, resolution: number) {
     const font = '600 ' + Math.min(20, 36 / resolution) + 'px Poppins';
-    const sector = feature.get('data').value() as SectorData;
+    // const sector = feature.get('data').value() as SectorData;
+    const data = feature.get('data');
+    if (!data) return;
+    const sector = data.value() as SectorData;
 
     const polygonStyle = new Style({
         stroke: new Stroke({
@@ -114,6 +118,16 @@ export const SectorAreaMarkersLayer: React.FC<SectorAreaMarkersLayerProps> = wat
 
     const [sectorToRename, setSectorToRename] = useState<Quark<Sector>>();
 
+    const handleDrawEnd = useCallback((e: DrawEvent) => {
+        const path = getPathFromFeature(e.feature);
+        const newSector = createSector(
+            props.topoQuark,
+            path,
+            props.boulderOrder
+        );
+        setSectorToRename(() => newSector);
+    }, [props.topoQuark, props.boulderOrder]);
+
     return (
         <>
             {creating &&
@@ -121,15 +135,7 @@ export const SectorAreaMarkersLayer: React.FC<SectorAreaMarkersLayerProps> = wat
                     source='sectors'
                     type='Polygon'
                     style={creatingSectorMarkerStyle}
-                    onDrawEnd={useCallback((e) => {
-                        const path = getPathFromFeature(e.feature);
-                        const newSector = createSector(
-							props.topoQuark,
-							path,
-							props.boulderOrder
-						);
-                        setSectorToRename(() => newSector);
-                    }, [props.topoQuark, props.boulderOrder])}
+                    onDrawEnd={handleDrawEnd}
                 />
             }
 

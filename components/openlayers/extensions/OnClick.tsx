@@ -1,9 +1,8 @@
 import type { Feature, MapBrowserEvent } from "ol";
-import { useLayer, useMap } from "../contexts";
+import { useMap } from "../contexts";
 import { useEffect } from "react";
 import BaseEvent from "ol/events/Event";
 import VectorLayer from "ol/layer/Vector";
-import type VectorSource from "ol/source/Vector";
 import { useGetLayers } from "../utils";
 import { FeatureLike } from "ol/Feature";
 
