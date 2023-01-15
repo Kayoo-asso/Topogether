@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Quark, watchDependencies } from 'helpers/quarky';
 import {
     Draw,
@@ -121,7 +121,7 @@ export const SectorAreaMarkersLayer: React.FC<SectorAreaMarkersLayerProps> = wat
                     source='sectors'
                     type='Polygon'
                     style={creatingSectorMarkerStyle}
-                    onDrawEnd={(e) => {
+                    onDrawEnd={useCallback((e) => {
                         const path = getPathFromFeature(e.feature);
                         const newSector = createSector(
 							props.topoQuark,
@@ -129,7 +129,7 @@ export const SectorAreaMarkersLayer: React.FC<SectorAreaMarkersLayerProps> = wat
 							props.boulderOrder
 						);
                         setSectorToRename(() => newSector);
-                    }}
+                    }, [props.topoQuark, props.boulderOrder])}
                 />
             }
 

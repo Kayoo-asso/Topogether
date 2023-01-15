@@ -53,7 +53,7 @@ export const MapToolSelector: React.FC<MapToolSelectorProps> = (props: MapToolSe
 
 					<div className="flex flex-row items-center gap-3 rounded-full bg-white px-4 md:px-6">
 						<div 
-							className={`ktext-label text-xs p-3 rounded-sm md:cursor-pointer" ${tool === "SECTOR" ? 'text-main bg-main bg-opacity-30' : 'text-grey-light'}`}
+							className={`ktext-label text-xs p-3 rounded-sm md:cursor-pointer ${tool === "SECTOR" ? 'text-main bg-main bg-opacity-30' : 'text-grey-light'}`}
 							onClick={() => onToolClick('SECTOR')}
 						>Nouveau secteur</div>
 
