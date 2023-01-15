@@ -82,6 +82,8 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies(
 					forbidden: false,
 					location: [longitude!, latitude!],
 					modified: new Date().toISOString(),
+					amenities: 0,
+					rockTypes: 0,
 				};
 				const newTopo = await createTopo(topoData);
 				if (newTopo) {
