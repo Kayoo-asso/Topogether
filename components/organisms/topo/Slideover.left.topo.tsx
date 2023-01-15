@@ -7,8 +7,8 @@ import { useSelectStore } from "components/pages/selectStore";
 import { InfoContent } from "./InfoContent";
 import { AccessContent } from "./AccessContent";
 import { ManagementContent } from "./ManagementContent";
-import { SectorList } from "components/molecules";
 import { Map } from "ol";
+import { SearchbarBoulders } from "components/map/SearchbarBoulders";
 
 type SlideoverLeftTopoProps = {
     topo: Quark<Topo>;
@@ -36,11 +36,7 @@ export const SlideoverLeftTopo: React.FC<SlideoverLeftTopoProps> = (props: Slide
             case 'INFO': return <InfoContent topo={props.topo} />;
             case 'ACCESS': return <AccessContent accesses={props.topo().accesses} />;
             case 'MANAGEMENT': return <ManagementContent managers={props.topo().managers} />;
-			case 'SECTOR': return <SectorList
-										topoQuark={props.topo}
-										boulderOrder={props.boulderOrder}
-										map={props.map}
-									/>;
+			case 'SEARCHBAR': return <SearchbarBoulders topo={props.topo} boulderOrder={props.boulderOrder} map={props.map} />;
 			default: return undefined;
         }
     }

@@ -2,17 +2,9 @@ import React, { useCallback, useEffect, useState } from "react";
 import { Map as BaseMap, View, TileLayer, XYZ } from "components/openlayers";
 import Map from "ol/Map";
 import { fromLonLat } from "ol/proj";
-import { RoundButton, SatelliteButton } from "components";
+import { SatelliteButton } from "components";
 import { ImageInput } from "components/molecules";
-import {
-	BoulderFilterOptions,
-	BoulderFilters,
-	MapSearchbar,
-	MapSearchbarProps,
-	TopoFilterOptions,
-	TopoFilters,
-} from ".";
-import { Boulder, GeoCoordinates, Position, Topo } from "types";
+import { GeoCoordinates, Position, Topo } from "types";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { setReactRef } from "helpers/utils";
 import { useBreakpoint, usePosition } from "helpers/hooks";
@@ -31,10 +23,11 @@ import {
 import { getMapCursorClass } from "helpers/map/getMapCursorClass";
 import { isEmpty } from "ol/extent";
 import { fontainebleauLocation } from "helpers/constants";
-
-import SectorIcon from "assets/icons/sector.svg";
-import CenterIcon from "assets/icons/center.svg";
 import { OnClickFeature } from "components/openlayers/extensions/OnClick";
+import { CenterButton } from "./CenterButton";
+import { TopoFilterOptions, TopoFilters } from "./TopoFilters";
+import { BoulderFilterOptions, BoulderFilters } from "./BoulderFilters";
+import { SearchButton } from "./SearchButton";
 
 type MapControlProps = React.PropsWithChildren<
 	Props & {
@@ -46,10 +39,7 @@ type MapControlProps = React.PropsWithChildren<
 		displayUserMarker?: "above" | "under";
 		displayToolSelector?: boolean;
 		onPhotoButtonClick?: () => void;
-		displaySectorButton?: boolean;
-		onSectorButtonClick?: () => void;
 		displaySearchbar?: boolean;
-		searchbarOptions?: MapSearchbarProps;
 		topo?: Quark<Topo>;
 		topoFilters?: Quark<TopoFilterOptions>;
 		topoFiltersDomain?: TopoFilterOptions;
@@ -69,17 +59,15 @@ const attributions =
 const controls = typeof window === "undefined" ? [] : [new Attribution()];
 
 export const MapControl = watchDependencies<Map, MapControlProps>(
-	(
-		{
-			initialZoom = 8,
-			displaySearchbar = true,
-			displaySatelliteButton = true,
-			displayUserMarker = "above",
-			displayToolSelector = false,
-			displaySectorButton = false,
-			...props
-		},
-		parentRef
+	({
+		initialZoom = 8,
+		displaySearchbar = true,
+		displaySatelliteButton = true,
+		displayUserMarker = "above",
+		displayToolSelector = false,
+		...props
+	},
+	parentRef
 	) => {
 		const session = useSession();
 		const breakpoint = useBreakpoint();
@@ -132,42 +120,7 @@ export const MapControl = watchDependencies<Map, MapControlProps>(
 			<div className="relative h-full w-full">
 				<div className="absolute h-full w-full">
 					{/* Top left */}
-					<div className="absolute left-0 top-0 m-3 w-full space-y-5">
-						{displaySearchbar && (
-							<MapSearchbar
-								boulders={
-									props.topo ? props.topo().boulders.toArray() : undefined
-								}
-								onMapboxResultSelect={(place) => {
-									map?.getView().setCenter(fromLonLat(place.center));
-								}}
-								onBoulderResultSelect={useCallback(
-									(boulder: Boulder) => {
-										const bQuark = props.topo!().boulders.findQuark(
-											(b) => b.id === boulder.id
-										)!;
-										select.boulder(bQuark);
-										map?.getView().setCenter(fromLonLat(boulder.location));
-									},
-									[props.topo]
-								)}
-								{...props.searchbarOptions}
-							/>
-						)}
-						{props.topoFilters && props.topoFiltersDomain && (
-							<TopoFilters
-								domain={props.topoFiltersDomain}
-								values={props.topoFilters()}
-								onChange={props.topoFilters.set}
-							/>
-						)}
-						{props.boulderFilters && props.boulderFiltersDomain && (
-							<BoulderFilters
-								domain={props.boulderFiltersDomain}
-								values={props.boulderFilters()}
-								onChange={props.boulderFilters.set}
-							/>
-						)}
+					<div className="absolute left-0 top-0 m-3 w-full">
 					</div>
 
 					{/* Top right */}
@@ -178,20 +131,7 @@ export const MapControl = watchDependencies<Map, MapControlProps>(
 					</div>
 
 					{/* Bottom left */}
-					<div
-						className={
-							"absolute bottom-0 left-0 m-3" +
-							(breakpoint === "desktop" ? " z-100" : "")
-						}
-					>
-						{displaySectorButton && (
-							<RoundButton
-								className="z-10 md:hidden"
-								onClick={props.onSectorButtonClick}
-							>
-								<SectorIcon className="h-7 w-7 fill-main stroke-main" />
-							</RoundButton>
-						)}
+					<div className={"absolute bottom-0 left-0 m-3"}>
 					</div>
 
 					{/* Bottom center */}
@@ -239,21 +179,51 @@ export const MapControl = watchDependencies<Map, MapControlProps>(
 					{/* Bottom right */}
 					<div
 						className={
-							"absolute right-0 bottom-0 m-3" +
+							"absolute right-0 bottom-0 m-3 space-y-5" +
+							(mapToolSelectorOpen && breakpoint === "mobile" ? ' pb-[90px]' : '') +
 							(breakpoint === "desktop" ? " z-100" : "")
 						}
 					>
-						{displayUserMarker && position && (
-							<RoundButton
-								onClick={() => {
-									if (position && map) {
-										map.getView().setCenter(fromLonLat(position));
-									}
-								}}
-							>
-								<CenterIcon className="h-7 w-7 fill-main stroke-main" />
-							</RoundButton>
+						{displaySearchbar && (
+							<SearchButton />
+							// <MapSearchbar
+							// 	boulders={
+							// 		props.topo ? props.topo().boulders.toArray() : undefined
+							// 	}
+							// 	onMapboxResultSelect={(place) => {
+							// 		map?.getView().setCenter(fromLonLat(place.center));
+							// 	}}
+							// 	onBoulderResultSelect={useCallback(
+							// 		(boulder: Boulder) => {
+							// 			const bQuark = props.topo!().boulders.findQuark(
+							// 				(b) => b.id === boulder.id
+							// 			)!;
+							// 			select.boulder(bQuark);
+							// 			map?.getView().setCenter(fromLonLat(boulder.location));
+							// 		},
+							// 		[props.topo]
+							// 	)}
+							// 	{...props.searchbarOptions}
+							// />
 						)}
+						{props.topoFilters && props.topoFiltersDomain && (
+							<TopoFilters
+								domain={props.topoFiltersDomain}
+								values={props.topoFilters()}
+								onChange={props.topoFilters.set}
+							/>
+						)}
+						{props.boulderFilters && props.boulderFiltersDomain && (
+							<BoulderFilters
+								domain={props.boulderFiltersDomain}
+								values={props.boulderFilters()}
+								onChange={props.boulderFilters.set}
+							/>
+						)}
+						<CenterButton 
+							map={map} 
+							topo={props.topo}
+						/>
 					</div>
 				</div>
 
@@ -277,7 +247,9 @@ export const MapControl = watchDependencies<Map, MapControlProps>(
 					{/* For demo purposes */}
 					<OnClickFeature
 						layers={["topos", "boulders", "parkings", "sectors", "waypoints"]}
-						onClick={(evt) => console.log("onClickFeature:", evt)}
+						onClick={(evt) => {
+							// console.log("onClickFeature:", evt)
+						}}
 					/>
 					<View
 						center={

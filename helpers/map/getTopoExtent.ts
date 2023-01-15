@@ -1,4 +1,4 @@
-import { Extent, createEmpty, extendCoordinate, isEmpty } from "ol/extent";
+import { Extent, createEmpty, extendCoordinate } from "ol/extent";
 import { fromLonLat } from "ol/proj";
 import { Topo, TopoData } from "types";
 import { buffer as addBuffer } from "ol/extent";

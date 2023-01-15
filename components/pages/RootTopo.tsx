@@ -10,7 +10,6 @@ import {
 import { useRouter } from "next/router";
 import { Header } from "components/layouts/Header";
 import { LeftbarTopoDesktop } from "components/layouts/LeftbarTopoDesktop";
-import { BoulderFilterOptions } from "components/map";
 import { MapControl } from "components/map/MapControl";
 import Map from "ol/Map";
 import { useBreakpoint } from "helpers/hooks";
@@ -26,6 +25,7 @@ import { SectorAreaMarkersLayer } from "components/map/markers/SectorAreaMarkers
 import { ParkingMarkersLayer } from "components/map/markers/ParkingMarkersLayer";
 import { WaypointMarkersLayer, disappearZoom } from "components/map/markers/WaypointMarkersLayer";
 import { SelectInteraction } from "components/map/markers/SelectInteraction";
+import { BoulderFilterOptions } from "components/map/BoulderFilters";
 
 interface RootTopoProps {
 	topoQuark: Quark<Topo>;
@@ -131,7 +131,11 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 						map={mapRef.current}
 					/>
 
-					<SlideoverLeftTopo topo={props.topoQuark} boulderOrder={boulderOrder} map={mapRef.current} />
+					<SlideoverLeftTopo 
+						topo={props.topoQuark} 
+						boulderOrder={boulderOrder} 
+						map={mapRef.current} 
+					/>
 
 					<MapControl
 						ref={mapRef}
@@ -139,13 +143,8 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 						initialZoom={16}
 						minZoom={disappearZoom - 1}
 						initialCenter={topo.location}
-						searchbarOptions={{
-							findBoulders: true,
-						}}
 						boulderFilters={boulderFilters}
 						boulderFiltersDomain={defaultBoulderFilterOptions}
-						displaySectorButton
-						onSectorButtonClick={() => select.info("SECTOR", breakpoint)}
 					>
 						<SelectInteraction
 							boulderOrder={boulderOrder}

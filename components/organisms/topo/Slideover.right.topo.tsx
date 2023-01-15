@@ -46,14 +46,8 @@ export const SlideoverRightTopo: React.FC<SlideoverRightTopoProps> = (
 					/>
 				);
 			}
-			if (item.type === 'parking')
-				return (
-					<ParkingContent />
-				);
-			else
-				return (
-					<WaypointContent />
-				);
+			if (item.type === 'parking') return <ParkingContent />;
+			else return <WaypointContent />;
 		} else return undefined;
 	}, [full, breakpoint, item]);
 

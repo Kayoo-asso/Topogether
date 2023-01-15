@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { HeaderDesktop } from "components/layouts/HeaderDesktop";
 import { LeftbarDesktop } from "components/layouts/Leftbar.desktop";
-import { TopoFilterOptions } from "../map";
 import { hasFlag } from "helpers/bitflags";
 import { watchDependencies, useCreateQuark } from "helpers/quarky";
 import { useAuth } from "helpers/services";
@@ -11,6 +10,9 @@ import { TopoPreview } from "components/organisms/TopoPreview";
 import { MapControl } from "components/map/MapControl";
 import { TopoMarkersLayer } from "components/map/markers/TopoMarkersLayer";
 import { usePosition } from "helpers/hooks";
+import { TopoFilterOptions } from "components/map/TopoFilters";
+import { SlideoverWorldmap } from "components/organisms/worldMap/Slideover.worldmap";
+import { Map } from "ol";
 
 interface RootWorldMapProps {
 	lightTopos: LightTopo[];
@@ -21,6 +23,8 @@ export const RootWorldMap: React.FC<RootWorldMapProps> = watchDependencies(
 		const auth = useAuth();
 		const user = auth.session();
 		const { position } = usePosition();
+
+		const mapRef = useRef<Map>(null);
 
 		const [selectedTopo, setSelectedTopo] = useState<LightTopo>();
 
@@ -79,13 +83,12 @@ export const RootWorldMap: React.FC<RootWorldMapProps> = watchDependencies(
 				<div className="relative flex h-contentPlusHeader flex-row md:h-full">
 					{user && <LeftbarDesktop currentMenuItem="MAP" />}
 
+					<SlideoverWorldmap topos={props.lightTopos} map={mapRef.current} />
+
 					<MapControl 
+						ref={mapRef}
 						initialZoom={5}
 						initialCenter={position || undefined}
-						searchbarOptions={{
-							findTopos: true,
-							findPlaces: true,
-						}}
 						topoFilters={topoFilters}
 						topoFiltersDomain={topoFilterDomain}
 						displayUserMarker='under'

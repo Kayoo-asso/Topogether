@@ -16,7 +16,6 @@ import { api, sync } from "helpers/services";
 import { useSession } from "helpers/services";
 import { Header } from "components/layouts/Header";
 import { LeftbarBuilderDesktop } from "components/layouts/LeftbarBuilderDesktop";
-import { BoulderFilterOptions } from "components/map";
 import {
 	createBoulder,
 	createParking,
@@ -55,6 +54,7 @@ import { WaypointMarkersLayer, disappearZoom } from "components/map/markers/Wayp
 import { CreatingMarkersLayer } from "components/map/markers/CreatingMarkersLayer";
 import { SelectInteraction } from "components/map/markers/SelectInteraction";
 import { DragInteraction } from "components/map/markers/DragInteraction";
+import { BoulderFilterOptions } from "components/map/BoulderFilters";
 
 interface RootBuilderProps {
 	topoQuark: Quark<Topo>;
@@ -226,12 +226,6 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 						initialZoom={16}
 						minZoom={disappearZoom - 1}
 						initialCenter={topo.location}
-						displaySectorButton
-						onSectorButtonClick={() => select.info("SECTOR", breakpoint)}
-						searchbarOptions={{
-							findBoulders: true,
-							focusOnOpen: true,
-						}}
 						displayToolSelector
 						boulderFilters={boulderFilters}
 						boulderFiltersDomain={defaultBoulderFilterOptions}
