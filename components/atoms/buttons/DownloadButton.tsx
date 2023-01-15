@@ -44,7 +44,7 @@ export const DownloadButton: React.FC<DownloadButtonProps> = watchDependencies(
 	(props: DownloadButtonProps) => {
 		const [ModalUndownload, showModalUndownload] = useModal();
 		const dlState = downloads.getState(props.topo.id);
-		// console.log("Topo download state:", dlState);
+		console.log("Topo download state:", dlState);
 
 		const download = async () => {
 			// TODO: handle errors
@@ -59,7 +59,7 @@ export const DownloadButton: React.FC<DownloadButtonProps> = watchDependencies(
 			<>
 				{dlState.status === "downloading" && (
 					<RoundProgressBar
-						percentage={dlState.progress}
+						percentage={dlState.progress*100}
 						displayLabel={false}
 						onClick={showModalUndownload}
 					/>
