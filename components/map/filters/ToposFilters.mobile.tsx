@@ -19,7 +19,7 @@ export const ToposFiltersMobile: React.FC<ToposFiltersMobileProps> = (
                 <div className="ktext-subtitle ml-3 text-main">Filtres</div>
             </div>
 
-            <div className="flex min-h-[100px] flex-col gap-6 p-5 pb-8">
+            <div className="flex min-h-[100px] flex-col gap-6 px-5 pt-2 pb-8">
                 <Filters.TopoTypesFilter />
                 <Filters.NbOfBouldersFilter />
                 <Filters.DifficultyFilter />

@@ -15,7 +15,6 @@ interface SpecSelectorProps {
 export const SpecSelector: React.FC<SpecSelectorProps> = (
 	props: SpecSelectorProps
 ) => {
-    console.log(props.value);
     const [specSelectorOpen, setSpecSelectorOpen] = useState(false);
     const [tempValue, setTempValue] = useState(props.value);
 

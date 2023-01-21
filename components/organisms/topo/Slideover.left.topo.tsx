@@ -55,10 +55,13 @@ export const SlideoverLeftTopo: React.FC<SlideoverLeftTopoProps> = (props: Slide
 			{bp === "mobile" && (
 				<SlideoverMobile 
 					open={selectedInfo !== 'NONE' && selectedType === 'none'}
+					height={selectedInfo === 'FILTERS' ? 50 : undefined}
 					onClose={onClose}
 				>
-					<div className="h-full pl-6 pr-3 pt-14">
-                        <div className="ktext-title mb-6">{getTitle()}</div>
+					<div className="h-full pl-6 pr-3 pt-12">
+                        <div className={`${selectedInfo === 'FILTERS' || selectedInfo === 'SEARCHBAR' ? 'hidden' : 'ktext-title mb-6'}`}>
+							{getTitle()}
+						</div>
 						{getContent()}
 					</div>
 				</SlideoverMobile>
