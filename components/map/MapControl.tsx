@@ -25,7 +25,6 @@ import { isEmpty } from "ol/extent";
 import { fontainebleauLocation } from "helpers/constants";
 import { OnClickFeature } from "components/openlayers/extensions/OnClick";
 import { CenterButton } from "./CenterButton";
-import { BoulderFilterOptions, BoulderFilters } from "./BoulderFilters";
 import { useRouter } from "next/router";
 import { SearchButton } from "./searchbar/SearchButton";
 import { FilterButton } from "./filters/FilterButton";
