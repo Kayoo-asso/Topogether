@@ -6,7 +6,6 @@ import { LightTopo } from "types";
 import { findPlace, GeocodingFeature } from "helpers/map/geocodingMapbox";
 import { useSelectStore } from "components/pages/selectStore";
 
-let timer: NodeJS.Timeout;
 export function useToposSearchbar (): [() => JSX.Element, LightTopo[], GeocodingFeature[]] {
 	const [topoApiResults, setTopoApiResults] = useState<LightTopo[]>([]);
 	const [mapboxApiResults, setMapboxApiResults] = useState<GeocodingFeature[]>([]);
@@ -14,7 +13,9 @@ export function useToposSearchbar (): [() => JSX.Element, LightTopo[], Geocoding
     const SearchInput = useCallback(() => {
 		const bp = useBreakpoint();
 		const { position } = usePosition();
-		const inputRef = useRef<HTMLInputElement>(null);
+		// setTimeout returns a number in the browser, but TypeScript is annoying
+		const timer = useRef<ReturnType<typeof setTimeout>>();
+		const [inputRef, setInputRef] = useState<HTMLInputElement | null>(null);
 		const [value, setValue] = useState("");
 
 		const getPredictions = async (val: string) => {
@@ -30,7 +31,7 @@ export function useToposSearchbar (): [() => JSX.Element, LightTopo[], Geocoding
 
 		const open = useSelectStore(s => s.info) === 'SEARCHBAR';
 		useEffect(() => {
-			if (inputRef.current) inputRef.current.focus();
+			if (inputRef) inputRef.focus();
 		}, [open])
 
 		const handleKeyboardShortcuts = (e: KeyboardEvent) => {
@@ -40,16 +41,16 @@ export function useToposSearchbar (): [() => JSX.Element, LightTopo[], Geocoding
 			} else if (e.code === "Escape") setValue("");
 		};
 		useEffect(() => {	
-			if (inputRef.current) inputRef.current.addEventListener("keyup", handleKeyboardShortcuts);
+			if (inputRef) inputRef.addEventListener("keyup", handleKeyboardShortcuts);
 			return () => {
-				if (inputRef.current) inputRef.current.removeEventListener("keyup", handleKeyboardShortcuts);
+				if (inputRef) inputRef.removeEventListener("keyup", handleKeyboardShortcuts);
 			};
-		}, [inputRef.current]);
+		}, [inputRef]);
 			
 		return (
 			<TextInput
 				id="searchbar"
-				ref={inputRef}
+				ref={setInputRef}
 				autoComplete="off"
 				label="Rechercher un topo"
 				displayLabel={false}
@@ -60,8 +61,8 @@ export function useToposSearchbar (): [() => JSX.Element, LightTopo[], Geocoding
 					const val = e.target.value;
 					setValue(val);
 					if (val.length > 2) {
-						clearTimeout(timer);
-						timer = setTimeout(() => {
+						if (timer.current) clearTimeout(timer.current);
+						timer.current = setTimeout(() => {
 							getPredictions(val);
 						}, 300);
 					}
