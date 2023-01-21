@@ -6,7 +6,7 @@ import { LightTopo } from "types";
 import { findPlace, GeocodingFeature } from "helpers/map/geocodingMapbox";
 import { useSelectStore } from "components/pages/selectStore";
 
-export function useToposSearchbar (): [() => JSX.Element, LightTopo[], GeocodingFeature[]] {
+export function useToposSearchbar (onlyPlaces: boolean = false): [() => JSX.Element, LightTopo[], GeocodingFeature[]] {
 	const [topoApiResults, setTopoApiResults] = useState<LightTopo[]>([]);
 	const [mapboxApiResults, setMapboxApiResults] = useState<GeocodingFeature[]>([]);
 	
@@ -19,8 +19,10 @@ export function useToposSearchbar (): [() => JSX.Element, LightTopo[], Geocoding
 		const [value, setValue] = useState("");
 
 		const getPredictions = async (val: string) => {
-			const topoResults = await api.searchLightTopos(val, 5, 0.2);
-			setTopoApiResults(topoResults);
+			if (!onlyPlaces) {
+				const topoResults = await api.searchLightTopos(val, 5, 0.2);
+				setTopoApiResults(topoResults);
+			}
 	
 			const mapboxResults = await findPlace(val, { 
 				types: ["country", "region", "place", 'address', 'poi'],
@@ -52,7 +54,7 @@ export function useToposSearchbar (): [() => JSX.Element, LightTopo[], Geocoding
 				id="searchbar"
 				ref={setInputRef}
 				autoComplete="off"
-				label="Rechercher un topo"
+				label={"Rechercher un lieu" + (!onlyPlaces && " ou un topo")}
 				displayLabel={false}
 				border={bp === 'mobile'}
 				wrapperClassName="w-[95%] mt-0"

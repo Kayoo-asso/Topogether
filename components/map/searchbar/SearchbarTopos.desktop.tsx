@@ -6,10 +6,14 @@ import { useSelectStore } from "components/pages/selectStore";
 
 export interface SearchbarToposDesktopProps {
 	map: Map | null;
+	onlyPlaces?: boolean;
 }
 
-export const SearchbarToposDesktop: React.FC<SearchbarToposDesktopProps> = (props: SearchbarToposDesktopProps) => {
-	const [SearchInput, toposResults, mapboxResults] = useToposSearchbar();
+export const SearchbarToposDesktop: React.FC<SearchbarToposDesktopProps> = ({
+	onlyPlaces = false,
+	...props
+}: SearchbarToposDesktopProps) => {
+	const [SearchInput, toposResults, mapboxResults] = useToposSearchbar(onlyPlaces);
 	const open = useSelectStore(s => s.info) === 'SEARCHBAR';
 
 	return (

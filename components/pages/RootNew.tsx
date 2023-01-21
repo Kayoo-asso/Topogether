@@ -14,6 +14,8 @@ import { TopoTypesName } from "types/BitflagNames";
 import { MapControl } from "components/map/MapControl";
 import { toLonLat } from "ol/proj";
 import { TopoMarkersLayer } from "components/map/markers/TopoMarkersLayer";
+import { SearchbarToposDesktop } from "components/map/searchbar/SearchbarTopos.desktop";
+import { Map } from "ol";
 
 interface RootNewProps {
 	user: User;
@@ -24,6 +26,7 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies(
 		const device = useBreakpoint();
 		const router = useRouter();
 		const { position } = usePosition();
+		const mapRef = useRef<Map>(null);
 
 		const [step, setStep] = useState(0);
 
@@ -104,6 +107,8 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies(
 			});
 		});
 
+		const SearchbarDesktop: React.FC = () => <SearchbarToposDesktop map={mapRef.current} onlyPlaces />
+
 		return (
 			<>
 				<Header
@@ -164,8 +169,9 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies(
 								</div>
 								<div className="mb-6 w-full h-[50vh] md:h-[55vh]">
 									<MapControl 
+										ref={mapRef}
 										initialZoom={10}
-										searchbarOptions={{ findPlaces: true }}
+										Searchbar={SearchbarDesktop}
 										onClick={(e) => {
 											if (e.coordinate) {
 												const lonlat = toLonLat(e.coordinate)
