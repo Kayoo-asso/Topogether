@@ -7,7 +7,7 @@ import {
 } from "components/openlayers";
 import { FeatureLike } from "ol/Feature";
 import { Fill, Icon, Style, Text } from "ol/style";
-import { Topo, UUID } from "types";
+import { Boulder, UUID } from "types";
 import { useSelectStore } from "components/pages/selectStore";
 import { fromLonLat } from "ol/proj";
 import { Cluster } from "components/openlayers/sources/Cluster";
@@ -15,7 +15,7 @@ import { Breakpoint, useBreakpoint } from "helpers/hooks";
 import { Select } from "components/openlayers";
 
 interface BoulderMarkersLayerProps {
-	topo: Quark<Topo>;
+	boulders: Quark<Boulder>[];
 	boulderOrder: globalThis.Map<UUID, number>;
 }
 
@@ -132,7 +132,7 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> = watchDepe
 				)}
 			>
 				<VectorSource>
-					{props.topo().boulders.quarks().map((bQuark) => {
+					{props.boulders.map((bQuark) => {
 						const b = bQuark();
 						return (
 							<Point

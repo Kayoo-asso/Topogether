@@ -38,11 +38,19 @@ import {
 export interface SectorListBuilderProps {
 	topoQuark: Quark<Topo>;
 	boulderOrder: globalThis.Map<UUID, number>;
+	// if undefined: all boulders are displayed
+	bouldersToDisplay?: UUID[];
+	displayEmptySectors?: boolean;
+	expandOnClick?: boolean
 	map: Map | null
 }
 
 export const SectorListBuilder: React.FC<SectorListBuilderProps> =
-	watchDependencies((props: SectorListBuilderProps) => {
+	watchDependencies(({
+		displayEmptySectors = true,
+		expandOnClick = true,
+		...props
+	}: SectorListBuilderProps) => {
 		const session = useSession();
 		if (!session) return null;
 		const breakpoint = useBreakpoint();
@@ -141,10 +149,14 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> =
 				<div className="mb-6">				
 					{topo.sectors.quarks().map((sectorQuark, sectorIndex) => {
 						const sector = sectorQuark();
+						const boulderIds = (props.bouldersToDisplay && props.bouldersToDisplay.length > 0) ? 
+							sector.boulders.filter(id => props.bouldersToDisplay?.includes(id)) : 
+							sector.boulders;
 						const boulders: Quark<Boulder>[] = [];
-						for (const id of sector.boulders) {
+						for (const id of boulderIds) {
 							boulders.push(boulderQuarksMap.get(id)!);
 						}
+						if (!displayEmptySectors && boulders.length < 1) return;
 						return (
 							<div key={sector.id} className="mb-10 flex flex-col pb-6">
 								<div className="ktext-label text-grey-medium">
@@ -167,7 +179,7 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> =
 
 									<div
 										className="flex-1"
-										onClick={() => toggleSector(sector)}
+										onClick={() => expandOnClick && toggleSector(sector)}
 									>
 										<span className={"md:cursor-pointer " + (sector.name.length > 12
 											? "text-lg"
@@ -224,7 +236,7 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> =
 															    onNameClick={() => {
 															        selectStore.select.boulder(boulderQuark);
 															        props.map?.getView().setCenter(fromLonLat(boulderQuark().location));
-															        toggleBoulder(boulder);
+															        expandOnClick && toggleBoulder(boulder);
 															    }}
 															    onDeleteClick={() => showModalDeleteBoulder(boulderQuark) }
 															    onTrackClick={(trackQuark) => selectStore.select.track(trackQuark, boulderQuark)}

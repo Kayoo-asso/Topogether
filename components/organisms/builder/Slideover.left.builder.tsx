@@ -7,16 +7,19 @@ import { SlideoverLeftDesktop, SlideoverMobile } from "components/atoms/overlays
 import { useSelectStore } from "components/pages/selectStore";
 import { ContributorsList } from "./ContributorsList";
 import { Map } from "ol";
-import { SearchbarBoulders } from "components/map/SearchbarBoulders";
+import { SearchbarBouldersMobile } from "components/map/searchbar/SearchbarBoulders.mobile";
+import { BouldersFiltersComponents } from "components/map/filters/useBouldersFilters";
+import { BouldersFiltersMobile } from "components/map/filters/BouldersFilters.mobile";
 
 type SlideoverLeftBuilderProps = {
     topo: Quark<Topo>;
 	boulderOrder: globalThis.Map<UUID, number>;
-	map: Map | null
+	map: Map | null;
+	Filters: BouldersFiltersComponents;
 }
 
 export const SlideoverLeftBuilder: React.FC<SlideoverLeftBuilderProps> = (props: SlideoverLeftBuilderProps) => {
-    const breakpoint = useBreakpoint();
+    const bp = useBreakpoint();
 	const selectedType = useSelectStore(s => s.item.type);
 	const selectedInfo = useSelectStore(s => s.info);
 	const flush = useSelectStore(s => s.flush);
@@ -27,19 +30,20 @@ export const SlideoverLeftBuilder: React.FC<SlideoverLeftBuilderProps> = (props:
             case 'ACCESS': return <AccessForm accesses={props.topo().accesses} />;
             case 'MANAGEMENT': return <ManagementForm managers={props.topo().managers} />;
 			case 'CONTRIBUTORS': return <ContributorsList contributors={props.topo().contributors} topoCreatorId={props.topo().creator?.id} />;
-			case 'SEARCHBAR': return <SearchbarBoulders topo={props.topo} boulderOrder={props.boulderOrder} map={props.map} />;
-            default: return undefined;
+			case 'SEARCHBAR': if (bp === 'mobile') return <SearchbarBouldersMobile topo={props.topo} boulderOrder={props.boulderOrder} map={props.map} />;
+			case 'FILTERS': if (bp === 'mobile') return <BouldersFiltersMobile Filters={props.Filters} />;
+			default: return undefined;
         }
     }
 
 	const onClose = () => {
-		if (breakpoint === 'mobile') flush.all();
+		if (bp === 'mobile') flush.all();
 		else flush.info()
 	}
 
 	return (
 		<>
-			{breakpoint === "mobile" && (
+			{bp === "mobile" && (
 				<SlideoverMobile 
 					open={selectedInfo !== 'NONE' && selectedType === 'none'}
 					onClose={onClose}
@@ -49,9 +53,9 @@ export const SlideoverLeftBuilder: React.FC<SlideoverLeftBuilderProps> = (props:
 					</div>
 				</SlideoverMobile>
 			)}
-			{breakpoint !== "mobile" && (
+			{bp !== "mobile" && (
 				<SlideoverLeftDesktop
-					open={selectedInfo !== 'NONE'}
+					open={selectedInfo !== 'NONE' && selectedInfo !== 'SEARCHBAR' && selectedInfo !== 'FILTERS'}
 					onClose={onClose}
 				>
 					{getContent()}

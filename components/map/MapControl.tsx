@@ -25,9 +25,10 @@ import { isEmpty } from "ol/extent";
 import { fontainebleauLocation } from "helpers/constants";
 import { OnClickFeature } from "components/openlayers/extensions/OnClick";
 import { CenterButton } from "./CenterButton";
-import { TopoFilterOptions, TopoFilters } from "./TopoFilters";
 import { BoulderFilterOptions, BoulderFilters } from "./BoulderFilters";
-import { SearchButton } from "./SearchButton";
+import { useRouter } from "next/router";
+import { SearchButton } from "./searchbar/SearchButton";
+import { FilterButton } from "./filters/FilterButton";
 
 type MapControlProps = React.PropsWithChildren<
 	Props & {
@@ -39,12 +40,9 @@ type MapControlProps = React.PropsWithChildren<
 		displayUserMarker?: "above" | "under";
 		displayToolSelector?: boolean;
 		onPhotoButtonClick?: () => void;
-		displaySearchbar?: boolean;
+		Searchbar?: React.FC;
+		Filters?: React.FC;
 		topo?: Quark<Topo>;
-		topoFilters?: Quark<TopoFilterOptions>;
-		topoFiltersDomain?: TopoFilterOptions;
-		boulderFilters?: Quark<BoulderFilterOptions>;
-		boulderFiltersDomain?: BoulderFilterOptions;
 		onUserMarkerClick?: (pos: GeoCoordinates | null) => void;
 	}
 >;
@@ -61,15 +59,17 @@ const controls = typeof window === "undefined" ? [] : [new Attribution()];
 export const MapControl = watchDependencies<Map, MapControlProps>(
 	({
 		initialZoom = 8,
-		displaySearchbar = true,
 		displaySatelliteButton = true,
 		displayUserMarker = "above",
 		displayToolSelector = false,
+		Searchbar,
+		Filters,
 		...props
 	},
 	parentRef
 	) => {
 		const session = useSession();
+		const router = useRouter();
 		const breakpoint = useBreakpoint();
 		const [map, setMap] = useState<Map | null>(null);
 		const { position } = usePosition();
@@ -85,9 +85,7 @@ export const MapControl = watchDependencies<Map, MapControlProps>(
 			setInitialCenter(props.initialCenter);
 		}
 
-		const [mapToolSelectorOpen, setMapToolSelectorOpen] = useState(
-			breakpoint === "desktop"
-		);
+		const [mapToolSelectorOpen, setMapToolSelectorOpen] = useState(router.pathname.includes('builder') && breakpoint === "desktop");
 		const [satelliteView, setSatelliteView] = useState(false);
 
 		useEffect(() => {
@@ -120,7 +118,19 @@ export const MapControl = watchDependencies<Map, MapControlProps>(
 			<div className="relative h-full w-full">
 				<div className="absolute h-full w-full">
 					{/* Top left */}
-					<div className="absolute left-0 top-0 m-3 w-full">
+					<div className="absolute left-0 top-0 m-3 w-full space-y-5">
+						{Searchbar &&
+							<div className={`relative hidden md:block`}>
+								<SearchButton />
+								<Searchbar />
+							</div>
+						}
+						{Filters &&
+							<div className={`relative hidden md:block`}>
+								<FilterButton />
+								<Filters />
+							</div>
+						}
 					</div>
 
 					{/* Top right */}
@@ -132,6 +142,7 @@ export const MapControl = watchDependencies<Map, MapControlProps>(
 
 					{/* Bottom left */}
 					<div className={"absolute bottom-0 left-0 m-3"}>
+						{/* Nothing here ! Map attributions */}
 					</div>
 
 					{/* Bottom center */}
@@ -184,42 +195,12 @@ export const MapControl = watchDependencies<Map, MapControlProps>(
 							(breakpoint === "desktop" ? " z-100" : "")
 						}
 					>
-						{displaySearchbar && (
+						<div className={`${Searchbar ? 'md:hidden' : 'hidden'}`}>
 							<SearchButton />
-							// <MapSearchbar
-							// 	boulders={
-							// 		props.topo ? props.topo().boulders.toArray() : undefined
-							// 	}
-							// 	onMapboxResultSelect={(place) => {
-							// 		map?.getView().setCenter(fromLonLat(place.center));
-							// 	}}
-							// 	onBoulderResultSelect={useCallback(
-							// 		(boulder: Boulder) => {
-							// 			const bQuark = props.topo!().boulders.findQuark(
-							// 				(b) => b.id === boulder.id
-							// 			)!;
-							// 			select.boulder(bQuark);
-							// 			map?.getView().setCenter(fromLonLat(boulder.location));
-							// 		},
-							// 		[props.topo]
-							// 	)}
-							// 	{...props.searchbarOptions}
-							// />
-						)}
-						{props.topoFilters && props.topoFiltersDomain && (
-							<TopoFilters
-								domain={props.topoFiltersDomain}
-								values={props.topoFilters()}
-								onChange={props.topoFilters.set}
-							/>
-						)}
-						{props.boulderFilters && props.boulderFiltersDomain && (
-							<BoulderFilters
-								domain={props.boulderFiltersDomain}
-								values={props.boulderFilters()}
-								onChange={props.boulderFilters.set}
-							/>
-						)}
+						</div>
+						<div className={`${Filters ? 'md:hidden' : 'hidden'}`}>
+							<FilterButton />
+						</div>
 						<CenterButton 
 							map={map} 
 							topo={props.topo}

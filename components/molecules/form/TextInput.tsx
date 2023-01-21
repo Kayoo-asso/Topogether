@@ -9,6 +9,7 @@ interface TextInputProps extends InputHTMLAttributes<HTMLInputElement> {
 	pointer?: boolean;
 	big?: boolean;
 	white?: boolean;
+	border?: boolean;
 	wrapperClassName?: string;
 	inputClassName?: string;
 	labelClassName?: string;
@@ -25,6 +26,7 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
 			inputClassName = "",
 			labelClassName = "",
 			pointer = false,
+			border = true,
 			...props
 		}: TextInputProps,
 		ref
@@ -42,7 +44,7 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
 				id={props.id}
 				value={props.value || ""}
 				className={`ktext-base peer h-14 w-full p-4 rounded-sm focus:outline-none
-					${big ? "border-3" : "border-2"}  \
+					${border ? (big ? "border-3" : "border-2") : ''}  \
 					${white
 							? "border-white bg-white bg-opacity-0 text-white"
 							: "border-grey-superlight text-dark focus:border-main"

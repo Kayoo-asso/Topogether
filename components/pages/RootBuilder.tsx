@@ -1,15 +1,13 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import {
 	GeoCoordinates,
 	Topo,
 	TopoStatus,
-	TrackDanger,
 } from "types";
 import {
 	Quark,
 	useCreateDerivation,
-	useCreateQuark,
 	watchDependencies,
 } from "helpers/quarky";
 import { api, sync } from "helpers/services";
@@ -54,7 +52,9 @@ import { WaypointMarkersLayer, disappearZoom } from "components/map/markers/Wayp
 import { CreatingMarkersLayer } from "components/map/markers/CreatingMarkersLayer";
 import { SelectInteraction } from "components/map/markers/SelectInteraction";
 import { DragInteraction } from "components/map/markers/DragInteraction";
-import { BoulderFilterOptions } from "components/map/BoulderFilters";
+import { SearchbarBouldersDesktop } from "components/map/searchbar/SearchbarBoulders.desktop";
+import { useBouldersFilters } from "components/map/filters/useBouldersFilters";
+import { BouldersFiltersDesktop } from "components/map/filters/BouldersFilters.desktop";
 
 interface RootBuilderProps {
 	topoQuark: Quark<Topo>;
@@ -123,38 +123,9 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 			[props.topoQuark]
 		);
 
-		const maxTracks = useCreateDerivation<number>(() => {
-			return topo.boulders
-				.toArray()
-				.map((b) => b.tracks.length)
-				.reduce((a, b) => a + b, 0);
-		}, [topo.boulders]);
-		const defaultBoulderFilterOptions: BoulderFilterOptions = {
-			spec: TrackDanger.None,
-			tracksRange: [0, maxTracks()],
-			gradeRange: [3, 9],
-			mustSee: false,
-		};
-		const boulderFilters = useCreateQuark<BoulderFilterOptions>(
-			defaultBoulderFilterOptions
-		);
-		const isFilterEmpty = () => {
-			const fl = boulderFilters();
-			return (fl.spec === TrackDanger.None && !fl.mustSee && fl.gradeRange[0] === 3 && fl.gradeRange[1] === 9 && fl.tracksRange[0] === 0 && fl.tracksRange[1] === maxTracks())
-		}
-		useEffect(() => {
-			const max = maxTracks();
-			if (max !== boulderFilters().tracksRange[1]) {
-				boulderFilters.set((opts) => ({
-					...opts,
-					tracksRange: [opts.tracksRange[0], max],
-				}));
-			}
-		}, [maxTracks()]);
-
 		const [flashOpen, setFlashOpen] = useState(false);
 		const handleCreateNewMarker = useCallback(
-			(e: MapBrowserEvent<any>) => {
+			(e: MapBrowserEvent<any>, filtersEmpty) => {
 				e.preventDefault(); e.stopPropagation();
 				if (!isEmptyStore()) {
 					flush.info();
@@ -165,7 +136,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 					const loc: GeoCoordinates = [lonlat[0], lonlat[1]];
 					switch (tool) {
 						case "ROCK":
-							if (!isFilterEmpty()) setFlashOpen(true);
+							if (!filtersEmpty) setFlashOpen(true);
 							createBoulder(props.topoQuark, loc);
 							break;
 						case "PARKING":
@@ -180,8 +151,17 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 					}
 				}
 			},
-			[topo, tool, createBoulder, createParking, createWaypoint, isEmptyStore(), isFilterEmpty()]
+			[topo, tool, createBoulder, createParking, createWaypoint, isEmptyStore()]
 		);
+
+		const SearchbarDesktop: React.FC = () =>
+			<SearchbarBouldersDesktop 
+				topo={props.topoQuark}
+				boulderOrder={boulderOrder}
+				map={mapRef.current}
+			/>
+		const [Filters, filterBoulders, areFiltersEmpty] = useBouldersFilters(topo);
+		const FiltersDesktop: React.FC = () => <BouldersFiltersDesktop Filters={Filters} />;
 
 		return (
 			<>
@@ -218,6 +198,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 						topo={props.topoQuark}
 						boulderOrder={boulderOrder}
 						map={mapRef.current}
+						Filters={Filters}
 					/>
 
 					<MapControl 
@@ -227,13 +208,13 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 						minZoom={disappearZoom - 1}
 						initialCenter={topo.location}
 						displayToolSelector
-						boulderFilters={boulderFilters}
-						boulderFiltersDomain={defaultBoulderFilterOptions}
+						Searchbar={SearchbarDesktop}
+						Filters={FiltersDesktop}
 					>
 						{tool && tool !== "SECTOR" &&
 							<CreatingMarkersLayer 
 								boulderOrder={boulderOrder}
-								onCreate={handleCreateNewMarker}
+								onCreate={(e) => handleCreateNewMarker(e, areFiltersEmpty)}
 							/>
 						}
 						<SelectInteraction
@@ -256,7 +237,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 							waypoints={topo.waypoints}
 						/>
 						<BoulderMarkersLayer 
-							topo={props.topoQuark}
+							boulders={filterBoulders(props.topoQuark().boulders.quarks())}
 							boulderOrder={boulderOrder}
 						/>
 					</MapControl>

@@ -8,16 +8,19 @@ import { InfoContent } from "./InfoContent";
 import { AccessContent } from "./AccessContent";
 import { ManagementContent } from "./ManagementContent";
 import { Map } from "ol";
-import { SearchbarBoulders } from "components/map/SearchbarBoulders";
+import { SearchbarBouldersMobile } from "components/map/searchbar/SearchbarBoulders.mobile";
+import { BouldersFiltersComponents } from "components/map/filters/useBouldersFilters";
+import { BouldersFiltersMobile } from "components/map/filters/BouldersFilters.mobile";
 
 type SlideoverLeftTopoProps = {
     topo: Quark<Topo>;
 	boulderOrder: globalThis.Map<UUID, number>;
 	map: Map | null
+	Filters: BouldersFiltersComponents
 }
 
 export const SlideoverLeftTopo: React.FC<SlideoverLeftTopoProps> = (props: SlideoverLeftTopoProps) => {
-    const breakpoint = useBreakpoint();
+    const bp = useBreakpoint();
 	const selectedType = useSelectStore(s => s.item.type);
 	const selectedInfo = useSelectStore(s => s.info);
 	const flush = useSelectStore(s => s.flush);
@@ -36,19 +39,20 @@ export const SlideoverLeftTopo: React.FC<SlideoverLeftTopoProps> = (props: Slide
             case 'INFO': return <InfoContent topo={props.topo} />;
             case 'ACCESS': return <AccessContent accesses={props.topo().accesses} />;
             case 'MANAGEMENT': return <ManagementContent managers={props.topo().managers} />;
-			case 'SEARCHBAR': return <SearchbarBoulders topo={props.topo} boulderOrder={props.boulderOrder} map={props.map} />;
+			case 'SEARCHBAR': if (bp === 'mobile') return <SearchbarBouldersMobile topo={props.topo} boulderOrder={props.boulderOrder} map={props.map} />;
+			case 'FILTERS': if (bp === 'mobile') return <BouldersFiltersMobile Filters={props.Filters} />;
 			default: return undefined;
         }
     }
 
 	const onClose = () => {
-		if (breakpoint === 'mobile') flush.all();
+		if (bp === 'mobile') flush.all();
 		else flush.info()
 	}
 
 	return (
 		<>
-			{breakpoint === "mobile" && (
+			{bp === "mobile" && (
 				<SlideoverMobile 
 					open={selectedInfo !== 'NONE' && selectedType === 'none'}
 					onClose={onClose}
@@ -59,10 +63,10 @@ export const SlideoverLeftTopo: React.FC<SlideoverLeftTopoProps> = (props: Slide
 					</div>
 				</SlideoverMobile>
 			)}
-			{breakpoint !== "mobile" && (
+			{bp !== "mobile" && (
 				<SlideoverLeftDesktop
 					title={getTitle()}
-					open={selectedInfo !== 'NONE'}
+					open={selectedInfo !== 'NONE' && selectedInfo !== 'SEARCHBAR' && selectedInfo !== 'FILTERS'}
 					onClose={onClose}
 				>
 					{getContent()}

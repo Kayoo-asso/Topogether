@@ -1,7 +1,7 @@
+import React, { useCallback, useState } from "react";
 import { ValidateButton } from "components/atoms/buttons/ValidateButton";
-import { listFlags } from "helpers/bitflags";
+import { listFlags, toggleFlag } from "helpers/bitflags";
 import { Portal } from "helpers/hooks";
-import React, { useState } from "react";
 import { TrackSpec } from "types";
 import { BodyPositionName, HoldTypeName, TrackDangerName, TrackSpecName, TrackStyleName } from "types/BitflagNames";
 import { SelectListMultiple } from "./SelectListMultiple";
@@ -15,14 +15,25 @@ interface SpecSelectorProps {
 export const SpecSelector: React.FC<SpecSelectorProps> = (
 	props: SpecSelectorProps
 ) => {
+    console.log(props.value);
     const [specSelectorOpen, setSpecSelectorOpen] = useState(false);
+    const [tempValue, setTempValue] = useState(props.value);
+
+    const updateTempValue = useCallback((v: TrackSpec) => {
+        setTempValue(tv => toggleFlag(tv, v))
+    }, []);
+
+    const handleValidate = useCallback(() => {
+        props.onChange(tempValue);
+        setSpecSelectorOpen(false);
+    }, [tempValue]);
 
 	return (
         <>
             <TextInput
                 id='spec-input'
                 label='Spécifications'	
-                value={props.value && listFlags(props.value, TrackSpecName).join(", ")}
+                value={tempValue && listFlags(tempValue, TrackSpecName).join(", ")}
                 readOnly
                 pointer
                 onClick={() => setSpecSelectorOpen(true)}
@@ -40,9 +51,9 @@ export const SpecSelector: React.FC<SpecSelectorProps> = (
                             <div className="text-center ktext-base-little border-second-light border-b py-1 text-second-light">Dangers</div>
                             <SelectListMultiple
                                 bitflagNames={TrackDangerName}
-                                value={props.value}
+                                value={tempValue}
                                 white
-                                onChange={props.onChange}
+                                onChange={updateTempValue}
                             />
                         </div>
 
@@ -50,9 +61,9 @@ export const SpecSelector: React.FC<SpecSelectorProps> = (
                             <div className="text-center ktext-base-little border-second-light border-b py-1 text-second-light">Type de voie</div>
                             <SelectListMultiple
                                 bitflagNames={TrackStyleName}
-                                value={props.value}
+                                value={tempValue}
                                 white
-                                onChange={props.onChange}
+                                onChange={updateTempValue}
                             />
                         </div>
                         
@@ -60,9 +71,9 @@ export const SpecSelector: React.FC<SpecSelectorProps> = (
                             <div className="text-center ktext-base-little border-second-light border-b py-1 text-second-light">Type de prises</div>
                             <SelectListMultiple
                                 bitflagNames={HoldTypeName}
-                                value={props.value}
+                                value={tempValue}
                                 white
-                                onChange={props.onChange}
+                                onChange={updateTempValue}
                             />
                         </div>
 
@@ -70,16 +81,16 @@ export const SpecSelector: React.FC<SpecSelectorProps> = (
                             <div className="text-center ktext-base-little border-second-light border-b py-1 text-second-light">Techniques</div>
                             <SelectListMultiple
                                 bitflagNames={BodyPositionName}
-                                value={props.value}
+                                value={tempValue}
                                 white
-                                onChange={props.onChange}
+                                onChange={updateTempValue}
                             />
                         </div>
                     </div>
 
                     <div className="w-full h-[10vh] flex justify-center">
                         <ValidateButton
-                            onClick={() => setSpecSelectorOpen(false)}
+                            onClick={handleValidate}
                         />
                     </div>
 

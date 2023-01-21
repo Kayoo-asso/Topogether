@@ -59,7 +59,7 @@ export async function findPlace(
 			return null;
 		}
 		const body = (await res.json()) as GeocodingResponse;
-		console.log("Received response:", body);
+		// console.log("Received response:", body);
 		return body.features;
 	} catch (e) {
 		console.error(`Error geocoding "${query}":`, e);

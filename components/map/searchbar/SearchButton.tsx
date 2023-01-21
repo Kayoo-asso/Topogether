@@ -8,16 +8,18 @@ import SearchIcon from "assets/icons/search.svg";
 export const SearchButton: React.FC = () => {
 	const bp = useBreakpoint();
 	const select = useSelectStore(s => s.select);
+	const flush = useSelectStore(s => s.flush);
+	const isOpened = useSelectStore(s => s.info) === 'SEARCHBAR';
 
 	return (
 		<div className="relative">
 			<RoundButton
 				className="z-200"
-				white
-				onClick={() => select.info('SEARCHBAR', bp)}
+				white={!isOpened}
+				onClick={() => isOpened ? flush.info() : select.info('SEARCHBAR', bp)}
 			>
 				<SearchIcon
-					className={"h-6 w-6 stroke-main"}
+					className={`h-6 w-6 ${isOpened ? 'stroke-white' : 'stroke-main'}`}
 				/>
 			</RoundButton>
 		</div>

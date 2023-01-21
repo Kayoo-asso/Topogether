@@ -3,18 +3,20 @@ import React, { useEffect, useRef, useState } from "react";
 type SlideoverMobileProps = React.PropsWithChildren<{
 	open: boolean,
 	persistent?: boolean;
+	height?: number; // % of the screen
 	onSizeChange?: (full: boolean) => void;
 	onClose?: () => void;
 }>;
 
-const OPEN = 5; // 100% - x of the screen
 const MINIMIZED = 80;
 const CLOSED = 100;
 
 export const SlideoverMobile: React.FC<SlideoverMobileProps> = ({
 	persistent = false,
+	height = 95,
 	...props
 }: SlideoverMobileProps) => {
+	const OPEN = 100 - height; // 100% - x of the screen
 	// Starts closed
 	const [translateY, setTranslateY] = useState(CLOSED);
 	// No transition during dragging, to ensure the movement is smooth

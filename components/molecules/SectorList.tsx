@@ -1,23 +1,29 @@
 import React, { useState } from "react";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { Boulder, Sector, Topo, UUID } from "types";
-import ArrowSimple from "assets/icons/arrow-simple.svg";
 import { BoulderItemLeftbar } from "components/layouts/BoulderItemLeftbar";
 import { useSelectStore } from "components/pages/selectStore";
 import { Map } from "ol";
-
 import { transform } from 'ol/proj.js';
-import { useBreakpoint } from "helpers/hooks";
+
+import ArrowSimple from "assets/icons/arrow-simple.svg";
 
 interface SectorListProps {
 	topoQuark: Quark<Topo>;
 	boulderOrder: globalThis.Map<UUID, number>;
+	// if undefined: all boulders are displayed
+	bouldersToDisplay?: UUID[];
+	displayEmptySectors?: boolean;
+	expandOnClick?: boolean
 	map: Map | null;
 }
 
 export const SectorList: React.FC<SectorListProps> = watchDependencies(
-	(props: SectorListProps) => {
-		const bp = useBreakpoint();
+	({
+		displayEmptySectors = true,
+		expandOnClick = true,
+		...props
+	}: SectorListProps) => {
 		const selectStore = useSelectStore();
 		const selectedBoulder = selectStore.item.type === 'boulder' ? selectStore.item : undefined;	
 		const topo = props.topoQuark();
@@ -59,12 +65,15 @@ export const SectorList: React.FC<SectorListProps> = watchDependencies(
 			<div className="mb-6 h-[95%] px-4">
 				{topo.sectors.quarks().map((sectorQuark, sectorIndex) => {
 					const sector = sectorQuark();
-					const quarks: Quark<Boulder>[] = [];
-					for (const id of sector.boulders) {
+					const boulderIds = (props.bouldersToDisplay && props.bouldersToDisplay.length > 0) ? 
+						sector.boulders.filter(id => props.bouldersToDisplay?.includes(id)) : 
+						sector.boulders;
+					const boulders: Quark<Boulder>[] = [];
+					for (const id of boulderIds) {
 						const bQ = boulderQuarksMap.get(id);
-						if (bQ) quarks.push(bQ);
+						if (bQ) boulders.push(bQ);
 					}
-					
+					if (!displayEmptySectors && boulders.length < 1) return;
 					return (
 						<div className="mb-10 flex flex-col pb-6" key={sector.id}>
 							<div className="ktext-label text-grey-medium">
@@ -78,18 +87,17 @@ export const SectorList: React.FC<SectorListProps> = watchDependencies(
 										onClick={() => toggleSector(sector)}
 									/>
 								</div>
-								<div onClick={() => toggleSector(sector)}>{sector.name}</div>
+								<div onClick={() => expandOnClick && toggleSector(sector)}>{sector.name}</div>
 							</div>
 
 							{!hiddenSectors.has(sector.id) && (
 								// BOULDERS
 								<div className="ml-3 flex flex-col gap-1">
-									{quarks.length === 0 && (
+									{boulders.length === 0 && (
 										<div className="">Aucun rocher référencé</div>
 									)}
-									{quarks.length > 0 &&
-										quarks.map((boulderQuark) => {
-											
+									{boulders.length > 0 &&
+										boulders.map((boulderQuark) => {
 											const boulder = boulderQuark();
 											return (
 												<div key={boulder.id}>
@@ -102,7 +110,7 @@ export const SectorList: React.FC<SectorListProps> = watchDependencies(
 														onNameClick={() => {
 															selectStore.select.boulder(boulderQuark);
 															props.map?.getView().setCenter(transform(boulderQuark().location, 'EPSG:4326', 'EPSG:3857'));
-															toggleBoulder(boulder);
+															expandOnClick && toggleBoulder(boulder);
 														}}
 														onTrackClick={(trackQuark) => selectStore.select.track(trackQuark, boulderQuark)}
 														displayCreateTrack={false}
