@@ -15,8 +15,9 @@ import { BouldersFiltersMobile } from "components/map/filters/BouldersFilters.mo
 type SlideoverLeftTopoProps = {
     topo: Quark<Topo>;
 	boulderOrder: globalThis.Map<UUID, number>;
-	map: Map | null
-	Filters: BouldersFiltersComponents
+	map: Map | null;
+	Filters: BouldersFiltersComponents;
+	onFilterReset: () => void;
 }
 
 export const SlideoverLeftTopo: React.FC<SlideoverLeftTopoProps> = (props: SlideoverLeftTopoProps) => {
@@ -40,7 +41,7 @@ export const SlideoverLeftTopo: React.FC<SlideoverLeftTopoProps> = (props: Slide
             case 'ACCESS': return <AccessContent accesses={props.topo().accesses} />;
             case 'MANAGEMENT': return <ManagementContent managers={props.topo().managers} />;
 			case 'SEARCHBAR': if (bp === 'mobile') return <SearchbarBouldersMobile topo={props.topo} boulderOrder={props.boulderOrder} map={props.map} />;
-			case 'FILTERS': if (bp === 'mobile') return <BouldersFiltersMobile Filters={props.Filters} />;
+			case 'FILTERS': if (bp === 'mobile') return <BouldersFiltersMobile Filters={props.Filters} onResetClick={props.onFilterReset}  />;
 			default: return undefined;
         }
     }

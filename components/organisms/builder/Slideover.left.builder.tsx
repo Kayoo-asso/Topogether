@@ -16,6 +16,7 @@ type SlideoverLeftBuilderProps = {
 	boulderOrder: globalThis.Map<UUID, number>;
 	map: Map | null;
 	Filters: BouldersFiltersComponents;
+	onFilterReset: () => void;
 }
 
 export const SlideoverLeftBuilder: React.FC<SlideoverLeftBuilderProps> = (props: SlideoverLeftBuilderProps) => {
@@ -31,7 +32,7 @@ export const SlideoverLeftBuilder: React.FC<SlideoverLeftBuilderProps> = (props:
             case 'MANAGEMENT': return <ManagementForm managers={props.topo().managers} />;
 			case 'CONTRIBUTORS': return <ContributorsList contributors={props.topo().contributors} topoCreatorId={props.topo().creator?.id} />;
 			case 'SEARCHBAR': if (bp === 'mobile') return <SearchbarBouldersMobile topo={props.topo} boulderOrder={props.boulderOrder} map={props.map} />;
-			case 'FILTERS': if (bp === 'mobile') return <BouldersFiltersMobile Filters={props.Filters} />;
+			case 'FILTERS': if (bp === 'mobile') return <BouldersFiltersMobile Filters={props.Filters} onResetClick={props.onFilterReset} />;
 			default: return undefined;
         }
     }

@@ -92,8 +92,8 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 				boulderOrder={boulderOrder}
 				map={mapRef.current}
 			/>
-		const [Filters, filterBoulders] = useBouldersFilters(topo);
-		const FiltersDesktop: React.FC = () => <BouldersFiltersDesktop Filters={Filters} />;
+		const [Filters, filterBoulders, resetFilters] = useBouldersFilters(topo);
+		const FiltersDesktop: React.FC = () => <BouldersFiltersDesktop Filters={Filters} onResetClick={resetFilters} />;
 
 		return (
 			<>
@@ -120,6 +120,7 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 						boulderOrder={boulderOrder} 
 						map={mapRef.current} 
 						Filters={Filters}
+						onFilterReset={resetFilters}
 					/>
 
 					<MapControl

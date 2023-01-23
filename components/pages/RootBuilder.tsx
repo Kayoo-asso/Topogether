@@ -160,8 +160,8 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 				boulderOrder={boulderOrder}
 				map={mapRef.current}
 			/>
-		const [Filters, filterBoulders, areFiltersEmpty] = useBouldersFilters(topo);
-		const FiltersDesktop: React.FC = () => <BouldersFiltersDesktop Filters={Filters} />;
+		const [Filters, filterBoulders, resetFilters, areFiltersEmpty] = useBouldersFilters(topo);
+		const FiltersDesktop: React.FC = () => <BouldersFiltersDesktop Filters={Filters} onResetClick={resetFilters} />;
 
 		return (
 			<>
@@ -199,6 +199,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 						boulderOrder={boulderOrder}
 						map={mapRef.current}
 						Filters={Filters}
+						onFilterReset={resetFilters}
 					/>
 
 					<MapControl 

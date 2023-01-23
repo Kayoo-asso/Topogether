@@ -29,8 +29,8 @@ export const RootWorldMap: React.FC<RootWorldMapProps> = watchDependencies(
 		const [selectedTopo, setSelectedTopo] = useState<LightTopo>();
 
 		const SearchbarDesktop: React.FC = () => <SearchbarToposDesktop map={mapRef.current} />
-		const [Filters, filterTopos] = useToposFilters(props.lightTopos);
-		const FiltersDesktop: React.FC = () => <ToposFiltersDesktop Filters={Filters} />;
+		const [Filters, filterTopos, resetFilters] = useToposFilters(props.lightTopos);
+		const FiltersDesktop: React.FC = () => <ToposFiltersDesktop Filters={Filters} onResetClick={resetFilters} />;
 
 		return (
 			<>
@@ -43,7 +43,11 @@ export const RootWorldMap: React.FC<RootWorldMapProps> = watchDependencies(
 				<div className="relative flex h-contentPlusHeader flex-row md:h-full">
 					{user && <LeftbarDesktop currentMenuItem="MAP" />}
 
-					<SlideoverMobileWorldmap map={mapRef.current} Filters={Filters} />
+					<SlideoverMobileWorldmap 
+						map={mapRef.current} 
+						Filters={Filters}
+						onFilterReset={resetFilters}
+					/>
 
 					<MapControl 
 						ref={mapRef}

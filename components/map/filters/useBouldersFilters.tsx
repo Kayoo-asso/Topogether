@@ -3,7 +3,7 @@ import { GradeSliderInput, SliderInput } from "components/molecules"
 import { SpecSelector } from "components/molecules/form/SpecSelector";
 import { hasSomeFlags, toggleFlag } from "helpers/bitflags";
 import { Quark, useCreateDerivation } from "helpers/quarky";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Boulder, LightGrade, Topo, TrackDanger, TrackSpec, gradeToLightGrade } from "types";
 
 export interface BoulderFilterOptions {
@@ -24,6 +24,7 @@ export type BouldersFiltersComponents = {
 export function useBouldersFilters (topo: Topo): [
     BouldersFiltersComponents,
     (boulders: Iterable<Quark<Boulder>>) => Quark<Boulder>[],
+    () => void,
     boolean
 ] {
     // TODO: memoize that?
@@ -33,13 +34,12 @@ export function useBouldersFilters (topo: Topo): [
             .map((b) => b.tracks.length)
             .reduce((a, b) => a + b, 0);
     }, [topo.boulders]);
-    // TODO: memoize that?
-    const filtersDomain: BoulderFilterOptions = {
+    const filtersDomain: BoulderFilterOptions = useMemo(() => ({
         spec: TrackDanger.None,
         tracksRange: [0, maxTracks()],
         gradeRange: [3, 9],
         mustSee: false,
-    };
+    }), [maxTracks()]);
     const [filters, setFilters] = useState(filtersDomain);
     useEffect(() => {
         const max = maxTracks();
@@ -55,11 +55,11 @@ export function useBouldersFilters (topo: Topo): [
 			option: K,
 			value: BoulderFilterOptions[K]
 		) => {
-			setFilters({
-				...filters,
+			setFilters(f => ({
+				...f,
 				[option]: value,
-			});
-		}, [filters]);
+			}));
+		}, []);
 
     const filterBoulders = useCallback((
         boulders: Iterable<Quark<Boulder>>,
@@ -102,6 +102,7 @@ export function useBouldersFilters (topo: Topo): [
     // TODO: memoize that?
     const isFilterEmpty = (filters.spec === TrackDanger.None && !filters.mustSee && filters.gradeRange[0] === 3 && filters.gradeRange[1] === 9 && filters.tracksRange[0] === 0 && filters.tracksRange[1] === maxTracks())
 
+    const resetFilters = () => setFilters(filtersDomain);
 
     const SpecFilter = useCallback(() => (
         <SpecSelector
@@ -144,6 +145,7 @@ export function useBouldersFilters (topo: Topo): [
             MustSeeFilter 
         },
         filterBoulders,
+        resetFilters,
         isFilterEmpty,
     ];
 }

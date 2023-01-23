@@ -11,6 +11,7 @@ import { TopoFiltersComponents } from "components/map/filters/useToposFilters";
 type SlideoverMobileWorldmapProps = {
 	map: Map | null;
 	Filters: TopoFiltersComponents;
+	onFilterReset: () => void;
 }
 
 export const SlideoverMobileWorldmap: React.FC<SlideoverMobileWorldmapProps> = (props: SlideoverMobileWorldmapProps) => {
@@ -21,7 +22,7 @@ export const SlideoverMobileWorldmap: React.FC<SlideoverMobileWorldmapProps> = (
     const getContent = () => {
         switch (selectedInfo) {
 			case 'SEARCHBAR': return <SearchbarToposMobile map={props.map} />;
-			case 'FILTERS': return <ToposFiltersMobile Filters={props.Filters} />;
+			case 'FILTERS': return <ToposFiltersMobile Filters={props.Filters} onResetClick={props.onFilterReset} />;
 			default: return undefined;
         }
     }
