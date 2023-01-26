@@ -36,7 +36,7 @@ export const DlTopos: React.FC<DlToposProps> = watchDependencies(
 
 		return (
 			<>
-				<div className="flex items-center justify-between px-4 pt-16 pb-6 md:px-8">
+				<div className="flex items-center justify-between px-4 py-6 md:px-8">
 					<div className="ktext-section-title text-center md:hidden">
 						Topos téléchargés
 					</div>
