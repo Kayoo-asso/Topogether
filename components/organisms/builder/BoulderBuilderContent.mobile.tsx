@@ -1,5 +1,5 @@
-import React, { Dispatch, SetStateAction, useCallback, useState } from "react";
-import { GradeScale, ImageSlider } from "components";
+import React, { useCallback, useState } from "react";
+import { ImageSlider } from "components";
 import { Topo } from "types";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { BoulderForm } from "..";
@@ -12,6 +12,7 @@ import { deleteBoulder } from "helpers/builder";
 import { TracksListBuilder } from "./TracksListBuilder";
 import { Drawer } from "../Drawer";
 import { SelectedBoulder, useSelectStore } from "components/pages/selectStore";
+import { GradeScale } from "components/molecules/GradeScale";
 
 interface BoulderBuilderContentMobileProps {
 	full: boolean,
@@ -60,7 +61,7 @@ export const BoulderBuilderContentMobile: React.FC<BoulderBuilderContentMobilePr
 							)}
 							{!props.full && (
 								<div className="mt-2 flex items-center">
-									<GradeScale boulder={boulder} circleSize="little" />
+									<GradeScale boulders={[boulder]} circleSize="little" />
 								</div>
 							)}
 						</div>

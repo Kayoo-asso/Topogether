@@ -7,12 +7,12 @@ import {
 import { UUID } from "types";
 import { watchDependencies } from "helpers/quarky";
 import { Image } from "components/atoms/Image";
-import ManyTracks from "assets/icons/many-tracks.svg";
-import AddIcon from "assets/icons/add.svg";
 import { SelectedBoulder, useSelectStore } from "components/pages/selectStore";
 import { TracksList } from "./TracksList";
 import { useSession } from "helpers/services";
 import { GradeScale } from "components/molecules/GradeScale";
+
+import ManyTracks from "assets/icons/many-tracks.svg";
 
 interface BoulderContentMobileProps {
 	full: boolean,
