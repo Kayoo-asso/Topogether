@@ -20,7 +20,11 @@ export const LikeButton: React.FC<LikeButtonProps> = watchDependencies(
 		return (
 			<Heart
 				className={`h-5 w-5 md:cursor-pointer ${color} ${props.className}`}
-				onClick={toggle}
+				onClick={(e) => {
+					e.preventDefault();
+					e.stopPropagation();
+					toggle();
+				}}
 			/>
 		);
 	}

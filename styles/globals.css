@@ -116,6 +116,10 @@ body {
   -webkit-box-orient: vertical;
 }
 
+.one-word-per-line {
+  word-spacing: 100vw;
+}
+
 
 /* MAP */
 .ol-attribution {

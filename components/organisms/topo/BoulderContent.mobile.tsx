@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import {
-	GradeScale,
 	LikeButton,
 	Show,
 	ImageSlider,
@@ -13,6 +12,7 @@ import AddIcon from "assets/icons/add.svg";
 import { SelectedBoulder, useSelectStore } from "components/pages/selectStore";
 import { TracksList } from "./TracksList";
 import { useSession } from "helpers/services";
+import { GradeScale } from "components/molecules/GradeScale";
 
 interface BoulderContentMobileProps {
 	full: boolean,
@@ -59,7 +59,7 @@ export const BoulderContentMobile: React.FC<BoulderContentMobileProps> =
 							)}
 							{!props.full && (
 								<div className="mt-2 flex items-center">
-									<GradeScale boulder={boulder} circleSize="little" />
+									<GradeScale boulders={[boulder]} circleSize="little" />
 								</div>
 							)}
 						</div>

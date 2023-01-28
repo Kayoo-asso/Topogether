@@ -15,7 +15,7 @@ import { Flash, ModalBG, ParkingModal, SlideoverRightDesktop } from "components/
 
 import Rock from "assets/icons/rock.svg";
 import ManyTracks from "assets/icons/many-tracks.svg";
-import Marker from "assets/icons/marker.svg";
+import Topo from "assets/icons/topo.svg";
 import Copy from "/assets/icons/copy.svg";
 
 type TopoPreviewButton = {
@@ -112,8 +112,8 @@ export const TopoPreview: React.FC<TopoPreviewProps> = ({
 					/>
 				</div>
 
-				<div className="mt-4 flex flex-row items-center px-4">
-					<Marker className={"h-6 w-6 fill-" + TopoTypeToColor(topo.type)} />
+				<div className="mt-4 flex flex-row gap-1 items-center px-4">
+					<Topo className={"h-5 w-5 fill-" + TopoTypeToColor(topo.type)} />
 					<div
 						className={
 							"ktext-section-title ml-2" +

@@ -1,16 +1,17 @@
 import React, { useState } from "react";
 import { ToolSelectorMobile } from "./ToolSelectorMobile";
 import { DrawerToolEnum, Grade, gradeToLightGrade } from "types";
+import { getLightGradeColorClass, GradeSelector } from "./GradeSelector";
+
 import Clear from "assets/icons/clear.svg";
 import Rewind from "assets/icons/rewind.svg";
 import Eraser from "assets/icons/eraser.svg";
 import ManyTracks from "assets/icons/many-tracks.svg";
-import Topo from "assets/icons/topo.svg";
+import Track from "assets/icons/track.svg";
 import Hand from "assets/icons/hand.svg";
 import ClimbingShoe from "assets/icons/climbing-shoe.svg";
 import ForbiddenArea from "assets/icons/forbidden-area.svg";
 import Checked from "assets/icons/checked.svg";
-import { getLightGradeColorClass, GradeSelector } from "./GradeSelector";
 import Circle from "assets/icons/circle.svg";
 
 interface ToolbarProps {
@@ -95,7 +96,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
 			</span>
 
 			<span className="hidden w-6/12 flex-row items-center justify-around px-[13%] md:flex">
-				<Topo
+				<Track
 					className={
 						"h-6 w-6 md:cursor-pointer " +
 						(selectedTool === "LINE_DRAWER"

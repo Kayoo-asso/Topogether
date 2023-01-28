@@ -4,7 +4,7 @@ import Link from "next/link";
 import { watchDependencies } from "helpers/quarky";
 import { useSession } from "helpers/services";
 
-import TopoIcon from "assets/icons/topo.svg";
+import Track from "assets/icons/track.svg";
 import MarkerIcon from "assets/icons/marker-stroke.svg";
 import UserIcon from "assets/icons/user.svg";
 import KeyIcon from "assets/icons/key.svg";
@@ -29,7 +29,7 @@ export const LeftbarDesktop: React.FC<LeftbarDesktopProps> = watchDependencies(
 				<div className="flex flex-1 flex-col gap-10">
 					<Link href="/builder/dashboard">
 						<a className="flex flex-row">
-							<TopoIcon
+							<Track
 								className={`mr-4 h-6 w-6 ${
 									currentMenuItem === "BUILDER" ? "stroke-main" : "stroke-dark"
 								}`}

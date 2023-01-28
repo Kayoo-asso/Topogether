@@ -9,7 +9,7 @@ import {
 } from "types";
 
 type GradeScaleProps = {
-	boulder: Boulder;
+	boulders: Boulder[];
 	selection?: GradeHistogramSelection;
 	circleSize?: "little" | "normal";
 	className?: string;
@@ -43,15 +43,17 @@ const defaultGradeHistogram = (): GradeHistogram => ({
 });
 
 export const GradeScale: React.FC<GradeScaleProps> = ({
-	boulder,
+	boulders,
 	selection = defaultHistogramSelection,
 	circleSize = "normal",
 	...props
 }: GradeScaleProps) => {
 	const histogram = defaultGradeHistogram();
-	for (const track of boulder.tracks) {
-		const lg = gradeToLightGrade(track.grade);
-		histogram[lg] += 1;
+	for (const boulder of boulders) {
+		for (const track of boulder.tracks) {
+			const lg = gradeToLightGrade(track.grade);
+			histogram[lg] += 1;
+		}
 	}
 
 	return (

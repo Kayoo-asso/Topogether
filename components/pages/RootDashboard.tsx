@@ -4,13 +4,13 @@ import { watchDependencies } from "helpers/quarky";
 import { HeaderDesktop } from "components/layouts/HeaderDesktop";
 import { LeftbarDesktop } from "components/layouts/Leftbar.desktop";
 import { MyTopos } from "components/organisms/dashboard/MyTopos";
-import { LikedTopos } from "components/organisms/dashboard/LikedTopos";
-import { DlTopos } from "components/organisms/dashboard/DlTopos";
 import { TabsFly } from "components/layouts/TabsFly";
+import { DlTopos } from "components/organisms/dashboard/dl/DlTopos";
 
 import UserTopoIcon from "assets/icons/user-topo.svg";
 import Heart from "assets/icons/heart.svg";
 import Download from "assets/icons/download.svg";
+import { LikedTopos } from "components/organisms/dashboard/liked/LikedTopos";
 
 interface RootDashboardProps {
 	myTopos: LightTopo[];
@@ -21,6 +21,7 @@ interface RootDashboardProps {
 export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies(
 	(props: RootDashboardProps) => {
 		const [tab, setTab] = useState<"MY"| "DL" | "LIKED">("MY");
+		const [displayTabs, setDisplayTabs] = useState(true);
 		const ref = useRef<HTMLDivElement>(null);
 
 		return (
@@ -32,14 +33,14 @@ export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies(
 
 					<div
 						ref={ref}
-						className="h-contentPlusHeader w-full overflow-y-auto overflow-x-hidden bg-white pl-[1%] pb-32 md:h-contentPlusShell"
+						className="h-contentPlusHeader w-full overflow-y-auto overflow-x-hidden bg-white md:h-contentPlusShell"
 					>
 
 						{tab === "MY" && <MyTopos myTopos={props.myTopos} pageRef={ref} />}
 						{tab === "LIKED" && <LikedTopos likedTopos={props.likedTopos} />}
-						{tab === "DL" && <DlTopos dlTopos={props.dlTopos} />}
+						{tab === "DL" && <DlTopos dlTopos={props.dlTopos} setDisplayTabs={setDisplayTabs} />}
 
-						<div className="absolute w-full md:w-[calc(100%-300px)] left-0 md:left-[calc(300px+1%)] bottom-[12vh] md:bottom-8 flex justify-center">
+						<div className={`${displayTabs ? '' : 'hidden'} absolute w-full md:w-[calc(100%-300px)] left-0 md:left-[calc(300px+1%)] bottom-[12vh] md:bottom-8 flex justify-center`}>
 							<TabsFly 
 								tabs={[
 									{
