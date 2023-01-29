@@ -1,12 +1,14 @@
-import React, { useState } from "react";
+import React from "react";
 import { BoulderData, LightTopo, Topo, TopoData, TrackData } from "types";
-import Download from "assets/icons/download.svg";
 import { staticUrl } from "helpers/constants";
 import { useModal } from "helpers/hooks/useModal";
 import { api } from "helpers/services";
 import { RoundProgressBar } from "./RoundProgressBar";
 import { watchDependencies } from "helpers/quarky";
 import { downloads } from "helpers/downloads/DownloadManager";
+
+import Download from "assets/icons/download.svg";
+import Check from "assets/icons/checked.svg";
 
 interface DownloadButtonProps {
 	className?: string;
@@ -44,10 +46,9 @@ export const DownloadButton: React.FC<DownloadButtonProps> = watchDependencies(
 	(props: DownloadButtonProps) => {
 		const [ModalUndownload, showModalUndownload] = useModal();
 		const dlState = downloads.getState(props.topo.id);
-		console.log("Topo download state:", dlState);
+		// console.log("Topo download state:", dlState);
 
 		const download = async () => {
-			// TODO: handle errors
 			let topo = isLight(props.topo)
 				? await api.getTopo(props.topo.id)
 				: topo2TopoData(props.topo);
@@ -64,18 +65,28 @@ export const DownloadButton: React.FC<DownloadButtonProps> = watchDependencies(
 						onClick={showModalUndownload}
 					/>
 				)}
-				{dlState.status !== "downloading" && (
+
+				{dlState.status === "downloaded" && (
+					<div 
+						className="relative px-3 py-3 bg-main rounded-full"
+						onClick={(e) => {
+							e.preventDefault(); e.stopPropagation();
+							showModalUndownload();
+						}}
+					>
+						<Check className="absolute w-3 h-3 stroke-white top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
+					</div>
+				)}
+
+				{dlState.status !== "downloading" && dlState.status !== "downloaded" && (
 					<Download
 						className={
-							"ml-5 md:cursor-pointer" +
-							(dlState.status === "downloaded"
-								? "h-5 w-5 stroke-main"
-								: "h-5 w-5 stroke-dark") +
-							(props.className ? " " + props.className : "")
+							"h-5 w-5 stroke-main stroke-[1.5px] md:cursor-pointer " +
+							(props.className ? props.className : "")
 						}
-						onClick={() => {
-							if (dlState.status === "downloaded") showModalUndownload();
-							else download();
+						onClick={(e) => {
+							e.preventDefault(); e.stopPropagation();
+							download();
 						}}
 					/>
 				)}

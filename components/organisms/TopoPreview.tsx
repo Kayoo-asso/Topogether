@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import {
 	Button,
-	DownloadButton,
-	LikeButton,
 	GradeHistogram,
 	ParkingButton,
 } from "components";
@@ -11,12 +9,12 @@ import { formatDate } from "helpers/utils";
 import { Image } from "components/atoms/Image";
 import Link from "next/link";
 import { TopoTypeToColor } from "helpers/topo";
-import { Flash, ModalBG, ParkingModal, SlideoverRightDesktop } from "components/atoms/overlays";
+import { ModalBG, ParkingModal, SlideoverRightDesktop } from "components/atoms/overlays";
+import { TopoPreviewBoutons } from "./TopoPreviewBoutons";
 
 import Rock from "assets/icons/rock.svg";
 import ManyTracks from "assets/icons/many-tracks.svg";
 import Topo from "assets/icons/topo.svg";
-import Copy from "/assets/icons/copy.svg";
 
 type TopoPreviewButton = {
 	content: string;
@@ -47,54 +45,12 @@ export const TopoPreview: React.FC<TopoPreviewProps> = ({
 	...props
 }: TopoPreviewProps) => {
 	const [modalParkingOpen, setModalParkingOpen] = useState(false);
-	const [flashMessage, setFlashMessage] = useState<string>();
 	const topo = props.topo;
 
-	const coordinateItem = () => (
-		<div
-			className="ktext-label md:cursor-pointer overflow-hidden text-grey-medium"
-			onClick={() => {
-				const data = [
-					new ClipboardItem({
-						"text/plain": new Blob(
-							[topo.location[1] + "," + topo.location[0]],
-							{
-								type: "text/plain",
-							}
-						),
-					}),
-				];
-				navigator.clipboard.write(data).then(
-					function () {
-						setFlashMessage("Coordonnées copiées dans le presse papier.");
-					},
-					function () {
-						setFlashMessage("Impossible de copier les coordonées.");
-					}
-				);
-			}}
-		>
-			{parseFloat(topo.location[1].toFixed(12)) +
-				"," +
-				parseFloat(topo.location[0].toFixed(12))}
-		</div>
-	);
-
 	const topoPreviewContent = () => (
-		<>
-			{displayLikeDownload && (
-				<div className="absolute top-2 right-2 z-100 flex flex-row justify-center rounded-full bg-white px-4 py-2 md:hidden">
-					<LikeButton liked={props.topo.liked} />
-					<DownloadButton topo={props.topo} />
-				</div>
-			)}
+		<div className="pb-8">
 
-			<div className="absolute top-2 left-2 z-100 flex max-w-[60%] flex-row gap-2 overflow-hidden rounded-full bg-white px-4 py-2">
-				<div>
-					<Copy className="h-5 w-5 stroke-main" />
-				</div>
-				{coordinateItem()}
-			</div>
+			<TopoPreviewBoutons topo={props.topo} onClose={props.onClose} />
 
 			<div className="flex flex-col">
 				<div
@@ -112,7 +68,7 @@ export const TopoPreview: React.FC<TopoPreviewProps> = ({
 					/>
 				</div>
 
-				<div className="mt-4 flex flex-row gap-1 items-center px-4">
+				<div className="flex flex-row gap-1 items-center px-4 mt-3">
 					<Topo className={"h-5 w-5 fill-" + TopoTypeToColor(topo.type)} />
 					<div
 						className={
@@ -189,22 +145,20 @@ export const TopoPreview: React.FC<TopoPreviewProps> = ({
 					</div>
 				</div>
 
-				{displayParking && topo.parkingLocation && (
-					<div className="py-4">
-						<ParkingButton onClick={() => setModalParkingOpen(true)} />
-					</div>
-				)}
-
 				{props.mainButton && (
-					<div className="flex w-full flex-col px-4 pb-6 pt-4">
+					<div className="flex w-full flex-col px-4 py-4 items-center">
 						<Button
-							content={props.mainButton?.content || "Entrer"}
-							fullWidth
-							href={props.mainButton?.link}
+							content={props.mainButton.content || "Entrer"}
+							href={props.mainButton.link}
+							className="px-24"
 							onClick={props.mainButton.onClick}
 						/>
 					</div>
 				)}
+
+				<div className={`${displayParking && topo.parkingLocation ? '' : 'hidden'} py-4`}>
+					<ParkingButton onClick={() => setModalParkingOpen(true)} />
+				</div>
 
 				{props.secondButton && (
 					<div className="flex w-full flex-row justify-between px-8 pt-4 pb-8 md:pb-2">
@@ -298,7 +252,7 @@ export const TopoPreview: React.FC<TopoPreviewProps> = ({
 					</div>
 				)}
 			</div>
-		</>
+		</div>
 	);
 
 	return (
@@ -309,8 +263,6 @@ export const TopoPreview: React.FC<TopoPreviewProps> = ({
 			<div className="hidden md:block">
 				<SlideoverRightDesktop
 					open
-					displayLikeButton={displayLikeDownload}
-					displayDlButton={displayLikeDownload}
 					item={props.topo}
 					onClose={props.onClose}
 				>
@@ -325,9 +277,6 @@ export const TopoPreview: React.FC<TopoPreviewProps> = ({
 					onClose={() => setModalParkingOpen(false)}
 				/>
 			)}
-			<Flash open={!!flashMessage} onClose={() => setFlashMessage(undefined)}>
-				{flashMessage}
-			</Flash>
 		</>
 	);
 };

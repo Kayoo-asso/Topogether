@@ -15,7 +15,7 @@ export const LikeButton: React.FC<LikeButtonProps> = watchDependencies(
 			liked.set((l) => !l);
 			await sync.attemptSync();
 		}, [liked]);
-		const color = liked() ? "fill-main" : "stroke-dark";
+		const color = liked() ? "fill-main" : "stroke-main";
 
 		return (
 			<Heart

@@ -78,7 +78,7 @@ export const RootWorldMap: React.FC<RootWorldMapProps> = watchDependencies(
 								displayLikeDownload={!!user}
 								// displayCreator
 								displayParking
-								mainButton={{ content: 'Ouvrir', link: '/topo/' + encodeUUID(selectedTopo.id) }}
+								mainButton={{ content: 'Entrer', link: '/topo/' + encodeUUID(selectedTopo.id) }}
 								onClose={() => setSelectedTopo(undefined)}
 							/>
 						}
