@@ -1,5 +1,5 @@
 import { SelectedInfo, useSelectStore } from 'components/pages/selectStore';
-import { useBreakpoint } from 'helpers/hooks';
+import { useBreakpoint } from 'helpers/hooks/DeviceProvider';
 import { decodeUUID, encodeUUID } from 'helpers/utils';
 import { useRouter } from 'next/router';
 import React, { useEffect } from 'react';

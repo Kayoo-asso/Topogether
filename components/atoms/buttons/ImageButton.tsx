@@ -1,8 +1,8 @@
 import React from "react";
-import { DeleteButton } from ".";
 import { Image } from "../Image";
 import { Img } from "types";
 import Spinner from "assets/icons/spinner.svg";
+import { DeleteButton } from "./DeleteButton";
 
 interface ImageButtonProps {
 	text?: string;

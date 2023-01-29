@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { Flash } from "../overlays";
 import { GeoCoordinates } from "types";
 
 import Copy from "/assets/icons/copy.svg";
+import { Flash } from "../overlays/Flash";
 
 interface ShareButtonProps {
     location: GeoCoordinates;

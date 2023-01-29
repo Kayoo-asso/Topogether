@@ -1,5 +1,5 @@
-import type { Breakpoint } from "helpers/hooks";
-import { GeoCoordinates, Position } from "types";
+import { Breakpoint } from "helpers/hooks/DeviceProvider";
+import { GeoCoordinates } from "types";
 
 // --- launchNavigation ---
 export const launchNavigation = (
