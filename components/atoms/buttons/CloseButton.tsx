@@ -1,10 +1,8 @@
 import React from "react";
 
-import Copy from "/assets/icons/copy.svg";
-
 interface CloseButtonProps {
 	className?: string;
-    onClose: () => void;
+    onClose?: () => void;
 }
 
 export const CloseButton: React.FC<CloseButtonProps> = (props: CloseButtonProps) => {
@@ -13,7 +11,7 @@ export const CloseButton: React.FC<CloseButtonProps> = (props: CloseButtonProps)
             className={`text-main ktext-section-title md:cursor-pointer ${props.className}`}
             onClick={(e) => {
                 e.preventDefault(); e.stopPropagation();
-                props.onClose();
+                props.onClose && props.onClose();
             }}
         >X</div>
     );

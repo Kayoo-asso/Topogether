@@ -5,11 +5,15 @@ import {
 	LikeButton,
 } from "components";
 import { Signal } from "helpers/quarky";
-import { Amenities, Topo } from "types";
+import { Amenities, Topo as TopoType } from "types";
 import { hasFlag, listFlags } from "helpers/bitflags";
 import { TopoTypeToColor } from "helpers/topo";
+import { Flash } from "components/atoms/overlays";
+import { RockNames } from "types/BitflagNames";
+import { useSession } from "helpers/services";
+import { ShareButton } from "components/atoms/buttons/ShareButton";
 
-import Marker from "assets/icons/marker.svg";
+import Topo from "assets/icons/topo.svg";
 import Rock from "assets/icons/rock.svg";
 import ManyTracks from "assets/icons/many-tracks.svg";
 import Toilets from "assets/icons/toilets.svg";
@@ -17,12 +21,10 @@ import Picnic from "assets/icons/picnic.svg";
 import WaterDrop from "assets/icons/water-drop.svg";
 import Bin from "assets/icons/bin.svg";
 import Umbrella from "assets/icons/umbrella.svg";
-import { Flash } from "components/atoms/overlays";
-import { RockNames } from "types/BitflagNames";
-import { useSession } from "helpers/services";
+
 
 interface InfoContentProps {
-	topo: Signal<Topo>;
+	topo: Signal<TopoType>;
 }
 
 export const InfoContent: React.FC<InfoContentProps> = (props: InfoContentProps) => {
@@ -43,11 +45,13 @@ export const InfoContent: React.FC<InfoContentProps> = (props: InfoContentProps)
 					{session &&
 						<>
 							<LikeButton liked={topo.liked} />
+							<ShareButton location={topo.location} />
 							<DownloadButton topo={topo} />
 						</>
 					}
 				</div>
-
+				
+				<div className="flex w-full ktext-subtitle mb-1">Infos du topo</div>
 				<div className="flex flex-col items-center px-6 pt-5 md:items-start md:px-0 md:pt-0">
 					{topo.creator?.userName && (
 						<div className="ktext-label text-center md:hidden">
@@ -64,9 +68,9 @@ export const InfoContent: React.FC<InfoContentProps> = (props: InfoContentProps)
 						</div>
 					)}
 
-					<div className="ktext-big-title mt-4 flex flex-row items-center text-center">
+					<div className="ktext-big-title mt-4 flex flex-row w-full items-center justify-center">
 						<div className="mr-2 hidden md:inline">
-							<Marker className={"h-6 w-6 fill-" + TopoTypeToColor(topo.type)} />
+							<Topo className={"h-6 w-6 fill-" + TopoTypeToColor(topo.type)} />
 						</div>
 						{topo.name}
 					</div>
@@ -75,36 +79,7 @@ export const InfoContent: React.FC<InfoContentProps> = (props: InfoContentProps)
 						<div className="text-grey-medium">
 							{topo.closestCity !== topo.name ? topo.closestCity : ""}
 						</div>
-						<div className="flex w-full flex-row justify-center md:justify-between">
-							<div
-								className="md:cursor-pointer text-grey-medium"
-								onClick={() => {
-									const data = [
-										new ClipboardItem({
-											"text/plain": new Blob(
-												[topo.location[1] + "," + topo.location[0]],
-												{
-													type: "text/plain",
-												}
-											),
-										}),
-									];
-									navigator.clipboard.write(data).then(
-										function () {
-											setFlashMessage(
-												"Coordonnées copiées dans le presse papier."
-											);
-										},
-										function () {
-											setFlashMessage("Impossible de copier les coordonées.");
-										}
-									);
-								}}
-							>
-								{parseFloat(topo.location[1].toFixed(12)) +
-									"," +
-									parseFloat(topo.location[0].toFixed(12))}
-							</div>
+						<div className="flex w-full flex-row justify-center">
 							{topo.creator?.userName && (
 								<div className="hidden md:block">
 									Topo créé par{" "}

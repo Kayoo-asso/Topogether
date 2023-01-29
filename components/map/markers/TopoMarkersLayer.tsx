@@ -90,7 +90,7 @@ export const TopoMarkersLayer: React.FC<TopoMarkersLayerProps> =
 								props.onTopoSelect && props.onTopoSelect(undefined);
 							}
 						}}
-            style={topoStyle}
+            			style={topoStyle}
 					/>
 
 					<VectorLayer

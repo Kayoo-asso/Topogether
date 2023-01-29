@@ -19,10 +19,12 @@ export const TopoPreviewBoutons: React.FC<TopoPreviewBoutonsProps> = (props: Top
                 <DownloadButton topo={props.topo} />
             </div>
 
-            <div className="relative bg-white rounded-full px-6 py-6">
+            <div 
+                className="relative bg-white rounded-full px-6 py-6 md:cursor-pointer"
+                onClick={props.onClose}
+            >
                 <CloseButton 
                     className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
-                    onClose={props.onClose}
                 />
             </div>
 

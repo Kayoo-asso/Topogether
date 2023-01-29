@@ -26,6 +26,7 @@ import { SelectInteraction } from "components/map/markers/SelectInteraction";
 import { SearchbarBouldersDesktop } from "components/map/searchbar/SearchbarBoulders.desktop";
 import { useBouldersFilters } from "components/map/filters/useBouldersFilters";
 import { BouldersFiltersDesktop } from "components/map/filters/BouldersFilters.desktop";
+import { downloads } from "helpers/downloads/DownloadManager";
 
 interface RootTopoProps {
 	topoQuark: Quark<Topo>;
@@ -95,12 +96,14 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 		const [Filters, filterBoulders, resetFilters] = useBouldersFilters(topo);
 		const FiltersDesktop: React.FC = () => <BouldersFiltersDesktop Filters={Filters} onResetClick={resetFilters} />;
 
+		const dlStatus = downloads.getState(topo.id).status;
+
 		return (
 			<>
 				<SyncUrl topo={topo} />
 
 				<Header
-					title={topo.name}
+					title={topo.name + (dlStatus === 'downloading' ? ' (téléchargement...)' : '')}
 					backLink="/"
 					onBackClick={!isEmptyStore() ? () => flush.all() : undefined}
 					menuOptions={constructMenuOptions()}

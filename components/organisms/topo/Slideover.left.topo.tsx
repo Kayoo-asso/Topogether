@@ -26,15 +26,6 @@ export const SlideoverLeftTopo: React.FC<SlideoverLeftTopoProps> = (props: Slide
 	const selectedInfo = useSelectStore(s => s.info);
 	const flush = useSelectStore(s => s.flush);
 
-    const getTitle = () => {
-        switch (selectedInfo) {
-            case 'INFO': return "Infos du topo";
-            case 'ACCESS': return "Marche d'approche";
-            case 'MANAGEMENT': return "Gestionnaires du site";
-            default: return undefined;
-        }
-    }
-
     const getContent = () => {
         switch (selectedInfo) {
             case 'INFO': return <InfoContent topo={props.topo} />;
@@ -60,16 +51,12 @@ export const SlideoverLeftTopo: React.FC<SlideoverLeftTopoProps> = (props: Slide
 					onClose={onClose}
 				>
 					<div className="h-full pl-6 pr-3 pt-12">
-                        <div className={`${selectedInfo === 'FILTERS' || selectedInfo === 'SEARCHBAR' ? 'hidden' : 'ktext-title mb-6'}`}>
-							{getTitle()}
-						</div>
 						{getContent()}
 					</div>
 				</SlideoverMobile>
 			)}
 			{bp !== "mobile" && (
 				<SlideoverLeftDesktop
-					title={getTitle()}
 					open={selectedInfo !== 'NONE' && selectedInfo !== 'SEARCHBAR' && selectedInfo !== 'FILTERS'}
 					onClose={onClose}
 				>

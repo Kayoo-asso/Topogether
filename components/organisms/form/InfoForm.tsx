@@ -34,7 +34,6 @@ export const InfoForm: React.FC<InfoFormProps> = watchDependencies(
 				}`}
 				onClick={(e) => e.stopPropagation()}
 			>
-				<div className="flex w-full ktext-subtitle mb-1">Infos du topo</div>
 				<div className="flex flex-row items-end gap-6">
 					<div className="w-32 md:mt-4">
 						<ImageInput

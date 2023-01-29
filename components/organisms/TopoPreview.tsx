@@ -150,7 +150,8 @@ export const TopoPreview: React.FC<TopoPreviewProps> = ({
 						<Button
 							content={props.mainButton.content || "Entrer"}
 							href={props.mainButton.link}
-							className="px-24"
+							// className="px-24"
+							fullWidth
 							onClick={props.mainButton.onClick}
 						/>
 					</div>

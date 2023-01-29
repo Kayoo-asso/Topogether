@@ -14,6 +14,8 @@ import { Map } from "ol";
 import { SearchbarToposDesktop } from "components/map/searchbar/SearchbarTopos.desktop";
 import { useToposFilters } from "components/map/filters/useToposFilters";
 import { ToposFiltersDesktop } from "components/map/filters/ToposFilters.desktop";
+import { downloads } from "helpers/downloads/DownloadManager";
+import { HeaderMobile } from "components/layouts/HeaderMobile";
 
 interface RootWorldMapProps {
 	lightTopos: LightTopo[];
@@ -32,15 +34,28 @@ export const RootWorldMap: React.FC<RootWorldMapProps> = watchDependencies(
 		const [Filters, filterTopos, resetFilters] = useToposFilters(props.lightTopos);
 		const FiltersDesktop: React.FC = () => <ToposFiltersDesktop Filters={Filters} onResetClick={resetFilters} />;
 
+		const onGoingDl = downloads.getGlobalState().ongoing;
+
 		return (
 			<>
 				<HeaderDesktop
 					backLink="#"
 					title="Carte des topo"
 					displayLogin={user ? false : true}
-				/>
+				>
+					<div className={`${onGoingDl > 0 ? '' : 'hidden'} text-white ktext-label w-full flex justify-end`}>
+						Téléchargement en cours... ({onGoingDl})
+					</div>
+				</HeaderDesktop>
+				{onGoingDl > 0 && (
+					<div className="flex h-header items-center bg-dark px-8">
+						<div className={`${onGoingDl > 0 ? '' : 'hidden'} text-white ktext-label w-full flex justify-end`}>
+							Téléchargement en cours... ({onGoingDl})
+						</div>
+					</div>
+				)}
 
-				<div className="relative flex h-contentPlusHeader flex-row md:h-full">
+				<div className={`${onGoingDl > 0 ? 'h-content' : 'h-contentPlusHeader'} relative flex flex-row md:h-full`}>
 					{user && <LeftbarDesktop currentMenuItem="MAP" />}
 
 					<SlideoverMobileWorldmap 
@@ -68,7 +83,7 @@ export const RootWorldMap: React.FC<RootWorldMapProps> = watchDependencies(
 						<TopoMarkersLayer 
 							topos={props.lightTopos.filter(filterTopos)}
 							selectedTopo={selectedTopo}
-							onTopoSelect={(t) => setSelectedTopo(t as LightTopo)}
+							onTopoSelect={t => {console.log(t); setSelectedTopo(t as LightTopo)}}
 						/>
 					</MapControl>
 

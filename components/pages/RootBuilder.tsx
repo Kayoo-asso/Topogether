@@ -176,11 +176,13 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 					onBackClick={flush.all}
 					menuOptions={menuOptions}
 				>
-					<BuilderProgressIndicator
-						topo={props.topoQuark()}
-						progress={progress()}
-					/>
-					<div className="md:pl-8"><NetworkIndicator /></div>
+					<>
+						<BuilderProgressIndicator
+							topo={props.topoQuark()}
+							progress={progress()}
+						/>
+						<div className="md:pl-8"><NetworkIndicator /></div>
+					</>
 				</Header>
 
 				{/* overflow-clip instead of overflow-hidden, so that the Slideagainst can appear off-screen without 

@@ -68,7 +68,7 @@ export const DownloadButton: React.FC<DownloadButtonProps> = watchDependencies(
 
 				{dlState.status === "downloaded" && (
 					<div 
-						className="relative px-3 py-3 bg-main rounded-full"
+						className="relative px-3 py-3 bg-main rounded-full md:cursor-pointer"
 						onClick={(e) => {
 							e.preventDefault(); e.stopPropagation();
 							showModalUndownload();
