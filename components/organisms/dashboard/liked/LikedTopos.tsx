@@ -1,8 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { LightTopo } from "types";
 import { watchDependencies } from "helpers/quarky";
-import { staticUrl } from "helpers/constants";
-import { useModal } from "helpers/hooks";
 import { TopoPreview } from "../../TopoPreview";
 import { encodeUUID } from "helpers/utils";
 import { LikedHeader } from "./LikedHeader";

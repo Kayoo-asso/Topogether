@@ -1,9 +1,11 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Button, TextInput } from "components";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { Name, Sector } from "types";
-import { Portal } from "helpers/hooks";
+
 import Clear from "assets/icons/clear.svg";
+import { Portal } from "helpers/hooks/useModal";
+import { TextInput } from "components/molecules/form/TextInput";
+import { Button } from "components/atoms/buttons/Button";
 
 interface ModalRenameSectorProps {
 	sector: Quark<Sector>;

@@ -1,6 +1,6 @@
 import Feature from "ol/Feature";
 import Point from "ol/geom/Point.js";
-import VectorSource, { VectorSourceEvent } from "ol/source/Vector";
+import VectorSource from "ol/source/Vector";
 import { add as addCoordinate, scale as scaleCoordinate } from "ol/coordinate";
 import { assert } from "ol/asserts";
 import {

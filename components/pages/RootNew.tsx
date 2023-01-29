@@ -3,9 +3,7 @@ import { StringBetween, TopoTypes, User } from "types";
 import { v4 as uuid } from "uuid";
 import { useRouter } from "next/router";
 import { watchDependencies } from "helpers/quarky";
-import { useBreakpoint, usePosition } from "helpers/hooks";
 import { Header } from "components/layouts/Header";
-import { TextInput } from "components/molecules";
 import { TopoCreate, createTopo } from "helpers/quarkifyTopo";
 import { encodeUUID } from "helpers/utils";
 import { ValidateButton } from "components/atoms/buttons/ValidateButton";
@@ -16,6 +14,9 @@ import { toLonLat } from "ol/proj";
 import { TopoMarkersLayer } from "components/map/markers/TopoMarkersLayer";
 import { SearchbarToposDesktop } from "components/map/searchbar/SearchbarTopos.desktop";
 import { Map } from "ol";
+import { useBreakpoint } from "helpers/hooks/DeviceProvider";
+import { usePosition } from "helpers/hooks/UserPositionProvider";
+import { TextInput } from "components/molecules/form/TextInput";
 
 interface RootNewProps {
 	user: User;

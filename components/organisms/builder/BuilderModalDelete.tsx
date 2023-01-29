@@ -2,9 +2,10 @@ import React, { Dispatch, SetStateAction, useCallback, useEffect } from 'react';
 import { InteractItem, useSelectStore } from 'components/pages/selectStore';
 import { deleteBoulder, deleteParking, deleteSector, deleteWaypoint } from 'helpers/builder';
 import { staticUrl } from 'helpers/constants';
-import { useBreakpoint, useModal } from 'helpers/hooks';
 import { Quark, watchDependencies } from 'helpers/quarky';
 import { Topo } from 'types';
+import { useBreakpoint } from 'helpers/hooks/DeviceProvider';
+import { useModal } from 'helpers/hooks/useModal';
 
 interface BuilderModalDeleteProps {
     topo: Quark<Topo>,

@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import NextImage from "next/image";
 import { staticUrl } from "helpers/constants";
 import Share from "assets/icons/share.svg";
-import { Button } from "components";
-import { useDevice } from "helpers/hooks";
+import { useDevice } from "helpers/hooks/DeviceProvider";
+import { Button } from "components/atoms/buttons/Button";
 
 type BeforeInstallPromptEvent = Event & {
 	prompt(): Promise<void>;

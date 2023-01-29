@@ -1,8 +1,8 @@
 import React, { useCallback } from "react";
 import { Grade, LightGrade } from "types";
 import Circle from "assets/icons/circle.svg";
-import { Portal } from "helpers/hooks";
 import { ValidateButton } from "components/atoms/buttons/ValidateButton";
+import { Portal } from "helpers/hooks/useModal";
 
 interface GradeselectorProps {
 	open: boolean;

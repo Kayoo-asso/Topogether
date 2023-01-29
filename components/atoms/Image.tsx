@@ -7,11 +7,12 @@ import {
 	useCallback,
 	ReactElement,
 } from "react";
-import { useBreakpoint, Portal } from "helpers/hooks";
 import type { Img } from "types";
 
 import defaultKayoo from "public/assets/img/Kayoo_defaut_image.png";
 import { SourceSize, VariantWidths, bunnyUrl } from "helpers/sharedWithServiceWorker";
+import { useBreakpoint } from "helpers/hooks/DeviceProvider";
+import { Portal } from "helpers/hooks/useModal";
 
 export type ImageProps = RawImageAttributes & {
 	alt: string;

@@ -11,8 +11,7 @@ import { Boulder, UUID } from "types";
 import { useSelectStore } from "components/pages/selectStore";
 import { fromLonLat } from "ol/proj";
 import { Cluster } from "components/openlayers/sources/Cluster";
-import { Breakpoint, useBreakpoint } from "helpers/hooks";
-import { Select } from "components/openlayers";
+import { Breakpoint, useBreakpoint } from "helpers/hooks/DeviceProvider";
 
 interface BoulderMarkersLayerProps {
 	boulders: Quark<Boulder>[];

@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { Dropdown, DropdownOption } from "components/molecules";
-import { useBreakpoint } from "helpers/hooks";
 
 import ArrowSimple from "assets/icons/arrow-full.svg";
+import { useBreakpoint } from "helpers/hooks/DeviceProvider";
+import { Dropdown, DropdownOption } from "components/molecules/form/Dropdown";
 
 interface LikedHeaderProps {
 	noTopos: boolean;
@@ -36,7 +36,7 @@ export const LikedHeader: React.FC<LikedHeaderProps> = (props: LikedHeaderProps)
 						${filterOpen ? "-rotate-90" : "rotate-90"}`}
 					/>
 					{filterOpen &&
-						<Dropdown 
+						<Dropdown
 							options={filterOptions}
 							className="top-[100%]"
 							onSelect={() => setFilterOpen(false)}

@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { Dropdown, DropdownOption } from "components/molecules";
 import { UUID } from "types";
-import { useBreakpoint } from "helpers/hooks";
 
 import ArrowSimple from "assets/icons/arrow-full.svg";
 import Bin from "assets/icons/bin.svg";
+import { useBreakpoint } from "helpers/hooks/DeviceProvider";
+import { Dropdown, DropdownOption } from "components/molecules/form/Dropdown";
 
 interface DlHeaderProps {
 	noTopos: boolean;

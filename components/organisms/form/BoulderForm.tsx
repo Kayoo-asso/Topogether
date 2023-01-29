@@ -1,9 +1,10 @@
 import React, { useCallback } from "react";
-import { Checkbox, TextInput } from "components";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { GeoCoordinates, Name, Topo } from "types";
 import { boulderChanged } from "helpers/builder";
 import { SelectedBoulder, useSelectStore } from "components/pages/selectStore";
+import { TextInput } from "components/molecules/form/TextInput";
+import { Checkbox } from "components/atoms/Checkbox";
 
 interface BoulderFormProps {
 	topo: Quark<Topo>;

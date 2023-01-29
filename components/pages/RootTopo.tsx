@@ -1,5 +1,4 @@
 import React, { useCallback, useRef } from "react";
-import { DropdownOption } from "components";
 import { Topo, TopoStatus } from "types";
 import {
 	Quark,
@@ -10,7 +9,6 @@ import { Header } from "components/layouts/Header";
 import { LeftbarTopoDesktop } from "components/layouts/LeftbarTopoDesktop";
 import { MapControl } from "components/map/MapControl";
 import Map from "ol/Map";
-import { useBreakpoint } from "helpers/hooks";
 import { useSession } from "helpers/services";
 import { sortBoulders } from "helpers/topo";
 import { encodeUUID } from "helpers/utils";
@@ -27,6 +25,8 @@ import { SearchbarBouldersDesktop } from "components/map/searchbar/SearchbarBoul
 import { useBouldersFilters } from "components/map/filters/useBouldersFilters";
 import { BouldersFiltersDesktop } from "components/map/filters/BouldersFilters.desktop";
 import { downloads } from "helpers/downloads/DownloadManager";
+import { useBreakpoint } from "helpers/hooks/DeviceProvider";
+import { DropdownOption } from "components/molecules/form/Dropdown";
 
 interface RootTopoProps {
 	topoQuark: Quark<Topo>;

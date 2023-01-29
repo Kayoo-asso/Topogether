@@ -1,11 +1,13 @@
 import React, { Dispatch, SetStateAction, useState } from 'react';
-import { Button } from 'components/atoms';
 import { staticUrl } from 'helpers/constants';
-import { useBreakpoint, useLoader, useModal } from 'helpers/hooks';
 import { useAuth } from 'helpers/services';
 import { useRouter } from 'next/router';
 
 import UserInfoIcon from "assets/icons/user-info.svg";
+import { useBreakpoint } from 'helpers/hooks/DeviceProvider';
+import { useLoader } from 'helpers/hooks/useLoader';
+import { useModal } from 'helpers/hooks/useModal';
+import { Button } from 'components/atoms/buttons/Button';
 
 interface ProfileContentProps {
     setDisplayModifyProfile: Dispatch<SetStateAction<boolean>>

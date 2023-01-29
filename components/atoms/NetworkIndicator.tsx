@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { sync, SyncStatus } from "helpers/services";
+import { watchDependencies } from 'helpers/quarky';
 
 import NoNetwork1 from "assets/icons/network-indicator/no-network1.svg";
 import NoNetwork2 from "assets/icons/network-indicator/no-network2.svg";
@@ -9,7 +10,6 @@ import Saved3 from "assets/icons/network-indicator/saved3.svg";
 import Saving1 from "assets/icons/network-indicator/saving1.svg";
 import Saving2 from "assets/icons/network-indicator/saving2.svg";
 import Saving3 from "assets/icons/network-indicator/saving3.svg";
-import { watchDependencies } from 'helpers/quarky';
 
 const enum NetIcon {
     Saved1,

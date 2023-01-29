@@ -10,7 +10,7 @@ import { Waypoint } from 'types';
 import { useSelectStore } from 'components/pages/selectStore';
 import { fromLonLat } from 'ol/proj';
 import { useMapZoom } from 'helpers/hooks/useMapZoom';
-import { Breakpoint, useBreakpoint } from 'helpers/hooks';
+import { Breakpoint, useBreakpoint } from 'helpers/hooks/DeviceProvider';
 
 interface WaypointMarkersLayerProps {
     waypoints: QuarkArray<Waypoint>;

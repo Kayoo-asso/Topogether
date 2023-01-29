@@ -8,14 +8,13 @@ import { encodeUUID } from "helpers/utils";
 import { TopoPreview } from "components/organisms/TopoPreview";
 import { MapControl } from "components/map/MapControl";
 import { TopoMarkersLayer } from "components/map/markers/TopoMarkersLayer";
-import { usePosition } from "helpers/hooks";
 import { SlideoverMobileWorldmap } from "components/organisms/worldMap/Slideover.mobile.worldmap";
 import { Map } from "ol";
 import { SearchbarToposDesktop } from "components/map/searchbar/SearchbarTopos.desktop";
 import { useToposFilters } from "components/map/filters/useToposFilters";
 import { ToposFiltersDesktop } from "components/map/filters/ToposFilters.desktop";
 import { downloads } from "helpers/downloads/DownloadManager";
-import { HeaderMobile } from "components/layouts/HeaderMobile";
+import { usePosition } from "helpers/hooks/UserPositionProvider";
 
 interface RootWorldMapProps {
 	lightTopos: LightTopo[];

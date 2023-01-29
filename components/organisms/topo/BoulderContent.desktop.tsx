@@ -1,18 +1,17 @@
 import React, { useState } from "react";
-import {
-	BoulderPreviewDesktop,
-	Button,
-} from "components";
 import { watchDependencies } from "helpers/quarky";
 import { UUID } from "types";
-import { LoginForm } from "..";
 import { useSession} from "helpers/services";
-import { useModal } from "helpers/hooks";
+import { TracksList } from "./TracksList";
 
 import Rock from "assets/icons/rock.svg";
 import { SelectedBoulder, useSelectStore } from "components/pages/selectStore";
-import { TracksList } from "./TracksList";
-import { Flash } from "components/atoms/overlays";
+import { useModal } from "helpers/hooks/useModal";
+import { BoulderPreviewDesktop } from "components/molecules/BoulderPreview.desktop";
+import { Button } from "components/atoms/buttons/Button";
+import { Flash } from "components/atoms/overlays/Flash";
+import { LoginForm } from "../user/LoginForm";
+
 
 interface BoulderContentDesktopProps {
 	topoCreatorId: UUID;

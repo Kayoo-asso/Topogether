@@ -9,8 +9,8 @@ import { getPathFromFeature } from "./SectorAreaMarkersLayer";
 import { boulderChanged, sectorChanged } from "helpers/builder";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { boulderMarkerStyle } from "./BoulderMarkersLayer";
-import { useBreakpoint } from "helpers/hooks";
 import { DragEvent } from "components/openlayers/extensions/DragInteraction";
+import { useBreakpoint } from "helpers/hooks/DeviceProvider";
 
 
 interface DragInteractionProps {

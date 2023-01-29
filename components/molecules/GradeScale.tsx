@@ -1,5 +1,5 @@
+import { GradeCircle } from "components/atoms/GradeCircle";
 import React from "react";
-import { GradeCircle } from "components";
 import {
 	Boulder,
 	GradeHistogram,
@@ -74,3 +74,5 @@ export const GradeScale: React.FC<GradeScaleProps> = ({
 		</div>
 	);
 };
+
+GradeScale.displayName = "GradeScale";

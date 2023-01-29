@@ -1,5 +1,5 @@
 import { hasFlag } from "helpers/bitflags";
-import { useBreakpoint } from "helpers/hooks";
+import { useBreakpoint } from "helpers/hooks/DeviceProvider";
 import React from "react";
 import { Bitflag } from "types";
 

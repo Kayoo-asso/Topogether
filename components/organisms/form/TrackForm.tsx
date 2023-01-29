@@ -1,13 +1,16 @@
 import React from "react";
-import { Button, Checkbox, TextArea, TextInput } from "components";
 import { watchDependencies } from "helpers/quarky";
 import { Description, Name, TrackSpec } from "types";
 import { toggleFlag } from "helpers/bitflags";
-import { useModal } from "helpers/hooks";
 import { staticUrl } from "helpers/constants";
 import { deleteTrack } from "helpers/builder";
 import { SelectedBoulder, useSelectStore } from "components/pages/selectStore";
 import { SpecSelector } from "components/molecules/form/SpecSelector";
+import { useModal } from "helpers/hooks/useModal";
+import { TextInput } from "components/molecules/form/TextInput";
+import { Checkbox } from "components/atoms/Checkbox";
+import { TextArea } from "components/molecules/form/TextArea";
+import { Button } from "components/atoms/buttons/Button";
 
 interface TrackFormProps {
 	className?: string,

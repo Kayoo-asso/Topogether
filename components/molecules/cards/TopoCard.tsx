@@ -1,11 +1,12 @@
 import React, { MouseEvent, TouchEvent, useCallback, useRef } from "react";
-import { Card, Image } from "components";
 import { formatDate } from "helpers/utils";
 import equal from "fast-deep-equal/es6";
 import { LightTopo, TopoStatus } from "types";
 import Checked from "assets/icons/checked.svg";
 import Recent from "assets/icons/recent.svg";
 import Edit from "assets/icons/edit.svg";
+import { Card } from "components/atoms/Card";
+import { Image } from "components/atoms/Image";
 
 interface TopoCardProps {
 	topo: LightTopo;

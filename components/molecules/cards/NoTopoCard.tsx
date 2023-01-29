@@ -1,5 +1,5 @@
+import { Card } from "components/atoms/Card";
 import React from "react";
-import { Card } from "components";
 import { TopoStatus } from "types";
 
 interface NoTopoCardProps {

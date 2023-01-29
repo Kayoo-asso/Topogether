@@ -1,14 +1,15 @@
 import React, { useCallback } from "react";
-import { GradeCircle } from "components";
 import { gradeToLightGrade } from "types";
 import { watchDependencies } from "helpers/quarky";
 import { useSession } from "helpers/services";
 import DrawIcon from "assets/icons/draw.svg";
 import { createTrack } from "helpers/builder";
 import { staticUrl } from "helpers/constants";
-import { useBreakpoint, useModal } from "helpers/hooks";
 import { TrackForm } from "../form/TrackForm";
 import { SelectedBoulder, useSelectStore } from "components/pages/selectStore";
+import { useBreakpoint } from "helpers/hooks/DeviceProvider";
+import { useModal } from "helpers/hooks/useModal";
+import { GradeCircle } from "components/atoms/GradeCircle";
 
 interface TracksListBuilderProps {
 	onDrawButtonClick?: () => void;

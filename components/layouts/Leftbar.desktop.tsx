@@ -1,8 +1,8 @@
 import React from "react";
-import { Button } from "components";
 import Link from "next/link";
 import { watchDependencies } from "helpers/quarky";
 import { useSession } from "helpers/services";
+import { Button } from "components/atoms/buttons/Button";
 
 import Track from "assets/icons/track.svg";
 import MarkerIcon from "assets/icons/marker-stroke.svg";

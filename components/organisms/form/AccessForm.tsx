@@ -1,10 +1,13 @@
 import React from "react";
-import { Button, ImageInput, TextArea, TextInput } from "components";
 import { QuarkArray, watchDependencies } from "helpers/quarky";
 import { Description, Difficulty, TopoAccess } from "types";
 import { DifficultyName, selectOptions } from "types/EnumNames";
 import { v4 } from "uuid";
 import { Select } from "components/molecules/form/Select";
+import { Button } from "components/atoms/buttons/Button";
+import { TextInput } from "components/molecules/form/TextInput";
+import { ImageInput } from "components/molecules/form/ImageInput";
+import { TextArea } from "components/molecules/form/TextArea";
 
 interface AccessFormProps {
 	accesses: QuarkArray<TopoAccess>;

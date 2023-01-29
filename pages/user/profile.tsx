@@ -1,9 +1,4 @@
 import { useCallback, useState } from "react";
-import {
-	Button,
-	ImageInput,
-	ProfileForm,
-} from "components";
 import { useAuth } from "helpers/services";
 import { Header } from "components/layouts/Header";
 import { LeftbarDesktop } from "components/layouts/Leftbar.desktop";
@@ -16,6 +11,9 @@ import {
 
 import { ProfileContent } from "components/organisms/user/ProfileContent";
 import { watchDependencies } from "helpers/quarky";
+import { ImageInput } from "components/molecules/form/ImageInput";
+import { Button } from "components/atoms/buttons/Button";
+import { ProfileForm } from "components/organisms/user/ProfileForm";
 
 const ProfilePage = withRouting({
 	async getInitialProps(ctx) {

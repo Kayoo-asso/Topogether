@@ -1,10 +1,11 @@
 import React from "react";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { Boulder, Grade, Track } from "types";
-import ArrowSimple from "assets/icons/arrow-simple.svg";
-import CrossDelete from "assets/icons/clear.svg";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from '@dnd-kit/utilities';
+
+import ArrowSimple from "assets/icons/arrow-simple.svg";
+import CrossDelete from "assets/icons/clear.svg";
 
 interface BoulderItemLeftbarProps {
 	boulder: Quark<Boulder>;

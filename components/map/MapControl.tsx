@@ -2,12 +2,9 @@ import React, { useCallback, useEffect, useState } from "react";
 import { Map as BaseMap, View, TileLayer, XYZ } from "components/openlayers";
 import Map from "ol/Map";
 import { fromLonLat } from "ol/proj";
-import { SatelliteButton } from "components";
-import { ImageInput } from "components/molecules";
 import { GeoCoordinates, Position, Topo } from "types";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { setReactRef } from "helpers/utils";
-import { useBreakpoint, usePosition } from "helpers/hooks";
 import { useSelectStore } from "components/pages/selectStore";
 import { handleNewPhoto } from "helpers/handleNewPhoto";
 import { useSession } from "helpers/services";
@@ -28,6 +25,10 @@ import { CenterButton } from "./CenterButton";
 import { useRouter } from "next/router";
 import { SearchButton } from "./searchbar/SearchButton";
 import { FilterButton } from "./filters/FilterButton";
+import { useBreakpoint } from "helpers/hooks/DeviceProvider";
+import { usePosition } from "helpers/hooks/UserPositionProvider";
+import { SatelliteButton } from "components/atoms/buttons/SatelliteButton";
+import { ImageInput } from "components/molecules/form/ImageInput";
 
 type MapControlProps = React.PropsWithChildren<
 	Props & {

@@ -1,7 +1,7 @@
-import { Button } from 'components/atoms';
+import { Button } from 'components/atoms/buttons/Button';
 import { SelectList } from 'components/molecules/form/SelectList';
 import { staticUrl } from 'helpers/constants';
-import { useModal } from 'helpers/hooks';
+import { useModal } from 'helpers/hooks/useModal';
 import React, { useState } from 'react';
 import { Contributor, ContributorRole } from 'types';
 
@@ -36,7 +36,7 @@ export const ContributorModifyForm: React.FC<ContributorModifyFormProps> = (prop
                 }}
             />
 
-            <Button 
+            <Button
                 content="Valider"
                 onClick={showModalModify}
             />

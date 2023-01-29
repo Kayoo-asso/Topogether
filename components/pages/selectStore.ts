@@ -1,4 +1,4 @@
-import { Breakpoint } from "helpers/hooks";
+import { Breakpoint } from "helpers/hooks/DeviceProvider";
 import { Quark } from "helpers/quarky"
 import { Boulder, Parking, Sector, Track, Waypoint, Img, MapToolEnum } from "types"
 import create from 'zustand'

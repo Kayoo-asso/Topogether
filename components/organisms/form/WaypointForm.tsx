@@ -1,10 +1,14 @@
 import React, { useCallback } from "react";
-import { Button, ImageInput, TextArea, TextInput } from "components";
 import { QuarkArray, watchDependencies } from "helpers/quarky";
 import { Description, Name, Waypoint } from "types";
-import { useBreakpoint, useModal } from "helpers/hooks";
 import { staticUrl } from "helpers/constants";
 import { SelectedWaypoint, useSelectStore } from "components/pages/selectStore";
+import { useBreakpoint } from "helpers/hooks/DeviceProvider";
+import { useModal } from "helpers/hooks/useModal";
+import { ImageInput } from "components/molecules/form/ImageInput";
+import { TextInput } from "components/molecules/form/TextInput";
+import { TextArea } from "components/molecules/form/TextArea";
+import { Button } from "components/atoms/buttons/Button";
 
 interface WaypointFormProps {
 	waypoints: QuarkArray<Waypoint>;

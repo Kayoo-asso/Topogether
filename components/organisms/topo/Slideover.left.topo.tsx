@@ -1,8 +1,6 @@
 import React from "react";
 import { Quark } from "helpers/quarky";
 import { Topo, UUID } from "types";
-import { useBreakpoint } from "helpers/hooks";
-import { SlideoverLeftDesktop, SlideoverMobile } from "components/atoms/overlays";
 import { useSelectStore } from "components/pages/selectStore";
 import { InfoContent } from "./InfoContent";
 import { AccessContent } from "./AccessContent";
@@ -11,6 +9,9 @@ import { Map } from "ol";
 import { SearchbarBouldersMobile } from "components/map/searchbar/SearchbarBoulders.mobile";
 import { BouldersFiltersComponents } from "components/map/filters/useBouldersFilters";
 import { BouldersFiltersMobile } from "components/map/filters/BouldersFilters.mobile";
+import { useBreakpoint } from "helpers/hooks/DeviceProvider";
+import { SlideoverMobile } from "components/atoms/overlays/SlideoverMobile";
+import { SlideoverLeftDesktop } from "components/atoms/overlays/SlideoverLeftDesktop";
 
 type SlideoverLeftTopoProps = {
     topo: Quark<Topo>;

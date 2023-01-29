@@ -1,9 +1,9 @@
 import React from "react";
-import { RoundButton } from "components";
-import { useBreakpoint } from "helpers/hooks";
 import { useSelectStore } from "components/pages/selectStore";
 
 import FilterIcon from "assets/icons/filter.svg";
+import { useBreakpoint } from "helpers/hooks/DeviceProvider";
+import { RoundButton } from "components/atoms/buttons/RoundButton";
 
 export const FilterButton: React.FC = () => {
 	const bp = useBreakpoint();

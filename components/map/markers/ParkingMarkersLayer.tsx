@@ -10,8 +10,8 @@ import { Parking } from 'types';
 import { useSelectStore } from 'components/pages/selectStore';
 import { fromLonLat } from 'ol/proj';
 import { useMapZoom } from 'helpers/hooks/useMapZoom';
-import { Breakpoint, useBreakpoint } from 'helpers/hooks';
 import { disappearZoom } from './WaypointMarkersLayer';
+import { Breakpoint, useBreakpoint } from 'helpers/hooks/DeviceProvider';
 
 interface ParkingMarkersLayerProps {
     parkings: QuarkArray<Parking>;

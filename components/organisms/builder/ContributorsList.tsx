@@ -1,11 +1,11 @@
-import React, { useCallback, useState } from "react";
+import React, { useState } from "react";
 import { QuarkArray, watchDependencies } from "helpers/quarky";
 import { Contributor, ContributorRole, UUID } from "types";
+import { ContributorAddForm } from "../form/ContributorAddForm";
+import { ContributorModifyForm } from "../form/ContributorModifyForm";
 
 import UserInfoIcon from "assets/icons/user-info.svg";
 import AddIcon from "assets/icons/add.svg";
-import { ContributorAddForm } from "../form/ContributorAddForm";
-import { ContributorModifyForm } from "../form/ContributorModifyForm";
 
 interface ContributorsListProps {
 	contributors: QuarkArray<Contributor>;

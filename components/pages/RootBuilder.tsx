@@ -20,11 +20,6 @@ import {
 	createWaypoint,
 } from "helpers/builder";
 import { staticUrl } from "helpers/constants";
-import {
-	useBreakpoint,
-	useLoader,
-	useModal,
-} from "helpers/hooks";
 import { sortBoulders, computeBuilderProgress } from "helpers/topo";
 import { encodeUUID } from "helpers/utils";
 import {
@@ -39,8 +34,6 @@ import { BuilderModalDelete } from "components/organisms/builder/BuilderModalDel
 import { InteractItem, useSelectStore } from "./selectStore";
 import { SyncUrl } from "components/organisms/SyncUrl";
 import { KeyboardShortcut } from "components/organisms/builder/KeyboardShortcuts";
-import { DropdownOption } from "components/molecules";
-import { Flash } from "components/atoms/overlays";
 import { NetworkIndicator } from "components/atoms/NetworkIndicator";
 import { MapControl } from "components/map/MapControl";
 import { Map, MapBrowserEvent } from "ol";
@@ -55,6 +48,11 @@ import { DragInteraction } from "components/map/markers/DragInteraction";
 import { SearchbarBouldersDesktop } from "components/map/searchbar/SearchbarBoulders.desktop";
 import { useBouldersFilters } from "components/map/filters/useBouldersFilters";
 import { BouldersFiltersDesktop } from "components/map/filters/BouldersFilters.desktop";
+import { useBreakpoint } from "helpers/hooks/DeviceProvider";
+import { useLoader } from "helpers/hooks/useLoader";
+import { useModal } from "helpers/hooks/useModal";
+import { DropdownOption } from "components/molecules/form/Dropdown";
+import { Flash } from "components/atoms/overlays/Flash";
 
 interface RootBuilderProps {
 	topoQuark: Quark<Topo>;

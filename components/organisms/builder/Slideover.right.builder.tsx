@@ -1,14 +1,16 @@
 import React, { useCallback, useState } from "react";
-import { ParkingForm, WaypointForm } from "../form";
 import { Quark } from "helpers/quarky";
 import { Topo } from "types";
-import { useBreakpoint } from "helpers/hooks";
 import { BoulderBuilderContentMobile } from "./BoulderBuilderContent.mobile";
 import { BoulderBuilderContentDesktop } from "./BoulderBuilderContent.desktop";
-import { SlideoverMobile, SlideoverRightDesktop } from "components/atoms/overlays";
 import { BuilderTrackSlideoverDesktop } from "./BuilderTrackSlideover.desktop";
 import { Drawer } from "../Drawer";
 import { useSelectStore } from "components/pages/selectStore";
+import { useBreakpoint } from "helpers/hooks/DeviceProvider";
+import { ParkingForm } from "../form/ParkingForm";
+import { WaypointForm } from "../form/WaypointForm";
+import { SlideoverMobile } from "components/atoms/overlays/SlideoverMobile";
+import { SlideoverRightDesktop } from "components/atoms/overlays/SlideoverRightDesktop";
 
 type SlideoverRightBuilderProps = {
 	topo: Quark<Topo>;

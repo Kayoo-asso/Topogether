@@ -5,12 +5,13 @@ import Head from "next/head";
 import { supabaseClient } from "helpers/services";
 import { AuthProvider } from "components/AuthProvider";
 import { ShellMobile } from "components/layouts/ShellMobile";
-import { DeviceManager, UserPositionProvider } from "helpers/hooks";
 import { initSupabaseSession, getUserInitialProps } from "helpers/serverStuff";
 import { User } from "types";
 import { NavigationLoader } from "components/layouts/NavigationLoader";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Initializers } from "helpers/services/Initializers";
+import { DeviceManager } from "helpers/hooks/DeviceProvider";
+import { UserPositionProvider } from "helpers/hooks/UserPositionProvider";
 
 type CustomProps = {
 	session: User | null;

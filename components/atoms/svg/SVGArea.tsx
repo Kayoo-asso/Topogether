@@ -1,9 +1,9 @@
 import React from "react";
-import { defaultTracksWeight } from "components/molecules";
 import { LinearRing, Position } from "types";
-import { DraggablePolyline } from ".";
 import { pointsToPolylineStr } from "helpers/svg";
 import { SVGPoint } from "./SVGPoint";
+import { defaultTracksWeight } from "components/molecules/TracksImage";
+import { DraggablePolyline } from "./DraggablePolyline";
 
 interface SVGAreaProps {
 	// a LinearRing delineates the contour of a Polygon

@@ -1,12 +1,13 @@
 import React, { useCallback, useMemo } from "react";
-import { AverageNote, GradeCircle } from "components";
 import { gradeToLightGrade, UUID } from "types";
 import { watchDependencies } from "helpers/quarky";
 import { listFlags } from "helpers/bitflags";
 import { OrientationName, ReceptionName } from "types/EnumNames";
-import { useBreakpoint } from "helpers/hooks";
 import { SelectedBoulder, useSelectStore } from "components/pages/selectStore";
 import { TrackSpecName } from "types/BitflagNames";
+import { useBreakpoint } from "helpers/hooks/DeviceProvider";
+import { GradeCircle } from "components/atoms/GradeCircle";
+import { AverageNote } from "components/atoms/AverageNote";
 
 const gradeColors = {
 	3: "text-grade-3",

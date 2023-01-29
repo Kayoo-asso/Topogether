@@ -4,7 +4,7 @@ import { LightTopo, UUID } from "types";
 import Topo from "assets/icons/topo.svg";
 import Marker from "assets/icons/marker.svg";
 import Check from "assets/icons/checked.svg";
-import { LikeButton } from "components/atoms";
+import { LikeButton } from "components/atoms/buttons/LikeButton";
 
 interface TopoListProps {
     topos: LightTopo[];

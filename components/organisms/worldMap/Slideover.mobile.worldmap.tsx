@@ -1,12 +1,11 @@
 import React from "react";
-import { LightTopo } from "types";
-import { useBreakpoint } from "helpers/hooks";
-import { SlideoverMobile } from "components/atoms/overlays";
 import { useSelectStore } from "components/pages/selectStore";
 import { Map } from "ol";
 import { SearchbarToposMobile } from "components/map/searchbar/SearchbarTopos.mobile";
 import { ToposFiltersMobile } from "components/map/filters/ToposFilters.mobile";
 import { TopoFiltersComponents } from "components/map/filters/useToposFilters";
+import { useBreakpoint } from "helpers/hooks/DeviceProvider";
+import { SlideoverMobile } from "components/atoms/overlays/SlideoverMobile";
 
 type SlideoverMobileWorldmapProps = {
 	map: Map | null;

@@ -1,9 +1,9 @@
-import { Portal } from "helpers/hooks";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { LoaderContext } from "helpers/hooks/useLoader";
 
 import Spinner from "assets/icons/spinner.svg";
+import { Portal } from "helpers/hooks/useModal";
 
 export function NavigationLoader({ children }: React.PropsWithChildren<{}>) {
 	const router = useRouter();

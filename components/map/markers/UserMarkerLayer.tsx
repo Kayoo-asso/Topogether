@@ -8,10 +8,10 @@ import {
 	useMap,
 } from "components/openlayers";
 import { Fill, Stroke, Style, Circle as CircleStyle } from "ol/style";
-import { usePosition } from "helpers/hooks";
 import { GeoCoordinates } from "types";
 import { fromLonLat } from "ol/proj";
 import { SelectEvent } from "ol/interaction/Select";
+import { usePosition } from "helpers/hooks/UserPositionProvider";
 
 interface UserMarkerLayerProps {
 	onClick?: (pos: GeoCoordinates | null) => void;

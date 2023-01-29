@@ -1,9 +1,4 @@
 import React, { useState } from "react";
-import {
-	LikeButton,
-	Show,
-	ImageSlider,
-} from "components";
 import { UUID } from "types";
 import { watchDependencies } from "helpers/quarky";
 import { Image } from "components/atoms/Image";
@@ -13,6 +8,9 @@ import { useSession } from "helpers/services";
 import { GradeScale } from "components/molecules/GradeScale";
 
 import ManyTracks from "assets/icons/many-tracks.svg";
+import { ImageSlider } from "components/molecules/ImageSlider";
+import { LikeButton } from "components/atoms/buttons/LikeButton";
+import { Show } from "components/atoms/utils";
 
 interface BoulderContentMobileProps {
 	full: boolean,

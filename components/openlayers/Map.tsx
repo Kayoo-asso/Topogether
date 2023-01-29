@@ -1,5 +1,5 @@
 import { MapContext } from "./contexts";
-import OLMap, { MapOptions } from "ol/Map";
+import OLMap from "ol/Map";
 import { createLifecycle, InferOptions } from "./createLifecycle";
 import { forwardRef } from "react";
 

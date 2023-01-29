@@ -1,7 +1,8 @@
-import { Checkbox } from "components/atoms"
-import { GradeSliderInput, SliderInput } from "components/molecules"
+import { Checkbox } from "components/atoms/Checkbox";
+import { GradeSliderInput } from "components/molecules/form/GradeSliderInput";
+import { SliderInput } from "components/molecules/form/SliderInput";
 import { SpecSelector } from "components/molecules/form/SpecSelector";
-import { hasSomeFlags, toggleFlag } from "helpers/bitflags";
+import { hasSomeFlags } from "helpers/bitflags";
 import { Quark, useCreateDerivation } from "helpers/quarky";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Boulder, LightGrade, Topo, TrackDanger, TrackSpec, gradeToLightGrade } from "types";
@@ -88,7 +89,7 @@ export function useBouldersFilters (topo: Topo): [
                 for (const track of boulder.tracks) {
                     hasSpec =
                     hasSpec || hasSomeFlags(track.spec, filters.spec);
-                    const lightGrade = gradeToLightGrade(track.grade);
+                    const lightGrade = gradeToLightGrade(track.grade) as number;
                     hasGrade =
                         hasGrade || (lightGrade >= minGrade && lightGrade <= maxGrade);
                 }

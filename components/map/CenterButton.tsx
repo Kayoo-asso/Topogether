@@ -1,13 +1,13 @@
-import { RoundButton } from "components/atoms";
 import CenterIcon from "assets/icons/center.svg";
 import { fromLonLat } from "ol/proj";
-import { usePosition } from "helpers/hooks";
 import { Map } from "ol";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { Topo } from "types";
 import { DEFAULT_EXTENT_BUFFER, getTopoExtent } from "helpers/map/getTopoExtent";
 import { Extent, containsCoordinate } from "ol/extent";
 import { Coordinate } from "ol/coordinate";
+import { usePosition } from "helpers/hooks/UserPositionProvider";
+import { RoundButton } from "components/atoms/buttons/RoundButton";
 
 interface CenterButtonProps {
     map: Map | null;

@@ -5,7 +5,7 @@ import Clear from "assets/icons/clear.svg";
 import Checked from "assets/icons/checked.svg";
 import { Rule, validateRule, rulesText } from "helpers/topo";
 import { useSelectStore } from "components/pages/selectStore";
-import { useBreakpoint } from "helpers/hooks";
+import { useBreakpoint } from "helpers/hooks/DeviceProvider";
 
 interface BuilderProgressIndicatorProps {
 	topo: Topo;

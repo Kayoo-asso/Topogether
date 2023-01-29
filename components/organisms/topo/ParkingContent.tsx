@@ -1,12 +1,11 @@
 import React, { useState } from "react";
-import {
-	ParkingButton,
-} from "components";
-import { Flash, ParkingModal } from "components/atoms/overlays";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { Parking } from "types";
 import { Image } from "components/atoms/Image";
 import { useSelectStore } from "components/pages/selectStore";
+import { ParkingButton } from "components/atoms/buttons/ParkingButton";
+import { Flash } from "components/atoms/overlays/Flash";
+import { ParkingModal } from "components/atoms/overlays/ParkingModal";
 
 import ParkingIcon from "assets/icons/parking.svg";
 

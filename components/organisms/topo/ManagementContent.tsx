@@ -3,7 +3,7 @@ import { QuarkArray } from "helpers/quarky";
 import { Manager } from "types";
 import { Image } from "components/atoms/Image";
 import { TabOption, Tabs } from "components/layouts/Tabs";
-import { Flash } from "components/atoms/overlays";
+import { Flash } from "components/atoms/overlays/Flash";
 
 interface ManagementContentProps {
 	managers: QuarkArray<Manager>;

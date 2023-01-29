@@ -6,15 +6,16 @@ import {
 	Position,
 	Track,
 } from "types";
-import { Toolbar, TracksImage } from "components";
 import {
 	QuarkIter,
 	watchDependencies,
 } from "helpers/quarky";
 import { v4 } from "uuid";
 import { staticUrl } from "helpers/constants";
-import { useModal, Portal } from "helpers/hooks";
 import { SelectedBoulder, useSelectStore } from "components/pages/selectStore";
+import { Portal, useModal } from "helpers/hooks/useModal";
+import { TracksImage } from "components/molecules/TracksImage";
+import { Toolbar } from "components/molecules/drawer/Toolbar";
 
 interface DrawerProps {
 	onValidate?: () => void;

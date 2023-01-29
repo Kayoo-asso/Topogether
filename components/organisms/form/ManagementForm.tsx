@@ -1,9 +1,11 @@
 import React, { useCallback } from "react";
-import { ImageInput, TextArea, TextInput } from "components";
 import { QuarkArray, watchDependencies } from "helpers/quarky";
 import { Description, Email, Manager, Name } from "types";
-import { Button } from "components/atoms";
 import { v4 } from "uuid";
+import { Button } from "components/atoms/buttons/Button";
+import { ImageInput } from "components/molecules/form/ImageInput";
+import { TextInput } from "components/molecules/form/TextInput";
+import { TextArea } from "components/molecules/form/TextArea";
 
 interface ManagementFormProps {
 	managers: QuarkArray<Manager>

@@ -1,9 +1,9 @@
 import React from "react";
 import { useSelectStore } from "components/pages/selectStore";
-import { useBreakpoint } from "helpers/hooks";
 import { TopoFiltersComponents } from "./useToposFilters";
 
 import FilterIcon from "assets/icons/filter.svg";
+import { useBreakpoint } from "helpers/hooks/DeviceProvider";
 
 interface ToposFiltersDesktopProps {
     Filters: TopoFiltersComponents;

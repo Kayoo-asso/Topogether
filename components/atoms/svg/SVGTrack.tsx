@@ -8,8 +8,10 @@ import {
 	Track,
 	UUID,
 } from "types";
-import { SVGArea, SVGLine, SVGPoint } from ".";
-import { useBreakpoint } from "helpers/hooks";
+import { useBreakpoint } from "helpers/hooks/DeviceProvider";
+import { SVGLine } from "./SVGLine";
+import { SVGPoint } from "./SVGPoint";
+import { SVGArea } from "./SVGArea";
 
 interface SVGTrackProps {
 	track: Quark<Track>;

@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
 import type { NextPage } from "next";
-import { Button, TextInput } from "components";
 import Link from "next/link";
 import NextImage from "next/image";
 import { SignUpRes, useAuth } from "helpers/services";
@@ -8,6 +7,8 @@ import { Email, isEmail, isName, Name } from "types";
 import { useRouter } from "next/router";
 import { Header } from "components/layouts/Header";
 import { staticUrl } from "helpers/constants";
+import { TextInput } from "components/molecules/form/TextInput";
+import { Button } from "components/atoms/buttons/Button";
 
 const SignupPage: NextPage = () => {
 	const router = useRouter();

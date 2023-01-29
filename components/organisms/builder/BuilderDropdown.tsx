@@ -1,11 +1,11 @@
-import { Dropdown, DropdownOption } from 'components/molecules';
-import { InteractItem, SelectedNone, useSelectStore } from 'components/pages/selectStore';
+import { InteractItem, useSelectStore } from 'components/pages/selectStore';
 import { createTrack } from 'helpers/builder';
 import { Quark, watchDependencies } from 'helpers/quarky';
 import { useSession } from 'helpers/services';
 import React, { Dispatch, SetStateAction, useCallback, useEffect, useState } from 'react';
 import { Boulder, Sector } from 'types';
 import { ModalRenameSector } from './ModalRenameSector';
+import { Dropdown, DropdownOption } from 'components/molecules/form/Dropdown';
 
 interface BuilderDropdownProps {
     position?: { x: number; y: number };

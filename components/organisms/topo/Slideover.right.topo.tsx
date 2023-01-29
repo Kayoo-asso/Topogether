@@ -1,15 +1,16 @@
 import React, { useCallback, useState } from "react";
 import { Quark, QuarkIter } from "helpers/quarky";
 import { Topo } from "types";
-import { useBreakpoint } from "helpers/hooks";
-import { SlideoverMobile, SlideoverRightDesktop } from "components/atoms/overlays";
 import { useSelectStore } from "components/pages/selectStore";
 import { ParkingContent } from "./ParkingContent";
 import { WaypointContent } from "./WaypointContent";
 import { BoulderContentMobile } from "./BoulderContent.mobile";
 import { BoulderContentDesktop } from "./BoulderContent.desktop";
 import { TopoTrackSlideoverDesktop } from "./TopoTrackSlideover.desktop";
-import { TracksImage } from "components/molecules";
+import { useBreakpoint } from "helpers/hooks/DeviceProvider";
+import { SlideoverMobile } from "components/atoms/overlays/SlideoverMobile";
+import { SlideoverRightDesktop } from "components/atoms/overlays/SlideoverRightDesktop";
+import { TracksImage } from "components/molecules/TracksImage";
 
 type SlideoverRightTopoProps = {
 	topo: Quark<Topo>;

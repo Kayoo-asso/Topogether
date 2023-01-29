@@ -1,17 +1,15 @@
 import React, { useState } from "react";
-import {
-	DownloadButton,
-	GradeHistogram,
-	LikeButton,
-} from "components";
 import { Signal } from "helpers/quarky";
 import { Amenities, Topo as TopoType } from "types";
 import { hasFlag, listFlags } from "helpers/bitflags";
 import { TopoTypeToColor } from "helpers/topo";
-import { Flash } from "components/atoms/overlays";
 import { RockNames } from "types/BitflagNames";
 import { useSession } from "helpers/services";
 import { ShareButton } from "components/atoms/buttons/ShareButton";
+import { LikeButton } from "components/atoms/buttons/LikeButton";
+import { DownloadButton } from "components/atoms/buttons/DownloadButton";
+import { GradeHistogram } from "components/molecules/GradeHistogram";
+import { Flash } from "components/atoms/overlays/Flash";
 
 import Topo from "assets/icons/topo.svg";
 import Rock from "assets/icons/rock.svg";
@@ -21,7 +19,6 @@ import Picnic from "assets/icons/picnic.svg";
 import WaterDrop from "assets/icons/water-drop.svg";
 import Bin from "assets/icons/bin.svg";
 import Umbrella from "assets/icons/umbrella.svg";
-
 
 interface InfoContentProps {
 	topo: Signal<TopoType>;

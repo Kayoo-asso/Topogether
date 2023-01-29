@@ -1,8 +1,9 @@
 import React from "react";
 import { Img, Track, UUID } from "types";
 // eslint-disable-next-line import/no-cycle
-import { DeleteButton, TracksImage } from "components";
 import { Quark, QuarkIter, watchDependencies } from "helpers/quarky";
+import { DeleteButton } from "./buttons/DeleteButton";
+import { TracksImage } from "components/molecules/TracksImage";
 
 interface ImageThumbProps {
 	image: Img;

@@ -1,6 +1,6 @@
 import OLDraw from "ol/interaction/Draw";
 import VectorSource from "ol/source/Vector";
-import { forwardRef, useEffect } from "react";
+import { forwardRef } from "react";
 import { useMap } from "../contexts";
 import { createLifecycle, InferOptions } from "../createLifecycle";
 import { useGetSources } from "../utils";

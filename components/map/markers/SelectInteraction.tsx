@@ -1,7 +1,6 @@
 import { Select } from "components/openlayers";
 import { removePreviouslySelected } from "components/openlayers/interactions/Select";
 import { useSelectStore } from "components/pages/selectStore";
-import { useBreakpoint } from "helpers/hooks";
 import { singleClick } from "ol/events/condition";
 import { useCallback } from "react";
 import { boulderMarkerStyle } from "./BoulderMarkersLayer";
@@ -13,6 +12,7 @@ import { useMapZoom } from "helpers/hooks/useMapZoom";
 import { disappearZoom, waypointMarkerStyle } from "./WaypointMarkersLayer";
 import { sectorMarkerStyle } from "./SectorAreaMarkersLayer";
 import { watchDependencies } from "helpers/quarky";
+import { useBreakpoint } from "helpers/hooks/DeviceProvider";
 
 interface SelectInteractionProps {
     boulderOrder: Map<UUID, number>;

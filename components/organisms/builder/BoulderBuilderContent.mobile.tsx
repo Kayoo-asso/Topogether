@@ -1,18 +1,19 @@
 import React, { useCallback, useState } from "react";
-import { ImageSlider } from "components";
 import { Topo } from "types";
 import { Quark, watchDependencies } from "helpers/quarky";
-import { BoulderForm } from "..";
 import { Image } from "components/atoms/Image";
-import { ImageInput } from "components/molecules";
-import { Button } from "components/atoms";
-import { useBreakpoint, useModal } from "helpers/hooks";
 import { staticUrl } from "helpers/constants";
 import { deleteBoulder } from "helpers/builder";
 import { TracksListBuilder } from "./TracksListBuilder";
 import { Drawer } from "../Drawer";
 import { SelectedBoulder, useSelectStore } from "components/pages/selectStore";
 import { GradeScale } from "components/molecules/GradeScale";
+import { useBreakpoint } from "helpers/hooks/DeviceProvider";
+import { ImageSlider } from "components/molecules/ImageSlider";
+import { useModal } from "helpers/hooks/useModal";
+import { ImageInput } from "components/molecules/form/ImageInput";
+import { BoulderForm } from "../form/BoulderForm";
+import { Button } from "components/atoms/buttons/Button";
 
 interface BoulderBuilderContentMobileProps {
 	full: boolean,

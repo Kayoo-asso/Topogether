@@ -6,11 +6,11 @@ import { LeftbarDesktop } from "components/layouts/Leftbar.desktop";
 import { MyTopos } from "components/organisms/dashboard/MyTopos";
 import { TabsFly } from "components/layouts/TabsFly";
 import { DlTopos } from "components/organisms/dashboard/dl/DlTopos";
+import { LikedTopos } from "components/organisms/dashboard/liked/LikedTopos";
 
 import UserTopoIcon from "assets/icons/user-topo.svg";
 import Heart from "assets/icons/heart.svg";
 import Download from "assets/icons/download.svg";
-import { LikedTopos } from "components/organisms/dashboard/liked/LikedTopos";
 
 interface RootDashboardProps {
 	myTopos: LightTopo[];

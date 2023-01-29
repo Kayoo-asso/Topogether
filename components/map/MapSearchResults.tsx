@@ -2,11 +2,11 @@ import Link from "next/link";
 import React from "react";
 import { encodeUUID } from "helpers/utils";
 import type { Boulder, LightTopo } from "types";
+import { GeocodingFeature } from "helpers/map/geocodingMapbox";
 
 import Rock from "assets/icons/rock.svg";
 import Flag from "assets/icons/flag.svg";
 import MarkerIcon from "assets/icons/marker.svg";
-import { GeocodingFeature } from "helpers/map/geocodingMapbox";
 
 interface MapSearchResultsProps {
 	topoApiResults: LightTopo[];

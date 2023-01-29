@@ -1,10 +1,10 @@
 import React, { useCallback } from "react";
 import type { NextPage } from "next";
-import { LoginForm } from "components";
 import { useRouter } from "next/router";
 import { AuthService, supabaseClient, useAuth } from "helpers/services";
 import { useQuarkyEffect } from "helpers/quarky";
 import { Header } from "components/layouts/Header";
+import { LoginForm } from "components/organisms/user/LoginForm";
 
 async function ifLoggedIn(auth: AuthService, redirect: () => Promise<void>) {
 	// TODO: Add indicator

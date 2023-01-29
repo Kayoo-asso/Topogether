@@ -1,8 +1,6 @@
 import React from "react";
 import { BouldersFiltersComponents } from "./useBouldersFilters";
 
-import FilterIcon from "assets/icons/filter.svg";
-
 interface BouldersFiltersMobileProps {
     Filters: BouldersFiltersComponents;
     onResetClick: () => void,

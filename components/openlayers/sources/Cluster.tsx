@@ -1,6 +1,6 @@
 import { InferOptions, createLifecycle } from "../createLifecycle";
-import { forwardRef, useEffect, useState } from "react";
-import { useLayer, useMap, useSource } from "../contexts";
+import { forwardRef, useEffect } from "react";
+import { useLayer, useMap } from "../contexts";
 import VectorSource from "ol/source/Vector";
 import { useGetSources } from "../utils";
 import { vectorSourceEvents, e } from "../events";

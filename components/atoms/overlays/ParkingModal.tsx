@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { GeoCoordinates } from "types";
-import { Flash } from ".";
 import { launchNavigation } from "helpers/map/mapUtils";
-import { Portal, useBreakpoint, useDevice, usePosition } from "helpers/hooks";
+import { useBreakpoint, useDevice } from "helpers/hooks/DeviceProvider";
+import { usePosition } from "helpers/hooks/UserPositionProvider";
+import { Portal } from "helpers/hooks/useModal";
+import { Flash } from "./Flash";
 
 interface ParkingModalProps {
 	open: boolean;

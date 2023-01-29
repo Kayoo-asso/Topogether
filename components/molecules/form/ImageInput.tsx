@@ -1,11 +1,13 @@
 import { useRef, useState, forwardRef, useEffect, useCallback } from "react";
 // eslint-disable-next-line import/no-cycle
-import { ImageButton, ProfilePicture, RoundButton } from "../../atoms";
 import { api, ImageUploadErrorReason } from "helpers/services";
 import { Img } from "types";
 import { setReactRef } from "helpers/utils";
 import Spinner from "assets/icons/spinner.svg";
 import Camera from "assets/icons/camera.svg";
+import { ProfilePicture } from "components/atoms/ProfilePicture";
+import { RoundButton } from "components/atoms/buttons/RoundButton";
+import { ImageButton } from "components/atoms/buttons/ImageButton";
 
 interface ImageInputProps {
 	label?: string;

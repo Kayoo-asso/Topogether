@@ -1,7 +1,8 @@
 import { LightTopo } from "types";
-import { DownloadButton, LikeButton } from "components/atoms";
 import { ShareButton } from "components/atoms/buttons/ShareButton";
 import { CloseButton } from "components/atoms/buttons/CloseButton";
+import { LikeButton } from "components/atoms/buttons/LikeButton";
+import { DownloadButton } from "components/atoms/buttons/DownloadButton";
 
 interface TopoPreviewBoutonsProps {
     topo: LightTopo;

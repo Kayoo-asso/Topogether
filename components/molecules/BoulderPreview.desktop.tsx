@@ -5,12 +5,13 @@ import React, {
 } from "react";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { Track, UUID } from "types";
-import { MultipleImageInput, TracksImage } from ".";
 import { deleteTrack } from "helpers/builder";
 import { staticUrl } from "helpers/constants";
 import { useModal } from "helpers/hooks/useModal";
 import { setReactRef } from "helpers/utils";
 import { SelectedBoulder, useSelectStore } from "components/pages/selectStore";
+import { TracksImage } from "./TracksImage";
+import { MultipleImageInput } from "./form/MultipleImageInput";
 
 interface BoulderPreviewDesktopProps {
 	displayAddButton?: boolean;

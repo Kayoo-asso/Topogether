@@ -1,20 +1,20 @@
 import React, { useState } from "react";
-import {
-	Button,
-	GradeHistogram,
-	ParkingButton,
-} from "components";
 import { BaseColor, LightTopo, TopoStatus } from "types";
 import { formatDate } from "helpers/utils";
 import { Image } from "components/atoms/Image";
 import Link from "next/link";
 import { TopoTypeToColor } from "helpers/topo";
-import { ModalBG, ParkingModal, SlideoverRightDesktop } from "components/atoms/overlays";
 import { TopoPreviewBoutons } from "./TopoPreviewBoutons";
 
 import Rock from "assets/icons/rock.svg";
 import ManyTracks from "assets/icons/many-tracks.svg";
 import Topo from "assets/icons/topo.svg";
+import { GradeHistogram } from "components/molecules/GradeHistogram";
+import { Button } from "components/atoms/buttons/Button";
+import { ParkingButton } from "components/atoms/buttons/ParkingButton";
+import { ModalBG } from "components/atoms/overlays/ModalBG";
+import { SlideoverRightDesktop } from "components/atoms/overlays/SlideoverRightDesktop";
+import { ParkingModal } from "components/atoms/overlays/ParkingModal";
 
 type TopoPreviewButton = {
 	content: string;

@@ -2,15 +2,15 @@ import React, { useCallback, useState } from "react";
 import { LightTopo, UUID } from "types";
 import { watchDependencies } from "helpers/quarky";
 import { staticUrl } from "helpers/constants";
-import { useModal } from "helpers/hooks";
 import { TopoPreview } from "../../TopoPreview";
 import { encodeUUID } from "helpers/utils";
 import { downloads } from "helpers/downloads/DownloadManager";
 import { TopoList } from "components/molecules/TopoList";
 import { DlHeader } from "./DlHeader";
-import { Button } from "components/atoms";
 
 import Download from "assets/icons/download.svg";
+import { useModal } from "helpers/hooks/useModal";
+import { Button } from "components/atoms/buttons/Button";
 
 interface DlToposProps {
 	dlTopos: LightTopo[];

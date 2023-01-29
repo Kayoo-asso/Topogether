@@ -1,10 +1,14 @@
 import React, { useCallback, useState } from "react";
-import { Checkbox, ImageInput, Show, TextArea, TextInput } from "components";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { Amenities, Description, Name, RockTypes, Topo } from "types";
 import { toggleFlag, hasFlag } from "helpers/bitflags";
 import { RockNames } from "types/BitflagNames";
 import { MultipleSelect } from "components/molecules/form/MultipleSelect";
+import { ImageInput } from "components/molecules/form/ImageInput";
+import { TextInput } from "components/molecules/form/TextInput";
+import { TextArea } from "components/molecules/form/TextArea";
+import { Checkbox } from "components/atoms/Checkbox";
+import { Show } from "components/atoms/utils";
 
 interface InfoFormProps {
 	topo: Quark<Topo>;

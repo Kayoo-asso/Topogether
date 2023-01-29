@@ -1,17 +1,16 @@
 import React, { useCallback, useRef } from "react";
-import {
-	BoulderPreviewDesktop,
-	BoulderForm,
-	Button,
-} from "components";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { Topo } from "types";
 import { setReactRef } from "helpers/utils";
-import { useBreakpoint, useModal } from "helpers/hooks";
 import { staticUrl } from "helpers/constants";
 import { deleteBoulder } from "helpers/builder";
 import { TracksListBuilder } from "./TracksListBuilder";
 import { SelectedBoulder, useSelectStore } from "components/pages/selectStore";
+import { useModal } from "helpers/hooks/useModal";
+import { useBreakpoint } from "helpers/hooks/DeviceProvider";
+import { BoulderForm } from "../form/BoulderForm";
+import { BoulderPreviewDesktop } from "components/molecules/BoulderPreview.desktop";
+import { Button } from "components/atoms/buttons/Button";
 
 interface BoulderBuilderContentDesktopProps {
 	topo: Quark<Topo>;

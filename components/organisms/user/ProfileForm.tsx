@@ -1,10 +1,11 @@
 import React, { Dispatch, SetStateAction, useCallback, useEffect, useState } from "react";
-import { Button, TextInput } from "components";
 import { watchDependencies } from "helpers/quarky";
-import { Name, StringBetween, User } from "types";
+import { Name, StringBetween } from "types";
 import { useAuth } from "helpers/services";
 import { ChangePasswordModal } from "./ChangePasswordModal";
 import { ChangeMailModal } from "./ChangeMailModal";
+import { TextInput } from "components/molecules/form/TextInput";
+import { Button } from "components/atoms/buttons/Button";
 
 interface ProfileFormProps {
 	setDisplayModifyProfile: Dispatch<SetStateAction<boolean>>

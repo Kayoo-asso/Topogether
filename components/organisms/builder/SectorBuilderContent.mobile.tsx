@@ -1,10 +1,10 @@
 import React from "react";
-import { Button } from "components";
 import { Topo, UUID } from "types";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { SectorListBuilder } from "./SectorListBuilder";
 import { useSelectStore } from "components/pages/selectStore";
 import { Map } from "ol";
+import { Button } from "components/atoms/buttons/Button";
 
 interface SectorBuilderContentMobileProps {
 	topoQuark: Quark<Topo>;

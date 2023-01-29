@@ -1,6 +1,7 @@
-import { Checkbox } from "components/atoms"
-import { GradeSliderInput, SliderInput } from "components/molecules"
+import { Checkbox } from "components/atoms/Checkbox";
+import { GradeSliderInput } from "components/molecules/form/GradeSliderInput";
 import { SelectListMultiple } from "components/molecules/form/SelectListMultiple"
+import { SliderInput } from "components/molecules/form/SliderInput";
 import { hasFlag, toggleFlag } from "helpers/bitflags";
 import { useCallback, useMemo, useState } from "react";
 import { Amenities, LightGrade, LightTopo, TopoTypes } from "types";

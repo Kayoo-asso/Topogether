@@ -1,6 +1,5 @@
 import OLMapboxVector from "ol/layer/MapboxVector";
-import { forwardRef, useEffect } from "react";
-import { useMap } from "../contexts";
+import { forwardRef } from "react";
 import { createLifecycle, InferOptions } from "../createLifecycle";
 import { e, layerEvents, tileLayerEvents } from "../events";
 import { useLayerLifecycle } from "./useLayerLifecycle";

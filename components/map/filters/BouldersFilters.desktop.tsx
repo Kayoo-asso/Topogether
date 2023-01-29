@@ -1,9 +1,9 @@
 import React from "react";
 import { useSelectStore } from "components/pages/selectStore";
-import { useBreakpoint } from "helpers/hooks";
 import { BouldersFiltersComponents } from "./useBouldersFilters";
 
 import FilterIcon from "assets/icons/filter.svg";
+import { useBreakpoint } from "helpers/hooks/DeviceProvider";
 
 interface BouldersFiltersDesktopProps {
     Filters: BouldersFiltersComponents;
