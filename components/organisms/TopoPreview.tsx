@@ -158,7 +158,7 @@ export const TopoPreview: React.FC<TopoPreviewProps> = ({
 				)}
 
 				<div className={`${displayParking && topo.parkingLocation ? '' : 'hidden'} py-4`}>
-					<ParkingButton onClick={() => setModalParkingOpen(true)} />
+					<ParkingButton onClick={() => setModalParkingOpen(true)} displayIcon />
 				</div>
 
 				{props.secondButton && (
