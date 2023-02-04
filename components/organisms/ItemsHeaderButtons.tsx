@@ -31,7 +31,7 @@ export const ItemsHeaderButtons: React.FC<ItemsHeaderButtonsProps> = (props: Ite
                     onClick={props.onClose}
                 >
                     <CloseButton 
-                        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 hidden md:block"
+                        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
                     />
                 </div>
             }  
