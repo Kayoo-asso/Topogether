@@ -11,7 +11,6 @@ import { fromLonLat, toLonLat } from "ol/proj";
 import { TopoTypeToColor } from "helpers/topo";
 import { Drag } from "components/openlayers/interactions/Drag";
 import { OnClickFeature } from "components/openlayers/extensions/OnClick";
-import { FeatureLike } from "ol/Feature";
 
 type TopoForMarkers =
 	| LightTopo
@@ -78,7 +77,8 @@ export const TopoMarkersLayer: React.FC<TopoMarkersLayerProps> =
 					)}
 
 					<OnClickFeature
-						layers={["topos"]}
+						layers={"topos"}
+						hitTolerance={5}
 						onClick={useCallback((e) => {
 							const { topo } = e.feature.get("data") as TopoMarkerData;
 							if (topo.id === props.selectedTopo?.id) props.onTopoSelect && props.onTopoSelect(undefined);

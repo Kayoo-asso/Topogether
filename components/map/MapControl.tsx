@@ -13,10 +13,6 @@ import { Props } from "components/openlayers/Map";
 import { UserMarkerLayer } from "./markers/UserMarkerLayer";
 import { MapBrowserEvent } from "ol";
 import { Attribution } from "ol/control";
-import {
-	DEFAULT_EXTENT_BUFFER,
-	getTopoExtent,
-} from "helpers/map/getTopoExtent";
 import { getMapCursorClass } from "helpers/map/getMapCursorClass";
 import { isEmpty } from "ol/extent";
 import { fontainebleauLocation } from "helpers/constants";
@@ -29,6 +25,7 @@ import { useBreakpoint } from "helpers/hooks/DeviceProvider";
 import { usePosition } from "helpers/hooks/UserPositionProvider";
 import { SatelliteButton } from "components/atoms/buttons/SatelliteButton";
 import { ImageInput } from "components/molecules/form/ImageInput";
+import { DEFAULT_EXTENT_BUFFER, getTopoExtent } from "helpers/map/getExtent";
 
 type MapControlProps = React.PropsWithChildren<
 	Props & {

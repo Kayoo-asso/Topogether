@@ -9,12 +9,9 @@ import {
 } from "../sharedWithServiceWorker";
 import { encodeUUID, withExponentialBackoff } from "helpers/utils";
 import { cacheDocument, onInit } from "helpers/services/Initializers";
-import {
-	getTopoExtent,
-	DEFAULT_EXTENT_BUFFER,
-} from "helpers/map/getTopoExtent";
 import { createXYZ } from "ol/tilegrid";
 import { Semaphore } from "helpers/downloads/semaphore";
+import { DEFAULT_EXTENT_BUFFER, getTopoExtent } from "helpers/map/getExtent";
 
 export type DownloadState =
 	| {

@@ -43,7 +43,6 @@ import { BoulderMarkersLayer } from "components/map/markers/BoulderMarkersLayer"
 import { ParkingMarkersLayer } from "components/map/markers/ParkingMarkersLayer";
 import { WaypointMarkersLayer, disappearZoom } from "components/map/markers/WaypointMarkersLayer";
 import { CreatingMarkersLayer } from "components/map/markers/CreatingMarkersLayer";
-import { SelectInteraction } from "components/map/markers/SelectInteraction";
 import { DragInteraction } from "components/map/markers/DragInteraction";
 import { SearchbarBouldersDesktop } from "components/map/searchbar/SearchbarBoulders.desktop";
 import { useBouldersFilters } from "components/map/filters/useBouldersFilters";
@@ -53,6 +52,7 @@ import { useLoader } from "helpers/hooks/useLoader";
 import { useModal } from "helpers/hooks/useModal";
 import { DropdownOption } from "components/molecules/form/Dropdown";
 import { Flash } from "components/atoms/overlays/Flash";
+import { OnClickInteraction } from "components/map/markers/OnClickInteraction";
 
 interface RootBuilderProps {
 	topoQuark: Quark<Topo>;
@@ -218,8 +218,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 								onCreate={(e) => handleCreateNewMarker(e, areFiltersEmpty)}
 							/>
 						}
-						<SelectInteraction
-							boulderOrder={boulderOrder}
+						<OnClickInteraction
 							selectableSector
 						/>
 						<DragInteraction 

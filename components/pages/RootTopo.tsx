@@ -20,13 +20,13 @@ import { BoulderMarkersLayer } from "components/map/markers/BoulderMarkersLayer"
 import { SectorAreaMarkersLayer } from "components/map/markers/SectorAreaMarkersLayer";
 import { ParkingMarkersLayer } from "components/map/markers/ParkingMarkersLayer";
 import { WaypointMarkersLayer, disappearZoom } from "components/map/markers/WaypointMarkersLayer";
-import { SelectInteraction } from "components/map/markers/SelectInteraction";
 import { SearchbarBouldersDesktop } from "components/map/searchbar/SearchbarBoulders.desktop";
 import { useBouldersFilters } from "components/map/filters/useBouldersFilters";
 import { BouldersFiltersDesktop } from "components/map/filters/BouldersFilters.desktop";
 import { downloads } from "helpers/downloads/DownloadManager";
 import { useBreakpoint } from "helpers/hooks/DeviceProvider";
 import { DropdownOption } from "components/molecules/form/Dropdown";
+import { OnClickInteraction } from "components/map/markers/OnClickInteraction";
 
 interface RootTopoProps {
 	topoQuark: Quark<Topo>;
@@ -135,9 +135,7 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 						Searchbar={SearchbarDesktop}
 						Filters={FiltersDesktop}
 					>
-						<SelectInteraction
-							boulderOrder={boulderOrder}
-						/>
+						<OnClickInteraction />
 						<SectorAreaMarkersLayer
 							topoQuark={props.topoQuark}
 							boulderOrder={boulderOrder}
