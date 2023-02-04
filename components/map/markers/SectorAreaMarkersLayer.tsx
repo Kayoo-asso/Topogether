@@ -9,7 +9,7 @@ import {
 import { FeatureLike } from 'ol/Feature';
 import { Circle, Fill, Stroke, Style, Text } from 'ol/style';
 import { GeoCoordinates, Sector, SectorData, Topo, UUID } from 'types';
-import { useSelectStore } from 'components/pages/selectStore';
+import { SelectedSector, useSelectStore } from 'components/pages/selectStore';
 import { fromLonLat, toLonLat } from 'ol/proj';
 import { Polygon as PolygonType } from 'ol/geom';
 import { createSector } from 'helpers/builder';
@@ -113,6 +113,7 @@ export const SectorAreaMarkersLayer: React.FC<SectorAreaMarkersLayerProps> = wat
     creating = false,
     ...props
 }: SectorAreaMarkersLayerProps) => {
+    const selectedItem = useSelectStore(s => s.item);
     const sectors = props.topoQuark().sectors;
     const flush = useSelectStore(s => s.flush);
 
@@ -141,7 +142,11 @@ export const SectorAreaMarkersLayer: React.FC<SectorAreaMarkersLayerProps> = wat
 
             <VectorLayer
                 id="sectors"     
-                style={(feature, resolution) => sectorMarkerStyle(false, feature, resolution)}
+                style={useCallback((f: FeatureLike, res: number) => {
+                    const item = f.get("data") as SelectedSector;
+                    const selected = selectedItem.value ? item.value().id === selectedItem.value().id : false;
+                    return sectorMarkerStyle(selected, f, res)
+                }, [selectedItem])}
                 updateWhileAnimating
                 updateWhileInteracting
             >

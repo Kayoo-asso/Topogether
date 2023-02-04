@@ -13,6 +13,7 @@ import { disappearZoom, waypointMarkerStyle } from "./WaypointMarkersLayer";
 import { sectorMarkerStyle } from "./SectorAreaMarkersLayer";
 import { watchDependencies } from "helpers/quarky";
 import { useBreakpoint } from "helpers/hooks/DeviceProvider";
+import { OnClickFeature } from "components/openlayers/extensions/OnClick";
 
 interface SelectInteractionProps {
     boulderOrder: Map<UUID, number>;
@@ -23,8 +24,9 @@ export const SelectInteraction: React.FC<SelectInteractionProps> = watchDependen
     selectableSector = false,
     ...props
 }: SelectInteractionProps) => {
-    const selectedType = useSelectStore((s) => s.item.type);
-    const anySelected = !!(selectedType !== 'none' && selectedType !== 'sector');
+    const selectedItem = useSelectStore((s) => s.item);
+    const anySelected = !!(selectedItem.type !== 'none' && selectedItem.type !== 'sector');
+
     const select = useSelectStore((s) => s.select);
     const flush = useSelectStore((s) => s.flush);
 
@@ -32,8 +34,27 @@ export const SelectInteraction: React.FC<SelectInteractionProps> = watchDependen
     const mapZoom = useMapZoom(disappearZoom);    
 
     return (
+        <>
+        <OnClickFeature 
+            layers={["parkings", "waypoints", selectableSector ||true ? "sectors" : "", "boulders"]}
+            onClick={(e) => {
+                e.preventDefault(); e.stopPropagation();
+                const item = e.feature.get("data") as SelectedItem;
+                console.log(item);
+                if (item.value && selectedItem.value && item.value().id === selectedItem.value().id) flush.all();
+                else switch (item.type) {
+                    case 'boulder': select.boulder(item.value); break;
+                    case 'parking': select.parking(item.value); break;
+                    case 'waypoint': select.waypoint(item.value); break;
+                    case 'sector': select.sector(item.value); break;
+                    //TODO : add clusters
+                    default: return;
+                }
+            }}
+        />
+
         <Select 
-            layers={["boulders", "parkings", "waypoints", selectableSector ? "sectors" : ""]}
+            layers={[]}
             hitTolerance={5}
             onSelect={(e) => {
                 // Avoid selecting something in another layer
@@ -67,6 +88,7 @@ export const SelectInteraction: React.FC<SelectInteractionProps> = watchDependen
             // Toggle when clicking again
             toggleCondition={singleClick}
         />
+        </>
     )
 });
 

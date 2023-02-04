@@ -8,7 +8,7 @@ import {
 import { FeatureLike } from "ol/Feature";
 import { Fill, Icon, Style, Text } from "ol/style";
 import { Boulder, UUID } from "types";
-import { useSelectStore } from "components/pages/selectStore";
+import { SelectedBoulder, useSelectStore } from "components/pages/selectStore";
 import { fromLonLat } from "ol/proj";
 import { Cluster } from "components/openlayers/sources/Cluster";
 import { Breakpoint, useBreakpoint } from "helpers/hooks/DeviceProvider";
@@ -78,8 +78,8 @@ export const clusterMarkerStyle = (selected: boolean, anySelected: boolean, size
 };
 
 export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> = watchDependencies((props: BoulderMarkersLayerProps) => {
-	const selectedItem = useSelectStore(s => s.item.value);
-	const selectedType = useSelectStore((s) => s.item.type);
+	const selectedItem = useSelectStore(s => s.item);
+	const selectedType = selectedItem.type;
 	const anySelected = !!(selectedType !== 'none' && selectedType !== 'sector');
 
 	const device = useBreakpoint();
@@ -93,7 +93,7 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> = watchDepe
 					let selected = false;
 					// If there is a selectedItem and the cluster contains the selected item, the clust must be selected also
 					if (selectedType === "boulder") {
-						if (features.some(f => f.get("data").value().id === selectedItem!().id)) selected = true;
+						if (features.some(f => f.get("data").value().id === selectedItem.value!().id)) selected = true;
 					}
 					if (features.length > 1) {
 						return clusterMarkerStyle(
@@ -102,7 +102,7 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> = watchDepe
 							features.length
 						);
 					}
-				}, [selectedItem, selectedItem && selectedItem(), selectedType, anySelected])}		
+				}, [selectedItem, selectedItem.value && selectedItem.value(), selectedType, anySelected])}		
 			>
 				<Cluster source="boulders" minDistance={20} distance={60} />
 			</VectorLayer>
@@ -110,13 +110,15 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> = watchDepe
 			<VectorLayer
 				id="boulders"
 				style={useCallback(
-					(feature: FeatureLike) => {
+					(f: FeatureLike) => {
+						const item = f.get("data") as SelectedBoulder;
+                        const selected = selectedItem.value ? item.value().id === selectedItem.value().id : false;
 						return boulderMarkerStyle(
-							false,
+							selected,
 							anySelected,
 							device,
 							props.boulderOrder,
-							feature
+							f
 						);
 					},
 					[device, anySelected, props.boulderOrder]

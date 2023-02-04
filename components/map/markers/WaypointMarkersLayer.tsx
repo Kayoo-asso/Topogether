@@ -7,10 +7,11 @@ import {
 } from "components/openlayers";
 import { Icon, Style } from 'ol/style';
 import { Waypoint } from 'types';
-import { useSelectStore } from 'components/pages/selectStore';
+import { SelectedWaypoint, useSelectStore } from 'components/pages/selectStore';
 import { fromLonLat } from 'ol/proj';
 import { useMapZoom } from 'helpers/hooks/useMapZoom';
 import { Breakpoint, useBreakpoint } from 'helpers/hooks/DeviceProvider';
+import { FeatureLike } from 'ol/Feature';
 
 interface WaypointMarkersLayerProps {
     waypoints: QuarkArray<Waypoint>;
@@ -30,8 +31,8 @@ export const waypointMarkerStyle = (selected: boolean, anySelected: boolean, dev
 
 export const disappearZoom = 14;
 export const WaypointMarkersLayer: React.FC<WaypointMarkersLayerProps> = watchDependencies((props: WaypointMarkersLayerProps) => {
-    const selectedType = useSelectStore((s) => s.item.type);
-    const anySelected = !!(selectedType !== 'none' && selectedType !== 'sector');
+    const selectedItem = useSelectStore((s) => s.item);
+    const anySelected = !!(selectedItem.type !== 'none' && selectedItem.type !== 'sector');
     
     const mapZoom = useMapZoom(disappearZoom);
     const device = useBreakpoint();
@@ -40,13 +41,15 @@ export const WaypointMarkersLayer: React.FC<WaypointMarkersLayerProps> = watchDe
         <>
             <VectorLayer
                 id="waypoints"
-                style={useCallback(() =>
-                    waypointMarkerStyle (
-                            false,
+                style={useCallback((f: FeatureLike) => {
+                    const item = f.get("data") as SelectedWaypoint;
+                    const selected = selectedItem.value ? item.value().id === selectedItem.value().id : false;
+                    return waypointMarkerStyle (
+                            selected,
                             anySelected,
                             device,
                             mapZoom
-                        ), [mapZoom, device, anySelected])
+                        )}, [mapZoom, device, anySelected])
                 }
             >
                 <VectorSource>
