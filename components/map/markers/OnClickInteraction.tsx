@@ -23,6 +23,16 @@ export const OnClickInteraction: React.FC<OnClickInteractionProps> = watchDepend
     return (
         <>
             <OnClickFeature 
+                layers="clusters"
+                hitTolerance={5}
+                onClick={(e) => {
+                    const boulderFeatures = e.feature.get("features") as FeatureLike[];
+                    const boulders = boulderFeatures.map(f => f.get("data").value() as Boulder);
+                    const extent = getBouldersExtent(boulders, 60);
+                    if (extent) map.getView().fit(extent, { duration: 300 });
+                }} 
+            />
+            <OnClickFeature 
                 layers={["boulders", "parkings", "waypoints", selectableSector ||true ? "sectors" : ""]}
                 hitTolerance={5}
                 onClick={(e) => {
@@ -37,16 +47,6 @@ export const OnClickInteraction: React.FC<OnClickInteractionProps> = watchDepend
                         default: return;
                     }
                 }}
-            />
-            <OnClickFeature 
-                layers="clusters"
-                hitTolerance={5}
-                onClick={(e) => {
-                    const boulderFeatures = e.feature.get("features") as FeatureLike[];
-                    const boulders = boulderFeatures.map(f => f.get("data").value() as Boulder);
-                    const extent = getBouldersExtent(boulders, 60);
-                    if (extent) map.getView().fit(extent, { duration: 300 });
-                }} 
             />
         </>
     )
