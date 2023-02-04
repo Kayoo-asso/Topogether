@@ -13,7 +13,6 @@ import { Props } from "components/openlayers/Map";
 import { UserMarkerLayer } from "./markers/UserMarkerLayer";
 import { MapBrowserEvent } from "ol";
 import { Attribution } from "ol/control";
-import { getMapCursorClass } from "helpers/map/getMapCursorClass";
 import { isEmpty } from "ol/extent";
 import { fontainebleauLocation } from "helpers/constants";
 import { OnClickFeature } from "components/openlayers/extensions/OnClick";
@@ -210,8 +209,7 @@ export const MapControl = watchDependencies<Map, MapControlProps>(
 						setMap(ref);
 						setReactRef(parentRef, ref);
 					}, [])}
-					className={"h-full w-full " + getMapCursorClass(tool)}
-					// TODO: remove once Select is fixed
+					className="h-full w-full"
 					onClick={(e) => {
 						const map = e.map;
 						const hit = map.getFeaturesAtPixel(e.pixel).length > 0;

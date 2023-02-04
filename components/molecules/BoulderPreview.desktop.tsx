@@ -76,7 +76,7 @@ export const BoulderPreviewDesktop = watchDependencies<
 
 		return (
 			<>
-				<div className="mb-3 px-5">
+				<div className="mb-3">
 					<div className="bg-dark">
 						<TracksImage
 							sizeHint="300px"
@@ -87,7 +87,7 @@ export const BoulderPreviewDesktop = watchDependencies<
 						/>
 					</div>
 
-					<div className="mt-3 flex min-h-max w-full flex-col">
+					<div className="mt-3 flex min-h-max w-full flex-col px-5">
 						<MultipleImageInput
 							ref={useCallback((ref) => {
 								setReactRef(multipleImageInputRef, ref);

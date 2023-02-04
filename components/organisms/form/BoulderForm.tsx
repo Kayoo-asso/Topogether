@@ -18,9 +18,7 @@ export const BoulderForm: React.FC<BoulderFormProps> = watchDependencies(
 
 		return (
 			<div
-				className={
-					"flex flex-col gap-6 " + (props.className ? props.className : "")
-				}
+				className={"flex flex-col gap-6 " + (props.className ? props.className : "")}
 				onClick={(e) => e.stopPropagation()}
 			>
 				<TextInput

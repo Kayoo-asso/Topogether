@@ -21,7 +21,7 @@ export const waypointMarkerStyle = (selected: boolean, anySelected: boolean, dev
     const icon = new Icon({
         opacity: mapZoom > disappearZoom ? (anySelected ? (selected ? 1 : 0.4) : 1) : 0,
         src: "/assets/icons/markers/info.svg",
-        scale: device === 'desktop' ? 0.8 : 1,
+        scale: device === 'desktop' ? 0.7 : 0.8,
     });
     return new Style({
         image: icon,
@@ -49,7 +49,7 @@ export const WaypointMarkersLayer: React.FC<WaypointMarkersLayerProps> = watchDe
                             anySelected,
                             device,
                             mapZoom
-                        )}, [mapZoom, device, anySelected])
+                        )}, [mapZoom, device, anySelected, selectedItem])
                 }
             >
                 <VectorSource>

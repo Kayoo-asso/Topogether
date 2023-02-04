@@ -61,7 +61,7 @@ export const SlideoverRightTopo: React.FC<SlideoverRightTopoProps> = (
 					onSizeChange={setFull}
 					onClose={onClose}
 				>
-					<div className={"h-full " + (item.type !== 'boulder' ? 'py-14' : '')}>
+					<div className="h-full">
 						{getContent()}
 					</div>
 				</SlideoverMobile>

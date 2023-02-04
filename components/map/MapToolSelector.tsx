@@ -1,13 +1,13 @@
 import React, { useCallback } from "react";
 import { useSelectStore } from "components/pages/selectStore";
 import { MapToolEnum } from "types";
-
-import Add from "assets/icons/add.svg";
-import Rock from "assets/icons/rock.svg";
-import InfoLight from "assets/icons/infoLight.svg";
-import ParkingLight from "assets/icons/parkingLight.svg";
 import { useBreakpoint } from "helpers/hooks/DeviceProvider";
 import { RoundButton } from "components/atoms/buttons/RoundButton";
+
+import Add from "assets/icons/add.svg";
+import RockLight from "assets/icons/rockLight.svg";
+import InfoLight from "assets/icons/infoLight.svg";
+import ParkingLight from "assets/icons/parkingLight.svg";
 
 
 interface MapToolSelectorProps {
@@ -63,7 +63,7 @@ export const MapToolSelector: React.FC<MapToolSelectorProps> = (props: MapToolSe
 							className={`p-2 rounded-sm md:cursor-pointer ${tool === "ROCK" ? "bg-main bg-opacity-30" : ""}`}
 							onClick={() => onToolClick('ROCK')}
 						>
-							<Rock
+							<RockLight
 								className={`h-6 w-6 md:cursor-pointer	${tool === "ROCK" ? "stroke-main" : "stroke-grey-light"}`}	
 							/>
 						</div>

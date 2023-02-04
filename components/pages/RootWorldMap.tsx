@@ -5,7 +5,6 @@ import { watchDependencies } from "helpers/quarky";
 import { useAuth } from "helpers/services";
 import { LightTopo } from "types";
 import { encodeUUID } from "helpers/utils";
-import { TopoPreview } from "components/organisms/TopoPreview";
 import { MapControl } from "components/map/MapControl";
 import { TopoMarkersLayer } from "components/map/markers/TopoMarkersLayer";
 import { SlideoverMobileWorldmap } from "components/organisms/worldMap/Slideover.mobile.worldmap";
@@ -15,6 +14,7 @@ import { useToposFilters } from "components/map/filters/useToposFilters";
 import { ToposFiltersDesktop } from "components/map/filters/ToposFilters.desktop";
 import { downloads } from "helpers/downloads/DownloadManager";
 import { usePosition } from "helpers/hooks/UserPositionProvider";
+import { TopoPreview } from "components/organisms/TopoPreview";
 
 interface RootWorldMapProps {
 	lightTopos: LightTopo[];
@@ -82,7 +82,7 @@ export const RootWorldMap: React.FC<RootWorldMapProps> = watchDependencies(
 						<TopoMarkersLayer 
 							topos={props.lightTopos.filter(filterTopos)}
 							selectedTopo={selectedTopo}
-							onTopoSelect={t => {console.log(t); setSelectedTopo(t as LightTopo)}}
+							onTopoSelect={t => setSelectedTopo(t as LightTopo)}
 						/>
 					</MapControl>
 

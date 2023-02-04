@@ -4,17 +4,17 @@ import { formatDate } from "helpers/utils";
 import { Image } from "components/atoms/Image";
 import Link from "next/link";
 import { TopoTypeToColor } from "helpers/topo";
-import { TopoPreviewBoutons } from "./TopoPreviewBoutons";
-
-import Rock from "assets/icons/rock.svg";
-import ManyTracks from "assets/icons/many-tracks.svg";
-import Topo from "assets/icons/topo.svg";
 import { GradeHistogram } from "components/molecules/GradeHistogram";
 import { Button } from "components/atoms/buttons/Button";
 import { ParkingButton } from "components/atoms/buttons/ParkingButton";
 import { ModalBG } from "components/atoms/overlays/ModalBG";
 import { SlideoverRightDesktop } from "components/atoms/overlays/SlideoverRightDesktop";
 import { ParkingModal } from "components/atoms/overlays/ParkingModal";
+import { ItemsHeaderButtons } from "./ItemsHeaderButtons";
+
+import RockLight from "assets/icons/rockLight.svg";
+import ManyTracks from "assets/icons/many-tracks.svg";
+import Topo from "assets/icons/topo.svg";
 
 type TopoPreviewButton = {
 	content: string;
@@ -50,7 +50,7 @@ export const TopoPreview: React.FC<TopoPreviewProps> = ({
 	const topoPreviewContent = () => (
 		<div className="pb-8">
 
-			<TopoPreviewBoutons topo={props.topo} onClose={props.onClose} />
+			<ItemsHeaderButtons item={props.topo} onClose={props.onClose} />
 
 			<div className="flex flex-col">
 				<div
@@ -121,7 +121,7 @@ export const TopoPreview: React.FC<TopoPreviewProps> = ({
 				<div className="flex flex-row px-4 py-4 md:flex-col">
 					<div className="flex w-1/3 flex-col gap-3 md:w-full md:flex-row md:justify-around">
 						<div className="flex flex-row items-center gap-2 pt-6 md:pt-0">
-							<Rock className="h-6 w-6 stroke-dark" />
+							<RockLight className="h-6 w-6 stroke-dark" />
 							<div className="ktext-subtext ml-2 flex flex-col text-center">
 								<span className="ktext-big-title font-semibold">
 									{topo.nbBoulders}

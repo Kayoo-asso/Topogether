@@ -11,9 +11,6 @@ interface SlideoverRightDesktopProps {
 	children?: ReactNode;
 }
 
-const isTopo = (item: Boulder | Topo | LightTopo): item is Topo =>
-	(item as Topo).rockTypes !== undefined;
-
 export const SlideoverRightDesktop: React.FC<
 SlideoverRightDesktopProps
 > = ({

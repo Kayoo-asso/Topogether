@@ -22,7 +22,7 @@ export const parkingMarkerStyle = (selected: boolean, anySelected: boolean, devi
     const icon = new Icon({
         opacity: mapZoom > disappearZoom ? (anySelected ? (selected ? 1 : 0.4) : 1) : 0,
         src: "/assets/icons/markers/parking.svg",
-        scale: device === 'desktop' ? 0.8 : 1,
+        scale: device === 'desktop' ? 0.7 : 0.8,
     });
     return new Style({
         image: icon,
@@ -50,7 +50,7 @@ export const ParkingMarkersLayer: React.FC<ParkingMarkersLayerProps> = watchDepe
                             anySelected,
                             device,
                             mapZoom
-                )}, [mapZoom, device, anySelected])
+                )}, [mapZoom, device, anySelected, selectedItem])
                 }
             >
                 <VectorSource>

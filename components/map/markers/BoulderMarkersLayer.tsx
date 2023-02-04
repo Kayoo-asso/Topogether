@@ -32,7 +32,7 @@ export const boulderMarkerStyle = (
 	const icon = new Icon({
 		opacity: anySelected ? (selected ? 1 : 0.4) : 1,
 		src: "/assets/icons/markers/boulder.svg",
-		scale: device === "desktop" ? 1 : 1.2,
+		scale: device === "desktop" ? 0.9 : 1,
 	});
 	const text = new Text({
 		text: label,
@@ -57,7 +57,7 @@ export const clusterMarkerStyle = (selected: boolean, anySelected: boolean, size
 	const icon = new Icon({
 		opacity: anySelected ? (selected ? 1 : 0.4) : 1,
 		src: "/assets/icons/markers/clusterBoulder.svg",
-		scale: 0.8,
+		scale: 0.6,
 	});
 	const text = new Text({
 		text: size.toString(),

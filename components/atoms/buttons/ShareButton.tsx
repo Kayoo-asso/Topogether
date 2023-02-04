@@ -3,6 +3,7 @@ import { GeoCoordinates } from "types";
 
 import Copy from "/assets/icons/copy.svg";
 import { Flash } from "../overlays/Flash";
+import { coordsToClipboard } from "helpers/coordsToClipboard";
 
 interface ShareButtonProps {
     location: GeoCoordinates;
@@ -14,24 +15,7 @@ export const ShareButton: React.FC<ShareButtonProps> = (props: ShareButtonProps)
 
     const handleClick = (e: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
         e.preventDefault(); e.stopPropagation();
-        const data = [
-            new ClipboardItem({
-                "text/plain": new Blob(
-                    [props.location[1] + "," + props.location[0]],
-                    {
-                        type: "text/plain",
-                    }
-                ),
-            }),
-        ];
-        navigator.clipboard.write(data).then(
-            function () {
-                setFlashMessage("Coordonnées copiées dans le presse papier.");
-            },
-            function () {
-                setFlashMessage("Impossible de copier les coordonées.");
-            }
-        );
+        coordsToClipboard(props.location, setFlashMessage);
     }
 
     return (

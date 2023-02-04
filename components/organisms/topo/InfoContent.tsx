@@ -12,13 +12,14 @@ import { GradeHistogram } from "components/molecules/GradeHistogram";
 import { Flash } from "components/atoms/overlays/Flash";
 
 import Topo from "assets/icons/topo.svg";
-import Rock from "assets/icons/rock.svg";
+import RockLight from "assets/icons/rockLight.svg";
 import ManyTracks from "assets/icons/many-tracks.svg";
 import Toilets from "assets/icons/toilets.svg";
 import Picnic from "assets/icons/picnic.svg";
 import WaterDrop from "assets/icons/water-drop.svg";
 import Bin from "assets/icons/bin.svg";
 import Umbrella from "assets/icons/umbrella.svg";
+import { ItemsHeaderButtons } from "../ItemsHeaderButtons";
 
 interface InfoContentProps {
 	topo: Signal<TopoType>;
@@ -38,17 +39,18 @@ export const InfoContent: React.FC<InfoContentProps> = (props: InfoContentProps)
 	return (
 		<>
 			<div className="flex h-full flex-col">
-				<div className="absolute z-100 flex flex-row gap-6 px-6 pt-4 left-1 top-1 md:left-48 md:top-3">
+				<div className="absolute z-100 flex flex-row gap-6 px-6 py-4 -left-5 top-0">
 					{session &&
-						<>
-							<LikeButton liked={topo.liked} />
-							<ShareButton location={topo.location} />
-							<DownloadButton topo={topo} />
-						</>
+						// <>
+						// 	<LikeButton liked={topo.liked} />
+						// 	<ShareButton location={topo.location} />
+						// 	<DownloadButton topo={topo} />
+						// </>
+						<ItemsHeaderButtons item={topo} />
 					}
 				</div>
 				
-				<div className="flex w-full ktext-subtitle mb-1">Infos du topo</div>
+				<div className="flex w-full ktext-subtitle mb-1 mt-2">Infos du topo</div>
 				<div className="flex flex-col items-center px-6 pt-5 md:items-start md:px-0 md:pt-0">
 					{topo.creator?.userName && (
 						<div className="ktext-label text-center md:hidden">
@@ -93,7 +95,7 @@ export const InfoContent: React.FC<InfoContentProps> = (props: InfoContentProps)
 					<div className="flex min-h-[150px] flex-row items-end justify-between md:justify-evenly">
 						<div className="flex flex-col items-center">
 							{nbOfBoulders}
-							<Rock className="h-8 w-8 stroke-dark" />
+							<RockLight className="h-8 w-8 stroke-dark" />
 						</div>
 						<div className="flex flex-col items-center pr-8">
 							{nbOfTracks}
