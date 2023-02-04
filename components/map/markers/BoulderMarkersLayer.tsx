@@ -68,7 +68,7 @@ export const clusterMarkerStyle = (selected: boolean, anySelected: boolean, size
 				: "rgba(255, 255, 255, 0.3)"
 			: "#fff",
 		}),
-		font: "bold 26px Poppins",
+		font: "bold 20px Poppins",
 		offsetY: 3,
 	});
 	return new Style({
