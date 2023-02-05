@@ -75,11 +75,7 @@ export const BoulderItemLeftbar: React.FC<BoulderItemLeftbarProps> = watchDepend
 						{props.orderIndex}.
 					</span>
 					<span
-						className={
-							(boulder.name.length > 12
-								? "ktext-base-little"
-								: "ktext-base") + (props.selected ? " font-semibold" : "")
-						}
+						className={"ktext-base" + (props.selected ? " font-semibold" : "")}
 					>
 						{boulder.name} 
 					</span>
