@@ -33,7 +33,7 @@ export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies(
 
 					<div
 						ref={ref}
-						className="h-contentPlusHeader w-full overflow-y-auto overflow-x-hidden bg-white md:h-contentPlusShell"
+						className="h-contentPlusHeader pb-28 w-full overflow-y-auto overflow-x-hidden bg-white md:h-contentPlusShell"
 					>
 
 						{tab === "MY" && <MyTopos myTopos={props.myTopos} pageRef={ref} />}

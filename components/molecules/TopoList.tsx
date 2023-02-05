@@ -22,10 +22,10 @@ export const TopoList: React.FC<TopoListProps> = ({
 }: TopoListProps) => {
 
     return (
-        <div className="flex flex-col overflow-auto border-b py-3 border-grey-medium w-full">
+        <div className="flex flex-col overflow-auto w-full">
             {props.topos.map(topo => (
                 <div 
-                    className="flex flex-row items-center px-4 md:cursor-pointer" 
+                    className="flex flex-row items-center py-2 px-4 border-b border-grey-medium md:cursor-pointer" 
                     onClick={() => !selectable && props.onClick(topo)}
                 >        
                     <div className="w-16 flex">
@@ -52,7 +52,7 @@ export const TopoList: React.FC<TopoListProps> = ({
                         <div className="flex flex-row gap-10">
                             <div>{topo.nbBoulders} blocs - {topo.nbTracks} voies</div>
                             <div className="flex flex-row gap-2 items-end">
-                                <Marker className='w-4 h-4 fill-main' />
+                                <Marker className={`w-4 h-4 fill-main ${topo.closestCity ? '' : 'hidden'}`} />
                                 {topo.closestCity}
                             </div>
                         </div>

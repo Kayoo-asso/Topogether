@@ -47,7 +47,7 @@ export const DlTopos: React.FC<DlToposProps> = watchDependencies(
 		);
 
 		return (
-			<div className="relative h-full">
+			<div>
 				<DlHeader 
 					noTopos={dlTopos.length === 0}
 					isDeleting={isDeleting}
@@ -83,8 +83,8 @@ export const DlTopos: React.FC<DlToposProps> = watchDependencies(
 					</>
 				)}
 
-				<div className={`${props.dlTopos.length === 0 ? '' : 'hidden'} pt-12 relative flex h-[60vh] w-full items-center justify-center`}>
-					<div className="relative flex flex-col gap-16 h-full w-5/6	 md:w-3/4 p-10 items-center overflow-hidden rounded-lg bg-grey-superlight">
+				<div className={`${props.dlTopos.length === 0 ? '' : 'hidden'} hide-scrollbar pt-12 relative flex w-full items-center justify-center`}>
+					<div className="relative flex flex-col gap-16 h-full w-5/6 md:w-3/4 p-8 md:p-10 items-center overflow-hidden rounded-lg bg-grey-superlight">
 						<div className="flex flex-col bg-white rounded-full px-8 py-3 items-center">
 							<span className="ktext-label">Aucun topo téléchargé</span>
 						</div>

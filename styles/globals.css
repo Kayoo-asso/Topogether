@@ -97,12 +97,12 @@ body {
   background-color: #979797;
 }
 .hide-scrollbar::-webkit-scrollbar {
-  display: none;
-  overflow: -moz-hidden-unscrollable;
+  display: none !important;
+  overflow: -moz-hidden-unscrollable !important;
 }
 .hide-scrollbar {
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none !important; /* IE and Edge */
+  scrollbar-width: none !important; /* Firefox */
 }
 
 .hide-after-two-lines {
