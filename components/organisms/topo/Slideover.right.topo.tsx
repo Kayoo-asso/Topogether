@@ -19,20 +19,20 @@ type SlideoverRightTopoProps = {
 export const SlideoverRightTopo: React.FC<SlideoverRightTopoProps> = (
 	props: SlideoverRightTopoProps
 ) => {
-	const breakpoint = useBreakpoint();
+	const bp = useBreakpoint();
 	const [full, setFull] = useState(false);
 	const flush = useSelectStore(s => s.flush);
 	const item = useSelectStore(s => s.item);
 
 	const onClose = () => {
-		if (breakpoint === 'mobile') flush.all();
+		if (bp === 'mobile') flush.all();
 		else flush.item();
 	};
 
 	const getContent = useCallback(() => {
 		if (item.type !== 'none' && item.type !== 'sector') {
 			if (item.type === 'boulder') {
-				if (breakpoint === "mobile")	
+				if (bp === "mobile")	
 					return (
 						<BoulderContentMobile
 							full={full}
@@ -47,16 +47,16 @@ export const SlideoverRightTopo: React.FC<SlideoverRightTopoProps> = (
 					/>
 				);
 			}
-			if (item.type === 'parking') return <ParkingContent />;
-			else return <WaypointContent />;
+			else if (item.type === 'parking') return <ParkingContent />;
+			else if (item.type === "waypoint") return <WaypointContent />;
 		} else return undefined;
-	}, [full, breakpoint, item]);
+	}, [full, bp, item]);
 
 	return (
 		<>
-			{breakpoint === "mobile" && (
+			{bp === "mobile" && item.type !== 'none' && (
 				<SlideoverMobile
-					open={item.type !== 'none' && item.type !== 'sector'}
+					open={item.type !== 'sector'}
 					persistent={item.type === 'boulder'}
 					onSizeChange={setFull}
 					onClose={onClose}
@@ -66,11 +66,11 @@ export const SlideoverRightTopo: React.FC<SlideoverRightTopoProps> = (
 					</div>
 				</SlideoverMobile>
 			)}
-			{breakpoint !== "mobile" && (
+			{bp !== "mobile" && item.type !== 'none' && (
 				<>
 					<SlideoverRightDesktop
 						item={item.type === 'boulder' ? item.value() : undefined}
-						open={item.type !== 'none' && item.type !== 'sector'}
+						open={item.type !== 'sector'}
 						onClose={onClose}
 					>
 						<div className="h-full">{getContent()}</div>

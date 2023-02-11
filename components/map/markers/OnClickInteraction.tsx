@@ -21,7 +21,6 @@ export const OnClickInteraction: React.FC<OnClickInteractionProps> = watchDepend
     const flush = useSelectStore((s) => s.flush);
 
     return (
-
         <OnClickFeature 
             layers={["clusters", "boulders", "parkings", "waypoints", selectableSector ||true ? "sectors" : ""]}
             hitTolerance={5}
@@ -39,7 +38,6 @@ export const OnClickInteraction: React.FC<OnClickInteractionProps> = watchDepend
                     case 'parking': select.parking(item.value); break;
                     case 'waypoint': select.waypoint(item.value); break;
                     case 'sector': select.sector(item.value); break;
-                    //TODO : add clusters
                     default: return;
                 }
             }}

@@ -126,6 +126,8 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 						onFilterReset={resetFilters}
 					/>
 
+					<SlideoverRightTopo topo={props.topoQuark} />
+
 					<MapControl
 						ref={mapRef}
 						topo={props.topoQuark}
@@ -152,8 +154,6 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 						/>
 						
 					</MapControl>
-
-					<SlideoverRightTopo topo={props.topoQuark} />
 				</div>
 			</>
 		);

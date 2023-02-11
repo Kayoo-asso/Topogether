@@ -32,8 +32,8 @@ export const SlideoverLeftTopo: React.FC<SlideoverLeftTopoProps> = (props: Slide
             case 'INFO': return <InfoContent topo={props.topo} />;
             case 'ACCESS': return <AccessContent accesses={props.topo().accesses} />;
             case 'MANAGEMENT': return <ManagementContent managers={props.topo().managers} />;
-			case 'SEARCHBAR': if (bp === 'mobile') return <SearchbarBouldersMobile topo={props.topo} boulderOrder={props.boulderOrder} map={props.map} />;
-			case 'FILTERS': if (bp === 'mobile') return <BouldersFiltersMobile Filters={props.Filters} onResetClick={props.onFilterReset}  />;
+			case 'SEARCHBAR': return <SearchbarBouldersMobile topo={props.topo} boulderOrder={props.boulderOrder} map={props.map} />;
+			case 'FILTERS': return <BouldersFiltersMobile Filters={props.Filters} onResetClick={props.onFilterReset}  />;
 			default: return undefined;
         }
     }
@@ -45,7 +45,7 @@ export const SlideoverLeftTopo: React.FC<SlideoverLeftTopoProps> = (props: Slide
 
 	return (
 		<>
-			{bp === "mobile" && (
+			<div className='md:hidden'>
 				<SlideoverMobile 
 					open={selectedInfo !== 'NONE' && selectedType === 'none'}
 					height={selectedInfo === 'FILTERS' ? 50 : undefined}
@@ -55,15 +55,15 @@ export const SlideoverLeftTopo: React.FC<SlideoverLeftTopoProps> = (props: Slide
 						{getContent()}
 					</div>
 				</SlideoverMobile>
-			)}
-			{bp !== "mobile" && (
+			</div>
+			<div className="hidden md:block">
 				<SlideoverLeftDesktop
 					open={selectedInfo !== 'NONE' && selectedInfo !== 'SEARCHBAR' && selectedInfo !== 'FILTERS'}
 					onClose={onClose}
 				>
 					{getContent()}
 				</SlideoverLeftDesktop>
-			)}
+			</div>
 		</>
 	);
 };
