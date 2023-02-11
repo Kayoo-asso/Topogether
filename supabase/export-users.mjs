@@ -18,68 +18,112 @@ const users = await sql`
   WHERE confirmed_at IS NOT NULL
 `;
 
-const profiles = await sql`
+const accounts = await sql`
   SELECT * 
   FROM public.accounts
 `;
 
 function formatUsername(str) {
-  let result = str
-  if(result) {
-    // remove all white spaces
-    result = result.replaceAll(' ', '');
-    while(result.length < 4) {
-      result += '_'
-    }
-  }
-  if(result !== str) {
-    console.log(`${str} -> ${result}`)
-  }
-  return result;
+	let result = str;
+	if (result) {
+		// remove all white spaces
+		result = result.replaceAll(" ", "");
+		result = result.replaceAll('é', 'e')
+		while (result.length < 4) {
+			result += "_";
+		}
+	}
+	// if(result !== str) {
+	//   console.log(`${str} -> ${result}`)
+	// }
+	return result;
+}
+
+function buildMetadata(account) {
+	const meta = {
+		role: account.role,
+	};
+	if (account.country) {
+		meta.country = account.country;
+	}
+	if (account.city) {
+		meta.city = account.city;
+	}
+	if (account.birthDate) {
+		meta.birthData = account.birthDate;
+	}
+	if (account.image) {
+		// The image was returned as a string by Postgres, in the format `(id, ratio, placeholder)`
+		const imgStr = account.image.substring(1, account.image.length - 1);
+		let [id, ratio, placeholder] = imgStr.split(",");
+		// Convert ratio to number
+		ratio = +ratio;
+		meta.image = {
+			id, ratio, placeholder
+		};
+	}
+	return meta;
 }
 
 function createInClerk(user) {
-	const profile = profiles.find((x) => x.id === user.id);
-	if (!profile) {
+	const account = accounts.find((x) => x.id === user.id);
+	if (!account) {
 		throw new Error("Could not find profile for user:", user);
 	}
-  const username = formatUsername(profile.userName);
-	// console.log(profile)
-	// return fetch("https://api.clerk.dev/v1/users/" + user.id, {
-	// 	method: "POST",
-	// 	headers: {
-	// 		"Content-Type": "application/json",
-	// 		Authorization: `Bearer ${process.env.CLERK_SECRET_KEY}`,
-	// 	},
-	// 	body: JSON.stringify({
-	// 		external_id: user.id,
-	// 		first_name: profile.firstName,
-	// 		last_name: profile.lastName,
-	// 		email_address: [user.email],
-	// 		phone_number: user.phone ? [user.phone] : undefined,
-  //     // Ended up removing the username, we'll show it 
-	// 		// username: profile.userName,
-	// 		password_digest: user.encrypted_password,
-	// 		password_hasher: "bcrypt",
-	// 		created_at: user.confirmed_at,
-	// 	}),
-	// })
-	// 	.then((res) => {
-	// 		if (!res.ok) {
-	// 			res.text().then((text) => {
-	// 				// console.log(`=== Failed creating user ${profile.userName} ===`);
-	// 				// console.log(text);
-	// 			});
-	// 		} else {
-	// 			console.log("-> Created user " + profile.userName);
-	// 		}
-	// 	})
-	// 	.catch((e) => {
-	// 		// console.log(`=== Failed creating user ${profile.userName} ===`);
-	// 		// console.log(e);
-	// 	});
+	const public_metadata = buildMetadata(account);
+	const username = formatUsername(account.userName)
+	console.log(`-- ${username} --`)
+	console.log(public_metadata);
+
+	return fetch("https://api.clerk.dev/v1/users", {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+			Authorization: `Bearer ${process.env.CLERK_SECRET_KEY}`,
+		},
+		body: JSON.stringify({
+			external_id: user.id,
+			first_name: account.firstName,
+			last_name: account.lastName,
+			username,
+			public_metadata,
+			email_address: [user.email],
+			phone_number: user.phone ? [user.phone] : undefined,
+			password_digest: user.encrypted_password,
+			password_hasher: "bcrypt",
+			created_at: user.confirmed_at,
+		}),
+	})
+		.then((res) => {
+			if (!res.ok) {
+				res.text().then((text) => {
+					console.log(`=== Failed creating user ${username} ===`);
+					console.log(text);
+				});
+			} else {
+				console.log("-> Created user " + username);
+			}
+		})
+		.catch((e) => {
+			console.log(`=== Failed creating user ${username} ===`);
+			console.log(e);
+		});
 }
 
-await Promise.all(users.map(createInClerk));
+const clerkUsers = await fetch("https://api.clerk.dev/v1/users?limit=100", {
+		headers: {
+			"Content-Type": "application/json",
+			Authorization: `Bearer ${process.env.CLERK_SECRET_KEY}`,
+		},
+}).then(x => x.json()).then(x => x.map(y => y.external_id));
 
-console.log("DONE")
+const existingUsers = new Set(accounts.map(x => x.id));
+for(const id of clerkUsers) {
+	if(!existingUsers.has(id)) {
+		console.log("Missing user " + id)
+	}
+}
+
+// await Promise.all(users.map(createInClerk));
+
+console.log("DONE");
