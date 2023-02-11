@@ -1,4 +1,4 @@
-import { InteractItem, useSelectStore } from 'components/pages/selectStore';
+import { SelectedItem, useSelectStore } from 'components/pages/selectStore';
 import { createTrack } from 'helpers/builder';
 import { Quark, watchDependencies } from 'helpers/quarky';
 import { useSession } from 'helpers/services';
@@ -6,18 +6,20 @@ import React, { Dispatch, SetStateAction, useCallback, useEffect, useState } fro
 import { Boulder, Sector } from 'types';
 import { ModalRenameSector } from './ModalRenameSector';
 import { Dropdown, DropdownOption } from 'components/molecules/form/Dropdown';
+import { useDeleteStore } from 'components/pages/deleteStore';
 
 interface BuilderDropdownProps {
     position?: { x: number; y: number };
-    dropdownItem?: InteractItem,
-    setDropdownItem: Dispatch<SetStateAction<InteractItem>>,
-    setDeleteItem: Dispatch<SetStateAction<InteractItem>>,
+    dropdownItem?: SelectedItem,
+    setDropdownItem: Dispatch<SetStateAction<SelectedItem>>,
 }
 
 export const BuilderDropdown: React.FC<BuilderDropdownProps> = watchDependencies(
     (props: BuilderDropdownProps) => {
     const session = useSession();
     const selectTack = useSelectStore(s => s.select.track);
+
+    const del = useDeleteStore(d => d.delete);
         
     const [sectorToRename, setSectorToRename] = useState<Quark<Sector>>();
     
@@ -33,17 +35,17 @@ export const BuilderDropdown: React.FC<BuilderDropdownProps> = watchDependencies
         if (item.type === 'sector') 
             return [
                 { value: "Renommer", action: () => setSectorToRename(() => item.value as Quark<Sector>) },
-                { value: "Supprimer", action: () => props.setDeleteItem(item) },
+                { value: "Supprimer", action: () => del.item(item) },
             ]
         else if (item.type === 'boulder')
             return [
                 { value: "Ajouter un passage", action: () => addTrack(item.value as Quark<Boulder>) },
-                { value: "Supprimer", action: () => props.setDeleteItem(item) },
+                { value: "Supprimer", action: () => del.item(item) },
             ];
         else if (item.type === 'parking')
-            return [{ value: "Supprimer", action: () => props.setDeleteItem(item) }]
+            return [{ value: "Supprimer", action: () => del.item(item) }]
         else // Case Waypoint
-            return [{ value: "Supprimer", action: () => props.setDeleteItem(item) }]
+            return [{ value: "Supprimer", action: () => del.item(item) }]
     }, [props.dropdownItem, addTrack]);
    
     return (

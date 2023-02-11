@@ -1,7 +1,7 @@
 import { Breakpoint } from "helpers/hooks/DeviceProvider";
-import { Quark } from "helpers/quarky"
-import { Boulder, Parking, Sector, Track, Waypoint, Img, MapToolEnum } from "types"
-import create from 'zustand'
+import { Quark } from "helpers/quarky";
+import { Boulder, Parking, Sector, Track, Waypoint, Img, MapToolEnum } from "types";
+import create from 'zustand';
 
 export type SelectedInfo = "MENU" | 
 	"INFO" | 
@@ -18,7 +18,7 @@ export type SelectedNone = {
 }
 export type SelectedSector = {
 	type: 'sector',
-	value: Quark<Sector>
+	value: Quark<Sector>,
 }
 export type SelectedBoulder = {
 	type: 'boulder',
@@ -28,18 +28,18 @@ export type SelectedBoulder = {
 }
 export type SelectedParking = {
 	type: 'parking',
-	value: Quark<Parking>
+	value: Quark<Parking>,
 }
 export type SelectedWaypoint = {
 	type: 'waypoint',
-	value: Quark<Waypoint>
+	value: Quark<Waypoint>,
 }
 
+export type Item = Quark<Sector> | Quark<Boulder> | Quark<Parking> | Quark<Waypoint>;
 export type SelectedItem = SelectedNone | SelectedSector | SelectedBoulder | SelectedParking | SelectedWaypoint;
-export type InteractItem = SelectedItem;
 export type DropdownItem = {
 	position: { x: number, y: number },
-	item: InteractItem
+	item: SelectedItem
 }
 
 export type Selectors = {

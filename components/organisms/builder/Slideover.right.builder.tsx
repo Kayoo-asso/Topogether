@@ -62,9 +62,9 @@ export const SlideoverRightBuilder: React.FC<SlideoverRightBuilderProps> = (
 
 	return (
 		<>
-			{breakpoint === "mobile" && (
+			{breakpoint === "mobile" && item.type !== 'none' && (
 				<SlideoverMobile
-					open={item.type !== 'none' && item.type !== 'sector'}
+					open={item.type !== 'sector'}
 					persistent={item.type === 'boulder'}
 					onSizeChange={setFull}
 					onClose={onClose}
@@ -74,11 +74,11 @@ export const SlideoverRightBuilder: React.FC<SlideoverRightBuilderProps> = (
 					</div>
 				</SlideoverMobile>
 			)}
-			{breakpoint !== "mobile" && (
+			{breakpoint !== "mobile" && item.type !== 'none' && (
 				<>
 					<SlideoverRightDesktop
 						item={item.type === 'boulder' ? item.value() : undefined}
-						open={item.type !== 'none' && item.type !== 'sector'}
+						open={item.type !== 'sector'}
 						onClose={onClose}
 					>
 						<div className="h-full py-6">{getContent()}</div>

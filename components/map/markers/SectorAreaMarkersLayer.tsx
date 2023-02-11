@@ -11,10 +11,12 @@ import { Circle, Fill, Stroke, Style, Text } from 'ol/style';
 import { GeoCoordinates, Sector, SectorData, Topo, UUID } from 'types';
 import { SelectedSector, useSelectStore } from 'components/pages/selectStore';
 import { fromLonLat, toLonLat } from 'ol/proj';
-import { Polygon as PolygonType } from 'ol/geom';
+import { MultiPoint, Polygon as PolygonType } from 'ol/geom';
 import { createSector } from 'helpers/builder';
 import { ModalRenameSector } from 'components/organisms/builder/ModalRenameSector';
 import { DrawEvent } from 'ol/interaction/Draw';
+import CircleStyle from 'ol/style/Circle';
+import { Coordinate } from 'ol/coordinate';
 
 interface SectorAreaMarkersLayerProps {
     topoQuark: Quark<Topo>,
@@ -34,7 +36,7 @@ export function sectorMarkerStyle(selected: boolean, feature: FeatureLike, resol
             color: selected ? 'rgba(4, 217, 139, 0.9)' : 'rgba(4, 217, 139, 0.7)',
             width: 4,
             lineJoin: 'round',
-            lineDash: [10, 18],
+            lineDash: selected ? undefined : [10, 18],
         }),
         fill: new Fill({
             color: selected ? 'rgba(4, 217, 139, 0.3)' : 'rgba(0,0,0,0)',
@@ -50,7 +52,26 @@ export function sectorMarkerStyle(selected: boolean, feature: FeatureLike, resol
             }),
         }),
     });
-    return polygonStyle;
+
+    //TODO: display and make sector modifiable when selected on Builder
+    const pointsStyle = new Style({
+        image: new CircleStyle({
+            radius: selected && false ? 5 : 0, //Del the 'false' when TODO
+            fill: new Fill({
+              color: '#fff',
+            }),
+            stroke: new Stroke({
+                color: 'rgba(4, 217, 139, 0.9)',
+            })
+          }),
+          geometry: function () {
+            // const coordinates = feature.getGeometry()?.getCoordinates()[0];
+            const poly = feature.getGeometry() as PolygonType | undefined;
+            const coordinates: Coordinate[] = poly!.getCoordinates()[0];
+            return new MultiPoint(coordinates);
+          },
+    })
+    return [polygonStyle, pointsStyle];
 }
 
 const creatingSectorMarkerStyle = (feature: FeatureLike) => {

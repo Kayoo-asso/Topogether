@@ -6,21 +6,27 @@ import { CSS } from '@dnd-kit/utilities';
 
 import ArrowSimple from "assets/icons/arrow-simple.svg";
 import CrossDelete from "assets/icons/clear.svg";
+import { useDeleteStore } from "components/pages/deleteStore";
 
 interface BoulderItemLeftbarProps {
 	boulder: Quark<Boulder>;
 	orderIndex: number;
 	selected: boolean;
 	displayed: boolean;
+	deletable?: boolean;
 	onArrowClick: () => void;
 	onNameClick?: () => void;
-	onDeleteClick?: () => void;
 	onTrackClick: (trackQuark: Quark<Track>) => void;
 	displayCreateTrack: boolean;
 	onCreateTrack?: () => void;
 }
 
-export const BoulderItemLeftbar: React.FC<BoulderItemLeftbarProps> = watchDependencies((props: BoulderItemLeftbarProps) => {
+export const BoulderItemLeftbar: React.FC<BoulderItemLeftbarProps> = watchDependencies(({
+	deletable = false,
+	...props
+}: BoulderItemLeftbarProps) => {
+	const del = useDeleteStore(d => d.delete);
+
 	const boulder = props.boulder();
 	const tracksIter = boulder.tracks.quarks();
 	const trackQuarks = Array.from(tracksIter);
@@ -80,13 +86,11 @@ export const BoulderItemLeftbar: React.FC<BoulderItemLeftbarProps> = watchDepend
 						{boulder.name} 
 					</span>
 				</div>
-				{props.onDeleteClick &&
-					<div className={`md:cursor-pointer`} onClick={props.onDeleteClick}>
-						<CrossDelete
-							className={"h-4 w-4 stroke-grey-medium hover:stroke-dark"}
-						/>
-					</div>
-				}
+				<div className={`${deletable ? '' : 'hidden'} md:cursor-pointer`} onClick={() => del.item({ type: "boulder", value: props.boulder })}>
+					<CrossDelete
+						className={"h-4 w-4 stroke-grey-medium hover:stroke-dark"}
+					/>
+				</div>
 			</div>
 
 			{props.displayed && (

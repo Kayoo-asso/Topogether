@@ -1,51 +1,61 @@
-import React, { Dispatch, SetStateAction, useCallback, useEffect } from 'react';
-import { InteractItem, useSelectStore } from 'components/pages/selectStore';
-import { deleteBoulder, deleteParking, deleteSector, deleteWaypoint } from 'helpers/builder';
+import React, { useCallback, useEffect } from 'react';
+import { useSelectStore } from 'components/pages/selectStore';
+import { deleteBoulder, deleteParking, deleteSector, deleteTrack, deleteWaypoint } from 'helpers/builder';
 import { staticUrl } from 'helpers/constants';
 import { Quark, watchDependencies } from 'helpers/quarky';
 import { Topo } from 'types';
 import { useBreakpoint } from 'helpers/hooks/DeviceProvider';
 import { useModal } from 'helpers/hooks/useModal';
+import { useDeleteStore } from 'components/pages/deleteStore';
 
 interface BuilderModalDeleteProps {
     topo: Quark<Topo>,
-    deleteItem: InteractItem,
-    setDeleteItem: Dispatch<SetStateAction<InteractItem>>,
 }
 
 export const BuilderModalDelete: React.FC<BuilderModalDeleteProps> = watchDependencies(
     (props: BuilderModalDeleteProps) => {
         const breakpoint = useBreakpoint();
-        const flush = useSelectStore(s => s.flush);
         const selectedItem = useSelectStore(s => s.item);
+        const flush = useSelectStore(s => s.flush);  
+
+        const toDeleteItem = useDeleteStore(d => d.item);
+        const flushDel = useDeleteStore(d => d.flush);
 
         const [ModalDelete, showModalDelete, hideModalDelete] = useModal();
         useEffect(() => {
-            if (props.deleteItem.type === 'none') hideModalDelete();
+            if (toDeleteItem.type === 'none') hideModalDelete();
             else showModalDelete();
-        }, [props.deleteItem])
+        }, [toDeleteItem]);
 
         const getModalContent = () => {
-            if (props.deleteItem.type === 'sector') return "Êtes-vous sûr de vouloir supprimer le secteur (les blocs associés ne seront pas supprimés) ?"
-            else if (props.deleteItem.type === 'boulder') return <>Êtes-vous sûr de vouloir supprimer le bloc <span className='font-semibold'>{props.deleteItem.value().name}</span> et toutes les voies associées ?</>
-            else if (props.deleteItem.type === 'parking') return <>Êtes-vous sûr de vouloir supprimer le parking <span className='font-semibold'>{props.deleteItem.value().name}</span> ?</>
-            else if (props.deleteItem.type === 'waypoint') return <>Êtes-vous sûr de vouloir supprimer le point d'intérêt <span className='font-semibold'>{props.deleteItem.value().name}</span> ?</>
+            switch (toDeleteItem.type) {
+                case 'sector': return "Êtes-vous sûr de vouloir supprimer le secteur (les blocs associés ne seront pas supprimés) ?";
+                case 'boulder': return <>Êtes-vous sûr de vouloir supprimer le bloc <span className='font-semibold'>{toDeleteItem.value().name}</span> et toutes les voies associées ?</>;
+                case 'track': return <>Êtes-vous sûr de vouloir supprimer le passage <span className='font-semibold'>{toDeleteItem.value().name}</span> ?</>;
+                case 'parking': return <>Êtes-vous sûr de vouloir supprimer le parking <span className='font-semibold'>{toDeleteItem.value().name}</span> ?</>;
+                case 'waypoint': return <>Êtes-vous sûr de vouloir supprimer le point d'intérêt <span className='font-semibold'>{toDeleteItem.value().name}</span> ?</>
+            }
         }
 
         const deleteItem = useCallback(() => {
-            const flushAction = breakpoint === 'mobile' ? flush.all : flush.item;
-            if (props.deleteItem.type === 'sector') deleteSector(props.topo, props.deleteItem.value);
-            else if (props.deleteItem.type === 'boulder') deleteBoulder(props.topo, props.deleteItem.value, flushAction, selectedItem.type === 'boulder' ? selectedItem : undefined);
-            else if (props.deleteItem.type === 'parking') deleteParking(props.topo, props.deleteItem.value, flushAction, selectedItem.type === 'parking' ? selectedItem : undefined)
-            else if (props.deleteItem.type === 'waypoint') deleteWaypoint(props.topo, props.deleteItem.value, flushAction, selectedItem.type === 'waypoint' ? selectedItem : undefined);
-            props.setDeleteItem({ type: 'none', value: undefined })
-        }, [props.deleteItem, props.topo, flush.all, flush.item]);
+            const flushAction = breakpoint === 'mobile' ? flush.all : toDeleteItem.type === 'track' ? flush.track : flush.item;
+            console.log(toDeleteItem);
+            switch (toDeleteItem.type) {
+                case 'sector': deleteSector(props.topo, toDeleteItem.value); break;
+                case 'boulder': deleteBoulder(props.topo, toDeleteItem.value, flushAction, selectedItem.type === 'boulder' ? selectedItem : undefined); break;
+                case 'track': deleteTrack(toDeleteItem.boulder(), toDeleteItem.value, flushAction, toDeleteItem.selectedBoulder); break;
+                case 'parking': deleteParking(props.topo, toDeleteItem.value, flushAction, selectedItem.type === 'parking' ? selectedItem : undefined); break;
+                case 'waypoint': deleteWaypoint(props.topo, toDeleteItem.value, flushAction, selectedItem.type === 'waypoint' ? selectedItem : undefined); break;
+            }
+            flushDel.item();
+        }, [toDeleteItem, toDeleteItem.type === 'track' && toDeleteItem.boulder, selectedItem, props.topo]);
     
         return (
             <ModalDelete
                 buttonText="Confirmer"
                 imgUrl={staticUrl.deleteWarning}
                 onConfirm={deleteItem}
+                onClose={() => toDeleteItem.type !== 'none' && flushDel.item()}
             >
                 {getModalContent()}
             </ModalDelete>

@@ -31,7 +31,7 @@ import {
 import { BuilderProgressIndicator } from "components/organisms/builder/BuilderProgressIndicator";
 import { BuilderDropdown } from "components/organisms/builder/BuilderDropdown";
 import { BuilderModalDelete } from "components/organisms/builder/BuilderModalDelete";
-import { InteractItem, useSelectStore } from "./selectStore";
+import { SelectedItem, useSelectStore } from "./selectStore";
 import { SyncUrl } from "components/organisms/SyncUrl";
 import { KeyboardShortcut } from "components/organisms/builder/KeyboardShortcuts";
 import { NetworkIndicator } from "components/atoms/NetworkIndicator";
@@ -74,12 +74,12 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 		const select = useSelectStore(s => s.select);
 		const tool = useSelectStore(s => s.tool);
 
-		const [dropdownItem, setDropdownItem] = useState<InteractItem>({ type: 'none', value: undefined });
+		//TODO: refactor with a dropdownStore (like deleteStore)
+		const [dropdownItem, setDropdownItem] = useState<SelectedItem>({ type: 'none', value: undefined });
 		const [dropdownPosition, setDropdownPosition] = useState<{
 			x: number;
 			y: number;
 		}>();
-		const [deleteItem, setDeleteItem] = useState<InteractItem>({ type: 'none', value: undefined });
 
 		const mapRef = useRef<Map>(null);
 		
@@ -164,9 +164,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 		return (
 			<>
 				<SyncUrl topo={topo} />
-				<KeyboardShortcut 
-					onDelete={(item) => setDeleteItem(item)}
-				/>
+				<KeyboardShortcut />
 				
 				<Header
 					title={topo.name}
@@ -200,6 +198,10 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 						map={mapRef.current}
 						Filters={Filters}
 						onFilterReset={resetFilters}
+					/>
+
+					<SlideoverRightBuilder
+						topo={props.topoQuark}
 					/>
 
 					<MapControl 
@@ -242,24 +244,15 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 						/>
 					</MapControl>
 
-					<SlideoverRightBuilder
-						topo={props.topoQuark}
-					/>
-
 				</div>
 
 				<BuilderDropdown 
 					position={dropdownPosition}
 					dropdownItem={dropdownItem}
 					setDropdownItem={setDropdownItem}
-					setDeleteItem={setDeleteItem}
 				/>
 
-				<BuilderModalDelete 
-					topo={props.topoQuark}
-					deleteItem={deleteItem}
-					setDeleteItem={setDeleteItem}
-				/>
+				<BuilderModalDelete topo={props.topoQuark} />
 
 				<ModalSubmitTopo
 					buttonText="Confirmer"

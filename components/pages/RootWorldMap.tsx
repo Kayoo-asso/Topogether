@@ -46,13 +46,11 @@ export const RootWorldMap: React.FC<RootWorldMapProps> = watchDependencies(
 						Téléchargement en cours... ({onGoingDl})
 					</div>
 				</HeaderDesktop>
-				{onGoingDl > 0 && (
-					<div className="flex h-header items-center bg-dark px-8">
-						<div className={`${onGoingDl > 0 ? '' : 'hidden'} text-white ktext-label w-full flex justify-end`}>
-							Téléchargement en cours... ({onGoingDl})
-						</div>
+				<div className={`flex h-header items-center bg-dark px-8 ${onGoingDl > 0 ? 'md:hidden' : 'hidden'}`}>
+					<div className={`${onGoingDl > 0 ? '' : 'hidden'} text-white ktext-label w-full flex justify-end`}>
+						Téléchargement en cours... ({onGoingDl})
 					</div>
-				)}
+				</div>
 
 				<div className={`${onGoingDl > 0 ? 'h-content' : 'h-contentPlusHeader'} relative flex flex-row md:h-full`}>
 					{user && <LeftbarDesktop currentMenuItem="MAP" />}
