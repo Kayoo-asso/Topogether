@@ -15,7 +15,7 @@ interface CenterButtonProps {
 }
 
 const centerOnUser = (map: Map, pos: Coordinate) => map.getView().setCenter(pos);
-const fitOnTopo = (map: Map, extent: Extent) => map.getView().fit(extent, { duration: 300 })
+const fitOnTopo = (map: Map, extent: Extent) => map.getView().fit(extent, { duration: 300 });
 
 export const CenterButton: React.FC<CenterButtonProps> = watchDependencies((props: CenterButtonProps) => {
     const { position } = usePosition();

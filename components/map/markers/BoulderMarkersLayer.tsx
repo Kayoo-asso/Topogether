@@ -5,13 +5,14 @@ import {
 	VectorLayer,
 	VectorSource,
 } from "components/openlayers";
-import { FeatureLike } from "ol/Feature";
+import Feature, { FeatureLike } from "ol/Feature";
 import { Fill, Icon, Style, Text } from "ol/style";
 import { Boulder, UUID } from "types";
 import { SelectedBoulder, useSelectStore } from "components/pages/selectStore";
 import { fromLonLat } from "ol/proj";
 import { Cluster } from "components/openlayers/sources/Cluster";
 import { Breakpoint, useBreakpoint } from "helpers/hooks/DeviceProvider";
+import { Geometry, Point as PointType } from "ol/geom";
 
 interface BoulderMarkersLayerProps {
 	boulders: Quark<Boulder>[];
@@ -77,6 +78,16 @@ export const clusterMarkerStyle = (selected: boolean, anySelected: boolean, size
 	});
 };
 
+function createClusterWithData(geometry: PointType, features: Array<Feature<Geometry>>) {
+	return new Feature({
+		geometry,
+		features,
+		data: {
+			type: "cluster"
+		}
+	})
+}
+
 export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> = watchDependencies((props: BoulderMarkersLayerProps) => {
 	const selectedItem = useSelectStore(s => s.item);
 	const selectedType = selectedItem.type;
@@ -108,6 +119,7 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> = watchDepe
 					source="boulders" 
 					minDistance={20} 
 					distance={60}
+					createCluster={createClusterWithData}
 				/>
 			</VectorLayer>
 
