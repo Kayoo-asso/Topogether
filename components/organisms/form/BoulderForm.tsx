@@ -1,9 +1,10 @@
 import React, { useCallback } from "react";
-import { Checkbox, TextInput } from "components";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { GeoCoordinates, Name, Topo } from "types";
 import { boulderChanged } from "helpers/builder";
 import { SelectedBoulder, useSelectStore } from "components/pages/selectStore";
+import { TextInput } from "components/molecules/form/TextInput";
+import { Checkbox } from "components/atoms/Checkbox";
 
 interface BoulderFormProps {
 	topo: Quark<Topo>;
@@ -17,9 +18,7 @@ export const BoulderForm: React.FC<BoulderFormProps> = watchDependencies(
 
 		return (
 			<div
-				className={
-					"flex flex-col gap-6 " + (props.className ? props.className : "")
-				}
+				className={"flex flex-col gap-6 " + (props.className ? props.className : "")}
 				onClick={(e) => e.stopPropagation()}
 			>
 				<TextInput

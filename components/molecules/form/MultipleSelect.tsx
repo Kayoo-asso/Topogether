@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { ValidateButton } from "components/atoms/buttons/ValidateButton";
-import { Portal } from "helpers/hooks";
 import { TextInput } from "./TextInput";
 import { SelectListMultiple } from "./SelectListMultiple";
 import { listFlags } from "helpers/bitflags";
 import { Bitflag } from "types";
+import { Portal } from "helpers/hooks/useModal";
 
 interface MultipleSelectProps<T extends Bitflag> {
 	id: string;

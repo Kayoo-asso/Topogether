@@ -1,17 +1,18 @@
-import { InteractItem, useSelectStore } from 'components/pages/selectStore';
+import { useDeleteStore } from 'components/pages/deleteStore';
+import { useSelectStore } from 'components/pages/selectStore';
 import { isOnMap } from 'helpers/map/mapUtils';
 import React, { useEffect, useState } from 'react';
 import { MapToolEnum } from 'types';
 
-interface KeyboardShortcutProps {
-    onDelete: (item: InteractItem) => void
-}
+interface KeyboardShortcutProps {}
 
 export const KeyboardShortcut: React.FC<KeyboardShortcutProps> = (props: KeyboardShortcutProps) => {
     const selectedItem = useSelectStore(s => s.item);
 	const select = useSelectStore(s => s.select);
     const flush = useSelectStore(s => s.flush);
 	const tool = useSelectStore(s => s.tool);
+
+	const del = useDeleteStore(d => d.delete);
 
     const [tempCurrentTool, setTempCurrentTool] = useState<MapToolEnum>();
 
@@ -24,7 +25,7 @@ export const KeyboardShortcut: React.FC<KeyboardShortcutProps> = (props: Keyboar
 				if (tool) flush.tool();
 				else flush.all();
 			}
-			else if (e.code === 'Delete' && isOnMap(e)) props.onDelete(selectedItem)
+			else if (e.code === 'Delete' && isOnMap(e)) del.item(selectedItem)
 			else if (e.code === "Space" && tool) {
 				setTempCurrentTool(tool);
 				flush.tool();

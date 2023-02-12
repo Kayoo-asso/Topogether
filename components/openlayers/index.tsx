@@ -23,3 +23,4 @@ export {
 export { Select } from "./interactions/Select";
 export { Modify } from "./interactions/Modify";
 export { Draw } from "./interactions/Draw";
+export { Collection } from "./Collection";

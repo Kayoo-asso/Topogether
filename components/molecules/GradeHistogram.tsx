@@ -102,3 +102,5 @@ export const GradeHistogram: React.FC<GradeHistogramProps> = ({
 		</div>
 	);
 };
+
+GradeHistogram.displayName = "GradeHistogram";

@@ -1,14 +1,16 @@
 import React, { useCallback, useState } from "react";
-import { ParkingForm, WaypointForm } from "../form";
 import { Quark } from "helpers/quarky";
 import { Topo } from "types";
-import { useBreakpoint } from "helpers/hooks";
 import { BoulderBuilderContentMobile } from "./BoulderBuilderContent.mobile";
 import { BoulderBuilderContentDesktop } from "./BoulderBuilderContent.desktop";
-import { SlideoverMobile, SlideoverRightDesktop } from "components/atoms/overlays";
 import { BuilderTrackSlideoverDesktop } from "./BuilderTrackSlideover.desktop";
 import { Drawer } from "../Drawer";
 import { useSelectStore } from "components/pages/selectStore";
+import { useBreakpoint } from "helpers/hooks/DeviceProvider";
+import { ParkingForm } from "../form/ParkingForm";
+import { WaypointForm } from "../form/WaypointForm";
+import { SlideoverMobile } from "components/atoms/overlays/SlideoverMobile";
+import { SlideoverRightDesktop } from "components/atoms/overlays/SlideoverRightDesktop";
 
 type SlideoverRightBuilderProps = {
 	topo: Quark<Topo>;
@@ -60,9 +62,9 @@ export const SlideoverRightBuilder: React.FC<SlideoverRightBuilderProps> = (
 
 	return (
 		<>
-			{breakpoint === "mobile" && (
+			{breakpoint === "mobile" && item.type !== 'none' && (
 				<SlideoverMobile
-					open={item.type !== 'none' && item.type !== 'sector'}
+					open={item.type !== 'sector'}
 					persistent={item.type === 'boulder'}
 					onSizeChange={setFull}
 					onClose={onClose}
@@ -72,14 +74,14 @@ export const SlideoverRightBuilder: React.FC<SlideoverRightBuilderProps> = (
 					</div>
 				</SlideoverMobile>
 			)}
-			{breakpoint !== "mobile" && (
+			{breakpoint !== "mobile" && item.type !== 'none' && (
 				<>
 					<SlideoverRightDesktop
 						item={item.type === 'boulder' ? item.value() : undefined}
-						open={item.type !== 'none' && item.type !== 'sector'}
+						open={item.type !== 'sector'}
 						onClose={onClose}
 					>
-						<div className="h-full">{getContent()}</div>
+						<div className="h-full py-6">{getContent()}</div>
 					</SlideoverRightDesktop>
 
 					{item.type === 'boulder' && item.selectedTrack && item.selectedImage &&

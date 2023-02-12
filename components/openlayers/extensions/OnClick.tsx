@@ -11,11 +11,15 @@ export type OnClickProps =
 			layers: string | Array<string>;
 			onClick(e: OnClickFeatureEvent<Feature>): void;
 			renderFeatures?: false;
+			stopPropagation?: boolean;
+			hitTolerance?: number;
 	  }
 	| {
 			layers: string | Array<string>;
 			onClick(e: OnClickFeatureEvent<FeatureLike>): void;
 			renderFeatures: true;
+			stopPropagation?: boolean;
+			hitTolerance?: number;
 	  };
 
 // Adapted from OpenLayer's ModifyEvent
@@ -37,12 +41,19 @@ export function OnClickFeature(props: OnClickProps) {
 	useEffect(() => {
 		const layerSet = new Set(layers);
 		const handler = (evt: MapBrowserEvent<UIEvent>) => {
+			let stop = false;
 			map.forEachFeatureAtPixel(
 				evt.pixel,
 				(feature) => {
-					props.onClick(new OnClickFeatureEvent(feature as any, evt));
+					if(!stop) {
+						props.onClick(new OnClickFeatureEvent(feature as any, evt));
+					}
+					if(props.stopPropagation === undefined || props.stopPropagation === true) {
+						stop = true;
+					} 
 				},
 				{
+					hitTolerance: props.hitTolerance,
 					layerFilter: (l) =>
 						layerSet.has(l) &&
 						(props.renderFeatures || l instanceof VectorLayer),

@@ -1,13 +1,13 @@
-import { RoundButton } from "components/atoms";
 import CenterIcon from "assets/icons/center.svg";
 import { fromLonLat } from "ol/proj";
-import { usePosition } from "helpers/hooks";
 import { Map } from "ol";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { Topo } from "types";
-import { DEFAULT_EXTENT_BUFFER, getTopoExtent } from "helpers/map/getTopoExtent";
 import { Extent, containsCoordinate } from "ol/extent";
 import { Coordinate } from "ol/coordinate";
+import { usePosition } from "helpers/hooks/UserPositionProvider";
+import { RoundButton } from "components/atoms/buttons/RoundButton";
+import { DEFAULT_EXTENT_BUFFER, getTopoExtent } from "helpers/map/getExtent";
 
 interface CenterButtonProps {
     map: Map | null;
@@ -15,7 +15,7 @@ interface CenterButtonProps {
 }
 
 const centerOnUser = (map: Map, pos: Coordinate) => map.getView().setCenter(pos);
-const fitOnTopo = (map: Map, extent: Extent) => map.getView().fit(extent, { duration: 300 })
+const fitOnTopo = (map: Map, extent: Extent) => map.getView().fit(extent, { duration: 300 });
 
 export const CenterButton: React.FC<CenterButtonProps> = watchDependencies((props: CenterButtonProps) => {
     const { position } = usePosition();

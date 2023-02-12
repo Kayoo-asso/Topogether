@@ -10,6 +10,7 @@ import type RenderEvent from "ol/render/Event";
 import { TileSourceEvent } from "ol/source/Tile";
 import { VectorSourceEvent } from "ol/source/Vector";
 import { DragEvent } from "./extensions/DragInteraction";
+import { CollectionEvent } from "ol/Collection";
 
 export const baseEvents = {
 	change: "onChange",
@@ -81,10 +82,6 @@ export const viewEvents = {
 	"change:rotation": "onChangeRotation",
 } as const;
 
-type KeysOfUnion<T> = T extends any ? keyof T: never;
-
-
-
 export function e<Arg extends Partial<Record<Event, EventHandler<Event>>>>(
 	events: Arg
 ): Array<keyof Arg> {
@@ -131,6 +128,7 @@ interface EventMap {
 	// Render
 	onPostRender(event: RenderEvent): void;
 	onPreRender(event: RenderEvent): void;
+
 
 	// Map
 	onChangeLayerGroup(event: ObjectEvent): void;

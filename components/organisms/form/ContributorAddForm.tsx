@@ -1,8 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { TextInput } from 'components/molecules';
 import { ContributorRole, Name, UUID } from 'types';
-import { Button } from 'components/atoms';
-import { SelectList } from 'components/molecules/form/SelectList';
 
 interface ContributorAddFormProps {
     onClose: () => void,

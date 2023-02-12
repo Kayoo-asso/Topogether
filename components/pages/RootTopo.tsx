@@ -1,5 +1,4 @@
 import React, { useCallback, useRef } from "react";
-import { DropdownOption } from "components";
 import { Topo, TopoStatus } from "types";
 import {
 	Quark,
@@ -10,7 +9,6 @@ import { Header } from "components/layouts/Header";
 import { LeftbarTopoDesktop } from "components/layouts/LeftbarTopoDesktop";
 import { MapControl } from "components/map/MapControl";
 import Map from "ol/Map";
-import { useBreakpoint } from "helpers/hooks";
 import { useSession } from "helpers/services";
 import { sortBoulders } from "helpers/topo";
 import { encodeUUID } from "helpers/utils";
@@ -22,10 +20,13 @@ import { BoulderMarkersLayer } from "components/map/markers/BoulderMarkersLayer"
 import { SectorAreaMarkersLayer } from "components/map/markers/SectorAreaMarkersLayer";
 import { ParkingMarkersLayer } from "components/map/markers/ParkingMarkersLayer";
 import { WaypointMarkersLayer, disappearZoom } from "components/map/markers/WaypointMarkersLayer";
-import { SelectInteraction } from "components/map/markers/SelectInteraction";
 import { SearchbarBouldersDesktop } from "components/map/searchbar/SearchbarBoulders.desktop";
 import { useBouldersFilters } from "components/map/filters/useBouldersFilters";
 import { BouldersFiltersDesktop } from "components/map/filters/BouldersFilters.desktop";
+import { downloads } from "helpers/downloads/DownloadManager";
+import { useBreakpoint } from "helpers/hooks/DeviceProvider";
+import { DropdownOption } from "components/molecules/form/Dropdown";
+import { OnClickInteraction } from "components/map/markers/OnClickInteraction";
 
 interface RootTopoProps {
 	topoQuark: Quark<Topo>;
@@ -92,15 +93,17 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 				boulderOrder={boulderOrder}
 				map={mapRef.current}
 			/>
-		const [Filters, filterBoulders] = useBouldersFilters(topo);
-		const FiltersDesktop: React.FC = () => <BouldersFiltersDesktop Filters={Filters} />;
+		const [Filters, filterBoulders, resetFilters] = useBouldersFilters(topo);
+		const FiltersDesktop: React.FC = () => <BouldersFiltersDesktop Filters={Filters} onResetClick={resetFilters} />;
+
+		const dlStatus = downloads.getState(topo.id).status;
 
 		return (
 			<>
 				<SyncUrl topo={topo} />
 
 				<Header
-					title={topo.name}
+					title={topo.name + (dlStatus === 'downloading' ? ' (téléchargement...)' : '')}
 					backLink="/"
 					onBackClick={!isEmptyStore() ? () => flush.all() : undefined}
 					menuOptions={constructMenuOptions()}
@@ -120,7 +123,10 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 						boulderOrder={boulderOrder} 
 						map={mapRef.current} 
 						Filters={Filters}
+						onFilterReset={resetFilters}
 					/>
+
+					<SlideoverRightTopo topo={props.topoQuark} />
 
 					<MapControl
 						ref={mapRef}
@@ -131,9 +137,7 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 						Searchbar={SearchbarDesktop}
 						Filters={FiltersDesktop}
 					>
-						<SelectInteraction
-							boulderOrder={boulderOrder}
-						/>
+						<OnClickInteraction />
 						<SectorAreaMarkersLayer
 							topoQuark={props.topoQuark}
 							boulderOrder={boulderOrder}
@@ -150,8 +154,6 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 						/>
 						
 					</MapControl>
-
-					<SlideoverRightTopo topo={props.topoQuark} />
 				</div>
 			</>
 		);

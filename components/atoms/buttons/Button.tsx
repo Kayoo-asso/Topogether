@@ -30,9 +30,7 @@ export const Button: React.FC<ButtonProps> = ({
 	};
 	const button = (
 		<button
-			className={`ktext-subtitle flex h-[45px] flex-row items-center justify-center gap-5 rounded-full px-4 py-3 shadow lg:h-[50px] lg:px-8 ${getUIClasses()} ${
-				fullWidth ? "w-full " : ""
-			} ${className}`}
+			className={`ktext-subtitle w-full flex h-[45px] flex-row items-center justify-center gap-5 rounded-full px-4 py-4 shadow lg:h-[50px] lg:px-8 ${getUIClasses()} ${className}`}
 			onClick={() => {
 				if (!loading && activated && props.onClick && !props.href)
 					props.onClick();
@@ -52,7 +50,7 @@ export const Button: React.FC<ButtonProps> = ({
 			{props.href && activated ? (
 				<>
 					<Link href={props.href || ""}>
-						<a>{button}</a>
+						<a className={`${fullWidth ? "w-full " : ""}`}>{button}</a>
 					</Link>
 				</>
 			) : (

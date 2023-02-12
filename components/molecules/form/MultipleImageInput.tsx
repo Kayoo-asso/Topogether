@@ -1,9 +1,9 @@
 import React, { forwardRef, useCallback, useEffect, useState } from "react";
-import { ImageThumb } from "components";
 import { Img, UUID } from "types";
-import { ImageInput } from ".";
 import ArrowFull from "assets/icons/arrow-full.svg";
 import { SelectedBoulder, useSelectStore } from "components/pages/selectStore";
+import { ImageThumb } from "components/atoms/ImageThumb";
+import { ImageInput } from "./ImageInput";
 
 interface MultipleImageInputProps {
 	images: Img[];

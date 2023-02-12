@@ -1,6 +1,6 @@
 import { Extent, createEmpty, extendCoordinate } from "ol/extent";
 import { fromLonLat } from "ol/proj";
-import { Topo, TopoData } from "types";
+import { Boulder, Topo, TopoData } from "types";
 import { buffer as addBuffer } from "ol/extent";
 
 // Used both for fitting the initial extent in MapControl and downloading the tiles in downloadTopo()
@@ -18,6 +18,17 @@ export function getTopoExtent(topo: TopoData | Topo, buffer?: number): Extent {
 	}
 	for (const waypoint of topo.waypoints) {
 		extendCoordinate(extent, fromLonLat(waypoint.location));
+	}
+	if (buffer) {
+		extent = addBuffer(extent, buffer);
+	}
+	return extent;
+}
+
+export function getBouldersExtent(boulders: Boulder[], buffer?: number): Extent {
+	let extent = createEmpty();
+	for (const boulder of boulders) {
+		extendCoordinate(extent, fromLonLat(boulder.location));
 	}
 	if (buffer) {
 		extent = addBuffer(extent, buffer);

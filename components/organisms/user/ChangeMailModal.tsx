@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { useAuth } from "helpers/services";
-import { Email, isEmail, User } from 'types';
-import { TextInput } from 'components/molecules';
-import { Button } from 'components/atoms';
-import { Portal } from 'helpers/hooks';
+import { Email, isEmail } from 'types';
+import { Portal } from 'helpers/hooks/useModal';
+import { TextInput } from 'components/molecules/form/TextInput';
+import { Button } from 'components/atoms/buttons/Button';
 
 interface ChangeMailModalProps {
     mail: string,

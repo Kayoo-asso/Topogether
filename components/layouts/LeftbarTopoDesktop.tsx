@@ -1,8 +1,8 @@
 import React from "react";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { Topo, UUID } from "types";
-import { SectorList } from "components";
 import { Map } from "ol";
+import { SectorList } from "components/molecules/SectorList";
 
 interface LeftbarTopoDesktopProps {
 	topoQuark: Quark<Topo>;

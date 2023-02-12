@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import { watchDependencies } from "helpers/quarky";
 import { useAuth } from "helpers/services";
 
-import TopoIcon from "assets/icons/topo.svg";
+import Track from "assets/icons/track.svg";
 import UserIcon from "assets/icons/user.svg";
 import MarkerIcon from "assets/icons/marker-stroke.svg";
 
@@ -59,7 +59,7 @@ export const ShellMobile: React.FC = watchDependencies(() => {
 							activeTab === 2 ? "border-t-6 border-t-main" : ""
 						}`}
 					>
-						<TopoIcon
+						<Track
 							className={`my-auto h-5 w-5 stroke-1 ${
 								activeTab === 2 ? "stroke-main" : "stroke-white"
 							} `}

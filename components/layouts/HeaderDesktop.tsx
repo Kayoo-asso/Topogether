@@ -1,12 +1,12 @@
 import React, { ReactElement, ReactNode, useEffect, useState } from "react";
 import NextImage from "next/image";
-import { ProfilePicture } from "components/atoms";
-import { Dropdown, DropdownOption } from "components/molecules/form";
 import Link from "next/link";
 import { useAuth } from "helpers/services";
 import { useRouter } from "next/router";
 import { watchDependencies } from "helpers/quarky";
 import ArrowFull from "assets/icons/arrow-full.svg";
+import { Dropdown, DropdownOption } from "components/molecules/form/Dropdown";
+import { ProfilePicture } from "components/atoms/ProfilePicture";
 
 interface HeaderDesktopProps {
 	title: string;

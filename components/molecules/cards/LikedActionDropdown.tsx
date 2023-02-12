@@ -1,8 +1,8 @@
 import React, { useCallback } from "react";
-import { Dropdown } from "components";
 import { LightTopo } from "types";
 import { useRouter } from "next/router";
 import { encodeUUID } from "helpers/utils";
+import { Dropdown } from "../form/Dropdown";
 
 interface LikedActionDropdownProps {
 	topo: LightTopo;

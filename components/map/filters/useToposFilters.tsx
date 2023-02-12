@@ -1,8 +1,9 @@
-import { Checkbox } from "components/atoms"
-import { GradeSliderInput, SliderInput } from "components/molecules"
+import { Checkbox } from "components/atoms/Checkbox";
+import { GradeSliderInput } from "components/molecules/form/GradeSliderInput";
 import { SelectListMultiple } from "components/molecules/form/SelectListMultiple"
+import { SliderInput } from "components/molecules/form/SliderInput";
 import { hasFlag, toggleFlag } from "helpers/bitflags";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Amenities, LightGrade, LightTopo, TopoTypes } from "types";
 import { TopoTypesName } from "types/BitflagNames";
 
@@ -23,30 +24,31 @@ export type TopoFiltersComponents = {
 export function useToposFilters (lightTopos: LightTopo[]): [
     TopoFiltersComponents,
     (topo: LightTopo) => boolean,
+    () => void,
 ] {
-    // TODO: memoize that
-    let maxBoulders = 0;
-    for (const topo of lightTopos) {
-        maxBoulders = Math.max(maxBoulders, topo.nbBoulders);
-    }
-    // TODO: memoize that?
-    const filtersDomain: TopoFilterOptions = {
-        types: 0,
-        boulderRange: [0, maxBoulders],
-        gradeRange: [3, 9],
-        adaptedToChildren: false,
-    };
+    const filtersDomain: TopoFilterOptions = useMemo(() => {
+        let maxBoulders = 0;
+        for (const topo of lightTopos) {
+            maxBoulders = Math.max(maxBoulders, topo.nbBoulders);
+        }
+        return ({
+            types: 0,
+            boulderRange: [0, maxBoulders],
+            gradeRange: [3, 9],
+            adaptedToChildren: false,
+        })
+    }, [lightTopos]);
     const [filters, setFilters] = useState(filtersDomain);
     const updateTopoFilters = useCallback(
 		<K extends keyof TopoFilterOptions>(
 			option: K,
 			value: TopoFilterOptions[K]
 		) => {
-			setFilters({
-				...filters,
+			setFilters(f => ({
+				...f,
 				[option]: value,
-			});
-		}, [filters]);
+			}));
+		}, []);
 
     const filterTopos = useCallback((topo: LightTopo) => {
         //TODO : check if this works
@@ -75,6 +77,8 @@ export function useToposFilters (lightTopos: LightTopo[]): [
             ? hasFlag(topo.amenities, Amenities.AdaptedToChildren)
             : true;
     }, [filters]);
+
+    const resetFilters = () => setFilters(filtersDomain);
 
     const TopoTypesFilter = useCallback(() => (
         <SelectListMultiple 
@@ -121,5 +125,6 @@ export function useToposFilters (lightTopos: LightTopo[]): [
             ChildrenFilter 
         },
         filterTopos,
+        resetFilters,
     ];
 }

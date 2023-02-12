@@ -3,7 +3,7 @@ import { QuarkArray } from "helpers/quarky";
 import { Manager } from "types";
 import { Image } from "components/atoms/Image";
 import { TabOption, Tabs } from "components/layouts/Tabs";
-import { Flash } from "components/atoms/overlays";
+import { Flash } from "components/atoms/overlays/Flash";
 
 interface ManagementContentProps {
 	managers: QuarkArray<Manager>;
@@ -31,8 +31,8 @@ export const ManagementContent: React.FC<ManagementContentProps> = (props: Manag
 	return (
 		<>
 			{!manager &&
-				<div className="flex h-full flex-col pt-5 md:pt-0">
-					<div className="flex flex-col px-6 pt-5 md:px-0 md:pt-0">
+				<div className="flex h-full flex-col md:pt-0">
+					<div className="flex flex-col px-6 md:px-0 md:pt-0">
 						<div className="ktext-big-title mt-4 mb-6 w-full text-center md:mb-3">
 							Aucun gestionnaire référencé pour ce spot
 						</div>
@@ -40,8 +40,8 @@ export const ManagementContent: React.FC<ManagementContentProps> = (props: Manag
 				</div>
 			}
 			{manager &&
-				<div className="flex h-full flex-col pt-5 md:pt-0">
-					<div className="flex flex-col px-6 pt-5 md:px-0 md:pt-0">
+				<div className="flex h-full flex-col md:pt-0">
+					<div className="flex flex-col px-6 md:px-0 md:pt-0">
 						<div className="ktext-big-title mt-4 mb-6 w-full text-center md:hidden">
 							{"Gestionnaire" +
 								(props.managers.length > 1 ? "s" : "") +

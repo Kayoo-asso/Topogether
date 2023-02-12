@@ -1,7 +1,7 @@
 import React from "react";
-import { RoundButton } from "components";
-import { useBreakpoint } from "helpers/hooks";
 import { useSelectStore } from "components/pages/selectStore";
+import { RoundButton } from "components/atoms/buttons/RoundButton";
+import { useBreakpoint } from "helpers/hooks/DeviceProvider";
 
 import SearchIcon from "assets/icons/search.svg";
 

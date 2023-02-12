@@ -2,7 +2,6 @@ import React, { useCallback } from "react";
 import { watchDependencies } from "helpers/quarky";
 import {
 	Point,
-	Select,
 	VectorLayer,
 	VectorSource,
 } from "components/openlayers";
@@ -11,7 +10,7 @@ import { GeoCoordinates, LightTopo, TopoTypes, UUID } from "types";
 import { fromLonLat, toLonLat } from "ol/proj";
 import { TopoTypeToColor } from "helpers/topo";
 import { Drag } from "components/openlayers/interactions/Drag";
-import { removePreviouslySelected } from "components/openlayers/interactions/Select";
+import { OnClickFeature } from "components/openlayers/extensions/OnClick";
 
 type TopoForMarkers =
 	| LightTopo
@@ -77,20 +76,14 @@ export const TopoMarkersLayer: React.FC<TopoMarkersLayerProps> =
 						/>
 					)}
 
-					<Select
-						layers={["topos"]}
+					<OnClickFeature
+						layers={"topos"}
 						hitTolerance={5}
-						onSelect={(e) => {
-							removePreviouslySelected(e)
-							if (e.selected.length === 1) {
-								const feature = e.selected[0];
-								const { topo } = feature.get("data") as TopoMarkerData;
-								props.onTopoSelect && props.onTopoSelect(topo);
-							} else if (e.deselected.length === 1) {
-								props.onTopoSelect && props.onTopoSelect(undefined);
-							}
-						}}
-            style={topoStyle}
+						onClick={useCallback((e) => {
+							const { topo } = e.feature.get("data") as TopoMarkerData;
+							if (topo.id === props.selectedTopo?.id) props.onTopoSelect && props.onTopoSelect(undefined);
+							else props.onTopoSelect && props.onTopoSelect(topo);
+						}, [props.selectedTopo])}
 					/>
 
 					<VectorLayer

@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { ValidateButton } from "components/atoms/buttons/ValidateButton";
-import { Portal } from "helpers/hooks";
 import { SelectList, SelectOption } from "./SelectList";
 import { TextInput } from "./TextInput";
+import { Portal } from "helpers/hooks/useModal";
 
 interface SelectProps<T> {
 	id: string;

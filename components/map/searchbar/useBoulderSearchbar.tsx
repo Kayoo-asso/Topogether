@@ -1,6 +1,6 @@
-import { TextInput } from "components/molecules";
+import { TextInput } from "components/molecules/form/TextInput";
 import { useSelectStore } from "components/pages/selectStore";
-import { useBreakpoint } from "helpers/hooks";
+import { useBreakpoint } from "helpers/hooks/DeviceProvider";
 import { Quark } from "helpers/quarky";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Trigram from "trigram-search";

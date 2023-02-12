@@ -1,4 +1,4 @@
-import { useBreakpoint } from "helpers/hooks";
+import { useBreakpoint } from "helpers/hooks/DeviceProvider";
 import React from "react";
 
 export type SelectOption<T> = [value: T, label: string];

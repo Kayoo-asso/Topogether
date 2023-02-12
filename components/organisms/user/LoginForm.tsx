@@ -1,11 +1,12 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Button, TextInput } from "components";
 import Link from "next/link";
 import NextImage from "next/image";
 import { SignInRes, useAuth } from "helpers/services";
 import { Email } from "types";
 import { useRouter } from "next/router";
 import { staticUrl } from "helpers/constants";
+import { TextInput } from "components/molecules/form/TextInput";
+import { Button } from "components/atoms/buttons/Button";
 
 interface LoginFormProps {
 	onLogin?: () => void;

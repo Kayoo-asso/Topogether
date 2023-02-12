@@ -1,13 +1,14 @@
 import React from "react";
-import { Button, Checkbox, TextArea, TextInput } from "components";
 import { watchDependencies } from "helpers/quarky";
 import { Description, Name, TrackSpec } from "types";
 import { toggleFlag } from "helpers/bitflags";
-import { useModal } from "helpers/hooks";
-import { staticUrl } from "helpers/constants";
-import { deleteTrack } from "helpers/builder";
 import { SelectedBoulder, useSelectStore } from "components/pages/selectStore";
 import { SpecSelector } from "components/molecules/form/SpecSelector";
+import { TextInput } from "components/molecules/form/TextInput";
+import { Checkbox } from "components/atoms/Checkbox";
+import { TextArea } from "components/molecules/form/TextArea";
+import { Button } from "components/atoms/buttons/Button";
+import { useDeleteStore } from "components/pages/deleteStore";
 
 interface TrackFormProps {
 	className?: string,
@@ -15,11 +16,10 @@ interface TrackFormProps {
 
 export const TrackForm: React.FC<TrackFormProps> = watchDependencies(
 	(props: TrackFormProps) => {
-		const [ModalDelete, showModalDelete] = useModal();
-
 		const selectedBoulder = useSelectStore(s => s.item as SelectedBoulder);
 		if (!selectedBoulder.selectedTrack) throw new Error("Trying to open TrackForm without any track");
-		const flushTrack = useSelectStore(s => s.flush.track);
+		const del = useDeleteStore(d => d.delete);
+
 		const trackQuark = selectedBoulder.selectedTrack;
 		const track = trackQuark();
 
@@ -116,19 +116,11 @@ export const TrackForm: React.FC<TrackFormProps> = watchDependencies(
 					<div className="flex w-full grow items-end">
 						<Button
 							content="Supprimer"
-							onClick={showModalDelete}
+							onClick={() => del.item({ type: 'track', value: trackQuark, boulder: selectedBoulder.value, selectedBoulder: selectedBoulder})}
 							fullWidth
 						/>
 					</div>
 				</div>
-
-				<ModalDelete
-					buttonText="Confirmer"
-					imgUrl={staticUrl.deleteWarning}
-					onConfirm={() => deleteTrack(selectedBoulder.value(), trackQuark, flushTrack, selectedBoulder)}
-				>
-					Etes-vous sûr de vouloir supprimer la voie ?
-				</ModalDelete>
 			</>
 		);
 	}

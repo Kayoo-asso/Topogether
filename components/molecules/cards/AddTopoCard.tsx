@@ -1,7 +1,7 @@
 import React from "react";
-import { Card } from "components";
 import Link from "next/link";
 import AddIcon from "assets/icons/add.svg";
+import { Card } from "components/atoms/Card";
 
 // corriger l'icone
 export const AddTopoCard: React.FC = () => {

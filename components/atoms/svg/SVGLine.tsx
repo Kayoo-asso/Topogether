@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { getCoordsInViewbox, getPathFromPoints } from "helpers/svg";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { Grade, gradeToLightGrade, Line } from "types";
-import { SVGPoint } from ".";
+import { SVGPoint } from "./SVGPoint";
 
 interface SVGLineProps {
 	line: Quark<Line>;

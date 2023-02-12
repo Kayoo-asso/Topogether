@@ -1,7 +1,5 @@
 import React from "react";
-import { useRouter } from "next/router";
 import { GeocodingFeature } from "helpers/map/geocodingMapbox";
-import { useBreakpoint } from "helpers/hooks";
 import { LightTopo } from "types";
 import { Map } from "ol";
 import Link from "next/link";
@@ -11,6 +9,7 @@ import { fromLonLat } from "ol/proj";
 
 import MarkerIcon from "assets/icons/marker.svg";
 import Flag from "assets/icons/flag.svg";
+import { useBreakpoint } from "helpers/hooks/DeviceProvider";
 
 export interface SearchbarToposProps {
 	topoApiResults: LightTopo[];

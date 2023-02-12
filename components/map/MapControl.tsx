@@ -2,12 +2,9 @@ import React, { useCallback, useEffect, useState } from "react";
 import { Map as BaseMap, View, TileLayer, XYZ } from "components/openlayers";
 import Map from "ol/Map";
 import { fromLonLat } from "ol/proj";
-import { SatelliteButton } from "components";
-import { ImageInput } from "components/molecules";
-import { GeoCoordinates, Position, Topo } from "types";
+import { GeoCoordinates, Position, Sector, Topo } from "types";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { setReactRef } from "helpers/utils";
-import { useBreakpoint, usePosition } from "helpers/hooks";
 import { useSelectStore } from "components/pages/selectStore";
 import { handleNewPhoto } from "helpers/handleNewPhoto";
 import { useSession } from "helpers/services";
@@ -16,11 +13,6 @@ import { Props } from "components/openlayers/Map";
 import { UserMarkerLayer } from "./markers/UserMarkerLayer";
 import { MapBrowserEvent } from "ol";
 import { Attribution } from "ol/control";
-import {
-	DEFAULT_EXTENT_BUFFER,
-	getTopoExtent,
-} from "helpers/map/getTopoExtent";
-import { getMapCursorClass } from "helpers/map/getMapCursorClass";
 import { isEmpty } from "ol/extent";
 import { fontainebleauLocation } from "helpers/constants";
 import { OnClickFeature } from "components/openlayers/extensions/OnClick";
@@ -28,6 +20,14 @@ import { CenterButton } from "./CenterButton";
 import { useRouter } from "next/router";
 import { SearchButton } from "./searchbar/SearchButton";
 import { FilterButton } from "./filters/FilterButton";
+import { useBreakpoint } from "helpers/hooks/DeviceProvider";
+import { usePosition } from "helpers/hooks/UserPositionProvider";
+import { SatelliteButton } from "components/atoms/buttons/SatelliteButton";
+import { ImageInput } from "components/molecules/form/ImageInput";
+import { DeleteButton } from "components/atoms/buttons/DeleteButton";
+import { DEFAULT_EXTENT_BUFFER, getTopoExtent } from "helpers/map/getExtent";
+import { ValidateButton } from "components/atoms/buttons/ValidateButton";
+import { DeleteItemButton } from "components/atoms/buttons/DeleteItemButton";
 
 type MapControlProps = React.PropsWithChildren<
 	Props & {
@@ -153,36 +153,42 @@ export const MapControl = watchDependencies<Map, MapControlProps>(
 						}
 					>
 						{displayToolSelector && (
-							<div className="flex w-full flex-row justify-center gap-5">
-								<MapToolSelector
-									open={mapToolSelectorOpen}
-									setOpen={setMapToolSelectorOpen}
-								/>
-								{!mapToolSelectorOpen && (
-									<ImageInput
-										button="builder"
-										size="big"
-										multiple={false}
-										activated={
-											!!position || process.env.NODE_ENV === "development"
-										}
-										onChange={(files) => {
-											position &&
-												session &&
-												props.topo &&
-												handleNewPhoto(
-													props.topo,
-													files[0],
-													position,
-													session,
-													select,
-													selectedItem,
-													tool
-												);
-										}}
+							<>
+								<div className={`${selectedItem.type === 'sector' ? '' : 'hidden'} flex w-full flex-row justify-center`}>
+									<DeleteItemButton white item={selectedItem} />
+								</div>
+
+								<div className={`${selectedItem.type === 'sector' ? 'hidden' : ''} flex w-full flex-row justify-center gap-5`}>
+									<MapToolSelector
+										open={mapToolSelectorOpen}
+										setOpen={setMapToolSelectorOpen}
 									/>
-								)}
-							</div>
+									{!mapToolSelectorOpen && (
+										<ImageInput
+											button="builder"
+											size="big"
+											multiple={false}
+											activated={
+												!!position || process.env.NODE_ENV === "development"
+											}
+											onChange={(files) => {
+												position &&
+													session &&
+													props.topo &&
+													handleNewPhoto(
+														props.topo,
+														files[0],
+														position,
+														session,
+														select,
+														selectedItem,
+														tool
+													);
+											}}
+										/>
+									)}
+								</div>
+							</>
 						)}
 					</div>
 
@@ -212,8 +218,7 @@ export const MapControl = watchDependencies<Map, MapControlProps>(
 						setMap(ref);
 						setReactRef(parentRef, ref);
 					}, [])}
-					className={"h-full w-full " + getMapCursorClass(tool)}
-					// TODO: remove once Select is fixed
+					className="h-full w-full"
 					onClick={(e) => {
 						const map = e.map;
 						const hit = map.getFeaturesAtPixel(e.pixel).length > 0;
@@ -224,13 +229,6 @@ export const MapControl = watchDependencies<Map, MapControlProps>(
 					}}
 					controls={controls}
 				>
-					{/* For demo purposes */}
-					<OnClickFeature
-						layers={["topos", "boulders", "parkings", "sectors", "waypoints"]}
-						onClick={(evt) => {
-							// console.log("onClickFeature:", evt)
-						}}
-					/>
 					<View
 						center={
 							initialCenter

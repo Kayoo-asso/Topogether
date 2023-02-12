@@ -3,56 +3,26 @@ import { Quark, watchDependencies } from "helpers/quarky";
 import { Waypoint } from "types";
 import { Image } from "components/atoms/Image";
 import { useSelectStore } from "components/pages/selectStore";
-import { Flash } from "components/atoms/overlays";
+import { Flash } from "components/atoms/overlays/Flash";
+import { ItemsHeaderButtons } from "../ItemsHeaderButtons";
 
-import HelpRound from "assets/icons/help-round.svg";
+import Info from "assets/icons/info.svg";
 
 export const WaypointContent: React.FC = watchDependencies(() => {
 		const [flashMessage, setFlashMessage] = useState<string>();
 		const waypoint = useSelectStore(s => s.item.value as Quark<Waypoint>)();
 
+		const flush = useSelectStore(s => s.flush);
+
 		return (
 			<>
 				<div className="flex h-[90%] flex-col gap-6 md:h-[85%] md:pt-0">
-					<div className="flex flex-col items-center px-6 md:items-start">
-						<div className="ktext-big-title flex flex-row items-center gap-3">
-							<div className="flex h-full items-center justify-center">
-								<HelpRound className="h-6 w-6 fill-third stroke-third" />
-							</div>
-							{waypoint.name}
-						</div>
-						<div
-							className="ktext-label md:cursor-pointer text-grey-medium"
-							onClick={() => {
-								const data = [
-									new ClipboardItem({
-										"text/plain": new Blob(
-											[waypoint.location[1] + "," + waypoint.location[0]],
-											{
-												type: "text/plain",
-											}
-										),
-									}),
-								];
-								navigator.clipboard.write(data).then(
-									function () {
-										setFlashMessage(
-											"Coordonnées copiées dans le presse papier."
-										);
-									},
-									function () {
-										setFlashMessage("Impossible de copier les coordonées.");
-									}
-								);
-							}}
-						>
-							{parseFloat(waypoint.location[1].toFixed(12)) +
-								"," +
-								parseFloat(waypoint.location[0].toFixed(12))}
-						</div>
+
+					<div className="hidden md:block">
+						<ItemsHeaderButtons item={waypoint} onClose={flush.item} />
 					</div>
 
-					<div className="relative h-[60%] max-h-[200px] w-full md:h-[25%]">
+					<div className="relative max-h-[40%] h-[40%] overflow-hidden rounded-t-lg w-full md:h-[30%]">
 						<Image
 							image={waypoint.image}
 							alt="Point de repère"
@@ -60,6 +30,15 @@ export const WaypointContent: React.FC = watchDependencies(() => {
 							sizeHint="50vw"
 							modalable
 						/>
+					</div>
+
+					<div className="flex flex-col px-6 items-start">
+						<div className="ktext-big-title flex flex-row items-center gap-3">
+							<div className="flex h-full items-center justify-center">
+								<Info className="h-6 w-6" />
+							</div>
+							{waypoint.name}
+						</div>
 					</div>
 
 					<div className="ktext-base-little px-6">{waypoint.description}</div>

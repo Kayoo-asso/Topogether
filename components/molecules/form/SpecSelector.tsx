@@ -1,11 +1,11 @@
 import React, { useCallback, useState } from "react";
 import { ValidateButton } from "components/atoms/buttons/ValidateButton";
 import { listFlags, toggleFlag } from "helpers/bitflags";
-import { Portal } from "helpers/hooks";
 import { TrackSpec } from "types";
 import { BodyPositionName, HoldTypeName, TrackDangerName, TrackSpecName, TrackStyleName } from "types/BitflagNames";
 import { SelectListMultiple } from "./SelectListMultiple";
 import { TextInput } from "./TextInput";
+import { Portal } from "helpers/hooks/useModal";
 
 interface SpecSelectorProps {
     value: TrackSpec;

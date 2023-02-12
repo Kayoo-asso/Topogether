@@ -3,9 +3,11 @@ import Parking from "assets/icons/parking.svg";
 
 interface ParkingButtonProps {
 	onClick?: () => void;
+	displayIcon?: boolean;
 }
 
 export const ParkingButton: React.FC<ParkingButtonProps> = ({
+	displayIcon = false,
 	...props
 }: ParkingButtonProps) => {
 	
@@ -15,7 +17,7 @@ export const ParkingButton: React.FC<ParkingButtonProps> = ({
 			onClick={props.onClick}
 		>
 			Itinéraire vers le parking
-			<Parking className="ml-3 h-5 w-5 fill-main" />
+			{displayIcon && <Parking className="ml-3 h-5 w-5" />}
 		</div>
 	);
 };

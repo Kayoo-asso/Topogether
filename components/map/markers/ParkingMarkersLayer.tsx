@@ -7,11 +7,12 @@ import {
 } from "components/openlayers";
 import { Icon, Style } from 'ol/style';
 import { Parking } from 'types';
-import { useSelectStore } from 'components/pages/selectStore';
+import { SelectedParking, useSelectStore } from 'components/pages/selectStore';
 import { fromLonLat } from 'ol/proj';
 import { useMapZoom } from 'helpers/hooks/useMapZoom';
-import { Breakpoint, useBreakpoint } from 'helpers/hooks';
 import { disappearZoom } from './WaypointMarkersLayer';
+import { Breakpoint, useBreakpoint } from 'helpers/hooks/DeviceProvider';
+import { FeatureLike } from 'ol/Feature';
 
 interface ParkingMarkersLayerProps {
     parkings: QuarkArray<Parking>;
@@ -21,7 +22,7 @@ export const parkingMarkerStyle = (selected: boolean, anySelected: boolean, devi
     const icon = new Icon({
         opacity: mapZoom > disappearZoom ? (anySelected ? (selected ? 1 : 0.4) : 1) : 0,
         src: "/assets/icons/markers/parking.svg",
-        scale: device === 'desktop' ? 0.8 : 1,
+        scale: device === 'desktop' ? 0.7 : 0.8,
     });
     return new Style({
         image: icon,
@@ -30,23 +31,26 @@ export const parkingMarkerStyle = (selected: boolean, anySelected: boolean, devi
 }
 
 export const ParkingMarkersLayer: React.FC<ParkingMarkersLayerProps> = watchDependencies((props: ParkingMarkersLayerProps) => {
-    const selectedType = useSelectStore((s) => s.item.type);
-    const anySelected = !!(selectedType !== 'none' && selectedType !== 'sector');
+    const selectedItem = useSelectStore((s) => s.item);
+    const anySelected = !!(selectedItem.type !== 'none' && selectedItem.type !== 'sector');
 
     const mapZoom = useMapZoom(disappearZoom);
     const device = useBreakpoint();
     
     return (
         <>
+
             <VectorLayer
                 id="parkings"
-                style={useCallback(() =>
-                        parkingMarkerStyle (
-                            false,
+                style={useCallback((f: FeatureLike) => {
+                        const item = f.get("data") as SelectedParking;
+                        const selected = selectedItem.value ? item.value().id === selectedItem.value().id : false;
+                        return parkingMarkerStyle (
+                            selected,
                             anySelected,
                             device,
                             mapZoom
-                        ), [mapZoom, device, anySelected])
+                )}, [mapZoom, device, anySelected, selectedItem])
                 }
             >
                 <VectorSource>

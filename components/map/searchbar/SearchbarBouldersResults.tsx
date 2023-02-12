@@ -1,10 +1,10 @@
 import React from "react";
 import { Boulder, Topo, UUID } from "types";
-import { SectorList } from "components/molecules";
 import { Quark } from "helpers/quarky";
 import { Map as OLMap } from "ol";
 import { SectorListBuilder } from "components/organisms/builder/SectorListBuilder";
 import { useRouter } from "next/router";
+import { SectorList } from "components/molecules/SectorList";
 
 
 export interface SearchbarBouldersProps {

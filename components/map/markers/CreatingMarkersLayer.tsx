@@ -7,13 +7,13 @@ import {
     useMap,
 } from "components/openlayers";
 import { useSelectStore } from 'components/pages/selectStore';
-import { useBreakpoint } from 'helpers/hooks';
 import { MapBrowserEvent } from 'ol';
 import { useMapPointerCoordinates } from 'helpers/hooks/useMapPointerCoordinates';
 import { parkingMarkerStyle } from './ParkingMarkersLayer';
 import { disappearZoom, waypointMarkerStyle } from './WaypointMarkersLayer';
 import { boulderMarkerStyle } from './BoulderMarkersLayer';
 import { UUID } from 'types';
+import { useBreakpoint } from 'helpers/hooks/DeviceProvider';
 
 interface CreatingMarkersLayerProps {
 	boulderOrder: globalThis.Map<UUID, number>,

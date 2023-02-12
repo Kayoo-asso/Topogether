@@ -1,15 +1,16 @@
 import React, { useCallback, useState } from "react";
 import { Quark, QuarkIter } from "helpers/quarky";
 import { Topo } from "types";
-import { useBreakpoint } from "helpers/hooks";
-import { SlideoverMobile, SlideoverRightDesktop } from "components/atoms/overlays";
 import { useSelectStore } from "components/pages/selectStore";
 import { ParkingContent } from "./ParkingContent";
 import { WaypointContent } from "./WaypointContent";
 import { BoulderContentMobile } from "./BoulderContent.mobile";
 import { BoulderContentDesktop } from "./BoulderContent.desktop";
 import { TopoTrackSlideoverDesktop } from "./TopoTrackSlideover.desktop";
-import { TracksImage } from "components/molecules";
+import { useBreakpoint } from "helpers/hooks/DeviceProvider";
+import { SlideoverMobile } from "components/atoms/overlays/SlideoverMobile";
+import { SlideoverRightDesktop } from "components/atoms/overlays/SlideoverRightDesktop";
+import { TracksImage } from "components/molecules/TracksImage";
 
 type SlideoverRightTopoProps = {
 	topo: Quark<Topo>;
@@ -18,20 +19,20 @@ type SlideoverRightTopoProps = {
 export const SlideoverRightTopo: React.FC<SlideoverRightTopoProps> = (
 	props: SlideoverRightTopoProps
 ) => {
-	const breakpoint = useBreakpoint();
+	const bp = useBreakpoint();
 	const [full, setFull] = useState(false);
 	const flush = useSelectStore(s => s.flush);
 	const item = useSelectStore(s => s.item);
 
 	const onClose = () => {
-		if (breakpoint === 'mobile') flush.all();
+		if (bp === 'mobile') flush.all();
 		else flush.item();
 	};
 
 	const getContent = useCallback(() => {
 		if (item.type !== 'none' && item.type !== 'sector') {
 			if (item.type === 'boulder') {
-				if (breakpoint === "mobile")	
+				if (bp === "mobile")	
 					return (
 						<BoulderContentMobile
 							full={full}
@@ -46,30 +47,30 @@ export const SlideoverRightTopo: React.FC<SlideoverRightTopoProps> = (
 					/>
 				);
 			}
-			if (item.type === 'parking') return <ParkingContent />;
-			else return <WaypointContent />;
+			else if (item.type === 'parking') return <ParkingContent />;
+			else if (item.type === "waypoint") return <WaypointContent />;
 		} else return undefined;
-	}, [full, breakpoint, item]);
+	}, [full, bp, item]);
 
 	return (
 		<>
-			{breakpoint === "mobile" && (
+			{bp === "mobile" && item.type !== 'none' && (
 				<SlideoverMobile
-					open={item.type !== 'none' && item.type !== 'sector'}
+					open={item.type !== 'sector'}
 					persistent={item.type === 'boulder'}
 					onSizeChange={setFull}
 					onClose={onClose}
 				>
-					<div className={"h-full " + (item.type !== 'boulder' ? 'py-14' : '')}>
+					<div className="h-full">
 						{getContent()}
 					</div>
 				</SlideoverMobile>
 			)}
-			{breakpoint !== "mobile" && (
+			{bp !== "mobile" && item.type !== 'none' && (
 				<>
 					<SlideoverRightDesktop
 						item={item.type === 'boulder' ? item.value() : undefined}
-						open={item.type !== 'none' && item.type !== 'sector'}
+						open={item.type !== 'sector'}
 						onClose={onClose}
 					>
 						<div className="h-full">{getContent()}</div>

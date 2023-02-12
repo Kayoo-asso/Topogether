@@ -2,14 +2,12 @@
 // Based on: https://openlayers.org/en/latest/examples/custom-interactions.html
 
 import { Feature } from "ol";
-import type { Map, MapBrowserEvent } from "ol";
+import type { MapBrowserEvent } from "ol";
 import type { Coordinate } from "ol/coordinate";
 import BaseEvent from "ol/events/Event";
-import type { FeatureLike } from "ol/Feature";
 import type { Geometry } from "ol/geom";
 import PointerInteraction from "ol/interaction/Pointer";
 import { Vector } from "ol/source";
-import { boundingExtent } from "ol/extent";
 import VectorSource from "ol/source/Vector";
 import Layer from "ol/layer/Layer";
 import VectorLayer from "ol/layer/Vector";

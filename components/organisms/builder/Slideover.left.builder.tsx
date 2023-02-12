@@ -1,21 +1,25 @@
 import React from "react";
-import { AccessForm, InfoForm, ManagementForm } from "../form";
 import { Quark } from "helpers/quarky";
 import { Topo, UUID } from "types";
-import { useBreakpoint } from "helpers/hooks";
-import { SlideoverLeftDesktop, SlideoverMobile } from "components/atoms/overlays";
 import { useSelectStore } from "components/pages/selectStore";
 import { ContributorsList } from "./ContributorsList";
 import { Map } from "ol";
 import { SearchbarBouldersMobile } from "components/map/searchbar/SearchbarBoulders.mobile";
 import { BouldersFiltersComponents } from "components/map/filters/useBouldersFilters";
 import { BouldersFiltersMobile } from "components/map/filters/BouldersFilters.mobile";
+import { useBreakpoint } from "helpers/hooks/DeviceProvider";
+import { InfoForm } from "../form/InfoForm";
+import { AccessForm } from "../form/AccessForm";
+import { ManagementForm } from "../form/ManagementForm";
+import { SlideoverMobile } from "components/atoms/overlays/SlideoverMobile";
+import { SlideoverLeftDesktop } from "components/atoms/overlays/SlideoverLeftDesktop";
 
 type SlideoverLeftBuilderProps = {
     topo: Quark<Topo>;
 	boulderOrder: globalThis.Map<UUID, number>;
 	map: Map | null;
 	Filters: BouldersFiltersComponents;
+	onFilterReset: () => void;
 }
 
 export const SlideoverLeftBuilder: React.FC<SlideoverLeftBuilderProps> = (props: SlideoverLeftBuilderProps) => {
@@ -31,7 +35,7 @@ export const SlideoverLeftBuilder: React.FC<SlideoverLeftBuilderProps> = (props:
             case 'MANAGEMENT': return <ManagementForm managers={props.topo().managers} />;
 			case 'CONTRIBUTORS': return <ContributorsList contributors={props.topo().contributors} topoCreatorId={props.topo().creator?.id} />;
 			case 'SEARCHBAR': if (bp === 'mobile') return <SearchbarBouldersMobile topo={props.topo} boulderOrder={props.boulderOrder} map={props.map} />;
-			case 'FILTERS': if (bp === 'mobile') return <BouldersFiltersMobile Filters={props.Filters} />;
+			case 'FILTERS': if (bp === 'mobile') return <BouldersFiltersMobile Filters={props.Filters} onResetClick={props.onFilterReset} />;
 			default: return undefined;
         }
     }

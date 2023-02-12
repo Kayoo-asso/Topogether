@@ -1,10 +1,4 @@
-import { Map } from "components/openlayers/Map";
-import { View } from "components/openlayers/View";
-import { OSM } from "components/openlayers/sources/OSM";
-import { TileLayer } from "components/openlayers/layers/TileLayer";
-import { useEffect, useState } from "react";
-import { VectorLayer, VectorSource } from "components/openlayers";
-import { fontainebleauLocation } from "helpers/constants";
+import { useState } from "react";
 import Style from "ol/style/Style";
 import Icon from "ol/style/Icon";
 import { BaseMap } from "components/map/openlayers/BaseMap";

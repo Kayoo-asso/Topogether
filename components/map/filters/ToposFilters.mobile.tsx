@@ -5,18 +5,22 @@ import FilterIcon from "assets/icons/filter.svg";
 
 interface ToposFiltersMobileProps {
     Filters: TopoFiltersComponents;
+    onResetClick: () => void;
 }
 
 export const ToposFiltersMobile: React.FC<ToposFiltersMobileProps> = (
     {
-        Filters
+        Filters,
+        ...props
     }: ToposFiltersMobileProps) => {
 
 	return (
-        <div className='flex flex-col h-full gap-2 md:hidden'>           
-           <div className='flex flex-row gap-3 items-center px-5'>
-                <FilterIcon className="h-6 w-6 fill-main stroke-main" />
-                <div className="ktext-subtitle ml-3 text-main">Filtres</div>
+        <div className='flex flex-col h-full gap-2 md:hidden'>       
+            <div className='flex flex-row justify-end'>
+                <div
+                    className="text-second mr-8"
+                    onClick={props.onResetClick}
+                >Reset</div>
             </div>
 
             <div className="flex min-h-[100px] flex-col gap-6 px-5 pt-2 pb-8">

@@ -54,13 +54,13 @@ export const Dropdown: React.FC<DropdownProps> = React.memo(
 					fullSize ? " w-full" : ""
 				} ${className}`}
 				style={{ left: `${position?.x}px`, top: `${position?.y}px` }}
+				onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
 			>
 				{props.options.map((opt, i) =>
 					opt.isSection ? (
 						<div
 							className={`ktext-label uppercase text-grey-medium cursor-default pb-2 mt-2 border-t-2 border-grey-light`}
 							key={opt.value}
-							onClick={(e) => e.stopPropagation()}
 						></div>
 					) : (
 						<div
@@ -72,6 +72,7 @@ export const Dropdown: React.FC<DropdownProps> = React.memo(
 							key={opt.value}
 							onPointerDown={(e) => {
 								e.preventDefault();
+								e.stopPropagation();
 								if (!opt.disabled) {
 									props.onSelect && props.onSelect(opt);
 									opt.action && opt.action(e);

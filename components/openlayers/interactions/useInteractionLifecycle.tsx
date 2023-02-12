@@ -1,4 +1,3 @@
-import { useMap } from "../contexts";
 import type Interaction from "ol/interaction/Interaction";
 import { useEffect } from "react";
 import { Map } from "ol";

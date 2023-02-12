@@ -1,7 +1,7 @@
 import OLTileLayer from "ol/layer/Tile";
 import type TileSource from "ol/source/Tile";
-import { forwardRef, useEffect } from "react";
-import { LayerContext, useMap } from "../contexts";
+import { forwardRef } from "react";
+import { LayerContext } from "../contexts";
 import { createLifecycle, InferOptions } from "../createLifecycle";
 import { e, layerEvents, tileLayerEvents } from "../events";
 import { useLayerLifecycle } from "./useLayerLifecycle";

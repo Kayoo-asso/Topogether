@@ -3,13 +3,14 @@ import { createTrack, deleteBoulder } from "helpers/builder";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { Boulder, Sector, Topo, UUID } from "types";
 import { useSession } from "helpers/services";
-import { useBreakpoint, useModal } from "helpers/hooks";
 import { staticUrl } from "helpers/constants";
 import { useSelectStore } from "components/pages/selectStore";
 import { ModalRenameSector } from "./ModalRenameSector";
 import { Map } from "ol";
 import { BoulderItemLeftbar } from "components/layouts/BoulderItemLeftbar";
 import { fromLonLat } from "ol/proj";
+import { useBreakpoint } from "helpers/hooks/DeviceProvider";
+import { useModal } from "helpers/hooks/useModal";
 
 import ArrowSimple from "assets/icons/arrow-simple.svg";
 import Edit from "assets/icons/edit.svg";
@@ -34,6 +35,7 @@ import {
 import {
 	restrictToVerticalAxis,
 } from '@dnd-kit/modifiers';
+
 
 export interface SectorListBuilderProps {
 	topoQuark: Quark<Topo>;
@@ -232,13 +234,13 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> =
 															    orderIndex={props.boulderOrder.get(boulder.id)!}
 															    selected={!!(selectedBoulder && selectedBoulder.value().id === boulder.id)}
 															    displayed={displayedBoulders.has(boulder.id)}
-															    onArrowClick={() => toggleBoulder(boulder)}
+															    deletable
+																onArrowClick={() => toggleBoulder(boulder)}
 															    onNameClick={() => {
 															        selectStore.select.boulder(boulderQuark);
 															        props.map?.getView().setCenter(fromLonLat(boulderQuark().location));
 															        expandOnClick && toggleBoulder(boulder);
 															    }}
-															    onDeleteClick={() => showModalDeleteBoulder(boulderQuark) }
 															    onTrackClick={(trackQuark) => selectStore.select.track(trackQuark, boulderQuark)}
 															    displayCreateTrack
 															    onCreateTrack={() => createTrack(boulder, session.id)}
@@ -290,13 +292,13 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> =
 												orderIndex={props.boulderOrder.get(boulder.id)!}
 												selected={!!(selectedBoulder && selectedBoulder.value().id === boulder.id)}
 												displayed={displayedBoulders.has(boulder.id)}
+												deletable
 												onArrowClick={() => toggleBoulder(boulder)}
 												onNameClick={() => {
 													selectStore.select.boulder(boulderQuark);
 													props.map?.getView().setCenter(fromLonLat(boulderQuark().location));
 													toggleBoulder(boulder);
 												}}
-												onDeleteClick={() => showModalDeleteBoulder(boulderQuark) }
 												onTrackClick={(trackQuark) =>
 													selectStore.select.track(trackQuark, boulderQuark)
 												}

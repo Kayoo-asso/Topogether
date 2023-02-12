@@ -1,8 +1,6 @@
 import Map from "ol/Map";
 import Layer from "ol/layer/Layer";
 import { useEffect, useMemo, useState } from "react";
-import BaseLayer from "ol/layer/Base";
-import { group } from "console";
 import Source from "ol/source/Source";
 
 type TitleCase<S extends string> = S extends `${infer Char}${infer Rest}`

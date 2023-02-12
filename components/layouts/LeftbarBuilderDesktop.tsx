@@ -1,9 +1,9 @@
 import React from "react";
-import { Button } from "components";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { Topo, UUID } from "types";
 import { Map } from "ol";
 import { SectorListBuilder } from "components/organisms/builder/SectorListBuilder";
+import { Button } from "components/atoms/buttons/Button";
 
 interface LeftbarBuilderDesktopProps {
 	topoQuark: Quark<Topo>;

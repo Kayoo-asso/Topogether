@@ -16,7 +16,6 @@ export interface SearchbarBouldersMobileProps {
 
 export const SearchbarBouldersMobile: React.FC<SearchbarBouldersMobileProps> = watchDependencies((props: SearchbarBouldersMobileProps) => {
 	const [SearchInput, boulderResults] = useBoulderSearchbar(props.topo);
-
 	return (
 		<div className='flex flex-col h-full gap-8 md:hidden'>
 			<div className='flex flex-row gap-3 items-center'>

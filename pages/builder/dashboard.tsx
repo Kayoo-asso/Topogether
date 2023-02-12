@@ -1,3 +1,4 @@
+import { useQuery } from "@tanstack/react-query";
 import { RootDashboard } from "components/pages/RootDashboard";
 import { downloads } from "helpers/downloads/DownloadManager";
 import { quarkifyLightTopos } from "helpers/quarkifyTopo";
@@ -8,7 +9,6 @@ import { DBLightTopo, TopoData } from "types";
 type DashboardProps = {
 	myTopos: DBLightTopo[];
 	likedTopos: DBLightTopo[];
-	lightDlTopos: DBLightTopo[];
 };
 
 const topoData2DBLightTopo = (t: TopoData): DBLightTopo => {
@@ -29,21 +29,26 @@ export default withRouting<DashboardProps>({
 		}
 		const myTopos = await api.getLightTopos({ userId });
 		const likedTopos = await api.getLikedTopos(userId);
-		// const dlTopos = [] as DBLightTopo[]; //TODO when dl is ready
-		const dlTopos = await downloads.getOfflineToposList();
-		const lightDlTopos = dlTopos.map(t => topoData2DBLightTopo(t));
 
 		return { props: { 
 			myTopos, 
 			likedTopos,
-			lightDlTopos,
 		}};
 	},
 	render(props) {
+		const { isLoading, error, data } = useQuery({
+			queryKey: ['dlTopos'],
+			queryFn: async () => {
+				const dlTopos = await downloads.getOfflineToposList();
+				return dlTopos.map(t => topoData2DBLightTopo(t));
+			}
+		});
+		const lightDlTopos = data || [];
+		
 		return <RootDashboard 
 			myTopos={quarkifyLightTopos(props.myTopos)} 
 			likedTopos={quarkifyLightTopos(props.likedTopos)} 
-			dlTopos={quarkifyLightTopos(props.lightDlTopos)}
+			dlTopos={quarkifyLightTopos(lightDlTopos)}
 		/>;
 	},
 });

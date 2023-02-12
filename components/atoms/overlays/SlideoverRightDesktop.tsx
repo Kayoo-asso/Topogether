@@ -1,20 +1,15 @@
 import React, { ReactNode, useEffect, useState } from "react";
 import { Boulder, LightTopo, Topo } from "types";
-import { DownloadButton, LikeButton, Show } from "..";
 
 interface SlideoverRightDesktopProps {
 	open?: boolean;
 	secondary?: boolean;
-	displayLikeButton?: boolean;
-	displayDlButton?: boolean;
 	className?: string;
 	item?: Boulder | Topo | LightTopo;
+	closeButton?: boolean;
 	onClose?: () => void;
 	children?: ReactNode;
 }
-
-const isTopo = (item: Boulder | Topo | LightTopo): item is Topo =>
-	(item as Topo).rockTypes !== undefined;
 
 export const SlideoverRightDesktop: React.FC<
 SlideoverRightDesktopProps
@@ -37,7 +32,7 @@ SlideoverRightDesktopProps
 
 	return (
 		<div
-			className={`absolute top-0 flex h-full w-[300px] flex-col border-l border-grey-medium bg-white pt-5
+			className={`absolute top-0 flex h-full w-[300px] flex-col border-l border-grey-medium bg-white
                 ${secondary ? "z-200" : "z-300"}
                 ${props.className ? props.className : ""}`}
 			style={{
@@ -48,19 +43,7 @@ SlideoverRightDesktopProps
 				transition: "transform 0.15s ease-in-out",
 			}}
 		>
-			<div className="flex h-[5%] flex-row justify-between px-5">
-				<div className="flex w-[70px] flex-row justify-between">
-					<Show when={() => props.item}>
-						{(item) => (
-							<>
-								{props.displayLikeButton && <LikeButton liked={item.liked} />}
-								{props.displayDlButton && isTopo(item) && (
-									<DownloadButton topo={item} />
-								)}
-							</>
-						)}
-					</Show>
-				</div>
+			<div className={`${props.closeButton ? '' : 'hidden'} flex h-[5%] flex-row justify-between pt-5 px-5`}>
 				<span
 					className={`ktext-base text-main md:cursor-pointer`}
 					onClick={() => {

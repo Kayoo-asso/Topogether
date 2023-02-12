@@ -9,10 +9,10 @@ import React, {
 	useState,
 } from "react";
 import { Img, Track } from "types";
-import { TracksImage } from "./TracksImage"; // requires a loader
-import { Portal } from "helpers/hooks";
-import { Image } from "components/atoms";
+import { TracksImage } from "./TracksImage";
 import { useSelectStore } from "components/pages/selectStore";
+import { Portal } from "helpers/hooks/useModal";
+import { Image } from "components/atoms/Image";
 
 interface ImageSliderProps {
 	images: Img[];
@@ -229,3 +229,5 @@ export const ImageSlider: React.FC<ImageSliderProps> = watchDependencies(
 		else return <Image alt="default boulder" sizeHint="100vw" />;
 	}
 );
+
+ImageSlider.displayName = "ImageSlider";

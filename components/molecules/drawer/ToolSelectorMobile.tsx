@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { DrawerToolEnum } from "types";
+
 import ForbiddenArea from "assets/icons/forbidden-area.svg";
 import ClimbingShoe from "assets/icons/climbing-shoe.svg";
 import Hand from "assets/icons/hand.svg";
-import TopoIcon from "assets/icons/topo.svg";
+import Track from "assets/icons/track.svg";
 
 interface ToolselectorMobileProps {
 	selectedTool: Exclude<DrawerToolEnum, "ERASER">;
@@ -17,7 +18,7 @@ export const ToolSelectorMobile: React.FC<ToolselectorMobileProps> = (
 
 	const FallbackIcon =
 		props.selectedTool === "LINE_DRAWER"
-			? TopoIcon
+			? Track
 			: props.selectedTool === "HAND_DEPARTURE_DRAWER"
 			? Hand
 			: props.selectedTool === "FOOT_DEPARTURE_DRAWER"
@@ -67,7 +68,7 @@ export const ToolSelectorMobile: React.FC<ToolselectorMobileProps> = (
 							setOpen(false);
 						}}
 					/>
-					<TopoIcon
+					<Track
 						className={
 							props.selectedTool === "LINE_DRAWER"
 								? "order-last h-8 w-8 md:cursor-pointer stroke-main"

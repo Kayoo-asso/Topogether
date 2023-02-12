@@ -1,4 +1,4 @@
-import { useBreakpoint } from "helpers/hooks";
+import { useBreakpoint } from "helpers/hooks/DeviceProvider";
 import React from "react";
 import { LightGrade } from "types";
 

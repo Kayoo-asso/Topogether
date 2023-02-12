@@ -1,16 +1,19 @@
-import { GradeCircle } from 'components/atoms';
+import { GradeCircle } from 'components/atoms/GradeCircle';
 import { SelectedBoulder, useSelectStore } from 'components/pages/selectStore';
 import { listFlags } from 'helpers/bitflags';
 import React from 'react';
 import { gradeToLightGrade } from 'types';
 import { TrackSpecName } from 'types/BitflagNames';
-import { OrientationName, ReceptionName } from 'types/EnumNames';
+import { OrientationName } from 'types/EnumNames';
+import { ItemsHeaderButtons } from '../ItemsHeaderButtons';
 
 export const TrackContent: React.FC = () => {
     const track = useSelectStore(s => s.item as SelectedBoulder).selectedTrack!();
 
     return (
-        <div className="mb-10 flex flex-col px-6">
+        
+        <div className="my-6 flex flex-col px-6 relative">
+
             <div className="mb-2 flex flex-row items-center">
                 <GradeCircle grade={gradeToLightGrade(track.grade)} />
                 <div className="ktext-big-title ml-3">{track.name}</div>

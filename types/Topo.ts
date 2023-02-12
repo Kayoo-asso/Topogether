@@ -12,7 +12,6 @@ import type { LineString, MultiLineString, Point, Position } from "./GeoJson";
 import type {
 	UUID,
 	GeoCoordinates,
-	RequireAtLeastOne,
 	StringBetween,
 	Name,
 	Description,

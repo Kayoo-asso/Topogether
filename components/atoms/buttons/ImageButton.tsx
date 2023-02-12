@@ -1,8 +1,8 @@
 import React from "react";
-import { DeleteButton } from ".";
 import { Image } from "../Image";
 import { Img } from "types";
 import Spinner from "assets/icons/spinner.svg";
+import { DeleteButton } from "./DeleteButton";
 
 interface ImageButtonProps {
 	text?: string;
@@ -23,7 +23,7 @@ export const ImageButton: React.FC<ImageButtonProps> = ({
 	return (
 		<div
 			className={`${activated ? "border-main text-main" : "border-grey-medium text-grey-medium"} 
-				"ktext-subtext group relative border-2 shadow w-[72px] h-[72px] flex justify-center items-center md:cursor-pointer`
+				ktext-label-little px-1 group relative border-2 shadow w-[72px] h-[72px] flex justify-center items-center md:cursor-pointer`
 			}
 			onClick={props.onClick}
 		>

@@ -20,11 +20,6 @@ import {
 	createWaypoint,
 } from "helpers/builder";
 import { staticUrl } from "helpers/constants";
-import {
-	useBreakpoint,
-	useLoader,
-	useModal,
-} from "helpers/hooks";
 import { sortBoulders, computeBuilderProgress } from "helpers/topo";
 import { encodeUUID } from "helpers/utils";
 import {
@@ -36,11 +31,9 @@ import {
 import { BuilderProgressIndicator } from "components/organisms/builder/BuilderProgressIndicator";
 import { BuilderDropdown } from "components/organisms/builder/BuilderDropdown";
 import { BuilderModalDelete } from "components/organisms/builder/BuilderModalDelete";
-import { InteractItem, useSelectStore } from "./selectStore";
+import { SelectedItem, useSelectStore } from "./selectStore";
 import { SyncUrl } from "components/organisms/SyncUrl";
 import { KeyboardShortcut } from "components/organisms/builder/KeyboardShortcuts";
-import { DropdownOption } from "components/molecules";
-import { Flash } from "components/atoms/overlays";
 import { NetworkIndicator } from "components/atoms/NetworkIndicator";
 import { MapControl } from "components/map/MapControl";
 import { Map, MapBrowserEvent } from "ol";
@@ -50,11 +43,17 @@ import { BoulderMarkersLayer } from "components/map/markers/BoulderMarkersLayer"
 import { ParkingMarkersLayer } from "components/map/markers/ParkingMarkersLayer";
 import { WaypointMarkersLayer, disappearZoom } from "components/map/markers/WaypointMarkersLayer";
 import { CreatingMarkersLayer } from "components/map/markers/CreatingMarkersLayer";
-import { SelectInteraction } from "components/map/markers/SelectInteraction";
 import { DragInteraction } from "components/map/markers/DragInteraction";
 import { SearchbarBouldersDesktop } from "components/map/searchbar/SearchbarBoulders.desktop";
 import { useBouldersFilters } from "components/map/filters/useBouldersFilters";
 import { BouldersFiltersDesktop } from "components/map/filters/BouldersFilters.desktop";
+import { useBreakpoint } from "helpers/hooks/DeviceProvider";
+import { useLoader } from "helpers/hooks/useLoader";
+import { useModal } from "helpers/hooks/useModal";
+import { DropdownOption } from "components/molecules/form/Dropdown";
+import { Flash } from "components/atoms/overlays/Flash";
+import { OnClickInteraction } from "components/map/markers/OnClickInteraction";
+import { ModifyInteraction } from "components/map/markers/ModifyInteraction";
 
 interface RootBuilderProps {
 	topoQuark: Quark<Topo>;
@@ -76,12 +75,12 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 		const select = useSelectStore(s => s.select);
 		const tool = useSelectStore(s => s.tool);
 
-		const [dropdownItem, setDropdownItem] = useState<InteractItem>({ type: 'none', value: undefined });
+		//TODO: refactor with a dropdownStore (like deleteStore)
+		const [dropdownItem, setDropdownItem] = useState<SelectedItem>({ type: 'none', value: undefined });
 		const [dropdownPosition, setDropdownPosition] = useState<{
 			x: number;
 			y: number;
 		}>();
-		const [deleteItem, setDeleteItem] = useState<InteractItem>({ type: 'none', value: undefined });
 
 		const mapRef = useRef<Map>(null);
 		
@@ -160,15 +159,13 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 				boulderOrder={boulderOrder}
 				map={mapRef.current}
 			/>
-		const [Filters, filterBoulders, areFiltersEmpty] = useBouldersFilters(topo);
-		const FiltersDesktop: React.FC = () => <BouldersFiltersDesktop Filters={Filters} />;
+		const [Filters, filterBoulders, resetFilters, areFiltersEmpty] = useBouldersFilters(topo);
+		const FiltersDesktop: React.FC = () => <BouldersFiltersDesktop Filters={Filters} onResetClick={resetFilters} />;
 
 		return (
 			<>
 				<SyncUrl topo={topo} />
-				<KeyboardShortcut 
-					onDelete={(item) => setDeleteItem(item)}
-				/>
+				<KeyboardShortcut />
 				
 				<Header
 					title={topo.name}
@@ -176,11 +173,13 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 					onBackClick={flush.all}
 					menuOptions={menuOptions}
 				>
-					<BuilderProgressIndicator
-						topo={props.topoQuark()}
-						progress={progress()}
-					/>
-					<div className="md:pl-8"><NetworkIndicator /></div>
+					<>
+						<BuilderProgressIndicator
+							topo={props.topoQuark()}
+							progress={progress()}
+						/>
+						<div className="md:pl-8"><NetworkIndicator /></div>
+					</>
 				</Header>
 
 				{/* overflow-clip instead of overflow-hidden, so that the Slideagainst can appear off-screen without 
@@ -199,6 +198,11 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 						boulderOrder={boulderOrder}
 						map={mapRef.current}
 						Filters={Filters}
+						onFilterReset={resetFilters}
+					/>
+
+					<SlideoverRightBuilder
+						topo={props.topoQuark}
 					/>
 
 					<MapControl 
@@ -217,14 +221,18 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 								onCreate={(e) => handleCreateNewMarker(e, areFiltersEmpty)}
 							/>
 						}
-						<SelectInteraction
-							boulderOrder={boulderOrder}
+						<OnClickInteraction
 							selectableSector
 						/>
 						<DragInteraction 
 							topoQuark={props.topoQuark}
 							boulderOrder={boulderOrder}
 						/>
+						<ModifyInteraction 
+							topoQuark={props.topoQuark}
+							boulderOrder={boulderOrder}
+						/>
+
 						<SectorAreaMarkersLayer
 							topoQuark={props.topoQuark}
 							boulderOrder={boulderOrder}
@@ -242,24 +250,15 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 						/>
 					</MapControl>
 
-					<SlideoverRightBuilder
-						topo={props.topoQuark}
-					/>
-
 				</div>
 
 				<BuilderDropdown 
 					position={dropdownPosition}
 					dropdownItem={dropdownItem}
 					setDropdownItem={setDropdownItem}
-					setDeleteItem={setDeleteItem}
 				/>
 
-				<BuilderModalDelete 
-					topo={props.topoQuark}
-					deleteItem={deleteItem}
-					setDeleteItem={setDeleteItem}
-				/>
+				<BuilderModalDelete topo={props.topoQuark} />
 
 				<ModalSubmitTopo
 					buttonText="Confirmer"
