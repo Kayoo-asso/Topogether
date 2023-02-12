@@ -1,0 +1,2 @@
+- Remember that user IDs in the DB may correspond to deleted accounts
+  -> need to check in Clerk
