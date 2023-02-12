@@ -16,7 +16,7 @@ interface CollectionProps {
 
 const rootCollection = new OLCollection<OLCollection<Feature>>();
 
-export const Collection = forwardRef<OLCollection<Feature>, CollectionProps>(
+export const Collection = forwardRef<OLCollection<Feature>, React.PropsWithChildren<CollectionProps>>(
 	(props, ref) => {
 		const [collection] = useState(() => new OLCollection<Feature>());
 
