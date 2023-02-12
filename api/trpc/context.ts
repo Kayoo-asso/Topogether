@@ -4,8 +4,6 @@ import { getAuth, clerkClient } from "@clerk/nextjs/server";
 import type { User } from "@clerk/nextjs/api";
 import { db } from "api/db";
 
-// TODO: add `db` object from Kysely
-
 /**
  * Replace this with an object if you want to pass things to createContextInner
  */
