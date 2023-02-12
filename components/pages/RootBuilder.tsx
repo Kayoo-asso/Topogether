@@ -53,6 +53,7 @@ import { useModal } from "helpers/hooks/useModal";
 import { DropdownOption } from "components/molecules/form/Dropdown";
 import { Flash } from "components/atoms/overlays/Flash";
 import { OnClickInteraction } from "components/map/markers/OnClickInteraction";
+import { ModifyInteraction } from "components/map/markers/ModifyInteraction";
 
 interface RootBuilderProps {
 	topoQuark: Quark<Topo>;
@@ -227,6 +228,11 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 							topoQuark={props.topoQuark}
 							boulderOrder={boulderOrder}
 						/>
+						<ModifyInteraction 
+							topoQuark={props.topoQuark}
+							boulderOrder={boulderOrder}
+						/>
+
 						<SectorAreaMarkersLayer
 							topoQuark={props.topoQuark}
 							boulderOrder={boulderOrder}

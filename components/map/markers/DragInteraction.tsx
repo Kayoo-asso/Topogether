@@ -23,7 +23,7 @@ export const DragInteraction: React.FC<DragInteractionProps> = watchDependencies
     const selectedType = useSelectStore((s) => s.item.type);
     const anySelected = !!(selectedType !== 'none' && selectedType !== 'sector');
 
-    const device = useBreakpoint();
+    const bp = useBreakpoint();
 
     return (
         <Drag 
@@ -42,8 +42,7 @@ export const DragInteraction: React.FC<DragInteractionProps> = watchDependencies
                     case 'boulder': 
                         item.value.set((b) => ({ ...b, location }));
                         boulderChanged(props.topoQuark, item.value().id, location);
-                        // console.log(props.boulderOrder);
-                        boulderMarkerStyle(true, anySelected, device, props.boulderOrder, e.feature)
+                        boulderMarkerStyle(true, anySelected, bp, props.boulderOrder, e.feature)
                         break;
                     case 'parking': item.value.set((p) => ({ ...p, location })); break;
                     case 'waypoint': item.value.set((w) => ({ ...w, location })); break;
@@ -54,7 +53,7 @@ export const DragInteraction: React.FC<DragInteractionProps> = watchDependencies
                         break;
                     default: return;
                 }
-            }, [props.topoQuark, props.boulderOrder, anySelected, device])}
+            }, [props.topoQuark, props.boulderOrder, anySelected, bp])}
         />
     )
 });
