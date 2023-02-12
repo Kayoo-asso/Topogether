@@ -165,20 +165,12 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> =
 					<VectorSource>
 						{props.boulders.map((bQuark) => {
 							const b = bQuark();
-							const point = (
+							return (
 								<Point
 									key={b.id}
 									coordinates={fromLonLat(b.location)}
 									data={{ type: "boulder", value: bQuark }}
 								/>
-							);
-							const isSelected =
-								selectedItem.type === "boulder" &&
-								selectedItem.value === bQuark;
-							return isSelected ? (
-								<Collection id="selectedBoulder">{point}</Collection>
-							) : (
-								point
 							);
 						})}
 					</VectorSource>

@@ -19,6 +19,7 @@ const rootCollection = new OLCollection<OLCollection<Feature>>();
 export const Collection = forwardRef<OLCollection<Feature>, React.PropsWithChildren<CollectionProps>>(
 	(props, ref) => {
 		const [collection] = useState(() => new OLCollection<Feature>());
+    console.log("Collection " + props.id, collection)
 
 		useImperativeHandle(ref, () => collection, [collection]);
 
@@ -46,11 +47,9 @@ export function useCollection(id: string | undefined) {
 	useEffect(() => {
     // Collection.get(undefined) is actually fine, but the types don't like it
 		const updateCollection = () => setCollection(rootCollection.get(id as string));
-		rootCollection.on("add", updateCollection);
-		rootCollection.on("remove", updateCollection);
+		rootCollection.on("propertychange", updateCollection);
 		return () => {
-			rootCollection.un("add", updateCollection);
-			rootCollection.un("remove", updateCollection);
+			rootCollection.un("propertychange", updateCollection);
 		};
 	}, []);
 

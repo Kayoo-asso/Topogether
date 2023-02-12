@@ -26,7 +26,7 @@ export const ModifyInteraction: React.FC<ModifyInteractionProps> = watchDependen
         <> 
             {/* TODO : finish this by preventing non-selected sectors to be modified */}
             <Modify 
-                source="sectors"
+                collection="selectedSector"
                 onModifyEnd={useCallback((e: ModifyEvent) => {
                     const feature = e.features.getArray()[0];
                     const item = feature.get("data") as SelectedSector;
