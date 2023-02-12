@@ -48,7 +48,7 @@ export const Modify = forwardRef<OLModify, P>(
 			);
 		}
 		if(features) {
-			console.log("Modify got collection:", features)
+			// console.log("Modify got collection:", features)
 		}
 
 		const modify = useBehavior(

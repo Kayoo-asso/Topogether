@@ -7,39 +7,56 @@ import { sectorChanged } from "helpers/builder";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { useBreakpoint } from "helpers/hooks/DeviceProvider";
 import { ModifyEvent } from "ol/interaction/Modify";
-import { Snap } from "components/openlayers/interactions/Snap";
-
+import { FeatureLike } from "ol/Feature";
+import { Circle, Fill, Stroke, Style } from "ol/style";
 
 interface ModifyInteractionProps {
     topoQuark: Quark<Topo>;
     boulderOrder: globalThis.Map<UUID, number>;
 }
 
+const modifyingSectorMarkerStyle = (feature: FeatureLike) => {
+	const geometry = feature.getGeometry()!;
+	if (geometry.getType() === "Point") {
+		const styles = [
+			new Style({
+				image: new Circle({
+					fill: new Fill({
+						color: "rgb(4, 217, 139)",
+					}),
+					stroke: new Stroke({
+						color: "#fff",
+						width: 2,
+					}),
+					radius: 5,
+				}),
+			}),
+		];
+		return styles;
+	}
+	return [];
+};
+
 export const ModifyInteraction: React.FC<ModifyInteractionProps> = watchDependencies((props: ModifyInteractionProps) => {
-    const selectedItem = useSelectStore((s) => s.item.value);
     const selectedType = useSelectStore((s) => s.item.type);
     const anySelected = !!(selectedType !== 'none' && selectedType !== 'sector');
 
     const bp = useBreakpoint();
 
     return (
-        <> 
-            {/* TODO : finish this by preventing non-selected sectors to be modified */}
-            <Modify 
-                collection="selectedSector"
-                snapToPointer
-                onModifyEnd={useCallback((e: ModifyEvent) => {
-                    const feature = e.features.getArray()[0];
-                    const item = feature.get("data") as SelectedSector;
-                    const newPath = getPathFromFeature(feature);
-                    item.value.set(s => ({ ...s, path: newPath }));
-                    sectorChanged(props.topoQuark, item.value().id, props.boulderOrder);
-                }, [props.topoQuark, props.boulderOrder, anySelected, bp])}
-            />
-            {/* <Snap 
-                source="sectors"
-            /> */}
-        </>
+        <Modify 
+            collection="selectedSector"
+            snapToPointer
+            pixelTolerance={10}
+            style={modifyingSectorMarkerStyle}
+            onModifyEnd={useCallback((e: ModifyEvent) => {
+                const feature = e.features.getArray()[0];
+                const item = feature.get("data") as SelectedSector;
+                const newPath = getPathFromFeature(feature);
+                item.value.set(s => ({ ...s, path: newPath }));
+                sectorChanged(props.topoQuark, item.value().id, props.boulderOrder);
+            }, [props.topoQuark, props.boulderOrder, anySelected, bp])}
+        />
     )
 });
 

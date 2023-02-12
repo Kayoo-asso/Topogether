@@ -1,8 +1,6 @@
 import OLCollection from "ol/Collection";
-import { createLifecycle } from "./createLifecycle";
 import {
 	forwardRef,
-	useContext,
 	useEffect,
 	useImperativeHandle,
 	useState,
@@ -19,7 +17,7 @@ const rootCollection = new OLCollection<OLCollection<Feature>>();
 export const Collection = forwardRef<OLCollection<Feature>, React.PropsWithChildren<CollectionProps>>(
 	(props, ref) => {
 		const [collection] = useState(() => new OLCollection<Feature>());
-    console.log("Collection " + props.id, collection)
+    // console.log("Collection " + props.id, collection)
 
 		useImperativeHandle(ref, () => collection, [collection]);
 
