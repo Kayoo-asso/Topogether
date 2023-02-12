@@ -27,14 +27,13 @@ export const ModifyInteraction: React.FC<ModifyInteractionProps> = watchDependen
             {/* TODO : finish this by preventing non-selected sectors to be modified */}
             <Modify 
                 collection="selectedSector"
+                snapToPointer
                 onModifyEnd={useCallback((e: ModifyEvent) => {
                     const feature = e.features.getArray()[0];
                     const item = feature.get("data") as SelectedSector;
-                    if (selectedItem && item.value().id === selectedItem().id) {
-                        const newPath = getPathFromFeature(feature);
-                        item.value.set(s => ({ ...s, path: newPath }));
-                        sectorChanged(props.topoQuark, item.value().id, props.boulderOrder);
-                    }
+                    const newPath = getPathFromFeature(feature);
+                    item.value.set(s => ({ ...s, path: newPath }));
+                    sectorChanged(props.topoQuark, item.value().id, props.boulderOrder);
                 }, [props.topoQuark, props.boulderOrder, anySelected, bp])}
             />
             {/* <Snap 
