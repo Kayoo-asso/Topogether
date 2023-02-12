@@ -28,9 +28,9 @@ type P = Omit<InferOptions<typeof useBehavior>, "features" | "source"> &
 	(
 		| {
 				source: string;
-				collection: undefined;
+				collection?: undefined;
 		  }
-		| { source: undefined; collection: string }
+		| { source?: undefined; collection: string }
 	);
 
 // Terrible hack, because Modify is not happy if we do not pass a source or feature collection
