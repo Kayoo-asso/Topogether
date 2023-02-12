@@ -39,7 +39,6 @@ export const BuilderModalDelete: React.FC<BuilderModalDeleteProps> = watchDepend
 
         const deleteItem = useCallback(() => {
             const flushAction = breakpoint === 'mobile' ? flush.all : toDeleteItem.type === 'track' ? flush.track : flush.item;
-            console.log(toDeleteItem);
             switch (toDeleteItem.type) {
                 case 'sector': deleteSector(props.topo, toDeleteItem.value); break;
                 case 'boulder': deleteBoulder(props.topo, toDeleteItem.value, flushAction, selectedItem.type === 'boulder' ? selectedItem : undefined); break;

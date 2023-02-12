@@ -93,7 +93,7 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> = watchDepe
 	const selectedType = selectedItem.type;
 	const anySelected = !!(selectedType !== 'none' && selectedType !== 'sector');
 
-	const device = useBreakpoint();
+	const bp = useBreakpoint();
 
 	return (
 		<>
@@ -132,12 +132,12 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> = watchDepe
 						return boulderMarkerStyle(
 							selected,
 							anySelected,
-							device,
+							bp,
 							props.boulderOrder,
 							f
 						);
 					},
-					[device, anySelected, props.boulderOrder]
+					[bp, anySelected, props.boulderOrder]
 				)}
 			>
 				<VectorSource>
@@ -153,28 +153,6 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> = watchDepe
 					})}
 				</VectorSource>
 			</VectorLayer>
-
-			{/* Context Menu TODO */}
-			{/* <VectorLayer
-id="boulder-controls"
-style={new Style({
-	image: new Icon({
-		size: [70, 70],
-		offset: [-15, 0],
-		src: '/assets/icons/colored/_rock_bold.svg',
-	})
-})}
->
-<VectorSource>
-	{props.boulders.map(b => {
-		if (selectedItem && b.id === selectedItem().id) return (
-			<Point
-				coordinates={fromLonLat(b.location)}
-			/>
-		)
-	})}
-</VectorSource>
-</VectorLayer> */}
 		</>
 	);
 });
