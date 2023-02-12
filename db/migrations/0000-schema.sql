@@ -22,23 +22,7 @@ CREATE TYPE public.grade_category as ENUM(
     '3', '4', '5', '6', '7', '8', '9', 'None'
 );
 
-create type public.img as (
-    id uuid,
-    ratio double precision,
-    placeholder text
-);
-
-create type public.topo_access_step as (
-    description varchar(5000),
-    image public.img
-);
-
 -- [TABLES]
-create table public.images (
-    id uuid primary key,
-    ratio double precision,
-    placeholder text
-);
 
 -- IF YOU UPDATE THIS, UPDATE LIGHTOPO
 create table topos (
@@ -57,9 +41,9 @@ create table topos (
     -- bitflags
     amenities int4 default 0 not null,
     rock_types int4 default 0 not null,
+    type int4 default 0 not null,
 
     -- optional
-    type smallint, -- TypeScript enum
     description varchar(5000),
     fauna_protection varchar(5000),
     ethics varchar(5000),
@@ -73,7 +57,7 @@ create table topos (
     lonely_boulders uuid[] not null default '{}',
 
     -- relations
-    image public.img,
+    image jsonb,
     creator_id uuid not null,
     validator_id uuid
 );
@@ -112,7 +96,7 @@ create table managers (
     zip integer,
     city varchar(500),
     topo_id uuid not null references public.topos(id) on delete cascade,
-    image public.img
+    image jsonb
 );
 
 create index managers_topo_idx on public.managers(topo_id);
@@ -125,7 +109,7 @@ create table parkings (
     description varchar(5000),
 
     topo_id uuid not null references public.topos(id) on delete cascade,
-    image public.img
+    image jsonb
 );
 
 create index parkings_topo_idx on public.parkings(topo_id);
@@ -137,7 +121,7 @@ create table waypoints (
     description varchar(5000),
 
     topo_id uuid not null references public.topos(id) on delete cascade,
-    image public.img
+    image jsonb
 );
 
 create index waypoints_topo_idx on public.waypoints(topo_id);
@@ -148,7 +132,7 @@ create table topo_accesses (
     danger varchar(5000),
     difficulty int2, -- TypeScript enum
     duration int,
-    steps topo_access_step[] not null,
+    steps jsonb not null,
 
     topo_id uuid not null references public.topos(id) on delete cascade
 );
@@ -174,7 +158,7 @@ create table boulders (
     is_highball boolean default false not null,
     must_see boolean default false not null,
     dangerous_descent boolean default false not null,
-    images public.img[] default '{}' not null,
+    images jsonb default '[]' not null,
 
     topo_id uuid not null references topos(id) on delete cascade
 );
@@ -193,7 +177,8 @@ create table tracks (
     reception int2, -- typescript enum
     anchors integer,
     -- bitflag
-    techniques integer DEFAULT 0 not null,
+    spec integer not null default 0,
+
 
     is_traverse boolean default false not null,
     is_sitting_start boolean default false not null,
@@ -216,7 +201,7 @@ create table lines (
 
     -- LineStrings require 2+ points, but we also accept lines with 0 or 1 point
     points double precision[] not null,
-    forbidden geometry(multilinestring),
+    forbidden number[][],
     hand1 geometry(point),
     hand2 geometry(point),
     foot1 geometry(point),
@@ -229,8 +214,6 @@ create table lines (
 
 create index lines_topo_idx on public.lines(topo_id);
 create index lines_track_idx on public.lines(track_id);
-
-alter table lines enable row level security;
 
 create table track_ratings (
     id uuid primary key,

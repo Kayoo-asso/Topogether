@@ -1,13 +1,19 @@
-import { Pool } from "pg";
-import { Kysely, PostgresDialect } from "kysely";
+import { Kysely, PostgresDialect, sql } from "kysely";
 import { env } from "env/server.mjs";
 import type { DB } from "db/types";
+import pg from "pg";
 
-export const db = new Kysely<DB>({
-	dialect: new PostgresDialect({
-		pool: new Pool({
-			connectionString: env.DATABASE_URL,
-			ssl: true,
+export function getDB<T>() {
+	return new Kysely<T>({
+		dialect: new PostgresDialect({
+			pool: new pg.Pool({
+				connectionString: env.DATABASE_URL,
+				ssl: true,
+			}),
 		}),
-	}),
-});
+	});
+}
+
+export const db = getDB<DB>();
+
+db.selectFrom("boulders").select(sql`ST_AsGeoJSON(location)`.as(""));

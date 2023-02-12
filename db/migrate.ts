@@ -9,11 +9,6 @@ import {
 import fs from "fs";
 import { db } from "api/db";
 
-// We can only import `pg` like this, in order for it to work with `esrun`, which we use to execute this file
-// (this is because `pg` is a CommonJS module, which does not support modern exports)
-import pg from "pg";
-const { Pool } = pg;
-
 // Adapted from kysely's default FileMigrationProvider
 export class SQLMigrationProvider implements MigrationProvider {
 	readonly #directory: string;
@@ -48,14 +43,6 @@ export class SQLMigrationProvider implements MigrationProvider {
 
 // Adapted from: https://github.com/koskimas/kysely/tree/master#migrations
 async function migrateToLatest() {
-	const db = new Kysely<any>({
-		dialect: new PostgresDialect({
-			pool: new Pool({
-				connectionString: process.env.DATABASE_URL,
-				ssl: true,
-			}),
-		}),
-	});
 	const folder = __dirname + "/migrations";
 
 	const migrator = new Migrator({
