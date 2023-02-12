@@ -6,6 +6,8 @@ import { forwardRef } from "react";
 // VERY IMPORTANT
 import "ol/ol.css";
 import { baseEvents, e, mapEvents, renderEvents } from "./events";
+import { Collection } from "ol";
+import { createRotationConstraint } from "ol/View";
 
 // TODO: additional reactive properties that are not in the Options
 const useLifecycle = createLifecycle(

@@ -7,12 +7,13 @@ import { StyleLike } from "ol/style/Style";
 import {
 	ForwardedRef,
 	forwardRef,
+	useContext,
 	useEffect,
 	useImperativeHandle,
 	useMemo,
 	useState,
 } from "react";
-import { useLayer } from "./contexts";
+import { CollectionContext, useLayer } from "./contexts";
 import { Cluster, Source } from "ol/source";
 
 import {
@@ -133,9 +134,14 @@ function implementation<G extends GeometryType>(
 
 	const feature = useMemo(() => new Feature({ geometry }), [geometry]);
 
+	const collection = useContext(CollectionContext);
+
 	useEffect(() => {
-		// console.log("New feature", feature);
-	}, []);
+		collection.push(feature);
+		return () => {
+			collection.remove(feature);
+		};
+	}, [collection, feature]);
 
 	useEffect(() => {
 		feature.setId(props.id);
