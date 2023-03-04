@@ -74,6 +74,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 		const flush = useSelectStore(s => s.flush);
 		const select = useSelectStore(s => s.select);
 		const tool = useSelectStore(s => s.tool);
+		console.log(tool);
 
 		//TODO: refactor with a dropdownStore (like deleteStore)
 		const [dropdownItem, setDropdownItem] = useState<SelectedItem>({ type: 'none', value: undefined });
@@ -122,9 +123,18 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 			[props.topoQuark]
 		);
 
+		const SearchbarDesktop: React.FC = () =>
+			<SearchbarBouldersDesktop 
+				topo={props.topoQuark}
+				boulderOrder={boulderOrder}
+				map={mapRef.current}
+			/>
+		const [Filters, filterBoulders, resetFilters, areFiltersEmpty] = useBouldersFilters(topo);
+		const FiltersDesktop: React.FC = () => <BouldersFiltersDesktop Filters={Filters} onResetClick={resetFilters} />;
+
 		const [flashOpen, setFlashOpen] = useState(false);
 		const handleCreateNewMarker = useCallback(
-			(e: MapBrowserEvent<any>, filtersEmpty) => {
+			(e: MapBrowserEvent<any>) => {
 				e.preventDefault(); e.stopPropagation();
 				if (!isEmptyStore()) {
 					flush.info();
@@ -135,7 +145,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 					const loc: GeoCoordinates = [lonlat[0], lonlat[1]];
 					switch (tool) {
 						case "ROCK":
-							if (!filtersEmpty) setFlashOpen(true);
+							if (!areFiltersEmpty) setFlashOpen(true);
 							createBoulder(props.topoQuark, loc);
 							break;
 						case "PARKING":
@@ -150,17 +160,8 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 					}
 				}
 			},
-			[topo, tool, createBoulder, createParking, createWaypoint, isEmptyStore()]
+			[topo, tool, areFiltersEmpty, createBoulder, createParking, createWaypoint, isEmptyStore()]
 		);
-
-		const SearchbarDesktop: React.FC = () =>
-			<SearchbarBouldersDesktop 
-				topo={props.topoQuark}
-				boulderOrder={boulderOrder}
-				map={mapRef.current}
-			/>
-		const [Filters, filterBoulders, resetFilters, areFiltersEmpty] = useBouldersFilters(topo);
-		const FiltersDesktop: React.FC = () => <BouldersFiltersDesktop Filters={Filters} onResetClick={resetFilters} />;
 
 		return (
 			<>
@@ -218,7 +219,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 						{tool && tool !== "SECTOR" &&
 							<CreatingMarkersLayer 
 								boulderOrder={boulderOrder}
-								onCreate={(e) => handleCreateNewMarker(e, areFiltersEmpty)}
+								onCreate={handleCreateNewMarker}
 							/>
 						}
 						<OnClickInteraction

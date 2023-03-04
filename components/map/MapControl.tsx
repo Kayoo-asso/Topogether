@@ -89,17 +89,18 @@ export const MapControl = watchDependencies<Map, MapControlProps>(
 
 		useEffect(() => {
 			const determinePointer = (e: MapBrowserEvent<PointerEvent>) => {
-				if (!map || tool || breakpoint !== "desktop") return;
-				const hit = map.getFeaturesAtPixel(e.pixel).length > 0;
-				if (hit) {
-					map.getTargetElement().style.cursor = "pointer";
-				} else {
-					map.getTargetElement().style.cursor = "";
+				if (map && !tool && breakpoint === "desktop") {
+					const hit = map && map.getFeaturesAtPixel(e.pixel).length > 0;
+					if (hit) {
+						map.getTargetElement().style.cursor = "pointer";
+					} else {
+						map.getTargetElement().style.cursor = "";
+					}
 				}
 			};
 			map?.on("pointermove", determinePointer);
 			return () => map?.un("pointermove", determinePointer);
-		}, [map, tool]);
+		}, [map, tool, breakpoint]);
 
 		// Initial extension / bounding
 		useEffect(() => {

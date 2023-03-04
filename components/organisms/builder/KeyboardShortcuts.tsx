@@ -25,7 +25,7 @@ export const KeyboardShortcut: React.FC<KeyboardShortcutProps> = (props: Keyboar
 				if (tool) flush.tool();
 				else flush.all();
 			}
-			else if (e.code === 'Delete' && isOnMap(e)) del.item(selectedItem)
+			else if (e.code === 'Delete' && selectedItem) del.item(selectedItem)
 			else if (e.code === "Space" && tool) {
 				setTempCurrentTool(tool);
 				flush.tool();

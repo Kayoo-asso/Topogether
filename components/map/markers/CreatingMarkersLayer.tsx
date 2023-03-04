@@ -32,7 +32,7 @@ export const CreatingMarkersLayer: React.FC<CreatingMarkersLayerProps> = (props:
         }
         map.on('click', handleTouchCreation);
         return () => map.un('click', handleTouchCreation);
-    }, [map]);
+    }, [map, tool]); //Important to keep tool here !!
     
     return (
         <>
