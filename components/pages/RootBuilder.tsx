@@ -74,7 +74,6 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 		const flush = useSelectStore(s => s.flush);
 		const select = useSelectStore(s => s.select);
 		const tool = useSelectStore(s => s.tool);
-		console.log(tool);
 
 		//TODO: refactor with a dropdownStore (like deleteStore)
 		const [dropdownItem, setDropdownItem] = useState<SelectedItem>({ type: 'none', value: undefined });

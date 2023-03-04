@@ -84,7 +84,7 @@ export const ProfileContent: React.FC<ProfileContentProps> = (props: ProfileCont
                         onClick={() => props.setDisplayModifyProfile(true)}
                     />
                     
-                    <div className="flex flex-row w-full md:w-auto justify-around md:gap-6 py-6 md:pt-0">
+                    <div className="flex flex-row w-full md:w-50 justify-around md:gap-6 py-6 md:pt-0">
                         <div
                             className="ktext-base-little md:cursor-pointer text-error"
                             onClick={async () => {
