@@ -29,7 +29,7 @@ export const BuilderModalDelete: React.FC<BuilderModalDeleteProps> = watchDepend
 
         const getModalContent = () => {
             switch (toDeleteItem.type) {
-                case 'sector': return "Êtes-vous sûr de vouloir supprimer le secteur (les blocs associés ne seront pas supprimés) ?";
+                case 'sector': return <>Êtes-vous sûr de vouloir supprimer le secteur (les blocs associés ne seront pas supprimés) ?</>;
                 case 'boulder': return <>Êtes-vous sûr de vouloir supprimer le bloc <span className='font-semibold'>{toDeleteItem.value().name}</span> et toutes les voies associées ?</>;
                 case 'track': return <>Êtes-vous sûr de vouloir supprimer le passage <span className='font-semibold'>{toDeleteItem.value().name}</span> ?</>;
                 case 'parking': return <>Êtes-vous sûr de vouloir supprimer le parking <span className='font-semibold'>{toDeleteItem.value().name}</span> ?</>;
@@ -40,7 +40,7 @@ export const BuilderModalDelete: React.FC<BuilderModalDeleteProps> = watchDepend
         const deleteItem = useCallback(() => {
             const flushAction = breakpoint === 'mobile' ? flush.all : toDeleteItem.type === 'track' ? flush.track : flush.item;
             switch (toDeleteItem.type) {
-                case 'sector': deleteSector(props.topo, toDeleteItem.value); break;
+                case 'sector': deleteSector(props.topo, toDeleteItem.value, flushAction, selectedItem.type === 'sector' ? selectedItem : undefined); break;
                 case 'boulder': deleteBoulder(props.topo, toDeleteItem.value, flushAction, selectedItem.type === 'boulder' ? selectedItem : undefined); break;
                 case 'track': deleteTrack(toDeleteItem.boulder(), toDeleteItem.value, flushAction, toDeleteItem.selectedBoulder); break;
                 case 'parking': deleteParking(props.topo, toDeleteItem.value, flushAction, selectedItem.type === 'parking' ? selectedItem : undefined); break;

@@ -15,7 +15,7 @@ import {
 	Waypoint,
 } from "types";
 import { v4 } from "uuid";
-import { SelectedBoulder, SelectedParking, SelectedWaypoint } from "components/pages/selectStore";
+import { SelectedBoulder, SelectedParking, SelectedSector, SelectedWaypoint } from "components/pages/selectStore";
 
 export const createSector = (
 	topoQuark: Quark<Topo>,
@@ -38,12 +38,13 @@ export const createSector = (
 };
 export const deleteSector = ( 
 	topoQuark: Quark<Topo>,
-	sectorQuark: Quark<Sector>
+	sectorQuark: Quark<Sector>,
+	flushStore: () => void,
+	selectedSector?: SelectedSector,
 ) => {
 	const topo = topoQuark();
 	topo.sectors.removeQuark(sectorQuark);
-	// TODO : add if necessary ?
-	// if (selectedItem?.type === 'sector' && selectedItem.value().id === sectorQuark().id) setSelectedItem({ type: 'none' })
+	if (selectedSector && selectedSector.value().id === sectorQuark().id) flushStore();
 }
 
 export const createBoulder = (
