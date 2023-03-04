@@ -21,6 +21,7 @@ export type ImageProps = RawImageAttributes & {
 	sizeHint: SourceSize | { raw: string };
 	defaultImage?: StaticImageData;
 	modalable?: boolean;
+	onImageClick?: () => void;
 };
 
 type RawImageAttributes = Omit<
@@ -58,6 +59,12 @@ export const Image = ({
 			);
 		return <>{elts}</>;
 	};
+
+	const cssCursor = modalable && image
+				? portalOpen
+					? " cursor-zoom-out"
+					: " cursor-zoom-in"
+				: props.onImageClick ? " md:cursor-pointer" : "";
 
 	let src = defaultImage.src;
 	let width = defaultImage.width;
@@ -102,7 +109,7 @@ export const Image = ({
 			height={height}
 			srcSet={srcSet}
 			sizes={sizes}
-			className={`h-full ${objectFitClass} ${props.className || ""}`}
+			className={`h-full ${cssCursor} ${objectFitClass} ${props.className || ""}`}
 			loading={props.loading || "lazy"}
 			decoding={props.decoding || "async"}
 			// Add the placeholder as background image

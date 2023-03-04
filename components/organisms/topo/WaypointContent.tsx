@@ -16,7 +16,7 @@ export const WaypointContent: React.FC = watchDependencies(() => {
 
 		return (
 			<>
-				<div className="flex h-[90%] flex-col gap-6 md:h-[85%] md:pt-0">
+				<div className="flex h-[90%] flex-col md:h-[85%] md:pt-0">
 
 					<div className="hidden md:block">
 						<ItemsHeaderButtons item={waypoint} onClose={flush.item} />
@@ -32,16 +32,18 @@ export const WaypointContent: React.FC = watchDependencies(() => {
 						/>
 					</div>
 
-					<div className="flex flex-col px-6 items-start">
-						<div className="ktext-big-title flex flex-row items-center gap-3">
-							<div className="flex h-full items-center justify-center">
-								<Info className="h-6 w-6" />
+					<div className="flex flex-col gap-6 p-6">
+						<div className="flex flex-col items-start">
+							<div className="ktext-big-title flex flex-row items-center gap-3">
+								<div className="flex h-full items-center justify-center">
+									<Info className="h-6 w-6" />
+								</div>
+								{waypoint.name}
 							</div>
-							{waypoint.name}
 						</div>
+					
+						<div className="ktext-base-little">{waypoint.description}</div>
 					</div>
-
-					<div className="ktext-base-little px-6">{waypoint.description}</div>
 				</div>
 
 				<Flash open={!!flashMessage} onClose={() => setFlashMessage(undefined)}>

@@ -124,12 +124,11 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(
 				  }, auto`
 				: "",
 		};
-		const cssCursor =
-			props.modalable && props.image
+		const cssCursor = props.modalable && props.image
 				? portalOpen
 					? " cursor-zoom-out"
 					: " cursor-zoom-in"
-				: props.onImageClick ? " md: cursor-pointer" : "";
+				: props.onImageClick ? " md:cursor-pointer" : "";
 
 		// Explanation of how this works:
 		// - width=100%, height=100% on everything, to let the consumer decide how to size the image
