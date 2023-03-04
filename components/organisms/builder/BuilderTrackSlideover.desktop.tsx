@@ -17,9 +17,7 @@ export const BuilderTrackSlideoverDesktop: React.FC =
 				onClose={flushTrack}
 			>
 				{selectedTrack &&
-					<div className="h-full px-5 py-3">
-						<TrackForm />
-					</div>
+					<TrackForm />
 				}
 			</SlideoverRightDesktop>
 		);

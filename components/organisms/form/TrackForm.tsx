@@ -9,6 +9,7 @@ import { Checkbox } from "components/atoms/Checkbox";
 import { TextArea } from "components/molecules/form/TextArea";
 import { Button } from "components/atoms/buttons/Button";
 import { useDeleteStore } from "components/pages/deleteStore";
+import { ItemsHeaderButtons } from "../ItemsHeaderButtons";
 
 interface TrackFormProps {
 	className?: string,
@@ -18,6 +19,7 @@ export const TrackForm: React.FC<TrackFormProps> = watchDependencies(
 	(props: TrackFormProps) => {
 		const selectedBoulder = useSelectStore(s => s.item as SelectedBoulder);
 		if (!selectedBoulder.selectedTrack) throw new Error("Trying to open TrackForm without any track");
+		const flush = useSelectStore(s => s.flush);
 		const del = useDeleteStore(d => d.delete);
 
 		const trackQuark = selectedBoulder.selectedTrack;
@@ -25,9 +27,11 @@ export const TrackForm: React.FC<TrackFormProps> = watchDependencies(
 
 		return (
 			<>
+				<ItemsHeaderButtons item={track} onClose={flush.track} />
+
 				<div
 					className={
-						"flex h-full flex-col gap-6 " +
+						"flex h-full flex-col gap-6 px-6 py-14" +
 						(props.className ? props.className : "")
 					}
 					onClick={(e) => e.stopPropagation()}

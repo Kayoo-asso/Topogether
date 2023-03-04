@@ -8,6 +8,7 @@ import { BoulderForm } from "../form/BoulderForm";
 import { BoulderPreviewDesktop } from "components/molecules/BoulderPreview.desktop";
 import { Button } from "components/atoms/buttons/Button";
 import { useDeleteStore } from "components/pages/deleteStore";
+import { ItemsHeaderButtons } from "../ItemsHeaderButtons";
 
 interface BoulderBuilderContentDesktopProps {
 	topo: Quark<Topo>;
@@ -18,6 +19,8 @@ export const BoulderBuilderContentDesktop = watchDependencies<
 	BoulderBuilderContentDesktopProps
 >((props: BoulderBuilderContentDesktopProps, parentRef) => {
 	const selectedBoulder = useSelectStore(s => s.item as SelectedBoulder);
+	const boulder = selectedBoulder.value();
+	const flush = useSelectStore(s => s.flush);
 	const del = useDeleteStore(d => d.delete);
 
 	const imageInputRef = useRef<HTMLInputElement>(null);	
@@ -25,8 +28,11 @@ export const BoulderBuilderContentDesktop = watchDependencies<
 	return (
 		// overflow-scroll to avoid scrollbar glitches with certain image sizes, where hovering the ImageThumb would display the scrolbar & change the overall layout
 		<div className="flex h-full w-full flex-col overflow-scroll">
+			
+			<ItemsHeaderButtons item={boulder} onClose={flush.item} />
+
 			<BoulderForm
-				className="mt-3 mb-6 px-5"
+				className="mt-20 mb-6 px-5"
 				topo={props.topo}
 			/>
 

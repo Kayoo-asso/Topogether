@@ -7,6 +7,8 @@ import { TextInput } from "components/molecules/form/TextInput";
 import { TextArea } from "components/molecules/form/TextArea";
 import { Button } from "components/atoms/buttons/Button";
 import { useDeleteStore } from "components/pages/deleteStore";
+import { ItemsHeaderButtons } from "../ItemsHeaderButtons";
+import { useBreakpoint } from "helpers/hooks/DeviceProvider";
 
 interface WaypointFormProps {
 	waypoints: QuarkArray<Waypoint>;
@@ -17,7 +19,10 @@ export const WaypointForm: React.FC<WaypointFormProps> = watchDependencies(
 	(props: WaypointFormProps) => {
 		const selectedWaypoint = useSelectStore(s => s.item as SelectedWaypoint);
 		const waypoint = selectedWaypoint.value();
+		const flush = useSelectStore(s => s.flush);
 		const del = useDeleteStore(d => d.delete);
+
+		const bp = useBreakpoint();
 
 		return (
 			<div
@@ -27,7 +32,9 @@ export const WaypointForm: React.FC<WaypointFormProps> = watchDependencies(
 				}
 				onClick={(e) => e.stopPropagation()}
 			>
-				<div className="flex w-full ktext-subtitle mb-1">Point de repère</div>
+				<ItemsHeaderButtons item={waypoint} onClose={flush.item} />
+
+				<div className={`flex w-full ktext-subtitle mb-1 ${bp === 'mobile' ? '' : 'mt-20'}`}>Point de repère</div>
 				<div className="flex flex-row items-end gap-6">
 					<div className="w-28">
 						<ImageInput

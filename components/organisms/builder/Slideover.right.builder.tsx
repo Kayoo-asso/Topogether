@@ -81,7 +81,7 @@ export const SlideoverRightBuilder: React.FC<SlideoverRightBuilderProps> = (
 						open={item.type !== 'sector'}
 						onClose={onClose}
 					>
-						<div className="h-full py-6">{getContent()}</div>
+						{getContent()}
 					</SlideoverRightDesktop>
 
 					{item.type === 'boulder' && item.selectedTrack && item.selectedImage &&
