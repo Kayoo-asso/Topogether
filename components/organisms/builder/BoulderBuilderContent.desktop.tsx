@@ -9,6 +9,7 @@ import { BoulderPreviewDesktop } from "components/molecules/BoulderPreview.deskt
 import { Button } from "components/atoms/buttons/Button";
 import { useDeleteStore } from "components/store/deleteStore";
 import { ItemsHeaderButtons } from "../ItemsHeaderButtons";
+import { useDrawerStore } from "components/store/drawerStore";
 
 interface BoulderBuilderContentDesktopProps {
 	topo: Quark<Topo>;

@@ -1,6 +1,5 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect } from "react";
 import {
-	DrawerToolEnum,
 	LinearRing,
 	PointEnum,
 	Position,
@@ -16,10 +15,9 @@ import { SelectedBoulder, useSelectStore } from "components/store/selectStore";
 import { Portal, useModal } from "helpers/hooks/useModal";
 import { TracksImage } from "components/molecules/TracksImage";
 import { Toolbar } from "components/molecules/drawer/Toolbar";
+import { useDrawerStore } from "components/store/drawerStore";
 
-interface DrawerProps {
-	onValidate?: () => void;
-}
+interface DrawerProps {}
 
 export const Drawer: React.FC<DrawerProps> = watchDependencies(
 	(props: DrawerProps) => {
@@ -27,11 +25,12 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies(
 		if (!selectedBoulder.selectedTrack) throw new Error('Drawer opened without any track');
 		if (!selectedBoulder.selectedImage) throw new Error("Drawer opened without any image");
 		const selectedTrack: Track = selectedBoulder.selectedTrack();
-		const image = selectedBoulder.selectedImage;	
+		const image = selectedBoulder.selectedImage;
 
-		const [selectedTool, setSelectedTool] =
-			useState<DrawerToolEnum>("LINE_DRAWER");
-		const [displayOtherTracks, setDisplayOtherTracks] = useState(false);
+		const selectedTool = useDrawerStore(d => d.selectedTool);
+		const selectTool = useDrawerStore(d => d.selectTool);
+		const isOtherTracksDisplayed = useDrawerStore(d => d.isOtherTracksDisplayed);
+
 		const [ModalClear, showModalClear] = useModal();
 		
 		const addPointToLine = useCallback((pos: Position) => {
@@ -167,7 +166,7 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies(
 			const handleKeydown = (e: KeyboardEvent) => {
 				if (e.ctrlKey && e.key === "z") rewind();
 				else if (e.code === "Escape") {
-					setSelectedTool("LINE_DRAWER");
+					selectTool("LINE_DRAWER");
 					e.stopPropagation();
 				}
 			};
@@ -189,11 +188,10 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies(
 								objectFit="contain"
 								image={image}
 								tracks={
-									displayOtherTracks
+									isOtherTracksDisplayed
 										? selectedBoulder.value().tracks.quarks()
 										: new QuarkIter([selectedBoulder.selectedTrack])
 								}
-								currentTool={selectedTool}
 								editable
 								allowDoubleTapZoom={false}
 								displayTracksDetails
@@ -208,20 +206,8 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies(
 						</div>
 
 						<Toolbar
-							selectedTool={selectedTool}
-							displayOtherTracks={displayOtherTracks}
-							grade={selectedTrack.grade}
-							onToolSelect={(tool) => setSelectedTool(tool)}
-							onGradeSelect={useCallback((grade) => {
-								selectedBoulder.selectedTrack!.set({
-									...selectedTrack,
-									grade: grade,
-								});
-							}, [selectedBoulder, selectedTrack])}
 							onClear={showModalClear}
 							onRewind={rewind}
-							onOtherTracks={() => setDisplayOtherTracks(!displayOtherTracks)}
-							onValidate={props.onValidate}
 						/>
 					</div>
 				</Portal>

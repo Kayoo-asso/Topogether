@@ -10,10 +10,9 @@ import { SelectedBoulder, useSelectStore } from "components/store/selectStore";
 import { useBreakpoint } from "helpers/hooks/DeviceProvider";
 import { useModal } from "helpers/hooks/useModal";
 import { GradeCircle } from "components/atoms/GradeCircle";
+import { useDrawerStore } from "components/store/drawerStore";
 
 interface TracksListBuilderProps {
-	onDrawButtonClick?: () => void;
-	onCreateTrack?: () => void;
 	onAddImage?: () => void;
 }
 
@@ -32,7 +31,11 @@ export const TracksListBuilder: React.FC<TracksListBuilderProps> =
 	watchDependencies((props: TracksListBuilderProps) => {
 		const session = useSession();
 		if (!session) return null;
-		const breakpoint = useBreakpoint();
+		const bp = useBreakpoint();
+
+		const openDrawer = useDrawerStore(d => d.openDrawer);
+		const openGradeSelector = useDrawerStore(d => d.openGradeSelector);
+		const selectTool = useDrawerStore(d => d.selectTool);
 		
 		const select = useSelectStore(s => s.select);
 		const flushTrack = useSelectStore(s => s.flush.track);
@@ -71,14 +74,20 @@ export const TracksListBuilder: React.FC<TracksListBuilderProps> =
 										selectedTrack().id !== track.id ? 
 										" opacity-40" : "")
 								}
-								onClick={() => toggleSelectedTrack(trackQuark)}
+								onClick={() => {
+									toggleSelectedTrack(trackQuark);
+									if (bp === 'desktop') selectTool('LINE_DRAWER');
+								}}
 							>
 								<div className="flex w-full flex-row items-center">
 									<GradeCircle
 										grade={grade}
 										className="md:cursor-pointer"
 										content={(track.index + 1).toString()}
-										onClick={() => toggleSelectedTrack(trackQuark)}
+										onClick={() => {
+											toggleSelectedTrack(trackQuark);
+											if (bp === 'desktop') selectTool('LINE_DRAWER');
+										}}
 									/>
 
 									{track.grade && (
@@ -98,19 +107,19 @@ export const TracksListBuilder: React.FC<TracksListBuilderProps> =
 										)}
 									</div>
 
-									{props.onDrawButtonClick && (
+									<div className='md:hidden'>
 										<button
 											onClick={(e) => {
 												e.stopPropagation();
 												select.track(trackQuark, selectedBoulder.value);
-												props.onDrawButtonClick!();
+												openDrawer();
 											}}
 										>
 											<DrawIcon className="h-6 w-6 stroke-main" />
 										</button>
-									)}
+									</div>
 								</div>
-								{selectedTrack && selectedTrack().id === track.id && breakpoint === "mobile" && (
+								{selectedTrack && selectedTrack().id === track.id && bp === "mobile" && (
 									<TrackForm className="mt-8" />
 								)}
 							</div>
@@ -127,7 +136,9 @@ export const TracksListBuilder: React.FC<TracksListBuilderProps> =
 						onClick={() => {
 							if (boulder.images.length > 0) {
 								select.track(createTrack(boulder, session!.id), selectedBoulder.value);
-								if (props.onCreateTrack) props.onCreateTrack();
+								openDrawer();
+								openGradeSelector();
+								
 							} else showModalAddImage();
 						}}
 					>

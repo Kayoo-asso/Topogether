@@ -3,13 +3,10 @@ import { Grade, LightGrade } from "types";
 import Circle from "assets/icons/circle.svg";
 import { ValidateButton } from "components/atoms/buttons/ValidateButton";
 import { Portal } from "helpers/hooks/useModal";
+import { useDrawerStore } from "components/store/drawerStore";
+import { SelectedBoulder, useSelectStore } from "components/store/selectStore";
 
-interface GradeselectorProps {
-	open: boolean;
-	setOpen?: React.Dispatch<React.SetStateAction<boolean>>;
-	grade?: Grade;
-	onGradeSelect: (grade?: Grade) => void;
-}
+interface GradeselectorProps {}
 
 const normalGrade = [9, 8, 7, 6, 5] as const;
 export const getLightGradeColorClass = (g: LightGrade) => {
@@ -36,6 +33,17 @@ export const getLightGradeColorClass = (g: LightGrade) => {
 export const GradeSelector: React.FC<GradeselectorProps> = (
 	props: GradeselectorProps
 ) => {
+    const isOpenGradeSelectorOpen = useDrawerStore(d => d.isGradeSelectorOpen);
+    const closeGradeSelector = useDrawerStore(d => d.closeGradeSelector);
+    const selectedBoulder = useSelectStore(s => s.item as SelectedBoulder);
+    const grade = selectedBoulder.selectedTrack!().grade;
+
+    const changeGrade = useCallback((g?: Grade) => {
+        selectedBoulder.selectedTrack!.set(t => ({
+            ...t,
+            grade: g,
+        }))
+    }, [selectedBoulder])
 
     const getNormalGradeLine = (g: typeof normalGrade[number]) => (
         <div className="w-full flex flex-row justify-between items-center" key={g}>
@@ -51,15 +59,15 @@ export const GradeSelector: React.FC<GradeselectorProps> = (
 
     const getInteractionDiv = useCallback((g: Grade, label?: string) => (
         <div 
-            className={"w-full rounded-sm p-1 justify-center md:cursor-pointer flex flex-row" + (props.grade === g ? ' text-white bg-main font-semibold' : '')}
-            onClick={() => props.onGradeSelect(g)}
+            className={"w-full rounded-sm p-1 justify-center md:cursor-pointer flex flex-row" + (grade === g ? ' text-white bg-main font-semibold' : '')}
+            onClick={() => changeGrade(g)}
         >
             {label || g}
         </div>
-    ), [props.grade]);
+    ), [grade]);
 
 	return (
-        <Portal open={props.open}>
+        <Portal open={isOpenGradeSelectorOpen}>
             <div className='w-full h-full bg-dark bg-opacity-95 flex flex-col px-8 absolute top-0 left-0 z-full md:px-[15%]'>
                 
                 <div className="w-full h-[7vh] flex justify-center items-center text-white ktext-title">
@@ -81,8 +89,8 @@ export const GradeSelector: React.FC<GradeselectorProps> = (
 
                     <div className="w-full flex justify-center">
                         <div 
-                            className={"rounded-sm p-2 md:cursor-pointer flex flex-row" + (!props.grade ? ' text-white bg-main font-semibold' : '')}
-                            onClick={() => props.onGradeSelect(undefined)}
+                            className={"rounded-sm p-2 md:cursor-pointer flex flex-row" + (!grade ? ' text-white bg-main font-semibold' : '')}
+                            onClick={() => changeGrade(undefined)}
                         >
                             <Circle className={"mr-2 h-6 w-6 " + getLightGradeColorClass('P')} /> Projet
                         </div>
@@ -91,7 +99,7 @@ export const GradeSelector: React.FC<GradeselectorProps> = (
 
                 <div className="w-full h-[10vh] flex justify-center">
                     <ValidateButton
-                        onClick={() => props.setOpen && props.setOpen(false)}
+                        onClick={closeGradeSelector}
                     />
                 </div>
 

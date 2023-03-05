@@ -10,6 +10,7 @@ import { TextArea } from "components/molecules/form/TextArea";
 import { Button } from "components/atoms/buttons/Button";
 import { useDeleteStore } from "components/store/deleteStore";
 import { ItemsHeaderButtons } from "../ItemsHeaderButtons";
+import { useDrawerStore } from "components/store/drawerStore";
 
 interface TrackFormProps {
 	className?: string,
@@ -31,7 +32,7 @@ export const TrackForm: React.FC<TrackFormProps> = watchDependencies(
 
 				<div
 					className={
-						"flex h-full flex-col gap-6 px-6 py-14" +
+						"flex h-full flex-col gap-6 px-6 md:py-14 " +
 						(props.className ? props.className : "")
 					}
 					onClick={(e) => e.stopPropagation()}

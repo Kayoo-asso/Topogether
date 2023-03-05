@@ -11,6 +11,7 @@ import { ImageInput } from "components/molecules/form/ImageInput";
 import { RockForm } from "../form/RockForm";
 import { Button } from "components/atoms/buttons/Button";
 import { useDeleteStore } from "components/store/deleteStore";
+import { useDrawerStore } from "components/store/drawerStore";
 
 interface BoulderBuilderContentMobileProps {
 	full: boolean,
@@ -24,7 +25,7 @@ export const BoulderBuilderContentMobile: React.FC<BoulderBuilderContentMobilePr
 		const select = useSelectStore(s => s.select);
 		const del = useDeleteStore(d => d.delete);
 
-		const [displayDrawer, setDisplayDrawer] = useState(false);
+		const isDrawerOpen = useDrawerStore(d => d.isDrawerOpen);
 
 		const [trackTab, setTrackTab] = useState(true);
 
@@ -115,10 +116,7 @@ export const BoulderBuilderContentMobile: React.FC<BoulderBuilderContentMobilePr
 					{/* TRACKSLIST */}
 					{trackTab && props.full && (
 						<div className="overflow-auto pb-[30px]">
-							<TracksListBuilder
-								onDrawButtonClick={() => setDisplayDrawer(true)}
-								onCreateTrack={() => setDisplayDrawer(true)}
-							/>
+							<TracksListBuilder />
 						</div>
 					)}
 
@@ -136,8 +134,8 @@ export const BoulderBuilderContentMobile: React.FC<BoulderBuilderContentMobilePr
 					)}
 				</div>
 
-				{displayDrawer &&
-					<Drawer onValidate={() => setDisplayDrawer(false)} />
+				{isDrawerOpen &&
+					<Drawer />
 				}
 			</>
 		);

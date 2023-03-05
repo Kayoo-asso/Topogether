@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import { ToolSelectorMobile } from "./ToolSelectorMobile";
-import { DrawerToolEnum, Grade, gradeToLightGrade } from "types";
+import { Grade, gradeToLightGrade } from "types";
 import { getLightGradeColorClass, GradeSelector } from "./GradeSelector";
+import { useDrawerStore } from "components/store/drawerStore";
 
 import Clear from "assets/icons/clear.svg";
 import Rewind from "assets/icons/rewind.svg";
@@ -13,23 +14,17 @@ import ClimbingShoe from "assets/icons/climbing-shoe.svg";
 import ForbiddenArea from "assets/icons/forbidden-area.svg";
 import Checked from "assets/icons/checked.svg";
 import Circle from "assets/icons/circle.svg";
+import { SelectedBoulder, useSelectStore } from "components/store/selectStore";
 
 interface ToolbarProps {
-	selectedTool: DrawerToolEnum;
-	displayOtherTracks: boolean;
-	grade?: Grade;
-	onToolSelect: (tool: DrawerToolEnum) => void;
-	onGradeSelect: (grade?: Grade) => void;
 	onClear: () => void;
 	onRewind: () => void;
-	onOtherTracks: () => void;
-	onValidate?: () => void;
 }
 
-const getStrokeColorClass = (grade: Grade | undefined) => {
-	if (!grade) return "stroke-grey-light";
+const getStrokeColorClass = (g: Grade | undefined) => {
+	if (!g) return "stroke-grey-light";
 	else {
-		const lightGrade = gradeToLightGrade(grade);
+		const lightGrade = gradeToLightGrade(g);
 		switch (lightGrade) {
 			case 3:
 				return "stroke-grade-3";
@@ -49,11 +44,16 @@ const getStrokeColorClass = (grade: Grade | undefined) => {
 	}
 };
 
-export const Toolbar: React.FC<ToolbarProps> = ({
-	selectedTool = "LINE_DRAWER",
-	...props
-}: ToolbarProps) => {
-	const [gradeSelectorOpen, setGradeSelectorOpen] = useState(false);
+export const Toolbar: React.FC<ToolbarProps> = (props: ToolbarProps) => {
+	const selectedTool = useDrawerStore(d => d.selectedTool);
+	const selectTool = useDrawerStore(d => d.selectTool);
+	const isOtherTracksDisplayed = useDrawerStore(d => d.isOtherTracksDisplayed);
+	const toggleOtherTracks = useDrawerStore(d => d.toggleOtherTracks);
+	const openGradeSelector = useDrawerStore(d => d.openGradeSelector);
+	const closeDrawer = useDrawerStore(d => d.closeDrawer)
+
+	const selectedBoulder = useSelectStore(s => s.item as SelectedBoulder);
+    const grade = selectedBoulder.selectedTrack!().grade;
 
 	return (
 		<div className="z-200 flex h-[9vh] w-full flex-row items-center justify-center bg-dark">
@@ -74,15 +74,15 @@ export const Toolbar: React.FC<ToolbarProps> = ({
 								? "fill-main stroke-main"
 								: "fill-white stroke-white")
 						}
-						onClick={() => props.onToolSelect("ERASER")}
+						onClick={() => selectTool("ERASER")}
 					/>
 				</div>
 				<ManyTracks
 					className={
 						"h-6 w-6 md:cursor-pointer " +
-						(props.displayOtherTracks ? "stroke-main" : "stroke-white")
+						(isOtherTracksDisplayed ? "stroke-main" : "stroke-white")
 					}
-					onClick={props.onOtherTracks}
+					onClick={toggleOtherTracks}
 				/>
 			</span>
 
@@ -91,7 +91,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
 					selectedTool={
 						selectedTool !== "ERASER" ? selectedTool : "LINE_DRAWER"
 					}
-					onToolSelect={props.onToolSelect}
+					onToolSelect={selectTool}
 				/>
 			</span>
 
@@ -100,28 +100,28 @@ export const Toolbar: React.FC<ToolbarProps> = ({
 					className={
 						"h-6 w-6 md:cursor-pointer " +
 						(selectedTool === "LINE_DRAWER"
-							? getStrokeColorClass(props.grade)
+							? getStrokeColorClass(grade)
 							: "stroke-white")
 					}
-					onClick={() => props.onToolSelect("LINE_DRAWER")}
+					onClick={() => selectTool("LINE_DRAWER")}
 				/>
 				<Hand
 					className={
 						"h-6 w-6 md:cursor-pointer " +
 						(selectedTool === "HAND_DEPARTURE_DRAWER"
-							? getStrokeColorClass(props.grade) + " fill-white"
+							? getStrokeColorClass(grade) + " fill-white"
 							: "stroke-white")
 					}
-					onClick={() => props.onToolSelect("HAND_DEPARTURE_DRAWER")}
+					onClick={() => selectTool("HAND_DEPARTURE_DRAWER")}
 				/>
 				<ClimbingShoe
 					className={
 						"h-7 w-7 md:cursor-pointer " +
 						(selectedTool === "FOOT_DEPARTURE_DRAWER"
-							? getStrokeColorClass(props.grade) + " fill-white"
+							? getStrokeColorClass(grade) + " fill-white"
 							: "stroke-white")
 					}
-					onClick={() => props.onToolSelect("FOOT_DEPARTURE_DRAWER")}
+					onClick={() => selectTool("FOOT_DEPARTURE_DRAWER")}
 				/>
 				<ForbiddenArea
 					className={
@@ -130,31 +130,26 @@ export const Toolbar: React.FC<ToolbarProps> = ({
 							? "fill-white stroke-second"
 							: "stroke-white")
 					}
-					onClick={() => props.onToolSelect("FORBIDDEN_AREA_DRAWER")}
+					onClick={() => selectTool("FORBIDDEN_AREA_DRAWER")}
 				/>
 			</span>
 
 			<span
 				className="flex text-white flex-row items-center md:cursor-pointer"
-				onClick={() => setGradeSelectorOpen(true)}
+				onClick={openGradeSelector}
 			>
-				<Circle className={"mr-2 h-6 w-6 " + getLightGradeColorClass(gradeToLightGrade(props.grade))} />
-				{props.grade ? props.grade : 'Pr'}
+				<Circle className={"mr-2 h-6 w-6 " + getLightGradeColorClass(gradeToLightGrade(grade))} />
+				{grade ? grade : 'Pr'}
 			</span>
 
 			<span className="flex w-1/5 justify-center md:hidden">
 				<Checked
 					className="h-6 w-6 md:cursor-pointer fill-main"
-					onClick={props.onValidate}
+					onClick={closeDrawer}
 				/>
 			</span>
 
-			<GradeSelector 
-				open={gradeSelectorOpen}
-				setOpen={setGradeSelectorOpen}
-				grade={props.grade}
-				onGradeSelect={props.onGradeSelect}
-			/>
+			<GradeSelector />
 		</div>
 	);
 };

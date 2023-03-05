@@ -1,32 +1,30 @@
-import { DrawerToolEnum, Track } from "types";
+import { DrawerToolEnum } from "types";
 import create from "zustand";
 
 type DrawerStore = {
-    track?: Track,
-    open: (t: Track) => void,
-    close: () => void,
+    isDrawerOpen: boolean,
+    openDrawer: () => void,
+    closeDrawer: () => void,
 	isGradeSelectorOpen: boolean,
     openGradeSelector: () => void,
     closeGradeSelector: () => void,
 	isOtherTracksDisplayed: boolean,
-    showOtherTracks: () => void,
-    hideOtherTracks: () => void,
+    toggleOtherTracks: () => void,
 	selectedTool: DrawerToolEnum,
     selectTool: (t: DrawerToolEnum) => void,
 }
 
 export const useDrawerStore = create<DrawerStore>()((set, get) => ({
-    track: undefined,
-    open: (t: Track) => set((s) => ({ track: t })),
-    close: () => set((s) => ({ track: undefined })),
+    isDrawerOpen: false,
+    openDrawer: () => set((s) => ({ isDrawerOpen: true, selectedTool: 'LINE_DRAWER' })),
+    closeDrawer: () => set((s) => ({ isDrawerOpen: false, selectedTool: 'LINE_DRAWER' })),
 
     isGradeSelectorOpen: false,
     openGradeSelector: () => set((s) => ({ isGradeSelectorOpen: true })),
     closeGradeSelector: () => set((s) => ({ isGradeSelectorOpen: false })),
 
 	isOtherTracksDisplayed: false,
-    showOtherTracks: () => set((s) => ({ isOtherTracksDisplayed: true })),
-    hideOtherTracks: () => set((s) => ({ isOtherTracksDisplayed: false })),
+    toggleOtherTracks: () => set((s) => ({ isOtherTracksDisplayed: !get().isOtherTracksDisplayed })),
 
 	selectedTool: 'LINE_DRAWER',
     selectTool: (t: DrawerToolEnum) => set((s) => ({ selectedTool: t })),

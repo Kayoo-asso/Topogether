@@ -18,6 +18,7 @@ import { useSelectStore } from "components/store/selectStore";
 import { SourceSize } from "helpers/sharedWithServiceWorker";
 import { Portal } from "helpers/hooks/useModal";
 import { SVGTrack } from "components/atoms/svg/SVGTrack";
+import { useDrawerStore } from "components/store/drawerStore";
 
 type TracksImageProps = React.PropsWithChildren<{
 	image?: Img;
@@ -33,7 +34,6 @@ type TracksImageProps = React.PropsWithChildren<{
 	editable?: boolean;
 	modalable?: boolean;
 	allowDoubleTapZoom?: boolean;
-	currentTool?: DrawerToolEnum;
 	onImageClick?: (pos: Position) => void;
 	onPointClick?: (pointType: PointEnum, index: number) => void;
 	onImageLoad?: (width: number, height: number) => void;
@@ -64,6 +64,8 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(
 		const selectedTrackQuark = useSelectStore(s => s.item.type === 'boulder' && s.item.selectedTrack || undefined);
 		const selectedTrack = selectedTrackQuark ? selectedTrackQuark() : undefined;
 		const selectTrack = useSelectStore(s => s.select.track);
+		const selectedTool = useDrawerStore(d => d.selectedTool);
+
 		// ratio = width / height
 		// so the most accurate way to scale the SVG viewBox is to set a height
 		// and take width = ratio * height (multiplication is better than division)
@@ -98,7 +100,7 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(
 			if (selectedTrack?.grade) cursorColor = selectedTrack.grade[0];
 
 			let cursorUrl = "/assets/icons/colored/";
-			switch (props.currentTool) {
+			switch (selectedTool) {
 				case "LINE_DRAWER":
 					cursorUrl += `line-point/_line-point-${cursorColor}.svg`;
 					break;
@@ -120,7 +122,7 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(
 		const cursorStyle: CSSProperties = {
 			cursor: editable
 				? `url(${getCursorUrl()}) ${
-						props.currentTool === "ERASER" ? "3 7" : ""
+						selectedTool === "ERASER" ? "3 7" : ""
 				  }, auto`
 				: "",
 		};
@@ -224,7 +226,6 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(
 											<SVGTrack
 												key={trackQuark().id}
 												track={trackQuark}
-												currentTool={props.currentTool}
 												imageId={props.image!.id}
 												editable={editable}
 												vb={viewBoxRef}
