@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { Boulder, Sector, Topo, UUID } from "types";
 import { BoulderItemLeftbar } from "components/layouts/BoulderItemLeftbar";
-import { useSelectStore } from "components/pages/selectStore";
+import { useSelectStore } from "components/store/selectStore";
 import { Map } from "ol";
 import { transform } from 'ol/proj.js';
 

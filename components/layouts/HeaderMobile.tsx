@@ -3,7 +3,7 @@ import Link from "next/link";
 import ArrowSimple from "assets/icons/arrow-simple.svg";
 import MenuIcon from "assets/icons/menu.svg";
 import { useRouter } from "next/router";
-import { useSelectStore } from "components/pages/selectStore";
+import { useSelectStore } from "components/store/selectStore";
 import { Dropdown, DropdownOption } from "components/molecules/form/Dropdown";
 
 interface HeaderMobileProps {

@@ -4,7 +4,7 @@ import { Quark, watchDependencies } from "helpers/quarky";
 import { Map as OLMap } from "ol";
 import { SearchbarBouldersResults } from "./SearchbarBouldersResults";
 import { useBoulderSearchbar } from "./useBoulderSearchbar";
-import { useSelectStore } from "components/pages/selectStore";
+import { useSelectStore } from "components/store/selectStore";
 
 export interface SearchbarBouldersDesktopProps {
 	topo: Quark<Topo>;

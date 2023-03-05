@@ -3,7 +3,7 @@ import { gradeToLightGrade, UUID } from "types";
 import { watchDependencies } from "helpers/quarky";
 import { listFlags } from "helpers/bitflags";
 import { OrientationName, ReceptionName } from "types/EnumNames";
-import { SelectedBoulder, useSelectStore } from "components/pages/selectStore";
+import { SelectedBoulder, useSelectStore } from "components/store/selectStore";
 import { TrackSpecName } from "types/BitflagNames";
 import { useBreakpoint } from "helpers/hooks/DeviceProvider";
 import { GradeCircle } from "components/atoms/GradeCircle";

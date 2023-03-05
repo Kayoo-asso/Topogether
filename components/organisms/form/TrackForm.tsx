@@ -2,13 +2,13 @@ import React from "react";
 import { watchDependencies } from "helpers/quarky";
 import { Description, Name, TrackSpec } from "types";
 import { toggleFlag } from "helpers/bitflags";
-import { SelectedBoulder, useSelectStore } from "components/pages/selectStore";
+import { SelectedBoulder, useSelectStore } from "components/store/selectStore";
 import { SpecSelector } from "components/molecules/form/SpecSelector";
 import { TextInput } from "components/molecules/form/TextInput";
 import { Checkbox } from "components/atoms/Checkbox";
 import { TextArea } from "components/molecules/form/TextArea";
 import { Button } from "components/atoms/buttons/Button";
-import { useDeleteStore } from "components/pages/deleteStore";
+import { useDeleteStore } from "components/store/deleteStore";
 import { ItemsHeaderButtons } from "../ItemsHeaderButtons";
 
 interface TrackFormProps {

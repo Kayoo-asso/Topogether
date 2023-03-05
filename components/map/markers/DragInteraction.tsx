@@ -1,6 +1,6 @@
-import { useSelectStore } from "components/pages/selectStore";
+import { useSelectStore } from "components/store/selectStore";
 import { useCallback } from "react";
-import { SelectedItem } from "components/pages/selectStore";
+import { SelectedItem } from "components/store/selectStore";
 import { GeoCoordinates, Topo, UUID } from "types";
 import { Drag } from "components/openlayers/interactions/Drag";
 import PointGeom from "ol/geom/Point";

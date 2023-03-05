@@ -12,7 +12,7 @@ import {
 } from "helpers/quarky";
 import { v4 } from "uuid";
 import { staticUrl } from "helpers/constants";
-import { SelectedBoulder, useSelectStore } from "components/pages/selectStore";
+import { SelectedBoulder, useSelectStore } from "components/store/selectStore";
 import { Portal, useModal } from "helpers/hooks/useModal";
 import { TracksImage } from "components/molecules/TracksImage";
 import { Toolbar } from "components/molecules/drawer/Toolbar";

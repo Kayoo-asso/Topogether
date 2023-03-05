@@ -3,11 +3,11 @@ import { Quark, watchDependencies } from "helpers/quarky";
 import { Topo } from "types";
 import { setReactRef } from "helpers/utils";
 import { TracksListBuilder } from "./TracksListBuilder";
-import { SelectedBoulder, useSelectStore } from "components/pages/selectStore";
-import { BoulderForm } from "../form/BoulderForm";
+import { SelectedBoulder, useSelectStore } from "components/store/selectStore";
+import { RockForm } from "../form/RockForm";
 import { BoulderPreviewDesktop } from "components/molecules/BoulderPreview.desktop";
 import { Button } from "components/atoms/buttons/Button";
-import { useDeleteStore } from "components/pages/deleteStore";
+import { useDeleteStore } from "components/store/deleteStore";
 import { ItemsHeaderButtons } from "../ItemsHeaderButtons";
 
 interface BoulderBuilderContentDesktopProps {
@@ -31,7 +31,7 @@ export const BoulderBuilderContentDesktop = watchDependencies<
 			
 			<ItemsHeaderButtons item={boulder} onClose={flush.item} />
 
-			<BoulderForm
+			<RockForm
 				className="mt-20 mb-6 px-5"
 				topo={props.topo}
 			/>

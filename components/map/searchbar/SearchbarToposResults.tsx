@@ -4,7 +4,7 @@ import { LightTopo } from "types";
 import { Map } from "ol";
 import Link from "next/link";
 import { encodeUUID } from "helpers/utils";
-import { useSelectStore } from "components/pages/selectStore";
+import { useSelectStore } from "components/store/selectStore";
 import { fromLonLat } from "ol/proj";
 
 import MarkerIcon from "assets/icons/marker.svg";

@@ -3,7 +3,7 @@ import { watchDependencies } from "helpers/quarky";
 import { UUID } from "types";
 import { useSession} from "helpers/services";
 import { TracksList } from "./TracksList";
-import { SelectedBoulder, useSelectStore } from "components/pages/selectStore";
+import { SelectedBoulder, useSelectStore } from "components/store/selectStore";
 import { useModal } from "helpers/hooks/useModal";
 import { BoulderPreviewDesktop } from "components/molecules/BoulderPreview.desktop";
 import { Button } from "components/atoms/buttons/Button";

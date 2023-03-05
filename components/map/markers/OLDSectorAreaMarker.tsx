@@ -17,7 +17,7 @@ export {}
 // import { isMouseEvent, isPointerEvent, isTouchEvent } from "./BoulderMarker";
 // import { toLatLng, usePolygon } from "helpers/map";
 // import { sectorChanged } from "helpers/builder";
-// import { useSelectStore } from "components/pages/selectStore";
+// import { useSelectStore } from "components/store/selectStore";
 
 // interface SectorAreaMarkerProps {
 // 	topoQuark: Quark<Topo>,

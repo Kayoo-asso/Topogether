@@ -1,7 +1,7 @@
 import React from "react";
 import { Quark } from "helpers/quarky";
 import { Topo, UUID } from "types";
-import { useSelectStore } from "components/pages/selectStore";
+import { useSelectStore } from "components/store/selectStore";
 import { InfoContent } from "./InfoContent";
 import { AccessContent } from "./AccessContent";
 import { ManagementContent } from "./ManagementContent";

@@ -1,7 +1,7 @@
 import React from "react";
 import { watchDependencies } from "helpers/quarky";
 import { TrackForm } from "../form/TrackForm";
-import { SelectedBoulder, useSelectStore } from "components/pages/selectStore";
+import { SelectedBoulder, useSelectStore } from "components/store/selectStore";
 import { SlideoverRightDesktop } from "components/atoms/overlays/SlideoverRightDesktop";
 
 export const BuilderTrackSlideoverDesktop: React.FC =

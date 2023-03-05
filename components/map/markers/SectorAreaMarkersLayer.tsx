@@ -10,7 +10,7 @@ import {
 import { FeatureLike } from "ol/Feature";
 import { Circle, Fill, Stroke, Style, Text } from "ol/style";
 import { GeoCoordinates, Sector, SectorData, Topo, UUID } from "types";
-import { SelectedSector, useSelectStore } from "components/pages/selectStore";
+import { SelectedSector, useSelectStore } from "components/store/selectStore";
 import { fromLonLat, toLonLat } from "ol/proj";
 import { MultiPoint, Polygon as PolygonType } from "ol/geom";
 import { createSector } from "helpers/builder";

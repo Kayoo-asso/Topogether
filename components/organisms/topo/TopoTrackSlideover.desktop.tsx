@@ -1,5 +1,5 @@
 import React from "react";
-import { SelectedBoulder, useSelectStore } from "components/pages/selectStore";
+import { SelectedBoulder, useSelectStore } from "components/store/selectStore";
 import { TrackContent } from "./TrackContent";
 import { SlideoverRightDesktop } from "components/atoms/overlays/SlideoverRightDesktop";
 

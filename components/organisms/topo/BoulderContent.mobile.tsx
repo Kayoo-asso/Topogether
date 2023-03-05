@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { UUID } from "types";
 import { watchDependencies } from "helpers/quarky";
 import { Image } from "components/atoms/Image";
-import { SelectedBoulder, useSelectStore } from "components/pages/selectStore";
+import { SelectedBoulder, useSelectStore } from "components/store/selectStore";
 import { TracksList } from "./TracksList";
 import { useSession } from "helpers/services";
 import { GradeScale } from "components/molecules/GradeScale";

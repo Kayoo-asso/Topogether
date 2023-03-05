@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { Quark, QuarkIter } from "helpers/quarky";
 import { Topo } from "types";
-import { useSelectStore } from "components/pages/selectStore";
+import { useSelectStore } from "components/store/selectStore";
 import { ParkingContent } from "./ParkingContent";
 import { WaypointContent } from "./WaypointContent";
 import { BoulderContentMobile } from "./BoulderContent.mobile";

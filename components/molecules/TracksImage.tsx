@@ -14,7 +14,7 @@ import {
 import { Image } from "components/atoms/Image";
 import QuickPinchZoom, { make3dTransformValue } from "react-quick-pinch-zoom";
 import { getCoordsInViewbox } from "helpers/svg";
-import { useSelectStore } from "components/pages/selectStore";
+import { useSelectStore } from "components/store/selectStore";
 import { SourceSize } from "helpers/sharedWithServiceWorker";
 import { Portal } from "helpers/hooks/useModal";
 import { SVGTrack } from "components/atoms/svg/SVGTrack";

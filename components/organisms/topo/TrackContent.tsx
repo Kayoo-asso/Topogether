@@ -1,6 +1,6 @@
 import React from 'react';
 import { GradeCircle } from 'components/atoms/GradeCircle';
-import { SelectedBoulder, useSelectStore } from 'components/pages/selectStore';
+import { SelectedBoulder, useSelectStore } from 'components/store/selectStore';
 import { listFlags } from 'helpers/bitflags';
 import { gradeToLightGrade } from 'types';
 import { TrackSpecName } from 'types/BitflagNames';

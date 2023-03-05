@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { useSelectStore } from "components/pages/selectStore";
+import { useSelectStore } from "components/store/selectStore";
 import { MapToolEnum } from "types";
 import { useBreakpoint } from "helpers/hooks/DeviceProvider";
 import { RoundButton } from "components/atoms/buttons/RoundButton";

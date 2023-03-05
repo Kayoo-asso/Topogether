@@ -1,12 +1,12 @@
 import React, { useCallback } from "react";
 import { QuarkArray, watchDependencies } from "helpers/quarky";
 import { Description, Name, Waypoint } from "types";
-import { SelectedWaypoint, useSelectStore } from "components/pages/selectStore";
+import { SelectedWaypoint, useSelectStore } from "components/store/selectStore";
 import { ImageInput } from "components/molecules/form/ImageInput";
 import { TextInput } from "components/molecules/form/TextInput";
 import { TextArea } from "components/molecules/form/TextArea";
 import { Button } from "components/atoms/buttons/Button";
-import { useDeleteStore } from "components/pages/deleteStore";
+import { useDeleteStore } from "components/store/deleteStore";
 import { ItemsHeaderButtons } from "../ItemsHeaderButtons";
 import { useBreakpoint } from "helpers/hooks/DeviceProvider";
 

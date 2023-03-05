@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect } from 'react';
-import { useSelectStore } from 'components/pages/selectStore';
+import { useSelectStore } from 'components/store/selectStore';
 import { deleteBoulder, deleteParking, deleteSector, deleteTrack, deleteWaypoint } from 'helpers/builder';
 import { staticUrl } from 'helpers/constants';
 import { Quark, watchDependencies } from 'helpers/quarky';
 import { Topo } from 'types';
 import { useBreakpoint } from 'helpers/hooks/DeviceProvider';
 import { useModal } from 'helpers/hooks/useModal';
-import { useDeleteStore } from 'components/pages/deleteStore';
+import { useDeleteStore } from 'components/store/deleteStore';
 
 interface BuilderModalDeleteProps {
     topo: Quark<Topo>,

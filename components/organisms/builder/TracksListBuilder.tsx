@@ -6,7 +6,7 @@ import DrawIcon from "assets/icons/draw.svg";
 import { createTrack } from "helpers/builder";
 import { staticUrl } from "helpers/constants";
 import { TrackForm } from "../form/TrackForm";
-import { SelectedBoulder, useSelectStore } from "components/pages/selectStore";
+import { SelectedBoulder, useSelectStore } from "components/store/selectStore";
 import { useBreakpoint } from "helpers/hooks/DeviceProvider";
 import { useModal } from "helpers/hooks/useModal";
 import { GradeCircle } from "components/atoms/GradeCircle";
@@ -132,7 +132,7 @@ export const TracksListBuilder: React.FC<TracksListBuilderProps> =
 						}}
 					>
 						<span className="ktext-subtitle ml-2 mr-5 text-xl">+</span>{" "}
-						<span className="ktext-subtitle">Nouveau passage</span>
+						<span className="ktext-subtitle">Nouvelle voie</span>
 					</div>
 				</div>
 

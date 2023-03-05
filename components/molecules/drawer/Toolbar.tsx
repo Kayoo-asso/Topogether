@@ -53,7 +53,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
 	selectedTool = "LINE_DRAWER",
 	...props
 }: ToolbarProps) => {
-	const [gradeSelectorOpen, setGradeSelectorOpen] = useState(true);
+	const [gradeSelectorOpen, setGradeSelectorOpen] = useState(false);
 
 	return (
 		<div className="z-200 flex h-[9vh] w-full flex-row items-center justify-center bg-dark">

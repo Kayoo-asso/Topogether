@@ -7,7 +7,7 @@ import {
 } from "components/openlayers";
 import { Icon, Style } from 'ol/style';
 import { Waypoint } from 'types';
-import { SelectedWaypoint, useSelectStore } from 'components/pages/selectStore';
+import { SelectedWaypoint, useSelectStore } from 'components/store/selectStore';
 import { fromLonLat } from 'ol/proj';
 import { useMapZoom } from 'helpers/hooks/useMapZoom';
 import { Breakpoint, useBreakpoint } from 'helpers/hooks/DeviceProvider';

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { Parking } from "types";
 import { Image } from "components/atoms/Image";
-import { useSelectStore } from "components/pages/selectStore";
+import { useSelectStore } from "components/store/selectStore";
 import { ParkingButton } from "components/atoms/buttons/ParkingButton";
 import { Flash } from "components/atoms/overlays/Flash";
 import { ParkingModal } from "components/atoms/overlays/ParkingModal";

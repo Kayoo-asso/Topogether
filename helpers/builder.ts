@@ -15,7 +15,7 @@ import {
 	Waypoint,
 } from "types";
 import { v4 } from "uuid";
-import { SelectedBoulder, SelectedParking, SelectedSector, SelectedWaypoint } from "components/pages/selectStore";
+import { SelectedBoulder, SelectedParking, SelectedSector, SelectedWaypoint } from "components/store/selectStore";
 
 export const createSector = (
 	topoQuark: Quark<Topo>,
@@ -56,7 +56,7 @@ export const createBoulder = (
 	// terrible hack around `liked` for now
 	const newBoulder: Boulder = setupBoulder({
 		id: v4(),
-		name: `Bloc sans nom` as Name,
+		name: `Caillou sans nom` as Name,
 		liked: undefined!,
 		location,
 		isHighball: false,

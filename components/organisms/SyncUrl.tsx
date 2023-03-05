@@ -1,4 +1,4 @@
-import { SelectedInfo, useSelectStore } from 'components/pages/selectStore';
+import { SelectedInfo, useSelectStore } from 'components/store/selectStore';
 import { useBreakpoint } from 'helpers/hooks/DeviceProvider';
 import { decodeUUID, encodeUUID } from 'helpers/utils';
 import { useRouter } from 'next/router';

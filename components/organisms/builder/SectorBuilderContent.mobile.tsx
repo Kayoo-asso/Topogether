@@ -2,7 +2,7 @@ import React from "react";
 import { Topo, UUID } from "types";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { SectorListBuilder } from "./SectorListBuilder";
-import { useSelectStore } from "components/pages/selectStore";
+import { useSelectStore } from "components/store/selectStore";
 import { Map } from "ol";
 import { Button } from "components/atoms/buttons/Button";
 

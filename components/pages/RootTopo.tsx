@@ -12,7 +12,7 @@ import Map from "ol/Map";
 import { useSession } from "helpers/services";
 import { sortBoulders } from "helpers/topo";
 import { encodeUUID } from "helpers/utils";
-import { useSelectStore } from "./selectStore";
+import { useSelectStore } from "../store/selectStore";
 import { SyncUrl } from "components/organisms/SyncUrl";
 import { SlideoverLeftTopo } from "components/organisms/topo/Slideover.left.topo";
 import { SlideoverRightTopo } from "components/organisms/topo/Slideover.right.topo";

@@ -9,7 +9,7 @@ import { deleteTrack } from "helpers/builder";
 import { staticUrl } from "helpers/constants";
 import { useModal } from "helpers/hooks/useModal";
 import { setReactRef } from "helpers/utils";
-import { SelectedBoulder, useSelectStore } from "components/pages/selectStore";
+import { SelectedBoulder, useSelectStore } from "components/store/selectStore";
 import { TracksImage } from "./TracksImage";
 import { MultipleImageInput } from "./form/MultipleImageInput";
 

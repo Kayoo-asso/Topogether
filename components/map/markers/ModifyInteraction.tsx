@@ -1,4 +1,4 @@
-import { SelectedSector, useSelectStore } from "components/pages/selectStore";
+import { SelectedSector, useSelectStore } from "components/store/selectStore";
 import { useCallback } from "react";
 import { Topo, UUID } from "types";
 import { Modify } from "components/openlayers/interactions/Modify";

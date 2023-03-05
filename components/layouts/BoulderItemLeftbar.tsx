@@ -6,7 +6,7 @@ import { CSS } from '@dnd-kit/utilities';
 
 import ArrowSimple from "assets/icons/arrow-simple.svg";
 import CrossDelete from "assets/icons/clear.svg";
-import { useDeleteStore } from "components/pages/deleteStore";
+import { useDeleteStore } from "components/store/deleteStore";
 
 interface BoulderItemLeftbarProps {
 	boulder: Quark<Boulder>;
@@ -81,7 +81,7 @@ export const BoulderItemLeftbar: React.FC<BoulderItemLeftbarProps> = watchDepend
 						{props.orderIndex}.
 					</span>
 					<span
-						className={"ktext-base" + (props.selected ? " font-semibold" : "")}
+						className={"ktext-base text-base" + (props.selected ? " font-semibold" : "")}
 					>
 						{boulder.name} 
 					</span>

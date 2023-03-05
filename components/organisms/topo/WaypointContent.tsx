@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { Waypoint } from "types";
 import { Image } from "components/atoms/Image";
-import { useSelectStore } from "components/pages/selectStore";
+import { useSelectStore } from "components/store/selectStore";
 import { Flash } from "components/atoms/overlays/Flash";
 import { ItemsHeaderButtons } from "../ItemsHeaderButtons";
 

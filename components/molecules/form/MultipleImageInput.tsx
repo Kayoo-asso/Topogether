@@ -1,7 +1,7 @@
 import React, { forwardRef, useCallback, useEffect, useState } from "react";
 import { Img, UUID } from "types";
 import ArrowFull from "assets/icons/arrow-full.svg";
-import { SelectedBoulder, useSelectStore } from "components/pages/selectStore";
+import { SelectedBoulder, useSelectStore } from "components/store/selectStore";
 import { ImageThumb } from "components/atoms/ImageThumb";
 import { ImageInput } from "./ImageInput";
 

@@ -1,4 +1,4 @@
-import { SelectedItem, useSelectStore } from 'components/pages/selectStore';
+import { SelectedItem, useSelectStore } from 'components/store/selectStore';
 import { createTrack } from 'helpers/builder';
 import { Quark, watchDependencies } from 'helpers/quarky';
 import { useSession } from 'helpers/services';
@@ -6,7 +6,7 @@ import React, { Dispatch, SetStateAction, useCallback, useEffect, useState } fro
 import { Boulder, Sector } from 'types';
 import { ModalRenameSector } from './ModalRenameSector';
 import { Dropdown, DropdownOption } from 'components/molecules/form/Dropdown';
-import { useDeleteStore } from 'components/pages/deleteStore';
+import { useDeleteStore } from 'components/store/deleteStore';
 
 interface BuilderDropdownProps {
     position?: { x: number; y: number };

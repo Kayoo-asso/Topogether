@@ -31,7 +31,7 @@ import {
 import { BuilderProgressIndicator } from "components/organisms/builder/BuilderProgressIndicator";
 import { BuilderDropdown } from "components/organisms/builder/BuilderDropdown";
 import { BuilderModalDelete } from "components/organisms/builder/BuilderModalDelete";
-import { SelectedItem, useSelectStore } from "./selectStore";
+import { SelectedItem, useSelectStore } from "../store/selectStore";
 import { SyncUrl } from "components/organisms/SyncUrl";
 import { KeyboardShortcut } from "components/organisms/builder/KeyboardShortcuts";
 import { NetworkIndicator } from "components/atoms/NetworkIndicator";

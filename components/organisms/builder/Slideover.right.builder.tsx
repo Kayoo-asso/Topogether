@@ -5,7 +5,7 @@ import { BoulderBuilderContentMobile } from "./BoulderBuilderContent.mobile";
 import { BoulderBuilderContentDesktop } from "./BoulderBuilderContent.desktop";
 import { BuilderTrackSlideoverDesktop } from "./BuilderTrackSlideover.desktop";
 import { Drawer } from "../Drawer";
-import { useSelectStore } from "components/pages/selectStore";
+import { useSelectStore } from "components/store/selectStore";
 import { useBreakpoint } from "helpers/hooks/DeviceProvider";
 import { ParkingForm } from "../form/ParkingForm";
 import { WaypointForm } from "../form/WaypointForm";
@@ -23,6 +23,7 @@ export const SlideoverRightBuilder: React.FC<SlideoverRightBuilderProps> = (
 	const [full, setFull] = useState(false);
 	const flush = useSelectStore(s => s.flush);
 	const item = useSelectStore(s => s.item);
+
 
 	const onClose = () => {
 		if (breakpoint === 'mobile') flush.all();

@@ -1,7 +1,7 @@
 import React from "react";
 import { Quark } from "helpers/quarky";
 import { Topo, UUID } from "types";
-import { useSelectStore } from "components/pages/selectStore";
+import { useSelectStore } from "components/store/selectStore";
 import { ContributorsList } from "./ContributorsList";
 import { Map } from "ol";
 import { SearchbarBouldersMobile } from "components/map/searchbar/SearchbarBoulders.mobile";

@@ -1,5 +1,5 @@
-import { useDeleteStore } from 'components/pages/deleteStore';
-import { useSelectStore } from 'components/pages/selectStore';
+import { useDeleteStore } from 'components/store/deleteStore';
+import { useSelectStore } from 'components/store/selectStore';
 import { isOnMap } from 'helpers/map/mapUtils';
 import React, { useEffect, useState } from 'react';
 import { MapToolEnum } from 'types';

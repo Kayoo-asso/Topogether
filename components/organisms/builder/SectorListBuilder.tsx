@@ -4,7 +4,7 @@ import { Quark, watchDependencies } from "helpers/quarky";
 import { Boulder, Sector, Topo, UUID } from "types";
 import { useSession } from "helpers/services";
 import { staticUrl } from "helpers/constants";
-import { useSelectStore } from "components/pages/selectStore";
+import { useSelectStore } from "components/store/selectStore";
 import { ModalRenameSector } from "./ModalRenameSector";
 import { Map } from "ol";
 import { BoulderItemLeftbar } from "components/layouts/BoulderItemLeftbar";

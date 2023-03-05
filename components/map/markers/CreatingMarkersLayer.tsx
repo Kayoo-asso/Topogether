@@ -6,7 +6,7 @@ import {
 	VectorSource,
     useMap,
 } from "components/openlayers";
-import { useSelectStore } from 'components/pages/selectStore';
+import { useSelectStore } from 'components/store/selectStore';
 import { MapBrowserEvent } from 'ol';
 import { useMapPointerCoordinates } from 'helpers/hooks/useMapPointerCoordinates';
 import { parkingMarkerStyle } from './ParkingMarkersLayer';

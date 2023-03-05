@@ -10,7 +10,7 @@ import React, {
 } from "react";
 import { Img, Track } from "types";
 import { TracksImage } from "./TracksImage";
-import { useSelectStore } from "components/pages/selectStore";
+import { useSelectStore } from "components/store/selectStore";
 import { Portal } from "helpers/hooks/useModal";
 import { Image } from "components/atoms/Image";
 

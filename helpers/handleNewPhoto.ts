@@ -1,4 +1,4 @@
-import { Selectors, SelectedBoulder, SelectedItem } from "components/pages/selectStore";
+import { Selectors, SelectedBoulder, SelectedItem } from "components/store/selectStore";
 import { GeoCoordinates, Img, MapToolEnum, Topo, User } from "types";
 import { createBoulder, createParking, createTrack, createWaypoint } from "./builder";
 import { Quark } from "./quarky";

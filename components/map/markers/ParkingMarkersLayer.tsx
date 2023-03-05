@@ -7,7 +7,7 @@ import {
 } from "components/openlayers";
 import { Icon, Style } from 'ol/style';
 import { Parking } from 'types';
-import { SelectedParking, useSelectStore } from 'components/pages/selectStore';
+import { SelectedParking, useSelectStore } from 'components/store/selectStore';
 import { fromLonLat } from 'ol/proj';
 import { useMapZoom } from 'helpers/hooks/useMapZoom';
 import { disappearZoom } from './WaypointMarkersLayer';

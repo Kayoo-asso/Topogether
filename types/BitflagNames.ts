@@ -30,9 +30,9 @@ export const RockNames: [RockTypes, string][] = [
 export const TopoTypesName: [TopoTypes, string][] = [
 	[TopoTypes.Artificial, "Artificiel"],
 	[TopoTypes.Boulder, "Bloc"],
-	// [TopoTypes.Cliff, "Couenne"],
+	[TopoTypes.Cliff, "Couenne"],
 	[TopoTypes.DeepWater, "Deepwater"],
-	// [TopoTypes.Multipitch, "Grande voie"],
+	[TopoTypes.Multipitch, "Grande voie"],
 ]
 
 export const TrackDangerName: [TrackDanger, string][] = [

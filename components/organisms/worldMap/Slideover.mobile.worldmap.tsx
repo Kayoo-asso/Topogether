@@ -1,5 +1,5 @@
 import React from "react";
-import { useSelectStore } from "components/pages/selectStore";
+import { useSelectStore } from "components/store/selectStore";
 import { Map } from "ol";
 import { SearchbarToposMobile } from "components/map/searchbar/SearchbarTopos.mobile";
 import { ToposFiltersMobile } from "components/map/filters/ToposFilters.mobile";
