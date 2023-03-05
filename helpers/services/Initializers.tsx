@@ -1,13 +1,13 @@
 import { EffectCallback, useEffect } from "react";
 
-const initializers: Array<EffectCallback> = [];
+const initializers: Array<() => void> = [];
 let ran = false;
 
-export function onInit(effect: EffectCallback) {
+export function onBrowserLoad(effect: EffectCallback) {
+	// `onBrowserLoad` may be called after initial useEffect, due to code splitting, lazy loading, etc...
+	// If the first useEffect ran, we can just initialize immediately, we know we're in the browser
 	if (ran) {
-		throw new Error(
-			"onInit called after the Initializers useEffect has run. This is a bug in our codebase."
-		);
+		effect()
 	}
 	initializers.push(effect);
 }
@@ -15,19 +15,17 @@ export function onInit(effect: EffectCallback) {
 export function Initializers() {
 	useEffect(() => {
 		ran = true;
-		const cleanups = initializers.map((x) => x());
-		return () => {
-			for (const cleanup of cleanups) {
-				cleanup && cleanup();
-			}
-		};
+		for(const fn of initializers) {
+			fn()
+		}
+
 	}, []);
 	return null;
 }
 
 // === PageCaching initalizer ===
 
-onInit(() => {
+onBrowserLoad(() => {
 	const pushState = history.pushState;
 	const replaceState = history.replaceState;
 	history.pushState = (...args) => {

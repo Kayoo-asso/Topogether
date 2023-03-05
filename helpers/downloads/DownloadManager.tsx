@@ -8,7 +8,7 @@ import {
 	tileUrl,
 } from "../sharedWithServiceWorker";
 import { encodeUUID, withExponentialBackoff } from "helpers/utils";
-import { cacheDocument, onInit } from "helpers/services/Initializers";
+import { cacheDocument, onBrowserLoad } from "helpers/services/Initializers";
 import { createXYZ } from "ol/tilegrid";
 import { Semaphore } from "helpers/downloads/semaphore";
 import { DEFAULT_EXTENT_BUFFER, getTopoExtent } from "helpers/map/getExtent";
@@ -70,7 +70,6 @@ function cachedEntriesKey(id: UUID) {
 }
 
 // This code is crappy and should be deleted ASAP
-
 class DownloadManager {
 	private global: GlobalTracker = {
 		count: 0,
@@ -82,7 +81,7 @@ class DownloadManager {
 	constructor() {
 		// Clear incomplete downloads after initialization
 		// Don't do it in the 5 seconds, to avoid competing with map loading etc...
-		onInit(() => {
+		onBrowserLoad(() => {
 			const offlineTopos = getOfflineTopos();
 			for (const id of offlineTopos) {
 				this.downloads.set(id, {
