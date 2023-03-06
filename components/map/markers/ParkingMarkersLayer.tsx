@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { QuarkArray, watchDependencies } from 'helpers/quarky';
+import { Quark, QuarkArray, watchDependencies } from 'helpers/quarky';
 import {
 	Point,
 	VectorLayer,
@@ -15,7 +15,7 @@ import { Breakpoint, useBreakpoint } from 'helpers/hooks/DeviceProvider';
 import { FeatureLike } from 'ol/Feature';
 
 interface ParkingMarkersLayerProps {
-    parkings: QuarkArray<Parking>;
+    parkings: Quark<Parking>[];
 }
 
 export const parkingMarkerStyle = (selected: boolean, anySelected: boolean, device: Breakpoint, mapZoom: number) => {
@@ -37,7 +37,6 @@ export const ParkingMarkersLayer: React.FC<ParkingMarkersLayerProps> = watchDepe
     const mapZoom = useMapZoom(disappearZoom);
     const bp = useBreakpoint();
     
-    console.log(props.parkings.toArray());
     return (
         <>
 
@@ -55,7 +54,7 @@ export const ParkingMarkersLayer: React.FC<ParkingMarkersLayerProps> = watchDepe
                 }
             >
                 <VectorSource>
-                    {props.parkings.quarks().map(pQuark => {
+                    {props.parkings.map(pQuark => {
                         const p = pQuark();
                         return (
                             <Point

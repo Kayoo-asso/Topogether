@@ -239,7 +239,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 							creating={tool === "SECTOR"}
 						/>
 						<ParkingMarkersLayer 
-							parkings={topo.parkings}
+							parkings={topo.parkings.quarks().toArray()}
 						/>
 						<WaypointMarkersLayer 
 							waypoints={topo.waypoints}
