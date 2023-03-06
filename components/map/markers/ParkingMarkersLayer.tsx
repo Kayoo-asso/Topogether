@@ -37,6 +37,8 @@ export const ParkingMarkersLayer: React.FC<ParkingMarkersLayerProps> = watchDepe
     const mapZoom = useMapZoom(disappearZoom);
     const bp = useBreakpoint();
     
+    console.log('parkings:');
+    console.log(props.parkings.toArray());
     return (
         <>
 
@@ -55,8 +57,6 @@ export const ParkingMarkersLayer: React.FC<ParkingMarkersLayerProps> = watchDepe
             >
                 <VectorSource>
                     {props.parkings.quarks().map(pQuark => {
-                        console.log('source:');
-                        console.log(props.parkings.toArray());
                         const p = pQuark();
                         return (
                             <Point
