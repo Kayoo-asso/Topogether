@@ -143,10 +143,10 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 							boulderOrder={boulderOrder}
 						/>
 						<ParkingMarkersLayer
-							parkings={topo.parkings}
+							parkings={topo.parkings.quarks().toArray()}
 						/>
 						<WaypointMarkersLayer 
-							waypoints={topo.waypoints}
+							waypoints={topo.waypoints.quarks().toArray()}
 						/>
 						<BoulderMarkersLayer 
 							boulders={filterBoulders(props.topoQuark().boulders.quarks())}
