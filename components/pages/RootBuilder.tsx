@@ -242,7 +242,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 							parkings={topo.parkings.quarks().toArray()}
 						/>
 						<WaypointMarkersLayer 
-							waypoints={topo.waypoints}
+							waypoints={topo.waypoints.quarks().toArray()}
 						/>
 						<BoulderMarkersLayer 
 							boulders={filterBoulders(props.topoQuark().boulders.quarks())}
