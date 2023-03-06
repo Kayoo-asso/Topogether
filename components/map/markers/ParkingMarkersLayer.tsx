@@ -35,7 +35,7 @@ export const ParkingMarkersLayer: React.FC<ParkingMarkersLayerProps> = watchDepe
     const anySelected = !!(selectedItem.type !== 'none' && selectedItem.type !== 'sector');
 
     const mapZoom = useMapZoom(disappearZoom);
-    const device = useBreakpoint();
+    const bp = useBreakpoint();
     
     return (
         <>
@@ -48,13 +48,15 @@ export const ParkingMarkersLayer: React.FC<ParkingMarkersLayerProps> = watchDepe
                         return parkingMarkerStyle (
                             selected,
                             anySelected,
-                            device,
+                            bp,
                             mapZoom
-                )}, [mapZoom, device, anySelected, selectedItem])
+                )}, [mapZoom, bp, anySelected, selectedItem])
                 }
             >
                 <VectorSource>
                     {props.parkings.quarks().map(pQuark => {
+                        console.log('source:');
+                        console.log(props.parkings.toArray());
                         const p = pQuark();
                         return (
                             <Point

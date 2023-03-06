@@ -86,12 +86,17 @@ export const MapControl = watchDependencies<Map, MapControlProps>(
 
 		useEffect(() => {
 			const determinePointer = (e: MapBrowserEvent<PointerEvent>) => {
-				if (map && !tool && breakpoint === "desktop") {
-					const hit = map && map.getFeaturesAtPixel(e.pixel).length > 0;
-					if (hit) {
-						map.getTargetElement().style.cursor = "pointer";
-					} else {
-						map.getTargetElement().style.cursor = "";
+				if (map) {
+					const mapViewport = map.getTargetElement().children[0] as HTMLElement;
+					if (tool === 'DRAGMAP') mapViewport.style.cursor = 'move';
+					else mapViewport.style.cursor = '';
+					if (!tool && breakpoint === "desktop") {
+						const hit = map.getFeaturesAtPixel(e.pixel).length > 0;
+						if (hit) {
+							map.getTargetElement().style.cursor = "pointer";
+						} else {
+							map.getTargetElement().style.cursor = "";
+						}
 					}
 				}
 			};

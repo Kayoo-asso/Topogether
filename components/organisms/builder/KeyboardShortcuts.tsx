@@ -40,18 +40,18 @@ export const KeyboardShortcut: React.FC<KeyboardShortcutProps> = (props: Keyboar
 				})
 				else del.item(selectedItem)
 			}
-			else if (e.code === "Space" && tool) {
-				setTempCurrentTool(tool);
-				flush.tool();
+			else if (e.code === "Space") {
+				if (tool !== 'DRAGMAP') setTempCurrentTool(tool);
+				select.tool('DRAGMAP');
 			}
 		};
 		const handleKeyUp = (e: KeyboardEvent) => {
-			if (e.code === "Space" && tempCurrentTool) {
+			if (e.code === "Space") {
 				select.tool(tempCurrentTool);
 				setTempCurrentTool(undefined);
 			}
 		};
-		window.addEventListener("keydown", handleKeyDown);
+		window.addEventListener("keydown", handleKeyDown, { once: true });
 		window.addEventListener("keyup", handleKeyUp);
 		return () => {
 			window.removeEventListener("keydown", handleKeyDown);
