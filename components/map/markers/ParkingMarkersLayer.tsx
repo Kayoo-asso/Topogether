@@ -36,7 +36,9 @@ export const ParkingMarkersLayer: React.FC<ParkingMarkersLayerProps> = watchDepe
 
     const mapZoom = useMapZoom(disappearZoom);
     const bp = useBreakpoint();
-
+    
+    console.log('parkings:');
+    // console.log(props.parkings.toArray());
     return (
         <>
 
