@@ -21,7 +21,6 @@ export const SectorBuilderContentMobile: React.FC<SectorBuilderContentMobileProp
 				<div className="flex flex-col w-full px-5 pb-5 overflow-scroll md:hidden">
 					<SectorListBuilder
 						topoQuark={props.topoQuark}
-						boulderOrder={props.boulderOrder}
 						map={props.map}
 					/>
 
