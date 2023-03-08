@@ -1,3 +1,4 @@
+import { useDrawerStore } from 'components/store/drawerStore';
 import { SelectedInfo, useSelectStore } from 'components/store/selectStore';
 import { useBreakpoint } from 'helpers/hooks/DeviceProvider';
 import { decodeUUID, encodeUUID } from 'helpers/utils';
@@ -16,6 +17,8 @@ export const SyncUrl: React.FC<SyncUrlProps> = (props: SyncUrlProps) => {
     const selectedItem = useSelectStore(s => s.item);
     const selectedInfo = useSelectStore(s => s.info);
     const select = useSelectStore(s => s.select);
+
+    const openDrawer = useDrawerStore(d => d.openDrawer);
 
     // Sync URL with selectedItem
     useEffect(() => {
@@ -43,7 +46,7 @@ export const SyncUrl: React.FC<SyncUrlProps> = (props: SyncUrlProps) => {
                         const tId = decodeUUID(t as string);
                         if (isUUID(tId)) {					
                             const tQ = bQ().tracks.findQuark((t) => t.id === tId);
-                            if (tQ) select.track(tQ, bQ);
+                            if (tQ) { select.track(tQ, bQ); openDrawer(); }
                         }
                     }
                     else select.boulder(bQ);

@@ -23,7 +23,9 @@ export const TrackSlider: React.FC<TrackSliderProps> = (props: TrackSliderProps)
     }
 
     return (
-        <div className='w-full flex flex-row gap-3'>
+        <div 
+            className='w-full flex flex-row gap-4 overflow-x-scroll'
+        >
             {tracks.sort((a,b) => a().index - b().index).map(trackQuark => {
                 const track = trackQuark();
                 return (

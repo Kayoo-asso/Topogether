@@ -33,7 +33,7 @@ export const SpecSelector: React.FC<SpecSelectorProps> = (
             <TextInput
                 id='spec-input'
                 label='Spécifications'	
-                value={nbSpec > 0 ? nbSpec + ' cochée' + (nbSpec > 1 ? 's' : '') : ''}
+                value={nbSpec > 0 ? nbSpec + ' sélection' + (nbSpec > 1 ? 's' : '') : ''}
                 readOnly
                 pointer
                 boldValue

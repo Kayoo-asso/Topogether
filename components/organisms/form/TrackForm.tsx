@@ -45,7 +45,7 @@ export const TrackForm: React.FC<TrackFormProps> = watchDependencies(
 
 				<div
 					className={
-						"flex h-full flex-col gap-6 px-6 " +
+						"flex h-full flex-col gap-4 px-6 " +
 						(props.className ? props.className : "")
 					}
 					onClick={(e) => e.stopPropagation()}
