@@ -3,6 +3,8 @@ import { ToolSelectorMobile } from "./ToolSelectorMobile";
 import { TopoTypes } from "types";
 import { useDrawerStore } from "components/store/drawerStore";
 import { SelectedBoulder, useSelectStore } from "components/store/selectStore";
+import { useTopoType } from "helpers/hooks/TopoTypeProvider";
+import { getStrokeGradeColorClass } from "helpers/gradeColors";
 
 import Clear from "assets/icons/clear.svg";
 import Rewind from "assets/icons/rewind.svg";
@@ -13,8 +15,6 @@ import Hand from "assets/icons/hand.svg";
 import ClimbingShoe from "assets/icons/climbing-shoe.svg";
 import ForbiddenArea from "assets/icons/forbidden-area.svg";
 import Checked from "assets/icons/checked.svg";
-import { useTopoType } from "helpers/hooks/TopoTypeProvider";
-import { getStrokeColorClass } from "helpers/gradeColors";
 
 interface ToolProps {
 	label: string,
@@ -117,7 +117,7 @@ export const Toolbar: React.FC<ToolbarProps> = (props: ToolbarProps) => {
 						className={
 							"h-6 w-6 " +
 							(selectedTool === "LINE_DRAWER"
-								? getStrokeColorClass(grade)
+								? getStrokeGradeColorClass(grade)
 								: "stroke-white")
 						}
 					/>
@@ -132,7 +132,7 @@ export const Toolbar: React.FC<ToolbarProps> = (props: ToolbarProps) => {
 						className={
 							"h-6 w-6 " +
 							(selectedTool === "HAND_DEPARTURE_DRAWER"
-								? getStrokeColorClass(grade) + " fill-white"
+								? getStrokeGradeColorClass(grade) + " fill-white"
 								: "stroke-white")
 						}
 					/>
@@ -147,7 +147,7 @@ export const Toolbar: React.FC<ToolbarProps> = (props: ToolbarProps) => {
 						className={
 							"h-7 w-7 " +
 							(selectedTool === "FOOT_DEPARTURE_DRAWER"
-								? getStrokeColorClass(grade) + " fill-white"
+								? getStrokeGradeColorClass(grade) + " fill-white"
 								: "stroke-white")
 						}
 					/>

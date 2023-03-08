@@ -10,11 +10,12 @@ export const KeyboardShortcut: React.FC<KeyboardShortcutProps> = (props: Keyboar
     const selectedItem = useSelectStore(s => s.item);
 	const select = useSelectStore(s => s.select);
     const flush = useSelectStore(s => s.flush);
-	const tool = useSelectStore(s => s.tool);
+	const mapTool = useSelectStore(s => s.tool);
 
 	const del = useDeleteStore(d => d.delete);
 
 	const isDrawerOpen = useDrawerStore(d => d.isDrawerOpen);
+	const closeDrawer = useDrawerStore(d => d.closeDrawer);
 	const drawerTool = useDrawerStore(d => d.selectedTool);
 	const selectDrawerTool = useDrawerStore(d => d.selectTool);
 
@@ -27,8 +28,11 @@ export const KeyboardShortcut: React.FC<KeyboardShortcutProps> = (props: Keyboar
 				// TODO: change this, we first wish to cancel any ongoing action,
 				// then set the current tool to undefined
 				if (isDrawerOpen && drawerTool !== 'LINE_DRAWER') selectDrawerTool('LINE_DRAWER');
-				else if (tool) flush.tool();
-				else if (selectedItem.type === 'boulder' && selectedItem.selectedTrack) flush.track();
+				else if (mapTool) flush.tool();
+				else if (selectedItem.type === 'boulder' && selectedItem.selectedTrack) {
+					closeDrawer();
+					flush.track();
+				}
 				else flush.all();
 			}
 			else if (e.code === 'Delete' && selectedItem) {
@@ -41,7 +45,7 @@ export const KeyboardShortcut: React.FC<KeyboardShortcutProps> = (props: Keyboar
 				else del.item(selectedItem)
 			}
 			else if (e.code === "Space") {
-				if (tool !== 'DRAGMAP') setTempCurrentTool(tool);
+				if (mapTool !== 'DRAGMAP') setTempCurrentTool(mapTool);
 				select.tool('DRAGMAP');
 			}
 		};
@@ -57,7 +61,7 @@ export const KeyboardShortcut: React.FC<KeyboardShortcutProps> = (props: Keyboar
 			window.removeEventListener("keydown", handleKeyDown);
 			window.removeEventListener("keyup", handleKeyUp);
 		};
-	}, [tool, tempCurrentTool, selectedItem, drawerTool]);
+	}, [mapTool, tempCurrentTool, selectedItem, drawerTool]);
 
     return null;
 }

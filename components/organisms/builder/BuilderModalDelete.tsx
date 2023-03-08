@@ -7,6 +7,7 @@ import { Topo } from 'types';
 import { useBreakpoint } from 'helpers/hooks/DeviceProvider';
 import { useModal } from 'helpers/hooks/useModal';
 import { useDeleteStore } from 'components/store/deleteStore';
+import { useDrawerStore } from 'components/store/drawerStore';
 
 interface BuilderModalDeleteProps {
     topo: Quark<Topo>,
@@ -16,10 +17,13 @@ export const BuilderModalDelete: React.FC<BuilderModalDeleteProps> = watchDepend
     (props: BuilderModalDeleteProps) => {
         const breakpoint = useBreakpoint();
         const selectedItem = useSelectStore(s => s.item);
+        const select = useSelectStore(s => s.select);
         const flush = useSelectStore(s => s.flush);  
 
         const toDeleteItem = useDeleteStore(d => d.item);
         const flushDel = useDeleteStore(d => d.flush);
+
+        const closeDrawer = useDrawerStore(d => d.closeDrawer);
 
         const [ModalDelete, showModalDelete, hideModalDelete] = useModal();
         useEffect(() => {
@@ -38,7 +42,9 @@ export const BuilderModalDelete: React.FC<BuilderModalDeleteProps> = watchDepend
         }
 
         const deleteItem = useCallback(() => {
-            const flushAction = toDeleteItem.type === 'track' ? flush.track : breakpoint === 'mobile' ? flush.all : flush.item;
+            const flushAction = toDeleteItem.type === 'track' ? flush.track
+                : breakpoint === 'mobile' ? flush.all 
+                : flush.item;
             switch (toDeleteItem.type) {
                 case 'sector': deleteSector(props.topo, toDeleteItem.value, flushAction, selectedItem.type === 'sector' ? selectedItem : undefined); break;
                 case 'boulder': deleteBoulder(props.topo, toDeleteItem.value, flushAction, selectedItem.type === 'boulder' ? selectedItem : undefined); break;
@@ -47,6 +53,7 @@ export const BuilderModalDelete: React.FC<BuilderModalDeleteProps> = watchDepend
                 case 'waypoint': deleteWaypoint(props.topo, toDeleteItem.value, flushAction, selectedItem.type === 'waypoint' ? selectedItem : undefined); break;
             }
             flushDel.item();
+            closeDrawer();
         }, [toDeleteItem, toDeleteItem.type === 'track' && toDeleteItem.boulder, selectedItem, props.topo]);
     
         return (

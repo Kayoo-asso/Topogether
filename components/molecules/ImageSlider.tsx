@@ -17,13 +17,11 @@ import { Image } from "components/atoms/Image";
 interface ImageSliderProps {
 	images: Img[];
 	tracks: QuarkIter<Quark<Track>>;
-	displayPhantomTracks?: boolean;
 	modalable?: boolean;
 }
 
 export const ImageSlider: React.FC<ImageSliderProps> = watchDependencies(
 	({
-		displayPhantomTracks = false,
 		modalable = true,
 		...props
 	}: ImageSliderProps) => {
@@ -178,7 +176,7 @@ export const ImageSlider: React.FC<ImageSliderProps> = watchDependencies(
 									sizeHint="100vw"
 									image={img}
 									tracks={props.tracks}
-									displayPhantomTracks={displayPhantomTracks}
+									displayPhantomTracks
 									displayTracksDetails={!!selectedTrack}
 									onImageClick={() => setPortalOpen(modalable)}
 								/>
@@ -216,7 +214,7 @@ export const ImageSlider: React.FC<ImageSliderProps> = watchDependencies(
 				sizeHint="100vw"
 				image={props.images[0]}
 				tracks={props.tracks}
-				displayPhantomTracks={displayPhantomTracks}
+				displayPhantomTracks
 				displayTracksDetails={!!selectedTrack}
 				onImageClick={() => setPortalOpen(modalable)}
 			/>

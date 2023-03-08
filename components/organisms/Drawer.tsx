@@ -1,5 +1,6 @@
-import React, { useCallback, useContext, useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import {
+	Img,
 	LinearRing,
 	PointEnum,
 	Position,
@@ -16,6 +17,7 @@ import { Portal, useModal } from "helpers/hooks/useModal";
 import { TracksImage } from "components/molecules/TracksImage";
 import { Toolbar } from "components/molecules/drawer/Toolbar";
 import { useDrawerStore } from "components/store/drawerStore";
+import { Image } from "components/atoms/Image";
 
 interface DrawerProps {}
 
@@ -23,9 +25,9 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies(
 	(props: DrawerProps) => {
 		const selectedBoulder = useSelectStore(s => s.item as SelectedBoulder);
 		if (!selectedBoulder.selectedTrack) throw new Error('Drawer opened without any track');
-		if (!selectedBoulder.selectedImage) throw new Error("Drawer opened without any image");
 		const selectedTrack: Track = selectedBoulder.selectedTrack();
 		const image = selectedBoulder.selectedImage;
+		const select = useSelectStore(s => s.select);
 
 		const selectedTool = useDrawerStore(d => d.selectedTool);
 		const selectTool = useDrawerStore(d => d.selectTool);
@@ -33,7 +35,7 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies(
 
 		const [ModalClear, showModalClear] = useModal();
 		
-		const addPointToLine = useCallback((pos: Position) => {
+		const addPointToLine = useCallback((pos: Position, image: Img) => {
 			let lineQuark = selectedTrack.lines.findQuark(
 				(l) => l.imageId === image.id
 			);
@@ -138,6 +140,10 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies(
 			},
 			[selectedTrack.lines]
 		);
+		const handleEraserClick = useCallback((pointType, index) => {
+			if (selectedTool === "ERASER")
+				deletePointToLine(pointType, index);
+		}, [selectedTool]);
 		const rewind = () => {
 			const pointType: PointEnum | undefined =
 				selectedTool === "LINE_DRAWER"
@@ -181,34 +187,54 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies(
 				*/}
 				<Portal open>
 					<div className="absolute left-0 top-0 md:top-[7vh] z-[600] h-full md:h-contentPlusShell w-full md:w-[calc(100%-300px)]">
+						{!selectedBoulder.selectedImage && 
+							<div className="flex flex-col gap-6 h-full p-8 md:p-12 bg-black b-opacity-90 overflow-scroll hide-scrollbar">
+								<div className="text-white ktext-label">Sélectionner l'image sur laquelle réaliser le tracé</div>
+								<div className='grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6'>
+									{selectedBoulder.value().images.map(img => (
+										<div key={img.id} className='md:cursor-pointer'>
+											<Image 
+												image={img}
+												alt="photo of rock"
+												sizeHint={'25vw'}
+												objectFit="cover"
+												className="max-h-[15vh] md:max-h-[20vh] rounded-lg border-4 border-main border-opacity-0 hover:border-opacity-100"
+												onClick={() => select.image(img)}
+											/>
+										</div>
+									))}
+								</div>
+							</div>
+						}
 						{/* Same, we know absolute size, since both header + toolbar are 7vh each */}
-						<div className="b-opacity-90 flex h-[90vh] md:h-[84vh] bg-black">
-							<TracksImage
-								sizeHint="100vw"
-								objectFit="contain"
-								image={image}
-								tracks={
-									isOtherTracksDisplayed
-										? selectedBoulder.value().tracks.quarks()
-										: new QuarkIter([selectedBoulder.selectedTrack])
-								}
-								editable
-								allowDoubleTapZoom={false}
-								displayTracksDetails
-								onImageClick={(pos) => {
-									addPointToLine(pos);
-								}}
-								onPointClick={useCallback((pointType, index) => {
-									if (selectedTool === "ERASER")
-										deletePointToLine(pointType, index);
-								}, [selectedTool])}
-							/>
-						</div>
+						{selectedBoulder.selectedImage &&
+							<>
+								<div className="b-opacity-90 flex h-[90vh] md:h-[84vh] bg-black">
+									<TracksImage
+										sizeHint="100vw"
+										objectFit="contain"
+										image={image}
+										tracks={
+											isOtherTracksDisplayed
+												? selectedBoulder.value().tracks.quarks()
+												: new QuarkIter([selectedBoulder.selectedTrack])
+										}
+										editable
+										allowDoubleTapZoom={false}
+										displayTracksDetails
+										onImageClick={(pos) => {
+											addPointToLine(pos, image!);
+										}}
+										onPointClick={handleEraserClick}
+									/>
+								</div>
 
-						<Toolbar
-							onClear={showModalClear}
-							onRewind={rewind}
-						/>
+								<Toolbar
+									onClear={showModalClear}
+									onRewind={rewind}
+								/>
+							</>
+						}
 					</div>
 				</Portal>
 
@@ -216,7 +242,7 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies(
 					buttonText="Confirmer"
 					imgUrl={staticUrl.deleteWarning}
 					onConfirm={useCallback(() => {
-						selectedTrack.lines.removeAll((x) => x.imageId === image.id);
+						selectedTrack.lines.removeAll((x) => x.imageId === image?.id);
 					}, [selectedTrack, selectedTrack.lines])}
 				>
 					Vous êtes sur le point de supprimer l'ensemble du tracé. Voulez-vous continuer ?

@@ -71,6 +71,7 @@ export const grades = [
 	"9b+",
 	"9c",
 	"9c+",
+	'P'
 ] as const;
 
 export const lightGrades = [3, 4, 5, 6, 7, 8, 9, "P"] as const; //"P" is for Project (the default grade, when it has not been settle yet)

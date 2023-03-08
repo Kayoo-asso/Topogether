@@ -11,6 +11,7 @@ import { WaypointForm } from "../form/WaypointForm";
 import { SlideoverMobile } from "components/atoms/overlays/SlideoverMobile";
 import { SlideoverRightDesktop } from "components/atoms/overlays/SlideoverRightDesktop";
 import { TrackForm } from "../form/TrackForm";
+import { useDrawerStore } from "components/store/drawerStore";
 
 type SlideoverRightBuilderProps = {
 	topo: Quark<Topo>;
@@ -23,7 +24,8 @@ export const SlideoverRightBuilder: React.FC<SlideoverRightBuilderProps> = (
 	const [full, setFull] = useState(false);
 	const flush = useSelectStore(s => s.flush);
 	const item = useSelectStore(s => s.item);
-	const isTrackSelected = !!(item.type === 'boulder' && item.selectedTrack && item.selectedImage);
+	const isTrackSelected = !!(item.type === 'boulder' && item.selectedTrack);
+	const isDrawerOpen = useDrawerStore(d => d.isDrawerOpen);
 
 	const onClose = () => {
 		if (bp === 'mobile') flush.all();
@@ -86,7 +88,7 @@ export const SlideoverRightBuilder: React.FC<SlideoverRightBuilderProps> = (
 						{getContent()}
 					</SlideoverRightDesktop>
 
-					{isTrackSelected && <Drawer /> }
+					{isDrawerOpen && <Drawer /> }
 				</>
 			)}
 		</>

@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import {
 	GeoCoordinates,
@@ -70,7 +70,9 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 		const showLoader = useLoader();
 
 		const topo = props.topoQuark();
-		sortBoulderOrder(topo.sectors, topo.lonelyBoulders);
+		useEffect(() => {
+			sortBoulderOrder(topo.sectors, topo.lonelyBoulders);
+		}, []);
 
 		const isEmptyStore = useSelectStore(s => s.isEmpty);
 		const flush = useSelectStore(s => s.flush);

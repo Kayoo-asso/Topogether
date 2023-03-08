@@ -5,7 +5,7 @@ import { ValidateButton } from "components/atoms/buttons/ValidateButton";
 import { Portal } from "helpers/hooks/useModal";
 import { useDrawerStore } from "components/store/drawerStore";
 import { SelectedBoulder, useSelectStore } from "components/store/selectStore";
-import { getFillLightGradeColorClass } from "helpers/gradeColors";
+import { getFillGradeColorClass } from "helpers/gradeColors";
 
 interface GradeselectorProps {}
 
@@ -28,7 +28,7 @@ export const GradeSelector: React.FC<GradeselectorProps> = (
 
     const getNormalGradeLine = (g: typeof normalGrade[number]) => (
         <div className="w-full flex flex-row justify-between items-center" key={g}>
-            <Circle className={"w-full mr-2 h-6 " + getFillLightGradeColorClass(g)} />
+            <Circle className={"w-full mr-2 h-6 " + getFillGradeColorClass(g.toString() as Grade)} />
             {getInteractionDiv(g + "a" as Grade, g + 'A')}
             {getInteractionDiv(g + "a+" as Grade, 'A+')}
             {getInteractionDiv(g + "b" as Grade, 'B')}
@@ -62,10 +62,10 @@ export const GradeSelector: React.FC<GradeselectorProps> = (
                     {normalGrade.map(g => getNormalGradeLine(g))}
 
                     <div className="w-full flex flex-row justify-between items-center">
-                        <Circle className={"w-full mr-2 h-6 " + getFillLightGradeColorClass(4)} />
+                        <Circle className={"w-full mr-2 h-6 " + getFillGradeColorClass('4')} />
                         {getInteractionDiv("4")}
                         {getInteractionDiv("4+")}
-                        <Circle className={"w-full mr-2 h-6 " + getFillLightGradeColorClass(3)} />
+                        <Circle className={"w-full mr-2 h-6 " + getFillGradeColorClass('3')} />
                         {getInteractionDiv("3")}
                         {getInteractionDiv("3+")}
                         <div className='w-full'></div>
@@ -79,7 +79,7 @@ export const GradeSelector: React.FC<GradeselectorProps> = (
                                 changeGrade(undefined);
                             }}
                         >
-                            <Circle className={"mr-2 h-6 w-6 " + getFillLightGradeColorClass('P')} /> Projet
+                            <Circle className={"mr-2 h-6 w-6 " + getFillGradeColorClass('P')} /> Projet
                         </div>
                     </div>
                 </div>

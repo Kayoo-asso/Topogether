@@ -13,9 +13,9 @@ interface ItemsHeaderButtonsProps {
     onClose?: () => void;
 }
 
-export const isTopo = (item: itemType): item is LightTopo => (item as LightTopo).rockTypes !== undefined;
-export const isBoulder = (item: itemType): item is Boulder => (item as Boulder).isHighball !== undefined;
-export const isTrack = (item: itemType): item is Track => (item as Track).isTraverse !== undefined;
+const isTopo = (item: itemType): item is LightTopo => (item as LightTopo).rockTypes !== undefined;
+const isBoulder = (item: itemType): item is Boulder => (item as Boulder).isHighball !== undefined;
+const isTrack = (item: itemType): item is Track => (item as Track).isTraverse !== undefined;
 
 export const ItemsHeaderButtons: React.FC<ItemsHeaderButtonsProps> = ({
     builder = false,

@@ -12,8 +12,9 @@ import { useDeleteStore } from "components/store/deleteStore";
 import { ItemsHeaderButtons } from "../ItemsHeaderButtons";
 import { useDrawerStore } from "components/store/drawerStore";
 import { GradeSelector } from "components/molecules/drawer/GradeSelector";
-import { getBGLightGradeColorClass } from "helpers/gradeColors";
+import { getBGGradeColorClass } from "helpers/gradeColors";
 import { useTopoType } from "helpers/hooks/TopoTypeProvider";
+import { TrackSlider } from "components/molecules/TrackSlider";
 
 interface TrackFormProps {
 	className?: string,
@@ -24,17 +25,23 @@ export const TrackForm: React.FC<TrackFormProps> = watchDependencies(
 		const topoType = useTopoType();
 		const selectedBoulder = useSelectStore(s => s.item as SelectedBoulder);
 		if (!selectedBoulder.selectedTrack) throw new Error("Trying to open TrackForm without any track");
+		const select = useSelectStore(s => s.select);
 		const flush = useSelectStore(s => s.flush);
 		const del = useDeleteStore(d => d.delete);
 		const openGradeSelector = useDrawerStore(d => d.openGradeSelector);
+		const closeDrawer = useDrawerStore(d => d.closeDrawer);
 
 		const trackQuark = selectedBoulder.selectedTrack;
 		const track = trackQuark();
 
 		return (
-			<div className="w-full h-full flex flex-col">
-				<ItemsHeaderButtons item={track} builder onClose={flush.track} />
-				<div className="ktext-base-superbig px-5 mt-3 mb-8 hidden md:block">Voie {track.index+1}</div>
+			<div className="w-full h-full flex flex-col gap-6">
+				<ItemsHeaderButtons item={track} builder onClose={() => { flush.track(); select.image(selectedBoulder.value().images[0]); closeDrawer(); }} />
+				<div className="ktext-base-superbig px-6 mt-3 hidden md:block">Voie {track.index+1}</div>
+
+				<div className="px-6 hidden md:block">
+					<TrackSlider />
+				</div>
 
 				<div
 					className={
@@ -59,7 +66,7 @@ export const TrackForm: React.FC<TrackFormProps> = watchDependencies(
 							id="track-grade"
 							className={`
 								w-1/4 flex items-center justify-center mt-2 rounded-sm text-white border border-grey-light md:cursor-pointer 
-								${getBGLightGradeColorClass(gradeToLightGrade(track.grade))}
+								${getBGGradeColorClass(track.grade)}
 							`}
 							onClick={openGradeSelector}
 						>{track.grade || 'Pr'}</div>

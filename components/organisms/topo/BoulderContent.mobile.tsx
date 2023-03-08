@@ -6,11 +6,11 @@ import { SelectedBoulder, useSelectStore } from "components/store/selectStore";
 import { TracksList } from "./TracksList";
 import { useSession } from "helpers/services";
 import { GradeScale } from "components/molecules/GradeScale";
-
-import ManyTracks from "assets/icons/many-tracks.svg";
 import { ImageSlider } from "components/molecules/ImageSlider";
 import { LikeButton } from "components/atoms/buttons/LikeButton";
 import { Show } from "components/atoms/utils";
+
+import ManyTracks from "assets/icons/many-tracks.svg";
 
 interface BoulderContentMobileProps {
 	full: boolean,
@@ -25,8 +25,6 @@ export const BoulderContentMobile: React.FC<BoulderContentMobileProps> =
 		const selectedBoulder = useSelectStore(s => s.item as SelectedBoulder);
 		const boulder = selectedBoulder.value();
 
-		const [displayPhantomTracks, setDisplayPhantomTracks] = useState(false);
-
 		return (
 			<>
 				{/* BOULDER IMAGE */}
@@ -35,7 +33,6 @@ export const BoulderContentMobile: React.FC<BoulderContentMobileProps> =
 						<ImageSlider
 							images={boulder.images}
 							tracks={boulder.tracks.quarks()}
-							displayPhantomTracks={displayPhantomTracks}
 						/>
 					</div>
 				)}
@@ -63,22 +60,6 @@ export const BoulderContentMobile: React.FC<BoulderContentMobileProps> =
 						</div>
 
 						<div className="col-span-2 flex flex-row justify-end gap-5">
-							{selectedBoulder.selectedTrack && boulder.tracks.length > 1 && (
-								<button
-									onClick={() =>
-										setDisplayPhantomTracks(!displayPhantomTracks)
-									}
-								>
-									<ManyTracks
-										className={
-											"h-6 w-6 " +
-											(displayPhantomTracks
-												? "stroke-main"
-												: "stroke-grey-medium")
-										}
-									/>
-								</button>
-							)}
 							{props.full && session && <LikeButton liked={boulder.liked} />}
 
 							{!props.full && (
