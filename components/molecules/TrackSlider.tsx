@@ -31,7 +31,8 @@ export const TrackSlider: React.FC<TrackSliderProps> = (props: TrackSliderProps)
                         key={track.id}
                         className={`
                             flex flex-col items-center justify-center py-1 px-[1.5px] rounded-full hide-scrollbar md:cursor-pointer 
-                            ${track.id === selectedId ? 'border-3 border-grey-superlight' : ''}
+                            ${track.id === selectedId ? 'border-3 border-grey-superlight' : ''} 
+                            ${(selectedBoulder.selectedImage?.id !== track.lines.at(0)?.imageId && track.id !== selectedId) ? 'opacity-50' : ''}
                         `}
                         onClick={() => handleSelectTrack(trackQuark)}
                     >
