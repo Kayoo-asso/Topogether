@@ -75,7 +75,9 @@ export const BoulderPreviewDesktop = watchDependencies<
 		}, [selectedImage, loading]);
 
 		return (
-			<>
+			<div className="flex flex-col gap-6">
+				<div className='ktext-label font-semibold px-5'>Ajout des voies</div>
+
 				<div className="mb-3">
 					<div className="bg-dark">
 						<TracksImage
@@ -148,7 +150,7 @@ export const BoulderPreviewDesktop = watchDependencies<
 					Tous les passages dessinés sur cette image seront supprimés. Etes-vous
 					sûr de vouloir continuer ?
 				</ModalDeleteImage>
-			</>
+			</div>
 		);
 	}
 );

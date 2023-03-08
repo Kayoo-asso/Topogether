@@ -29,15 +29,6 @@ export const TopoTypeToColor = (type?: TopoTypes) => {
 	}
 };
 
-// --- sortBoulders ---
-
-export type BoulderOrder = {
-	id: UUID;
-	name: String;
-	sectorId: UUID | String;
-	index: number;
-};
-
 // --- computeBuilderProgress ---
 
 const rules = [

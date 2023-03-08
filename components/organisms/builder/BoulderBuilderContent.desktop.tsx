@@ -9,6 +9,7 @@ import { BoulderPreviewDesktop } from "components/molecules/BoulderPreview.deskt
 import { Button } from "components/atoms/buttons/Button";
 import { useDeleteStore } from "components/store/deleteStore";
 import { ItemsHeaderButtons } from "../ItemsHeaderButtons";
+import { useBoulderOrder } from "components/store/boulderOrderStore";
 
 interface BoulderBuilderContentDesktopProps {
 	topo: Quark<Topo>;
@@ -23,6 +24,8 @@ export const BoulderBuilderContentDesktop = watchDependencies<
 	const flush = useSelectStore(s => s.flush);
 	const del = useDeleteStore(d => d.delete);
 
+	const boulderOrder = useBoulderOrder(bo => bo.value);
+
 	const imageInputRef = useRef<HTMLInputElement>(null);	
 
 	return (
@@ -30,10 +33,10 @@ export const BoulderBuilderContentDesktop = watchDependencies<
 		<div className="flex h-full w-full flex-col overflow-scroll">
 			
 			<ItemsHeaderButtons item={boulder} builder onClose={flush.item} />
-			<div className="">Bloc {boulder.name}</div>
+			<div className="ktext-base-superbig px-5 mt-3 mb-6">Bloc {boulderOrder.get(boulder.id)}</div>
 
 			<RockForm
-				className="mt-20 mb-6 px-5"
+				className="mb-8 px-5"
 				topo={props.topo}
 			/>
 
