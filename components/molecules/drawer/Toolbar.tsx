@@ -54,37 +54,47 @@ export const Toolbar: React.FC<ToolbarProps> = (props: ToolbarProps) => {
 
 	return (
 		<div className="z-200 flex h-[9vh] w-full flex-row items-center justify-center bg-dark">
-			<span className="flex w-2/5 flex-row items-center justify-around md:w-3/12">
-				
-				<Clear
-					className="h-8 w-8 md:cursor-pointer stroke-white"
+			<span className="flex flex-row items-center justify-around w-2/5 md:w-3/12">
+
+				<div 
+					className="rounded-full md:p-4 md:cursor-pointer hover:bg-white hover:bg-opacity-20"
 					onClick={props.onClear}
-				/>
-				<Rewind
-					className="h-6 w-6 md:cursor-pointer stroke-white"
+				>
+					<Clear className="h-8 w-8 stroke-white" />
+				</div>
+				<div 
+					className="rounded-full md:p-4 md:cursor-pointer hover:bg-white hover:bg-opacity-20"
 					onClick={props.onRewind}
-				/>
-				<div className="hidden md:block">
+				>
+					<Rewind className="h-6 w-6 stroke-white" />
+				</div>
+				<div 
+					className="hidden md:block rounded-full md:p-4 md:cursor-pointer hover:bg-white hover:bg-opacity-20"
+					onClick={() => selectedTool === "ERASER" ? selectTool("LINE_DRAWER") : selectTool("ERASER")}
+				>
 					<Eraser
 						className={
-							"h-6 w-6 md:cursor-pointer " +
+							"h-6 w-6 " +
 							(selectedTool === "ERASER"
 								? "fill-main stroke-main"
 								: "fill-white stroke-white")
 						}
-						onClick={() => selectTool("ERASER")}
 					/>
 				</div>
-				<ManyTracks
-					className={
-						"h-6 w-6 md:cursor-pointer " +
-						(isOtherTracksDisplayed ? "stroke-main" : "stroke-white")
-					}
+				<div 
+					className="hidden md:block rounded-full md:p-4 md:cursor-pointer hover:bg-white hover:bg-opacity-20"
 					onClick={toggleOtherTracks}
-				/>
+				>
+					<ManyTracks
+						className={
+							"h-6 w-6 " +
+							(isOtherTracksDisplayed ? "stroke-main" : "stroke-white")
+						}
+					/>
+				</div>
 			</span>
 
-			<span className="1/5 mx-3 flex self-end pb-4 md:hidden">
+			<span className="w-1/5 mx-3 flex self-end pb-4 md:hidden">
 				<ToolSelectorMobile
 					selectedTool={
 						selectedTool !== "ERASER" ? selectedTool : "LINE_DRAWER"
@@ -93,7 +103,7 @@ export const Toolbar: React.FC<ToolbarProps> = (props: ToolbarProps) => {
 				/>
 			</span>
 
-			<span className="hidden w-6/12 flex-row items-center justify-around px-[13%] md:flex">
+			<span className="w-1/2 flex-row items-center justify-around px-[13%] hidden md:flex">
 				<div 
 					className="rounded-full md:p-4 md:cursor-pointer hover:bg-white hover:bg-opacity-20"
 					onClick={() => selectTool("LINE_DRAWER")}
@@ -148,7 +158,14 @@ export const Toolbar: React.FC<ToolbarProps> = (props: ToolbarProps) => {
 				</div>
 			</span>
 
-			<span className="flex w-1/5 justify-center md:hidden">
+			<span className="flex flex-row w-2/5 items-center justify-around md:hidden">
+				<ManyTracks
+					className={
+						"h-6 w-6 md:cursor-pointer " +
+						(isOtherTracksDisplayed ? "stroke-main" : "stroke-white")
+					}
+					onClick={toggleOtherTracks}
+				/>
 				<Checked
 					className="h-6 w-6 md:cursor-pointer fill-main"
 					onClick={closeDrawer}
