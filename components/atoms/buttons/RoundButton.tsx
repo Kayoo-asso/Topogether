@@ -20,7 +20,10 @@ export const RoundButton: React.FC<RoundButtonProps> = ({
 				white ? "bg-white" : "bg-main"
 			} ${className ? className : "z-40"}`}
 			style={{ height: buttonSize + "px", width: buttonSize + "px" }}
-			onClick={props.onClick}
+			onClick={(e) => {
+				e.stopPropagation(); e.preventDefault();
+				props.onClick && props.onClick();
+			}}
 		>
 			{props.children}
 		</button>

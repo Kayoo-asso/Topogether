@@ -1,6 +1,6 @@
 import React from "react";
 import { watchDependencies } from "helpers/quarky";
-import { Description, Name, TrackSpec } from "types";
+import { Description, Name, TrackSpec, gradeToLightGrade } from "types";
 import { toggleFlag } from "helpers/bitflags";
 import { SelectedBoulder, useSelectStore } from "components/store/selectStore";
 import { SpecSelector } from "components/molecules/form/SpecSelector";
@@ -11,6 +11,8 @@ import { Button } from "components/atoms/buttons/Button";
 import { useDeleteStore } from "components/store/deleteStore";
 import { ItemsHeaderButtons } from "../ItemsHeaderButtons";
 import { useDrawerStore } from "components/store/drawerStore";
+import { GradeSelector } from "components/molecules/drawer/GradeSelector";
+import { getBGLightGradeColorClass } from "helpers/gradeColors";
 
 interface TrackFormProps {
 	className?: string,
@@ -22,32 +24,44 @@ export const TrackForm: React.FC<TrackFormProps> = watchDependencies(
 		if (!selectedBoulder.selectedTrack) throw new Error("Trying to open TrackForm without any track");
 		const flush = useSelectStore(s => s.flush);
 		const del = useDeleteStore(d => d.delete);
+		const openGradeSelector = useDrawerStore(d => d.openGradeSelector);
 
 		const trackQuark = selectedBoulder.selectedTrack;
 		const track = trackQuark();
 
 		return (
 			<>
-				<ItemsHeaderButtons item={track} onClose={flush.track} />
+				<ItemsHeaderButtons item={track} builder onClose={flush.track} />
+				<div className="ktext-base-superbig px-5 mt-3 mb-6 hidden md:block">Voie {track.index+1}</div>
 
 				<div
 					className={
-						"flex h-full flex-col gap-6 px-6 md:py-14 " +
+						"flex h-full flex-col gap-6 px-6 " +
 						(props.className ? props.className : "")
 					}
 					onClick={(e) => e.stopPropagation()}
 				>
-					<TextInput
-						id="track-name"
-						label="Nom de la voie"
-						value={track.name}
-						onChange={(e) =>
-							trackQuark.set({
-								...track,
-								name: e.target.value as Name,
-							})
-						}
-					/>
+					<div className="flex flex-row gap-1">
+						<TextInput
+							id="track-name"
+							label="Nom de la voie"
+							value={track.name}
+							onChange={(e) =>
+								trackQuark.set({
+									...track,
+									name: e.target.value as Name,
+								})
+							}
+						/>
+						<div 
+							id="track-grade"
+							className={`
+								w-1/4 flex items-center justify-center mt-2 rounded-sm text-white border border-grey-light md:cursor-pointer 
+								${getBGLightGradeColorClass(gradeToLightGrade(track.grade))}
+							`}
+							onClick={openGradeSelector}
+						>{track.grade || 'Pr'}</div>
+					</div>
 
 					<div className="flex flex-col gap-3">
 						<Checkbox
@@ -126,6 +140,8 @@ export const TrackForm: React.FC<TrackFormProps> = watchDependencies(
 						/>
 					</div>
 				</div>
+
+				<GradeSelector />
 			</>
 		);
 	}

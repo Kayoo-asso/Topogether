@@ -1,8 +1,8 @@
 import React from "react";
 import { ToolSelectorMobile } from "./ToolSelectorMobile";
 import { Grade, gradeToLightGrade } from "types";
-import { getLightGradeColorClass, GradeSelector } from "./GradeSelector";
 import { useDrawerStore } from "components/store/drawerStore";
+import { SelectedBoulder, useSelectStore } from "components/store/selectStore";
 
 import Clear from "assets/icons/clear.svg";
 import Rewind from "assets/icons/rewind.svg";
@@ -13,8 +13,6 @@ import Hand from "assets/icons/hand.svg";
 import ClimbingShoe from "assets/icons/climbing-shoe.svg";
 import ForbiddenArea from "assets/icons/forbidden-area.svg";
 import Checked from "assets/icons/checked.svg";
-import Circle from "assets/icons/circle.svg";
-import { SelectedBoulder, useSelectStore } from "components/store/selectStore";
 
 interface ToolbarProps {
 	onClear: () => void;
@@ -49,7 +47,6 @@ export const Toolbar: React.FC<ToolbarProps> = (props: ToolbarProps) => {
 	const selectTool = useDrawerStore(d => d.selectTool);
 	const isOtherTracksDisplayed = useDrawerStore(d => d.isOtherTracksDisplayed);
 	const toggleOtherTracks = useDrawerStore(d => d.toggleOtherTracks);
-	const openGradeSelector = useDrawerStore(d => d.openGradeSelector);
 	const closeDrawer = useDrawerStore(d => d.closeDrawer)
 
 	const selectedBoulder = useSelectStore(s => s.item as SelectedBoulder);
@@ -58,6 +55,7 @@ export const Toolbar: React.FC<ToolbarProps> = (props: ToolbarProps) => {
 	return (
 		<div className="z-200 flex h-[9vh] w-full flex-row items-center justify-center bg-dark">
 			<span className="flex w-2/5 flex-row items-center justify-around md:w-3/12">
+				
 				<Clear
 					className="h-8 w-8 md:cursor-pointer stroke-white"
 					onClick={props.onClear}
@@ -96,50 +94,58 @@ export const Toolbar: React.FC<ToolbarProps> = (props: ToolbarProps) => {
 			</span>
 
 			<span className="hidden w-6/12 flex-row items-center justify-around px-[13%] md:flex">
-				<Track
-					className={
-						"h-6 w-6 md:cursor-pointer " +
-						(selectedTool === "LINE_DRAWER"
-							? getStrokeColorClass(grade)
-							: "stroke-white")
-					}
+				<div 
+					className="rounded-full md:p-4 md:cursor-pointer hover:bg-white hover:bg-opacity-20"
 					onClick={() => selectTool("LINE_DRAWER")}
-				/>
-				<Hand
-					className={
-						"h-6 w-6 md:cursor-pointer " +
-						(selectedTool === "HAND_DEPARTURE_DRAWER"
-							? getStrokeColorClass(grade) + " fill-white"
-							: "stroke-white")
-					}
+				>
+					<Track
+						className={
+							"h-6 w-6 " +
+							(selectedTool === "LINE_DRAWER"
+								? getStrokeColorClass(grade)
+								: "stroke-white")
+						}
+					/>
+				</div>
+				<div 
+					className="rounded-full md:p-4 md:cursor-pointer hover:bg-white hover:bg-opacity-20"
 					onClick={() => selectTool("HAND_DEPARTURE_DRAWER")}
-				/>
-				<ClimbingShoe
-					className={
-						"h-7 w-7 md:cursor-pointer " +
-						(selectedTool === "FOOT_DEPARTURE_DRAWER"
-							? getStrokeColorClass(grade) + " fill-white"
-							: "stroke-white")
-					}
+				>
+					<Hand
+						className={
+							"h-6 w-6 " +
+							(selectedTool === "HAND_DEPARTURE_DRAWER"
+								? getStrokeColorClass(grade) + " fill-white"
+								: "stroke-white")
+						}
+					/>
+				</div>
+				<div 
+					className="rounded-full md:p-4 md:cursor-pointer hover:bg-white hover:bg-opacity-20"
 					onClick={() => selectTool("FOOT_DEPARTURE_DRAWER")}
-				/>
-				<ForbiddenArea
-					className={
-						"h-6 w-6 md:cursor-pointer " +
-						(selectedTool === "FORBIDDEN_AREA_DRAWER"
-							? "fill-white stroke-second"
-							: "stroke-white")
-					}
+				>
+					<ClimbingShoe
+						className={
+							"h-7 w-7 " +
+							(selectedTool === "FOOT_DEPARTURE_DRAWER"
+								? getStrokeColorClass(grade) + " fill-white"
+								: "stroke-white")
+						}
+					/>
+				</div>
+				<div 
+					className="rounded-full md:p-4 md:cursor-pointer hover:bg-white hover:bg-opacity-20"
 					onClick={() => selectTool("FORBIDDEN_AREA_DRAWER")}
-				/>
-			</span>
-
-			<span
-				className="flex text-white flex-row items-center md:cursor-pointer"
-				onClick={openGradeSelector}
-			>
-				<Circle className={"mr-2 h-6 w-6 " + getLightGradeColorClass(gradeToLightGrade(grade))} />
-				{grade ? grade : 'Pr'}
+				>
+					<ForbiddenArea
+						className={
+							"h-6 w-6 " +
+							(selectedTool === "FORBIDDEN_AREA_DRAWER"
+								? "fill-white stroke-second"
+								: "stroke-white")
+						}
+					/>
+				</div>
 			</span>
 
 			<span className="flex w-1/5 justify-center md:hidden">
@@ -148,8 +154,6 @@ export const Toolbar: React.FC<ToolbarProps> = (props: ToolbarProps) => {
 					onClick={closeDrawer}
 				/>
 			</span>
-
-			<GradeSelector />
 		</div>
 	);
 };
