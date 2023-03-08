@@ -20,8 +20,6 @@ export const TopoTypeToColor = (type?: TopoTypes) => {
 			return "third";
 		case TopoTypes.DeepWater:
 			return "grade-5";
-		case TopoTypes.Multipitch:
-			return "third-light";
 		case TopoTypes.Artificial:
 			return "dark";
 		default:
