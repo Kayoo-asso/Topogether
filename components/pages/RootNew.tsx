@@ -17,6 +17,7 @@ import { Map } from "ol";
 import { useBreakpoint } from "helpers/hooks/DeviceProvider";
 import { usePosition } from "helpers/hooks/UserPositionProvider";
 import { TextInput } from "components/molecules/form/TextInput";
+import { fetchAltitude } from "helpers/map/fetchAltitude";
 
 interface RootNewProps {
 	user: User;
@@ -30,6 +31,7 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies(
 		const mapRef = useRef<Map>(null);
 
 		const [step, setStep] = useState(0);
+		const [loading, setLoading] = useState<boolean>(false);
 
 		const [name, setName] = useState<string>();
 		const [type, setType] = useState<TopoTypes>(TopoTypes.Boulder);
@@ -41,7 +43,6 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies(
 			position ? position[1] : undefined
 		);
 
-		const [loading, setLoading] = useState<boolean>(false);
 		const [nameError, setNameError] = useState<string>();
 		const [typeError, setTypeError] = useState<string>();
 		const [latitudeError, setLatitudeError] = useState<string>();
@@ -77,12 +78,14 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies(
 			if (!isValidStep0()) setStep(0);
 			else if (isValidStep1()) {
 				setLoading(true);
+				const altitude = await fetchAltitude(longitude!, latitude!);
 				const topoData: TopoCreate = {
 					id: uuid(),
 					creator: props.user,
 					name: name as StringBetween<1, 255>,
 					status: 0,
 					type: type,
+					altitude: altitude,
 					forbidden: false,
 					location: [longitude!, latitude!],
 					modified: new Date().toISOString(),
