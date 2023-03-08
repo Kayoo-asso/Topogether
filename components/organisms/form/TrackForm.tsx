@@ -32,9 +32,9 @@ export const TrackForm: React.FC<TrackFormProps> = watchDependencies(
 		const track = trackQuark();
 
 		return (
-			<>
+			<div className="w-full h-full flex flex-col">
 				<ItemsHeaderButtons item={track} builder onClose={flush.track} />
-				<div className="ktext-base-superbig px-5 mt-3 mb-6 hidden md:block">Voie {track.index+1}</div>
+				<div className="ktext-base-superbig px-5 mt-3 mb-8 hidden md:block">Voie {track.index+1}</div>
 
 				<div
 					className={
@@ -151,7 +151,7 @@ export const TrackForm: React.FC<TrackFormProps> = watchDependencies(
 						}
 					/>
 
-					<div className="flex w-full grow items-end pb-6">
+					<div className="flex w-full items-end pb-6">
 						<Button
 							content="Supprimer"
 							onClick={() => del.item({ type: 'track', value: trackQuark, boulder: selectedBoulder.value, selectedBoulder: selectedBoulder})}
@@ -161,7 +161,7 @@ export const TrackForm: React.FC<TrackFormProps> = watchDependencies(
 				</div>
 
 				<GradeSelector />
-			</>
+			</div>
 		);
 	}
 );
