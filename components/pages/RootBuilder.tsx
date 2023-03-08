@@ -20,7 +20,7 @@ import {
 	createWaypoint,
 } from "helpers/builder";
 import { staticUrl } from "helpers/constants";
-import { sortBoulders, computeBuilderProgress } from "helpers/topo";
+import { computeBuilderProgress } from "helpers/topo";
 import { encodeUUID } from "helpers/utils";
 import {
 	SlideoverLeftBuilder,
@@ -54,6 +54,7 @@ import { DropdownOption } from "components/molecules/form/Dropdown";
 import { Flash } from "components/atoms/overlays/Flash";
 import { OnClickInteraction } from "components/map/markers/OnClickInteraction";
 import { ModifyInteraction } from "components/map/markers/ModifyInteraction";
+import { useBoulderOrder } from "components/store/boulderOrderStore";
 
 interface RootBuilderProps {
 	topoQuark: Quark<Topo>;
@@ -64,11 +65,12 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 		const router = useRouter();
 		const session = useSession()!;
 		const breakpoint = useBreakpoint();
+		const sortBoulderOrder = useBoulderOrder(bo => bo.sort);
 
 		const showLoader = useLoader();
 
 		const topo = props.topoQuark();
-		const boulderOrder = sortBoulders(topo.sectors, topo.lonelyBoulders)
+		sortBoulderOrder(topo.sectors, topo.lonelyBoulders);
 
 		const isEmptyStore = useSelectStore(s => s.isEmpty);
 		const flush = useSelectStore(s => s.flush);
@@ -125,7 +127,6 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 		const SearchbarDesktop: React.FC = () =>
 			<SearchbarBouldersDesktop 
 				topo={props.topoQuark}
-				boulderOrder={boulderOrder}
 				map={mapRef.current}
 			/>
 		const [Filters, filterBoulders, resetFilters, areFiltersEmpty] = useBouldersFilters(topo);
@@ -187,7 +188,6 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 				<div className="relative flex h-content flex-row md:h-contentPlusShell md:overflow-clip">
 					<LeftbarBuilderDesktop
 						topoQuark={props.topoQuark}
-						boulderOrder={boulderOrder}
 						map={mapRef.current}
 						onSubmit={showModalSubmitTopo}
 						activateSubmission={progress() === 100}
@@ -195,7 +195,6 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 
 					<SlideoverLeftBuilder
 						topo={props.topoQuark}
-						boulderOrder={boulderOrder}
 						map={mapRef.current}
 						Filters={Filters}
 						onFilterReset={resetFilters}
@@ -217,7 +216,6 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 					>
 						{tool && tool !== "SECTOR" &&
 							<CreatingMarkersLayer 
-								boulderOrder={boulderOrder}
 								onCreate={handleCreateNewMarker}
 							/>
 						}
@@ -226,16 +224,13 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 						/>
 						<DragInteraction 
 							topoQuark={props.topoQuark}
-							boulderOrder={boulderOrder}
 						/>
 						<ModifyInteraction 
 							topoQuark={props.topoQuark}
-							boulderOrder={boulderOrder}
 						/>
 
 						<SectorAreaMarkersLayer
 							topoQuark={props.topoQuark}
-							boulderOrder={boulderOrder}
 							creating={tool === "SECTOR"}
 						/>
 						<ParkingMarkersLayer 
@@ -246,7 +241,6 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 						/>
 						<BoulderMarkersLayer 
 							boulders={filterBoulders(props.topoQuark().boulders.quarks())}
-							boulderOrder={boulderOrder}
 						/>
 					</MapControl>
 

@@ -1,15 +1,17 @@
 import { RootTopo } from "components/pages/RootTopo";
-import { isUUID, TopoData } from "types";
+import { isUUID, TopoData, TopoTypes } from "types";
 import { api } from "helpers/services";
 import { useRouter } from "next/router";
 import { editTopo } from "helpers/quarkifyTopo";
 import { decodeUUID } from "helpers/utils";
 import { withRouting } from "helpers/serverStuff";
-import { useMemo } from "react";
+import { createContext, useMemo } from "react";
 
 type TopoProps = {
 	topo: TopoData;
 };
+
+export const TopoTypeContext = createContext<TopoTypes>(0);
 
 const getRidOfBouldersWithoutTrack = (topo: TopoData) => {
 	topo.lonelyBoulders = topo.lonelyBoulders.filter(id => topo.boulders.find(b => b.id === id)!.tracks.length > 0)
@@ -48,6 +50,10 @@ export default withRouting<TopoProps>({
 		}
 
 		const topoQuark = useMemo(() => editTopo(topo), []);
-		return <RootTopo topoQuark={topoQuark} />;
+		return (
+			<TopoTypeContext.Provider value={topoQuark().type}>
+				<RootTopo topoQuark={topoQuark} />
+			</TopoTypeContext.Provider>
+		);
 	},
 });

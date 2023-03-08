@@ -9,6 +9,7 @@ type itemType = LightTopo | Boulder | Parking | Waypoint | Track;
 
 interface ItemsHeaderButtonsProps {
     item: itemType;
+    builder?: boolean;
     onClose?: () => void;
 }
 
@@ -16,16 +17,33 @@ export const isTopo = (item: itemType): item is LightTopo => (item as LightTopo)
 export const isBoulder = (item: itemType): item is Boulder => (item as Boulder).isHighball !== undefined;
 export const isTrack = (item: itemType): item is Track => (item as Track).isTraverse !== undefined;
 
-export const ItemsHeaderButtons: React.FC<ItemsHeaderButtonsProps> = (props: ItemsHeaderButtonsProps) => {
+export const ItemsHeaderButtons: React.FC<ItemsHeaderButtonsProps> = ({
+    builder = false,
+    ...props
+}: ItemsHeaderButtonsProps) => {
     const bp = useBreakpoint();
 
     return (
-        <div className={`absolute flex flex-row w-[90%] px-2 mt-2 z-10 ${isTrack(props.item) ? 'justify-end' : 'justify-between'} ${bp === 'mobile' ? 'hidden' : ''}`}>
+        <div className={`
+            absolute flex flex-row w-[90%] px-2 mt-2 z-10 
+            ${bp === 'mobile' ? 'hidden' : ''}
+            ${(builder || isTrack(props.item)) ? 'justify-end' : 'justify-between'} 
+        `}>
 
-            <div className={`${(isTopo(props.item) || isBoulder(props.item)) ? "px-6" : "px-4"} ${isTrack(props.item) ? 'hidden' : ''} relative flex flex-row gap-5 justify-evenly items-center bg-white rounded-full md:cursor-pointer`}>
-                {(isTopo(props.item) || isBoulder(props.item)) && <LikeButton liked={props.item.liked} />}
-                {!isTrack(props.item) && <ShareButton location={props.item.location} />}
-                {isTopo(props.item) && <DownloadButton topo={props.item} />}
+            <div className={`
+                relative flex flex-row gap-5 justify-evenly items-center bg-white rounded-full md:cursor-pointer
+                ${(builder || isTrack(props.item)) ? 'hidden' : ''} 
+                ${(isTopo(props.item) || isBoulder(props.item)) ? "px-6" : "px-4"} 
+            `}>
+                {(isTopo(props.item) || isBoulder(props.item)) && !builder && 
+                    <LikeButton liked={props.item.liked} />
+                }
+                {!isTrack(props.item) && !builder && 
+                    <ShareButton location={props.item.location} />
+                }
+                {isTopo(props.item) && 
+                    <DownloadButton topo={props.item} />
+                }
             </div>
 
             {props.onClose && 

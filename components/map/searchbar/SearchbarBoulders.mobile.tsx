@@ -9,7 +9,6 @@ import SearchIcon from "assets/icons/search.svg";
 
 export interface SearchbarBouldersMobileProps {
 	topo: Quark<Topo>;
-	boulderOrder: Map<UUID, number>;
 	map: OLMap | null;
 	onBoulderResultSelect?: (boulder: Boulder) => void;
 }
@@ -25,7 +24,6 @@ export const SearchbarBouldersMobile: React.FC<SearchbarBouldersMobileProps> = w
 
 			<SearchbarBouldersResults 
 				topo={props.topo}
-				boulderOrder={props.boulderOrder}
 				boulderResults={boulderResults}
 				map={props.map}
 			/>

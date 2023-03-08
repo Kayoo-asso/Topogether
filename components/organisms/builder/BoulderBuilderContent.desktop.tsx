@@ -9,7 +9,6 @@ import { BoulderPreviewDesktop } from "components/molecules/BoulderPreview.deskt
 import { Button } from "components/atoms/buttons/Button";
 import { useDeleteStore } from "components/store/deleteStore";
 import { ItemsHeaderButtons } from "../ItemsHeaderButtons";
-import { useDrawerStore } from "components/store/drawerStore";
 
 interface BoulderBuilderContentDesktopProps {
 	topo: Quark<Topo>;
@@ -30,7 +29,8 @@ export const BoulderBuilderContentDesktop = watchDependencies<
 		// overflow-scroll to avoid scrollbar glitches with certain image sizes, where hovering the ImageThumb would display the scrolbar & change the overall layout
 		<div className="flex h-full w-full flex-col overflow-scroll">
 			
-			<ItemsHeaderButtons item={boulder} onClose={flush.item} />
+			<ItemsHeaderButtons item={boulder} builder onClose={flush.item} />
+			<div className="">Bloc {boulder.name}</div>
 
 			<RockForm
 				className="mt-20 mb-6 px-5"

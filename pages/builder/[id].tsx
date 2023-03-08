@@ -1,6 +1,6 @@
-import { useMemo } from "react";
+import { createContext, useMemo } from "react";
 import { api } from "helpers/services";
-import { isUUID, TopoData } from "types";
+import { isUUID, TopoData, TopoTypes } from "types";
 import { editTopo } from "helpers/quarkifyTopo";
 import { withRouting } from "helpers/serverStuff";
 import { decodeUUID } from "helpers/utils";
@@ -11,6 +11,8 @@ type BuilderProps = {
 };
 
 // TODO: check the user is a contributor of the topo
+
+export const TopoTypeContext = createContext<TopoTypes>(0);
 
 export default withRouting<BuilderProps>({
 	async getInitialProps({ query }) {
@@ -35,12 +37,10 @@ export default withRouting<BuilderProps>({
 		// Memoize here, to avoid recreating a store from the initial page props after the first render
 		// (ex: when the URL changes when the user selects a boulder)
 		const topoQuark = useMemo(() => editTopo(topo), []);
-		const topoType = topoQuark().type;
-		// create context
 		return (
-			<>
+			<TopoTypeContext.Provider value={topoQuark().type}>
 				<RootBuilder topoQuark={topoQuark} />
-			</>
+			</TopoTypeContext.Provider>
 		);
 	},
 });

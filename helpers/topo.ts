@@ -38,23 +38,6 @@ export type BoulderOrder = {
 	index: number;
 };
 
-export function sortBoulders(
-	sectors: Iterable<Sector>,
-	lonelyBoulders: UUID[]
-): Map<UUID, number> {
-	let idx = 1;
-	let order: Map<UUID, number> = new Map();
-	for (const sector of sectors) {
-		for (const boulderId of sector.boulders) {
-			order.set(boulderId, idx++);
-		}
-	}
-	for (const boulderId of lonelyBoulders) {
-		order.set(boulderId, idx++);
-	}
-	return order;
-}
-
 // --- computeBuilderProgress ---
 
 const rules = [

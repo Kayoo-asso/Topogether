@@ -22,6 +22,7 @@ export const RockForm: React.FC<RockFormProps> = watchDependencies(
 				className={"flex flex-col gap-6 " + (props.className ? props.className : "")}
 				onClick={(e) => e.stopPropagation()}
 			>
+				<div className='ktext-label'>Informations générales</div>
 				<TextInput
 					id="rock-name"
 					label='Nom du caillou'

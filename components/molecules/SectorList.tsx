@@ -7,10 +7,10 @@ import { Map } from "ol";
 import { transform } from 'ol/proj.js';
 
 import ArrowSimple from "assets/icons/arrow-simple.svg";
+import { useBoulderOrder } from "components/store/boulderOrderStore";
 
 interface SectorListProps {
 	topoQuark: Quark<Topo>;
-	boulderOrder: globalThis.Map<UUID, number>;
 	// if undefined: all boulders are displayed
 	bouldersToDisplay?: UUID[];
 	displayEmptySectors?: boolean;
@@ -37,6 +37,8 @@ export const SectorList: React.FC<SectorListProps> = watchDependencies(
 		for (const id of topo.lonelyBoulders) {
 			lonelyQuarks.push(boulderQuarksMap.get(id)!);
 		}
+
+		const boulderOrder = useBoulderOrder(bo => bo.value);
 
 		// By default, all sectors are shown
 		// Thus, it's cheaper and easier to track the sectors we hide
@@ -103,7 +105,7 @@ export const SectorList: React.FC<SectorListProps> = watchDependencies(
 												<div key={boulder.id}>
 													<BoulderItemLeftbar
 														boulder={boulderQuark}
-														orderIndex={props.boulderOrder.get(boulder.id)!}
+														orderIndex={boulderOrder.get(boulder.id)!}
 														selected={!!(selectedBoulder && selectedBoulder.value().id === boulder.id)}
 														displayed={displayedBoulders.has(boulder.id)}
 														onArrowClick={() => toggleBoulder(boulder)}
@@ -138,7 +140,7 @@ export const SectorList: React.FC<SectorListProps> = watchDependencies(
 								<div key={boulder.id}>
 									<BoulderItemLeftbar
 										boulder={boulderQuark}
-										orderIndex={props.boulderOrder.get(boulder.id)!}
+										orderIndex={boulderOrder.get(boulder.id)!}
 										selected={!!(selectedBoulder && selectedBoulder.value().id === boulder.id)}
 										displayed={displayedBoulders.has(boulder.id)}
 										onArrowClick={() => toggleBoulder(boulder)}

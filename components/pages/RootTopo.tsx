@@ -10,7 +10,6 @@ import { LeftbarTopoDesktop } from "components/layouts/LeftbarTopoDesktop";
 import { MapControl } from "components/map/MapControl";
 import Map from "ol/Map";
 import { useSession } from "helpers/services";
-import { sortBoulders } from "helpers/topo";
 import { encodeUUID } from "helpers/utils";
 import { useSelectStore } from "../store/selectStore";
 import { SyncUrl } from "components/organisms/SyncUrl";
@@ -27,6 +26,7 @@ import { downloads } from "helpers/downloads/DownloadManager";
 import { useBreakpoint } from "helpers/hooks/DeviceProvider";
 import { DropdownOption } from "components/molecules/form/Dropdown";
 import { OnClickInteraction } from "components/map/markers/OnClickInteraction";
+import { useBoulderOrder } from "components/store/boulderOrderStore";
 
 interface RootTopoProps {
 	topoQuark: Quark<Topo>;
@@ -37,9 +37,10 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 		const router = useRouter();
 		const session = useSession();
 		const breakpoint = useBreakpoint();
+		const sortBoulderOrder = useBoulderOrder(bo => bo.sort);
 
 		const topo = props.topoQuark();
-		const boulderOrder = sortBoulders(topo.sectors, topo.lonelyBoulders);
+		sortBoulderOrder(topo.sectors, topo.lonelyBoulders);
 
 		const isEmptyStore = useSelectStore((s) => s.isEmpty);
 		const flush = useSelectStore((s) => s.flush);
@@ -90,7 +91,6 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 		const SearchbarDesktop: React.FC = () =>
 			<SearchbarBouldersDesktop 
 				topo={props.topoQuark}
-				boulderOrder={boulderOrder}
 				map={mapRef.current}
 			/>
 		const [Filters, filterBoulders, resetFilters] = useBouldersFilters(topo);
@@ -114,13 +114,11 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 				<div className="relative flex h-content flex-row md:h-full md:overflow-clip">
 					<LeftbarTopoDesktop
 						topoQuark={props.topoQuark}
-						boulderOrder={boulderOrder}
 						map={mapRef.current}
 					/>
 
 					<SlideoverLeftTopo 
 						topo={props.topoQuark} 
-						boulderOrder={boulderOrder} 
 						map={mapRef.current} 
 						Filters={Filters}
 						onFilterReset={resetFilters}
@@ -140,7 +138,6 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 						<OnClickInteraction />
 						<SectorAreaMarkersLayer
 							topoQuark={props.topoQuark}
-							boulderOrder={boulderOrder}
 						/>
 						<ParkingMarkersLayer
 							parkings={topo.parkings.quarks().toArray()}
@@ -150,7 +147,6 @@ export const RootTopo: React.FC<RootTopoProps> = watchDependencies(
 						/>
 						<BoulderMarkersLayer 
 							boulders={filterBoulders(props.topoQuark().boulders.quarks())}
-							boulderOrder={boulderOrder}
 						/>
 						
 					</MapControl>

@@ -12,11 +12,10 @@ import { useMapPointerCoordinates } from 'helpers/hooks/useMapPointerCoordinates
 import { parkingMarkerStyle } from './ParkingMarkersLayer';
 import { disappearZoom, waypointMarkerStyle } from './WaypointMarkersLayer';
 import { boulderMarkerStyle } from './BoulderMarkersLayer';
-import { UUID } from 'types';
 import { useBreakpoint } from 'helpers/hooks/DeviceProvider';
+import { useBoulderOrder } from 'components/store/boulderOrderStore';
 
 interface CreatingMarkersLayerProps {
-	boulderOrder: globalThis.Map<UUID, number>,
     onCreate?: (e: MapBrowserEvent<MouseEvent>) => void;
 }
 
@@ -24,6 +23,8 @@ export const CreatingMarkersLayer: React.FC<CreatingMarkersLayerProps> = (props:
     const tool = useSelectStore(s => s.tool);
     const device = useBreakpoint();
     const pointerCoords = useMapPointerCoordinates(!!tool);
+
+    const boulderOrder = useBoulderOrder(bo => bo.value);
 
     const map = useMap();
     useEffect(() => {
@@ -49,9 +50,9 @@ export const CreatingMarkersLayer: React.FC<CreatingMarkersLayerProps> = (props:
                     switch (tool) {
                         case "PARKING": return parkingMarkerStyle(false, false, device, disappearZoom + 1); break;
                         case "WAYPOINT": return waypointMarkerStyle(false, false, device, disappearZoom + 1); break;
-                        case 'ROCK': return boulderMarkerStyle(false, false, device, props.boulderOrder); break;
+                        case 'ROCK': return boulderMarkerStyle(false, false, device, boulderOrder); break;
                     }
-                }, [tool, device, props.boulderOrder])}
+                }, [tool, device, boulderOrder])}
             >
                 <VectorSource> 
                     {pointerCoords &&

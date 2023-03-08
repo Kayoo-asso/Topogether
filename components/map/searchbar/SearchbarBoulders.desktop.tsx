@@ -8,7 +8,6 @@ import { useSelectStore } from "components/store/selectStore";
 
 export interface SearchbarBouldersDesktopProps {
 	topo: Quark<Topo>;
-	boulderOrder: Map<UUID, number>;
 	map: OLMap | null;
 	onBoulderResultSelect?: (boulder: Boulder) => void;
 	// onAddTopoSelect?: () => void,
@@ -27,7 +26,6 @@ export const SearchbarBouldersDesktop: React.FC<SearchbarBouldersDesktopProps> =
 			<div className={`px-10 absolute left-0 top-0 z-50 rounded-lg bg-white pt-[60px] pb-3 shadow w-[97%] ${boulderResults.length > 0 ? '' : 'hidden'}`}>
 				<SearchbarBouldersResults 
 					topo={props.topo}
-					boulderOrder={props.boulderOrder}
 					boulderResults={boulderResults}
 					map={props.map}
 				/>

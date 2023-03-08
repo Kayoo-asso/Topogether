@@ -7,7 +7,6 @@ import { Button } from "components/atoms/buttons/Button";
 
 interface LeftbarBuilderDesktopProps {
 	topoQuark: Quark<Topo>;
-	boulderOrder: globalThis.Map<UUID, number>;
 	map: Map | null
 	activateSubmission: boolean;
 	onSubmit: () => void;
@@ -20,7 +19,6 @@ export const LeftbarBuilderDesktop: React.FC<LeftbarBuilderDesktopProps> =
 			<div className="z-500 hidden h-full w-[280px] min-w-[280px] flex-col overflow-auto border-r border-grey-medium bg-white px-6 py-10 md:flex">
 				<SectorListBuilder 
 					topoQuark={props.topoQuark}
-					boulderOrder={props.boulderOrder}
 					map={props.map}
 				/>
 
