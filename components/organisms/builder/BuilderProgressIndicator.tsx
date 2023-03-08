@@ -86,7 +86,6 @@ export const BuilderProgressIndicator: React.FC<BuilderProgressIndicatorProps> =
 							{displayRule(topo, "TOPO_IMAGE")}
 							{displayRule(topo, "DESCRIPTION")}
 							{displayRule(topo, "ROCK_TYPE")}
-							{displayRule(topo, "ALTITUDE")}
 						</div>
 						<div className="my-2">
 							{displayMainRule(topo, "PARKINGS")}

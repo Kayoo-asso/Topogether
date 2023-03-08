@@ -17,6 +17,7 @@ export const SpecSelector: React.FC<SpecSelectorProps> = (
 ) => {
     const [specSelectorOpen, setSpecSelectorOpen] = useState(false);
     const [tempValue, setTempValue] = useState(props.value);
+    const nbSpec = listFlags(tempValue, TrackSpecName).length;
 
     const updateTempValue = useCallback((v: TrackSpec) => {
         setTempValue(tv => toggleFlag(tv, v))
@@ -32,9 +33,10 @@ export const SpecSelector: React.FC<SpecSelectorProps> = (
             <TextInput
                 id='spec-input'
                 label='Spécifications'	
-                value={tempValue && listFlags(tempValue, TrackSpecName).join(", ")}
+                value={nbSpec > 0 ? nbSpec + ' cochée' + (nbSpec > 1 ? 's' : '') : ''}
                 readOnly
                 pointer
+                boldValue
                 onClick={() => setSpecSelectorOpen(true)}
             />
 

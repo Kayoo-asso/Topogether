@@ -33,7 +33,6 @@ const rules = [
 	"TOPO_IMAGE",
 	"DESCRIPTION",
 	"ROCK_TYPE",
-	"ALTITUDE",
 	"PARKINGS",
 	"ACCESS_DURATION",
 	"ACCESS_DIFFICULTY",
@@ -47,13 +46,11 @@ export const rulesText = {
 	TOPO_IMAGE: "Ajouter une photo du site",
 	DESCRIPTION: "Ajouter la description du site",
 	ROCK_TYPE: "Préciser le type de roche",
-	ALTITUDE: "Préciser l'altitude du site",
 	PARKINGS: "Ajouter au moins un parking",
 	INFOS_ACCESS: "Décrire la marche d'approche",
 	ACCESS_DURATION: "Préciser le temps de marche",
 	ACCESS_DIFFICULTY: "Préciser la difficulté",
 	ACCESS_STEP: "Ajouter au moins une étape",
-	MANAGRES: "Ajouter les coordonnées des gestionnaires du site",
 	BOULDERS: "Ajouter au moins un bloc",
 	TRACKS: "Ajouter au moins un passage",
 };
@@ -62,8 +59,7 @@ export type Rule = typeof rules[number] | "INFOS_TOPO" | "INFOS_ACCESS";
 
 export const computeBuilderProgress = (topo: Quark<Topo>): number => {
 	return Math.round(
-		(rules.filter((rule) => validateRule(topo(), rule)).length / rules.length) *
-			100
+		(rules.filter((rule) => validateRule(topo(), rule)).length / rules.length) * 100
 	);
 };
 
@@ -73,8 +69,7 @@ export const validateRule = (topo: Topo, rule: Rule): boolean => {
 			return (
 				validateRule(topo, "TOPO_IMAGE") &&
 				validateRule(topo, "DESCRIPTION") &&
-				validateRule(topo, "ROCK_TYPE") &&
-				validateRule(topo, "ALTITUDE")
+				validateRule(topo, "ROCK_TYPE")
 			);
 		case "TOPO_IMAGE":
 			return !!topo.image;
@@ -82,8 +77,6 @@ export const validateRule = (topo: Topo, rule: Rule): boolean => {
 			return !!topo.description;
 		case "ROCK_TYPE":
 			return !!topo.rockTypes;
-		case "ALTITUDE":
-			return (topo.altitude !== undefined && topo.altitude !== null);
 		case "PARKINGS":
 			return topo.parkings.length > 0;
 		case "INFOS_ACCESS":

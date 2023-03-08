@@ -10,6 +10,7 @@ interface TextInputProps extends InputHTMLAttributes<HTMLInputElement> {
 	big?: boolean;
 	white?: boolean;
 	border?: boolean;
+	boldValue?: boolean
 	wrapperClassName?: string;
 	inputClassName?: string;
 	labelClassName?: string;
@@ -27,6 +28,7 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
 			labelClassName = "",
 			pointer = false,
 			border = true,
+			boldValue = false,
 			...props
 		}: TextInputProps,
 		ref
@@ -43,14 +45,15 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
 				type={type}
 				id={props.id}
 				value={props.value || ""}
-				className={`ktext-base peer h-14 w-full p-4 rounded-sm focus:outline-none
-					${border ? (big ? "border-3" : "border-2") : ''}  \
+				className={`ktext-base peer h-14 w-full p-4 rounded-sm focus:outline-none 
+					${boldValue ? 'font-semibold' : ''} 
+					${border ? (big ? "border-3" : "border-2") : ''} 
 					${white
 							? "border-white bg-white bg-opacity-0 text-white"
 							: "border-grey-superlight text-dark focus:border-main"
-					} \ 
-					${displayLabel ? "placeholder-transparent" : ""} \
-					${pointer ? " md:cursor-pointer" : ""} \
+					} 
+					${displayLabel ? "placeholder-transparent" : ""} 
+					${pointer ? " md:cursor-pointer" : ""} 
 					${inputClassName}`
 				}
 			/>
