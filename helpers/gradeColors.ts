@@ -1,4 +1,4 @@
-import { LightGrade } from "types";
+import { Grade, LightGrade, gradeToLightGrade } from "types";
 
 export const getFillLightGradeColorClass = (g: LightGrade) => {
     switch (g) {
@@ -40,4 +40,27 @@ export const getBGLightGradeColorClass = (g: LightGrade) => {
         case 'P':
             return "bg-grey-light";
     }
+};
+
+export const getStrokeColorClass = (g: Grade | undefined) => {
+	if (!g) return "stroke-grey-light";
+	else {
+		const lightGrade = gradeToLightGrade(g);
+		switch (lightGrade) {
+			case 3:
+				return "stroke-grade-3";
+			case 4:
+				return "stroke-grade-4";
+			case 5:
+				return "stroke-grade-5";
+			case 6:
+				return "stroke-grade-6";
+			case 7:
+				return "stroke-grade-7";
+			case 8:
+				return "stroke-grade-8";
+			case 9:
+				return "stroke-grade-9";
+		}
+	}
 };

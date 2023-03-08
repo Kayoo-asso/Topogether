@@ -1,6 +1,6 @@
 import React from "react";
 import { ToolSelectorMobile } from "./ToolSelectorMobile";
-import { Grade, TopoTypes, gradeToLightGrade } from "types";
+import { TopoTypes } from "types";
 import { useDrawerStore } from "components/store/drawerStore";
 import { SelectedBoulder, useSelectStore } from "components/store/selectStore";
 
@@ -14,34 +14,32 @@ import ClimbingShoe from "assets/icons/climbing-shoe.svg";
 import ForbiddenArea from "assets/icons/forbidden-area.svg";
 import Checked from "assets/icons/checked.svg";
 import { useTopoType } from "helpers/hooks/TopoTypeProvider";
+import { getStrokeColorClass } from "helpers/gradeColors";
+
+interface ToolProps {
+	label: string,
+	className?: string,
+	onClick: () => void,
+}
+const Tool: React.FC<ToolProps> = (props: React.PropsWithChildren<ToolProps>) => (
+	<div className={`relative group ${props.className ? props.className : ''}`}>
+		<div className="hidden group-hover:block whitespace-nowrap absolute -top-12 left-1/2 transform -translate-x-1/2 text-white border border-grey-medium bg-dark rounded-full py-2 px-3">
+			{props.label}
+		</div>
+		<div 
+			className="rounded-full md:p-4 md:cursor-pointer group-hover:bg-white group-hover:bg-opacity-20"
+			onClick={props.onClick}
+		>
+			{props.children}
+		</div>
+	</div>
+)
+
 
 interface ToolbarProps {
 	onClear: () => void;
 	onRewind: () => void;
 }
-
-const getStrokeColorClass = (g: Grade | undefined) => {
-	if (!g) return "stroke-grey-light";
-	else {
-		const lightGrade = gradeToLightGrade(g);
-		switch (lightGrade) {
-			case 3:
-				return "stroke-grade-3";
-			case 4:
-				return "stroke-grade-4";
-			case 5:
-				return "stroke-grade-5";
-			case 6:
-				return "stroke-grade-6";
-			case 7:
-				return "stroke-grade-7";
-			case 8:
-				return "stroke-grade-8";
-			case 9:
-				return "stroke-grade-9";
-		}
-	}
-};
 
 export const Toolbar: React.FC<ToolbarProps> = (props: ToolbarProps) => {
 	const topoType = useTopoType();
@@ -59,33 +57,37 @@ export const Toolbar: React.FC<ToolbarProps> = (props: ToolbarProps) => {
 		<div className="z-200 flex h-[9vh] w-full flex-row items-center justify-center bg-dark">
 			<span className="flex flex-row items-center justify-around w-2/5 md:w-3/12">
 
-				<div 
-					className="rounded-full md:p-4 md:cursor-pointer hover:bg-white hover:bg-opacity-20"
+				<Tool
+					label='Supprimer'
 					onClick={props.onClear}
 				>
-					<Clear className="h-8 w-8 stroke-white" />
-				</div>
-				<div 
-					className="rounded-full md:p-4 md:cursor-pointer hover:bg-white hover:bg-opacity-20"
+					<Clear className="h-7 w-7 stroke-white" />
+				</Tool>
+
+				<Tool
+					label='Retour'
 					onClick={props.onRewind}
 				>
 					<Rewind className="h-6 w-6 stroke-white" />
-				</div>
-				<div 
-					className="hidden md:block rounded-full md:p-4 md:cursor-pointer hover:bg-white hover:bg-opacity-20"
+				</Tool>
+
+				<Tool
+					label='Gomme'
 					onClick={() => selectedTool === "ERASER" ? selectTool("LINE_DRAWER") : selectTool("ERASER")}
-				>
-					<Eraser
-						className={
-							"h-6 w-6 " +
-							(selectedTool === "ERASER"
-								? "fill-main stroke-main"
-								: "fill-white stroke-white")
-						}
-					/>
-				</div>
-				<div 
-					className="hidden md:block rounded-full md:p-4 md:cursor-pointer hover:bg-white hover:bg-opacity-20"
+					>
+						<Eraser
+							className={
+								"h-6 w-6 " +
+								(selectedTool === "ERASER"
+									? "fill-main stroke-main"
+									: "fill-white stroke-white")
+							}
+						/>
+				</Tool>
+				
+				<Tool
+					label='Autres voies'
+					className='hidden md:block'
 					onClick={toggleOtherTracks}
 				>
 					<ManyTracks
@@ -94,7 +96,7 @@ export const Toolbar: React.FC<ToolbarProps> = (props: ToolbarProps) => {
 							(isOtherTracksDisplayed ? "stroke-main" : "stroke-white")
 						}
 					/>
-				</div>
+				</Tool>
 			</span>
 
 			<span className="w-1/5 mx-3 flex self-end pb-4 md:hidden">
@@ -107,8 +109,8 @@ export const Toolbar: React.FC<ToolbarProps> = (props: ToolbarProps) => {
 			</span>
 
 			<span className="w-1/2 flex-row items-center justify-around px-[13%] hidden md:flex">
-				<div 
-					className="rounded-full md:p-4 md:cursor-pointer hover:bg-white hover:bg-opacity-20"
+				<Tool
+					label='Tracé'
 					onClick={() => selectTool("LINE_DRAWER")}
 				>
 					<Track
@@ -119,9 +121,11 @@ export const Toolbar: React.FC<ToolbarProps> = (props: ToolbarProps) => {
 								: "stroke-white")
 						}
 					/>
-				</div>
-				<div 
-					className={`rounded-full md:p-4 md:cursor-pointer hover:bg-white hover:bg-opacity-20 ${topoType === TopoTypes.Cliff ? 'hidden' : ''}`}
+				</Tool>
+				
+				<Tool
+					label='Main de départ'
+					className={topoType === TopoTypes.Cliff ? 'hidden' : ''}
 					onClick={() => selectTool("HAND_DEPARTURE_DRAWER")}
 				>
 					<Hand
@@ -132,9 +136,11 @@ export const Toolbar: React.FC<ToolbarProps> = (props: ToolbarProps) => {
 								: "stroke-white")
 						}
 					/>
-				</div>
-				<div 
-					className={`rounded-full md:p-4 md:cursor-pointer hover:bg-white hover:bg-opacity-20 ${topoType === TopoTypes.Cliff ? 'hidden' : ''}`}
+				</Tool>
+
+				<Tool
+					label='Pied de départ'
+					className={topoType === TopoTypes.Cliff ? 'hidden' : ''}
 					onClick={() => selectTool("FOOT_DEPARTURE_DRAWER")}
 				>
 					<ClimbingShoe
@@ -145,9 +151,11 @@ export const Toolbar: React.FC<ToolbarProps> = (props: ToolbarProps) => {
 								: "stroke-white")
 						}
 					/>
-				</div>
-				<div 
-					className={`rounded-full md:p-4 md:cursor-pointer hover:bg-white hover:bg-opacity-20 ${topoType === TopoTypes.Cliff ? 'hidden' : ''}`}
+				</Tool>
+
+				<Tool
+					label='Zone interdite'
+					className={topoType === TopoTypes.Cliff ? 'hidden' : ''}
 					onClick={() => selectTool("FORBIDDEN_AREA_DRAWER")}
 				>
 					<ForbiddenArea
@@ -158,7 +166,7 @@ export const Toolbar: React.FC<ToolbarProps> = (props: ToolbarProps) => {
 								: "stroke-white")
 						}
 					/>
-				</div>
+				</Tool>
 			</span>
 
 			<span className="flex flex-row w-2/5 items-center justify-around md:hidden">
