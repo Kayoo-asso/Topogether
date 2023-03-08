@@ -1,6 +1,6 @@
 import React from "react";
 import { ToolSelectorMobile } from "./ToolSelectorMobile";
-import { Grade, gradeToLightGrade } from "types";
+import { Grade, TopoTypes, gradeToLightGrade } from "types";
 import { useDrawerStore } from "components/store/drawerStore";
 import { SelectedBoulder, useSelectStore } from "components/store/selectStore";
 
@@ -13,6 +13,7 @@ import Hand from "assets/icons/hand.svg";
 import ClimbingShoe from "assets/icons/climbing-shoe.svg";
 import ForbiddenArea from "assets/icons/forbidden-area.svg";
 import Checked from "assets/icons/checked.svg";
+import { useTopoType } from "helpers/hooks/TopoTypeProvider";
 
 interface ToolbarProps {
 	onClear: () => void;
@@ -43,6 +44,8 @@ const getStrokeColorClass = (g: Grade | undefined) => {
 };
 
 export const Toolbar: React.FC<ToolbarProps> = (props: ToolbarProps) => {
+	const topoType = useTopoType();
+
 	const selectedTool = useDrawerStore(d => d.selectedTool);
 	const selectTool = useDrawerStore(d => d.selectTool);
 	const isOtherTracksDisplayed = useDrawerStore(d => d.isOtherTracksDisplayed);
@@ -118,7 +121,7 @@ export const Toolbar: React.FC<ToolbarProps> = (props: ToolbarProps) => {
 					/>
 				</div>
 				<div 
-					className="rounded-full md:p-4 md:cursor-pointer hover:bg-white hover:bg-opacity-20"
+					className={`rounded-full md:p-4 md:cursor-pointer hover:bg-white hover:bg-opacity-20 ${topoType === TopoTypes.Cliff ? 'hidden' : ''}`}
 					onClick={() => selectTool("HAND_DEPARTURE_DRAWER")}
 				>
 					<Hand
@@ -131,7 +134,7 @@ export const Toolbar: React.FC<ToolbarProps> = (props: ToolbarProps) => {
 					/>
 				</div>
 				<div 
-					className="rounded-full md:p-4 md:cursor-pointer hover:bg-white hover:bg-opacity-20"
+					className={`rounded-full md:p-4 md:cursor-pointer hover:bg-white hover:bg-opacity-20 ${topoType === TopoTypes.Cliff ? 'hidden' : ''}`}
 					onClick={() => selectTool("FOOT_DEPARTURE_DRAWER")}
 				>
 					<ClimbingShoe
@@ -144,7 +147,7 @@ export const Toolbar: React.FC<ToolbarProps> = (props: ToolbarProps) => {
 					/>
 				</div>
 				<div 
-					className="rounded-full md:p-4 md:cursor-pointer hover:bg-white hover:bg-opacity-20"
+					className={`rounded-full md:p-4 md:cursor-pointer hover:bg-white hover:bg-opacity-20 ${topoType === TopoTypes.Cliff ? 'hidden' : ''}`}
 					onClick={() => selectTool("FORBIDDEN_AREA_DRAWER")}
 				>
 					<ForbiddenArea

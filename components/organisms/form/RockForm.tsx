@@ -5,6 +5,7 @@ import { boulderChanged } from "helpers/builder";
 import { SelectedBoulder, useSelectStore } from "components/store/selectStore";
 import { TextInput } from "components/molecules/form/TextInput";
 import { Checkbox } from "components/atoms/Checkbox";
+import { useTopoType } from "helpers/hooks/TopoTypeProvider";
 
 interface RockFormProps {
 	topo: Quark<Topo>;
@@ -13,7 +14,7 @@ interface RockFormProps {
 
 export const RockForm: React.FC<RockFormProps> = watchDependencies(
 	(props: RockFormProps) => {
-		const topoType = props.topo().type;
+		const topoType = useTopoType();
 		const selectedBoulder = useSelectStore(s => s.item as SelectedBoulder);
 		const boulder = selectedBoulder.value();
 

@@ -1,18 +1,17 @@
-import { createContext, useMemo } from "react";
+import { useMemo } from "react";
 import { api } from "helpers/services";
-import { isUUID, TopoData, TopoTypes } from "types";
+import { isUUID, TopoData } from "types";
 import { editTopo } from "helpers/quarkifyTopo";
 import { withRouting } from "helpers/serverStuff";
 import { decodeUUID } from "helpers/utils";
 import { RootBuilder } from "components/pages/RootBuilder";
+import { TopoTypeProvider } from "helpers/hooks/TopoTypeProvider";
 
 type BuilderProps = {
 	topo: TopoData;
 };
 
 // TODO: check the user is a contributor of the topo
-
-export const TopoTypeContext = createContext<TopoTypes>(0);
 
 export default withRouting<BuilderProps>({
 	async getInitialProps({ query }) {
@@ -38,9 +37,9 @@ export default withRouting<BuilderProps>({
 		// (ex: when the URL changes when the user selects a boulder)
 		const topoQuark = useMemo(() => editTopo(topo), []);
 		return (
-			<TopoTypeContext.Provider value={topoQuark().type}>
+			<TopoTypeProvider value={topoQuark().type}>
 				<RootBuilder topoQuark={topoQuark} />
-			</TopoTypeContext.Provider>
+			</TopoTypeProvider>
 		);
 	},
 });

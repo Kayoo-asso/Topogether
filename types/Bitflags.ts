@@ -49,7 +49,6 @@ export const enum TopoTypes {
 	Boulder = 1 << 1,
 	Cliff = 1 << 2,
 	DeepWater = 1 << 3,
-	Multipitch = 1 << 4,
 }
 
 
