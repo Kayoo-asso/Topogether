@@ -53,7 +53,9 @@ export const RootWorldMap: React.FC<RootWorldMapProps> = watchDependencies(
 				</div>
 
 				<div className={`${onGoingDl > 0 ? 'h-content' : 'h-contentPlusHeader'} relative flex flex-row md:h-full`}>
-					{user && <LeftbarDesktop currentMenuItem="MAP" />}
+					{user && 
+						<LeftbarDesktop currentMenuItem="MAP" />
+					}
 
 					<SlideoverMobileWorldmap 
 						map={mapRef.current} 

@@ -5,7 +5,6 @@ interface SlideoverRightDesktopProps {
 	open?: boolean;
 	secondary?: boolean;
 	className?: string;
-	item?: Boulder | Topo | LightTopo;
 	onClose?: () => void;
 	children?: ReactNode;
 }

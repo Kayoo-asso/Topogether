@@ -118,7 +118,7 @@ export const TrackForm: React.FC<TrackFormProps> = watchDependencies(
 						}
 					/>
 
-					<div className="flex w-full grow items-end">
+					<div className="flex w-full grow items-end pb-6">
 						<Button
 							content="Supprimer"
 							onClick={() => del.item({ type: 'track', value: trackQuark, boulder: selectedBoulder.value, selectedBoulder: selectedBoulder})}

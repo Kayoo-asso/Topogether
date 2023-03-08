@@ -264,7 +264,6 @@ export const TopoPreview: React.FC<TopoPreviewProps> = ({
 			<div className="hidden md:block">
 				<SlideoverRightDesktop
 					open
-					item={props.topo}
 					onClose={props.onClose}
 				>
 					{topoPreviewContent()}
