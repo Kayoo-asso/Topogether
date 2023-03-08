@@ -28,7 +28,7 @@ export const RockNames: [RockTypes, string][] = [
 ];
 
 export const TopoTypesName: [TopoTypes, string][] = [
-	[TopoTypes.Artificial, "Artificiel"],
+	// [TopoTypes.Artificial, "Artificiel"],
 	[TopoTypes.Boulder, "Bloc"],
 	[TopoTypes.Cliff, "Voie"],
 	[TopoTypes.DeepWater, "Deepwater"],
