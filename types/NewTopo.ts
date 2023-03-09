@@ -29,9 +29,7 @@ import type { Img } from "./Img";
 // Add key 'dangers' to Track
 // Add key 'orientation' to Rock and del from Track
 // Add key 'belays' to Line
-
 // Add key 'variants' to Track
-// Change spec
 
 export type Topo = Omit<
 	TopoData,
