@@ -23,8 +23,8 @@ import type { ContributorRole, Profile, TrackRating } from "./User";
 import type { Img } from "./Img";
 
 // Key 'Boulder' become 'Rock'
-// Keys 'bestSeason' and 'oldGear' in Topo
-// Key 'type' in Waypoint, del 'amenities' in Topo and replace with a boolean 'adaptedToChildren'
+// Add Keys 'bestSeason' and 'oldGear' to Topo
+// Add Key 'type' to Waypoint, del 'amenities' in Topo and replace with a boolean 'adaptedToChildren'
 // Add key 'isMultipitch' and 'isTrad' to Track
 // Add key 'dangers' to Track
 // Add key 'orientation' to Rock and del from Track
