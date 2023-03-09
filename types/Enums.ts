@@ -30,6 +30,13 @@ export enum Orientation {
 
 export type Rating = 1 | 2 | 3 | 4 | 5;
 
+export enum Seasons {
+	Winter,
+	Spring,
+	Summer,
+	Autumn,
+}
+
 export enum TopoStatus {
 	Draft,
 	Submitted,

@@ -3,7 +3,7 @@
 
 // Used to define helper functions that only operate on one of the bitflags
 // Register new bitflags here
-export type Bitflag = Amenities | RockTypes | TopoTypes | TrackDanger | TrackStyle | HoldType | BodyPosition;
+export type Bitflag = Amenities | RockTypes | TopoTypes | WaypointTypes | TrackDanger | TrackPersonnality | TrackStyle | HoldType | BodyPosition;
 
 export const enum Amenities {
 	None = 0,
@@ -51,15 +51,29 @@ export const enum TopoTypes {
 	DeepWater = 1 << 3,
 }
 
-
-export type TrackSpec = TrackDanger | TrackStyle | HoldType | BodyPosition;
-
+export const enum WaypointTypes {
+	None = 0,
+	Toilets = 1 << 0,
+	Waterspot = 1 << 1,
+	Bins = 1 << 2,
+	PicnicArea = 1 << 3,
+	Shelter = 1 << 4,
+}
 
 export const enum TrackDanger {
 	None = 0,
-	BadReception = 1 << 0,
-	High = 1 << 1,
-	LooseRock = 1 << 2,
+	Engaged = 1 << 0,
+	BadReception = 1 << 1,
+	FallingRock = 1 << 2,
+}
+
+export type TrackSpec = TrackPersonnality | TrackStyle | HoldType | BodyPosition;
+
+export const enum TrackPersonnality {
+	None = 0,
+	Power = 1 << 0,
+	Resistance = 1 << 1,
+	Precision = 1 << 2,
 }
 
 export const enum TrackStyle {
