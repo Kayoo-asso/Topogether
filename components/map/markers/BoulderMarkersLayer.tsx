@@ -160,7 +160,7 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> =
 								f
 							);
 						},
-						[bp, anySelected, boulderOrder]
+						[bp, selectedItem.value, anySelected, boulderOrder]
 					)}
 				>
 					<VectorSource>

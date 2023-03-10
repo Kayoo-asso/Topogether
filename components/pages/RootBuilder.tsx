@@ -72,7 +72,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 		const topo = props.topoQuark();
 		useEffect(() => {
 			sortBoulderOrder(topo.sectors, topo.lonelyBoulders);
-		}, []);
+		}, [topo.sectors, topo.lonelyBoulders]);
 
 		const isEmptyStore = useSelectStore(s => s.isEmpty);
 		const flush = useSelectStore(s => s.flush);
@@ -216,7 +216,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 						Searchbar={SearchbarDesktop}
 						Filters={FiltersDesktop}
 					>
-						{tool && tool !== "SECTOR" &&
+						{tool && tool !== "SECTOR" && isEmptyStore() &&
 							<CreatingMarkersLayer 
 								onCreate={handleCreateNewMarker}
 							/>
@@ -224,9 +224,11 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 						<OnClickInteraction
 							selectableSector
 						/>
-						<DragInteraction 
-							topoQuark={props.topoQuark}
-						/>
+						{isEmptyStore() && 
+							<DragInteraction 
+								topoQuark={props.topoQuark}
+							/>
+						}
 						<ModifyInteraction 
 							topoQuark={props.topoQuark}
 						/>

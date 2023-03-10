@@ -1,6 +1,6 @@
 import React from "react";
 import { watchDependencies } from "helpers/quarky";
-import { Description, Name, TopoTypes, TrackSpec, gradeToLightGrade } from "types";
+import { Description, Grade, Name, TopoTypes, TrackSpec, gradeToLightGrade } from "types";
 import { toggleFlag } from "helpers/bitflags";
 import { SelectedBoulder, useSelectStore } from "components/store/selectStore";
 import { SpecSelector } from "components/molecules/form/SpecSelector";
@@ -12,9 +12,23 @@ import { useDeleteStore } from "components/store/deleteStore";
 import { ItemsHeaderButtons } from "../ItemsHeaderButtons";
 import { useDrawerStore } from "components/store/drawerStore";
 import { GradeSelector } from "components/molecules/drawer/GradeSelector";
-import { getBGGradeColorClass } from "helpers/gradeColors";
 import { useTopoType } from "helpers/hooks/TopoTypeProvider";
 import { TrackSlider } from "components/molecules/TrackSlider";
+
+const getBGGradeColorClass = (g: Grade | undefined) => {
+    if (!g) return "bg-grey-light";
+    const lightGrade = gradeToLightGrade(g);
+    switch (lightGrade) {
+        case 3: return "bg-grade-3"; break;
+        case 4: return "bg-grade-4"; break;
+        case 5: return "bg-grade-5"; break;
+        case 6: return "bg-grade-6"; break;
+        case 7: return "bg-grade-7"; break;
+        case 8: return "bg-grade-8"; break;
+        case 9: return "bg-grade-9"; break;
+        case 'P': return "bg-grey-light"; break;
+    }
+};
 
 interface TrackFormProps {
 	className?: string,

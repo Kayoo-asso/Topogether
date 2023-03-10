@@ -1,10 +1,9 @@
 import React from "react";
 import { ToolSelectorMobile } from "./ToolSelectorMobile";
-import { TopoTypes } from "types";
+import { Grade, TopoTypes, gradeToLightGrade } from "types";
 import { useDrawerStore } from "components/store/drawerStore";
 import { SelectedBoulder, useSelectStore } from "components/store/selectStore";
 import { useTopoType } from "helpers/hooks/TopoTypeProvider";
-import { getStrokeGradeColorClass } from "helpers/gradeColors";
 
 import Clear from "assets/icons/clear.svg";
 import Rewind from "assets/icons/rewind.svg";
@@ -15,6 +14,21 @@ import Hand from "assets/icons/hand.svg";
 import ClimbingShoe from "assets/icons/climbing-shoe.svg";
 import ForbiddenArea from "assets/icons/forbidden-area.svg";
 import Checked from "assets/icons/checked.svg";
+
+const getStrokeGradeColorClass = (g: Grade | undefined) => {
+	if (!g) return "stroke-grey-light";
+    const lightGrade = gradeToLightGrade(g);
+    switch (lightGrade) {
+        case 3: return "stroke-grade-3"; break;
+        case 4: return "stroke-grade-4"; break;
+        case 5: return "stroke-grade-5"; break;
+        case 6: return "stroke-grade-6"; break;
+        case 7: return "stroke-grade-7"; break;
+        case 8: return "stroke-grade-8"; break;
+        case 9: return "stroke-grade-9"; break;
+        case 'P': return "stroke-grey-light"; break;
+    }
+};
 
 interface ToolProps {
 	label: string,

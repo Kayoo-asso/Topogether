@@ -11,7 +11,23 @@ import { useBreakpoint } from "helpers/hooks/DeviceProvider";
 import { useModal } from "helpers/hooks/useModal";
 import { GradeCircle } from "components/atoms/GradeCircle";
 import { useDrawerStore } from "components/store/drawerStore";
-import { getTextGradeColorClass } from "helpers/gradeColors";
+
+const getTextGradeColorClass = (g: Grade | undefined) => {
+	if (!g) return "text-grey-light";
+	else {
+		const lightGrade = gradeToLightGrade(g);
+		switch (lightGrade) {
+			case 3: return "text-grade-3"; break;
+			case 4: return "text-grade-4"; break;
+			case 5: return "text-grade-5"; break;
+			case 6: return "text-grade-6"; break;
+			case 7: return "text-grade-7"; break;
+			case 8: return "text-grade-8"; break;
+			case 9: return "text-grade-9"; break;
+            case 'P': return "text-grey-light"; break;
+		}
+	}
+};
 
 interface TracksListBuilderProps {
 	onAddImage?: () => void;

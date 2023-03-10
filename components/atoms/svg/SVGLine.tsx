@@ -3,7 +3,35 @@ import { getCoordsInViewbox, getPathFromPoints } from "helpers/svg";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { Grade, gradeToLightGrade, Line } from "types";
 import { SVGPoint } from "./SVGPoint";
-import { getFillGradeColorClass, getStrokeGradeColorClass } from "helpers/gradeColors";
+
+const getFillGradeColorClass = (g: Grade | undefined) => {
+    if (!g) return "fill-grey-light";
+    const lightGrade = gradeToLightGrade(g);
+    switch (lightGrade) {
+        case 3: return "fill-grade-3";
+        case 4: return "fill-grade-4"; break;
+        case 5: return "fill-grade-5"; break;
+        case 6: return "fill-grade-6"; break;
+        case 7: return "fill-grade-7"; break;
+        case 8: return "fill-grade-8"; break;
+        case 9: return "fill-grade-9"; break;
+        case 'P': return "fill-grey-light"; break;
+    }
+};
+const getStrokeGradeColorClass = (g: Grade | undefined) => {
+	if (!g) return "stroke-grey-light";
+    const lightGrade = gradeToLightGrade(g);
+    switch (lightGrade) {
+        case 3: return "stroke-grade-3"; break;
+        case 4: return "stroke-grade-4"; break;
+        case 5: return "stroke-grade-5"; break;
+        case 6: return "stroke-grade-6"; break;
+        case 7: return "stroke-grade-7"; break;
+        case 8: return "stroke-grade-8"; break;
+        case 9: return "stroke-grade-9"; break;
+        case 'P': return "stroke-grey-light"; break;
+    }
+};
 
 interface SVGLineProps {
 	line: Quark<Line>;
@@ -109,9 +137,11 @@ export const SVGLine: React.FC<SVGLineProps> = watchDependencies(
 		return (
 			<>
 				<path
-					className={`fill-[none] ${getStrokeGradeColorClass(props.grade)} ${
-						phantom ? "z-10" : "z-30"
-					}${props.onClick ? " md:cursor-pointer" : ""}`}
+					className={`fill-[none] \
+						${getStrokeGradeColorClass(props.grade)} \
+						${phantom ? "z-10" : "z-30"} \
+						${props.onClick ? " md:cursor-pointer" : ""} \
+					`}
 					d={path}
 					strokeDasharray={phantom ? 100 : ''}
 					onClick={props.onClick}
@@ -158,11 +188,11 @@ export const SVGLine: React.FC<SVGLineProps> = watchDependencies(
 							cx={firstX}
 							cy={firstY}
 							r={firstPointSize}
-							className={`${getFillGradeColorClass(props.grade)} ${
-								phantom ? "z-20" : "z-40"
-							}${
-								((!eraser && props.onClick) || phantom) ? " md:cursor-pointer" : ""
-							}`}
+							className={` \
+								${getFillGradeColorClass(props.grade)} \
+								${phantom ? "z-20" : "z-40"} \
+								${((!eraser && props.onClick) || phantom) ? " md:cursor-pointer" : ""} \
+							`}
 							onClick={(e) => {
 								if (eraser) {
 									e.stopPropagation();

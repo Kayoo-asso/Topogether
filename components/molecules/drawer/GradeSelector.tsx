@@ -1,11 +1,25 @@
 import React, { useCallback } from "react";
-import { Grade } from "types";
+import { Grade, gradeToLightGrade } from "types";
 import Circle from "assets/icons/circle.svg";
 import { ValidateButton } from "components/atoms/buttons/ValidateButton";
 import { Portal } from "helpers/hooks/useModal";
 import { useDrawerStore } from "components/store/drawerStore";
 import { SelectedBoulder, useSelectStore } from "components/store/selectStore";
-import { getFillGradeColorClass } from "helpers/gradeColors";
+
+const getFillGradeColorClass = (g: Grade | undefined) => {
+    if (!g) return "fill-grey-light";
+    const lightGrade = gradeToLightGrade(g);
+    switch (lightGrade) {
+        case 3: return "fill-grade-3";
+        case 4: return "fill-grade-4"; break;
+        case 5: return "fill-grade-5"; break;
+        case 6: return "fill-grade-6"; break;
+        case 7: return "fill-grade-7"; break;
+        case 8: return "fill-grade-8"; break;
+        case 9: return "fill-grade-9"; break;
+        case 'P': return "fill-grey-light"; break;
+    }
+};
 
 interface GradeselectorProps {}
 

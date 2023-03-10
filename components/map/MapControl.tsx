@@ -69,10 +69,11 @@ export const MapControl = watchDependencies<Map, MapControlProps>(
 		const breakpoint = useBreakpoint();
 		const [map, setMap] = useState<Map | null>(null);
 		const { position } = usePosition();
-		const selectedItem = useSelectStore((s) => s.item);
-		const select = useSelectStore((s) => s.select);
-		const flush = useSelectStore((s) => s.flush);
-		const tool = useSelectStore((s) => s.tool);
+		const isEmptyStore = useSelectStore(s => s.isEmpty);
+		const selectedItem = useSelectStore(s => s.item);
+		const select = useSelectStore(s => s.select);
+		const flush = useSelectStore(s => s.flush);
+		const tool = useSelectStore(s => s.tool);
 
 		// We don't want to recenter the View after initial load, so we need to never change
 		// its `center` prop
@@ -90,7 +91,7 @@ export const MapControl = watchDependencies<Map, MapControlProps>(
 					const mapViewport = map.getTargetElement().children[0] as HTMLElement;
 					if (tool === 'DRAGMAP') mapViewport.style.cursor = 'move';
 					else mapViewport.style.cursor = '';
-					if (!tool && breakpoint === "desktop") {
+					if ((!tool || !isEmptyStore()) && breakpoint === "desktop") {
 						const hit = map.getFeaturesAtPixel(e.pixel).length > 0;
 						if (hit) {
 							map.getTargetElement().style.cursor = "pointer";

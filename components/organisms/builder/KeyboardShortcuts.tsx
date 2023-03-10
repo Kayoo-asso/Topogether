@@ -27,6 +27,7 @@ export const KeyboardShortcut: React.FC<KeyboardShortcutProps> = (props: Keyboar
 			if (e.code === "Escape") {
 				// TODO: change this, we first wish to cancel any ongoing action,
 				// then set the current tool to undefined
+				console.log(isDrawerOpen);
 				if (isDrawerOpen && drawerTool !== 'LINE_DRAWER') selectDrawerTool('LINE_DRAWER');
 				else if (mapTool) flush.tool();
 				else if (selectedItem.type === 'boulder' && selectedItem.selectedTrack) {
@@ -61,7 +62,7 @@ export const KeyboardShortcut: React.FC<KeyboardShortcutProps> = (props: Keyboar
 			window.removeEventListener("keydown", handleKeyDown);
 			window.removeEventListener("keyup", handleKeyUp);
 		};
-	}, [mapTool, tempCurrentTool, selectedItem, drawerTool]);
+	}, [mapTool, tempCurrentTool, selectedItem, drawerTool, isDrawerOpen]);
 
     return null;
 }

@@ -24,7 +24,7 @@ interface CreatingMarkersLayerProps {
 
 export const CreatingMarkersLayer: React.FC<CreatingMarkersLayerProps> = (props: CreatingMarkersLayerProps) => {
     const tool = useSelectStore(s => s.tool);
-    const device = useBreakpoint();
+    const bp = useBreakpoint();
     const pointerCoords = useMapPointerCoordinates(!!tool);
 
     const boulderOrder = useBoulderOrder(bo => bo.value);
@@ -51,12 +51,12 @@ export const CreatingMarkersLayer: React.FC<CreatingMarkersLayerProps> = (props:
                 id="creating"
                 style={useCallback(() => {
                     switch (tool) {
-                        case "PARKING": return parkingMarkerStyle(false, false, device, disappearZoom + 1); break;
-                        case "WAYPOINT": return waypointMarkerStyle(false, false, device, disappearZoom + 1); break;
-                        case 'ROCK': return boulderMarkerStyle(false, false, device, boulderOrder); break;
+                        case "PARKING": return parkingMarkerStyle(false, false, bp, disappearZoom + 1); break;
+                        case "WAYPOINT": return waypointMarkerStyle(false, false, bp, disappearZoom + 1); break;
+                        case 'ROCK': return boulderMarkerStyle(false, false, bp, boulderOrder); break;
                         case 'TOPO': return topoMarkerStyle(props.topoType!, false, false); break;
                     }
-                }, [tool, device, boulderOrder, props.topoType])}
+                }, [tool, bp, boulderOrder, props.topoType])}
             >
                 <VectorSource> 
                     {pointerCoords &&
