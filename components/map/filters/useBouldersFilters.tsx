@@ -5,7 +5,7 @@ import { SpecSelector } from "components/molecules/form/SpecSelector";
 import { hasSomeFlags } from "helpers/bitflags";
 import { Quark, useCreateDerivation } from "helpers/quarky";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Boulder, LightGrade, Topo, TrackDanger, TrackSpec, gradeToLightGrade } from "types";
+import { Boulder, LightGrade, Topo, TrackDanger, TrackPersonnality, TrackSpec, gradeToLightGrade } from "types";
 
 export interface BoulderFilterOptions {
 	spec: TrackSpec;
@@ -36,7 +36,7 @@ export function useBouldersFilters (topo: Topo): [
             .reduce((a, b) => a + b, 0);
     }, [topo.boulders]);
     const filtersDomain: BoulderFilterOptions = useMemo(() => ({
-        spec: TrackDanger.None,
+        spec: TrackPersonnality.None,
         tracksRange: [0, maxTracks()],
         gradeRange: [3, 9],
         mustSee: false,
@@ -84,7 +84,7 @@ export function useBouldersFilters (topo: Topo): [
             // - options.spec === TrackDanger.None means the user does not want to filter based on spec
             // - `maxGrade - minGrade` is 6 only if the range goes from grade 3 to grade 9, which always matches all tracks
             let hasGrade = maxGrade - minGrade === 6;
-            let hasSpec = filters.spec === TrackDanger.None;
+            let hasSpec = filters.spec === TrackPersonnality.None;
             if (!hasGrade || !hasSpec) {
                 for (const track of boulder.tracks) {
                     hasSpec =
@@ -101,7 +101,7 @@ export function useBouldersFilters (topo: Topo): [
     }, [filters]);
 
     // TODO: memoize that?
-    const isFilterEmpty = (filters.spec === TrackDanger.None && !filters.mustSee && filters.gradeRange[0] === 3 && filters.gradeRange[1] === 9 && filters.tracksRange[0] === 0 && filters.tracksRange[1] === maxTracks())
+    const isFilterEmpty = (filters.spec === TrackPersonnality.None && !filters.mustSee && filters.gradeRange[0] === 3 && filters.gradeRange[1] === 9 && filters.tracksRange[0] === 0 && filters.tracksRange[1] === maxTracks())
 
     const resetFilters = () => setFilters(filtersDomain);
 
