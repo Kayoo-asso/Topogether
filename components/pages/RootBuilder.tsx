@@ -216,7 +216,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 						Searchbar={SearchbarDesktop}
 						Filters={FiltersDesktop}
 					>
-						{tool && tool !== "SECTOR" && isEmptyStore() &&
+						{tool && tool !== "SECTOR" && //isEmptyStore() &&  Uncomment when bug with DragInteraction will be fixed
 							<CreatingMarkersLayer 
 								onCreate={handleCreateNewMarker}
 							/>
@@ -224,11 +224,9 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 						<OnClickInteraction
 							selectableSector
 						/>
-						{isEmptyStore() && 
-							<DragInteraction 
-								topoQuark={props.topoQuark}
-							/>
-						}
+						<DragInteraction 
+							topoQuark={props.topoQuark}
+						/>
 						<ModifyInteraction 
 							topoQuark={props.topoQuark}
 						/>
