@@ -14,8 +14,11 @@ import { disappearZoom, waypointMarkerStyle } from './WaypointMarkersLayer';
 import { boulderMarkerStyle } from './BoulderMarkersLayer';
 import { useBreakpoint } from 'helpers/hooks/DeviceProvider';
 import { useBoulderOrder } from 'components/store/boulderOrderStore';
+import { topoMarkerStyle } from './TopoMarkersLayer';
+import { TopoTypes } from 'types';
 
 interface CreatingMarkersLayerProps {
+    topoType?: TopoTypes; // Leave this for RootNew which does not have any TopoTypeContext
     onCreate?: (e: MapBrowserEvent<MouseEvent>) => void;
 }
 
@@ -51,8 +54,9 @@ export const CreatingMarkersLayer: React.FC<CreatingMarkersLayerProps> = (props:
                         case "PARKING": return parkingMarkerStyle(false, false, device, disappearZoom + 1); break;
                         case "WAYPOINT": return waypointMarkerStyle(false, false, device, disappearZoom + 1); break;
                         case 'ROCK': return boulderMarkerStyle(false, false, device, boulderOrder); break;
+                        case 'TOPO': return topoMarkerStyle(props.topoType!, false, false); break;
                     }
-                }, [tool, device, boulderOrder])}
+                }, [tool, device, boulderOrder, props.topoType])}
             >
                 <VectorSource> 
                     {pointerCoords &&
@@ -67,4 +71,4 @@ export const CreatingMarkersLayer: React.FC<CreatingMarkersLayerProps> = (props:
     )
 }
 
-CreatingMarkersLayer.displayName = "ParkingMarkersLayer";
+CreatingMarkersLayer.displayName = "CreatingMarkersLayer";

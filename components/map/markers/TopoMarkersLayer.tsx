@@ -30,13 +30,13 @@ export type TopoMarkerData = {
 };
 
 export const topoMarkerStyle = (
-	topo: LightTopo,
+	topoType: TopoTypes,
 	selected: boolean,
 	anySelected: boolean
 ) => {
 	const icon = new Icon({
 		opacity: anySelected ? (selected ? 1 : 0.4) : 1,
-		src: "/assets/icons/markers/topo/" + TopoTypeToColor(topo.type) + ".svg",
+		src: "/assets/icons/markers/topo/" + TopoTypeToColor(topoType) + ".svg",
 		scale: 0.8,
 	});
 	return new Style({
@@ -53,7 +53,7 @@ export const TopoMarkersLayer: React.FC<TopoMarkersLayerProps> =
 				(feature) => {
 					const { topo } = feature.get("data");
 					return topoMarkerStyle(
-						topo,
+						topo.type,
 						props.selectedTopo?.id === topo.id,
 						!!props.selectedTopo
 					);

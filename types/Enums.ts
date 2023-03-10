@@ -94,7 +94,7 @@ export const gradeToLightGrade = (grade?: Grade): LightGrade => {
 	return "P";
 };
 
-export type MapToolEnum = "ROCK" | "SECTOR" | "PARKING" | "WAYPOINT" | "DRAGMAP" | undefined;
+export type MapToolEnum = "ROCK" | "SECTOR" | "PARKING" | "WAYPOINT" | "DRAGMAP" | "TOPO" | undefined;
 
 export type DrawerToolEnum =
 	| "LINE_DRAWER"
