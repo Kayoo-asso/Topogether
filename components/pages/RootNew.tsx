@@ -176,17 +176,11 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies(
 								<div className="ktext-subtitle w-[95%] py-5 text-center text-white">
 									{bp === 'desktop' ? 'Cliquer sur' : 'toucher'} la carte pour placer le topo
 								</div>
-								<div className="mb-6 w-full h-[50vh] md:h-[55vh]">
+								<div className="mb-6 w-full h-[50vh] md:h-[55vh] bg-grey-light">
 									<MapControl 
 										ref={mapRef}
 										initialZoom={10}
 										Searchbar={SearchbarDesktop}
-										onUserMarkerClick={(pos) => {
-											if (pos) {
-												setLongitude(pos[0]);
-												setLatitude(pos[1]);
-											}
-										}}
 									>
 										<CreatingMarkersLayer 
 											topoType={type}
