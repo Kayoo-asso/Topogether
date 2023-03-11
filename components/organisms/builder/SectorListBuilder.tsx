@@ -4,7 +4,7 @@ import { Quark, watchDependencies } from "helpers/quarky";
 import { Boulder, Sector, Topo, UUID } from "types";
 import { useSession } from "helpers/services";
 import { staticUrl } from "helpers/constants";
-import { useSelectStore } from "components/pages/selectStore";
+import { useSelectStore } from "components/store/selectStore";
 import { ModalRenameSector } from "./ModalRenameSector";
 import { Map } from "ol";
 import { BoulderItemLeftbar } from "components/layouts/BoulderItemLeftbar";
@@ -35,11 +35,11 @@ import {
 import {
 	restrictToVerticalAxis,
 } from '@dnd-kit/modifiers';
+import { useBoulderOrder } from "components/store/boulderOrderStore";
 
 
 export interface SectorListBuilderProps {
 	topoQuark: Quark<Topo>;
-	boulderOrder: globalThis.Map<UUID, number>;
 	// if undefined: all boulders are displayed
 	bouldersToDisplay?: UUID[];
 	displayEmptySectors?: boolean;
@@ -70,6 +70,8 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> =
 		for (const id of topo.lonelyBoulders) {
 			lonelyQuarks.push(boulderQuarksMap.get(id)!);
 		}
+
+		const boulderOrder = useBoulderOrder(bo => bo.value);
 
 		// By default, all sectors are shown
 		// Thus, it's cheaper and easier to track the sectors we hide
@@ -231,7 +233,7 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> =
 															<BoulderItemLeftbar
 																key={boulder.id}
 															    boulder={boulderQuark}
-															    orderIndex={props.boulderOrder.get(boulder.id)!}
+															    orderIndex={boulderOrder.get(boulder.id)!}
 															    selected={!!(selectedBoulder && selectedBoulder.value().id === boulder.id)}
 															    displayed={displayedBoulders.has(boulder.id)}
 															    deletable
@@ -289,7 +291,7 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> =
 											<BoulderItemLeftbar
 												key={index}
 												boulder={boulderQuark}
-												orderIndex={props.boulderOrder.get(boulder.id)!}
+												orderIndex={boulderOrder.get(boulder.id)!}
 												selected={!!(selectedBoulder && selectedBoulder.value().id === boulder.id)}
 												displayed={displayedBoulders.has(boulder.id)}
 												deletable

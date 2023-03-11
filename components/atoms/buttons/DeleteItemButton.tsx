@@ -1,7 +1,7 @@
 import React from "react";
 import { RoundButton } from "./RoundButton";
-import { SelectedItem } from "components/pages/selectStore";
-import { useDeleteStore } from "components/pages/deleteStore";
+import { SelectedItem } from "components/store/selectStore";
+import { useDeleteStore } from "components/store/deleteStore";
 
 import BinIcon from "assets/icons/bin.svg";
 

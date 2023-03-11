@@ -2,7 +2,7 @@ import { api } from "helpers/services";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { LightTopo } from "types";
 import { findPlace, GeocodingFeature } from "helpers/map/geocodingMapbox";
-import { useSelectStore } from "components/pages/selectStore";
+import { useSelectStore } from "components/store/selectStore";
 import { useBreakpoint } from "helpers/hooks/DeviceProvider";
 import { usePosition } from "helpers/hooks/UserPositionProvider";
 import { TextInput } from "components/molecules/form/TextInput";

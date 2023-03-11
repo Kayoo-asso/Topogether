@@ -5,6 +5,7 @@ import { editTopo } from "helpers/quarkifyTopo";
 import { withRouting } from "helpers/serverStuff";
 import { decodeUUID } from "helpers/utils";
 import { RootBuilder } from "components/pages/RootBuilder";
+import { TopoTypeProvider } from "helpers/hooks/TopoTypeProvider";
 
 type BuilderProps = {
 	topo: TopoData;
@@ -36,9 +37,9 @@ export default withRouting<BuilderProps>({
 		// (ex: when the URL changes when the user selects a boulder)
 		const topoQuark = useMemo(() => editTopo(topo), []);
 		return (
-			<>
+			<TopoTypeProvider value={topoQuark().type}>
 				<RootBuilder topoQuark={topoQuark} />
-			</>
+			</TopoTypeProvider>
 		);
 	},
 });

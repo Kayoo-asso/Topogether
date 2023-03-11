@@ -17,7 +17,7 @@ export function useLayerLifecycle(id: string | undefined, layer: BaseLayer | und
 				return () => {
 					map.removeLayer(layer);
 					if (id) {
-						layers.set(id, undefined);
+						layers.unset(id);
 					}
 				};
 			}

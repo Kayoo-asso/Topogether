@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { QuarkArray, watchDependencies } from 'helpers/quarky';
+import { Quark, QuarkArray, watchDependencies } from 'helpers/quarky';
 import {
 	Point,
 	VectorLayer,
@@ -7,14 +7,14 @@ import {
 } from "components/openlayers";
 import { Icon, Style } from 'ol/style';
 import { Waypoint } from 'types';
-import { SelectedWaypoint, useSelectStore } from 'components/pages/selectStore';
+import { SelectedWaypoint, useSelectStore } from 'components/store/selectStore';
 import { fromLonLat } from 'ol/proj';
 import { useMapZoom } from 'helpers/hooks/useMapZoom';
 import { Breakpoint, useBreakpoint } from 'helpers/hooks/DeviceProvider';
 import { FeatureLike } from 'ol/Feature';
 
 interface WaypointMarkersLayerProps {
-    waypoints: QuarkArray<Waypoint>;
+    waypoints: Quark<Waypoint>[];
 }
 
 export const waypointMarkerStyle = (selected: boolean, anySelected: boolean, device: Breakpoint, mapZoom: number) => {
@@ -53,7 +53,7 @@ export const WaypointMarkersLayer: React.FC<WaypointMarkersLayerProps> = watchDe
                 }
             >
                 <VectorSource>
-                    {props.waypoints.quarks().map(wQuark => {
+                    {props.waypoints.map(wQuark => {
                         const w = wQuark();
                         return (
                             <Point

@@ -1,7 +1,7 @@
 import React from "react";
 import { Quark } from "helpers/quarky";
 import { Topo, UUID } from "types";
-import { useSelectStore } from "components/pages/selectStore";
+import { useSelectStore } from "components/store/selectStore";
 import { ContributorsList } from "./ContributorsList";
 import { Map } from "ol";
 import { SearchbarBouldersMobile } from "components/map/searchbar/SearchbarBoulders.mobile";
@@ -16,7 +16,6 @@ import { SlideoverLeftDesktop } from "components/atoms/overlays/SlideoverLeftDes
 
 type SlideoverLeftBuilderProps = {
     topo: Quark<Topo>;
-	boulderOrder: globalThis.Map<UUID, number>;
 	map: Map | null;
 	Filters: BouldersFiltersComponents;
 	onFilterReset: () => void;
@@ -34,7 +33,7 @@ export const SlideoverLeftBuilder: React.FC<SlideoverLeftBuilderProps> = (props:
             case 'ACCESS': return <AccessForm accesses={props.topo().accesses} />;
             case 'MANAGEMENT': return <ManagementForm managers={props.topo().managers} />;
 			case 'CONTRIBUTORS': return <ContributorsList contributors={props.topo().contributors} topoCreatorId={props.topo().creator?.id} />;
-			case 'SEARCHBAR': if (bp === 'mobile') return <SearchbarBouldersMobile topo={props.topo} boulderOrder={props.boulderOrder} map={props.map} />;
+			case 'SEARCHBAR': if (bp === 'mobile') return <SearchbarBouldersMobile topo={props.topo} map={props.map} />;
 			case 'FILTERS': if (bp === 'mobile') return <BouldersFiltersMobile Filters={props.Filters} onResetClick={props.onFilterReset} />;
 			default: return undefined;
         }

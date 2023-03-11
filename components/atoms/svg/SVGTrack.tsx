@@ -12,13 +12,13 @@ import { useBreakpoint } from "helpers/hooks/DeviceProvider";
 import { SVGLine } from "./SVGLine";
 import { SVGPoint } from "./SVGPoint";
 import { SVGArea } from "./SVGArea";
+import { useDrawerStore } from "components/store/drawerStore";
 
 interface SVGTrackProps {
 	track: Quark<Track>;
 	editable?: boolean;
 	vb: React.RefObject<SVGRectElement | null>;
 	highlighted?: boolean;
-	currentTool?: DrawerToolEnum;
 	imageId: UUID;
 	displayTrackDetails?: boolean;
 	displayTrackOrderIndexes?: boolean;
@@ -37,6 +37,8 @@ export const SVGTrack: React.FC<SVGTrackProps> = watchDependencies(
 		...props
 	}: SVGTrackProps) => {
 		const breakpoint = useBreakpoint();
+		const selectedTool = useDrawerStore(d => d.selectedTool);
+
 		const track = props.track();
 		const colorNumber = track.grade ? gradeToLightGrade(track.grade) : "grey";
 
@@ -57,7 +59,7 @@ export const SVGTrack: React.FC<SVGTrackProps> = watchDependencies(
 					editable={editable && highlighted}
 					vb={props.vb}
 					linePointSize={linePointSize}
-					eraser={props.currentTool === "ERASER"}
+					eraser={selectedTool === "ERASER"}
 					grade={track.grade}
 					phantom={!highlighted}
 					trackOrderIndex={track.index}
@@ -83,7 +85,7 @@ export const SVGTrack: React.FC<SVGTrackProps> = watchDependencies(
 							draggable={editable}
 							vb={props.vb}
 							size={handPointSize}
-							eraser={props.currentTool === "ERASER"}
+							eraser={selectedTool === "ERASER"}
 							onDrag={(pos) => {
 								if (editable) {
 									quarkLine?.set({
@@ -110,7 +112,7 @@ export const SVGTrack: React.FC<SVGTrackProps> = watchDependencies(
 							draggable={editable}
 							vb={props.vb}
 							size={handPointSize}
-							eraser={props.currentTool === "ERASER"}
+							eraser={selectedTool === "ERASER"}
 							onDrag={(pos) => {
 								if (editable) {
 									quarkLine?.set({
@@ -139,7 +141,7 @@ export const SVGTrack: React.FC<SVGTrackProps> = watchDependencies(
 							draggable={editable}
 							vb={props.vb}
 							size={footPointSize}
-							eraser={props.currentTool === "ERASER"}
+							eraser={selectedTool === "ERASER"}
 							onDrag={(pos) => {
 								if (editable) {
 									quarkLine?.set({
@@ -166,7 +168,7 @@ export const SVGTrack: React.FC<SVGTrackProps> = watchDependencies(
 							draggable={editable}
 							vb={props.vb}
 							size={footPointSize}
-							eraser={props.currentTool === "ERASER"}
+							eraser={selectedTool === "ERASER"}
 							onDrag={(pos) => {
 								if (editable) {
 									quarkLine?.set({
@@ -196,7 +198,7 @@ export const SVGTrack: React.FC<SVGTrackProps> = watchDependencies(
 							area={area}
 							editable={editable}
 							vb={props.vb}
-							eraser={props.currentTool === "ERASER"}
+							eraser={selectedTool === "ERASER"}
 							onDragStart={() => {
 								const area = document.querySelector("polyline#" + id);
 								if (area) {

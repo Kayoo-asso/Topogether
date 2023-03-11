@@ -9,8 +9,8 @@ import {
 } from "components/openlayers";
 import { FeatureLike } from "ol/Feature";
 import { Circle, Fill, Stroke, Style, Text } from "ol/style";
-import { GeoCoordinates, Sector, SectorData, Topo, UUID } from "types";
-import { SelectedSector, useSelectStore } from "components/pages/selectStore";
+import { GeoCoordinates, Sector, SectorData, Topo } from "types";
+import { SelectedSector, useSelectStore } from "components/store/selectStore";
 import { fromLonLat, toLonLat } from "ol/proj";
 import { MultiPoint, Polygon as PolygonType } from "ol/geom";
 import { createSector } from "helpers/builder";
@@ -18,10 +18,10 @@ import { ModalRenameSector } from "components/organisms/builder/ModalRenameSecto
 import { DrawEvent } from "ol/interaction/Draw";
 import CircleStyle from "ol/style/Circle";
 import { Coordinate } from "ol/coordinate";
+import { useBoulderOrder } from "components/store/boulderOrderStore";
 
 interface SectorAreaMarkersLayerProps {
 	topoQuark: Quark<Topo>;
-	boulderOrder: Map<UUID, number>;
 	creating?: boolean;
 }
 
@@ -142,6 +142,8 @@ export const SectorAreaMarkersLayer: React.FC<SectorAreaMarkersLayerProps> =
 			const sectors = props.topoQuark().sectors;
 			const flush = useSelectStore((s) => s.flush);
 
+			const boulderOrder = useBoulderOrder(bo => bo.value);
+
 			const [sectorToRename, setSectorToRename] = useState<Quark<Sector>>();
 
 			const handleDrawEnd = useCallback(
@@ -150,11 +152,11 @@ export const SectorAreaMarkersLayer: React.FC<SectorAreaMarkersLayerProps> =
 					const newSector = createSector(
 						props.topoQuark,
 						path,
-						props.boulderOrder
+						boulderOrder
 					);
 					setSectorToRename(() => newSector);
 				},
-				[props.topoQuark, props.boulderOrder]
+				[props.topoQuark, boulderOrder]
 			);
 
 			return (

@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import {
 	GeoCoordinates,
@@ -20,7 +20,7 @@ import {
 	createWaypoint,
 } from "helpers/builder";
 import { staticUrl } from "helpers/constants";
-import { sortBoulders, computeBuilderProgress } from "helpers/topo";
+import { computeBuilderProgress } from "helpers/topo";
 import { encodeUUID } from "helpers/utils";
 import {
 	SlideoverLeftBuilder,
@@ -31,7 +31,7 @@ import {
 import { BuilderProgressIndicator } from "components/organisms/builder/BuilderProgressIndicator";
 import { BuilderDropdown } from "components/organisms/builder/BuilderDropdown";
 import { BuilderModalDelete } from "components/organisms/builder/BuilderModalDelete";
-import { SelectedItem, useSelectStore } from "./selectStore";
+import { SelectedItem, useSelectStore } from "../store/selectStore";
 import { SyncUrl } from "components/organisms/SyncUrl";
 import { KeyboardShortcut } from "components/organisms/builder/KeyboardShortcuts";
 import { NetworkIndicator } from "components/atoms/NetworkIndicator";
@@ -54,6 +54,7 @@ import { DropdownOption } from "components/molecules/form/Dropdown";
 import { Flash } from "components/atoms/overlays/Flash";
 import { OnClickInteraction } from "components/map/markers/OnClickInteraction";
 import { ModifyInteraction } from "components/map/markers/ModifyInteraction";
+import { useBoulderOrder } from "components/store/boulderOrderStore";
 
 interface RootBuilderProps {
 	topoQuark: Quark<Topo>;
@@ -64,11 +65,14 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 		const router = useRouter();
 		const session = useSession()!;
 		const breakpoint = useBreakpoint();
+		const sortBoulderOrder = useBoulderOrder(bo => bo.sort);
 
 		const showLoader = useLoader();
 
 		const topo = props.topoQuark();
-		const boulderOrder = sortBoulders(topo.sectors, topo.lonelyBoulders)
+		useEffect(() => {
+			sortBoulderOrder(topo.sectors, topo.lonelyBoulders);
+		}, [topo.sectors, topo.lonelyBoulders]);
 
 		const isEmptyStore = useSelectStore(s => s.isEmpty);
 		const flush = useSelectStore(s => s.flush);
@@ -122,9 +126,17 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 			[props.topoQuark]
 		);
 
+		const SearchbarDesktop: React.FC = () =>
+			<SearchbarBouldersDesktop 
+				topo={props.topoQuark}
+				map={mapRef.current}
+			/>
+		const [Filters, filterBoulders, resetFilters, areFiltersEmpty] = useBouldersFilters(topo);
+		const FiltersDesktop: React.FC = () => <BouldersFiltersDesktop Filters={Filters} onResetClick={resetFilters} />;
+
 		const [flashOpen, setFlashOpen] = useState(false);
 		const handleCreateNewMarker = useCallback(
-			(e: MapBrowserEvent<any>, filtersEmpty) => {
+			(e: MapBrowserEvent<any>) => {
 				e.preventDefault(); e.stopPropagation();
 				if (!isEmptyStore()) {
 					flush.info();
@@ -135,7 +147,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 					const loc: GeoCoordinates = [lonlat[0], lonlat[1]];
 					switch (tool) {
 						case "ROCK":
-							if (!filtersEmpty) setFlashOpen(true);
+							if (!areFiltersEmpty) setFlashOpen(true);
 							createBoulder(props.topoQuark, loc);
 							break;
 						case "PARKING":
@@ -150,17 +162,8 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 					}
 				}
 			},
-			[topo, tool, createBoulder, createParking, createWaypoint, isEmptyStore()]
+			[topo, tool, areFiltersEmpty, createBoulder, createParking, createWaypoint, isEmptyStore()]
 		);
-
-		const SearchbarDesktop: React.FC = () =>
-			<SearchbarBouldersDesktop 
-				topo={props.topoQuark}
-				boulderOrder={boulderOrder}
-				map={mapRef.current}
-			/>
-		const [Filters, filterBoulders, resetFilters, areFiltersEmpty] = useBouldersFilters(topo);
-		const FiltersDesktop: React.FC = () => <BouldersFiltersDesktop Filters={Filters} onResetClick={resetFilters} />;
 
 		return (
 			<>
@@ -187,7 +190,6 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 				<div className="relative flex h-content flex-row md:h-contentPlusShell md:overflow-clip">
 					<LeftbarBuilderDesktop
 						topoQuark={props.topoQuark}
-						boulderOrder={boulderOrder}
 						map={mapRef.current}
 						onSubmit={showModalSubmitTopo}
 						activateSubmission={progress() === 100}
@@ -195,7 +197,6 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 
 					<SlideoverLeftBuilder
 						topo={props.topoQuark}
-						boulderOrder={boulderOrder}
 						map={mapRef.current}
 						Filters={Filters}
 						onFilterReset={resetFilters}
@@ -215,10 +216,9 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 						Searchbar={SearchbarDesktop}
 						Filters={FiltersDesktop}
 					>
-						{tool && tool !== "SECTOR" &&
+						{tool && tool !== "SECTOR" && //isEmptyStore() &&  Uncomment when bug with DragInteraction will be fixed
 							<CreatingMarkersLayer 
-								boulderOrder={boulderOrder}
-								onCreate={(e) => handleCreateNewMarker(e, areFiltersEmpty)}
+								onCreate={handleCreateNewMarker}
 							/>
 						}
 						<OnClickInteraction
@@ -226,27 +226,23 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 						/>
 						<DragInteraction 
 							topoQuark={props.topoQuark}
-							boulderOrder={boulderOrder}
 						/>
 						<ModifyInteraction 
 							topoQuark={props.topoQuark}
-							boulderOrder={boulderOrder}
 						/>
 
 						<SectorAreaMarkersLayer
 							topoQuark={props.topoQuark}
-							boulderOrder={boulderOrder}
 							creating={tool === "SECTOR"}
 						/>
 						<ParkingMarkersLayer 
-							parkings={topo.parkings}
+							parkings={topo.parkings.quarks().toArray()}
 						/>
 						<WaypointMarkersLayer 
-							waypoints={topo.waypoints}
+							waypoints={topo.waypoints.quarks().toArray()}
 						/>
 						<BoulderMarkersLayer 
 							boulders={filterBoulders(props.topoQuark().boulders.quarks())}
-							boulderOrder={boulderOrder}
 						/>
 					</MapControl>
 

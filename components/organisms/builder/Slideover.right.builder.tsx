@@ -3,14 +3,15 @@ import { Quark } from "helpers/quarky";
 import { Topo } from "types";
 import { BoulderBuilderContentMobile } from "./BoulderBuilderContent.mobile";
 import { BoulderBuilderContentDesktop } from "./BoulderBuilderContent.desktop";
-import { BuilderTrackSlideoverDesktop } from "./BuilderTrackSlideover.desktop";
 import { Drawer } from "../Drawer";
-import { useSelectStore } from "components/pages/selectStore";
+import { useSelectStore } from "components/store/selectStore";
 import { useBreakpoint } from "helpers/hooks/DeviceProvider";
 import { ParkingForm } from "../form/ParkingForm";
 import { WaypointForm } from "../form/WaypointForm";
 import { SlideoverMobile } from "components/atoms/overlays/SlideoverMobile";
 import { SlideoverRightDesktop } from "components/atoms/overlays/SlideoverRightDesktop";
+import { TrackForm } from "../form/TrackForm";
+import { useDrawerStore } from "components/store/drawerStore";
 
 type SlideoverRightBuilderProps = {
 	topo: Quark<Topo>;
@@ -19,13 +20,16 @@ type SlideoverRightBuilderProps = {
 export const SlideoverRightBuilder: React.FC<SlideoverRightBuilderProps> = (
 	props: SlideoverRightBuilderProps
 ) => {
-	const breakpoint = useBreakpoint();
+	const bp = useBreakpoint();
 	const [full, setFull] = useState(false);
 	const flush = useSelectStore(s => s.flush);
 	const item = useSelectStore(s => s.item);
+	const isTrackSelected = !!(item.type === 'boulder' && item.selectedTrack);
+	const isDrawerOpen = useDrawerStore(d => d.isDrawerOpen);
 
 	const onClose = () => {
-		if (breakpoint === 'mobile') flush.all();
+		if (bp === 'mobile') flush.all();
+		else if (isTrackSelected) flush.track();
 		else flush.item();
 	};
 
@@ -33,18 +37,19 @@ export const SlideoverRightBuilder: React.FC<SlideoverRightBuilderProps> = (
 		switch (item.type) {
 			case 'sector': return undefined;
 			case 'boulder': {
-				if (breakpoint === "mobile")	
-				return (
+				if (bp === "mobile") return (
 					<BoulderBuilderContentMobile
 						topo={props.topo}
 						full={full}
-					/>
-				);
-				return (
-					<BoulderBuilderContentDesktop
-						topo={props.topo}
-					/>
-				);
+					/>);
+				else {
+					if (isTrackSelected) return (<TrackForm />);
+					else return (
+						<BoulderBuilderContentDesktop
+							topo={props.topo}
+						/>
+					);
+				}
 			}
 			case 'parking': return (
 				<ParkingForm
@@ -58,11 +63,11 @@ export const SlideoverRightBuilder: React.FC<SlideoverRightBuilderProps> = (
 			);
 			default: return undefined;
 		}
-	}, [full, props.topo, breakpoint, item.type]);
+	}, [full, props.topo, bp, item.type, isTrackSelected]);
 
 	return (
 		<>
-			{breakpoint === "mobile" && item.type !== 'none' && (
+			{bp === "mobile" && item.type !== 'none' && (
 				<SlideoverMobile
 					open={item.type !== 'sector'}
 					persistent={item.type === 'boulder'}
@@ -74,22 +79,16 @@ export const SlideoverRightBuilder: React.FC<SlideoverRightBuilderProps> = (
 					</div>
 				</SlideoverMobile>
 			)}
-			{breakpoint !== "mobile" && item.type !== 'none' && (
+			{bp !== "mobile" && item.type !== 'none' && (
 				<>
 					<SlideoverRightDesktop
-						item={item.type === 'boulder' ? item.value() : undefined}
 						open={item.type !== 'sector'}
 						onClose={onClose}
 					>
-						<div className="h-full py-6">{getContent()}</div>
+						{getContent()}
 					</SlideoverRightDesktop>
 
-					{item.type === 'boulder' && item.selectedTrack && item.selectedImage &&
-						<>
-							<BuilderTrackSlideoverDesktop />
-							<Drawer />
-						</>
-					}
+					{isDrawerOpen && <Drawer /> }
 				</>
 			)}
 		</>

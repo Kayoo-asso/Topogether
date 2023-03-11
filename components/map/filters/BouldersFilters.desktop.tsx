@@ -1,5 +1,5 @@
 import React from "react";
-import { useSelectStore } from "components/pages/selectStore";
+import { useSelectStore } from "components/store/selectStore";
 import { BouldersFiltersComponents } from "./useBouldersFilters";
 
 import FilterIcon from "assets/icons/filter.svg";

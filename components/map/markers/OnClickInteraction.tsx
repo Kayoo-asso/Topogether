@@ -1,5 +1,5 @@
-import { useSelectStore } from "components/pages/selectStore";
-import { SelectedItem } from "components/pages/selectStore";
+import { useSelectStore } from "components/store/selectStore";
+import { SelectedItem } from "components/store/selectStore";
 import { watchDependencies } from "helpers/quarky";
 import { OnClickFeature } from "components/openlayers/extensions/OnClick";
 import { useMap } from "components/openlayers";

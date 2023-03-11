@@ -9,7 +9,6 @@ import { SectorList } from "components/molecules/SectorList";
 
 export interface SearchbarBouldersProps {
 	topo: Quark<Topo>;
-	boulderOrder: Map<UUID, number>;
     boulderResults: Boulder[];
 	map: OLMap | null;
 	onBoulderResultSelect?: (boulder: Boulder) => void;
@@ -27,7 +26,6 @@ export const SearchbarBouldersResults: React.FC<SearchbarBouldersProps> = (props
             {router.pathname.includes('topo') && 
                 <SectorList 
                     topoQuark={props.topo}
-                    boulderOrder={props.boulderOrder}
                     bouldersToDisplay={props.boulderResults.map(b => b.id)}
                     displayEmptySectors={props.boulderResults.length < 1}
                     expandOnClick={false}
@@ -37,7 +35,6 @@ export const SearchbarBouldersResults: React.FC<SearchbarBouldersProps> = (props
             {router.pathname.includes('builder') && 
                 <SectorListBuilder 
                     topoQuark={props.topo}
-                    boulderOrder={props.boulderOrder}
                     bouldersToDisplay={props.boulderResults.map(b => b.id)}
                     displayEmptySectors={props.boulderResults.length < 1}
                     expandOnClick={false}

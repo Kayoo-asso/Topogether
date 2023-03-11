@@ -17,6 +17,9 @@ import { Map } from "ol";
 import { useBreakpoint } from "helpers/hooks/DeviceProvider";
 import { usePosition } from "helpers/hooks/UserPositionProvider";
 import { TextInput } from "components/molecules/form/TextInput";
+import { fetchAltitude } from "helpers/map/fetchAltitude";
+import { CreatingMarkersLayer } from "components/map/markers/CreatingMarkersLayer";
+import { useSelectStore } from "components/store/selectStore";
 
 interface RootNewProps {
 	user: User;
@@ -24,12 +27,14 @@ interface RootNewProps {
 
 export const RootNew: React.FC<RootNewProps> = watchDependencies(
 	(props: RootNewProps) => {
-		const device = useBreakpoint();
+		const bp = useBreakpoint();
 		const router = useRouter();
 		const { position } = usePosition();
 		const mapRef = useRef<Map>(null);
+		const selectTool = useSelectStore(s => s.select.tool);
 
 		const [step, setStep] = useState(0);
+		const [loading, setLoading] = useState<boolean>(false);
 
 		const [name, setName] = useState<string>();
 		const [type, setType] = useState<TopoTypes>(TopoTypes.Boulder);
@@ -41,7 +46,6 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies(
 			position ? position[1] : undefined
 		);
 
-		const [loading, setLoading] = useState<boolean>(false);
 		const [nameError, setNameError] = useState<string>();
 		const [typeError, setTypeError] = useState<string>();
 		const [latitudeError, setLatitudeError] = useState<string>();
@@ -71,18 +75,23 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies(
 		};
 
 		const goStep1 = () => {
-			if (isValidStep0()) setStep(1);
+			if (isValidStep0()) {
+				setStep(1);
+				selectTool('TOPO');
+			}
 		};
 		const create = async () => {
 			if (!isValidStep0()) setStep(0);
 			else if (isValidStep1()) {
 				setLoading(true);
+				const altitude = await fetchAltitude(longitude!, latitude!);
 				const topoData: TopoCreate = {
 					id: uuid(),
 					creator: props.user,
 					name: name as StringBetween<1, 255>,
 					status: 0,
 					type: type,
+					altitude: altitude,
 					forbidden: false,
 					location: [longitude!, latitude!],
 					modified: new Date().toISOString(),
@@ -146,7 +155,7 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies(
 										bitflagNames={TopoTypesName}
 										value={type}
 										white
-										big={device === "desktop" ? true : false}
+										big={bp === "desktop" ? true : false}
 										justify={false}
 										error={typeError}
 										onChange={(val) => {
@@ -165,36 +174,28 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies(
 						{step === 1 && (
 							<>
 								<div className="ktext-subtitle w-[95%] py-5 text-center text-white">
-									Vous pouvez cliquer sur la carte puis glisser le marqueur pour
-									placer le topo.
+									{bp === 'desktop' ? 'Cliquer sur' : 'toucher'} la carte pour placer le topo
 								</div>
-								<div className="mb-6 w-full h-[50vh] md:h-[55vh]">
+								<div className="mb-6 w-full h-[50vh] md:h-[55vh] bg-grey-light">
 									<MapControl 
 										ref={mapRef}
 										initialZoom={10}
 										Searchbar={SearchbarDesktop}
-										onClick={(e) => {
-											if (e.coordinate) {
-												const lonlat = toLonLat(e.coordinate)
-												setLongitude(lonlat[0]);
-												setLatitude(lonlat[1]);
-											}
-										}}
-										onUserMarkerClick={(pos) => {
-											if (pos) {
-												setLongitude(pos[0]);
-												setLatitude(pos[1]);
-											}
-										}}
 									>
+										<CreatingMarkersLayer 
+											topoType={type}
+											onCreate={(e) => {
+												e.preventDefault(); e.stopPropagation();
+												if (e.coordinate) {
+													const lonlat = toLonLat(e.coordinate)
+													setLongitude(lonlat[0]);
+													setLatitude(lonlat[1]);
+												}
+											}}
+										/>
 										{latitude && longitude && (
 											<TopoMarkersLayer 
 												topos={[{ id: uuid(), type: type, location: [longitude, latitude] }]}
-												draggable
-												onDragEnd={(_, loc) => {
-													setLongitude(loc[0]);
-													setLatitude(loc[1]);
-												}}
 											/>
 										)}
 									</MapControl>
@@ -229,7 +230,7 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies(
 									</div>
 
 									<div className="flex w-full flex-row justify-center md:justify-between">
-										{device === "desktop" && (
+										{bp === "desktop" && (
 											<div
 												className="flex md:cursor-pointer items-center text-white"
 												onClick={() => setStep(0)}
@@ -250,7 +251,7 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies(
 											)}
 										</div>
 										{/* Just for alignment */}
-										{device === "desktop" && <div></div>}
+										{bp === "desktop" && <div></div>}
 									</div>
 								</div>
 							</>

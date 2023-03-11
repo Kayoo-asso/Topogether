@@ -2,7 +2,7 @@ import React, { useCallback, useState } from "react";
 import { ValidateButton } from "components/atoms/buttons/ValidateButton";
 import { listFlags, toggleFlag } from "helpers/bitflags";
 import { TrackSpec } from "types";
-import { BodyPositionName, HoldTypeName, TrackDangerName, TrackSpecName, TrackStyleName } from "types/BitflagNames";
+import { BodyPositionName, HoldTypeName, TrackPersonnalityName, TrackSpecName, TrackStyleName } from "types/BitflagNames";
 import { SelectListMultiple } from "./SelectListMultiple";
 import { TextInput } from "./TextInput";
 import { Portal } from "helpers/hooks/useModal";
@@ -17,6 +17,7 @@ export const SpecSelector: React.FC<SpecSelectorProps> = (
 ) => {
     const [specSelectorOpen, setSpecSelectorOpen] = useState(false);
     const [tempValue, setTempValue] = useState(props.value);
+    const nbSpec = listFlags(tempValue, TrackSpecName).length;
 
     const updateTempValue = useCallback((v: TrackSpec) => {
         setTempValue(tv => toggleFlag(tv, v))
@@ -32,9 +33,10 @@ export const SpecSelector: React.FC<SpecSelectorProps> = (
             <TextInput
                 id='spec-input'
                 label='Spécifications'	
-                value={tempValue && listFlags(tempValue, TrackSpecName).join(", ")}
+                value={nbSpec > 0 ? nbSpec + ' sélection' + (nbSpec > 1 ? 's' : '') : ''}
                 readOnly
                 pointer
+                boldValue
                 onClick={() => setSpecSelectorOpen(true)}
             />
 
@@ -47,9 +49,9 @@ export const SpecSelector: React.FC<SpecSelectorProps> = (
 
                     <div className="w-full flex-1 flex flex-col justify-center items-center text-grey-light ktext-title">
                         <div className="pb-3">
-                            <div className="text-center ktext-base-little border-second-light border-b py-1 text-second-light">Dangers</div>
+                            <div className="text-center ktext-base-little border-second-light border-b py-1 text-second-light">Personnalité</div>
                             <SelectListMultiple
-                                bitflagNames={TrackDangerName}
+                                bitflagNames={TrackPersonnalityName}
                                 value={tempValue}
                                 white
                                 onChange={updateTempValue}

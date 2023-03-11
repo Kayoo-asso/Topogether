@@ -5,8 +5,6 @@ interface SlideoverRightDesktopProps {
 	open?: boolean;
 	secondary?: boolean;
 	className?: string;
-	item?: Boulder | Topo | LightTopo;
-	closeButton?: boolean;
 	onClose?: () => void;
 	children?: ReactNode;
 }
@@ -43,18 +41,6 @@ SlideoverRightDesktopProps
 				transition: "transform 0.15s ease-in-out",
 			}}
 		>
-			<div className={`${props.closeButton ? '' : 'hidden'} flex h-[5%] flex-row justify-between pt-5 px-5`}>
-				<span
-					className={`ktext-base text-main md:cursor-pointer`}
-					onClick={() => {
-						setOffset(0);
-						window.setTimeout(() => props.onClose && props.onClose(), 150);
-					}}
-				>
-					Terminé
-				</span>
-			</div>
-
 			<div className="relative flex-1 overflow-auto">{props.children}</div>
 		</div>
 	);

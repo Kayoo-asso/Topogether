@@ -2,7 +2,7 @@ import React from "react";
 import { Topo, UUID } from "types";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { SectorListBuilder } from "./SectorListBuilder";
-import { useSelectStore } from "components/pages/selectStore";
+import { useSelectStore } from "components/store/selectStore";
 import { Map } from "ol";
 import { Button } from "components/atoms/buttons/Button";
 
@@ -21,7 +21,6 @@ export const SectorBuilderContentMobile: React.FC<SectorBuilderContentMobileProp
 				<div className="flex flex-col w-full px-5 pb-5 overflow-scroll md:hidden">
 					<SectorListBuilder
 						topoQuark={props.topoQuark}
-						boulderOrder={props.boulderOrder}
 						map={props.map}
 					/>
 

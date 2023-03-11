@@ -36,7 +36,7 @@ export default withRouting<DashboardProps>({
 		}};
 	},
 	render(props) {
-		const { isLoading, error, data } = useQuery({
+		const { data } = useQuery({
 			queryKey: ['dlTopos'],
 			queryFn: async () => {
 				const dlTopos = await downloads.getOfflineToposList();

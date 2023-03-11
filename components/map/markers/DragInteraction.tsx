@@ -1,6 +1,6 @@
-import { useSelectStore } from "components/pages/selectStore";
+import { useSelectStore } from "components/store/selectStore";
 import { useCallback } from "react";
-import { SelectedItem } from "components/pages/selectStore";
+import { SelectedItem } from "components/store/selectStore";
 import { GeoCoordinates, Topo, UUID } from "types";
 import { Drag } from "components/openlayers/interactions/Drag";
 import PointGeom from "ol/geom/Point";
@@ -11,17 +11,19 @@ import { Quark, watchDependencies } from "helpers/quarky";
 import { boulderMarkerStyle } from "./BoulderMarkersLayer";
 import { DragEvent } from "components/openlayers/extensions/DragInteraction";
 import { useBreakpoint } from "helpers/hooks/DeviceProvider";
+import { useBoulderOrder } from "components/store/boulderOrderStore";
 
 
 interface DragInteractionProps {
     topoQuark: Quark<Topo>;
-    boulderOrder: globalThis.Map<UUID, number>;
 }
 
 export const DragInteraction: React.FC<DragInteractionProps> = watchDependencies((props: DragInteractionProps) => {
     const selectedItem = useSelectStore((s) => s.item.value);
     const selectedType = useSelectStore((s) => s.item.type);
     const anySelected = !!(selectedType !== 'none' && selectedType !== 'sector');
+
+    const boulderOrder = useBoulderOrder(bo => bo.value);
 
     const bp = useBreakpoint();
 
@@ -42,18 +44,18 @@ export const DragInteraction: React.FC<DragInteractionProps> = watchDependencies
                     case 'boulder': 
                         item.value.set((b) => ({ ...b, location }));
                         boulderChanged(props.topoQuark, item.value().id, location);
-                        boulderMarkerStyle(true, anySelected, bp, props.boulderOrder, e.feature)
+                        boulderMarkerStyle(true, anySelected, bp, boulderOrder, e.feature)
                         break;
                     case 'parking': item.value.set((p) => ({ ...p, location })); break;
                     case 'waypoint': item.value.set((w) => ({ ...w, location })); break;
                     case 'sector':
                         const path = getPathFromFeature(e.feature);
                         item.value.set(s => ({ ...s, path: path }));
-                        sectorChanged(props.topoQuark, item.value().id, props.boulderOrder);
+                        sectorChanged(props.topoQuark, item.value().id, boulderOrder);
                         break;
                     default: return;
                 }
-            }, [props.topoQuark, props.boulderOrder, anySelected, bp])}
+            }, [props.topoQuark, boulderOrder, anySelected, bp])}
         />
     )
 });

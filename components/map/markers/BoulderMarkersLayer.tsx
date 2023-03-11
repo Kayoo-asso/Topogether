@@ -4,16 +4,15 @@ import { Point, VectorLayer, VectorSource } from "components/openlayers";
 import Feature, { FeatureLike } from "ol/Feature";
 import { Fill, Icon, Style, Text } from "ol/style";
 import { Boulder, UUID } from "types";
-import { SelectedBoulder, useSelectStore } from "components/pages/selectStore";
+import { SelectedBoulder, useSelectStore } from "components/store/selectStore";
 import { fromLonLat } from "ol/proj";
 import { Cluster } from "components/openlayers/sources/Cluster";
 import { Breakpoint, useBreakpoint } from "helpers/hooks/DeviceProvider";
 import { Geometry, Point as PointType } from "ol/geom";
-import { Collection } from "components/openlayers";
+import { useBoulderOrder } from "components/store/boulderOrderStore";
 
 interface BoulderMarkersLayerProps {
 	boulders: Quark<Boulder>[];
-	boulderOrder: globalThis.Map<UUID, number>;
 }
 
 export const boulderMarkerStyle = (
@@ -100,6 +99,8 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> =
 			selectedType !== "none" && selectedType !== "sector"
 		);
 
+		const boulderOrder = useBoulderOrder(bo => bo.value);
+
 		const bp = useBreakpoint();
 
 		return (
@@ -155,11 +156,11 @@ export const BoulderMarkersLayer: React.FC<BoulderMarkersLayerProps> =
 								selected,
 								anySelected,
 								bp,
-								props.boulderOrder,
+								boulderOrder,
 								f
 							);
 						},
-						[bp, anySelected, props.boulderOrder]
+						[bp, selectedItem.value, anySelected, boulderOrder]
 					)}
 				>
 					<VectorSource>

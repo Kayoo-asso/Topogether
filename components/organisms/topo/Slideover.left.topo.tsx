@@ -1,7 +1,7 @@
 import React from "react";
 import { Quark } from "helpers/quarky";
 import { Topo, UUID } from "types";
-import { useSelectStore } from "components/pages/selectStore";
+import { useSelectStore } from "components/store/selectStore";
 import { InfoContent } from "./InfoContent";
 import { AccessContent } from "./AccessContent";
 import { ManagementContent } from "./ManagementContent";
@@ -15,7 +15,6 @@ import { SlideoverLeftDesktop } from "components/atoms/overlays/SlideoverLeftDes
 
 type SlideoverLeftTopoProps = {
     topo: Quark<Topo>;
-	boulderOrder: globalThis.Map<UUID, number>;
 	map: Map | null;
 	Filters: BouldersFiltersComponents;
 	onFilterReset: () => void;
@@ -32,7 +31,7 @@ export const SlideoverLeftTopo: React.FC<SlideoverLeftTopoProps> = (props: Slide
             case 'INFO': return <InfoContent topo={props.topo} />;
             case 'ACCESS': return <AccessContent accesses={props.topo().accesses} />;
             case 'MANAGEMENT': return <ManagementContent managers={props.topo().managers} />;
-			case 'SEARCHBAR': return <SearchbarBouldersMobile topo={props.topo} boulderOrder={props.boulderOrder} map={props.map} />;
+			case 'SEARCHBAR': return <SearchbarBouldersMobile topo={props.topo} map={props.map} />;
 			case 'FILTERS': return <BouldersFiltersMobile Filters={props.Filters} onResetClick={props.onFilterReset}  />;
 			default: return undefined;
         }

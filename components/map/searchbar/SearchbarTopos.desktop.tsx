@@ -2,7 +2,7 @@ import React from "react";
 import { Map } from "ol";
 import { SearchbarToposResults } from "./SearchbarToposResults";
 import { useToposSearchbar } from "./useToposSearchbar";
-import { useSelectStore } from "components/pages/selectStore";
+import { useSelectStore } from "components/store/selectStore";
 
 export interface SearchbarToposDesktopProps {
 	map: Map | null;

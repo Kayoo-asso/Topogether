@@ -70,9 +70,10 @@ export const GradeCircle: React.FC<GradeCircleProps> = ({
 			tabIndex={0}
 		>
 			<span
-				className={`ktext-subtitle${size === "little" ? " text-xs" : ""}${
-					(props.onClick && bp === 'desktop') ? " cursor-pointer" : ""
-				}`}
+				className={`ktext-base-little 
+					${size === 'little' ? 'text-xxs' : 'text-xs'}
+					${(props.onClick && bp === 'desktop') ? " cursor-pointer" : ""}
+				`}
 			>
 				{content}
 			</span>

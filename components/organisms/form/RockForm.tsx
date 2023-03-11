@@ -1,18 +1,20 @@
 import React, { useCallback } from "react";
 import { Quark, watchDependencies } from "helpers/quarky";
-import { GeoCoordinates, Name, Topo } from "types";
+import { GeoCoordinates, Name, Topo, TopoTypes } from "types";
 import { boulderChanged } from "helpers/builder";
-import { SelectedBoulder, useSelectStore } from "components/pages/selectStore";
+import { SelectedBoulder, useSelectStore } from "components/store/selectStore";
 import { TextInput } from "components/molecules/form/TextInput";
 import { Checkbox } from "components/atoms/Checkbox";
+import { useTopoType } from "helpers/hooks/TopoTypeProvider";
 
-interface BoulderFormProps {
+interface RockFormProps {
 	topo: Quark<Topo>;
 	className?: string;
 }
 
-export const BoulderForm: React.FC<BoulderFormProps> = watchDependencies(
-	(props: BoulderFormProps) => {
+export const RockForm: React.FC<RockFormProps> = watchDependencies(
+	(props: RockFormProps) => {
+		const topoType = useTopoType();
 		const selectedBoulder = useSelectStore(s => s.item as SelectedBoulder);
 		const boulder = selectedBoulder.value();
 
@@ -21,9 +23,10 @@ export const BoulderForm: React.FC<BoulderFormProps> = watchDependencies(
 				className={"flex flex-col gap-6 " + (props.className ? props.className : "")}
 				onClick={(e) => e.stopPropagation()}
 			>
+				<div className='ktext-label font-semibold'>Informations générales</div>
 				<TextInput
-					id="boulder-name"
-					label="Nom du bloc"
+					id="rock-name"
+					label='Nom du caillou'
 					value={boulder.name}
 					onChange={useCallback((e) => {
 						selectedBoulder.value.set({
@@ -35,7 +38,7 @@ export const BoulderForm: React.FC<BoulderFormProps> = watchDependencies(
 
 				<div className="flex flex-row gap-3">
 					<TextInput
-						id="boulder-latitude"
+						id="rock-latitude"
 						label="Latitude"
 						type="number"
 						value={boulder.location[1]}
@@ -52,7 +55,7 @@ export const BoulderForm: React.FC<BoulderFormProps> = watchDependencies(
 						}, [selectedBoulder, boulder, boulderChanged, props.topo])}
 					/>
 					<TextInput
-						id="boulder-longitude"
+						id="rock-longitude"
 						label="Longitude"
 						type="number"
 						value={boulder.location[0]}
@@ -73,6 +76,7 @@ export const BoulderForm: React.FC<BoulderFormProps> = watchDependencies(
 				<div className="flex flex-col gap-3">
 					<Checkbox
 						label="High Ball"
+						className={topoType === TopoTypes.Boulder ? ''  : 'hidden'}
 						checked={boulder.isHighball}
 						onClick={useCallback((checked) =>
 							selectedBoulder.value.set({
@@ -93,6 +97,7 @@ export const BoulderForm: React.FC<BoulderFormProps> = watchDependencies(
 					/>
 					<Checkbox
 						label="Descente dangereuse"
+						className={topoType === TopoTypes.Boulder ? ''  : 'hidden'}
 						checked={boulder.dangerousDescent}
 						onClick={useCallback((checked) =>
 							selectedBoulder.value.set({
@@ -107,4 +112,4 @@ export const BoulderForm: React.FC<BoulderFormProps> = watchDependencies(
 	}
 );
 
-BoulderForm.displayName = "BoulderForm";
+RockForm.displayName = "RockForm";

@@ -30,6 +30,13 @@ export enum Orientation {
 
 export type Rating = 1 | 2 | 3 | 4 | 5;
 
+export enum Seasons {
+	Winter,
+	Spring,
+	Summer,
+	Autumn,
+}
+
 export enum TopoStatus {
 	Draft,
 	Submitted,
@@ -71,6 +78,7 @@ export const grades = [
 	"9b+",
 	"9c",
 	"9c+",
+	'P'
 ] as const;
 
 export const lightGrades = [3, 4, 5, 6, 7, 8, 9, "P"] as const; //"P" is for Project (the default grade, when it has not been settle yet)
@@ -86,7 +94,7 @@ export const gradeToLightGrade = (grade?: Grade): LightGrade => {
 	return "P";
 };
 
-export type MapToolEnum = "ROCK" | "SECTOR" | "PARKING" | "WAYPOINT" | undefined;
+export type MapToolEnum = "ROCK" | "SECTOR" | "PARKING" | "WAYPOINT" | "DRAGMAP" | "TOPO" | undefined;
 
 export type DrawerToolEnum =
 	| "LINE_DRAWER"

@@ -2,10 +2,10 @@ import React, { useCallback, useEffect, useState } from "react";
 import { Map as BaseMap, View, TileLayer, XYZ } from "components/openlayers";
 import Map from "ol/Map";
 import { fromLonLat } from "ol/proj";
-import { GeoCoordinates, Position, Sector, Topo } from "types";
+import { GeoCoordinates, Position, Topo } from "types";
 import { Quark, watchDependencies } from "helpers/quarky";
 import { setReactRef } from "helpers/utils";
-import { useSelectStore } from "components/pages/selectStore";
+import { useSelectStore } from "components/store/selectStore";
 import { handleNewPhoto } from "helpers/handleNewPhoto";
 import { useSession } from "helpers/services";
 import { MapToolSelector } from "./MapToolSelector";
@@ -15,7 +15,6 @@ import { MapBrowserEvent } from "ol";
 import { Attribution } from "ol/control";
 import { isEmpty } from "ol/extent";
 import { fontainebleauLocation } from "helpers/constants";
-import { OnClickFeature } from "components/openlayers/extensions/OnClick";
 import { CenterButton } from "./CenterButton";
 import { useRouter } from "next/router";
 import { SearchButton } from "./searchbar/SearchButton";
@@ -24,9 +23,7 @@ import { useBreakpoint } from "helpers/hooks/DeviceProvider";
 import { usePosition } from "helpers/hooks/UserPositionProvider";
 import { SatelliteButton } from "components/atoms/buttons/SatelliteButton";
 import { ImageInput } from "components/molecules/form/ImageInput";
-import { DeleteButton } from "components/atoms/buttons/DeleteButton";
 import { DEFAULT_EXTENT_BUFFER, getTopoExtent } from "helpers/map/getExtent";
-import { ValidateButton } from "components/atoms/buttons/ValidateButton";
 import { DeleteItemButton } from "components/atoms/buttons/DeleteItemButton";
 
 type MapControlProps = React.PropsWithChildren<
@@ -72,10 +69,11 @@ export const MapControl = watchDependencies<Map, MapControlProps>(
 		const breakpoint = useBreakpoint();
 		const [map, setMap] = useState<Map | null>(null);
 		const { position } = usePosition();
-		const selectedItem = useSelectStore((s) => s.item);
-		const select = useSelectStore((s) => s.select);
-		const flush = useSelectStore((s) => s.flush);
-		const tool = useSelectStore((s) => s.tool);
+		const isEmptyStore = useSelectStore(s => s.isEmpty);
+		const selectedItem = useSelectStore(s => s.item);
+		const select = useSelectStore(s => s.select);
+		const flush = useSelectStore(s => s.flush);
+		const tool = useSelectStore(s => s.tool);
 
 		// We don't want to recenter the View after initial load, so we need to never change
 		// its `center` prop
@@ -89,17 +87,23 @@ export const MapControl = watchDependencies<Map, MapControlProps>(
 
 		useEffect(() => {
 			const determinePointer = (e: MapBrowserEvent<PointerEvent>) => {
-				if (!map || tool || breakpoint !== "desktop") return;
-				const hit = map.getFeaturesAtPixel(e.pixel).length > 0;
-				if (hit) {
-					map.getTargetElement().style.cursor = "pointer";
-				} else {
-					map.getTargetElement().style.cursor = "";
+				if (map) {
+					const mapViewport = map.getTargetElement().children[0] as HTMLElement;
+					if (tool === 'DRAGMAP') mapViewport.style.cursor = 'move';
+					else mapViewport.style.cursor = '';
+					if ((!tool || !isEmptyStore()) && breakpoint === "desktop") {
+						const hit = map.getFeaturesAtPixel(e.pixel).length > 0;
+						if (hit) {
+							map.getTargetElement().style.cursor = "pointer";
+						} else {
+							map.getTargetElement().style.cursor = "";
+						}
+					}
 				}
 			};
 			map?.on("pointermove", determinePointer);
 			return () => map?.un("pointermove", determinePointer);
-		}, [map, tool]);
+		}, [map, tool, breakpoint]);
 
 		// Initial extension / bounding
 		useEffect(() => {

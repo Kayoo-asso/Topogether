@@ -1,41 +1,50 @@
 import React, { useCallback } from "react";
-import { gradeToLightGrade } from "types";
-import { watchDependencies } from "helpers/quarky";
+import { Boulder, Grade, Track, gradeToLightGrade } from "types";
+import { Quark, watchDependencies } from "helpers/quarky";
 import { useSession } from "helpers/services";
 import DrawIcon from "assets/icons/draw.svg";
 import { createTrack } from "helpers/builder";
 import { staticUrl } from "helpers/constants";
 import { TrackForm } from "../form/TrackForm";
-import { SelectedBoulder, useSelectStore } from "components/pages/selectStore";
+import { SelectedBoulder, useSelectStore } from "components/store/selectStore";
 import { useBreakpoint } from "helpers/hooks/DeviceProvider";
 import { useModal } from "helpers/hooks/useModal";
 import { GradeCircle } from "components/atoms/GradeCircle";
+import { useDrawerStore } from "components/store/drawerStore";
+
+const getTextGradeColorClass = (g: Grade | undefined) => {
+	if (!g) return "text-grey-light";
+	else {
+		const lightGrade = gradeToLightGrade(g);
+		switch (lightGrade) {
+			case 3: return "text-grade-3"; break;
+			case 4: return "text-grade-4"; break;
+			case 5: return "text-grade-5"; break;
+			case 6: return "text-grade-6"; break;
+			case 7: return "text-grade-7"; break;
+			case 8: return "text-grade-8"; break;
+			case 9: return "text-grade-9"; break;
+            case 'P': return "text-grey-light"; break;
+		}
+	}
+};
 
 interface TracksListBuilderProps {
-	onDrawButtonClick?: () => void;
-	onCreateTrack?: () => void;
 	onAddImage?: () => void;
 }
-
-const gradeColors = {
-	3: "text-grade-3",
-	4: "text-grade-4",
-	5: "text-grade-5",
-	6: "text-grade-6",
-	7: "text-grade-7",
-	8: "text-grade-8",
-	9: "text-grade-9",
-	P: "border-grey-light bg-grey-light text-white",
-};
 
 export const TracksListBuilder: React.FC<TracksListBuilderProps> =
 	watchDependencies((props: TracksListBuilderProps) => {
 		const session = useSession();
 		if (!session) return null;
-		const breakpoint = useBreakpoint();
+		const bp = useBreakpoint();
+
+		const openDrawer = useDrawerStore(d => d.openDrawer);
+		const openGradeSelector = useDrawerStore(d => d.openGradeSelector);
+		const selectTool = useDrawerStore(d => d.selectTool);
 		
 		const select = useSelectStore(s => s.select);
-		const flushTrack = useSelectStore(s => s.flush.track);
+		const flush = useSelectStore(s => s.flush);
 		const selectedBoulder = useSelectStore(s => s.item as SelectedBoulder);
 		const selectedTrack = selectedBoulder.selectedTrack;
 
@@ -45,14 +54,14 @@ export const TracksListBuilder: React.FC<TracksListBuilderProps> =
 			.toArray()
 			.sort((t1, t2) => t1().index - t2().index);
 
-		const toggleSelectedTrack = useCallback(
-			(trackQuark) => {
-				const track = trackQuark();
-				if (selectedTrack && selectedTrack().id === track.id) flushTrack();
-				else select.track(trackQuark, selectedBoulder.value);
-			},
-			[selectedTrack, boulder, select, flushTrack]
-		);
+		const selectTrack = (tQuark: Quark<Track>, bQuark: Quark<Boulder>, sTrack?: Quark<Track>) => {
+			if (sTrack && sTrack().id === tQuark().id) flush.track();
+			else select.track(tQuark, bQuark);
+			if (bp === 'desktop') {
+				selectTool('LINE_DRAWER');
+				openDrawer();
+			}
+		}
 
 		const [ModalAddImage, showModalAddImage] = useModal();
 
@@ -71,19 +80,20 @@ export const TracksListBuilder: React.FC<TracksListBuilderProps> =
 										selectedTrack().id !== track.id ? 
 										" opacity-40" : "")
 								}
-								onClick={() => toggleSelectedTrack(trackQuark)}
+								onClick={() => selectTrack(trackQuark, selectedBoulder.value, selectedTrack)}
+
 							>
 								<div className="flex w-full flex-row items-center">
 									<GradeCircle
 										grade={grade}
 										className="md:cursor-pointer"
 										content={(track.index + 1).toString()}
-										onClick={() => toggleSelectedTrack(trackQuark)}
+										onClick={() => selectTrack(trackQuark, selectedBoulder.value,  selectedTrack)}
 									/>
 
 									{track.grade && (
 										<div
-											className={`ktext-subtitle ml-3 text-right ${gradeColors[grade]}`}
+											className={`ktext-subtitle ml-3 text-right ${getTextGradeColorClass(grade.toString() as Grade)}`}
 										>
 											{track.grade}
 										</div>
@@ -98,19 +108,19 @@ export const TracksListBuilder: React.FC<TracksListBuilderProps> =
 										)}
 									</div>
 
-									{props.onDrawButtonClick && (
+									<div className='md:hidden'>
 										<button
 											onClick={(e) => {
 												e.stopPropagation();
 												select.track(trackQuark, selectedBoulder.value);
-												props.onDrawButtonClick!();
+												openDrawer();
 											}}
 										>
 											<DrawIcon className="h-6 w-6 stroke-main" />
 										</button>
-									)}
+									</div>
 								</div>
-								{selectedTrack && selectedTrack().id === track.id && breakpoint === "mobile" && (
+								{selectedTrack && selectedTrack().id === track.id && bp === "mobile" && (
 									<TrackForm className="mt-8" />
 								)}
 							</div>
@@ -127,12 +137,14 @@ export const TracksListBuilder: React.FC<TracksListBuilderProps> =
 						onClick={() => {
 							if (boulder.images.length > 0) {
 								select.track(createTrack(boulder, session!.id), selectedBoulder.value);
-								if (props.onCreateTrack) props.onCreateTrack();
+								openGradeSelector();
+								openDrawer();
+								
 							} else showModalAddImage();
 						}}
 					>
 						<span className="ktext-subtitle ml-2 mr-5 text-xl">+</span>{" "}
-						<span className="ktext-subtitle">Nouveau passage</span>
+						<span className="ktext-subtitle">Nouvelle voie</span>
 					</div>
 				</div>
 

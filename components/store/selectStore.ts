@@ -92,7 +92,7 @@ export const useSelectStore = create<SelectStore>()((set, get) => ({
 					if (s.item.value === b) return { item: { ...s.item, selectedTrack: t, selectedImage: getImageFromTrack(s.item.value(), t()) } }
 					else return { item: { type: 'boulder', value: b, selectedTrack: t, selectedImage: getImageFromTrack(s.item.value(), t()) } }
 				}
-				else return { item: { ...s.item, selectedTrack: t } }
+				else return { item: { ...s.item, selectedTrack: t, selectedImage: getImageFromTrack(s.item.value(), t()) } }
 			}
 			else {
 				if (b) return { item: { type: 'boulder', value: b, selectedTrack: t, selectedImage: getImageFromTrack(b(), t()) } }
@@ -124,5 +124,5 @@ export const useSelectStore = create<SelectStore>()((set, get) => ({
 }));
 
 const getImageFromTrack = (b: Boulder, t: Track) => {
-	return b.images.find((i) => i.id === t.lines.at(0)?.imageId) || (b.images.length > 0 ? b.images[0] : undefined)
+	return b.images.find((i) => i.id === t.lines.at(0)?.imageId) || (b.images.length === 0 ? b.images[0] : undefined)
 }

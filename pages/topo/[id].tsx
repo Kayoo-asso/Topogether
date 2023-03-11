@@ -6,6 +6,7 @@ import { editTopo } from "helpers/quarkifyTopo";
 import { decodeUUID } from "helpers/utils";
 import { withRouting } from "helpers/serverStuff";
 import { useMemo } from "react";
+import { TopoTypeProvider } from "helpers/hooks/TopoTypeProvider";
 
 type TopoProps = {
 	topo: TopoData;
@@ -48,6 +49,10 @@ export default withRouting<TopoProps>({
 		}
 
 		const topoQuark = useMemo(() => editTopo(topo), []);
-		return <RootTopo topoQuark={topoQuark} />;
+		return (
+			<TopoTypeProvider value={topoQuark().type}>
+				<RootTopo topoQuark={topoQuark} />
+			</TopoTypeProvider>
+		);
 	},
 });

@@ -1,5 +1,5 @@
 import React from "react";
-import { useSelectStore } from "components/pages/selectStore";
+import { useSelectStore } from "components/store/selectStore";
 import { RoundButton } from "components/atoms/buttons/RoundButton";
 import { useBreakpoint } from "helpers/hooks/DeviceProvider";
 

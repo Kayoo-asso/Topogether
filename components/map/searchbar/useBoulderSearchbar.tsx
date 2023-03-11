@@ -1,5 +1,5 @@
 import { TextInput } from "components/molecules/form/TextInput";
-import { useSelectStore } from "components/pages/selectStore";
+import { useSelectStore } from "components/store/selectStore";
 import { useBreakpoint } from "helpers/hooks/DeviceProvider";
 import { Quark } from "helpers/quarky";
 import { useCallback, useEffect, useRef, useState } from "react";

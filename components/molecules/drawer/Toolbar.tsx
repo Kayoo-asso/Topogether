@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 import { ToolSelectorMobile } from "./ToolSelectorMobile";
-import { DrawerToolEnum, Grade, gradeToLightGrade } from "types";
-import { getLightGradeColorClass, GradeSelector } from "./GradeSelector";
+import { Grade, TopoTypes, gradeToLightGrade } from "types";
+import { useDrawerStore } from "components/store/drawerStore";
+import { SelectedBoulder, useSelectStore } from "components/store/selectStore";
+import { useTopoType } from "helpers/hooks/TopoTypeProvider";
 
 import Clear from "assets/icons/clear.svg";
 import Rewind from "assets/icons/rewind.svg";
@@ -12,149 +14,188 @@ import Hand from "assets/icons/hand.svg";
 import ClimbingShoe from "assets/icons/climbing-shoe.svg";
 import ForbiddenArea from "assets/icons/forbidden-area.svg";
 import Checked from "assets/icons/checked.svg";
-import Circle from "assets/icons/circle.svg";
 
-interface ToolbarProps {
-	selectedTool: DrawerToolEnum;
-	displayOtherTracks: boolean;
-	grade?: Grade;
-	onToolSelect: (tool: DrawerToolEnum) => void;
-	onGradeSelect: (grade?: Grade) => void;
-	onClear: () => void;
-	onRewind: () => void;
-	onOtherTracks: () => void;
-	onValidate?: () => void;
-}
-
-const getStrokeColorClass = (grade: Grade | undefined) => {
-	if (!grade) return "stroke-grey-light";
-	else {
-		const lightGrade = gradeToLightGrade(grade);
-		switch (lightGrade) {
-			case 3:
-				return "stroke-grade-3";
-			case 4:
-				return "stroke-grade-4";
-			case 5:
-				return "stroke-grade-5";
-			case 6:
-				return "stroke-grade-6";
-			case 7:
-				return "stroke-grade-7";
-			case 8:
-				return "stroke-grade-8";
-			case 9:
-				return "stroke-grade-9";
-		}
-	}
+const getStrokeGradeColorClass = (g: Grade | undefined) => {
+	if (!g) return "stroke-grey-light";
+    const lightGrade = gradeToLightGrade(g);
+    switch (lightGrade) {
+        case 3: return "stroke-grade-3"; break;
+        case 4: return "stroke-grade-4"; break;
+        case 5: return "stroke-grade-5"; break;
+        case 6: return "stroke-grade-6"; break;
+        case 7: return "stroke-grade-7"; break;
+        case 8: return "stroke-grade-8"; break;
+        case 9: return "stroke-grade-9"; break;
+        case 'P': return "stroke-grey-light"; break;
+    }
 };
 
-export const Toolbar: React.FC<ToolbarProps> = ({
-	selectedTool = "LINE_DRAWER",
-	...props
-}: ToolbarProps) => {
-	const [gradeSelectorOpen, setGradeSelectorOpen] = useState(true);
+interface ToolProps {
+	label: string,
+	className?: string,
+	onClick: () => void,
+}
+const Tool: React.FC<ToolProps> = (props: React.PropsWithChildren<ToolProps>) => (
+	<div className={`relative group ${props.className ? props.className : ''}`}>
+		<div className="hidden group-hover:block whitespace-nowrap absolute -top-12 left-1/2 transform -translate-x-1/2 text-white border border-grey-medium bg-dark rounded-full py-2 px-3">
+			{props.label}
+		</div>
+		<div 
+			className="rounded-full md:p-4 md:cursor-pointer group-hover:bg-white group-hover:bg-opacity-20"
+			onClick={props.onClick}
+		>
+			{props.children}
+		</div>
+	</div>
+)
+
+
+interface ToolbarProps {
+	onClear: () => void;
+	onRewind: () => void;
+}
+
+export const Toolbar: React.FC<ToolbarProps> = (props: ToolbarProps) => {
+	const topoType = useTopoType();
+
+	const selectedTool = useDrawerStore(d => d.selectedTool);
+	const selectTool = useDrawerStore(d => d.selectTool);
+	const isOtherTracksDisplayed = useDrawerStore(d => d.isOtherTracksDisplayed);
+	const toggleOtherTracks = useDrawerStore(d => d.toggleOtherTracks);
+	const closeDrawer = useDrawerStore(d => d.closeDrawer)
+
+	const selectedBoulder = useSelectStore(s => s.item as SelectedBoulder);
+    const grade = selectedBoulder.selectedTrack!().grade;
 
 	return (
 		<div className="z-200 flex h-[9vh] w-full flex-row items-center justify-center bg-dark">
-			<span className="flex w-2/5 flex-row items-center justify-around md:w-3/12">
-				<Clear
-					className="h-8 w-8 md:cursor-pointer stroke-white"
+			<span className="flex flex-row items-center justify-around w-2/5 md:w-3/12">
+
+				<Tool
+					label='Supprimer'
 					onClick={props.onClear}
-				/>
-				<Rewind
-					className="h-6 w-6 md:cursor-pointer stroke-white"
+				>
+					<Clear className="h-7 w-7 stroke-white" />
+				</Tool>
+
+				<Tool
+					label='Retour'
 					onClick={props.onRewind}
-				/>
-				<div className="hidden md:block">
-					<Eraser
+				>
+					<Rewind className="h-6 w-6 stroke-white" />
+				</Tool>
+
+				<Tool
+					label='Gomme'
+					onClick={() => selectedTool === "ERASER" ? selectTool("LINE_DRAWER") : selectTool("ERASER")}
+					>
+						<Eraser
+							className={
+								"h-6 w-6 " +
+								(selectedTool === "ERASER"
+									? "fill-main stroke-main"
+									: "fill-white stroke-white")
+							}
+						/>
+				</Tool>
+				
+				<Tool
+					label='Autres voies'
+					className='hidden md:block'
+					onClick={toggleOtherTracks}
+				>
+					<ManyTracks
 						className={
-							"h-6 w-6 md:cursor-pointer " +
-							(selectedTool === "ERASER"
-								? "fill-main stroke-main"
-								: "fill-white stroke-white")
+							"h-6 w-6 " +
+							(isOtherTracksDisplayed ? "stroke-main" : "stroke-white")
 						}
-						onClick={() => props.onToolSelect("ERASER")}
 					/>
-				</div>
-				<ManyTracks
-					className={
-						"h-6 w-6 md:cursor-pointer " +
-						(props.displayOtherTracks ? "stroke-main" : "stroke-white")
-					}
-					onClick={props.onOtherTracks}
-				/>
+				</Tool>
 			</span>
 
-			<span className="1/5 mx-3 flex self-end pb-4 md:hidden">
+			<span className="w-1/5 mx-3 flex self-end pb-4 md:hidden">
 				<ToolSelectorMobile
 					selectedTool={
 						selectedTool !== "ERASER" ? selectedTool : "LINE_DRAWER"
 					}
-					onToolSelect={props.onToolSelect}
+					onToolSelect={selectTool}
 				/>
 			</span>
 
-			<span className="hidden w-6/12 flex-row items-center justify-around px-[13%] md:flex">
-				<Track
-					className={
-						"h-6 w-6 md:cursor-pointer " +
-						(selectedTool === "LINE_DRAWER"
-							? getStrokeColorClass(props.grade)
-							: "stroke-white")
-					}
-					onClick={() => props.onToolSelect("LINE_DRAWER")}
-				/>
-				<Hand
-					className={
-						"h-6 w-6 md:cursor-pointer " +
-						(selectedTool === "HAND_DEPARTURE_DRAWER"
-							? getStrokeColorClass(props.grade) + " fill-white"
-							: "stroke-white")
-					}
-					onClick={() => props.onToolSelect("HAND_DEPARTURE_DRAWER")}
-				/>
-				<ClimbingShoe
-					className={
-						"h-7 w-7 md:cursor-pointer " +
-						(selectedTool === "FOOT_DEPARTURE_DRAWER"
-							? getStrokeColorClass(props.grade) + " fill-white"
-							: "stroke-white")
-					}
-					onClick={() => props.onToolSelect("FOOT_DEPARTURE_DRAWER")}
-				/>
-				<ForbiddenArea
-					className={
-						"h-6 w-6 md:cursor-pointer " +
-						(selectedTool === "FORBIDDEN_AREA_DRAWER"
-							? "fill-white stroke-second"
-							: "stroke-white")
-					}
-					onClick={() => props.onToolSelect("FORBIDDEN_AREA_DRAWER")}
-				/>
+			<span className="w-1/2 flex-row items-center justify-around px-[13%] hidden md:flex">
+				<Tool
+					label='Tracé'
+					onClick={() => selectTool("LINE_DRAWER")}
+				>
+					<Track
+						className={
+							"h-6 w-6 " +
+							(selectedTool === "LINE_DRAWER"
+								? getStrokeGradeColorClass(grade)
+								: "stroke-white")
+						}
+					/>
+				</Tool>
+				
+				<Tool
+					label='Main de départ'
+					className={topoType === TopoTypes.Cliff ? 'hidden' : ''}
+					onClick={() => selectTool("HAND_DEPARTURE_DRAWER")}
+				>
+					<Hand
+						className={
+							"h-6 w-6 " +
+							(selectedTool === "HAND_DEPARTURE_DRAWER"
+								? getStrokeGradeColorClass(grade) + " fill-white"
+								: "stroke-white")
+						}
+					/>
+				</Tool>
+
+				<Tool
+					label='Pied de départ'
+					className={topoType === TopoTypes.Cliff ? 'hidden' : ''}
+					onClick={() => selectTool("FOOT_DEPARTURE_DRAWER")}
+				>
+					<ClimbingShoe
+						className={
+							"h-7 w-7 " +
+							(selectedTool === "FOOT_DEPARTURE_DRAWER"
+								? getStrokeGradeColorClass(grade) + " fill-white"
+								: "stroke-white")
+						}
+					/>
+				</Tool>
+
+				<Tool
+					label='Zone interdite'
+					className={topoType === TopoTypes.Cliff ? 'hidden' : ''}
+					onClick={() => selectTool("FORBIDDEN_AREA_DRAWER")}
+				>
+					<ForbiddenArea
+						className={
+							"h-6 w-6 " +
+							(selectedTool === "FORBIDDEN_AREA_DRAWER"
+								? "fill-white stroke-second"
+								: "stroke-white")
+						}
+					/>
+				</Tool>
 			</span>
 
-			<span
-				className="flex text-white flex-row items-center md:cursor-pointer"
-				onClick={() => setGradeSelectorOpen(true)}
-			>
-				<Circle className={"mr-2 h-6 w-6 " + getLightGradeColorClass(gradeToLightGrade(props.grade))} />
-				{props.grade ? props.grade : 'Pr'}
-			</span>
-
-			<span className="flex w-1/5 justify-center md:hidden">
+			<span className="flex flex-row w-2/5 items-center justify-around md:hidden">
+				<ManyTracks
+					className={
+						"h-6 w-6 md:cursor-pointer " +
+						(isOtherTracksDisplayed ? "stroke-main" : "stroke-white")
+					}
+					onClick={toggleOtherTracks}
+				/>
 				<Checked
 					className="h-6 w-6 md:cursor-pointer fill-main"
-					onClick={props.onValidate}
+					onClick={closeDrawer}
 				/>
 			</span>
-
-			<GradeSelector 
-				open={gradeSelectorOpen}
-				setOpen={setGradeSelectorOpen}
-				grade={props.grade}
-				onGradeSelect={props.onGradeSelect}
-			/>
 		</div>
 	);
 };

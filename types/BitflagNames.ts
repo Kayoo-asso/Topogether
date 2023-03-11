@@ -1,4 +1,4 @@
-import { BodyPosition, HoldType, RockTypes, TopoTypes, TrackDanger, TrackStyle } from "./Bitflags";
+import { BodyPosition, HoldType, RockTypes, TopoTypes, TrackPersonnality, TrackStyle } from "./Bitflags";
 
 export const RockNames: [RockTypes, string][] = [
 	[RockTypes.Andesite, "Andésite"],
@@ -28,17 +28,16 @@ export const RockNames: [RockTypes, string][] = [
 ];
 
 export const TopoTypesName: [TopoTypes, string][] = [
-	[TopoTypes.Artificial, "Artificiel"],
+	// [TopoTypes.Artificial, "Artificiel"],
 	[TopoTypes.Boulder, "Bloc"],
-	// [TopoTypes.Cliff, "Couenne"],
+	[TopoTypes.Cliff, "Voie"],
 	[TopoTypes.DeepWater, "Deepwater"],
-	// [TopoTypes.Multipitch, "Grande voie"],
 ]
 
-export const TrackDangerName: [TrackDanger, string][] = [
-	[TrackDanger.BadReception, 'Mauvaise réception'],
-	[TrackDanger.High, 'Voie haute'],
-	[TrackDanger.LooseRock, 'Roche friable'],
+export const TrackPersonnalityName: [TrackPersonnality, string][] = [
+	[TrackPersonnality.Power, 'Puissance'],
+	[TrackPersonnality.Resistance, 'Résistance'],
+	[TrackPersonnality.Precision, 'Précision'],
 ]
 
 export const TrackStyleName: [TrackStyle, string][] = [
@@ -68,8 +67,8 @@ export const BodyPositionName: [BodyPosition, string][] = [
 	[BodyPosition.ToeHook, 'Contrepointe'],
 ]
 
-export const TrackSpecName: [TrackDanger | TrackStyle | HoldType | BodyPosition, string][] = [
-	...TrackDangerName,
+export const TrackSpecName: [TrackPersonnality | TrackStyle | HoldType | BodyPosition, string][] = [
+	...TrackPersonnalityName,
 	...TrackStyleName,
 	...HoldTypeName,
 	...BodyPositionName,

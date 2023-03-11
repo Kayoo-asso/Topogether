@@ -4,13 +4,14 @@ import { Quark, watchDependencies } from "helpers/quarky";
 import { Image } from "components/atoms/Image";
 import { TracksListBuilder } from "./TracksListBuilder";
 import { Drawer } from "../Drawer";
-import { SelectedBoulder, useSelectStore } from "components/pages/selectStore";
+import { SelectedBoulder, useSelectStore } from "components/store/selectStore";
 import { GradeScale } from "components/molecules/GradeScale";
 import { ImageSlider } from "components/molecules/ImageSlider";
 import { ImageInput } from "components/molecules/form/ImageInput";
-import { BoulderForm } from "../form/BoulderForm";
+import { RockForm } from "../form/RockForm";
 import { Button } from "components/atoms/buttons/Button";
-import { useDeleteStore } from "components/pages/deleteStore";
+import { useDeleteStore } from "components/store/deleteStore";
+import { useDrawerStore } from "components/store/drawerStore";
 
 interface BoulderBuilderContentMobileProps {
 	full: boolean,
@@ -24,7 +25,7 @@ export const BoulderBuilderContentMobile: React.FC<BoulderBuilderContentMobilePr
 		const select = useSelectStore(s => s.select);
 		const del = useDeleteStore(d => d.delete);
 
-		const [displayDrawer, setDisplayDrawer] = useState(false);
+		const isDrawerOpen = useDrawerStore(d => d.isDrawerOpen);
 
 		const [trackTab, setTrackTab] = useState(true);
 
@@ -115,17 +116,14 @@ export const BoulderBuilderContentMobile: React.FC<BoulderBuilderContentMobilePr
 					{/* TRACKSLIST */}
 					{trackTab && props.full && (
 						<div className="overflow-auto pb-[30px]">
-							<TracksListBuilder
-								onDrawButtonClick={() => setDisplayDrawer(true)}
-								onCreateTrack={() => setDisplayDrawer(true)}
-							/>
+							<TracksListBuilder />
 						</div>
 					)}
 
 					{/* BOULDER FORM */}
 					{!trackTab && props.full && (
 						<div className="overflow-auto border-t border-grey-light px-6 py-10">
-							<BoulderForm topo={props.topo} />
+							<RockForm topo={props.topo} />
 							<Button
 								content="Supprimer le bloc"
 								className="mt-10"
@@ -136,8 +134,8 @@ export const BoulderBuilderContentMobile: React.FC<BoulderBuilderContentMobilePr
 					)}
 				</div>
 
-				{displayDrawer &&
-					<Drawer onValidate={() => setDisplayDrawer(false)} />
+				{isDrawerOpen &&
+					<Drawer />
 				}
 			</>
 		);

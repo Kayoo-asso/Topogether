@@ -1,5 +1,5 @@
 import React from "react";
-import { useSelectStore } from "components/pages/selectStore";
+import { useSelectStore } from "components/store/selectStore";
 
 import FilterIcon from "assets/icons/filter.svg";
 import { useBreakpoint } from "helpers/hooks/DeviceProvider";

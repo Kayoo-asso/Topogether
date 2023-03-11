@@ -4,6 +4,35 @@ import { Quark, watchDependencies } from "helpers/quarky";
 import { Grade, gradeToLightGrade, Line } from "types";
 import { SVGPoint } from "./SVGPoint";
 
+const getFillGradeColorClass = (g: Grade | undefined) => {
+    if (!g) return "fill-grey-light";
+    const lightGrade = gradeToLightGrade(g);
+    switch (lightGrade) {
+        case 3: return "fill-grade-3";
+        case 4: return "fill-grade-4"; break;
+        case 5: return "fill-grade-5"; break;
+        case 6: return "fill-grade-6"; break;
+        case 7: return "fill-grade-7"; break;
+        case 8: return "fill-grade-8"; break;
+        case 9: return "fill-grade-9"; break;
+        case 'P': return "fill-grey-light"; break;
+    }
+};
+const getStrokeGradeColorClass = (g: Grade | undefined) => {
+	if (!g) return "stroke-grey-light";
+    const lightGrade = gradeToLightGrade(g);
+    switch (lightGrade) {
+        case 3: return "stroke-grade-3"; break;
+        case 4: return "stroke-grade-4"; break;
+        case 5: return "stroke-grade-5"; break;
+        case 6: return "stroke-grade-6"; break;
+        case 7: return "stroke-grade-7"; break;
+        case 8: return "stroke-grade-8"; break;
+        case 9: return "stroke-grade-9"; break;
+        case 'P': return "stroke-grey-light"; break;
+    }
+};
+
 interface SVGLineProps {
 	line: Quark<Line>;
 	grade: Grade | undefined;
@@ -104,58 +133,17 @@ export const SVGLine: React.FC<SVGLineProps> = watchDependencies(
 		const getColorNumber = () => {
 			return props.grade ? gradeToLightGrade(props.grade) : "grey";
 		};
-		const getStrokeColorClass = () => {
-			if (!props.grade) return "stroke-grey-light";
-			else {
-				const lightGrade = gradeToLightGrade(props.grade);
-				switch (lightGrade) {
-					case 3:
-						return "stroke-grade-3";
-					case 4:
-						return "stroke-grade-4";
-					case 5:
-						return "stroke-grade-5";
-					case 6:
-						return "stroke-grade-6";
-					case 7:
-						return "stroke-grade-7";
-					case 8:
-						return "stroke-grade-8";
-					case 9:
-						return "stroke-grade-9";
-				}
-			}
-		};
-		const getFillColorClass = () => {
-			if (!props.grade) return "fill-grey-light";
-			else {
-				const lightGrade = gradeToLightGrade(props.grade);
-				switch (lightGrade) {
-					case 3:
-						return "fill-grade-3";
-					case 4:
-						return "fill-grade-4";
-					case 5:
-						return "fill-grade-5";
-					case 6:
-						return "fill-grade-6";
-					case 7:
-						return "fill-grade-7";
-					case 8:
-						return "fill-grade-8";
-					case 9:
-						return "fill-grade-9";
-				}
-			}
-		};
 
 		return (
 			<>
 				<path
-					className={`fill-[none] ${getStrokeColorClass()} ${
-						phantom ? "z-10 opacity-50" : "z-30"
-					}${props.onClick ? " md:cursor-pointer" : ""}`}
+					className={`fill-[none] \
+						${getStrokeGradeColorClass(props.grade)} \
+						${phantom ? "z-10" : "z-30"} \
+						${props.onClick ? " md:cursor-pointer" : ""} \
+					`}
 					d={path}
+					strokeDasharray={phantom ? 100 : ''}
 					onClick={props.onClick}
 					style={{
 						strokeWidth: trackWeight + "px",
@@ -200,11 +188,11 @@ export const SVGLine: React.FC<SVGLineProps> = watchDependencies(
 							cx={firstX}
 							cy={firstY}
 							r={firstPointSize}
-							className={`${getFillColorClass()} ${
-								phantom ? "z-20 opacity-50" : "z-40"
-							}${
-								((!eraser && props.onClick) || phantom) ? " md:cursor-pointer" : ""
-							}`}
+							className={` \
+								${getFillGradeColorClass(props.grade)} \
+								${phantom ? "z-20" : "z-40"} \
+								${((!eraser && props.onClick) || phantom) ? " md:cursor-pointer" : ""} \
+							`}
 							onClick={(e) => {
 								if (eraser) {
 									e.stopPropagation();
@@ -219,13 +207,12 @@ export const SVGLine: React.FC<SVGLineProps> = watchDependencies(
 							x={firstX}
 							y={firstY}
 							className={`select-none fill-white ${
-								phantom ? "z-20 opacity-50" : "z-40"
+								phantom ? "z-20" : "z-40"
 							}${
 								((!eraser && props.onClick) || phantom) ? " md:cursor-pointer" : ""
 							}`}
 							textAnchor="middle"
 							stroke="white"
-							strokeWidth="8px"
 							fontSize={firstPointSize + "px"}
 							dy={firstPointSize / 3 + "px"}
 							onClick={(e) => {
