@@ -15,7 +15,8 @@
 		"test": "jest",
 		"test:db": "TEST_DB=true jest",
 		"test:ci": "jest --ci",
-		"format": "prettier --write '**/*.{js,ts,jsx,tsx,json}'"
+		"format": "prettier --write '**/*.{js,ts,jsx,tsx,json}'",
+		"query": "doppler run -- esrun db/testing.ts"
 	},
 	"dependencies": {
 		"@clerk/nextjs": "^4.10.0",
@@ -30,12 +31,12 @@
 		"@trpc/server": "^10.11.0",
 		"compressorjs": "^1.0.7",
 		"cookie": "^0.4.2",
-		"drizzle-orm": "^0.21.1",
+		"drizzle-orm": "0.22.0-cfe1679",
 		"fast-deep-equal": "^3.1.3",
 		"idb-keyval": "^6.2.0",
 		"ismobilejs": "^1.1.1",
 		"js-base64": "^3.7.2",
-		"kysely": "^0.23.4",
+		"kysely": "^0.23.5",
 		"next": "^12.1.2",
 		"next-pwa": "^5.6.0",
 		"ol": "^7.2.2",

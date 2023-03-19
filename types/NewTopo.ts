@@ -9,7 +9,7 @@ import type {
 	Reception,
 	Seasons,
 } from "./Enums";
-import type { LineString, MultiLineString, Point, Position } from "./GeoJson";
+import type { LineString, MultiLineString, Point, Position } from "./GeoJSON";
 import type {
 	UUID,
 	GeoCoordinates,

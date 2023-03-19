@@ -1,4 +1,4 @@
-import { Expression, Kysely, OperationNode, RawBuilder, sql } from "kysely";
+import { Expression, Kysely, OperationNode, RawBuilder, sql, SelectQueryBuilder } from "kysely";
 import {
 	JsonInput,
 	Point,
