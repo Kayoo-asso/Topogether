@@ -17,16 +17,7 @@ export enum Reception {
 	None,
 }
 
-export enum Orientation {
-	N,
-	NE,
-	E,
-	SE,
-	S,
-	SW,
-	W,
-	NW,
-}
+
 
 export type Rating = 1 | 2 | 3 | 4 | 5;
 

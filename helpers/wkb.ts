@@ -1,11 +1,17 @@
 export type ParsedPoint = { type: "Point"; coordinates: [number, number] };
-export type ParsedLineString = { type: "LineString"; coordinates: Array<[number, number]> };
-export type ParsedPolygon = { type: "Polygon"; coordinates: Array<Array<[number, number]>> };
+export type ParsedLineString = {
+	type: "LineString";
+	coordinates: Array<[number, number]>;
+};
+export type ParsedPolygon = {
+	type: "Polygon";
+	coordinates: Array<Array<[number, number]>>;
+};
 
 export type ParsedGeometry = ParsedPoint | ParsedLineString | ParsedPolygon;
 
 export function parseWKB(wkb: string): ParsedGeometry {
-    const buffer = hexStringToBuffer(wkb)
+	const buffer = hexStringToBuffer(wkb);
 	const view = new DataView(buffer);
 	const littleEndian = view.getUint8(0) === 1;
 	const geometryType = view.getUint32(1, littleEndian);
