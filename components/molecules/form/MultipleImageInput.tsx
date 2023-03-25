@@ -4,6 +4,7 @@ import ArrowFull from "assets/icons/arrow-full.svg";
 import { SelectedBoulder, useSelectStore } from "components/store/selectStore";
 import { ImageThumb } from "components/atoms/ImageThumb";
 import { ImageInput } from "./ImageInput";
+import { useDeleteStore } from "components/store/deleteStore";
 
 interface MultipleImageInputProps {
 	images: Img[];
@@ -11,8 +12,8 @@ interface MultipleImageInputProps {
 	rows?: number;
 	cols?: number;
 	allowUpload?: boolean;
-	selected?: UUID;
-	onImageClick?: (id: UUID) => void;
+	allowDelete?: boolean;
+	selected?: Img;
 	onImageDelete?: (id: UUID) => void;
 	onChange: (images: Img[]) => void;
 	onLoadStart?: () => void;
@@ -33,6 +34,8 @@ export const MultipleImageInput = forwardRef<
 		ref
 	) => {
 		const selectedBoulder = useSelectStore(s => s.item as SelectedBoulder);
+		const select = useSelectStore(s => s.select);
+		const del = useDeleteStore(d => d.delete);
 		const [error, setError] = useState<string>();
 
 		let nbVisible = rows * cols;
@@ -45,7 +48,7 @@ export const MultipleImageInput = forwardRef<
 		useEffect(() => {
 			if (props.selected) {
 				const indexOfTheImage = props.images.findIndex(
-					(img) => img.id === props.selected
+					(img) => img.id === props.selected?.id
 				);
 				const pageToDisplay = Math.trunc(indexOfTheImage / nbVisible);
 				setPage(pageToDisplay);
@@ -91,9 +94,13 @@ export const MultipleImageInput = forwardRef<
 											) !== undefined
 									)
 								}
-								selected={image.id === props.selected}
-								onClick={props.onImageClick}
-								onDelete={props.onImageDelete}
+								selected={image.id === props.selected?.id}
+								onClick={() => select.image(image)}
+								onDelete={props.allowDelete ? () => del.item({ 
+									type: 'image', 
+									value: image, 
+									selectedBoulder: selectedBoulder 
+								}) : undefined}
 							/>
 						) : (
 							<div key={index} className="w-[73px] h-[73px]"></div>

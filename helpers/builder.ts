@@ -105,6 +105,32 @@ export const deleteBoulder = (
 	if (selectedBoulder && selectedBoulder.value().id === boulder.id) flushStore()
 }
 
+export const deleteImage = (
+	img: Img,
+	selectedBoulder: SelectedBoulder,
+	flushImage: () => void,
+	selectImage: (i: Img) => void,
+	flushTrack: () => void,
+) => {
+	const boulder = selectedBoulder.value();
+	const tracksOnTheImage = boulder.tracks.quarks().filter(t => !!t().lines?.find((l) => l.imageId === img.id)).toArray();
+	deleteTracks(tracksOnTheImage, boulder, flushTrack, selectedBoulder);
+
+	const imgIndex = boulder.images.indexOf(boulder.images.find(i => i.id === img.id)!);
+	const newImages = boulder.images.filter(i => i.id !== img.id);
+	if (newImages.length === 0) flushImage();
+	//Select the image that come just after (or just before if it was the last one)
+	else if (selectedBoulder.selectedImage?.id === img.id) {
+		if (imgIndex === -1) flushImage();
+		else if (imgIndex < newImages.length) selectImage(newImages[imgIndex]);
+		else selectImage(newImages[newImages.length - 1]);
+	}
+	selectedBoulder.value.set((b) => ({
+		...b,
+		images: newImages,
+	}));
+}
+
 export const createParking = (
 	topo: Topo,
 	location: GeoCoordinates,
@@ -195,6 +221,16 @@ export const deleteTrack = (
 	}
 	if (selectedBoulder?.selectedTrack && selectedBoulder.selectedTrack().id === track().id) flushTrack();
 };
+export const deleteTracks = (
+	tracksQuark: Quark<Track>[],
+	boulder: Boulder,
+	flushTrack: () => void,
+	selectedBoulder?: SelectedBoulder,
+) => {
+	tracksQuark.forEach((tQ) => 
+		deleteTrack(boulder, tQ, flushTrack, selectedBoulder)
+	);
+}
 
 export const boulderChanged = (
 	topoQuark: Quark<Topo>,

@@ -1,10 +1,11 @@
 import create from "zustand";
 import { SelectedBoulder, SelectedItem } from "./selectStore";
-import { Boulder, Manager, TopoAccess, Track } from "types";
+import { Boulder, Img, Manager, TopoAccess, Track, UUID } from "types";
 import { Quark } from "helpers/quarky";
 
 export type DeletedItem = SelectedItem | 
 { type: 'track', value: Quark<Track>, boulder: Quark<Boulder>, selectedBoulder?: SelectedBoulder } |
+{ type: 'image', value: Img, selectedBoulder: SelectedBoulder, selectedImage?: Img } |
 { type: 'manager', value: Quark<Manager> } |
 { type: 'topoAccess', value: Quark<TopoAccess>}
 
