@@ -12,6 +12,7 @@ import { setReactRef } from "helpers/utils";
 import { SelectedBoulder, useSelectStore } from "components/store/selectStore";
 import { TracksImage } from "./TracksImage";
 import { MultipleImageInput } from "./form/MultipleImageInput";
+import { useDrawerStore } from "components/store/drawerStore";
 
 interface BoulderPreviewDesktopProps {
 	displayAddButton?: boolean;
@@ -31,6 +32,7 @@ export const BoulderPreviewDesktop = watchDependencies<
 		const selectedImage = selectedBoulder.selectedImage;
 		const select = useSelectStore(s => s.select);
 		const flush = useSelectStore(s => s.flush);
+		const openDrawer = useDrawerStore(d => d.openDrawer);
 
 		const multipleImageInputRef = useRef<HTMLInputElement>(null);
 
@@ -69,7 +71,15 @@ export const BoulderPreviewDesktop = watchDependencies<
 		);
 
 		const addImagesClick = useCallback(() => {
-			if (!selectedImage && multipleImageInputRef.current) {
+			if (selectedImage) {
+				const tracksOnTheImage = boulder.tracks.quarks().filter(t => t().lines.at(0).imageId === selectedImage.id).toArray();
+				const firstTrack = tracksOnTheImage.reduce((min, curr) => (curr().index < min().index ? curr : min), tracksOnTheImage[0]);
+				if (firstTrack) {
+					select.track(firstTrack);
+					openDrawer();
+				}
+			}
+			else if (multipleImageInputRef.current) {
 				multipleImageInputRef.current.click();
 			}
 		}, [selectedImage, loading]);
@@ -84,7 +94,6 @@ export const BoulderPreviewDesktop = watchDependencies<
 							sizeHint="300px"
 							image={selectedBoulder.selectedImage}
 							tracks={boulder.tracks.quarks()}
-							modalable={!!selectedBoulder.selectedImage}
 							onImageClick={!loading ? addImagesClick : undefined}
 						/>
 					</div>

@@ -65,6 +65,7 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(
 		const selectedTrack = selectedTrackQuark ? selectedTrackQuark() : undefined;
 		const selectTrack = useSelectStore(s => s.select.track);
 		const selectedTool = useDrawerStore(d => d.selectedTool);
+		const openDrawer = useDrawerStore(d => d.openDrawer);
 
 		// ratio = width / height
 		// so the most accurate way to scale the SVG viewBox is to set a height
@@ -157,6 +158,28 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(
 			[]
 		);
 
+		const handleClick = useCallback((e) => {
+				const eltUnder = e.target as EventTarget & SVGSVGElement;
+				if (eltUnder.nodeName === "svg" && props.modalable)
+					setPortalOpen(true);
+				else {
+					// Handle clicks that are 1) left-click, 2) in the viewBox and 3) on the SVG canvas directly
+					if (
+						e.buttons !== 0 ||
+						!props.onImageClick ||
+						!viewBoxRef.current ||
+						eltUnder.nodeName !== "svg"
+					)
+						return;
+					const coords = getCoordsInViewbox(
+						viewBoxRef.current,
+						e.clientX,
+						e.clientY
+					);
+					if (coords) props.onImageClick(coords);
+				}
+			}, [props.onImageClick, props.modalable]);
+
 		return wrapPortal(
 			<QuickPinchZoom
 				onUpdate={onPinchZoom}
@@ -175,30 +198,7 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(
 						style={cursorStyle}
 						viewBox={`0 0 ${viewBoxWidth} ${viewBoxHeight}`}
 						preserveAspectRatio={`xMidYMid ${preserveAspectRatio[objectFit]}`}
-						onClick={useCallback(
-							(e) => {
-								const eltUnder = e.target as EventTarget & SVGSVGElement;
-								if (eltUnder.nodeName === "svg" && props.modalable)
-									setPortalOpen(true);
-								else {
-									// Handle clicks that are 1) left-click, 2) in the viewBox and 3) on the SVG canvas directly
-									if (
-										e.buttons !== 0 ||
-										!props.onImageClick ||
-										!viewBoxRef.current ||
-										eltUnder.nodeName !== "svg"
-									)
-										return;
-									const coords = getCoordsInViewbox(
-										viewBoxRef.current,
-										e.clientX,
-										e.clientY
-									);
-									if (coords) props.onImageClick(coords);
-								}
-							},
-							[props.onImageClick, props.modalable]
-						)}
+						onClick={handleClick}
 					>
 						{/* Invisible rectangle of the size of the viewBox, to get its on-screen dimensions easily
                 (they could also be computed, but I'm lazy)
@@ -233,7 +233,10 @@ export const TracksImage: React.FC<TracksImageProps> = watchDependencies(
 												displayTrackDetails={displayTracksDetails}
 												displayTrackOrderIndexes={displayTrackOrderIndexes}
 												trackWeight={tracksWeight}
-												onLineClick={() => selectTrack(trackQuark)}
+												onLineClick={() => {
+													selectTrack(trackQuark);
+													openDrawer();
+												}}
 												onPointClick={props.onPointClick}
 											/>
 										);

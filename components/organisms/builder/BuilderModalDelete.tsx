@@ -46,6 +46,7 @@ export const BuilderModalDelete: React.FC<BuilderModalDeleteProps> = watchDepend
             const flushAction = toDeleteItem.type === 'track' ? flush.track
                 : breakpoint === 'mobile' ? flush.all 
                 : flush.item;
+            closeDrawer();
             switch (toDeleteItem.type) {
                 case 'sector': deleteSector(props.topo, toDeleteItem.value, flushAction, selectedItem.type === 'sector' ? selectedItem : undefined); break;
                 case 'boulder': deleteBoulder(props.topo, toDeleteItem.value, flushAction, selectedItem.type === 'boulder' ? selectedItem : undefined); break;
@@ -56,7 +57,6 @@ export const BuilderModalDelete: React.FC<BuilderModalDeleteProps> = watchDepend
                 case 'topoAccess': props.topo().accesses.removeQuark(toDeleteItem.value); break;
             }
             flushDel.item();
-            closeDrawer();
         }, [toDeleteItem, toDeleteItem.type === 'track' && toDeleteItem.boulder, selectedItem, props.topo]);
     
         return (
