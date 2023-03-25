@@ -114,7 +114,6 @@ export const SectorList: React.FC<SectorListProps> = watchDependencies(
 															props.map?.getView().setCenter(transform(boulderQuark().location, 'EPSG:4326', 'EPSG:3857'));
 															expandOnClick && toggleBoulder(boulder);
 														}}
-														onTrackClick={(trackQuark) => selectStore.select.track(trackQuark, boulderQuark)}
 														displayCreateTrack={false}
 													/>
 												</div>
@@ -149,9 +148,6 @@ export const SectorList: React.FC<SectorListProps> = watchDependencies(
 											props.map?.getView().setCenter(transform(boulderQuark().location, 'EPSG:4326', 'EPSG:3857'));
 											toggleBoulder(boulder);
 										}}
-										onTrackClick={(trackQuark) =>
-											selectStore.select.track(trackQuark, boulderQuark)
-										}
 										displayCreateTrack={false}
 									/>
 								</div>
