@@ -1,10 +1,12 @@
 import create from "zustand";
 import { SelectedBoulder, SelectedItem } from "./selectStore";
-import { Boulder, Track } from "types";
+import { Boulder, Manager, TopoAccess, Track } from "types";
 import { Quark } from "helpers/quarky";
 
 export type DeletedItem = SelectedItem | 
-{ type: 'track', value: Quark<Track>, boulder: Quark<Boulder>, selectedBoulder?: SelectedBoulder };
+{ type: 'track', value: Quark<Track>, boulder: Quark<Boulder>, selectedBoulder?: SelectedBoulder } |
+{ type: 'manager', value: Quark<Manager> } |
+{ type: 'topoAccess', value: Quark<TopoAccess>}
 
 export type Deleters = {
 	item: (i: DeletedItem) => void,

@@ -17,7 +17,6 @@ export const BuilderModalDelete: React.FC<BuilderModalDeleteProps> = watchDepend
     (props: BuilderModalDeleteProps) => {
         const breakpoint = useBreakpoint();
         const selectedItem = useSelectStore(s => s.item);
-        const select = useSelectStore(s => s.select);
         const flush = useSelectStore(s => s.flush);  
 
         const toDeleteItem = useDeleteStore(d => d.item);
@@ -38,6 +37,8 @@ export const BuilderModalDelete: React.FC<BuilderModalDeleteProps> = watchDepend
                 case 'track': return <>Êtes-vous sûr de vouloir supprimer la voie <span className='font-semibold'>{toDeleteItem.value().name}</span> ?</>;
                 case 'parking': return <>Êtes-vous sûr de vouloir supprimer le parking <span className='font-semibold'>{toDeleteItem.value().name}</span> ?</>;
                 case 'waypoint': return <>Êtes-vous sûr de vouloir supprimer le point d'intérêt <span className='font-semibold'>{toDeleteItem.value().name}</span> ?</>
+                case 'manager': return <>Êtes-vous sûr de vouloir supprimer le gestionnaire du site ?</>
+                case 'topoAccess': return <>Êtes-vous sûr de vouloir supprimer la marche d'approche ?</>
             }
         }
 
@@ -51,6 +52,8 @@ export const BuilderModalDelete: React.FC<BuilderModalDeleteProps> = watchDepend
                 case 'track': deleteTrack(toDeleteItem.boulder(), toDeleteItem.value, flushAction, toDeleteItem.selectedBoulder); break;
                 case 'parking': deleteParking(props.topo, toDeleteItem.value, flushAction, selectedItem.type === 'parking' ? selectedItem : undefined); break;
                 case 'waypoint': deleteWaypoint(props.topo, toDeleteItem.value, flushAction, selectedItem.type === 'waypoint' ? selectedItem : undefined); break;
+                case 'manager': props.topo().managers.removeQuark(toDeleteItem.value); break;
+                case 'topoAccess': props.topo().accesses.removeQuark(toDeleteItem.value); break;
             }
             flushDel.item();
             closeDrawer();

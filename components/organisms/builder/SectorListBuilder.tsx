@@ -57,8 +57,10 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> =
 		if (!session) return null;
 		const breakpoint = useBreakpoint();
 
-		const selectStore = useSelectStore();
-		const selectedBoulder = selectStore.item.type === 'boulder' ? selectStore.item : undefined;
+		const select = useSelectStore(s => s.select);
+		const flush = useSelectStore(s => s.flush);
+		const selectedItem = useSelectStore(s => s.item);
+		const selectedBoulder = selectedItem.type === 'boulder' ? selectedItem : undefined;
 		const topo = props.topoQuark();
 
 		const boulderQuarksMap = new globalThis.Map<UUID, Quark<Boulder>>();
@@ -239,13 +241,11 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> =
 															    deletable
 																onArrowClick={() => toggleBoulder(boulder)}
 															    onNameClick={() => {
-															        selectStore.select.boulder(boulderQuark);
+															        select.boulder(boulderQuark);
 															        props.map?.getView().setCenter(fromLonLat(boulderQuark().location));
 															        expandOnClick && toggleBoulder(boulder);
 															    }}
-															    onTrackClick={(trackQuark) => selectStore.select.track(trackQuark, boulderQuark)}
 															    displayCreateTrack
-															    onCreateTrack={() => createTrack(boulder, session.id)}
 															/>
 														);
 													})}
@@ -297,17 +297,11 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> =
 												deletable
 												onArrowClick={() => toggleBoulder(boulder)}
 												onNameClick={() => {
-													selectStore.select.boulder(boulderQuark);
+													select.boulder(boulderQuark);
 													props.map?.getView().setCenter(fromLonLat(boulderQuark().location));
 													toggleBoulder(boulder);
 												}}
-												onTrackClick={(trackQuark) =>
-													selectStore.select.track(trackQuark, boulderQuark)
-												}
 												displayCreateTrack
-												onCreateTrack={() =>
-													createTrack(boulder, session.id)
-												}
 											/>
 										)}
 									)}
@@ -327,7 +321,7 @@ export const SectorListBuilder: React.FC<SectorListBuilderProps> =
 				<ModalDeleteBoulder
 					buttonText="Confirmer"
 					imgUrl={staticUrl.deleteWarning}
-					onConfirm={(boulderQuark) => deleteBoulder(props.topoQuark, boulderQuark, breakpoint === 'mobile' ? selectStore.flush.all : selectStore.flush.item, selectedBoulder) }
+					onConfirm={(boulderQuark) => deleteBoulder(props.topoQuark, boulderQuark, breakpoint === 'mobile' ? flush.all : flush.item, selectedBoulder) }
 				>
 					Êtes-vous sûr de vouloir supprimer le bloc et toutes les voies
 					associées ?

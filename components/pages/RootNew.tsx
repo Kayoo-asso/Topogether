@@ -100,6 +100,7 @@ export const RootNew: React.FC<RootNewProps> = watchDependencies(
 				};
 				const newTopo = await createTopo(topoData);
 				if (newTopo) {
+					selectTool(undefined);
 					await router.push("/builder/" + encodeUUID(newTopo.id));
 				} else {
 					setCreationError("Une erreur est survenue. Merci de réessayer.");

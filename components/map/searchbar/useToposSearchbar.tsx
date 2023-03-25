@@ -55,7 +55,7 @@ export function useToposSearchbar (onlyPlaces: boolean = false): [() => JSX.Elem
 				id="searchbar"
 				ref={setInputRef}
 				autoComplete="off"
-				label={"Rechercher un lieu" + (!onlyPlaces && " ou un topo")}
+				label={"Rechercher un lieu" + (onlyPlaces ? '' : " ou un topo")}
 				displayLabel={false}
 				border={bp === 'mobile'}
 				wrapperClassName="w-[95%] mt-0"

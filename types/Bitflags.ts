@@ -65,6 +65,7 @@ export const enum TrackDanger {
 	Engaged = 1 << 0,
 	BadReception = 1 << 1,
 	FallingRock = 1 << 2,
+	BadQualityRock = 1 << 3,
 }
 
 export type TrackSpec = TrackPersonnality | TrackStyle | HoldType | BodyPosition;

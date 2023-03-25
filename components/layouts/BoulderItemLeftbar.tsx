@@ -1,12 +1,19 @@
 import React from "react";
 import { Quark, watchDependencies } from "helpers/quarky";
-import { Boulder, Grade, Track } from "types";
+import { Boulder, Grade } from "types";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from '@dnd-kit/utilities';
+import { useDeleteStore } from "components/store/deleteStore";
+import { useModal } from "helpers/hooks/useModal";
+import { staticUrl } from "helpers/constants";
+import { useSelectStore } from "components/store/selectStore";
+import { createTrack } from "helpers/builder";
+import { useSession } from "helpers/services";
 
 import ArrowSimple from "assets/icons/arrow-simple.svg";
 import CrossDelete from "assets/icons/clear.svg";
-import { useDeleteStore } from "components/store/deleteStore";
+import { useDrawerStore } from "components/store/drawerStore";
+
 
 interface BoulderItemLeftbarProps {
 	boulder: Quark<Boulder>;
@@ -16,16 +23,21 @@ interface BoulderItemLeftbarProps {
 	deletable?: boolean;
 	onArrowClick: () => void;
 	onNameClick?: () => void;
-	onTrackClick: (trackQuark: Quark<Track>) => void;
 	displayCreateTrack: boolean;
-	onCreateTrack?: () => void;
 }
 
 export const BoulderItemLeftbar: React.FC<BoulderItemLeftbarProps> = watchDependencies(({
 	deletable = false,
 	...props
 }: BoulderItemLeftbarProps) => {
+	const session = useSession();
+	if (!session) return null;
 	const del = useDeleteStore(d => d.delete);
+	const select = useSelectStore(s => s.select);
+	const selectedItem = useSelectStore(s => s.item);
+
+	const openDrawer = useDrawerStore(d => d.openDrawer);
+	const openGradeSelector = useDrawerStore(d => d.openGradeSelector);
 
 	const boulder = props.boulder();
 	const tracksIter = boulder.tracks.quarks();
@@ -62,6 +74,8 @@ export const BoulderItemLeftbar: React.FC<BoulderItemLeftbarProps> = watchDepend
 		transform: CSS.Transform.toString(transform),
 		transition,
 	};
+
+	const [ModalAddImage, showModalAddImage] = useModal();
 
 	return (
 		<div ref={setNodeRef} style={style} {...attributes} {...listeners}>
@@ -102,7 +116,10 @@ export const BoulderItemLeftbar: React.FC<BoulderItemLeftbarProps> = watchDepend
 							<div
 								key={track.id}
 								className={`flex flex-row items-baseline md:cursor-pointer`}
-								onClick={() => props.onTrackClick(trackQuark)}
+								onClick={() => {
+									select.track(trackQuark, props.boulder);
+									openDrawer();
+								}}
 							>
 								{track.grade && (
 									<div
@@ -127,14 +144,29 @@ export const BoulderItemLeftbar: React.FC<BoulderItemLeftbarProps> = watchDepend
 					})}
 					{props.displayCreateTrack && (
 						<div
-							className={`mt-2 text-grey-medium md:cursor-pointer`}
-							onClick={props.onCreateTrack}
+							className={`mt-2 text-grey-medium ${boulder.images.length > 0 ? 'md:cursor-pointer' : 'md:cursor-default'}`}
+							onClick={() => {
+								if (boulder.images.length > 0) {
+									select.track(createTrack(boulder, session.id), props.boulder);
+									openGradeSelector();
+									openDrawer();
+								}
+								else showModalAddImage();
+							}}
 						>
 							+ Nouvelle voie
 						</div>
 					)}
 				</div>
 			)}
+
+				<ModalAddImage
+					buttonText={selectedItem.type === 'boulder' && selectedItem.value().id === boulder.id ? "" : "Ouvrir le bloc"}
+					imgUrl={staticUrl.defaultProfilePicture}
+					onConfirm={() => select.boulder(props.boulder)}
+				>
+					Vous devez ajouter une première image pour créer une voie.
+				</ModalAddImage>
 		</div>
 	);
 });

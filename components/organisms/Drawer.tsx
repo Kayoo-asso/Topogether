@@ -26,7 +26,7 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies(
 		const selectedBoulder = useSelectStore(s => s.item as SelectedBoulder);
 		if (!selectedBoulder.selectedTrack) throw new Error('Drawer opened without any track');
 		const selectedTrack: Track = selectedBoulder.selectedTrack();
-		const image = selectedBoulder.selectedImage;
+		const image = selectedBoulder.selectedImage || selectedBoulder.value().images[0];
 		const select = useSelectStore(s => s.select);
 
 		const selectedTool = useDrawerStore(d => d.selectedTool);
@@ -187,7 +187,7 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies(
 				*/}
 				<Portal open>
 					<div className="absolute left-0 top-0 md:top-[7vh] z-[600] h-full md:h-contentPlusShell w-full md:w-[calc(100%-300px)]">
-						{!selectedBoulder.selectedImage && 
+						{(!selectedBoulder.selectedImage && selectedBoulder.value().images.length > 1) && 
 							<div className="flex flex-col gap-6 h-full p-8 md:p-12 bg-black b-opacity-90 overflow-scroll hide-scrollbar">
 								<div className="text-white ktext-label">Sélectionner l'image sur laquelle réaliser le tracé</div>
 								<div className='grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6'>
@@ -206,8 +206,9 @@ export const Drawer: React.FC<DrawerProps> = watchDependencies(
 								</div>
 							</div>
 						}
+
 						{/* Same, we know absolute size, since both header + toolbar are 7vh each */}
-						{selectedBoulder.selectedImage &&
+						{(selectedBoulder.selectedImage || selectedBoulder.value().images.length === 1) &&
 							<>
 								<div className="b-opacity-90 flex h-[90vh] md:h-[84vh] bg-black">
 									<TracksImage

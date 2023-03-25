@@ -8,6 +8,7 @@ import { Button } from "components/atoms/buttons/Button";
 import { TextInput } from "components/molecules/form/TextInput";
 import { ImageInput } from "components/molecules/form/ImageInput";
 import { TextArea } from "components/molecules/form/TextArea";
+import { useDeleteStore } from "components/store/deleteStore";
 
 interface AccessFormProps {
 	accesses: QuarkArray<TopoAccess>;
@@ -18,6 +19,7 @@ export const AccessForm: React.FC<AccessFormProps> = watchDependencies(
 	(props: AccessFormProps) => {
 		const accessQuark = props.accesses.quarkAt(0);
 		const access = accessQuark ? accessQuark() : undefined;
+		const del = useDeleteStore(d => d.delete);
 		
 		return (
 			<>
@@ -142,7 +144,7 @@ export const AccessForm: React.FC<AccessFormProps> = watchDependencies(
 						<Button
 							content="Supprimer"
 							fullWidth
-							onClick={() => props.accesses.removeQuark(accessQuark)}
+							onClick={() => del.item({ type: 'topoAccess', value: accessQuark })}
 						/>
 					</>
 				}
