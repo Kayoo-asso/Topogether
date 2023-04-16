@@ -8,7 +8,7 @@ import { setReactRef } from "helpers/utils";
 import { useSelectStore } from "components/store/selectStore";
 import { handleNewPhoto } from "helpers/handleNewPhoto";
 import { useSession } from "helpers/services";
-import { MapToolSelector } from "./MapToolSelector";
+import { MapToolSelector } from "./MapToolSelector2";
 import { Props } from "components/openlayers/Map";
 import { UserMarkerLayer } from "./markers/UserMarkerLayer";
 import { MapBrowserEvent } from "ol";
@@ -65,7 +65,6 @@ export const MapControl = watchDependencies<Map, MapControlProps>(
 	parentRef
 	) => {
 		const session = useSession();
-		const router = useRouter();
 		const breakpoint = useBreakpoint();
 		const [map, setMap] = useState<Map | null>(null);
 		const { position } = usePosition();
@@ -82,7 +81,6 @@ export const MapControl = watchDependencies<Map, MapControlProps>(
 			setInitialCenter(props.initialCenter);
 		}
 
-		const [mapToolSelectorOpen, setMapToolSelectorOpen] = useState(router.pathname.includes('builder') && breakpoint === "desktop");
 		const [satelliteView, setSatelliteView] = useState(false);
 
 		useEffect(() => {
@@ -151,7 +149,7 @@ export const MapControl = watchDependencies<Map, MapControlProps>(
 					{/* Bottom center */}
 					<div
 						className={
-							(mapToolSelectorOpen && breakpoint === "mobile"
+							(breakpoint === "mobile"
 								? "z-100"
 								: "z-1") + " absolute bottom-0 my-3 flex w-full justify-center"
 						}
@@ -163,34 +161,22 @@ export const MapControl = watchDependencies<Map, MapControlProps>(
 								</div>
 
 								<div className={`${selectedItem.type === 'sector' ? 'hidden' : ''} flex w-full flex-row justify-center gap-5`}>
-									<MapToolSelector
-										open={mapToolSelectorOpen}
-										setOpen={setMapToolSelectorOpen}
+									<MapToolSelector 
+										onPhoto={(files) => {
+											position &&
+												session &&
+												props.topo &&
+												handleNewPhoto(
+													props.topo,
+													files[0],
+													position,
+													session,
+													select,
+													selectedItem,
+													tool
+												);
+										}}
 									/>
-									{!mapToolSelectorOpen && (
-										<ImageInput
-											button="builder"
-											size="big"
-											multiple={false}
-											activated={
-												!!position || process.env.NODE_ENV === "development"
-											}
-											onChange={(files) => {
-												position &&
-													session &&
-													props.topo &&
-													handleNewPhoto(
-														props.topo,
-														files[0],
-														position,
-														session,
-														select,
-														selectedItem,
-														tool
-													);
-											}}
-										/>
-									)}
 								</div>
 							</>
 						)}
@@ -200,7 +186,7 @@ export const MapControl = watchDependencies<Map, MapControlProps>(
 					<div
 						className={
 							"absolute right-0 bottom-0 m-3 space-y-5" +
-							(mapToolSelectorOpen && breakpoint === "mobile" ? ' pb-[90px]' : '') +
+							(breakpoint === "mobile" ? ' pb-[90px]' : '') +
 							(breakpoint === "desktop" ? " z-100" : "")
 						}
 					>

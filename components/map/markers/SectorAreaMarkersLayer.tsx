@@ -58,10 +58,9 @@ export function sectorMarkerStyle(
 		}),
 	});
 
-	//TODO: display and make sector modifiable when selected on Builder
 	const pointsStyle = new Style({
 		image: new CircleStyle({
-			radius: selected && false ? 5 : 0, //Del the 'false' when TODO
+			radius: selected ? 5 : 0,
 			fill: new Fill({
 				color: "#fff",
 			}),
@@ -202,7 +201,9 @@ export const SectorAreaMarkersLayer: React.FC<SectorAreaMarkersLayerProps> =
 										{polygon}
 									</Collection>
 								) : (
-									<React.Fragment key={s.id}>{polygon}</React.Fragment>
+									<React.Fragment key={s.id}>
+										{polygon}
+									</React.Fragment>
 								);
 							})}
 						</VectorSource>

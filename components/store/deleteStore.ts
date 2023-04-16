@@ -1,6 +1,6 @@
 import create from "zustand";
 import { SelectedBoulder, SelectedItem } from "./selectStore";
-import { Boulder, Img, Manager, TopoAccess, Track, UUID } from "types";
+import { Boulder, Img, Manager, TopoAccess, Track } from "types";
 import { Quark } from "helpers/quarky";
 
 export type DeletedItem = SelectedItem | 

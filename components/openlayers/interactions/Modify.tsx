@@ -47,6 +47,9 @@ export const Modify = forwardRef<OLModify, P>(
 				`The target source of a Draw interaction should be a VectorSource`
 			);
 		}
+		if (features) {
+			// console.log("Modify got collection:", features)
+		}
 
 		const modify = useBehavior(
 			{

@@ -1,13 +1,17 @@
 import { useRef, useState, forwardRef, useEffect, useCallback } from "react";
 // eslint-disable-next-line import/no-cycle
 import { api, ImageUploadErrorReason } from "helpers/services";
-import { Img } from "types";
+import { Img, TopoTypes } from "types";
 import { setReactRef } from "helpers/utils";
-import Spinner from "assets/icons/spinner.svg";
-import Camera from "assets/icons/camera.svg";
 import { ProfilePicture } from "components/atoms/ProfilePicture";
 import { RoundButton } from "components/atoms/buttons/RoundButton";
 import { ImageButton } from "components/atoms/buttons/ImageButton";
+
+import Spinner from "assets/icons/spinner.svg";
+import Camera from "assets/icons/camera.svg";
+import { useModal } from "helpers/hooks/useModal";
+import { staticUrl } from "helpers/constants";
+import { useTopoType } from "helpers/hooks/TopoTypeProvider";
 
 interface ImageInputProps {
 	label?: string;
@@ -83,6 +87,13 @@ export const ImageInput = forwardRef<HTMLInputElement, ImageInputProps>(
 			if (props.onError && error && error.length > 0) props.onError(error);
 		}, [error, props.onError]);
 
+		const topoType = useTopoType();
+		const [ModalBeforeClick, showModalBeforeClick] = useModal()
+		const handleClick = useCallback(() => {
+			if (!loading && activated && fileInputRef.current)
+				fileInputRef.current.click();
+		}, [activated, loading])
+
 		return (
 			<>
 				<input
@@ -105,31 +116,20 @@ export const ImageInput = forwardRef<HTMLInputElement, ImageInputProps>(
 						image={props.value}
 						input
 						loading={loading}
-						onClick={useCallback(() => {
-							if (!loading && fileInputRef.current)
-								fileInputRef.current.click();
-						}, [loading])}
+						onClick={handleClick}
 					/>
 				)}
 				{button === "builder" && (
-					<RoundButton
-						buttonSize={size === "little" ? 45 : 60}
-						onClick={useCallback(() => {
-							if (!loading && activated && fileInputRef.current)
-								fileInputRef.current.click();
-						}, [loading, activated])}
-					>
+					<div onClick={showModalBeforeClick}>
 						{!loading && (
 							<Camera
-								className={
-									"h-6 w-6 " + (activated ? "stroke-main" : "stroke-grey-light")
-								}
+								className={"h-6 w-6 " + (activated ? "stroke-dark" : "stroke-grey-light")}
 							/>
 						)}
 						{loading && (
-							<Spinner className="m-2 h-6 w-6 animate-spin stroke-main" />
+							<Spinner className="m-2 h-6 w-6 animate-spin stroke-dark" />
 						)}
-					</RoundButton>
+					</div>
 				)}
 				{button === "square" && (
 					<ImageButton
@@ -137,10 +137,7 @@ export const ImageInput = forwardRef<HTMLInputElement, ImageInputProps>(
 						image={props.value}
 						loading={loading}
 						activated={activated}
-						onClick={useCallback(() => {
-							if (!loading && fileInputRef.current)
-								fileInputRef.current.click();
-						}, [loading])}
+						onClick={handleClick}
 						onDelete={props.onDelete}
 					/>
 				)}
@@ -153,6 +150,15 @@ export const ImageInput = forwardRef<HTMLInputElement, ImageInputProps>(
 						{error}
 					</div>
 				)}
+
+				<ModalBeforeClick 
+					buttonText="Créer"
+					imgUrl={staticUrl.defaultProfilePicture}
+					onConfirm={handleClick}
+				>{topoType === TopoTypes.Boulder || topoType === TopoTypes.DeepWater ? 
+					'En ajoutant une photo, un nouveau bloc sera créé à votre position' : 
+					'En ajoutant une photo, une nouvelle falaise sera ajoutée à votre position'}
+				</ModalBeforeClick>
 			</>
 		);
 	}
