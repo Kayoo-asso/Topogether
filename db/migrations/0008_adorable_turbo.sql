@@ -1,0 +1,1 @@
+ALTER TABLE "repro" ALTER COLUMN "xs" SET DATA TYPE text[][];

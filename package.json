@@ -11,7 +11,8 @@
 		"format": "prettier --write '**/*.{js,ts,jsx,tsx,json}'",
 		"migrate": "drizzle-kit up:pg --out db/migrations && doppler run -- node db/migrate.mjs",
 		"gen-migration": "doppler run -- drizzle-kit generate:pg --out db/migrations --schema db/schema.ts",
-		"transfer": "doppler run -- bun db/transferSupabase.ts"
+		"transfer": "doppler run -- bun db/transferSupabase.ts",
+		"test": "doppler run -- bun db/test.ts"
 	},
 	"dependencies": {
 		"@clerk/nextjs": "^4.10.0",

@@ -12,6 +12,7 @@ import {
 	doublePrecision,
 	primaryKey,
 	uniqueIndex,
+	serial,
 } from "drizzle-orm/pg-core";
 import {
 	RockTypes,
@@ -24,8 +25,8 @@ import {
 	TrackSpec,
 	TrackDanger,
 } from "types";
-import { point, polygon, bitflag, jsonb, uuid, xy } from "./custom";
-import {} from "drizzle-orm/neon-serverless/"
+import { point, polygon, bitflag, jsonb, uuid, xy, xyArray } from "./custom";
+import {} from "drizzle-orm/neon-serverless/";
 
 // IMPORTANT: any object that should be created in the database
 // should be *exported* from this file.
@@ -45,7 +46,7 @@ export const difficulty = pgEnum("difficulty", [
 	"bad",
 	"dangerous",
 ]);
-export const reception = pgEnum("reception", ["good", "ok", "bad"]);
+export const reception = pgEnum("reception", ["good", "ok", "dangerous"]);
 export const grade = pgEnum("grades", grades);
 
 const timestamptz = (name: string) => timestamp(name, { withTimezone: true });
@@ -56,8 +57,8 @@ export const topos = pgTable(
 		id: uuid("id").primaryKey(),
 		name: text("name").notNull(),
 		status: topoStatus("status").notNull(),
-		trashed: boolean("trashed").default(false),
 		type: bitflag<TopoTypes>("type").notNull(),
+		trashed: boolean("trashed").notNull().default(false),
 
 		location: point("location").notNull(),
 		rockTypes: bitflag<RockTypes>("rock_types")
@@ -97,7 +98,7 @@ export const sectors = pgTable("sectors", {
 	id: uuid("id").primaryKey(),
 	name: text("name").notNull(),
 	index: integer("index").notNull(),
-	geometry: polygon("geometry").notNull(),
+	path: polygon("path").notNull(),
 	topoId: uuid("topoId")
 		.notNull()
 		.references(() => topos.id, { onDelete: "cascade" }),
@@ -126,6 +127,23 @@ export const parkings = pgTable("parkings", {
 		.references(() => topos.id, { onDelete: "cascade" }),
 });
 
+export const managers = pgTable("managers", {
+	id: uuid("id").primaryKey(),
+	name: text("name").notNull(),
+	contactName: text("contact_name").notNull(),
+	contactPhone: text("contact_phone"),
+	contactMail: text("contact_mail"),
+	description: text("description"),
+	address: text("address"),
+	zip: integer("zip"),
+	city: text("city"),
+	image: jsonb<Img>("image"),
+
+	topoId: uuid("topo_id")
+		.notNull()
+		.references(() => topos.id, { onDelete: "cascade" }),
+});
+
 export const topoAccesses = pgTable("topo_accesses", {
 	id: uuid("id").primaryKey(),
 	duration: doublePrecision("duration"),
@@ -143,9 +161,6 @@ export const rocks = pgTable("rocks", {
 	location: point("location").notNull(),
 	mustSee: boolean("must_see").notNull().default(false),
 	isHighball: boolean("is_highball").notNull().default(false),
-	orientation: bitflag<Orientation>("orientation")
-		.notNull()
-		.default(Orientation.None),
 	dangerousDescent: boolean("dangerous_descent").notNull().default(false),
 	images: jsonb<Array<Img>>("images").notNull(),
 	topoId: uuid("topo_id")
@@ -155,12 +170,16 @@ export const rocks = pgTable("rocks", {
 
 export const tracks = pgTable("tracks", {
 	id: uuid("id").primaryKey(),
-	name: text("name").notNull(),
+	name: text("name"),
 	index: integer("index").notNull(),
 	description: text("description"),
 	height: doublePrecision("height"),
 	reception: reception("reception"),
 	anchors: integer("anchors"),
+
+	orientation: bitflag<Orientation>("orientation")
+		.notNull()
+		.default(Orientation.None),
 	mustSee: boolean("must_see").notNull().default(false),
 	isTraverse: boolean("is_traverse").notNull().default(false),
 	isSittingStart: boolean("is_sitting_start").notNull().default(false),
@@ -174,9 +193,9 @@ export const tracks = pgTable("tracks", {
 	topoId: uuid("topo_id")
 		.notNull()
 		.references(() => topos.id, { onDelete: "cascade" }),
-	boulderId: uuid("boulder_id")
+	rockId: uuid("rock_id")
 		.notNull()
-		.references(() => topos.id, { onDelete: "cascade" }),
+		.references(() => rocks.id, { onDelete: "cascade" }),
 });
 
 export const trackVariants = pgTable("track_variants", {
@@ -192,7 +211,9 @@ export const lines = pgTable("lines", {
 	id: uuid("id").primaryKey(),
 	index: integer("index").notNull(),
 	points: xy("points").array().notNull(),
-	forbidden: xy("forbidden").array().array(),
+	// The custom `xyArray` type is a workaround for this issue:
+	// https://github.com/drizzle-team/drizzle-orm/issues/460
+	forbidden: xyArray("forbidden").array(),
 	hand1: xy("hand1"),
 	hand2: xy("hand2"),
 	foot1: xy("foot1"),

@@ -1,11 +1,13 @@
 import { customType } from "drizzle-orm/pg-core";
 import { parseWKB, ParsedPolygon } from "helpers/wkb";
 import { UUID } from "types";
+import WKB from "ol/format/WKB";
+import { Point, Polygon } from "ol/geom";
 
 export const point = customType<{ data: [number, number]; driverData: string }>(
 	{
 		dataType() {
-			return "Geometry(Polygon, 4326)";
+			return "Geometry(Point, 4326)";
 		},
 		fromDriver(value: string) {
 			const json = parseWKB(value);
@@ -15,7 +17,7 @@ export const point = customType<{ data: [number, number]; driverData: string }>(
 			return json.coordinates;
 		},
 		toDriver(coordinates: [number, number]) {
-			return `ST_Point(${coordinates[0]}, ${coordinates[1]})`;
+			return new WKB().writeGeometry(new Point(coordinates)).toString();
 		},
 	}
 );
@@ -35,11 +37,7 @@ export const polygon = customType<{
 		return json.coordinates;
 	},
 	toDriver(coordinates: ParsedPolygon["coordinates"]) {
-		const geojson = {
-			type: "Polygon",
-			coordinates,
-		};
-		return `ST_GeomFromGeoJSON('${geojson}')`;
+		return new WKB().writeGeometry(new Polygon(coordinates)).toString();
 	},
 });
 
@@ -74,5 +72,16 @@ export const uuid = customType<{ data: UUID; driverData: string }>({
 export const xy = customType<{ data: [number, number]; driverData: string }>({
 	dataType() {
 		return "double precision[]";
+	},
+});
+
+// The custom `xyArray` type is a workaround for this issue:
+// https://github.com/drizzle-team/drizzle-orm/issues/460
+export const xyArray = customType<{
+	data: Array<[number, number]>;
+	driverData: string;
+}>({
+	dataType() {
+		return "double precision[][]";
 	},
 });

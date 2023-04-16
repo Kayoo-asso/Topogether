@@ -1,0 +1,1 @@
+ALTER TABLE "lines" ALTER COLUMN "forbidden" SET DATA TYPE double precision[][][];
