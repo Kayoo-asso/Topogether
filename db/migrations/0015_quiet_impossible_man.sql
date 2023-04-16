@@ -1,0 +1,9 @@
+CREATE INDEX IF NOT EXISTS "lines_topo_id_index" ON "lines" ("topo_id");
+CREATE INDEX IF NOT EXISTS "managers_topo_id_index" ON "managers" ("topo_id");
+CREATE INDEX IF NOT EXISTS "parkings_topo_id_index" ON "parkings" ("topo_id");
+CREATE INDEX IF NOT EXISTS "rocks_topo_id_index" ON "rocks" ("topo_id");
+CREATE INDEX IF NOT EXISTS "sectors_topoId_index" ON "sectors" ("topoId");
+CREATE INDEX IF NOT EXISTS "topo_accesses_id_index" ON "topo_accesses" ("id");
+CREATE INDEX IF NOT EXISTS "track_variants_track_id_index" ON "track_variants" ("track_id");
+CREATE INDEX IF NOT EXISTS "tracks_id_index" ON "tracks" ("id");
+CREATE INDEX IF NOT EXISTS "waypoints_topo_id_index" ON "waypoints" ("topo_id");

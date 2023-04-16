@@ -1,8 +1,8 @@
 import { customType } from "drizzle-orm/pg-core";
-import { parseWKB, ParsedPolygon } from "helpers/wkb";
 import { UUID } from "types";
 import WKB from "ol/format/WKB";
 import { Point, Polygon } from "ol/geom";
+import { cornersOfRectangle } from "@dnd-kit/core/dist/utilities/algorithms/helpers";
 
 export const point = customType<{ data: [number, number]; driverData: string }>(
 	{
@@ -10,11 +10,17 @@ export const point = customType<{ data: [number, number]; driverData: string }>(
 			return "Geometry(Point, 4326)";
 		},
 		fromDriver(value: string) {
-			const json = parseWKB(value);
-			if (json.type !== "Point") {
-				throw new Error(`Expected Point geometry, received ${json.type}`);
+			const geom = new WKB().readGeometry(value);
+			if (!(geom instanceof Point)) {
+				throw new Error(`Expected Point geometry, received ${geom}`);
 			}
-			return json.coordinates;
+			const coordinates = geom.getCoordinates();
+			if (coordinates.length !== 2) {
+				throw new Error(
+					`Expected 2 coordinates, received ${coordinates.length}`
+				);
+			}
+			return coordinates as [number, number];
 		},
 		toDriver(coordinates: [number, number]) {
 			return new WKB().writeGeometry(new Point(coordinates)).toString();
@@ -22,21 +28,22 @@ export const point = customType<{ data: [number, number]; driverData: string }>(
 	}
 );
 
+type PolygonCoordinates = Array<Array<[number, number]>>;
 export const polygon = customType<{
-	data: ParsedPolygon["coordinates"];
+	data: PolygonCoordinates;
 	driverData: string;
 }>({
 	dataType() {
 		return "Geometry(Polygon, 4326)";
 	},
 	fromDriver(value: string) {
-		const json = parseWKB(value);
-		if (json.type !== "Polygon") {
-			throw new Error(`Expected Polygon geometry, received ${json.type}`);
+		const geom = new WKB().readGeometry(value);
+		if (!(geom instanceof Polygon)) {
+			throw new Error(`Expected Point geometry, received ${geom}`);
 		}
-		return json.coordinates;
+		return geom.getCoordinates() as PolygonCoordinates;
 	},
-	toDriver(coordinates: ParsedPolygon["coordinates"]) {
+	toDriver(coordinates: PolygonCoordinates) {
 		return new WKB().writeGeometry(new Polygon(coordinates)).toString();
 	},
 });

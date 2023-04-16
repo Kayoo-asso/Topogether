@@ -6,4 +6,6 @@ const pool = new Pool({
 	connectionString: env.PGURL,
 	password: env.PGPASSWORD,
 });
-export const db = drizzle(pool, {logger: true});
+export const db = drizzle(pool);
+
+export * from "./schema";

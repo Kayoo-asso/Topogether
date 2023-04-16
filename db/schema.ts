@@ -13,6 +13,7 @@ import {
 	primaryKey,
 	uniqueIndex,
 	serial,
+	PgEnum,
 } from "drizzle-orm/pg-core";
 import {
 	RockTypes,
@@ -26,7 +27,6 @@ import {
 	TrackDanger,
 } from "types";
 import { point, polygon, bitflag, jsonb, uuid, xy, xyArray } from "./custom";
-import {} from "drizzle-orm/neon-serverless/";
 
 // IMPORTANT: any object that should be created in the database
 // should be *exported* from this file.
@@ -48,6 +48,7 @@ export const difficulty = pgEnum("difficulty", [
 ]);
 export const reception = pgEnum("reception", ["good", "ok", "dangerous"]);
 export const grade = pgEnum("grades", grades);
+
 
 const timestamptz = (name: string) => timestamp(name, { withTimezone: true });
 
@@ -102,6 +103,10 @@ export const sectors = pgTable("sectors", {
 	topoId: uuid("topoId")
 		.notNull()
 		.references(() => topos.id, { onDelete: "cascade" }),
+}, (sectors) => {
+	return {
+		topoIdx: index().on(sectors.topoId)
+	}
 });
 
 export const waypoints = pgTable("waypoints", {
@@ -113,6 +118,10 @@ export const waypoints = pgTable("waypoints", {
 	topoId: uuid("topo_id")
 		.notNull()
 		.references(() => topos.id, { onDelete: "cascade" }),
+}, (waypoints) => {
+	return {
+		topoIdx: index().on(waypoints.topoId)
+	}
 });
 
 export const parkings = pgTable("parkings", {
@@ -125,6 +134,10 @@ export const parkings = pgTable("parkings", {
 	topoId: uuid("topo_id")
 		.notNull()
 		.references(() => topos.id, { onDelete: "cascade" }),
+}, (parkings) => {
+	return {
+		topoIdx: index().on(parkings.topoId)
+	}
 });
 
 export const managers = pgTable("managers", {
@@ -142,6 +155,10 @@ export const managers = pgTable("managers", {
 	topoId: uuid("topo_id")
 		.notNull()
 		.references(() => topos.id, { onDelete: "cascade" }),
+}, (managers) => {
+	return {
+		topoIdx: index().on(managers.topoId)
+	}
 });
 
 export const topoAccesses = pgTable("topo_accesses", {
@@ -153,6 +170,10 @@ export const topoAccesses = pgTable("topo_accesses", {
 	topoId: uuid("topo_id")
 		.notNull()
 		.references(() => topos.id, { onDelete: "cascade" }),
+}, (topoAccesses) => {
+	return {
+		topoIdx: index().on(topoAccesses.id)
+	}
 });
 
 export const rocks = pgTable("rocks", {
@@ -166,6 +187,10 @@ export const rocks = pgTable("rocks", {
 	topoId: uuid("topo_id")
 		.notNull()
 		.references(() => topos.id, { onDelete: "cascade" }),
+}, (rocks) => {
+	return {
+		topoIdx: index().on(rocks.topoId)
+	}
 });
 
 export const tracks = pgTable("tracks", {
@@ -173,6 +198,8 @@ export const tracks = pgTable("tracks", {
 	name: text("name"),
 	index: integer("index").notNull(),
 	description: text("description"),
+
+	grade: grade("grade"),
 	height: doublePrecision("height"),
 	reception: reception("reception"),
 	anchors: integer("anchors"),
@@ -196,6 +223,10 @@ export const tracks = pgTable("tracks", {
 	rockId: uuid("rock_id")
 		.notNull()
 		.references(() => rocks.id, { onDelete: "cascade" }),
+}, (tracks) => {
+	return {
+		topoIdx: index().on(tracks.id)
+	}
 });
 
 export const trackVariants = pgTable("track_variants", {
@@ -205,6 +236,10 @@ export const trackVariants = pgTable("track_variants", {
 	trackId: uuid("track_id")
 		.notNull()
 		.references(() => tracks.id, { onDelete: "cascade" }),
+}, (trackVariants) => {
+	return {
+		trackIdx: index().on(trackVariants.trackId)
+	}
 });
 
 export const lines = pgTable("lines", {
@@ -230,6 +265,10 @@ export const lines = pgTable("lines", {
 	variantId: uuid("variant_id").references(() => trackVariants.id, {
 		onDelete: "cascade",
 	}),
+}, (lines) => {
+	return {
+		topoIdx: index().on(lines.topoId)
+	}
 });
 
 export const contributorRole = pgEnum("contributor_role", [

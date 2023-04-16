@@ -1,4 +1,4 @@
-import { db } from "../api/db";
+import { db } from "db";
 import postgres from "postgres";
 import { env } from "../src/env.mjs";
 import {
@@ -190,6 +190,7 @@ for (const id of topoIds) {
 			trackRows.push({
 				id: track.id,
 				name: track.name,
+				grade: track.grade,
 				index: track.index,
 				description: track.description,
 				height: track.height,
