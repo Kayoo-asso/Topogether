@@ -10,7 +10,8 @@
 		"start": "next start",
 		"format": "prettier --write '**/*.{js,ts,jsx,tsx,json}'",
 		"migrate": "drizzle-kit up:pg --out db/migrations && doppler run -- node db/migrate.mjs",
-		"gen-migration": "doppler run -- drizzle-kit generate:pg --out db/migrations --schema db/schema.ts"
+		"gen-migration": "doppler run -- drizzle-kit generate:pg --out db/migrations --schema db/schema.ts",
+		"transfer": "doppler run -- bun db/transferSupabase.ts"
 	},
 	"dependencies": {
 		"@clerk/nextjs": "^4.10.0",
@@ -18,7 +19,6 @@
 		"@dnd-kit/modifiers": "^6.0.1",
 		"@dnd-kit/sortable": "^7.0.2",
 		"@neondatabase/serverless": "^0.3.0",
-		"@react-spring/web": "^9.4.5",
 		"@supabase/supabase-js": "^1.35.6",
 		"@tanstack/react-query": "^4.20.4",
 		"@trpc/client": "^10.11.0",
@@ -50,7 +50,6 @@
 	},
 	"devDependencies": {
 		"@babel/core": "^7.16.7",
-		"@digitak/esrun": "^3.2.23",
 		"@svgr/webpack": "^6.2.1",
 		"@types/cookie": "^0.4.1",
 		"@types/node": "17.0.0",

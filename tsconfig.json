@@ -20,8 +20,11 @@
 		"isolatedModules": true,
 		"jsx": "preserve",
 		"incremental": true,
-		"allowSyntheticDefaultImports": true
+		"allowSyntheticDefaultImports": true,
+		"paths": {
+			"~/*": ["./src/*"]
+		}
 	},
-	"include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "db/migrate.mjs"],
+	"include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "db/migrate.mjs", "db/transferSupabase.ts"],
 	"exclude": ["node_modules", "fly"]
 }

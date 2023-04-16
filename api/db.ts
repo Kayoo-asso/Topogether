@@ -1,19 +1,10 @@
-import { Kysely, PostgresDialect, sql } from "kysely";
-import { env } from "env/server.mjs";
-import type { DB } from "db/types";
-import pg from "pg";
+import { drizzle } from "drizzle-orm/neon-serverless/index.js";
 
-export function getDB<T>() {
-	return new Kysely<T>({
-		dialect: new PostgresDialect({
-			pool: new pg.Pool({
-				connectionString: env.DATABASE_URL,
-				ssl: true,
-			}),
-		}),
-	});
-}
+import { Pool } from "@neondatabase/serverless";
+import { env } from "~/env.mjs";
 
-export const db = getDB<DB>();
-
-db.selectFrom("boulders").select(sql`ST_AsGeoJSON(location)`.as(""));
+const pool = new Pool({
+	connectionString: env.PGURL,
+	password: env.PGPASSWORD,
+});
+export const db = drizzle(pool, { logger: true });
