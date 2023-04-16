@@ -41,14 +41,11 @@ export const Modify = forwardRef<OLModify, P>(
 	({ source, collection, ...props }, ref) => {
 		const map = useMap();
 		const [s] = useGetSources(map, [source]);
-		const features = useCollection(collection);
+		let features = useCollection(collection);
 		if (s && !(s instanceof VectorSource)) {
 			throw new Error(
 				`The target source of a Draw interaction should be a VectorSource`
 			);
-		}
-		if(features) {
-			// console.log("Modify got collection:", features)
 		}
 
 		const modify = useBehavior(
