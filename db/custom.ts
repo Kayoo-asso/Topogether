@@ -1,80 +1,78 @@
-import { Expression, Kysely, OperationNode, RawBuilder, sql, SelectQueryBuilder } from "kysely";
-import {
-	JsonInput,
-	Point,
-	PointInput,
-	Polygon,
-	PolygonInput,
-} from "./types";
-
-export function json<T>(value: T): RawBuilder<JsonInput<T>> {
-  return sql`CAST(${JSON.stringify(value)} AS JSONB)`
-}
-export function pointWrite(point: [number, number]): RawBuilder<PointInput>
-export function pointWrite(point: [number, number] | undefined): RawBuilder<PointInput> | null
-export function pointWrite(point: [number, number] | undefined): RawBuilder<PointInput> | null  {
-	if(!point) {
-		return null;
-	}
-	else {
-		return sql`ST_Point(${point[0]}, ${point[1]})`;
-	}
-}
-
-export function pointRead(column: string) {
-	// Using Postgres' array literal syntax to return an array directly
-	return sql<Point>`'{ ST_X(${sql.ref(column)}), ST_Y(${sql.ref(
-		column
-	)}) }'`.as(column);
-}
-
-export function polygonWrite(polygon: Polygon): RawBuilder<PolygonInput> {
-	return sql`ST_MakePolygon(ST_MakeLine(${polygon.map(pointWrite)}))`;
-}
-
-export function polygonRead(column: string) {
-	// Convert to GeoJSON and only return the coordinates
-	return sql<Polygon>`ST_AsGeoJSON(${sql.ref(column)})->'coordinates'`.as(
-		column
-	);
-}
-
 import { customType } from "drizzle-orm/pg-core";
 import { parseWKB, ParsedPolygon } from "helpers/wkb";
 import { UUID } from "types";
 
-export const point = customType<{ data: [number, number], driverData: string;}>({
-    dataType() {
-        return "Geometry(Polygon, 4326)"
-    },
-    fromDriver(value: string) {
-        const json = parseWKB(value);
-        if (json.type !== "Point") {
-            throw new Error(`Expected Point geometry, received ${json.type}`)
-        }
-        return json.coordinates;
-    },
-    toDriver(coordinates: [number, number]) {
-        return `ST_Point(${coordinates[0]}, ${coordinates[1]})`
-    }
-})
+export const point = customType<{ data: [number, number]; driverData: string }>(
+	{
+		dataType() {
+			return "Geometry(Polygon, 4326)";
+		},
+		fromDriver(value: string) {
+			const json = parseWKB(value);
+			if (json.type !== "Point") {
+				throw new Error(`Expected Point geometry, received ${json.type}`);
+			}
+			return json.coordinates;
+		},
+		toDriver(coordinates: [number, number]) {
+			return `ST_Point(${coordinates[0]}, ${coordinates[1]})`;
+		},
+	}
+);
 
-export const polygon = customType<{ data: ParsedPolygon["coordinates"], driverData: string;}>({
-    dataType() {
-        return "Geometry(Polygon, 4326)"
-    },
-    fromDriver(value: string) {
-        const json = parseWKB(value);
-        if (json.type !== "Polygon") {
-            throw new Error(`Expected Polygon geometry, received ${json.type}`)
-        }
-        return json.coordinates;
-    },
-    toDriver(coordinates: ParsedPolygon["coordinates"]) {
-        const geojson = {
-            type: "Polygon",
-            coordinates
-        } satisfies ParsedPolygon;
-        return `ST_GeomFromGeoJSON('${geojson}')`
-    }
+export const polygon = customType<{
+	data: ParsedPolygon["coordinates"];
+	driverData: string;
+}>({
+	dataType() {
+		return "Geometry(Polygon, 4326)";
+	},
+	fromDriver(value: string) {
+		const json = parseWKB(value);
+		if (json.type !== "Polygon") {
+			throw new Error(`Expected Polygon geometry, received ${json.type}`);
+		}
+		return json.coordinates;
+	},
+	toDriver(coordinates: ParsedPolygon["coordinates"]) {
+		const geojson = {
+			type: "Polygon",
+			coordinates,
+		};
+		return `ST_GeomFromGeoJSON('${geojson}')`;
+	},
+});
+
+// For these two custom types, we wrap the call to `customType` in a callback, that allows passing
+// in a more specific type for the value in the column.
+export const jsonb = <TData>(name: string) =>
+	customType<{ data: TData; driverData: string }>({
+		dataType() {
+			return "jsonb";
+		},
+		toDriver(value: TData): string {
+			return JSON.stringify(value);
+		},
+	})(name);
+
+export const bitflag = <TData extends number>(name: string) =>
+	customType<{ data: TData; driverData: string }>({
+		dataType() {
+			return "integer";
+		},
+	})(name);
+
+// There is a built-in type for UUID in the Drizzle Postgres driver.
+// However, we want to enforce the use of our custom UUID TypeScript type.
+// For this, we need to redefine the `uuid` type using `customType`
+export const uuid = customType<{ data: UUID; driverData: string }>({
+	dataType() {
+		return "uuid";
+	},
+});
+
+export const xy = customType<{ data: [number, number]; driverData: string }>({
+	dataType() {
+		return "double precision[]";
+	},
 });

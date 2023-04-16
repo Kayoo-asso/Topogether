@@ -3,7 +3,7 @@
 		// Gives us nicer paths to modules, by referring to them
 		// from the root of the project
 		"baseUrl": ".",
-		"target": "ES6",
+		"target": "ESNext",
 		"lib": ["dom", "dom.iterable", "WebWorker"],
 		// Used to add types to libraries
 		"allowJs": true,
@@ -22,6 +22,6 @@
 		"incremental": true,
 		"allowSyntheticDefaultImports": true
 	},
-	"include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+	"include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "db/migrate.mjs"],
 	"exclude": ["node_modules", "fly"]
 }

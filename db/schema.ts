@@ -1,5 +1,4 @@
 import {
-	uuid,
 	text,
 	integer,
 	smallint,
@@ -11,7 +10,8 @@ import {
 	boolean,
 	date,
 	doublePrecision,
-	jsonb,
+	primaryKey,
+	uniqueIndex,
 } from "drizzle-orm/pg-core";
 import {
 	RockTypes,
@@ -21,51 +21,77 @@ import {
 	Orientation,
 	TopoAccessStep,
 	grades,
-    TrackSpec,
-    TrackDanger,
+	TrackSpec,
+	TrackDanger,
 } from "types";
-import { bitflag } from "./BitflagColumn";
-import { point, polygon } from "./custom";
+import { point, polygon, bitflag, jsonb, uuid, xy } from "./custom";
+import {} from "drizzle-orm/neon-serverless/"
 
-const topoStatus = pgEnum("topo_status", ["draft", "submitted", "validated"]);
-const season = pgEnum("season", ["winter", "spring", "summer", "fall"]);
-const difficulty = pgEnum("difficulty", ["good", "ok", "bad", "dangerous"]);
-const reception = pgEnum("difficulty", ["good", "ok", "bad"]);
-const pgGrade = pgEnum("grades", grades);
+// IMPORTANT: any object that should be created in the database
+// should be *exported* from this file.
+// Example: calling pgTable or pgEnum without exporting the result means Drizzle Kit
+// will NOT create the corresponding object in the database.
+
+export const topoStatus = pgEnum("topo_status", [
+	"draft",
+	"submitted",
+	"validated",
+]);
+export const season = pgEnum("season", ["winter", "spring", "summer", "fall"]);
+
+export const difficulty = pgEnum("difficulty", [
+	"good",
+	"ok",
+	"bad",
+	"dangerous",
+]);
+export const reception = pgEnum("reception", ["good", "ok", "bad"]);
+export const grade = pgEnum("grades", grades);
 
 const timestamptz = (name: string) => timestamp(name, { withTimezone: true });
 
-export const topos = pgTable("topos", {
-	id: uuid("id").primaryKey(),
-	name: text("name").notNull(),
-	status: topoStatus("status").notNull(),
-	type: bitflag<TopoTypes>("type").notNull(),
+export const topos = pgTable(
+	"topos",
+	{
+		id: uuid("id").primaryKey(),
+		name: text("name").notNull(),
+		status: topoStatus("status").notNull(),
+		trashed: boolean("trashed").default(false),
+		type: bitflag<TopoTypes>("type").notNull(),
 
-	location: point("location").notNull(),
-	rockTypes: bitflag<RockTypes>("rock_types").notNull().default(RockTypes.None),
+		location: point("location").notNull(),
+		rockTypes: bitflag<RockTypes>("rock_types")
+			.notNull()
+			.default(RockTypes.None),
 
-	bestSeason: season("best_season"),
-	forbidden: boolean("forbidden").notNull().default(false),
-	oldGear: boolean("old_gear").notNull().default(false),
-	adaptedToChildren: boolean("adapted_to_children").notNull().default(false),
+		bestSeason: season("best_season"),
+		forbidden: boolean("forbidden").notNull().default(false),
+		oldGear: boolean("old_gear").notNull().default(false),
+		adaptedToChildren: boolean("adapted_to_children").notNull().default(false),
 
-	cleaned: date("cleaned"),
-	modified: timestamptz("modified").notNull().defaultNow(),
-	submitted: timestamptz("submitted"),
-	validated: timestamptz("validated"),
+		cleaned: date("cleaned"),
+		modified: timestamptz("modified").notNull().defaultNow(),
+		submitted: timestamptz("submitted"),
+		validated: timestamptz("validated"),
 
-	closestCity: text("closest_city"),
-	description: text("description"),
-	faunaProtection: text("fauna_protection"),
-	ethics: text("ethics"),
-	danger: text("danger"),
-	altitude: doublePrecision("altitude"),
-	otherAmenities: text("other_amenities"),
+		closestCity: text("closest_city"),
+		description: text("description"),
+		faunaProtection: text("fauna_protection"),
+		ethics: text("ethics"),
+		danger: text("danger"),
+		altitude: doublePrecision("altitude"),
+		otherAmenities: text("other_amenities"),
 
-	image: jsonb<Img>("image"),
-	creatorId: uuid("creator_id"),
-	validatorId: uuid("validator_id"),
-});
+		image: jsonb<Img>("image"),
+		creatorId: uuid("creator_id"),
+		validatorId: uuid("validator_id"),
+	},
+	(topos) => {
+		return {
+			uniqueIdx: uniqueIndex("topos_unique_name").on(topos.name),
+		};
+	}
+);
 
 export const sectors = pgTable("sectors", {
 	id: uuid("id").primaryKey(),
@@ -74,7 +100,7 @@ export const sectors = pgTable("sectors", {
 	geometry: polygon("geometry").notNull(),
 	topoId: uuid("topoId")
 		.notNull()
-		.references(() => topos.id),
+		.references(() => topos.id, { onDelete: "cascade" }),
 });
 
 export const waypoints = pgTable("waypoints", {
@@ -85,7 +111,7 @@ export const waypoints = pgTable("waypoints", {
 	image: jsonb<Img>("image"),
 	topoId: uuid("topo_id")
 		.notNull()
-		.references(() => topos.id),
+		.references(() => topos.id, { onDelete: "cascade" }),
 });
 
 export const parkings = pgTable("parkings", {
@@ -97,7 +123,7 @@ export const parkings = pgTable("parkings", {
 	image: jsonb<Img>("image"),
 	topoId: uuid("topo_id")
 		.notNull()
-		.references(() => topos.id),
+		.references(() => topos.id, { onDelete: "cascade" }),
 });
 
 export const topoAccesses = pgTable("topo_accesses", {
@@ -108,7 +134,7 @@ export const topoAccesses = pgTable("topo_accesses", {
 	steps: jsonb<Array<TopoAccessStep>>("steps"),
 	topoId: uuid("topo_id")
 		.notNull()
-		.references(() => topos.id),
+		.references(() => topos.id, { onDelete: "cascade" }),
 });
 
 export const rocks = pgTable("rocks", {
@@ -124,7 +150,7 @@ export const rocks = pgTable("rocks", {
 	images: jsonb<Array<Img>>("images").notNull(),
 	topoId: uuid("topo_id")
 		.notNull()
-		.references(() => topos.id),
+		.references(() => topos.id, { onDelete: "cascade" }),
 });
 
 export const tracks = pgTable("tracks", {
@@ -142,18 +168,98 @@ export const tracks = pgTable("tracks", {
 	isTrad: boolean("is_trad").notNull().default(false),
 	hasMantle: boolean("has_mantle").notNull().default(false),
 
-    spec: bitflag<TrackSpec>("spec").notNull(),
-    dangers: bitflag<TrackDanger>("danger").notNull(),
+	spec: bitflag<TrackSpec>("spec").notNull(),
+	dangers: bitflag<TrackDanger>("danger").notNull(),
 
 	topoId: uuid("topo_id")
 		.notNull()
-		.references(() => topos.id),
+		.references(() => topos.id, { onDelete: "cascade" }),
 	boulderId: uuid("boulder_id")
 		.notNull()
-		.references(() => topos.id),
+		.references(() => topos.id, { onDelete: "cascade" }),
 });
 
 export const trackVariants = pgTable("track_variants", {
-    name: text("name"),
-    grade: pgGrade("grade"),
-})
+	id: uuid("id").primaryKey(),
+	name: text("name"),
+	grade: grade("grade"),
+	trackId: uuid("track_id")
+		.notNull()
+		.references(() => tracks.id, { onDelete: "cascade" }),
+});
+
+export const lines = pgTable("lines", {
+	id: uuid("id").primaryKey(),
+	index: integer("index").notNull(),
+	points: xy("points").array().notNull(),
+	forbidden: xy("forbidden").array().array(),
+	hand1: xy("hand1"),
+	hand2: xy("hand2"),
+	foot1: xy("foot1"),
+	foot2: xy("foot2"),
+	belays: xy("belays").array(),
+
+	topoId: uuid("topo_id")
+		.notNull()
+		.references(() => topos.id, { onDelete: "cascade" }),
+	trackId: uuid("track_id")
+		.notNull()
+		.references(() => tracks.id, { onDelete: "cascade" }),
+	imageId: uuid("image_id").notNull(),
+	variantId: uuid("variant_id").references(() => trackVariants.id, {
+		onDelete: "cascade",
+	}),
+});
+
+export const contributorRole = pgEnum("contributor_role", [
+	"CONTRIBUTOR",
+	"ADMIN",
+]);
+
+export const contributors = pgTable(
+	"contributors",
+	{
+		topoId: uuid("topo_id")
+			.notNull()
+			.references(() => topos.id, { onDelete: "cascade" }),
+		userId: uuid("user_id").notNull(),
+		role: contributorRole("role").notNull(),
+	},
+	(contributors) => {
+		return {
+			primaryKey: primaryKey(contributors.topoId, contributors.userId),
+		};
+	}
+);
+
+export const topoLikes = pgTable(
+	"topo_likes",
+	{
+		topoId: uuid("topo_id")
+			.notNull()
+			.references(() => topos.id, { onDelete: "cascade" }),
+		userId: uuid("user_id").notNull(),
+		created: timestamptz("created").notNull().defaultNow(),
+	},
+	(topoLikes) => {
+		return {
+			primaryKey: primaryKey(topoLikes.topoId, topoLikes.userId),
+		};
+	}
+);
+
+export const rockLikes = pgTable(
+	"rock_likes",
+	{
+		rockId: uuid("rock_id")
+			.notNull()
+			.references(() => rocks.id, { onDelete: "cascade" }),
+		userId: uuid("user_id").notNull(),
+		created: timestamptz("created").notNull().defaultNow(),
+	},
+	(rockLikes) => {
+		return {
+			primaryKey: primaryKey(rockLikes.rockId, rockLikes.userId),
+		};
+	}
+);

@@ -17,7 +17,17 @@ export enum Reception {
 	None,
 }
 
-
+export const enum Orientation {
+	None,
+	N,
+	NE,
+	E,
+	SE,
+	S,
+	SW,
+	W,
+	NW,
+}
 
 export type Rating = 1 | 2 | 3 | 4 | 5;
 
@@ -69,7 +79,7 @@ export const grades = [
 	"9b+",
 	"9c",
 	"9c+",
-	'P'
+	"P",
 ] as const;
 
 export const lightGrades = [3, 4, 5, 6, 7, 8, 9, "P"] as const; //"P" is for Project (the default grade, when it has not been settle yet)
@@ -85,7 +95,14 @@ export const gradeToLightGrade = (grade?: Grade): LightGrade => {
 	return "P";
 };
 
-export type MapToolEnum = "ROCK" | "SECTOR" | "PARKING" | "WAYPOINT" | "DRAGMAP" | "TOPO" | undefined;
+export type MapToolEnum =
+	| "ROCK"
+	| "SECTOR"
+	| "PARKING"
+	| "WAYPOINT"
+	| "DRAGMAP"
+	| "TOPO"
+	| undefined;
 
 export type DrawerToolEnum =
 	| "LINE_DRAWER"
