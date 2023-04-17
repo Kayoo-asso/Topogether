@@ -172,7 +172,7 @@ export const topoAccesses = pgTable("topo_accesses", {
 		.references(() => topos.id, { onDelete: "cascade" }),
 }, (topoAccesses) => {
 	return {
-		topoIdx: index().on(topoAccesses.id)
+		topoIdx: index().on(topoAccesses.topoId)
 	}
 });
 
@@ -225,7 +225,7 @@ export const tracks = pgTable("tracks", {
 		.references(() => rocks.id, { onDelete: "cascade" }),
 }, (tracks) => {
 	return {
-		topoIdx: index().on(tracks.id)
+		topoIdx: index().on(tracks.topoId)
 	}
 });
 

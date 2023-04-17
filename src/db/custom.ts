@@ -2,8 +2,8 @@ import { AnyPgColumn, customType } from "drizzle-orm/pg-core";
 import { UUID } from "types";
 import WKB from "ol/format/WKB";
 import { Point, Polygon } from "ol/geom";
-import { cornersOfRectangle } from "@dnd-kit/core/dist/utilities/algorithms/helpers";
 import { sql } from "drizzle-orm";
+
 
 export const point = customType<{ data: [number, number]; driverData: string }>(
 	{

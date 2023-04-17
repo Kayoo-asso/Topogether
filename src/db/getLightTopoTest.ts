@@ -12,12 +12,61 @@ import {
 	trackVariants as variantsTable,
 	contributors as contributorsTable,
 	countDistinct,
+	rocks,
 } from "~/db";
 import { InferModel, eq, sql } from "drizzle-orm";
 import { UUID } from "types";
+import { ProfileContent } from "components/organisms/user/ProfileContent";
 
-const id = "cc1c96b4-e73d-4632-8f04-7949e8e5f902" as UUID;
-const lightTopo = await db
+const start = Date.now();
+const parkingsAgg = db.$with("parkings_agg").as(
+	db
+		.select({
+      // Workaround for SELECT DISTINCT ON, which is not yet supported by Drizzle
+      // https://github.com/drizzle-team/drizzle-orm/issues/338
+			id: sql<UUID>`DISTINCT ON (${parkingsTable.topoId}) ${parkingsTable.topoId}`.as(
+				"parkings.topo_id"
+			),
+			parkingLocation: sql<
+				[number, number]
+			>`ARRAY[ST_X(${parkingsTable.location}), ST_Y(${parkingsTable.location})]`.as(
+				"parking_location"
+			),
+		})
+		.from(parkingsTable)
+		.orderBy(parkingsTable.topoId)
+);
+const sectorsCount = db.$with("sectors_count").as(
+	db
+		.select({
+			id: sectorsTable.topoId,
+			nbSectors: countDistinct(sectorsTable.id).as("nb_sectors"),
+		})
+		.from(sectorsTable)
+		.groupBy(sectorsTable.topoId)
+);
+const rocksCount = db.$with("rocks_count").as(
+	db
+		.select({
+			id: rocksTable.topoId,
+			nbRocks: countDistinct(rocksTable.id).as("nb_rocks"),
+		})
+		.from(rocksTable)
+		.groupBy(rocksTable.topoId)
+);
+
+const tracksCount = db.$with("tracks_count").as(
+	db
+		.select({
+			id: tracksTable.topoId,
+			nbTracks: countDistinct(tracksTable.id).as("nb_tracks"),
+		})
+		.from(tracksTable)
+		.groupBy(tracksTable.topoId)
+);
+
+const query = db
+	.with(parkingsAgg, sectorsCount, rocksCount, tracksCount)
 	.select({
 		id: toposTable.id,
 		name: toposTable.name,
@@ -29,19 +78,21 @@ const lightTopo = await db
 		// -> Add properties as needed here
 
 		// Aggregated properties
-		nbSectors: countDistinct(sectorsTable.id),
-		nbTracks: countDistinct(tracksTable.id),
-		nbRocks: countDistinct(rocksTable.id),
-		parkingLocation: sql`MAX(${parkingsTable.location})`,
+		nbSectors: sectorsCount.nbSectors,
+		nbRocks: rocksCount.nbRocks,
+		nbTracks: tracksCount.nbTracks,
+		parkingLocation: parkingsAgg.parkingLocation,
 	})
 	.from(toposTable)
-	.leftJoin(rocksTable, eq(rocksTable.topoId, toposTable.id))
-	.leftJoin(tracksTable, eq(tracksTable.topoId, toposTable.id))
-	.leftJoin(sectorsTable, eq(sectorsTable.topoId, toposTable.id))
-	.leftJoin(parkingsTable, eq(parkingsTable.topoId, toposTable.id))
-	.groupBy(toposTable.id)
-	.where(eq(toposTable.id, id));
+	.leftJoin(parkingsAgg, eq(parkingsAgg.id, toposTable.id))
+	.leftJoin(sectorsCount, eq(sectorsCount.id, toposTable.id))
+	.leftJoin(rocksCount, eq(rocksCount.id, toposTable.id))
+	.leftJoin(tracksCount, eq(tracksCount.id, toposTable.id));
 
-console.log(lightTopo);
+console.log(query.toSQL().sql);
+const result = await query;
+
+const end = Date.now();
+console.log(`Query took ${end - start}ms`);
 
 process.exit(0);

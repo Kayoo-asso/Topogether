@@ -14,11 +14,14 @@ import {
 	topoLikes as topoLikesTable,
 	rockLikes as rockLikesTable,
 	count,
+	countDistinct,
 } from "~/db";
 import { router, procedure } from "./init";
 import { z } from "zod";
-import { InferModel, eq } from "drizzle-orm";
+import { InferModel, eq, sql } from "drizzle-orm";
 import { UUID } from "types";
+import WKB from "ol/format/WKB";
+import { Point } from "ol/geom";
 
 // Intermediate types, used in the `getTopo` function below
 type Track = InferModel<typeof tracksTable> & {
@@ -128,7 +131,54 @@ export const appRouter = router({
 	}),
 
 	getLightTopos: procedure.query(() => {
+		const parkingLocation = db.$with("parkings_agg").as(
+			db
+				.select({
+					// Workaround for SELECT DISTINCT ON, which is not yet supported by Drizzle
+					// https://github.com/drizzle-team/drizzle-orm/issues/338
+					id: sql<UUID>`DISTINCT ON (${parkingsTable.topoId}) ${parkingsTable.topoId}`.as(
+						"parkings.topo_id"
+					),
+					parkingLocation: sql<
+						[number, number]
+					>`ARRAY[ST_X(${parkingsTable.location}), ST_Y(${parkingsTable.location})]`.as(
+						"parking_location"
+					),
+				})
+				.from(parkingsTable)
+				.orderBy(parkingsTable.topoId)
+		);
+		const sectorsCount = db.$with("sectors_count").as(
+			db
+				.select({
+					id: sectorsTable.topoId,
+					nbSectors: countDistinct(sectorsTable.id).as("nb_sectors"),
+				})
+				.from(sectorsTable)
+				.groupBy(sectorsTable.topoId)
+		);
+		const rocksCount = db.$with("rocks_count").as(
+			db
+				.select({
+					id: rocksTable.topoId,
+					nbRocks: countDistinct(rocksTable.id).as("nb_rocks"),
+				})
+				.from(rocksTable)
+				.groupBy(rocksTable.topoId)
+		);
+
+		const tracksCount = db.$with("tracks_count").as(
+			db
+				.select({
+					id: tracksTable.topoId,
+					nbTracks: countDistinct(tracksTable.id).as("nb_tracks"),
+				})
+				.from(tracksTable)
+				.groupBy(tracksTable.topoId)
+		);
+
 		return db
+			.with(parkingLocation, sectorsCount, rocksCount, tracksCount)
 			.select({
 				id: toposTable.id,
 				name: toposTable.name,
@@ -140,17 +190,16 @@ export const appRouter = router({
 				// -> Add properties as needed here
 
 				// Aggregated properties
-				nbSectors: countDistinct(sectorsTable.id),
-				nbTracks: countDistinct(tracksTable.id),
-				nbRocks: countDistinct(rocksTable.id),
-				parkingLocation: sql`MAX(${parkingsTable.location})`,
+				nbSectors: sectorsCount.nbSectors,
+				nbRocks: rocksCount.nbRocks,
+				nbTracks: tracksCount.nbTracks,
+				parkingLocation: parkingLocation.parkingLocation,
 			})
 			.from(toposTable)
-			.leftJoin(rocksTable, eq(rocksTable.topoId, toposTable.id))
-			.leftJoin(tracksTable, eq(tracksTable.topoId, toposTable.id))
-			.leftJoin(sectorsTable, eq(sectorsTable.topoId, toposTable.id))
-			.leftJoin(parkingsTable, eq(parkingsTable.topoId, toposTable.id))
-			.groupBy(toposTable.id);
+			.leftJoin(parkingLocation, eq(parkingLocation.id, toposTable.id))
+			.leftJoin(sectorsCount, eq(sectorsCount.id, toposTable.id))
+			.leftJoin(rocksCount, eq(rocksCount.id, toposTable.id))
+			.leftJoin(tracksCount, eq(tracksCount.id, toposTable.id));
 	}),
 
 	getTopoLikes: procedure.input(z.string().uuid()).query(async ({ input }) => {

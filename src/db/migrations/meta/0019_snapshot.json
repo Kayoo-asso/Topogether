@@ -1,0 +1,1221 @@
+{
+  "version": "5",
+  "dialect": "pg",
+  "id": "d554f1b3-2c49-44c2-8809-ec00bcc8144c",
+  "prevId": "cc0c8eca-0ad1-458d-9acd-4742b87def5c",
+  "tables": {
+    "contributors": {
+      "name": "contributors",
+      "schema": "",
+      "columns": {
+        "topo_id": {
+          "name": "topo_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "role": {
+          "name": "role",
+          "type": "contributor_role",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "contributors_topo_id_topos_id_fk": {
+          "name": "contributors_topo_id_topos_id_fk",
+          "tableFrom": "contributors",
+          "tableTo": "topos",
+          "columnsFrom": [
+            "topo_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "contributors_topo_id_user_id": {
+          "name": "contributors_topo_id_user_id",
+          "columns": [
+            "topo_id",
+            "user_id"
+          ]
+        }
+      }
+    },
+    "lines": {
+      "name": "lines",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "index": {
+          "name": "index",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "points": {
+          "name": "points",
+          "type": "double precision[][]",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "forbidden": {
+          "name": "forbidden",
+          "type": "double precision[][][]",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "hand1": {
+          "name": "hand1",
+          "type": "double precision[]",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "hand2": {
+          "name": "hand2",
+          "type": "double precision[]",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "foot1": {
+          "name": "foot1",
+          "type": "double precision[]",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "foot2": {
+          "name": "foot2",
+          "type": "double precision[]",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "belays": {
+          "name": "belays",
+          "type": "double precision[][]",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "topo_id": {
+          "name": "topo_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "track_id": {
+          "name": "track_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "image_id": {
+          "name": "image_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "variant_id": {
+          "name": "variant_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "lines_topo_id_index": {
+          "name": "lines_topo_id_index",
+          "columns": [
+            "topo_id"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "lines_topo_id_topos_id_fk": {
+          "name": "lines_topo_id_topos_id_fk",
+          "tableFrom": "lines",
+          "tableTo": "topos",
+          "columnsFrom": [
+            "topo_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "lines_track_id_tracks_id_fk": {
+          "name": "lines_track_id_tracks_id_fk",
+          "tableFrom": "lines",
+          "tableTo": "tracks",
+          "columnsFrom": [
+            "track_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "lines_variant_id_track_variants_id_fk": {
+          "name": "lines_variant_id_track_variants_id_fk",
+          "tableFrom": "lines",
+          "tableTo": "track_variants",
+          "columnsFrom": [
+            "variant_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {}
+    },
+    "managers": {
+      "name": "managers",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "contact_name": {
+          "name": "contact_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "contact_phone": {
+          "name": "contact_phone",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "contact_mail": {
+          "name": "contact_mail",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "address": {
+          "name": "address",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "zip": {
+          "name": "zip",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "city": {
+          "name": "city",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "image": {
+          "name": "image",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "topo_id": {
+          "name": "topo_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "managers_topo_id_index": {
+          "name": "managers_topo_id_index",
+          "columns": [
+            "topo_id"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "managers_topo_id_topos_id_fk": {
+          "name": "managers_topo_id_topos_id_fk",
+          "tableFrom": "managers",
+          "tableTo": "topos",
+          "columnsFrom": [
+            "topo_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {}
+    },
+    "parkings": {
+      "name": "parkings",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "spaces": {
+          "name": "spaces",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "location": {
+          "name": "location",
+          "type": "Geometry(Point, 4326)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "image": {
+          "name": "image",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "topo_id": {
+          "name": "topo_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "parkings_topo_id_index": {
+          "name": "parkings_topo_id_index",
+          "columns": [
+            "topo_id"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "parkings_topo_id_topos_id_fk": {
+          "name": "parkings_topo_id_topos_id_fk",
+          "tableFrom": "parkings",
+          "tableTo": "topos",
+          "columnsFrom": [
+            "topo_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {}
+    },
+    "rock_likes": {
+      "name": "rock_likes",
+      "schema": "",
+      "columns": {
+        "rock_id": {
+          "name": "rock_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created": {
+          "name": "created",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "rock_likes_rock_id_rocks_id_fk": {
+          "name": "rock_likes_rock_id_rocks_id_fk",
+          "tableFrom": "rock_likes",
+          "tableTo": "rocks",
+          "columnsFrom": [
+            "rock_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "rock_likes_rock_id_user_id": {
+          "name": "rock_likes_rock_id_user_id",
+          "columns": [
+            "rock_id",
+            "user_id"
+          ]
+        }
+      }
+    },
+    "rocks": {
+      "name": "rocks",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "location": {
+          "name": "location",
+          "type": "Geometry(Point, 4326)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "must_see": {
+          "name": "must_see",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "is_highball": {
+          "name": "is_highball",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "dangerous_descent": {
+          "name": "dangerous_descent",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "images": {
+          "name": "images",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "topo_id": {
+          "name": "topo_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "rocks_topo_id_index": {
+          "name": "rocks_topo_id_index",
+          "columns": [
+            "topo_id"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "rocks_topo_id_topos_id_fk": {
+          "name": "rocks_topo_id_topos_id_fk",
+          "tableFrom": "rocks",
+          "tableTo": "topos",
+          "columnsFrom": [
+            "topo_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {}
+    },
+    "sectors": {
+      "name": "sectors",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "index": {
+          "name": "index",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "path": {
+          "name": "path",
+          "type": "Geometry(Polygon, 4326)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "topoId": {
+          "name": "topoId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "sectors_topoId_index": {
+          "name": "sectors_topoId_index",
+          "columns": [
+            "topoId"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "sectors_topoId_topos_id_fk": {
+          "name": "sectors_topoId_topos_id_fk",
+          "tableFrom": "sectors",
+          "tableTo": "topos",
+          "columnsFrom": [
+            "topoId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {}
+    },
+    "topo_accesses": {
+      "name": "topo_accesses",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "duration": {
+          "name": "duration",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "danger": {
+          "name": "danger",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "difficulty": {
+          "name": "difficulty",
+          "type": "difficulty",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "steps": {
+          "name": "steps",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "topo_id": {
+          "name": "topo_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "topo_accesses_topo_id_index": {
+          "name": "topo_accesses_topo_id_index",
+          "columns": [
+            "topo_id"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "topo_accesses_topo_id_topos_id_fk": {
+          "name": "topo_accesses_topo_id_topos_id_fk",
+          "tableFrom": "topo_accesses",
+          "tableTo": "topos",
+          "columnsFrom": [
+            "topo_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {}
+    },
+    "topo_likes": {
+      "name": "topo_likes",
+      "schema": "",
+      "columns": {
+        "topo_id": {
+          "name": "topo_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created": {
+          "name": "created",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "topo_likes_topo_id_topos_id_fk": {
+          "name": "topo_likes_topo_id_topos_id_fk",
+          "tableFrom": "topo_likes",
+          "tableTo": "topos",
+          "columnsFrom": [
+            "topo_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "topo_likes_topo_id_user_id": {
+          "name": "topo_likes_topo_id_user_id",
+          "columns": [
+            "topo_id",
+            "user_id"
+          ]
+        }
+      }
+    },
+    "topos": {
+      "name": "topos",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "topo_status",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "type": {
+          "name": "type",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "trashed": {
+          "name": "trashed",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "location": {
+          "name": "location",
+          "type": "Geometry(Point, 4326)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "rock_types": {
+          "name": "rock_types",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "best_season": {
+          "name": "best_season",
+          "type": "season",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "forbidden": {
+          "name": "forbidden",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "old_gear": {
+          "name": "old_gear",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "adapted_to_children": {
+          "name": "adapted_to_children",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "cleaned": {
+          "name": "cleaned",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "modified": {
+          "name": "modified",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "submitted": {
+          "name": "submitted",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "validated": {
+          "name": "validated",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "closest_city": {
+          "name": "closest_city",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "fauna_protection": {
+          "name": "fauna_protection",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ethics": {
+          "name": "ethics",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "danger": {
+          "name": "danger",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "altitude": {
+          "name": "altitude",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "other_amenities": {
+          "name": "other_amenities",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "image": {
+          "name": "image",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "creator_id": {
+          "name": "creator_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "validator_id": {
+          "name": "validator_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "topos_unique_name": {
+          "name": "topos_unique_name",
+          "columns": [
+            "name"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {}
+    },
+    "track_variants": {
+      "name": "track_variants",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "grade": {
+          "name": "grade",
+          "type": "grades",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "track_id": {
+          "name": "track_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "track_variants_track_id_index": {
+          "name": "track_variants_track_id_index",
+          "columns": [
+            "track_id"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "track_variants_track_id_tracks_id_fk": {
+          "name": "track_variants_track_id_tracks_id_fk",
+          "tableFrom": "track_variants",
+          "tableTo": "tracks",
+          "columnsFrom": [
+            "track_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {}
+    },
+    "tracks": {
+      "name": "tracks",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "index": {
+          "name": "index",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "grade": {
+          "name": "grade",
+          "type": "grades",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "height": {
+          "name": "height",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "reception": {
+          "name": "reception",
+          "type": "reception",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "anchors": {
+          "name": "anchors",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "orientation": {
+          "name": "orientation",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "must_see": {
+          "name": "must_see",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "is_traverse": {
+          "name": "is_traverse",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "is_sitting_start": {
+          "name": "is_sitting_start",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "is_multipitch": {
+          "name": "is_multipitch",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "is_trad": {
+          "name": "is_trad",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "has_mantle": {
+          "name": "has_mantle",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "spec": {
+          "name": "spec",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "danger": {
+          "name": "danger",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "topo_id": {
+          "name": "topo_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "rock_id": {
+          "name": "rock_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "tracks_topo_id_index": {
+          "name": "tracks_topo_id_index",
+          "columns": [
+            "topo_id"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "tracks_topo_id_topos_id_fk": {
+          "name": "tracks_topo_id_topos_id_fk",
+          "tableFrom": "tracks",
+          "tableTo": "topos",
+          "columnsFrom": [
+            "topo_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "tracks_rock_id_rocks_id_fk": {
+          "name": "tracks_rock_id_rocks_id_fk",
+          "tableFrom": "tracks",
+          "tableTo": "rocks",
+          "columnsFrom": [
+            "rock_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {}
+    },
+    "waypoints": {
+      "name": "waypoints",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "location": {
+          "name": "location",
+          "type": "Geometry(Point, 4326)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "image": {
+          "name": "image",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "topo_id": {
+          "name": "topo_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "waypoints_topo_id_index": {
+          "name": "waypoints_topo_id_index",
+          "columns": [
+            "topo_id"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "waypoints_topo_id_topos_id_fk": {
+          "name": "waypoints_topo_id_topos_id_fk",
+          "tableFrom": "waypoints",
+          "tableTo": "topos",
+          "columnsFrom": [
+            "topo_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {}
+    }
+  },
+  "enums": {
+    "contributor_role": {
+      "name": "contributor_role",
+      "values": {
+        "CONTRIBUTOR": "CONTRIBUTOR",
+        "ADMIN": "ADMIN"
+      }
+    },
+    "difficulty": {
+      "name": "difficulty",
+      "values": {
+        "good": "good",
+        "ok": "ok",
+        "bad": "bad",
+        "dangerous": "dangerous"
+      }
+    },
+    "grades": {
+      "name": "grades",
+      "values": {
+        "3": "3",
+        "4": "4",
+        "3+": "3+",
+        "4+": "4+",
+        "5a": "5a",
+        "5a+": "5a+",
+        "5b": "5b",
+        "5b+": "5b+",
+        "5c": "5c",
+        "5c+": "5c+",
+        "6a": "6a",
+        "6a+": "6a+",
+        "6b": "6b",
+        "6b+": "6b+",
+        "6c": "6c",
+        "6c+": "6c+",
+        "7a": "7a",
+        "7a+": "7a+",
+        "7b": "7b",
+        "7b+": "7b+",
+        "7c": "7c",
+        "7c+": "7c+",
+        "8a": "8a",
+        "8a+": "8a+",
+        "8b": "8b",
+        "8b+": "8b+",
+        "8c": "8c",
+        "8c+": "8c+",
+        "9a": "9a",
+        "9a+": "9a+",
+        "9b": "9b",
+        "9b+": "9b+",
+        "9c": "9c",
+        "9c+": "9c+",
+        "P": "P"
+      }
+    },
+    "reception": {
+      "name": "reception",
+      "values": {
+        "good": "good",
+        "ok": "ok",
+        "dangerous": "dangerous"
+      }
+    },
+    "season": {
+      "name": "season",
+      "values": {
+        "winter": "winter",
+        "spring": "spring",
+        "summer": "summer",
+        "fall": "fall"
+      }
+    },
+    "topo_status": {
+      "name": "topo_status",
+      "values": {
+        "draft": "draft",
+        "submitted": "submitted",
+        "validated": "validated"
+      }
+    }
+  },
+  "schemas": {},
+  "_meta": {
+    "schemas": {},
+    "tables": {},
+    "columns": {}
+  }
+}
