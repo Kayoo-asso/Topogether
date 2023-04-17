@@ -11,6 +11,9 @@ import {
 	lines as linesTable,
 	trackVariants as variantsTable,
 	contributors as contributorsTable,
+	topoLikes as topoLikesTable,
+	rockLikes as rockLikesTable,
+	count,
 } from "~/db";
 import { router, procedure } from "./init";
 import { z } from "zod";
@@ -105,7 +108,7 @@ export const appRouter = router({
 					variants: variant ? [variant] : [],
 					lines: [],
 				};
-				rockMap.get(tracks.id)!.tracks.push(newTrack);
+				rockMap.get(tracks.rockId)!.tracks.push(newTrack);
 				trackMap.set(tracks.id, newTrack);
 			}
 		}
@@ -124,13 +127,40 @@ export const appRouter = router({
 		};
 	}),
 
-	getLightTopos: procedure.query(async () => {
-		return await db
-			.select()
+	getLightTopos: procedure.query(() => {
+		return db
+			.select({
+				id: toposTable.id,
+				name: toposTable.name,
+				status: toposTable.status,
+				location: toposTable.location,
+				modified: toposTable.modified,
+				submitted: toposTable.submitted,
+				validated: toposTable.validated,
+				// -> Add properties as needed here
+
+				// Aggregated properties
+				nbSectors: countDistinct(sectorsTable.id),
+				nbTracks: countDistinct(tracksTable.id),
+				nbRocks: countDistinct(rocksTable.id),
+				parkingLocation: sql`MAX(${parkingsTable.location})`,
+			})
 			.from(toposTable)
 			.leftJoin(rocksTable, eq(rocksTable.topoId, toposTable.id))
 			.leftJoin(tracksTable, eq(tracksTable.topoId, toposTable.id))
-			.leftJoin(sectorsTable, eq(sectorsTable.topoId, toposTable.id));
+			.leftJoin(sectorsTable, eq(sectorsTable.topoId, toposTable.id))
+			.leftJoin(parkingsTable, eq(parkingsTable.topoId, toposTable.id))
+			.groupBy(toposTable.id);
+	}),
+
+	getTopoLikes: procedure.input(z.string().uuid()).query(async ({ input }) => {
+		const userId = input as UUID;
+		return db
+			.select({
+				topoId: topoLikesTable.topoId,
+			})
+			.from(topoLikesTable)
+			.where(eq(topoLikesTable.userId, userId));
 	}),
 });
 

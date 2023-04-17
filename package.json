@@ -9,10 +9,10 @@
 		"build": "next build",
 		"start": "next start",
 		"format": "prettier --write '**/*.{js,ts,jsx,tsx,json}'",
-		"migrate": "drizzle-kit up:pg --out src/db/migrations && doppler run -- node db/migrate.mjs",
-		"gen-migration": "doppler run -- drizzle-kit generate:pg --out src/db/migrations --schema db/schema.ts",
+		"migrate": "drizzle-kit up:pg --out src/db/migrations && doppler run -- node src/db/migrate.mjs",
+		"gen-migration": "doppler run -- drizzle-kit generate:pg --out src/db/migrations --schema src/db/schema.ts",
 		"transfer": "doppler run -- bun src/db/transferSupabase.ts",
-		"test": "doppler run -- bun src/db/test.ts"
+		"test": "doppler run -- bun src/db/getLightTopoTest.ts"
 	},
 	"dependencies": {
 		"@clerk/nextjs": "^4.10.0",
