@@ -10,7 +10,7 @@ import {
 	trackVariants,
 	tracks,
 	waypoints,
-} from "db";
+} from "~/db";
 import { eq } from "drizzle-orm";
 import { UUID } from "types";
 
@@ -44,5 +44,5 @@ const [
 
 const end = Date.now();
 
-console.log(`Query took ${end-start}ms`)
-process.exit(0)
+console.log(`Query took ${end - start}ms`);
+process.exit(0);

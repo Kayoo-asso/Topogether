@@ -11,7 +11,7 @@ import {
 	lines as linesTable,
 	trackVariants as variantsTable,
 	contributors as contributorsTable,
-} from "db";
+} from "~/db";
 import { router, procedure } from "./init";
 import { z } from "zod";
 import { InferModel, eq } from "drizzle-orm";
@@ -122,6 +122,15 @@ export const appRouter = router({
 			topoAccesses,
 			rocks: Array.from(rockMap.values()),
 		};
+	}),
+
+	getLightTopos: procedure.query(async () => {
+		return await db
+			.select()
+			.from(toposTable)
+			.leftJoin(rocksTable, eq(rocksTable.topoId, toposTable.id))
+			.leftJoin(tracksTable, eq(tracksTable.topoId, toposTable.id))
+			.leftJoin(sectorsTable, eq(sectorsTable.topoId, toposTable.id));
 	}),
 });
 

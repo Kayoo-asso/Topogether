@@ -25,6 +25,6 @@
 			"~/*": ["./src/*"]
 		}
 	},
-	"include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "db/migrate.mjs", "db/transferSupabase.ts"],
+	"include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/db/migrate.mjs", "src/db/transferSupabase.ts"],
 	"exclude": ["node_modules", "fly"]
 }

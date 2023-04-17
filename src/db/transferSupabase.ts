@@ -1,6 +1,6 @@
-import { db } from "db";
+import { db } from "~/db";
 import postgres from "postgres";
-import { env } from "../src/env.mjs";
+import { env } from "../env.mjs";
 import {
 	Amenities,
 	Difficulty,
@@ -23,7 +23,7 @@ import {
 	topos,
 	tracks,
 	waypoints,
-} from "db/schema";
+} from "~/db/schema";
 import { ApiService } from "helpers/services";
 import { createClient } from "@supabase/supabase-js";
 import { hasFlag } from "helpers/bitflags";
