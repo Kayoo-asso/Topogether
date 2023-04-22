@@ -17,6 +17,18 @@ Currently only available in French, sorry!
 ## Backend rework
 - Type-safe environment variables (like t3-stack)
 
+### TODO
+- LighTopo.grades
+- Download status
+- Only have on TopoFilters component + responsive CSS
+- Remove packages:
+  - Supabase
+  - cookie
+  - postgres
+
+### Changes to check
+- TopoFilters
+
 ### Content and features
 
 - Add topos, both by ourselves & by bringing in more contributors on the platform.

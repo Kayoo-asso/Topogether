@@ -1,14 +1,12 @@
-// @ts-check
 /**
- * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation.
- * This is especially useful for Docker builds.
+ * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially useful
+ * for Docker builds.
  */
-!process.env.SKIP_ENV_VALIDATION && (await import("./env/server.mjs"));
+await import("./src/env.mjs");
 
 import nextPWA from "next-pwa";
 
-
-const withPWA = require("next-pwa")({
+const withPWA = nextPWA({
 	// disable during local development (unless focusing on SW)
 	disable: process.env.NODE_ENV !== "production",
 	// disable: false,
@@ -17,23 +15,23 @@ const withPWA = require("next-pwa")({
 	buildExcludes: [/.*sw\.js$/],
 });
 
-module.exports = withPWA(
-	/** @type {import('next').NextConfig} */
-	{
-		reactStrictMode: true,
-		eslint: {
-			// Warning: This allows production builds to successfully complete even if
-			// your project has ESLint errors.
-			ignoreDuringBuilds: true,
-		},
-		webpack(config) {
-			// SVGR
-			config.module.rules.push({
-				test: /\.svg$/i,
-				issuer: /\.[jt]sx?$/,
-				use: "@svgr/webpack",
-			});
-			return config;
-		},
-	}
-);
+/** @type {import('next').NextConfig} */
+const config = {
+	reactStrictMode: true,
+	eslint: {
+		// Warning: This allows production builds to successfully complete even if
+		// your project has ESLint errors.
+		ignoreDuringBuilds: true,
+	},
+	webpack(config) {
+		// SVGR
+		config.module.rules.push({
+			test: /\.svg$/i,
+			issuer: /\.[jt]sx?$/,
+			use: "@svgr/webpack",
+		});
+		return config;
+	},
+};
+
+export default withPWA(config);

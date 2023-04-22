@@ -1,5 +1,6 @@
-import NoStandalone from "components/pages/NoStandalone";
-import { useFirstRender } from "helpers/hooks/useFirstRender";
+
+import NoStandalone from "~/components/layout/NoStandalone";
+import { useFirstRender } from "~/hooks";
 import React, { useContext, useMemo } from "react";
 import useDimensions from "react-cool-dimensions";
 import isMobile from "ismobilejs";
@@ -24,18 +25,22 @@ export function useDevice() {
 	return useContext(DeviceContext);
 }
 
+type DeviceManagerProps = React.PropsWithChildren<{
+	userAgent?: string;
+}>;
+
 const breakpoints: Record<Breakpoint, number> = {
 	mobile: 0,
 	desktop: 800,
 };
 
-export function DeviceManager({ children }: React.PropsWithChildren<{}>) {
+export function DeviceManager({ userAgent, children }: DeviceManagerProps) {
 	const { observe, currentBreakpoint } = useDimensions({
 		breakpoints,
 		updateOnBreakpointChange: true,
 	});
 	// TODO: how does this handle undefined User-Agents?
-	const deviceInfo = useMemo(() => isMobile(navigator.userAgent), []);
+	const deviceInfo = useMemo(() => isMobile(userAgent), [userAgent]);
 	const initialBreakpoint = deviceInfo.any ? "mobile" : "desktop";
 
 	const firstRender = useFirstRender();

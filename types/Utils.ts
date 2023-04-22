@@ -1,3 +1,4 @@
+
 export type GeoCoordinates = [lng: number, lat: number];
 
 export type Result<Success, Error> =
