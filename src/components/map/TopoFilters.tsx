@@ -140,12 +140,12 @@ export function TopoFiltersDesktop(props: TopoFiltersProps) {
 					<div className="ktext-subtitle ml-3 text-white">Filtres</div>
 				</div>
 
-				<div
-					className="mr-8 text-second md:cursor-pointer"
+				<button
+					className="mr-8 text-second"
 					onClick={() => props.setFilters(props.domain)}
 				>
 					Reset
-				</div>
+				</button>
 			</div>
 
 			<div className="flex min-h-[100px] flex-col gap-6 p-5 pb-8">
@@ -159,12 +159,12 @@ export function TopoFiltersMobile(props: TopoFiltersProps) {
 	return (
 		<div className="flex h-full flex-col gap-2 md:hidden">
 			<div className="flex flex-row justify-end">
-				<div
+				<button
 					className="mr-8 text-second"
 					onClick={() => props.setFilters(props.domain)}
 				>
 					Reset
-				</div>
+				</button>
 			</div>
 
 			<div className="flex min-h-[100px] flex-col gap-6 px-5 pb-8 pt-2">

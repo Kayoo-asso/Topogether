@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/click-events-have-key-events */
 import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";

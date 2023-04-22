@@ -1,0 +1,8 @@
+.kvfysmfp {
+  height: 100%;
+  touch-action: auto !important;
+}
+.gallery::-webkit-scrollbar {
+    display: none;
+ }
+

@@ -12,7 +12,7 @@ type BeforeInstallPromptEvent = Event & {
 
 const NoStandalone: React.FC = () => {
 	const device = useDevice();
-	const isIos = device.apple.device;
+	const isIos = device?.apple.device;
 
 	const [installPromptEvent, setInstallPromptEvent] =
 		useState<BeforeInstallPromptEvent>();
@@ -32,13 +32,13 @@ const NoStandalone: React.FC = () => {
 			className="flex h-screen w-screen flex-col items-center justify-center bg-main px-6 py-10 text-white"
 		>
 			<div className="ktext-big-title">Topogether</div>
-			<div className="relative my-14 h-[150px] w-[150px]">
+			<div className="relative my-14">
 				<NextImage
 					src={staticUrl.logo_white}
 					priority
 					alt="Logo Topogether"
-					layout="fill"
-					objectFit="contain"
+          height={150}
+          width={150}
 				/>
 			</div>
 

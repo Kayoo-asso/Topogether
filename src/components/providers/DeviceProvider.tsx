@@ -1,4 +1,3 @@
-
 import NoStandalone from "~/components/layout/NoStandalone";
 import { useFirstRender } from "~/hooks";
 import React, { useContext, useMemo } from "react";
@@ -17,31 +16,36 @@ export function useBreakpoint(): Breakpoint {
 	return device;
 }
 
-const DeviceContext = React.createContext<ReturnType<typeof isMobile>>(
-	undefined!
+type DeviceInfo = ReturnType<typeof isMobile>;
+
+const DeviceContext = React.createContext<DeviceInfo | null | undefined>(
+	undefined
 );
 
 export function useDevice() {
-	return useContext(DeviceContext);
+	const value = useContext(DeviceContext);
+	if (value === undefined) {
+		throw new Error("useDevice used outside of DeviceProvider");
+	}
+	return value;
 }
-
-type DeviceManagerProps = React.PropsWithChildren<{
-	userAgent?: string;
-}>;
 
 const breakpoints: Record<Breakpoint, number> = {
 	mobile: 0,
 	desktop: 800,
 };
 
-export function DeviceManager({ userAgent, children }: DeviceManagerProps) {
+export function DeviceProvider({ children }: React.PropsWithChildren<{}>) {
 	const { observe, currentBreakpoint } = useDimensions({
 		breakpoints,
 		updateOnBreakpointChange: true,
 	});
-	// TODO: how does this handle undefined User-Agents?
-	const deviceInfo = useMemo(() => isMobile(userAgent), [userAgent]);
-	const initialBreakpoint = deviceInfo.any ? "mobile" : "desktop";
+	const deviceInfo = useMemo(
+		() =>
+			typeof window !== "undefined" ? isMobile(navigator.userAgent) : null,
+		[]
+	);
+	const initialBreakpoint = deviceInfo?.any ? "mobile" : "desktop";
 
 	const firstRender = useFirstRender();
 	const bp = firstRender
@@ -56,7 +60,8 @@ export function DeviceManager({ userAgent, children }: DeviceManagerProps) {
 					className="flex h-screen w-screen flex-col items-end"
 				>
 					<div
-						className={"h-full w-full" +
+						className={
+							"h-full w-full" +
 							(bp === "mobile" && process.env.NODE_ENV !== "development"
 								? " standalone"
 								: "")
@@ -67,7 +72,7 @@ export function DeviceManager({ userAgent, children }: DeviceManagerProps) {
 					</div>
 
 					{bp === "mobile" && process.env.NODE_ENV !== "development" && (
-						<div className="z-full no-standalone">
+						<div className="no-standalone z-full">
 							<NoStandalone />
 						</div>
 					)}

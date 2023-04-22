@@ -8,7 +8,7 @@ import {
 	Track,
 	Waypoint,
 } from "types";
-import create from "zustand";
+import { create } from "zustand";
 import { Breakpoint } from "~/components/providers/DeviceProvider";
 
 export type SelectedInfo =

@@ -53,7 +53,7 @@ export const UserPositionProvider = ({
 		useModal();
 
 	const device = useDevice();
-	const isIos = device.apple.device;
+	const isIos = device?.apple.device;
 	const latestPosition = useRef<UserPosition>();
 
 	const subscribe = useCallback((fn: PositionSubscriber) => {

@@ -1,12 +1,12 @@
 import { ClerkProvider } from "@clerk/nextjs";
-import { NavigationLoader } from "components/layouts/NavigationLoader";
-import { ShellMobile } from "components/layouts/ShellMobile";
-import { UserPositionProvider } from "helpers/hooks/UserPositionProvider";
 import { Initializers } from "helpers/services/Initializers";
 import type { AppType } from "next/app";
 import Head from "next/head";
-import "styles/globals.css";
-import { DeviceManager } from "~/components/providers/DeviceProvider";
+import { NavigationLoader } from "~/components/layout/NavigationLoader";
+import { ShellMobile } from "~/components/layout/ShellMobile";
+import { DeviceProvider } from "~/components/providers/DeviceProvider";
+import { UserPositionProvider } from "~/components/providers/UserPositionProvider";
+import "~/styles/globals.css";
 
 const App: AppType<{}> = ({ Component, pageProps }) => {
 	return (
@@ -146,8 +146,8 @@ const App: AppType<{}> = ({ Component, pageProps }) => {
 			<Initializers />
 
 			<ClerkProvider {...pageProps}>
-				<UserPositionProvider>
-					<DeviceManager>
+				<DeviceProvider>
+					<UserPositionProvider>
 						<NavigationLoader>
 							<div
 								id="content"
@@ -162,9 +162,11 @@ const App: AppType<{}> = ({ Component, pageProps }) => {
 								<ShellMobile />
 							</div>
 						</NavigationLoader>
-					</DeviceManager>
-				</UserPositionProvider>
+					</UserPositionProvider>
+				</DeviceProvider>
 			</ClerkProvider>
 		</>
 	);
 };
+
+export default App;

@@ -39,6 +39,7 @@ specifiers:
   js-base64: ^3.7.2
   next: ^13.2.4
   next-pwa: ^5.6.0
+  next-superjson-plugin: ^0.5.7
   ol: ^7.2.2
   postcss: ^8.4.5
   postgres: ^3.3.4
@@ -80,6 +81,7 @@ dependencies:
   js-base64: 3.7.5
   next: 13.3.1_z72xxk7vwlamvgqemvc4ptm4du
   next-pwa: 5.6.0_osvylfcnoyirhgdjwwbrgnbjpi
+  next-superjson-plugin: 0.5.7_wxp5rvetehm2h6ed7wqqknbq4m
   ol: 7.3.0
   react: 18.2.0
   react-compound-slider: 3.4.0_react@18.2.0
@@ -4895,6 +4897,12 @@ packages:
     resolution: {integrity: sha512-2bsegYkkHO+h/9MGbn6KWcE45cHZgPANo5LXF7EvWdT0yT2EguSVO1nDgU5c8+ZOPwp2vMNa7YFsJhVcDR9Sdg==}
     dev: true
 
+  /hoist-non-react-statics/3.3.2:
+    resolution: {integrity: sha512-/gGivxi8JPKWNm/W0jSmzcMPpfpPLc3dY/6GxhX2hQ9iGj3aDfklV4ET7NjKpSinLpJ5vafa9iiGIEZg10SfBw==}
+    dependencies:
+      react-is: 16.13.1
+    dev: false
+
   /html-encoding-sniffer/2.0.1:
     resolution: {integrity: sha512-D5JbOMBIR/TVZkubHT+OyT2705QvogUW4IBn6nHd756OwieSF9aDYFj4dv6HHEVGYbHaLETa3WggZYWWMyy3ZQ==}
     engines: {node: '>=10'}
@@ -6179,6 +6187,17 @@ packages:
       - webpack
     dev: false
 
+  /next-superjson-plugin/0.5.7_wxp5rvetehm2h6ed7wqqknbq4m:
+    resolution: {integrity: sha512-bkF49B/Pcf0GCh10vXL+hjBodC404FgzEsl3wtrjwqvTkoWDnqBOgP2KqWR9sF1tz4MSMlo872Q4Srl/2XRFWw==}
+    peerDependencies:
+      next: ^13
+      superjson: ^1
+    dependencies:
+      hoist-non-react-statics: 3.3.2
+      next: 13.3.1_z72xxk7vwlamvgqemvc4ptm4du
+      superjson: 1.12.3
+    dev: false
+
   /next-tick/1.1.0:
     resolution: {integrity: sha512-CXdUiJembsNjuToQvxayPZF9Vqht7hewsvy2sOWafLvi2awflj9mOC6bHIg50orX8IJvWKY9wYQ/zB2kogPslQ==}
     dev: true
@@ -6866,7 +6885,6 @@ packages:
 
   /react-is/16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
-    dev: true
 
   /react-is/17.0.2:
     resolution: {integrity: sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==}

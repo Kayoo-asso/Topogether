@@ -1,10 +1,12 @@
 import { useUser } from "@clerk/nextjs";
-import { GetStaticProps, InferGetStaticPropsType, NextPage } from "next";
+import { InferGetStaticPropsType, NextPage } from "next";
 import { useRef, useState } from "react";
 import { HeaderDesktop } from "~/components/layout/HeaderDesktop";
 import { LightTopo, getLightTopos } from "~/server/queries";
 import { Map } from "ol";
 import { usePosition } from "~/components/providers/UserPositionProvider";
+import { initialTopoFilters } from "~/components/map/TopoFilters";
+import { LeftbarDesktop } from "~/components/layout/LeftbarDesktop";
 
 export const getStaticProps = async () => {
 	return {
@@ -17,22 +19,23 @@ export const getStaticProps = async () => {
 const Page: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
 	lightTopos,
 }) => {
-	// TODO
 	const { user } = useUser();
-	const onGoingDl = 0;
 
 	const { position } = usePosition();
 	const mapRef = useRef<Map>(null);
 
 	const [selectedTopo, setSelectedTopo] = useState<LightTopo>();
+	const [filters, setFilters] = useState(initialTopoFilters(lightTopos));
 
-	const SearchbarDesktop: React.FC = () => (
-		<SearchbarToposDesktop map={mapRef.current} />
-	);
-	const [Filters, filterTopos, resetFilters] = useToposFilters(lightTopos);
-	const FiltersDesktop: React.FC = () => (
-		<ToposFiltersDesktop Filters={Filters} onResetClick={resetFilters} />
-	);
+	// const SearchbarDesktop: React.FC = () => (
+	// 	<SearchbarToposDesktop map={mapRef.current} />
+	// );
+	// const [Filters, filterTopos, resetFilters] = useToposFilters(lightTopos);
+	// const FiltersDesktop: React.FC = () => (
+	// 	<ToposFiltersDesktop Filters={Filters} onResetClick={resetFilters} />
+	// );
+	// TOOD
+	const onGoingDl = 0;
 
 	return (
 		<>
@@ -69,7 +72,7 @@ const Page: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
 				} relative flex flex-row md:h-full`}
 			>
 				{user && <LeftbarDesktop currentMenuItem="MAP" />}
-
+        {/*
 				<SlideoverMobileWorldmap
 					map={mapRef.current}
 					Filters={Filters}
@@ -114,7 +117,7 @@ const Page: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
 						}}
 						onClose={() => setSelectedTopo(undefined)}
 					/>
-				)}
+				)} */}
 			</div>
 		</>
 	);

@@ -15,6 +15,7 @@ import { ToposFiltersDesktop } from "components/map/filters/ToposFilters.desktop
 import { downloads } from "helpers/downloads/DownloadManager";
 import { usePosition } from "helpers/hooks/UserPositionProvider";
 import { TopoPreview } from "components/organisms/TopoPreview";
+import { initialTopoFilters } from "~/components/map/TopoFilters";
 
 interface RootWorldMapProps {
 	lightTopos: LightTopo[];
@@ -22,12 +23,14 @@ interface RootWorldMapProps {
 
 export const RootWorldMap: React.FC<RootWorldMapProps> = watchDependencies(
 	(props: RootWorldMapProps) => {
+		
 		const auth = useAuth();
 		const user = auth.session();
 		const { position } = usePosition();
 		const mapRef = useRef<Map>(null);
 
 		const [selectedTopo, setSelectedTopo] = useState<LightTopo>();
+
 
 		const SearchbarDesktop: React.FC = () => <SearchbarToposDesktop map={mapRef.current} />
 		const [Filters, filterTopos, resetFilters] = useToposFilters(props.lightTopos);

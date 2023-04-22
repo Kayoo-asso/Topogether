@@ -34,21 +34,16 @@ export const HeaderDesktop = ({
 	const wrapLink = (elts: ReactElement<any, any>) => {
 		if (props.onBackClick)
 			return (
-				<a
+				<button
 					onClick={() => {
 						props.onBackClick!();
 						router.push(props.backLink);
 					}}
 				>
 					{elts}
-				</a>
+				</button>
 			);
-		else
-			return (
-				<Link href={props.backLink}>
-					<a>{elts}</a>
-				</Link>
-			);
+		else return <Link href={props.backLink}>{elts}</Link>;
 	};
 
 	useEffect(() => {
@@ -98,10 +93,10 @@ export const HeaderDesktop = ({
 			</div>
 
 			{displayLogin && !user && (
-				<Link href="/user/login">
-					<a className={`ktext-base mr-[3%] text-white md:cursor-pointer`}>
+				<Link href="/user/login"
+          className="ktext-base mr-[3%] text-white md:cursor-pointer"
+        >
 						Se connecter
-					</a>
 				</Link>
 			)}
 

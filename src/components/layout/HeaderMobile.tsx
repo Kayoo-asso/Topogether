@@ -28,21 +28,16 @@ export const HeaderMobile: React.FC<HeaderMobileProps> = (
 	const wrapLink = (elts: ReactElement<any, any>) => {
 		if (props.onBackClick)
 			return (
-				<a
+				<button
 					onClick={() => {
 						props.onBackClick!();
 						router.push(props.backLink);
 					}}
 				>
 					{elts}
-				</a>
+				</button>
 			);
-		else
-			return (
-				<Link href={props.backLink}>
-					<a>{elts}</a>
-				</Link>
-			);
+		else return <Link href={props.backLink}>{elts}</Link>;
 	};
 
 	return (

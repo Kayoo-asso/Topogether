@@ -25,6 +25,8 @@ Currently only available in French, sorry!
   - Supabase
   - cookie
   - postgres
+- Delete Amenities bitflag
+- Remove all traces of `useLoader`
 
 ### Changes to check
 - TopoFilters

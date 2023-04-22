@@ -32,6 +32,17 @@ const config = {
 		});
 		return config;
 	},
+	swcMinify: true,
+	experimental: {
+    swcPlugins: [
+      [
+        'next-superjson-plugin',
+        {
+          excluded: [],
+        },
+      ],
+    ],
+  },
 };
 
 export default withPWA(config);
