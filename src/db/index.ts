@@ -9,5 +9,6 @@ const pool = new Pool({
 export const db = drizzle(pool);
 
 export * from "./schema";
+
 // Utility functions
 export { count, countDistinct } from "./custom";

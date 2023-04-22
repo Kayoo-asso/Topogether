@@ -1,6 +1,6 @@
 import { db } from "~/db";
 import postgres from "postgres";
-import { env } from "../env.mjs";
+import { env } from "../env.old.mjs";
 import {
 	Amenities,
 	Difficulty,

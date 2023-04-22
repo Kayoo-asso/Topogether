@@ -18,10 +18,8 @@ import {
 } from "~/db";
 import { router, procedure } from "./init";
 import { z } from "zod";
-import { InferModel, eq, sql } from "drizzle-orm";
+import { InferModel, and, eq, sql } from "drizzle-orm";
 import { UUID } from "types";
-import WKB from "ol/format/WKB";
-import { Point } from "ol/geom";
 
 // Intermediate types, used in the `getTopo` function below
 type Track = InferModel<typeof tracksTable> & {
@@ -72,6 +70,10 @@ export const appRouter = router({
 			return undefined;
 		}
 		const topo = topoResult[0];
+
+		if (topo.trashed) {
+			return undefined;
+		}
 
 		// Check if the user is allowed to see the topo.
 		// Two cases:
@@ -129,6 +131,50 @@ export const appRouter = router({
 			rocks: Array.from(rockMap.values()),
 		};
 	}),
+
+	deleteTopo: procedure
+		.input(z.string().uuid())
+		.mutation(async ({ input, ctx }) => {
+			const topoId = input as UUID;
+			// The user needs to be logged in to delete a topo
+			if (!ctx.user) {
+				return;
+			}
+			const userId = ctx.user.id as UUID;
+			const roleQuery = await db
+				.select({
+					role: contributorsTable.role,
+				})
+				.from(contributorsTable)
+				.where(
+					and(
+						eq(contributorsTable.topoId, topoId),
+						eq(contributorsTable.userId, userId)
+					)
+				);
+			// The user is not a contributor of this topo
+			if(roleQuery.length === 0) {
+				return;
+			} 
+			const role = roleQuery[0].role;
+			// The user needs to be an admin for this topo
+			if(role !== "ADMIN") {
+				return;
+			}
+			return db
+				.update(toposTable)
+				.set({ trashed: true })
+				.where(eq(toposTable.id, topoId));
+		}),
+
+	setTopoStatus: procedure
+		.input(
+			z.object({
+				id: z.string().uuid(),
+				status: z.enum(["draft", "submitted", "validated"]),
+			})
+		)
+		.mutation(({ input }) => {}),
 
 	getLightTopos: procedure.query(() => {
 		const parkingLocation = db.$with("parkings_agg").as(

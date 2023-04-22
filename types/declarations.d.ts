@@ -11,3 +11,11 @@ declare module "*.svg" {
 declare module "uuid" {
 	export function v4(): UUID;
 }
+
+
+// declare module "@clerk/nextjs/api" {
+
+// 	// export interface User {
+// 	// 	id: UUID;
+// 	// }
+// }

@@ -2,7 +2,7 @@ import { migrate } from "drizzle-orm/neon-serverless/migrator.js";
 import { drizzle } from "drizzle-orm/neon-serverless/index.js";
 
 import { Pool } from "@neondatabase/serverless";
-import { env } from "../env.mjs";
+import { env } from "~/env.mjs";
 
 console.log("-> Migrating...");
 

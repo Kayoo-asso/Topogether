@@ -5,6 +5,9 @@
  */
 !process.env.SKIP_ENV_VALIDATION && (await import("./env/server.mjs"));
 
+import nextPWA from "next-pwa";
+
+
 const withPWA = require("next-pwa")({
 	// disable during local development (unless focusing on SW)
 	disable: process.env.NODE_ENV !== "production",
@@ -17,7 +20,7 @@ const withPWA = require("next-pwa")({
 module.exports = withPWA(
 	/** @type {import('next').NextConfig} */
 	{
-		reactStrictMode: false,
+		reactStrictMode: true,
 		eslint: {
 			// Warning: This allows production builds to successfully complete even if
 			// your project has ESLint errors.

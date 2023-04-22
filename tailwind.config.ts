@@ -1,6 +1,7 @@
-const colors = require("tailwindcss/colors");
+import { type Config } from "tailwindcss";
+import colors from "tailwindcss/colors";
 
-module.exports = {
+export default {
 	content: [
 		"./pages/**/*.{js,jsx,ts,tsx}",
 		"./components/**/*.{js,jsx,ts,tsx}",
@@ -561,25 +562,17 @@ module.exports = {
 			contentPlusShell: "93vh",
 			contentPlusHeader: "90vh",
 		}),
-		inset: (theme, { negative }) => ({
-			auto: "auto",
-			...theme("spacing"),
-			...negative(theme("spacing")),
-			"1/2": "50%",
-			"1/3": "33.333333%",
-			"2/3": "66.666667%",
-			"1/4": "25%",
-			"2/4": "50%",
-			"3/4": "75%",
-			full: "100%",
-			"-1/2": "-50%",
-			"-1/3": "-33.333333%",
-			"-2/3": "-66.666667%",
-			"-1/4": "-25%",
-			"-2/4": "-50%",
-			"-3/4": "-75%",
-			"-full": "-100%",
-		}),
+    inset: ({ theme }) => ({
+      auto: 'auto',
+      ...theme('spacing'),
+      '1/2': '50%',
+      '1/3': '33.333333%',
+      '2/3': '66.666667%',
+      '1/4': '25%',
+      '2/4': '50%',
+      '3/4': '75%',
+      full: '100%',
+    }),
 		keyframes: {
 			spin: {
 				to: {
@@ -673,11 +666,10 @@ module.exports = {
 			disc: "disc",
 			decimal: "decimal",
 		},
-		margin: (theme, { negative }) => ({
-			auto: "auto",
-			...theme("spacing"),
-			...negative(theme("spacing")),
-		}),
+    margin: ({ theme }) => ({
+      auto: 'auto',
+      ...theme('spacing'),
+    }),
 		maxHeight: ({ theme }) => ({
 			...theme("spacing"),
 			full: "100%",
@@ -686,7 +678,7 @@ module.exports = {
 			max: "max-content",
 			fit: "fit-content",
 		}),
-		maxWidth: (theme, { breakpoints }) => ({
+		maxWidth: ({theme, breakpoints }) => ({
 			none: "none",
 			0: "0rem",
 			xs: "20rem",
@@ -873,10 +865,9 @@ module.exports = {
 			6: "6deg",
 			12: "12deg",
 		},
-		space: (theme, { negative }) => ({
-			...theme("spacing"),
-			...negative(theme("spacing")),
-		}),
+    space: ({ theme }) => ({
+      ...theme('spacing'),
+    }),
 		stroke: ({ theme }) => theme("colors"),
 		strokeWidth: {
 			0: "0",
@@ -956,9 +947,8 @@ module.exports = {
 			out: "cubic-bezier(0, 0, 0.2, 1)",
 			"in-out": "cubic-bezier(0.4, 0, 0.2, 1)",
 		},
-		translate: (theme, { negative }) => ({
+		translate: ({theme }) => ({
 			...theme("spacing"),
-			...negative(theme("spacing")),
 			"1/2": "50%",
 			"1/3": "33.333333%",
 			"2/3": "66.666667%",
@@ -1049,4 +1039,4 @@ module.exports = {
 		"active",
 		"disabled",
 	],
-};
+} satisfies Config;

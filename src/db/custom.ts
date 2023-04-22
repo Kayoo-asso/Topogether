@@ -30,6 +30,7 @@ export const point = customType<{ data: [number, number]; driverData: string }>(
 );
 
 type PolygonCoordinates = Array<Array<[number, number]>>;
+
 export const polygon = customType<{
 	data: PolygonCoordinates;
 	driverData: string;
