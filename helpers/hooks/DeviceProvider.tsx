@@ -3,6 +3,8 @@ import { useFirstRender } from "helpers/hooks/useFirstRender";
 import React, { useContext, useMemo } from "react";
 import useDimensions from "react-cool-dimensions";
 import isMobile from "ismobilejs";
+import { classNames } from "~/utils";
+import { env } from "~/env.mjs";
 
 export type Breakpoint = {
 	isMobile: boolean;
@@ -26,7 +28,6 @@ const DeviceContext = React.createContext<ReturnType<typeof isMobile>>(
 export function useDevice() {
 	return useContext(DeviceContext);
 }
-
 
 const breakpoints = {
 	mobile: 0,
@@ -56,21 +57,21 @@ export function DeviceManager({ children }: React.PropsWithChildren<{}>) {
 			<BreakpointContext.Provider value={bp}>
 				<div
 					ref={observe}
-					className="flex h-screen w-screen flex-col items-end"
+					className="h-screen w-screen"
 				>
 					<div
-						className={
-							"h-full w-full" +
-							(bp.isMobile && process.env.NODE_ENV !== "development"
-								? " standalone"
-								: "")
-						}
+						className={classNames(
+							"h-full w-full",
+							bp.isMobile &&
+								env.NODE_ENV !== "development" &&
+								"standalone"
+						)}
 					>
 						{/* Here goes the Component + ShellMobile part */}
 						{children}
 					</div>
 
-					{bp.isMobile && process.env.NODE_ENV !== "development" && (
+					{bp.isMobile && env.NODE_ENV !== "development" && (
 						<div className="no-standalone z-full">
 							<NoStandalone />
 						</div>

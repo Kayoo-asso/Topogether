@@ -2,10 +2,10 @@ import { useBreakpoint } from "./providers/DeviceProvider";
 
 export function Mobile({ children }: React.PropsWithChildren) {
 	const breakpoint = useBreakpoint();
-	return breakpoint.isMobile ? <>{children}</> : null;
+	return breakpoint.isMobile ? <div className="w-full h-full block md:hidden">{children}</div> : null;
 }
 
 export function Desktop({ children }: React.PropsWithChildren) {
 	const breakpoint = useBreakpoint();
-	return breakpoint.isDesktop ? <>{children}</> : null;
+	return breakpoint.isDesktop ? <div className="w-full h-full hidden md:block">{children}</div> : null;
 }

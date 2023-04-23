@@ -6,8 +6,8 @@ import { getLightTopos } from "~/server/queries";
 import { Map } from "ol";
 import { usePosition } from "~/components/providers/UserPositionProvider";
 import { LeftbarDesktop } from "~/components/layout/LeftbarDesktop";
-import { WorldMapDesktop } from "~/components/map/WorldMap";
-import { Desktop, Mobile } from "~/components/Responsive";
+import { WorldMapDesktop, WorldMapMobile } from "~/components/map/WorldMap";
+import { Desktop, Mobile } from "~/components/responsive";
 
 export const getStaticProps = async () => {
 	return {
@@ -42,7 +42,9 @@ const Page: NextPage<Props> = ({ lightTopos }) => {
 			<Desktop>
 				<WorldMapDesktop topos={lightTopos} />
 			</Desktop>
-			<Mobile></Mobile>
+			<Mobile>
+				<WorldMapMobile topos={lightTopos} />
+			</Mobile>
 
 			{/*
 				<SlideoverMobileWorldmap

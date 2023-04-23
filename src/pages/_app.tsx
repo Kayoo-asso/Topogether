@@ -7,6 +7,7 @@ import { NavigationLoader } from "~/components/layout/NavigationLoader";
 import { ShellMobile } from "~/components/layout/ShellMobile";
 import { DeviceProvider } from "~/components/providers/DeviceProvider";
 import { UserPositionProvider } from "~/components/providers/UserPositionProvider";
+import { Mobile } from "~/components/responsive";
 import { api } from "~/server/api";
 import "~/styles/globals.css";
 
@@ -156,16 +157,18 @@ const App: AppType<{}> = ({ Component, pageProps }) => {
 							<NavigationLoader>
 								<div
 									id="content"
-									className="absolute flex h-full w-screen flex-1 flex-col overflow-hidden bg-grey-light md:h-screen"
+									className="flex h-screen w-screen flex-1 bg-grey-light"
 								>
 									<Component {...pageProps} />
 								</div>
-								<div
-									id="footer"
-									className="absolute bottom-0 z-500 h-shell bg-dark md:hidden"
-								>
-									<ShellMobile />
-								</div>
+								<Mobile>
+									<div
+										id="footer"
+										className="absolute bottom-0 z-500 h-shell bg-dark"
+									>
+										<ShellMobile />
+									</div>
+								</Mobile>
 							</NavigationLoader>
 						</UserPositionProvider>
 					</DeviceProvider>

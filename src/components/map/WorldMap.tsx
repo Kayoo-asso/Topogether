@@ -11,6 +11,8 @@ import { TopoFiltersDesktop, filterTopos } from "./TopoFilters";
 import { TopoInteractions, TopoMarkers } from "./TopoMarkers";
 import { TopoSearchbar } from "./TopoSearchbar";
 import { UserMarker } from "./UserMarker";
+import { useUser } from "@clerk/nextjs";
+import { classNames } from "~/utils";
 
 interface WorldMapProps {
 	topos: LightTopo[];
@@ -20,23 +22,21 @@ export function WorldMapDesktop({ topos }: WorldMapProps) {
 	const { position } = usePosition();
 	const filters = useWorldMapStore((s) => s.filters);
 	const filteredTopos = filterTopos(topos, filters);
-
+	const { user } = useUser();
 	// TODO
 	const ongoingDl = 0;
 
 	return (
 		<>
 			<HeaderDesktop backLink="#" title="Carte des topo">
-				<div
-					className={`${
-						ongoingDl > 0 ? "" : "hidden"
-					} ktext-label flex w-full justify-end text-white`}
-				>
-					Téléchargement en cours... ({ongoingDl})
-				</div>
+				{ongoingDl > 0 && (
+					<div className="ktext-label flex w-full justify-end text-white">
+						Téléchargement en cours... ({ongoingDl})
+					</div>
+				)}
 			</HeaderDesktop>
-			<div className="relative flex h-full flex-row">
-				<LeftbarDesktop currentMenuItem="MAP" />
+			<div className="flex h-full flex-row">
+				{user && <LeftbarDesktop currentMenuItem="MAP" />}
 				<BaseMap
 					initialCenter={position}
 					initialZoom={5}
@@ -54,6 +54,42 @@ export function WorldMapDesktop({ topos }: WorldMapProps) {
 					<TopoInteractions />
 				</BaseMap>
 				<TopoPreview sendTo="topo" displayLikeDownload displayParking />
+			</div>
+		</>
+	);
+}
+
+export function WorldMapMobile({ topos }: WorldMapProps) {
+	const filters = useWorldMapStore((s) => s.filters);
+	const filteredTopos = filterTopos(topos, filters);
+	const { position } = usePosition();
+	// TODO:
+	const ongoingDl = 0;
+	return (
+		<>
+			{ongoingDl > 0 && (
+				<div className="flex h-header items-center bg-dark px-8">
+					<div className="ktext-label flex w-full justify-end text-white">
+						Téléchargement en cours... ({ongoingDl})
+					</div>
+				</div>
+			)}
+			<div className={ongoingDl > 0 ? "h-content" : "h-contentPlusHeader"}>
+				<BaseMap
+					initialCenter={position}
+					initialZoom={5}
+					onBackgroundClick={() => {
+						useWorldMapStore.setState({
+							selectedTopo: undefined,
+							filtersOpen: false,
+							searchOpen: false,
+						});
+					}}
+				>
+					<UserMarker />
+					<TopoMarkers topos={filteredTopos} />
+					<TopoInteractions />
+				</BaseMap>
 			</div>
 		</>
 	);

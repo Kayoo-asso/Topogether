@@ -1,7 +1,7 @@
 import { MapContext } from "./contexts";
 import OLMap from "ol/Map";
 import { createLifecycle, InferOptions } from "./createLifecycle";
-import { forwardRef } from "react";
+import { forwardRef, useId } from "react";
 
 // VERY IMPORTANT
 import "ol/ol.css";
@@ -24,13 +24,12 @@ export type Props = Omit<
 	"view" | "target" | "interactions" | "overlays" | "layers"
 > &
 	React.PropsWithChildren<{
-		id?: string;
 		className?: string;
 	}>;
 
 export const Map = forwardRef<OLMap, Props>(
-	({ children, id, className, ...props }, ref) => {
-		id = id || "map";
+	({ children, className, ...props }, ref) => {
+		const id = useId();
 		const map = useLifecycle({ ...props, target: id }, ref);
 
 		return (
