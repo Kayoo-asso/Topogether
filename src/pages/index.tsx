@@ -21,20 +21,11 @@ type Props = InferGetStaticPropsType<typeof getStaticProps>;
 const Page: NextPage<Props> = ({ lightTopos }) => {
 	const { user } = useUser();
 
-	const { position } = usePosition();
-	const mapRef = useRef<Map>(null);
-
-	// const SearchbarDesktop: React.FC = () => (
-	// 	<SearchbarToposDesktop map={mapRef.current} />
-	// );
-	// const [Filters, filterTopos, resetFilters] = useToposFilters(lightTopos);
-	// const FiltersDesktop: React.FC = () => (
-	// 	<ToposFiltersDesktop Filters={Filters} onResetClick={resetFilters} />
-	// );
 	// TOOD
 	const onGoingDl = 0;
 	return (
 		<>
+			{/* Header stuff */}
 			<HeaderDesktop
 				backLink="#"
 				title="Carte des topo"
@@ -67,7 +58,8 @@ const Page: NextPage<Props> = ({ lightTopos }) => {
 					onGoingDl > 0 ? "h-content" : "h-contentPlusHeader"
 				} relative flex flex-row md:h-full`}
 			>
-				{user && <LeftbarDesktop currentMenuItem="MAP" />}
+				{/* {user && <LeftbarDesktop currentMenuItem="MAP" />} */}
+				<LeftbarDesktop currentMenuItem="MAP" />
 				<WorldMap topos={lightTopos} />
 				{/*
 				<SlideoverMobileWorldmap

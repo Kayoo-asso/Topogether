@@ -26,6 +26,10 @@ type PositionSubscriptions = {
 const UserPositionContext = createContext<PositionSubscriptions | undefined>(
 	undefined
 );
+const defaultOptions: PositionOptions = {
+	timeout: 5000,
+	enableHighAccuracy: true,
+};
 
 export function usePosition(): UserPosition {
 	const ctx = useContext(UserPositionContext);
@@ -96,11 +100,6 @@ export const UserPositionProvider = ({
 	}, []);
 
 	const launchGeolocation = () => {
-		const options: PositionOptions = {
-			timeout: 5000,
-			enableHighAccuracy: true,
-		};
-
 		const onPosChange: PositionCallback = (pos) => {
 			if (isIos && !localStorage.getItem("geolocationPermission")) {
 				localStorage.setItem("geolocationPermission", "first");
@@ -134,7 +133,7 @@ export const UserPositionProvider = ({
 		const watcher = navigator.geolocation.watchPosition(
 			onPosChange,
 			onError,
-			options
+			defaultOptions
 		);
 
 		return () => navigator.geolocation.clearWatch(watcher);

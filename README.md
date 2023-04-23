@@ -18,25 +18,32 @@ Currently only available in French, sorry!
 - Type-safe environment variables (like t3-stack)
 
 ### TODO
-- ImageInput onChange in MapControl
-- MapControl use of breakpoint
+- Like button
+- Download button
 - Download status
 - Only have one TopoFilters component + responsive CSS
 - Search bar styling
-  - input overlaps + casts shadow on results
-  - overlaps satellite button
+  - Round input
+  - Make results section a scrollable container, to avoid pushing other controls out of the map
 - Search bar features + error handling
 - Investigate all different buttons (too many of them, with too many redundant options)
+- "Annuler" in ParkingModal has no effect
 - Cleanups
   - SelectListMultiple
     - `getClassName`
     - The hover styling for either the active element or all elements on mobile seems weird
   - Too many sliders
+  - Geolocation permissions are super messy right now
+    -> `getCurrentPosition` seems pretty slow and unreliable in my testing
+- `currentMenuItem` in `LeftbarDesktop` looks sus
 - Remove packages:
   - Supabase
   - cookie
   - postgres
 - Delete Amenities bitflag
+- Use an actual icon for CloseButton...
+- look into `lucide-react` for icons
+
 - Try to avoid as many .preventDefault() and .stopPropagation() as possible
 - Use next/image instead of our custom `Image` component, now that it is good
 - Remove all traces of `useLoader`
@@ -51,7 +58,10 @@ Currently only available in French, sorry!
   - MapControl bottom center controls z-index
   - MapControl bottom right controls z-index and bottom padding
 - `cursor-pointer` behavior for GradeCircle
+- TopoPreview
+  - pointer cursor on image (which is modalable)
 - The Drag interaction in TopoMarkers was never used apparently?
+- `launchNavigation` in `ParkingModal` across devices (especially iOS) 
 
 ### Content and features
 

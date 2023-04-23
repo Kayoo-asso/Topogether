@@ -1,13 +1,13 @@
 import React from "react";
 import Link from "next/link";
-import { Button } from "components/atoms/buttons/Button";
+import { Button } from "~/components/buttons/Button";
+import { useUser } from "@clerk/nextjs";
+import { getAuthMetadata } from "~/server/auth";
 
 import Track from "assets/icons/track.svg";
 import MarkerIcon from "assets/icons/marker-stroke.svg";
 import UserIcon from "assets/icons/user.svg";
 import KeyIcon from "assets/icons/key.svg";
-import { useUser } from "@clerk/nextjs";
-import { getAuthMetadata } from "~/server/auth";
 
 interface LeftbarDesktopProps {
 	currentMenuItem?: "BUILDER" | "MAP" | "USER" | "ADMIN";
@@ -29,70 +29,62 @@ export function LeftbarDesktop({
 			</div>
 
 			<div className="flex flex-1 flex-col gap-10">
-				<Link href="/builder/dashboard">
-					<a className="flex flex-row">
-						<Track
-							className={`mr-4 h-6 w-6 ${
-								currentMenuItem === "BUILDER" ? "stroke-main" : "stroke-dark"
-							}`}
-						/>
-						<span
-							className={`ktext-title ${
-								currentMenuItem === "BUILDER" ? "text-main" : "text-dark"
-							}`}
-						>
-							Topos
-						</span>
-					</a>
+				<Link className="flex flex-row" href="/builder/dashboard">
+					<Track
+						className={`mr-4 h-6 w-6 ${
+							currentMenuItem === "BUILDER" ? "stroke-main" : "stroke-dark"
+						}`}
+					/>
+					<span
+						className={`ktext-title ${
+							currentMenuItem === "BUILDER" ? "text-main" : "text-dark"
+						}`}
+					>
+						Topos
+					</span>
 				</Link>
-				<Link href="/">
-					<a className="flex flex-row">
-						<MarkerIcon
-							className={`mr-4 h-6 w-6 stroke-2 ${
-								currentMenuItem === "MAP" ? "stroke-main" : "stroke-dark"
-							}`}
-						/>
-						<span
-							className={`ktext-title ${
-								currentMenuItem === "MAP" ? "text-main" : "text-dark"
-							}`}
-						>
-							Carte
-						</span>
-					</a>
+				<Link className="flex flex-row" href="/">
+					<MarkerIcon
+						className={`mr-4 h-6 w-6 stroke-2 ${
+							currentMenuItem === "MAP" ? "stroke-main" : "stroke-dark"
+						}`}
+					/>
+					<span
+						className={`ktext-title ${
+							currentMenuItem === "MAP" ? "text-main" : "text-dark"
+						}`}
+					>
+						Carte
+					</span>
 				</Link>
-				<Link href="/user/profile">
-					<a className="flex flex-row">
-						<UserIcon
-							className={`mr-4 h-6 w-6 stroke-2 ${
-								currentMenuItem === "USER" ? "stroke-main" : "stroke-dark"
-							}`}
-						/>
-						<span
-							className={`ktext-title ${
-								currentMenuItem === "USER" ? "text-main" : "text-dark"
-							}`}
-						>
-							Profile
-						</span>
-					</a>
+				<Link className="flex flex-row" href="/user/profile">
+					<UserIcon
+						className={`mr-4 h-6 w-6 stroke-2 ${
+							currentMenuItem === "USER" ? "stroke-main" : "stroke-dark"
+						}`}
+					/>
+					<span
+						className={`ktext-title ${
+							currentMenuItem === "USER" ? "text-main" : "text-dark"
+						}`}
+					>
+						Profile
+					</span>
 				</Link>
 				{userMeta?.role === "admin" && (
-					<Link href="/admin">
-						<a className="flex flex-row">
-							<KeyIcon
-								className={`mr-4 h-6 w-6 ${
-									currentMenuItem === "ADMIN" ? "stroke-main" : "stroke-dark"
-								}`}
-							/>
-							<span
-								className={`ktext-title ${
-									currentMenuItem === "ADMIN" ? "text-main" : "text-dark"
-								}`}
-							>
-								Admin
-							</span>
-						</a>
+					<Link className="flex flex-row" href="/admin">
+						<KeyIcon
+							className={`mr-4 h-6 w-6 ${
+								currentMenuItem === "ADMIN" ? "stroke-main" : "stroke-dark"
+							}`}
+						/>
+						<span
+							className={`ktext-title ${
+								currentMenuItem === "ADMIN" ? "text-main" : "text-dark"
+							}`}
+						>
+							Admin
+						</span>
 					</Link>
 				)}
 			</div>

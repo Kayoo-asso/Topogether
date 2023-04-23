@@ -20,7 +20,7 @@ import defaultKayoo from "public/assets/img/Kayoo_defaut_image.png";
 
 export type ImageProps = RawImageAttributes & {
 	alt: string;
-	image?: Img;
+	image?: Img | null;
 	objectFit?: "contain" | "cover";
 	sizeHint: SourceSize | { raw: string };
 	defaultImage?: StaticImageData;

@@ -1,5 +1,8 @@
 import { RoundButton } from "~/components/buttons/RoundButton";
-import { usePosition } from "~/components/providers/UserPositionProvider";
+import {
+	getPosition,
+	usePosition,
+} from "~/components/providers/UserPositionProvider";
 import { LightTopo } from "~/server/queries";
 import { useWorldMapStore } from "~/stores/worldmapStore";
 import { BaseMap } from "./BaseMap";
@@ -9,6 +12,7 @@ import { UserMarker } from "./UserMarker";
 
 import FilterIcon from "assets/icons/filter.svg";
 import { TopoSearchbar } from "./TopoSearchbar";
+import { useEffect } from "react";
 
 interface WorldMapProps {
 	topos: LightTopo[];
@@ -16,7 +20,6 @@ interface WorldMapProps {
 
 export function WorldMap({ topos }: WorldMapProps) {
 	const { position } = usePosition();
-	const selectTopo = useWorldMapStore((s) => s.selectTopo);
 	const filters = useWorldMapStore((s) => s.filters);
 	const filteredTopos = filterTopos(topos, filters);
 
@@ -42,9 +45,8 @@ export function WorldMap({ topos }: WorldMapProps) {
 
 function WorldMapControls({ topos }: { topos: LightTopo[] }) {
 	const filtersOpen = useWorldMapStore((s) => s.filtersOpen);
-	const searchOpen = useWorldMapStore((s) => s.searchOpen);
 	const toggleFilters = useWorldMapStore((s) => s.toggleFilters);
-	const toggleSearch = useWorldMapStore((s) => s.toggleSearch);
+
 
 	return (
 		<>

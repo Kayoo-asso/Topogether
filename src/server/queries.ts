@@ -86,6 +86,9 @@ export async function getLightTopos() {
 			submitted: toposTable.submitted,
 			validated: toposTable.validated,
 			adaptedToChildren: toposTable.adaptedToChildren,
+			closestCity: toposTable.closestCity,
+			description: toposTable.description,
+			image: toposTable.image,
 			// -> Add properties as needed here
 
 			// Aggregated properties
@@ -105,4 +108,3 @@ export async function getLightTopos() {
 		.leftJoin(tracksAgg, eq(tracksAgg.id, toposTable.id));
 }
 
-export type LightTopo = Awaited<ReturnType<typeof getLightTopos>>[number];

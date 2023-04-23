@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { Loading } from "./Loading";
+import { classNames } from "~/utils";
 
 interface ButtonProps {
 	content: string;
@@ -30,7 +31,7 @@ export const Button: React.FC<ButtonProps> = ({
 	};
 	const button = (
 		<button
-			className={`ktext-subtitle w-full flex h-[45px] flex-row items-center justify-center gap-5 rounded-full px-4 py-4 shadow lg:h-[50px] lg:px-8 ${getUIClasses()} ${className}`}
+			className={`ktext-subtitle flex h-[45px] w-full flex-row items-center justify-center gap-5 rounded-full px-4 py-4 shadow lg:h-[50px] lg:px-8 ${getUIClasses()} ${className}`}
 			onClick={() => {
 				if (!loading && activated && props.onClick && !props.href)
 					props.onClick();
@@ -45,17 +46,16 @@ export const Button: React.FC<ButtonProps> = ({
 		</button>
 	);
 
-	return (
-		<>
-			{props.href && activated ? (
-				<>
-					<Link href={props.href || ""}>
-						<a className={`${fullWidth ? "w-full " : ""}`}>{button}</a>
-					</Link>
-				</>
-			) : (
-				<>{button}</>
-			)}
-		</>
-	);
+	if (props.href && activated) {
+		return (
+			<Link
+				className={classNames(fullWidth && "w-full")}
+				href={props.href || ""}
+			>
+				{button}
+			</Link>
+		);
+	} else {
+		return <>{button}</>;
+	}
 };

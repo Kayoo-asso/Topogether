@@ -35,6 +35,11 @@ const DeviceContext = React.createContext<DeviceInfo | null | undefined>(
 	undefined
 );
 
+// Note: keep in sync with how device info is obtained in the provider
+export function getDevice() {
+	return typeof window !== "undefined" ? isMobile(navigator.userAgent) : null;
+}
+
 export function useDevice() {
 	const value = useContext(DeviceContext);
 	if (value === undefined) {
@@ -69,6 +74,7 @@ export function DeviceProvider({ children }: React.PropsWithChildren<{}>) {
 			}
 		},
 	});
+	// Note: keep in sync with how device info is obtained in `getDevice`
 	const deviceInfo = useMemo(
 		() =>
 			typeof window !== "undefined" ? isMobile(navigator.userAgent) : null,

@@ -27,6 +27,7 @@ export function useDevice() {
 	return useContext(DeviceContext);
 }
 
+
 const breakpoints = {
 	mobile: 0,
 	desktop: 800,
