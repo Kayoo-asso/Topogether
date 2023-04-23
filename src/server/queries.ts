@@ -31,8 +31,10 @@ export async function getLightTopos() {
 				id: sql<UUID>`DISTINCT ON (${parkingsTable.topoId}) ${parkingsTable.topoId}`.as(
 					"parkings.topo_id"
 				),
+				// The `null` case represents the situation where there is no matching parking
+				// in the JOIN below
 				parkingLocation: sql<
-					[number, number]
+					[number, number] | null
 				>`ARRAY[ST_X(${parkingsTable.location}), ST_Y(${parkingsTable.location})]`.as(
 					"parking_location"
 				),
@@ -64,7 +66,7 @@ export async function getLightTopos() {
 			.select({
 				id: tracksTable.topoId,
 				nbTracks: countDistinct(tracksTable.id).as("nb_tracks"),
-				allGrades: sql<Array<Grade>>`JSON_AGG(${tracksTable.grade})`.as(
+				allGrades: sql<Array<Grade> | null>`JSON_AGG(${tracksTable.grade})`.as(
 					"all_grades"
 				),
 			})
@@ -87,10 +89,13 @@ export async function getLightTopos() {
 			// -> Add properties as needed here
 
 			// Aggregated properties
-			nbSectors: sectorsCount.nbSectors,
-			nbRocks: rocksCount.nbRocks,
-			nbTracks: tracksAgg.nbTracks,
-			allGrades: tracksAgg.allGrades,
+			// Need to coalesce to avoid nulls
+			nbSectors: sql<number>`COALESCE(${sectorsCount.nbSectors}, 0)`,
+			nbRocks: sql<number>`COALESCE(${rocksCount.nbRocks}, 0)`,
+			nbTracks: sql<number>`COALESCE(${tracksAgg.nbTracks}, 0)`,
+			allGrades: sql<
+				Array<Grade | null>
+			>`COALESCE(${tracksAgg.allGrades}, '[]')`,
 			parkingLocation: parkingLocation.parkingLocation,
 		})
 		.from(toposTable)

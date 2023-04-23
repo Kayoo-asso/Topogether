@@ -1,15 +1,12 @@
 import { useUser } from "@clerk/nextjs";
 import { InferGetStaticPropsType, NextPage } from "next";
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import { HeaderDesktop } from "~/components/layout/HeaderDesktop";
-import { LightTopo, getLightTopos } from "~/server/queries";
+import { getLightTopos } from "~/server/queries";
 import { Map } from "ol";
 import { usePosition } from "~/components/providers/UserPositionProvider";
-import { initialTopoFilters } from "~/components/forms/TopoFilters";
 import { LeftbarDesktop } from "~/components/layout/LeftbarDesktop";
-import { useWorldMapStore } from "~/stores/worldmapStore";
-import { BaseMap } from "~/components/map/BaseMap";
-import { TopoInteractions, TopoMarkers } from "~/components/map/TopoMarkers";
+import { WorldMap } from "~/components/map/WorldMap";
 
 export const getStaticProps = async () => {
 	return {
@@ -19,9 +16,9 @@ export const getStaticProps = async () => {
 	};
 };
 
-const Page: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
-	lightTopos,
-}) => {
+type Props = InferGetStaticPropsType<typeof getStaticProps>;
+
+const Page: NextPage<Props> = ({ lightTopos }) => {
 	const { user } = useUser();
 
 	const { position } = usePosition();
@@ -36,8 +33,6 @@ const Page: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
 	// );
 	// TOOD
 	const onGoingDl = 0;
-	const selectTopo = useWorldMapStore((s) => s.selectTopo);
-
 	return (
 		<>
 			<HeaderDesktop
@@ -73,15 +68,7 @@ const Page: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
 				} relative flex flex-row md:h-full`}
 			>
 				{user && <LeftbarDesktop currentMenuItem="MAP" />}
-
-				<BaseMap
-					initialCenter={position}
-					initialZoom={5}
-					onBackgroundClick={() => selectTopo(undefined)}
-				>
-					<TopoMarkers topos={lightTopos} />
-					<TopoInteractions />
-				</BaseMap>
+				<WorldMap topos={lightTopos} />
 				{/*
 				<SlideoverMobileWorldmap
 					map={mapRef.current}

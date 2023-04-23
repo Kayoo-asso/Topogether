@@ -9,11 +9,12 @@ import BgSatellite from "assets/bg_satellite.jpg";
 import BgNonSatellite from "assets/bg_non-satellite.jpg";
 import { useGeographic } from "ol/proj";
 import { MapBrowserEvent } from "ol";
+import { Attribution } from "ol/control";
 
 // Use geographic coordinates everywhere
 useGeographic();
 
-type BaseMapProps = Props & {
+type BaseMapProps = {
 	initialCenter?: GeoCoordinates | null;
 	initialZoom?: number;
 	minZoom?: number;
@@ -25,6 +26,9 @@ const attributions =
 	'© <a href="https://www.mapbox.com/map-feedback/">Mapbox</a> ' +
 	'© <a href="https://www.openstreetmap.org/copyright">' +
 	"OpenStreetMap contributors</a>";
+
+// The default controls except the zoom +/- buttons and the rotate button
+const controls = typeof window === "undefined" ? [] : [new Attribution()];
 
 export function BaseMap({
 	initialZoom = 8,
@@ -45,6 +49,7 @@ export function BaseMap({
 	return (
 		<Map
 			className="relative h-full w-full"
+			controls={controls}
 			// Hacky but effective way of detecting when the user clicked outside any marker
 			onClick={useCallback(
 				(e: MapBrowserEvent<MouseEvent>) => {
@@ -83,22 +88,21 @@ export function BaseMap({
 				zoom={initialZoom}
 				minZoom={minZoom}
 				enableRotation={false}
-			>
-				<TileLayer>
-					<XYZ
-						attributions={attributions}
-						url={
-							satelliteView
-								? `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/tiles/512/{z}/{x}/{y}@2x?access_token=${token}`
-								: `https://api.mapbox.com/styles/v1/erwinkn/clbs8clin005514qrc9iueujg/tiles/512/{z}/{x}/{y}@2x?access_token=${token}`
-						}
-						// IMPORTANT
-						tilePixelRatio={2}
-						tileSize={512}
-					/>
-				</TileLayer>
-				{children}
-			</View>
+			/>
+			<TileLayer>
+				<XYZ
+					attributions={attributions}
+					url={
+						satelliteView
+							? `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/tiles/512/{z}/{x}/{y}@2x?access_token=${token}`
+							: `https://api.mapbox.com/styles/v1/erwinkn/clbs8clin005514qrc9iueujg/tiles/512/{z}/{x}/{y}@2x?access_token=${token}`
+					}
+					// IMPORTANT
+					tilePixelRatio={2}
+					tileSize={512}
+				/>
+			</TileLayer>
+			{children}
 		</Map>
 	);
 }

@@ -32,6 +32,7 @@ Currently only available in French, sorry!
   - cookie
   - postgres
 - Delete Amenities bitflag
+- Try to avoid as many .preventDefault() and .stopPropagation() as possible
 - Use next/image instead of our custom `Image` component, now that it is good
 - Remove all traces of `useLoader`
 - Use a proper form library

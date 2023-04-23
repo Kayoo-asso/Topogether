@@ -19,7 +19,7 @@ export interface TopoFilters {
 }
 
 interface TopoFiltersProps {
-	lightTopos: LightTopo[];
+	topos: LightTopo[];
 }
 
 export function initialTopoFilters(lightTopos: LightTopo[]): TopoFilters {
@@ -35,7 +35,7 @@ export function initialTopoFilters(lightTopos: LightTopo[]): TopoFilters {
 	};
 }
 
-export function filterTopos(filters: TopoFilters, topos: LightTopo[]) {
+export function filterTopos(topos: LightTopo[], filters: TopoFilters) {
 	const filtered: LightTopo[] = [];
 	const [minRocks, maxRocks] = filters.rockRange;
 	const [minGrade, maxGrade] = filters.gradeRange;
@@ -52,6 +52,7 @@ export function filterTopos(filters: TopoFilters, topos: LightTopo[]) {
 		if (minGrade === 3 && maxGrade === 9) {
 			hasRocksAtGrade = true;
 		} else {
+			console.log({topo})
 			for (const grade of topo.allGrades) {
 				const category = gradeCategory(grade);
 				const catNb = Number(category);
@@ -72,7 +73,7 @@ export function filterTopos(filters: TopoFilters, topos: LightTopo[]) {
 	return filtered;
 }
 
-function TopoFilters({ lightTopos }: TopoFiltersProps) {
+function TopoFilters({ topos: lightTopos }: TopoFiltersProps) {
 	const filters = useWorldMapStore((s) => s.filters);
 	const domain = useWorldMapStore((s) => s.filtersDomain);
 	const setFilters = useWorldMapStore((s) => s.setFilters);
@@ -132,10 +133,8 @@ export function TopoFiltersDesktop(props: TopoFiltersProps) {
 
 	return (
 		<div
-			className={classNames(
-				"relative z-40 flex min-w-[250px] max-w-[80%] flex-col rounded-lg bg-white shadow md:max-w-[40%]",
-				open && "hidden"
-			)}
+			className="relative z-40 flex min-w-[250px] max-w-[80%] flex-col rounded-lg bg-white shadow md:max-w-[40%]"
+			
 		>
 			<div className="flex flex-row items-center justify-between">
 				<div
