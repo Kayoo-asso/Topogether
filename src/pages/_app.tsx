@@ -7,6 +7,7 @@ import { NavigationLoader } from "~/components/layout/NavigationLoader";
 import { ShellMobile } from "~/components/layout/ShellMobile";
 import { DeviceProvider } from "~/components/providers/DeviceProvider";
 import { UserPositionProvider } from "~/components/providers/UserPositionProvider";
+import { api } from "~/server/api";
 import "~/styles/globals.css";
 
 const queryClient = new QueryClient();
@@ -174,4 +175,4 @@ const App: AppType<{}> = ({ Component, pageProps }) => {
 	);
 };
 
-export default App;
+export default api.withTRPC(App);

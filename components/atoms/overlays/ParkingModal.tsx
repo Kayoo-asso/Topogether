@@ -24,13 +24,13 @@ export const ParkingModal: React.FC<ParkingModalProps> = (
 	return (
 		<Portal open={props.open}>
 			<div
-				className="absolute top-0 left-0 z-full flex h-screen w-screen bg-black bg-opacity-80"
+				className="absolute z-full flex flex-col justify-end items-center h-screen w-screen bg-black bg-opacity-80"
 				onClick={props.onClose}
 			>
-				<div className="absolute left-[50%] bottom-[80px] w-11/12 translate-x-[-50%] shadow">
-					<div className={`ktext-base rounded bg-white text-center text-main md:cursor-pointer`}>
+				<div className="w-11/12 shadow">	
+					<div className="ktext-base flex flex-col rounded bg-white border border-grey-light text-center text-main">
 						<div
-							className="border-b border-grey-light py-5"
+							className="py-5"
 							onClick={(e) => {
 								e.stopPropagation();
 								launchNavigation(

@@ -20,6 +20,7 @@ import { router, procedure } from "./init";
 import { z } from "zod";
 import { InferModel, and, eq, sql } from "drizzle-orm";
 import { UUID } from "types";
+import { clerkClient } from '@clerk/nextjs/server'
 
 // Intermediate types, used in the `getTopo` function below
 type Track = InferModel<typeof tracksTable> & {
@@ -257,6 +258,7 @@ export const appRouter = router({
 			.from(topoLikesTable)
 			.where(eq(topoLikesTable.userId, userId));
 	}),
+
 });
 
 // export type definition of API

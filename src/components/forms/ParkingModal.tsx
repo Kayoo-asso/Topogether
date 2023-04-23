@@ -5,6 +5,7 @@ import { Portal } from "~/components/ui/Modal";
 import { Flash } from "~/components/ui/Flash";
 import { useState } from "react";
 import { copyToCliboard } from "~/utils";
+import { Separator } from "../ui/Separator";
 
 interface ParkingModalProps {
 	open: boolean;
@@ -21,15 +22,15 @@ export function ParkingModal(props: ParkingModalProps) {
 
 	return (
 		<Portal open={props.open}>
-			<div className="absolute left-0 top-0 z-full flex h-screen w-screen bg-black bg-opacity-80">
-				<div className="absolute bottom-[80px] left-[50%] w-11/12 translate-x-[-50%] shadow">
-					<div
-						className={`ktext-base rounded bg-white text-center text-main md:cursor-pointer`}
-					>
+			<div
+				className="absolute left-0 top-0 z-full flex h-screen w-screen flex-col items-center justify-end bg-black bg-opacity-80"
+				onClick={props.onClose}
+			>
+				<div className="flex w-11/12 flex-col pb-12">
+					<div className="ktext-base flex flex-col rounded border border-grey-light bg-white text-center text-main md:cursor-pointer">
 						<button
-							className="border-b border-grey-light py-5"
-							onClick={(e) => {
-								e.stopPropagation();
+							className="py-5"
+							onClick={() => {
 								launchNavigation("google", props.parkingLocation, position);
 								props.onClose();
 							}}
@@ -37,17 +38,21 @@ export function ParkingModal(props: ParkingModalProps) {
 							Google Maps
 						</button>
 						{isIos && (
-							<button
-								className="border-b border-grey-light py-5"
-								onClick={(e) => {
-									e.stopPropagation();
-									launchNavigation("apple", props.parkingLocation, position);
-									props.onClose();
-								}}
-							>
-								Apple Maps
-							</button>
+							<>
+								<Separator className="h-[2px] bg-grey-light" />
+								<button
+									className="border-b border-grey-light py-5"
+									onClick={(e) => {
+										e.stopPropagation();
+										launchNavigation("apple", props.parkingLocation, position);
+										props.onClose();
+									}}
+								>
+									Apple Maps
+								</button>
+							</>
 						)}
+						<Separator className="bg-grey-light" />
 						<button
 							className="py-5"
 							onClick={(e) => {
@@ -69,7 +74,7 @@ export function ParkingModal(props: ParkingModalProps) {
 						</button>
 					</div>
 					<button
-						className={`ktext-base mt-2 rounded bg-white py-5 text-center text-main md:cursor-pointer`}
+						className="ktext-base mt-2 rounded bg-white py-5 text-center text-main"
 						onClick={props.onClose}
 					>
 						Annuler

@@ -1,37 +1,36 @@
 import Link from "next/link";
 import React, { useState } from "react";
-import {
-	BaseColor,
-	textColors,
-	topoColors,
-	topoFillColors,
-} from "~/helpers/colors";
-import { LightTopo } from "~/types";
+import { Button } from "~/components/buttons/Button";
+import { PreviewButtons } from "~/components/buttons/ItemsHeaderButtons";
+import { LikeButton } from "~/components/buttons/LikeButton";
+import { ParkingButton } from "~/components/buttons/ParkingButton";
+import { ParkingModal } from "~/components/forms/ParkingModal";
+import { Image } from "~/components/ui/Image";
 import { ModalBG } from "~/components/ui/Modal";
 import { SlideoverRight } from "~/components/ui/SlideoverRight";
-import { ParkingModal } from "~/components/forms/ParkingModal";
-import { Button } from "../buttons/Button";
+import {
+  BaseColor,
+  textColors,
+  topoColors,
+  topoFillColors,
+} from "~/helpers/colors";
+import { api } from "~/server/api";
+import { useTopoSelectStore } from "~/stores/topoSelectStore";
+import { classNames, encodeUUID } from "~/utils";
 import { GradeHistogram } from "./GradeHistogram";
-import { classNames } from "~/utils";
-import { Image } from "~/components/ui/Image";
 
-import RockLight from "assets/icons/rockLight.svg";
 import ManyTracks from "assets/icons/many-tracks.svg";
+import RockLight from "assets/icons/rockLight.svg";
 import Topo from "assets/icons/topo.svg";
-import { PreviewButtons } from "../buttons/ItemsHeaderButtons";
-import { LikeButton } from "../buttons/LikeButton";
-import { ParkingButton } from "../buttons/ParkingButton";
 
 interface TopoPreviewProps {
 	open?: boolean;
-	topo: LightTopo;
 	displayLikeDownload?: boolean;
 	displayCreator?: boolean;
 	displayLastDate?: boolean;
 	displayParking?: boolean;
-	mainButton?: TopoPreviewButton;
+	sendTo: "topo" | "builder";
 	otherButtons?: TopoPreviewButton[];
-	onClose: () => void;
 }
 
 function Container(
@@ -56,12 +55,24 @@ function Container(
 
 export function TopoPreview(props: TopoPreviewProps) {
 	const [modalParkingOpen, setModalParkingOpen] = useState(false);
-	const topo = props.topo;
+	const topo = useTopoSelectStore((s) => s.selected);
+
+	const creatorQuery = api.getProfile.useQuery(topo?.creatorId!, {
+		enabled: !!topo?.creatorId,
+	});
+
+	const onClose = () => useTopoSelectStore.setState({ selected: undefined });
+
+	if (!topo) {
+		return null;
+	}
+
 	return (
 		<>
-			<Container onClose={props.onClose}>
+			<Container onClose={onClose}>
 				<div className="pb-8">
-					<PreviewButtons onClose={props.onClose}>
+					<PreviewButtons onClose={onClose}>
+						{/* TODO: only display when user is logged in */}
 						<LikeButton liked={false} onClick={() => {}} />
 						{/* TODO: download button */}
 					</PreviewButtons>
@@ -90,10 +101,10 @@ export function TopoPreview(props: TopoPreviewProps) {
 								{topo.name}
 							</div>
 						</div>
-						{topo.creator && props.displayCreator && (
+						{props.displayCreator && creatorQuery.data && (
 							<div className="ktext-label px-4">
 								Topo créé par{" "}
-								<span className="text-main">{topo.creator.userName}</span>
+								<span className="text-main">{creatorQuery.data.username}</span>
 							</div>
 						)}
 						{props.displayLastDate && (
@@ -162,17 +173,13 @@ export function TopoPreview(props: TopoPreviewProps) {
 							</div>
 						</div>
 
-						{props.mainButton && (
-							<div className="flex w-full flex-col items-center px-4 py-4">
-								<Button
-									content={props.mainButton.content || "Entrer"}
-									href={props.mainButton.link}
-									// className="px-24"
-									fullWidth
-									onClick={props.mainButton.onClick}
-								/>
-							</div>
-						)}
+						<div className="flex w-full flex-col items-center px-4 py-4">
+							<Button
+								content="Entrer"
+								href={`/${props.sendTo}/${encodeUUID(topo.id)}`}
+								fullWidth
+							/>
+						</div>
 
 						{props.displayParking && topo.parkingLocation && (
 							<div className="py-4">
@@ -194,10 +201,10 @@ export function TopoPreview(props: TopoPreviewProps) {
 				</div>
 			</Container>
 
-			{props.topo.parkingLocation && (
+			{topo.parkingLocation && (
 				<ParkingModal
 					open={modalParkingOpen}
-					parkingLocation={props.topo.parkingLocation}
+					parkingLocation={topo.parkingLocation}
 					onClose={() => setModalParkingOpen(false)}
 				/>
 			)}

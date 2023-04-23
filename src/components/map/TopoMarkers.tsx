@@ -1,12 +1,12 @@
 import { FeatureLike } from "ol/Feature";
 import { Icon, Style } from "ol/style";
 import React, { useCallback } from "react";
-import { GeoCoordinates, LightTopo, TopoTypes, UUID } from "types";
+import { GeoCoordinates, TopoTypes } from "types";
 import { Point, VectorLayer, VectorSource } from "~/components/openlayers";
 import { OnClickFeature } from "~/components/openlayers/extensions/OnClick";
 import { topoColors } from "~/helpers/colors";
-import { useWorldMapStore } from "~/stores/worldmapStore";
-import { filterTopos } from "./TopoFilters";
+import { useTopoSelectStore } from "~/stores/topoSelectStore";
+import { LightTopo, UUID } from "~/types";
 
 type TopoInfo = { id: UUID; type: TopoTypes; location: GeoCoordinates };
 
@@ -37,8 +37,7 @@ export const topoMarkerStyle = (
 
 // Only used in the world map
 export function TopoInteractions() {
-	const selected = useWorldMapStore((s) => s.selectedTopo);
-	const selectTopo = useWorldMapStore((s) => s.selectTopo);
+	const selected = useTopoSelectStore((s) => s.selected);
 	return (
 		<OnClickFeature
 			layers="topos"
@@ -46,13 +45,13 @@ export function TopoInteractions() {
 			onClick={useCallback(
 				(e) => {
 					const { topo } = e.feature.get("data") as TopoMarkerData;
-					if (topo.id !== selected) {
-						selectTopo(topo.id);
+					if (topo.id !== selected?.id) {
+						useTopoSelectStore.setState({ selected: topo });
 					} else {
-						selectTopo(undefined);
+						useTopoSelectStore.setState({ selected: undefined });
 					}
 				},
-				[selected, selectTopo]
+				[selected]
 			)}
 		/>
 	);
@@ -61,11 +60,11 @@ export function TopoInteractions() {
 // Used in the world map + topo creation screen
 export function TopoMarkers(props: TopoMarkersProps) {
 	// Always false during topo creation
-	const selected = useWorldMapStore((s) => s.selectedTopo);
+	const selected = useTopoSelectStore((s) => s.selected);
 	const style = useCallback(
 		(feature: FeatureLike) => {
 			const { topo } = feature.get("data") as TopoMarkerData;
-			const isSelected = topo.id === selected;
+			const isSelected = topo.id === selected?.id;
 			const anySelected = !!selected;
 			const shadowed = anySelected && !isSelected;
 

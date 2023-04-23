@@ -20,11 +20,7 @@ type HeaderDesktopProps = React.PropsWithChildren<{
 }>;
 
 // TODO: start showing a loader as soon as a sign out happens?
-export const HeaderDesktop = ({
-	displayLogin = false,
-	displayUser = true,
-	...props
-}: HeaderDesktopProps) => {
+export const HeaderDesktop = (props: HeaderDesktopProps) => {
 	const { user } = useUser();
 	const userMeta = getAuthMetadata(user);
 	const { signOut } = useClerk();
@@ -94,7 +90,7 @@ export const HeaderDesktop = ({
 				{props.children}
 			</div>
 
-			{displayLogin && !user && (
+			{!user && (
 				<Link
 					href="/user/login"
 					className="ktext-base mr-[3%] text-white md:cursor-pointer"
@@ -103,7 +99,7 @@ export const HeaderDesktop = ({
 				</Link>
 			)}
 
-			{displayUser && user && (
+			{user && (
 				<div className="flex w-1/12 items-center justify-center">
 					<div className="relative h-[45px] w-[45px]">
 						<ProfilePicture

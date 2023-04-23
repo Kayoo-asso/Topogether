@@ -20,7 +20,7 @@ Currently only available in French, sorry!
 ### TODO
 - Like button
 - Download button
-- Download status
+- Styling of download status in Header
 - Only have one TopoFilters component + responsive CSS
 - Search bar styling
   - Round input
