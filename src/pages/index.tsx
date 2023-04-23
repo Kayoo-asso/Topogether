@@ -5,9 +5,11 @@ import { HeaderDesktop } from "~/components/layout/HeaderDesktop";
 import { LightTopo, getLightTopos } from "~/server/queries";
 import { Map } from "ol";
 import { usePosition } from "~/components/providers/UserPositionProvider";
-import { initialTopoFilters } from "~/components/map/TopoFilters";
+import { initialTopoFilters } from "~/components/forms/TopoFilters";
 import { LeftbarDesktop } from "~/components/layout/LeftbarDesktop";
 import { useWorldMapStore } from "~/stores/worldmapStore";
+import { BaseMap } from "~/components/map/BaseMap";
+import { TopoInteractions, TopoMarkers } from "~/components/map/TopoMarkers";
 
 export const getStaticProps = async () => {
 	return {
@@ -25,13 +27,6 @@ const Page: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
 	const { position } = usePosition();
 	const mapRef = useRef<Map>(null);
 
-	const [selectedTopo, setSelectedTopo] = useState<LightTopo>();
-	const [filters, setFilters] = useState(initialTopoFilters(lightTopos));
-  useEffect(() => {
-    const initialFilters = initialTopoFilters(lightTopos);
-    useWorldMapStore.s
-  })
-
 	// const SearchbarDesktop: React.FC = () => (
 	// 	<SearchbarToposDesktop map={mapRef.current} />
 	// );
@@ -41,6 +36,7 @@ const Page: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
 	// );
 	// TOOD
 	const onGoingDl = 0;
+	const selectTopo = useWorldMapStore((s) => s.selectTopo);
 
 	return (
 		<>
@@ -77,7 +73,16 @@ const Page: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
 				} relative flex flex-row md:h-full`}
 			>
 				{user && <LeftbarDesktop currentMenuItem="MAP" />}
-        {/*
+
+				<BaseMap
+					initialCenter={position}
+					initialZoom={5}
+					onBackgroundClick={() => selectTopo(undefined)}
+				>
+					<TopoMarkers topos={lightTopos} />
+					<TopoInteractions />
+				</BaseMap>
+				{/*
 				<SlideoverMobileWorldmap
 					map={mapRef.current}
 					Filters={Filters}

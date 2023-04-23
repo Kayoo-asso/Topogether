@@ -1,6 +1,6 @@
 import { TopoTypes, UUID } from "types";
 import { create } from "zustand";
-import { TopoFilters } from "~/components/map/TopoFilters";
+import { TopoFilters } from "~/components/forms/TopoFilters";
 
 interface WorldMapStore {
 	selectedTopo?: UUID;

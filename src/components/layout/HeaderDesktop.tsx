@@ -1,12 +1,14 @@
-import React, { ReactElement, ReactNode, useEffect, useState } from "react";
+import { useClerk, useUser } from "@clerk/nextjs";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import ArrowFull from "assets/icons/arrow-full.svg";
-import { Dropdown, DropdownOption } from "components/molecules/form/Dropdown";
-import { ProfilePicture } from "components/atoms/ProfilePicture";
-import { useClerk, useUser } from "@clerk/nextjs";
+import React, { ReactElement, ReactNode, useEffect, useState } from "react";
+import { ProfilePicture } from "~/components/profile/ProfilePicture";
+import { Dropdown, DropdownOption } from "~/components/ui/Dropdown";
 import { getAuthMetadata } from "~/server/auth";
+
+import Logo from "assets/Logo_white_topogether.png";
+import ArrowFull from "assets/icons/arrow-full.svg";
 
 type HeaderDesktopProps = React.PropsWithChildren<{
 	title: string;
@@ -59,13 +61,13 @@ export const HeaderDesktop = ({
 
 	return (
 		<div className="hidden h-header items-center bg-dark md:flex">
-			<div className={`relative h-[70%] w-1/12 md:cursor-pointer`}>
+			<div className="flex h-[70%] w-1/12 items-center justify-center">
 				{wrapLink(
 					<Image
-						src="/assets/img/Logo_white_topogether.png"
-						width={60}
-						height={60}
-						priority
+						className=""
+						src={Logo}
+						width={45}
+						height={45}
 						alt="Logo Topogether"
 					/>
 				)}
@@ -93,10 +95,11 @@ export const HeaderDesktop = ({
 			</div>
 
 			{displayLogin && !user && (
-				<Link href="/user/login"
-          className="ktext-base mr-[3%] text-white md:cursor-pointer"
-        >
-						Se connecter
+				<Link
+					href="/user/login"
+					className="ktext-base mr-[3%] text-white md:cursor-pointer"
+				>
+					Se connecter
 				</Link>
 			)}
 

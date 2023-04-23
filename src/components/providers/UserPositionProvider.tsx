@@ -1,4 +1,3 @@
-import { staticUrl } from "helpers/constants";
 import React, {
 	createContext,
 	useCallback,
@@ -8,19 +7,14 @@ import React, {
 	useState,
 } from "react";
 import { GeoCoordinates } from "types";
-import { useModal } from "~/components/modal";
+import { useModal } from "~/components/ui/Modal";
 import { useDevice } from "~/components/providers/DeviceProvider";
+import { staticUrl } from "~/constants";
 
 export type UserPosition = {
 	position: GeoCoordinates | null;
 	accuracy: number | null;
 	heading: number | null;
-};
-
-const defaultPosition: UserPosition = {
-	position: null,
-	accuracy: null,
-	heading: null,
 };
 
 type PositionSubscriber = (position: UserPosition) => void;
@@ -29,17 +23,22 @@ type PositionSubscriptions = {
 	subscribe: (setState: PositionSubscriber) => () => void;
 };
 
-const UserPositionContext = createContext<PositionSubscriptions>({
-	subscribe: () => () => {},
-});
+const UserPositionContext = createContext<PositionSubscriptions | undefined>(
+	undefined
+);
 
 export function usePosition(): UserPosition {
-	const { subscribe } = useContext(UserPositionContext);
-	const [position, setPosition] = useState<UserPosition>(defaultPosition);
+	const ctx = useContext(UserPositionContext);
+	if (!ctx) {
+		throw new Error("usePosition used outside UserPositionProvider");
+	}
+	const [position, setPosition] = useState<UserPosition>({
+		position: null,
+		accuracy: null,
+		heading: null,
+	});
 
-	useEffect(() => {
-		return subscribe(setPosition);
-	}, []);
+	useEffect(() => ctx.subscribe(setPosition), []);
 
 	return position;
 }
@@ -56,13 +55,16 @@ export const UserPositionProvider = ({
 	const isIos = device?.apple.device;
 	const latestPosition = useRef<UserPosition>();
 
-	const subscribe = useCallback((fn: PositionSubscriber) => {
-		subscribers.current.add(fn);
-		if (latestPosition.current) {
-			fn(latestPosition.current);
-		}
-		return () => subscribers.current.delete(fn);
-	}, []);
+	// Give a stable object reference to the Context provider
+	const context = useRef({
+		subscribe(fn: PositionSubscriber) {
+			subscribers.current.add(fn);
+			if (latestPosition.current) {
+				fn(latestPosition.current);
+			}
+			return () => subscribers.current.delete(fn);
+		},
+	});
 
 	useEffect(() => {
 		if (isIos) {
@@ -150,7 +152,7 @@ export const UserPositionProvider = ({
 	};
 
 	return (
-		<UserPositionContext.Provider value={{ subscribe }}>
+		<UserPositionContext.Provider value={context.current}>
 			{children}
 			<ModalAskAccess
 				buttonText="Valider"

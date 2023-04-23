@@ -32,6 +32,7 @@ Currently only available in French, sorry!
   - cookie
   - postgres
 - Delete Amenities bitflag
+- Use next/image instead of our custom `Image` component, now that it is good
 - Remove all traces of `useLoader`
 - Use a proper form library
 - Look into using [`shadcn/ui`](https://ui.shadcn.com/) components
@@ -44,6 +45,7 @@ Currently only available in French, sorry!
   - MapControl bottom center controls z-index
   - MapControl bottom right controls z-index and bottom padding
 - `cursor-pointer` behavior for GradeCircle
+- The Drag interaction in TopoMarkers was never used apparently?
 
 ### Content and features
 

@@ -15,7 +15,7 @@ import { ToposFiltersDesktop } from "components/map/filters/ToposFilters.desktop
 import { downloads } from "helpers/downloads/DownloadManager";
 import { usePosition } from "helpers/hooks/UserPositionProvider";
 import { TopoPreview } from "components/organisms/TopoPreview";
-import { initialTopoFilters } from "~/components/map/TopoFilters";
+import { initialTopoFilters } from "~/components/forms/TopoFilters";
 
 interface RootWorldMapProps {
 	lightTopos: LightTopo[];
@@ -23,7 +23,6 @@ interface RootWorldMapProps {
 
 export const RootWorldMap: React.FC<RootWorldMapProps> = watchDependencies(
 	(props: RootWorldMapProps) => {
-		
 		const auth = useAuth();
 		const user = auth.session();
 		const { position } = usePosition();
@@ -31,10 +30,15 @@ export const RootWorldMap: React.FC<RootWorldMapProps> = watchDependencies(
 
 		const [selectedTopo, setSelectedTopo] = useState<LightTopo>();
 
-
-		const SearchbarDesktop: React.FC = () => <SearchbarToposDesktop map={mapRef.current} />
-		const [Filters, filterTopos, resetFilters] = useToposFilters(props.lightTopos);
-		const FiltersDesktop: React.FC = () => <ToposFiltersDesktop Filters={Filters} onResetClick={resetFilters} />;
+		const SearchbarDesktop: React.FC = () => (
+			<SearchbarToposDesktop map={mapRef.current} />
+		);
+		const [Filters, filterTopos, resetFilters] = useToposFilters(
+			props.lightTopos
+		);
+		const FiltersDesktop: React.FC = () => (
+			<ToposFiltersDesktop Filters={Filters} onResetClick={resetFilters} />
+		);
 
 		const onGoingDl = downloads.getGlobalState().ongoing;
 
@@ -45,60 +49,80 @@ export const RootWorldMap: React.FC<RootWorldMapProps> = watchDependencies(
 					title="Carte des topo"
 					displayLogin={user ? false : true}
 				>
-					<div className={`${onGoingDl > 0 ? '' : 'hidden'} text-white ktext-label w-full flex justify-end`}>
+					<div
+						className={`${
+							onGoingDl > 0 ? "" : "hidden"
+						} ktext-label flex w-full justify-end text-white`}
+					>
 						Téléchargement en cours... ({onGoingDl})
 					</div>
 				</HeaderDesktop>
-				<div className={`flex h-header items-center bg-dark px-8 ${onGoingDl > 0 ? 'md:hidden' : 'hidden'}`}>
-					<div className={`${onGoingDl > 0 ? '' : 'hidden'} text-white ktext-label w-full flex justify-end`}>
+				<div
+					className={`flex h-header items-center bg-dark px-8 ${
+						onGoingDl > 0 ? "md:hidden" : "hidden"
+					}`}
+				>
+					<div
+						className={`${
+							onGoingDl > 0 ? "" : "hidden"
+						} ktext-label flex w-full justify-end text-white`}
+					>
 						Téléchargement en cours... ({onGoingDl})
 					</div>
 				</div>
 
-				<div className={`${onGoingDl > 0 ? 'h-content' : 'h-contentPlusHeader'} relative flex flex-row md:h-full`}>
-					{user && 
-						<LeftbarDesktop currentMenuItem="MAP" />
-					}
+				<div
+					className={`${
+						onGoingDl > 0 ? "h-content" : "h-contentPlusHeader"
+					} relative flex flex-row md:h-full`}
+				>
+					{user && <LeftbarDesktop currentMenuItem="MAP" />}
 
-					<SlideoverMobileWorldmap 
-						map={mapRef.current} 
+					<SlideoverMobileWorldmap
+						map={mapRef.current}
 						Filters={Filters}
 						onFilterReset={resetFilters}
 					/>
 
-					<MapControl 
+					<MapControl
 						ref={mapRef}
 						initialZoom={5}
 						initialCenter={position || undefined}
-						displayUserMarker='under'
+						displayUserMarker="under"
 						// onUserMarkerClick={(e) => console.log(e)}
 						Searchbar={SearchbarDesktop}
 						Filters={FiltersDesktop}
 						onClick={(e) => {
 							const map = e.map;
-							const hit = map?.forEachFeatureAtPixel(e.pixel, function(feature, layer) {
-								return true;
-							});
+							const hit = map?.forEachFeatureAtPixel(
+								e.pixel,
+								function (feature, layer) {
+									return true;
+								}
+							);
 							if (!hit) setSelectedTopo(undefined);
 						}}
 					>
-						<TopoMarkersLayer 
+						<TopoMarkersLayer
 							topos={props.lightTopos.filter(filterTopos)}
 							selectedTopo={selectedTopo}
-							onTopoSelect={t => setSelectedTopo(t as LightTopo)}
+							onTopoSelect={(t) => setSelectedTopo(t as LightTopo)}
 						/>
 					</MapControl>
 
-						{selectedTopo &&	
-							<TopoPreview
-								topo={selectedTopo}
-								displayLikeDownload={!!user}
-								// displayCreator
-								displayParking
-								mainButton={{ content: 'Entrer', link: '/topo/' + encodeUUID(selectedTopo.id) }}
-								onClose={() => setSelectedTopo(undefined)}
-							/>
-						}
+					{selectedTopo && (
+						<TopoPreview
+							topo={selectedTopo}
+							displayLikeDownload={!!user}
+							// displayCreator
+							displayParking
+							mainButton={{
+								content: "Entrer",
+								link: "/topo/" + encodeUUID(selectedTopo.id),
+							}}
+							onClose={() => setSelectedTopo(undefined)}
+						/>
+					)}
 				</div>
 			</>
 		);

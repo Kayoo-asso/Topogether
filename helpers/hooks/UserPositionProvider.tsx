@@ -6,6 +6,7 @@ import React, {
 	useContext,
 	useRef,
 	useCallback,
+	useMemo,
 } from "react";
 import { GeoCoordinates } from "types";
 import { useDevice } from "./DeviceProvider";
@@ -56,13 +57,19 @@ export const UserPositionProvider = ({
 	const isIos = device.apple.device;
 	const latestPosition = useRef<UserPosition>();
 
-	const subscribe = useCallback((fn: PositionSubscriber) => {
-		subscribers.current.add(fn);
-		if(latestPosition.current) {
-			fn(latestPosition.current);
-		}
-		return () => subscribers.current.delete(fn);
-	}, []);
+	// Give a stable object reference to the Context provider
+	const context = useMemo(
+		() => ({
+			subscribe(fn: PositionSubscriber) {
+				subscribers.current.add(fn);
+				if (latestPosition.current) {
+					fn(latestPosition.current);
+				}
+				return () => subscribers.current.delete(fn);
+			},
+		}),
+		[]
+	);
 
 	useEffect(() => {
 		if (isIos) {
@@ -120,7 +127,9 @@ export const UserPositionProvider = ({
 		};
 		const onError: PositionErrorCallback = (err) => {
 			if (err.code === 1) {
-				if (isIos) localStorage.setItem("geolocationPermission", "denied");
+				if (isIos) {
+					localStorage.setItem("geolocationPermission", "denied");
+				}
 				console.log(err.message);
 			} else if (err.code === 3) {
 				console.error("Geolocation timed out!");
@@ -150,7 +159,7 @@ export const UserPositionProvider = ({
 	};
 
 	return (
-		<UserPositionContext.Provider value={{ subscribe }}>
+		<UserPositionContext.Provider value={context}>
 			{children}
 			<ModalAskAccess
 				buttonText="Valider"

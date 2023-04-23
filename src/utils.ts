@@ -30,3 +30,14 @@ export function buildGradeHistogram(lightTopo: LightTopo) {
 	}
 	return histogram;
 }
+
+export function setReactRef<T>(
+	ref: ForwardedRef<T> | null,
+	value: T
+) {
+	if (typeof ref === "function") {
+		ref(value);
+	} else if (ref) {
+		ref.current = value;
+	}
+}

@@ -1,7 +1,7 @@
 import Spinner from "assets/icons/spinner.svg";
 import { useRouter } from "next/router";
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { Portal } from "~/components/modal";
+import { Portal } from "~/components/ui/Modal";
 
 export const LoaderContext = createContext((_: boolean) => {});
 

@@ -45,12 +45,15 @@ export function OnClickFeature(props: OnClickProps) {
 			map.forEachFeatureAtPixel(
 				evt.pixel,
 				(feature) => {
-					if(!stop) {
+					if (!stop) {
 						props.onClick(new OnClickFeatureEvent(feature as any, evt));
 					}
-					if(props.stopPropagation === undefined || props.stopPropagation === true) {
+					if (
+						props.stopPropagation === undefined ||
+						props.stopPropagation === true
+					) {
 						stop = true;
-					} 
+					}
 				},
 				{
 					hitTolerance: props.hitTolerance,
@@ -60,8 +63,15 @@ export function OnClickFeature(props: OnClickProps) {
 				}
 			);
 		};
-		map.on("singleclick", handler);
-		return () => map.un("singleclick", handler);
-	}, [map, layers, props.onClick]);
+		map.on("click", handler);
+		return () => map.un("click", handler);
+	}, [
+		map,
+		layers,
+		props.onClick,
+		props.stopPropagation,
+		props.hitTolerance,
+		props.renderFeatures,
+	]);
 	return null;
 }

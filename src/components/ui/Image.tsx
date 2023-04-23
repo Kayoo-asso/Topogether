@@ -1,9 +1,7 @@
-import { setReactRef } from "~/utils";
 import type { StaticImageData } from "next/image";
 import {
 	ImgHTMLAttributes,
 	ReactElement,
-	Ref,
 	useCallback,
 	useRef,
 	useState,
@@ -16,6 +14,7 @@ import {
 	VariantWidths,
 	bunnyUrl,
 } from "~/helpers/sharedWithServiceWorker";
+import { setReactRef } from "~/utils";
 
 import defaultKayoo from "public/assets/img/Kayoo_defaut_image.png";
 
