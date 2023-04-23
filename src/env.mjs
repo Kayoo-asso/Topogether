@@ -20,7 +20,8 @@ const server = z.object({
  */
 const client = z.object(
 	/** @satisfies {Record<`NEXT_PUBLIC_${string}`, import('zod').ZodType>} */ ({
-		NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string().optional(),
+		NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string(),
+		NEXT_PUBLIC_MAPBOX_TOKEN: z.string(),
 	})
 );
 
@@ -35,6 +36,7 @@ const processEnv = {
 	CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY,
 	NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY:
 		process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
+	NEXT_PUBLIC_MAPBOX_TOKEN: process.env.NEXT_PUBLIC_MAPBOX_TOKEN,
 	PGURL: process.env.PGURL,
 	PGPASSWORD: process.env.PGPASSWORD,
 	SUPABASE_PGURL: process.env.SUPABASE_PGURL,

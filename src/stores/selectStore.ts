@@ -9,7 +9,7 @@ import {
 	Waypoint,
 } from "types";
 import { create } from "zustand";
-import { Breakpoint } from "~/components/providers/DeviceProvider";
+import { Breakpoint, getBreakpoint } from "~/components/providers/DeviceProvider";
 
 export type SelectedInfo =
 	| "MENU"
@@ -61,7 +61,7 @@ export type DropdownItem = {
 };
 
 export type Selectors = {
-	info: (s: SelectedInfo, b: Breakpoint) => void;
+	info: (s: SelectedInfo) => void;
 	tool: (t: MapToolEnum) => void;
 	sector: (s: Quark<Sector>) => void;
 	boulder: (b: Quark<Boulder>) => void;
@@ -94,14 +94,17 @@ export const useSelectStore = create<SelectStore>()((set, get) => ({
 		return !get() || (get().info === "NONE" && get().item.type === "none");
 	},
 	select: {
-		info: function (i: SelectedInfo, b: Breakpoint) {
-			if (b === "mobile") get().flush.item();
-			else get().flush.track();
+		info(i: SelectedInfo) {
+			if (getBreakpoint().isMobile) {
+				get().flush.item();
+			} else {
+				get().flush.track();
+			}
 			set({ info: i });
 		},
 		tool: (t: MapToolEnum) => set({ tool: t }),
 		sector: (s: Quark<Sector>) => set({ item: { type: "sector", value: s } }),
-		boulder: (b: Quark<Boulder>) =>
+		boulder(b: Quark<Boulder>) {
 			set({
 				item: {
 					type: "boulder",
@@ -109,8 +112,9 @@ export const useSelectStore = create<SelectStore>()((set, get) => ({
 					selectedTrack: undefined,
 					selectedImage: b().images.length > 0 ? b().images[0] : undefined,
 				},
-			}),
-		track: (t: Quark<Track>, b?: Quark<Boulder>) =>
+			});
+		},
+		track(t: Quark<Track>, b?: Quark<Boulder>) {
 			set((s) => {
 				if (s.item.type === "boulder") {
 					if (b) {
@@ -151,7 +155,8 @@ export const useSelectStore = create<SelectStore>()((set, get) => ({
 						};
 					else throw new Error("Trying to select a Track without boulder");
 				}
-			}),
+			});
+		},
 		image: (i: Img) =>
 			set((s) => {
 				const boulder = s.item as SelectedBoulder;

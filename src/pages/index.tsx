@@ -1,12 +1,13 @@
 import { useUser } from "@clerk/nextjs";
 import { InferGetStaticPropsType, NextPage } from "next";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { HeaderDesktop } from "~/components/layout/HeaderDesktop";
 import { LightTopo, getLightTopos } from "~/server/queries";
 import { Map } from "ol";
 import { usePosition } from "~/components/providers/UserPositionProvider";
 import { initialTopoFilters } from "~/components/map/TopoFilters";
 import { LeftbarDesktop } from "~/components/layout/LeftbarDesktop";
+import { useWorldMapStore } from "~/stores/worldmapStore";
 
 export const getStaticProps = async () => {
 	return {
@@ -26,6 +27,10 @@ const Page: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
 
 	const [selectedTopo, setSelectedTopo] = useState<LightTopo>();
 	const [filters, setFilters] = useState(initialTopoFilters(lightTopos));
+  useEffect(() => {
+    const initialFilters = initialTopoFilters(lightTopos);
+    useWorldMapStore.s
+  })
 
 	// const SearchbarDesktop: React.FC = () => (
 	// 	<SearchbarToposDesktop map={mapRef.current} />

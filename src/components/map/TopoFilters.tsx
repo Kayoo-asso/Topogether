@@ -1,17 +1,15 @@
 import FilterIcon from "assets/icons/filter.svg";
-import { Checkbox } from "components/atoms/Checkbox";
-import { GradeSliderInput } from "components/molecules/form/GradeSliderInput";
-import { SelectListMultiple } from "components/molecules/form/SelectListMultiple";
-import { SliderInput } from "components/molecules/form/SliderInput";
-import { useSelectStore } from "components/store/selectStore";
-import { hasFlag, toggleFlag } from "helpers/bitflags";
-import { useBreakpoint } from "helpers/hooks/DeviceProvider";
-import React from "react";
+import React, { useEffect } from "react";
 import { Amenities, LightGrade, TopoTypes } from "types";
 import { TopoTypesName } from "types/BitflagNames";
+import { GradeSlider } from "~/components/forms/GradeSlider";
+import { Checkbox } from "~/components/ui/Checkbox";
+import { SelectListMultiple } from "~/components/ui/SelectListMultiple";
+import { SliderInput } from "~/components/ui/SliderInput";
+import { hasFlag, toggleFlag } from "~/helpers/bitflags";
 import { LightTopo } from "~/server/queries";
-import { SetState } from "~/types";
-import { gradeCategory } from "~/utils";
+import { useWorldMapStore } from "~/stores/worldmapStore";
+import { classNames, gradeCategory } from "~/utils";
 
 export interface TopoFilters {
 	types: TopoTypes;
@@ -21,9 +19,7 @@ export interface TopoFilters {
 }
 
 interface TopoFiltersProps {
-	filters: TopoFilters;
-	domain: TopoFilters;
-	setFilters: SetState<TopoFilters>;
+	lightTopos: LightTopo[];
 }
 
 export function initialTopoFilters(lightTopos: LightTopo[]): TopoFilters {
@@ -76,7 +72,19 @@ export function filterTopos(filters: TopoFilters, topos: LightTopo[]) {
 	return filtered;
 }
 
-function TopoFilters({ filters, domain, setFilters }: TopoFiltersProps) {
+function TopoFilters({ lightTopos }: TopoFiltersProps) {
+	const filters = useWorldMapStore((s) => s.filters);
+	const domain = useWorldMapStore((s) => s.filtersDomain);
+	const setFilters = useWorldMapStore((s) => s.setFilters);
+
+	useEffect(() => {
+		const initial = initialTopoFilters(lightTopos);
+		useWorldMapStore.setState({
+			filtersDomain: initial,
+			filters: initial,
+		});
+	}, [lightTopos]);
+
 	return (
 		<>
 			{/* Topo types */}
@@ -85,10 +93,9 @@ function TopoFilters({ filters, domain, setFilters }: TopoFiltersProps) {
 				value={filters.types}
 				justify={false}
 				onChange={(value) =>
-					setFilters((f) => ({
-						...f,
-						types: toggleFlag(f.types, value),
-					}))
+					setFilters({
+						types: toggleFlag(filters.types, value),
+					})
 				}
 			/>
 			{/* Number of boulders */}
@@ -97,53 +104,49 @@ function TopoFilters({ filters, domain, setFilters }: TopoFiltersProps) {
 				<SliderInput
 					domain={domain.rockRange}
 					values={filters.rockRange}
-					onChange={(value) => setFilters((f) => ({ ...f, rockRange: value }))}
+					onChange={(value) => setFilters({ rockRange: value })}
 				/>
 			</div>
 			{/* Difficulties */}
 			<div>
 				<div className="ktext-label text-grey-medium">Difficultés</div>
-				<GradeSliderInput
+				<GradeSlider
 					values={domain.gradeRange}
-					onChange={(range) => setFilters((f) => ({ ...f, gradeRange: range }))}
+					onChange={(range) => setFilters({ gradeRange: range })}
 				/>
 			</div>
 			{/* Adapted to children */}
 			<Checkbox
 				label="Adapté aux enfants"
 				checked={filters.adaptedToChildren}
-				onClick={(isChecked) =>
-					setFilters((f) => ({ ...f, adaptedToChildren: isChecked }))
-				}
+				onClick={(isChecked) => setFilters({ adaptedToChildren: isChecked })}
 			/>
 		</>
 	);
 }
 
 export function TopoFiltersDesktop(props: TopoFiltersProps) {
-	const select = useSelectStore((s) => s.select);
-	const bp = useBreakpoint();
-	const open = useSelectStore((s) => s.info) === "FILTERS";
+	const open = useWorldMapStore((s) => s.filtersOpen);
+	const toggle = useWorldMapStore((s) => s.toggleFilters);
+	const reset = useWorldMapStore((s) => s.resetFilters);
 
 	return (
 		<div
-			className={`${
-				open ? "" : "hidden"
-			} relative z-40 flex min-w-[250px] max-w-[80%] flex-col rounded-lg bg-white shadow md:max-w-[40%]`}
+			className={classNames(
+				"relative z-40 flex min-w-[250px] max-w-[80%] flex-col rounded-lg bg-white shadow md:max-w-[40%]",
+				open && "hidden"
+			)}
 		>
 			<div className="flex flex-row items-center justify-between">
 				<div
-					className={`flex max-w-[150px] flex-row items-center rounded-lg bg-main p-3 pl-5 pt-4 shadow md:cursor-pointer`}
-					onClick={() => select.info("NONE", bp)}
+					className="flex max-w-[150px] flex-row items-center rounded-lg bg-main p-3 pl-5 pt-4 shadow md:cursor-pointer"
+					onClick={toggle}
 				>
 					<FilterIcon className="h-6 w-6 fill-white stroke-white" />
 					<div className="ktext-subtitle ml-3 text-white">Filtres</div>
 				</div>
 
-				<button
-					className="mr-8 text-second"
-					onClick={() => props.setFilters(props.domain)}
-				>
+				<button className="mr-8 text-second" onClick={reset}>
 					Reset
 				</button>
 			</div>
@@ -156,13 +159,11 @@ export function TopoFiltersDesktop(props: TopoFiltersProps) {
 }
 
 export function TopoFiltersMobile(props: TopoFiltersProps) {
+	const reset = useWorldMapStore((s) => s.resetFilters);
 	return (
 		<div className="flex h-full flex-col gap-2 md:hidden">
 			<div className="flex flex-row justify-end">
-				<button
-					className="mr-8 text-second"
-					onClick={() => props.setFilters(props.domain)}
-				>
+				<button className="mr-8 text-second" onClick={reset}>
 					Reset
 				</button>
 			</div>

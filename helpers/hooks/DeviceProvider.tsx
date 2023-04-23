@@ -4,7 +4,10 @@ import React, { useContext, useMemo } from "react";
 import useDimensions from "react-cool-dimensions";
 import isMobile from "ismobilejs";
 
-export type Breakpoint = "mobile" | "desktop";
+export type Breakpoint = {
+	isMobile: boolean;
+	isDesktop: boolean;
+};
 
 const BreakpointContext = React.createContext<Breakpoint>(undefined!);
 
@@ -24,7 +27,7 @@ export function useDevice() {
 	return useContext(DeviceContext);
 }
 
-const breakpoints: Record<Breakpoint, number> = {
+const breakpoints = {
 	mobile: 0,
 	desktop: 800,
 };
@@ -34,14 +37,18 @@ export function DeviceManager({ children }: React.PropsWithChildren<{}>) {
 		breakpoints,
 		updateOnBreakpointChange: true,
 	});
+
 	// TODO: how does this handle undefined User-Agents?
 	const deviceInfo = useMemo(() => isMobile(navigator.userAgent), []);
-	const initialBreakpoint = deviceInfo.any ? "mobile" : "desktop";
 
 	const firstRender = useFirstRender();
 	const bp = firstRender
-		? initialBreakpoint
-		: (currentBreakpoint as Breakpoint);
+		? // Initial breakpoint: render both versions of the app
+		  { isMobile: true, isDesktop: true }
+		: {
+				isMobile: currentBreakpoint === "mobile",
+				isDesktop: currentBreakpoint === "desktop",
+		  };
 
 	return (
 		<DeviceContext.Provider value={deviceInfo}>
@@ -51,8 +58,9 @@ export function DeviceManager({ children }: React.PropsWithChildren<{}>) {
 					className="flex h-screen w-screen flex-col items-end"
 				>
 					<div
-						className={"h-full w-full" +
-							(bp === "mobile" && process.env.NODE_ENV !== "development"
+						className={
+							"h-full w-full" +
+							(bp.isMobile && process.env.NODE_ENV !== "development"
 								? " standalone"
 								: "")
 						}
@@ -61,8 +69,8 @@ export function DeviceManager({ children }: React.PropsWithChildren<{}>) {
 						{children}
 					</div>
 
-					{bp === "mobile" && process.env.NODE_ENV !== "development" && (
-						<div className="z-full no-standalone">
+					{bp.isMobile && process.env.NODE_ENV !== "development" && (
+						<div className="no-standalone z-full">
 							<NoStandalone />
 						</div>
 					)}

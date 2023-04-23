@@ -32,7 +32,7 @@ export const SlideoverMobileWorldmap: React.FC<SlideoverMobileWorldmapProps> = (
 	}
 
 	return (
-		<>
+		<div>
 			{breakpoint === "mobile" && (
 				<SlideoverMobile 
 					open={selectedInfo === 'SEARCHBAR' || selectedInfo === 'FILTERS'}

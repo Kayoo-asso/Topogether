@@ -18,18 +18,32 @@ Currently only available in French, sorry!
 - Type-safe environment variables (like t3-stack)
 
 ### TODO
-- LighTopo.grades
+- ImageInput onChange in MapControl
+- MapControl use of breakpoint
 - Download status
-- Only have on TopoFilters component + responsive CSS
+- Only have one TopoFilters component + responsive CSS
+- Cleanups
+  - SelectListMultiple
+    - `getClassName`
+    - The hover styling for either the active element or all elements on mobile seems weird
+  - Too many sliders
 - Remove packages:
   - Supabase
   - cookie
   - postgres
 - Delete Amenities bitflag
 - Remove all traces of `useLoader`
+- Use a proper form library
+- Look into using [`shadcn/ui`](https://ui.shadcn.com/) components
+  - Remove `react-compound-slider`
 
 ### Changes to check
 - TopoFilters
+- Styling converted from breakpoint to `md:` variant
+  - SelectListMultiple hover styling
+  - MapControl bottom center controls z-index
+  - MapControl bottom right controls z-index and bottom padding
+- `cursor-pointer` behavior for GradeCircle
 
 ### Content and features
 
