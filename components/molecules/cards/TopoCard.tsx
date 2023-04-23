@@ -1,7 +1,7 @@
 import React, { MouseEvent, TouchEvent, useCallback, useRef } from "react";
 import { formatDate } from "helpers/utils";
 import equal from "fast-deep-equal/es6";
-import { LightTopo, TopoStatus } from "types";
+import { LightTopoOld, TopoStatus } from "types";
 import Checked from "assets/icons/checked.svg";
 import Recent from "assets/icons/recent.svg";
 import Edit from "assets/icons/edit.svg";
@@ -9,9 +9,12 @@ import { Card } from "components/atoms/Card";
 import { Image } from "components/atoms/Image";
 
 interface TopoCardProps {
-	topo: LightTopo;
-	onClick?: (topo: LightTopo) => void;
-	onContextMenu?: (topo: LightTopo, position: { x: number; y: number }) => void;
+	topo: LightTopoOld;
+	onClick?: (topo: LightTopoOld) => void;
+	onContextMenu?: (
+		topo: LightTopoOld,
+		position: { x: number; y: number }
+	) => void;
 }
 
 const iconSize = "h-4 w-4 md:h-6 md:w-6";
@@ -53,7 +56,6 @@ export const TopoCard: React.FC<TopoCardProps> = React.memo(
 		const handleTouchStartContextMenu = useCallback(
 			(e: TouchEvent<HTMLDivElement>) => {
 				if (props.onContextMenu) {
-
 					// TODO: cause une erreur "Unable to preventDefault inside passive event listener invocation."
 					// e.preventDefault();
 					e.stopPropagation();
@@ -87,7 +89,7 @@ export const TopoCard: React.FC<TopoCardProps> = React.memo(
 				onTouchEnd={handleTouchEndContextMenu}
 				onClick={() => props.onClick && props.onClick(topo)}
 			>
-				<Card className="relative flex md:cursor-pointer flex-col bg-white text-center text-grey-medium">
+				<Card className="relative flex flex-col bg-white text-center text-grey-medium md:cursor-pointer">
 					<div className="relative top-0 h-[55%] w-full md:h-[75%]">
 						<Image
 							image={props.topo.image}

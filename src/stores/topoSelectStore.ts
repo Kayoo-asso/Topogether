@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { LightTopo, UUID } from "~/types";
+import { LightTopo } from "~/types";
 
 interface TopoSelectStore {
   selected: LightTopo | undefined;

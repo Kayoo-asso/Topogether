@@ -22,27 +22,31 @@ const Handle = (props: HandleProps) => (
 );
 
 interface GradeSliderProps {
-	values: [Exclude<LightGrade, "P">, Exclude<LightGrade, "P">];
+	values: [number, number];
 	onChange: (
-		range: [Exclude<LightGrade, "P">, Exclude<LightGrade, "P">]
+		range: [number, number]
 	) => void;
 }
 
-export const GradeSlider: React.FC<GradeSliderProps> = (
-	props: GradeSliderProps
-) => (
-	<BaseSlider
-		values={props.values}
-		domain={[3, 9]}
-		step={1}
-		onChange={(range) => {
-			props.onChange([
-				range[0] as Exclude<LightGrade, "P">,
-				range[1] as Exclude<LightGrade, "P">,
-			]);
-		}}
-		handleCreator={(handle, getHandleProps) => (
-			<Handle handle={handle} getHandleProps={getHandleProps} key={handle.id} />
-		)}
-	/>
-);
+export function GradeSlider(props: GradeSliderProps) {
+	return (
+		<BaseSlider
+			values={props.values}
+			domain={[3, 9]}
+			step={1}
+			onChange={(range) => {
+				props.onChange([
+					range[0],
+					range[1],
+				]);
+			}}
+			handleCreator={(handle, getHandleProps) => (
+				<Handle
+					handle={handle}
+					getHandleProps={getHandleProps}
+					key={handle.id}
+				/>
+			)}
+		/>
+	);
+}

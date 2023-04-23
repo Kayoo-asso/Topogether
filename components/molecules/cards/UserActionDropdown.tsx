@@ -1,11 +1,11 @@
 import React, { useCallback } from "react";
-import { LightTopo, TopoStatus } from "types";
+import { LightTopoOld, TopoStatus } from "types";
 import { useRouter } from "next/router";
 import { encodeUUID } from "helpers/utils";
 import { Dropdown, DropdownOption } from "../form/Dropdown";
 
 interface UserActionDropdownProps {
-	topo: LightTopo;
+	topo: LightTopoOld;
 	position: { x: number; y: number };
 	onSendToValidationClick: () => void;
 	onSendToDraftClick: () => void;
@@ -27,13 +27,19 @@ export const UserActionDropdown: React.FC<UserActionDropdownProps> = (
 	const options: DropdownOption[] = [];
 	if (props.topo.status === TopoStatus.Draft) {
 		options.push(
-			{ value: "Modifier", action: () => router.push(`/builder/${encodeUUID(props.topo.id)}`) }, 
+			{
+				value: "Modifier",
+				action: () => router.push(`/builder/${encodeUUID(props.topo.id)}`),
+			},
 			{ value: "Valider", action: props.onSendToValidationClick }
 		);
 	}
 	if (props.topo.status === TopoStatus.Submitted) {
 		options.push(
-			{ value: "Voir le topo", action: () => router.push(`/topo/${encodeUUID(props.topo.id)}`) }, 
+			{
+				value: "Voir le topo",
+				action: () => router.push(`/topo/${encodeUUID(props.topo.id)}`),
+			},
 			{ value: "Modifier", action: props.onSendToDraftClick }
 		);
 	}

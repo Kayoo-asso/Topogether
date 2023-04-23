@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { LightTopo } from "types";
+import { LightTopoOld } from "types";
 import { watchDependencies } from "helpers/quarky";
 import { HeaderDesktop } from "components/layouts/HeaderDesktop";
 import { LeftbarDesktop } from "components/layouts/Leftbar.desktop";
@@ -13,14 +13,14 @@ import Heart from "assets/icons/heart.svg";
 import Download from "assets/icons/download.svg";
 
 interface RootDashboardProps {
-	myTopos: LightTopo[];
-	likedTopos: LightTopo[];
-	dlTopos: LightTopo[];
+	myTopos: LightTopoOld[];
+	likedTopos: LightTopoOld[];
+	dlTopos: LightTopoOld[];
 }
 
 export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies(
 	(props: RootDashboardProps) => {
-		const [tab, setTab] = useState<"MY"| "DL" | "LIKED">("MY");
+		const [tab, setTab] = useState<"MY" | "DL" | "LIKED">("MY");
 		const [displayTabs, setDisplayTabs] = useState(true);
 		const ref = useRef<HTMLDivElement>(null);
 
@@ -33,15 +33,23 @@ export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies(
 
 					<div
 						ref={ref}
-						className="h-contentPlusHeader pb-28 w-full overflow-y-auto overflow-x-hidden bg-white md:h-contentPlusShell"
+						className="h-contentPlusHeader w-full overflow-y-auto overflow-x-hidden bg-white pb-28 md:h-contentPlusShell"
 					>
-
 						{tab === "MY" && <MyTopos myTopos={props.myTopos} pageRef={ref} />}
 						{tab === "LIKED" && <LikedTopos likedTopos={props.likedTopos} />}
-						{tab === "DL" && <DlTopos dlTopos={props.dlTopos} setDisplayTabs={setDisplayTabs} />}
+						{tab === "DL" && (
+							<DlTopos
+								dlTopos={props.dlTopos}
+								setDisplayTabs={setDisplayTabs}
+							/>
+						)}
 
-						<div className={`${displayTabs ? '' : 'hidden'} absolute w-full md:w-[calc(100%-300px)] left-0 md:left-[calc(300px+1%)] bottom-[12vh] md:bottom-8 flex justify-center`}>
-							<TabsFly 
+						<div
+							className={`${
+								displayTabs ? "" : "hidden"
+							} absolute bottom-[12vh] left-0 flex w-full justify-center md:bottom-8 md:left-[calc(300px+1%)] md:w-[calc(100%-300px)]`}
+						>
+							<TabsFly
 								tabs={[
 									{
 										icon: UserTopoIcon,
@@ -62,19 +70,17 @@ export const RootDashboard: React.FC<RootDashboardProps> = watchDependencies(
 										iconStroke: true,
 										iconFill: tab === "LIKED" ? true : false,
 										label: "Topos favoris",
-										color: "main",	
+										color: "main",
 										action: () => setTab("LIKED"),
 									},
 								]}
 							/>
 						</div>
-
 					</div>
-
 				</div>
 			</>
 		);
 	}
 );
 
-RootDashboard.displayName = 'RootDashboard';
+RootDashboard.displayName = "RootDashboard";

@@ -1,5 +1,5 @@
 import React, { useCallback, useRef, useState } from "react";
-import { LightTopo, TopoStatus } from "types";
+import { LightTopoOld, TopoStatus } from "types";
 import { AdminActionDropdown } from "components/molecules/cards/AdminActionDropdown";
 import { useContextMenu } from "helpers/hooks/useContextMenu";
 import { api } from "helpers/services";
@@ -16,7 +16,7 @@ import { useModal } from "helpers/hooks/useModal";
 import { TopoCard } from "components/molecules/cards/TopoCard";
 
 interface RootAdminProps {
-	lightTopos: LightTopo[];
+	lightTopos: LightTopoOld[];
 }
 
 export const RootAdmin: React.FC<RootAdminProps> = (props: RootAdminProps) => {
@@ -25,28 +25,46 @@ export const RootAdmin: React.FC<RootAdminProps> = (props: RootAdminProps) => {
 	);
 
 	const [lightTopos, setLightTopos] = useState(props.lightTopos);
-	const draftLightTopos = lightTopos.filter(
-		(topo) => topo.status === TopoStatus.Draft
-	).sort((t1, t2) => { return new Date(t2.modified).getTime() - new Date(t1.modified).getTime() });
-	const submittedLightTopos = lightTopos.filter(
-		(topo) => topo.status === TopoStatus.Submitted
-	).sort((t1, t2) => { return new Date(t2.submitted!).getTime() - new Date(t1.submitted!).getTime() });
-	const validatedLightTopos = lightTopos.filter(
-		(topo) => topo.status === TopoStatus.Validated
-	).sort((t1, t2) => { return new Date(t2.validated!).getTime() - new Date(t1.validated!).getTime() });
+	const draftLightTopos = lightTopos
+		.filter((topo) => topo.status === TopoStatus.Draft)
+		.sort((t1, t2) => {
+			return new Date(t2.modified).getTime() - new Date(t1.modified).getTime();
+		});
+	const submittedLightTopos = lightTopos
+		.filter((topo) => topo.status === TopoStatus.Submitted)
+		.sort((t1, t2) => {
+			return (
+				new Date(t2.submitted!).getTime() - new Date(t1.submitted!).getTime()
+			);
+		});
+	const validatedLightTopos = lightTopos
+		.filter((topo) => topo.status === TopoStatus.Validated)
+		.sort((t1, t2) => {
+			return (
+				new Date(t2.validated!).getTime() - new Date(t1.validated!).getTime()
+			);
+		});
 
-	const toposToDisplay = (selectedStatus === TopoStatus.Draft) ? draftLightTopos : (selectedStatus === TopoStatus.Submitted) ? submittedLightTopos : validatedLightTopos;
+	const toposToDisplay =
+		selectedStatus === TopoStatus.Draft
+			? draftLightTopos
+			: selectedStatus === TopoStatus.Submitted
+			? submittedLightTopos
+			: validatedLightTopos;
 
-	const [actionTopo, setActionTopo] = useState<LightTopo>();
+	const [actionTopo, setActionTopo] = useState<LightTopoOld>();
 
-	const [previewTopo, setPreviewTopo] = useState<LightTopo>();
-	const togglePreviewTopo = useCallback((topo: LightTopo) => {
-		if (previewTopo && previewTopo.id === topo.id) setPreviewTopo(undefined);
-		else {
-			setActionTopo(topo);
-			setPreviewTopo(topo);
-		}
-	}, [previewTopo]);
+	const [previewTopo, setPreviewTopo] = useState<LightTopoOld>();
+	const togglePreviewTopo = useCallback(
+		(topo: LightTopoOld) => {
+			if (previewTopo && previewTopo.id === topo.id) setPreviewTopo(undefined);
+			else {
+				setActionTopo(topo);
+				setPreviewTopo(topo);
+			}
+		},
+		[previewTopo]
+	);
 
 	const ref = useRef<HTMLDivElement>(null);
 	const [dropdownPosition, setDropdownPosition] = useState<{
@@ -93,9 +111,7 @@ export const RootAdmin: React.FC<RootAdminProps> = (props: RootAdminProps) => {
 	const unvalidateTopo = useCallback(async () => {
 		if (actionTopo) {
 			await api.setTopoStatus(actionTopo.id, TopoStatus.Submitted);
-			const unvalidatedTopo = lightTopos.find(
-				(lt) => lt.id === actionTopo.id
-			)!;
+			const unvalidatedTopo = lightTopos.find((lt) => lt.id === actionTopo.id)!;
 			unvalidatedTopo.validated = undefined;
 			unvalidatedTopo.status = TopoStatus.Submitted;
 			setLightTopos(lightTopos.slice());
@@ -105,19 +121,20 @@ export const RootAdmin: React.FC<RootAdminProps> = (props: RootAdminProps) => {
 	const deleteTopo = useCallback(() => {
 		if (actionTopo) {
 			api.deleteTopo(actionTopo);
-			const newLightTopos = lightTopos.filter(
-				(lt) => lt.id !== actionTopo.id
-			)!;
+			const newLightTopos = lightTopos.filter((lt) => lt.id !== actionTopo.id)!;
 			setLightTopos(newLightTopos);
 		}
 		setPreviewTopo(undefined);
 	}, [actionTopo, lightTopos]);
 
 	useContextMenu(() => setDropdownPosition(undefined), ref.current);
-	const onContextMenu = (topo: LightTopo, position: { x: number; y: number }) => {
+	const onContextMenu = (
+		topo: LightTopoOld,
+		position: { x: number; y: number }
+	) => {
 		setActionTopo(topo);
 		setDropdownPosition(position);
-	}
+	};
 
 	return (
 		<>
@@ -126,18 +143,18 @@ export const RootAdmin: React.FC<RootAdminProps> = (props: RootAdminProps) => {
 			<div className="flex h-full flex-row bg-white">
 				<LeftbarDesktop currentMenuItem="ADMIN" />
 
-				<div className="mt-[10%] md:mt-[5%] h-[10%] w-full">
+				<div className="mt-[10%] h-[10%] w-full md:mt-[5%]">
 					<div className="hide-scrollbar h-contentPlusHeader overflow-y-scroll pb-40 md:h-contentPlusShell">
 						<div className="flex min-w-full flex-row flex-wrap px-4 py-6 md:px-8">
-							{toposToDisplay.length === 0 &&
+							{toposToDisplay.length === 0 && (
 								<div className="relative flex h-[70vh] w-full justify-center">
 									<div className="relative flex h-full w-[90%] items-center overflow-hidden rounded bg-grey-superlight">
-											<div className="flex w-full flex-col items-center">
-												<span>Aucun topo dans cette catégorie</span>
-											</div>
+										<div className="flex w-full flex-col items-center">
+											<span>Aucun topo dans cette catégorie</span>
+										</div>
 									</div>
 								</div>
-							}
+							)}
 							{toposToDisplay.map((topo) => (
 								<TopoCard
 									key={topo.id}
@@ -148,8 +165,8 @@ export const RootAdmin: React.FC<RootAdminProps> = (props: RootAdminProps) => {
 							))}
 						</div>
 
-						<div className="absolute w-full md:w-[calc(100%-300px)] left-0 md:left-[calc(300px+1%)] bottom-[12vh] md:bottom-8 flex justify-center">
-							<TabsFly 
+						<div className="absolute bottom-[12vh] left-0 flex w-full justify-center md:bottom-8 md:left-[calc(300px+1%)] md:w-[calc(100%-300px)]">
+							<TabsFly
 								tabs={[
 									{
 										icon: Edit,
@@ -179,42 +196,84 @@ export const RootAdmin: React.FC<RootAdminProps> = (props: RootAdminProps) => {
 				</div>
 			</div>
 
-			{previewTopo && previewTopo.status === TopoStatus.Draft &&
+			{previewTopo && previewTopo.status === TopoStatus.Draft && (
 				<TopoPreview
 					topo={previewTopo}
 					displayLastDate
 					displayCreator
-					mainButton={{ content: 'Ouvrir', link: `/topo/${encodeUUID(previewTopo.id)}?show=all` }}
-					secondButton={{ content: 'Supprimer', onClick: showModalDelete, color: 'red' }}
-					thirdButton={{ content: 'Modifier', link: '/builder/' + encodeUUID(previewTopo.id) }}
-					fourthButton={{ content: 'Soumettre', onClick: showModalSubmit, color: 'third' }}
+					mainButton={{
+						content: "Ouvrir",
+						link: `/topo/${encodeUUID(previewTopo.id)}?show=all`,
+					}}
+					secondButton={{
+						content: "Supprimer",
+						onClick: showModalDelete,
+						color: "red",
+					}}
+					thirdButton={{
+						content: "Modifier",
+						link: "/builder/" + encodeUUID(previewTopo.id),
+					}}
+					fourthButton={{
+						content: "Soumettre",
+						onClick: showModalSubmit,
+						color: "third",
+					}}
 					onClose={() => setPreviewTopo(undefined)}
 				/>
-			}
-			{previewTopo && previewTopo.status === TopoStatus.Submitted &&
+			)}
+			{previewTopo && previewTopo.status === TopoStatus.Submitted && (
 				<TopoPreview
 					topo={previewTopo}
 					displayLastDate
 					displayCreator
-					mainButton={{ content: 'Ouvrir', link: `/topo/${encodeUUID(previewTopo.id)}?show=all` }}
-					secondButton={{ content: 'Refuser', onClick: showModalReject, color: 'second' }}
-					thirdButton={{ content: 'Modifier', link: '/builder/' + encodeUUID(previewTopo.id) }}
-					fourthButton={{ content: 'Valider', onClick: showModalValidate, color: 'main' }}
+					mainButton={{
+						content: "Ouvrir",
+						link: `/topo/${encodeUUID(previewTopo.id)}?show=all`,
+					}}
+					secondButton={{
+						content: "Refuser",
+						onClick: showModalReject,
+						color: "second",
+					}}
+					thirdButton={{
+						content: "Modifier",
+						link: "/builder/" + encodeUUID(previewTopo.id),
+					}}
+					fourthButton={{
+						content: "Valider",
+						onClick: showModalValidate,
+						color: "main",
+					}}
 					onClose={() => setPreviewTopo(undefined)}
 				/>
-			}
-			{previewTopo && previewTopo.status === TopoStatus.Validated &&
+			)}
+			{previewTopo && previewTopo.status === TopoStatus.Validated && (
 				<TopoPreview
 					topo={previewTopo}
 					displayLastDate
 					displayCreator
-					mainButton={{ content: 'Ouvrir', link: '/topo/' + encodeUUID(previewTopo.id) }}
-					secondButton={{ content: 'Dévalider', onClick: showModalUnvalidate, color: 'third' }}
-					thirdButton={{ content: 'Modifier', link: '/builder/' + encodeUUID(previewTopo.id) }}
-					fourthButton={{ content: 'Supprimer', onClick: showModalDelete, color: 'red' }}
+					mainButton={{
+						content: "Ouvrir",
+						link: "/topo/" + encodeUUID(previewTopo.id),
+					}}
+					secondButton={{
+						content: "Dévalider",
+						onClick: showModalUnvalidate,
+						color: "third",
+					}}
+					thirdButton={{
+						content: "Modifier",
+						link: "/builder/" + encodeUUID(previewTopo.id),
+					}}
+					fourthButton={{
+						content: "Supprimer",
+						onClick: showModalDelete,
+						color: "red",
+					}}
 					onClose={() => setPreviewTopo(undefined)}
 				/>
-			}
+			)}
 
 			{actionTopo && dropdownPosition && (
 				<AdminActionDropdown
@@ -232,8 +291,7 @@ export const RootAdmin: React.FC<RootAdminProps> = (props: RootAdminProps) => {
 				imgUrl={staticUrl.deleteWarning}
 				onConfirm={submitTopo}
 			>
-				Le topo sera envoyé en validation.
-				Etes-vous sûr de vouloir continuer ?
+				Le topo sera envoyé en validation. Etes-vous sûr de vouloir continuer ?
 			</ModalSubmit>
 			<ModalValidate
 				buttonText="Confirmer"

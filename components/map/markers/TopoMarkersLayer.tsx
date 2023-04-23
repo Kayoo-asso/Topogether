@@ -1,24 +1,20 @@
 import React, { useCallback } from "react";
 import { watchDependencies } from "helpers/quarky";
-import {
-	Point,
-	VectorLayer,
-	VectorSource,
-} from "components/openlayers";
+import { Point, VectorLayer, VectorSource } from "components/openlayers";
 import { Icon, Style } from "ol/style";
-import { GeoCoordinates, LightTopo, TopoTypes, UUID } from "types";
+import { GeoCoordinates, LightTopoOld, TopoTypes, UUID } from "types";
 import { fromLonLat, toLonLat } from "ol/proj";
 import { TopoTypeToColor } from "helpers/topo";
 import { Drag } from "components/openlayers/interactions/Drag";
 import { OnClickFeature } from "components/openlayers/extensions/OnClick";
 
 type TopoForMarkers =
-	| LightTopo
+	| LightTopoOld
 	| { id: UUID; type: TopoTypes; location: GeoCoordinates };
 
 interface TopoMarkersLayerProps {
 	topos: TopoForMarkers[];
-	selectedTopo?: LightTopo;
+	selectedTopo?: LightTopoOld;
 	draggable?: boolean;
 	onTopoSelect?: (topo?: TopoForMarkers) => void;
 	onDragEnd?: (topoId: UUID, newLocation: GeoCoordinates) => void;
@@ -26,7 +22,7 @@ interface TopoMarkersLayerProps {
 
 export type TopoMarkerData = {
 	label: string;
-	topo: LightTopo;
+	topo: LightTopoOld;
 };
 
 export const topoMarkerStyle = (
@@ -48,7 +44,7 @@ export const topoMarkerStyle = (
 export const TopoMarkersLayer: React.FC<TopoMarkersLayerProps> =
 	watchDependencies(
 		({ draggable = false, ...props }: TopoMarkersLayerProps) => {
-      // Used for both the vector layer and Select
+			// Used for both the vector layer and Select
 			const topoStyle = useCallback(
 				(feature) => {
 					const { topo } = feature.get("data");
@@ -79,17 +75,18 @@ export const TopoMarkersLayer: React.FC<TopoMarkersLayerProps> =
 					<OnClickFeature
 						layers={"topos"}
 						hitTolerance={5}
-						onClick={useCallback((e) => {
-							const { topo } = e.feature.get("data") as TopoMarkerData;
-							if (topo.id === props.selectedTopo?.id) props.onTopoSelect && props.onTopoSelect(undefined);
-							else props.onTopoSelect && props.onTopoSelect(topo);
-						}, [props.selectedTopo])}
+						onClick={useCallback(
+							(e) => {
+								const { topo } = e.feature.get("data") as TopoMarkerData;
+								if (topo.id === props.selectedTopo?.id)
+									props.onTopoSelect && props.onTopoSelect(undefined);
+								else props.onTopoSelect && props.onTopoSelect(topo);
+							},
+							[props.selectedTopo]
+						)}
 					/>
 
-					<VectorLayer
-						id="topos"
-						style={topoStyle}
-					>
+					<VectorLayer id="topos" style={topoStyle}>
 						<VectorSource>
 							{props.topos.map((t) => {
 								return (

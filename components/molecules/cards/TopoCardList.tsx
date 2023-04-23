@@ -1,17 +1,20 @@
 import React, { ReactNode } from "react";
-import { LightTopo, TopoStatus } from "types";
+import { LightTopoOld, TopoStatus } from "types";
 import { NoTopoCard } from "./NoTopoCard";
 import { TopoCard } from "./TopoCard";
 
 // TODO: add a select to sort topos by date or alphabetic order
 interface TopoCardListProps {
-	topos: LightTopo[];
+	topos: LightTopoOld[];
 	status: TopoStatus;
 	title?: ReactNode;
 	noTopoCardContent?: string;
 	lastCard?: ReactNode;
-	onClick?: (topo: LightTopo) => void,
-	onContextMenu?: (topo: LightTopo, position: { x: number; y: number }) => void;
+	onClick?: (topo: LightTopoOld) => void;
+	onContextMenu?: (
+		topo: LightTopoOld,
+		position: { x: number; y: number }
+	) => void;
 }
 
 export const TopoCardList: React.FC<TopoCardListProps> = (

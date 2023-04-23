@@ -2,7 +2,7 @@ import { SupabaseClient } from "@supabase/supabase-js";
 import {
 	TopoData,
 	UUID,
-	LightTopo,
+	LightTopoOld,
 	TopoStatus,
 	DBTopo,
 	Topo,
@@ -78,8 +78,8 @@ export class ApiService {
 		query: string,
 		limit: number,
 		similarity: number = 0.3
-	): Promise<LightTopo[]> {
-		const { error, data } = await this.client.rpc<LightTopo>(
+	): Promise<LightTopoOld[]> {
+		const { error, data } = await this.client.rpc<LightTopoOld>(
 			"search_light_topos",
 			{
 				_query: query,
@@ -109,7 +109,7 @@ export class ApiService {
 		return UpdateResult.Ok;
 	}
 
-	deleteTopo(topo: Topo | TopoData | LightTopo) {
+	deleteTopo(topo: Topo | TopoData | LightTopoOld) {
 		sync.topoDelete(topo);
 	}
 

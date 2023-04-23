@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { BaseColor, LightTopo, TopoStatus } from "types";
+import { BaseColor, LightTopoOld, TopoStatus } from "types";
 import { formatDate } from "helpers/utils";
 import { Image } from "components/atoms/Image";
 import Link from "next/link";
@@ -26,7 +26,7 @@ type TopoPreviewButton = {
 };
 
 interface TopoPreviewProps {
-	topo: LightTopo;
+	topo: LightTopoOld;
 	displayLikeDownload?: boolean;
 	displayCreator?: boolean;
 	displayLastDate?: boolean;
@@ -51,7 +51,6 @@ export const TopoPreview: React.FC<TopoPreviewProps> = ({
 
 	const topoPreviewContent = () => (
 		<div className="pb-8">
-
 			<ItemsHeaderButtons item={props.topo} onClose={props.onClose} />
 
 			<div className="flex flex-col">
@@ -70,8 +69,8 @@ export const TopoPreview: React.FC<TopoPreviewProps> = ({
 					/>
 				</div>
 
-				<div className="flex flex-row gap-1 items-center px-4 mt-3">
-					<Topo className={"h-5 w-5 fill-" + TopoTypeToColor(topo.type)} />
+				<div className="mt-3 flex flex-row items-center gap-1 px-4">
+					<Topo className={"fill- h-5 w-5" + TopoTypeToColor(topo.type)} />
 					<div
 						className={
 							"ktext-section-title ml-2" +
@@ -148,7 +147,7 @@ export const TopoPreview: React.FC<TopoPreviewProps> = ({
 				</div>
 
 				{props.mainButton && (
-					<div className="flex w-full flex-col px-4 py-4 items-center">
+					<div className="flex w-full flex-col items-center px-4 py-4">
 						<Button
 							content={props.mainButton.content || "Entrer"}
 							href={props.mainButton.link}
@@ -159,12 +158,19 @@ export const TopoPreview: React.FC<TopoPreviewProps> = ({
 					</div>
 				)}
 
-				<div className={`${displayParking && topo.parkingLocation ? '' : 'hidden'} py-4`}>
-					<ParkingButton onClick={() => setModalParkingOpen(true)} displayIcon />
+				<div
+					className={`${
+						displayParking && topo.parkingLocation ? "" : "hidden"
+					} py-4`}
+				>
+					<ParkingButton
+						onClick={() => setModalParkingOpen(true)}
+						displayIcon
+					/>
 				</div>
 
 				{props.secondButton && (
-					<div className="flex w-full flex-row justify-between px-8 pt-4 pb-8 md:pb-2">
+					<div className="flex w-full flex-row justify-between px-8 pb-8 pt-4 md:pb-2">
 						<div
 							className={
 								"ktext-label md:cursor-pointer " +
@@ -264,10 +270,7 @@ export const TopoPreview: React.FC<TopoPreviewProps> = ({
 				<ModalBG onBgClick={props.onClose}>{topoPreviewContent()}</ModalBG>
 			</div>
 			<div className="hidden md:block">
-				<SlideoverRightDesktop
-					open
-					onClose={props.onClose}
-				>
+				<SlideoverRightDesktop open onClose={props.onClose}>
 					{topoPreviewContent()}
 				</SlideoverRightDesktop>
 			</div>

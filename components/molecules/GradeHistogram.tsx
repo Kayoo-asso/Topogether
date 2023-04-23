@@ -1,13 +1,8 @@
 import React from "react";
-import {
-	lightGrades,
-	LightTopo,
-	Topo,
-	gradeToLightGrade,
-} from "types";
+import { lightGrades, LightTopoOld, Topo, gradeToLightGrade } from "types";
 
 interface GradeHistogramProps {
-	topo: Topo | LightTopo;
+	topo: Topo | LightTopoOld;
 	size?: "little" | "normal" | "big";
 }
 
@@ -33,8 +28,8 @@ const defaultGradeHistogram = () => ({
 	P: 0, //"P" is for Project
 });
 
-const isLight = (topo: LightTopo | Topo): topo is LightTopo =>
-	(topo as LightTopo).grades !== undefined;
+const isLight = (topo: LightTopoOld | Topo): topo is LightTopoOld =>
+	(topo as LightTopoOld).grades !== undefined;
 
 export const GradeHistogram: React.FC<GradeHistogramProps> = ({
 	topo,
@@ -69,7 +64,7 @@ export const GradeHistogram: React.FC<GradeHistogramProps> = ({
 	return (
 		<div className="flex h-full">
 			{lightGrades.map((grade) => {
-				if (grade === 'P' && histogram['P'] < 1) return;
+				if (grade === "P" && histogram["P"] < 1) return;
 				const count = histogram[grade];
 				let heightPercent = 0;
 				if (maxNbOfTracks > 0) {

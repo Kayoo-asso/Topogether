@@ -7,7 +7,7 @@ import {
 	Amenities,
 	TopoStatus,
 	RockTypes,
-	LightTopo,
+	LightTopoOld,
 	TopoTypes,
 } from "types";
 import { v4 as uuid } from "uuid";
@@ -25,7 +25,7 @@ const topoCreatorId = uuid();
 // const contributorId = uuid();
 // const validatorId = uuid();
 
-export const lightTopo: LightTopo = {
+export const lightTopo: LightTopoOld = {
 	id: uuid(),
 	name: "Yzéron" as Name,
 	// hack for now
@@ -77,4 +77,4 @@ export const lightTopo: LightTopo = {
 	// in the modifiedAt date for them?
 };
 
-export const quarkLightTopo: Quark<LightTopo> = quark(lightTopo);
+export const quarkLightTopo: Quark<LightTopoOld> = quark(lightTopo);

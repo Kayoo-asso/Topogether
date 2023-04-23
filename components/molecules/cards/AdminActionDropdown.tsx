@@ -1,11 +1,11 @@
 import React, { useCallback, useMemo } from "react";
-import { LightTopo, TopoStatus } from "types";
+import { LightTopoOld, TopoStatus } from "types";
 import { useRouter } from "next/router";
 import { encodeUUID } from "helpers/utils";
 import { Dropdown, DropdownOption } from "../form/Dropdown";
 
 interface AdminActionDropdownProps {
-	topo: LightTopo;
+	topo: LightTopoOld;
 	position: { x: number; y: number };
 	onValidateClick: () => void;
 	onUnvalidateClick: () => void;
@@ -38,7 +38,13 @@ export const AdminActionDropdown: React.FC<AdminActionDropdownProps> = (
 			{ value: "Modifier", action: editTopo },
 			...(props.topo.status === TopoStatus.Submitted
 				? [
-						{ value: "Valider", action: () => {console.log("1"); props.onValidateClick(); } },
+						{
+							value: "Valider",
+							action: () => {
+								console.log("1");
+								props.onValidateClick();
+							},
+						},
 						{ value: "Refuser", action: props.onRejectClick },
 				  ]
 				: []),

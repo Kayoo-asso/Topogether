@@ -1,11 +1,11 @@
 import React, { useCallback } from "react";
-import { LightTopo } from "types";
+import { LightTopoOld } from "types";
 import { useRouter } from "next/router";
 import { encodeUUID } from "helpers/utils";
 import { Dropdown } from "../form/Dropdown";
 
 interface DownloadedActionDropdownProps {
-	topo: LightTopo;
+	topo: LightTopoOld;
 	position: { x: number; y: number };
 	onUnsaveClick: () => void;
 	onSelect?: () => void;
@@ -26,8 +26,8 @@ export const DownloadedActionDropdown: React.FC<
 			className="w-64"
 			position={props.position}
 			options={[
-					{ value: "Ouvrir", action: openTopo },
-					{ value: "Retirer des téléchargements", action: props.onUnsaveClick }
+				{ value: "Ouvrir", action: openTopo },
+				{ value: "Retirer des téléchargements", action: props.onUnsaveClick },
 			]}
 			onSelect={props.onSelect}
 		/>

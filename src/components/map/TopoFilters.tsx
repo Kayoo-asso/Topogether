@@ -7,14 +7,14 @@ import { Checkbox } from "~/components/ui/Checkbox";
 import { SelectListMultiple } from "~/components/ui/SelectListMultiple";
 import { SliderInput } from "~/components/ui/SliderInput";
 import { hasFlag, toggleFlag } from "~/helpers/bitflags";
-import { LightTopo } from "~/server/queries";
 import { useWorldMapStore } from "~/stores/worldmapStore";
+import { LightTopo } from "~/types";
 import { classNames, gradeCategory } from "~/utils";
 
 export interface TopoFilters {
 	types: TopoTypes;
 	rockRange: [number, number];
-	gradeRange: [Exclude<LightGrade, "P">, Exclude<LightGrade, "P">];
+	gradeRange: [number, number];
 	adaptedToChildren: boolean;
 }
 

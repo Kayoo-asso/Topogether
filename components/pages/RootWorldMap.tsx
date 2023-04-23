@@ -3,7 +3,7 @@ import { HeaderDesktop } from "components/layouts/HeaderDesktop";
 import { LeftbarDesktop } from "components/layouts/Leftbar.desktop";
 import { watchDependencies } from "helpers/quarky";
 import { useAuth } from "helpers/services";
-import { LightTopo } from "types";
+import { LightTopoOld } from "types";
 import { encodeUUID } from "helpers/utils";
 import { MapControl } from "components/map/MapControl";
 import { TopoMarkersLayer } from "components/map/markers/TopoMarkersLayer";
@@ -18,7 +18,7 @@ import { TopoPreview } from "components/organisms/TopoPreview";
 import { initialTopoFilters } from "~/components/map/TopoFilters";
 
 interface RootWorldMapProps {
-	lightTopos: LightTopo[];
+	lightTopos: LightTopoOld[];
 }
 
 export const RootWorldMap: React.FC<RootWorldMapProps> = watchDependencies(
@@ -28,7 +28,7 @@ export const RootWorldMap: React.FC<RootWorldMapProps> = watchDependencies(
 		const { position } = usePosition();
 		const mapRef = useRef<Map>(null);
 
-		const [selectedTopo, setSelectedTopo] = useState<LightTopo>();
+		const [selectedTopo, setSelectedTopo] = useState<LightTopoOld>();
 
 		const SearchbarDesktop: React.FC = () => (
 			<SearchbarToposDesktop map={mapRef.current} />
@@ -106,7 +106,7 @@ export const RootWorldMap: React.FC<RootWorldMapProps> = watchDependencies(
 						<TopoMarkersLayer
 							topos={props.lightTopos.filter(filterTopos)}
 							selectedTopo={selectedTopo}
-							onTopoSelect={(t) => setSelectedTopo(t as LightTopo)}
+							onTopoSelect={(t) => setSelectedTopo(t as LightTopoOld)}
 						/>
 					</MapControl>
 

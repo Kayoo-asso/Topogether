@@ -1,6 +1,6 @@
 import React from "react";
 import { GeocodingFeature } from "helpers/map/geocodingMapbox";
-import { LightTopo } from "types";
+import { LightTopoOld } from "types";
 import { Map } from "ol";
 import Link from "next/link";
 import { encodeUUID } from "helpers/utils";
@@ -12,7 +12,7 @@ import Flag from "assets/icons/flag.svg";
 import { useBreakpoint } from "helpers/hooks/DeviceProvider";
 
 export interface SearchbarToposProps {
-	topoApiResults: LightTopo[];
+	topoApiResults: LightTopoOld[];
 	mapboxApiResults: GeocodingFeature[];
 	map: Map | null;
 }

@@ -1,11 +1,11 @@
 import React, { useCallback } from "react";
-import { LightTopo } from "types";
+import { LightTopoOld } from "types";
 import { useRouter } from "next/router";
 import { encodeUUID } from "helpers/utils";
 import { Dropdown } from "../form/Dropdown";
 
 interface LikedActionDropdownProps {
-	topo: LightTopo;
+	topo: LightTopoOld;
 	position: { x: number; y: number };
 	onSelect?: () => void;
 }
@@ -24,9 +24,7 @@ export const LikedActionDropdown: React.FC<LikedActionDropdownProps> = (
 		<Dropdown
 			className="w-64"
 			position={props.position}
-			options={[
-				{ value: "Ouvrir", action: openTopo }
-			]}
+			options={[{ value: "Ouvrir", action: openTopo }]}
 			onSelect={props.onSelect}
 		/>
 	);

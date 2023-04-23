@@ -134,7 +134,7 @@ export type DBTopo = NullableOptional<{
 	image?: Img;
 }>;
 
-export interface LightTopo {
+export interface LightTopoOld {
 	id: UUID;
 	name: Name;
 	status: TopoStatus;
@@ -165,7 +165,7 @@ export interface LightTopo {
 	grades?: Partial<GradeHistogram>;
 }
 
-export type DBLightTopo = Omit<LightTopo, "liked"> & {
+export type DBLightTopo = Omit<LightTopoOld, "liked"> & {
 	liked: boolean;
 };
 

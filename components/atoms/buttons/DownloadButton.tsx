@@ -1,5 +1,5 @@
 import React from "react";
-import { BoulderData, LightTopo, Topo, TopoData, TrackData } from "types";
+import { BoulderData, LightTopoOld, Topo, TopoData, TrackData } from "types";
 import { staticUrl } from "helpers/constants";
 import { useModal } from "helpers/hooks/useModal";
 import { api } from "helpers/services";
@@ -12,22 +12,22 @@ import Check from "assets/icons/checked.svg";
 
 interface DownloadButtonProps {
 	className?: string;
-	topo: Topo | LightTopo;
+	topo: Topo | LightTopoOld;
 }
 
-const isLight = (topo: Topo | LightTopo): topo is LightTopo => {
-	return (topo as LightTopo).nbBoulders !== undefined;
+const isLight = (topo: Topo | LightTopoOld): topo is LightTopoOld => {
+	return (topo as LightTopoOld).nbBoulders !== undefined;
 };
 const topo2TopoData = (t: Topo) => {
-	const bds: BoulderData[] = t.boulders.toArray().map(b => ({
+	const bds: BoulderData[] = t.boulders.toArray().map((b) => ({
 		...b,
 		liked: b.liked(),
-		tracks: b.tracks.toArray().map(t => ({
+		tracks: b.tracks.toArray().map((t) => ({
 			...t,
 			ratings: t.ratings.toArray(),
 			lines: t.lines.toArray(),
 		})) as TrackData[],
-	}))
+	}));
 	const td: TopoData = {
 		...t,
 		liked: t.liked(),
@@ -37,10 +37,10 @@ const topo2TopoData = (t: Topo) => {
 		parkings: t.parkings.toArray(),
 		accesses: t.accesses.toArray(),
 		managers: t.managers.toArray(),
-		contributors: t.contributors.toArray()
+		contributors: t.contributors.toArray(),
 	};
 	return td;
-}
+};
 
 export const DownloadButton: React.FC<DownloadButtonProps> = watchDependencies(
 	(props: DownloadButtonProps) => {
@@ -60,36 +60,39 @@ export const DownloadButton: React.FC<DownloadButtonProps> = watchDependencies(
 			<>
 				{dlState.status === "downloading" && (
 					<RoundProgressBar
-						percentage={dlState.progress*100}
+						percentage={dlState.progress * 100}
 						displayLabel={false}
 						onClick={showModalUndownload}
 					/>
 				)}
 
 				{dlState.status === "downloaded" && (
-					<div 
-						className="relative px-3 py-3 bg-main rounded-full md:cursor-pointer"
+					<div
+						className="relative rounded-full bg-main px-3 py-3 md:cursor-pointer"
 						onClick={(e) => {
-							e.preventDefault(); e.stopPropagation();
+							e.preventDefault();
+							e.stopPropagation();
 							showModalUndownload();
 						}}
 					>
-						<Check className="absolute w-3 h-3 stroke-white top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
+						<Check className="absolute left-1/2 top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 transform stroke-white" />
 					</div>
 				)}
 
-				{dlState.status !== "downloading" && dlState.status !== "downloaded" && (
-					<Download
-						className={
-							"h-5 w-5 stroke-main stroke-[1.5px] md:cursor-pointer " +
-							(props.className ? props.className : "")
-						}
-						onClick={(e) => {
-							e.preventDefault(); e.stopPropagation();
-							download();
-						}}
-					/>
-				)}
+				{dlState.status !== "downloading" &&
+					dlState.status !== "downloaded" && (
+						<Download
+							className={
+								"h-5 w-5 stroke-main stroke-[1.5px] md:cursor-pointer " +
+								(props.className ? props.className : "")
+							}
+							onClick={(e) => {
+								e.preventDefault();
+								e.stopPropagation();
+								download();
+							}}
+						/>
+					)}
 
 				<ModalUndownload
 					buttonText="Confirmer"

@@ -1,5 +1,5 @@
 import React, { ReactNode, useEffect, useState } from "react";
-import { Boulder, LightTopo, Topo } from "types";
+import { Boulder, LightTopoOld, Topo } from "types";
 
 interface SlideoverRightDesktopProps {
 	open?: boolean;
@@ -9,9 +9,7 @@ interface SlideoverRightDesktopProps {
 	children?: ReactNode;
 }
 
-export const SlideoverRightDesktop: React.FC<
-SlideoverRightDesktopProps
-> = ({
+export const SlideoverRightDesktop: React.FC<SlideoverRightDesktopProps> = ({
 	open = false,
 	secondary = false,
 	...props

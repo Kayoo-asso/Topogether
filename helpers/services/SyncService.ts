@@ -15,7 +15,7 @@ import {
 	DBTrack,
 	DBUserUpdate,
 	DBWaypoint,
-	LightTopo,
+	LightTopoOld,
 	Line,
 	Manager,
 	Parking,
@@ -47,14 +47,14 @@ export interface SyncService {
 	attemptSync(): Promise<boolean>;
 
 	likeTopo(
-		topo: Topo | TopoData | LightTopo | DBLightTopo,
+		topo: Topo | TopoData | LightTopoOld | DBLightTopo,
 		value: boolean
 	): void;
 	likeBoulder(boulder: Boulder | BoulderData, value: boolean): void;
 
 	topoCreate(topo: DBTopo): void;
 	topoUpdate(topo: Topo | TopoData): void;
-	topoDelete(topo: Topo | TopoData | LightTopo): void;
+	topoDelete(topo: Topo | TopoData | LightTopoOld): void;
 
 	topoAccessUpdate(topoAccess: TopoAccess, topoId: UUID): void;
 	topoAccessDelete(topoAccess: TopoAccess): void;
@@ -140,7 +140,7 @@ export class InMemorySync implements SyncService {
 	like_topos: Set<UUID> = new Set();
 	unlike_topos: Set<UUID> = new Set();
 
-	likeTopo(topo: Topo | TopoData | LightTopo, value: boolean): void {
+	likeTopo(topo: Topo | TopoData | LightTopoOld, value: boolean): void {
 		if (value) {
 			this.like_topos.add(topo.id);
 			this.unlike_topos.delete(topo.id);
@@ -184,7 +184,7 @@ export class InMemorySync implements SyncService {
 		this._status.set(SyncStatus.UnsavedChanges);
 	}
 
-	topoDelete(topo: Topo | TopoData | LightTopo) {
+	topoDelete(topo: Topo | TopoData | LightTopoOld) {
 		this.deletedTopos.add(topo.id);
 		this.updatedTopos.delete(topo.id);
 		this._status.set(SyncStatus.UnsavedChanges);
@@ -509,7 +509,10 @@ export class InMemorySync implements SyncService {
 }
 
 // modifies `dest`
-function mergeMaps<T>(dest: Map<UUID | string, T>, source: Map<UUID | string, T>): Map<UUID | string, T> {
+function mergeMaps<T>(
+	dest: Map<UUID | string, T>,
+	source: Map<UUID | string, T>
+): Map<UUID | string, T> {
 	for (const [k, v] of source) {
 		dest.set(k, v);
 	}
@@ -517,7 +520,10 @@ function mergeMaps<T>(dest: Map<UUID | string, T>, source: Map<UUID | string, T>
 }
 
 // modifies `dest`
-function mergeSets(dest: Set<UUID | string>, source: Set<UUID | string>): Set<UUID | string> {
+function mergeSets(
+	dest: Set<UUID | string>,
+	source: Set<UUID | string>
+): Set<UUID | string> {
 	for (const x of source) {
 		dest.add(x);
 	}

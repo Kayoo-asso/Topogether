@@ -2,19 +2,18 @@ import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import Trigram from "trigram-search";
-import { GeoCoordinates } from "types";
+import { RoundButton } from "~/components/buttons/RoundButton";
 import { SearchInput } from "~/components/forms/SearchInput";
 import { useMap } from "~/components/openlayers";
 import { usePosition } from "~/components/providers/UserPositionProvider";
 import { env } from "~/env.mjs";
-import { LightTopo } from "~/server/queries";
 import { useWorldMapStore } from "~/stores/worldmapStore";
+import { GeoCoordinates, LightTopo } from "~/types";
 import { encodeUUID } from "~/utils";
-import { RoundButton } from "~/components/buttons/RoundButton";
 
-import SearchIcon from "assets/icons/search.svg";
-import MarkerIcon from "assets/icons/marker.svg";
 import Flag from "assets/icons/flag.svg";
+import MarkerIcon from "assets/icons/marker.svg";
+import SearchIcon from "assets/icons/search.svg";
 
 export function TopoSearchbar(props: { topos: LightTopo[] }) {
 	const searchOpen = useWorldMapStore((s) => s.searchOpen);
@@ -92,8 +91,12 @@ export function TopoSearchbar(props: { topos: LightTopo[] }) {
 				</RoundButton>
 				{/* Horizontal block 2 */}
 				{searchOpen && (
-					<div className="flex-1 ml-4">
-						<SearchInput value={input} onChange={setInput} label={searchLabel} />
+					<div className="ml-4 flex-1">
+						<SearchInput
+							value={input}
+							onChange={setInput}
+							label={searchLabel}
+						/>
 					</div>
 				)}
 			</div>

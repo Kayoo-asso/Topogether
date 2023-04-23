@@ -12,7 +12,6 @@ import { TopoInteractions, TopoMarkers } from "./TopoMarkers";
 import { TopoSearchbar } from "./TopoSearchbar";
 import { UserMarker } from "./UserMarker";
 import { useUser } from "@clerk/nextjs";
-import { classNames } from "~/utils";
 
 interface WorldMapProps {
 	topos: LightTopo[];

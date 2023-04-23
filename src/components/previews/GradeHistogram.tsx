@@ -3,7 +3,7 @@ import { Grade } from "~/types";
 import { buildGradeHistogram, classNames } from "~/utils";
 
 interface GradeHistogramProps {
-	grades: Array<Grade>;
+	grades: Array<Grade | null>;
 	size?: "little" | "normal" | "big";
 }
 

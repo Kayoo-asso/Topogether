@@ -1,9 +1,9 @@
 import { Feature } from "ol";
-import { Coordinate } from "ol/coordinate";
-import BaseEvent from "ol/events/Event";
-import { GeometryLayout } from "ol/geom/Geometry";
-import { ObjectEvent } from "ol/Object";
-import { StyleLike } from "ol/style/Style";
+import type { Coordinate } from "ol/coordinate";
+import type BaseEvent from "ol/events/Event";
+import type { GeometryLayout } from "ol/geom/Geometry";
+import type { ObjectEvent } from "ol/Object";
+import type { StyleLike } from "ol/style/Style";
 import {
 	ForwardedRef,
 	forwardRef,
@@ -14,7 +14,8 @@ import {
 	useState,
 } from "react";
 import { CollectionContext, useLayer } from "./contexts";
-import { Cluster, Source } from "ol/source";
+import type Source from "ol/source/Source";
+import Cluster from "ol/source/Cluster";
 
 import {
 	Circle as OLCircle,

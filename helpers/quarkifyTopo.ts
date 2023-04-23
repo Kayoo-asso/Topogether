@@ -16,7 +16,7 @@ import {
 	TopoAccess,
 	Parking,
 	DBLightTopo,
-	LightTopo,
+	LightTopoOld,
 	DBTopo,
 	Contributor,
 } from "types";
@@ -124,7 +124,7 @@ export function quarkifyTopo(data: TopoData, seedData: boolean): Quark<Topo> {
 }
 
 // terrible hack
-export function quarkifyLightTopos(data: DBLightTopo[]): LightTopo[] {
+export function quarkifyLightTopos(data: DBLightTopo[]): LightTopoOld[] {
 	return data.map((t) => ({
 		...t,
 		liked: quark(t.liked, { onChange: (like) => sync.likeTopo(t, like) }),
@@ -198,7 +198,8 @@ function quarkifyContributors(
 	topoId: UUID,
 	seedData: boolean
 ): QuarkArray<Contributor> {
-	const onChange = (contributor: Contributor) => sync.contributorUpdate(contributor, topoId);
+	const onChange = (contributor: Contributor) =>
+		sync.contributorUpdate(contributor, topoId);
 	if (seedData) contributors.forEach(onChange);
 
 	return new QuarkArray(contributors, {

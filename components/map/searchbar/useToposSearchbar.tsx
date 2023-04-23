@@ -1,6 +1,6 @@
 import { api } from "helpers/services";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { LightTopo } from "types";
+import { LightTopoOld } from "types";
 import { findPlace, GeocodingFeature } from "helpers/map/geocodingMapbox";
 import { useSelectStore } from "components/store/selectStore";
 import { useBreakpoint } from "helpers/hooks/DeviceProvider";
@@ -9,8 +9,8 @@ import { TextInput } from "components/molecules/form/TextInput";
 
 export function useToposSearchbar(
 	onlyPlaces: boolean = false
-): [() => JSX.Element, LightTopo[], GeocodingFeature[]] {
-	const [topoApiResults, setTopoApiResults] = useState<LightTopo[]>([]);
+): [() => JSX.Element, LightTopoOld[], GeocodingFeature[]] {
+	const [topoApiResults, setTopoApiResults] = useState<LightTopoOld[]>([]);
 	const [mapboxApiResults, setMapboxApiResults] = useState<GeocodingFeature[]>(
 		[]
 	);

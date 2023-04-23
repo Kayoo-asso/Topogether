@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { LightTopo, TopoStatus } from "types";
+import { LightTopoOld, TopoStatus } from "types";
 import { UserActionDropdown } from "components/molecules/cards/UserActionDropdown";
 import { api } from "helpers/services";
 import { watchDependencies } from "helpers/quarky";
@@ -16,36 +16,51 @@ import { TopoCardList } from "components/molecules/cards/TopoCardList";
 import { AddTopoCard } from "components/molecules/cards/AddTopoCard";
 
 interface MyToposProps {
-	myTopos: LightTopo[];
+	myTopos: LightTopoOld[];
 	pageRef: React.RefObject<HTMLDivElement>;
 }
 
 export const MyTopos: React.FC<MyToposProps> = watchDependencies(
 	(props: MyToposProps) => {
-		const router = useRouter(); 
+		const router = useRouter();
 		const [lightTopos, setLightTopos] = useState(props.myTopos);
-		const draftLightTopos = lightTopos.filter(
-			(topo) => topo.status === TopoStatus.Draft
-		).sort((t1, t2) => { return new Date(t2.modified).getTime() - new Date(t1.modified).getTime() });
-		const submittedLightTopos = lightTopos.filter(
-			(topo) => topo.status === TopoStatus.Submitted
-		).sort((t1, t2) => { return new Date(t2.submitted!).getTime() - new Date(t1.submitted!).getTime() });
-		const validatedLightTopos = lightTopos.filter(
-			(topo) => topo.status === TopoStatus.Validated
-		).sort((t1, t2) => { return new Date(t2.validated!).getTime() - new Date(t1.validated!).getTime() });
+		const draftLightTopos = lightTopos
+			.filter((topo) => topo.status === TopoStatus.Draft)
+			.sort((t1, t2) => {
+				return (
+					new Date(t2.modified).getTime() - new Date(t1.modified).getTime()
+				);
+			});
+		const submittedLightTopos = lightTopos
+			.filter((topo) => topo.status === TopoStatus.Submitted)
+			.sort((t1, t2) => {
+				return (
+					new Date(t2.submitted!).getTime() - new Date(t1.submitted!).getTime()
+				);
+			});
+		const validatedLightTopos = lightTopos
+			.filter((topo) => topo.status === TopoStatus.Validated)
+			.sort((t1, t2) => {
+				return (
+					new Date(t2.validated!).getTime() - new Date(t1.validated!).getTime()
+				);
+			});
 
-		const [actionTopo, setActionTopo] = useState<LightTopo>();
+		const [actionTopo, setActionTopo] = useState<LightTopoOld>();
 
-		const [previewTopo, setPreviewTopo] = useState<LightTopo>();
-		const togglePreviewTopo = useCallback((topo: LightTopo) => {
-			if (previewTopo && previewTopo.id === topo.id) setPreviewTopo(undefined);
-			else {
-				setActionTopo(topo);
-				setPreviewTopo(topo);
-			}
-		}, [previewTopo]);
+		const [previewTopo, setPreviewTopo] = useState<LightTopoOld>();
+		const togglePreviewTopo = useCallback(
+			(topo: LightTopoOld) => {
+				if (previewTopo && previewTopo.id === topo.id)
+					setPreviewTopo(undefined);
+				else {
+					setActionTopo(topo);
+					setPreviewTopo(topo);
+				}
+			},
+			[previewTopo]
+		);
 
-		
 		const [dropdownPosition, setDropdownPosition] = useState<{
 			x: number;
 			y: number;
@@ -66,21 +81,26 @@ export const MyTopos: React.FC<MyToposProps> = watchDependencies(
 			setPreviewTopo(undefined);
 		}, [actionTopo, lightTopos]);
 
-		const unsubmitTopo = useCallback(async (openTopo?: boolean) => {
-			if (actionTopo) {
-				await api.setTopoStatus(actionTopo.id, TopoStatus.Draft);
-				const toDraftTopo = lightTopos.find((lt) => lt.id === actionTopo.id)!;
-				toDraftTopo.submitted = undefined;
-				toDraftTopo.status = TopoStatus.Draft;
-				setLightTopos(lightTopos.slice());
-				setPreviewTopo(undefined);
-				if (openTopo) router.push("/builder/" + encodeUUID(actionTopo.id));
-			}
-		}, [actionTopo, lightTopos]);
+		const unsubmitTopo = useCallback(
+			async (openTopo?: boolean) => {
+				if (actionTopo) {
+					await api.setTopoStatus(actionTopo.id, TopoStatus.Draft);
+					const toDraftTopo = lightTopos.find((lt) => lt.id === actionTopo.id)!;
+					toDraftTopo.submitted = undefined;
+					toDraftTopo.status = TopoStatus.Draft;
+					setLightTopos(lightTopos.slice());
+					setPreviewTopo(undefined);
+					if (openTopo) router.push("/builder/" + encodeUUID(actionTopo.id));
+				}
+			},
+			[actionTopo, lightTopos]
+		);
 
 		const deleteTopo = useCallback(() => {
 			if (actionTopo) {
-				const newLightTopos = lightTopos.filter((lt) => lt.id !== actionTopo.id);
+				const newLightTopos = lightTopos.filter(
+					(lt) => lt.id !== actionTopo.id
+				);
 				api.deleteTopo(actionTopo);
 				setLightTopos(newLightTopos);
 			}
@@ -89,8 +109,8 @@ export const MyTopos: React.FC<MyToposProps> = watchDependencies(
 
 		useContextMenu(() => setDropdownPosition(undefined), props.pageRef.current);
 		const onContextMenu = useCallback(
-			(t: LightTopo, position: { x: number; y: number }) => {
-				setActionTopo(t)
+			(t: LightTopoOld, position: { x: number; y: number }) => {
+				setActionTopo(t);
 				setDropdownPosition(position);
 			},
 			[props.pageRef]
@@ -106,7 +126,7 @@ export const MyTopos: React.FC<MyToposProps> = watchDependencies(
 						<Button content="Créer un topo" href="/builder/new" />
 					)}
 				</div>
-				
+
 				{lightTopos.length > 0 && (
 					<>
 						<TopoCardList
@@ -160,36 +180,60 @@ export const MyTopos: React.FC<MyToposProps> = watchDependencies(
 					</div>
 				)}
 
-				{previewTopo && previewTopo.status === TopoStatus.Draft &&
+				{previewTopo && previewTopo.status === TopoStatus.Draft && (
 					<TopoPreview
 						topo={previewTopo}
 						displayLastDate
-						mainButton={{ content: 'Modifier', link: '/builder/' + encodeUUID(previewTopo.id) }}
-						secondButton={{ content: 'Valider', onClick: showModalSubmit, color: 'main' }}
-						thirdButton={{ content: 'Supprimer', onClick: showModalDelete, color: 'red' }}
+						mainButton={{
+							content: "Modifier",
+							link: "/builder/" + encodeUUID(previewTopo.id),
+						}}
+						secondButton={{
+							content: "Valider",
+							onClick: showModalSubmit,
+							color: "main",
+						}}
+						thirdButton={{
+							content: "Supprimer",
+							onClick: showModalDelete,
+							color: "red",
+						}}
 						onClose={() => setPreviewTopo(undefined)}
 					/>
-				}
-				{previewTopo && previewTopo.status === TopoStatus.Submitted &&
+				)}
+				{previewTopo && previewTopo.status === TopoStatus.Submitted && (
 					<TopoPreview
 						topo={previewTopo}
 						displayLastDate
-						mainButton={{ content: 'Voir le topo', link: '/topo/' + encodeUUID(previewTopo.id) }}
-						secondButton={{ content: 'Modifier', onClick: showModalUnsubmit }}
-						thirdButton={{ content: 'Supprimer', onClick: showModalDelete, color: 'red' }}
+						mainButton={{
+							content: "Voir le topo",
+							link: "/topo/" + encodeUUID(previewTopo.id),
+						}}
+						secondButton={{ content: "Modifier", onClick: showModalUnsubmit }}
+						thirdButton={{
+							content: "Supprimer",
+							onClick: showModalDelete,
+							color: "red",
+						}}
 						onClose={() => setPreviewTopo(undefined)}
 					/>
-				}
-				{previewTopo && previewTopo.status === TopoStatus.Validated &&
+				)}
+				{previewTopo && previewTopo.status === TopoStatus.Validated && (
 					<TopoPreview
 						topo={previewTopo}
 						displayLastDate
-						mainButton={{ content: 'Ouvrir', link: '/topo/' + encodeUUID(previewTopo.id) }}
-						secondButton={{ content: 'Supprimer', onClick: showModalDelete, color: 'red' }}
+						mainButton={{
+							content: "Ouvrir",
+							link: "/topo/" + encodeUUID(previewTopo.id),
+						}}
+						secondButton={{
+							content: "Supprimer",
+							onClick: showModalDelete,
+							color: "red",
+						}}
 						onClose={() => setPreviewTopo(undefined)}
 					/>
-				}
-				
+				)}
 
 				{actionTopo && dropdownPosition && (
 					<UserActionDropdown
@@ -216,7 +260,8 @@ export const MyTopos: React.FC<MyToposProps> = watchDependencies(
 					imgUrl={staticUrl.defaultProfilePicture}
 					onConfirm={() => unsubmitTopo(true)}
 				>
-					Le topo retournera en brouillon avant de pouvoir être modifié. Etes-vous sûr de vouloir continuer ?
+					Le topo retournera en brouillon avant de pouvoir être modifié.
+					Etes-vous sûr de vouloir continuer ?
 				</ModalUnsubmit>
 				<ModalDelete
 					buttonText="Supprimer"
@@ -231,4 +276,4 @@ export const MyTopos: React.FC<MyToposProps> = watchDependencies(
 	}
 );
 
-MyTopos.displayName = 'MyTopos';
+MyTopos.displayName = "MyTopos";

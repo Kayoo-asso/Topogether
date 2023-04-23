@@ -14,7 +14,8 @@ import {
 	useState,
 } from "react";
 import { CollectionContext, useLayer } from "./contexts";
-import { Cluster, Source } from "ol/source";
+import type Source from "ol/source/Source";
+import Cluster from "ol/source/Cluster";
 
 import {
 	Circle as OLCircle,
