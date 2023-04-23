@@ -6,7 +6,7 @@ import { Point, VectorLayer, VectorSource } from "~/components/openlayers";
 import { OnClickFeature } from "~/components/openlayers/extensions/OnClick";
 import { topoColors } from "~/helpers/colors";
 import { useWorldMapStore } from "~/stores/worldmapStore";
-import { filterTopos } from "../forms/TopoFilters";
+import { filterTopos } from "./TopoFilters";
 
 type TopoInfo = { id: UUID; type: TopoTypes; location: GeoCoordinates };
 

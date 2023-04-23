@@ -7,11 +7,15 @@ import { useBreakpoint } from "helpers/hooks/DeviceProvider";
 import { usePosition } from "helpers/hooks/UserPositionProvider";
 import { TextInput } from "components/molecules/form/TextInput";
 
-export function useToposSearchbar (onlyPlaces: boolean = false): [() => JSX.Element, LightTopo[], GeocodingFeature[]] {
+export function useToposSearchbar(
+	onlyPlaces: boolean = false
+): [() => JSX.Element, LightTopo[], GeocodingFeature[]] {
 	const [topoApiResults, setTopoApiResults] = useState<LightTopo[]>([]);
-	const [mapboxApiResults, setMapboxApiResults] = useState<GeocodingFeature[]>([]);
-	
-    const SearchInput = useCallback(() => {
+	const [mapboxApiResults, setMapboxApiResults] = useState<GeocodingFeature[]>(
+		[]
+	);
+
+	const SearchInput = useCallback(() => {
 		const bp = useBreakpoint();
 		const { position } = usePosition();
 		// setTimeout returns a number in the browser, but TypeScript is annoying
@@ -24,18 +28,18 @@ export function useToposSearchbar (onlyPlaces: boolean = false): [() => JSX.Elem
 				const topoResults = await api.searchLightTopos(val, 5, 0.2);
 				setTopoApiResults(topoResults);
 			}
-	
-			const mapboxResults = await findPlace(val, { 
-				types: ["country", "region", "place", 'address', 'poi'],
-				proximity: position || undefined 
+
+			const mapboxResults = await findPlace(val, {
+				types: ["country", "region", "place", "address", "poi"],
+				proximity: position || undefined,
 			});
 			setMapboxApiResults(mapboxResults || []);
 		};
 
-		const open = useSelectStore(s => s.info) === 'SEARCHBAR';
+		const open = useSelectStore((s) => s.info) === "SEARCHBAR";
 		useEffect(() => {
 			if (inputRef) inputRef.focus();
-		}, [open])
+		}, [open]);
 
 		const handleKeyboardShortcuts = (e: KeyboardEvent) => {
 			if (e.code === "Enter" && value.length > 2) {
@@ -43,13 +47,14 @@ export function useToposSearchbar (onlyPlaces: boolean = false): [() => JSX.Elem
 				// else if (mapboxApiResults.length > 0) selectPlace(mapboxApiResults[0]);
 			} else if (e.code === "Escape") setValue("");
 		};
-		useEffect(() => {	
+		useEffect(() => {
 			if (inputRef) inputRef.addEventListener("keyup", handleKeyboardShortcuts);
 			return () => {
-				if (inputRef) inputRef.removeEventListener("keyup", handleKeyboardShortcuts);
+				if (inputRef)
+					inputRef.removeEventListener("keyup", handleKeyboardShortcuts);
 			};
 		}, [inputRef]);
-			
+
 		return (
 			<TextInput
 				id="searchbar"
@@ -57,7 +62,7 @@ export function useToposSearchbar (onlyPlaces: boolean = false): [() => JSX.Elem
 				autoComplete="off"
 				label={"Rechercher un lieu" + (!onlyPlaces && " ou un topo")}
 				displayLabel={false}
-				border={bp === 'mobile'}
+				border={bp === "mobile"}
 				wrapperClassName="w-[95%] mt-0"
 				value={value}
 				onChange={(e) => {
@@ -71,8 +76,8 @@ export function useToposSearchbar (onlyPlaces: boolean = false): [() => JSX.Elem
 					}
 				}}
 			/>
-		) 
+		);
 	}, []);
 
-    return [SearchInput, topoApiResults, mapboxApiResults];
+	return [SearchInput, topoApiResults, mapboxApiResults];
 }

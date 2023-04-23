@@ -14,59 +14,65 @@ import { useBreakpoint } from "helpers/hooks/DeviceProvider";
 export interface SearchbarToposProps {
 	topoApiResults: LightTopo[];
 	mapboxApiResults: GeocodingFeature[];
-    map: Map | null;
+	map: Map | null;
 }
 
-export const SearchbarToposResults: React.FC<SearchbarToposProps> = (props: SearchbarToposProps) => {
-    {/* TODO: Add closing button */}
-    {/* TODO: Add "Résultats récents" */}
-    const bp = useBreakpoint();
-	const select = useSelectStore(s => s.select);
+export const SearchbarToposResults: React.FC<SearchbarToposProps> = (
+	props: SearchbarToposProps
+) => {
+	{
+		/* TODO: Add closing button */
+	}
+	{
+		/* TODO: Add "Résultats récents" */
+	}
+	const bp = useBreakpoint();
+	const select = useSelectStore((s) => s.select);
 
 	const selectPlace = (place: GeocodingFeature) => {
 		props.map?.getView().animate({
-            center: fromLonLat(place.center),
-            duration: 300,
-            zoom: 13
-        });
-		select.info('NONE', bp);
+			center: fromLonLat(place.center),
+			duration: 300,
+			zoom: 13,
+		});
+		select.info("NONE", bp);
 	};
 
-    return (
-        <div className='flex flex-col px-4'>
-            {props.topoApiResults.length > 0 &&
-                <>
-                    <div className='ktext-section-title py-4'>Liste des topos</div>
-                    {props.topoApiResults.map((topo) => (
-                        <Link href={"/topo/" + encodeUUID(topo.id)} key={topo.id}>
-                            <a 
-                                className={`ktext-base flex flex-row items-center gap-4 py-3 px-7 text-dark md:cursor-pointer hover:bg-grey-light`}
-                                onClick={() => select.info('NONE', bp)}
-                            >
-                                <MarkerIcon className="h-5 w-5 fill-main" />
-                                <div>{topo.name}</div>
-                            </a>
-                        </Link>
-                    ))}
-                </>
-            }
-            {props.mapboxApiResults.length > 0 &&
-                <>
-                    <div className='ktext-section-title py-4'>Lieux</div>
-                    {props.mapboxApiResults.map((res) => (
-                        <div
-                            key={res.place_name}
-                            className={`ktext-base flex flex-row items-center gap-4 py-3 px-7 text-dark md:cursor-pointer hover:bg-grey-light`}
-                            onClick={() => selectPlace(res)}
-                        >
-                            <Flag className="h-5 w-5 stroke-dark" />
-                            <div>{res.text}</div>
-                        </div>
-                    ))}
-                </>
-            }
-        </div>
-    )
+	return (
+		<div className="flex flex-col px-4">
+			{props.topoApiResults.length > 0 && (
+				<>
+					<div className="ktext-section-title py-4">Liste des topos</div>
+					{props.topoApiResults.map((topo) => (
+						<Link href={"/topo/" + encodeUUID(topo.id)} key={topo.id}>
+							<a
+								className={`ktext-base flex flex-row items-center gap-4 px-7 py-3 text-dark hover:bg-grey-light md:cursor-pointer`}
+								onClick={() => select.info("NONE", bp)}
+							>
+								<MarkerIcon className="h-5 w-5 fill-main" />
+								<div>{topo.name}</div>
+							</a>
+						</Link>
+					))}
+				</>
+			)}
+			{props.mapboxApiResults.length > 0 && (
+				<>
+					<div className="ktext-section-title py-4">Lieux</div>
+					{props.mapboxApiResults.map((res) => (
+						<div
+							key={res.place_name}
+							className={`ktext-base flex flex-row items-center gap-4 px-7 py-3 text-dark hover:bg-grey-light md:cursor-pointer`}
+							onClick={() => selectPlace(res)}
+						>
+							<Flag className="h-5 w-5 stroke-dark" />
+							<div>{res.text}</div>
+						</div>
+					))}
+				</>
+			)}
+		</div>
+	);
 };
 
-SearchbarToposResults.displayName = 'SearchbarToposResults';
+SearchbarToposResults.displayName = "SearchbarToposResults";

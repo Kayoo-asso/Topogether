@@ -22,6 +22,11 @@ Currently only available in French, sorry!
 - MapControl use of breakpoint
 - Download status
 - Only have one TopoFilters component + responsive CSS
+- Search bar styling
+  - input overlaps + casts shadow on results
+  - overlaps satellite button
+- Search bar features + error handling
+- Investigate all different buttons (too many of them, with too many redundant options)
 - Cleanups
   - SelectListMultiple
     - `getClassName`

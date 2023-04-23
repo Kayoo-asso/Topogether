@@ -16,7 +16,7 @@ export const RoundButton: React.FC<RoundButtonProps> = ({
 }: RoundButtonProps) => {
 	return (
 		<button
-			className={`relative flex items-center justify-center rounded-full shadow ${
+			className={`flex items-center justify-center rounded-full shadow ${
 				white ? "bg-white" : "bg-main"
 			} ${className ? className : "z-40"}`}
 			style={{ height: buttonSize + "px", width: buttonSize + "px" }}

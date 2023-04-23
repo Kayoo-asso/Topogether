@@ -1,13 +1,8 @@
 import { GeoCoordinates, GeomCoordinates, GeometryType } from "types";
 
-// NOT USED FOR NOW
-// DEAD CODE
-// DON'T PUT INTO `mapUtils.ts`
-// it works though
-
 // Only deals with forward geocoding
-
 type GeocodingTypes = "country" | "region" | "postcode" | "district" | "place" | "locality" | "neighborhood" | "address" | "poi";
+
 export type GeocodingOptions = {
 	// those have full coverage on Mapbox
 	types?: GeocodingTypes[];
@@ -19,7 +14,7 @@ export type GeocodingOptions = {
 };
 
 type GeocodingResponse = {
-	type: GeometryType;
+	type: "FeatureCollection";
 	query: string[];
 	features: GeocodingFeature[];
 	attribution: string;
@@ -27,7 +22,7 @@ type GeocodingResponse = {
 
 // Not including all the returned fields, only those of interest to us
 // Full documentation: https://docs.mapbox.com/api/search/geocoding/#geocoding-response-object=a
-export type GeocodingFeature = {
+type GeocodingFeature = {
 	// From 0 to 1
 	relevance: number;
 	// Name of the place, without hierarchical information, in the requested language.
@@ -37,7 +32,7 @@ export type GeocodingFeature = {
 	center: GeoCoordinates;
 };
 
-export async function findPlace(
+async function findPlace(
 	query: string,
 	options?: GeocodingOptions
 ): Promise<GeocodingFeature[] | null> {

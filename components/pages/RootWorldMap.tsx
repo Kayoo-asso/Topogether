@@ -15,7 +15,7 @@ import { ToposFiltersDesktop } from "components/map/filters/ToposFilters.desktop
 import { downloads } from "helpers/downloads/DownloadManager";
 import { usePosition } from "helpers/hooks/UserPositionProvider";
 import { TopoPreview } from "components/organisms/TopoPreview";
-import { initialTopoFilters } from "~/components/forms/TopoFilters";
+import { initialTopoFilters } from "~/components/map/TopoFilters";
 
 interface RootWorldMapProps {
 	lightTopos: LightTopo[];

@@ -1,4 +1,5 @@
 import { ClerkProvider } from "@clerk/nextjs";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Initializers } from "helpers/services/Initializers";
 import type { AppType } from "next/app";
 import Head from "next/head";
@@ -7,6 +8,8 @@ import { ShellMobile } from "~/components/layout/ShellMobile";
 import { DeviceProvider } from "~/components/providers/DeviceProvider";
 import { UserPositionProvider } from "~/components/providers/UserPositionProvider";
 import "~/styles/globals.css";
+
+const queryClient = new QueryClient();
 
 const App: AppType<{}> = ({ Component, pageProps }) => {
 	return (
@@ -146,24 +149,26 @@ const App: AppType<{}> = ({ Component, pageProps }) => {
 			<Initializers />
 
 			<ClerkProvider {...pageProps}>
-				<DeviceProvider>
-					<UserPositionProvider>
-						<NavigationLoader>
-							<div
-								id="content"
-								className="absolute flex h-full w-screen flex-1 flex-col overflow-hidden bg-grey-light md:h-screen"
-							>
-								<Component {...pageProps} />
-							</div>
-							<div
-								id="footer"
-								className="absolute bottom-0 z-500 h-shell bg-dark md:hidden"
-							>
-								<ShellMobile />
-							</div>
-						</NavigationLoader>
-					</UserPositionProvider>
-				</DeviceProvider>
+				<QueryClientProvider client={queryClient}>
+					<DeviceProvider>
+						<UserPositionProvider>
+							<NavigationLoader>
+								<div
+									id="content"
+									className="absolute flex h-full w-screen flex-1 flex-col overflow-hidden bg-grey-light md:h-screen"
+								>
+									<Component {...pageProps} />
+								</div>
+								<div
+									id="footer"
+									className="absolute bottom-0 z-500 h-shell bg-dark md:hidden"
+								>
+									<ShellMobile />
+								</div>
+							</NavigationLoader>
+						</UserPositionProvider>
+					</DeviceProvider>
+				</QueryClientProvider>
 			</ClerkProvider>
 		</>
 	);
