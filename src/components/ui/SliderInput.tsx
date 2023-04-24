@@ -1,6 +1,6 @@
 import React from "react";
 import { GetHandleProps, SliderItem } from "react-compound-slider";
-import { Color } from "~/types";
+import { Color } from "~/helpers/colors";
 import { BaseSlider } from "./BaseSlider";
 
 interface HandleProps {

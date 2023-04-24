@@ -78,5 +78,8 @@
     "prettier-plugin-tailwindcss": "^0.2.6",
     "tailwindcss": "^3.3.0",
     "typescript": "^5.0.2"
+  },
+  "optionalDependencies": {
+    "@typescript/analyze-trace": "^0.10.0"
   }
 }

@@ -131,7 +131,6 @@ function MapControlsMobile() {
 
 	return (
 		<>
-			{/* Bottom right of the map */}
 			<RoundButton onClick={toggleSearch}>
 				<SearchIcon className="h-6 w-6 stroke-main" />
 			</RoundButton>

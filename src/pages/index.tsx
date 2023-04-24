@@ -16,7 +16,6 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
 	};
 };
 
-
 const Page: NextPage<Props> = ({ lightTopos }) => {
 	return (
 		<>
