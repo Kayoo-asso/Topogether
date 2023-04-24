@@ -1,4 +1,4 @@
-import { GeoCoordinates, Img } from "types";
+import { GeoCoordinates } from "~/types";
 
 export const fontainebleauLocation: GeoCoordinates = [2.697569, 48.399065];
 

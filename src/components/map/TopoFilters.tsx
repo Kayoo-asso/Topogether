@@ -52,7 +52,6 @@ export function filterTopos(topos: LightTopo[], filters: TopoFilters) {
 		if (minGrade === 3 && maxGrade === 9) {
 			hasRocksAtGrade = true;
 		} else {
-			console.log({topo})
 			for (const grade of topo.allGrades) {
 				const category = gradeCategory(grade);
 				const catNb = Number(category);
@@ -73,7 +72,7 @@ export function filterTopos(topos: LightTopo[], filters: TopoFilters) {
 	return filtered;
 }
 
-function TopoFilters({ topos: lightTopos }: TopoFiltersProps) {
+function Filters({ topos: lightTopos }: TopoFiltersProps) {
 	const filters = useWorldMapStore((s) => s.filters);
 	const domain = useWorldMapStore((s) => s.filtersDomain);
 	const setFilters = useWorldMapStore((s) => s.setFilters);
@@ -112,7 +111,7 @@ function TopoFilters({ topos: lightTopos }: TopoFiltersProps) {
 			<div>
 				<div className="ktext-label text-grey-medium">Difficultés</div>
 				<GradeSlider
-					values={domain.gradeRange}
+					values={filters.gradeRange}
 					onChange={(range) => setFilters({ gradeRange: range })}
 				/>
 			</div>
@@ -127,15 +126,11 @@ function TopoFilters({ topos: lightTopos }: TopoFiltersProps) {
 }
 
 export function TopoFiltersDesktop(props: TopoFiltersProps) {
-	const open = useWorldMapStore((s) => s.filtersOpen);
 	const toggle = useWorldMapStore((s) => s.toggleFilters);
 	const reset = useWorldMapStore((s) => s.resetFilters);
 
 	return (
-		<div
-			className="relative z-40 flex min-w-[250px] max-w-[80%] flex-col rounded-lg bg-white shadow md:max-w-[40%]"
-			
-		>
+		<div className="relative z-40 flex w-[80%] min-w-[250px] flex-col rounded-lg bg-white shadow md:max-w-[40%]">
 			<div className="flex flex-row items-center justify-between">
 				<div
 					className="flex max-w-[150px] flex-row items-center rounded-lg bg-main p-3 pl-5 pt-4 shadow md:cursor-pointer"
@@ -151,7 +146,7 @@ export function TopoFiltersDesktop(props: TopoFiltersProps) {
 			</div>
 
 			<div className="flex min-h-[100px] flex-col gap-6 p-5 pb-8">
-				<TopoFilters {...props} />
+				<Filters {...props} />
 			</div>
 		</div>
 	);
@@ -168,7 +163,7 @@ export function TopoFiltersMobile(props: TopoFiltersProps) {
 			</div>
 
 			<div className="flex min-h-[100px] flex-col gap-6 px-5 pb-8 pt-2">
-				<TopoFilters {...props} />
+				<Filters {...props} />
 			</div>
 		</div>
 	);

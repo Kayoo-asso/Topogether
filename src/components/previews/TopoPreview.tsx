@@ -7,7 +7,7 @@ import { ParkingButton } from "~/components/buttons/ParkingButton";
 import { ParkingModal } from "~/components/forms/ParkingModal";
 import { Image } from "~/components/ui/Image";
 import { ModalBG } from "~/components/ui/Modal";
-import { SlideoverRight } from "~/components/ui/SlideoverRight";
+import { SlideoverRight } from "~/components/layout/SlideoverRight";
 import {
   BaseColor,
   textColors,

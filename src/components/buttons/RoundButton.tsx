@@ -7,13 +7,13 @@ type RoundButtonProps = React.PropsWithChildren<{
 	onClick?: () => void;
 }>;
 
-export const RoundButton: React.FC<RoundButtonProps> = ({
+export function RoundButton({
 	white = true,
 	buttonSize = 60,
 	className = "",
 	// iconSizeClass = 'h-6 w-6',
 	...props
-}: RoundButtonProps) => {
+}: RoundButtonProps) {
 	return (
 		<button
 			className={`flex items-center justify-center rounded-full shadow ${
@@ -29,4 +29,4 @@ export const RoundButton: React.FC<RoundButtonProps> = ({
 			{props.children}
 		</button>
 	);
-};
+}

@@ -1,16 +1,14 @@
-import { TopoTypes, UUID } from "types";
+import { TopoTypes } from "types";
 import { create } from "zustand";
 import { TopoFilters } from "~/components/map/TopoFilters";
 
 interface WorldMapStore {
-	selectedTopo?: UUID;
 	filters: TopoFilters;
 	filtersOpen: boolean;
 	filtersDomain: TopoFilters;
 	searchOpen: boolean;
 	toggleFilters(): void;
 	toggleSearch(): void;
-	selectTopo(id: UUID | undefined): void;
 	setFilters(update: Partial<TopoFilters>): void;
 	resetFilters(): void;
 }
@@ -23,19 +21,15 @@ const defaultFilters: TopoFilters = {
 };
 
 export const useWorldMapStore = create<WorldMapStore>((set) => ({
-	selectedTopo: undefined,
 	filters: { ...defaultFilters },
 	filtersOpen: false,
 	filtersDomain: { ...defaultFilters },
 	searchOpen: false,
 	toggleFilters() {
-		set((s) => ({ filtersOpen: !s.filtersOpen }));
+		set((s) => ({ filtersOpen: !s.filtersOpen, searchOpen: false }));
 	},
 	toggleSearch() {
-		set((s) => ({ searchOpen: !s.searchOpen }));
-	},
-	selectTopo(id) {
-		set({ selectedTopo: id });
+		set((s) => ({ searchOpen: !s.searchOpen, filtersOpen: false }));
 	},
 	setFilters(update) {
 		set((state) => ({

@@ -35,7 +35,7 @@ export function SearchInput(props: SearchInputProps) {
 			label={props.label}
 			displayLabel={false}
 			border={props.mobile}
-			wrapperClassName="w-[95%] mt-0"
+			wrapperClassName="mt-0 h-full"
 			value={props.value}
 			onChange={(e) => props.onChange(e.target.value)}
 		/>

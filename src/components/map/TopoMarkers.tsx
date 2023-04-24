@@ -1,12 +1,12 @@
 import { FeatureLike } from "ol/Feature";
 import { Icon, Style } from "ol/style";
 import React, { useCallback } from "react";
-import { GeoCoordinates, TopoTypes } from "types";
+import { TopoTypes } from "types";
 import { Point, VectorLayer, VectorSource } from "~/components/openlayers";
 import { OnClickFeature } from "~/components/openlayers/extensions/OnClick";
 import { topoColors } from "~/helpers/colors";
 import { useTopoSelectStore } from "~/stores/topoSelectStore";
-import { LightTopo, UUID } from "~/types";
+import { LightTopo, UUID, GeoCoordinates } from "~/types";
 
 type TopoInfo = { id: UUID; type: TopoTypes; location: GeoCoordinates };
 

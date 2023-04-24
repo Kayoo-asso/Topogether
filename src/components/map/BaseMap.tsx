@@ -1,16 +1,19 @@
-import { TileLayer, View, XYZ } from "~/components/openlayers";
-import { Map, Props } from "~/components/openlayers/Map";
-import { GeoCoordinates } from "types";
-import { env } from "~/env.mjs";
-import { useCallback, useState } from "react";
 import Image from "next/image";
-import { fontainebleauLocation } from "~/constants";
-import BgSatellite from "assets/bg_satellite.jpg";
-import BgNonSatellite from "assets/bg_non-satellite.jpg";
-import { useGeographic } from "ol/proj";
 import { MapBrowserEvent } from "ol";
 import { Attribution } from "ol/control";
+import { useGeographic } from "ol/proj";
+import { useCallback, useState } from "react";
+import { RoundButton } from "~/components/buttons/RoundButton";
+import { TileLayer, View, XYZ, useMap } from "~/components/openlayers";
+import { Map, Props } from "~/components/openlayers/Map";
+import { usePosition } from "~/components/providers/UserPositionProvider";
+import { fontainebleauLocation } from "~/constants";
+import { env } from "~/env.mjs";
+import { GeoCoordinates } from "~/types";
 
+import BgNonSatellite from "assets/bg_non-satellite.jpg";
+import BgSatellite from "assets/bg_satellite.jpg";
+import CenterIcon from "assets/icons/center.svg";
 // Use geographic coordinates everywhere
 useGeographic();
 
@@ -18,6 +21,10 @@ type BaseMapProps = {
 	initialCenter?: GeoCoordinates | null;
 	initialZoom?: number;
 	minZoom?: number;
+	TopLeft?: JSX.Element;
+	TopRight?: JSX.Element;
+	BottomLeft?: JSX.Element;
+	BottomRight?: JSX.Element;
 	onBackgroundClick?: () => void;
 };
 
@@ -36,6 +43,7 @@ export function BaseMap({
 	minZoom,
 	onBackgroundClick,
 	children,
+	...props
 }: React.PropsWithChildren<BaseMapProps>) {
 	const [satelliteView, setSatelliteView] = useState(false);
 
@@ -62,10 +70,16 @@ export function BaseMap({
 				[onBackgroundClick]
 			)}
 		>
+			{/* Top left */}
+
+			<div className="absolute left-0 top-0 z-10 m-3 flex w-4/5 flex-col items-start space-y-3">
+				{props.TopLeft && <>{props.TopLeft}</>}
+			</div>
 			{/* Top right */}
-			<div className="absolute right-0 top-0 m-3">
+			<div className="absolute right-0 top-0 z-10 m-3 flex w-4/5 flex-col items-end space-y-3">
 				{/* Satellite button */}
 				<button
+					// `relative` needed for the `fill` behavior of the Image below
 					className="relative z-20 h-[60px] w-[60px] overflow-hidden rounded-full shadow"
 					onClick={() => setSatelliteView((b) => !b)}
 				>
@@ -82,6 +96,16 @@ export function BaseMap({
 						}
 					/>
 				</button>
+				{props.TopRight && <>{props.TopRight}</>}
+			</div>
+			{/* Bottom left */}
+			<div className="absolute bottom-0 left-0 z-10 m-3 flex w-4/5 flex-col items-start space-y-3">
+				{props.BottomLeft && <>{props.BottomLeft}</>}
+			</div>
+			{/* Bottom right */}
+			<div className="absolute bottom-0 right-0 z-10 m-3 flex flex-col items-end space-y-3">
+				{props.BottomRight && <>{props.BottomRight}</>}
+				<CenterButton />
 			</div>
 			<View
 				center={center}
@@ -104,5 +128,24 @@ export function BaseMap({
 			</TileLayer>
 			{children}
 		</Map>
+	);
+}
+
+function CenterButton() {
+	const map = useMap();
+	const { position } = usePosition();
+
+	return (
+		<RoundButton
+			onClick={position ? () => map.getView().setCenter(position) : undefined}
+		>
+			<CenterIcon
+				className={`h-7 w-7 ${
+					!!position
+						? "fill-main stroke-main"
+						: "fill-grey-light stroke-grey-light"
+				}`}
+			/>
+		</RoundButton>
 	);
 }

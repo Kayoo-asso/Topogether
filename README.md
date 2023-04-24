@@ -53,7 +53,8 @@ Currently only available in French, sorry!
   - Remove `react-compound-slider`
 
 ### Changes to check
-- TopoFilters
+- CenterButton only center on user, not topo
+  -> centering on opened topo goes against every usage of that kind of button I have ever seen
 - Styling converted from breakpoint to `md:` variant
   - SelectListMultiple hover styling
   - MapControl bottom center controls z-index

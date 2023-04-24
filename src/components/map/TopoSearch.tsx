@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
+import { Map } from "ol";
 import { useEffect, useMemo, useState } from "react";
 import Trigram from "trigram-search";
 import { RoundButton } from "~/components/buttons/RoundButton";
@@ -15,58 +16,11 @@ import Flag from "assets/icons/flag.svg";
 import MarkerIcon from "assets/icons/marker.svg";
 import SearchIcon from "assets/icons/search.svg";
 
-export function TopoSearchbar(props: { topos: LightTopo[] }) {
+export function TopoSearchDesktop(props: { topos: LightTopo[] }) {
 	const searchOpen = useWorldMapStore((s) => s.searchOpen);
 	const toggleSearch = useWorldMapStore((s) => s.toggleSearch);
 	const [input, setInput] = useState("");
-	const { position } = usePosition();
-
-	// Avoid firing too many requests while user is typing
-	const query = useDebounce(input, 300);
-
-	const mapboxQuery = useQuery({
-		// I don't think it's worth adding the position into the query key
-		queryKey: ["geocode", query],
-		queryFn: (ctx) => {
-			const query = ctx.queryKey[1];
-			// Pass an AbortSignal to cancel requests if the query changes
-			return findPlace(query, ctx.signal, {
-				types: ["country", "region", "place", "address", "poi"],
-				proximity: position || undefined,
-				autocomplete: true,
-				fuzzyMatch: true,
-			});
-		},
-	});
-	const mapboxResults = mapboxQuery.data || [];
-
-	const searcher = useMemo(
-		() =>
-			new Trigram(props.topos, {
-				idField: "id",
-				searchField: "name",
-				count: 5,
-			}),
-		[props.topos]
-	);
-	const topoResults =
-		query.length > 0
-			? searcher.find(query).map((x) => x.value as LightTopo)
-			: [];
-
-	const map = useMap();
-
-	const selectPlace = (place: GeocodingFeature) => {
-		map.getView().animate({
-			center: place.center,
-			duration: 300,
-			zoom: 13,
-		});
-		useWorldMapStore.setState({
-			searchOpen: false,
-			filtersOpen: false,
-		});
-	};
+	const [topoResults, mapboxResults] = useSearchResults(props.topos, input);
 
 	let searchLabel = "Rechercher un lieu";
 	if (props.topos.length > 0) {
@@ -74,11 +28,11 @@ export function TopoSearchbar(props: { topos: LightTopo[] }) {
 	}
 
 	return (
-		// Vertical flow : (button + input) -> (results)
-		<div className="flex w-5/6 flex-col">
+		// Vertical flow : (button - input) -> (results)
+		<div className="flex w-4/5 flex-col">
 			{/* Vertical block 1 */}
 			{/* Horizontal flow: button -> input */}
-			<div className="flex h-[60px] items-center justify-start">
+			<div className="flex h-[60px] justify-start items-center">
 				{/* Horizontal block 1 */}
 				<RoundButton
 					className="z-200"
@@ -104,41 +58,129 @@ export function TopoSearchbar(props: { topos: LightTopo[] }) {
 			{/* Vertical block 2 */}
 			{searchOpen && (
 				<div className="mt-4 rounded-lg bg-white px-10 py-3 shadow">
-					<div className="flex flex-col px-4">
-						{/* Only show the topo results category if topos were passed in (otherwise this is a place-only search) */}
-						{props.topos.length > 0 && (
-							<div>
-								<div className="ktext-section-title py-4">Liste des topos</div>
-								{topoResults.map((topo) => (
-									<Link
-										key={topo.id}
-										className="ktext-base flex flex-row items-center gap-4 px-7 py-3 text-dark hover:bg-grey-light md:cursor-pointer"
-										href={"/topo/" + encodeUUID(topo.id)}
-									>
-										<MarkerIcon className="h-5 w-5 fill-main" />
-										<div>{topo.name}</div>
-									</Link>
-								))}
-							</div>
-						)}
-						<div>
-							<div className="ktext-section-title py-4">Lieux</div>
-							{mapboxResults.map((res) => (
-								<div
-									key={res.place_name}
-									className="ktext-base flex flex-row items-center gap-4 px-7 py-3 text-dark hover:bg-grey-light md:cursor-pointer"
-									onClick={() => selectPlace(res)}
-								>
-									<Flag className="h-5 w-5 stroke-dark" />
-									<div>{res.text}</div>
-								</div>
-							))}
-						</div>
-					</div>
+					<Results
+						topos={topoResults}
+						mapbox={mapboxResults}
+						showTopos={props.topos.length > 0}
+					/>
 				</div>
 			)}
 		</div>
 	);
+}
+
+export function TopoSearchMobile(props: { topos: LightTopo[] }) {
+	const [input, setInput] = useState("");
+	const [topoResults, mapboxResults] = useSearchResults(props.topos, input);
+
+	let searchLabel = "Rechercher un lieu";
+	if (props.topos.length > 0) {
+		searchLabel += " ou un topo";
+	}
+
+	return (
+		<div className="flex h-full flex-col px-6 py-4">
+			<SearchInput value={input} onChange={setInput} label={searchLabel} />
+			<Results
+				topos={topoResults}
+				mapbox={mapboxResults}
+				showTopos={props.topos.length > 0}
+			/>
+		</div>
+	);
+}
+
+function Results(props: {
+	topos: LightTopo[];
+	mapbox: GeocodingFeature[];
+	showTopos: boolean;
+}) {
+	const map = useMap();
+
+	return (
+		<div className="flex flex-col px-4">
+			{/* Only show the topo results category if topos were passed in (otherwise this is a place-only search) */}
+			{props.showTopos && (
+				<div>
+					<div className="ktext-section-title py-4">Liste des topos</div>
+					{props.topos.map((topo) => (
+						<Link
+							key={topo.id}
+							className="ktext-base flex flex-row items-center gap-4 px-7 py-3 text-dark hover:bg-grey-light md:cursor-pointer"
+							href={"/topo/" + encodeUUID(topo.id)}
+						>
+							<MarkerIcon className="h-5 w-5 fill-main" />
+							<div>{topo.name}</div>
+						</Link>
+					))}
+				</div>
+			)}
+			<div>
+				<div className="ktext-section-title py-4">Lieux</div>
+				{props.mapbox.map((res) => (
+					<div
+						key={res.place_name}
+						className="ktext-base flex flex-row items-center gap-4 px-7 py-3 text-dark hover:bg-grey-light md:cursor-pointer"
+						onClick={() => navigateTo(res, map)}
+					>
+						<Flag className="h-5 w-5 stroke-dark" />
+						<div>{res.text}</div>
+					</div>
+				))}
+			</div>
+		</div>
+	);
+}
+
+function useSearchResults(topos: LightTopo[], input: string) {
+	// Avoid firing too many requests while user is typing
+	const query = useDebounce(input, 300);
+	// Used to preferably search for places close to the user
+	const { position } = usePosition();
+
+	const mapboxQuery = useQuery({
+		// I don't think it's worth adding the position into the query key
+		queryKey: ["geocode", query],
+		queryFn: (ctx) => {
+			const query = ctx.queryKey[1];
+			// Pass an AbortSignal to cancel requests if the query changes
+			return findPlace(query, ctx.signal, {
+				types: ["country", "region", "place", "address", "poi"],
+				proximity: position || undefined,
+				autocomplete: true,
+				fuzzyMatch: true,
+			});
+		},
+	});
+	const mapboxResults = mapboxQuery.data || [];
+
+	const searcher = useMemo(
+		() =>
+			new Trigram(topos, {
+				idField: "id",
+				searchField: "name",
+				count: 5,
+			}),
+		[topos]
+	);
+	const topoResults =
+		query.length > 0
+			? searcher.find(query).map((x) => x.value as LightTopo)
+			: [];
+
+	return [topoResults, mapboxResults] as const;
+}
+
+function navigateTo(place: GeocodingFeature, map: Map) {
+	map.getView().animate({
+		center: place.center,
+		duration: 300,
+		zoom: 13,
+	});
+	useWorldMapStore.setState({
+		searchOpen: false,
+		filtersOpen: false,
+	});
 }
 
 // Only deals with forward geocoding

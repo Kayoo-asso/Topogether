@@ -5,6 +5,7 @@
     "build": "next build",
     "dev": "doppler run -- next dev",
     "start": "next start",
+    "lint": "next lint",
     "format": "prettier --write '**/*.{js,ts,jsx,tsx,json}'",
     "gen-migration": "doppler run -- drizzle-kit generate:pg --out src/db/migrations --schema src/db/schema.ts",
     "migrate": "drizzle-kit up:pg --out src/db/migrations && doppler run -- node src/db/migrate.mjs",

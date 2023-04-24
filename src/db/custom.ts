@@ -1,9 +1,8 @@
 import { AnyPgColumn, customType } from "drizzle-orm/pg-core";
-import { UUID } from "types";
+import { UUID } from "~/types";
 import WKB from "ol/format/WKB";
 import { Point, Polygon } from "ol/geom";
 import { sql } from "drizzle-orm";
-
 
 export const point = customType<{ data: [number, number]; driverData: string }>(
 	{
@@ -100,5 +99,7 @@ export function count(column?: AnyPgColumn) {
 }
 
 export function countDistinct(column?: AnyPgColumn) {
-	return column ? sql<number>`COUNT(DISTINCT ${column})` : sql<number>`count(*)`;
+	return column
+		? sql<number>`COUNT(DISTINCT ${column})`
+		: sql<number>`count(*)`;
 }

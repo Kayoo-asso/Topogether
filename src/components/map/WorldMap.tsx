@@ -9,9 +9,12 @@ import { TopoPreview } from "../previews/TopoPreview";
 import { BaseMap } from "./BaseMap";
 import { TopoFiltersDesktop, filterTopos } from "./TopoFilters";
 import { TopoInteractions, TopoMarkers } from "./TopoMarkers";
-import { TopoSearchbar } from "./TopoSearchbar";
+import { TopoSearchDesktop, TopoSearchMobile } from "./TopoSearch";
 import { UserMarker } from "./UserMarker";
 import { useUser } from "@clerk/nextjs";
+
+import SearchIcon from "assets/icons/search.svg";
+import { SlideoverMobile } from "../layout/SlideoverMobile";
 
 interface WorldMapProps {
 	topos: LightTopo[];
@@ -34,20 +37,19 @@ export function WorldMapDesktop({ topos }: WorldMapProps) {
 					</div>
 				)}
 			</HeaderDesktop>
-			<div className="flex h-full flex-row">
+			<div className="flex h-contentPlusShell flex-row">
 				{user && <LeftbarDesktop currentMenuItem="MAP" />}
 				<BaseMap
 					initialCenter={position}
 					initialZoom={5}
+					TopLeft={<MapControlsDesktop topos={topos} />}
 					onBackgroundClick={() => {
 						useWorldMapStore.setState({
-							selectedTopo: undefined,
 							filtersOpen: false,
 							searchOpen: false,
 						});
 					}}
 				>
-					<WorldMapControls topos={topos} />
 					<UserMarker />
 					<TopoMarkers topos={filteredTopos} />
 					<TopoInteractions />
@@ -61,6 +63,8 @@ export function WorldMapDesktop({ topos }: WorldMapProps) {
 export function WorldMapMobile({ topos }: WorldMapProps) {
 	const filters = useWorldMapStore((s) => s.filters);
 	const filteredTopos = filterTopos(topos, filters);
+	const filtersOpen = useWorldMapStore((s) => s.filtersOpen);
+	const searchOpen = useWorldMapStore((s) => s.searchOpen);
 	const { position } = usePosition();
 	// TODO:
 	const ongoingDl = 0;
@@ -77,9 +81,9 @@ export function WorldMapMobile({ topos }: WorldMapProps) {
 				<BaseMap
 					initialCenter={position}
 					initialZoom={5}
+					BottomRight={<MapControlsMobile />}
 					onBackgroundClick={() => {
 						useWorldMapStore.setState({
-							selectedTopo: undefined,
 							filtersOpen: false,
 							searchOpen: false,
 						});
@@ -88,32 +92,47 @@ export function WorldMapMobile({ topos }: WorldMapProps) {
 					<UserMarker />
 					<TopoMarkers topos={filteredTopos} />
 					<TopoInteractions />
+					<SlideoverMobile open={filtersOpen || searchOpen}>
+						{searchOpen && <TopoSearchMobile topos={topos} />}
+					</SlideoverMobile>
 				</BaseMap>
 			</div>
 		</>
 	);
 }
 
-function WorldMapControls({ topos }: { topos: LightTopo[] }) {
+function MapControlsDesktop({ topos }: WorldMapProps) {
 	const filtersOpen = useWorldMapStore((s) => s.filtersOpen);
 	const toggleFilters = useWorldMapStore((s) => s.toggleFilters);
 
 	return (
 		<>
-			{/* Top left */}
-			<div className="absolute left-0 top-0 m-3 w-full space-y-5">
-				{/* Search */}
-				<TopoSearchbar topos={topos} />
-				{/* Filters */}
-				<div className="hidden md:block">
-					{!filtersOpen && (
-						<RoundButton className="z-20" onClick={toggleFilters}>
-							<FilterIcon className="h-6 w-6 fill-main stroke-main" />
-						</RoundButton>
-					)}
-					{filtersOpen && <TopoFiltersDesktop topos={topos} />}
-				</div>
-			</div>
+			{/* Search */}
+			<TopoSearchDesktop topos={topos} />
+			{/* Filters */}
+			{!filtersOpen && (
+				<RoundButton className="z-20" onClick={toggleFilters}>
+					<FilterIcon className="h-6 w-6 fill-main stroke-main" />
+				</RoundButton>
+			)}
+			{filtersOpen && <TopoFiltersDesktop topos={topos} />}
+		</>
+	);
+}
+
+function MapControlsMobile() {
+	const toggleFilters = useWorldMapStore((s) => s.toggleFilters);
+	const toggleSearch = useWorldMapStore((s) => s.toggleSearch);
+
+	return (
+		<>
+			{/* Bottom right of the map */}
+			<RoundButton onClick={toggleSearch}>
+				<SearchIcon className="h-6 w-6 stroke-main" />
+			</RoundButton>
+			<RoundButton onClick={toggleFilters}>
+				<FilterIcon className="h-6 w-6 fill-main stroke-main" />
+			</RoundButton>
 		</>
 	);
 }
