@@ -92,7 +92,7 @@ export const HeaderDesktop = (props: HeaderDesktopProps) => {
 
 			{!user && (
 				<Link
-					href="/user/login"
+					href="/login"
 					className="ktext-base mr-[3%] text-white md:cursor-pointer"
 				>
 					Se connecter
@@ -112,7 +112,7 @@ export const HeaderDesktop = (props: HeaderDesktopProps) => {
 							options={[
 								{
 									value: "Mon profil",
-									action: () => router.push("/user/profile"),
+									action: () => router.push("/profile"),
 								},
 								{
 									value: "Se déconnecter",

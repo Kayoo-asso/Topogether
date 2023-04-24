@@ -19,7 +19,9 @@ Currently only available in French, sorry!
 
 ### TODO
 - Like button
+- Smooth transition from not signed in to signed in (happens after load on static pages)
 - Download button
+- See if we should redirect to source page and not dashboard after clicking "Se connecter" and logging in
 - Remove `usePosition` at the root of WorldMap
 - Styling of download status in Header
 - Only have one TopoFilters component + responsive CSS

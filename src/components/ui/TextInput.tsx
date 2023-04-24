@@ -45,7 +45,7 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
 				placeholder={props.label}
 				type={type}
 				id={props.id}
-				value={props.value || ""}
+				value={props.value}
 				className={classNames(
 					"ktext-base peer h-14 w-full rounded-sm p-4 focus:outline-none",
 					boldValue && "font-semibold",

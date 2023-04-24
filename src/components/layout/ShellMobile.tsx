@@ -22,7 +22,7 @@ export function ShellMobile() {
 		<>
 			<div className="flex h-full w-screen bg-dark">
 				<Link
-					href={user ? "/user/profile" : "/user/login"}
+					href={user ? "/profile" : "/login"}
 					className={classNames(
 						"flex h-full flex-1 items-center justify-center",
 						activeTab === 0 && "border-t-6 border-t-main"

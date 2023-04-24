@@ -57,7 +57,7 @@ export function LeftbarDesktop({
 						Carte
 					</span>
 				</Link>
-				<Link className="flex flex-row" href="/user/profile">
+				<Link className="flex flex-row" href="/profile">
 					<UserIcon
 						className={`mr-4 h-6 w-6 stroke-2 ${
 							currentMenuItem === "USER" ? "stroke-main" : "stroke-dark"
