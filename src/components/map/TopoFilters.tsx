@@ -130,15 +130,15 @@ export function TopoFiltersDesktop(props: TopoFiltersProps) {
 	const reset = useWorldMapStore((s) => s.resetFilters);
 
 	return (
-		<div className="relative z-40 flex w-[80%] min-w-[250px] flex-col rounded-lg bg-white shadow md:max-w-[40%]">
+		<div className="relative z-40 flex w-[80vw] min-w-[250px] max-w-[40%] flex-col rounded-lg bg-white shadow">
 			<div className="flex flex-row items-center justify-between">
-				<div
+				<button
 					className="flex max-w-[150px] flex-row items-center rounded-lg bg-main p-3 pl-5 pt-4 shadow md:cursor-pointer"
 					onClick={toggle}
 				>
 					<FilterIcon className="h-6 w-6 fill-white stroke-white" />
 					<div className="ktext-subtitle ml-3 text-white">Filtres</div>
-				</div>
+				</button>
 
 				<button className="mr-8 text-second" onClick={reset}>
 					Reset
@@ -155,16 +155,14 @@ export function TopoFiltersDesktop(props: TopoFiltersProps) {
 export function TopoFiltersMobile(props: TopoFiltersProps) {
 	const reset = useWorldMapStore((s) => s.resetFilters);
 	return (
-		<div className="flex h-full flex-col gap-2 md:hidden">
-			<div className="flex flex-row justify-end">
-				<button className="mr-8 text-second" onClick={reset}>
-					Reset
-				</button>
-			</div>
+		<>
+			<button className="mr-8 text-second" onClick={reset}>
+				Reset
+			</button>
 
 			<div className="flex min-h-[100px] flex-col gap-6 px-5 pb-8 pt-2">
 				<Filters {...props} />
 			</div>
-		</div>
+		</>
 	);
 }

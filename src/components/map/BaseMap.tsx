@@ -72,11 +72,11 @@ export function BaseMap({
 		>
 			{/* Top left */}
 
-			<div className="absolute left-0 top-0 z-10 m-3 flex w-4/5 flex-col items-start space-y-3">
+			<div className="absolute left-0 top-0 z-10 m-3 flex flex-col space-y-3">
 				{props.TopLeft && <>{props.TopLeft}</>}
 			</div>
 			{/* Top right */}
-			<div className="absolute right-0 top-0 z-10 m-3 flex w-4/5 flex-col items-end space-y-3">
+			<div className="absolute right-0 top-0 z-10 m-3 flex flex-col space-y-3">
 				{/* Satellite button */}
 				<button
 					// `relative` needed for the `fill` behavior of the Image below
@@ -99,11 +99,11 @@ export function BaseMap({
 				{props.TopRight && <>{props.TopRight}</>}
 			</div>
 			{/* Bottom left */}
-			<div className="absolute bottom-0 left-0 z-10 m-3 flex w-4/5 flex-col items-start space-y-3">
+			<div className="absolute bottom-0 left-0 z-10 m-3 flex flex-col space-y-3">
 				{props.BottomLeft && <>{props.BottomLeft}</>}
 			</div>
 			{/* Bottom right */}
-			<div className="absolute bottom-0 right-0 z-10 m-3 flex flex-col items-end space-y-3">
+			<div className="absolute bottom-0 right-0 z-10 m-3 flex flex-col space-y-3">
 				{props.BottomRight && <>{props.BottomRight}</>}
 				<CenterButton />
 			</div>

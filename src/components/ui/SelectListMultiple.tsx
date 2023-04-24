@@ -68,7 +68,7 @@ export const SelectListMultiple = <T extends Bitflag>({
 						else return 1;
 					})
 					.map(([flag, name]) => (
-						<div
+						<button
 							key={name}
 							className={classNames(
 								"ktext-label h-full rounded-sm border border-opacity-25 md:cursor-pointer",
@@ -77,11 +77,10 @@ export const SelectListMultiple = <T extends Bitflag>({
 								getClassName(props.value, flag)
 							)}
 							onClick={() => props.onChange(flag)}
-							role="menuitem"
 							tabIndex={0}
 						>
 							{name}
-						</div>
+						</button>
 					))}
 			</div>
 

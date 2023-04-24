@@ -29,10 +29,10 @@ export function TopoSearchDesktop(props: { topos: LightTopo[] }) {
 
 	return (
 		// Vertical flow : (button - input) -> (results)
-		<div className="flex w-4/5 flex-col">
+		<div className="flex w-[80vw] flex-col">
 			{/* Vertical block 1 */}
 			{/* Horizontal flow: button -> input */}
-			<div className="flex h-[60px] justify-start items-center">
+			<div className="flex h-[60px] items-center justify-start">
 				{/* Horizontal block 1 */}
 				<RoundButton
 					className="z-200"
@@ -79,14 +79,14 @@ export function TopoSearchMobile(props: { topos: LightTopo[] }) {
 	}
 
 	return (
-		<div className="flex h-full flex-col px-6 py-4">
+		<>
 			<SearchInput value={input} onChange={setInput} label={searchLabel} />
 			<Results
 				topos={topoResults}
 				mapbox={mapboxResults}
 				showTopos={props.topos.length > 0}
 			/>
-		</div>
+		</>
 	);
 }
 

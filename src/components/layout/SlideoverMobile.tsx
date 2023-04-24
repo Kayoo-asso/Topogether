@@ -113,7 +113,7 @@ export function SlideoverMobile({
 				<div className="mt-[8px] h-[6px] w-3/12 rounded-full bg-grey-light shadow" />
 			</div>
 			<div
-				className="flex h-full flex-col"
+				className="flex h-full flex-col px-6 pt-8 pb-4"
 				onTouchStart={(e) => !open && handleTouchStart(e)}
 				onTouchMove={(e) => !open && handleTouchMove(e)}
 				onTouchEnd={(e) => !open && handleTouchEnd(e)}

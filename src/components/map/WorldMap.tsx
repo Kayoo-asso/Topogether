@@ -7,7 +7,11 @@ import { HeaderDesktop } from "../layout/HeaderDesktop";
 import { LeftbarDesktop } from "../layout/LeftbarDesktop";
 import { TopoPreview } from "../previews/TopoPreview";
 import { BaseMap } from "./BaseMap";
-import { TopoFiltersDesktop, filterTopos } from "./TopoFilters";
+import {
+	TopoFiltersDesktop,
+	TopoFiltersMobile,
+	filterTopos,
+} from "./TopoFilters";
 import { TopoInteractions, TopoMarkers } from "./TopoMarkers";
 import { TopoSearchDesktop, TopoSearchMobile } from "./TopoSearch";
 import { UserMarker } from "./UserMarker";
@@ -94,6 +98,7 @@ export function WorldMapMobile({ topos }: WorldMapProps) {
 					<TopoInteractions />
 					<SlideoverMobile open={filtersOpen || searchOpen}>
 						{searchOpen && <TopoSearchMobile topos={topos} />}
+						{filtersOpen && <TopoFiltersMobile topos={topos} />}
 					</SlideoverMobile>
 				</BaseMap>
 			</div>
