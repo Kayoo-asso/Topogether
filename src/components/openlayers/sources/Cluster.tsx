@@ -13,9 +13,11 @@ const useBehavior = createLifecycle(
 	["geometryFunction", "createCluster", "wrapX"]
 );
 
-export type ClusterProps = Omit<InferOptions<typeof useBehavior>, "source"> & {
-	source: string;
-};
+export type ClusterProps = React.PropsWithChildren<
+	Omit<InferOptions<typeof useBehavior>, "source"> & {
+		source: string;
+	}
+>;
 
 export const Cluster = forwardRef<ClusterSource, ClusterProps>(
 	({ children, source, ...props }, ref) => {

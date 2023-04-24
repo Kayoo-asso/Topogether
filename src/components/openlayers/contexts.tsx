@@ -1,4 +1,5 @@
-import { Collection, Feature } from "ol";
+import Collection from "ol/Collection";
+import type Feature from "ol/Feature";
 import type Map from "ol/Map";
 import type Layer from "ol/layer/Layer";
 import { createContext, useContext, useEffect, useState } from "react";

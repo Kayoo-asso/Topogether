@@ -1,7 +1,7 @@
 import OLSelect, { SelectEvent } from "ol/interaction/Select";
 import Layer from "ol/layer/Layer";
-import { forwardRef, useContext, useEffect, useMemo } from "react";
-import { LayerContext, useLayer, useMap } from "../contexts";
+import { forwardRef, useMemo } from "react";
+import { useMap } from "../contexts";
 import { createLifecycle, InferOptions } from "../createLifecycle";
 import { useGetLayers } from "../utils";
 import { useInteractionLifecycle } from "./useInteractionLifecycle";

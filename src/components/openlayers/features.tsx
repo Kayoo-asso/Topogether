@@ -1,4 +1,4 @@
-import { Feature } from "ol";
+import Feature from "ol/Feature";
 import type { Coordinate } from "ol/coordinate";
 import type BaseEvent from "ol/events/Event";
 import type { GeometryLayout } from "ol/geom/Geometry";

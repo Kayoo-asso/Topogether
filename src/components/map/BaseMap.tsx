@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { MapBrowserEvent } from "ol";
+import type MapBrowserEvent from "ol/MapBrowserEvent";
 import { Attribution } from "ol/control";
 import { useGeographic } from "ol/proj";
 import { useCallback, useState } from "react";
@@ -14,6 +14,7 @@ import { GeoCoordinates } from "~/types";
 import BgNonSatellite from "assets/bg_non-satellite.jpg";
 import BgSatellite from "assets/bg_satellite.jpg";
 import CenterIcon from "assets/icons/center.svg";
+
 // Use geographic coordinates everywhere
 useGeographic();
 

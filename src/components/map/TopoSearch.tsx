@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
-import { Map } from "ol";
+import type Map from "ol/Map";
 import { useEffect, useMemo, useState } from "react";
 import Trigram from "trigram-search";
 import { RoundButton } from "~/components/buttons/RoundButton";

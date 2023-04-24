@@ -40,6 +40,7 @@ export function DeviceManager({ children }: React.PropsWithChildren<{}>) {
 		updateOnBreakpointChange: true,
 	});
 
+
 	// TODO: how does this handle undefined User-Agents?
 	const deviceInfo = useMemo(() => isMobile(navigator.userAgent), []);
 

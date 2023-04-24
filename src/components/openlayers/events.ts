@@ -1,16 +1,15 @@
 import type BaseEvent from "ol/events/Event";
-import { DragBoxEvent } from "ol/interaction/DragBox";
-import { DrawEvent } from "ol/interaction/Draw";
-import { ModifyEvent } from "ol/interaction/Modify";
+import type { DragBoxEvent } from "ol/interaction/DragBox";
+import type { DrawEvent } from "ol/interaction/Draw";
+import type { ModifyEvent } from "ol/interaction/Modify";
 import type { SelectEvent } from "ol/interaction/Select";
 import type MapBrowserEvent from "ol/MapBrowserEvent";
 import type MapEvent from "ol/MapEvent";
 import type { ObjectEvent } from "ol/Object";
 import type RenderEvent from "ol/render/Event";
-import { TileSourceEvent } from "ol/source/Tile";
-import { VectorSourceEvent } from "ol/source/Vector";
-import { DragEvent } from "./extensions/DragInteraction";
-import { CollectionEvent } from "ol/Collection";
+import type { TileSourceEvent } from "ol/source/Tile";
+import type { VectorSourceEvent } from "ol/source/Vector";
+import type { DragEvent } from "./extensions/DragInteraction";
 
 export const baseEvents = {
 	change: "onChange",

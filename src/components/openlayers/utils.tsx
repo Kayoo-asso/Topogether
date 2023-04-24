@@ -1,7 +1,7 @@
-import Map from "ol/Map";
-import Layer from "ol/layer/Layer";
+import type Map from "ol/Map";
+import type Layer from "ol/layer/Layer";
 import { useEffect, useMemo, useState } from "react";
-import Source from "ol/source/Source";
+import type Source from "ol/source/Source";
 
 type TitleCase<S extends string> = S extends `${infer Char}${infer Rest}`
 	? `${Uppercase<Char>}${Rest}`

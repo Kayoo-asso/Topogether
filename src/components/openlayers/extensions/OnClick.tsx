@@ -1,10 +1,10 @@
-import type { Feature, MapBrowserEvent } from "ol";
 import { useMap } from "../contexts";
 import { useEffect } from "react";
+import type MapBrowserEvent from "ol/MapBrowserEvent";
 import BaseEvent from "ol/events/Event";
 import VectorLayer from "ol/layer/Vector";
 import { useGetLayers } from "../utils";
-import { FeatureLike } from "ol/Feature";
+import Feature, { FeatureLike } from "ol/Feature";
 
 export type OnClickProps =
 	| {

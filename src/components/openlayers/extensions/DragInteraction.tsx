@@ -1,16 +1,16 @@
 // Custom interaction here
 // Based on: https://openlayers.org/en/latest/examples/custom-interactions.html
 
-import { Feature } from "ol";
-import type { MapBrowserEvent } from "ol";
+import type MapBrowserEvent from "ol/MapBrowserEvent";
+import Feature from "ol/Feature";
 import type { Coordinate } from "ol/coordinate";
 import BaseEvent from "ol/events/Event";
 import type { Geometry } from "ol/geom";
 import PointerInteraction from "ol/interaction/Pointer";
-import { Vector } from "ol/source";
-import VectorSource from "ol/source/Vector";
-import Layer from "ol/layer/Layer";
+import type Layer from "ol/layer/Layer";
 import VectorLayer from "ol/layer/Vector";
+import type Vector from "ol/source/Vector";
+import VectorSource from "ol/source/Vector";
 
 // Departure from standard OpenLayers API
 // TODO: change that & use collections for fine-grained feature selection
@@ -87,28 +87,34 @@ export class DragInteraction extends PointerInteraction {
 		this.origLayer_ = null;
 	}
 
-	findFeature(evt: MapBrowserEvent<UIEvent>): [Feature, VectorLayer<VectorSource>] | undefined {
+	findFeature(
+		evt: MapBrowserEvent<UIEvent>
+	): [Feature, VectorLayer<VectorSource>] | undefined {
 		const map = evt.map;
 		if (this.sources) {
 			let feature: Feature | undefined;
 			let layer: VectorLayer<VectorSource> | undefined;
-			map.forEachFeatureAtPixel(evt.pixel, function (f, l) {
-				if(f instanceof Feature) {
-					feature = f;
-					// TODO: remove after debugging
-					if(!(l instanceof VectorLayer)) {
-						throw new Error("Unexpected!")
+			map.forEachFeatureAtPixel(
+				evt.pixel,
+				function (f, l) {
+					if (f instanceof Feature) {
+						feature = f;
+						// TODO: remove after debugging
+						if (!(l instanceof VectorLayer)) {
+							throw new Error("Unexpected!");
+						}
+						layer = l;
+						// Signal to stop
+						return true;
 					}
-					layer = l;
-					// Signal to stop
-					return true;
+				},
+				{
+					layerFilter: this.layerFilter_,
+					hitTolerance: this.hitTolerance_,
 				}
-			}, {
-				layerFilter: this.layerFilter_,
-				hitTolerance: this.hitTolerance_
-			})
-			if(feature && layer) {
-				return [feature, layer]
+			);
+			if (feature && layer) {
+				return [feature, layer];
 			}
 		}
 	}
@@ -148,22 +154,22 @@ function handleDragEvent(this: DragInteraction, evt: MapBrowserEvent<UIEvent>) {
 	const origLayer = this.origLayer_!;
 	const origSource = origLayer.getSource()!;
 	const feature = this.feature_!;
-	if(!this.tempLayer_) {
+	if (!this.tempLayer_) {
 		// Setup a temporary layer for the dragging motion
 		this.tempLayer_ = new VectorLayer({
 			source: new VectorSource({
 				useSpatialIndex: false,
 				wrapX: origSource.getWrapX(),
-				features: [feature]
+				features: [feature],
 			}),
 			style: origLayer.getStyle(),
 			updateWhileAnimating: true,
-			updateWhileInteracting: true
+			updateWhileInteracting: true,
 		});
 		// Show the new layer
 		evt.map.addLayer(this.tempLayer_);
 		// Remove the feature from its original source
-		origSource.removeFeature(feature)
+		origSource.removeFeature(feature);
 	}
 	const prevCoord = this.coordinate_!;
 	const deltaX = evt.coordinate[0] - prevCoord[0];
@@ -203,7 +209,7 @@ function handleUpEvent(this: DragInteraction, evt: MapBrowserEvent<UIEvent>) {
 		this.dispatchEvent(new DragEvent("dragend", feature, evt));
 		// The temporary layer may not have been created if there was no movement
 		// In that case, the feature is still in its original source, so we shouldn't move it
-		if(this.tempLayer_) {
+		if (this.tempLayer_) {
 			evt.map.removeLayer(this.tempLayer_);
 			const origLayer = this.origLayer_!;
 			origLayer.getSource()?.addFeature(feature);

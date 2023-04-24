@@ -1,5 +1,5 @@
 import Feature from "ol/Feature";
-import Point from "ol/geom/Point.js";
+import Point from "ol/geom/Point";
 import VectorSource from "ol/source/Vector";
 import { add as addCoordinate, scale as scaleCoordinate } from "ol/coordinate";
 import { assert } from "ol/asserts";
@@ -10,12 +10,12 @@ import {
 	createOrUpdateFromCoordinate,
 	getCenter,
 } from "ol/extent";
-import { AttributionLike } from "ol/source/Source";
-import { Projection } from "ol/proj";
+import type { AttributionLike } from "ol/source/Source";
+import type { Projection } from "ol/proj";
 import VectorEventType from "ol/source/VectorEventType";
-import { Style } from "ol/style";
-import { Geometry } from "ol/geom";
-import { StyleLike } from "ol/style/Style";
+import Geometry from "ol/geom/Geometry";
+import Style from "ol/style/Style";
+import { type StyleLike } from "ol/style/Style";
 
 // TODO:
 // - add more specific event handlers:

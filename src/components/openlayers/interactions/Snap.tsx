@@ -18,19 +18,17 @@ type P = Omit<InferOptions<typeof useBehavior>, "features" | "source"> & {
 	source: string;
 };
 
-export const Snap = forwardRef<OLSnap, P>(
-	({ children, source, ...props }, ref) => {
-		const map = useMap();
-		const [s] = useGetSources(map, [source]);
-		if (s && !(s instanceof VectorSource)) {
-			throw new Error(
-				`The target source of a Draw interaction should be a VectorSource`
-			);
-		}
-		const modify = useBehavior({ ...props, source: s }, ref);
-
-		useInteractionLifecycle(modify, map);
-
-		return null;
+export const Snap = forwardRef<OLSnap, P>(({ source, ...props }, ref) => {
+	const map = useMap();
+	const [s] = useGetSources(map, [source]);
+	if (s && !(s instanceof VectorSource)) {
+		throw new Error(
+			`The target source of a Draw interaction should be a VectorSource`
+		);
 	}
-);
+	const modify = useBehavior({ ...props, source: s }, ref);
+
+	useInteractionLifecycle(modify, map);
+
+	return null;
+});

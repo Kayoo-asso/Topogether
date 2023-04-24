@@ -1,6 +1,6 @@
 import type Interaction from "ol/interaction/Interaction";
 import { useEffect } from "react";
-import { Map } from "ol";
+import type Map from "ol/Map";
 
 export function useInteractionLifecycle(
 	interaction: Interaction | undefined,

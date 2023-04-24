@@ -1,11 +1,11 @@
 import React from "react";
 
-type RoundButtonProps = React.PropsWithChildren<{
+interface RoundButtonProps {
 	white?: boolean;
 	buttonSize?: number;
 	className?: string;
 	onClick?: () => void;
-}>;
+};
 
 export function RoundButton({
 	white = true,
@@ -13,7 +13,7 @@ export function RoundButton({
 	className = "",
 	// iconSizeClass = 'h-6 w-6',
 	...props
-}: RoundButtonProps) {
+}: React.PropsWithChildren<RoundButtonProps>) {
 	return (
 		<button
 			className={`flex items-center justify-center rounded-full shadow ${
