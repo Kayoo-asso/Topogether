@@ -1,6 +1,6 @@
 import { getDevice, useDevice } from "~/components/providers/DeviceProvider";
 import { usePosition } from "~/components/providers/UserPositionProvider";
-import { GeoCoordinates } from "types";
+import { GeoCoordinates } from "~/types";
 import { Portal } from "~/components/ui/Modal";
 import { Flash } from "~/components/ui/Flash";
 import { useState } from "react";

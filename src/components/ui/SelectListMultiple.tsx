@@ -1,7 +1,7 @@
 import { hasFlag } from "~/helpers/bitflags";
 import { useBreakpoint } from "~/components/providers/DeviceProvider";
 import React from "react";
-import { Bitflag } from "types";
+import { Bitflag } from "~/types";
 import { classNames } from "~/utils";
 
 interface SelectListMultipleProps<T extends Bitflag> {

@@ -1,32 +1,32 @@
 import {
-	text,
-	integer,
-	smallint,
-	pgEnum,
-	pgTable,
-	timestamp,
-	foreignKey,
-	index,
+	PgEnum,
 	boolean,
 	date,
 	doublePrecision,
+	foreignKey,
+	index,
+	integer,
+	pgEnum,
+	pgTable,
 	primaryKey,
-	uniqueIndex,
 	serial,
-	PgEnum,
+	smallint,
+	text,
+	timestamp,
+	uniqueIndex,
 } from "drizzle-orm/pg-core";
 import {
-	RockTypes,
-	TopoTypes,
-	UUID,
 	Img,
 	Orientation,
+	RockTypes,
 	TopoAccessStep,
-	grades,
-	TrackSpec,
+	TopoTypes,
 	TrackDanger,
-} from "types";
-import { point, polygon, bitflag, jsonb, uuid, xy, xyArray } from "./custom";
+	TrackSpec,
+	UUID,
+	grades,
+} from "~/types";
+import { bitflag, jsonb, point, polygon, uuid, xy, xyArray } from "./custom";
 
 // IMPORTANT: any object that should be created in the database
 // should be *exported* from this file.
@@ -48,6 +48,7 @@ export const difficulty = pgEnum("difficulty", [
 ]);
 export const reception = pgEnum("reception", ["good", "ok", "dangerous"]);
 export const grade = pgEnum("grades", grades);
+
 
 
 const timestamptz = (name: string) => timestamp(name, { withTimezone: true });

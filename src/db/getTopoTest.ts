@@ -13,7 +13,7 @@ import {
 	contributors as contributorsTable,
 } from "~/db";
 import { InferModel, eq } from "drizzle-orm";
-import { UUID } from "types";
+import { UUID } from "~/types";
 
 const id = "cc1c96b4-e73d-4632-8f04-7949e8e5f902" as UUID;
 

@@ -9,7 +9,7 @@ import {
 	TopoStatus,
 	TrackDanger,
 	UUID,
-} from "types";
+} from "~/types";
 import {
 	contributors,
 	lines,

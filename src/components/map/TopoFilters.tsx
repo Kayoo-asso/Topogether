@@ -1,14 +1,13 @@
 import FilterIcon from "assets/icons/filter.svg";
 import React, { useEffect } from "react";
-import { Amenities, LightGrade, TopoTypes } from "types";
-import { TopoTypesName } from "types/BitflagNames";
 import { GradeSlider } from "~/components/forms/GradeSlider";
 import { Checkbox } from "~/components/ui/Checkbox";
 import { SelectListMultiple } from "~/components/ui/SelectListMultiple";
 import { SliderInput } from "~/components/ui/SliderInput";
+import { TopoTypesName } from "~/constants";
 import { hasFlag, toggleFlag } from "~/helpers/bitflags";
 import { useWorldMapStore } from "~/stores/worldmapStore";
-import { LightTopo } from "~/types";
+import { LightTopo, TopoTypes } from "~/types";
 import { classNames, gradeCategory } from "~/utils";
 
 export interface TopoFilters {

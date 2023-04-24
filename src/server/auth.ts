@@ -1,5 +1,5 @@
 import { User } from "@clerk/nextjs/api";
-import { Img } from "types";
+import { Img } from "~/types";
 
 export interface ClerkMetadata {
 	role: "user" | "admin";

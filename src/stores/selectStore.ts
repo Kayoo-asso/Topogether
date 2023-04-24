@@ -1,4 +1,4 @@
-import { Quark } from "helpers/quarky";
+// import { Quark } from "helpers/quarky";
 import {
 	Boulder,
 	Img,
@@ -10,6 +10,8 @@ import {
 } from "types";
 import { create } from "zustand";
 import { Breakpoint, getBreakpoint } from "~/components/providers/DeviceProvider";
+
+type Quark<T> = () => T
 
 export type SelectedInfo =
 	| "MENU"

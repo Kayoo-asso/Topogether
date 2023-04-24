@@ -1,4 +1,4 @@
-import { TopoTypes } from "types";
+import { TopoTypes } from "~/types";
 import { create } from "zustand";
 import { TopoFilters } from "~/components/map/TopoFilters";
 

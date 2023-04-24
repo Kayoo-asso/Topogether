@@ -1,6 +1,6 @@
 import Link from "next/link";
 import NextImage from "next/image";
-import { Header } from "components/layouts/Header";
+import { Header } from "~/components/layout/Header";
 
 interface Error404Props {
 	title: string;
@@ -16,8 +16,7 @@ export default function (props: Error404Props) {
 						src="/assets/img/404_error_topo_climbing.png"
 						priority
 						alt="Erreur 404"
-						layout="fill"
-						objectFit="contain"
+						fill
 					/>
 				</a>
 			</Link>

@@ -1,11 +1,11 @@
 import { ClerkProvider } from "@clerk/nextjs";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Initializers } from "helpers/services/Initializers";
 import type { AppType } from "next/app";
 import Head from "next/head";
 import { NavigationLoader } from "~/components/layout/NavigationLoader";
 import { ShellMobile } from "~/components/layout/ShellMobile";
 import { DeviceProvider } from "~/components/providers/DeviceProvider";
+import { Initializers } from "~/components/providers/Initializers";
 import { UserPositionProvider } from "~/components/providers/UserPositionProvider";
 import { Mobile } from "~/components/responsive";
 import { api } from "~/server/api";

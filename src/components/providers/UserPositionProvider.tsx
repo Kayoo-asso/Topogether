@@ -6,7 +6,7 @@ import React, {
 	useRef,
 	useState,
 } from "react";
-import { GeoCoordinates } from "types";
+import { GeoCoordinates } from "~/types";
 import { useModal } from "~/components/ui/Modal";
 import { useDevice } from "~/components/providers/DeviceProvider";
 import { staticUrl } from "~/constants";

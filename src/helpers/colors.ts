@@ -1,4 +1,4 @@
-import { TopoTypes } from "types";
+import { TopoTypes } from "~/types";
 
 export const topoColors = {
   [TopoTypes.Boulder]: "main",

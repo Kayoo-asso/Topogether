@@ -1,6 +1,6 @@
 import { Base64 } from "js-base64";
 import { ForwardedRef } from "react";
-import { Grade, UUID, FirstLetter } from "~/types";
+import { Grade, UUID } from "~/types";
 
 export function classNames(
 	...classes: Array<string | undefined | null | false>
@@ -8,6 +8,9 @@ export function classNames(
 	return classes.filter(Boolean).join(" ");
 }
 
+
+// Just a utility type for nice TypeScript checks for the `gradeCategory` function below
+type FirstLetter<T> = T extends `${infer F}${infer _}` ? F : null;
 
 export function gradeCategory<G extends Grade | null>(grade: G): G extends string ? FirstLetter<G> : "P" {
   return grade ? grade[0] : "P" as any;

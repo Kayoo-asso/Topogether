@@ -1,5 +1,5 @@
 import { InferModel, and, eq, sql } from "drizzle-orm";
-import { UUID } from "types";
+import { UUID } from "~/types";
 import {
 	topoAccesses as accessesTable,
 	contributors as contributorsTable,

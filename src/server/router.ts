@@ -18,7 +18,7 @@ import {
 } from "~/db";
 import { z } from "zod";
 import { InferModel, and, eq, sql } from "drizzle-orm";
-import { UUID } from "types";
+import { UUID } from "~/types";
 import { createTRPCRouter, publicProcedure, protectedProcedure } from "./trpc";
 import { getLightTopos, getTopo } from "./queries";
 import { User, clerkClient } from "@clerk/nextjs/api";

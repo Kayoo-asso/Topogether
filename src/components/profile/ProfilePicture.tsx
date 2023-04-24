@@ -1,5 +1,5 @@
 import React from "react";
-import { Img } from "types";
+import { Img } from "~/types";
 import { Image } from "~/components/ui/Image";
 import { Loading } from "~/components/buttons/Loading";
 

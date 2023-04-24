@@ -1,5 +1,4 @@
 import NoStandalone from "~/components/layout/NoStandalone";
-import { useFirstRender } from "~/hooks";
 import React, { useContext, useMemo, useState } from "react";
 import useDimensions from "react-cool-dimensions";
 import isMobile from "ismobilejs";
@@ -12,7 +11,7 @@ export type Breakpoint = {
 
 const BreakpointContext = React.createContext<Breakpoint>(undefined!);
 
-export function useBreakpoint(): Breakpoint {
+export function useBreakpoint() {
 	const device = useContext(BreakpointContext);
 	if (device === undefined) {
 		throw new Error("useBreakpoint used outside a BreakpointContext");

@@ -1,16 +1,16 @@
 import React from "react";
-import { LightGrade } from "types";
+import { GradeCategory } from "~/types";
 import { classNames } from "~/utils";
 
 // Note: removed `clickable?` from props, since it's equivalent
 // to having an onClick handler or not
 interface GradeCircleProps {
-	grade: LightGrade;
+	grade: GradeCategory;
 	size?: "little" | "normal" | "big";
 	selected?: boolean;
 	content?: string;
 	className?: string;
-	onClick?: (grade: LightGrade) => void;
+	onClick?: (grade: GradeCategory) => void;
 }
 
 const notSelectedColorStyles = {
@@ -41,11 +41,11 @@ const sizeStyles = {
   little: "p-1 w-5 h-5 border-2",
 }
 
-export const GradeCircle: React.FC<GradeCircleProps> = ({
+export function GradeCircle({
 	selected = true,
 	size = "normal",
 	...props
-}: GradeCircleProps) => {
+}: GradeCircleProps) {
 	const colorStyles = selected
 		? selectedColorStyles[props.grade]
 		: notSelectedColorStyles[props.grade];

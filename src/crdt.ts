@@ -13,4 +13,4 @@ import {
 	lines,
 } from "~/db";
 import { InferModel } from "drizzle-orm";
-import { UUID } from "types";
+import { UUID } from "~/types";

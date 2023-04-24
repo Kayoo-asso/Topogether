@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { HeaderDesktop } from "./HeaderDesktop";
 import { HeaderMobile } from "./HeaderMobile";
-import type { DropdownOption } from "components/molecules/form/Dropdown";
+import type { DropdownOption } from "~/components/ui/Dropdown";
 
 interface HeaderProps {
 	backLink: string;

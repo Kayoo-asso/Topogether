@@ -3,8 +3,8 @@ import Link from "next/link";
 import ArrowSimple from "assets/icons/arrow-simple.svg";
 import MenuIcon from "assets/icons/menu.svg";
 import { useRouter } from "next/router";
-import { useSelectStore } from "components/store/selectStore";
-import { Dropdown, DropdownOption } from "components/molecules/form/Dropdown";
+import { useSelectStore } from "~/stores/selectStore";
+import { Dropdown, DropdownOption } from "~/components/ui/Dropdown";
 
 type HeaderMobileProps = React.PropsWithChildren<{
 	title: string;

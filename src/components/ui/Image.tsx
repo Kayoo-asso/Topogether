@@ -6,7 +6,7 @@ import {
 	useRef,
 	useState,
 } from "react";
-import type { Img } from "types";
+import type { Img } from "~/types";
 import { useBreakpoint } from "~/components/providers/DeviceProvider";
 import { Portal } from "~/components/ui/Modal";
 import {

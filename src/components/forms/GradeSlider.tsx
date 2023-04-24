@@ -1,6 +1,6 @@
 import React from "react";
 import { GetHandleProps, SliderItem } from "react-compound-slider";
-import { LightGrade } from "types";
+import { GradeCategory } from "~/types";
 import { BaseSlider } from "~/components/ui/BaseSlider";
 import { GradeCircle } from "~/components/ui/GradeCircle";
 
@@ -17,7 +17,7 @@ const Handle = (props: HandleProps) => (
 		}}
 		{...props.getHandleProps(props.handle.id)}
 	>
-		<GradeCircle size="normal" grade={props.handle.value as LightGrade} />
+		<GradeCircle size="normal" grade={props.handle.value as GradeCategory} />
 	</div>
 );
 

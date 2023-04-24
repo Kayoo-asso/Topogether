@@ -1,4 +1,4 @@
-import type { UUID } from "types";
+import type { UUID } from "~/types";
 
 export const TOPO_CACHE_KEY = "topo-download";
 export const CACHED_IMG_WIDTH = 2048;
