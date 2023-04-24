@@ -1,15 +1,15 @@
-import React from "react";
-import Link from "next/link";
-import NextImage from "next/image";
-import { type NextRouter, useRouter } from "next/router";
-import { staticUrl } from "~/constants";
-import { TextInput } from "~/components/ui/TextInput";
-import { Button } from "~/components/buttons/Button";
-import { z } from "zod";
 import { useSignIn } from "@clerk/nextjs";
-import { useMutation } from "@tanstack/react-query";
-import { useForm, useFormState } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
+import NextImage from "next/image";
+import Link from "next/link";
+import { useRouter, type NextRouter } from "next/router";
+import React from "react";
+import { useForm, useFormState } from "react-hook-form";
+import { z } from "zod";
+import { Button } from "~/components/buttons/Button";
+import { TextInput } from "~/components/ui/TextInput";
+import { staticUrl } from "~/constants";
 
 const formSchema = z.object({
 	email: z
@@ -34,7 +34,7 @@ export function LoginForm() {
 	const router = useRouter();
 	// Redirect to world map by default
 	const redirectUrl = getRedirectUrl(router, "/");
-	const { signIn, setActive, isLoaded } = useSignIn();
+	const { signIn, setActive, isLoaded: signInReady } = useSignIn();
 	// Need to specify the type, react-hook-form can't infer it based on the resolver
 	const form = useForm<Form>({ resolver: zodResolver(formSchema) });
 
@@ -57,21 +57,6 @@ export function LoginForm() {
 					throw new Error();
 				}
 			}
-
-			// if (!hasError && signIn) {
-			// 	auth.si;
-			// 	const res = await auth.signIn(email, password);
-			// 	const res = await auth.signIn(email as Email, password!);
-			// 	if (res === SignInRes.ConfirmationRequired)
-			// 		setErrorMessage(
-			// 			"Merci de confirmer votre compte en cliquant sur le lien dans le mail qui vous a été envoyé."
-			// 		);
-			// 	else if (res === SignInRes.Ok) {
-			// 		if (props.onLogin) props.onLogin();
-			// 		else router.push("/");
-			// 	} else setErrorMessage("Authentification incorrecte");
-			// 	setLoading(false);
-			// }
 		},
 	});
 
@@ -109,7 +94,7 @@ export function LoginForm() {
 
 			<div className="flex w-full flex-col items-center justify-start md:mb-6 md:flex-row md:justify-between">
 				<div>
-					<Button content="Se connecter" fullWidth loading={login.isLoading} />
+					<Button content="Se connecter" fullWidth loading={login.isLoading || !signInReady} activated={signInReady}  />
 					{login.isError && (
 						<div className="ktext-error mt-3 text-error">
 							Une erreur s'est produite, veuillez réessayer.
