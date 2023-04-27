@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
  
 // Set the paths that don't require the user to be signed in
-const publicPaths = ["/", "/topo*"];
+const publicPaths = ["/", "/topo*", "/sign-up"];
 // Separate, so we can redirect the user to the dashboard if they're already signed in
 const loginPath = "/login";
  
@@ -41,8 +41,9 @@ export const config = {
      * - static (static files)
      * - favicon.ico (favicon file)
      * - public folder
+     * - trpc API route
      */
-    "/((?!static|.*\\..*|_next|favicon.ico).*)",
+    "/(.*?trpc.*?|(?!static|.*\\..*|_next|favicon.ico).*)",
     "/",
   ],
 }
