@@ -2,10 +2,10 @@ import { withClerkMiddleware, getAuth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
  
-// Set the paths that don't require the user to be signed in
-const publicPaths = ["/", "/topo*", "/sign-up"];
 // Separate, so we can redirect the user to the dashboard if they're already signed in
 const loginPath = "/login";
+// Set the paths that don't require the user to be signed in
+const publicPaths = ["/", "/topo*", "/sign-up", loginPath];
  
 const findMatch = (patterns: string[], path: string) => {
   return patterns.find((x) =>
@@ -21,7 +21,7 @@ export default withClerkMiddleware((request: NextRequest) => {
     return NextResponse.redirect(rootUrl)
   }
 
-  const isPublic = findMatch([...publicPaths, loginPath], request.nextUrl.pathname); 
+  const isPublic = findMatch(publicPaths, request.nextUrl.pathname); 
   // if the user is not signed in and this is not a public page, redirect them to the login page.
   if (!userId && !isPublic) {
     const logInUrl = new URL(loginPath, request.url);

@@ -1,4 +1,4 @@
-import { drizzle } from "drizzle-orm/neon-serverless/index.js";
+import { drizzle } from "drizzle-orm/neon-serverless";
 import { Pool } from "@neondatabase/serverless";
 import { env } from "~/env.mjs";
 

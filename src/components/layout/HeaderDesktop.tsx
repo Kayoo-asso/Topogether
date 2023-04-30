@@ -21,7 +21,7 @@ type HeaderDesktopProps = React.PropsWithChildren<{
 
 // TODO: start showing a loader as soon as a sign out happens?
 export const HeaderDesktop = (props: HeaderDesktopProps) => {
-	const { user } = useUser();
+	const { user, isLoaded} = useUser();
 	const userMeta = getAuthMetadata(user);
 	const { signOut } = useClerk();
 	const router = useRouter();
@@ -90,7 +90,8 @@ export const HeaderDesktop = (props: HeaderDesktopProps) => {
 				{props.children}
 			</div>
 
-			{!user && (
+			{/* Don't show until we're sure the user is not logged in */}
+			{isLoaded && !user && (
 				<Link
 					href="/login"
 					className="ktext-base mr-[3%] text-white md:cursor-pointer"
@@ -111,15 +112,12 @@ export const HeaderDesktop = (props: HeaderDesktopProps) => {
 						<Dropdown
 							options={[
 								{
-									value: "Mon profil",
-									action: () => router.push("/profile"),
+									label: "Mon profil",
+									href: "/profile"
 								},
 								{
-									value: "Se déconnecter",
-									action: async () => {
-										await signOut();
-										await router.push("/");
-									},
+									label: "Se déconnecter",
+									href: "/sign-out"
 								},
 							]}
 							className="-ml-[180px] mt-[180px] w-[200px]"

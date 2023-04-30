@@ -111,7 +111,8 @@ for (const id of topoIds) {
 			topoId: topo.id,
 		});
 	}
-
+  
+  const rockSectors = new Map<UUID, UUID>();
 	for (const s of topo.sectors) {
 		sectorRows.push({
 			id: s.id,
@@ -120,6 +121,9 @@ for (const id of topoIds) {
 			path: [s.path],
 			topoId: topo.id,
 		});
+    for(const id of s.boulders) {
+      rockSectors.set(id, s.id);
+    }
 	}
 	for (const w of topo.waypoints) {
 		waypointRows.push({
@@ -177,6 +181,7 @@ for (const id of topoIds) {
 			dangerousDescent: b.dangerousDescent,
 			images: b.images,
 			topoId: topo.id,
+      sectorId: rockSectors.get(b.id) || null
 		});
 		for (const track of b.tracks) {
 			let reception: "good" | "ok" | "dangerous" | undefined = undefined;

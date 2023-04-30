@@ -115,7 +115,7 @@ function pushBytes(
 }
 
 // trusts the input to be a correct Base64URL string
-export function decodeUUID(short: string): string {
+export function decodeUUID(short: string): UUID {
 	const bytes = Base64.toUint8Array(short);
 	let output = pushBytes("", bytes, 0, 4);
 	output += "-";
@@ -127,7 +127,7 @@ export function decodeUUID(short: string): string {
 	output += "-";
 	output = pushBytes(output, bytes, 10, 6);
 	// the 'uuid' l
-	return output;
+	return output as UUID;
 }
 
 // -- Write to clipboard --

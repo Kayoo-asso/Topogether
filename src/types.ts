@@ -1,4 +1,5 @@
-import { getLightTopos } from "./server/queries";
+import { Return } from "react-cool-dimensions";
+import { getLightTopos, getTopo } from "./server/queries";
 
 export interface Img {
 	readonly id: UUID;
@@ -11,7 +12,13 @@ export interface TopoAccessStep {
 	image?: Img;
 }
 
+
 export type LightTopo = Awaited<ReturnType<typeof getLightTopos>>[number];
+export type TopoDoc = Exclude<Awaited<ReturnType<typeof getTopo>>, undefined>;
+export type Topo = TopoDoc["topo"]
+export type Sector = TopoDoc["sectors"][number]
+export type Rock = TopoDoc["rocks"][number];
+export type Track = TopoDoc["tracks"][number];
 
 export type UUID = string & {
 	readonly _isUUID: unique symbol;

@@ -4,7 +4,7 @@ import { usePosition } from "~/components/providers/UserPositionProvider";
 import { useWorldMapStore } from "~/stores/worldmapStore";
 import { LightTopo } from "~/types";
 import { HeaderDesktop } from "../layout/HeaderDesktop";
-import { LeftbarDesktop } from "../layout/LeftbarDesktop";
+import { WorldMapLeftbar } from "../layout/WorldMapLeftbar";
 import { TopoPreview } from "../previews/TopoPreview";
 import { BaseMap } from "./BaseMap";
 import {
@@ -42,7 +42,7 @@ export function WorldMapDesktop({ topos }: WorldMapProps) {
 				)}
 			</HeaderDesktop>
 			<div className="flex h-contentPlusShell flex-row">
-				{user && <LeftbarDesktop currentMenuItem="MAP" />}
+				{user && <WorldMapLeftbar currentMenuItem="MAP" />}
 				<BaseMap
 					initialCenter={position}
 					initialZoom={5}

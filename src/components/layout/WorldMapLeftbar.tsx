@@ -9,13 +9,13 @@ import MarkerIcon from "assets/icons/marker-stroke.svg";
 import UserIcon from "assets/icons/user.svg";
 import KeyIcon from "assets/icons/key.svg";
 
-interface LeftbarDesktopProps {
+interface WorldMapLeftbarProps {
 	currentMenuItem?: "BUILDER" | "MAP" | "USER" | "ADMIN";
 }
 
-export function LeftbarDesktop({
+export function WorldMapLeftbar({
 	currentMenuItem = "MAP",
-}: LeftbarDesktopProps) {
+}: WorldMapLeftbarProps) {
 	const { user } = useUser();
 	const userMeta = getAuthMetadata(user);
 
@@ -94,4 +94,4 @@ export function LeftbarDesktop({
 	);
 }
 
-LeftbarDesktop.displayName = "Leftbar Desktop";
+WorldMapLeftbar.displayName = "Leftbar Desktop";

@@ -19,7 +19,12 @@ Currently only available in French, sorry!
 
 ### TODO
 - Like button
-- Smooth transition from not signed in to signed in (happens after load on static pages)
+- Check the meaning of `expandOnClick = false` in SearchbarBoulderResults
+- Changing the size of the track name text based on name length is uhm... sus
+- Opening non-submitted topos in viewer (= preview mode)
+- Check all the uses of h-content or h-contentPlusShell for more responsive way to handle the styling
+- Refactor user menu in Header to not use Dropdown, to avoid a `sign-out` page
+- Animated transition from not signed in to signed in (happens after load on static pages)
 - Download button
 - See if we should redirect to source page and not dashboard after clicking "Se connecter" and logging in
 - Remove `usePosition` at the root of WorldMap

@@ -24,6 +24,17 @@ export const textColors = {
   dark: "text-dark"
 }
 
+export const trackTextColors = {
+  3: "text-grade-3",
+  4: "text-grade-4",
+  5: "text-grade-5",
+  6: "text-grade-6",
+  7: "text-grade-7",
+  8: "text-grade-8",
+  9: "text-grade-9",
+  "P": "text-grey-medium"
+}
+
 export type BaseColor = "main" | "second" | "third";
 export type StructureColor =
 	| "dark"

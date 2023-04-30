@@ -1,28 +1,35 @@
 import React, { useEffect, useRef, useState } from "react";
 import equal from "fast-deep-equal/es6";
+import { classNames } from "~/utils";
+import Link from "next/link";
 
 export interface DropdownOption {
-	value: any;
-	label?: string;
-	isSection?: boolean;
-	action?: (e: React.PointerEvent<HTMLDivElement>) => void;
-	icon?: SVG;
-	disabled?: boolean;
+	// value: any;
+	label: string;
+	// section?: boolean;
+	// icon?: SVG;
+	href: string | URL;
+	// action?: (e: React.PointerEvent<HTMLDivElement>) => void;
+	// disabled?: boolean;
 }
 
 interface DropdownProps {
-	position?: { x: number; y: number };
+	// position?: { x: number; y: number };
+	className?: string;
 	options: DropdownOption[];
 	onSelect?: (option: DropdownOption) => void;
-	type?: string;
-	fullSize?: boolean;
-	className?: string;
+	// type?: string;
+}
+
+interface Position {
+	x: number;
+	y: number;
 }
 
 export const Dropdown: React.FC<DropdownProps> = React.memo(
-	({ className = "", fullSize = false, ...props }: DropdownProps) => {
+	({ className = "", ...props }: DropdownProps) => {
 		const ref = useRef<HTMLDivElement>(null);
-		const [position, setPosition] = useState(props.position);
+		const [position, setPosition] = useState<Position>();
 
 		useEffect(() => {
 			if (ref.current && position) {
@@ -50,46 +57,21 @@ export const Dropdown: React.FC<DropdownProps> = React.memo(
 		return (
 			<div
 				ref={ref}
-				className={`absolute z-1000 bg-white px-7 shadow rounded${
-					fullSize ? " w-full" : ""
-				} ${className}`}
-				style={{ left: `${position?.x}px`, top: `${position?.y}px` }}
-				onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
-			>
-				{props.options.map((opt, i) =>
-					opt.isSection ? (
-						<div
-							className={`ktext-label uppercase text-grey-medium cursor-default pb-2 mt-2 border-t-2 border-grey-light`}
-							key={opt.value}
-						></div>
-					) : (
-						<div
-							className={`h-16 ${
-								opt.disabled
-									? "cursor-default text-grey-medium"
-									: "md:cursor-pointer text-dark"
-							} ktext-base flex flex-row items-center`}
-							key={opt.value}
-							onPointerDown={(e) => {
-								e.preventDefault();
-								e.stopPropagation();
-								if (!opt.disabled) {
-									props.onSelect && props.onSelect(opt);
-									opt.action && opt.action(e);
-								}
-							}}
-						>
-							{opt.icon && (
-								<opt.icon
-									className={`${
-										opt.disabled ? "stroke-grey-medium" : "stroke-black"
-									} mr-5 h-5 w-5`}
-								/>
-							)}
-							{opt.label || opt.value}
-						</div>
-					)
+				className={classNames(
+					"absolute z-1000 rounded bg-white px-7 shadow",
+					className
 				)}
+				style={{ left: `${position?.x}px`, top: `${position?.y}px` }}
+			>
+				{props.options.map((opt, i) => (
+					<Link
+						key={opt.href.toString()}
+						href={opt.href}
+						className="h-16 ktext-base flex flex-row items-center text-dark"
+					>
+						{opt.label}
+					</Link>
+				))}
 			</div>
 		);
 	},

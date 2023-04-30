@@ -8,7 +8,7 @@
     "lint": "next lint",
     "format": "prettier --write '**/*.{js,ts,jsx,tsx,json}'",
     "gen-migration": "doppler run -- drizzle-kit generate:pg --out src/db/migrations --schema src/db/schema.ts",
-    "migrate": "drizzle-kit up:pg --out src/db/migrations && doppler run -- node src/db/migrate.mjs",
+    "migrate": "drizzle-kit up:pg --out src/db/migrations && NODE_ENV=development doppler run -- node src/db/migrate.mjs",
     "test": "doppler run -- bun src/db/getLightTopoTest.ts",
     "transfer": "doppler run -- bun src/db/transferSupabase.ts"
   },
