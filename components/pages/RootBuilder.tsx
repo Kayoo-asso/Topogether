@@ -55,6 +55,7 @@ import { Flash } from "components/atoms/overlays/Flash";
 import { OnClickInteraction } from "components/map/markers/OnClickInteraction";
 import { ModifyInteraction } from "components/map/markers/ModifyInteraction";
 import { useBoulderOrder } from "components/store/boulderOrderStore";
+import { SectorCreationTuto } from "components/molecules/tutos/SectorCreationTuto";
 
 interface RootBuilderProps {
 	topoQuark: Quark<Topo>;
@@ -169,6 +170,7 @@ export const RootBuilder: React.FC<RootBuilderProps> = watchDependencies(
 			<>
 				<SyncUrl topo={topo} />
 				<KeyboardShortcut />
+				<SectorCreationTuto />
 				
 				<Header
 					title={topo.name}

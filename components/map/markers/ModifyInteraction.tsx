@@ -8,9 +8,6 @@ import { ModifyEvent } from "ol/interaction/Modify";
 import { FeatureLike } from "ol/Feature";
 import { Circle, Fill, Stroke, Style } from "ol/style";
 import { useBoulderOrder } from "components/store/boulderOrderStore";
-import { Point, Polygon } from "ol/geom";
-import { getDistance } from 'ol/sphere';
-
 
 interface ModifyInteractionProps {
     topoQuark: Quark<Topo>;
@@ -56,12 +53,15 @@ export const ModifyInteraction: React.FC<ModifyInteractionProps> = watchDependen
             pixelTolerance={10}
             style={modifyingSectorMarkerStyle}
             onModifyEnd={handleModifyEnd}
-            // deleteCondition={(e) => {
-            //     if (e.type === 'click' && e.originalEvent.altKey) {
-            //         return true;
-            //     }
-            //     return false;
-            // }}
+            deleteCondition={(e) => {
+                if (
+                    (e.type === 'click' && e.originalEvent.altKey) 
+                    || (e.type === 'pointerup' && e.originalEvent.longPress)
+                ) {
+                    return true;
+                }
+                return false;
+            }}
         />
     )
 });

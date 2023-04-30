@@ -2,12 +2,13 @@ import React, { useCallback } from "react";
 import { useSelectStore } from "components/store/selectStore";
 import { Img, MapToolEnum } from "types";
 import { useBreakpoint } from "helpers/hooks/DeviceProvider";
+import { ImageInput } from "components/molecules/form/ImageInput";
 
 import Rewind from "assets/icons/rewind.svg";
 import RockLight from "assets/icons/rockLight.svg";
 import InfoLight from "assets/icons/infoLight.svg";
 import ParkingLight from "assets/icons/parkingLight.svg";
-import { ImageInput } from "components/molecules/form/ImageInput";
+import { useTutoStore } from "components/store/tutoStore";
 
 
 interface MapToolSelectorProps {
@@ -19,6 +20,7 @@ export const MapToolSelector: React.FC<MapToolSelectorProps> = (props: MapToolSe
 	const select = useSelectStore(s => s.select);
 	const flush = useSelectStore(s => s.flush);
 	const tool = useSelectStore(s => s.tool);
+	const showTuto = useTutoStore(t => t.showTuto)
 
 	const onToolClick = useCallback((t: MapToolEnum) => {
 		flush.item();
@@ -99,8 +101,8 @@ export const MapToolSelector: React.FC<MapToolSelectorProps> = (props: MapToolSe
 					<div className='px-5'>
 						<div className='ktext-label-little mb-1 text-center'>Aider</div>
 						<div 
-							className={`ktext-label text-xs font-bold p-2 rounded-sm md:cursor-pointer text-dark bg-opacity-30 bg-grey-light`}
-							// onClick={() => onToolClick('SECTOR')}
+							className={`ktext-label text-xs font-bold p-2 rounded-sm md:cursor-pointer text-dark bg-opacity-30 bg-grey-light `}
+							onClick={() => showTuto('SECTOR_CREATION')}
 						>Revoir tuto</div>
 					</div>
 				</div>

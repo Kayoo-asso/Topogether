@@ -179,7 +179,7 @@ export const SectorAreaMarkersLayer: React.FC<SectorAreaMarkersLayerProps> =
 									: false;
 								return sectorMarkerStyle(selected, f, res);
 							},
-							[selectedItem]
+							[selectedItem.value]
 						)}
 						updateWhileAnimating
 						updateWhileInteracting

@@ -16,13 +16,11 @@ import { Attribution } from "ol/control";
 import { isEmpty } from "ol/extent";
 import { fontainebleauLocation } from "helpers/constants";
 import { CenterButton } from "./CenterButton";
-import { useRouter } from "next/router";
 import { SearchButton } from "./searchbar/SearchButton";
 import { FilterButton } from "./filters/FilterButton";
 import { useBreakpoint } from "helpers/hooks/DeviceProvider";
 import { usePosition } from "helpers/hooks/UserPositionProvider";
 import { SatelliteButton } from "components/atoms/buttons/SatelliteButton";
-import { ImageInput } from "components/molecules/form/ImageInput";
 import { DEFAULT_EXTENT_BUFFER, getTopoExtent } from "helpers/map/getExtent";
 import { DeleteItemButton } from "components/atoms/buttons/DeleteItemButton";
 
