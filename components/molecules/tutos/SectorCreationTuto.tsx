@@ -19,20 +19,20 @@ export const SectorCreationTuto: React.FC = () => {
     }, [opened]);
 
     const images = [
-        staticUrl.defaultKayoo,
-        staticUrl.defaultKayoo,
-        staticUrl.defaultKayoo,
-        staticUrl.defaultKayoo,
-        staticUrl.defaultKayoo,
-        staticUrl.defaultKayoo,
+        staticUrl.illuSectorCreation5,
+        staticUrl.illuSectorCreation1,
+        staticUrl.illuSectorCreation2,
+        staticUrl.illuSectorCreation3,
+        staticUrl.illuSectorCreation4,
+        staticUrl.illuSectorCreation4,
     ];
     const contents = [
-        <>Une fois le bouton <span className="font-semibold">Nouveau secteur</span> sélectionné, cliquer une première fois sur la carte pour <span className="font-semibold">placer le premier point</span>.</>,
+        <>Cliquer sur la carte pour <span className="font-semibold">poser des points</span> aux angles du secteur.</>,
         <>Cliquer sur le premier point du secteur pour le refermer et <span className="font-semibold">le terminer</span>.</>,
         <>Cliquer sur le secteur pour <span className="font-semibold">le modifier, le déplacer ou le supprimer</span>.</>,
         <>Cliquer sur l'un des côtés du secteur pour <span className="font-semibold">ajouter un point sur le tracé</span>.</>,
         <>Cliquer-glisser un point <span className="font-semibold">pour modifier le tracé</span>.</>,
-        <>Cliquer sur un point ${bp === 'mobile' ? 'en maintenant la pression 2 secondes' : 'en maintenant la touche "alt" appuyée pour'} <span className="font-semibold">supprimer un point du tracé</span>.</>
+        <>Cliquer sur un point {bp === 'mobile' ? 'en maintenant la pression 2 secondes pour' : 'en maintenant la touche "alt" appuyée pour'} <span className="font-semibold">supprimer un point du tracé</span>.</>
 
     ];
 
@@ -56,6 +56,7 @@ export const SectorCreationTuto: React.FC = () => {
                         src={images[step]}
                         width={400}
                         height={400}
+                        objectFit="contain"
                     />              
                     <div className="ktext-base-little pt-3">
                         {contents[step]}

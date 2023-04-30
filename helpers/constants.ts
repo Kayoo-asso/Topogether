@@ -12,4 +12,9 @@ export const staticUrl = {
 	defaultProfilePicture: `/assets/img/Default_profile_picture.png`,
 	defaultKayoo: `/assets/img/Kayoo_defaut_image.png`,
 	deleteWarning: `/assets/img/Warning delete topogether boulder escalade topo.png`,
+	illuSectorCreation1: `/assets/img/illu_sector_creation1.png`,
+	illuSectorCreation2: `/assets/img/illu_sector_creation2.png`,
+	illuSectorCreation3: `/assets/img/illu_sector_creation3.png`,
+	illuSectorCreation4: `/assets/img/illu_sector_creation4.png`,
+	illuSectorCreation5: `/assets/img/illu_sector_creation5.png`,
 };
