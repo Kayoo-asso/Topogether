@@ -8,6 +8,7 @@ export { TileLayer } from "./layers/TileLayer";
 export { VectorLayer } from "./layers/VectorLayer";
 export { VectorTileLayer } from "./layers/VectorTileLayer";
 export { MapboxVector } from "./layers/MapboxVector";
+export { Cluster } from "./sources/Cluster";
 export { OSM } from "./sources/OSM";
 export { VectorSource } from "./sources/VectorSource";
 export { XYZ } from "./sources/XYZ";

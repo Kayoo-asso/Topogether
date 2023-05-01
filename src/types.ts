@@ -19,6 +19,10 @@ export type Topo = TopoDoc["topo"]
 export type Sector = TopoDoc["sectors"][number]
 export type Rock = TopoDoc["rocks"][number];
 export type Track = TopoDoc["tracks"][number];
+export type Parking = TopoDoc["parkings"][number];
+export type Waypoint = TopoDoc["waypoints"][number];
+export type Manager = TopoDoc["managers"][number];
+export type TopoAccess = TopoDoc["accesses"][number];
 
 export type UUID = string & {
 	readonly _isUUID: unique symbol;
