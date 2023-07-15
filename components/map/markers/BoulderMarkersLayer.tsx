@@ -23,7 +23,7 @@ export const boulderMarkerStyle = (
 	feature?: FeatureLike
 ) => {
 	const label = feature
-		? boulderOrder.get(feature.get("data").value().id)?.toString()
+		? boulderOrder.get(feature.get("data").value().id)!.toString()
 		: (boulderOrder.size + 1).toString();
 	// console.log(label);
 	const icon = new Icon({
@@ -47,7 +47,7 @@ export const boulderMarkerStyle = (
 	return new Style({
 		image: icon,
 		text,
-		zIndex: 100,
+		zIndex: 100 + parseInt(label),
 	});
 };
 export const clusterMarkerStyle = (

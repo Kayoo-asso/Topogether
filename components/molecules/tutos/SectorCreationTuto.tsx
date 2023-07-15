@@ -48,7 +48,6 @@ export const SectorCreationTuto: React.FC = () => {
         >
             <div className="flex flex-col gap-3 md:px-10">
                 <div className="ktext-section-title text-main">Création de secteurs</div>
-                <div className="text-grey-medium">Comment créé-t-on des secteurs sur Topogether</div>
 
                 <div className="py-4">
                     <Image 

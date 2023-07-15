@@ -29,10 +29,10 @@ export const MapToolSelector: React.FC<MapToolSelectorProps> = (props: MapToolSe
 	}, [tool]);
 
 	return (
-		<div className={"z-500 flex flex-row justify-center items-center rounded bg-white shadow h-[70px]" + ((bp === 'mobile') ? ' w-[96%]' : '')}>
+		<div className={"z-100 flex flex-row justify-center items-center rounded bg-white shadow h-[70px]" + ((bp === 'mobile') ? ' w-[96%]' : '')}>
 			
 			<div 
-				className='w-1/6 h-full flex justify-center items-center border-r border-grey-light md:cursor-pointer'
+				className='w-1/6 md:w-[12%] h-full flex justify-center items-center border-r border-grey-light md:cursor-pointer'
 				// onClick={() => onToolClick('ROCK')}
 			>
 				<Rewind
@@ -40,10 +40,11 @@ export const MapToolSelector: React.FC<MapToolSelectorProps> = (props: MapToolSe
 				/>
 			</div>
 
-			<div className='w-5/6 h-full'>
+			<div className='w-5/6 md:w-[88%] h-full'>
 
 				<div className='h-full w-full overflow-x-auto whitespace-nowrap hide-scrollbar flex items-center'>
 					<div className='px-5 md:cursor-pointer'>
+						<div className="ktext-label-little mb-1 text-center text-transparent">-</div>
 						<ImageInput
 							button="builder"
 							size="little"
@@ -52,22 +53,22 @@ export const MapToolSelector: React.FC<MapToolSelectorProps> = (props: MapToolSe
 						/>
 					</div>
 
-					<div className="text-dark"> | </div>
+					<div className="text-grey-light"> | </div>
 
 					<div className='px-5'>
 						<div className="ktext-label-little mb-1 text-center">Placer sur le topo</div>
 						<div className="flex flex-row gap-1.5">
 							<div 
-								className={`p-1.5 rounded-sm md:cursor-pointer bg-opacity-30 ${tool === "ROCK" ? "bg-main-light" : "bg-grey-light"}`}
+								className={`p-1 rounded-sm md:cursor-pointer ${tool === "ROCK" ? "bg-main" : ""}`}
 								onClick={() => onToolClick('ROCK')}
 							>
 								<RockLight
-									className={`h-6 w-6 stroke-[1.4px] md:cursor-pointer	${tool === "ROCK" ? "stroke-main" : "stroke-dark"}`}	
+									className={`h-6 w-6 stroke-[1.4px] md:cursor-pointer stroke-dark`}	
 								/>
 							</div>
 
 							<div 
-								className={`p-1.5 rounded-sm md:cursor-pointer ${tool === "WAYPOINT" ? "bg-info-light" : "bg-opacity-30 bg-grey-light"}`}
+								className={`p-1.5 rounded-sm md:cursor-pointer ${tool === "WAYPOINT" ? "bg-info-light" : ""}`}
 								onClick={() => onToolClick('WAYPOINT')}
 							>
 								<InfoLight
@@ -76,7 +77,7 @@ export const MapToolSelector: React.FC<MapToolSelectorProps> = (props: MapToolSe
 							</div>
 
 							<div 
-								className={`p-1.5 rounded-sm md:cursor-pointer ${tool === "PARKING" ? " bg-info-light" : "bg-opacity-30 bg-grey-light"}`}
+								className={`p-1.5 rounded-sm md:cursor-pointer ${tool === "PARKING" ? " bg-info-light" : ""}`}
 								onClick={() => onToolClick('PARKING')}
 							>
 								<ParkingLight
@@ -91,7 +92,7 @@ export const MapToolSelector: React.FC<MapToolSelectorProps> = (props: MapToolSe
 					<div className='px-5'>
 						<div className='ktext-label-little mb-1 text-center'>Créer un</div>
 						<div 
-							className={`ktext-label text-xs font-bold p-2 rounded-sm md:cursor-pointer bg-opacity-30 ${tool === "SECTOR" ? 'text-main bg-main-light' : 'text-dark bg-grey-light'}`}
+							className={`ktext-label text-xs font-bold p-2 rounded-sm md:cursor-pointer border-grey-light border-2 ${tool === "SECTOR" ? 'bg-main' : 'text-dark'}`}
 							onClick={() => onToolClick('SECTOR')}
 						>Nouveau secteur</div>
 					</div>
@@ -101,7 +102,7 @@ export const MapToolSelector: React.FC<MapToolSelectorProps> = (props: MapToolSe
 					<div className='px-5'>
 						<div className='ktext-label-little mb-1 text-center'>Aider</div>
 						<div 
-							className={`ktext-label text-xs font-bold p-2 rounded-sm md:cursor-pointer text-dark bg-opacity-30 bg-grey-light `}
+							className={`ktext-label text-xs font-bold p-2 rounded-sm md:cursor-pointer border-grey-light border-2 text-dark`}
 							onClick={() => showTuto('SECTOR_CREATION')}
 						>Revoir tuto</div>
 					</div>

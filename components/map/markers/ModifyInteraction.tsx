@@ -8,6 +8,7 @@ import { ModifyEvent } from "ol/interaction/Modify";
 import { FeatureLike } from "ol/Feature";
 import { Circle, Fill, Stroke, Style } from "ol/style";
 import { useBoulderOrder } from "components/store/boulderOrderStore";
+import { useBreakpoint } from "helpers/hooks/DeviceProvider";
 
 interface ModifyInteractionProps {
     topoQuark: Quark<Topo>;
@@ -37,8 +38,11 @@ const modifyingSectorMarkerStyle = (feature: FeatureLike) => {
 
 export const ModifyInteraction: React.FC<ModifyInteractionProps> = watchDependencies((props: ModifyInteractionProps) => {
     const boulderOrder = useBoulderOrder(bo => bo.value);
+    const bp = useBreakpoint();
 
     const handleModifyEnd = (e: ModifyEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
         const feature = e.features.getArray()[0];
         const item = feature.get("data") as SelectedSector;
         const newPath = getPathFromFeature(feature);
@@ -55,9 +59,11 @@ export const ModifyInteraction: React.FC<ModifyInteractionProps> = watchDependen
             onModifyEnd={handleModifyEnd}
             deleteCondition={(e) => {
                 if (
-                    (e.type === 'click' && e.originalEvent.altKey) 
-                    || (e.type === 'pointerup' && e.originalEvent.longPress)
+                    bp === 'desktop' && e.type === 'click' && e.originalEvent.altKey ||
+                    bp === 'mobile' && e.type === 'contextmenu' //longpress                    
                 ) {
+                    e.preventDefault();
+                    e.stopPropagation();
                     return true;
                 }
                 return false;

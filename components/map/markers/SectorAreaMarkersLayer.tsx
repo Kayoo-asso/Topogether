@@ -134,6 +134,8 @@ export const getPathFromFeature = (feature: FeatureLike) => {
 	return coords;
 };
 
+// TO CHANGE THE MODIFYING INTERACTION OF AN EXISTING SECTOR: Component ModifyInteraction.tsx
+
 export const SectorAreaMarkersLayer: React.FC<SectorAreaMarkersLayerProps> =
 	watchDependencies(
 		({ creating = false, ...props }: SectorAreaMarkersLayerProps) => {

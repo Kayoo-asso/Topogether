@@ -66,13 +66,13 @@ export const GradeSelector: React.FC<GradeselectorProps> = (
 
 	return (
         <Portal open={isOpenGradeSelectorOpen}>
-            <div className='w-full h-full bg-dark bg-opacity-95 flex flex-col px-8 absolute top-0 left-0 z-full md:px-[15%]'>
+            <div className='w-full h-full bg-dark bg-opacity-95 flex flex-col px-8 py-3 absolute top-0 left-0 z-full md:px-[25%]'>
                 
-                <div className="w-full h-[7vh] flex justify-center items-center text-white ktext-title">
+                <div className="w-full flex justify-center items-center text-white ktext-title">
                     Choisir la difficulté
                 </div>
 
-                <div className="w-full flex-1 flex flex-col gap-12 justify-center items-center text-grey-light ktext-title">
+                <div className="w-full flex-1 flex flex-col justify-evenly items-center text-grey-light ktext-title">
                     {normalGrade.map(g => getNormalGradeLine(g))}
 
                     <div className="w-full flex flex-row justify-between items-center">
@@ -93,12 +93,12 @@ export const GradeSelector: React.FC<GradeselectorProps> = (
                                 changeGrade(undefined);
                             }}
                         >
-                            <Circle className={"mr-2 h-6 w-6 " + getFillGradeColorClass('P')} /> Projet
+                            <Circle className={"mr-2 h-6 w-6 " + getFillGradeColorClass(undefined)} /> Projet
                         </div>
                     </div>
                 </div>
 
-                <div className="w-full h-[10vh] flex justify-center">
+                <div className="w-full flex justify-center">
                     <ValidateButton
                         onClick={closeGradeSelector}
                     />
