@@ -1,5 +1,5 @@
 import { InferModel, and, eq, sql } from "drizzle-orm";
-import { UUID } from "~/types";
+import { Topo, UUID } from "~/types";
 import {
 	topoAccesses as accessesTable,
 	contributors as contributorsTable,
@@ -22,7 +22,7 @@ import {
 
 type Grade = InferModel<typeof tracksTable>["grade"];
 
-export async function getLightTopos() {
+export async function getLightTopos({ status }: { status: Topo["status"] }) {
 	const parkingLocation = db.$with("parkings_agg").as(
 		db
 			.select({
@@ -106,7 +106,8 @@ export async function getLightTopos() {
 		.leftJoin(parkingLocation, eq(parkingLocation.id, toposTable.id))
 		.leftJoin(sectorsCount, eq(sectorsCount.id, toposTable.id))
 		.leftJoin(rocksCount, eq(rocksCount.id, toposTable.id))
-		.leftJoin(tracksAgg, eq(tracksAgg.id, toposTable.id));
+		.leftJoin(tracksAgg, eq(tracksAgg.id, toposTable.id))
+		.where(eq(toposTable.status, status));
 }
 
 export async function getTopo(id: UUID, userId: UUID | undefined) {
@@ -142,6 +143,7 @@ export async function getTopo(id: UUID, userId: UUID | undefined) {
 	if (topoResult.length === 0) {
 		return undefined;
 	}
+
 	const topo = topoResult[0];
 
 	if (topo.trashed) {
@@ -154,9 +156,11 @@ export async function getTopo(id: UUID, userId: UUID | undefined) {
 	// - the user is a contributor
 	// If none of those are true, return `undefined`.
 	const isContributor = !!contributors.find((c) => c.userId === userId);
+
 	if (topo.status !== "validated" && !isContributor) {
 		return undefined;
 	}
+
 	return {
 		topo,
 		managers,

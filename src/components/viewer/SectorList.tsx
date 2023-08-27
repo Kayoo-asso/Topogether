@@ -84,7 +84,7 @@ interface RockItemProps {
 }
 
 function RockItem({ idx, rock }: RockItemProps) {
-	const [selected, setSelected] = useUUIDQueryParam("selected");
+	const [selected, setSelected] = useUUIDQueryParam("rock");
 	const isSelected = selected === rock.id;
 
 	const [expanded, setExpanded] = useState(false);

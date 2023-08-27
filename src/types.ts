@@ -1,4 +1,3 @@
-import { Return } from "react-cool-dimensions";
 import { getLightTopos, getTopo } from "./server/queries";
 
 export interface Img {

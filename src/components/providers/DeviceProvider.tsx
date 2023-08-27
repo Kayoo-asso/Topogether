@@ -1,5 +1,5 @@
 import NoStandalone from "~/components/layout/NoStandalone";
-import React, { useContext, useMemo, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import useDimensions from "react-cool-dimensions";
 import isMobile from "ismobilejs";
 import { classNames } from "~/utils";
@@ -49,7 +49,7 @@ export function useDevice() {
 
 const breakpoints = {
 	mobile: 0,
-	desktop: 800,
+	desktop: 768,
 };
 
 export function DeviceProvider({ children }: React.PropsWithChildren<{}>) {
@@ -73,6 +73,8 @@ export function DeviceProvider({ children }: React.PropsWithChildren<{}>) {
 			}
 		},
 	});
+
+
 	// Note: keep in sync with how device info is obtained in `getDevice`
 	const deviceInfo = useMemo(
 		() =>

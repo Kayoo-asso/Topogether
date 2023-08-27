@@ -15,6 +15,7 @@ const findMatch = (patterns: string[], path: string) => {
  
 export default withClerkMiddleware((request: NextRequest) => {
   const { userId } = getAuth(request);
+  
   // If the user is already logged in and navigating to /login, redirect to world map
   if(userId && findMatch([loginPath], request.nextUrl.pathname)) {
     const rootUrl = new URL("/", request.url)

@@ -3,4 +3,4 @@ image:
 
 tasks:
   - name: Install NPM packages
-    command: pnpm i
+    init: pnpm i

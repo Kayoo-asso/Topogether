@@ -71,7 +71,17 @@ export const appRouter = createTRPCRouter({
 		)
 		.mutation(({ input }) => {}),
 
-	getLightTopos: publicProcedure.query(() => getLightTopos()),
+	getLightTopos: publicProcedure
+		.input(
+			z.object({
+				status: z.union([
+					z.literal("validated"),
+					z.literal("submitted"),
+					z.literal("draft"),
+				]),
+			})
+		)
+		.query(({ input }) => getLightTopos(input)),
 
 	getTopoLikes: protectedProcedure
 		.input(z.string().uuid())
@@ -87,7 +97,7 @@ export const appRouter = createTRPCRouter({
 
 	getProfile: publicProcedure
 		.input(z.string().uuid())
-		.query(async ({ input}) => {
+		.query(async ({ input }) => {
 			const user = await clerkClient.users.getUser(input);
 			const meta = getAuthMetadata(user);
 
@@ -95,14 +105,14 @@ export const appRouter = createTRPCRouter({
 				id: user.id,
 				username: user.username,
 				firstName: user.firstName,
-				lastName: user.lastName,	
+				lastName: user.lastName,
 				created: user.createdAt,
 				image: meta.image,
 				role: meta.role,
 				country: meta.country,
-				city: meta.city
-			}
-		})
+				city: meta.city,
+			};
+		}),
 });
 
 // export type definition of API

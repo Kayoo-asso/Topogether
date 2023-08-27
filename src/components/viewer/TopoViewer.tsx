@@ -17,6 +17,7 @@ export function TopoViewerDesktop({ doc }: Props) {
 		doc.managers.length > 0
 			? doc.managers[0].contactMail
 			: "contact@kayoo-asso.fr";
+
 	return (
 		<div>
 			<HeaderDesktop

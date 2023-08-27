@@ -94,6 +94,7 @@ export const topos = pgTable(
 	}
 );
 
+
 export const sectors = pgTable(
 	"sectors",
 	{

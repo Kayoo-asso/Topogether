@@ -96,6 +96,7 @@ export function WorldMapMobile({ topos }: WorldMapProps) {
 					<UserMarker />
 					<TopoMarkers topos={filteredTopos} />
 					<TopoInteractions />
+					{/* Has to be within BaseMap (why? can't remember, I just know it's important) */}
 					<SlideoverMobile open={filtersOpen || searchOpen}>
 						{searchOpen && <TopoSearchMobile topos={topos} />}
 						{filtersOpen && <TopoFiltersMobile topos={topos} />}
