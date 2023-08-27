@@ -28,8 +28,6 @@ export type UUID = string & {
 
 export type GeoCoordinates = [lng: number, lat: number];
 
-export type UpdateState<T> = T | ((state: T) => T);
-
 // === Bitflags ===
 // Bitflags can only have up to 32 values
 // JavaScript considers all number as 32-bit for bitwise operations

@@ -1,91 +1,71 @@
 import { useRouter, type NextRouter } from "next/router";
 import { useCallback } from "react";
-import { z } from "zod";
-import { UUID, UpdateState } from "~/types";
 import { decodeUUID, encodeUUID } from "~/utils";
 
-function getKey<Allowed extends string>(
-	router: NextRouter,
-	key: string,
-	allowed?: Allowed[]
-) {
-	let value = router.query[key];
-	if (Array.isArray(value)) {
-		console.error(`Received array value for query param ${key}`);
-		return undefined;
-	}
-	// Ignore non-allowed values
-	if (allowed && value && !(allowed as string[]).includes(value)) {
-		return undefined;
-	}
-	return value as Allowed;
-}
-
 interface UseQueryParamOptions<
-	Allowed extends string = string,
 	Input extends string = string,
 	Output extends string = string
 > {
-	allowed?: Allowed[];
 	encode?: (input: Input) => string | undefined;
-	decode?: (query: string | undefined) => Output;
+	decode?: (query: string) => Output | undefined;
 }
 
 // A small helper to encode state into the URL, before
 // we properly transition to the Next App Router
-export function useQueryParam(
-	key: string
-): [string | undefined, (value: string | undefined) => void];
-export function useQueryParam<Allowed extends string>(
-	key: string,
-	allowed: Allowed[]
-): [Allowed | undefined, (value: Allowed | undefined) => void];
-
-export function useQueryParam<Allowed extends string>(
-	key: string,
-	allowed?: Allowed[]
-) {
+export function useQueryParam<
+	Input extends string = string,
+	Output extends string = string
+>(key: string, options?: UseQueryParamOptions<Input, Output>) {
 	const router = useRouter();
-	const value = getKey(router, key, allowed);
+	const value = extractQuery(router, key, options?.decode);
 
 	const set = useCallback(
-		(update: UpdateState<Allowed | undefined>) => {
+		(
+			update:
+				| (Input | undefined)
+				| ((state: Output | undefined) => Input | undefined)
+		) => {
 			if (typeof update === "function") {
-				update = update(getKey(router, key, allowed));
+				update = update(extractQuery(router, key, options?.decode));
 			}
-			const query = addQueryParam(router, key, update);
+			let query: ReturnType<typeof addQueryParam>;
+			if (options?.encode && update !== undefined) {
+				query = addQueryParam(router, key, options.encode(update));
+			} else {
+				query = addQueryParam(router, key, update);
+			}
 			router.push({ pathname: router.pathname, query }, undefined, {
 				shallow: true,
 			});
 		},
 		// `allowed` is an array of strings or undefined, so JSON.stringify works fine for our purposes here
-		[router, key, JSON.stringify(allowed)]
+		[router, key, options?.decode]
 	);
 
 	return [value, set] as const;
 }
 
-const uuidValidator = z.string().uuid();
+function extractQuery<Output extends string = string>(
+	router: NextRouter,
+	key: string,
+	decode?: (query: string) => Output | undefined
+) {
+	let value = router.query[key];
+	// Only allow string values
+	if (typeof value !== "string") {
+		value = undefined;
+	}
+	if (decode && value !== undefined) {
+		return decode(value);
+	}
+	return value as Output | undefined;
+}
 
 export function useUUIDQueryParam(key: string) {
-	const [value, set] = useQueryParam(key);
-	let decodedValue = undefined;
-	if (value && uuidValidator.safeParse(value).success) {
-		decodedValue = decodeUUID(value);
-	}
-	const wrappedSet = (update: UpdateState<UUID>) => {
-		let wrappedUpdate: UpdateState<string>;
-		if (typeof update === "function") {
-			wrappedUpdate = (state: string | undefined) => {
-				let decodedState = undefined;
-				if (state && uuidValidator.safeParse(state).success) {
-					decodedState = decodeUUID(state as UUID);
-				}
-			};
-		}
-		set(encodeUUID(update));
-	};
-	return [decodedValue, wrappedSet] as const;
+	return useQueryParam(key, {
+		encode: encodeUUID,
+		decode: decodeUUID,
+	});
 }
 
 export function urlWithQueryParam(
@@ -93,15 +73,8 @@ export function urlWithQueryParam(
 	key: string,
 	value: string | undefined
 ): string {
-	// Clone the current query object
-	const updatedQuery = addQueryParam(router, key, value);
-
 	// Update the query object based on the key and value
-	if (value === undefined) {
-		delete updatedQuery[key];
-	} else {
-		updatedQuery[key] = value;
-	}
+	const updatedQuery = addQueryParam(router, key, value);
 
 	// Create a new query string from the updated query object
 	const searchParams = new URLSearchParams(

@@ -1,12 +1,15 @@
-import { drizzle } from "drizzle-orm/neon-serverless";
-import { Pool } from "@neondatabase/serverless";
+import { drizzle } from "drizzle-orm/neon-http";
+import { neon, neonConfig} from "@neondatabase/serverless";
 import { env } from "~/env.mjs";
 
-const pool = new Pool({
-	connectionString: env.PGURL,
-	password: env.PGPASSWORD,
-});
-export const db = drizzle(pool);
+neonConfig.fetchConnectionCache = true;
+neonConfig.poolQueryViaFetch = true;
+
+// const pool = new Pool({
+// 	connectionString: env.PGURL,
+// 	password: env.PGPASSWORD,
+// });
+export const db = drizzle(neon(env.PGURL));
 
 export * from "./schema";
 
