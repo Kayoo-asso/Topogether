@@ -11,7 +11,7 @@ interface Props {
 export const getStaticProps: GetStaticProps<Props> = async () => {
 	return {
 		props: {
-			lightTopos: await getLightTopos(),
+			lightTopos: await getLightTopos({ status: "validated" }),
 		},
 	};
 };

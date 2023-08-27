@@ -18,9 +18,7 @@ export const getStaticProps: GetStaticProps<Props, { id: string }> = async (
 	ctx
 ) => {
 	const topoId = decodeUUID(ctx.params!.id);
-	console.log("topoId", topoId)
 	const doc = await getTopo(topoId, undefined);
-	console.log("doc", doc)
 	if (!doc) {
 		return {
 			notFound: true,

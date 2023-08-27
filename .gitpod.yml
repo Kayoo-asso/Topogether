@@ -4,3 +4,10 @@ image:
 tasks:
   - name: Install NPM packages
     init: pnpm i
+
+vscode:
+  extensions:
+    - ms-vscode.vscode-typescript-next
+    - yoavbls.pretty-ts-errors
+    - esbenp.prettier-vscode
+    - bradlc.vscode-tailwindcss
