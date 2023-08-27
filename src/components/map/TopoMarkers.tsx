@@ -84,7 +84,7 @@ export function TopoMarkers(props: TopoMarkersProps) {
 			<VectorSource>
 				{props.topos.map((t) => {
 					return (
-						<Point key={t.id} coordinates={t.location} data={{ topo: t }} />
+						<Point key={t.id} coordinates={t.location} data={{ topo: t }} className="cursor-pointer" />
 					);
 				})}
 			</VectorSource>
