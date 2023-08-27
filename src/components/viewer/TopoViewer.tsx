@@ -4,6 +4,8 @@ import { urlWithQueryParam, useQueryParam } from "~/helpers/queryParams";
 import { useRouter } from "next/router";
 import { BaseMap } from "../map/BaseMap";
 import { SectorList } from "./SectorList";
+import { UserMarker } from "../map/UserMarker";
+import { RockMarkers } from "../map/RockMarkers";
 
 interface Props {
 	doc: TopoDoc;
@@ -43,8 +45,14 @@ export function TopoViewerDesktop({ doc }: Props) {
 			/>
 			{/* Min zoom = 14, individual markers disappear above zoom 14 */}
 			<div className="w-full h-contentPlusShell">
-				<BaseMap initialCenter={doc.topo.location} initialZoom={16} minZoom={13}>
+				<BaseMap 
+					initialCenter={doc.topo.location} 
+					initialZoom={16} 
+					minZoom={14}
+				>
 					<div className="absolute left-0 top-0 h-full w-[280px] border-r border-grey-medium bg-white px-2 py-10">
+						<UserMarker />
+						<RockMarkers rocks={doc.rocks} />
 						<SectorList sectors={doc.sectors} rocks={doc.rocks} />
 					</div>
 				</BaseMap>

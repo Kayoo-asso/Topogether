@@ -21,6 +21,29 @@ export interface RockMarkerData {
 	value: Rock;
 }
 
+export const boulderMarkerStyle = (label: string, solid: boolean) => {
+	const bp = getBreakpoint();
+	const icon = new Icon({
+		opacity: solid ? 1 : 0.4,
+		src: "/assets/icons/markers/boulder.svg",
+		scale: bp.isDesktop ? 0.9 : 1,
+	});
+	const text = new Text({
+		text: label,
+		fill: new Fill({
+			color: solid ? "#343644" : "rgba(52, 54, 68, 0.3)",
+		}),
+		font: "bold 11px Poppins",
+		offsetY: 7,
+		offsetX: -1,
+	});
+	return new Style({
+		image: icon,
+		text,
+		zIndex: 100,
+	});
+}
+
 export function RockMarkers({ rocks }: Props) {
 	const [selected, ] = useUUIDQueryParam("selected");
 	const { sectors } = useTopoDoc();
@@ -132,25 +155,4 @@ function rockOrder(rocks: Rock[], sectors: Sector[]) {
 	return boulderOrder;
 }
 
-export function boulderMarkerStyle(label: string, solid: boolean) {
-	const bp = getBreakpoint();
-	const icon = new Icon({
-		opacity: solid ? 1 : 0.4,
-		src: "/assets/icons/markers/boulder.svg",
-		scale: bp.isDesktop ? 0.9 : 1,
-	});
-	const text = new Text({
-		text: label,
-		fill: new Fill({
-			color: solid ? "#343644" : "rgba(52, 54, 68, 0.3)",
-		}),
-		font: "bold 11px Poppins",
-		offsetY: 7,
-		offsetX: -1,
-	});
-	return new Style({
-		image: icon,
-		text,
-		zIndex: 100,
-	});
-}
+

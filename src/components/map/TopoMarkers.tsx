@@ -1,3 +1,4 @@
+import { Drag } from "components/openlayers/interactions/Drag";
 import { FeatureLike } from "ol/Feature";
 import { Icon, Style } from "ol/style";
 import React, { useCallback } from "react";
@@ -34,25 +35,47 @@ export const topoMarkerStyle = (
 	});
 };
 
+interface TopoInteractionsProps {
+	draggable?: boolean;
+	onDragEnd?: (id: UUID, coordinate: GeoCoordinates) => void;
+}
+
 // Only used in the world map
-export function TopoInteractions() {
+export function TopoInteractions({
+	draggable = false,
+	onDragEnd,
+}: TopoInteractionsProps) {
 	const selected = useTopoSelectStore((s) => s.selected);
 	return (
-		<OnClickFeature
-			layers="topos"
-			hitTolerance={5}
-			onClick={useCallback(
-				(e) => {
-					const { topo } = e.feature.get("data") as TopoMarkerData;
-					if (topo.id !== selected?.id) {
-						useTopoSelectStore.setState({ selected: topo });
-					} else {
-						useTopoSelectStore.setState({ selected: undefined });
-					}
-				},
-				[selected]
+		<>
+			{draggable && (
+				<Drag
+					sources="topos"
+					hitTolerance={5}
+					onDragEnd={(e) => {
+						const newLoc = e.mapBrowserEvent.coordinate;
+						const { topo } = e.feature.get("data") as TopoMarkerData;
+						onDragEnd &&
+							onDragEnd(topo.id, [newLoc[0], newLoc[1]]);
+					}}
+				/>
 			)}
-		/>
+			<OnClickFeature
+				layers="topos"
+				hitTolerance={5}
+				onClick={useCallback(
+					(e) => {
+						const { topo } = e.feature.get("data") as TopoMarkerData;
+						if (topo.id !== selected?.id) {
+							useTopoSelectStore.setState({ selected: topo });
+						} else {
+							useTopoSelectStore.setState({ selected: undefined });
+						}
+					},
+					[selected]
+				)}
+			/>
+		</>
 	);
 }
 
