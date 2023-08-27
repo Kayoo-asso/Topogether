@@ -84,7 +84,7 @@ interface RockItemProps {
 }
 
 function RockItem({ idx, rock }: RockItemProps) {
-	const [selected, setSelected] = useUUIDQueryParam("rock");
+	const [selected, setSelected] = useUUIDQueryParam("selected");
 	const isSelected = selected === rock.id;
 
 	const [expanded, setExpanded] = useState(false);
@@ -134,11 +134,11 @@ function TrackList({ rock }: { rock: Rock }) {
 	const doc = useTopoDoc();
 	const tracks = doc.tracks.filter((t) => t.rockId === rock.id);
 
-	const [selected, setSelected] = useUUIDQueryParam("selected");
-	const [selectedTrack, setSelectedTrack] = useUUIDQueryParam("track");
+	const [, setSelectedRock] = useUUIDQueryParam("selected");
+	const [, setSelectedTrack] = useUUIDQueryParam("track");
 
 	const select = (track: Track) => {
-		setSelected(rock.id);
+		setSelectedRock(rock.id);
 		setSelectedTrack(track.id);
 	}
 

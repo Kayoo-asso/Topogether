@@ -11,7 +11,7 @@ export function tileUrl(x: number, y: number, z: number): string {
 export const VariantWidths = [
 	16, 32, 64, 96, 128, 256, 384, 640, 750, 828, 1080, 1200, 1920, 2048, 3840,
 ] as const;
-type VariantWidth = typeof VariantWidths[number];
+type VariantWidth = (typeof VariantWidths)[number];
 
 type VW<W extends number> = `${W}vw`;
 type PX<W extends number> = `${W}px`;
@@ -25,3 +25,14 @@ export type SourceSize = ViewportWidth | PixelWidth;
 // IMPORTANT: maintain in sync with service worker (see sw.ts)
 export const bunnyUrl = (imageId: UUID, width: VariantWidth): string =>
 	`https://topogether.b-cdn.net/${imageId}.jpg?width=${width}`;
+
+export const bunnyLoader = ({
+	src,
+	width,
+	quality,
+}: {
+	src: string;
+	width: number;
+	quality: number;
+}) =>
+	`https://topogether.b-cdn.net/${src}.jpg?width=${width}&quality=${quality}`;

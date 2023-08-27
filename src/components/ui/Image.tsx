@@ -24,7 +24,6 @@ export type ImageProps = RawImageAttributes & {
 	objectFit?: "contain" | "cover";
 	sizeHint: SourceSize | { raw: string };
 	defaultImage?: StaticImageData;
-	modalable?: boolean;
 	onImageClick?: () => void;
 };
 
@@ -33,45 +32,55 @@ type RawImageAttributes = Omit<
 	"src" | "srcset" | "width" | "height" | "sizes" | "style" | "fetchpriority"
 >;
 
+
+export function ModalableImage({ objectFit, sizeHint, ...commonProps }: ImageProps) {
+	const [portalOpen, setPortalOpen] = useState(false);
+	const cssCursor = portalOpen ? " cursor-zoom-out" : " cursor-zoom-in";
+
+	return (
+		<>
+			<Image 
+				objectFit={objectFit} 
+				sizeHint={sizeHint} 
+				className={cssCursor}
+				onClick={(e) => {
+					if (commonProps.image) setPortalOpen(true);
+					if (commonProps.onClick) commonProps.onClick(e);
+				}}
+				{...commonProps} 
+			/>
+			{portalOpen && (
+				<Portal open={portalOpen}>
+					<div
+						className="absolute left-0 top-0 z-full flex h-screen w-screen overflow-hidden bg-black bg-opacity-80"
+						onClick={() => setPortalOpen(false)}
+					>
+						<Image 
+							sizeHint="100vw" 
+							className={cssCursor}
+							onClick={(e) => {
+								if (commonProps.image) setPortalOpen(true);
+								if (commonProps.onClick) commonProps.onClick(e);
+							}}
+							{...commonProps} 
+						/>
+					</div>
+				</Portal>
+			)}
+		</>
+	);
+}
+
 // TODO: implement priority using a <link> tag + next/head (as next/image does)
 export const Image = ({
 	objectFit = "contain",
 	image,
 	sizeHint,
-	modalable,
 	defaultImage = defaultKayoo,
 	...props
 }: ImageProps) => {
 	const device = useBreakpoint();
 	const imgRef = useRef<HTMLImageElement>(null);
-
-	const [portalOpen, setPortalOpen] = useState(false);
-	const wrapPortal = (elts: ReactElement<any, any>) => {
-		if (modalable)
-			return (
-				<>
-					{elts}
-					<Portal open={portalOpen}>
-						<div
-							className="absolute left-0 top-0 z-full flex h-screen w-screen overflow-hidden bg-black bg-opacity-80"
-							onClick={() => setPortalOpen(false)}
-						>
-							{elts}
-						</div>
-					</Portal>
-				</>
-			);
-		return <>{elts}</>;
-	};
-
-	const cssCursor =
-		modalable && image
-			? portalOpen
-				? " cursor-zoom-out"
-				: " cursor-zoom-in"
-			: props.onImageClick
-			? " md:cursor-pointer"
-			: "";
 
 	let src = defaultImage.src;
 	let width = defaultImage.width;
@@ -80,7 +89,6 @@ export const Image = ({
 	let srcSet = undefined;
 	let sizes = undefined;
 
-	if (portalOpen) objectFit = "contain";
 	const objectFitClass =
 		objectFit === "contain" ? " object-contain " : " object-cover ";
 
@@ -92,15 +100,13 @@ export const Image = ({
 		height = width / image.ratio;
 		srcSet = sources.join();
 		src = bunnyUrl(image.id, defaultVariant);
-		sizes = portalOpen
-			? "100vw"
-			: typeof sizeHint === "string"
+		sizes = typeof sizeHint === "string"
 			? sizeHint
 			: sizeHint.raw;
 		placeholder = image.placeholder;
 	}
 
-	return wrapPortal(
+	return (
 		<img
 			key={image?.id}
 			ref={useCallback((ref: HTMLImageElement | null) => {
@@ -116,9 +122,11 @@ export const Image = ({
 			height={height}
 			srcSet={srcSet}
 			sizes={sizes}
-			className={`h-full ${cssCursor} ${objectFitClass} ${
-				props.className || ""
-			}`}
+			className={`w-full h-full 
+				${props.onImageClick ? " md:cursor-pointer" : ""} \
+				${objectFitClass} \
+				${props.className || ""}`
+			}
 			loading={props.loading || "lazy"}
 			decoding={props.decoding || "async"}
 			// Add the placeholder as background image
@@ -133,10 +141,6 @@ export const Image = ({
 					  }
 					: {}
 			}
-			onClick={(e) => {
-				if (modalable && image) setPortalOpen(true);
-				if (props.onClick) props.onClick(e);
-			}}
 			onLoad={(e) => {
 				clearPlaceholder(e.target as HTMLImageElement);
 				if (props.onLoad) props.onLoad(e);

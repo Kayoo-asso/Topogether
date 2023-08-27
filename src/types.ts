@@ -4,18 +4,17 @@ export interface Img {
 	readonly id: UUID;
 	readonly ratio: number;
 	readonly placeholder?: string;
-};
+}
 
 export interface TopoAccessStep {
 	description: string;
 	image?: Img;
 }
 
-
 export type LightTopo = Awaited<ReturnType<typeof getLightTopos>>[number];
 export type TopoDoc = Exclude<Awaited<ReturnType<typeof getTopo>>, undefined>;
-export type Topo = TopoDoc["topo"]
-export type Sector = TopoDoc["sectors"][number]
+export type Topo = TopoDoc["topo"];
+export type Sector = TopoDoc["sectors"][number];
 export type Rock = TopoDoc["rocks"][number];
 export type Track = TopoDoc["tracks"][number];
 export type Parking = TopoDoc["parkings"][number];
@@ -29,13 +28,24 @@ export type UUID = string & {
 
 export type GeoCoordinates = [lng: number, lat: number];
 
+export type UpdateState<T> = T | ((state: T) => T);
+
 // === Bitflags ===
 // Bitflags can only have up to 32 values
 // JavaScript considers all number as 32-bit for bitwise operations
 
 // Used to define helper functions that only operate on one of the bitflags
 // Register new bitflags here
-export type Bitflag = Amenities | RockTypes | TopoTypes | WaypointTypes | TrackDanger | TrackPersonnality | TrackStyle | HoldType | BodyPosition;
+export type Bitflag =
+	| Amenities
+	| RockTypes
+	| TopoTypes
+	| WaypointTypes
+	| TrackDanger
+	| TrackPersonnality
+	| TrackStyle
+	| HoldType
+	| BodyPosition;
 
 export const enum Amenities {
 	None = 0,
@@ -99,7 +109,11 @@ export const enum TrackDanger {
 	FallingRock = 1 << 2,
 }
 
-export type TrackSpec = TrackPersonnality | TrackStyle | HoldType | BodyPosition;
+export type TrackSpec =
+	| TrackPersonnality
+	| TrackStyle
+	| HoldType
+	| BodyPosition;
 
 export const enum TrackPersonnality {
 	None = 0,
@@ -219,11 +233,11 @@ export const grades = [
 	"9c+",
 	"P",
 ] as const;
-export type Grade = typeof grades[number];
+export type Grade = (typeof grades)[number];
 
 export const gradeCategories = [3, 4, 5, 6, 7, 8, 9, "P"] as const; //"P" is for Project (the default grade, when it has not been settle yet)
 
-export type GradeCategory = typeof gradeCategories[number];
+export type GradeCategory = (typeof gradeCategories)[number];
 
 export type MapToolEnum =
 	| "ROCK"

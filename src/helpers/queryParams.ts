@@ -1,9 +1,35 @@
 import { useRouter, type NextRouter } from "next/router";
 import { useCallback } from "react";
 import { z } from "zod";
-import { uuid } from "~/db/custom";
-import { UUID } from "~/types";
+import { UUID, UpdateState } from "~/types";
 import { decodeUUID, encodeUUID } from "~/utils";
+
+function getKey<Allowed extends string>(
+	router: NextRouter,
+	key: string,
+	allowed?: Allowed[]
+) {
+	let value = router.query[key];
+	if (Array.isArray(value)) {
+		console.error(`Received array value for query param ${key}`);
+		return undefined;
+	}
+	// Ignore non-allowed values
+	if (allowed && value && !(allowed as string[]).includes(value)) {
+		return undefined;
+	}
+	return value as Allowed;
+}
+
+interface UseQueryParamOptions<
+	Allowed extends string = string,
+	Input extends string = string,
+	Output extends string = string
+> {
+	allowed?: Allowed[];
+	encode?: (input: Input) => string | undefined;
+	decode?: (query: string | undefined) => Output;
+}
 
 // A small helper to encode state into the URL, before
 // we properly transition to the Next App Router
@@ -14,42 +40,52 @@ export function useQueryParam<Allowed extends string>(
 	key: string,
 	allowed: Allowed[]
 ): [Allowed | undefined, (value: Allowed | undefined) => void];
+
 export function useQueryParam<Allowed extends string>(
 	key: string,
 	allowed?: Allowed[]
 ) {
 	const router = useRouter();
+	const value = getKey(router, key, allowed);
+
 	const set = useCallback(
-		(value: Allowed | undefined) => {
-			const query = addQueryParam(router, key, value);
-			router.push({ pathname: router.pathname, query }, undefined, { shallow: true});
+		(update: UpdateState<Allowed | undefined>) => {
+			if (typeof update === "function") {
+				update = update(getKey(router, key, allowed));
+			}
+			const query = addQueryParam(router, key, update);
+			router.push({ pathname: router.pathname, query }, undefined, {
+				shallow: true,
+			});
 		},
-		[router]
+		// `allowed` is an array of strings or undefined, so JSON.stringify works fine for our purposes here
+		[router, key, JSON.stringify(allowed)]
 	);
 
-	let value = router.query[key];
-	if (Array.isArray(value)) {
-		throw new Error("useQueryParam does not support array values for now");
-	}
-	if (allowed && value && !(allowed as string[]).includes(value)) {
-		// Clear the value
-		value = undefined;
-	}
-
-	return [value as Allowed | undefined, set] as const;
+	return [value, set] as const;
 }
 
 const uuidValidator = z.string().uuid();
+
 export function useUUIDQueryParam(key: string) {
 	const [value, set] = useQueryParam(key);
-	let safeValue = undefined;
-	if(value && uuidValidator.safeParse(value).success) {
-		safeValue = decodeUUID(value);
+	let decodedValue = undefined;
+	if (value && uuidValidator.safeParse(value).success) {
+		decodedValue = decodeUUID(value);
 	}
-	const wrappedSet = (value: UUID) => {
-		set(encodeUUID(value));
-	}	
-	return [safeValue, wrappedSet] as const;
+	const wrappedSet = (update: UpdateState<UUID>) => {
+		let wrappedUpdate: UpdateState<string>;
+		if (typeof update === "function") {
+			wrappedUpdate = (state: string | undefined) => {
+				let decodedState = undefined;
+				if (state && uuidValidator.safeParse(state).success) {
+					decodedState = decodeUUID(state as UUID);
+				}
+			};
+		}
+		set(encodeUUID(update));
+	};
+	return [decodedValue, wrappedSet] as const;
 }
 
 export function urlWithQueryParam(
@@ -91,4 +127,3 @@ function addQueryParam(
 	}
 	return query;
 }
-

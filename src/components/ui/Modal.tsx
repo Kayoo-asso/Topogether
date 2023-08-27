@@ -94,7 +94,7 @@ export function useModal<T>(): [
 					<ModalBG onBgClick={close}>
 						<div className="p-6 pt-10">
 							{imgUrl && (
-								<div className="relative mb-5 h-[100px] w-full">
+								<div className="relative flex justify-center mb-5 h-[100px] w-full">
 									<NextImage
 										src={imgUrl}
 										priority
@@ -151,7 +151,7 @@ export const ModalBG: React.FC<ModalBGProps> = (props: ModalBGProps) => {
 			tabIndex={-1}
 		>
 			<div
-				className="absolute left-[50%] top-[45%] min-h-[25%] w-11/12 translate-x-[-50%] translate-y-[-50%] overflow-hidden rounded-lg bg-white shadow md:top-[50%] md:w-5/12"
+				className="absolute left-[50%] top-[50%] min-h-[25%] w-11/12 translate-x-[-50%] translate-y-[-50%] overflow-hidden rounded-lg bg-white shadow md:top-[50%] md:w-5/12"
 				// Avoid closing the modal when we click here (otherwise propagates to the backdrop)
 				onClick={(event) => event.stopPropagation()}
 			>

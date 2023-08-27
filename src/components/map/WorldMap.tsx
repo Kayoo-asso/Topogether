@@ -19,6 +19,8 @@ import { useUser } from "@clerk/nextjs";
 
 import SearchIcon from "assets/icons/search.svg";
 import { SlideoverMobile } from "../layout/SlideoverMobile";
+import { TopoPreviewMobile } from "../previews/TopoPreviewMobile";
+import { TopoPreviewDesktop } from "../previews/TopoPreviewDesktop";
 
 interface WorldMapProps {
 	topos: LightTopo[];
@@ -58,7 +60,7 @@ export function WorldMapDesktop({ topos }: WorldMapProps) {
 					<TopoMarkers topos={filteredTopos} />
 					<TopoInteractions />
 				</BaseMap>
-				<TopoPreview sendTo="topo" displayLikeDownload displayParking />
+				<TopoPreviewDesktop sendTo="topo" displayLikeDownload displayParking />
 			</div>
 		</>
 	);
@@ -97,11 +99,12 @@ export function WorldMapMobile({ topos }: WorldMapProps) {
 					<TopoMarkers topos={filteredTopos} />
 					<TopoInteractions />
 					{/* Has to be within BaseMap (why? can't remember, I just know it's important) */}
-					<SlideoverMobile open={filtersOpen || searchOpen}>
+					<SlideoverMobile open={filtersOpen || searchOpen} onClose={() => useWorldMapStore.setState({ filtersOpen: false, searchOpen: false })}>
 						{searchOpen && <TopoSearchMobile topos={topos} />}
 						{filtersOpen && <TopoFiltersMobile topos={topos} />}
 					</SlideoverMobile>
 				</BaseMap>
+				<TopoPreviewMobile sendTo="topo" displayLikeDownload displayParking />		
 			</div>
 		</>
 	);

@@ -11,6 +11,8 @@ import { useCallback } from "react";
 import { type FeatureLike } from "ol/Feature";
 import { Fill, Icon, Style, Text } from "ol/style";
 import { getBreakpoint } from "../providers/DeviceProvider";
+import { OnClickFeature } from "../openlayers/extensions/OnClick";
+import { useMap } from "~/components/openlayers";
 
 interface Props {
 	rocks: Rock[];
@@ -19,6 +21,10 @@ interface Props {
 export interface RockMarkerData {
 	type: "rock";
 	value: Rock;
+}
+
+interface RockClusterData {
+	type: "cluster";
 }
 
 export const boulderMarkerStyle = (label: string, solid: boolean) => {
@@ -42,12 +48,13 @@ export const boulderMarkerStyle = (label: string, solid: boolean) => {
 		text,
 		zIndex: 100,
 	});
-}
+};
 
 export function RockMarkers({ rocks }: Props) {
-	const [selected, ] = useUUIDQueryParam("selected");
+	const [selected, setSelected] = useUUIDQueryParam("selected");
 	const { sectors } = useTopoDoc();
 	const order = rockOrder(rocks, sectors);
+	const map = useMap();
 
 	return (
 		<>
@@ -142,7 +149,7 @@ function rockOrder(rocks: Rock[], sectors: Sector[]) {
 	sectors.sort((s1, s2) => s1.index - s2.index);
 	let idx = 0;
 	for (const sector of sectors) {
-		const list = rocksBySector.get(sector.id)!;
+		const list = rocksBySector.get(sector.id) || [];
 		for (const rock of list) {
 			boulderOrder.set(rock.id, idx);
 			idx += 1;
@@ -154,5 +161,3 @@ function rockOrder(rocks: Rock[], sectors: Sector[]) {
 	}
 	return boulderOrder;
 }
-
-
