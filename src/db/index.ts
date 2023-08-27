@@ -1,15 +1,15 @@
-import { drizzle } from "drizzle-orm/neon-http";
+import { drizzle } from "drizzle-orm/node-postgres";
 import { neon, neonConfig} from "@neondatabase/serverless";
 import { env } from "~/env.mjs";
+import pg from "pg";
 
-neonConfig.fetchConnectionCache = true;
-neonConfig.poolQueryViaFetch = true;
+// neonConfig.fetchConnectionCache = true;
 
-// const pool = new Pool({
-// 	connectionString: env.PGURL,
-// 	password: env.PGPASSWORD,
-// });
-export const db = drizzle(neon(env.PGURL));
+const pool = new pg.Pool({
+	connectionString: env.PGURL,
+  ssl: {rejectUnauthorized: false}
+});
+export const db = drizzle(pool);
 
 export * from "./schema";
 
